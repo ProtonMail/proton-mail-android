@@ -20,17 +20,17 @@ package ch.protonmail.android.activities.messageDetails.details
 
 import android.view.View
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.ContactDatabase
+import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.ui.RecipientDropDownClickListener
 
-/**
- * Created by Kamil Rajtar on 14.08.18.
- */
-internal class RecipientContextMenuFactory(private val context:MessageDetailsActivity):Function1<String,View.OnClickListener> {
+internal class RecipientContextMenuFactory(
+    private val context: MessageDetailsActivity
+    ) : Function1<String, View.OnClickListener> {
 
-	override fun invoke(email: String): View.OnClickListener {
-		val contactsDatabase = ContactDatabase.getInstance(ProtonMailApplication.getApplication()).getDao()
-		return RecipientDropDownClickListener(context, contactsDatabase, email)
-	}
+    override fun invoke(email: String): View.OnClickListener {
+        val app = context.app
+        val contactsDatabase = ContactDatabase.getInstance(app, app.userManager.requireCurrentUserId()).getDao()
+        return RecipientDropDownClickListener(context, contactsDatabase, email)
+    }
 }

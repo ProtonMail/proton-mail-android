@@ -43,8 +43,16 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_READING_RESTRICTED
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.*
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.model.ContactData
+import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
@@ -63,14 +71,13 @@ import com.google.gson.JsonSyntaxException
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.runBlocking
-import me.proton.core.util.kotlin.unsupported
 import me.proton.core.domain.arch.map
-import me.proton.core.util.kotlin.unsupported
 import timber.log.Timber
 import javax.inject.Named
 import kotlin.math.max
 
 class EventHandler @AssistedInject constructor(
+    private val context: Context,
     private val protonMailApiManager: ProtonMailApiManager,
     private val userManager: UserManager,
     private val workManager: WorkManager,
@@ -81,14 +88,10 @@ class EventHandler @AssistedInject constructor(
     private val counterDao: CounterDao,
     @Named("messages") var messageDao: MessageDao,
     private val pendingActionDao: PendingActionDao,
-    private val pendingActionsDaoFactory: PendingActionDatabase,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val mapper: AddressBridgeMapper,
     @Assisted val userId: Id
 ) {
-
-    @Deprecated("Use User Id", ReplaceWith("userId"), DeprecationLevel.ERROR)
-    val username: String = unsupported
 
     @AssistedInject.Factory
     interface AssistedFactory {
@@ -111,7 +114,7 @@ class EventHandler @AssistedInject constructor(
             clearContactDataCache()
             clearContactEmailsLabelsJoin()
             clearContactEmailsCache()
-            clearContactGroupsLabelsTable()
+            clearContactGroupsLabelsTableBlocking()
         }
         fetchContactEmails.enqueue()
         fetchContactsData.enqueue()
@@ -206,7 +209,6 @@ class EventHandler @AssistedInject constructor(
      * NOTE we should not do api requests here because we are in a transaction
      */
     private fun unsafeWrite(
-        context: Context,
         contactDao: ContactDao,
         messageDao: MessageDao,
         pendingActionDao: PendingActionDao,
@@ -232,11 +234,11 @@ class EventHandler @AssistedInject constructor(
         val addresses = response.addresses
 
         if (labels != null) {
-            writeLabelsUpdates(messagesDao, contactDao, labels)
+            writeLabelsUpdates(messageDao, contactDao, labels)
         }
         if (messages != null) {
             messages.sortByDescending { eventMessageSortSelector(it) }
-            writeMessagesUpdates(messagesDao, pendingActionDao, messages)
+            writeMessagesUpdates(messageDao, pendingActionDao, messages)
         }
         if (contacts != null) {
             writeContactsUpdates(contactDao, contacts)
@@ -316,7 +318,7 @@ class EventHandler @AssistedInject constructor(
     private fun writeMessageUpdate(
         event: EventResponse.MessageEventBody,
         pendingActionDao: PendingActionDao,
-        messageID: String,
+        messageId: String,
         messageDao: MessageDao
     ) {
         val type = EventType.fromInt(event.type)
@@ -576,7 +578,7 @@ class EventHandler @AssistedInject constructor(
                         }
                         Timber.v("Create new email contact: ${contactEmail.email} newJoins size: ${newJoins.size}")
                         if (newJoins.isNotEmpty()) {
-                            contactsDatabase.saveContactEmailContactLabelBlocking(newJoins)
+                            contactDao.saveContactEmailContactLabelBlocking(newJoins)
                         }
                     }
                 }
@@ -591,8 +593,8 @@ class EventHandler @AssistedInject constructor(
                         val labelIds = updatedContactEmail.labelIds ?: ArrayList()
                         val contactEmailId = updatedContactEmail.contactEmailId
                         contactEmailId.let {
-                            contactDap.saveContactEmail(updatedContactEmail)
-                            val joins = contactsDatabase.fetchJoinsByEmail(contactEmailId).toMutableList()
+                            contactDao.saveContactEmail(updatedContactEmail)
+                            val joins = contactDao.fetchJoinsByEmail(contactEmailId).toMutableList()
                             for (labelId in labelIds) {
                                 joins.add(ContactEmailContactLabelJoin(contactEmailId, labelId))
                             }
@@ -690,7 +692,7 @@ class EventHandler @AssistedInject constructor(
         if (currentGroup != null) {
             val contactLabelFactory = ContactLabelFactory()
             val labelToSave = contactLabelFactory.createDBObjectFromServerObject(updatedGroup)
-            val joins = contactDao.fetchJoins(labelToSave.ID)
+            val joins = contactDao.fetchJoinsBlocking(labelToSave.ID)
             contactDao.saveContactGroupLabel(labelToSave)
             contactDao.saveContactEmailContactLabelBlocking(joins)
         }

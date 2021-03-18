@@ -18,18 +18,26 @@
  */
 package ch.protonmail.android.data
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
+import timber.log.Timber
 import javax.inject.Inject
 
-class ContactsRepository @Inject constructor(private val databaseProvider: DatabaseProvider) {
+class ContactsRepository @Inject constructor(
+    private val databaseProvider: DatabaseProvider,
+    private val userManager: UserManager
+) {
 
-    private val contactsDao by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDao in ContactsRepository"); databaseProvider.provideContactDao() }
+    private val contactDao by lazy {
+        Timber.v("Instantiating contactDao in ContactsRepository")
+        databaseProvider.provideContactDao(userManager.requireCurrentUserId())
+    }
 
-    fun findContactEmailByEmailLiveData(email: String): LiveData<ContactEmail> = contactsDao.findContactEmailByEmailLiveData(email)
+    fun findContactEmailByEmailLiveData(email: String): LiveData<ContactEmail> =
+        contactDao.findContactEmailByEmailLiveData(email)
 
-    fun findAllContactsEmailsAsync(): LiveData<List<ContactEmail>> = contactsDao.findAllContactsEmailsAsync()
+    fun findAllContactsEmailsAsync(): LiveData<List<ContactEmail>> = contactDao.findAllContactsEmailsAsync()
 
 }

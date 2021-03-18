@@ -24,22 +24,20 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.ToggleButton
-import androidx.lifecycle.ViewModelProviders
+import androidx.activity.viewModels
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountMailboxLoginViewModel
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.ConnectAccountMailboxLoginEvent
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.moveToMailbox
+import ch.protonmail.android.utils.extensions.app
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_connect_account_mailbox_login.*
 import kotlinx.android.synthetic.main.connect_account_progress.*
-import javax.inject.Inject
 
 // region constants
 const val EXTRA_KEY_SALT = "key_salt"
-const val EXTRA_CURRENT_PRIMARY = "connect_current_primary"
+const val EXTRA_CURRENT_PRIMARY_USER_ID = "extra.connect.current.primary.user.id"
 // constants
 
 /**
@@ -48,9 +46,6 @@ const val EXTRA_CURRENT_PRIMARY = "connect_current_primary"
  */
 @AndroidEntryPoint
 class ConnectAccountMailboxLoginActivity : ConnectAccountBaseActivity() {
-    override fun removeAccount(username: String) {
-        viewModel.removeAccount(username)
-    }
 
     override val togglePasswordView: ToggleButton
         get() = toggleViewPassword
@@ -58,16 +53,9 @@ class ConnectAccountMailboxLoginActivity : ConnectAccountBaseActivity() {
         get() = mailboxPassword
 
     private var setupComplete: Boolean = false
-    /** [ConnectAccountMailboxLoginViewModel.Factory] for [ConnectAccountMailboxLoginViewModel] */
-    @Inject
-    lateinit var viewModelFactory: ConnectAccountMailboxLoginViewModel.Factory
 
-    /** A Lazy instance of [ConnectAccountMailboxLoginViewModel] */
-    private val viewModel by lazy {
-        ViewModelProviders.of(this, viewModelFactory)
-                .get(ConnectAccountMailboxLoginViewModel::class.java)
-    }
-
+    private val viewModel: ConnectAccountMailboxLoginViewModel by viewModels()
+    
     override fun getLayoutId(): Int = R.layout.activity_connect_account_mailbox_login
 
     override fun resetState() {
@@ -78,20 +66,17 @@ class ConnectAccountMailboxLoginActivity : ConnectAccountBaseActivity() {
     }
 
     override fun unsubscribeFromEvents() {
-        ProtonMailApplication.getApplication().bus.unregister(this)
+        app.bus.unregister(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewModel.username = intent?.extras?.getString(EXTRA_USERNAME, null)
-        viewModel.currentPrimary = intent?.extras?.getString(EXTRA_CURRENT_PRIMARY, null)
         mailboxSignIn.setOnClickListener { onMailboxLoginClicked() }
     }
 
     override fun onStart() {
         super.onStart()
-        ProtonMailApplication.getApplication().bus.register(this)
+        app.bus.register(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -99,16 +84,6 @@ class ConnectAccountMailboxLoginActivity : ConnectAccountBaseActivity() {
             android.R.id.home -> onBackPressed()
         }
         return true
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        if (!setupComplete) {
-            viewModel.username?.let {
-                viewModel.logoutAccount(it)
-                moveToMailbox()
-            }
-        }
     }
 
     private fun onMailboxLoginClicked() {

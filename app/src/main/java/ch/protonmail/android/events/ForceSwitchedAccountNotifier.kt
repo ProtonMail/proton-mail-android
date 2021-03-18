@@ -23,5 +23,5 @@ import androidx.lifecycle.MutableLiveData
 
 object ForceSwitchedAccountNotifier {
     @JvmField
-    val notifier = MutableLiveData<ForceSwitchedAccountEvent?>()
+    val notifier = MutableLiveData<SwitchUserEvent?>()
 }

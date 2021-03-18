@@ -1644,7 +1644,7 @@ public class ComposeMessageActivity
             mScrollContentView.setVisibility(View.VISIBLE);
             mProgressView.setVisibility(View.GONE);
         }
-        AddressCrypto crypto = Crypto.forAddress(mUserManager, mUserManager.requireCurrentUserId(), loadedMessage.getAddressID());
+        AddressCrypto crypto = Crypto.forAddress(mUserManager, mUserManager.requireCurrentUserId(), new Id(loadedMessage.getAddressID()));
         if (updateAttachments) {
             composeMessageViewModel.createLocalAttachments(loadedMessage);
         }

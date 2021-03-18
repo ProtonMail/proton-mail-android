@@ -28,19 +28,25 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
-import ch.protonmail.android.data.local.*
-import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.model.Attachment
+import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.LocalAttachment
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.PendingSend
+import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.utils.MessageUtils
+import ch.protonmail.android.utils.extensions.asyncMap
 import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Flowable
@@ -66,7 +72,7 @@ private const val DEPRECATION_MESSAGE = "We should strive towards moving methods
 class MessageDetailsRepository @Inject constructor(
     private val jobManager: JobManager,
     private val api: ProtonMailApiManager,
-    @Named("messages_search") var searchDatabaseDao: MessagesDao,
+    @Named("messages_search") var searchDatabaseDao: MessageDao,
     private var pendingActionDatabase: PendingActionDao,
     private val applicationContext: Context,
     val databaseProvider: DatabaseProvider,
@@ -74,7 +80,7 @@ class MessageDetailsRepository @Inject constructor(
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer
 ) {
 
-    private var messagesDao: MessagesDao = databaseProvider.provideMessageDao()
+    private var messagesDao: MessageDao = databaseProvider.provideMessageDao(userManager.requireCurrentUserId())
 
     fun reloadDependenciesForUser(userId: Id) {
         pendingActionDatabase = databaseProvider.providePendingActionDao(userId)
@@ -489,7 +495,8 @@ class MessageDetailsRepository @Inject constructor(
         jobManager.addJobInBackground(PostReadJob(listOf(messageId)))
     }
 
-    fun findAllPendingSendsAsync(): LiveData<List<PendingSend>> = pendingActionDatabase.findAllPendingSendsAsync()
+    fun findAllPendingSendsAsync(): LiveData<List<PendingSend>> =
+        pendingActionDatabase.findAllPendingSendsAsync()
 
     fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>> =
         pendingActionDatabase.findAllPendingUploadsAsync()

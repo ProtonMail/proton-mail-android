@@ -56,7 +56,6 @@ import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_E
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_EMAIL_EXIST;
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_INVALID_EMAIL;
 
-// todo needs to be refactored and converted to kotlin
 public class UpdateContactJob extends ProtonMailEndlessJob {
 
 	private final String mContactId;
@@ -68,8 +67,14 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
 
     private transient ContactDao mContactDao;
 
-    public UpdateContactJob(String contactId, @NonNull String contactName, @NonNull List<ContactEmail> contactEmails,
-                            String encryptedData, String signedData, HashMap<ContactEmail, List<ContactLabel>> mapEmailGroupsIds) {
+    public UpdateContactJob(
+            String contactId,
+            @NonNull String contactName,
+            @NonNull List<ContactEmail> contactEmails,
+            String encryptedData,
+            String signedData,
+            HashMap<ContactEmail, List<ContactLabel>> mapEmailGroupsIds
+    ) {
         super(new Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT));
 		mContactId = contactId;
         mContactName = contactName;
@@ -83,7 +88,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
     public void onAdded() {
         User user = getUserManager().getUser();
         if (user != null) {
-            UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().getUsername());
+            UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().requireCurrentUserId());
             try {
                 CipherText tct = crypto.encrypt(mEncryptedData, false);
                 String encryptedDataSignature = crypto.sign(mEncryptedData);
@@ -102,8 +107,10 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
 
     @Override
     public void onRun() throws Throwable {
-        UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().getUsername());
-        mContactDao = ContactDatabase.Companion.getInstance(getApplicationContext()).getDao();
+        UserCrypto crypto = Crypto.forUser(getUserManager(), userId);
+        mContactDao = ContactDatabase.Companion
+                .getInstance(getApplicationContext(), userId)
+                .getDao();
 
         CipherText tct = crypto.encrypt(mEncryptedData, false);
         String encryptedDataSignature = crypto.sign(mEncryptedData);
@@ -129,8 +136,14 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
         }
     }
 
-    private void updateContact(@NonNull String contactName, @NonNull List<ContactEmail> contactEmails, String encryptedData,
-                               String encryptedDataSignature, String signedDataSignature, boolean updateJoins) {
+    private void updateContact(
+            @NonNull String contactName,
+            @NonNull List<ContactEmail> contactEmails,
+            String encryptedData,
+            String encryptedDataSignature,
+            String signedDataSignature,
+            boolean updateJoins
+    ) {
 
         final ContactData contactData = mContactDao.findContactDataById(mContactId) ;
         if (contactData != null) {
@@ -199,14 +212,17 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
         try {
             getApi().labelContacts(labelContactsBody)
                     .doOnComplete(() -> {
-                        List<ContactEmailContactLabelJoin> joins = mContactDao.fetchJoins(contactGroupId);
+                        List<ContactEmailContactLabelJoin> joins = mContactDao.fetchJoinsBlocking(contactGroupId);
                         for (String contactEmail : membersList) {
                             joins.add(new ContactEmailContactLabelJoin(contactEmail, contactGroupId));
                         }
                         mContactDao.saveContactEmailContactLabelBlocking(joins);
                     })
                     .doOnError(throwable ->
-                            getJobManager().addJobInBackground(new SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList)))
+                            getJobManager().addJobInBackground(
+                                    new SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList)
+                            )
+                    )
                     .subscribeOn(ThreadSchedulers.io())
                     .observeOn(ThreadSchedulers.io())
                     .subscribe();

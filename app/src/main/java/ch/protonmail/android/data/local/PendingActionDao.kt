@@ -18,20 +18,20 @@
  */
 package ch.protonmail.android.data.local
 
-import COLUMN_PENDING_DRAFT_MESSAGE_ID
-import PendingDraft
-import TABLE_PENDING_DRAFT
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import ch.protonmail.android.data.local.model.COLUMN_PENDING_DRAFT_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_PENDING_SEND_LOCAL_DB_ID
 import ch.protonmail.android.data.local.model.COLUMN_PENDING_SEND_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_PENDING_SEND_OFFLINE_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_PENDING_UPLOAD_MESSAGE_ID
+import ch.protonmail.android.data.local.model.PendingDraft
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
+import ch.protonmail.android.data.local.model.TABLE_PENDING_DRAFT
 import ch.protonmail.android.data.local.model.TABLE_PENDING_SEND
 import ch.protonmail.android.data.local.model.TABLE_PENDING_UPLOADS
 

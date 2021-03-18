@@ -35,7 +35,8 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants
@@ -46,7 +47,6 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.base64.Base64Encoder
@@ -58,6 +58,7 @@ import javax.inject.Inject
 
 public const val SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX = "saveDraftUniqueWork"
 
+internal const val KEY_INPUT_SAVE_DRAFT_USER_ID = "keySaveDraftMessageUserId"
 internal const val KEY_INPUT_SAVE_DRAFT_MSG_DB_ID = "keySaveDraftMessageDbId"
 internal const val KEY_INPUT_SAVE_DRAFT_MSG_LOCAL_ID = "keySaveDraftMessageLocalId"
 internal const val KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID = "keySaveDraftMessageParentId"
@@ -79,11 +80,14 @@ class CreateDraftWorker @WorkerInject constructor(
     private val addressCryptoFactory: AddressCrypto.Factory,
     private val base64: Base64Encoder,
     private val apiManager: ProtonMailApiManager,
+    private val databaseProvider: DatabaseProvider,
     private val userNotifier: UserNotifier
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val message = messageDetailsRepository.findMessageByMessageDbIdBlocking(getInputMessageDbId())
+        val userId = getInputUserId()
+
+        val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
             ?: return failureWithError(CreateDraftWorkerErrors.MessageNotFound)
         val senderAddressId = requireNotNull(message.addressID)
         val senderAddress = requireNotNull(getSenderAddress(senderAddressId))
@@ -95,7 +99,7 @@ class CreateDraftWorker @WorkerInject constructor(
                 createDraftRequest.parentID = parentId
                 createDraftRequest.action = getInputActionType().messageActionTypeValue
                 val parentMessage = messageDetailsRepository.findMessageByIdBlocking(parentId)
-                val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
+                val attachments = parentMessage?.attachments(databaseProvider.provideMessageDao(userId))
 
                 buildParentAttachmentsKeyPacketsMap(attachments, senderAddress).forEach {
                     createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
@@ -120,7 +124,7 @@ class CreateDraftWorker @WorkerInject constructor(
                 apiManager.updateDraft(
                     messageId,
                     createDraftRequest,
-                    RetrofitTag(userManager.username)
+                    UserIdTag(userManager.requireCurrentUserId())
                 )
             }
         }.fold(
@@ -224,7 +228,7 @@ class CreateDraftWorker @WorkerInject constructor(
 
     private fun reEncryptAttachment(senderAddress: Address, attachment: Attachment): String? {
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
-        val addressCrypto = addressCryptoFactory.create(userId, Id(previousSenderAddressId))
+        val addressCrypto = addressCryptoFactory.create(getInputUserId(), Id(previousSenderAddressId))
         val primaryKey = senderAddress.keys
         val publicKey = addressCrypto.buildArmoredPublicKey(primaryKey.primaryKey!!.privateKey)
 
@@ -260,8 +264,8 @@ class CreateDraftWorker @WorkerInject constructor(
         return previousSenderAddressId?.isNotEmpty() == true
     }
 
-    private fun getSenderAddress(senderAddressId: String): Address? {
-        val user = userManager.getUser(userManager.username).loadNew(userManager.username)
+    private suspend fun getSenderAddress(senderAddressId: String): Address? {
+        val user = userManager.getUser(getInputUserId())
         return user.findAddressById(Id(senderAddressId))
     }
 
@@ -276,6 +280,9 @@ class CreateDraftWorker @WorkerInject constructor(
         val errorData = workDataOf(KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM to error.name)
         return Result.failure(errorData)
     }
+
+    private fun getInputUserId(): Id =
+        Id(requireNotNull(inputData.getString(KEY_INPUT_SAVE_DRAFT_USER_ID)))
 
     private fun getInputActionType(): Constants.MessageActionType =
         Constants.MessageActionType.fromInt(inputData.getInt(KEY_INPUT_SAVE_DRAFT_ACTION_TYPE, -1))
@@ -292,6 +299,7 @@ class CreateDraftWorker @WorkerInject constructor(
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
         fun enqueue(
+            userId: Id,
             message: Message,
             parentId: String?,
             actionType: Constants.MessageActionType,
@@ -304,6 +312,7 @@ class CreateDraftWorker @WorkerInject constructor(
                 .setConstraints(constraints)
                 .setInputData(
                     workDataOf(
+                        KEY_INPUT_SAVE_DRAFT_USER_ID to userId.s,
                         KEY_INPUT_SAVE_DRAFT_MSG_DB_ID to message.dbId,
                         KEY_INPUT_SAVE_DRAFT_MSG_LOCAL_ID to message.messageId,
                         KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID to parentId,

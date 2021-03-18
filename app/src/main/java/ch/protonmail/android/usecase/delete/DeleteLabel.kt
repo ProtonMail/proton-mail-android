@@ -51,7 +51,7 @@ class DeleteLabel @Inject constructor(
             labelIds.forEach { labelId ->
                 ensureActive()
 
-                val contactLabel = contactDao.findContactGroupById(labelId)
+                val contactLabel = contactDao.findContactGroupByIdBlocking(labelId)
                 contactLabel?.let { label ->
                     Timber.v("Delete DB contact group $label")
                     contactDao.deleteContactGroup(label)

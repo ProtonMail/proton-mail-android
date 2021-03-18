@@ -25,6 +25,7 @@ import ch.protonmail.android.api.models.enumerations.KeyFlag
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.di.CurrentUserCrypto
 import ch.protonmail.android.utils.crypto.KeyInformation
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -34,7 +35,7 @@ import javax.inject.Inject
 class FetchVerificationKeys @Inject constructor(
     private val api: ProtonMailApiManager,
     private val userManager: UserManager,
-    private val userCrypto: UserCrypto,
+    @CurrentUserCrypto private val userCrypto: UserCrypto,
     private val contactDao: ContactDao,
     private val dispatchers: DispatcherProvider
 ) {

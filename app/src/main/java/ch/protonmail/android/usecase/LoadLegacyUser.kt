@@ -20,11 +20,12 @@
 package ch.protonmail.android.usecase
 
 import android.content.Context
-import ch.protonmail.android.api.models.User
 import ch.protonmail.android.domain.entity.Id
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
+import ch.protonmail.android.api.models.User as LegacyUser
 
 @Deprecated("Use new User entity", ReplaceWith("LoadUser"))
 class LoadLegacyUser @Inject constructor(
@@ -32,8 +33,12 @@ class LoadLegacyUser @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) {
 
-    suspend operator fun invoke(userId: Id): User = withContext(dispatchers.Io) {
+    suspend operator fun invoke(userId: Id): LegacyUser = withContext(dispatchers.Io) {
         @Suppress("DEPRECATION")
-        User.load(userId, context)
+        LegacyUser.load(userId, context)
     }
+
+    @Deprecated("Use suspend variant", ReplaceWith("this(userId)"))
+    fun blocking(userId: Id): LegacyUser =
+        runBlocking { invoke(userId) }
 }

@@ -53,6 +53,7 @@ import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse;
+import ch.protonmail.android.di.CurrentUserId;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.domain.entity.user.Address;
 import ch.protonmail.android.domain.entity.user.AddressKey;

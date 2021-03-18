@@ -25,13 +25,16 @@ import ch.protonmail.android.api.models.factories.IConverterFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import me.proton.core.util.kotlin.toInt
 import java.io.IOException
 import javax.inject.Inject
 
@@ -48,7 +51,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
         val labelBody = contactLabelFactory.createServerObjectFromDBObject(contactLabel)
         return apiManager.updateLabelCompletable(contactLabel.ID, labelBody.labelBody)
             .doOnComplete {
-                val joins = contactDao.fetchJoins(contactLabel.ID)
+                val joins = contactDao.fetchJoinsBlocking(contactLabel.ID)
                 contactDao.saveContactGroupLabel(contactLabel)
                 contactDao.saveContactEmailContactLabelBlocking(joins)
             }
@@ -123,7 +126,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
             contactLabel.name,
             contactLabel.color,
             contactLabel.display,
-            contactLabel.exclusive.makeInt(),
+            contactLabel.exclusive.toInt(),
             isUpdate,
             contactLabel.ID
         )

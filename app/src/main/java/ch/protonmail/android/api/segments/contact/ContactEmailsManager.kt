@@ -20,13 +20,12 @@ package ch.protonmail.android.api.segments.contact
 
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEmailsResponseV2
-import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import kotlinx.coroutines.runBlocking
+import timber.log.Timber
 import javax.inject.Inject
 
 class ContactEmailsManager @Inject constructor(

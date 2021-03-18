@@ -258,7 +258,10 @@ class ConvertLocalContactsJob(
                 someGroupsAlreadyExist = true
             } else {
                 result[it.value] = response.contactGroup.ID
-                ContactDatabase.getInstance(applicationContext).getDao().saveContactGroupLabel(response.contactGroup)
+                ContactDatabase
+                    .getInstance(applicationContext, userId ?: getUserManager().requireCurrentUserId())
+                    .getDao()
+                    .saveContactGroupLabel(response.contactGroup)
             }
         }
 
@@ -280,8 +283,12 @@ class ConvertLocalContactsJob(
     }
 
     @ContactEvent.Status
-    private fun handleResponse(contactDao: ContactDao, response: ContactResponse,
-                               contactDataDbId: Long, contactGroupIds: List<String>): Int {
+    private fun handleResponse(
+        contactDao: ContactDao,
+        response: ContactResponse,
+        contactDataDbId: Long,
+        contactGroupIds: List<String>
+    ): Int {
         val remoteContactId = response.contactId
         val previousContactData = contactDao.findContactDataByDbId(contactDataDbId)
         if (remoteContactId != "") {
@@ -298,7 +305,7 @@ class ConvertLocalContactsJob(
                     val emailsList = contact.emails!!.map { it.contactEmailId }
                     getApi().labelContacts(LabelContactsBody(contactGroupId, emailsList))
                             .doOnComplete {
-                                val joins = contactDao.fetchJoins(contactGroupId) as ArrayList
+                                val joins = contactDao.fetchJoinsBlocking(contactGroupId) as ArrayList
                                 for (contactEmail in emailsList) {
                                     joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                                 }

@@ -24,7 +24,6 @@ import com.birbit.android.jobqueue.Params;
 
 import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.BugReportEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.utils.AppUtil;
@@ -37,7 +36,7 @@ public class ReportBugsJob extends ProtonMailEndlessJob {
     private final String mClientVersion;
     private final String mTitle;
     private final String mDescription;
-    private final Id userId;
+    private final String username;
     private final String mEmail;
 
     public ReportBugsJob(
@@ -47,7 +46,7 @@ public class ReportBugsJob extends ProtonMailEndlessJob {
             @NonNull String clientVersion,
             @NonNull String title,
             @NonNull String description,
-            @NonNull Id userId,
+            @NonNull String username,
             @NonNull String email
     ) {
         super(new Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_BUGS));
@@ -57,7 +56,7 @@ public class ReportBugsJob extends ProtonMailEndlessJob {
         mClientVersion = clientVersion;
         mTitle = title;
         mDescription = description;
-        this.userId = userId;
+        this.username = username;
         mEmail = email;
     }
 
@@ -72,7 +71,7 @@ public class ReportBugsJob extends ProtonMailEndlessJob {
     @Override
     public void onRun() throws Throwable {
         ResponseBody response =
-                getApi().reportBug(mOSName, mAppVersion, mClient, mClientVersion, mTitle, mDescription, userId, mEmail);
+                getApi().reportBug(mOSName, mAppVersion, mClient, mClientVersion, mTitle, mDescription, username, mEmail);
         if (response.getCode() == Constants.RESPONSE_CODE_OK) {
             AppUtil.postEventOnUi(new BugReportEvent(Status.SUCCESS));
         } else {

@@ -32,6 +32,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.toInt
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -88,7 +89,7 @@ open class ContactDetailsRepository @Inject constructor(
         val labelBody = contactLabelConverterFactory.createServerObjectFromDBObject(contactLabel)
         return api.updateLabelCompletable(contactLabel.ID, labelBody.labelBody)
             .doOnComplete {
-                val joins = contactDao.fetchJoins(contactLabel.ID)
+                val joins = contactDao.fetchJoinsBlocking(contactLabel.ID)
                 contactDao.saveContactGroupLabel(contactLabel)
                 contactDao.saveContactEmailContactLabelBlocking(joins)
             }
@@ -98,7 +99,7 @@ open class ContactDetailsRepository @Inject constructor(
                         contactLabel.name,
                         contactLabel.color,
                         contactLabel.display,
-                        contactLabel.exclusive.makeInt(),
+                        contactLabel.exclusive.toInt(),
                         false,
                         contactLabel.ID
                     )
@@ -110,7 +111,7 @@ open class ContactDetailsRepository @Inject constructor(
         val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
         return api.labelContacts(labelContactsBody)
             .doOnComplete {
-                val joins = contactDao.fetchJoins(contactGroupId) as ArrayList
+                val joins = contactDao.fetchJoinsBlocking(contactGroupId) as ArrayList
                 for (contactEmail in membersList) {
                     joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                 }
@@ -164,7 +165,7 @@ open class ContactDetailsRepository @Inject constructor(
             contactId?.let {
                 val localContactEmails = contactDao.findContactEmailsByContactId(it)
                 contactDao.deleteAllContactsEmails(localContactEmails)
-                contactDao.saveAllContactsEmailsBlocking(contactServerEmails)
+                contactDao.saveAllContactsEmails(contactServerEmails)
             }
         }
     }

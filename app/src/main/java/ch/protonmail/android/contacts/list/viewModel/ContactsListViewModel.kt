@@ -21,6 +21,8 @@ package ch.protonmail.android.contacts.list.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.viewModelScope
 import androidx.loader.app.LoaderManager
 import androidx.work.Operation
 import androidx.work.WorkManager
@@ -32,6 +34,13 @@ import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContac
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.worker.DeleteContactWorker
 import ch.protonmail.libs.core.utils.ViewModelFactory
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import me.proton.core.util.kotlin.EMPTY_STRING
+import me.proton.core.util.kotlin.containsNoCase
+import timber.log.Timber
 import javax.inject.Inject
 
 class ContactsListViewModel(
@@ -62,8 +71,8 @@ class ContactsListViewModel(
             .combine(searchPhraseLiveData.asFlow()) { contacts, searchPhrase ->
                 contacts.filter { contactItem ->
                     searchPhrase?.isEmpty() ?: true ||
-                        contactItem.getName().contains(searchPhrase ?: EMPTY_STRING, ignoreCase = true) ||
-                        contactItem.getEmail().contains(searchPhrase ?: EMPTY_STRING, ignoreCase = true)
+                        contactItem.getName() containsNoCase (searchPhrase ?: EMPTY_STRING) ||
+                        contactItem.getEmail() containsNoCase (searchPhrase ?: EMPTY_STRING)
                 }
             }
             .onEach {
@@ -115,7 +124,8 @@ class ContactsListViewModel(
         private val contactDao: ContactDao,
         private val workManager: WorkManager,
         private val androidContactsRepositoryFactory: AndroidContactsRepository.AssistedFactory,
-        private val androidContactsDetailsRepositoryFactory: AndroidContactDetailsRepository.AssistedFactory
+        private val androidContactsDetailsRepositoryFactory: AndroidContactDetailsRepository.AssistedFactory,
+        private val contactsListMapper: ContactsListMapper
     ) : ViewModelFactory<ContactsListViewModel>() {
 
         lateinit var loaderManager: LoaderManager
@@ -127,7 +137,8 @@ class ContactsListViewModel(
                 contactDao,
                 workManager,
                 androidContactsRepository,
-                androidContactsDetailsRepository
+                androidContactsDetailsRepository,
+                contactsListMapper
             )
         }
     }

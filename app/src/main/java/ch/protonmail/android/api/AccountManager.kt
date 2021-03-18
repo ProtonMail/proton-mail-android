@@ -194,12 +194,19 @@ class AccountManager(
     /**
      * Removes all known lists of usernames.
      */
-    suspend fun clear() = withContext(dispatchers.Io) {
-        sharedPreferences.edit {
-            // New
-            remove(PREF_ALL_LOGGED_IN)
-            remove(PREF_ALL_SAVED)
+    suspend fun clear() {
+        withContext(dispatchers.Io) {
+            sharedPreferences.edit {
+                // New
+                remove(PREF_ALL_LOGGED_IN)
+                remove(PREF_ALL_SAVED)
+            }
         }
+    }
+
+    @Deprecated("Use suspend variant", ReplaceWith("this.clear()"))
+    fun clearBlocking() {
+        runBlocking { clear() }
     }
 
     /**
@@ -232,15 +239,13 @@ class AccountManager(
                 setLoggedIn(allLoggedUsernames.mapNotNull { allUsernamesToIds[it] })
             }
 
-                defaultSharedPreferences.edit {
-                    remove(PREF_USERNAMES_LOGGED_OUT)
-                    remove(PREF_USERNAMES_LOGGED_IN)
-                }
-
-                userManagerMigration()
+            defaultSharedPreferences.edit {
+                remove(PREF_USERNAMES_LOGGED_OUT)
+                remove(PREF_USERNAMES_LOGGED_IN)
             }
-        }
 
+            userManagerMigration()
+        }
     }
 
     companion object {

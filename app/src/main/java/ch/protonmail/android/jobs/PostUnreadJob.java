@@ -25,6 +25,8 @@ import java.util.List;
 
 import ch.protonmail.android.api.models.IDList;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.data.local.CounterDao;
+import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
 import ch.protonmail.android.events.RefreshDrawerEvent;
@@ -42,7 +44,7 @@ public class PostUnreadJob extends ProtonMailEndlessJob {
     @Override
     public void onAdded() {
         final CounterDao counterDao = CounterDatabase.Companion
-                .getInstance(getApplicationContext())
+                .getInstance(getApplicationContext(), userId)
                 .getDao();
         Constants.MessageLocationType messageLocation = Constants.MessageLocationType.INVALID;
         boolean starred = false;

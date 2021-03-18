@@ -89,25 +89,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
     private var recoveryEmailValue: String? = null
     private var actionBarTitle: Int = -1
     private var initializedRemote = false
-    private var initializedEbedded = false
-
-    override fun getLayoutId(): Int = R.layout.activity_edit_settings_item
-
-    override fun onStop() {
-        super.onStop()
-        initializedRemote = true
-        initializedEbedded = true
-        enableFeatureSwitch.setOnCheckedChangeListener(null)
-        setToggleListener(SettingsEnum.LINK_CONFIRMATION, null)
-        setToggleListener(SettingsEnum.PREVENT_SCREENSHOTS, null)
-        setToggleListener(SettingsEnum.SHOW_REMOTE_IMAGES, null)
-        setToggleListener(SettingsEnum.SHOW_EMBEDDED_IMAGES, null)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        renderViews()
-    }
+    private var initializedEmbedded = false
 
     private val isValidNewConfirmEmail: Boolean
         get() {
@@ -266,7 +248,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     val newMobileSignature = (it as CustomFontEditText).text.toString()
                     val isMobileSignatureChanged = newMobileSignature != currentMobileSignature
 
-                    if (mobileSignatureChanged) {
+                    if (isMobileSignatureChanged) {
                         legacyUser.mobileSignature = newMobileSignature
                         legacyUser.save()
                     }

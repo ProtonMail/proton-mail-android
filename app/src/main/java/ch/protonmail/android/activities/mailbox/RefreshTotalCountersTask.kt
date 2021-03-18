@@ -19,17 +19,18 @@
 package ch.protonmail.android.activities.mailbox
 
 import android.os.AsyncTask
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.model.TotalLabelCounter
+import ch.protonmail.android.data.local.model.TotalLocationCounter
 
-/**
- * Created by Kamil Rajtar on 21.08.18.
- */
-internal class RefreshTotalCountersTask(private val counterDao:CounterDao,
-                                        private val locationCounters:List<TotalLocationCounter>,
-                                        private val labelCounters:List<TotalLabelCounter>):AsyncTask<Void,Void,Void>() {
+internal class RefreshTotalCountersTask(
+    private val counterDao: CounterDao,
+    private val locationCounters: List<TotalLocationCounter>,
+    private val labelCounters: List<TotalLabelCounter>
+) : AsyncTask<Void, Void, Void>() {
 
-	override fun doInBackground(vararg voids:Void):Void? {
-		counterDao.refreshTotalCounters(locationCounters,labelCounters)
-		return null
-	}
+    override fun doInBackground(vararg voids: Void): Void? {
+        counterDao.refreshTotalCounters(locationCounters, labelCounters)
+        return null
+    }
 }

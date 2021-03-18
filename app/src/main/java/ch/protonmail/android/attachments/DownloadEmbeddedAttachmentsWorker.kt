@@ -106,7 +106,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         requireNotNull(message)
         val addressId = requireNotNull(message.addressID)
 
-        val addressCrypto = Crypto.forAddress(userManager, userId, Id(addressId))
+        val addressCrypto = Crypto.forAddress(userManager, userId, Id(message.addressID!!))
         // We need this outside of this because the embedded attachments are set once the message is actually decrypted
         try {
             message.decrypt(addressCrypto)

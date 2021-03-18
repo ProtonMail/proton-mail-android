@@ -26,16 +26,13 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.ToggleButton
-import androidx.lifecycle.ViewModelProviders
+import androidx.activity.viewModels
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountViewModel
-import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.models.LoginInfoResponse
 import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.segments.event.AlarmReceiver
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.LOGIN_STATE_LOGIN_FINISHED
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.ConnectAccountLoginEvent
@@ -46,6 +43,7 @@ import ch.protonmail.android.events.LoginInfoEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
+import ch.protonmail.android.utils.extensions.getColorCompat
 import ch.protonmail.android.utils.extensions.removeWhitespaces
 import ch.protonmail.android.utils.extensions.setcolor
 import ch.protonmail.android.utils.extensions.showToast
@@ -56,7 +54,6 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_connect_account.*
 import kotlinx.android.synthetic.main.connect_account_progress.*
-import javax.inject.Inject
 
 /**
  * This activity handles the first step towards connecting an account,
@@ -73,14 +70,7 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
     private var disableBack = false
     private var twoFactorDialog: AlertDialog? = null
 
-    /** [ConnectAccountViewModel.Factory] for [ConnectAccountViewModel] */
-    @Inject
-    lateinit var viewModelFactory: ConnectAccountViewModel.Factory
-
-    /** A Lazy instance of [ConnectAccountViewModel] */
-    private val viewModel by lazy {
-        ViewModelProviders.of(this, viewModelFactory).get(ConnectAccountViewModel::class.java)
-    }
+    private val viewModel: ConnectAccountViewModel by viewModels()
 
     override fun removeAccount(username: String) {
         viewModel.removeAccount(username)
@@ -109,32 +99,17 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         forgotPassword.setOnClickListener { onForgotPasswordClicked() }
         connect.setOnClickListener { onConnectClicked() }
 
-        progressCircular.setcolor(resources.getColor(R.color.new_purple_dark))
+        progressCircular.setcolor(getColorCompat(R.color.new_purple_dark))
     }
 
     override fun onStart() {
         super.onStart()
-        ProtonMailApplication.getApplication().bus.register(this)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.username?.let {
-            val tokenManager = mUserManager.getTokenManager(it)
-            val accountManager = AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext)
-            val isLoggedIn = accountManager.getLoggedInUsers().contains(it)
-            if (tokenManager != null &&
-                !tokenManager.scope.toLowerCase().split(" ").contains(Constants.TOKEN_SCOPE_FULL) &&
-                isLoggedIn
-            ) {
-                mUserManager.logoutAccount(it)
-            }
-        }
+        app.bus.register(this)
     }
 
     @Subscribe
     fun onLogin2FAEvent(event: Login2FAEvent) {
-        ProtonMailApplication.getApplication().resetLogin2FAEvent()
+        app.resetLogin2FAEvent()
         hideProgress()
         enableInput(true)
         showTwoFactorDialog(
@@ -150,7 +125,7 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
     fun onLoginInfoEvent(event: LoginInfoEvent) {
         when (event.status) {
             AuthStatus.SUCCESS -> {
-                ProtonMailApplication.getApplication().resetLoginInfoEvent()
+                app.resetLoginInfoEvent()
                 viewModel.login(
                     username = event.username,
                     password = event.password,
@@ -176,7 +151,7 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         if (event == null) {
             return
         }
-        ProtonMailApplication.getApplication().resetLoginEvent()
+        app.resetLoginEvent()
         enableInput(true)
         when (event.status) {
             AuthStatus.SUCCESS -> {
@@ -187,9 +162,8 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
                 hideProgress()
                 mUserManager.loginState = LOGIN_STATE_LOGIN_FINISHED
                 val mailboxLoginIntent = Intent(this, ConnectAccountMailboxLoginActivity::class.java)
-                mailboxLoginIntent.putExtra(EXTRA_KEY_SALT, event.keySalt)
-                mailboxLoginIntent.putExtra(EXTRA_USERNAME, viewModel.username)
-                mailboxLoginIntent.putExtra(EXTRA_CURRENT_PRIMARY, viewModel.currentPrimaryUsername)
+                    .putExtra(EXTRA_KEY_SALT, event.keySalt)
+                    .putExtra(EXTRA_CURRENT_PRIMARY_USER_ID, viewModel.currentPrimary?.s)
                 startActivity(AppUtil.decorInAppIntent(mailboxLoginIntent))
                 saveLastInteraction()
                 finish()
@@ -284,10 +258,10 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
             UiUtil.hideKeyboard(this)
             progress.visibility = View.VISIBLE
             twoFA(userId, password, it, response, loginResponse, fallbackAuthVersion)
-            ProtonMailApplication.getApplication().resetLoginInfoEvent()
+            app.resetLoginInfoEvent()
         }, {
             UiUtil.hideKeyboard(this@ConnectAccountActivity)
-            ProtonMailApplication.getApplication().resetLoginInfoEvent()
+            app.resetLoginInfoEvent()
             mUserManager.logoutBlocking(userId)
         })
     }

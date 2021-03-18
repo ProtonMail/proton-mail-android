@@ -150,7 +150,7 @@ abstract class NavigationActivity :
     val lazyManager = resettableManager()
 
     val messagesDatabase by resettableLazy(lazyManager) {
-        MessageDatabase.getInstance(applicationContext).getDao()
+        MessageDatabase.getInstance(applicationContext, userManager.requireCurrentUserId()).getDao()
     }
 
     @Inject

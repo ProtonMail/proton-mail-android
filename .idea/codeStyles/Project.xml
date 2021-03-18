@@ -140,6 +140,8 @@
     </codeStyleSettings>
     <codeStyleSettings language="kotlin">
       <option name="RIGHT_MARGIN" value="120" />
+      <option name="METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
+      <option name="METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE" value="true" />
       <indentOptions>
         <option name="CONTINUATION_INDENT_SIZE" value="4" />
       </indentOptions>

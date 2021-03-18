@@ -47,7 +47,7 @@ import kotlinx.android.synthetic.main.drawer_user_list_item.view.*
 import kotlinx.android.synthetic.main.drawer_user_list_item_footer.view.*
 import kotlinx.android.synthetic.main.user_list_item.view.*
 import kotlinx.android.synthetic.main.user_list_item_footer.view.*
-import me.proton.android.core.presentation.ui.adapter.ProtonAdapter
+import me.proton.core.presentation.ui.adapter.ProtonAdapter
 
 // region constants
 private const val VIEW_TYPE_NAV_USER = 0 // for user list item in nav drawer list

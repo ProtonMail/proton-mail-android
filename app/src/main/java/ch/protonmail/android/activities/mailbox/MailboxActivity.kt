@@ -119,6 +119,8 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
 import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.data.local.model.*
@@ -250,15 +252,15 @@ class MailboxActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        counterDao = CounterDatabase.getInstance(this, userManager.requireCurrentUserId())
-            .getDao()
-        pendingActionDao = PendingActionDatabase.getInstance(this).getDao()
+        val userId = userManager.requireCurrentUserId()
+        counterDao = CounterDatabase.getInstance(this, userId).getDao()
+        pendingActionDao = PendingActionDatabase.getInstance(this, userId).getDao()
 
         // force reload of MessageDetailsRepository's internal dependencies in case we just switched user
 
         // TODO if we decide to use special flag for switching (and not login), change this
         if (intent.getBooleanExtra(EXTRA_FIRST_LOGIN, false)) {
-            messageDetailsRepository.reloadDependenciesForUser(userManager.requireCurrentUserId())
+            messageDetailsRepository.reloadDependenciesForUser(userId)
             FcmUtil.setTokenSent(false) // force FCM to re-register
         }
         val extras = intent.extras
@@ -280,12 +282,11 @@ class MailboxActivity :
         mailboxViewModel.toastMessageMaxLabelsReached.observe(this) { event: Event<MaxLabelsReached?> ->
             val maxLabelsReached = event.getContentIfNotHandled()
             if (maxLabelsReached != null) {
-                val message =
-                    String.format(
-                        getString(R.string.max_labels_exceeded),
-                        maxLabelsReached.subject,
-                        maxLabelsReached.maxAllowedLabels
-                    )
+                val message = getString(
+                    R.string.max_labels_exceeded,
+                    maxLabelsReached.subject,
+                    maxLabelsReached.maxAllowedLabels
+                )
                 showToast(message, Toast.LENGTH_SHORT)
             }
         }
@@ -575,7 +576,7 @@ class MailboxActivity :
 
         mJobManager.start()
         counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()
-        pendingActionDao = PendingActionDatabase.getInstance(this).getDao()
+        pendingActionDao = PendingActionDatabase.getInstance(this, currentUserId).getDao()
         messageDetailsRepository.reloadDependenciesForUser(currentUserId)
 
         startObservingPendingActions()

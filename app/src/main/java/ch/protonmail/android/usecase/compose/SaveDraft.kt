@@ -30,7 +30,7 @@ import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.*
-import ch.protonmail.android.di.CurrentUsername
+import ch.protonmail.android.di.CurrentUserId
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.utils.notifier.UserNotifier
@@ -50,7 +50,7 @@ class SaveDraft @Inject constructor(
     private val addressCryptoFactory: AddressCrypto.Factory,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val dispatchers: DispatcherProvider,
-    private val pendingActionsDao: PendingActionDao,
+    private val pendingActionDao: PendingActionDao,
     private val createDraftWorker: CreateDraftWorker.Enqueuer,
     @CurrentUserId private val userId: Id,
     private val uploadAttachments: UploadAttachments.Enqueuer,
@@ -87,6 +87,7 @@ class SaveDraft @Inject constructor(
         localDraftId: String
     ): Flow<SaveDraftResult> {
         return createDraftWorker.enqueue(
+            userId,
             localDraft,
             params.parentId,
             params.actionType,
@@ -142,10 +143,10 @@ class SaveDraft @Inject constructor(
     }
 
     private fun updatePendingForSendMessage(createdDraftId: String, messageId: String) {
-        val pendingForSending = pendingActionsDao.findPendingSendByMessageId(messageId)
+        val pendingForSending = pendingActionDao.findPendingSendByMessageId(messageId)
         pendingForSending?.let {
             pendingForSending.messageId = createdDraftId
-            pendingActionsDao.insertPendingForSend(pendingForSending)
+            pendingActionDao.insertPendingForSend(pendingForSending)
         }
     }
 

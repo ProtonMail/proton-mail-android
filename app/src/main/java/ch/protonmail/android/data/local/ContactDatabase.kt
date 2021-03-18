@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.data.local
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -29,7 +28,6 @@ import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsConverter
-import me.proton.core.util.kotlin.unsupported
 
 @Database(
     entities = [
@@ -49,26 +47,5 @@ abstract class ContactDatabase : RoomDatabase() {
     companion object : DatabaseFactory<ContactDatabase>(
         ContactDatabase::class,
         "ContactsDatabase.db"
-    ) {
-
-        @JvmOverloads
-        @Synchronized
-        @Deprecated(
-            "Use with user Id",
-            ReplaceWith("ContactsDatabase.getInstance(context, userId)"),
-            DeprecationLevel.ERROR
-        )
-        fun getInstance(context: Context, username: String? = null): ContactDatabase =
-            unsupported
-
-        @Synchronized
-        @Deprecated(
-            "Use with user Id",
-            ReplaceWith("ContactsDatabase.deleteDatabase(context, userId)"),
-            DeprecationLevel.ERROR
-        )
-        fun deleteDb(context: Context, username: String) {
-            unsupported
-        }
-    }
+    )
 }

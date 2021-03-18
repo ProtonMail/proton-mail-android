@@ -35,7 +35,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.loader.app.LoaderManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Operation
@@ -54,7 +53,6 @@ import ch.protonmail.android.contacts.list.progress.ProgressDialogFactory
 import ch.protonmail.android.contacts.list.progress.UploadProgressObserver
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListViewModel
-import ch.protonmail.android.contacts.list.viewModel.ContactsListViewModelFactory
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.utils.AppUtil
@@ -62,7 +60,6 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
-import ch.protonmail.libs.core.utils.ViewModelProvider
 import com.birbit.android.jobqueue.JobManager
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
@@ -78,7 +75,11 @@ private const val EXTRA_PERMISSION = "extra_permission"
 @AndroidEntryPoint
 class ContactsListFragment : BaseFragment(), IContactsFragment {
 
-    private lateinit var viewModel: ContactsListViewModel
+    @Inject
+    lateinit var viewModelFactory: ContactsListViewModel.Factory
+    private val viewModel: ContactsListViewModel by viewModels {
+        viewModelFactory.apply { loaderManager = LoaderManager.getInstance(this@ContactsListFragment) }
+    }
     private lateinit var contactsAdapter: ContactsListAdapter
     private var hasContactsPermission: Boolean = false
 
@@ -214,15 +215,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val loaderManager = LoaderManager.getInstance(this)
-        val application = activity!!.application
         hasContactsPermission = arguments?.getBoolean(EXTRA_PERMISSION) ?: false
-        val factory = ContactsListViewModelFactory(
-            application,
-            loaderManager,
-            workManager
-        )
-        viewModel = ViewModelProvider(this, factory).get(ContactsListViewModel::class.java)
 
         initAdapter()
         listener.selectPage(0)

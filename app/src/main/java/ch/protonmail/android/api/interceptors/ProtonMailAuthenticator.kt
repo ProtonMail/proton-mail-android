@@ -88,7 +88,7 @@ class ProtonMailAuthenticator @Inject constructor(
         if (!originalRequest.url().encodedPath().contains(REFRESH_PATH)) {
             val refreshBody = tokenManager.createRefreshBody()
             val refreshResponse =
-                appContext.app.api.refreshAuthBlocking(refreshBody, RetrofitTag(usernameAuth))
+                appContext.app.api.refreshAuthBlocking(refreshBody, UserIdTag(userId))
             if (refreshResponse.error.isNullOrEmpty() && refreshResponse.accessToken != null) {
                 Timber.i(
                     "access token expired: got correct refresh response, handle refresh in token manager"

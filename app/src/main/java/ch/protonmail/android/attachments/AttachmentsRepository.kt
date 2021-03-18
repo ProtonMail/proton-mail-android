@@ -25,6 +25,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import okhttp3.MediaType
@@ -58,7 +59,9 @@ class AttachmentsRepository @Inject constructor(
     }
 
     suspend fun uploadPublicKey(message: Message, crypto: AddressCrypto): Result {
-        val address = userManager.getUser(userManager.username).getAddressById(message.addressID).toNewAddress()
+        val addressId = Id(checkNotNull(message.addressID))
+        val user = userManager.getUser(userManager.requireCurrentUserId())
+        val address = checkNotNull(user.findAddressById(addressId))
         val primaryKey = requireNotNull(address.keys.primaryKey)
 
         val publicKey = crypto.buildArmoredPublicKey(primaryKey.privateKey)

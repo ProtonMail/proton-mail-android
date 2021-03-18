@@ -28,16 +28,14 @@ import java.util.List;
 
 import ch.protonmail.android.api.models.IDList;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.data.local.CounterDao;
+import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
 import ch.protonmail.android.events.RefreshDrawerEvent;
 import ch.protonmail.android.utils.AppUtil;
-
-/**
- * Created by dino on 2/24/17.
- */
 
 public class MoveToFolderJob extends ProtonMailBaseJob {
     private List<String> mMessageIds;

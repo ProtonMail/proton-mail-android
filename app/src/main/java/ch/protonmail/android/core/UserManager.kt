@@ -29,8 +29,7 @@ import ch.protonmail.android.api.local.SnoozeSettings
 import ch.protonmail.android.api.models.LoginInfoResponse
 import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.models.MailSettings
-import ch.protonmail.android.api.models.User // TODO import as `LegacyUser`
-import ch.protonmail.android.api.models.UserInfo
+import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.UserSettings
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.services.LoginService
@@ -71,7 +70,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.suspendCoroutine
 import kotlin.time.minutes
-import ch.protonmail.android.domain.entity.user.User as NewUser // TODO import as `User`
+import ch.protonmail.android.domain.entity.user.User as NewUser
 
 // region constants
 const val LOGIN_STATE_NOT_INITIALIZED = 0
@@ -155,18 +154,6 @@ class UserManager @Inject constructor(
             field = value
             if (value != null) withCurrentUserPreferences(value::save)
         }
-
-    @get:Deprecated(
-        "Caching is not supported anymore",
-        ReplaceWith("getCurrentUserMailSettings"),
-        DeprecationLevel.ERROR
-    )
-    @set:Deprecated(
-        "Caching is not supported anymore. No replacement",
-        level = DeprecationLevel.ERROR
-    )
-    var mailSettings: MailSettings? =
-        unsupported
 
     suspend fun getCurrentUserMailSettings(): MailSettings? =
         currentUserId?.let { getMailSettings(it) }
@@ -561,14 +548,10 @@ class UserManager @Inject constructor(
     // TODO: find better name for its purpose
     suspend fun connectAccountMailboxLogin(
         userId: Id,
-        currentPrimaryUserId: Id,
+        currentPrimaryUserId: Id?,
         mailboxPassword: String,
         keySalt: String
     ) {
-        val username = loadUser(userId).name
-        val currentPrimary =
-            if (currentPrimaryUserId != userId) loadUser(currentPrimaryUserId).name
-            else username
         LoginService.startConnectAccountMailboxLogin(userId, currentPrimaryUserId, mailboxPassword, keySalt)
     }
 
@@ -638,16 +621,11 @@ class UserManager @Inject constructor(
     private suspend fun deleteDatabases(context: Context, userId: Id) = suspendCoroutine<Unit> {
         // TODO: this currently terminates only of the deletions is successful, the method must accept also a failure
         //  callback
-        AppUtil.deleteDatabases(context, getUserBlocking(userId).name.s) { it.resumeWith(Result.success(Unit)) }
+        AppUtil.deleteDatabases(context, userId) { it.resumeWith(Result.success(Unit)) }
     }
 
     @Deprecated("Use with user Id", ReplaceWith("logout(userId)"), DeprecationLevel.ERROR)
     fun logoutAccount(username: String) {
-        unsupported
-    }
-
-    @Deprecated("Use with user Id", ReplaceWith("logout(userId)"), DeprecationLevel.ERROR)
-    fun logoutAccount(username: String, clearDoneListener: (() -> Unit)?) {
         unsupported
     }
 
@@ -659,8 +637,7 @@ class UserManager @Inject constructor(
         val currentUserId = requireNotNull(currentUserId)
         isLoggedIn = false
         currentUserLoginState = LOGIN_STATE_NOT_INITIALIZED
-        val currentUserUsername = getUserBlocking(currentUserId).name.s
-        AppUtil.deleteDatabases(app.applicationContext, currentUserUsername, clearDoneListener)
+        AppUtil.deleteDatabases(app.applicationContext, currentUserId, clearDoneListener)
         saveBackupSettings()
         // Passing FCM token already here to prevent it being deleted from shared prefs before worker starts
         LogoutService.startLogout(context, requireCurrentUserId(), true, FcmUtil.getFirebaseToken())
@@ -933,7 +910,6 @@ class UserManager @Inject constructor(
             save()
         }
         this@UserManager.apply {
-            this.mailSettings = mailSettings
             this.userSettings = userSettings
             this.snoozeSettings = SnoozeSettings.load(preferencesFor(Id(user.id)))
             this.user = user
@@ -952,22 +928,6 @@ class UserManager @Inject constructor(
     ) = runBlocking {
         currentUserId = Id(user.id)
         setUserDetails(user, addresses, mailSettings, userSettings)
-    }
-
-    @JvmOverloads
-    @Deprecated(
-        "Use 'setUserDetails'",
-        ReplaceWith("setUserDetails(user, addresses, mailSettings, userSettings)"),
-        DeprecationLevel.ERROR
-    )
-    fun setUserInfo(
-        userInfo: UserInfo,
-        username: String? = null,
-        mailSettings: MailSettings,
-        userSettings: UserSettings,
-        addresses: List<Address>
-    ) {
-        unsupported
     }
 
     @Synchronized
@@ -1161,7 +1121,7 @@ class UserManager @Inject constructor(
         withContext(dispatchers.Io) {
             val preferences = preferencesFor(userId)
             userSettings = UserSettings.load(preferences)
-            mailSettings = MailSettings.load(preferences)snoozeSettings = SnoozeSettings.load(preferences)
+            snoozeSettings = SnoozeSettings.load(preferences)
             // Reload autoLockPINPeriod
             user.autoLockPINPeriod
         }

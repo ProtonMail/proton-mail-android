@@ -38,11 +38,13 @@ import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.data.local.AttachmentMetadataDao;
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase;
 import ch.protonmail.android.data.local.ContactDatabase;
+import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.NotificationDatabase;
 import ch.protonmail.android.data.local.PendingActionDatabase;
 import ch.protonmail.android.data.local.model.AttachmentMetadata;
 import ch.protonmail.android.data.local.model.Message;
+import ch.protonmail.android.domain.entity.Id;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -51,7 +53,7 @@ public class AttachmentClearingService extends ProtonJobIntentService {
     public static final String ACTION_REGULAR_CHECK = "ACTION_REGULAR_CHECK";
     public static final String ACTION_CLEAR_CACHE_IMMEDIATELY = "ACTION_CLEAR_CACHE_IMMEDIATELY";
     public static final String ACTION_CLEAR_CACHE_IMMEDIATELY_DELETE_TABLES = "ACTION_CLEAR_CACHE_IMMEDIATELY_DELETE_TABLES";
-    public static final String EXTRA_USERNAME = "EXTRA_USERNAME";
+    public static final String EXTRA_USER_ID = "extra.user.od";
 
     @Inject
     UserManager userManager;
@@ -114,15 +116,15 @@ public class AttachmentClearingService extends ProtonJobIntentService {
             } else if (ACTION_CLEAR_CACHE_IMMEDIATELY.equals(action)) {
                 clearStorage();
             } else if (ACTION_CLEAR_CACHE_IMMEDIATELY_DELETE_TABLES.equals(action)) {
-                String username = intent.getStringExtra(EXTRA_USERNAME);
+                Id userId = new Id(intent.getStringExtra(EXTRA_USER_ID));
                 clearStorage();
                 Context context = this;
-                ContactDatabase.Companion.deleteDb(context, username);
-                MessageDatabase.Companion.deleteDb(context, username);
-                NotificationDatabase.Companion.deleteDb(context, username);
-                CounterDatabase.Companion.deleteDb(context, username);
-                AttachmentMetadataDatabase.Companion.deleteDb(context, username);
-                PendingActionDatabase.Companion.deleteDb(context, username);
+                ContactDatabase.Companion.deleteDatabase(context, userId);
+                MessageDatabase.Companion.deleteDatabase(context, userId);
+                NotificationDatabase.Companion.deleteDatabase(context, userId);
+                CounterDatabase.Companion.deleteDatabase(context, userId);
+                AttachmentMetadataDatabase.Companion.deleteDatabase(context, userId);
+                PendingActionDatabase.Companion.deleteDatabase(context, userId);
             }
     }
 

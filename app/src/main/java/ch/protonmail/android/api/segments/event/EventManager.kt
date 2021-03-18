@@ -26,7 +26,6 @@ import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.EventResponse
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -181,7 +180,7 @@ class EventManager @Inject constructor(
 
     private fun recoverNextEventId(userId: Id): String? {
         val prefs = sharedPrefs.getOrPut(userId, {
-            SecureSharedPreferences.getPrefsForUser(protonMailApplication, userId)
+            SecureSharedPreferences.getPrefsForUser(context, userId)
         })
         Timber.d("EventManager recoverLastEventId")
         val lastEventId = prefs.getString(PREF_NEXT_EVENT_ID, null)
@@ -190,7 +189,7 @@ class EventManager @Inject constructor(
 
     private fun backupNextEventId(userId: Id, eventId: String) {
         val prefs = sharedPrefs.getOrPut(userId, {
-            SecureSharedPreferences.getPrefsForUser(protonMailApplication, userId)
+            SecureSharedPreferences.getPrefsForUser(context, userId)
         })
         Timber.d("EventManager backupLastEventId")
         prefs.edit().putString(PREF_NEXT_EVENT_ID, eventId).apply()

@@ -28,7 +28,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -53,6 +52,8 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao;
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase;
 import ch.protonmail.android.data.local.ContactDao;
 import ch.protonmail.android.data.local.ContactDatabase;
+import ch.protonmail.android.data.local.CounterDao;
+import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.NotificationDao;
@@ -152,39 +153,30 @@ public class AppUtil {
         return file;
     }
 
-    public static void deleteDatabases(Context context, String username) {
-        deleteDatabases(context, username, null, true);
+    public static void deleteDatabases(Context context, Id userId) {
+        deleteDatabases(context, userId, null, true);
     }
 
-    public static void deleteDatabases(Context context, String username, boolean clearContacts) {
-        deleteDatabases(context, username, null, clearContacts);
+    public static void deleteDatabases(Context context, Id userId, boolean clearContacts) {
+        deleteDatabases(context, userId, null, clearContacts);
     }
 
-    public static void deleteDatabases(Context context, String username, IDBClearDone clearDoneListener) {
-        deleteDatabases(context, username, clearDoneListener, true);
+    public static void deleteDatabases(Context context, Id userId, IDBClearDone clearDoneListener) {
+        deleteDatabases(context, userId, clearDoneListener, true);
     }
 
-    private static void deleteDatabases(Context context, String username, IDBClearDone clearDoneListener, boolean clearContacts) {
+    private static void deleteDatabases(Context context, Id userId, IDBClearDone clearDoneListener, boolean clearContacts) {
         try {
-            if (!TextUtils.isEmpty(username)) {
-                clearStorage(ContactDatabase.Companion.getInstance(context, username).getDao(),
-                        MessageDatabase.Companion.getInstance(context, username).getDao(),
-                        MessageDatabase.Companion.getSearchDatabase(context).getDao(),
-                        NotificationDatabase.Companion.getInstance(context, username).getDao(),
-                        CounterDatabase.Companion.getInstance(context, username).getDao(),
-                        AttachmentMetadataDatabase.Companion.getInstance(context, username).getDao(),
-                        PendingActionDatabase.Companion.getInstance(context, username).getDao(),
-                        clearDoneListener, clearContacts);
-            } else {
-                clearStorage(ContactDatabase.Companion.getInstance(context).getDao(),
-                        MessageDatabase.Companion.getInstance(context).getDao(),
-                        MessageDatabase.Companion.getSearchDatabase(context).getDao(),
-                        NotificationDatabase.Companion.getInstance(context).getDao(),
-                        CounterDatabase.Companion.getInstance(context).getDao(),
-                        AttachmentMetadataDatabase.Companion.getInstance(context).getDao(),
-                        PendingActionDatabase.Companion.getInstance(context).getDao(),
-                        clearDoneListener, clearContacts);
-            }
+            clearStorage(
+                    ContactDatabase.Companion.getInstance(context, userId).getDao(),
+                    MessageDatabase.Companion.getInstance(context, userId).getDao(),
+                    MessageDatabase.Companion.getSearchDatabase(context, userId).getDao(),
+                    NotificationDatabase.Companion.getInstance(context, userId).getDao(),
+                    CounterDatabase.Companion.getInstance(context, userId).getDao(),
+                    AttachmentMetadataDatabase.Companion.getInstance(context, userId).getDao(),
+                    PendingActionDatabase.Companion.getInstance(context, userId).getDao(),
+                    clearDoneListener, clearContacts
+            );
         } catch (Exception e) {
             Timber.e(e);
             if (clearDoneListener != null)
@@ -342,7 +334,7 @@ public class AppUtil {
                 pendingActionDao.clearPendingUploadCache();
                 if (clearContacts) {
                     contactDao.clearContactEmailsLabelsJoin();
-                    contactDao.clearContactEmailsCacheBlocking();
+                    contactDao.clearContactEmailsCache();
                     contactDao.clearContactDataCache();
                     contactDao.clearContactGroupsLabelsTableBlocking();
                     contactDao.clearFullContactDetailsCache();

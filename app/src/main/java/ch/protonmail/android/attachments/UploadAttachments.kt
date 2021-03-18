@@ -36,13 +36,13 @@ import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.segments.TEN_SECONDS
-import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.di.CurrentUserId
+import ch.protonmail.android.di.CurrentUserMailSettings
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -62,9 +62,8 @@ class UploadAttachments @WorkerInject constructor(
     @Assisted params: WorkerParameters,
     private val dispatchers: DispatcherProvider,
     private val attachmentsRepository: AttachmentsRepository,
-    private val pendingActionsDao: PendingActionDao,
+    private val pendingActionDao: PendingActionDao,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val userManager: UserManager,
     private val addressCryptoFactory: AddressCrypto.Factory,
     @CurrentUserId private val userId: Id,
     @CurrentUserMailSettings private val mailSettings: MailSettings
@@ -99,7 +98,7 @@ class UploadAttachments @WorkerInject constructor(
             val messageId = requireNotNull(message.messageId)
             Timber.i("UploadAttachments started for messageId $messageId - attachmentIds $attachmentIds")
 
-            pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
+            pendingActionDao.insertPendingForUpload(PendingUpload(messageId))
 
             performAttachmentsUpload(attachmentIds, message, crypto, messageId)?.let { failure ->
                 return@withContext failure
@@ -111,12 +110,12 @@ class UploadAttachments @WorkerInject constructor(
                 val result = attachmentsRepository.uploadPublicKey(message, crypto)
 
                 if (result is AttachmentsRepository.Result.Failure) {
-                    pendingActionsDao.deletePendingUploadByMessageId(messageId)
+                    pendingActionDao.deletePendingUploadByMessageId(messageId)
                     return@withContext Result.Failure(result.error)
                 }
             }
 
-            pendingActionsDao.deletePendingUploadByMessageId(messageId)
+            pendingActionDao.deletePendingUploadByMessageId(messageId)
             return@withContext Result.Success
         }
 
@@ -147,7 +146,7 @@ class UploadAttachments @WorkerInject constructor(
                 }
                 is AttachmentsRepository.Result.Failure -> {
                     Timber.e("UploadAttachment $attachmentId to API for messageId $messageId FAILED.")
-                    pendingActionsDao.deletePendingUploadByMessageId(messageId)
+                    pendingActionDao.deletePendingUploadByMessageId(messageId)
                     return Result.Failure(result.error)
                 }
             }

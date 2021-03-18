@@ -61,6 +61,8 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.ContactDatabase
+import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.NotificationDao
@@ -153,13 +155,17 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        contactDao = ContactDatabase.getInstance(applicationContext).getDao()
-        messageDao = MessageDatabase.getInstance(applicationContext).getDao()
-        searchDatabase = MessageDatabase.getSearchDatabase(applicationContext).getDao()
-        notificationDao = NotificationDatabase.getInstance(applicationContext).getDao()
-        counterDao = CounterDatabase.getInstance(applicationContext).getDao()
-        attachmentMetadataDao = AttachmentMetadataDatabase.getInstance(applicationContext).getDao()
-        pendingActionDao = PendingActionDatabase.getInstance(applicationContext).getDao()
+        legacyUser = userManager.requireCurrentLegacyUserBlocking()
+        user = legacyUser.toNewUser()
+        val userId = user.id
+
+        contactDao = ContactDatabase.getInstance(applicationContext, userId).getDao()
+        messageDao = MessageDatabase.getInstance(applicationContext, userId).getDao()
+        searchDatabase = MessageDatabase.getSearchDatabase(applicationContext, userId).getDao()
+        notificationDao = NotificationDatabase.getInstance(applicationContext, userId).getDao()
+        counterDao = CounterDatabase.getInstance(applicationContext, userId).getDao()
+        attachmentMetadataDao = AttachmentMetadataDatabase.getInstance(applicationContext, userId).getDao()
+        pendingActionDao = PendingActionDatabase.getInstance(applicationContext, userId).getDao()
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this@BaseSettingsActivity)
 
         mMailboxLocation = Constants.MessageLocationType
@@ -168,8 +174,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
         fetchOrganizationData()
 
-        legacyUser = userManager.requireCurrentLegacyUserBlocking()
-        user = legacyUser.toNewUser()
 
         val primaryAddress = checkNotNull(user.addresses.primary)
         mDisplayName = primaryAddress.displayName?.s

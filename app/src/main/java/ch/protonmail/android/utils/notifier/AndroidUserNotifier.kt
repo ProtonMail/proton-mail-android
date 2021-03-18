@@ -25,21 +25,22 @@ import android.os.Looper
 import ch.protonmail.android.R
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.servers.notification.INotificationServer
+import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.extensions.showToast
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 class AndroidUserNotifier @Inject constructor(
-    private val notificationServer: INotificationServer,
+    private val notificationServer: NotificationServer,
     private val userManager: UserManager,
     private val context: Context,
     private val dispatchers: DispatcherProvider
 ) : UserNotifier {
 
     override fun showPersistentError(errorMessage: String, messageSubject: String?) {
-        notificationServer.notifySaveDraftError(errorMessage, messageSubject, userManager.username)
+        val user = userManager.requireCurrentUserBlocking()
+        notificationServer.notifySaveDraftError(user.id, errorMessage, messageSubject, user.name)
     }
 
     override fun showError(errorMessage: String) {

@@ -25,27 +25,22 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.jobs.Priority
 import ch.protonmail.android.jobs.ProtonMailBaseJob
-import ch.protonmail.android.utils.extensions.ifNullElse
 import com.birbit.android.jobqueue.Params
 
-/**
- * Created by kadrikj on 9/20/18. */
 class SetMembersForContactGroupJob(
-        private val contactGroupId: String,
-        private val contactGroupName: String,
-        private val membersList: List<String>
+    private val contactGroupId: String,
+    private val contactGroupName: String,
+    private val membersList: List<String>
 ) : ProtonMailBaseJob(Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_LABEL)) {
 
     override fun onRun() {
-        val contactsDatabase = ContactDatabase.getInstance(applicationContext).getDao()
+        val contactsDatabase = ContactDatabase
+            .getInstance(applicationContext, getUserManager().requireCurrentUserId())
+            .getDao()
         var id = contactGroupId
         if (TextUtils.isEmpty(id)) {
             val contactLabel = contactsDatabase.findContactGroupByName(contactGroupName)
-            contactLabel.ifNullElse({
-                id = ""
-            }, {
-                id = contactLabel!!.ID
-            })
+            id = contactLabel?.ID ?: ""
         }
         val labelContactsBody = LabelContactsBody(id, membersList)
         getApi().labelContacts(labelContactsBody)

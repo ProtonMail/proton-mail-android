@@ -100,7 +100,7 @@ public class QuickSnoozeDialogFragment
     @Override
     protected void initUi(View rootView) {
         getDialog().setCanceledOnTouchOutside(true);
-        boolean isQuickSnoozeEnabled = userManager.isSnoozeQuickEnabled();
+        boolean isQuickSnoozeEnabled = userManager.isSnoozeQuickEnabledBlocking();
         if (isQuickSnoozeEnabled) {
             int notificationsResumeInMinutes = (int) ((userManager.getSnoozeSettings().getSnoozeQuickEndTime() - System.currentTimeMillis()) / 1000 / 60);
             if (notificationsResumeInMinutes > 60) {
@@ -153,7 +153,7 @@ public class QuickSnoozeDialogFragment
             return;
         }
         mSelectedSnoozeMinutes = getResources().getIntArray(R.array.quick_snooze_values_int)[position];
-        userManager.setSnoozeQuick(true, mSelectedSnoozeMinutes);
+        userManager.setSnoozeQuickBlocking(true, mSelectedSnoozeMinutes);
         mQuickSnoozeListener.onQuickSnoozeSet(true);
         dismissAllowingStateLoss();
     }
@@ -161,7 +161,7 @@ public class QuickSnoozeDialogFragment
     @OnClick({R.id.quick_snooze_turn_off_container, R.id.quick_snooze_turn_off})
     public void onQuickSnoozeTurnOffClicked() {
         mSelectedSnoozeMinutes = 0;
-        userManager.setSnoozeQuick(false, 0);
+        userManager.setSnoozeQuickBlocking(false, 0);
         mQuickSnoozeListener.onQuickSnoozeSet(false);
         dismissAllowingStateLoss();
     }
@@ -169,7 +169,7 @@ public class QuickSnoozeDialogFragment
     @Override
     public void onCustomQuickSnoozeSet(int minutes) {
         mSelectedSnoozeMinutes = minutes;
-        userManager.setSnoozeQuick(true, mSelectedSnoozeMinutes);
+        userManager.setSnoozeQuickBlocking(true, mSelectedSnoozeMinutes);
         mQuickSnoozeListener.onQuickSnoozeSet(true);
         dismissAllowingStateLoss();
     }

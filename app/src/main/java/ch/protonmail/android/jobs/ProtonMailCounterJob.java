@@ -25,14 +25,13 @@ import com.birbit.android.jobqueue.Params;
 import java.util.List;
 
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.data.local.CounterDao;
+import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
 import ch.protonmail.android.events.RefreshDrawerEvent;
 import ch.protonmail.android.utils.AppUtil;
 
-/**
- * Created by dkadrikj on 11/20/15.
- */
 public abstract class ProtonMailCounterJob extends ProtonMailEndlessJob {
 
     protected ProtonMailCounterJob(Params params) {
@@ -45,8 +44,9 @@ public abstract class ProtonMailCounterJob extends ProtonMailEndlessJob {
 
     @Override
     protected void onProtonCancel(int cancelReason, @Nullable Throwable throwable) {
-        final CounterDao counterDao = CounterDatabase.Companion.getInstance(
-                getApplicationContext()).getDao();
+        final CounterDao counterDao = CounterDatabase.Companion
+                .getInstance(getApplicationContext(), userId)
+                .getDao();
 
         int totalUnread = 0;
         List<String> messageIds = getMessageIds();

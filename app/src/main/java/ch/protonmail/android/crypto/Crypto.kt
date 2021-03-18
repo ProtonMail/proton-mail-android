@@ -31,7 +31,6 @@ import ch.protonmail.android.utils.crypto.TextDecryptionResult
 import com.proton.gopenpgp.armor.Armor
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.invoke
-import me.proton.core.util.kotlin.unsupported
 import timber.log.Timber
 import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 
@@ -180,43 +179,7 @@ abstract class Crypto<K>(
             UserCrypto(userManager, userManager.openPgp, userId)
 
         @JvmStatic
-        @Deprecated(
-            "Get with user Id",
-            ReplaceWith(
-                "forUser(userManager, userId)",
-                "ch.protonmail.android.crypto.UserCrypto"
-            ),
-            DeprecationLevel.ERROR
-        )
-        fun forUser(userManager: UserManager, username: String): UserCrypto =
-            unsupported
-
-        @JvmStatic
         fun forAddress(userManager: UserManager, userId: Id, addressId: Id): AddressCrypto =
             AddressCrypto(userManager, userManager.openPgp, userId, addressId)
-
-        @JvmStatic
-        @Deprecated(
-            "Get with user Id",
-            ReplaceWith(
-                "forAddress(userManager, userId, Id(addressID))",
-                "ch.protonmail.android.crypto.UserCrypto"
-            ),
-            DeprecationLevel.ERROR
-        )
-        fun forAddress(userManager: UserManager, username: String, addressID: String): AddressCrypto =
-            unsupported
     }
-}
-
-class GetString {
-
-    operator fun invoke(p1: Int): String {
-        TODO("Not yet implemented")
-    }
-}
-
-// EXAMPLE USAGE
-fun test(getString: GetString) {
-    val stirng: String = getString(0)
 }

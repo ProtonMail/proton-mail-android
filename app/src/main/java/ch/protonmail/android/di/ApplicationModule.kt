@@ -43,18 +43,18 @@ import ch.protonmail.android.attachments.OpenPgpArmorer
 import ch.protonmail.android.contacts.list.listView.ContactItemListFactory
 import ch.protonmail.android.contacts.repositories.andorid.baseInfo.AndroidContactsLoaderCallbacksFactory
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.PREF_USERNAME
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.ContactLabel
-import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.BuildInfo
 import ch.protonmail.android.utils.base64.AndroidBase64Encoder
 import ch.protonmail.android.utils.base64.Base64Encoder
+import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.notifier.AndroidUserNotifier
 import ch.protonmail.android.utils.notifier.UserNotifier
@@ -116,10 +116,23 @@ object ApplicationModule {
         context.getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE)
 
     @Provides
-    @CurrentUsername
-    fun currentUserUsername(
-        @DefaultSharedPreferences prefs: SharedPreferences
-    ): String = requireNotNull(prefs.getString(PREF_USERNAME, ""))
+    @CurrentUserCrypto
+    fun currentUserCrypto(
+        userManager: UserManager,
+        openPgp: OpenPGP,
+        @CurrentUserId userId: Id
+    ): UserCrypto = UserCrypto(userManager, openPgp, userId)
+
+    @Provides
+    @CurrentUserId
+    fun currentUserId(userManager: UserManager): Id =
+        userManager.requireCurrentUserId()
+
+    @Provides
+    @CurrentUserMailSettings
+    fun currentUserMailSettings(
+        userManager: UserManager
+    ) = userManager.getCurrentUserMailSettingsBlocking()
 
     @Provides
     @Singleton

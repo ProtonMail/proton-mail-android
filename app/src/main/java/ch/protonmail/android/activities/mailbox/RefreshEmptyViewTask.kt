@@ -19,40 +19,33 @@
 package ch.protonmail.android.activities.mailbox
 
 import android.os.AsyncTask
-import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType
+import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.MessageDao
-import ch.protonmail.android.data.local.model.*
 import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 
-/**
- * Created by Kamil Rajtar on 21.08.18.
- */
 internal class RefreshEmptyViewTask(
     private val mailboxActivityWeakReference: WeakReference<MailboxActivity>,
     private val counterDao: CounterDao,
     private val messageDao: MessageDao,
-    private val mailboxLocation: Constants.MessageLocationType,
+    private val mailboxLocation: MessageLocationType,
     private val labelId: String?
 ) : AsyncTask<Void, Void, Int>() {
 
     override fun doInBackground(vararg voids: Void): Int? {
-        if (mailboxLocation == Constants.MessageLocationType.STARRED) {
+        if (mailboxLocation == MessageLocationType.STARRED) {
             return null
         }
         Thread.sleep(TimeUnit.SECONDS.toMillis(1))
 
-        val counter = if (listOf(
-                        Constants.MessageLocationType.LABEL,
-                        Constants.MessageLocationType.LABEL_FOLDER).contains(mailboxLocation)) {
+        val counter = if (mailboxLocation in listOf(MessageLocationType.LABEL, MessageLocationType.LABEL_FOLDER)) {
             labelId?.let(counterDao::findTotalLabelById)
         } else {
             counterDao.findTotalLocationById(mailboxLocation.messageLocationTypeValue)
         }
 
-        val localCounter = if (listOf(
-                        Constants.MessageLocationType.LABEL,
-                        Constants.MessageLocationType.LABEL_FOLDER).contains(mailboxLocation)) {
+        val localCounter = if (mailboxLocation in listOf(MessageLocationType.LABEL, MessageLocationType.LABEL_FOLDER)) {
             messageDao.getMessagesCountByByLabelId(labelId!!)
         } else {
             messageDao.getMessagesCountByLocation(mailboxLocation.messageLocationTypeValue)
@@ -64,6 +57,7 @@ internal class RefreshEmptyViewTask(
 
     override fun onPostExecute(messageCount: Int?) {
         messageCount ?: return
+
         val mailboxActivity = mailboxActivityWeakReference.get()
         mailboxActivity?.refreshEmptyView(messageCount)
         mailboxActivity?.setRefreshing(false)

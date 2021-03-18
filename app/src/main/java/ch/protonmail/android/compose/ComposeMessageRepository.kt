@@ -25,13 +25,15 @@ import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.SendPreference
-import ch.protonmail.android.data.local.*
-import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.model.Attachment
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.LocalAttachment
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.FetchDraftDetailJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
@@ -63,6 +65,8 @@ class ComposeMessageRepository @Inject constructor(
     @Named("messages") private var messageDao: MessageDao,
     @Named("messages_search") private val searchDatabase: MessageDao,
     private val messageDetailsRepository: MessageDetailsRepository, // FIXME: this should be removed){}
+    private val accountManager: AccountManager,
+    private val userManager: UserManager,
     private val dispatchers: DispatcherProvider
 ) {
 
@@ -77,11 +81,11 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     private val contactDao by resettableLazy(lazyManager) {
-        databaseProvider.provideContactDao()
+        databaseProvider.provideContactDao(userManager.requireCurrentUserId())
     }
 
     private val contactDaos: HashMap<Id, ContactDao> by resettableLazy(lazyManager) {
-        val userIds = AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext).allLoggedInBlocking()
+        val userIds = accountManager.allLoggedInBlocking()
         val listOfDaos: HashMap<Id, ContactDao> = HashMap()
         for (userId in userIds) {
             listOfDaos[userId] = databaseProvider.provideContactDao(userId)
@@ -116,7 +120,7 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     fun getContactGroupEmailsSync(groupId: String): List<ContactEmail> {
-        return contactDao.findAllContactsEmailsByContactGroup(groupId)
+        return contactDao.findAllContactsEmailsByContactGroupBlocking(groupId)
     }
 
     suspend fun getAttachments(message: Message, isTransient: Boolean, dispatcher: CoroutineDispatcher): List<Attachment> =
@@ -143,13 +147,14 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     /**
-     * Returns a message for a given draft id. It tries to get it by local id first, if absent then by a regular message id.
+     * Returns a message for a given draft id. It tries to get it by local id first, if absent then by a regular
+     *  message id.
      */
     suspend fun findMessage(draftId: String, dispatcher: CoroutineDispatcher): Message? =
         withContext(dispatcher) {
             var message: Message? = null
             if (!TextUtils.isEmpty(draftId)) {
-                message = messageDetailsRepository.findMessageByIdBlocking(draftId)
+                message = messageDetailsRepository.findMessageById(draftId)
             }
             message
         }
@@ -157,7 +162,7 @@ class ComposeMessageRepository @Inject constructor(
 
     suspend fun deleteMessageById(messageId: String) =
         withContext(dispatchers.Io) {
-            messageDatabase.deleteMessageById(messageId)
+            messageDao.deleteMessageById(messageId)
         }
 
     fun startGetAvailableDomains() {

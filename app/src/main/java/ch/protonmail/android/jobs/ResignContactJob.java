@@ -59,7 +59,9 @@ public class ResignContactJob extends ProtonMailEndlessJob {
 
     @Override
     public void onAdded() {
-        ContactDao contactDao = ContactDatabase.Companion.getInstance(getApplicationContext()).getDao();
+        ContactDao contactDao = ContactDatabase.Companion
+                .getInstance(getApplicationContext(), userId)
+                .getDao();
         User user = getUserManager().getUser();
         String contactId = getContactId(contactDao, mContactEmail);
         if (contactId == null) {
@@ -96,8 +98,8 @@ public class ResignContactJob extends ProtonMailEndlessJob {
 
     @Override
     public void onRun() throws Throwable {
-        ContactDao contactDao = ContactDatabase.Companion.getInstance(
-                getApplicationContext()).getDao();
+        ContactDao contactDao = ContactDatabase.Companion
+                .getInstance(getApplicationContext(), userId).getDao();
         String contactId = getContactId(contactDao, mContactEmail);
         if (contactId == null) {
             AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.ERROR, mDestination));
@@ -106,7 +108,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
 
         FullContactDetails fullContactDetails = contactDao.findFullContactDetailsById(
                 contactId);
-        UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().getUsername());
+        UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().requireCurrentUserId());
         ContactEncryptedData signedCard = getCardByType(fullContactDetails.getEncryptedData(), ContactEncryption.SIGNED);
 
         if (signedCard == null) {

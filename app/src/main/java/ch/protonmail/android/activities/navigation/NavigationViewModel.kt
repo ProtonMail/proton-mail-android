@@ -27,6 +27,7 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.launch
@@ -35,27 +36,30 @@ import me.proton.core.util.kotlin.DispatcherProvider
 class NavigationViewModel @ViewModelInject constructor(
     private val dispatchers: DispatcherProvider,
     private val accountManager: AccountManager,
-    private val databaseProvider: DatabaseProvider
+    private val databaseProvider: DatabaseProvider,
+    private val userManager: UserManager
 ) : ViewModel() {
 
     var notificationsCounterLiveData = MutableLiveData<Map<Id, Int>>()
+    val currentUserId get() =
+        userManager.requireCurrentUserId()
 
     init {
         notificationsCounts()
     }
 
     fun reloadDependencies() {
-        locationsListLiveData = databaseProvider.provideCounterDao().findAllUnreadLocations()
-        unreadLabelsLiveData = databaseProvider.provideCounterDao().findAllUnreadLabels()
+        locationsListLiveData = databaseProvider.provideCounterDao(currentUserId).findAllUnreadLocations()
+        unreadLabelsLiveData = databaseProvider.provideCounterDao(currentUserId).findAllUnreadLabels()
     }
 
     private fun labelsLiveData(): LiveData<List<Label>> =
-        databaseProvider.provideMessageDao()
+        databaseProvider.provideMessageDao(currentUserId)
             .getAllLabels()
             .map { list -> list.sortedBy { it.order } }
 
-    private var locationsListLiveData = databaseProvider.provideCounterDao().findAllUnreadLocations()
-    private var unreadLabelsLiveData = databaseProvider.provideCounterDao().findAllUnreadLabels()
+    private var locationsListLiveData = databaseProvider.provideCounterDao(currentUserId).findAllUnreadLocations()
+    private var unreadLabelsLiveData = databaseProvider.provideCounterDao(currentUserId).findAllUnreadLabels()
 
     fun labelsWithUnreadCounterLiveData(): MediatorLiveData<MutableList<LabelWithUnreadCounter>> =
         LabelsWithUnreadCounterLiveData(labelsLiveData(), unreadLabelsLiveData)

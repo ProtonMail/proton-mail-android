@@ -24,7 +24,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.HideLabelCreationViews
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.HideLabelsView
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.SelectedLabelsArchiveEvent
@@ -37,10 +36,8 @@ import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.Sho
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowMissingNameError
 import ch.protonmail.android.views.ThreeStateButton
 import javax.inject.Inject
-import javax.inject.Named
 
 class ManageLabelsDialogViewModel @Inject constructor(
-    @Named("messages") private val messagesDao: MessagesDao,
     private val userManager: UserManager
 ) : ViewModel() {
 
@@ -132,8 +129,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
     }
 
     class ManageLabelsDialogViewModelFactory @Inject constructor(
-        private val manageLabelsViewModel: ManageLabelsDialogViewModel,
-        @Named("messages") private val messagesDao: MessagesDao
+        private val manageLabelsViewModel: ManageLabelsDialogViewModel
     ) : ViewModelProvider.NewInstanceFactory() {
 
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {

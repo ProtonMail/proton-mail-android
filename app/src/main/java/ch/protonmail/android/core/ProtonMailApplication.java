@@ -75,8 +75,6 @@ import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
 import ch.protonmail.android.api.services.MessagesService;
-import ch.protonmail.android.data.local.ContactDao;
-import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Message;
@@ -123,6 +121,8 @@ import timber.log.Timber;
 import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
 import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
+import static ch.protonmail.android.core.Constants.PrefsType.BACKUP_PREFS_NAME;
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
 import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
@@ -166,8 +166,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private Organization mOrganization;
     private String mCurrentLocale;
     private AlertDialog forceUpgradeDialog;
+    private boolean changedSystemTimeDate;
 
-    private ContactDao contactDao;
     private MessageDao messageDao;
 
     @NonNull
@@ -218,9 +218,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
         ViewStateStoreConfig.INSTANCE
                 .setErrorStateGenerator(ErrorStateGeneratorsKt.getErrorStateGenerator());
-
-        contactDao = ContactDatabase.Companion.getInstance(getApplicationContext()).getDao();
-        messageDao = MessageDatabase.Companion.getInstance(getApplicationContext()).getDao();
 
         FileUtils.createDownloadsDir(this);
         setupNotificationChannels();
@@ -526,7 +523,11 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 userManager.setCurrentUserLoginState(LOGIN_STATE_TO_INBOX);
             }
 
-            if (BuildConfig.DEBUG) {
+            Id currentUser = userManager.getCurrentUserId();
+            if (BuildConfig.DEBUG && currentUser != null) {
+                messageDao = MessageDatabase.Companion
+                        .getInstance(this, currentUser)
+                        .getDao();
                 new RefreshMessagesAndAttachments(messageDao).execute();
             }
             if (BuildConfig.FETCH_FULL_CONTACTS && userManager.isLoggedIn()) {
@@ -730,4 +731,16 @@ public class ProtonMailApplication extends Application implements androidx.work.
         final SharedPreferences prefs = getDefaultSharedPreferences();
         networkConfigurator.networkSwitcher.reconfigureProxy(Proxies.Companion.getInstance(null, prefs));
     }
+
+    public boolean isChangedSystemTimeDate() {
+        final SharedPreferences pref = getSharedPreferences(BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
+        changedSystemTimeDate = pref.getBoolean(PREF_TIME_AND_DATE_CHANGED, false);
+        return changedSystemTimeDate;
+    }
+
+    public void setChangedSystemTimeDate(boolean changed) {
+        final SharedPreferences pref = getSharedPreferences(BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
+        pref.edit().putBoolean(PREF_TIME_AND_DATE_CHANGED, changed).apply();
+    }
+
 }

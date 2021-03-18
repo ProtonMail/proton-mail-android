@@ -375,8 +375,7 @@ class ComposeMessageViewModel @Inject constructor(
     fun onFetchMessageDetailEvent(event: FetchMessageDetailEvent) {
         if (event.success) {
             val message = event.message
-            val username = userManager.getCurrentUserBlocking()?.name?.s!! // TODO: how to improve this?
-            message!!.decrypt(userManager, username)
+            message!!.decrypt(userManager, userManager.requireCurrentUserId())
             val decryptedMessage = message.decryptedHTML // todo check if any var should be set
             val messageId = event.messageId
             composeMessageRepository.markMessageRead(messageId)

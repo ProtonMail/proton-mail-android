@@ -383,7 +383,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
             private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
                 return try {
-                    decrypt(userManager = userManager, username = userManager.username, verKeys = verificationKeys)
+                    decrypt(userManager, userManager.requireCurrentUserId(), verificationKeys)
                     true
                 } catch (exception: Exception) {
                     // signature verification failed with special case, try to decrypt again without verification
@@ -392,7 +392,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                         exception.message == "Signature Verification Error: No matching signature"
                     ) {
                         Timber.d(exception, "Decrypting message again without verkeys")
-                        decrypt(userManager = userManager, username = userManager.username)
+                        decrypt(userManager, userManager.requireCurrentUserId())
                         this.hasValidSignature = false
                         this.hasInvalidSignature = true
                         true

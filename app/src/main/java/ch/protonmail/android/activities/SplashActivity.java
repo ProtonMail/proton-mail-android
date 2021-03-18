@@ -111,7 +111,7 @@ public class SplashActivity extends BaseActivity {
             finish();
         } else if (loginState == LOGIN_STATE_LOGIN_FINISHED) {
             // login finished but mailbox login not
-            mUserManager.logoutAccount(mUserManager.getUsername());
+            mUserManager.logoutBlocking(mUserManager.requireCurrentUserId());
             if (AccountManager.Companion.getInstance(this).getLoggedInUsers().size() >= 1) {
                 // There were multiple accounts logged in
                 checkUserDetailsAndGoHome();

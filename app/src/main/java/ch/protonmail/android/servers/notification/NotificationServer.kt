@@ -49,9 +49,9 @@ import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.*
-import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_DELETE_MESSAGE
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.buildArchiveIntent
@@ -61,6 +61,7 @@ import ch.protonmail.android.utils.extensions.showToast
 import timber.log.Timber
 import javax.inject.Inject
 import ch.protonmail.android.api.models.User as LegacyUser
+import ch.protonmail.android.data.local.model.Notification as RoomNotification
 
 const val CHANNEL_ID_EMAIL = "emails"
 const val EXTRA_MAILBOX_LOCATION = "mailbox_location"
@@ -171,18 +172,19 @@ class NotificationServer @Inject constructor(
     }
 
     fun notifyVerificationNeeded(
+        userId: Id,
         username: Name,
-        messageSubject: String?,
-        messageId: String?,
+        messageTitle: String,
+        messageId: String,
         messageInline: Boolean,
-        messageAddressId: String?
+        messageAddressId: String
     ) {
         val inboxStyle = NotificationCompat.BigTextStyle()
         inboxStyle.setBigContentTitle(context.getString(R.string.verification_needed))
         inboxStyle.bigText(
             String.format(
                 context.getString(R.string.verification_needed_description_notification),
-                messageSubject
+                messageTitle
             )
         )
 
@@ -206,7 +208,9 @@ class NotificationServer @Inject constructor(
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.notification_icon)
             .setContentTitle(context.getString(R.string.verification_needed))
-            .setContentText(String.format(context.getString(R.string.verification_needed_description_notification), messageSubject))
+            .setContentText(
+                context.getString(R.string.verification_needed_description_notification, messageTitle)
+            )
             .setContentIntent(contentIntent)
             .setColor(ContextCompat.getColor(context, R.color.ocean_blue))
             .setStyle(inboxStyle)
@@ -528,7 +532,7 @@ class NotificationServer @Inject constructor(
         isNotificationVisibleInLockScreen: Boolean,
         unreadNotifications: List<RoomNotification>
     ) {
-        val contentPendingIntent = getMailboxActivityIntent(userManager.requireCurrentUserId(), Id(loggedInUser.id))
+        val contentPendingIntent = getMailboxActivityIntent(userManager.requireCurrentUserId(), loggedInUser.id)
 
         // Prepare Notification info
         val notificationTitle = context.getString(R.string.new_emails, unreadNotifications.size)
@@ -556,7 +560,7 @@ class NotificationServer @Inject constructor(
         // Build the Notification
         val notification = builder.build()
 
-        notificationManager.notify(user.id.hashCode(), notification)
+        notificationManager.notify(loggedInUser.id.hashCode(), notification)
     }
 
     /**
@@ -591,12 +595,12 @@ class NotificationServer @Inject constructor(
         )
     }
 
-    private fun getMailboxActivityIntent(currentUserUsername: String, loggedInUser: String): PendingIntent {
+    private fun getMailboxActivityIntent(currentUserId: Id, loggedInUserId: Id): PendingIntent {
         // Create content Intent for open MailboxActivity
         val contentIntent = Intent(context, MailboxActivity::class.java)
-        if (currentUserUsername != loggedInUser) {
-            contentIntent.putExtra(EXTRA_SWITCHED_USER, true)
-            contentIntent.putExtra(EXTRA_SWITCHED_TO_USER, loggedInUser)
+        if (currentUserId != loggedInUserId) {
+            contentIntent.putExtra(EXTRA_HAS_SWITCHED_USER, true)
+            contentIntent.putExtra(EXTRA_SWITCHED_TO_USER_ID, loggedInUserId.s)
         }
         val requestCode = System.currentTimeMillis().toInt()
         return PendingIntent.getActivity(context, requestCode, contentIntent, 0)
@@ -703,7 +707,7 @@ class NotificationServer @Inject constructor(
             .bigText(createSpannableBigText(unreadSendingFailedNotifications))
 
         // Create notification builder
-        val notificationBuilder = createGenericErrorSendingMessageNotification(Id(user.id))
+        val notificationBuilder = createGenericErrorSendingMessageNotification(user.id)
             .setStyle(bigTextStyle)
 
         // Build and show notification
@@ -719,12 +723,12 @@ class NotificationServer @Inject constructor(
         notifyMultipleErrorSendingMessage(unreadSendingFailedNotifications, user.toNewUser())
     }
 
-    fun notifySaveDraftError(userId: Id, errorMessage: String, messageSubject: String?, username: String) {
+    fun notifySaveDraftError(userId: Id, errorMessage: String, messageSubject: String?, username: Name) {
         val title = context.getString(R.string.failed_saving_draft_online, messageSubject)
 
         val bigTextStyle = NotificationCompat.BigTextStyle()
             .setBigContentTitle(title)
-            .setSummaryText(username)
+            .setSummaryText(username.s)
             .bigText(errorMessage)
 
         val notificationBuilder = createGenericErrorSendingMessageNotification(userId)
@@ -754,9 +758,7 @@ private fun Context.buildReplyIntent(
         Constants.MessageActionType.REPLY, message.subject)
 
     if (message.messageBody != null) {
-        // TODO is this redundant? Can 'user.name' be used instead?
-        val username = userManager.requireCurrentUserBlocking().name.s
-        message.decrypt(userManager, username)
+        message.decrypt(userManager, user.id)
     }
 
     intent

@@ -21,7 +21,6 @@ package ch.protonmail.android.crypto
 import android.util.Base64
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.AddressKeys
@@ -53,7 +52,7 @@ class AddressCrypto @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(addressId: Id, username: Name): AddressCrypto
+        fun create(userId: Id, addressId: Id): AddressCrypto
     }
 
     private val address

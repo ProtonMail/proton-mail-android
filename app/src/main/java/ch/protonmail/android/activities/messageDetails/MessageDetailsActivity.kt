@@ -42,6 +42,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
@@ -79,18 +80,18 @@ import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
-import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.MODE_ACCORDION
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithTwoButtons
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.MessageActionButton
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
@@ -157,8 +158,8 @@ internal class MessageDetailsActivity :
         messageId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_ID))
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
         isTransientMessage = intent.getBooleanExtra(EXTRA_TRANSIENT_MESSAGE, false)
-        val currentAccountUsername = mUserManager.username
-        AppUtil.clearNotifications(this)
+        val user = mUserManager.requireCurrentUserBlocking()
+        AppUtil.clearNotifications(this, user.id)
         if (!mUserManager.isLoggedIn) {
             startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
         }
@@ -167,24 +168,25 @@ internal class MessageDetailsActivity :
             title = null
         }
         initAdapters()
-        if (messageRecipientUsername != null && currentAccountUsername != messageRecipientUsername) {
-            showInfoDialogWithTwoButtons(
-                this,
-                getString(R.string.switch_accounts_question),
-                String.format(getString(R.string.switch_to_account), messageRecipientUsername),
-                getString(R.string.cancel),
-                getString(R.string.okay),
-                { finish() },
-                {
-                    mUserManager.switchToAccount(messageRecipientUsername!!)
-                    continueSetup()
-                    invalidateOptionsMenu()
-                    showSignedInSnack(
-                        coordinatorLayout,
-                        String.format(getString(R.string.signed_in_with), messageRecipientUsername)
-                    )
+        if (messageRecipientUsername != null && user.name.s != messageRecipientUsername) {
+            showTwoButtonInfoDialog(
+                title = getString(R.string.switch_accounts_question),
+                message = String.format(getString(R.string.switch_to_account), messageRecipientUsername),
+                rightStringId = R.string.okay,
+                leftStringId = R.string.cancel,
+                cancelable = false,
+                onRight = {
+                    lifecycleScope.launchWhenCreated {
+                        mUserManager.switchTo(user.id)
+                        continueSetup()
+                        invalidateOptionsMenu()
+                        showSignedInSnack(
+                            coordinatorLayout,
+                            getString(R.string.signed_in_with, messageRecipientUsername)
+                        )
+                    }
                 },
-                false
+                onLeft = { finish() }
             )
         } else {
             continueSetup()
@@ -844,7 +846,8 @@ internal class MessageDetailsActivity :
                         messageAction,
                         message.subject
                     )
-                    val userUsedSpace = app.getSecureSharedPreferences(mUserManager.username)
+                    val userUsedSpace = SecureSharedPreferences
+                        .getPrefsForUser(this@MessageDetailsActivity, mUserManager.requireCurrentUserId())
                         .getLong(Constants.Prefs.PREF_USED_SPACE, 0)
                     val userMaxSpace = if (mUserManager.user.maxSpace == 0L) {
                         Long.MAX_VALUE
@@ -853,21 +856,18 @@ internal class MessageDetailsActivity :
                     }
                     val percentageUsed = userUsedSpace * 100 / userMaxSpace
                     if (percentageUsed >= 100) {
-                        showInfoDialogWithTwoButtons(
-                            this@MessageDetailsActivity,
-                            getString(R.string.storage_limit_warning_title),
-                            getString(R.string.storage_limit_reached_text),
-                            getString(R.string.learn_more),
-                            getString(R.string.okay),
-                            {
+                        this@MessageDetailsActivity.showTwoButtonInfoDialog(
+                            title = getString(R.string.storage_limit_warning_title),
+                            message = getString(R.string.storage_limit_reached_text),
+                            rightStringId = R.string.okay,
+                            leftStringId = R.string.learn_more,
+                            onLeft = {
                                 val browserIntent = Intent(
                                     Intent.ACTION_VIEW,
                                     Uri.parse(getString(R.string.limit_reached_learn_more))
                                 )
                                 startActivity(browserIntent)
-                            },
-                            { },
-                            true
+                            }
                         )
                     } else {
                         viewModel.prepareEditMessageIntent.observe(

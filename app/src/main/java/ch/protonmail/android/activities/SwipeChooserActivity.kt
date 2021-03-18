@@ -29,6 +29,7 @@ import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.jobs.UpdateSettingsJob
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.moveToLogin
 import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.activity_swipe_chooser.*
@@ -119,20 +120,23 @@ class SwipeChooserActivity : BaseActivity() {
                     var actionLeftSwipeChanged = false
                     var actionRightSwipeChanged = false
 
+                    val mailSettings = checkNotNull(mUserManager.getCurrentUserMailSettingsBlocking())
                     if (mSwipeId == SwipeType.LEFT) {
-                        actionLeftSwipeChanged = mCurrentAction != mUserManager.mailSettings!!.leftSwipeAction
+                        actionLeftSwipeChanged = mCurrentAction != mailSettings.leftSwipeAction
                         if (actionLeftSwipeChanged) {
-                            mUserManager.mailSettings!!.leftSwipeAction = mCurrentAction
+                            mailSettings.leftSwipeAction = mCurrentAction
 
                         }
                     } else if (mSwipeId == SwipeType.RIGHT) {
-                        actionRightSwipeChanged = mCurrentAction != mUserManager.mailSettings!!.rightSwipeAction
+                        actionRightSwipeChanged = mCurrentAction != mailSettings.rightSwipeAction
                         if (actionRightSwipeChanged) {
-                            mUserManager.mailSettings!!.rightSwipeAction = mCurrentAction
+                            mailSettings.rightSwipeAction = mCurrentAction
 
                         }
                     }
-                    mUserManager.mailSettings!!.save()
+                    val userPreferences =
+                        SecureSharedPreferences.getPrefsForUser(this, mUserManager.requireCurrentUserId())
+                    mailSettings.saveBlocking(userPreferences)
                     val job = UpdateSettingsJob(actionRightSwipeChanged = actionRightSwipeChanged,
                             actionLeftSwipeChanged = actionLeftSwipeChanged)
                     mJobManager.addJobInBackground(job)

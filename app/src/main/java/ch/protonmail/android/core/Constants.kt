@@ -158,6 +158,7 @@ object Constants {
         const val PREF_ROLE = "role"
         const val PREF_SIGNATURE = "ui_signature"
         const val PREF_SUBSCRIBED = "subscribed"
+        const val PREF_TIME_AND_DATE_CHANGED = "time_and_date_changed"
         const val PREF_USE_FINGERPRINT = "use_fingerprint_for_lock"
         const val PREF_USE_PIN = "use_pin_for_lock"
         const val PREF_USED_SPACE = "ui_used_space"

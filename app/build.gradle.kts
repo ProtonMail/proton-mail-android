@@ -249,12 +249,11 @@ dependencies {
 
         // `Proton-data`,
         `Proton-domain`,
-        // `Proton-presentation`,
+        `Proton-presentation`,
 
         `Proton-kotlin-util`,
         `Proton-shared-preferences`,
         `Proton-work-manager`,
-        `Proton-presentation`,
 
         // Modules
         project(Module.domain),

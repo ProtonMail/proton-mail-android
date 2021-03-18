@@ -19,10 +19,10 @@
 package ch.protonmail.android.jobs
 
 import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.data.local.*
-import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.data.local.CounterDatabase
+import ch.protonmail.android.data.local.model.UnreadLabelCounter
+import ch.protonmail.android.data.local.model.UnreadLocationCounter
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.Status
@@ -66,7 +66,7 @@ class FetchMessageCountsJob(
             }
 
             val unreadCountersDatabase =
-                CounterDatabase.getInstance(ProtonMailApplication.getApplication(), username).getDao()
+                CounterDatabase.getInstance(applicationContext, userId).getDao()
             unreadCountersDatabase.updateUnreadCounters(unreadLocationCounters, unreadLabelCounters)
 
             AppUtil.postEventOnUi(MessageCountsEvent(Status.SUCCESS, countersResponse))

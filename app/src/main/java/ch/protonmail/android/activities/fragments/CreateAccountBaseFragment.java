@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -38,6 +38,8 @@ import androidx.fragment.app.Fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import ch.protonmail.android.R;
 import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.models.LoginInfoResponse;
@@ -54,11 +56,13 @@ import ch.protonmail.android.jobs.CheckUsernameAvailableJob;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
+import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Created by dkadrikj on 17.7.15.
- */
+@AndroidEntryPoint
 public abstract class CreateAccountBaseFragment extends BaseFragment implements ViewTreeObserver.OnGlobalLayoutListener {
+
+    @Inject
+    AccountManager accountManager;
 
     public static final String ARGUMENT_WINDOW_HEIGHT = "ch.protonmail.android.ARG_WIN_HEIGHT";
 
@@ -344,7 +348,7 @@ public abstract class CreateAccountBaseFragment extends BaseFragment implements 
 
     void handleLoginStatus(AuthStatus status) {
         handleLoginStatus(status, null);
-        AccountManager.Companion.getInstance(ProtonMailApplication.getApplication()).clear();
+        accountManager.clearBlocking();
     }
 
     private void handleLoginStatus(AuthStatus status, String errorMessage) {

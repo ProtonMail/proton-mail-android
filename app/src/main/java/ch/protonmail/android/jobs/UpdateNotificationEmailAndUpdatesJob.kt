@@ -32,16 +32,27 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ConstantTime
 import com.birbit.android.jobqueue.Params
 
-class UpdateNotificationEmailAndUpdatesJob(private val email: String, private val password: ByteArray, private val displayName: String, private val updateNotify: Boolean) : ProtonMailBaseJob(Params(Priority.LOW).requireNetwork().persist()) {
+class UpdateNotificationEmailAndUpdatesJob(
+    private val email: String,
+    private val password: ByteArray,
+    private val displayName: String,
+    private val updateNotify: Boolean
+) : ProtonMailBaseJob(Params(Priority.LOW).requireNetwork().persist()) {
 
     @Throws(Throwable::class)
     override fun onRun() {
         var failed = false
         try {
-            val infoResponse = getApi().loginInfo(getUserManager().username)
+            val currentUser = getUserManager().requireCurrentUserBlocking()
+            val username = currentUser.name.s
+            val infoResponse = getApi().loginInfo(username)
 
-            val proofs = LoginService.srpProofsForInfo(getUserManager().username, password, infoResponse, 2)
-            val response = getApi().updateNotificationEmail(infoResponse.srpSession, ConstantTime.encodeBase64(proofs!!.clientEphemeral, true), ConstantTime.encodeBase64(proofs.clientProof, true), null, email)
+            val proofs = LoginService.srpProofsForInfo(username, password, infoResponse, 2)
+            val response = getApi().updateNotificationEmail(infoResponse.srpSession,
+                ConstantTime.encodeBase64(proofs!!.clientEphemeral, true),
+                ConstantTime.encodeBase64(proofs.clientProof, true),
+                null,
+                email)
 
             val responseUpdateNotify = getApi().updateNotify(updateNotify)
             if (!TextUtils.isEmpty(displayName)) {

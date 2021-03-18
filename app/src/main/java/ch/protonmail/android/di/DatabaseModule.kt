@@ -25,11 +25,12 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.ContactDatabase
+import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
-import ch.protonmail.android.data.local.model.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,12 +43,12 @@ object DatabaseModule {
 
     @Provides
     fun provideAttachmentMetadataDatabase(context: Context, userManager: UserManager): AttachmentMetadataDao =
-        AttachmentMetadataDatabase.getInstance(context, userManager.username).getDao()
+        AttachmentMetadataDatabase.getInstance(context, userManager.requireCurrentUserId()).getDao()
 
 
     @Provides
     fun provideContactsDatabaseFactory(context: Context, userManager: UserManager): ContactDatabase =
-        ContactDatabase.getInstance(context, userManager.username)
+        ContactDatabase.getInstance(context, userManager.requireCurrentUserId())
 
     @Provides
     fun provideContactsDatabase(factory: ContactDatabase): ContactDao =
@@ -66,7 +67,7 @@ object DatabaseModule {
     @Provides
     @Named("messages_factory")
     fun provideMessagesDatabaseFactory(context: Context, userManager: UserManager): MessageDatabase =
-        MessageDatabase.getInstance(context, userManager.username)
+        MessageDatabase.getInstance(context, userManager.requireCurrentUserId())
 
     @Provides
     @Named("messages")
@@ -77,7 +78,7 @@ object DatabaseModule {
 
     @Provides
     fun providePendingActionsDatabaseFactory(context: Context, userManager: UserManager) =
-        PendingActionDatabase.getInstance(context, userManager.username)
+        PendingActionDatabase.getInstance(context, userManager.requireCurrentUserId())
 
     @Provides
     fun providePendingActionsDatabase(
@@ -87,8 +88,8 @@ object DatabaseModule {
 
     @Provides
     @Named("messages_search_factory")
-    fun provideSearchMessagesDatabaseFactory(context: Context): MessageDatabase =
-        MessageDatabase.getSearchDatabase(context)
+    fun provideSearchMessagesDatabaseFactory(context: Context, userManager: UserManager): MessageDatabase =
+        MessageDatabase.getSearchDatabase(context, userManager.requireCurrentUserId())
 
     @Provides
     @Named("messages_search")

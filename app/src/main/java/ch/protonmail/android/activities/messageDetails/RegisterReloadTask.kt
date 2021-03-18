@@ -25,15 +25,15 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.jobs.FetchMessageDetailJob
 import java.util.concurrent.atomic.AtomicBoolean
 
-/**
- * Created by Kamil Rajtar on 30.07.18.
- */
-internal class RegisterReloadTask(private val message:Message,
-								  private val requestPending:AtomicBoolean):AsyncTask<Void,Void,Void>() {
+internal class RegisterReloadTask(
+	private val message: Message,
+	private val requestPending: AtomicBoolean
+):AsyncTask<Void,Void,Void>() {
 
 	override fun doInBackground(vararg voids:Void):Void? {
-		val messagesDatabase = MessageDatabase.getInstance(ProtonMailApplication.getApplication()).getDao()
-		val jobManager = ProtonMailApplication.getApplication().jobManager
+		val app = ProtonMailApplication.getApplication()
+		val messagesDatabase = MessageDatabase.getInstance(app, app.userManager.requireCurrentUserId()).getDao()
+		val jobManager = app.jobManager
 		if(message.checkIfAttHeadersArePresent(messagesDatabase)) {
 			requestPending.set(true)
 			jobManager.addJobInBackground(FetchMessageDetailJob(message.messageId))

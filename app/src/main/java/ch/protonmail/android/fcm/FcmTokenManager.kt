@@ -87,4 +87,8 @@ class FcmTokenManager @AssistedInject constructor(
     suspend fun isTokenSent(): Boolean = withContext(dispatchers.Io) {
         userPreferences[PREF_SENT_TOKEN_TO_SERVER] ?: false
     }
+
+    @Deprecated("Use suspend variant", ReplaceWith("isTokenSent()"))
+    fun isTokenSentBlocking(): Boolean =
+        userPreferences[PREF_SENT_TOKEN_TO_SERVER] ?: false
 }

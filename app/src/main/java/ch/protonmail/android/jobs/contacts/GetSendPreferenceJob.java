@@ -39,10 +39,6 @@ import ch.protonmail.android.utils.Logger;
 
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_RECIPIENT_NOT_FOUND;
 
-/**
- * Created by protonlabs on 5/26/18.
- */
-
 public class GetSendPreferenceJob extends ProtonMailBaseJob {
 
 	private final ContactDao contactDao;
@@ -62,8 +58,8 @@ public class GetSendPreferenceJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        MailSettings mailSettings = getUserManager().getMailSettings();
-        SendPreferencesFactory factory = new SendPreferencesFactory(getApi(), getUserManager(), getUserManager().getUsername(), mailSettings, contactDao);
+        MailSettings mailSettings = getUserManager().getCurrentUserMailSettingsBlocking();
+        SendPreferencesFactory factory = new SendPreferencesFactory(getApi(), getUserManager(), getUserManager().requireCurrentUserId(), mailSettings, contactDao);
         Map<String, SendPreference> sendPreferenceMap = new HashMap<>();
         sendPreferenceMap.put(mEmails.get(0), null);
         try {

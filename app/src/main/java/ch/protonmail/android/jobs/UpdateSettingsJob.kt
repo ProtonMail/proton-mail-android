@@ -54,12 +54,13 @@ class UpdateSettingsJob(
 
     @Throws(Throwable::class)
     override fun onRun() {
-        val user = getUserManager().user
         var failed = false
         try {
+            val user = getUserManager().requireCurrentLegacyUserBlocking()
             if (notificationEmailChanged) {
-                val infoResponse = getApi().loginInfo(getUserManager().username)
-                val proofs = LoginService.srpProofsForInfo(getUserManager().username, password, infoResponse, 2)
+                val username = user.username ?: user.name
+                val infoResponse = getApi().loginInfo(username)
+                val proofs = LoginService.srpProofsForInfo(username, password, infoResponse, 2)
                 val response = getApi().updateNotificationEmail(infoResponse.srpSession,
                     ConstantTime.encodeBase64(proofs!!.clientEphemeral, true),
                     ConstantTime.encodeBase64(proofs.clientProof, true), twoFactor, newEmail)
@@ -103,7 +104,7 @@ class UpdateSettingsJob(
                     }
                     getApi().updateAlias(newAliasesOrder)
                 }
-                if (displayChanged && !TextUtils.isEmpty(addressId)) {
+                if (displayChanged && addressId.isNotBlank()) {
                     val addresses = user.addresses
                     for (address in addresses) {
                         if (address.id == addressId) {
@@ -129,15 +130,15 @@ class UpdateSettingsJob(
                     user.setAddresses(addresses)
                     user.save()
                 }
+                val mailSettings = getUserManager().getCurrentUserMailSettingsBlocking()!!
                 if (actionLeftSwipeChanged) {
-                    getApi().updateLeftSwipe(getUserManager().mailSettings!!.leftSwipeAction)
+                    getApi().updateLeftSwipe(mailSettings.leftSwipeAction)
                 }
                 if (actionRightSwipeChanged) {
-                    getApi().updateRightSwipe(getUserManager().mailSettings!!.rightSwipeAction)
+                    getApi().updateRightSwipe(mailSettings.rightSwipeAction)
                 }
-                if (mailSettings != null) {
-                    getUserManager().mailSettings = mailSettings
-                    getApi().updateAutoShowImages(mailSettings.showImagesFrom.flag)
+                if (this.mailSettings != null) {
+                    getApi().updateAutoShowImages(this.mailSettings.showImagesFrom.flag)
 
                 }
                 AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.SUCCESS, oldEmail, backPressed, null))

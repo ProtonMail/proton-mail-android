@@ -426,18 +426,6 @@ data class Message @JvmOverloads constructor(
         decrypt(addressCrypto, verKeys)
     }
 
-    /**
-     * @throws Exception
-     */
-    @JvmOverloads
-    @Deprecated(
-        "Use with user id",
-        ReplaceWith("decrypt(userManger, userId, verKeys")
-    )
-    fun decrypt(userManager: UserManager, username: String, verKeys: List<KeyInformation>? = null) {
-        unsupported
-    }
-
     private fun decryptMime(addressCrypto: AddressCrypto, keys: List<ByteArray>? = null) {
         val messageBody = checkNotNull(messageBody)
         val mimeDecryptor = addressCrypto.decryptMime(CipherText(messageBody))

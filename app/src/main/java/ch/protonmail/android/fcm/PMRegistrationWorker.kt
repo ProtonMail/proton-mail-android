@@ -34,12 +34,14 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DEVICE_ENVIRONMENT_ANDROID
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.BuildInfo
 import javax.inject.Inject
 
 // region constants
-const val KEY_PM_REGISTRATION_WORKER_USERNAME = "username"
-const val KEY_PM_REGISTRATION_WORKER_ERROR = "pmRegistrationWorkerError"
+const val KEY_PM_REGISTRATION_WORKER_USER_ID = "PMRegistrationWorker.input.user.id"
+const val KEY_PM_REGISTRATION_WORKER_ERROR = "PMRegistrationWorker.error"
 // endregion
 
 /**
@@ -50,17 +52,20 @@ class PMRegistrationWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted workerParameters: WorkerParameters,
     private val buildInfo: BuildInfo,
-    private val protonMailApiManager: ProtonMailApiManager
+    private val protonMailApiManager: ProtonMailApiManager,
+    private val fcmTokenManagerFactory: FcmTokenManager.Factory
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
-        val username = inputData.getString(KEY_PM_REGISTRATION_WORKER_USERNAME)
-        if (username.isNullOrBlank()) {
-            return Result.failure(workDataOf(KEY_PM_REGISTRATION_WORKER_ERROR to "Username not provided"))
-        }
+        val userId = inputData.getString(KEY_PM_REGISTRATION_WORKER_USER_ID)
+            ?.let(::Id)
+            ?: return Result.failure(workDataOf(KEY_PM_REGISTRATION_WORKER_ERROR to "Username not provided"))
+
+        val userPrefs = SecureSharedPreferences.getPrefsForUser(applicationContext, userId)
+        val fcmTokenManager = fcmTokenManagerFactory.create(userPrefs)
 
         val registerDeviceRequestBody = RegisterDeviceRequestBody(
-            deviceToken = FcmUtil.getFirebaseToken(),
+            deviceToken = checkNotNull(fcmTokenManager.getToken()).value,
             deviceName = "Android",
             deviceModel = buildInfo.model,
             deviceVersion = "${buildInfo.sdkVersion}",
@@ -69,10 +74,10 @@ class PMRegistrationWorker @WorkerInject constructor(
         )
 
         return runCatching {
-            protonMailApiManager.registerDevice(registerDeviceRequestBody, username)
+            protonMailApiManager.registerDevice(registerDeviceRequestBody, userId)
         }.map { registerDeviceResponseBody ->
             if (registerDeviceResponseBody.code == RESPONSE_CODE_OK) {
-                FcmUtil.setTokenSent(username, true)
+                fcmTokenManager.setTokenSent(true)
             }
         }.fold(
             onSuccess = { Result.success() },
@@ -81,8 +86,10 @@ class PMRegistrationWorker @WorkerInject constructor(
     }
 
     class Enqueuer @Inject constructor(
+        private val context: Context,
         private val workManager: WorkManager,
-        private val accountManager: AccountManager
+        private val accountManager: AccountManager,
+        private val fcmTokenManagerFactory: FcmTokenManager.Factory
     ) {
 
         operator fun invoke() {
@@ -90,8 +97,10 @@ class PMRegistrationWorker @WorkerInject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            for (username in accountManager.getLoggedInUsers()) {
-                if (!FcmUtil.isTokenSent(username)) {
+            for (userId in accountManager.allLoggedInBlocking()) {
+                val userPrefs = SecureSharedPreferences.getPrefsForUser(context, userId)
+                val fcmTokenManager = fcmTokenManagerFactory.create(userPrefs)
+                if (fcmTokenManager.isTokenSentBlocking().not()) {
                     val request = OneTimeWorkRequestBuilder<PMRegistrationWorker>()
                         .setConstraints(constraints)
                         .setInputData(workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.s))

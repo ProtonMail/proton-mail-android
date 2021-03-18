@@ -120,8 +120,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Created by dinokadrikj on 3/3/20.
- *
  * This class takes an API implementation and acts as a proxy. The real implementation is in the {@param api}
  * which can work directly with the Proton API or use any alternative proxy.
  */
@@ -453,15 +451,15 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override fun getPaymentToken(token: String): Call<GetPaymentTokenResponse> = api.getPaymentToken(token)
 
     override fun reportBug(
-        OSName: String,
+        osName: String,
         appVersion: String,
         client: String,
         clientVersion: String,
         title: String,
         description: String,
-        userId: Id,
+        username: String,
         email: String
-    ): ResponseBody = api.reportBug(OSName, appVersion, client, clientVersion, title, description, userId, email)
+    ): ResponseBody = api.reportBug(osName, appVersion, client, clientVersion, title, description, username, email)
 
     override fun postPhishingReport(
         messageId: String,
