@@ -37,7 +37,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.PasswordMode
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.PasswordChangeEvent
-import ch.protonmail.android.usecase.FindUsernameForUserId
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ConstantTime
 import ch.protonmail.android.utils.Logger
@@ -45,7 +44,6 @@ import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.Params
 import com.birbit.android.jobqueue.RetryConstraint
-import javax.inject.Inject
 
 class ChangePasswordJob(
     private val passwordType: Int,
@@ -55,15 +53,12 @@ class ChangePasswordJob(
     private val newPassword: ByteArray
 ) : ProtonMailBaseJob(Params(Priority.HIGH).requireNetwork()) {
 
-    @Inject
-    lateinit var findUsernameForUserId: FindUsernameForUserId
-
     @Throws(Throwable::class)
     override fun onRun() {
 
-        val username = findUsernameForUserId.blocking(checkNotNull(userId)).s
         val openPGP = applicationContext.app.openPGP
         val user = getUserManager().user
+        val username = user.name ?: user.username
         val infoResponse = getApi().loginInfo(username)
         val proofs = LoginService.srpProofsForInfo(username, oldPassword, infoResponse, 2)
         var keysResponse: Keys? = null
@@ -131,7 +126,7 @@ class ChangePasswordJob(
         val generatedMailboxPassword = openPGP.generateMailboxPassword(keySalt, newPassword)
         val verifier = if (isSingleMode == PasswordMode.SINGLE)
             PasswordVerifier.calculate(newPassword, newModulus) else null
-        val username = findUsernameForUserId.blocking(checkNotNull(userId)).s
+        val username = user.name ?: user.username
         val proofs = LoginService.srpProofsForInfo(username, oldPassword, infoResponse, 2)
         val userAddresses: List<Address> = user.addresses
         val privateKeyBodies = ArrayList<PrivateKeyBody>()

@@ -42,7 +42,6 @@ import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.PublicKeyBody;
 import ch.protonmail.android.api.models.PublicKeyResponse;
 import ch.protonmail.android.api.models.SendPreference;
-import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.enumerations.MIMEType;
 import ch.protonmail.android.api.models.enumerations.PackageType;
 import ch.protonmail.android.core.UserManager;
@@ -58,6 +57,7 @@ import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.domain.entity.user.Address;
 import ch.protonmail.android.domain.entity.user.AddressKey;
 import ch.protonmail.android.domain.entity.user.Addresses;
+import ch.protonmail.android.domain.entity.user.User;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.VCardUtil;
 import ch.protonmail.android.utils.crypto.KeyInformation;
@@ -334,7 +334,7 @@ public class SendPreferencesFactory {
         return null;
     }
 
-    private String findPrimaryKey(List<String> keys, PublicKeyResponse pubKeyResp) throws Exception {
+    private String findPrimaryKey(List<String> keys, PublicKeyResponse pubKeyResp) {
         if (keys.size() == 0) {
             return findPrimaryKey(pubKeyResp);
         }

@@ -244,7 +244,15 @@ public class User {
     }
 
     public void save() {
-        Timber.v("Saving User for username: `" + username + "`");
+        final String finalUserName;
+        if (!TextUtils.isEmpty(name)) {
+            finalUserName = name;
+        } else if (!TextUtils.isEmpty(username)) {
+            finalUserName = username;
+        } else {
+            throw new IllegalStateException("Cannot save user with empty name and username");
+        }
+        Timber.v("Saving User for username: `" + finalUserName + "`");
         final SharedPreferences pref = getPreferences();
 
         if (NotificationSetting == -1) {
@@ -280,7 +288,7 @@ public class User {
         ShowMobileSignature = loadShowMobileSignatureSetting();
 
         pref.edit()
-                .putString(PREF_USER_NAME, name)
+                .putString(PREF_USER_NAME, finalUserName)
                 .putLong(PREF_USED_SPACE, usedSpace)
                 .putString(PREF_SIGNATURE, Signature)
                 .putString(PREF_MOBILE_SIGNATURE, MobileSignature)

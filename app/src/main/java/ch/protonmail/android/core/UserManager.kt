@@ -743,9 +743,8 @@ class UserManager @Inject constructor(
 //        mMailboxPin = mailboxPin
     }
 
-    fun getMailboxPin(): String? {
-        return app.secureSharedPreferences.getString(PREF_PIN, "")
-    }
+    fun getMailboxPin(): String? =
+        app.secureSharedPreferences.getString(PREF_PIN, "")
 
     suspend fun saveMailboxPassword(userId: Id, mailboxPassword: ByteArray) = withContext(dispatchers.Io) {
         val secureSharedPreferences = SecureSharedPreferences.getPrefsForUser(context, userId)

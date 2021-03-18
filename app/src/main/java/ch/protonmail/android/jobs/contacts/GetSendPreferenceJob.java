@@ -35,7 +35,7 @@ import ch.protonmail.android.events.contacts.SendPreferencesEvent;
 import ch.protonmail.android.jobs.Priority;
 import ch.protonmail.android.jobs.ProtonMailBaseJob;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.Logger;
+import timber.log.Timber;
 
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_RECIPIENT_NOT_FOUND;
 
@@ -73,7 +73,7 @@ public class GetSendPreferenceJob extends ProtonMailBaseJob {
             }
             return;
         } catch (Exception e) {
-            Logger.doLogException(e);
+            Timber.e(e);
             AppUtil.postEventOnUi(new SendPreferencesEvent(Status.FAILED, sendPreferenceMap, mDestination, false));
             return;
         }

@@ -23,34 +23,33 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
-import io.mockk.MockKAnnotations
+import ch.protonmail.android.core.UserManager
 import io.mockk.coEvery
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.util.android.workmanager.toWorkData
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FetchContactsEmailsWorkerTest {
 
-    @RelaxedMockK
-    private lateinit var context: Context
+    private val context: Context = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var parameters: WorkerParameters
+    private val parameters: WorkerParameters = mockk(relaxed = true)
 
-    @MockK
-    private lateinit var contactEmailsManager: ContactEmailsManager
+    private val userManager: UserManager = mockk()
 
-    private lateinit var worker: FetchContactsEmailsWorker
+    private val contactEmailsManager: ContactEmailsManager = mockk()
 
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-        worker = FetchContactsEmailsWorker(context, parameters, contactEmailsManager)
-    }
+    private val worker = FetchContactsEmailsWorker(
+        context,
+        parameters,
+        userManager,
+        contactEmailsManagerFactory = mockk {
+            every { create(any()) } returns contactEmailsManager
+        }
+    )
 
     @Test
     fun verityThatInNormalConditionSuccessResultIsReturned() =
