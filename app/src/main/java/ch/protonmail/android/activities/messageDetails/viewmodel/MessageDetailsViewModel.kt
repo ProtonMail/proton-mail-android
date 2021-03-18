@@ -484,7 +484,9 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         for (labelId in message.allLabelIDs) {
             if (labelId.length <= 2) {
                 location = Constants.MessageLocationType.fromInt(Integer.valueOf(labelId))
-                if (location != Constants.MessageLocationType.ALL_MAIL && location != Constants.MessageLocationType.STARRED) {
+                if (location != Constants.MessageLocationType.ALL_MAIL &&
+                    location != Constants.MessageLocationType.STARRED
+                ) {
                     break
                 }
             }
@@ -500,18 +502,15 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             Timber.v("viewOrDownloadAttachment Id: $attachmentToDownloadId metadataId: ${metadata?.id}")
             if (metadata != null) {
                 val uri = metadata.uri
-                when {
-                    uri?.path?.contains(DIR_EMB_ATTACHMENT_DOWNLOADS) == true -> {
+                if (uri != null && attachmentsHelper.isFileAvailable(context, uri)) {
+                    if (uri.path?.contains(DIR_EMB_ATTACHMENT_DOWNLOADS) == true) {
                         copyAttachmentToDownloadsAndDisplay(context, metadata.name, uri)
-                    }
-                    // extra check if user has not deleted the file
-                    attachmentsHelper.isFileAvailable(context, uri) -> {
+                    } else {
                         viewAttachment(context, metadata.name, uri)
                     }
-                    else -> {
-                        Timber.v("No file attachment id: $attachmentToDownloadId downloading again")
-                        attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
-                    }
+                } else {
+                    Timber.v("No file attachment id: $attachmentToDownloadId downloading again")
+                    attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
                 }
             } else {
                 Timber.v("No metadata found for attachment id: $attachmentToDownloadId")
@@ -520,7 +519,8 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         }
     }
 
-    /**
+
+/**
      * Explicitly make a copy of embedded attachment to downloads and display it (product requirement)
      */
     private fun copyAttachmentToDownloadsAndDisplay(
