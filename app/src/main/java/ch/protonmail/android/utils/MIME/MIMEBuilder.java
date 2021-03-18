@@ -33,9 +33,9 @@ import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 
 import ch.protonmail.android.api.ProtonMailApiManager;
-import ch.protonmail.android.api.models.room.messages.Attachment;
 import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
+import ch.protonmail.android.data.local.model.Attachment;
 import ch.protonmail.android.data.local.model.AttachmentHeaders;
 import ch.protonmail.android.utils.HTMLToMDConverter;
 import ch.protonmail.android.utils.crypto.BinaryDecryptionResult;

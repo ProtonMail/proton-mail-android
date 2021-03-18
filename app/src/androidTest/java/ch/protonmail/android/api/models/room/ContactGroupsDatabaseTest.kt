@@ -22,7 +22,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.InstrumentationRegistry
 import ch.protonmail.android.data.local.ContactDatabase
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.local.model.ContactLabel
 import org.junit.Assert
 import org.junit.Rule
 import java.util.Arrays
@@ -49,7 +51,7 @@ class ContactGroupsDatabaseTest {
         database.saveContactGroupLabel(label2)
         database.saveContactGroupLabel(label3)
 
-        val needed = database.findContactGroupByIdBlocking("b")
+        val needed = database.findContactGroupById("b")
         Assert.assertEquals(label2, needed)
     }
 
@@ -60,7 +62,7 @@ class ContactGroupsDatabaseTest {
         database.saveContactGroupLabel(label1)
         database.updateFullContactGroup(label2)
 
-        val needed = database.findContactGroupByIdBlocking("a")
+        val needed = database.findContactGroupById("a")
         Assert.assertEquals(needed?.name, "ab")
     }
 

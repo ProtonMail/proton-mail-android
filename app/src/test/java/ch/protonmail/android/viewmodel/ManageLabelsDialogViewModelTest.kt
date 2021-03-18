@@ -22,8 +22,8 @@ package ch.protonmail.android.viewmodel
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import ch.protonmail.android.adapters.LabelsAdapter
-import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.HideLabelsView
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.SelectedLabelsArchiveEvent

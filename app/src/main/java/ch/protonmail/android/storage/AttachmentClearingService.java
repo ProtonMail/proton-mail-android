@@ -32,9 +32,6 @@ import javax.inject.Inject;
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.api.models.User;
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadata;
-import ch.protonmail.android.api.models.room.counters.CounterDatabase;
-import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.UserManager;
@@ -44,6 +41,8 @@ import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.NotificationDatabase;
 import ch.protonmail.android.data.local.PendingActionDatabase;
+import ch.protonmail.android.data.local.model.AttachmentMetadata;
+import ch.protonmail.android.data.local.model.Message;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint

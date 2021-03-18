@@ -27,9 +27,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import ch.protonmail.android.api.models.MessageRecipient
-import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_ID
-import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_NAME
-import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_ORDER
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_DATA_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_DATA_NAME
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_CONTACT_ID
@@ -39,6 +36,9 @@ import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_LABELS_JOIN_
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_EMAILS_LABEL_IDS
 import ch.protonmail.android.data.local.model.COLUMN_CONTACT_ID
+import ch.protonmail.android.data.local.model.COLUMN_LABEL_ID
+import ch.protonmail.android.data.local.model.COLUMN_LABEL_NAME
+import ch.protonmail.android.data.local.model.COLUMN_LABEL_ORDER
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin

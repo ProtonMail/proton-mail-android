@@ -25,10 +25,10 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.factories.IConverterFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.every

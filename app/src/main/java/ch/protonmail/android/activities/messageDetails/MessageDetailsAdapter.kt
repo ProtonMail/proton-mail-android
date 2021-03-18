@@ -47,8 +47,8 @@ import ch.protonmail.android.activities.messageDetails.body.MessageBodyTouchList
 import ch.protonmail.android.activities.messageDetails.details.OnDetailsCheckChangeListener
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
 import ch.protonmail.android.activities.messageDetails.details.RecipientContextMenuFactory
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.extensions.showToast

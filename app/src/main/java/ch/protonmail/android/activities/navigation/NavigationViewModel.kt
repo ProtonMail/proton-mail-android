@@ -27,7 +27,7 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.api.models.room.messages.Label
+import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.DispatcherProvider

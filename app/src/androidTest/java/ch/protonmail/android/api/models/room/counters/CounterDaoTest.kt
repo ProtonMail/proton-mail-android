@@ -21,8 +21,8 @@ package ch.protonmail.android.api.models.room.counters
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import ch.protonmail.android.api.models.room.testValue
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.testAndroidInstrumented.ReflectivePropertiesMatcher
 import ch.protonmail.android.testAndroidInstrumented.matchers
 import org.hamcrest.Matchers.`is`

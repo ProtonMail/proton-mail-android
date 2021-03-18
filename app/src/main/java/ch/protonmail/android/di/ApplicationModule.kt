@@ -37,7 +37,6 @@ import ch.protonmail.android.api.models.factories.IConverterFactory
 import ch.protonmail.android.api.models.messages.receive.AttachmentFactory
 import ch.protonmail.android.api.models.messages.receive.IAttachmentFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.attachments.Armorer
 import ch.protonmail.android.attachments.OpenPgpArmorer
@@ -47,6 +46,7 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.servers.notification.NotificationServer
@@ -159,7 +159,7 @@ object ApplicationModule {
     @Provides
     fun mailSettings(
         userManager: UserManager
-    ) = userManager.mailSettings
+    ) = userManager.getCurrentUserMailSettingsBlocking()
 
     @Provides
     @Singleton
@@ -215,7 +215,7 @@ object ApplicationModule {
 
     @Provides
     fun provideUserCrypto(userManager: UserManager): UserCrypto =
-        UserCrypto(userManager, userManager.openPgp, Name(userManager.username))
+        UserCrypto(userManager, userManager.openPgp, userManager.requireCurrentUserId())
 
     @Provides
     fun providesArmorer(): Armorer = OpenPgpArmorer()

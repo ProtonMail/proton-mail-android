@@ -30,10 +30,10 @@ import androidx.appcompat.widget.PopupMenu;
 
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
-import ch.protonmail.android.api.models.room.contacts.ContactEmail;
 import ch.protonmail.android.contacts.details.ContactDetailsActivity;
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity;
 import ch.protonmail.android.data.local.ContactDao;
+import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;

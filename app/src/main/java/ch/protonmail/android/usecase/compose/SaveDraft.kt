@@ -21,8 +21,6 @@ package ch.protonmail.android.usecase.compose
 
 import androidx.work.WorkInfo
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.attachments.KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR
 import ch.protonmail.android.attachments.UploadAttachments
 import ch.protonmail.android.core.Constants
@@ -30,6 +28,8 @@ import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
 import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.di.CurrentUsername
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
@@ -50,9 +50,9 @@ class SaveDraft @Inject constructor(
     private val addressCryptoFactory: AddressCrypto.Factory,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val dispatchers: DispatcherProvider,
-    private val pendingActionsDao: PendingActionsDao,
+    private val pendingActionsDao: PendingActionDao,
     private val createDraftWorker: CreateDraftWorker.Enqueuer,
-    @CurrentUsername private val username: String,
+    @CurrentUserId private val userId: Id,
     private val uploadAttachments: UploadAttachments.Enqueuer,
     private val userNotifier: UserNotifier
 ) {
@@ -67,7 +67,7 @@ class SaveDraft @Inject constructor(
         val addressId = requireNotNull(message.addressID)
 
         if (params.trigger != SaveDraftTrigger.SendingMessage) {
-            val addressCrypto = addressCryptoFactory.create(Id(addressId), Name(username))
+            val addressCrypto = addressCryptoFactory.create(userId, Id(addressId))
             val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
             if (message.decryptedBody == null) {
                 Timber.w("Save Draft for messageId $messageId - Decrypted Body was null, proceeding...")

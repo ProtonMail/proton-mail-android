@@ -20,8 +20,6 @@
 package ch.protonmail.android.di
 
 import android.content.Context
-import ch.protonmail.android.api.models.room.counters.CounterDao
-import ch.protonmail.android.api.models.room.counters.CounterDatabase
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
@@ -31,6 +29,7 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
+import ch.protonmail.android.data.local.model.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

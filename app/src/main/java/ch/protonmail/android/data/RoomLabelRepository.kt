@@ -19,8 +19,7 @@
 
 package ch.protonmail.android.data
 
-import ch.protonmail.android.api.models.room.messages.Label
-import ch.protonmail.android.api.models.room.messages.MessagesDao
+import ch.protonmail.android.data.local.model.*
 import javax.inject.Inject
 import javax.inject.Named
 

@@ -20,7 +20,9 @@ package ch.protonmail.android.contacts.groups.list
 
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.local.model.ContactLabel
 import io.reactivex.Observable
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.util.kotlin.DispatcherProvider

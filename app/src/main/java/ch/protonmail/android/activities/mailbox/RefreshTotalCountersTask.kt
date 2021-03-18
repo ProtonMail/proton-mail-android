@@ -19,10 +19,7 @@
 package ch.protonmail.android.activities.mailbox
 
 import android.os.AsyncTask
-
-import ch.protonmail.android.api.models.room.counters.CounterDao
-import ch.protonmail.android.api.models.room.counters.TotalLabelCounter
-import ch.protonmail.android.api.models.room.counters.TotalLocationCounter
+import ch.protonmail.android.data.local.model.*
 
 /**
  * Created by Kamil Rajtar on 21.08.18.

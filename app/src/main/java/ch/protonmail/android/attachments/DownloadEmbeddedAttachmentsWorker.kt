@@ -39,8 +39,8 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.data.local.AttachmentMetadataDao
-import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.domain.entity.*
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import ch.protonmail.android.worker.failure
 import timber.log.Timber

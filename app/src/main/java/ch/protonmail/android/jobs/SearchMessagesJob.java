@@ -25,7 +25,7 @@ import com.birbit.android.jobqueue.Params;
 import java.util.List;
 
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse;
-import ch.protonmail.android.api.models.room.messages.Message;
+import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.events.NoResultsEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;

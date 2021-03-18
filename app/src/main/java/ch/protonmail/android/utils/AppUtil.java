@@ -46,8 +46,6 @@ import java.util.Locale;
 
 import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.activities.BaseActivity;
-import ch.protonmail.android.api.models.room.counters.CounterDao;
-import ch.protonmail.android.api.models.room.counters.CounterDatabase;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.local.AttachmentMetadataDao;

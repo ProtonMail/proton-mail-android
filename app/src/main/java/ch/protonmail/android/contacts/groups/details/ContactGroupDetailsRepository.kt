@@ -23,8 +23,7 @@ import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.worker.PostLabelWorker
 import io.reactivex.Observable
 import io.reactivex.Single

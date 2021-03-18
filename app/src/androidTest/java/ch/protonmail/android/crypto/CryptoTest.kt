@@ -23,8 +23,8 @@ import androidx.test.filters.LargeTest
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mapper.bridge.AddressKeyBridgeMapper
 import ch.protonmail.android.mapper.bridge.AddressKeysBridgeMapper
@@ -45,8 +45,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Ignore
-import kotlin.test.Test
 import javax.mail.internet.InternetHeaders
+import kotlin.test.Test
 
 @LargeTest
 internal class CryptoTest {

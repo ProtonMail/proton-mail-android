@@ -25,13 +25,6 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_COLOR
-import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_DISPLAY
-import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_EXCLUSIVE
-import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_ID
-import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_NAME
-import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_ORDER
-import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_TYPE
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState
 import me.proton.core.util.kotlin.EMPTY_STRING
 import java.io.Serializable

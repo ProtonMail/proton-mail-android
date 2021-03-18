@@ -23,12 +23,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
-import ch.protonmail.android.api.models.room.contacts.FullContactDetails
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.usecase.model.FetchContactDetailsResult
 import me.proton.core.util.kotlin.DispatcherProvider

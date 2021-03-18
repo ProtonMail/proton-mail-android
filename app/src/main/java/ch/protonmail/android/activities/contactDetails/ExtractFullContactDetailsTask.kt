@@ -19,8 +19,8 @@
 package ch.protonmail.android.activities.contactDetails
 
 import android.os.AsyncTask
-import ch.protonmail.android.api.models.room.contacts.FullContactDetails
 import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.FullContactDetails
 
 class ExtractFullContactDetailsTask(
     private val contactDao: ContactDao,

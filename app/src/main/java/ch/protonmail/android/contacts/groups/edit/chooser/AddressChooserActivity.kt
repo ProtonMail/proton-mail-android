@@ -29,9 +29,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
 import ch.protonmail.android.contacts.groups.GroupsItemAdapterMode
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UiUtil

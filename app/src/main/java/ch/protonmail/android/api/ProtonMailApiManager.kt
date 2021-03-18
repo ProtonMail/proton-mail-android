@@ -89,9 +89,6 @@ import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.models.requests.PasswordChange
 import ch.protonmail.android.api.models.requests.PostHumanVerificationBody
 import ch.protonmail.android.api.models.requests.UpgradePasswordBody
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
-import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.segments.address.AddressApiSpec
 import ch.protonmail.android.api.segments.attachment.AttachmentApiSpec
@@ -110,6 +107,7 @@ import ch.protonmail.android.api.segments.reset.ResetApiSpec
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
 import ch.protonmail.android.api.segments.settings.mail.UserSettingsApiSpec
 import ch.protonmail.android.api.segments.user.UserApiSpec
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.Id
 import io.reactivex.Completable
 import io.reactivex.Observable

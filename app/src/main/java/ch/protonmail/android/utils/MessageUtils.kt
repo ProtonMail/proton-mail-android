@@ -28,10 +28,10 @@ import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
 import ch.protonmail.android.api.models.enumerations.MessageFlag
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.user.Addresses
 import ch.protonmail.android.jobs.MoveToFolderJob
 import ch.protonmail.android.jobs.PostArchiveJob

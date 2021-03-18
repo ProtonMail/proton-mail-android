@@ -21,10 +21,10 @@ package ch.protonmail.android.activities.composeMessage
 import android.text.Spanned
 import android.text.SpannedString
 import ch.protonmail.android.api.models.SendPreference
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.LocalAttachment
+import ch.protonmail.android.data.local.model.Message
 
 class MessageBuilderData(
     val message: Message,

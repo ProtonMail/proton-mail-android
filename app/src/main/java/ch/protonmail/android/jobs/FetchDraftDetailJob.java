@@ -20,8 +20,8 @@ package ch.protonmail.android.jobs;
 
 import com.birbit.android.jobqueue.Params;
 
-import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;

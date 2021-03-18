@@ -22,7 +22,8 @@ package ch.protonmail.android.contacts.details
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.ContactData
+import ch.protonmail.android.data.local.model.ContactEmail
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
 import io.mockk.coVerify
@@ -108,7 +109,7 @@ class ContactDetailsRepositoryTest {
 
             verify { contactDao.findContactEmailsByContactId(contactId) }
             verify { contactDao.deleteAllContactsEmails(localContactEmails) }
-            verify { contactDao.saveAllContactsEmailsBlocking(serverEmails) }
+            verify { contactDao.saveAllContactsEmails(serverEmails) }
         }
     }
 

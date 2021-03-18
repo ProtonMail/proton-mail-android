@@ -18,9 +18,7 @@
  */
 package ch.protonmail.android.api.models.messages.receive
 
-import ch.protonmail.android.api.models.AttachmentHeaders
-import ch.protonmail.android.data.local.model.FIELD_ATTACHMENT_HEADERS
-import ch.protonmail.android.data.local.model.AttachmentHeaders
+import ch.protonmail.android.data.local.model.*
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 

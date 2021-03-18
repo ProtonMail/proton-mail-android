@@ -24,7 +24,8 @@ import androidx.test.InstrumentationRegistry
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.room.testValue
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.*
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.model.*
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.`is`

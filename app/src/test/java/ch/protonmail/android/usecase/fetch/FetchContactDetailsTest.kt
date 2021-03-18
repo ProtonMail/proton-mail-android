@@ -22,10 +22,10 @@ package ch.protonmail.android.usecase.fetch
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
-import ch.protonmail.android.api.models.room.contacts.FullContactDetails
-import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.FullContactDetails
+import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.usecase.model.FetchContactDetailsResult
 import io.mockk.MockKAnnotations

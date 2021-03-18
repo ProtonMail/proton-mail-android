@@ -19,9 +19,9 @@
 package ch.protonmail.android.activities.mailbox
 
 import android.os.AsyncTask
-import ch.protonmail.android.api.models.room.counters.CounterDao
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.model.*
 import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 

@@ -42,10 +42,10 @@ import java.util.List;
 import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.adapters.FoldersAdapter;
-import ch.protonmail.android.api.models.room.messages.Label;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
+import ch.protonmail.android.data.local.model.Label;
 
 /**
  * Created by dino on 2/20/17.

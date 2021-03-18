@@ -21,10 +21,10 @@ package ch.protonmail.android.api.models.room.pendingActions
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import ch.protonmail.android.api.models.room.testValue
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.testAndroidInstrumented.ReflectivePropertiesMatcher
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.containsInAnyOrder

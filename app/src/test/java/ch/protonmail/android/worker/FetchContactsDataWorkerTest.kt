@@ -24,9 +24,9 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactsDataResponse
-import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.ContactData
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify

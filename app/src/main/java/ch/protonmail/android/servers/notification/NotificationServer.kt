@@ -45,11 +45,10 @@ import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER_ID
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotification
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
@@ -62,7 +61,6 @@ import ch.protonmail.android.utils.extensions.showToast
 import timber.log.Timber
 import javax.inject.Inject
 import ch.protonmail.android.api.models.User as LegacyUser
-import ch.protonmail.android.api.models.room.notifications.Notification as RoomNotification
 
 const val CHANNEL_ID_EMAIL = "emails"
 const val EXTRA_MAILBOX_LOCATION = "mailbox_location"

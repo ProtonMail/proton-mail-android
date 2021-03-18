@@ -25,8 +25,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
-import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.data.local.MessageDatabase
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.libs.core.utils.EMPTY_STRING
 import io.mockk.MockKAnnotations
 import io.mockk.every

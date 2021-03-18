@@ -21,11 +21,11 @@ package ch.protonmail.android.activities.mailbox
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.PendingActionDatabase
+import ch.protonmail.android.data.local.model.ContactLabel
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.every
 import io.mockk.mockk

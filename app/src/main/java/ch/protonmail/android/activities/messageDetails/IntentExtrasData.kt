@@ -20,11 +20,11 @@ package ch.protonmail.android.activities.messageDetails
 
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.address.Address
-import ch.protonmail.android.api.models.room.messages.Attachment
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.LocalAttachment
+import ch.protonmail.android.data.local.model.Message
 
 class IntentExtrasData(
     val user: User,

@@ -19,9 +19,9 @@
 package ch.protonmail.android.activities.messageDetails
 
 import android.os.AsyncTask
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.MessageDatabase
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.jobs.FetchMessageDetailJob
 import java.util.concurrent.atomic.AtomicBoolean
 

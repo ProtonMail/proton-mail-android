@@ -20,7 +20,7 @@ package ch.protonmail.android.contacts.groups.edit.chooser
 
 import android.util.Log
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
+import ch.protonmail.android.data.local.model.ContactEmail
 import io.reactivex.Observable
 import javax.inject.Inject
 import javax.inject.Singleton

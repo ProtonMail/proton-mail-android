@@ -21,7 +21,7 @@ package ch.protonmail.android.data
 import android.util.Log
 import androidx.lifecycle.LiveData
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
+import ch.protonmail.android.data.local.model.ContactEmail
 import javax.inject.Inject
 
 class ContactsRepository @Inject constructor(private val databaseProvider: DatabaseProvider) {

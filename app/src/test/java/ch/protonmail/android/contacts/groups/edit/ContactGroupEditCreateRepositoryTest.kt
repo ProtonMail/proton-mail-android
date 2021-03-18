@@ -24,7 +24,8 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
@@ -102,7 +103,7 @@ class ContactGroupEditCreateRepositoryTest {
         verifyOrder {
             contactDao.fetchJoins(contactGroupId)
             contactDao.saveContactGroupLabel(contactLabel)
-            contactDao.saveContactEmailContactLabelBlocking(emailLabelJoinedList)
+            contactDao.saveContactEmailContactLabel(emailLabelJoinedList)
         }
     }
 
