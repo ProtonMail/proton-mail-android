@@ -19,11 +19,11 @@
 
 package ch.protonmail.android.compose
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
@@ -108,7 +108,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             // This indicates that saving draft was requested by the user
             viewModel.setUploadAttachments(true)
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
-            coEvery { messageDetailsRepository.findMessageById("draftId") } returns message
+            coEvery { messageDetailsRepository.findMessageById("draftId") } returns flowOf(message)
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
@@ -135,7 +135,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             // This indicates that saving draft was not requested by the user
             viewModel.setUploadAttachments(false)
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
-            coEvery { messageDetailsRepository.findMessageById("draftId") } returns message
+            coEvery { messageDetailsRepository.findMessageById("draftId") } returns flowOf(message)
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
@@ -202,7 +202,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             viewModel.draftId = "non-empty-draftId"
             viewModel.setUploadAttachments(true)
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
-            coEvery { messageDetailsRepository.findMessageById("draftId") } returns message
+            coEvery { messageDetailsRepository.findMessageById("draftId") } returns flowOf(message)
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
