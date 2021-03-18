@@ -42,7 +42,7 @@ class FetchVerificationKeys @Inject constructor(
 
     suspend operator fun invoke(email: String): List<KeyInformation> = withContext(dispatchers.Io) {
         Timber.v("FetchVerificationKeys email: $email")
-        val publicKeys = userManager.user.toNewUser().addresses.addresses.values
+        val publicKeys = userManager.requireCurrentUser().addresses.addresses.values
             .find { it.email.s == email }?.keys?.keys
             ?.map { key ->
                 val armouredKey = userCrypto.buildArmoredPublicKey(key.privateKey)

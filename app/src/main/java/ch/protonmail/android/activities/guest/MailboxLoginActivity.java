@@ -177,7 +177,7 @@ public class MailboxLoginActivity extends BaseLoginActivity {
     public void onBackPressed() {
         if (!mDisableBack) {
             mProgressContainer.setVisibility(View.VISIBLE);
-            mUserManager.removeAccount(mUserManager.getUsername(), null);
+            mUserManager.logoutAndRemoveBlocking(mUserManager.requireCurrentUserId());
             super.onBackPressed();
         }
     }

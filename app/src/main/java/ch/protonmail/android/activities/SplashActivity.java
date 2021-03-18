@@ -148,7 +148,7 @@ public class SplashActivity extends BaseActivity {
         ProtonMailApplication.getApplication().resetLoginInfoEvent();
         switch (event.status) {
             case SUCCESS: {
-                mUserManager.saveKeySalt(event.response.getSalt(), event.username);
+                mUserManager.saveKeySaltBlocking(mUserManager.requireCurrentUserId(), event.response.getSalt());
                 startActivity(new Intent(this, MailboxLoginActivity.class));
                 finish();
             }

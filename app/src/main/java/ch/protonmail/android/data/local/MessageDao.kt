@@ -346,10 +346,10 @@ abstract class MessageDao {
     abstract fun saveAttachment(vararg attachments: Attachment): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveAllAttachments(attachments: List<Attachment>): List<Long>
+    abstract suspend fun saveAllAttachments(attachments: List<Attachment>): List<Long>
 
     @Delete
-    abstract fun deleteAllAttachments(attachments: List<Attachment>)
+    abstract suspend fun deleteAllAttachments(attachments: List<Attachment>)
 
     @Delete
     abstract fun deleteAttachment(vararg attachment: Attachment)

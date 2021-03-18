@@ -54,8 +54,8 @@ import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.core.UserManager;
+import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.events.Login2FAEvent;
 import ch.protonmail.android.events.LoginEvent;
@@ -308,7 +308,7 @@ public class LoginActivity extends BaseLoginActivity {
                 }
                 hideProgress();
                 userManager.setCurrentUserLoginState(LOGIN_STATE_LOGIN_FINISHED);
-                userManager.saveKeySalt(event.getUsername(), event.getKeySalt());
+                userManager.saveKeySaltBlocking(new Id(event.getUser().getId()), event.getKeySalt());
                 Intent mailboxLoginIntent = new Intent(this, MailboxLoginActivity.class);
                 mailboxLoginIntent.putExtra(MailboxLoginActivity.EXTRA_KEY_SALT, event.getKeySalt());
                 startActivity(AppUtil.decorInAppIntent(mailboxLoginIntent));

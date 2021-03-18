@@ -305,13 +305,17 @@ public class LoginService extends ProtonJobIntentService {
         JobIntentService.enqueueWork(context, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
     }
 
-    public static void startInfo(final String username, final byte[] password, final int fallbackAuthVersion) {
+    public static void startInfo(
+            final String username,
+            final byte[] password,
+            final int fallbackAuthVersion
+    ) {
         final Context context = ProtonMailApplication.getApplication();
-        final Intent intent = new Intent(context, LoginService.class);
-        intent.setAction(ACTION_LOGIN_INFO);
-        intent.putExtra(EXTRA_USERNAME, username);
-        intent.putExtra(EXTRA_PASSWORD, new String(password));
-        intent.putExtra(EXTRA_FALLBACK_AUTH_VERSION, fallbackAuthVersion);
+        final Intent intent = new Intent(context, LoginService.class)
+                .setAction(ACTION_LOGIN_INFO)
+                .putExtra(EXTRA_USERNAME, username)
+                .putExtra(EXTRA_PASSWORD, new String(password))
+                .putExtra(EXTRA_FALLBACK_AUTH_VERSION, fallbackAuthVersion);
         JobIntentService.enqueueWork(context, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
     }
 
@@ -426,7 +430,11 @@ public class LoginService extends ProtonJobIntentService {
         }
     }
 
-    private void handleLoginInfo(final String username, final byte[] password, final int fallbackAuthVersion) {
+    private void handleLoginInfo(
+            final String username,
+            final byte[] password,
+            final int fallbackAuthVersion
+    ) {
         AuthStatus status = AuthStatus.FAILED;
         LoginInfoResponse infoResponse = null;
         try {
@@ -675,7 +683,7 @@ public class LoginService extends ProtonJobIntentService {
                 } else {
                     userManager.setCurrentUserBlocking(userId);
                     UserInfo userInfo = api.fetchUserInfoBlocking();
-                    if (!userManager.canConnectAccount() && !userInfo.getUser().isPaidUser()) {
+                    if (!userManager.canConnectAnotherAccountBlocking() && !userInfo.getUser().isPaidUser()) {
                         userManager.logoutBlocking(userId);
                         if (currentPrimaryUserId != null) {
                             userManager.setCurrentUserBlocking(currentPrimaryUserId);

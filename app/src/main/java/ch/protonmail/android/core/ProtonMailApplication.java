@@ -708,12 +708,12 @@ public class ProtonMailApplication extends Application implements androidx.work.
         jobManager.addJobInBackground(getOrganizationJob);
     }
 
-    public void notifyLoggedOut(String username) {
+    public void notifyLoggedOut(Id userId) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(
                 Context.NOTIFICATION_SERVICE);
         NotificationServer notificationServer = new NotificationServer(this, notificationManager);
         if (userManager != null && userManager.isLoggedIn()) {
-            notificationServer.notifyUserLoggedOut(userManager.getUser(username));
+            notificationServer.notifyUserLoggedOut(userManager.getUserBlocking(userId));
         }
     }
 

@@ -64,7 +64,6 @@ import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.invoke
 import me.proton.core.util.kotlin.takeIfNotBlank
-import me.proton.core.util.kotlin.unsupported
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -359,15 +358,6 @@ class UserManager @Inject constructor(
     fun getUserIdBySessionIdBlocking(sessionId: String): Id? =
         runBlocking { getUserIdBySessionId(sessionId) }
 
-    @Deprecated(
-        "Username should not be used, get Id instead",
-        ReplaceWith("getUserIdBySessionId(sessionId)"),
-        DeprecationLevel.ERROR
-    )
-    fun getUsernameBySessionId(sessionId: String): String? {
-        unsupported
-    }
-
     var checkTimestamp: Float
         get() = _checkTimestamp
         set(checkTimestamp) {
@@ -442,11 +432,6 @@ class UserManager @Inject constructor(
         _mailboxPassword = null
 //        mMailboxPin = null
         app.eventManager.clearState()
-    }
-
-    @Deprecated("Use 'resetReferences'", ReplaceWith("resetReferences"), DeprecationLevel.ERROR)
-    private fun reset() {
-        unsupported
     }
 
     fun generateKeyPair(username: String, domain: String, password: ByteArray, bits: Int) {
@@ -553,25 +538,10 @@ class UserManager @Inject constructor(
         connectAccountMailboxLogin(userId, currentPrimaryUserId, mailboxPassword, keySalt)
     }
 
-    // used for two-password mode. Since already the user is logged in, we should have the userID by now
-    @Deprecated(
-        "Use with user Id",
-        ReplaceWith("connectAccountMailboxLogin(userId, currentPrimaryUserId, password, keySalt)"),
-        DeprecationLevel.ERROR
-    )
-    fun connectAccountMailboxLogin(username: String, currentPrimary: String, mailboxPassword: String, keySalt: String) {
-        unsupported
-    }
-
     suspend fun switchTo(userId: Id) {
         setCurrentUser(userId)
         user = loadLegacyUser(userId)
         loadSettings(userId)
-    }
-
-    @Deprecated("Use with user Id", ReplaceWith("switchTo(userId)"), DeprecationLevel.ERROR)
-    fun switchToAccount(username: String) {
-        unsupported
     }
 
     suspend fun logoutAndRemove(userId: Id) {
@@ -579,9 +549,11 @@ class UserManager @Inject constructor(
         accountManager.remove(userId)
     }
 
-    @Deprecated("Use with user Id", ReplaceWith("logoutAndRemove(userId)"), DeprecationLevel.ERROR)
-    fun removeAccount(username: String, clearDoneListener: (() -> Unit)? = null) {
-        unsupported
+    @Deprecated("Use suspend function", ReplaceWith("logoutAndRemove(userId)"))
+    fun logoutAndRemoveBlocking(userId: Id) {
+        runBlocking {
+            logoutAndRemove(userId)
+        }
     }
 
     suspend fun logout(userId: Id) = withContext(dispatchers.Io) {
@@ -607,11 +579,6 @@ class UserManager @Inject constructor(
         // TODO: this currently terminates only of the deletions is successful, the method must accept also a failure
         //  callback
         AppUtil.deleteDatabases(context, userId) { it.resumeWith(Result.success(Unit)) }
-    }
-
-    @Deprecated("Use with user Id", ReplaceWith("logout(userId)"), DeprecationLevel.ERROR)
-    fun logoutAccount(username: String) {
-        unsupported
     }
 
     /**
@@ -687,15 +654,6 @@ class UserManager @Inject constructor(
         runBlocking { logoutOffline(requireCurrentUserId()) }
     }
 
-    @Deprecated(
-        "Use user Id",
-        ReplaceWith("logoutOffline(userId)"),
-        DeprecationLevel.ERROR
-    )
-    fun logoutOffline(usernameToLogout: String? = null) {
-        unsupported
-    }
-
     private suspend fun saveCurrentUserBackupSettings() = withContext(dispatchers.Io) {
         getCurrentLegacyUser()?.apply{
             saveNotificationSettingsBackup()
@@ -768,18 +726,6 @@ class UserManager @Inject constructor(
         runBlocking { setCurrentUser(userId) }
     }
 
-    /**
-     * This sets the primary user of the application.
-     */
-    @Deprecated(
-        "Use user Id",
-        ReplaceWith("setCurrentUser(userId)"),
-        DeprecationLevel.ERROR
-    )
-    fun setUsernameAndReload(username: String) {
-        unsupported
-    }
-
     fun increaseIncorrectPinAttempt() {
         val secureSharedPreferences = app.secureSharedPreferences
         var attempts = secureSharedPreferences.getInt(PREF_PIN_INCORRECT_ATTEMPTS, 0)
@@ -822,15 +768,6 @@ class UserManager @Inject constructor(
         }
     }
 
-    @Deprecated(
-        "Save with user Id",
-        ReplaceWith("saveMailboxPassword(userId, mailboxPassword)"),
-        DeprecationLevel.ERROR
-    )
-    fun saveMailboxPassword(mailboxPassword: ByteArray, userName: String = "") {
-        unsupported
-    }
-
     suspend fun saveKeySalt(userId: Id, keysSalt: String?) = withContext(dispatchers.Io) {
         val secureSharedPreferences = SecureSharedPreferences.getPrefsForUser(context, userId)
         secureSharedPreferences[PREF_KEY_SALT] = keysSalt
@@ -850,30 +787,11 @@ class UserManager @Inject constructor(
         }
     }
 
-    @Deprecated(
-        "Save with user Id",
-        ReplaceWith("saveKeySalt(userId, keySalt)"),
-        DeprecationLevel.ERROR
-    )
-    fun saveKeySalt(keysSalt: String?, userName: String = "") {
-        unsupported
-    }
-
     fun getMailboxPassword(userId: Id): ByteArray? =
         preferencesFor(userId).get<String>(PREF_MAILBOX_PASSWORD)?.toByteArray(Charsets.UTF_8)
 
     fun getCurrentUserMailboxPassword(): ByteArray? =
         withCurrentUserPreferences { it.get<String>(PREF_MAILBOX_PASSWORD)?.toByteArray(Charsets.UTF_8) }
-
-    @JvmOverloads
-    @Deprecated(
-        "Get with user Id or use the 'currentUser' variant",
-        ReplaceWith("getMailboxPassword(userId)"),
-        DeprecationLevel.ERROR
-    )
-    fun getMailboxPassword(userName: String = ""): ByteArray? {
-        unsupported
-    }
 
     fun accessTokenExists(): Boolean {
         val exists = tokenManager?.let {
@@ -933,7 +851,11 @@ class UserManager @Inject constructor(
         cachedLegacyUsers.getOrPut(userId) {
             loadLegacyUser(userId)
                 // Also save to cachedUsers
-                .also { cachedUsers[userId] = userMapper { it.toNewModel() } }
+                .also { legacyUser ->
+                    runCatching { userMapper { legacyUser.toNewUser() } }
+                        .onSuccess { cachedUsers[userId] = it }
+                        .onFailure(Timber::e)
+                }
         }
 
     @Deprecated(
@@ -942,17 +864,6 @@ class UserManager @Inject constructor(
     )
     fun getLegacyUserBlocking(userId: Id) = runBlocking {
         getLegacyUser(userId)
-    }
-
-    /**
-     * Use this method to get User's settings for other users than currently active.
-     *
-     * @return [User] object for given username, might have empty values if user was not saved before
-     */
-    @Synchronized
-    @Deprecated("Get by user Id", ReplaceWith("getLegacyUser(userId)"), DeprecationLevel.ERROR)
-    fun getUser(username: String): User {
-        unsupported
     }
 
     /**
@@ -969,15 +880,6 @@ class UserManager @Inject constructor(
     @Deprecated("Use suspend function", ReplaceWith("canConnectAnotherAccount"))
     fun canConnectAnotherAccountBlocking(): Boolean =
         runBlocking { canConnectAnotherAccount() }
-
-    @Deprecated(
-        "Use suspend function or blocking one where not possible",
-        ReplaceWith("canConnectAnotherAccount"),
-        DeprecationLevel.ERROR
-    )
-    fun canConnectAccount(): Boolean {
-        unsupported
-    }
 
     suspend fun getTokenManager(userId: Id): TokenManager {
         val tokenManager = TokenManager.getInstance(context, userId)
@@ -997,11 +899,6 @@ class UserManager @Inject constructor(
     )
     fun getTokenManagerBlocking(userId: Id) = runBlocking {
         getTokenManager(userId)
-    }
-
-    @Deprecated("Use user Id", ReplaceWith("getTokenManager(userId)"), DeprecationLevel.ERROR)
-    fun getTokenManager(username: String): TokenManager? {
-        unsupported
     }
 
     fun canShowStorageLimitWarning(): Boolean =
@@ -1108,13 +1005,8 @@ class UserManager @Inject constructor(
             userSettings = UserSettings.load(preferences)
             snoozeSettings = SnoozeSettings.load(preferences)
             // Reload autoLockPINPeriod
-            user.autoLockPINPeriod
+            getLegacyUser(userId).autoLockPINPeriod
         }
-    }
-
-    @Deprecated("Use with User Id", ReplaceWith("loadSettings(userId)"), DeprecationLevel.ERROR)
-    private fun loadSettings(username: String) {
-        unsupported
     }
 
     fun didReachLabelsThreshold(numberOfLabels: Int): Boolean = getMaxLabelsAllowed() < numberOfLabels

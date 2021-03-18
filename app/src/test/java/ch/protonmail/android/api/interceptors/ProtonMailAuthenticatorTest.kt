@@ -100,7 +100,7 @@ class ProtonMailAuthenticatorTest {
             appContextMock.app.defaultSharedPreferences
         } returns prefsMock
 
-        every { appContextMock.app.notifyLoggedOut(TEST_USERNAME) } just runs
+        every { appContextMock.app.notifyLoggedOut(TEST_ID) } just runs
     }
 
     @Test
