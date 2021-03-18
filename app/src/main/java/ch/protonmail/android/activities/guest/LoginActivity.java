@@ -415,7 +415,7 @@ public class LoginActivity extends BaseLoginActivity {
                     app.resetLoginInfoEvent();
                     return null;
                 }, () -> {
-                    userManager.logoutLastActiveAccount();
+                    userManager.logoutLastActiveAccountBlocking();
                     UiUtil.hideKeyboard(LoginActivity.this);
                     app.resetLoginInfoEvent();
                     return null;

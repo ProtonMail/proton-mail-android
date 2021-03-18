@@ -153,21 +153,27 @@ public class AppUtil {
         return file;
     }
 
+    @Deprecated // Use ClearUserData use case
     public static void deleteDatabases(Context context, Id userId) {
         deleteDatabases(context, userId, null, true);
     }
 
+    @Deprecated // Use ClearUserData use case
     public static void deleteDatabases(Context context, Id userId, boolean clearContacts) {
         deleteDatabases(context, userId, null, clearContacts);
     }
 
+    @Deprecated // Use ClearUserData use case
     public static void deleteDatabases(Context context, Id userId, IDBClearDone clearDoneListener) {
         deleteDatabases(context, userId, clearDoneListener, true);
     }
 
+    @Deprecated // Use ClearUserData use case
     private static void deleteDatabases(Context context, Id userId, IDBClearDone clearDoneListener, boolean clearContacts) {
         try {
             clearStorage(
+                    context,
+                    userId,
                     ContactDatabase.Companion.getInstance(context, userId).getDao(),
                     MessageDatabase.Companion.getInstance(context, userId).getDao(),
                     MessageDatabase.Companion.getSearchDatabase(context, userId).getDao(),
@@ -301,7 +307,10 @@ public class AppUtil {
         }.execute();
     }
 
+    @Deprecated // Use ClearUserData use case
     public static void clearStorage(
+            final Context context,
+            final Id userId,
             final ContactDao contactDao,
             final MessageDao messageDao,
             final MessageDao searchDatabase,
@@ -311,11 +320,25 @@ public class AppUtil {
             final PendingActionDao pendingActionDao,
             final boolean clearContacts
     ) {
-        clearStorage(contactDao, messageDao, searchDatabase, notificationDao, counterDao,
-                attachmentMetadataDao, pendingActionDao, null, clearContacts);
+        clearStorage(
+                context,
+                userId,
+                contactDao,
+                messageDao,
+                searchDatabase,
+                notificationDao,
+                counterDao,
+                attachmentMetadataDao,
+                pendingActionDao,
+                null,
+                clearContacts
+        );
     }
 
+    @Deprecated // Use ClearUserData use case
     private static void clearStorage(
+            final Context context,
+            final Id userId,
             final ContactDao contactDao,
             final MessageDao messageDao,
             final MessageDao searchDatabase,
@@ -330,6 +353,7 @@ public class AppUtil {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
+                AttachmentClearingService.startClearUpImmediatelyService(context, userId);
                 pendingActionDao.clearPendingSendCache();
                 pendingActionDao.clearPendingUploadCache();
                 if (clearContacts) {
@@ -357,7 +381,6 @@ public class AppUtil {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                AttachmentClearingService.startClearUpImmediatelyService();
                 if (clearDone != null) {
                     clearDone.onDatabaseClearingCompleted();
                 }
@@ -401,15 +424,6 @@ public class AppUtil {
             editor.putString(PREF_PIN, mailboxPinBackup);
         }
         editor.apply();
-    }
-
-    /**
-     * Deletes user's Secure Shared Preferences and preserves some important values.
-     */
-    @Deprecated
-    @kotlin.Deprecated(message = "Use with SharedPreferences directly")
-    public static void deleteSecurePrefs(@NonNull String username, boolean deletePin) {
-        throw new UnsupportedOperationException("Use with SharedPreferences directly");
     }
 
     // TODO: Rewrite with coroutines after the whole AppUtil file is converted to Kotlin

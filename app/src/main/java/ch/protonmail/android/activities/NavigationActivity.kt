@@ -87,15 +87,6 @@ import ch.protonmail.android.api.models.User as OldUser
 // region constants
 const val EXTRA_FIRST_LOGIN = "extra.first.login"
 const val EXTRA_HAS_SWITCHED_USER = "extra.has.switched.user"
-@Deprecated(
-    "Use 'EXTRA_SWITCHED_TO_USER_ID'",
-    ReplaceWith(
-        "EXTRA_SWITCHED_TO_USER_ID",
-        "ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER_ID"
-    ),
-    DeprecationLevel.ERROR
-)
-const val EXTRA_SWITCHED_TO_USER = "EXTRA_SWITCHED_TO_USER"
 const val EXTRA_SWITCHED_TO_USER_ID = "extra.switched.to.user.id"
 const val EXTRA_LOGOUT = "extra.logout"
 
@@ -501,7 +492,7 @@ abstract class NavigationActivity :
                             it.setCancelable(false)
                             it.show()
                         }
-                    userManager.logoutLastActiveAccount()
+                    userManager.logoutLastActiveAccountBlocking()
                     onLogout()
                 } else {
                     userManager.logoutBlocking(currentUserId)

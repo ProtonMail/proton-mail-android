@@ -417,6 +417,8 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 showToast(R.string.processing_request, gravity = Gravity.CENTER)
                 if (canClick.getAndSet(false)) {
                     AppUtil.clearStorage(
+                        applicationContext,
+                        userManager.requireCurrentUserId(),
                         contactDao,
                         messageDao,
                         searchDatabase,

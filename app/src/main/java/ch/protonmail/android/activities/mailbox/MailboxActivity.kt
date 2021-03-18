@@ -580,7 +580,8 @@ class MailboxActivity :
     }
 
     override fun onSwitchedAccounts() {
-        val currentUserId = userManager.requireCurrentUserId()
+        val currentUserId = userManager.currentUserId
+            ?: return
 
         mJobManager.start()
         counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()

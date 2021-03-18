@@ -46,6 +46,7 @@ import ch.protonmail.android.data.local.model.AttachmentMetadata;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.domain.entity.Id;
 import dagger.hilt.android.AndroidEntryPoint;
+import timber.log.Timber;
 
 @AndroidEntryPoint
 public class AttachmentClearingService extends ProtonJobIntentService {
@@ -59,21 +60,20 @@ public class AttachmentClearingService extends ProtonJobIntentService {
     UserManager userManager;
 
     @Inject
-    MessageDetailsRepository messageDetailsRepository;
+    MessageDetailsRepository.AssistedFactory messageDetailsRepositoryFactory;
 
+    private MessageDetailsRepository messageDetailsRepository;
     private AttachmentMetadataDao attachmentMetadataDao;
 
     public AttachmentClearingService() {
         super();
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Id userId = userManager.requireCurrentUserId();
-        attachmentMetadataDao = AttachmentMetadataDatabase.Companion
-                .getInstance(this, userId)
-                .getDao();
+    public static void startClearUpImmediatelyService(Context context, Id userId) {
+        final Intent intent = new Intent(context, AttachmentClearingService.class)
+                .putExtra(EXTRA_USER_ID, userId.getS())
+                .setAction(ACTION_CLEAR_CACHE_IMMEDIATELY);
+        enqueueWork(context, AttachmentClearingService.class, Constants.JOB_INTENT_SERVICE_ID_ATTACHMENT_CLEARING, intent);
     }
 
     public static void startClearUpImmediatelyService() {
@@ -85,47 +85,57 @@ public class AttachmentClearingService extends ProtonJobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-            if (!userManager.isLoggedIn()) {
+        Id userId;
+        String userIdParam = intent.getStringExtra(EXTRA_USER_ID);
+        if (userIdParam != null)
+            userId = new Id(userIdParam);
+        else
+            userId = userManager.getCurrentUserId();
+        if (userId == null) {
+            Timber.w("No user id provided and no user currently logged in");
+            return;
+        }
+
+        messageDetailsRepository = messageDetailsRepositoryFactory.create(userId);
+        attachmentMetadataDao = AttachmentMetadataDatabase.Companion
+                .getInstance(getApplicationContext(), userId)
+                .getDao();
+
+        String action = intent.getAction();
+        User user = userManager.getLegacyUserBlocking(userId);
+        if (ACTION_REGULAR_CHECK.equals(action)) {
+            long currentEmbeddedImagesSize = attachmentMetadataDao.getAllAttachmentsSizeUsedBlocking();
+            long maxSize = user.getMaxAllowedAttachmentSpace();
+            if (maxSize == -1) {
                 return;
             }
-            String action = intent.getAction();
-            User user = userManager.getUser();
-            if (ACTION_REGULAR_CHECK.equals(action)) {
-                long currentEmbeddedImagesSize = attachmentMetadataDao.getAllAttachmentsSizeUsedBlocking();
-                long maxSize = user.getMaxAllowedAttachmentSpace();
-                if (maxSize == -1) {
-                    return;
-                }
-                maxSize = maxSize * 1000 * 1000; // in bytes
-                List<Message> leastAccessMessages = messageDetailsRepository.findAllMessageByLastMessageAccessTimeBlocking(0);
-                if (maxSize > currentEmbeddedImagesSize) {
-                    return; // no need to delete attachments
-                }
-                long neededSpaceToFreeUp = (currentEmbeddedImagesSize - maxSize) + (long) (maxSize * Constants.MIN_LOCAL_STORAGE_CLEARING_SIZE); // we try to reduce the space by 20%
-                long messagesFreedSize = doTheCleanMessages(leastAccessMessages, neededSpaceToFreeUp / 2);
-                long embeddedImagesFreedSize = doTheCleanEmbeddedImages(attachmentMetadataDao,
-                        neededSpaceToFreeUp / 2);
-                if (embeddedImagesFreedSize + messagesFreedSize < neededSpaceToFreeUp) {
-                    if (embeddedImagesFreedSize < neededSpaceToFreeUp / 2) {
-                        doTheCleanMessages(leastAccessMessages, (neededSpaceToFreeUp / 2) - embeddedImagesFreedSize);
-                    } else if (messagesFreedSize < neededSpaceToFreeUp / 2) {
-                        doTheCleanEmbeddedImages(attachmentMetadataDao,
-                                (neededSpaceToFreeUp / 2) - messagesFreedSize);
-                    }
-                }
-            } else if (ACTION_CLEAR_CACHE_IMMEDIATELY.equals(action)) {
-                clearStorage();
-            } else if (ACTION_CLEAR_CACHE_IMMEDIATELY_DELETE_TABLES.equals(action)) {
-                Id userId = new Id(intent.getStringExtra(EXTRA_USER_ID));
-                clearStorage();
-                Context context = this;
-                ContactDatabase.Companion.deleteDatabase(context, userId);
-                MessageDatabase.Companion.deleteDatabase(context, userId);
-                NotificationDatabase.Companion.deleteDatabase(context, userId);
-                CounterDatabase.Companion.deleteDatabase(context, userId);
-                AttachmentMetadataDatabase.Companion.deleteDatabase(context, userId);
-                PendingActionDatabase.Companion.deleteDatabase(context, userId);
+            maxSize = maxSize * 1000 * 1000; // in bytes
+            List<Message> leastAccessMessages = messageDetailsRepository.findAllMessageByLastMessageAccessTimeBlocking(0);
+            if (maxSize > currentEmbeddedImagesSize) {
+                return; // no need to delete attachments
             }
+            long neededSpaceToFreeUp = (currentEmbeddedImagesSize - maxSize) + (long) (maxSize * Constants.MIN_LOCAL_STORAGE_CLEARING_SIZE); // we try to reduce the space by 20%
+            long messagesFreedSize = doTheCleanMessages(leastAccessMessages, neededSpaceToFreeUp / 2);
+            long embeddedImagesFreedSize = doTheCleanEmbeddedImages(neededSpaceToFreeUp / 2);
+            if (embeddedImagesFreedSize + messagesFreedSize < neededSpaceToFreeUp) {
+                if (embeddedImagesFreedSize < neededSpaceToFreeUp / 2) {
+                    doTheCleanMessages(leastAccessMessages, (neededSpaceToFreeUp / 2) - embeddedImagesFreedSize);
+                } else if (messagesFreedSize < neededSpaceToFreeUp / 2) {
+                    doTheCleanEmbeddedImages((neededSpaceToFreeUp / 2) - messagesFreedSize);
+                }
+            }
+        } else if (ACTION_CLEAR_CACHE_IMMEDIATELY.equals(action)) {
+            clearStorage();
+        } else if (ACTION_CLEAR_CACHE_IMMEDIATELY_DELETE_TABLES.equals(action)) {
+            clearStorage();
+            Context context = this;
+            ContactDatabase.Companion.deleteDatabase(context, userId);
+            MessageDatabase.Companion.deleteDatabase(context, userId);
+            NotificationDatabase.Companion.deleteDatabase(context, userId);
+            CounterDatabase.Companion.deleteDatabase(context, userId);
+            AttachmentMetadataDatabase.Companion.deleteDatabase(context, userId);
+            PendingActionDatabase.Companion.deleteDatabase(context, userId);
+        }
     }
 
     private void clearStorage() {
@@ -160,11 +170,9 @@ public class AttachmentClearingService extends ProtonJobIntentService {
         return messagesFreedSize;
     }
 
-    private long doTheCleanEmbeddedImages(AttachmentMetadataDao attachmentMetadataDao,
-                                          long neededSpaceToFreeUp) {
+    private long doTheCleanEmbeddedImages(long neededSpaceToFreeUp) {
         long embeddedImagesFreedSize = 0;
-        List<AttachmentMetadata> attachmentForDeletion = getAttachmentListForDeletion(
-                attachmentMetadataDao, neededSpaceToFreeUp);
+        List<AttachmentMetadata> attachmentForDeletion = getAttachmentListForDeletion(neededSpaceToFreeUp);
         // delete the attachments
         for (AttachmentMetadata attachmentMetadata : attachmentForDeletion) {
             File file = new File(getApplicationContext().getFilesDir() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS, attachmentMetadata.getFolderLocation());
@@ -177,8 +185,7 @@ public class AttachmentClearingService extends ProtonJobIntentService {
         return embeddedImagesFreedSize;
     }
     //TODO move database to receiver after Kotlin
-    private List<AttachmentMetadata> getAttachmentListForDeletion(
-            AttachmentMetadataDao attachmentMetadataDao, long neededSpaceToFree) {
+    private List<AttachmentMetadata> getAttachmentListForDeletion(long neededSpaceToFree) {
         List<AttachmentMetadata> attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsMetadata();
         List<AttachmentMetadata> attachmentMetadataListForDeletion = new ArrayList<>();
         long size = 0;

@@ -331,7 +331,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             if (!isValid) {
                 boolean logout = data.getBooleanExtra(EXTRA_LOGOUT, false);
                 if (logout) {
-                    mUserManager.logoutLastActiveAccount();
+                    mUserManager.logoutLastActiveAccountBlocking();
                     AppUtil.postEventOnUi(new LogoutEvent(Status.SUCCESS));
                 } else {
                     validationCanceled = true;

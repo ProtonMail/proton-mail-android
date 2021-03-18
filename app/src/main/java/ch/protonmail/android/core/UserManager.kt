@@ -50,6 +50,7 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.FindUserIdForUsername
 import ch.protonmail.android.usecase.LoadLegacyUser
 import ch.protonmail.android.usecase.LoadUser
+import ch.protonmail.android.usecase.delete.ClearUserData
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
@@ -67,7 +68,6 @@ import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.coroutines.suspendCoroutine
 import kotlin.time.minutes
 import ch.protonmail.android.domain.entity.user.User as NewUser
 
@@ -107,6 +107,7 @@ private const val PREF_ENGAGEMENT_SHOWN = "engagement_shown"
 class UserManager @Inject constructor(
     private val context: Context,
     private val accountManager: AccountManager,
+    private val clearUserData: ClearUserData,
     private val loadUser: LoadUser,
     private val loadLegacyUser: LoadLegacyUser,
     private val userMapper: UserBridgeMapper,
@@ -558,13 +559,13 @@ class UserManager @Inject constructor(
 
     suspend fun logout(userId: Id) = withContext(dispatchers.Io) {
         val nextLoggedIn = getNextLoggedInUser()
-            ?: // fallback to "last user logout"
-            return@withContext logoutLastActiveAccount()
+            // fallback to "last user logout"
+            ?: return@withContext logoutLastActiveAccount()
         LogoutService.startLogout(context, userId, false)
         accountManager.setLoggedOut(userId)
         AppUtil.deleteSecurePrefs(preferencesFor(userId), false)
         launch {
-            deleteDatabases(context, userId)
+            clearUserData(userId)
         }
         setCurrentUser(nextLoggedIn)
         app.eventManager.clearState(userId)
@@ -575,24 +576,18 @@ class UserManager @Inject constructor(
         runBlocking { logout(userId) }
     }
 
-    private suspend fun deleteDatabases(context: Context, userId: Id) = suspendCoroutine<Unit> {
-        // TODO: this currently terminates only of the deletions is successful, the method must accept also a failure
-        //  callback
-        AppUtil.deleteDatabases(context, userId) { it.resumeWith(Result.success(Unit)) }
-    }
-
     /**
      * Log out the only active ( logged in ) user
      */
-    @JvmOverloads
-    fun logoutLastActiveAccount(clearDoneListener: (() -> Unit)? = null) {
+    suspend fun logoutLastActiveAccount() {
+        val userId = requireCurrentUserId()
+        saveBackupSettings()
+        clearUserData(userId)
         isLoggedIn = false
         currentUserLoginState = LOGIN_STATE_NOT_INITIALIZED
-        AppUtil.deleteDatabases(app.applicationContext, currentUserId, clearDoneListener)
-        saveBackupSettings()
         // Passing FCM token already here to prevent it being deleted from shared prefs before worker starts
-        val fcmTokenManager = fcmTokenManagerFactory.create(preferencesFor(requireCurrentUserId()))
-        LogoutService.startLogout(context, requireCurrentUserId(), true, fcmTokenManager.getTokenBlocking()?.value)
+        val fcmTokenManager = fcmTokenManagerFactory.create(preferencesFor(userId))
+        LogoutService.startLogout(context, userId, true, fcmTokenManager.getTokenBlocking()?.value)
         setRememberMailboxLogin(false)
         firstLoginRemove()
         resetReferencesBlocking()
@@ -600,6 +595,11 @@ class UserManager @Inject constructor(
         AppUtil.deletePrefs()
         AppUtil.deleteBackupPrefs()
         AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
+    }
+
+    @Deprecated("Use suspend function", ReplaceWith("logoutLastActiveAccount()"))
+    fun logoutLastActiveAccountBlocking() {
+        runBlocking { logoutLastActiveAccount() }
     }
 
     suspend fun logoutOffline(userId: Id) = withContext(dispatchers.Io) {
@@ -621,14 +621,14 @@ class UserManager @Inject constructor(
             firstLoginRemove()
             resetReferences()
             getCurrentUserTokenManager()?.clear()
-            deleteDatabases(app, userId)
+            clearUserData(userId)
             AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
             TokenManager.clearAllInstances()
         } else {
             val oldUser = requireCurrentUser()
             accountManager.setLoggedOut(userId)
             AppUtil.deleteSecurePrefs(preferencesFor(userId), false)
-            deleteDatabases(app, userId)
+            clearUserData(userId)
             setCurrentUser(nextUserId)
             val nextUser = loadUser(nextUserId)
             val event = SwitchUserEvent(from = oldUser.id to oldUser.name, to = nextUser.id to nextUser.name)
@@ -655,7 +655,7 @@ class UserManager @Inject constructor(
     }
 
     private suspend fun saveCurrentUserBackupSettings() = withContext(dispatchers.Io) {
-        getCurrentLegacyUser()?.apply{
+        getCurrentLegacyUser()?.apply {
             saveNotificationSettingsBackup()
             saveAutoLogoutBackup()
             saveAutoLockPINPeriodBackup()

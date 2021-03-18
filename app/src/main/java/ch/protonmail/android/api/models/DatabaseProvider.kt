@@ -19,6 +19,8 @@
 package ch.protonmail.android.api.models
 
 import android.content.Context
+import ch.protonmail.android.data.local.AttachmentMetadataDao
+import ch.protonmail.android.data.local.AttachmentMetadataDatabase
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.CounterDao
@@ -43,42 +45,34 @@ class DatabaseProvider @Inject constructor(
     private val context: Context
 ) {
 
-    // Contact
-    fun provideContactDatabase(userId: Id): ContactDatabase =
-        ContactDatabase.getInstance(context, userId)
+    // Attachment metadata
+    fun provideAttachmentMetadataDao(userId: Id): AttachmentMetadataDao =
+        AttachmentMetadataDatabase.getInstance(context, userId).getDao()
 
+    // Contact
     fun provideContactDao(userId: Id): ContactDao =
-        provideContactDatabase(userId).getDao()
+        ContactDatabase.getInstance(context, userId).getDao()
 
     // Counter
     fun provideCounterDao(userId: Id): CounterDao =
         CounterDatabase.getInstance(context, userId).getDao()
 
     // Message
-    fun provideMessageDatabase(userId: Id): MessageDatabase =
-        MessageDatabase.getInstance(context, userId)
-
     fun provideMessageDao(userId: Id): MessageDao =
-        provideMessageDatabase(userId).getDao()
+        MessageDatabase.getInstance(context, userId).getDao()
+
+    fun provideMessageSearchDao(userId: Id): MessageDao =
+        MessageDatabase.getSearchDatabase(context, userId).getDao()
 
     // Notification
-    fun provideNotificationDatabase(userId: Id): NotificationDatabase =
-        NotificationDatabase.getInstance(context, userId)
+    fun provideNotificationDao(userId: Id): NotificationDao =
+        NotificationDatabase.getInstance(context, userId).getDao()
 
-    fun provideNotificationsDao(userId: Id): NotificationDao =
-        provideNotificationDatabase(userId).getDao()
-
-    // Pending Action
-    fun providePendingActionDatabase(userId: Id): PendingActionDatabase =
-        PendingActionDatabase.getInstance(context, userId)
-
+    // Pending action
     fun providePendingActionDao(userId: Id): PendingActionDao =
-        providePendingActionDatabase(userId).getDao()
+        PendingActionDatabase.getInstance(context, userId).getDao()
 
     // Sending failed notification
-    fun provideSendingFailedNotificationsDatabase(userId: Id): SendingFailedNotificationDatabase =
-        SendingFailedNotificationDatabase.getInstance(context, userId)
-
-    fun provideSendingFailedNotificationsDao(userId: Id): SendingFailedNotificationDao =
-        provideSendingFailedNotificationsDatabase(userId).getDao()
+    fun provideSendingFailedNotificationDao(userId: Id): SendingFailedNotificationDao =
+        SendingFailedNotificationDatabase.getInstance(context, userId).getDao()
 }

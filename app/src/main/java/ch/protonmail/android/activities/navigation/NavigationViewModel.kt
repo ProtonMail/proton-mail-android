@@ -72,7 +72,7 @@ class NavigationViewModel @ViewModelInject constructor(
     fun notificationsCounts() {
         viewModelScope.launch(dispatchers.Io) {
             val notificationsCounters = accountManager.allLoggedIn()
-                .map { it to databaseProvider.provideNotificationsDao(it).count() }
+                .map { it to databaseProvider.provideNotificationDao(it).count() }
                 .toMap()
 
             notificationsCounterLiveData.postValue(notificationsCounters)

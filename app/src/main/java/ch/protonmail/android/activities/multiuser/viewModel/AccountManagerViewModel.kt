@@ -70,9 +70,7 @@ class AccountManagerViewModel @ViewModelInject constructor(
                 remove(userId, notify = false)
             }
 
-            userManager.logoutLastActiveAccount {
-                _removedAllAccountsResult.value = true
-            }
+            userManager.logoutLastActiveAccount()
         }
     }
 }

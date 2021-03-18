@@ -50,6 +50,8 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.extensions.asyncMap
 import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.JobManager
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.CoroutineDispatcher
@@ -73,15 +75,36 @@ private const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
 private const val DEPRECATION_MESSAGE = "We should strive towards moving methods out of this repository and stopping using it."
 
 class MessageDetailsRepository @Inject constructor(
+    private val applicationContext: Context,
     private val jobManager: JobManager,
     private val api: ProtonMailApiManager,
     userManager: UserManager,
     @Named("messages_search") var searchDatabaseDao: MessageDao,
     private var pendingActionDao: PendingActionDao,
-    private val applicationContext: Context,
     val databaseProvider: DatabaseProvider,
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer
 ) {
+
+    @AssistedInject
+    constructor(
+        context: Context,
+        jobManager: JobManager,
+        api: ProtonMailApiManager,
+        userManager: UserManager,
+        @Named("messages_search") searchDatabaseDao: MessageDao,
+        databaseProvider: DatabaseProvider,
+        attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
+        @Assisted userId: Id
+    ) : this(
+        applicationContext = context,
+        jobManager = jobManager,
+        api = api,
+        userManager = userManager,
+        searchDatabaseDao = searchDatabaseDao,
+        pendingActionDao = databaseProvider.providePendingActionDao(userId),
+        databaseProvider = databaseProvider,
+        attachmentsWorker = attachmentsWorker
+    )
 
     private var messagesDao: MessageDao = databaseProvider.provideMessageDao(userManager.requireCurrentUserId())
 
@@ -538,4 +561,10 @@ class MessageDetailsRepository @Inject constructor(
 
     fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>> =
         pendingActionDao.findAllPendingUploadsAsync()
+
+    @AssistedInject.Factory
+    interface AssistedFactory {
+
+        fun create(userId: Id): MessageDetailsRepository
+    }
 }
