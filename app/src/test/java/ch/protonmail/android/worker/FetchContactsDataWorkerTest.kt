@@ -35,6 +35,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.android.workmanager.toWorkData
 import kotlin.test.BeforeTest
 import kotlin.test.Test

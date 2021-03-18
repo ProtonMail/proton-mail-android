@@ -45,8 +45,8 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     override fun messages(location: Int): MessagesResponse? =
         ParseUtils.parse(service.messages(location, "time", "", "").execute())
 
-    override fun messages(location: Int, userIdTag: UserIdTag): MessagesResponse? =
-        ParseUtils.parse(service.messages(location, "time", "", "", userIdTag))
+    override fun messages(location: Int, userIdTag: UserIdTag): MessagesResponse =
+        service.messages(location, "time", "", "", userIdTag)
 
     override fun fetchMessages(location: Int, time: Long): MessagesResponse? {
         return if (Constants.MessageLocationType.fromInt(location) == Constants.MessageLocationType.STARRED) {
@@ -92,7 +92,7 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     @WorkerThread
     @Throws(Exception::class)
     override fun fetchMessageDetailsBlocking(messageId: String): MessageResponse =
-        ParseUtils.parse(service.fetchMessageDetailsBlocking(messageId))
+        service.fetchMessageDetailsBlocking(messageId)
 
     override suspend fun fetchMessageDetails(messageId: String, userIdTag: UserIdTag): MessageResponse =
         service.fetchMessageDetails(messageId, userIdTag)
@@ -100,7 +100,7 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     @WorkerThread
     override fun fetchMessageDetailsBlocking(messageId: String, userIdTag: UserIdTag): MessageResponse? =
         try {
-            ParseUtils.parse(service.fetchMessageDetailsBlocking(messageId, userIdTag))
+            service.fetchMessageDetailsBlocking(messageId, userIdTag)
         } catch (exc: Exception) {
             Timber.e(exc, "An exception was thrown while fetching message details")
             null

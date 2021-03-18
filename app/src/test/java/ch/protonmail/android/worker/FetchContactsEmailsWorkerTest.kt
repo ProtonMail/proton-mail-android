@@ -38,7 +38,7 @@ class FetchContactsEmailsWorkerTest {
 
     private val parameters: WorkerParameters = mockk(relaxed = true)
 
-    private val userManager: UserManager = mockk()
+    private val userManager: UserManager = mockk(relaxed = true)
 
     private val contactEmailsManager: ContactEmailsManager = mockk()
 

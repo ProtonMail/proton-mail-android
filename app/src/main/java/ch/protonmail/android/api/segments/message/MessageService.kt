@@ -78,7 +78,7 @@ interface MessageService {
         @Query("Begin") begin: String,
         @Query("End") end: String,
         @Tag userIdTag: UserIdTag
-    ): Call<MessagesResponse>
+    ): MessagesResponse
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
@@ -144,7 +144,7 @@ interface MessageService {
 
     @GET("mail/v4/messages/{messageId}")
     @Headers(ACCEPT_HEADER_V1)
-    fun fetchMessageDetailsBlocking(@Path("messageId") messageId: String): Call<MessageResponse>
+    fun fetchMessageDetailsBlocking(@Path("messageId") messageId: String): MessageResponse
 
     @GET("mail/v4/messages/{messageId}")
     @Headers(ACCEPT_HEADER_V1)

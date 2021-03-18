@@ -21,17 +21,17 @@ package ch.protonmail.android.utils.notifier
 
 import android.content.Context
 import ch.protonmail.android.R
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.servers.notification.INotificationServer
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.extensions.showToast
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.just
+import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
@@ -42,17 +42,28 @@ import kotlin.test.Test
 
 class AndroidUserNotifierTest : CoroutinesTest {
 
-    @RelaxedMockK
-    private lateinit var notificationServer: INotificationServer
+    private val testUserId = Id("id")
+    private val testUserName = Name("name")
 
-    @MockK
-    private lateinit var context: Context
+    private val notificationServer: NotificationServer = mockk(relaxed = true)
 
-    @MockK
-    private lateinit var userManager: UserManager
+    private val context: Context = mockk()
 
-    @InjectMockKs
-    private lateinit var userNotifier: AndroidUserNotifier
+    private val userManager: UserManager = mockk {
+        every { currentUserId } returns testUserId
+        every { requireCurrentUserId() } returns testUserId
+        every { requireCurrentUserBlocking() } returns mockk {
+            every { id } returns testUserId
+            every { name } returns testUserName
+        }
+    }
+
+    private val userNotifier = AndroidUserNotifier(
+        notificationServer,
+        userManager,
+        context,
+        dispatchers
+    )
 
     @BeforeTest
     fun setUp() {
@@ -63,23 +74,21 @@ class AndroidUserNotifierTest : CoroutinesTest {
     fun userNotifierCallsNotificationServerToDisplayErrorInPersistentNotification() {
         val errorMessage = "Failed uploading attachments"
         val subject = "Message subject"
-        every { userManager.username } returns "loggedInUsername"
 
         userNotifier.showPersistentError(errorMessage, subject)
 
-        verify { notificationServer.notifySaveDraftError(errorMessage, subject, "loggedInUsername") }
+        verify { notificationServer.notifySaveDraftError(testUserId, errorMessage, subject, testUserName) }
     }
 
     @Test
     fun userNotifierCallsNotificationServerToDisplaySendMessageErrorInPersistentNotification() {
         val errorMessage = "Failed sending message"
         val subject = "A message subject"
-        every { userManager.username } returns "loggedInUsername"
 
         userNotifier.showSendMessageError(errorMessage, subject)
 
         val errorAndSubject = "\"$subject\" - $errorMessage"
-        verify { notificationServer.notifySingleErrorSendingMessage(errorAndSubject, "loggedInUsername") }
+        verify { notificationServer.notifySingleErrorSendingMessage(testUserId, testUserName, errorAndSubject) }
     }
 
     @Test
@@ -105,13 +114,13 @@ class AndroidUserNotifierTest : CoroutinesTest {
             this.isInline = isMessageInline
             this.addressID = messageAddressId
         }
-        every { userManager.username } returns "loggedInUsername"
 
         userNotifier.showHumanVerificationNeeded(message)
 
         verify {
             notificationServer.notifyVerificationNeeded(
-                "loggedInUsername",
+                testUserId,
+                testUserName,
                 subject,
                 messageId,
                 isMessageInline,

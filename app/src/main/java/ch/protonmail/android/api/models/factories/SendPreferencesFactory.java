@@ -34,8 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Named;
-
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.ContactEncryptedData;
 import ch.protonmail.android.api.models.MailSettings;
@@ -52,12 +50,10 @@ import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse;
-import ch.protonmail.android.di.CurrentUserId;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.domain.entity.user.Address;
 import ch.protonmail.android.domain.entity.user.AddressKey;
 import ch.protonmail.android.domain.entity.user.Addresses;
-import ch.protonmail.android.domain.entity.user.User;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.VCardUtil;
 import ch.protonmail.android.utils.crypto.KeyInformation;
@@ -86,7 +82,7 @@ public class SendPreferencesFactory {
         this.mApi = api;
         this.mUserManager = userManager;
         this.userId = userId;
-        this.mailSettings = userManager.getMailSettings(userId);
+        this.mailSettings = userManager.getMailSettingsBlocking(userId);
         this.crypto = Crypto.forUser(userManager, userId);
 		this.contactDao = ContactDatabase.Companion.getInstance(context, userId).getDao();
 	}

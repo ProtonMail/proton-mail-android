@@ -18,6 +18,8 @@
  */
 package ch.protonmail.android.jobs.contacts;
 
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_RECIPIENT_NOT_FOUND;
+
 import com.birbit.android.jobqueue.Params;
 
 import java.util.HashMap;
@@ -25,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import ch.protonmail.android.api.exceptions.ApiException;
-import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.factories.SendPreferencesFactory;
@@ -36,8 +37,6 @@ import ch.protonmail.android.jobs.Priority;
 import ch.protonmail.android.jobs.ProtonMailBaseJob;
 import ch.protonmail.android.utils.AppUtil;
 import timber.log.Timber;
-
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_RECIPIENT_NOT_FOUND;
 
 public class GetSendPreferenceJob extends ProtonMailBaseJob {
 
@@ -58,8 +57,12 @@ public class GetSendPreferenceJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        MailSettings mailSettings = getUserManager().getCurrentUserMailSettingsBlocking();
-        SendPreferencesFactory factory = new SendPreferencesFactory(getApi(), getUserManager(), getUserManager().requireCurrentUserId(), mailSettings, contactDao);
+        SendPreferencesFactory factory = new SendPreferencesFactory(
+                getApplicationContext(),
+                getApi(),
+                getUserManager(),
+                getUserManager().requireCurrentUserId()
+        );
         Map<String, SendPreference> sendPreferenceMap = new HashMap<>();
         sendPreferenceMap.put(mEmails.get(0), null);
         try {

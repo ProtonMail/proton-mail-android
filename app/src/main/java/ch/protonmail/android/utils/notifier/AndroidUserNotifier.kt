@@ -23,8 +23,8 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import ch.protonmail.android.R
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.extensions.showToast
 import kotlinx.coroutines.withContext
@@ -51,7 +51,8 @@ class AndroidUserNotifier @Inject constructor(
 
     override fun showSendMessageError(errorMessage: String, messageSubject: String?) {
         val error = "\"$messageSubject\" - $errorMessage"
-        notificationServer.notifySingleErrorSendingMessage(error, userManager.username)
+        val user = userManager.requireCurrentUserBlocking()
+        notificationServer.notifySingleErrorSendingMessage(user.id, user.name, error)
     }
 
     override suspend fun showMessageSent() {
@@ -61,12 +62,14 @@ class AndroidUserNotifier @Inject constructor(
     }
 
     override fun showHumanVerificationNeeded(message: Message) {
+        val user = userManager.requireCurrentUserBlocking()
         notificationServer.notifyVerificationNeeded(
-            userManager.username,
-            message.subject,
-            message.messageId,
+            user.id,
+            user.name,
+            checkNotNull(message.subject) { "'subject' cannot be null" },
+            checkNotNull(message.messageId) { "'messageId' cannot be null" },
             message.isInline,
-            message.addressID
+            checkNotNull(message.addressID) { "'addressID' cannot be null" }
         )
     }
 

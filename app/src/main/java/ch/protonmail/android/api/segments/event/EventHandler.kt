@@ -59,6 +59,7 @@ import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.UserSettingsEvent
 import ch.protonmail.android.mapper.bridge.AddressBridgeMapper
+import ch.protonmail.android.mapper.bridge.UserBridgeMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
@@ -71,7 +72,7 @@ import com.google.gson.JsonSyntaxException
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.runBlocking
-import me.proton.core.domain.arch.map
+import me.proton.core.util.kotlin.invoke
 import timber.log.Timber
 import kotlin.math.max
 
@@ -89,6 +90,7 @@ class EventHandler @AssistedInject constructor(
     private val pendingActionDao: PendingActionDao,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val mapper: AddressBridgeMapper,
+    private val userMapper: UserBridgeMapper,
     @Assisted val userId: Id
 ) {
 
@@ -504,7 +506,7 @@ class EventHandler @AssistedInject constructor(
             }
         }
 
-        AddressKeyActivationWorker.runIfNeeded(workManager, addresses.map(mapper) { it.toNewModel() }, userId)
+        AddressKeyActivationWorker.runIfNeeded(workManager, userMapper { user.toNewUser() }.addresses, userId)
         user.setAddresses(addresses)
     }
 

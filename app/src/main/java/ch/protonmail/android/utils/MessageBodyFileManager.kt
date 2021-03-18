@@ -20,8 +20,8 @@
 package ch.protonmail.android.utils
 
 import android.content.Context
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants.DIR_MESSAGE_BODY_DOWNLOADS
+import ch.protonmail.android.data.local.model.Message
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject

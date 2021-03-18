@@ -30,7 +30,6 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.Addresses
@@ -46,7 +45,7 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import ch.protonmail.android.api.models.address.Address as OldAddress
 
-private const val KEY_INPUT_DATA_USER_ID = "KEY_INPUT_DATA_USER_ID"
+internal const val KEY_INPUT_DATA_USER_ID = "KEY_INPUT_DATA_USER_ID"
 private const val MAX_RETRY_COUNT = 3
 
 /**
@@ -68,7 +67,7 @@ class AddressKeyActivationWorker @WorkerInject constructor(
         val userId = Id(userIdString)
         val mailboxPassword = userManager.getMailboxPassword(userId) ?: return@withContext Result.failure()
 
-        Timber.v("AddressKeyActivationWorker started with username: $username")
+        Timber.v("AddressKeyActivationWorker started with user: ${userId.s}")
 
         val user = userManager.getUser(userId)
         val primaryKeys = user.addresses.addresses.values.map { it.keys.primaryKey }

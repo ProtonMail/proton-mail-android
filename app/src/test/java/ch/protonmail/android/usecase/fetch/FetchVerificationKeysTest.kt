@@ -22,82 +22,46 @@ package ch.protonmail.android.usecase.fetch
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.PublicKeyBody
 import ch.protonmail.android.api.models.PublicKeyResponse
-import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
-import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.NotBlankString
-import ch.protonmail.android.domain.entity.PgpField
-import ch.protonmail.android.domain.entity.user.AddressKey
-import ch.protonmail.android.domain.entity.user.AddressKeys
+import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.utils.crypto.KeyInformation
-import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
-import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class FetchVerificationKeysTest : CoroutinesTest {
 
-    @MockK
-    private lateinit var api: ProtonMailApiManager
-
-    @MockK
-    private lateinit var userManager: UserManager
-
-    @RelaxedMockK
-    private lateinit var userCrypto: UserCrypto
-
-    @MockK
-    private lateinit var contactDao: ContactDao
-
-    lateinit var useCase: FetchVerificationKeys
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-        val testUser = mockk<User> {
-            every { id } returns "id"
-            every { toNewUser() } returns mockk()
-            every { toNewUser().addresses } returns mockk()
-            val testAddresses = listOf(mockk<Address>())
-            val primaryKey = mockk<AddressKey> {
-                every { privateKey } returns PgpField.PrivateKey(NotBlankString("privateKey"))
-                every { buildBackEndFlags() } returns 0
-            }
-            val addressKeys = AddressKeys(
-                primaryKey = primaryKey,
-                keys = listOf(primaryKey)
-            )
-            val newAddresses = mockk<ch.protonmail.android.domain.entity.user.Address> {
-                every { email } returns EmailAddress("testemail@asd.com")
-                every { keys } returns addressKeys
-            }
-            val newTestAddresses = listOf(newAddresses)
-            every { toNewUser().addresses.addresses } returns mapOf(1 to newAddresses)
-            every { toNewUser().addresses.sorted() } returns newTestAddresses
-            every { getAddresses() } returns CopyOnWriteArrayList(testAddresses)
-        }
-        every { userManager.user } returns testUser
-        every { userManager.currentUserId } returns Id("id")
-        every { userManager.openPgp } returns mockk()
-        useCase = FetchVerificationKeys(api, userManager, userCrypto, contactDao, TestDispatcherProvider)
+    private val testUserId = Id("id")
+    private val testUser = mockk<User> {
+        every { id } returns testUserId
+        every { addresses } returns mockk(relaxed = true)
     }
+
+    private val api: ProtonMailApiManager = mockk()
+
+    private val userManager: UserManager = mockk {
+        coEvery { requireCurrentUser() } returns testUser
+        every { currentUserId } returns testUserId
+        every { requireCurrentUserId() } returns testUserId
+        every { openPgp } returns mockk()
+    }
+
+    private val userCrypto: UserCrypto = mockk(relaxed = true)
+
+    private val contactDao: ContactDao = mockk()
+
+    private val useCase = FetchVerificationKeys(api, userManager, userCrypto, contactDao, dispatchers)
 
     @Test
     fun verifyThatContactsAreFetchedCorrectlyFromRemoteApi() = runBlockingTest {

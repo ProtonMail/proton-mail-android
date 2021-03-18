@@ -32,7 +32,6 @@ import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Attachment
@@ -78,11 +77,10 @@ class MessageDetailsRepository @Inject constructor(
     private val applicationContext: Context,
     private val jobManager: JobManager,
     private val api: ProtonMailApiManager,
-    userManager: UserManager,
     private var messagesDao: MessageDao,
     @SearchMessageDaoQualifier var searchDatabaseDao: MessageDao,
     private var pendingActionDao: PendingActionDao,
-    val databaseProvider: DatabaseProvider,
+    private val databaseProvider: DatabaseProvider,
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer
 ) {
 
@@ -91,7 +89,6 @@ class MessageDetailsRepository @Inject constructor(
         context: Context,
         jobManager: JobManager,
         api: ProtonMailApiManager,
-        userManager: UserManager,
         databaseProvider: DatabaseProvider,
         attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
         @Assisted userId: Id
@@ -99,7 +96,6 @@ class MessageDetailsRepository @Inject constructor(
         applicationContext = context,
         jobManager = jobManager,
         api = api,
-        userManager = userManager,
         messagesDao = databaseProvider.provideMessageDao(userId),
         searchDatabaseDao = databaseProvider.provideMessageSearchDao(userId),
         pendingActionDao = databaseProvider.providePendingActionDao(userId),

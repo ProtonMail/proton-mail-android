@@ -33,12 +33,12 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.room.notifications.Notification
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
-import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.data.local.model.Notification
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.fcm.model.PushNotification
 import ch.protonmail.android.fcm.model.PushNotificationData
 import ch.protonmail.android.repository.MessageRepository
@@ -94,22 +94,28 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
 
         queueNetworkUtil.setCurrentlyHasConnectivity()
 
-        val notificationUsername = userManager.getUsernameBySessionId(sessionId)
-        if (notificationUsername.isNullOrEmpty()) {
+        val notificationUserId = userManager.getUserIdBySessionId(sessionId)
             // we do not show notifications for unknown/inactive users
-            return Result.failure(workDataOf(KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR to "User is unknown or inactive"))
-        }
+            ?: return Result.failure(
+                workDataOf(
+                    KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR to "User is unknown or inactive"
+                )
+            )
 
-        val user = userManager.getUser(notificationUsername)
+        val user = userManager.getLegacyUser(notificationUserId)
         if (!user.isBackgroundSync) {
             // we do not show notifications for users who have disabled background sync
-            return Result.failure(workDataOf(KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR to "Background sync is disabled"))
+            return Result.failure(
+                workDataOf(
+                    KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR to "Background sync is disabled"
+                )
+            )
         }
 
         var pushNotification: PushNotification? = null
         var pushNotificationData: PushNotificationData? = null
         try {
-            val userCrypto = UserCrypto(userManager, userManager.openPgp, Name(notificationUsername))
+            val userCrypto = UserCrypto(userManager, userManager.openPgp, notificationUserId)
             val textDecryptionResult = userCrypto.decryptMessage(encryptedMessage)
             val decryptedData = textDecryptionResult.decryptedData
             pushNotification = decryptedData.deserialize(PushNotification.serializer())
@@ -131,36 +137,53 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
             it.senderName.ifEmpty { it.senderAddress }
         } ?: EMPTY_STRING
 
-        val primaryUser = userManager.username == notificationUsername
+        val isPrimaryUser = userManager.currentUserId == notificationUserId
         val isQuickSnoozeEnabled = userManager.isSnoozeQuickEnabled()
         val isScheduledSnoozeEnabled = userManager.isSnoozeScheduledEnabled()
 
         if (!isQuickSnoozeEnabled && (!isScheduledSnoozeEnabled || !shouldSuppressNotification())) {
-            sendNotification(user, messageId, notificationBody, sender, primaryUser)
+            sendNotification(notificationUserId, user, messageId, notificationBody, sender, isPrimaryUser)
         }
 
         return Result.success()
     }
 
     private suspend fun sendNotification(
+        userId: Id,
         user: User,
         messageId: String,
         notificationBody: String,
         sender: String,
-        primaryUser: Boolean
+        isPrimaryUser: Boolean
     ) {
 
         // Insert current Notification in Database
-        val notificationsDatabase = databaseProvider.provideNotificationsDao(user.username)
+        val notificationsDatabase = databaseProvider.provideNotificationDao(userId)
         val notification = Notification(messageId, sender, notificationBody)
         val notifications = notificationsDatabase.insertNewNotificationAndReturnAll(notification)
-        val message = messageRepository.getMessage(messageId, user.username)
+        val message = messageRepository.getMessage(messageId, userId)
 
         if (notifications.size > 1) {
-            notificationServer.notifyMultipleUnreadEmail(userManager, user, notifications)
+            notificationServer.notifyMultipleUnreadEmail(
+                userManager,
+                user.toNewUser(),
+                user.notificationSetting,
+                user.ringtone,
+                user.isNotificationVisibilityLockScreen,
+                notifications
+            )
         } else {
             notificationServer.notifySingleNewEmail(
-                userManager, user, message, messageId, notificationBody, sender, primaryUser
+                userManager,
+                user.toNewUser(),
+                user.notificationSetting,
+                user.ringtone,
+                user.isNotificationVisibilityLockScreen,
+                message,
+                messageId,
+                notificationBody,
+                sender,
+                isPrimaryUser
             )
         }
     }

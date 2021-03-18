@@ -43,6 +43,7 @@ import ch.protonmail.android.di.CurrentUserId
 import ch.protonmail.android.di.CurrentUserMailSettings
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -75,7 +76,7 @@ class UploadAttachments @WorkerInject constructor(
         val messageId = inputData.getString(KEY_INPUT_UPLOAD_ATTACHMENTS_MESSAGE_ID).orEmpty()
         val isMessageSending = inputData.getBoolean(KEY_INPUT_UPLOAD_ATTACHMENTS_IS_MESSAGE_SENDING, false)
 
-        messageDetailsRepository.findMessageById(messageId)?.let { message ->
+        messageDetailsRepository.findMessageById(messageId).first()?.let { message ->
             val addressId = requireNotNull(message.addressID)
             val addressCrypto = addressCryptoFactory.create(userId, Id(addressId))
 
@@ -104,7 +105,7 @@ class UploadAttachments @WorkerInject constructor(
                 return@withContext failure
             }
 
-            val isAttachPublicKey = mailSettings.getAttachPublicKey() ?: false
+            val isAttachPublicKey = mailSettings.getAttachPublicKey()
             if (isAttachPublicKey && isMessageSending) {
                 Timber.i("UploadAttachments attaching publicKey for messageId $messageId")
                 val result = attachmentsRepository.uploadPublicKey(message, crypto)
