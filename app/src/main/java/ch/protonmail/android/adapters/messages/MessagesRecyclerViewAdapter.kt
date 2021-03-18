@@ -21,6 +21,11 @@ package ch.protonmail.android.adapters.messages
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
+import ch.protonmail.android.api.models.room.contacts.ContactEmail
+import ch.protonmail.android.api.models.room.messages.Label
+import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.api.models.room.pendingActions.PendingSend
+import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Label
@@ -159,7 +164,12 @@ class MessagesRecyclerViewAdapter(
         val message = messages[position]
         val messageLabels = message.allLabelIDs.mapNotNull { labels[it] }
 
-        message.senderDisplayName = contactsList?.find { message.senderEmail == it.email }?.name ?: message.senderName
+        val pendingSend = pendingSendList?.find { it.messageId == message.messageId }
+        // under these conditions the message is in sending process
+        message.isBeingSent = pendingSend != null && pendingSend.sent == null
+        message.isAttachmentsBeingUploaded = pendingUploadList?.find { it.messageId == message.messageId } != null
+        message.senderDisplayName = contactsList?.find { message.senderEmail == it.email }?.name
+            ?: message.senderName
 
         this.view.bind(message, messageLabels, selectedMessageIds.isNotEmpty(), mMailboxLocation)
 
@@ -182,7 +192,6 @@ class MessagesRecyclerViewAdapter(
                 onItemClick?.invoke(message)
             }
         }
-
         this.view.setOnLongClickListener {
             if (selectedMessageIds.isEmpty()) {
                 val messageId = it.tag as String
@@ -204,17 +213,17 @@ class MessagesRecyclerViewAdapter(
 
     fun setPendingUploadsList(pendingUploadList: List<PendingUpload>) {
         this.pendingUploadList = pendingUploadList
-        notifyDataSetChanged() // TODO
+        notifyDataSetChanged()
     }
 
     fun setPendingForSendingList(pendingSendList: List<PendingSend>) {
         this.pendingSendList = pendingSendList
-        notifyDataSetChanged() // TODO
+        notifyDataSetChanged()
     }
 
     fun setContactsList(contactsList: List<ContactEmail>?) {
         this.contactsList = contactsList
-        notifyDataSetChanged() // TODO
+        notifyDataSetChanged()
     }
 
     fun setNewLocation(mailboxLocation: Constants.MessageLocationType) {
