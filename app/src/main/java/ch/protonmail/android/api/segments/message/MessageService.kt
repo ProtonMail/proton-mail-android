@@ -19,6 +19,7 @@
 package ch.protonmail.android.api.segments.message
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
@@ -131,7 +132,7 @@ interface MessageService {
     suspend fun updateDraft(
         @Path("messageId") messageId: String,
         @Body draftBody: DraftBody,
-        @Tag retrofitTag: RetrofitTag
+        @Tag userIdTag: UserIdTag
     ): MessageResponse
 
     @POST("mail/v4/messages/{messageId}")
@@ -139,7 +140,7 @@ interface MessageService {
     suspend fun sendMessage(
         @Path("messageId") messageId: String,
         @Body message: MessageSendBody,
-        @Tag retrofitTag: RetrofitTag
+        @Tag userIdTag: UserIdTag
     ): MessageSendResponse
 
     @GET("mail/v4/messages/{messageId}")
@@ -150,14 +151,14 @@ interface MessageService {
     @Headers(ACCEPT_HEADER_V1)
     suspend fun fetchMessageDetails(
         @Path("messageId") messageId: String,
-        @Tag retrofitTag: RetrofitTag
+        @Tag userIdTag: UserIdTag
     ): MessageResponse
 
     @GET("mail/v4/messages/{messageId}")
     @Headers(ACCEPT_HEADER_V1)
     fun fetchMessageDetailsBlocking(
         @Path("messageId") messageId: String,
-        @Tag retrofitTag: RetrofitTag
+        @Tag userIdTag: UserIdTag
     ): Call<MessageResponse>
 
     @GET("mail/v4/messages/{messageId}")

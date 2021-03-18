@@ -1645,8 +1645,8 @@ public class ComposeMessageActivity
             mScrollContentView.setVisibility(View.VISIBLE);
             mProgressView.setVisibility(View.GONE);
         }
-        String username = mUserManager.getCurrentUserBlocking().getName().getS();
-        AddressCrypto crypto = Crypto.forAddress(mUserManager, username, loadedMessage.getAddressID());
+        // temporary until a complete refactor of AddressCrypto is done
+        AddressCrypto crypto = Crypto.forAddress(mUserManager, mUserManager.requireCurrentUserId(), loadedMessage.getAddressID());
         if (updateAttachments) {
             composeMessageViewModel.createLocalAttachments(loadedMessage);
         }

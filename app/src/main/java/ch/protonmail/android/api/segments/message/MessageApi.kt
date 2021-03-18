@@ -20,6 +20,7 @@ package ch.protonmail.android.api.segments.message
 
 import androidx.annotation.WorkerThread
 import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse

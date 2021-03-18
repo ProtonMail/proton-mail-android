@@ -20,6 +20,7 @@ package ch.protonmail.android.api.segments.message
 
 import androidx.annotation.WorkerThread
 import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
@@ -96,13 +97,13 @@ interface MessageApiSpec {
     suspend fun updateDraft(
         messageId: String,
         draftBody: DraftBody,
-        retrofitTag: RetrofitTag
+        userIdTag: UserIdTag
     ): MessageResponse
 
     suspend fun sendMessage(
         messageId: String,
         message: MessageSendBody,
-        retrofitTag: RetrofitTag
+        userIdTag: UserIdTag
     ): MessageSendResponse
 
     @Throws(IOException::class)

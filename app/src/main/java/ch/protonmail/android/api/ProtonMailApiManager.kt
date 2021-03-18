@@ -19,6 +19,7 @@
 package ch.protonmail.android.api
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.AttachmentUploadResponse
 import ch.protonmail.android.api.models.AvailableDomainsResponse
 import ch.protonmail.android.api.models.AvailablePlansResponse
@@ -340,14 +341,14 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override suspend fun updateDraft(
         messageId: String,
         draftBody: DraftBody,
-        retrofitTag: RetrofitTag
-    ): MessageResponse = api.updateDraft(messageId, draftBody, retrofitTag)
+        userIdTag: UserIdTag
+    ): MessageResponse = api.updateDraft(messageId, draftBody, userIdTag)
 
     override suspend fun sendMessage(
         messageId: String,
         message: MessageSendBody,
-        retrofitTag: RetrofitTag
-    ): MessageSendResponse = api.sendMessage(messageId, message, retrofitTag)
+        userIdTag: UserIdTag
+    ): MessageSendResponse = api.sendMessage(messageId, message, userIdTag)
 
     override fun unlabelMessages(idList: IDList) = api.unlabelMessages(idList)
 
