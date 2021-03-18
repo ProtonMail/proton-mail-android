@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.label
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
@@ -49,7 +49,7 @@ interface LabelService {
 
     @GET("labels?" + Fields.Label.TYPE + "=" + Constants.LABEL_TYPE_MESSAGE)
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchLabels(@Tag retrofitTag: RetrofitTag): Call<LabelsResponse>
+    fun fetchLabels(@Tag userIdTag: UserIdTag): Call<LabelsResponse>
 
     // this is coded here and not passed as a param because there is no point when it is a constant always
     @GET("labels?" + Fields.Label.TYPE + "=" + Constants.LABEL_TYPE_CONTACT_GROUPS)

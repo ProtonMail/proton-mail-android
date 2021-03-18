@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.label
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
@@ -32,12 +32,11 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import java.io.IOException
 
-class LabelApi (private val service : LabelService) : BaseApi(), LabelApiSpec {
+class LabelApi(private val service: LabelService) : BaseApi(), LabelApiSpec {
 
     @Throws(IOException::class)
-    override fun fetchLabels(retrofitTag: RetrofitTag): LabelsResponse {
-        return ParseUtils.parse(service.fetchLabels(retrofitTag).execute())
-    }
+    override fun fetchLabels(userIdTag: UserIdTag): LabelsResponse =
+        ParseUtils.parse(service.fetchLabels(userIdTag).execute())
 
     @Throws(IOException::class)
     override fun fetchContactGroups(): Single<ContactGroupsResponse> {
@@ -49,9 +48,9 @@ class LabelApi (private val service : LabelService) : BaseApi(), LabelApiSpec {
     @Throws(IOException::class)
     override fun fetchContactGroupsAsObservable(): Observable<List<ContactLabel>> {
         return service.fetchContactGroupsAsObservable().map { t: ContactGroupsResponse -> t.contactGroups }
-                .doOnError {
-                    ParseUtils.doOnError(it)
-                }
+            .doOnError {
+                ParseUtils.doOnError(it)
+            }
     }
 
     override suspend fun fetchContactGroupsList(): List<ContactLabel> {
@@ -59,22 +58,20 @@ class LabelApi (private val service : LabelService) : BaseApi(), LabelApiSpec {
     }
 
     @Throws(IOException::class)
-    override fun createLabel(label: LabelBody): LabelResponse {
-        return ParseUtils.parse(service.createLabel(label).execute())
-    }
+    override fun createLabel(label: LabelBody): LabelResponse =
+        ParseUtils.parse(service.createLabel(label).execute())
 
     override fun createLabelCompletable(label: LabelBody): Single<ContactLabel> {
-        return service.createLabelCompletable(label).map {
-            t: LabelResponse -> t.contactGroup
+        return service.createLabelCompletable(label).map { t: LabelResponse ->
+            t.contactGroup
         }.doOnError {
             ParseUtils.doOnError(it)
         }
     }
 
     @Throws(IOException::class)
-    override fun updateLabel(labelId: String, label: LabelBody): LabelResponse {
-        return ParseUtils.parse(service.updateLabel(labelId, label).execute())
-    }
+    override fun updateLabel(labelId: String, label: LabelBody): LabelResponse =
+        ParseUtils.parse(service.updateLabel(labelId, label).execute())
 
     override fun updateLabelCompletable(labelId: String, label: LabelBody): Completable {
         return service.updateLabelCompletable(labelId, label).doOnError {

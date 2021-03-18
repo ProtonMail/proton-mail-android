@@ -19,14 +19,23 @@
 package ch.protonmail.android.api.segments.report
 
 import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.domain.entity.Id
 import java.io.IOException
 
 interface ReportApiSpec {
 
     @Throws(IOException::class)
-    fun reportBug(OSName: String, appVersion: String, client: String, clientVersion: String, title: String, description: String, username: String, email: String): ResponseBody
+    fun reportBug(
+        OSName: String,
+        appVersion: String,
+        client: String,
+        clientVersion: String,
+        title: String,
+        description: String,
+        userId: Id,
+        email: String
+    ): ResponseBody
 
     @Throws(IOException::class)
     fun postPhishingReport(messageId: String, messageBody: String, mimeType: String): ResponseBody?
-
 }

@@ -19,12 +19,10 @@
 package ch.protonmail.android.api.segments.domain
 
 import ch.protonmail.android.api.models.AvailableDomainsResponse
-import ch.protonmail.android.api.segments.BaseApi
 import java.io.IOException
 
 interface DomainApiSpec {
 
     @Throws(IOException::class)
     fun fetchAvailableDomains(): AvailableDomainsResponse
-
 }

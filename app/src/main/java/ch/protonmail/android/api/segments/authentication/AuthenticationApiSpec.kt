@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.authentication
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.LoginInfoResponse
 import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.models.ModulusResponse
@@ -27,15 +27,15 @@ import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.TwoFABody
 import ch.protonmail.android.api.models.TwoFAResponse
-import retrofit2.Call
+import ch.protonmail.android.domain.entity.Id
 import java.io.IOException
 
 interface AuthenticationApiSpec {
 
     @Throws(IOException::class)
-    fun revokeAccessBlocking(username: String): ResponseBody
+    fun revokeAccessBlocking(userId: Id): ResponseBody
 
-    suspend fun revokeAccess(username: String): ResponseBody
+    suspend fun revokeAccess(userId: Id): ResponseBody
 
     @Throws(IOException::class)
     fun loginInfo(username: String): LoginInfoResponse
@@ -52,7 +52,7 @@ interface AuthenticationApiSpec {
     @Throws(IOException::class)
     fun randomModulus(): ModulusResponse
 
-    suspend fun refreshAuth(refreshBody: RefreshBody, retrofitTag: RetrofitTag?): RefreshResponse
+    suspend fun refreshAuth(refreshBody: RefreshBody, userIdTag: UserIdTag?): RefreshResponse
 
     @Throws(IOException::class)
     fun refreshAuthBlocking(refreshBody: RefreshBody, retrofitTag: RetrofitTag?): RefreshResponse

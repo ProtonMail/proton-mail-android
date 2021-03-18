@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.device
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
@@ -36,7 +36,7 @@ interface DeviceService {
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun registerDevice(
         @Body deviceRequest: RegisterDeviceRequestBody,
-        @Tag retrofitTag: RetrofitTag
+        @Tag userIdTag: UserIdTag
     ): ResponseBody
 
     @DELETE("devices")

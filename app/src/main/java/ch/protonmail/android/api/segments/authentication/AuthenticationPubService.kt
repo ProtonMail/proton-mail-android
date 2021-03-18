@@ -19,6 +19,7 @@
 package ch.protonmail.android.api.segments.authentication
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.*
 import ch.protonmail.android.api.segments.RetrofitConstants
 import retrofit2.Call
@@ -40,13 +41,13 @@ interface AuthenticationPubService {
 
     @POST("auth/2fa")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
-    fun post2fa(@Body twofaBody: TwoFABody, @Tag retrofitTag: RetrofitTag? = null): Call<TwoFAResponse>
+    fun post2fa(@Body twofaBody: TwoFABody, @Tag userIdTag: UserIdTag? = null): Call<TwoFAResponse>
 
     @POST("auth/refresh")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
     suspend fun refreshAuth(
         @Body refreshBody: RefreshBody,
-        @Tag retrofitTag: RetrofitTag? = null
+        @Tag userIdTag: UserIdTag? = null
     ): RefreshResponse
 
     @POST("auth/refresh")

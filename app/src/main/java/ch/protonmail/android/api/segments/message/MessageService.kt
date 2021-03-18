@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.api.segments.message
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.DraftBody
@@ -48,7 +47,7 @@ interface MessageService {
 
     @GET("mail/v4/messages/count")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchMessagesCount(@Tag retrofitTag: RetrofitTag): Call<UnreadTotalMessagesResponse>
+    fun fetchMessagesCount(@Tag userIdTag: UserIdTag): Call<UnreadTotalMessagesResponse>
 
     @PUT("mail/v4/messages/delete")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
@@ -78,7 +77,7 @@ interface MessageService {
         @Query("Order") order: String,
         @Query("Begin") begin: String,
         @Query("End") end: String,
-        @Tag retrofitTag: RetrofitTag
+        @Tag userIdTag: UserIdTag
     ): Call<MessagesResponse>
 
     @GET("mail/v4/messages")
@@ -124,7 +123,7 @@ interface MessageService {
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun fetchMessageMetadata(
         @Query("ID") messageId: String,
-        @Tag retrofitTag: RetrofitTag
+        @Tag userIdTag: UserIdTag
     ): MessagesResponse
 
     @PUT("mail/v4/messages/{messageId}")
@@ -159,7 +158,7 @@ interface MessageService {
     fun fetchMessageDetailsBlocking(
         @Path("messageId") messageId: String,
         @Tag userIdTag: UserIdTag
-    ): Call<MessageResponse>
+    ): MessageResponse
 
     @GET("mail/v4/messages/{messageId}")
     @Headers(ACCEPT_HEADER_V1)
@@ -176,5 +175,4 @@ interface MessageService {
     @PUT("mail/v4/messages/label")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun labelMessages(@Body body: IDList): Call<MoveToFolderResponse>
-
 }

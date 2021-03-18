@@ -28,6 +28,5 @@ interface DomainPubService {
 
     @GET("domains/available")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
-    fun fetchAvailableDomains() : Call<AvailableDomainsResponse>
-
+    fun fetchAvailableDomains(): Call<AvailableDomainsResponse>
 }

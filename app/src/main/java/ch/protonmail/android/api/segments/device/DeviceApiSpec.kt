@@ -20,10 +20,11 @@ package ch.protonmail.android.api.segments.device
 
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.domain.entity.Id
 
 interface DeviceApiSpec {
 
-    suspend fun registerDevice(registerDeviceRequestBody: RegisterDeviceRequestBody, username: String): ResponseBody
+    suspend fun registerDevice(registerDeviceRequestBody: RegisterDeviceRequestBody, userId: Id): ResponseBody
 
     suspend fun unregisterDevice(deviceToken: String): ResponseBody
 }

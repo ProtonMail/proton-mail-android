@@ -258,7 +258,7 @@ class EventHandler @AssistedInject constructor(
             writeContactEmailsUpdates(contactsDao, contactsEmails)
         }
         if (mailSettings != null) {
-            writeMailSettings(mailSettings)
+            writeMailSettings(context, mailSettings)
         }
         if (userSettings != null) {
             writeUserSettings(context, userSettings)
@@ -288,7 +288,7 @@ class EventHandler @AssistedInject constructor(
     }
 
 
-    private fun writeMailSettings(mSettings: MailSettings) {
+    private fun writeMailSettings(context: Context, mSettings: MailSettings) {
         var mailSettings: MailSettings? = mSettings
         if (mailSettings == null) {
             mailSettings = MailSettings()
@@ -298,7 +298,9 @@ class EventHandler @AssistedInject constructor(
         mailSettings.sign = mSettings.sign
         mailSettings.pgpScheme = mSettings.pgpScheme
         mailSettings.setAttachPublicKey(if (mSettings.getAttachPublicKey()) 1 else 0)
-        mailSettings.save()
+
+        val prefs = SecureSharedPreferences.getPrefsForUser(context, userId)
+        mailSettings.saveBlocking(prefs)
     }
 
     private fun writeUserSettings(context: Context, userSettings: UserSettings) {
@@ -514,7 +516,7 @@ class EventHandler @AssistedInject constructor(
             }
         }
 
-        AddressKeyActivationWorker.runIfNeeded(workManager, addresses.map(mapper) { it.toNewModel() }, Name(userId.s))
+        AddressKeyActivationWorker.runIfNeeded(workManager, addresses.map(mapper) { it.toNewModel() }, userId)
         user.setAddresses(addresses)
     }
 

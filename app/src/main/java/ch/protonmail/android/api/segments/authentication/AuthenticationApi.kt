@@ -19,6 +19,7 @@
 package ch.protonmail.android.api.segments.authentication
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.LoginBody
 import ch.protonmail.android.api.models.LoginInfoBody
 import ch.protonmail.android.api.models.LoginInfoResponse
@@ -31,6 +32,7 @@ import ch.protonmail.android.api.models.TwoFABody
 import ch.protonmail.android.api.models.TwoFAResponse
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.ConstantTime
 import java.io.IOException
 
@@ -44,11 +46,11 @@ class AuthenticationApi(
         ParseUtils.parse(pubService.post2fa(twoFABody).execute())
 
     @Throws(IOException::class)
-    override fun revokeAccessBlocking(username: String): ResponseBody =
-        ParseUtils.parse(service.revoke(RetrofitTag(username)).execute())
+    override fun revokeAccessBlocking(userId: Id): ResponseBody =
+        ParseUtils.parse(service.revoke(UserIdTag(userId)).execute())
 
-    override suspend fun revokeAccess(username: String): ResponseBody =
-        ParseUtils.parse(service.revoke(RetrofitTag(username)).execute())
+    override suspend fun revokeAccess(userId: Id): ResponseBody =
+        ParseUtils.parse(service.revoke(UserIdTag(userId)).execute())
 
     @Throws(IOException::class)
     override fun loginInfo(username: String): LoginInfoResponse {
@@ -59,6 +61,7 @@ class AuthenticationApi(
     @Throws(IOException::class)
     override fun loginInfoForAuthentication(username: String): LoginInfoResponse {
         val infoBody = LoginInfoBody(username)
+        // return ParseUtils.parse(pubService.loginInfo(infoBody, RetrofitTag(usernameAuth = null)).execute())
         return ParseUtils.parse(pubService.loginInfo(infoBody, RetrofitTag(usernameAuth = null)).execute())
     }
 
@@ -75,8 +78,8 @@ class AuthenticationApi(
     override fun randomModulus(): ModulusResponse = ParseUtils.parse(pubService.randomModulus().execute())
 
     @Throws(IOException::class)
-    override suspend fun refreshAuth(refreshBody: RefreshBody, retrofitTag: RetrofitTag?): RefreshResponse =
-        pubService.refreshAuth(refreshBody, retrofitTag)
+    override suspend fun refreshAuth(refreshBody: RefreshBody, userIdTag: UserIdTag?): RefreshResponse =
+        pubService.refreshAuth(refreshBody, userIdTag)
 
     @Throws(IOException::class)
     override fun refreshAuthBlocking(refreshBody: RefreshBody, retrofitTag: RetrofitTag?): RefreshResponse =

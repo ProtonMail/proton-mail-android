@@ -22,7 +22,7 @@ import android.content.Intent
 import androidx.core.app.JobIntentService
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
@@ -31,6 +31,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkResults
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
@@ -90,7 +91,7 @@ class MessagesService : JobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
 
-        val currentUser = userManager.username
+        val currentUserId = userManager.currentUserId!!
         messageDetailsRepository.reloadDependenciesForUserId(userManager.requireCurrentUserId())
         when (intent.action) {
             ACTION_FETCH_MESSAGES_BY_PAGE -> {
@@ -104,13 +105,16 @@ class MessagesService : JobIntentService() {
                     handleFetchFirstLabelPage(
                         Constants.MessageLocationType.LABEL,
                         labelId,
-                        currentUser,
+                        currentUserId,
                         refreshMessages
                     )
                 } else {
                     handleFetchFirstPage(
-                        Constants.MessageLocationType.fromInt(location), refreshDetails,
-                        intent.getStringExtra(EXTRA_UUID), currentUser, refreshMessages
+                        Constants.MessageLocationType.fromInt(location),
+                        refreshDetails,
+                        intent.getStringExtra(EXTRA_UUID),
+                        currentUserId,
+                        refreshMessages
                     )
                 }
             }
@@ -130,10 +134,10 @@ class MessagesService : JobIntentService() {
                         Constants.MessageLocationType.fromInt(location),
                         labelTime,
                         labelId,
-                        currentUser
+                        currentUserId
                     )
                 } else {
-                    handleFetchMessages(Constants.MessageLocationType.fromInt(location), time, currentUser)
+                    handleFetchMessages(Constants.MessageLocationType.fromInt(location), time, currentUserId)
                 }
             }
             ACTION_FETCH_MESSAGE_LABELS -> handleFetchLabels()
@@ -145,13 +149,13 @@ class MessagesService : JobIntentService() {
         location: Constants.MessageLocationType,
         refreshDetails: Boolean,
         uuid: String?,
-        currentUser: String,
+        currentUserId: Id,
         refreshMessages: Boolean
     ) {
         try {
-            val messages = mApi.messages(location.messageLocationTypeValue, RetrofitTag(currentUser))
+            val messages = mApi.messages(location.messageLocationTypeValue, UserIdTag(currentUserId))
             if (messages?.code == Constants.RESPONSE_CODE_OK)
-                handleResult(messages, location, refreshDetails, uuid, currentUser, refreshMessages)
+                handleResult(messages, location, refreshDetails, uuid, currentUserId, refreshMessages)
             else {
                 val errorMessage = messages?.error ?: ""
                 val event = MailboxLoadedEvent(Status.FAILED, uuid, errorMessage)
@@ -159,7 +163,6 @@ class MessagesService : JobIntentService() {
                 mNetworkResults.setMailboxLoaded(event)
                 Timber.v( "error while fetching messages", Exception(errorMessage))
             }
-
         } catch (error: Exception) {
             val event = MailboxLoadedEvent(Status.FAILED, uuid)
             AppUtil.postEventOnUi(event)
@@ -168,10 +171,10 @@ class MessagesService : JobIntentService() {
         }
     }
 
-    private fun handleFetchMessages(location: Constants.MessageLocationType, time: Long, currentUser: String) {
+    private fun handleFetchMessages(location: Constants.MessageLocationType, time: Long, currentUserId: Id) {
         try {
             val messages = mApi.fetchMessages(location.messageLocationTypeValue, time)
-            handleResult(messages, location, false, null, currentUser)
+            handleResult(messages, location, false, null, currentUserId)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
             Logger.doLogException(TAG_MESSAGES_SERVICE, "error while fetching messages", error)
@@ -181,12 +184,12 @@ class MessagesService : JobIntentService() {
     private fun handleFetchFirstLabelPage(
         location: Constants.MessageLocationType,
         labelId: String,
-        currentUser: String,
+        currentUserId: Id,
         refreshMessages: Boolean
     ) {
         try {
             val messagesResponse = mApi.searchByLabelAndPage(labelId, 0)
-            handleResult(messagesResponse, location, labelId, currentUser, refreshMessages)
+            handleResult(messagesResponse, location, labelId, currentUserId, refreshMessages)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
             Logger.doLogException(TAG_MESSAGES_SERVICE, "error while fetching messages", error)
@@ -197,11 +200,11 @@ class MessagesService : JobIntentService() {
         location: Constants.MessageLocationType,
         unixTime: Long,
         labelId: String,
-        currentUser: String
+        currentUserId: Id
     ) {
         try {
             val messages = mApi.searchByLabelAndTime(labelId, unixTime)
-            handleResult(messages, location, labelId, currentUser)
+            handleResult(messages, location, labelId, currentUserId)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
             Logger.doLogException(TAG_MESSAGES_SERVICE, "error while fetching messages", error)
@@ -218,9 +221,9 @@ class MessagesService : JobIntentService() {
 
     private fun handleFetchLabels() {
         try {
-            val currentUser = userManager.username
+            val currentUserId = userManager.currentUserId!!
             val db = MessagesDatabaseFactory.getInstance(applicationContext, currentUser).getDatabase()
-            val labelList = mApi.fetchLabels(RetrofitTag(currentUser)).labels
+            val labelList = mApi.fetchLabels(UserIdTag(currentUserId)).labels
             db.saveAllLabels(labelList)
             AppUtil.postEventOnUi(FetchLabelsEvent(Status.SUCCESS))
         } catch (error: Exception) {
@@ -234,7 +237,7 @@ class MessagesService : JobIntentService() {
         location: Constants.MessageLocationType,
         refreshDetails: Boolean,
         uuid: String?,
-        currentUser: String,
+        currentUserId: Id,
         refreshMessages: Boolean = false
     ) {
         val messageList = messages?.messages
@@ -306,7 +309,7 @@ class MessagesService : JobIntentService() {
         messagesResponse: MessagesResponse,
         location: Constants.MessageLocationType,
         labelId: String,
-        currentUser: String,
+        currentUserId: Id,
         refreshMessages: Boolean = false
     ) {
         val messageList = messagesResponse.messages

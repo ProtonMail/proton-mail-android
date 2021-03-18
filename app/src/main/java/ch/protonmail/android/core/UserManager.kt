@@ -348,6 +348,11 @@ class UserManager @Inject constructor(
     suspend fun getCurrentUserTokenManager(): TokenManager? =
         currentUserId?.let { getTokenManager(it) }
 
+    fun getCurrentUserTokenManagerBlocking(): TokenManager? =
+        runBlocking {
+            getCurrentUserTokenManager()
+        }
+
     @Deprecated("Use 'currentUser' variant", ReplaceWith("getCurrentUserTokenManager()"))
     val tokenManager: TokenManager?
         get() = runBlocking { getCurrentUserTokenManager() }
@@ -912,7 +917,7 @@ class UserManager @Inject constructor(
 
     @Deprecated(
         "Should not be used, necessary only for old and Java classes",
-        ReplaceWith("setUserDetailsBlocking(user, addreses, mailSettings, userSettings)")
+        ReplaceWith("setUserDetails(user, addreses, mailSettings, userSettings)")
     )
     fun setUserDetailsBlocking(
         user: User,

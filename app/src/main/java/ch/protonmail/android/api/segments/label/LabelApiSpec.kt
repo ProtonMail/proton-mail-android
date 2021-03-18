@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.label
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
@@ -33,7 +33,7 @@ import java.io.IOException
 interface LabelApiSpec {
 
     @Throws(IOException::class)
-    fun fetchLabels(retrofitTag: RetrofitTag): LabelsResponse
+    fun fetchLabels(userIdTag: UserIdTag): LabelsResponse
 
     @Throws(IOException::class)
     fun fetchContactGroups(): Single<ContactGroupsResponse>

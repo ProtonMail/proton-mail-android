@@ -697,7 +697,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     public void notifyLoggedOut(String username) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(
                 Context.NOTIFICATION_SERVICE);
-        INotificationServer notificationServer = new NotificationServer(this, notificationManager);
+        NotificationServer notificationServer = new NotificationServer(this, notificationManager);
         if (userManager != null && userManager.isLoggedIn()) {
             notificationServer.notifyUserLoggedOut(userManager.getUser(username));
         }

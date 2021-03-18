@@ -26,6 +26,7 @@ import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.UserInfo
 import ch.protonmail.android.api.models.VerificationCodeBody
 import ch.protonmail.android.api.models.requests.PostHumanVerificationBody
+import ch.protonmail.android.domain.entity.Id
 import java.io.IOException
 
 interface UserApiSpec {
@@ -36,7 +37,7 @@ interface UserApiSpec {
     suspend fun fetchUserInfo(): UserInfo
 
     @Throws(IOException::class)
-    fun fetchUserInfoBlocking(username: String): UserInfo
+    fun fetchUserInfoBlocking(userId: Id): UserInfo
 
     @Throws(IOException::class)
     fun fetchKeySalts(): KeySalts

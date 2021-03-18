@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.user
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.HumanVerifyOptionsResponse
 import ch.protonmail.android.api.models.KeySalts
 import ch.protonmail.android.api.models.ResponseBody
@@ -51,7 +51,7 @@ interface UserService {
 
     @GET("users")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchUserInfoCall(@Tag retrofitTag: RetrofitTag): Call<UserInfo>
+    fun fetchUserInfoCall(@Tag userIdTag: UserIdTag): Call<UserInfo>
 
     @GET("keys/salts")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

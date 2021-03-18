@@ -66,17 +66,13 @@ class ProtonMailAuthenticator @Inject constructor(
 
     @Synchronized
     private fun refreshAuthToken(response: Response): Request? {
-        val usernameAuth = response.request().tag(RetrofitTag::class.java)?.usernameAuth ?: userManager.username
-        val tokenManager = userManager.getTokenManager(usernameAuth)
+        val userId = response.request().tag(UserIdTag::class.java)?.id ?: userManager.currentUserId
+        val tokenManager = userManager.getTokenManagerBlocking(userId!!)
 
         val originalRequest = response.request()
-        if (originalRequest.header(HEADER_AUTH) != tokenManager?.authAccessToken) {
+        if (originalRequest.header(HEADER_AUTH) != tokenManager.authAccessToken) {
             // update request with new token
-            return if (tokenManager != null) {
-                updateRequestHeaders(tokenManager, originalRequest)
-            } else {
-                null
-            }
+            return updateRequestHeaders(tokenManager, originalRequest)
         } else {
             if (response.priorResponse() != null) { // NOT NULL -> triggered by automatic retry,
                 // requests triggered by auto-retry will be discarded for refreshing tokens
@@ -86,7 +82,7 @@ class ProtonMailAuthenticator @Inject constructor(
             }
         }
 
-        if (tokenManager != null && !originalRequest.url().encodedPath().contains(REFRESH_PATH)) {
+        if (!originalRequest.url().encodedPath().contains(REFRESH_PATH)) {
             val refreshBody = tokenManager.createRefreshBody()
             val refreshResponse =
                 appContext.app.api.refreshAuthBlocking(refreshBody, RetrofitTag(usernameAuth))
@@ -112,7 +108,7 @@ class ProtonMailAuthenticator @Inject constructor(
                     jobManager.stop()
                     jobManager.clear()
                     jobManager.cancelJobsInBackground(null, TagConstraint.ALL)
-                    userManager.logoutOffline(usernameAuth)
+                    userManager.logoutOfflineBlocking(userId)
                     // return null since we're logging out
                     null
                 }
@@ -138,8 +134,8 @@ class ProtonMailAuthenticator @Inject constructor(
         } else { // if received 401 error while refreshing access token, send event to logout user
             Timber.tag("429").i(
                 "access token expired: got 401 while trying to refresh it " +
-                    "(refresh token blank = ${tokenManager?.isRefreshTokenBlank()}, " +
-                    "uid blank = ${tokenManager?.isUidBlank()})"
+                    "(refresh token blank = ${tokenManager.isRefreshTokenBlank()}, " +
+                    "uid blank = ${tokenManager.isUidBlank()})"
             )
             appContext.app.notifyLoggedOut(usernameAuth)
             userManager.logoutOffline(usernameAuth)
