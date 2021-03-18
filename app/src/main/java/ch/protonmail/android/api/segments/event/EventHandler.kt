@@ -18,11 +18,11 @@
  */
 package ch.protonmail.android.api.segments.event
 
-import android.content.Context
+import androidx.work.WorkManager
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.RetrofitTag
-import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.EventResponse
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.MessageCount
@@ -50,16 +50,19 @@ import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
+import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_ID
 import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_READING_RESTRICTED
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.UserSettingsEvent
+import ch.protonmail.android.mapper.bridge.AddressBridgeMapper
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.MessageUtils
@@ -70,24 +73,26 @@ import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import com.google.gson.JsonSyntaxException
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.runBlocking
 import me.proton.core.util.kotlin.unsupported
+import me.proton.core.domain.arch.map
 import timber.log.Timber
 import javax.inject.Named
 import kotlin.collections.set
 import kotlin.math.max
 
 class EventHandler @AssistedInject constructor(
-    private val context: Context,
     private val protonMailApiManager: ProtonMailApiManager,
     private val userManager: UserManager,
+    private val workManager: WorkManager,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
-    private val launchInitialDataFetch: LaunchInitialDataFetch,
-    private val pendingActionDao: PendingActionDao,
     private val contactDao: ContactDao,
     private val counterDao: CounterDao,
-    @Named("messages") private var messageDao: MessageDao,
+    @Named("messages") var messageDao: MessageDao,
+    private val pendingActionDao: PendingActionDao,
+    private val launchInitialDataFetch: LaunchInitialDataFetch,
     @Assisted val userId: Id
 ) {
 
@@ -162,11 +167,11 @@ class EventHandler @AssistedInject constructor(
                 continue
             }
 
-            if (checkPendingForSending(pendingActionsDao, messageID)) {
+            if (checkPendingForSending(pendingActionDao, messageID)) {
                 continue
             }
 
-            val messageResponse = protonMailApiManager.fetchMessageDetailsBlocking(messageID, RetrofitTag(username))
+            val messageResponse = protonMailApiManager.fetchMessageDetailsBlocking(messageID, UserIdTag(userId))
             val isMessageStaged = if (messageResponse == null) {
                 // If the response is null, an exception has been thrown while fetching message details
                 // Return false and with that terminate processing this event any further
@@ -199,7 +204,7 @@ class EventHandler @AssistedInject constructor(
     }
 
     fun write(response: EventResponse) {
-        unsafeWrite(contactsDao, messagesDao, pendingActionsDao, response)
+        unsafeWrite(contactDao, messageDao, pendingActionDao, response)
     }
 
     private fun eventMessageSortSelector(message: EventResponse.MessageEventBody): Int = message.type
@@ -214,7 +219,7 @@ class EventHandler @AssistedInject constructor(
         response: EventResponse
     ) {
 
-        val savedUser = userManager.getUser(username)
+        val savedUser = runBlocking { userManager.getLegacyUser(userId) }
 
         if (response.usedSpace > 0) {
             savedUser.setAndSaveUsedSpace(response.usedSpace)
@@ -508,7 +513,8 @@ class EventHandler @AssistedInject constructor(
             }
         }
 
-        AddressKeyActivationWorker.activateAddressKeysIfNeeded(context, eventAddresses, username)
+        val mapper = AddressBridgeMapper.buildDefault()
+        AddressKeyActivationWorker.runIfNeeded(workManager, addresses.map(mapper) { it.toNewModel() }, Name(username))
         user.setAddresses(addresses)
     }
 
@@ -709,6 +715,21 @@ class EventHandler @AssistedInject constructor(
 
         companion object {
             fun fromInt(eventType: Int) = values().find { eventType == it.eventType } ?: DELETE
+        }
+    }
+}
+
+enum class EventType(val eventType: Int) {
+    DELETE(0),
+    CREATE(1),
+    UPDATE(2),
+    UPDATE_FLAGS(3);
+
+    companion object {
+        fun fromInt(eventType: Int): EventType {
+            return values().find {
+                eventType == it.eventType
+            } ?: DELETE
         }
     }
 }

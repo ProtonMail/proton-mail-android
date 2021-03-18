@@ -219,7 +219,7 @@ class AddressKeyActivationWorker @WorkerInject constructor(
             ReplaceWith(
                 """
                     val mapper = AddressBridgeMapper.buildDefault()
-                    runIfNeeded(context, addresses.map(mapper) { it.toNewModel() }, Name(username))
+                    runIfNeeded(workManager, addresses.map(mapper) { it.toNewModel() }, Name(username))
                 """,
                 "me.proton.core.domain.arch.map",
                 "ch.protonmail.android.mapper.bridge.AddressBridgeMapper"
@@ -227,15 +227,15 @@ class AddressKeyActivationWorker @WorkerInject constructor(
         )
         fun activateAddressKeysIfNeeded(context: Context, addresses: List<OldAddress>, username: String) {
             val mapper = AddressBridgeMapper.buildDefault()
-            runIfNeeded(context, addresses.map(mapper) { it.toNewModel() }, Name(username))
+            runIfNeeded(WorkManager.getInstance(context), addresses.map(mapper) { it.toNewModel() }, Name(username))
         }
 
         @Suppress("unused") // When using new User, it will be nicer to user 'user.addresses'
-        fun runIfNeeded(context: Context, addresses: Addresses, username: Name) {
-            runIfNeeded(context, addresses.addresses.values, username)
+        fun runIfNeeded(workManager: WorkManager, addresses: Addresses, username: Name) {
+            runIfNeeded(workManager, addresses.addresses.values, username)
         }
 
-        private fun runIfNeeded(context: Context, addresses: Collection<Address>, username: Name) {
+        private fun runIfNeeded(workManager: WorkManager, addresses: Collection<Address>, username: Name) {
             val isActivationNeeded = addresses.any { address ->
                 address.keys.keys.any { it.activation != null }
             }
@@ -245,7 +245,7 @@ class AddressKeyActivationWorker @WorkerInject constructor(
                 val work = OneTimeWorkRequestBuilder<AddressKeyActivationWorker>()
                     .setInputData(data)
                     .build()
-                WorkManager.getInstance(context).enqueue(work)
+                workManager.enqueue(work)
             }
         }
     }
