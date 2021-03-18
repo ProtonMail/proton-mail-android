@@ -55,6 +55,10 @@ const val RESPONSE_CODE_INVALID_APP_CODE = 5002
 const val RESPONSE_CODE_FORCE_UPGRADE = 5003
 const val RESPONSE_CODE_OLD_PASSWORD_INCORRECT = 8002
 const val RESPONSE_CODE_ERROR_VERIFICATION_NEEDED = 9001
+const val RESPONSE_CODE_NOT_ALLOWED = 2011
+const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_FAILED_GENERIC = 10_001
+const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DELETED = 10_002
+const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DISABLED = 10_003
 const val RESPONSE_CODE_ATTACHMENT_DELETE_ID_INVALID = 11_123
 const val RESPONSE_CODE_EMAIL_FAILED_VALIDATION = 12_006
 const val RESPONSE_CODE_NEW_PASSWORD_INCORRECT = 12_022
@@ -102,6 +106,6 @@ open class BaseApi {
             throw RuntimeException("Interrupted!")
         }
 
-        return List(list.size) { i : Int -> result[i] }
+        return List(list.size) { i: Int -> result[i] }
     }
 }

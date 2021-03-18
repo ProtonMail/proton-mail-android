@@ -29,7 +29,14 @@ import ch.protonmail.android.api.segments.HEADER_AUTH
 import ch.protonmail.android.api.segments.HEADER_LOCALE
 import ch.protonmail.android.api.segments.HEADER_UID
 import ch.protonmail.android.api.segments.HEADER_USER_AGENT
+import ch.protonmail.android.api.segments.RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DELETED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DISABLED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_AUTH_AUTH_ACCOUNT_FAILED_GENERIC
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED
 import ch.protonmail.android.api.segments.RESPONSE_CODE_GATEWAY_TIMEOUT
+import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_READING_RESTRICTED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_NOT_ALLOWED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_OLD_PASSWORD_INCORRECT
 import ch.protonmail.android.api.segments.RESPONSE_CODE_SERVICE_UNAVAILABLE
 import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
 import ch.protonmail.android.api.segments.RESPONSE_CODE_UNPROCESSABLE_ENTITY
@@ -147,8 +154,9 @@ abstract class BaseRequestInterceptor(
             response.code() == RESPONSE_CODE_UNPROCESSABLE_ENTITY -> {
                 Timber.d("'unprocessable entity' when processing request")
                 var responseBodyError = response.message()
+                var responseBody: ResponseBody? = null
                 try {
-                    val responseBody = Gson().fromJson(
+                    responseBody = Gson().fromJson(
                         response.peekBody(Long.MAX_VALUE).string(),
                         ResponseBody::class.java
                     )
@@ -158,7 +166,22 @@ abstract class BaseRequestInterceptor(
                 } catch (e: IOException) {
                     Timber.d(e)
                 }
-                userNotifier.showError(responseBodyError)
+                // when we introduced global handling of 422 http error code it resulted with toast
+                // showing up in places where we have questionable behaviours that don't really cause
+                // issues for the end user. And sadly the errors provided by the API weren't of any
+                // particular use to the end user. So for now we show only the errors for this error codes.
+                if (responseBody?.code in arrayOf(
+                        RESPONSE_CODE_MESSAGE_READING_RESTRICTED,
+                        RESPONSE_CODE_OLD_PASSWORD_INCORRECT,
+                        RESPONSE_CODE_ERROR_VERIFICATION_NEEDED,
+                        RESPONSE_CODE_NOT_ALLOWED,
+                        RESPONSE_CODE_AUTH_AUTH_ACCOUNT_FAILED_GENERIC,
+                        RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DELETED,
+                        RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DISABLED
+                    )
+                ) {
+                    userNotifier.showError(responseBodyError)
+                }
             }
         }
         return null
