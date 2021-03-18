@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -32,6 +32,7 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType
+import ch.protonmail.android.domain.entity.user.Addresses
 import ch.protonmail.android.jobs.MoveToFolderJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
@@ -48,6 +49,32 @@ import java.util.UUID
  */
 object MessageUtils {
 
+    fun addRecipientsToIntent(
+        intent: Intent,
+        extraName: String,
+        recipientList: String?,
+        messageAction: MessageActionType,
+        userAddresses: Addresses
+    ) {
+        val addresses = userAddresses.addresses.values
+        if (!recipientList.isNullOrEmpty()) {
+            val recipients = recipientList.split(Constants.EMAIL_DELIMITER)
+            val numberOfMatches = recipients.intersect(addresses.map { it.email.s }).size
+            val list = recipients.filter { recipient ->
+                addresses.none { it.email.s equalsNoCase recipient } ||
+                    messageAction == MessageActionType.REPLY
+            } as ArrayList
+
+            if (list.size > 0) {
+                intent.putExtra(extraName, list.toTypedArray())
+            } else if (numberOfMatches == recipients.size && ComposeMessageActivity.EXTRA_TO_RECIPIENTS == extraName) {
+                list.add(recipients[0])
+                intent.putExtra(extraName, list.toTypedArray())
+            }
+        }
+    }
+
+    @Deprecated("Use with Addresses model")
     fun addRecipientsToIntent(
         intent: Intent,
         extraName: String,

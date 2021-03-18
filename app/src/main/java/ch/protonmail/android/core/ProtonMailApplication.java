@@ -102,7 +102,6 @@ import ch.protonmail.android.jobs.FetchLabelsJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.jobs.user.FetchUserSettingsJob;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
-import ch.protonmail.android.servers.notification.INotificationServer;
 import ch.protonmail.android.servers.notification.NotificationServer;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
@@ -503,7 +502,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private void setupNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            INotificationServer notificationServer = new NotificationServer(this, notificationManager);
+            NotificationServer notificationServer = new NotificationServer(this, notificationManager);
             notificationServer.createEmailsChannel();
             notificationServer.createAttachmentsChannel();
             notificationServer.createRetrievingNotificationsNotification();
