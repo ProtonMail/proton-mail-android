@@ -54,7 +54,7 @@ public class PostReadJob extends ProtonMailEndlessJob {
                 starred = message.isStarred() != null && message.isStarred();
                 messageLocation = Constants.MessageLocationType.Companion.fromInt(message.getLocation());
                 message.setIsRead(true);
-                getMessageDetailsRepository().saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageBlocking(message);
             }
         }
 

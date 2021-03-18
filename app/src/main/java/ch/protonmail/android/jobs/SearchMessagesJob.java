@@ -63,7 +63,7 @@ public class SearchMessagesJob extends ProtonMailBaseJob {
     private boolean doLocalSearch() {
         final List<Message> messages = getMessageDetailsRepository().searchMessages(queryString, queryString, queryString);
         getMessageDetailsRepository().clearSearchMessagesCache();
-        getMessageDetailsRepository().saveAllSearchMessagesInDB(messages);
+        getMessageDetailsRepository().saveAllSearchMessagesBlocking(messages);
         return messages.size() > 0;
     }
 
@@ -75,7 +75,7 @@ public class SearchMessagesJob extends ProtonMailBaseJob {
             if (newSearch && page == 0) {
                 getMessageDetailsRepository().clearSearchMessagesCache();
             }
-            getMessageDetailsRepository().saveAllSearchMessagesInDB(resultsList);
+            getMessageDetailsRepository().saveAllSearchMessagesBlocking(resultsList);
             return resultsList.size() > 0;
         } catch (Exception error) {
             Logger.doLogException(TAG_SEARCH_MESSAGES_JOB, "Error searching messages", error);

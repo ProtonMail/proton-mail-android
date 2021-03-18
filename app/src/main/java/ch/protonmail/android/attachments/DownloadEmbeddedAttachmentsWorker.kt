@@ -32,17 +32,13 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.ProgressListener
-import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.Crypto
-import ch.protonmail.android.data.local.AttachmentMetadataDao
-import ch.protonmail.android.data.local.model.*
-import ch.protonmail.android.domain.entity.*
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import ch.protonmail.android.worker.failure
+import kotlinx.coroutines.flow.first
+import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import java.security.GeneralSecurityException
 import javax.inject.Inject
@@ -55,7 +51,7 @@ internal const val KEY_INPUT_DATA_ATTACHMENT_ID_STRING = "KEY_INPUT_DATA_ATTACHM
 
 /**
  * Represents one unit of work downloading embedded attachments for
- * [Message][ch.protonmail.android.api.models.room.messages.Message] and saving them to local app storage.
+ * [Message][ch.protonmail.android.data.local.model.Message] and saving them to local app storage.
  *
  * Downloading of files on Android Q is based on the information from
  * https://commonsware.com/blog/2020/01/11/scoped-storage-stories-diabolical-details-downloads.html
@@ -80,33 +76,31 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
     override suspend fun doWork(): Result {
 
         // sanitize input
-        val messageId = inputData.getString(KEY_INPUT_DATA_MESSAGE_ID_STRING)
-            ?: return Result.failure()
-        val userIdString = inputData.getString(KEY_INPUT_DATA_USER_ID_STRING)
-            ?: return Result.failure()
+        val messageId = inputData.getString(KEY_INPUT_DATA_MESSAGE_ID_STRING)?.takeIfNotBlank()
+            ?: return Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty message id")
+            )
+        val userIdString = inputData.getString(KEY_INPUT_DATA_USER_ID_STRING)?.takeIfNotBlank()
+            ?: return Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty user id")
+            )
         val userId = Id(userIdString)
 
         val singleAttachmentId = inputData.getString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING)
 
-        if (messageId.isEmpty()) {
-            return Result.failure(
-                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty messageId")
-            )
-        }
-
-        var message = messageDetailsRepository.findSearchMessageById(messageId)
+        var message = messageDetailsRepository.findSearchMessageById(messageId).first()
         var attachments = if (message != null) {
             // use search or standard message database, if Message comes from search
             messageDetailsRepository.findSearchAttachmentsByMessageId(messageId)
         } else {
-            message = messageDetailsRepository.findMessageById(messageId)
+            message = messageDetailsRepository.findMessageById(messageId).first()
             messageDetailsRepository.findAttachmentsByMessageId(messageId)
         }
 
         requireNotNull(message)
         val addressId = requireNotNull(message.addressID)
 
-        val addressCrypto = Crypto.forAddress(userManager, userId, Id(message.addressID!!))
+        val addressCrypto = Crypto.forAddress(userManager, userId, Id(addressId))
         // We need this outside of this because the embedded attachments are set once the message is actually decrypted
         try {
             message.decrypt(addressCrypto)

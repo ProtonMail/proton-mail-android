@@ -170,7 +170,7 @@ class UploadAttachments @WorkerInject constructor(
                     attachments.add(uploadedAttachment)
                 }
             message.setAttachmentList(attachments)
-            messageDetailsRepository.saveMessageLocally(message)
+            messageDetailsRepository.saveMessage(message)
         }
     }
 

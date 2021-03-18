@@ -40,6 +40,7 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -290,7 +291,13 @@ class MessagesService : JobIntentService() {
                             }
                         }
                         msg
-                    }.filterNotNull().toList().let(messageDetailsRepository::saveAllMessages)
+                    }.filterNotNull()
+                        .toList()
+                        .let {
+                            runBlocking {
+                                messageDetailsRepository.saveAllMessages(it)
+                            }
+                        }
                 }
             }
             saveLastMessageTime(unixTime, location, "")
@@ -361,7 +368,13 @@ class MessagesService : JobIntentService() {
                             }
                         }
                         msg
-                    }.filterNotNull().toList().let(messageDetailsRepository::saveAllMessages)
+                    }.filterNotNull()
+                        .toList()
+                        .let {
+                            runBlocking {
+                                messageDetailsRepository.saveAllMessages(it)
+                            }
+                        }
                 }
             }
             saveLastMessageTime(unixTime, location, labelId)

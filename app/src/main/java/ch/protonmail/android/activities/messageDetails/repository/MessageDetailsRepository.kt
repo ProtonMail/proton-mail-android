@@ -53,8 +53,10 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.equalsNoCase
 import timber.log.Timber
 import java.io.File
@@ -72,18 +74,18 @@ private const val DEPRECATION_MESSAGE = "We should strive towards moving methods
 class MessageDetailsRepository @Inject constructor(
     private val jobManager: JobManager,
     private val api: ProtonMailApiManager,
+    userManager: UserManager,
     @Named("messages_search") var searchDatabaseDao: MessageDao,
-    private var pendingActionDatabase: PendingActionDao,
+    private var pendingActionDao: PendingActionDao,
     private val applicationContext: Context,
     val databaseProvider: DatabaseProvider,
-    private val dispatchers: DispatcherProvider,
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer
 ) {
 
     private var messagesDao: MessageDao = databaseProvider.provideMessageDao(userManager.requireCurrentUserId())
 
     fun reloadDependenciesForUser(userId: Id) {
-        pendingActionDatabase = databaseProvider.providePendingActionDao(userId)
+        pendingActionDao = databaseProvider.providePendingActionDao(userId)
         messagesDao = databaseProvider.provideMessageDao(userId)
     }
 
@@ -93,22 +95,17 @@ class MessageDetailsRepository @Inject constructor(
     fun findSearchMessageByIdAsync(messageId: String): LiveData<Message> =
         searchDatabaseDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
 
-    suspend fun findMessageByMessageDbId(dbId: Long): Message? =
-        withContext(dispatchers.Io) {
-            findMessageByMessageDbIdBlocking(dbId)
-        }
-
     fun findMessageByIdBlocking(messageId: String): Message? =
         messagesDao.findMessageByIdBlocking(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
-    suspend fun findMessageById(messageId: String): Message? =
-        messagesDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+    fun findMessageById(messageId: String): Flow<Message?> =
+        messagesDao.findMessageById(messageId).map { readMessageBodyFromFileIfNeeded(it) }
 
     fun findSearchMessageByIdBlocking(messageId: String): Message? =
         searchDatabaseDao.findMessageByIdBlocking(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
-    suspend fun findSearchMessageById(messageId: String): Message? =
-        searchDatabaseDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+    fun findSearchMessageById(messageId: String): Flow<Message?> =
+        searchDatabaseDao.findMessageById(messageId).map { readMessageBodyFromFileIfNeeded(it) }
 
     fun findMessageByIdSingle(messageId: String): Single<Message> =
         messagesDao.findMessageByIdSingle(messageId).map(readMessageBodyFromFileIfNeeded)
@@ -116,14 +113,26 @@ class MessageDetailsRepository @Inject constructor(
     fun findMessageByIdObservable(messageId: String): Flowable<Message> =
         messagesDao.findMessageByIdObservable(messageId).map(readMessageBodyFromFileIfNeeded)
 
+    fun findMessageByMessageDbId(messageDbId: Long): Flow<Message?> =
+        messagesDao.findMessageByMessageDbId(messageDbId).map { readMessageBodyFromFileIfNeeded(it) }
+
+    @Deprecated("Use Flow", ReplaceWith("findMessageByMessageDbId(messageDbId).first()"))
     fun findMessageByMessageDbIdBlocking(messageDbId: Long): Message? =
-        messagesDao.findMessageByMessageDbIdBlocking(messageDbId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+        runBlocking {
+            findMessageByMessageDbId(messageDbId).first()
+        }
 
     fun findMessageByDbId(messageDbId: Long): Flow<Message?> =
         messagesDao.findMessageByDbId(messageDbId)
 
-    fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): List<Message> =
-        messagesDao.findAllMessageByLastMessageAccessTime(laterThan).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
+    fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =
+        messagesDao.findAllMessageByLastMessageAccessTime(laterThan)
+            .map { list ->
+                list.mapNotNull { readMessageBodyFromFileIfNeeded(it) }
+            }
+
+    fun findAllMessageByLastMessageAccessTimeBlocking(laterThan: Long = 0): List<Message> =
+        runBlocking { findAllMessageByLastMessageAccessTime(laterThan).first() }
 
     /**
      * Helper function mapping Message with body saved in file to body in memory.
@@ -202,47 +211,60 @@ class MessageDetailsRepository @Inject constructor(
         }
     }
 
-    suspend fun findAttachmentsByMessageId(messageId: String) = messagesDao.findAttachmentsByMessageId(messageId)
+    suspend fun findAttachmentsByMessageId(messageId: String): List<Attachment> =
+        messagesDao.findAttachmentsByMessageId(messageId).first()
 
-    suspend fun findSearchAttachmentsByMessageId(messageId: String) =
-        searchDatabaseDao.findAttachmentsByMessageId(messageId)
-
-    fun saveAttachmentBlocking(attachment: Attachment) = messagesDao.saveAttachmentBlocking(attachment)
+    suspend fun findSearchAttachmentsByMessageId(messageId: String): List<Attachment> =
+        searchDatabaseDao.findAttachmentsByMessageId(messageId).first()
 
     suspend fun saveAttachment(attachment: Attachment) = messagesDao.saveAttachment(attachment)
 
+    @Deprecated("Use suspend function", ReplaceWith("saveAttachment(attachment)"))
+    fun saveAttachmentBlocking(attachment: Attachment) = messagesDao.saveAttachmentBlocking(attachment)
+
     fun findPendingSendByOfflineMessageIdAsync(messageId: String) =
-        pendingActionDatabase.findPendingSendByOfflineMessageIdAsync(messageId)
+        pendingActionDao.findPendingSendByOfflineMessageIdAsync(messageId)
 
-    fun findPendingSendByMessageId(messageId: String) = pendingActionDatabase.findPendingSendByMessageId(messageId)
+    fun findPendingSendByMessageId(messageId: String) = pendingActionDao.findPendingSendByMessageId(messageId)
 
-
-    @Suppress("RedundantSuspendModifier")
-    // suspend not needed as now, but may all db operations will be wrapped into a Coroutine
+    @Deprecated(
+        "Use 'saveMessage'",
+        ReplaceWith("saveMessageLocally(message, isSearchMessage = isTransient)")
+    )
     suspend fun saveMessageInDB(message: Message, isTransient: Boolean) {
-        return if (isTransient)
+        saveMessage(message, isSearchMessage = isTransient)
+    }
+
+    suspend fun saveMessage(message: Message, isSearchMessage: Boolean = false): Long {
+        return if (isSearchMessage) {
             saveSearchMessageInDB(message)
-        else {
-            saveMessageInDB(message)
-            Unit // saveMessageInDB is returning Long
+        } else {
+            checkSaveFlagAndSaveFile(message)
+            messagesDao.saveMessage(message)
         }
     }
 
-    fun saveMessageInDB(message: Message): Long {
-        checkSaveFlagAndSaveFile(message)
-        return messagesDao.saveMessage(message)
+    @Deprecated("Use suspend function", ReplaceWith("saveMessage(message)"))
+    fun saveMessageBlocking(message: Message): Long = runBlocking {
+        saveMessage(message)
     }
 
-    suspend fun saveMessageLocally(message: Message): Long =
-        withContext(dispatchers.Io) {
-            saveMessageInDB(message)
+    @Deprecated("Use 'saveMessage'", ReplaceWith("saveMessage(message)"))
+    suspend fun saveMessageInDB(message: Message): Long =
+        saveMessage(message)
+
+    suspend fun saveAllMessages(messages: List<Message>) {
+        messages.forEach { saveMessage(it) }
+    }
+
+    @Deprecated("Use suspend function", ReplaceWith("saveAllMessages(messages)"))
+    fun saveAllMessagesBlocking(messages: List<Message>) {
+        runBlocking {
+            saveAllMessages(messages)
         }
-
-    fun saveAllMessages(messages: List<Message>) {
-        messages.map(this::saveMessageInDB)
     }
 
-    fun saveMessagesInOneTransaction(messages: List<Message>) {
+    suspend fun saveMessagesInOneTransaction(messages: List<Message>) {
         if (messages.isEmpty()) {
             return
         }
@@ -252,10 +274,14 @@ class MessageDetailsRepository @Inject constructor(
         messagesDao.saveMessages(*messages.toTypedArray())
     }
 
-    fun saveSearchMessageInDB(message: Message) {
+    suspend fun saveSearchMessage(message: Message): Long {
         checkSaveFlagAndSaveFile(message)
-        searchDatabaseDao.saveMessage(message)
+        return searchDatabaseDao.saveMessage(message)
     }
+
+    @Deprecated("Use 'saveSearchMessage'", ReplaceWith("saveSearchMessage(message)"))
+    suspend fun saveSearchMessageInDB(message: Message): Long =
+        saveSearchMessage(message)
 
     private fun checkSaveFlagAndSaveFile(message: Message) {
         if (Constants.FeatureFlags.SAVE_MESSAGE_BODY_TO_FILE) {
@@ -266,11 +292,21 @@ class MessageDetailsRepository @Inject constructor(
         }
     }
 
-    fun saveAllSearchMessagesInDB(messages: List<Message>) {
-        messages.map(this::saveSearchMessageInDB)
+    suspend fun saveAllSearchMessages(messages: List<Message>) {
+        messages.forEach { saveSearchMessage(it) }
     }
 
-    fun saveSearchMessagesInOneTransaction(messages: List<Message>) {
+    @Deprecated("Use suspend function", ReplaceWith("saveAllSearchMessages(messages)"))
+    fun saveAllSearchMessagesBlocking(messages: List<Message>) {
+        runBlocking { saveAllSearchMessages(messages) }
+    }
+
+    @Deprecated("Use 'saveAllSearchMessages'", ReplaceWith("saveAllSearchMessages(messages)"))
+    suspend fun saveAllSearchMessagesInDB(messages: List<Message>) {
+        saveAllSearchMessages(messages)
+    }
+
+    suspend fun saveSearchMessagesInOneTransaction(messages: List<Message>) {
         if (messages.isEmpty()) {
             return
         }
@@ -496,8 +532,8 @@ class MessageDetailsRepository @Inject constructor(
     }
 
     fun findAllPendingSendsAsync(): LiveData<List<PendingSend>> =
-        pendingActionDatabase.findAllPendingSendsAsync()
+        pendingActionDao.findAllPendingSendsAsync()
 
     fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>> =
-        pendingActionDatabase.findAllPendingUploadsAsync()
+        pendingActionDao.findAllPendingUploadsAsync()
 }

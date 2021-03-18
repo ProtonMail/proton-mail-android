@@ -66,6 +66,7 @@ import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -439,7 +440,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                                 with(messageDetailsRepository) {
 
                                     if (isTransientMessage) {
-                                        val savedMessage = findSearchMessageById(messageId)
+                                        val savedMessage = findSearchMessageById(messageId).first()
                                         if (savedMessage != null) {
                                             messageResponse.message.writeTo(savedMessage)
                                             saveSearchMessageInDB(savedMessage)
@@ -448,7 +449,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                                         }
 
                                     } else {
-                                        val savedMessage = findMessageById(messageId)
+                                        val savedMessage = findMessageById(messageId).first()
                                         if (savedMessage != null) {
                                             messageResponse.message.writeTo(savedMessage)
                                             saveMessageInDB(savedMessage)

@@ -52,6 +52,7 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.notifier.UserNotifier
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -88,7 +89,7 @@ class CreateDraftWorker @WorkerInject constructor(
     override suspend fun doWork(): Result {
         val userId = getInputUserId()
 
-        val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
+        val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId()).first()
             ?: return failureWithError(CreateDraftWorkerErrors.MessageNotFound)
         val senderAddressId = requireNotNull(message.addressID)
         val senderAddress = requireNotNull(getSenderAddress(senderAddressId))
@@ -188,7 +189,7 @@ class CreateDraftWorker @WorkerInject constructor(
             localId = localDraft.messageId
         }
 
-        messageDetailsRepository.saveMessageLocally(apiDraft)
+        messageDetailsRepository.saveMessage(apiDraft)
     }
 
     private fun retryOrFail(error: String?, messageSubject: String?): Result {

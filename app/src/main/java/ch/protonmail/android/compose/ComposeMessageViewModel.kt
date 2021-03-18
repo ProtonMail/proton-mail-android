@@ -71,8 +71,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import java.util.HashMap
@@ -489,7 +489,7 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     private suspend fun onDraftSaved(savedDraftId: String) {
-        val draft = requireNotNull(messageDetailsRepository.findMessageById(savedDraftId))
+        val draft = requireNotNull(messageDetailsRepository.findMessageById(savedDraftId).first())
 
         viewModelScope.launch(dispatchers.Main) {
             _draftId.set(draft.messageId)
@@ -514,9 +514,7 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     private suspend fun saveMessage(message: Message): Long =
-        withContext(dispatchers.Io) {
-            messageDetailsRepository.saveMessageInDB(message)
-        }
+        messageDetailsRepository.saveMessage(message)
 
     private fun getSenderEmailAddresses(userEmailAlias: String? = null) {
         val user = userManager.user
@@ -585,7 +583,7 @@ class ComposeMessageViewModel @Inject constructor(
         viewModelScope.launch {
             var message: Message? = null
             if (draftId.isNotEmpty()) {
-                message = composeMessageRepository.findMessage(draftId, dispatchers.Io)
+                message = composeMessageRepository.findMessage(draftId)
             }
             if (message != null) {
                 _draftId.set(message.messageId)
@@ -667,7 +665,7 @@ class ComposeMessageViewModel @Inject constructor(
 
         viewModelScope.launch {
             if (draftId.isNotEmpty()) {
-                val message = composeMessageRepository.findMessage(draftId, dispatchers.Io)
+                val message = composeMessageRepository.findMessage(draftId)
 
                 if (message != null) {
                     val messageAttachments = composeMessageRepository.getAttachments(message, _messageDataResult.isTransient, dispatchers.Io)
@@ -720,7 +718,7 @@ class ComposeMessageViewModel @Inject constructor(
             } else {
                 // this will ensure the message get latest message id if it was already saved in a create/update draft job
                 // and also that the message has all the latest edits in between draft saving (creation) and sending the message
-                val savedMessage = messageDetailsRepository.findMessageByMessageDbId(_dbId!!)
+                val savedMessage = messageDetailsRepository.findMessageByMessageDbId(_dbId!!).first()
                 message.dbId = _dbId
                 savedMessage?.let {
                     if (!TextUtils.isEmpty(it.localId)) {

@@ -52,7 +52,7 @@ public class FetchDraftDetailJob extends ProtonMailBaseJob {
                 message.setInline(savedMessage.isInline());
             }
             message.setDownloaded(true);
-            long messageDbId = getMessageDetailsRepository().saveMessageInDB(message);
+            long messageDbId = getMessageDetailsRepository().saveMessageBlocking(message);
             final FetchDraftDetailEvent event = new FetchDraftDetailEvent(true);
             // we need to re-query MessageRepository, because after saving, messageBody may be replaced with uri to file
             event.setMessage(getMessageDetailsRepository().findMessageByMessageDbIdBlocking(messageDbId));

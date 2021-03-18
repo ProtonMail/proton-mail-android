@@ -45,6 +45,7 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.lang3.StringEscapeUtils
 import timber.log.Timber
@@ -364,11 +365,11 @@ data class Message @JvmOverloads constructor(
     fun isEncrypted(): Boolean = messageEncryption!!.isEndToEndEncrypted
 
     @WorkerThread
-    fun attachmentsBlocking(messagesDatabase: MessagesDatabase): List<Attachment> = runBlocking {
-        attachments(messagesDatabase)
+    fun attachmentsBlocking(messageDao: MessageDao): List<Attachment> = runBlocking {
+        attachments(messageDao)
     }
 
-    suspend fun attachments(messagesDatabase: MessagesDatabase): List<Attachment> {
+    suspend fun attachments(messageDao: MessageDao): List<Attachment> {
         if (isPGPMime) {
             return this.Attachments
         }
@@ -376,7 +377,7 @@ data class Message @JvmOverloads constructor(
         if (messageId == null || messageId.isEmpty()) {
             return emptyList()
         }
-        val result = messageDao.findAttachmentsByMessageId(messageId)
+        val result = messageDao.findAttachmentsByMessageId(messageId).first()
         for (att in result) {
             val oldInline = att.inline
             if (!att.inline) {

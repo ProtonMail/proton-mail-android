@@ -21,11 +21,16 @@ package ch.protonmail.android.activities.composeMessage
 import android.os.AsyncTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.data.local.model.Message
+import kotlinx.coroutines.runBlocking
 
-internal class SaveMassageTask(private val messageDetailsRepository: MessageDetailsRepository,
-                               private val savedMessage: Message) : AsyncTask<Unit, Unit, Unit>() {
+internal class SaveMassageTask(
+    private val messageDetailsRepository: MessageDetailsRepository,
+    private val savedMessage: Message
+) : AsyncTask<Unit, Unit, Unit>() {
 
     override fun doInBackground(vararg units: Unit) {
-        messageDetailsRepository.saveMessageInDB(savedMessage)
+        runBlocking {
+            messageDetailsRepository.saveMessageInDB(savedMessage)
+        }
     }
 }

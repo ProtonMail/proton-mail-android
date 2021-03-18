@@ -97,7 +97,7 @@ public class AttachmentClearingService extends ProtonJobIntentService {
                     return;
                 }
                 maxSize = maxSize * 1000 * 1000; // in bytes
-                List<Message> leastAccessMessages = messageDetailsRepository.findAllMessageByLastMessageAccessTime(0);
+                List<Message> leastAccessMessages = messageDetailsRepository.findAllMessageByLastMessageAccessTimeBlocking(0);
                 if (maxSize > currentEmbeddedImagesSize) {
                     return; // no need to delete attachments
                 }
@@ -139,13 +139,13 @@ public class AttachmentClearingService extends ProtonJobIntentService {
         }
         File directory = new File(getApplicationContext().getFilesDir() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS);
         deleteRecursive(directory);
-        List<Message> leastAccessMessages = messageDetailsRepository.findAllMessageByLastMessageAccessTime(0);
+        List<Message> leastAccessMessages = messageDetailsRepository.findAllMessageByLastMessageAccessTimeBlocking(0);
         List<Message> messageListForDeletion = getMessageListForDeletion(leastAccessMessages, -1);
         for (Message message : messageListForDeletion) {
             message.setMessageBody("");
             message.setDownloaded(false);
         }
-        messageDetailsRepository.saveAllMessages(messageListForDeletion);
+        messageDetailsRepository.saveAllMessagesBlocking(messageListForDeletion);
     }
 
     private long doTheCleanMessages(List<Message> leastAccessMessages, long neededSpaceToFreeUp) {
@@ -155,7 +155,7 @@ public class AttachmentClearingService extends ProtonJobIntentService {
             messagesFreedSize += message.getTotalSize();
             message.setMessageBody("");
             message.setDownloaded(false);
-            messageDetailsRepository.saveMessageInDB(message);
+            messageDetailsRepository.saveMessageBlocking(message);
         }
         return messagesFreedSize;
     }

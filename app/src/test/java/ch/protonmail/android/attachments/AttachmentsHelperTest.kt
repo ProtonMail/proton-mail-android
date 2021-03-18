@@ -19,8 +19,8 @@
 
 package ch.protonmail.android.attachments
 
-import ch.protonmail.android.api.models.AttachmentHeaders
-import ch.protonmail.android.api.models.room.messages.Attachment
+import ch.protonmail.android.data.local.model.Attachment
+import ch.protonmail.android.data.local.model.AttachmentHeaders
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import io.mockk.MockKAnnotations
 import kotlin.test.BeforeTest

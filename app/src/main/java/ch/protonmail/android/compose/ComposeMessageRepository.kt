@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.compose
 
-import android.text.TextUtils
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.AccountManager
@@ -52,9 +51,11 @@ import io.reactivex.Single
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -138,26 +139,20 @@ class ComposeMessageRepository @Inject constructor(
         message.attachmentsBlocking(searchDatabase)
     }
 
-    fun findMessageByIdSingle(id: String): Single<Message> {
-        return messageDetailsRepository.findMessageByIdSingle(id)
-    }
+    fun findMessageByIdSingle(id: String): Single<Message> =
+        messageDetailsRepository.findMessageByIdSingle(id)
 
-    fun findMessageByIdObservable(id: String): Flowable<Message> {
-        return messageDetailsRepository.findMessageByIdObservable(id)
-    }
+    fun findMessageByIdObservable(id: String): Flowable<Message> =
+        messageDetailsRepository.findMessageByIdObservable(id)
 
     /**
      * Returns a message for a given draft id. It tries to get it by local id first, if absent then by a regular
      *  message id.
      */
-    suspend fun findMessage(draftId: String, dispatcher: CoroutineDispatcher): Message? =
-        withContext(dispatcher) {
-            var message: Message? = null
-            if (!TextUtils.isEmpty(draftId)) {
-                message = messageDetailsRepository.findMessageById(draftId)
-            }
-            message
-        }
+    suspend fun findMessage(draftId: String): Message? {
+        draftId.takeIfNotBlank() ?: return null
+        return messageDetailsRepository.findMessageById(draftId).first()
+    }
 
 
     suspend fun deleteMessageById(messageId: String) =

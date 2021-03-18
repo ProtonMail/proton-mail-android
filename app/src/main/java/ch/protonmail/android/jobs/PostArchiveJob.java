@@ -70,7 +70,7 @@ public class PostArchiveJob extends ProtonMailCounterJob {
                         }
                     }
                 }
-                getMessageDetailsRepository().saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageBlocking(message);
             }
         }
 
@@ -102,7 +102,7 @@ public class PostArchiveJob extends ProtonMailCounterJob {
         } else {
             message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
         }
-        getMessageDetailsRepository().saveMessageInDB(message);
+        getMessageDetailsRepository().saveMessageBlocking(message);
         return unreadIncrease;
     }
 

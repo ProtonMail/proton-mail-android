@@ -175,6 +175,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override fun downloadAttachmentBlocking(attachmentId: String): ByteArray =
         api.downloadAttachmentBlocking(attachmentId)
 
+    override fun downloadAttachmentBlocking(attachmentId: String, progressListener: ProgressListener): ByteArray =
+        api.downloadAttachmentBlocking(attachmentId, progressListener)
+
     override suspend fun downloadAttachment(attachmentId: String): okhttp3.ResponseBody? =
         api.downloadAttachment(attachmentId)
 

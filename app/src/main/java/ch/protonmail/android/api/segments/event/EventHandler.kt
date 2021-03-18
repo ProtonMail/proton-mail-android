@@ -331,7 +331,7 @@ class EventHandler @AssistedInject constructor(
                 try {
                     val savedMessage = messageDetailsRepository.findMessageByIdBlocking(messageId)
                     if (savedMessage == null) {
-                        messageDetailsRepository.saveMessageInDB(messageFactory.createMessage(event.message))
+                        messageDetailsRepository.saveMessageBlocking(messageFactory.createMessage(event.message))
                     } else {
                         updateMessageFlags(messageDao, messageId, event)
                     }
@@ -361,7 +361,7 @@ class EventHandler @AssistedInject constructor(
 
                     if (serverTime > dbTime && message != null && messageUpdate.messageBody != null) {
                         message.messageBody = messageUpdate.messageBody
-                        messageDetailsRepository.saveMessageInDB(message)
+                        messageDetailsRepository.saveMessageBlocking(message)
                     }
 
                     Timber.v("Message Id: $messageId processed, staged size:${stagedMessages.size}")
@@ -459,11 +459,11 @@ class EventHandler @AssistedInject constructor(
             if (expired) {
                 messageDetailsRepository.deleteMessage(message)
             } else {
-                messageDetailsRepository.saveMessageInDB(message)
+                messageDetailsRepository.saveMessageBlocking(message)
             }
         } else {
             stagedMessages[messageId]?.let {
-                messageDetailsRepository.saveMessageInDB(it)
+                messageDetailsRepository.saveMessageBlocking(it)
             }
         }
         stagedMessages.remove(messageId)

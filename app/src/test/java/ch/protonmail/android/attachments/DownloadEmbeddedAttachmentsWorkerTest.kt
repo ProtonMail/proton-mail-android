@@ -24,63 +24,67 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.models.room.messages.Attachment
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.Attachment
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
-import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DownloadEmbeddedAttachmentsWorkerTest {
 
-    @RelaxedMockK
-    private lateinit var context: Context
+    private val context: Context = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var parameters: WorkerParameters
+    private val parameters: WorkerParameters = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var userManager: UserManager
+    private val userManager: UserManager = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var messageDetailsRepository: MessageDetailsRepository
+    private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true)
 
-    @MockK
-    private lateinit var attachmentsHelper: AttachmentsHelper
+    private val attachmentsHelper: AttachmentsHelper = mockk()
 
-    @RelaxedMockK
-    private lateinit var handleSingleAttachment: HandleSingleAttachment
+    private val handleSingleAttachment: HandleSingleAttachment = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var handleEmbeddedImages: HandleEmbeddedImageAttachments
+    private val handleEmbeddedImages: HandleEmbeddedImageAttachments = mockk(relaxed = true)
 
-    @InjectMockKs
-    private lateinit var worker: DownloadEmbeddedAttachmentsWorker
+    private val worker = DownloadEmbeddedAttachmentsWorker(
+        context,
+        parameters,
+        userManager,
+        messageDetailsRepository,
+        attachmentsHelper,
+        handleSingleAttachment,
+        handleEmbeddedImages
+    )
 
-    private var dispatcherProvider = TestDispatcherProvider
+    @Test
+    fun verifyWorkerFailsWithNoMessageIdProvided() = runBlockingTest {
+        // given
+        every { parameters.inputData.getString(KEY_INPUT_DATA_USER_ID_STRING) } returns "userId"
+        val expected = ListenableWorker.Result.failure(
+            workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty message id")
+        )
 
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
+        // when
+        val operationResult = worker.doWork()
+
+        // then
+        assertEquals(expected, operationResult)
     }
 
     @Test
-    fun verifyWorkerFailsWithNoMessageIdAndUsernameProvided() = runBlockingTest {
+    fun verifyWorkerFailsWithNoUserIdProvided() = runBlockingTest {
         // given
+        every { parameters.inputData.getString(KEY_INPUT_DATA_MESSAGE_ID_STRING) } returns "messageId"
         val expected = ListenableWorker.Result.failure(
-            workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty messageId or username")
+            workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty user id")
         )
 
         // when
@@ -99,7 +103,7 @@ class DownloadEmbeddedAttachmentsWorkerTest {
             val expected = ListenableWorker.Result.success()
             val testMessageId = "MId1"
             val testAddressId = "addressId123"
-            val userName = "userNameAbc"
+            val userId = "userId"
             val isPgpMessage = true
             val attachmentId1 = "attachment1"
             val attachmentId2 = "attachment2"
@@ -143,9 +147,10 @@ class DownloadEmbeddedAttachmentsWorkerTest {
             every { attachmentsHelper.fromAttachmentToEmbeddedImage(attachment1, embeddedImageIds) } returns embeddedImage1
             every { attachmentsHelper.fromAttachmentToEmbeddedImage(attachment2, embeddedImageIds) } returns embeddedImage2
             every { parameters.inputData.getString(KEY_INPUT_DATA_MESSAGE_ID_STRING) } returns testMessageId
-            every { parameters.inputData.getString(KEY_INPUT_DATA_USERNAME_STRING) } returns userName
-            coEvery { messageDetailsRepository.findSearchMessageById(testMessageId) } returns null
-            coEvery { messageDetailsRepository.findMessageById(testMessageId) } returns message
+            every { parameters.inputData.getString(KEY_INPUT_DATA_USER_ID_STRING) } returns userId
+            every { messageDetailsRepository.findMessageById(testMessageId) } returns flowOf(message)
+            every { messageDetailsRepository.findSearchMessageById(testMessageId) } returns flowOf(null)
+            coEvery { messageDetailsRepository.findMessageByIdBlocking(testMessageId) } returns message
             coEvery { messageDetailsRepository.findAttachmentsByMessageId(testMessageId) } returns attachments
             coEvery { handleEmbeddedImages.invoke(embeddedImages, any(), testMessageId) } returns expected
 
@@ -166,7 +171,7 @@ class DownloadEmbeddedAttachmentsWorkerTest {
             val expected = ListenableWorker.Result.success()
             val testMessageId = "MId1"
             val testAddressId = "addressId123"
-            val userName = "userNameAbc"
+            val userId = "userId"
             val isPgpMessage = true
             val attachmentId1 = "attachment1"
             val attachmentId2 = "attachment2"
@@ -183,10 +188,11 @@ class DownloadEmbeddedAttachmentsWorkerTest {
             }
             every { attachmentsHelper.fromAttachmentToEmbeddedImage(any(), any()) } returns null
             every { parameters.inputData.getString(KEY_INPUT_DATA_MESSAGE_ID_STRING) } returns testMessageId
-            every { parameters.inputData.getString(KEY_INPUT_DATA_USERNAME_STRING) } returns userName
+            every { parameters.inputData.getString(KEY_INPUT_DATA_USER_ID_STRING) } returns userId
             every { parameters.inputData.getString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING) } returns attachmentId1
-            coEvery { messageDetailsRepository.findSearchMessageById(testMessageId) } returns null
-            coEvery { messageDetailsRepository.findMessageById(testMessageId) } returns message
+            every { messageDetailsRepository.findMessageById(testMessageId) } returns flowOf(message)
+            every { messageDetailsRepository.findSearchMessageById(testMessageId) } returns flowOf(null)
+            coEvery { messageDetailsRepository.findMessageByIdBlocking(testMessageId) } returns message
             coEvery { messageDetailsRepository.findAttachmentsByMessageId(testMessageId) } returns attachments
             coEvery { handleSingleAttachment.invoke(any(), any(), testMessageId) } returns expected
 

@@ -25,6 +25,7 @@ import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.usecase.model.DeleteMessageResult
 import ch.protonmail.android.worker.DeleteMessageWorker
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
@@ -50,11 +51,11 @@ class DeleteMessage @Inject constructor(
 
             for (id in validMessageIdList) {
                 ensureActive()
-                messageDetailsRepository.findMessageById(id)?.let { message ->
+                messageDetailsRepository.findMessageById(id).first()?.let { message ->
                     message.deleted = true
                     messagesToSave.add(message)
                 }
-                messageDetailsRepository.findSearchMessageById(id)?.let { searchMessage ->
+                messageDetailsRepository.findSearchMessageById(id).first()?.let { searchMessage ->
                     searchMessage.deleted = true
                     searchMessagesToSave.add(searchMessage)
                 }

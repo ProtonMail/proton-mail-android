@@ -25,6 +25,7 @@ import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.attachments.AttachmentsHelper
+import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.AttachmentMetadataDao
@@ -32,15 +33,11 @@ import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.DownloadUtils
-import io.mockk.MockKAnnotations
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.channels.Channel
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -53,20 +50,15 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private val downloadUtils = DownloadUtils()
 
-    @RelaxedMockK
-    private lateinit var messageDetailsRepository: MessageDetailsRepository
+    private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var userManager: UserManager
+    private val userManager: UserManager = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var contactsRepository: ContactsRepository
+    private val contactsRepository: ContactsRepository = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var attachmentsHelper: AttachmentsHelper
+    private val attachmentsHelper: AttachmentsHelper = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var attachmentMetadataDao: AttachmentMetadataDao
+    private val attachmentMetadataDao: AttachmentMetadataDao = mockk(relaxed = true)
 
     private var messageRendererFactory = mockk<MessageRenderer.Factory> {
         every { create(any(), any()) } returns mockk(relaxed = true) {
@@ -74,28 +66,32 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         }
     }
 
-    @RelaxedMockK
-    private lateinit var deleteMessageUseCase: DeleteMessage
+    private val deleteMessageUseCase: DeleteMessage = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var fetchVerificationKeys: FetchVerificationKeys
+    private val fetchVerificationKeys: FetchVerificationKeys = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var verifyConnection: VerifyConnection
+    private val verifyConnection: VerifyConnection = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var networkConfigurator: NetworkConfigurator
+    private val networkConfigurator: NetworkConfigurator = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var attachemntsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer
+    private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer = mockk(relaxed = true)
 
-    @InjectMockKs
-    private lateinit var viewModel: MessageDetailsViewModel
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-    }
+    private val viewModel = MessageDetailsViewModel(
+        savedStateHandle,
+        messageDetailsRepository,
+        userManager,
+        contactsRepository,
+        attachmentMetadataDao,
+        deleteMessageUseCase,
+        fetchVerificationKeys,
+        attachmentsWorker,
+        dispatchers,
+        attachmentsHelper,
+        downloadUtils,
+        messageRendererFactory,
+        verifyConnection,
+        networkConfigurator
+    )
 
     @Test
     fun verifyThatMessageIsParsedProperly() {

@@ -64,7 +64,7 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
                 if (markMessageLocally(counterDao, message)) {
                     totalUnread++;
                 }
-                getMessageDetailsRepository().saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageBlocking(message);
             }
         }
 
@@ -102,7 +102,7 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
                 .getInstance(getApplicationContext(), userId)
                 .getDao();
         message.setFolderLocation(messageDao);
-        getMessageDetailsRepository().saveMessageInDB(message);
+        getMessageDetailsRepository().saveMessageBlocking(message);
         return unreadIncrease;
     }
 }

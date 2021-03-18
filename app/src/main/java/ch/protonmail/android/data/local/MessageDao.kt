@@ -52,7 +52,10 @@ import ch.protonmail.android.data.local.model.TABLE_MESSAGES
 import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.runBlocking
 
 @Dao
 abstract class MessageDao {
@@ -110,8 +113,14 @@ abstract class MessageDao {
     """)
     abstract fun getMessagesByLabelId(label: String): List<Message>
 
-    fun findMessageById(messageId: String) = findMessageInfoById(messageId)?.also {
-        it.Attachments = it.attachments(this)
+    fun findMessageById(messageId: String): Flow<Message?> = findMessageInfoById(messageId)
+        .onEach { message ->
+            message ?: return@onEach
+            message.Attachments = message.attachments(this)
+        }
+
+    fun findMessageByIdBlocking(messageId: String): Message? = runBlocking {
+        findMessageById(messageId).first()
     }
 
     fun findMessageByIdAsync(messageId: String) = findMessageInfoByIdAsync(messageId)
@@ -120,26 +129,36 @@ abstract class MessageDao {
 
     fun findMessageByIdObservable(messageId: String) = findMessageInfoByIdObservable(messageId)
 
-    fun findMessageByMessageDbIdBlocking(messageDbId: Long) = findMessageInfoByDbIdBlocking(messageDbId)?.also {
-        it.Attachments = it.attachmentsBlocking(this)
-    }
+    fun findMessageByMessageDbId(messageDbId: Long) = findMessageInfoByDbId(messageDbId)
+        .onEach { message ->
+            message ?: return@onEach
+            message.Attachments = message.attachmentsBlocking(this)
+        }
+
+    fun findMessageByMessageDbIdBlocking(messageDbId: Long) = findMessageInfoByDbIdBlocking(messageDbId)
+        ?.also { message ->
+            message.Attachments = message.attachmentsBlocking(this)
+        }
 
     fun findMessageByDbId(dbId: Long): Flow<Message?> =
         findMessageInfoByDbId(dbId).map { message ->
             return@map message?.let {
                 it.Attachments = it.attachmentsBlocking(this)
-                it
+        it
             }
         }
 
     @JvmOverloads
-    fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): List<Message> =
-        findAllMessageInfoByLastMessageAccessTime(laterThan).onEach { message ->
-            message.Attachments = message.attachments(this)
-        }
+    fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =
+        findAllMessageInfoByLastMessageAccessTime(laterThan)
+            .map { messages ->
+                messages.onEach { message ->
+                    message.Attachments = message.attachments(this)
+                }
+            }
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
-    protected abstract fun findMessageInfoById(messageId: String): Message?
+    protected abstract fun findMessageInfoById(messageId: String): Flow<Message?>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
     protected abstract fun findMessageInfoByIdSingle(messageId: String): Single<Message>
@@ -162,19 +181,19 @@ abstract class MessageDao {
         WHERE $COLUMN_MESSAGE_ACCESS_TIME > :laterThan
         ORDER BY $COLUMN_MESSAGE_ACCESS_TIME
     """)
-    protected abstract fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): List<Message>
+    protected abstract fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>>
 
     @Transaction
-    open fun saveMessage(message: Message): Long {
+    open suspend fun saveMessage(message: Message): Long {
         processMessageAttachments(message)
         return saveMessageInfo(message)
     }
 
-    private fun processMessageAttachments(message: Message) {
+    private suspend fun processMessageAttachments(message: Message) {
         val messageId = message.messageId
         var localAttachments: List<Attachment> = ArrayList()
         if (messageId != null) {
-            localAttachments = findAttachmentsByMessageId(messageId)
+            localAttachments = findAttachmentsByMessageId(messageId).first()
         }
 
         var preservedAttachments = message.Attachments.map {
@@ -195,7 +214,7 @@ abstract class MessageDao {
         }
 
         val hasAnyAttachment =
-            message.embeddedImagesArray.isNotEmpty() && preservedAttachments.isEmpty() && localAttachments.isNotEmpty()
+            message.embeddedImageIds.isNotEmpty() && preservedAttachments.isEmpty() && localAttachments.isNotEmpty()
         if (hasAnyAttachment) {
             localAttachments.forEach { localAttachment ->
                 localAttachment.setMessage(message)
@@ -208,7 +227,7 @@ abstract class MessageDao {
                         if (it.inline) {
                             preservedAtt.inline = it.inline
                         } else {
-                            if (message.embeddedImagesArray.isNotEmpty()) {
+                            if (message.embeddedImageIds.isNotEmpty()) {
                                 preservedAtt.setMessage(message)
                             }
                         }
@@ -216,7 +235,7 @@ abstract class MessageDao {
                         preservedAtt.isUploading = it.isUploading
                     }
                 } else {
-                    if (message.embeddedImagesArray.isNotEmpty()) {
+                    if (message.embeddedImageIds.isNotEmpty()) {
                         preservedAtt.setMessage(message)
                     }
                 }
@@ -237,7 +256,7 @@ abstract class MessageDao {
     }
 
     @Transaction
-    open fun saveMessages(vararg messages: Message) {
+    open suspend fun saveMessages(vararg messages: Message) {
         messages.forEach {
             processMessageAttachments(it)
         }
@@ -246,8 +265,8 @@ abstract class MessageDao {
 
     @Deprecated("Use MessageDetailsRepository's methods that contain logic for large Message bodies")
     @Transaction
-    open fun saveAllMessages(messages: List<Message>) {
-        messages.map(this::saveMessage)
+    open suspend fun saveAllMessages(messages: List<Message>) {
+        messages.map { saveMessage(it) }
     }
 
     @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location")
@@ -299,7 +318,7 @@ abstract class MessageDao {
     abstract fun findAttachmentsByMessageIdAsync(messageId: String): LiveData<List<Attachment>>
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
-    abstract fun findAttachmentsByMessageId(messageId: String): List<Attachment>
+    abstract fun findAttachmentsByMessageId(messageId: String): Flow<List<Attachment>>
 
     @Query("""
         SELECT * 
@@ -315,7 +334,11 @@ abstract class MessageDao {
     ): Attachment
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveAttachment(attachment: Attachment): Long
+    abstract suspend fun saveAttachment(attachment: Attachment): Long
+
+    @Deprecated("Use suspend function", ReplaceWith("saveAttachment(attachment)"))
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun saveAttachmentBlocking(attachment: Attachment): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun saveAttachment(vararg attachments: Attachment): List<Long>

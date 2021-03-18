@@ -58,7 +58,7 @@ public class FetchMessageDetailJob extends ProtonMailBaseJob {
             final FetchMessageDetailEvent event = new FetchMessageDetailEvent(true, mMessageId);
             if (savedMessage != null) {
                 message.writeTo(savedMessage);
-                getMessageDetailsRepository().saveMessageInDB(savedMessage);
+                getMessageDetailsRepository().saveMessageBlocking(savedMessage);
                 event.setMessage(savedMessage);
             } else {
                 message.setToList(message.getToList());
@@ -81,7 +81,7 @@ public class FetchMessageDetailJob extends ProtonMailBaseJob {
                 }
                 message.setLocation(location.getMessageLocationTypeValue());
                 message.setFolderLocation(messageDao);
-                getMessageDetailsRepository().saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageBlocking(message);
                 event.setMessage(message);
             }
 

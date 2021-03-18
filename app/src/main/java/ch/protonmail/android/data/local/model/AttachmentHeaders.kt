@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models
+package ch.protonmail.android.data.local.model
 
 import android.util.Base64
 import ch.protonmail.android.api.utils.Fields
@@ -41,18 +41,25 @@ import java.lang.reflect.Type
  * it's ok to always parse them as String and if they are sent as an Array in that case get the first element.
  */
 class AttachmentHeaders(
+
     @SerializedName(Fields.Attachment.CONTENT_TYPE)
     var contentType: String = EMPTY_STRING,
+
     @SerializedName(Fields.Attachment.CONTENT_TRANSFER_ENCODING)
     var contentTransferEncoding: String = EMPTY_STRING,
+
     @SerializedName(Fields.Attachment.CONTENT_DISPOSITION)
     var contentDisposition: List<String> = listOf(),
+
     @SerializedName(Fields.Attachment.CONTENT_ID)
     var contentId: String = EMPTY_STRING,
+
     @SerializedName(Fields.Attachment.CONTENT_LOCATION)
     var contentLocation: String = EMPTY_STRING,
+
     @SerializedName(Fields.Attachment.CONTENT_ENCRYPTION)
     var contentEncryption: String = EMPTY_STRING
+
 ) : Serializable {
 
     override fun toString(): String {

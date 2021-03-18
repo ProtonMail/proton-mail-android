@@ -26,7 +26,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import ch.protonmail.android.api.models.room.messages.Attachment
+import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import okio.buffer
 import okio.sink

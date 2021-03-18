@@ -26,15 +26,11 @@ import android.webkit.WebView
 import androidx.test.filters.SmallTest
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.core.UserManager
-import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import junit.framework.Assert.assertTrue
 import java.util.Arrays
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -50,29 +46,19 @@ private const val EXTRA_MESSAGE_BODY = "message_body"
 @SmallTest
 class PMWebViewClientTest {
 
-    @RelaxedMockK
-    private lateinit var userManager: UserManager
+    private val userManager: UserManager = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var activity: Activity
+    private val activity: Activity = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var mockWebView: WebView
+    private val mockWebView: WebView = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var mockContext: Context
+    private val mockContext: Context = mockk(relaxed = true)
 
-    @InjectMockKs
-    private lateinit var webViewClient: PMWebViewClient
-
-    // Injected into webViewClient
     private val loadRemote = false
 
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-        every { userManager.context } returns mockContext
-    }
+    private val webViewClient = PMWebViewClient(
+        userManager, activity, loadRemote
+    )
 
     @Test
     fun shouldOverrideUrlLoadingStartsComposeMessageActivityWhenAMailToLinkWithoutCcRecipientsIsLoaded() {

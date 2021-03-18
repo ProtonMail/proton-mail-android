@@ -27,12 +27,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.core.Constants
-import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.data.local.*
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.utils.AppUtil
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

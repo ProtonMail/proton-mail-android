@@ -90,7 +90,7 @@ public class PostSpamJob extends ProtonMailCounterJob {
         }
         message.setLocation(Constants.MessageLocationType.SPAM.getMessageLocationTypeValue());
         message.setLabelIDs(Arrays.asList(String.valueOf(Constants.MessageLocationType.SPAM.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue())));
-        getMessageDetailsRepository().saveMessageInDB(message);
+        getMessageDetailsRepository().saveMessageBlocking(message);
         return unreadIncrease;
     }
 

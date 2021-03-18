@@ -74,7 +74,7 @@ public class PostTrashJob extends ProtonMailCounterJob {
                     }
                     message.setLocation(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue());
                 }
-                getMessageDetailsRepository().saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageBlocking(message);
 
             }
         }

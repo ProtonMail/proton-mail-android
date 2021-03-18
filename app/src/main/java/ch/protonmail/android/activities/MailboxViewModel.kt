@@ -38,6 +38,7 @@ import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.ArrayList
@@ -142,7 +143,7 @@ class MailboxViewModel @ViewModelInject constructor(
             withContext(Dispatchers.Default) {
                 while (iterator.hasNext()) {
                     val messageId = iterator.next()
-                    val message = messageDetailsRepository.findMessageById(messageId)
+                    val message = messageDetailsRepository.findMessageById(messageId).first()
 
                     if (message != null) {
                         val currentLabelsIds = message.labelIDsNotIncludingLocations
@@ -195,7 +196,7 @@ class MailboxViewModel @ViewModelInject constructor(
     ): ApplyRemoveLabels? {
         val labelsToRemove = ArrayList<String>()
 
-        //handle the case where too many labels exist for this message
+        // handle the case where too many labels exist for this message
         currentContactLabels?.forEach {
             val labelId = it.id
             if (!checkedLabelIds.contains(labelId) && !unchangedLabels.contains(labelId) && !it.exclusive) {
@@ -221,7 +222,9 @@ class MailboxViewModel @ViewModelInject constructor(
         // update the message with the new contactLabels
         message.addLabels(checkedLabelIds)
         message.removeLabels(labelsToRemove)
-        messageDetailsRepository.saveMessageInDB(message)
+        viewModelScope.launch {
+            messageDetailsRepository.saveMessageInDB(message)
+        }
 
         return ApplyRemoveLabels(checkedLabelIds, labelsToRemove)
     }

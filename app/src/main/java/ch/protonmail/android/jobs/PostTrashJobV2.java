@@ -90,7 +90,7 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
                         }
                     }
                 }
-                getMessageDetailsRepository().saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageBlocking(message);
             }
         }
 

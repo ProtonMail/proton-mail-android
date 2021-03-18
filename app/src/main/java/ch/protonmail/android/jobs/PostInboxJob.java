@@ -77,7 +77,7 @@ public class PostInboxJob extends ProtonMailCounterJob {
                     }
                 }
                 message.setLocation(Constants.MessageLocationType.INBOX.getMessageLocationTypeValue());
-                getMessageDetailsRepository().saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageBlocking(message);
             }
         }
 
