@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -27,6 +27,8 @@ import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.domain.entity.Id;
+import ch.protonmail.android.prefs.SecureSharedPreferences;
 import timber.log.Timber;
 
 public class FcmUtil {
@@ -40,6 +42,7 @@ public class FcmUtil {
      * Firebase token.
      */
     @NonNull
+    @Deprecated // Use FcmTokenManager - getToken
     public static String getFirebaseToken() {
         final ProtonMailApplication app = ProtonMailApplication.getApplication();
         final SharedPreferences prefs = app.getDefaultSharedPreferences();
@@ -70,6 +73,7 @@ public class FcmUtil {
      * @param token Firebase token
      */
     @SuppressLint("CommitPrefEdits")
+    @Deprecated // Use FcmTokenManager - saveToken
     public static void setFirebaseToken(String token) {
         final ProtonMailApplication app = ProtonMailApplication.getApplication();
         final SharedPreferences prefs = app.getDefaultSharedPreferences();
@@ -82,24 +86,45 @@ public class FcmUtil {
                 .commit();
     }
 
-    public static void setTokenSent(String username, boolean sent) {
-        final ProtonMailApplication app = ProtonMailApplication.getApplication();
-        final SharedPreferences prefs = app.getSecureSharedPreferences(username);
-        prefs.edit().putBoolean(Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER, sent).apply();
+    @Deprecated // Use FcmTokenManager - setTokenSent
+    public static void setTokenSent(SharedPreferences userPreferences, boolean sent) {
+        userPreferences.edit().putBoolean(Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER, sent).apply();
     }
 
-    public static void setTokenSent(boolean sent) {
-        for (String username : AccountManager.Companion.getInstance(ProtonMailApplication.getApplication()).getLoggedInUsers()) {
-            setTokenSent(username, sent);
+    @Deprecated // Use FcmTokenManager - setTokenSent
+    public static void setTokenSent(Id userId, boolean sent) {
+        final ProtonMailApplication app = ProtonMailApplication.getApplication();
+        final SharedPreferences prefs = SecureSharedPreferences.Companion.getPrefsForUser(app, userId);
+
+        setTokenSent(prefs, sent);
+    }
+
+    @Deprecated // Use FcmTokenManager - setTokenSent
+    public static void setTokenSent(String username, boolean sent) {
+    }
+
+    @Deprecated // No replacement, must be called on FcmTokenManager for each logged in user
+    public static void setTokenSent(AccountManager accountManager, boolean sent) {
+        for (Id userId : accountManager.allLoggedInBlocking()) {
+            setTokenSent(userId, sent);
         }
     }
 
+    @Deprecated // No replacement, must be called on FcmTokenManager for each logged in user
+    public static void setTokenSent(boolean sent) {
+        final ProtonMailApplication app = ProtonMailApplication.getApplication();
+
+        setTokenSent(AccountManager.Companion.getInstance(app), sent);
+    }
+
+    @Deprecated // Use FcmTokenManager - isTokenSent
     public static boolean isTokenSent(String username) {
         final ProtonMailApplication app = ProtonMailApplication.getApplication();
         final SharedPreferences prefs = app.getSecureSharedPreferences(username);
         return prefs.getBoolean(Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER, false);
     }
 
+    @Deprecated // No replacement, must be called on FcmTokenManager for each logged in user
     public static boolean isTokenSent() {
         for (String username : AccountManager.Companion.getInstance(ProtonMailApplication.getApplication()).getLoggedInUsers()) {
             if (!isTokenSent(username)) {
