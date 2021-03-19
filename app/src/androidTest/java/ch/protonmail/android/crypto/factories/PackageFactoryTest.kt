@@ -27,11 +27,10 @@ import ch.protonmail.android.api.models.enumerations.MIMEType
 import ch.protonmail.android.api.models.enumerations.PackageType
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.models.factories.PackageFactory
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.utils.HTMLToMDConverter
 import ch.protonmail.android.utils.base64.Base64Encoder
 import com.proton.gopenpgp.crypto.SessionKey
@@ -100,15 +99,16 @@ class PackageFactoryTest {
             every { dataPacket } returns "dataPacket".toByteArray()
         }
         val currentUsername = "Marino"
+        val currentUserId = Id("marino")
         every { base64Encoder.encode(any()) } returns "encodedBase64"
-        every { addressCryptoFactory.create(Id(addressId), Name(currentUsername)) } returns crypto
+        every { addressCryptoFactory.create(currentUserId, Id(addressId)) } returns crypto
         every { htmlToMDConverter.convert(any()) } returns bodyPlainText
         every { crypto.encrypt(bodyPlainText, true) } returns cipherText
         every { crypto.decryptKeyPacket(keyPackage) } returns "decryptedKeyPackets".toByteArray()
         every { crypto.encryptKeyPacket(any(), any()) } returns "encryptedKeyPackets".toByteArray()
         every { crypto.getSessionKey(keyPackage) } returns SessionKey("token".toByteArray(), "algorithm")
 
-        packageFactory.generatePackages(message, preferences, securityOptions, currentUsername)
+        packageFactory.generatePackages(message, preferences, securityOptions, currentUserId)
 
         verify { crypto.decryptKeyPacket(any()) }
         verify { crypto.getSessionKey(any()) }

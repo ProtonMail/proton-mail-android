@@ -36,6 +36,7 @@ import com.proton.gopenpgp.crypto.Crypto.newKeyFromArmored
 import com.proton.gopenpgp.crypto.Crypto.newKeyRing
 import com.proton.gopenpgp.crypto.Crypto.newPGPMessageFromArmored
 import com.proton.gopenpgp.crypto.Crypto.newPGPSignatureFromArmored
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -58,7 +59,7 @@ internal class CryptoTest {
     private val openPgpMock: OpenPGP = mockk()
 
     //region One Address Key Setup
-    private val oneAddressKeyUsername = "one_address_key_user"
+    private val oneAddressKeyUserId = Id("one_address_key_user")
     private val oneAddressKeyMailboxPassword = "7NgO4d0h72zt4XuFLOUbg352vhrn.tu"
     private val oneAddressKeyAddressId = "MMxTCP7DMErrWkOREQljdviitcZ1mDzjWcnzdg8wqObisClP25ILZ18vUsNgUVi-JD3O2EgmOuiEmx8C5qmofw=="
     private val oneAddressKeyUserKeyFingerprint = "20cf363b58ec99e722e53ec411c31e8e5e07f4d0"
@@ -155,7 +156,7 @@ internal class CryptoTest {
     //endregion
 
     //region Many Address Keys Setup
-    private val manyAddressKeysUsername = "many_address_keys_user"
+    private val manyAddressKeysUserId = Id("many_address_keys_user")
     private val manyAddressKeysMailboxPassword = "ikaAA3dimv9p7D.bqZ6mq.R45LRS6oi"
     private val manyAddressKeysAddressId =
         "odHOhMzF3YKgGR9firZjLxRWn9lfF2CPuS4XX2t0VWaKggxd3qqQ6QWv-hSbavF6VjZRmuFdDVXsMgh_lhUX-Q=="
@@ -677,7 +678,7 @@ internal class CryptoTest {
     //endregion
 
     //region Token and Signature generation
-    private val tokenAndSignatureUserName = "token_and_sign_name"
+    private val tokenAndSignatureUserId = Id("token_and_sign")
     private val passphrase = "7NgO4d0h72zt4XuFLOUbg352vhrn.tu".toByteArray()
     private val randomTokenString = "9efb6173a8da137e7ead1a9d2b6ada0f707a19156dee0c84899761fee73e556a"
     private val randomToken =
@@ -729,8 +730,6 @@ internal class CryptoTest {
 
     init {
         mockkStatic(TextUtils::class)
-        every { TextUtils.isEmpty(oneAddressKeyUsername) } returns false
-        every { TextUtils.isEmpty(manyAddressKeysUsername) } returns false
 
         every { userManagerMock.openPgp } returns openPgp
 
@@ -739,21 +738,22 @@ internal class CryptoTest {
         every { oneKeyUserMock.getAddressById(oneAddressKeyAddressId) } returns mockk {
             every { keys } returns oneAddressKeyAddressKeys
         }
-        every { userManagerMock.getUser(oneAddressKeyUsername) } returns oneKeyUserMock
-        every { userManagerMock.getMailboxPassword(oneAddressKeyUsername) } returns oneAddressKeyMailboxPassword.toByteArray()
+        every { userManagerMock.getLegacyUserBlocking(oneAddressKeyUserId) } returns oneKeyUserMock
+        every { userManagerMock.getMailboxPassword(oneAddressKeyUserId) } returns oneAddressKeyMailboxPassword.toByteArray()
 
         // many address keys
         every { manyAddressKeysUserMock.keys } returns manyAddressKeysUserKeys
         every { manyAddressKeysUserMock.getAddressById(manyAddressKeysAddressId) } returns mockk {
             every { keys } returns manyAddressKeysAddressKeys
         }
-        every { userManagerMock.getUser(manyAddressKeysUsername) } returns manyAddressKeysUserMock
-        every { userManagerMock.getMailboxPassword(manyAddressKeysUsername) } returns manyAddressKeysMailboxPassword.toByteArray()
+        every { userManagerMock.getLegacyUserBlocking(manyAddressKeysUserId) } returns manyAddressKeysUserMock
+        every { userManagerMock.getMailboxPassword(manyAddressKeysUserId) } returns manyAddressKeysMailboxPassword.toByteArray()
 
         // token and signature generation
-        every { userManagerMock.username } returns tokenAndSignatureUserName
-        every { userManagerMock.getTokenManager(tokenAndSignatureUserName) } returns tokenManagerMock
-        every { userManagerMock.getMailboxPassword(tokenAndSignatureUserName) } returns passphrase
+        every { userManagerMock.currentUserId } returns tokenAndSignatureUserId
+        every { userManagerMock.requireCurrentUserId() } returns tokenAndSignatureUserId
+        coEvery { userManagerMock.getTokenManager(tokenAndSignatureUserId) } returns tokenManagerMock
+        every { userManagerMock.getMailboxPassword(tokenAndSignatureUserId) } returns passphrase
         every { tokenManagerMock.encPrivateKey } returns armoredPrivateKey
         every { openPgpMock.randomToken() } returns randomToken
     }
@@ -788,7 +788,7 @@ internal class CryptoTest {
 
         val expected = "Test PGP/MIME Message\r\n\r\n\r\n"
 
-        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUsername, oneAddressKeyAddressId)
+        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUserId, Id(oneAddressKeyAddressId))
         val result = addressCrypto.decrypt(CipherText(encryptedMessage)).decryptedData
 
         assertEquals(expected, result)
@@ -798,7 +798,7 @@ internal class CryptoTest {
     fun encrypt_and_decrypt_message() {
         val message = "Text to encrypt and decrypt."
 
-        val userCrypto = Crypto.forUser(userManagerMock, oneAddressKeyUsername)
+        val userCrypto = Crypto.forUser(userManagerMock, oneAddressKeyUserId)
         val encrypted = userCrypto.encrypt(message, false)
         val decrypted = userCrypto.decrypt(encrypted)
 
@@ -814,7 +814,7 @@ internal class CryptoTest {
     fun encrypt_and_decrypt_signed_message() {
         val message = "Text to encrypt and decrypt, signed."
 
-        val userCrypto = Crypto.forUser(userManagerMock, oneAddressKeyUsername)
+        val userCrypto = Crypto.forUser(userManagerMock, oneAddressKeyUserId)
         val encryptedAndSigned = userCrypto.encrypt(message, true)
         val decrypted = userCrypto.decrypt(encryptedAndSigned)
 
@@ -853,7 +853,7 @@ internal class CryptoTest {
             "The ProtonMail Team\r\n"
 
         val addressCrypto =
-            Crypto.forAddress(userManagerMock, manyAddressKeysUsername, manyAddressKeysAddressId)
+            Crypto.forAddress(userManagerMock, manyAddressKeysUserId, Id(manyAddressKeysAddressId))
         val result = addressCrypto.decrypt(CipherText(encryptedMessage)).decryptedData
 
         assertEquals(expected, result)
@@ -898,7 +898,7 @@ internal class CryptoTest {
 
         val expected = "Test PGP/MIME Message\r\n\r\n\r\n"
 
-        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUsername, oneAddressKeyAddressId)
+        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUserId, Id(oneAddressKeyAddressId))
         val decryptor = addressCrypto.decryptMime(CipherText(encryptedMessage))
 
         lateinit var resultBody: String
@@ -1623,7 +1623,7 @@ internal class CryptoTest {
             }
         )
 
-        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUsername, oneAddressKeyAddressId)
+        val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUserId, Id(oneAddressKeyAddressId))
         val decryptor = addressCrypto.decryptMime(CipherText(encryptedMessage))
 
         lateinit var resultBody: String

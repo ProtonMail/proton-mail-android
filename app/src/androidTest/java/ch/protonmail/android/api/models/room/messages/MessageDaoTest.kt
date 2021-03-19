@@ -18,17 +18,20 @@
  */
 package ch.protonmail.android.api.models.room.messages
 
-import androidx.room.Room
-import androidx.test.InstrumentationRegistry
+import androidx.test.core.app.ApplicationProvider
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
+import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.MessageDatabase
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.MessageSender
+import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert
 import kotlin.test.Test
 
-class MessageDaoTest {
-	private val context=InstrumentationRegistry.getTargetContext()
-	private var databaseFactory=Room.inMemoryDatabaseBuilder(context, MessageDatabase::class.java).build()
+class MessageDaoTest : CoroutinesTest {
+
+    private val context = ApplicationProvider.getApplicationContext<ProtonMailApplication>()
+    private var databaseFactory = MessageDatabase.buildInMemoryDatabase(context)
     private var initiallyEmptyDatabase = databaseFactory.getDao()
 
     private fun createBaseMessage(): Message {
@@ -39,7 +42,7 @@ class MessageDaoTest {
     }
 
     @Test
-    fun insertFindByIdShouldReturnTheSame() {
+    fun insertFindByIdShouldReturnTheSame() = coroutinesTest {
         val expected = createBaseMessage()
         val id = "testId"
         expected.messageId = id
@@ -49,7 +52,7 @@ class MessageDaoTest {
     }
 
     @Test
-    fun insertFindByMessageDbIdShouldReturnTheSame() {
+    fun insertFindByMessageDbIdShouldReturnTheSame() = coroutinesTest {
         val expected = createBaseMessage()
         val id = "testId"
         expected.messageId = id
@@ -59,7 +62,7 @@ class MessageDaoTest {
     }
 
     @Test
-    fun insertFindMessageLabelIdShouldReturnTheAppropriate() {
+    fun insertFindMessageLabelIdShouldReturnTheAppropriate() = coroutinesTest {
         val message1 = createBaseMessage()
         message1.messageId = "1"
         message1.allLabelIDs = listOf("1", "5", "10")
@@ -78,7 +81,7 @@ class MessageDaoTest {
     }
 
     @Test
-    fun insertFindMessageLabelIdShouldReturnTheAppropriateSecond() {
+    fun insertFindMessageLabelIdShouldReturnTheAppropriateSecond() = coroutinesTest {
         val message1 = createBaseMessage()
         message1.messageId = "1"
         message1.allLabelIDs = listOf("1", "abcdef50abcdef", "10")
@@ -106,7 +109,7 @@ class MessageDaoTest {
     }
 
     @Test
-    fun testUpdateGoesFine() {
+    fun testUpdateGoesFine() = coroutinesTest {
         val message1 = createBaseMessage()
         message1.messageId = "1"
         message1.allLabelIDs = listOf("1", "5", "10")

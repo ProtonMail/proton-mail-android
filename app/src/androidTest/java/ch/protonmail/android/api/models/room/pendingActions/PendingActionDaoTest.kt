@@ -19,13 +19,15 @@
 package ch.protonmail.android.api.models.room.pendingActions
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import ch.protonmail.android.api.models.room.testValue
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.PendingSend
+import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.testAndroidInstrumented.ReflectivePropertiesMatcher
+import ch.protonmail.android.testAndroidInstrumented.matchers
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.Assert
@@ -38,7 +40,7 @@ import kotlin.test.Test
 internal class PendingActionDaoTest {
 
     private val context = ApplicationProvider.getApplicationContext<ProtonMailApplication>()
-    private var databaseFactory = Room.inMemoryDatabaseBuilder(context, PendingActionDatabase::class.java).build()
+    private var databaseFactory = PendingActionDatabase.buildInMemoryDatabase(context)
     private var database = databaseFactory.getDao()
 
     @get:Rule
@@ -70,8 +72,10 @@ internal class PendingActionDaoTest {
         database.populate()
     }
 
-    private fun assertDatabaseState(expectedSends: Iterable<PendingSend> = pendingSends,
-                                    expectedUploads: Iterable<PendingUpload> = pendingUploads) {
+    private fun assertDatabaseState(
+        expectedSends: Iterable<PendingSend> = pendingSends,
+        expectedUploads: Iterable<PendingUpload> = pendingUploads
+    ) {
         val expectedSendsMatcher = expectedSends.map { ReflectivePropertiesMatcher(it) }
         val expectedUploadsMatcher = expectedUploads.map { ReflectivePropertiesMatcher(it) }
 

@@ -40,7 +40,6 @@ import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.worker.PostLabelWorker
-import com.birbit.android.jobqueue.JobManager
 import studio.forface.viewstatestore.ViewStateStore
 import studio.forface.viewstatestore.from
 import studio.forface.viewstatestore.paging.PagedViewStateStore
@@ -52,8 +51,7 @@ import studio.forface.viewstatestore.paging.ViewStateStoreScope
  * Implements [ViewStateStoreScope] for being able to publish to a Locked [ViewStateStore]
  */
 internal class LabelsManagerViewModel @ViewModelInject constructor(
-    private val jobManager: JobManager,
-    private val messageDao: MessageDao,
+    messageDao: MessageDao,
     @Assisted private val savedStateHandle: SavedStateHandle,
     private val deleteLabel: DeleteLabel,
     private val workManager: WorkManager

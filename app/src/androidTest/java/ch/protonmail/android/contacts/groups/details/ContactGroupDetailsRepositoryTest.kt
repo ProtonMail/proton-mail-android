@@ -44,6 +44,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ContactGroupDetailsRepositoryTest {
+
     //region mocks
     private val protonMailApi = mockk<ProtonMailApiManager>(relaxed = true)
     private val database = mockk<ContactDao>(relaxed = true)
@@ -56,15 +57,18 @@ class ContactGroupDetailsRepositoryTest {
     //endregion
 
     //region rules
-    @get:Rule val rule = InstantTaskExecutorRule()
-    @get:Rule val rule2 = TestSchedulerRule()
+    @get:Rule
+    val rule = InstantTaskExecutorRule()
+    @get:Rule
+    val rule2 = TestSchedulerRule()
     //endregion
 
     private lateinit var contactGroupDetailsRepository: ContactGroupDetailsRepository
 
     @BeforeTest
     fun setUp() {
-        contactGroupDetailsRepository = ContactGroupDetailsRepository(protonMailApi, databaseProvider, workManager)
+        contactGroupDetailsRepository =
+            ContactGroupDetailsRepository(protonMailApi, databaseProvider, workManager, mockk())
     }
 
     //region tests
@@ -82,7 +86,9 @@ class ContactGroupDetailsRepositoryTest {
     fun testReturnNullWrongContactId() {
         val label1 = ContactLabel("a", "aa")
         every { database.findContactGroupByIdAsync("a") } returns Single.just(label1)
-        every { database.findContactGroupByIdAsync(any()) } returns Single.error(EmptyResultSetException("no such element"))
+        every { database.findContactGroupByIdAsync(any()) } returns Single.error(
+            EmptyResultSetException("no such element")
+        )
 
         val testObserver = contactGroupDetailsRepository.findContactGroupDetailsBlocking("b").test()
         testObserver.awaitTerminalEvent()
@@ -94,7 +100,9 @@ class ContactGroupDetailsRepositoryTest {
     fun testCorrectGetContactGroupEmails() {
         val email1 = ContactEmail("a", "a@a.a", name = "ce1")
         val email2 = ContactEmail("b", "b@b.b", name = "ce2")
-        every { database.findAllContactsEmailsByContactGroupAsyncObservable(any()) } returns Flowable.just(listOf(email1, email2))
+        every { database.findAllContactsEmailsByContactGroupAsyncObservable(any()) } returns Flowable.just(
+            listOf(email1, email2)
+        )
 
         val testObserver = contactGroupDetailsRepository.getContactGroupEmailsBlocking("").test()
         testObserver.awaitTerminalEvent()
@@ -159,7 +167,9 @@ class ContactGroupDetailsRepositoryTest {
     fun testCorrectGetContactEmailGroups() {
         val email1 = ContactEmail("a", "a@a.a", name = "ce1")
         val email2 = ContactEmail("b", "b@b.b", name = "ce2")
-        every { database.findAllContactsEmailsByContactGroupAsyncObservable(any()) } returns Flowable.just(listOf(email1, email2))
+        every { database.findAllContactsEmailsByContactGroupAsyncObservable(any()) } returns Flowable.just(
+            listOf(email1, email2)
+        )
 
         val testObserver = contactGroupDetailsRepository.getContactGroupEmailsBlocking("").test()
         testObserver.awaitTerminalEvent()

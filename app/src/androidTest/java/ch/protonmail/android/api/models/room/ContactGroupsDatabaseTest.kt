@@ -19,22 +19,22 @@
 package ch.protonmail.android.api.models.room
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
-import androidx.test.InstrumentationRegistry
+import androidx.test.core.app.ApplicationProvider
+import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.data.local.model.ContactLabel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert
 import org.junit.Rule
 import java.util.Arrays
 import kotlin.test.Test
 
-/**
- * Created by Dino Kadrikj on 13.08.2018.
- */
-class ContactGroupsDatabaseTest {
-    private val context = InstrumentationRegistry.getTargetContext()
+class ContactGroupsDatabaseTest : CoroutinesTest {
+    private val context = ApplicationProvider.getApplicationContext<ProtonMailApplication>()
     private val databaseFactory = ContactDatabase.buildInMemoryDatabase(context)
     private val database = databaseFactory.getDao()
 
@@ -56,13 +56,13 @@ class ContactGroupsDatabaseTest {
     }
 
     @Test
-    fun testUpdateFullLabel() {
+    fun testUpdateFullLabel() = coroutinesTest {
         val label1 = ContactLabel("a", "aa", "aaa")
         val label2 = ContactLabel("a", "ab")
         database.saveContactGroupLabel(label1)
         database.updateFullContactGroup(label2)
 
-        val needed = database.findContactGroupById("a")
+        val needed = database.findContactGroupById("a").first()
         Assert.assertEquals(needed?.name, "ab")
     }
 
@@ -165,7 +165,7 @@ class ContactGroupsDatabaseTest {
         val email5 = ContactEmail("e5", "5@5.5", "e", labelIds = listOf("lb"))
         val email6 = ContactEmail("e6", "6@6.6", "f", labelIds = listOf("ld"))
 
-        database.saveAllContactsEmailsBlocking(email1, email2, email3, email4, email5, email6)
+        database.saveAllContactsEmails(email1, email2, email3, email4, email5, email6)
         database.saveAllContactGroups(label1, label2, label3, label4)
 
         val contactEmailContactLabel1 = ContactEmailContactLabelJoin("e1", "la")
@@ -178,9 +178,17 @@ class ContactGroupsDatabaseTest {
         val contactEmailContactLabel8 = ContactEmailContactLabelJoin("e5", "lb")
         val contactEmailContactLabel9 = ContactEmailContactLabelJoin("e6", "ld")
 
-        database.saveContactEmailContactLabelBlocking(contactEmailContactLabel1, contactEmailContactLabel2, contactEmailContactLabel3,
-            contactEmailContactLabel4, contactEmailContactLabel5, contactEmailContactLabel6, contactEmailContactLabel7,
-            contactEmailContactLabel8, contactEmailContactLabel9)
+        database.saveContactEmailContactLabel(
+            contactEmailContactLabel1,
+            contactEmailContactLabel2,
+            contactEmailContactLabel3,
+            contactEmailContactLabel4,
+            contactEmailContactLabel5,
+            contactEmailContactLabel6,
+            contactEmailContactLabel7,
+            contactEmailContactLabel8,
+            contactEmailContactLabel9
+        )
         val laCount = database.countContactEmailsByLabelIdBlocking("la")
         val lbCount = database.countContactEmailsByLabelIdBlocking("lb")
         val lcCount = database.countContactEmailsByLabelIdBlocking("lc")
@@ -201,7 +209,7 @@ class ContactGroupsDatabaseTest {
         val email4 = ContactEmail("e4", "4@4.4", labelIds = listOf("lb"), name = "ce3")
         val email5 = ContactEmail("e5", "5@5.5", labelIds = listOf("lb", "la"), name = "ce4")
 
-        database.saveAllContactsEmailsBlocking(email1, email2, email4, email5)
+        database.saveAllContactsEmails(email1, email2, email4, email5)
         database.saveAllContactGroups(label1, label2)
 
         val contactEmailContactLabel1 = ContactEmailContactLabelJoin("e1", "la")
@@ -211,8 +219,14 @@ class ContactGroupsDatabaseTest {
         val contactEmailContactLabel7 = ContactEmailContactLabelJoin("e5", "lb")
         val contactEmailContactLabel8 = ContactEmailContactLabelJoin("e5", "la")
 
-        database.saveContactEmailContactLabelBlocking(contactEmailContactLabel1, contactEmailContactLabel2,
-            contactEmailContactLabel3, contactEmailContactLabel4, contactEmailContactLabel7, contactEmailContactLabel8)
+        database.saveContactEmailContactLabel(
+            contactEmailContactLabel1,
+            contactEmailContactLabel2,
+            contactEmailContactLabel3,
+            contactEmailContactLabel4,
+            contactEmailContactLabel7,
+            contactEmailContactLabel8
+        )
         val laReturnedEmails = database.findAllContactsEmailsByContactGroupAsync("la").testValue
         val lbReturnedEmails = database.findAllContactsEmailsByContactGroupAsync("lb").testValue
         val lcReturnedEmails = database.findAllContactsEmailsByContactGroupAsync("lc").testValue
@@ -233,7 +247,7 @@ class ContactGroupsDatabaseTest {
         val email4 = ContactEmail("e3", "3@3.3", labelIds = listOf("lb"), name = "ce3")
         val email5 = ContactEmail("e4", "4@3.4", labelIds = listOf("lb", "la"), name = "ce4")
 
-        database.saveAllContactsEmailsBlocking(email1, email2, email4, email5)
+        database.saveAllContactsEmails(email1, email2, email4, email5)
         database.saveAllContactGroups(label1, label2)
 
         val contactEmailContactLabel1 = ContactEmailContactLabelJoin("e1", "la")
@@ -243,8 +257,14 @@ class ContactGroupsDatabaseTest {
         val contactEmailContactLabel7 = ContactEmailContactLabelJoin("e4", "lb")
         val contactEmailContactLabel8 = ContactEmailContactLabelJoin("e4", "la")
 
-        database.saveContactEmailContactLabelBlocking(contactEmailContactLabel1, contactEmailContactLabel2,
-            contactEmailContactLabel3, contactEmailContactLabel4, contactEmailContactLabel7, contactEmailContactLabel8)
+        database.saveContactEmailContactLabel(
+            contactEmailContactLabel1,
+            contactEmailContactLabel2,
+            contactEmailContactLabel3,
+            contactEmailContactLabel4,
+            contactEmailContactLabel7,
+            contactEmailContactLabel8
+        )
         runBlockingTest {
             val result = database.filterContactsEmailsByContactGroup("la", "%2%").first()
 
@@ -269,7 +289,7 @@ class ContactGroupsDatabaseTest {
         val email4 = ContactEmail("e4", "4@4.4", labelIds = listOf("lb"), name = "ce3")
         val email5 = ContactEmail("e5", "5@5.5", labelIds = listOf("lb", "la"), name = "ce4")
 
-        database.saveAllContactsEmailsBlocking(email1, email2, email4, email5)
+        database.saveAllContactsEmails(email1, email2, email4, email5)
         database.saveAllContactGroups(label1, label2)
 
         val contactEmailContactLabel1 = ContactEmailContactLabelJoin("e1", "la")
@@ -279,8 +299,14 @@ class ContactGroupsDatabaseTest {
         val contactEmailContactLabel7 = ContactEmailContactLabelJoin("e5", "lb")
         val contactEmailContactLabel8 = ContactEmailContactLabelJoin("e5", "la")
 
-        database.saveContactEmailContactLabelBlocking(contactEmailContactLabel1, contactEmailContactLabel2,
-            contactEmailContactLabel3, contactEmailContactLabel4, contactEmailContactLabel7, contactEmailContactLabel8)
+        database.saveContactEmailContactLabel(
+            contactEmailContactLabel1,
+            contactEmailContactLabel2,
+            contactEmailContactLabel3,
+            contactEmailContactLabel4,
+            contactEmailContactLabel7,
+            contactEmailContactLabel8
+        )
         val laReturnedEmails = database.findAllContactGroupsByContactEmailAsync("e1").testValue
 
         Assert.assertNotNull(laReturnedEmails)

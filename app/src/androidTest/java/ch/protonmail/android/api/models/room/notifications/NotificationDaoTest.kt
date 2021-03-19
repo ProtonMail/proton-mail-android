@@ -18,11 +18,11 @@
  */
 package ch.protonmail.android.api.models.room.notifications
 
-import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.NotificationDao
 import ch.protonmail.android.data.local.NotificationDatabase
+import ch.protonmail.android.data.local.model.Notification
 import ch.protonmail.android.testAndroidInstrumented.ReflectivePropertiesMatcher
 import ch.protonmail.android.testAndroidInstrumented.matchers
 import org.hamcrest.Matchers.`is`
@@ -35,8 +35,7 @@ import kotlin.test.Test
  * Created by Kamil Rajtar on 05.09.18.  */
 internal class NotificationDaoTest {
     private val context = ApplicationProvider.getApplicationContext<ProtonMailApplication>()
-    private val databaseFactory = Room.inMemoryDatabaseBuilder(context,
-        NotificationDatabase::class.java).build()
+    private val databaseFactory = NotificationDatabase.buildInMemoryDatabase(context)
     private val database = databaseFactory.getDao()
 
     private val notifications = listOf(

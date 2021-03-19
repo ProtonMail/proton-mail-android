@@ -19,7 +19,7 @@
 package ch.protonmail.android.settings.pin
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.api.models.room.testValue
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import io.mockk.mockk
 import io.mockk.verify
@@ -28,8 +28,6 @@ import org.junit.Assert.assertNotNull
 import org.junit.Rule
 import kotlin.test.Test
 
-/**
- * Created by dkadrikj on 3/15/19. */
 class PinFragmentViewModelTest {
 
     // region mocks

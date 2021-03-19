@@ -19,10 +19,15 @@
 package ch.protonmail.android.api.models.room.counters
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import ch.protonmail.android.api.models.room.testValue
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.CounterDatabase
+import ch.protonmail.android.data.local.model.TotalLabelCounter
+import ch.protonmail.android.data.local.model.TotalLocationCounter
+import ch.protonmail.android.data.local.model.UnreadLabelCounter
+import ch.protonmail.android.data.local.model.UnreadLocationCounter
 import ch.protonmail.android.testAndroidInstrumented.ReflectivePropertiesMatcher
 import ch.protonmail.android.testAndroidInstrumented.matchers
 import org.hamcrest.Matchers.`is`
@@ -37,7 +42,7 @@ import kotlin.test.Test
 internal class CounterDaoTest {
 
     private val context = ApplicationProvider.getApplicationContext<ProtonMailApplication>()
-    private var databaseFactory = Room.inMemoryDatabaseBuilder(context, CounterDatabase::class.java).build()
+    private var databaseFactory = CounterDatabase.buildInMemoryDatabase(context)
     private var database = databaseFactory.getDao()
 
     @get:Rule
@@ -70,10 +75,12 @@ internal class CounterDaoTest {
         TotalLabelCounter("d", 12)
     )
 
-    private fun assertDatabaseState(expectedUnreadLocations: Iterable<UnreadLocationCounter> = unreadLocations,
-                                    expectedUnreadLabels: Iterable<UnreadLabelCounter> = unreadLabels,
-                                    expectedTotalLocations: Iterable<TotalLocationCounter> = totalLocations,
-                                    expectedTotalLabels: Iterable<TotalLabelCounter> = totalLabels) {
+    private fun assertDatabaseState(
+        expectedUnreadLocations: Iterable<UnreadLocationCounter> = unreadLocations,
+        expectedUnreadLabels: Iterable<UnreadLabelCounter> = unreadLabels,
+        expectedTotalLocations: Iterable<TotalLocationCounter> = totalLocations,
+        expectedTotalLabels: Iterable<TotalLabelCounter> = totalLabels
+    ) {
         val expectedUnreadLocationsMatcher =
             expectedUnreadLocations.map { ReflectivePropertiesMatcher(it) }
         val expectedUnreadLabelsMatcher = expectedUnreadLabels.map { ReflectivePropertiesMatcher(it) }
@@ -85,8 +92,10 @@ internal class CounterDaoTest {
         val actualUnreadLabelsSet = database.findAllUnreadLabels().testValue
         val actualTotalLocationsSet = database.findAllTotalLocations().testValue
         val actualTotalLabelsSet = database.findAllTotalLabels().testValue
-        Assert.assertThat(actualUnreadLocationsSet,
-            containsInAnyOrder(expectedUnreadLocationsMatcher))
+        Assert.assertThat(
+            actualUnreadLocationsSet,
+            containsInAnyOrder(expectedUnreadLocationsMatcher)
+        )
         Assert.assertThat(actualUnreadLabelsSet, containsInAnyOrder(expectedUnreadLabelsMatcher))
         Assert.assertThat(actualTotalLocationsSet, containsInAnyOrder(expectedTotalLocationsMatcher))
         Assert.assertThat(actualTotalLabelsSet, containsInAnyOrder(expectedTotalLabelsMatcher))
@@ -238,8 +247,10 @@ internal class CounterDaoTest {
         val insertedLabels = listOf(UnreadLabelCounter("e", 8), UnreadLabelCounter("f", 7))
         val insertedLocations = listOf(UnreadLocationCounter(5, 8), UnreadLocationCounter(6, 7))
         database.updateUnreadCounters(insertedLocations, insertedLabels)
-        assertDatabaseState(expectedUnreadLocations = insertedLocations,
-            expectedUnreadLabels = insertedLabels)
+        assertDatabaseState(
+            expectedUnreadLocations = insertedLocations,
+            expectedUnreadLabels = insertedLabels
+        )
     }
 
     @Test
@@ -300,7 +311,9 @@ internal class CounterDaoTest {
         val insertedLabels = listOf(TotalLabelCounter("e", 8), TotalLabelCounter("f", 7))
         val insertedLocations = listOf(TotalLocationCounter(5, 8), TotalLocationCounter(6, 7))
         database.refreshTotalCounters(insertedLocations, insertedLabels)
-        assertDatabaseState(expectedTotalLocations = insertedLocations,
-            expectedTotalLabels = insertedLabels)
+        assertDatabaseState(
+            expectedTotalLocations = insertedLocations,
+            expectedTotalLabels = insertedLabels
+        )
     }
 }

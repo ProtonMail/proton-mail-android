@@ -19,14 +19,15 @@
 package ch.protonmail.android.api.models.room.contacts
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
 import androidx.test.InstrumentationRegistry
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.room.testValue
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.ContactDatabase
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.ContactData
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.FullContactDetails
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert
@@ -326,7 +327,7 @@ internal class ContactDaoTest {
     @Test
     fun clearContactEmailsCache() {
         val expected = emptyList<ContactEmail>()
-        database.clearContactEmailsCacheBlocking()
+        database.clearContactEmailsCache()
         assertDatabaseState(expectedContactEmails = expected)
     }
 
@@ -402,7 +403,7 @@ internal class ContactDaoTest {
             )
         )
         val expected = contactEmails + inserted
-        database.saveAllContactsEmailsBlocking(*inserted.toTypedArray())
+        database.saveAllContactsEmails(*inserted.toTypedArray())
         assertDatabaseState(expectedContactEmails = expected)
     }
 
@@ -607,7 +608,7 @@ internal class ContactDaoTest {
             "c",
             labelIds = listOf("la", "lc")
         )
-        initiallyEmptyDatabase.saveAllContactsEmailsBlocking(email1, email2, email3)
+        initiallyEmptyDatabase.saveAllContactsEmails(email1, email2, email3)
         val emailFromDb = initiallyEmptyDatabase.findContactEmailById("e1")
         Assert.assertNotNull(emailFromDb)
         val listOfGroups = emailFromDb?.labelIds

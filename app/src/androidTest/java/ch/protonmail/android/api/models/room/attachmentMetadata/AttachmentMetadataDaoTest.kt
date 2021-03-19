@@ -19,8 +19,8 @@
 package ch.protonmail.android.api.models.room.attachmentMetadata
 
 import android.net.Uri
-import androidx.room.Room
-import androidx.test.InstrumentationRegistry
+import androidx.test.core.app.ApplicationProvider
+import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
 import ch.protonmail.android.data.local.model.AttachmentMetadata
@@ -32,16 +32,16 @@ import org.junit.Assert
 import kotlin.test.Test
 
 class AttachmentMetadataDaoTest {
-    private val context = InstrumentationRegistry.getTargetContext()
-    private var databaseFactory = AttachmentMetadataDatabase.buildInMemoryDatabase()
+    private val context = ApplicationProvider.getApplicationContext<ProtonMailApplication>()
+    private var databaseFactory = AttachmentMetadataDatabase.buildInMemoryDatabase(context)
     private var database = databaseFactory.getDao()
 
     private val first = AttachmentMetadata("a", "b", 3, "c", "d", 10, Uri.parse("a"))
     private val second = AttachmentMetadata("e", "f", 5, "g", "h", 11, Uri.parse("e"))
     private val third = AttachmentMetadata("i", "j", 7, "k", "l", 8, Uri.parse("i"))
     private val standardTest = listOf(first, second, third)
-    private fun AttachmentMetadataDatabase.insert(attachments: Iterable<AttachmentMetadata>) {
-        attachments.forEach(this::insertAttachmentMetadataBlocking)
+    private fun AttachmentMetadataDao.insert(attachments: Iterable<AttachmentMetadata>) {
+        attachments.forEach(::insertAttachmentMetadata)
     }
 
     @Test
@@ -98,7 +98,7 @@ class AttachmentMetadataDaoTest {
         val replacement = AttachmentMetadata("e", "eee", 18, "eee", "eee", 123, Uri.parse("e"))
         val expected = listOf(first, replacement, third).map { ReflectivePropertiesMatcher(it) }
         database.insert(inserted)
-        database.insertAttachmentMetadataBlocking(replacement)
+        database.insertAttachmentMetadata(replacement)
         val actual = database.getAllAttachmentsMetadata().sortedBy(AttachmentMetadata::id)
         Assert.assertThat(actual, containsInAnyOrder(expected))
     }

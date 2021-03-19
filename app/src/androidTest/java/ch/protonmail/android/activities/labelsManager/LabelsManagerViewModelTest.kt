@@ -26,7 +26,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
 import ch.protonmail.android.data.local.MessageDatabase
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.libs.core.utils.EMPTY_STRING
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -56,7 +56,7 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
-    private val messagesDatabase = MessageDatabase.buildInMemoryDatabase(context).getDao()
+    private val messageDao = MessageDatabase.buildInMemoryDatabase(context).getDao()
 
     private lateinit var viewModel: LabelsManagerViewModel
 
@@ -69,9 +69,8 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
         MockKAnnotations.init(this)
         viewModel =
             LabelsManagerViewModel(
-                jobManager = mockk(),
+                messageDao = messageDao,
                 savedStateHandle = savedState,
-                messagesDatabase = messagesDatabase,
                 deleteLabel = mockk(),
                 workManager = workManager
             )
@@ -87,7 +86,7 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
 
         // Add single label
         val label = Label("1", EMPTY_STRING, EMPTY_STRING)
-        messagesDatabase.saveLabel(label)
+        messageDao.saveLabel(label)
         runBlocking { delay(50) } // Wait for async delivery
         assertEquals(1, adapter.itemCount)
 
