@@ -1036,6 +1036,78 @@ class CreateDraftWorkerTest : CoroutinesTest {
         }
     }
 
+    @Test
+    fun workerSavesMessageLocallyWithAttachmentsFromApiDraftPlusAnyLocalAttachmentThatWasNotUploaded() {
+        runBlockingTest {
+            // Given
+            val parentId = "8238482"
+            val messageDbId = 345L
+            val remoteMessageId = "7pmfkkkyCO69Ch5Gzn0b517H-x-zycdj1Urhn-pj6Eam38FnYY3IxZ62jJ-gbwxVg=="
+            val localAttachment = Attachment(attachmentId = "LOCAL-82374", isUploaded = false)
+            val localMessage = Message().apply {
+                dbId = messageDbId
+                messageId = remoteMessageId
+                addressID = "addressId8238"
+                messageBody = "messageBody12"
+                sender = MessageSender("sender92384", "senderEmail@8238.com")
+                setLabelIDs(listOf("label", "label1", "label2"))
+                parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
+                numAttachments = 1
+                Attachments = listOf(localAttachment)
+            }
+
+            val apiDraftRequest = mockk<DraftBody>(relaxed = true)
+            val remoteAttachment = Attachment(attachmentId = "REMOTE-12736", isUploaded = true)
+            val responseMessage = Message(messageId = "created_draft_id").apply {
+                Attachments = listOf(remoteAttachment)
+            }
+            val apiDraftResponse = mockk<MessageResponse> {
+                every { code } returns 1000
+                every { messageId } returns "created_draft_id"
+                every { this@mockk.message } returns responseMessage
+            }
+            val retrofitTag = RetrofitTag(userManager.username)
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            givenActionTypeInput(NONE)
+            givenPreviousSenderAddress("")
+            every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns localMessage
+            every { messageFactory.createDraftApiRequest(localMessage) } returns apiDraftRequest
+            coEvery { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) } returns apiDraftResponse
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
+
+            // When
+            worker.doWork()
+
+            // Then
+            coVerify { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) }
+            val expectedMessage = Message().apply {
+                this.dbId = messageDbId
+                this.messageId = "created_draft_id"
+                this.toList = listOf()
+                this.ccList = listOf()
+                this.bccList = listOf()
+                this.replyTos = listOf()
+                this.sender = localMessage.sender
+                this.setLabelIDs(localMessage.getEventLabelIDs())
+                this.parsedHeaders = localMessage.parsedHeaders
+                this.isDownloaded = true
+                this.setIsRead(true)
+                this.numAttachments = localMessage.numAttachments
+                this.Attachments = listOf(localAttachment, remoteAttachment)
+                this.localId = localMessage.messageId
+            }
+            val actualMessage = slot<Message>()
+            coVerify { messageDetailsRepository.saveMessageLocally(capture(actualMessage)) }
+            assertEquals(expectedMessage, actualMessage.captured)
+            assertEquals(expectedMessage.Attachments, actualMessage.captured.Attachments)
+        }
+    }
+
     private fun givenPreviousSenderAddress(address: String) {
         every { parameters.inputData.getString(KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID) } answers { address }
     }
