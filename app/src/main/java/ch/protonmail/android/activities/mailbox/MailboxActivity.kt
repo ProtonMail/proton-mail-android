@@ -260,6 +260,7 @@ class MailboxActivity :
     private val handler = Handler(Looper.getMainLooper())
 
     override val currentLabelId get() = mailboxLabelId
+    val currentLocation get() = mailboxLocationMain
 
     override fun getLayoutId(): Int = R.layout.activity_mailbox
 
@@ -1353,7 +1354,10 @@ class MailboxActivity :
                     getString(R.string.delete_messages),
                     getString(R.string.confirm_destructive_action)
                 ) {
-                    mailboxViewModel.deleteMessages(messageIds)
+                    mailboxViewModel.deleteMessages(
+                        messageIds,
+                        currentLocation.value?.messageLocationTypeValue.toString()
+                    )
                     mode.finish()
                 }
             R.id.mark_read -> job = PostReadJob(messageIds)

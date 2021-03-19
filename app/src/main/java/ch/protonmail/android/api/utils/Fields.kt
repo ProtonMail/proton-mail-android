@@ -121,6 +121,7 @@ object Fields {
     object Message {
         const val MESSAGE_IDS = "MessageIDs"
         const val LABEL_ID = "LabelID"
+        const val CURRENT_LABEL_ID = "CurrentLabelID"
         const val IDS = "IDs"
         const val MESSAGE = "Message"
 
