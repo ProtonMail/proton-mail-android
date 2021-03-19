@@ -80,6 +80,11 @@ fun org.gradle.api.Project.android(
         }
     }
 
+    buildTypes {
+        register("releasePlayStore")
+        register("releaseBeta")
+    }
+
     lintOptions {
         disable("InvalidPackage")
         disable("MissingTranslation")
