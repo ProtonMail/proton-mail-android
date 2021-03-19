@@ -138,6 +138,7 @@ import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.SwitchUserEvent
 import ch.protonmail.android.fcm.FcmTokenManager
+import ch.protonmail.android.fcm.MultiUserFcmTokenManager
 import ch.protonmail.android.fcm.PMRegistrationWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.jobs.EmptyFolderJob
@@ -233,10 +234,13 @@ class MailboxActivity :
 
     @Inject
     lateinit var fcmTokenManagerFactory: FcmTokenManager.Factory
-    private val fcmTokenManager: FcmTokenManager by lazy {
+    private val currentUserTokenManager: FcmTokenManager by lazy {
         val prefs = SecureSharedPreferences.getPrefsForUser(this, userManager.requireCurrentUserId())
         fcmTokenManagerFactory.create(prefs)
     }
+
+    @Inject
+    lateinit var multiUserFcmTokenManager: MultiUserFcmTokenManager
 
     private lateinit var messagesAdapter: MessagesRecyclerViewAdapter
     private val mailboxLocationMain = MutableLiveData<MessageLocationType>()
@@ -269,7 +273,7 @@ class MailboxActivity :
         // TODO if we decide to use special flag for switching (and not login), change this
         if (intent.getBooleanExtra(EXTRA_FIRST_LOGIN, false)) {
             messageDetailsRepository.reloadDependenciesForUser(userId)
-            fcmTokenManager.setTokenSentBlocking(false) // force FCM to re-register
+            multiUserFcmTokenManager.setTokenUnsentForAllSavedUsersBlocking() // force FCM to re-register
         }
         val extras = intent.extras
         if (!userManager.isEngagementShown) {
@@ -674,13 +678,13 @@ class MailboxActivity :
         // Check device for Play Services APK.
         lifecycleScope.launchWhenCreated {
             if (checkPlayServices()) {
-                val tokenSent = fcmTokenManager.isTokenSent()
+                val tokenSent = multiUserFcmTokenManager.isTokenSentForAllLoggedUsers()
                 if (!tokenSent) {
                     try {
                         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 task.result?.let { result ->
-                                    fcmTokenManager.saveTokenBlocking(FirebaseToken(result.token))
+                                    currentUserTokenManager.saveTokenBlocking(FirebaseToken(result.token))
                                     pmRegistrationWorkerEnqueuer()
                                 }
                             } else {

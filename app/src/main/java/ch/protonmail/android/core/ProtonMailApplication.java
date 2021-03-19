@@ -18,6 +18,16 @@
  */
 package ch.protonmail.android.core;
 
+import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
+import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
+import static ch.protonmail.android.core.Constants.PrefsType.BACKUP_PREFS_NAME;
+import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
+import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
+import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
+import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -56,7 +66,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -79,8 +88,6 @@ import ch.protonmail.android.api.segments.event.EventManager;
 import ch.protonmail.android.api.services.MessagesService;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
-import ch.protonmail.android.data.local.model.Message;
-import ch.protonmail.android.data.local.model.SendingFailedNotification;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.domain.entity.user.User;
 import ch.protonmail.android.domain.entity.user.UserKey;
@@ -99,7 +106,7 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.StorageLimitEvent;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
-import ch.protonmail.android.fcm.FcmTokenManager;
+import ch.protonmail.android.fcm.MultiUserFcmTokenManager;
 import ch.protonmail.android.jobs.FetchLabelsJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.jobs.user.FetchUserSettingsJob;
@@ -119,16 +126,6 @@ import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
-
-import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
-import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
-import static ch.protonmail.android.core.Constants.PrefsType.BACKUP_PREFS_NAME;
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
-import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
-import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
-import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
 
 @HiltAndroidApp
 public class ProtonMailApplication extends Application implements androidx.work.Configuration.Provider {
@@ -158,7 +155,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     DownloadUtils downloadUtils;
 
     @Inject
-    FcmTokenManager.Factory fcmTokenManagerFactory;
+    MultiUserFcmTokenManager multiUserFcmTokenManager;
 
     private Bus mBus;
     private boolean appInBackground;
@@ -533,7 +530,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 new FetchContactsDataWorker.Enqueuer(WorkManager.getInstance(this)).enqueue();
             }
             if (BuildConfig.REREGISTER_FOR_PUSH) {
-                fcmTokenManagerFactory.create(prefs).setTokenSentBlocking(false);
+                multiUserFcmTokenManager.setTokenUnsentForAllSavedUsersBlocking();
             }
             jobManager.addJobInBackground(new FetchLabelsJob());
             //new version will get set in RegisterGcmJob
@@ -619,10 +616,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     }
                 }
                 if (previousVersion < FCM_MIGRATION_VERSION) {
-                    for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
-                        SharedPreferences userPrefs = entry.getValue();
-                        fcmTokenManagerFactory.create(userPrefs).setTokenSentBlocking(false);
-                    }
+                    multiUserFcmTokenManager.setTokenUnsentForAllSavedUsersBlocking();
                 }
                 if (defaultSharedPreferences.contains(PREF_SENT_TOKEN_TO_SERVER)) {
                     for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
