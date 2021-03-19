@@ -174,6 +174,7 @@ class CreateDraftWorker @WorkerInject constructor(
         MessageUtils.isLocalMessageId(message.messageId)
 
     private suspend fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {
+        val localAttachments = localDraft.Attachments.filterNot { it.isUploaded }
         apiDraft.apply {
             dbId = localDraft.dbId
             toList = localDraft.toList
@@ -186,6 +187,7 @@ class CreateDraftWorker @WorkerInject constructor(
             isDownloaded = true
             setIsRead(true)
             numAttachments = localDraft.numAttachments
+            Attachments = localAttachments.plus(Attachments)
             localId = localDraft.messageId
         }
 
