@@ -686,7 +686,10 @@ class ComposeMessageViewModel @Inject constructor(
     fun deleteDraft() {
         viewModelScope.launch {
             if (_draftId.get().isNotEmpty()) {
-                deleteMessage(listOf(_draftId.get()))
+                deleteMessage(
+                    listOf(_draftId.get()),
+                    Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString()
+                )
             }
         }
     }

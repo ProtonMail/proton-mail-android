@@ -42,7 +42,7 @@ class DeleteMessage @Inject constructor(
     private val workerScheduler: DeleteMessageWorker.Enqueuer
 ) {
 
-    suspend operator fun invoke(messageIds: List<String>): DeleteMessageResult =
+    suspend operator fun invoke(messageIds: List<String>, currentLabelId: String?): DeleteMessageResult =
         withContext(dispatchers.Io) {
 
             val (validMessageIdList, invalidMessageIdList) = getValidAndInvalidMessages(messageIds)
@@ -66,7 +66,7 @@ class DeleteMessage @Inject constructor(
             messageDetailsRepository.saveMessagesInOneTransaction(messagesToSave)
             messageDetailsRepository.saveSearchMessagesInOneTransaction(searchMessagesToSave)
 
-            val scheduleWorkerResult = workerScheduler.enqueue(validMessageIdList)
+            val scheduleWorkerResult = workerScheduler.enqueue(validMessageIdList, currentLabelId)
             return@withContext DeleteMessageResult(
                 invalidMessageIdList.isEmpty(),
                 scheduleWorkerResult
