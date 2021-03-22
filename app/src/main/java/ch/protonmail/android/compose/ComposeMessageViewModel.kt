@@ -65,7 +65,6 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
-import ch.protonmail.android.worker.drafts.SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX
 import com.squareup.otto.Subscribe
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -734,13 +733,6 @@ class ComposeMessageViewModel @Inject constructor(
 
             if (_dbId != null) {
                 val newAttachments = calculateNewAttachments(true)
-
-                // Cancel scheduled save draft work to allow attachments removal while offline
-                // This is needed to replace the logic to block draft creation while sending, which being in
-                // SaveDraft use case has no effect when CreateDraft is scheduled offline. As this logic
-                // was removed in the send refactor, this solution was adopted over moving the check in CreateDraftWorker
-                val saveDraftUniqueWorkId = "$SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX-${message.messageId})"
-                workManager.cancelUniqueWork(saveDraftUniqueWorkId)
 
                 sendMessageUseCase(
                     SendMessage.SendMessageParameters(
