@@ -53,7 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">No hay conexión, mensaje en espera</string>
     <string name="update_app_title">Actualización requerida</string>
     <string name="update_app">Su aplicación de ProtonMail no se puede usar hasta que se actualice</string>
-    <string name="you_are_offline">You are offline</string>
+    <string name="you_are_offline">No estás conectado</string>
     <string name="api_offline_title">API de ProtonMail sin conexión</string>
     <string name="api_offline">ProtonMail está desconectado. Compruebe en https://protonstatus.com o https://twitter.com/protonmail para el estado actual.</string>
     <string name="contact_saved">Contacto guardado</string>
@@ -286,7 +286,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Error al eliminar algunos mensajes. ¡¿Algunos de los mensajes seleccionados están en proceso de envío?!</string>
     <string name="respond_inline">Responder en línea</string>
     <string name="no_connectivity_detected">No se detectó ninguna conexión...</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Servidor no accesible… (<u>Resolución de problemas</u>)</string>
     <string name="connectivity_checking">Comprobando la conexión...</string>
     <string name="sync_short">sincronizar</string>
     <string name="draft_attachments_uploading">El borrador todavía está cargando...</string>
@@ -421,7 +421,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_visionary_with_price">VISIONARY %s /Mes</string>
     <string name="plan_business_with_price">BUSINESS %s /Mes</string>
     <string name="plan_free_title">Cuenta básica con funciones limitadas</string>
-    <string name="plan_plus_title">Email seguro con funciones avanzadas</string>
+    <string name="plan_plus_title">Correo electrónico seguro con funcionalidades avanzadas</string>
     <string name="plan_visionary_title">Cuentas especiales para nuestros clientes</string>
     <string name="plan_business_title">Cuentas especiales para nuestros clientes</string>
     <string name="plan_plus_line2">1000 mensajes enviados por día</string>
@@ -743,7 +743,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_name_ongoing_operations">Operaciones en curso</string>
     <string name="channel_description_ongoing_operations">Muestra todas las operaciones en curso como
 		descarga de mensajes nuevos en segundo plano</string>
-    <string name="checking_mailbox">Revisando buzón</string>
+    <string name="retrieving_notifications">Recuperando notificaciones</string>
     <string name="report_phishing">Reportar suplantación</string>
     <string name="print">Imprimir</string>
     <string name="phishing_dialog_title">Confirmar reporte de suplantación de identidad</string>
@@ -949,7 +949,7 @@ compre más
     <string name="connections_via_third_parties">Enrutado alternativo</string>
     <string name="allow_secure_connections_via_third_parties">Permitir el enrutado alternativo</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">En caso de que los sitios de Proton estén bloqueados, esta configuración permite a la aplicación intentar un enrutamiento de red alternativo para llegar a Proton, lo que puede ser útil para evitar los cortafuegos o los problemas de red. Recomendamos mantener esta configuración activada para una mayor fiabilidad.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">En caso de que los sitios de Proton estén bloqueados, esta configuración permitira a la aplicación intentar un enrutamiento de red alternativo para llegar a Proton, lo que puede ser útil para evitar los cortafuegos o los problemas de red. Recomendamos mantener esta configuración activada para una mayor fiabilidad. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Más información</a></string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">En caso de que los sitios de Proton estén bloqueados, esta configuración permitirá a la aplicación intentar un enrutamiento de red alternativo para llegar a Proton, lo que puede ser útil para evitar los cortafuegos o los problemas de red. Recomendamos mantener esta configuración activada para una mayor fiabilidad. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Más información</a></string>
     <string name="app_language">Idioma de la aplicación</string>
     <string name="custom_language_dialog_title">Seleccionar idioma de la app</string>
     <string name="auto_detect">Detectar automáticamente</string>

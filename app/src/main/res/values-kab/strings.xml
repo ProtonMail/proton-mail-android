@@ -737,7 +737,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_name_ongoing_operations">Tigawin i d-iteddun</string>
     <string name="channel_description_ongoing_operations">Sken-d akk tigawin i d-iteddun am tulya
 	n izen amaynut deffir ugdil</string>
-    <string name="checking_mailbox">Asenqed tbaḍt n imaylen</string>
+    <string name="retrieving_notifications">Tiririt n yilɣa</string>
     <string name="report_phishing">Azen aneqqis phishing</string>
     <string name="print">Siggez</string>
     <string name="phishing_dialog_title">Sentem tuzna n uneqqis n phishing</string>

@@ -53,7 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">No hi ha connexió, el missatge queda a la cua</string>
     <string name="update_app_title">Actualització requerida</string>
     <string name="update_app">L\'aplicació de ProtonMail no pot ser utilitzada fins que no sigui actualitzada</string>
-    <string name="you_are_offline">You are offline</string>
+    <string name="you_are_offline">Esteu fora de línia</string>
     <string name="api_offline_title">L\'API de ProtonMail està fora de línia</string>
     <string name="api_offline">Actualment ProtonMail es troba fora de línia, consulta\'n l\'estat actual al nostre twitter: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contacte desat</string>
@@ -286,7 +286,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">S\'ha produït un error en suprimir alguns missatges. Alguns dels missatges seleccionats estan en procés d’enviament?!</string>
     <string name="respond_inline">Respondre en línia</string>
     <string name="no_connectivity_detected">No s\'ha detectat cap connectivitat...</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Servidor no accessible… (<u>Resolució de problemes</u>)</string>
     <string name="connectivity_checking">S\'està cercant la connexió...</string>
     <string name="sync_short">sincronitzar</string>
     <string name="draft_attachments_uploading">L\'esborrany està encara carregant...</string>
@@ -742,7 +742,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_name_ongoing_operations">Operacions en curs</string>
     <string name="channel_description_ongoing_operations">Mostra totes les operacions en curs com a noves	
  descàrrega de missatges en segon pla</string>
-    <string name="checking_mailbox">Comprovació de la bústia de correu</string>
+    <string name="retrieving_notifications">Recuperant notificacions</string>
     <string name="report_phishing">Informeu de phishing</string>
     <string name="print">Imprimir</string>
     <string name="phishing_dialog_title">Confirma l\'informe de phising</string>

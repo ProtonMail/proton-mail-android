@@ -53,7 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">ネットワークに接続がありません。メッセージは接続確認後に処理されます。</string>
     <string name="update_app_title">アップデートが必要です。</string>
     <string name="update_app">アップデートされるまで、Protonmailアプリはご利用いただけません。</string>
-    <string name="you_are_offline">You are offline</string>
+    <string name="you_are_offline">オフラインです</string>
     <string name="api_offline_title">Protonmail APIはご利用になれません。</string>
     <string name="api_offline">ProtonMailは現在ご利用できません。https://protonstatus.com または https://twitter.com/protonmail で現在の状態を確認してください。</string>
     <string name="contact_saved">連絡先が保存されました。</string>
@@ -727,7 +727,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_description_account">アカウントの状態</string>
     <string name="channel_name_ongoing_operations">実行中の操作</string>
     <string name="channel_description_ongoing_operations">バックグラウンドでのダウンロードのような、実行中の操作を表示する</string>
-    <string name="checking_mailbox">受信箱を確認しています</string>
+    <string name="retrieving_notifications">通知を取得中</string>
     <string name="report_phishing">フィッシングを報告</string>
     <string name="print">印刷</string>
     <string name="phishing_dialog_title">フィッシング報告の確認</string>
@@ -961,7 +961,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- region errors -->
     <string name="error_image_not_found">画像が見つかりませんでした。</string>
     <string name="error_image_bad_url">不正な画像のURLです。</string>
-    <string name="error_saving_try_again">Error while saving message. Try again.</string>
+    <string name="error_saving_try_again">メッセージの保存中にエラーが発生しました。もう一度やり直してください。</string>
     <!-- endregion -->
     <string name="allowed">許可</string>
     <string name="denied">拒否</string>

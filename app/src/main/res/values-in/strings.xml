@@ -736,7 +736,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="channel_name_ongoing_operations">Operasi yang sedang berlangsung</string>
     <string name="channel_description_ongoing_operations">Memperlihatkan semua operasi yang sedang berlangsung seperti
 		unduh pesan baru di latar belakang</string>
-    <string name="checking_mailbox">Memeriksa kotak pesan</string>
+    <string name="retrieving_notifications">Mengembalikan notifikasi</string>
     <string name="report_phishing">Laporkan phishing</string>
     <string name="print">Cetak</string>
     <string name="phishing_dialog_title">Konfirmasi laporan phishing</string>

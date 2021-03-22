@@ -756,7 +756,7 @@ zresetować hasło logowania, jeśli je zapomnisz.</string>
     <string name="channel_name_ongoing_operations">Trwające działania</string>
     <string name="channel_description_ongoing_operations">Pokazuje wszystkie trwające działania, takie jak
 		pobieranie wiadomości w tle</string>
-    <string name="checking_mailbox">Sprawdzanie skrzynki pocztowej</string>
+    <string name="retrieving_notifications">Otrzymywanie powiadomień</string>
     <string name="report_phishing">Zgłoś próbę wyłudzenia informacji</string>
     <string name="print">Drukuj</string>
     <string name="phishing_dialog_title">Potwierdź próbę wyłudzenia informacji</string>
