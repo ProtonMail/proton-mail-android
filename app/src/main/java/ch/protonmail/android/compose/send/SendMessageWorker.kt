@@ -151,7 +151,9 @@ class SendMessageWorker @WorkerInject constructor(
                 throw exception
             }
         } else {
-            retryOrFail(DraftCreationFailed, message)
+            pendingActionsDao.deletePendingSendByMessageId(message.messageId ?: "")
+            showSendMessageError(message.subject)
+            failureWithError(DraftCreationFailed)
         }
 
     }

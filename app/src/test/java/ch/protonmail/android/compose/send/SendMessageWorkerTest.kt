@@ -239,28 +239,7 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerRetriesWhenSaveDraftOperationFailsAndMaxRetriesWereNotReached() = runBlockingTest {
-        val messageDbId = 82478L
-        val messageId = "823742"
-        val message = Message().apply {
-            dbId = messageDbId
-            this.messageId = messageId
-            this.subject = "Subject 004"
-        }
-        givenFullValidInput(messageDbId, messageId)
-        coEvery { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
-        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.OnlineDraftCreationFailed)
-        every { parameters.runAttemptCount } returns 3
-
-        val result = worker.doWork()
-
-        verify(exactly = 0) { pendingActionsDao.deletePendingSendByMessageId(any()) }
-        verify(exactly = 0) { userNotifier.showSendMessageError(any(), any()) }
-        assertEquals(ListenableWorker.Result.Retry(), result)
-    }
-
-    @Test
-    fun workerFailsReturningErrorWhenSaveDraftOperationFailsAndMaxRetriesWereReached() = runBlockingTest {
+    fun workerFailsReturningErrorWhenSaveDraftOperationFails() = runBlockingTest {
         val messageDbId = 2834L
         val messageId = "823472"
         val message = Message().apply {
