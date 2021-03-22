@@ -177,7 +177,7 @@ class UploadAttachments @WorkerInject constructor(
         error: String,
         exception: Throwable? = null
     ): ListenableWorker.Result {
-        if (runAttemptCount <= UPLOAD_ATTACHMENTS_MAX_RETRIES) {
+        if (runAttemptCount < UPLOAD_ATTACHMENTS_MAX_RETRIES) {
             Timber.d("UploadAttachments Worker failed with error = $error, exception = $exception. Retrying...")
             return ListenableWorker.Result.retry()
         }

@@ -266,7 +266,7 @@ class SendMessageWorker @WorkerInject constructor(
         message: Message,
         exception: Throwable? = null
     ): Result {
-        if (runAttemptCount <= SEND_MESSAGE_MAX_RETRIES) {
+        if (runAttemptCount < SEND_MESSAGE_MAX_RETRIES) {
             Timber.d("Send Message Worker failed with error = ${error.name}, exception = $exception. Retrying...")
             return Result.retry()
         }
