@@ -43,7 +43,7 @@ public class FetchMessageDetailJob extends ProtonMailBaseJob {
     @Override
     public void onRun() throws Throwable {
         final MessageDao messageDao = MessageDatabase.Companion
-                .getInstance(getApplicationContext(), userId)
+                .getInstance(getApplicationContext(), getUserId())
                 .getDao();
         if (!getQueueNetworkUtil().isConnected()) {
             Logger.doLog(TAG_FETCH_MESSAGE_DETAIL_JOB, "no network cannot fetch message detail");

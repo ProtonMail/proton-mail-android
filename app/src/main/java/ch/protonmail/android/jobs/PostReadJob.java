@@ -44,7 +44,7 @@ public class PostReadJob extends ProtonMailEndlessJob {
     @Override
     public void onAdded() {
         final CounterDao counterDao = CounterDatabase.Companion
-                .getInstance(getApplicationContext(), userId)
+                .getInstance(getApplicationContext(), getUserId())
                 .getDao();
         Constants.MessageLocationType messageLocation = Constants.MessageLocationType.INVALID;
         boolean starred = false;

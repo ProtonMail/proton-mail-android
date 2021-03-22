@@ -60,7 +60,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
     @Override
     public void onAdded() {
         ContactDao contactDao = ContactDatabase.Companion
-                .getInstance(getApplicationContext(), userId)
+                .getInstance(getApplicationContext(), getUserId())
                 .getDao();
         User user = getUserManager().getUser();
         String contactId = getContactId(contactDao, mContactEmail);
@@ -99,7 +99,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
     @Override
     public void onRun() throws Throwable {
         ContactDao contactDao = ContactDatabase.Companion
-                .getInstance(getApplicationContext(), userId).getDao();
+                .getInstance(getApplicationContext(), getUserId()).getDao();
         String contactId = getContactId(contactDao, mContactEmail);
         if (contactId == null) {
             AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.ERROR, mDestination));
