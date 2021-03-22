@@ -195,7 +195,7 @@ class CreateDraftWorker @WorkerInject constructor(
     }
 
     private fun retryOrFail(error: String?, messageSubject: String?): Result {
-        if (runAttemptCount <= SAVE_DRAFT_MAX_RETRIES) {
+        if (runAttemptCount < SAVE_DRAFT_MAX_RETRIES) {
             Timber.d("Create Draft Worker API call FAILED with error = $error. Retrying...")
             return Result.retry()
         }

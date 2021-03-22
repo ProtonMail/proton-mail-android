@@ -910,7 +910,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 every { this@mockk.message.subject } returns "Subject001"
             }
             coEvery { apiManager.createDraft(any()) } throws IOException(errorMessage)
-            every { parameters.runAttemptCount } returns 3
+            every { parameters.runAttemptCount } returns 2
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
             val parentMessage = mockk<Message> {
                 coEvery { attachments(any()) } returns listOf(attachment)

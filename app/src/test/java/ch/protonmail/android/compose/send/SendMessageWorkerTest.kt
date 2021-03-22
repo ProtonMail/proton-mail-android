@@ -249,7 +249,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         givenFullValidInput(messageDbId, messageId)
         coEvery { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns flowOf(message)
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.OnlineDraftCreationFailed)
-        every { parameters.runAttemptCount } returns 4
+        every { parameters.runAttemptCount } returns 2
         every { context.getString(R.string.message_drafted) } returns "error message 9216"
 
         val result = worker.doWork()
