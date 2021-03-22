@@ -30,7 +30,6 @@ import java.util.Map;
 
 import ch.protonmail.android.api.models.ContactEncryptedData;
 import ch.protonmail.android.api.models.CreateContactV2BodyItem;
-import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody;
 import ch.protonmail.android.api.rx.ThreadSchedulers;
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob;
@@ -58,7 +57,7 @@ import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_I
 
 public class UpdateContactJob extends ProtonMailEndlessJob {
 
-	private final String mContactId;
+    private final String mContactId;
     private final String mContactName;
     private final List<ContactEmail> mContactEmails;
     private final String mEncryptedData;
@@ -76,7 +75,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             HashMap<ContactEmail, List<ContactLabel>> mapEmailGroupsIds
     ) {
         super(new Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT));
-		mContactId = contactId;
+        mContactId = contactId;
         mContactName = contactName;
         mContactEmails = contactEmails;
         mEncryptedData = encryptedData;
@@ -86,19 +85,16 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
 
     @Override
     public void onAdded() {
-        User user = getUserManager().getUser();
-        if (user != null) {
-            UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().requireCurrentUserId());
-            try {
-                CipherText tct = crypto.encrypt(mEncryptedData, false);
-                String encryptedDataSignature = crypto.sign(mEncryptedData);
-                String signedDataSignature = crypto.sign(mSignedData);
+        UserCrypto crypto = Crypto.forUser(getUserManager(), getUserId());
+        try {
+            CipherText tct = crypto.encrypt(mEncryptedData, false);
+            String encryptedDataSignature = crypto.sign(mEncryptedData);
+            String signedDataSignature = crypto.sign(mSignedData);
 
-                updateContact(mContactName, mContactEmails, tct.getArmored(), encryptedDataSignature, signedDataSignature, false);
-                AppUtil.postEventOnUi(new ContactEvent(ContactEvent.SAVED, true));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            updateContact(mContactName, mContactEmails, tct.getArmored(), encryptedDataSignature, signedDataSignature, false);
+            AppUtil.postEventOnUi(new ContactEvent(ContactEvent.SAVED, true));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         if (!getQueueNetworkUtil().isConnected()) {
             AppUtil.postEventOnUi(new ContactEvent(ContactEvent.NO_NETWORK, true));
@@ -107,9 +103,9 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
 
     @Override
     public void onRun() throws Throwable {
-        UserCrypto crypto = Crypto.forUser(getUserManager(), userId);
+        UserCrypto crypto = Crypto.forUser(getUserManager(), getUserId());
         mContactDao = ContactDatabase.Companion
-                .getInstance(getApplicationContext(), userId)
+                .getInstance(getApplicationContext(), getUserId())
                 .getDao();
 
         CipherText tct = crypto.encrypt(mEncryptedData, false);
@@ -129,7 +125,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
                 AppUtil.postEventOnUi(new ContactEvent(ContactEvent.INVALID_EMAIL, true));
             } else if (response.getCode() == RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED) {
                 AppUtil.postEventOnUi(new ContactEvent(ContactEvent.DUPLICATE_EMAIL, true));
-            }else {
+            } else {
                 updateContact(mContactName, response.getContact().getEmails(), tct.getArmored(), encryptedDataSignature, signedDataSignature, true);
                 AppUtil.postEventOnUi(new ContactEvent(ContactEvent.SUCCESS, true));
             }
@@ -145,7 +141,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             boolean updateJoins
     ) {
 
-        final ContactData contactData = mContactDao.findContactDataById(mContactId) ;
+        final ContactData contactData = mContactDao.findContactDataById(mContactId);
         if (contactData != null) {
             contactData.setName(contactName);
             mContactDao.saveContactData(contactData);
@@ -155,10 +151,10 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
         mContactDao.deleteAllContactsEmails(emails);
 
         for (ContactEmail email : contactEmails) {
-			final String emailToClear=email.getEmail();
-			mContactDao.clearByEmail(emailToClear);
+            final String emailToClear = email.getEmail();
+            mContactDao.clearByEmail(emailToClear);
         }
-		mContactDao.saveAllContactsEmailsBlocking(contactEmails);
+        mContactDao.saveAllContactsEmailsBlocking(contactEmails);
         Map<ContactLabel, List<String>> mapContactGroupContactEmails = new HashMap<>();
         if (updateJoins) {
             for (ContactEmail email : contactEmails) {
@@ -173,7 +169,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
                 }
             }
         }
-		FullContactDetails contact = mContactDao.findFullContactDetailsById(mContactId);
+        FullContactDetails contact = mContactDao.findFullContactDetailsById(mContactId);
         if (contact != null) {
             ContactEncryptedData contactEncryptedData = new ContactEncryptedData(encryptedData, encryptedDataSignature, Constants.VCardType.SIGNED_ENCRYPTED);
             ContactEncryptedData contactSignedData = new ContactEncryptedData(mSignedData, signedDataSignature, Constants.VCardType.SIGNED);

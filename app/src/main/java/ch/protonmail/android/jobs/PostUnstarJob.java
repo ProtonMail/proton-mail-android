@@ -44,7 +44,7 @@ public class PostUnstarJob extends ProtonMailEndlessJob {
     @Override
     public void onAdded() {
         final CounterDao counterDao = CounterDatabase.Companion
-                .getInstance(getApplicationContext(), userId)
+                .getInstance(getApplicationContext(), getUserId())
                 .getDao();
 
         for (String id : mMessageIds) {

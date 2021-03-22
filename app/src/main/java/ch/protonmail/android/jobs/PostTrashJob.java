@@ -48,7 +48,7 @@ public class PostTrashJob extends ProtonMailCounterJob {
     @Override
     public void onAdded() {
         final CounterDao counterDao = CounterDatabase.Companion
-                .getInstance(getApplicationContext(), userId)
+                .getInstance(getApplicationContext(), getUserId())
                 .getDao();
 
         int totalUnread = 0;

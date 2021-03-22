@@ -50,7 +50,7 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
     @Override
     public void onAdded() {
         final CounterDao counterDao = CounterDatabase.Companion
-                .getInstance(getApplicationContext(), userId)
+                .getInstance(getApplicationContext(), getUserId())
                 .getDao();
         int totalUnread = 0;
         for (String id : mMessageIds) {
@@ -99,7 +99,7 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
             message.setLocation(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue());
         }
         MessageDao messageDao = MessageDatabase.Companion
-                .getInstance(getApplicationContext(), userId)
+                .getInstance(getApplicationContext(), getUserId())
                 .getDao();
         message.setFolderLocation(messageDao);
         getMessageDetailsRepository().saveMessageBlocking(message);

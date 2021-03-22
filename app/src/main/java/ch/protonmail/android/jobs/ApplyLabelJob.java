@@ -63,7 +63,7 @@ public class ApplyLabelJob extends ProtonMailEndlessJob {
 
     private void countUnread(@NonNull ModificationMethod modificationMethod) {
         final CounterDao counterDao = CounterDatabase.Companion
-                .getInstance(getApplicationContext(), userId)
+                .getInstance(getApplicationContext(), getUserId())
                 .getDao();
         int totalUnread = 0;
         for (String messageId : messageIds) {

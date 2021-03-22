@@ -45,7 +45,7 @@ public abstract class ProtonMailCounterJob extends ProtonMailEndlessJob {
     @Override
     protected void onProtonCancel(int cancelReason, @Nullable Throwable throwable) {
         final CounterDao counterDao = CounterDatabase.Companion
-                .getInstance(getApplicationContext(), userId)
+                .getInstance(getApplicationContext(), getUserId())
                 .getDao();
 
         int totalUnread = 0;

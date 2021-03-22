@@ -43,7 +43,7 @@ public class EmptyFolderJob extends ProtonMailBaseJob {
     public void onAdded() {
         super.onAdded();
         MessageDao messageDao = MessageDatabase.Companion
-                .getInstance(getApplicationContext(), userId)
+                .getInstance(getApplicationContext(), getUserId())
                 .getDao();
 
         if (labelId != null) {

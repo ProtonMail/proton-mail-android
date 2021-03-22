@@ -33,16 +33,14 @@ abstract class ProtonMailBaseJob @JvmOverloads protected constructor(
     userId: Id? = null
 ) : Job(params) {
 
-    protected val entryPoint get() =
-        EntryPoints.get(ProtonMailApplication.getApplication(), JobEntryPoint::class.java)
+    protected val entryPoint
+        get() = EntryPoints.get(ProtonMailApplication.getApplication(), JobEntryPoint::class.java)
 
-    // This is needed for the class to be serialized by JobQueue library
-    private val userIdString = userId?.s
+    // This property is serialized by JobQueue library.
+    private var userIdString: String = userId?.s ?: getUserManager().requireCurrentUserId().s
 
-    @Transient
-    @JvmField
-    protected val userId: Id? = userIdString?.let(::Id)
-        ?: getUserManager().currentUserId
+    protected val userId: Id
+        get() = Id(userIdString)
 
     protected fun getAccountManager() = entryPoint.accountManager()
     protected fun getApi() = entryPoint.apiManager()
