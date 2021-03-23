@@ -415,10 +415,8 @@ class ComposeMessageViewModel @Inject constructor(
 
                 invokeSaveDraftUseCase(message, newAttachments, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger)
 
-                if (newAttachments.isNotEmpty() && uploadAttachments) {
-                    _oldSenderAddressId = message.addressID
-                        ?: _messageDataResult.addressId // overwrite "old sender ID" when updating draft
-                }
+                // overwrite "old sender ID" when updating draft
+                _oldSenderAddressId = message.addressID ?: _messageDataResult.addressId
                 setIsDirty(false)
                 //endregion
             } else {

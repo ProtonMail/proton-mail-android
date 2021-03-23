@@ -371,6 +371,30 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         }
     }
 
+    @Test
+    fun saveDraftUpdatesOldSenderAddressIdAfterUpdatingADraft() {
+        runBlockingTest {
+            // Given
+            // Setting sender address on message simulates the user changing the address
+            val message = Message(addressID = "changedSenderAddress")
+            val updatedDraftId = "updatedDraftId"
+            val updatedDraft = Message(messageId = updatedDraftId, localId = "local82347")
+            givenViewModelPropertiesAreInitialised()
+            // This value was set to empty during initial draft creation
+            viewModel.oldSenderAddressId = ""
+            viewModel.draftId = "non-empty draftId triggers update draft"
+            coEvery { saveDraft(any()) } returns SaveDraftResult.Success(updatedDraftId)
+            coEvery { messageDetailsRepository.findMessageById(updatedDraftId) } returns updatedDraft
+
+            // When
+            viewModel.saveDraft(message, hasConnectivity = false)
+
+            // Then
+            coVerify { messageDetailsRepository.findMessageById(updatedDraftId) }
+            assertEquals("changedSenderAddress", viewModel.oldSenderAddressId)
+        }
+    }
+
     private fun givenViewModelPropertiesAreInitialised() {
         // Needed to set class fields to the right value and allow code under test to get executed
         viewModel.prepareMessageData(false, "addressId", "mail-alias", false)
