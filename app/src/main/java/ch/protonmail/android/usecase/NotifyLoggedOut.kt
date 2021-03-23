@@ -25,11 +25,12 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class NotifyLoggedOut @Inject constructor(
-    private val loadLegacyUser: LoadLegacyUser,
+    private val loadUser: LoadUser,
     private val notificationServer: NotificationServer
 ) {
     suspend operator fun invoke(userId: Id) {
-        notificationServer.notifyUserLoggedOut(loadLegacyUser.invoke(userId))
+        val user = runCatching { loadUser(userId) }.getOrNull()
+        notificationServer.notifyUserLoggedOut(user)
     }
 
     @Deprecated(

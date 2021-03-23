@@ -221,6 +221,7 @@ class MailboxActivity :
     private lateinit var pendingActionDao: PendingActionDao
 
     @Inject
+    lateinit var messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory
     lateinit var messageDetailsRepository: MessageDetailsRepository
 
     @Inject
@@ -264,7 +265,13 @@ class MailboxActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val userId = userManager.requireCurrentUserId()
+        val userId = userManager.currentUserId
+        if (userId == null) {
+            finish()
+            return
+        }
+
+        messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
         counterDao = CounterDatabase.getInstance(this, userId).getDao()
         pendingActionDao = PendingActionDatabase.getInstance(this, userId).getDao()
 
