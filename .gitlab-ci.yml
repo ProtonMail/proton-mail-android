@@ -119,7 +119,7 @@ build prerelease:
     - large
   script:
     - ./gradlew clean
-    - ./gradlew assemblePlaystoreReleasePlayStore
+    - ./gradlew assembleProductionRelease
   artifacts:
     expire_in: 3 week
     paths:
@@ -135,7 +135,7 @@ build release:
     - large
   script:
     - ./gradlew clean
-    - ./gradlew assemblePlaystoreReleasePlayStore
+    - ./gradlew assembleProductionRelease
   artifacts:
     expire_in: 4 week
     paths:
