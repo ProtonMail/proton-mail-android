@@ -66,7 +66,7 @@ class FetchMessageCountsJob(
             }
 
             val unreadCountersDatabase =
-                CounterDatabase.getInstance(applicationContext, userId).getDao()
+                CounterDatabase.getInstance(applicationContext, requireUserId()).getDao()
             unreadCountersDatabase.updateUnreadCounters(unreadLocationCounters, unreadLabelCounters)
 
             AppUtil.postEventOnUi(MessageCountsEvent(Status.SUCCESS, countersResponse))

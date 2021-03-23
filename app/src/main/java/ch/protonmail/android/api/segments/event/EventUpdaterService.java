@@ -28,6 +28,7 @@ import com.birbit.android.jobqueue.JobManager;
 
 import javax.inject.Inject;
 
+import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
@@ -56,16 +57,17 @@ public class EventUpdaterService extends ProtonJobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        if (mUserManager.isLoggedIn()) {
-            if (mUserManager.isBackgroundSyncEnabled()) {
-                if (mNetworkUtils.isConnected() && mUserManager.accessTokenExists()) {
-                    startService();
-                } else {
-                    startService();
-                }
-            }
+        User user;
+        try {
+            user = mUserManager.getCurrentLegacyUserBlocking();
+        } catch (IllegalStateException e) {
+            user = null;
+        }
+        if (user != null && user.isBackgroundSync()) {
+            startService();
         }
     }
+
 
     private void startService() {
         mJobManager.addJob(new FetchUpdatesJob(eventManager));
