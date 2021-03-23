@@ -31,7 +31,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.jobs.UpdateSettingsJob
-import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.moveToLogin
@@ -133,7 +133,7 @@ class AccountSettingsActivity : BaseSettingsActivity() {
             )
         )
 
-        val mailSettings = mUserManager.mailSettings
+        val mailSettings = mUserManager.getCurrentUserMailSettingsBlocking()
         showCurrentViewModeSetting(mailSettings)
         setupViewModeChangedListener(mailSettings)
     }
@@ -160,7 +160,9 @@ class AccountSettingsActivity : BaseSettingsActivity() {
             object : (View, Boolean) -> Unit {
                 override fun invoke(view: View, isEnabled: Boolean) {
                     mailSettings?.viewMode = if (isEnabled) 0 else 1
-                    mailSettings?.save()
+                    mailSettings?.saveBlocking(
+                        SecureSharedPreferences.getPrefsForUser(this@AccountSettingsActivity, user.id)
+                    )
                     mJobManager.addJobInBackground(UpdateSettingsJob(mailSettings = mailSettings))
                 }
             }
