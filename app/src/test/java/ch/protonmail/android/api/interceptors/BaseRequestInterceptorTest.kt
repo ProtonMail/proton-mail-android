@@ -24,6 +24,7 @@ import ch.protonmail.android.api.models.RefreshBody
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.doh.PREF_DNS_OVER_HTTPS_API_URL_LIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_GATEWAY_TIMEOUT
+import ch.protonmail.android.api.segments.RESPONSE_CODE_OLD_PASSWORD_INCORRECT
 import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
@@ -135,6 +136,8 @@ class BaseRequestInterceptorTest {
         assertNull(checkIfTokenExpiredResponse)
     }
 
+    // this case is currently covered only for specific error codes and not all 422 errors,
+    // so we test using only one of those error codes, RESPONSE_CODE_OLD_PASSWORD_INCORRECT = 8002 in this case..
     @Test
     fun verifyThatUnprocessableEntityResponseShowsErrorToTheUser() {
         // given
@@ -145,7 +148,8 @@ class BaseRequestInterceptorTest {
         val errorMessage = "Error - Reason for 422 response"
         val responseMock = mockk<Response> {
             every { code() } returns 422
-            every { peekBody(any()).string() } returns "{ Error: \"$errorMessage\" }"
+            every { peekBody(any()).string() } returns
+                "{ Code: $RESPONSE_CODE_OLD_PASSWORD_INCORRECT, Error: \"$errorMessage\" }"
             every { message() } returns "HTTP status message"
         }
 
@@ -154,6 +158,27 @@ class BaseRequestInterceptorTest {
 
         // then
         verify { userNotifier.showError(errorMessage) }
+    }
+
+    @Test
+    fun verifyThatUnprocessableEntityResponseDoesntShowsErrorToTheUser() {
+        // given
+        every {
+            ProtonMailApplication.getApplication().defaultSharedPreferences
+        } returns prefsMock
+
+        val errorMessage = "Error - Reason for 422 response"
+        val responseMock = mockk<Response> {
+            every { code() } returns 422
+            every { peekBody(any()).string() } returns "{ }"
+            every { message() } returns "HTTP status message"
+        }
+
+        // when
+        interceptor.checkResponse(responseMock)
+
+        // then
+        verify(exactly = 0) { userNotifier.showError(errorMessage) }
     }
 
     companion object {
