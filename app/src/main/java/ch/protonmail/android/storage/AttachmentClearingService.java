@@ -102,8 +102,8 @@ public class AttachmentClearingService extends ProtonJobIntentService {
                 .getDao();
 
         String action = intent.getAction();
-        User user = userManager.getLegacyUserBlocking(userId);
         if (ACTION_REGULAR_CHECK.equals(action)) {
+            User user = userManager.getLegacyUserBlocking(userId);
             long currentEmbeddedImagesSize = attachmentMetadataDao.getAllAttachmentsSizeUsedBlocking();
             long maxSize = user.getMaxAllowedAttachmentSpace();
             if (maxSize == -1) {
