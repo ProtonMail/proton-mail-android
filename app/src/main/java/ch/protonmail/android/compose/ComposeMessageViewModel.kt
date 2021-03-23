@@ -28,7 +28,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
-import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.composeMessage.UserAction
@@ -96,7 +95,6 @@ class ComposeMessageViewModel @Inject constructor(
     private val saveDraft: SaveDraft,
     private val dispatchers: DispatcherProvider,
     private val stringResourceResolver: StringResourceResolver,
-    private val workManager: WorkManager,
     private val sendMessageUseCase: SendMessage,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
@@ -416,10 +414,8 @@ class ComposeMessageViewModel @Inject constructor(
 
                 invokeSaveDraftUseCase(message, newAttachments, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger)
 
-                if (newAttachments.isNotEmpty() && uploadAttachments) {
-                    _oldSenderAddressId = message.addressID
-                        ?: _messageDataResult.addressId // overwrite "old sender ID" when updating draft
-                }
+                // overwrite "old sender ID" when updating draft
+                _oldSenderAddressId = message.addressID ?: _messageDataResult.addressId
                 setIsDirty(false)
                 //endregion
             } else {
