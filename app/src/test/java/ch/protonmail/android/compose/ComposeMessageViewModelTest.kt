@@ -107,7 +107,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             givenViewModelPropertiesAreInitialised()
             // This indicates that saving draft was requested by the user
             viewModel.setUploadAttachments(true)
-            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
+            coEvery { saveDraft(any()) } returns SaveDraftResult.Success("draftId")
             coEvery { messageDetailsRepository.findMessageById("draftId") } returns flowOf(message)
 
             // When
@@ -134,7 +134,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             givenViewModelPropertiesAreInitialised()
             // This indicates that saving draft was not requested by the user
             viewModel.setUploadAttachments(false)
-            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
+            coEvery { saveDraft(any()) } returns SaveDraftResult.Success("draftId")
             coEvery { messageDetailsRepository.findMessageById("draftId") } returns flowOf(message)
 
             // When
@@ -162,8 +162,8 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             val createdDraft = Message(messageId = createdDraftId, localId = "local28348")
             val savedDraftObserver = viewModel.savingDraftComplete.testObserver()
             givenViewModelPropertiesAreInitialised()
-            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
-            every { messageDetailsRepository.findMessageById(createdDraftId) } returns flowOf(createdDraft)
+            coEvery { saveDraft(any()) } returns SaveDraftResult.Success(createdDraftId)
+            coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns flowOf(createdDraft)
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
@@ -181,7 +181,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             val localDraftId = "localDraftId"
             val createdDraft = Message(messageId = createdDraftId, localId = localDraftId)
             givenViewModelPropertiesAreInitialised()
-            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
+            coEvery { saveDraft(any()) } returns SaveDraftResult.Success(createdDraftId)
             coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns flowOf(createdDraft)
 
             // When
@@ -201,7 +201,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             givenViewModelPropertiesAreInitialised()
             viewModel.draftId = "non-empty-draftId"
             viewModel.setUploadAttachments(true)
-            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
+            coEvery { saveDraft(any()) } returns SaveDraftResult.Success("draftId")
             coEvery { messageDetailsRepository.findMessageById("draftId") } returns flowOf(message)
 
             // When
@@ -229,7 +229,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             val saveDraftErrorObserver = viewModel.savingDraftError.testObserver()
             val errorResId = R.string.failed_saving_draft_online
             givenViewModelPropertiesAreInitialised()
-            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.OnlineDraftCreationFailed)
+            coEvery { saveDraft(any()) } returns SaveDraftResult.OnlineDraftCreationFailed
             every { stringResourceResolver.invoke(errorResId) } returns "Error creating draft for message %s"
 
             // When
@@ -250,7 +250,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             val saveDraftErrorObserver = viewModel.savingDraftError.testObserver()
             val errorResId = R.string.attachment_failed
             givenViewModelPropertiesAreInitialised()
-            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.UploadDraftAttachmentsFailed)
+            coEvery { saveDraft(any()) } returns SaveDraftResult.UploadDraftAttachmentsFailed
             every { stringResourceResolver.invoke(errorResId) } returns "Error uploading attachments for subject "
 
             // When
@@ -272,7 +272,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             val savedDraftObserver = viewModel.savingDraftComplete.testObserver()
             givenViewModelPropertiesAreInitialised()
             viewModel.draftId = "non-empty draftId triggers update draft"
-            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(updatedDraftId))
+            coEvery { saveDraft(any()) } returns SaveDraftResult.Success(updatedDraftId)
             coEvery { messageDetailsRepository.findMessageById(updatedDraftId) } returns flowOf(updatedDraft)
 
             // When

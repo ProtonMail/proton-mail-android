@@ -54,7 +54,6 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -375,7 +374,7 @@ class SaveDraftTest : CoroutinesTest {
                     "previousSenderId132423",
                     SaveDraft.SaveDraftTrigger.UserRequested
                 )
-            ).first()
+            )
 
             // Then
             val expected = PendingSend("234234", "createdDraftMessageId", null, false, 834L)
@@ -429,7 +428,7 @@ class SaveDraftTest : CoroutinesTest {
                     "previousSenderId132423",
                     SaveDraft.SaveDraftTrigger.UserRequested
                 )
-            ).first()
+            )
 
             // Then
             coVerify { uploadAttachmentsEnqueuer.enqueue(newAttachmentIds, "createdDraftMessageId345", false) }
@@ -482,7 +481,7 @@ class SaveDraftTest : CoroutinesTest {
                     "previousSenderId132424",
                     SaveDraft.SaveDraftTrigger.SendingMessage
                 )
-            ).first()
+            )
 
             // Then
             coVerify { uploadAttachmentsEnqueuer.enqueue(newAttachmentIds, "createdDraftMessageId346", true) }
@@ -533,7 +532,7 @@ class SaveDraftTest : CoroutinesTest {
                     "previousSenderId132423",
                     SaveDraft.SaveDraftTrigger.AutoSave
                 )
-            ).first()
+            )
 
             // Then
             coVerify(exactly = 0) { uploadAttachmentsEnqueuer.enqueue(any(), any(), any()) }
@@ -580,7 +579,7 @@ class SaveDraftTest : CoroutinesTest {
                     "previousSenderId132423",
                     SaveDraft.SaveDraftTrigger.UserRequested
                 )
-            ).first()
+            )
 
             // Then
             assertEquals(SaveDraftResult.OnlineDraftCreationFailed, result)
@@ -636,7 +635,7 @@ class SaveDraftTest : CoroutinesTest {
                     "previousSenderId132423",
                     SaveDraft.SaveDraftTrigger.UserRequested
                 )
-            ).first()
+            )
 
             // Then
             verify { userNotifier.showPersistentError(errorMessage, "Message Subject") }
@@ -690,7 +689,7 @@ class SaveDraftTest : CoroutinesTest {
                     "previousSenderId132423",
                     SaveDraft.SaveDraftTrigger.UserRequested
                 )
-            ).first()
+            )
 
             // Then
             assertEquals(SaveDraftResult.UploadDraftAttachmentsFailed, result)
@@ -743,7 +742,7 @@ class SaveDraftTest : CoroutinesTest {
                     "previousSenderId132423",
                     SaveDraft.SaveDraftTrigger.UserRequested
                 )
-            ).first()
+            )
 
             // Then
             verify { uploadAttachmentsEnqueuer.enqueue(newAttachmentIds, "createdDraftMessageId345", false) }

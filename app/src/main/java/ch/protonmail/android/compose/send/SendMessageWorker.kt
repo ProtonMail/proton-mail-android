@@ -257,7 +257,7 @@ class SendMessageWorker @WorkerInject constructor(
                 previousSenderAddressId,
                 SaveDraft.SaveDraftTrigger.SendingMessage
             )
-        ).first()
+        )
     }
 
     private fun retryOrFail(

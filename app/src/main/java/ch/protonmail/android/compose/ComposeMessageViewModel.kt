@@ -28,7 +28,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
-import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.composeMessage.UserAction
@@ -460,7 +459,7 @@ class ComposeMessageViewModel @Inject constructor(
         oldSenderAddress: String,
         saveDraftTrigger: SaveDraft.SaveDraftTrigger
     ) {
-        saveDraft(
+        val saveDraftResult = saveDraft(
             SaveDraft.SaveDraftParameters(
                 message,
                 newAttachments,
@@ -469,19 +468,19 @@ class ComposeMessageViewModel @Inject constructor(
                 oldSenderAddress,
                 saveDraftTrigger
             )
-        ).collect { saveDraftResult ->
-            when (saveDraftResult) {
-                is SaveDraftResult.Success -> onDraftSaved(saveDraftResult.draftId)
-                SaveDraftResult.OnlineDraftCreationFailed -> {
-                    val errorMessage = stringResourceResolver(
-                        R.string.failed_saving_draft_online
-                    ).format(message.subject)
-                    _savingDraftError.postValue(errorMessage)
-                }
-                SaveDraftResult.UploadDraftAttachmentsFailed -> {
-                    val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
-                    _savingDraftError.postValue(errorMessage)
-                }
+        )
+
+        when (saveDraftResult) {
+            is SaveDraftResult.Success -> onDraftSaved(saveDraftResult.draftId)
+            SaveDraftResult.OnlineDraftCreationFailed -> {
+                val errorMessage = stringResourceResolver(
+                    R.string.failed_saving_draft_online
+                ).format(message.subject)
+                _savingDraftError.postValue(errorMessage)
+            }
+            SaveDraftResult.UploadDraftAttachmentsFailed -> {
+                val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
+                _savingDraftError.postValue(errorMessage)
             }
         }
     }
