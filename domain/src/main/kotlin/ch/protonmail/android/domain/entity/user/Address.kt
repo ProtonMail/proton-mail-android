@@ -21,6 +21,7 @@ package ch.protonmail.android.domain.entity.user
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.Validated
 
 /**
@@ -33,6 +34,7 @@ data class Address(
     val domainId: Id?,
     val email: EmailAddress,
     val displayName: Name?,
+    val signature: NotBlankString?,
     val enabled: Boolean,
     val type: Type,
     val allowedToSend: Boolean,

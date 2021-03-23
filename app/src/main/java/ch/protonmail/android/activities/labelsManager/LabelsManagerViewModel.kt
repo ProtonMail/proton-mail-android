@@ -33,20 +33,17 @@ import androidx.paging.PagedList
 import androidx.paging.toLiveData
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import androidx.work.WorkRequest
-import ch.protonmail.android.api.models.room.messages.Label
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
+import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.worker.PostLabelWorker
-import com.birbit.android.jobqueue.JobManager
 import studio.forface.viewstatestore.ViewStateStore
 import studio.forface.viewstatestore.from
 import studio.forface.viewstatestore.paging.PagedViewStateStore
 import studio.forface.viewstatestore.paging.ViewStateStoreScope
-import javax.inject.Named
 
 /**
  * A [ViewModel] for Manage Labels
@@ -54,8 +51,7 @@ import javax.inject.Named
  * Implements [ViewStateStoreScope] for being able to publish to a Locked [ViewStateStore]
  */
 internal class LabelsManagerViewModel @ViewModelInject constructor(
-    private val jobManager: JobManager,
-    @Named("messages") private val messagesDatabase: MessagesDatabase,
+    messageDao: MessageDao,
     @Assisted private val savedStateHandle: SavedStateHandle,
     private val deleteLabel: DeleteLabel,
     private val workManager: WorkManager
@@ -86,8 +82,8 @@ internal class LabelsManagerViewModel @ViewModelInject constructor(
      * Triggered when a Labels are updated in DB
      */
     private val labelsSource = when (type) {
-        LabelUiModel.Type.LABELS -> messagesDatabase.getAllLabelsNotExclusivePaged()
-        LabelUiModel.Type.FOLDERS -> messagesDatabase.getAllLabelsExclusivePaged()
+        LabelUiModel.Type.LABELS -> messageDao.getAllLabelsNotExclusivePaged()
+        LabelUiModel.Type.FOLDERS -> messageDao.getAllLabelsExclusivePaged()
     }
 
     private val labelMapper = LabelUiModelMapper(isLabelEditable = true)

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -53,25 +53,25 @@ import ch.protonmail.android.activities.SwipeType
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
+import ch.protonmail.android.activities.settings.SettingsEnum.*
 import ch.protonmail.android.adapters.SettingsAdapter
-import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.address.Address
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabaseFactory
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
-import ch.protonmail.android.api.models.room.counters.CountersDatabase
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
-import ch.protonmail.android.api.models.room.notifications.NotificationsDatabase
-import ch.protonmail.android.api.models.room.notifications.NotificationsDatabaseFactory
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.AttachmentMetadataDao
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.ContactDatabase
+import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.CounterDatabase
+import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.MessageDatabase
+import ch.protonmail.android.data.local.NotificationDao
+import ch.protonmail.android.data.local.NotificationDatabase
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.PendingActionDatabase
+import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.domain.entity.user.Address
+import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.FetchLabelsEvent
-import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
@@ -80,14 +80,15 @@ import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
+import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.google.gson.Gson
-import com.squareup.otto.Subscribe
 import timber.log.Timber
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
+import ch.protonmail.android.api.models.User as LegacyUser
 
 // region constants
 const val EXTRA_CURRENT_MAILBOX_LOCATION = "Extra_Current_Mailbox_Location"
@@ -99,7 +100,13 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     val viewModel: ConnectivityBaseViewModel by viewModels()
 
     @Inject
+    lateinit var userManager: UserManager
+
+    @Inject
     lateinit var launchInitialDataFetch: LaunchInitialDataFetch
+
+    @Inject
+    lateinit var attachmentMetadataDao: AttachmentMetadataDao
 
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
@@ -110,13 +117,12 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     var settingsUiList: List<SettingsItemUiModel> = ArrayList()
 
-    var contactsDatabase: ContactsDatabase? = null
-    var messagesDatabase: MessagesDatabase? = null
-    private var searchDatabase: MessagesDatabase? = null
-    private var notificationsDatabase: NotificationsDatabase? = null
-    var countersDatabase: CountersDatabase? = null
-    var attachmentMetadataDatabase: AttachmentMetadataDatabase? = null
-    var pendingActionsDatabase: PendingActionsDatabase? = null
+    var contactDao: ContactDao? = null
+    var messageDao: MessageDao? = null
+    private var searchDatabase: MessageDao? = null
+    private var notificationDao: NotificationDao? = null
+    var counterDao: CounterDao? = null
+    var pendingActionDao: PendingActionDao? = null
     var sharedPreferences: SharedPreferences? = null
 
     private var mMailboxLocation: Constants.MessageLocationType = Constants.MessageLocationType.INBOX
@@ -127,9 +133,11 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     var mPinValue: Boolean = false
     var mRecoveryEmail: String = ""
     var mNotificationOptionValue: Int = 0
-    lateinit var mSelectedAddress: Address
+    lateinit var selectedAddress: Address
     var mDisplayName: String = ""
     var mSignature: String = ""
+    @Deprecated("Use new User model", ReplaceWith("user"))
+    lateinit var legacyUser: LegacyUser
     lateinit var user: User
 
     private var canClick = AtomicBoolean(true)
@@ -137,26 +145,59 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     init {
         settingsAdapter.onItemClick = { settingItem ->
 
-            if (!settingItem.isSection && (settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.DRILL_DOWN || settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.BUTTON)) {
+            if (settingItem.isSection.not() &&
+                (settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.DRILL_DOWN ||
+                    settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.BUTTON)) {
                 selectItem(settingItem.settingId)
             }
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        legacyUser = userManager.requireCurrentLegacyUserBlocking()
+        user = legacyUser.toNewUser()
+        val userId = user.id
+
+        contactDao = ContactDatabase.getInstance(applicationContext, userId).getDao()
+        messageDao = MessageDatabase.getInstance(applicationContext, userId).getDao()
+        searchDatabase = MessageDatabase.getSearchDatabase(applicationContext, userId).getDao()
+        notificationDao = NotificationDatabase.getInstance(applicationContext, userId).getDao()
+        counterDao = CounterDatabase.getInstance(applicationContext, userId).getDao()
+        pendingActionDao = PendingActionDatabase.getInstance(applicationContext, userId).getDao()
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this@BaseSettingsActivity)
+
+        mMailboxLocation = Constants.MessageLocationType
+            .fromInt(intent.getIntExtra(EXTRA_CURRENT_MAILBOX_LOCATION, 0))
+        mLabelId = intent.getStringExtra(EXTRA_CURRENT_MAILBOX_LABEL_ID)
+
+        fetchOrganizationData()
+
+
+        val primaryAddress = checkNotNull(user.addresses.primary)
+        mDisplayName = primaryAddress.displayName?.s
+            ?: primaryAddress.email.s
+
+        viewModel.hasConnectivity.observe(this, ::onConnectivityEvent)
+    }
+
     override fun onStart() {
         super.onStart()
-        ProtonMailApplication.getApplication().bus.register(this)
+        app.bus.register(this)
     }
 
     override fun onResume() {
         super.onResume()
-        user = mUserManager.user
+        legacyUser = userManager.requireCurrentLegacyUserBlocking()
+        user = legacyUser.toNewUser()
+        settingsAdapter.notifyDataSetChanged()
         viewModel.checkConnectivity()
     }
 
     override fun onStop() {
         super.onStop()
-        ProtonMailApplication.getApplication().bus.unregister(this)
+        app.bus.unregister(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -173,37 +214,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         finish()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        contactsDatabase = ContactsDatabaseFactory.getInstance(applicationContext).getDatabase()
-        messagesDatabase = MessagesDatabaseFactory.getInstance(applicationContext).getDatabase()
-        searchDatabase = MessagesDatabaseFactory.getSearchDatabase(applicationContext).getDatabase()
-        notificationsDatabase = NotificationsDatabaseFactory.getInstance(applicationContext).getDatabase()
-        countersDatabase = CountersDatabaseFactory.getInstance(applicationContext).getDatabase()
-        attachmentMetadataDatabase = AttachmentMetadataDatabaseFactory.getInstance(applicationContext).getDatabase()
-        pendingActionsDatabase = PendingActionsDatabaseFactory.getInstance(applicationContext).getDatabase()
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this@BaseSettingsActivity)
-
-        mMailboxLocation = Constants.MessageLocationType.fromInt(intent.getIntExtra(EXTRA_CURRENT_MAILBOX_LOCATION, 0))
-        mLabelId = intent.getStringExtra(EXTRA_CURRENT_MAILBOX_LABEL_ID)
-
-        loadMailSettings()
-        fetchOrganizationData()
-
-        user = mUserManager.user
-
-        mDisplayName = if (user.getDisplayNameForAddress(user.addressId)?.isEmpty()!!)
-            user.defaultAddress.email
-        else
-            user.getDisplayNameForAddress(user.addressId)!!
-
-        viewModel.hasConnectivity.observe(
-            this,
-            { onConnectivityEvent(it) }
-        )
-    }
-
     override fun setContentView(layoutResID: Int) {
         super.setContentView(layoutResID)
         setSupportActionBar(toolbar)
@@ -214,99 +224,108 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     private fun showCustomLocaleDialog() {
         val selectedLanguage = sharedPreferences!!.getString(PREF_CUSTOM_APP_LANGUAGE, "")
         val languageValues = resources.getStringArray(R.array.custom_language_values)
-        var selectedLanguageIndex = 0
-        for (i in languageValues.indices) {
-            if (languageValues[i] == selectedLanguage) {
-                selectedLanguageIndex = i
-                break
+        val selectedLanguageIndex = languageValues.indexOfFirst { it == selectedLanguage }
+
+        AlertDialog.Builder(this)
+            .setTitle(R.string.custom_language_dialog_title)
+            .setSingleChoiceItems(
+                resources.getStringArray(R.array.custom_language_labels),
+                selectedLanguageIndex
+            ) { dialog, which ->
+
+                val language = resources.getStringArray(R.array.custom_language_values)[which]
+                CustomLocale.setLanguage(this@BaseSettingsActivity, language)
+
+                val recreatedMailboxIntent = Intent(this@BaseSettingsActivity, MailboxActivity::class.java)
+                recreatedMailboxIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+                dialog.dismiss()
+                startActivity(recreatedMailboxIntent)
             }
-        }
-
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.custom_language_dialog_title)
-        builder.setSingleChoiceItems(resources.getStringArray(R.array.custom_language_labels), selectedLanguageIndex) { dialog, which ->
-
-            val language = resources.getStringArray(R.array.custom_language_values)[which]
-            CustomLocale.setLanguage(this@BaseSettingsActivity, language)
-
-            val recreatedMailboxIntent = Intent(this@BaseSettingsActivity, MailboxActivity::class.java)
-            recreatedMailboxIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-
-            dialog.dismiss()
-            startActivity(recreatedMailboxIntent)
-
-        }.setNegativeButton(R.string.cancel, null)
-
-        val dialog = builder.create()
-        dialog.show()
+            .setNegativeButton(R.string.cancel, null)
+            .create()
+            .show()
     }
 
 
     private fun showSortAliasDialog() {
         val defaultAddressIntent = AppUtil.decorInAppIntent(Intent(this, DefaultAddressActivity::class.java))
-        startActivityForResult(defaultAddressIntent, SettingsEnum.DEFAULT_EMAIL.ordinal)
+        startActivityForResult(defaultAddressIntent, DEFAULT_EMAIL.ordinal)
     }
 
     private fun selectItem(settingsId: String) {
-        user = mUserManager.user
-        when (SettingsEnum.valueOf(settingsId.toUpperCase(Locale.ENGLISH))) {
-            SettingsEnum.ACCOUNT -> {
-                val accountSettingsIntent = AppUtil.decorInAppIntent(Intent(this, AccountSettingsActivity::class.java))
-                startActivityForResult(accountSettingsIntent, SettingsEnum.ACCOUNT.ordinal)
+        legacyUser = userManager.requireCurrentLegacyUserBlocking()
+        user = legacyUser.toNewUser()
+        when (valueOf(settingsId.toUpperCase(Locale.ENGLISH))) {
+            ACCOUNT -> {
+                val accountSettingsIntent =
+                    AppUtil.decorInAppIntent(Intent(this, AccountSettingsActivity::class.java))
+                startActivityForResult(accountSettingsIntent, ACCOUNT.ordinal)
             }
-            SettingsEnum.SUBSCRIPTION -> {
-                val accountTypeIntent = AppUtil.decorInAppIntent(Intent(this, AccountTypeActivity::class.java))
+            SUBSCRIPTION -> {
+                val accountTypeIntent =
+                    AppUtil.decorInAppIntent(Intent(this, AccountTypeActivity::class.java))
                 startActivity(accountTypeIntent)
             }
-            SettingsEnum.PASSWORD_MANAGEMENT -> {
-                val passwordManagerIntent = AppUtil.decorInAppIntent(Intent(this, ChangePasswordActivity::class.java))
-                startActivityForResult(passwordManagerIntent, SettingsEnum.PASSWORD_MANAGEMENT.ordinal)
+            PASSWORD_MANAGEMENT -> {
+                val passwordManagerIntent =
+                    AppUtil.decorInAppIntent(Intent(this, ChangePasswordActivity::class.java))
+                startActivityForResult(passwordManagerIntent, PASSWORD_MANAGEMENT.ordinal)
             }
-            SettingsEnum.RECOVERY_EMAIL -> {
-                val recoveryEmailIntent = AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
+            RECOVERY_EMAIL -> {
+                val recoveryEmailIntent =
+                    AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
                 recoveryEmailIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.RECOVERY_EMAIL)
                 recoveryEmailIntent.putExtra(EXTRA_SETTINGS_ITEM_VALUE, mRecoveryEmail)
-                startActivityForResult(recoveryEmailIntent, SettingsEnum.RECOVERY_EMAIL.ordinal)
+                startActivityForResult(recoveryEmailIntent, RECOVERY_EMAIL.ordinal)
             }
-            SettingsEnum.DEFAULT_EMAIL -> {
+            DEFAULT_EMAIL -> {
                 showSortAliasDialog()
             }
-            SettingsEnum.DISPLAY_NAME_N_SIGNATURE -> {
+            DISPLAY_NAME_N_SIGNATURE -> {
                 val editSignatureIntent = Intent(this, EditSettingsItemActivity::class.java)
                 editSignatureIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.DISPLAY_NAME_AND_SIGNATURE)
-                startActivityForResult(AppUtil.decorInAppIntent(editSignatureIntent), SettingsEnum.DISPLAY_NAME_N_SIGNATURE.ordinal)
+                startActivityForResult(
+                    AppUtil.decorInAppIntent(editSignatureIntent), DISPLAY_NAME_N_SIGNATURE.ordinal
+                )
             }
-            SettingsEnum.NOTIFICATION_SNOOZE -> {
-                val notificationSnoozeIntent = AppUtil.decorInAppIntent(Intent(this, SnoozeNotificationsActivity::class.java))
-                startActivityForResult(notificationSnoozeIntent, SettingsEnum.NOTIFICATION_SNOOZE.ordinal)
+            NOTIFICATION_SNOOZE -> {
+                val notificationSnoozeIntent =
+                    AppUtil.decorInAppIntent(Intent(this, SnoozeNotificationsActivity::class.java))
+                startActivityForResult(notificationSnoozeIntent, NOTIFICATION_SNOOZE.ordinal)
             }
-            SettingsEnum.PRIVACY -> {
-                val privacyIntent = AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
+            PRIVACY -> {
+                val privacyIntent =
+                    AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
                 privacyIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.PRIVACY)
-                startActivityForResult(privacyIntent, SettingsEnum.PRIVACY.ordinal)
+                startActivityForResult(privacyIntent, PRIVACY.ordinal)
             }
-            SettingsEnum.AUTO_DOWNLOAD_MESSAGES -> {
+            AUTO_DOWNLOAD_MESSAGES -> {
                 val gcmAutoDownloadIntent = Intent(this, EditSettingsItemActivity::class.java)
                 gcmAutoDownloadIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.AUTO_DOWNLOAD_MESSAGES)
-                startActivityForResult(AppUtil.decorInAppIntent(gcmAutoDownloadIntent), SettingsEnum.AUTO_DOWNLOAD_MESSAGES.ordinal)
+                startActivityForResult(
+                    AppUtil.decorInAppIntent(gcmAutoDownloadIntent), AUTO_DOWNLOAD_MESSAGES.ordinal
+                )
             }
-            SettingsEnum.BACKGROUND_REFRESH -> {
+            BACKGROUND_REFRESH -> {
                 val backgroundSyncIntent = Intent(this, EditSettingsItemActivity::class.java)
                 backgroundSyncIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.BACKGROUND_SYNC)
-                startActivityForResult(AppUtil.decorInAppIntent(backgroundSyncIntent), SettingsEnum.BACKGROUND_REFRESH.ordinal)
+                startActivityForResult(
+                    AppUtil.decorInAppIntent(backgroundSyncIntent), BACKGROUND_REFRESH.ordinal
+                )
             }
-            SettingsEnum.SEARCH -> {
-            }
-            SettingsEnum.LABELS_N_FOLDERS -> {
-                val labelsNFoldersIntent = AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
+            LABELS_N_FOLDERS -> {
+                val labelsNFoldersIntent =
+                    AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
                 labelsNFoldersIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.LABELS_AND_FOLDERS)
-                startActivityForResult(labelsNFoldersIntent, SettingsEnum.LABELS_N_FOLDERS.ordinal)
+                startActivityForResult(labelsNFoldersIntent, LABELS_N_FOLDERS.ordinal)
             }
-            SettingsEnum.LABELS_MANAGER -> {
-                val labelsManagerIntent = AppUtil.decorInAppIntent(Intent(this, LabelsManagerActivity::class.java))
+            LABELS_MANAGER -> {
+                val labelsManagerIntent =
+                    AppUtil.decorInAppIntent(Intent(this, LabelsManagerActivity::class.java))
                 startActivity(labelsManagerIntent)
             }
-            SettingsEnum.FOLDERS_MANAGER -> {
+            FOLDERS_MANAGER -> {
                 val foldersManagerIntent = AppUtil.decorInAppIntent(
                     Intent(
                         this,
@@ -316,94 +335,130 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 foldersManagerIntent.putExtra(EXTRA_MANAGE_FOLDERS, true)
                 startActivity(foldersManagerIntent)
             }
-            SettingsEnum.SWIPING_GESTURE -> {
+            SWIPING_GESTURE -> {
                 val swipeGestureIntent = Intent(this, EditSettingsItemActivity::class.java)
                 swipeGestureIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.SWIPE)
                 startActivityForResult(
                     AppUtil.decorInAppIntent(swipeGestureIntent),
-                    SettingsEnum.SWIPING_GESTURE.ordinal
+                    SWIPING_GESTURE.ordinal
                 )
             }
-            SettingsEnum.SWIPE_LEFT -> {
+            SWIPE_LEFT -> {
                 val swipeLeftChooserIntent = Intent(this, SwipeChooserActivity::class.java)
-                swipeLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mUserManager.mailSettings!!.leftSwipeAction)
+                val mailSettings = checkNotNull(userManager.getCurrentUserMailSettingsBlocking())
+                swipeLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mailSettings.leftSwipeAction)
                 swipeLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.LEFT)
                 startActivityForResult(
                     AppUtil.decorInAppIntent(swipeLeftChooserIntent),
-                    SettingsEnum.SWIPE_LEFT.ordinal
+                    SWIPE_LEFT.ordinal
                 )
             }
-            SettingsEnum.SWIPE_RIGHT -> {
+            SWIPE_RIGHT -> {
                 val rightLeftChooserIntent = Intent(this, SwipeChooserActivity::class.java)
-                rightLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mUserManager.mailSettings!!.rightSwipeAction)
+                val mailSettings = checkNotNull(userManager.getCurrentUserMailSettingsBlocking())
+                rightLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mailSettings.rightSwipeAction)
                 rightLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.RIGHT)
                 startActivityForResult(
                     AppUtil.decorInAppIntent(rightLeftChooserIntent),
-                    SettingsEnum.SWIPE_RIGHT.ordinal
+                    SWIPE_RIGHT.ordinal
                 )
             }
-            SettingsEnum.LOCAL_STORAGE_LIMIT -> {
+            LOCAL_STORAGE_LIMIT -> {
                 val attachmentStorageIntent = Intent(this, AttachmentStorageActivity::class.java)
-                attachmentStorageIntent.putExtra(AttachmentStorageActivity.EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE, mAttachmentStorageValue)
-                startActivityForResult(AppUtil.decorInAppIntent(attachmentStorageIntent), SettingsEnum.LOCAL_STORAGE_LIMIT.ordinal)
+                attachmentStorageIntent.putExtra(
+                    AttachmentStorageActivity.EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE,
+                    mAttachmentStorageValue
+                )
+                startActivityForResult(
+                    AppUtil.decorInAppIntent(attachmentStorageIntent), LOCAL_STORAGE_LIMIT.ordinal
+                )
             }
-            SettingsEnum.PUSH_NOTIFICATION -> {
-                val privateNotificationsIntent = AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
+            PUSH_NOTIFICATION -> {
+                val privateNotificationsIntent =
+                    AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
                 privateNotificationsIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.PUSH_NOTIFICATIONS)
-                startActivityForResult(privateNotificationsIntent, SettingsEnum.PUSH_NOTIFICATION.ordinal)
+                startActivityForResult(privateNotificationsIntent, PUSH_NOTIFICATION.ordinal)
             }
-            SettingsEnum.NOTIFICATION_SETTINGS -> {
+            NOTIFICATION_SETTINGS -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     val intent = Intent(ACTION_CHANNEL_NOTIFICATION_SETTINGS)
                     intent.putExtra(EXTRA_CHANNEL_ID, CHANNEL_ID_EMAIL)
                     intent.putExtra(EXTRA_APP_PACKAGE, packageName)
                     startActivity(intent)
                 } else {
-                    mNotificationOptionValue = user.notificationSetting
+                    mNotificationOptionValue = legacyUser.notificationSetting
                     val notificationSettingsIntent = Intent(this, NotificationSettingsActivity::class.java)
                     notificationSettingsIntent.putExtra(EXTRA_CURRENT_ACTION, mNotificationOptionValue)
-                    startActivityForResult(AppUtil.decorInAppIntent(notificationSettingsIntent), SettingsEnum.NOTIFICATION_SETTINGS.ordinal)
+                    startActivityForResult(
+                        AppUtil.decorInAppIntent(notificationSettingsIntent), NOTIFICATION_SETTINGS.ordinal
+                    )
                 }
             }
-            SettingsEnum.AUTO_LOCK -> {
+            AUTO_LOCK -> {
                 val pinManagerIntent = AppUtil.decorInAppIntent(Intent(this, PinSettingsActivity::class.java))
                 startActivity(pinManagerIntent)
             }
-            SettingsEnum.CONNECTIONS_VIA_THIRD_PARTIES -> {
-                val allowSecureConnectionsViaThirdPartiesIntent = AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
-                allowSecureConnectionsViaThirdPartiesIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.CONNECTIONS_VIA_THIRD_PARTIES)
-                startActivity(allowSecureConnectionsViaThirdPartiesIntent)
+            CONNECTIONS_VIA_THIRD_PARTIES -> {
+                val allowThirdPartiesSecureConnectionsIntent =
+                    AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
+                allowThirdPartiesSecureConnectionsIntent
+                    .putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.CONNECTIONS_VIA_THIRD_PARTIES)
+                startActivity(allowThirdPartiesSecureConnectionsIntent)
             }
-            SettingsEnum.APP_LANGUAGE -> {
+            APP_LANGUAGE -> {
                 showCustomLocaleDialog()
             }
-            SettingsEnum.COMBINED_CONTACTS -> {
+            COMBINED_CONTACTS -> {
                 val combinedContactsIntent = Intent(this, EditSettingsItemActivity::class.java)
                 combinedContactsIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.COMBINED_CONTACTS)
                 startActivity(AppUtil.decorInAppIntent(combinedContactsIntent))
             }
-            SettingsEnum.APP_LOCAL_CACHE -> {
+            APP_LOCAL_CACHE -> {
                 showToast(R.string.processing_request, gravity = Gravity.CENTER)
                 if (canClick.getAndSet(false)) {
-                    run {
-                        AppUtil.clearStorage(
-                            contactsDatabase,
-                            messagesDatabase,
-                            searchDatabase,
-                            notificationsDatabase,
-                            countersDatabase,
-                            attachmentMetadataDatabase,
-                            pendingActionsDatabase,
-                            true
+                    AppUtil.clearStorage(
+                        applicationContext,
+                        userManager.requireCurrentUserId(),
+                        contactDao,
+                        messageDao,
+                        searchDatabase,
+                        notificationDao,
+                        counterDao,
+                        attachmentMetadataDao,
+                        pendingActionDao,
+                        true
+                    )
+                    launchInitialDataFetch()
+                    mJobManager.addJobInBackground(
+                        FetchByLocationJob(
+                            mMailboxLocation,
+                            mLabelId,
+                            true,
+                            null,
+                            false
                         )
-                        launchInitialDataFetch()
-                        mJobManager.addJobInBackground(FetchByLocationJob(mMailboxLocation, mLabelId, true, null, false))
-                    }
+                    )
                 }
             }
-            else -> {
-                Timber.v("Unhandled setting: ${settingsId.toUpperCase(Locale.ENGLISH)} selection")
-            }
+            ACCOUNT_SECTION,
+            ACCOUNT_SETTINGS,
+            ADDRESSES,
+            ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES,
+            APP_INFORMATION,
+            APP_SETTINGS,
+            APP_VERSION,
+            DISPLAY_NAME,
+            EXTENDED_NOTIFICATION,
+            LINK_CONFIRMATION,
+            MAILBOX,
+            MAILBOX_SIZE,
+            MOBILE_SIGNATURE,
+            PREVENT_SCREENSHOTS,
+            SEARCH,
+            SHOW_EMBEDDED_IMAGES,
+            SHOW_REMOTE_IMAGES,
+            SIGNATURE,
+            SNOOZE -> { /* ignored */ }
         }
     }
 
@@ -430,11 +485,15 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     }
 
     protected fun setToggleListener(settingType: SettingsEnum, listener: ((View, Boolean) -> Unit)?) {
-        settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }?.apply { toggleListener = listener }
+        settingsAdapter.items
+            .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
+            ?.apply { toggleListener = listener }
     }
 
     protected fun setEditTextListener(settingType: SettingsEnum, listener: (View) -> Unit) {
-        settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }?.apply { editTextListener = listener }
+        settingsAdapter.items
+            .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
+            ?.apply { editTextListener = listener }
     }
 
     protected fun setEditTextChangeListener(settingType: SettingsEnum, listener: (String) -> Unit) {
@@ -443,14 +502,18 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     }
 
     protected fun setValue(settingType: SettingsEnum, settingValueNew: String) {
-        settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }?.apply { settingValue = settingValueNew }
+        settingsAdapter.items
+            .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
+            ?.apply { settingValue = settingValueNew }
     }
 
     /**
      * Turns the value of setting with [settingType] ON or OFF.
      */
     protected fun setEnabled(settingType: SettingsEnum, settingValueEnabled: Boolean) {
-        settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }?.apply { enabled = settingValueEnabled }
+        settingsAdapter.items
+            .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
+            ?.apply { enabled = settingValueEnabled }
     }
 
     /**
@@ -468,9 +531,9 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
             settingHeader = if (settingHeaderNew.isNotEmpty()) {
                 settingHeaderNew
             } else {
-                SettingsEnum.valueOf(settingType.name).getHeader(this@BaseSettingsActivity)
+                valueOf(settingType.name).getHeader(this@BaseSettingsActivity)
             }
-            settingsHint = SettingsEnum.valueOf(settingType.name).getHint(this@BaseSettingsActivity)
+            settingsHint = valueOf(settingType.name).getHint(this@BaseSettingsActivity)
         }
     }
 
@@ -495,11 +558,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         ).show()
 
         viewModel.checkConnectivityDelayed()
-    }
-
-    @Subscribe
-    fun onMailSettingsEvent(event: MailSettingsEvent) {
-        loadMailSettings()
     }
 
     open fun onLabelsLoadedEvent(event: FetchLabelsEvent) {

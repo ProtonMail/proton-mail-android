@@ -44,12 +44,11 @@ import ch.protonmail.android.api.models.enumerations.PackageType;
 import ch.protonmail.android.api.models.messages.send.MessageSendAddressBody;
 import ch.protonmail.android.api.models.messages.send.MessageSendKey;
 import ch.protonmail.android.api.models.messages.send.MessageSendPackage;
-import ch.protonmail.android.api.models.room.messages.Attachment;
-import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
+import ch.protonmail.android.data.local.model.Attachment;
+import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.domain.entity.Id;
-import ch.protonmail.android.domain.entity.Name;
 import ch.protonmail.android.utils.HTMLToMDConverter;
 import ch.protonmail.android.utils.MIME.MIMEBuilder;
 import ch.protonmail.android.utils.crypto.EOToken;
@@ -66,7 +65,8 @@ public class PackageFactory {
     public PackageFactory(
             @NonNull ProtonMailApiManager apiManager,
             @NonNull AddressCrypto.Factory addressCryptoFactory,
-            @NonNull HTMLToMDConverter htmlToMDConverter) {
+            @NonNull HTMLToMDConverter htmlToMDConverter
+    ) {
         this.apiManager = apiManager;
         this.addressCryptoFactory = addressCryptoFactory;
         this.htmlToMDConverter = htmlToMDConverter;
@@ -76,13 +76,10 @@ public class PackageFactory {
             @NonNull Message message,
             @NonNull List<SendPreference> preferences,
             @NonNull MessageSecurityOptions securityOptions,
-            @NonNull String username
+            @NonNull Id userId
     ) throws Exception {
         final Map<MIMEType, MessageSendPackage> packageMap = new HashMap<>();
-        crypto = addressCryptoFactory.create(
-                new Id(message.getAddressID()),
-                new Name(username)
-        );
+        crypto = addressCryptoFactory.create(userId, new Id(message.getAddressID()));
 
         Set<String> recipients = getMessageRecipients(message);
         for (SendPreference sendPref : preferences) {

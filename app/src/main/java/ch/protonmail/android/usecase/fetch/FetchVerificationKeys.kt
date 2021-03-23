@@ -22,9 +22,10 @@ package ch.protonmail.android.usecase.fetch
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.PublicKeyBody
 import ch.protonmail.android.api.models.enumerations.KeyFlag
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.di.CurrentUserCrypto
 import ch.protonmail.android.utils.crypto.KeyInformation
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -34,14 +35,14 @@ import javax.inject.Inject
 class FetchVerificationKeys @Inject constructor(
     private val api: ProtonMailApiManager,
     private val userManager: UserManager,
-    private val userCrypto: UserCrypto,
-    private val contactsDao: ContactsDao,
+    @CurrentUserCrypto private val userCrypto: UserCrypto,
+    private val contactDao: ContactDao,
     private val dispatchers: DispatcherProvider
 ) {
 
     suspend operator fun invoke(email: String): List<KeyInformation> = withContext(dispatchers.Io) {
         Timber.v("FetchVerificationKeys email: $email")
-        val publicKeys = userManager.user.toNewUser().addresses.addresses.values
+        val publicKeys = userManager.requireCurrentUser().addresses.addresses.values
             .find { it.email.s == email }?.keys?.keys
             ?.map { key ->
                 val armouredKey = userCrypto.buildArmoredPublicKey(key.privateKey)
@@ -57,13 +58,13 @@ class FetchVerificationKeys @Inject constructor(
             return@withContext publicKeys
         }
 
-        val contactEmail = contactsDao.findContactEmailByEmail(email)
+        val contactEmail = contactDao.findContactEmailByEmail(email)
         contactEmail?.contactId?.let {
 
             return@withContext runCatching {
                 val contactResponse = api.fetchContactDetails(it)
                 val fullContactDetails = contactResponse.contact
-                contactsDao.insertFullContactDetails(fullContactDetails)
+                contactDao.insertFullContactDetails(fullContactDetails)
                 val response = api.getPublicKeys(email)
                 if (response.hasError()) {
                     Timber.w("FetchVerificationKeys Error ${response.error}")

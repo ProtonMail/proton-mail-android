@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -28,7 +28,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -46,26 +45,29 @@ import java.util.Locale;
 
 import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.activities.BaseActivity;
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase;
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabaseFactory;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
-import ch.protonmail.android.api.models.room.counters.CountersDatabase;
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
-import ch.protonmail.android.api.models.room.notifications.NotificationsDatabase;
-import ch.protonmail.android.api.models.room.notifications.NotificationsDatabaseFactory;
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase;
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory;
-import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabase;
-import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabaseFactory;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.core.UserManager;
+import ch.protonmail.android.data.local.AttachmentMetadataDao;
+import ch.protonmail.android.data.local.AttachmentMetadataDatabase;
+import ch.protonmail.android.data.local.ContactDao;
+import ch.protonmail.android.data.local.ContactDatabase;
+import ch.protonmail.android.data.local.CounterDao;
+import ch.protonmail.android.data.local.CounterDatabase;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
+import ch.protonmail.android.data.local.NotificationDao;
+import ch.protonmail.android.data.local.NotificationDatabase;
+import ch.protonmail.android.data.local.PendingActionDao;
+import ch.protonmail.android.data.local.PendingActionDatabase;
+import ch.protonmail.android.data.local.SendingFailedNotificationDao;
+import ch.protonmail.android.data.local.SendingFailedNotificationDatabase;
+import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.storage.AttachmentClearingService;
 import ch.protonmail.android.storage.MessageBodyClearingService;
+import timber.log.Timber;
 
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
@@ -151,41 +153,40 @@ public class AppUtil {
         return file;
     }
 
-    public static void deleteDatabases(Context context, String username) {
-        deleteDatabases(context, username, null, true);
+    @Deprecated // Use ClearUserData use case
+    public static void deleteDatabases(Context context, Id userId) {
+        deleteDatabases(context, userId, null, true);
     }
 
-    public static void deleteDatabases(Context context, String username, boolean clearContacts) {
-        deleteDatabases(context, username, null, clearContacts);
+    @Deprecated // Use ClearUserData use case
+    public static void deleteDatabases(Context context, Id userId, boolean clearContacts) {
+        deleteDatabases(context, userId, null, clearContacts);
     }
 
-    public static void deleteDatabases(Context context, String username, IDBClearDone clearDoneListener) {
-        deleteDatabases(context, username, clearDoneListener, true);
+    @Deprecated // Use ClearUserData use case
+    public static void deleteDatabases(Context context, Id userId, IDBClearDone clearDoneListener) {
+        deleteDatabases(context, userId, clearDoneListener, true);
     }
 
-    private static void deleteDatabases(Context context, String username, IDBClearDone clearDoneListener, boolean clearContacts) {
+    @Deprecated // Use ClearUserData use case
+    private static void deleteDatabases(Context context, Id userId, IDBClearDone clearDoneListener, boolean clearContacts) {
         try {
-            if (!TextUtils.isEmpty(username)) {
-                clearStorage(ContactsDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
-                        MessagesDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
-                        MessagesDatabaseFactory.Companion.getSearchDatabase(context).getDatabase(),
-                        NotificationsDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
-                        CountersDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
-                        AttachmentMetadataDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
-                        PendingActionsDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
-                        clearDoneListener, true, username, clearContacts);
-            } else {
-                clearStorage(ContactsDatabaseFactory.Companion.getInstance(context).getDatabase(),
-                        MessagesDatabaseFactory.Companion.getInstance(context).getDatabase(),
-                        MessagesDatabaseFactory.Companion.getSearchDatabase(context).getDatabase(),
-                        NotificationsDatabaseFactory.Companion.getInstance(context).getDatabase(),
-                        CountersDatabaseFactory.Companion.getInstance(context).getDatabase(),
-                        AttachmentMetadataDatabaseFactory.Companion.getInstance(context).getDatabase(),
-                        PendingActionsDatabaseFactory.Companion.getInstance(context).getDatabase(),
-                        clearDoneListener, false, null, clearContacts);
-            }
+            clearStorage(
+                    context,
+                    userId,
+                    ContactDatabase.Companion.getInstance(context, userId).getDao(),
+                    MessageDatabase.Companion.getInstance(context, userId).getDao(),
+                    MessageDatabase.Companion.getSearchDatabase(context, userId).getDao(),
+                    NotificationDatabase.Companion.getInstance(context, userId).getDao(),
+                    CounterDatabase.Companion.getInstance(context, userId).getDao(),
+                    AttachmentMetadataDatabase.Companion.getInstance(context, userId).getDao(),
+                    PendingActionDatabase.Companion.getInstance(context, userId).getDao(),
+                    clearDoneListener, clearContacts
+            );
         } catch (Exception e) {
-            Logger.doLogException(e);
+            Timber.e(e);
+            if (clearDoneListener != null)
+                clearDoneListener.onDatabaseClearingCompleted();
         }
     }
 
@@ -222,18 +223,25 @@ public class AppUtil {
         return activityManager.isInLockTaskMode();
     }
 
+    @Deprecated // Use with User Id
     public static void clearNotifications(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
-        final NotificationsDatabase notificationsDatabase = NotificationsDatabaseFactory.Companion.getInstance(context).getDatabase();
-        new ClearNotificationsFromDatabaseTask(notificationsDatabase).execute();
+        final UserManager userManager = ((ProtonMailApplication) context.getApplicationContext()).getUserManager();
+        final Id userId = userManager.requireCurrentUserId();
+        final NotificationDao notificationDao = NotificationDatabase.Companion
+                .getInstance(context, userId)
+                .getDao();
+        new ClearNotificationsFromDatabaseTask(notificationDao).execute();
     }
 
-    public static void clearNotifications(Context context, String username) {
+    public static void clearNotifications(Context context, Id userId) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(username.hashCode());
-        final NotificationsDatabase notificationsDatabase = NotificationsDatabaseFactory.Companion.getInstance(context).getDatabase();
-        new ClearNotificationsFromDatabaseTask(notificationsDatabase).execute();
+        notificationManager.cancel(userId.hashCode());
+        final NotificationDao notificationDao = NotificationDatabase.Companion
+                .getInstance(context, userId)
+                .getDao();
+        new ClearNotificationsFromDatabaseTask(notificationDao).execute();
     }
 
     public static void clearNotifications(Context context, int notificationId) {
@@ -241,11 +249,13 @@ public class AppUtil {
         notificationManager.cancel(notificationId);
     }
 
-    public static void clearSendingFailedNotifications(Context context, String username) {
+    public static void clearSendingFailedNotifications(Context context, Id userId) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(username.hashCode() + NOTIFICATION_ID_SENDING_FAILED);
-        final SendingFailedNotificationsDatabase sendingFailedNotificationsDatabase = SendingFailedNotificationsDatabaseFactory.Companion.getInstance(context).getDatabase();
-        new ClearSendingFailedNotificationsFromDatabaseTask(sendingFailedNotificationsDatabase).execute();
+        notificationManager.cancel(userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED);
+        final SendingFailedNotificationDao sendingFailedNotificationDao = SendingFailedNotificationDatabase.Companion
+                .getInstance(context, userId)
+                .getDao();
+        new ClearSendingFailedNotificationsFromDatabaseTask(sendingFailedNotificationDao).execute();
     }
 
     /// read string from raw
@@ -297,66 +307,80 @@ public class AppUtil {
         }.execute();
     }
 
-    public static void clearStorage(final ContactsDatabase contactsDatabase,
-                                    final MessagesDatabase messagesDatabase,
-                                    final MessagesDatabase searchDatabase,
-                                    final NotificationsDatabase notificationsDatabase,
-                                    final CountersDatabase countersDatabase,
-                                    final AttachmentMetadataDatabase attachmentMetadataDatabase,
-                                    final PendingActionsDatabase pendingActionsDatabase,
-                                    final boolean clearContacts) {
-        clearStorage(contactsDatabase, messagesDatabase, searchDatabase, notificationsDatabase, countersDatabase,
-                attachmentMetadataDatabase, pendingActionsDatabase, null, false, null, clearContacts);
+    @Deprecated // Use ClearUserData use case
+    public static void clearStorage(
+            final Context context,
+            final Id userId,
+            final ContactDao contactDao,
+            final MessageDao messageDao,
+            final MessageDao searchDatabase,
+            final NotificationDao notificationDao,
+            final CounterDao counterDao,
+            final AttachmentMetadataDao attachmentMetadataDao,
+            final PendingActionDao pendingActionDao,
+            final boolean clearContacts
+    ) {
+        clearStorage(
+                context,
+                userId,
+                contactDao,
+                messageDao,
+                searchDatabase,
+                notificationDao,
+                counterDao,
+                attachmentMetadataDao,
+                pendingActionDao,
+                null,
+                clearContacts
+        );
     }
 
-    private static void clearStorage(final ContactsDatabase contactsDatabase,
-                                     final MessagesDatabase messagesDatabase,
-                                     final MessagesDatabase searchDatabase,
-                                     final NotificationsDatabase notificationsDatabase,
-                                     final CountersDatabase countersDatabase,
-                                     final AttachmentMetadataDatabase attachmentMetadataDatabase,
-                                     final PendingActionsDatabase pendingActionsDatabase,
-                                     final IDBClearDone clearDone,
-                                     final boolean deleteTables,
-                                     final String username,
-                                     final boolean clearContacts) {
+    @Deprecated // Use ClearUserData use case
+    private static void clearStorage(
+            final Context context,
+            final Id userId,
+            final ContactDao contactDao,
+            final MessageDao messageDao,
+            final MessageDao searchDatabase,
+            final NotificationDao notificationDao,
+            final CounterDao counterDao,
+            final AttachmentMetadataDao attachmentMetadataDao,
+            final PendingActionDao pendingActionDao,
+            final IDBClearDone clearDone,
+            final boolean clearContacts
+    ) {
 
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                pendingActionsDatabase.clearPendingSendCache();
-                pendingActionsDatabase.clearPendingUploadCache();
+                AttachmentClearingService.startClearUpImmediatelyService(context, userId);
+                pendingActionDao.clearPendingSendCache();
+                pendingActionDao.clearPendingUploadCache();
                 if (clearContacts) {
-                    contactsDatabase.clearContactEmailsLabelsJoin();
-                    contactsDatabase.clearContactEmailsCacheBlocking();
-                    contactsDatabase.clearContactDataCache();
-                    contactsDatabase.clearContactGroupsLabelsTableBlocking();
-                    contactsDatabase.clearFullContactDetailsCache();
+                    contactDao.clearContactEmailsLabelsJoin();
+                    contactDao.clearContactEmailsCache();
+                    contactDao.clearContactDataCache();
+                    contactDao.clearContactGroupsLabelsTableBlocking();
+                    contactDao.clearFullContactDetailsCache();
                 }
-                messagesDatabase.clearMessagesCache();
-                messagesDatabase.clearAttachmentsCache();
-                messagesDatabase.clearLabelsCache();
+                messageDao.clearMessagesCache();
+                messageDao.clearAttachmentsCache();
+                messageDao.clearLabelsCache();
                 searchDatabase.clearMessagesCache();
                 searchDatabase.clearAttachmentsCache();
                 searchDatabase.clearLabelsCache();
-                notificationsDatabase.clearNotificationCache();
-                countersDatabase.clearUnreadLocationsTable();
-                countersDatabase.clearUnreadLabelsTable();
-                countersDatabase.clearTotalLocationsTable();
-                countersDatabase.clearTotalLabelsTable();
-                attachmentMetadataDatabase.clearAttachmentMetadataCache();
+                notificationDao.clearNotificationCache();
+                counterDao.clearUnreadLocationsTable();
+                counterDao.clearUnreadLabelsTable();
+                counterDao.clearTotalLocationsTable();
+                counterDao.clearTotalLabelsTable();
+                attachmentMetadataDao.clearAttachmentMetadataCache();
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                // TODO: test this in future and uncomment
-//                if (deleteTables) {
-//                    AttachmentClearingService.startClearUpImmediatelyServiceAndDeleteTables(username);
-//                } else {
-                AttachmentClearingService.startClearUpImmediatelyService();
-//                }
                 if (clearDone != null) {
                     clearDone.onDatabaseClearingCompleted();
                 }
@@ -389,45 +413,46 @@ public class AppUtil {
     /**
      * Deletes user's Secure Shared Preferences and preserves some important values.
      */
-    public static void deleteSecurePrefs(@NonNull String username, boolean deletePin) {
-        SharedPreferences secureSharedPrefs = ProtonMailApplication.getApplication().getSecureSharedPreferences(username);
+    public static void deleteSecurePrefs(
+            @NonNull SharedPreferences userPreferences,
+            boolean deletePin
+    ) {
+        String mailboxPinBackup = userPreferences.getString(PREF_PIN, null);
+        SharedPreferences.Editor editor = userPreferences.edit()
+                .clear();
         if (!deletePin) {
-            String mailboxPin = secureSharedPrefs.getString(PREF_PIN, null);
-            secureSharedPrefs.edit().clear().apply();
-            secureSharedPrefs.edit().putString(PREF_PIN, mailboxPin).apply();
-        } else {
-            secureSharedPrefs.edit().clear().apply();
-
+            editor.putString(PREF_PIN, mailboxPinBackup);
         }
+        editor.apply();
     }
 
     // TODO: Rewrite with coroutines after the whole AppUtil file is converted to Kotlin
     private static class ClearNotificationsFromDatabaseTask extends AsyncTask<Void, Void, Void> {
-        private final NotificationsDatabase notificationsDatabase;
+        private final NotificationDao notificationDao;
 
         ClearNotificationsFromDatabaseTask(
-                NotificationsDatabase notificationsDatabase) {
-            this.notificationsDatabase = notificationsDatabase;
+                NotificationDao notificationDao) {
+            this.notificationDao = notificationDao;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            notificationsDatabase.clearNotificationCache();
+            notificationDao.clearNotificationCache();
             return null;
         }
     }
 
     // TODO: Rewrite with coroutines after the whole AppUtil file is converted to Kotlin
     private static class ClearSendingFailedNotificationsFromDatabaseTask extends AsyncTask<Void, Void, Void> {
-        private final SendingFailedNotificationsDatabase sendingFailedNotificationsDatabase;
+        private final SendingFailedNotificationDao sendingFailedNotificationDao;
 
-        ClearSendingFailedNotificationsFromDatabaseTask(SendingFailedNotificationsDatabase sendingFailedNotificationsDatabase) {
-            this.sendingFailedNotificationsDatabase = sendingFailedNotificationsDatabase;
+        ClearSendingFailedNotificationsFromDatabaseTask(SendingFailedNotificationDao sendingFailedNotificationDao) {
+            this.sendingFailedNotificationDao = sendingFailedNotificationDao;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            sendingFailedNotificationsDatabase.clearSendingFailedNotifications();
+            sendingFailedNotificationDao.clearSendingFailedNotifications();
             return null;
 
         }

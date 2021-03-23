@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -42,7 +42,6 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.Status;
-import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
@@ -170,7 +169,7 @@ public class MailboxLoginActivity extends BaseLoginActivity {
         UiUtil.hideKeyboard(this, mPasswordEditText);
         new Handler().postDelayed(() -> {
             mDisableBack = false;
-            mUserManager.mailboxLogin(mUserManager.getUsername() /* TODO we should indicate in GUI, which user we log in */, mailboxPassword, getIntent().getStringExtra(EXTRA_KEY_SALT), false);
+            mUserManager.mailboxLogin(mUserManager.getCurrentUserId() /* TODO we should indicate in GUI, which user we log in */, mailboxPassword, getIntent().getStringExtra(EXTRA_KEY_SALT), false);
         }, 1500);
     }
 
@@ -178,7 +177,7 @@ public class MailboxLoginActivity extends BaseLoginActivity {
     public void onBackPressed() {
         if (!mDisableBack) {
             mProgressContainer.setVisibility(View.VISIBLE);
-            mUserManager.removeAccount(mUserManager.getUsername(), null);
+            mUserManager.logoutAndRemoveBlocking(mUserManager.requireCurrentUserId());
             super.onBackPressed();
         }
     }
@@ -212,11 +211,6 @@ public class MailboxLoginActivity extends BaseLoginActivity {
         } else {
             networkSnackBarUtil.hideAllSnackBars();
         }
-    }
-
-    @Subscribe
-    public void  onMailSettingsEvent(MailSettingsEvent event) {
-        loadMailSettings();
     }
 
     @Subscribe

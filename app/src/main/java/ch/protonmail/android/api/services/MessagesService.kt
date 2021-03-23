@@ -22,21 +22,21 @@ import android.content.Intent
 import androidx.core.app.JobIntentService
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkResults
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.MessageDatabase
+import ch.protonmail.android.data.local.PendingActionDatabase
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.Logger
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -90,8 +90,8 @@ class MessagesService : JobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
 
-        val currentUser = userManager.username
-        messageDetailsRepository.reloadDependenciesForUser(currentUser)
+        val currentUserId = userManager.requireCurrentUserId()
+        messageDetailsRepository.reloadDependenciesForUser(currentUserId)
         when (intent.action) {
             ACTION_FETCH_MESSAGES_BY_PAGE -> {
                 val location = intent.getIntExtra(EXTRA_MESSAGE_LOCATION, 0)
@@ -104,13 +104,16 @@ class MessagesService : JobIntentService() {
                     handleFetchFirstLabelPage(
                         Constants.MessageLocationType.LABEL,
                         labelId,
-                        currentUser,
+                        currentUserId,
                         refreshMessages
                     )
                 } else {
                     handleFetchFirstPage(
-                        Constants.MessageLocationType.fromInt(location), refreshDetails,
-                        intent.getStringExtra(EXTRA_UUID), currentUser, refreshMessages
+                        Constants.MessageLocationType.fromInt(location),
+                        refreshDetails,
+                        intent.getStringExtra(EXTRA_UUID),
+                        currentUserId,
+                        refreshMessages
                     )
                 }
             }
@@ -130,10 +133,10 @@ class MessagesService : JobIntentService() {
                         Constants.MessageLocationType.fromInt(location),
                         labelTime,
                         labelId,
-                        currentUser
+                        currentUserId
                     )
                 } else {
-                    handleFetchMessages(Constants.MessageLocationType.fromInt(location), time, currentUser)
+                    handleFetchMessages(Constants.MessageLocationType.fromInt(location), time, currentUserId)
                 }
             }
             ACTION_FETCH_MESSAGE_LABELS -> handleFetchLabels()
@@ -145,13 +148,13 @@ class MessagesService : JobIntentService() {
         location: Constants.MessageLocationType,
         refreshDetails: Boolean,
         uuid: String?,
-        currentUser: String,
+        currentUserId: Id,
         refreshMessages: Boolean
     ) {
         try {
-            val messages = mApi.messages(location.messageLocationTypeValue, RetrofitTag(currentUser))
+            val messages = mApi.messages(location.messageLocationTypeValue, UserIdTag(currentUserId))
             if (messages?.code == Constants.RESPONSE_CODE_OK)
-                handleResult(messages, location, refreshDetails, uuid, currentUser, refreshMessages)
+                handleResult(messages, location, refreshDetails, uuid, currentUserId, refreshMessages)
             else {
                 val errorMessage = messages?.error ?: ""
                 val event = MailboxLoadedEvent(Status.FAILED, uuid, errorMessage)
@@ -159,37 +162,36 @@ class MessagesService : JobIntentService() {
                 mNetworkResults.setMailboxLoaded(event)
                 Timber.v( "error while fetching messages", Exception(errorMessage))
             }
-
         } catch (error: Exception) {
             val event = MailboxLoadedEvent(Status.FAILED, uuid)
             AppUtil.postEventOnUi(event)
             mNetworkResults.setMailboxLoaded(event)
-            Logger.doLogException(TAG_MESSAGES_SERVICE, "error while fetching messages", error)
+            Timber.e("Error while fetching messages", error)
         }
     }
 
-    private fun handleFetchMessages(location: Constants.MessageLocationType, time: Long, currentUser: String) {
+    private fun handleFetchMessages(location: Constants.MessageLocationType, time: Long, currentUserId: Id) {
         try {
             val messages = mApi.fetchMessages(location.messageLocationTypeValue, time)
-            handleResult(messages, location, false, null, currentUser)
+            handleResult(messages, location, false, null, currentUserId)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Logger.doLogException(TAG_MESSAGES_SERVICE, "error while fetching messages", error)
+            Timber.e("Error while fetching messages", error)
         }
     }
 
     private fun handleFetchFirstLabelPage(
         location: Constants.MessageLocationType,
         labelId: String,
-        currentUser: String,
+        currentUserId: Id,
         refreshMessages: Boolean
     ) {
         try {
             val messagesResponse = mApi.searchByLabelAndPage(labelId, 0)
-            handleResult(messagesResponse, location, labelId, currentUser, refreshMessages)
+            handleResult(messagesResponse, location, labelId, currentUserId, refreshMessages)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Logger.doLogException(TAG_MESSAGES_SERVICE, "error while fetching messages", error)
+            Timber.e("Error while fetching messages", error)
         }
     }
 
@@ -197,14 +199,14 @@ class MessagesService : JobIntentService() {
         location: Constants.MessageLocationType,
         unixTime: Long,
         labelId: String,
-        currentUser: String
+        currentUserId: Id
     ) {
         try {
             val messages = mApi.searchByLabelAndTime(labelId, unixTime)
-            handleResult(messages, location, labelId, currentUser)
+            handleResult(messages, location, labelId, currentUserId)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Logger.doLogException(TAG_MESSAGES_SERVICE, "error while fetching messages", error)
+            Timber.e("Error while fetching messages", error)
         }
     }
 
@@ -218,9 +220,9 @@ class MessagesService : JobIntentService() {
 
     private fun handleFetchLabels() {
         try {
-            val currentUser = userManager.username
-            val db = MessagesDatabaseFactory.getInstance(applicationContext, currentUser).getDatabase()
-            val labelList = mApi.fetchLabels(RetrofitTag(currentUser)).labels
+            val currentUserId = userManager.requireCurrentUserId()
+            val db = MessageDatabase.getInstance(applicationContext, currentUserId).getDao()
+            val labelList = mApi.fetchLabels(UserIdTag(currentUserId)).labels
             db.saveAllLabels(labelList)
             AppUtil.postEventOnUi(FetchLabelsEvent(Status.SUCCESS))
         } catch (error: Exception) {
@@ -234,71 +236,71 @@ class MessagesService : JobIntentService() {
         location: Constants.MessageLocationType,
         refreshDetails: Boolean,
         uuid: String?,
-        currentUser: String,
+        currentUserId: Id,
         refreshMessages: Boolean = false
     ) {
         val messageList = messages?.messages
         if (messageList == null || messageList.isEmpty()) {
-            Logger.doLog(TAG_MESSAGES_SERVICE, "no more messages")
+            Timber.i("No more messages")
             AppUtil.postEventOnUi(MailboxNoMessagesEvent())
             return
         }
         try {
             var unixTime = 0L
-            val actionsDbFactory = PendingActionsDatabaseFactory.getInstance(applicationContext, currentUser)
-            val messagesDbFactory = MessagesDatabaseFactory.getInstance(applicationContext, currentUser)
-            val messagesDb = messagesDbFactory.getDatabase()
-            val actionsDb = actionsDbFactory.getDatabase()
-            messageDetailsRepository.reloadDependenciesForUser(currentUser)
-            messagesDbFactory.runInTransaction {
-                actionsDbFactory.runInTransaction {
-                    if (refreshMessages) messageDetailsRepository.deleteMessagesByLocation(location)
-                    messageList.asSequence().map { msg ->
-                        unixTime = msg.time
-                        val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
-                        msg.setLabelIDs(msg.getEventLabelIDs())
-                        msg.location = location.messageLocationTypeValue
-                        msg.setFolderLocation(messagesDb)
-                        if (savedMessage != null) {
-                            if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
-                                return@map null
-                            }
-                            msg.mimeType = savedMessage.mimeType
-                            msg.toList = savedMessage.toList
-                            msg.ccList = savedMessage.ccList
-                            msg.bccList = savedMessage.bccList
-                            msg.replyTos = savedMessage.replyTos
-                            msg.sender = savedMessage.sender
-                            msg.header = savedMessage.header
-                            msg.parsedHeaders = savedMessage.parsedHeaders
-                            if (!refreshDetails) {
-                                msg.isDownloaded = savedMessage.isDownloaded
-                                if (savedMessage.isDownloaded) {
-                                    msg.messageBody = savedMessage.messageBody
-                                }
-                                msg.setIsEncrypted(savedMessage.getIsEncrypted())
-                            }
-                            msg.isInline = savedMessage.isInline
-                            savedMessage.location = location.messageLocationTypeValue
-                            savedMessage.setFolderLocation(messagesDb)
-                            val attachments = savedMessage.Attachments
-                            if (attachments.isNotEmpty()) {
-                                msg.setAttachmentList(attachments)
-                            }
+            val actionsDbFactory = PendingActionDatabase.getInstance(applicationContext, currentUserId)
+            val messagesDbFactory = MessageDatabase.getInstance(applicationContext, currentUserId)
+            val messagesDb = messagesDbFactory.getDao()
+            val actionsDb = actionsDbFactory.getDao()
+            messageDetailsRepository.reloadDependenciesForUser(currentUserId)
+            if (refreshMessages) messageDetailsRepository.deleteMessagesByLocation(location)
+            messageList.asSequence().map { msg ->
+                unixTime = msg.time
+                val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
+                msg.setLabelIDs(msg.getEventLabelIDs())
+                msg.location = location.messageLocationTypeValue
+                msg.setFolderLocation(messagesDb)
+                if (savedMessage != null) {
+                    if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
+                        return@map null
+                    }
+                    msg.mimeType = savedMessage.mimeType
+                    msg.toList = savedMessage.toList
+                    msg.ccList = savedMessage.ccList
+                    msg.bccList = savedMessage.bccList
+                    msg.replyTos = savedMessage.replyTos
+                    msg.sender = savedMessage.sender
+                    msg.header = savedMessage.header
+                    msg.parsedHeaders = savedMessage.parsedHeaders
+                    if (!refreshDetails) {
+                        msg.isDownloaded = savedMessage.isDownloaded
+                        if (savedMessage.isDownloaded) {
+                            msg.messageBody = savedMessage.messageBody
                         }
-                        msg
-                    }.filterNotNull().toList().let(messageDetailsRepository::saveAllMessages)
+                        msg.setIsEncrypted(savedMessage.getIsEncrypted())
+                    }
+                    msg.isInline = savedMessage.isInline
+                    savedMessage.location = location.messageLocationTypeValue
+                    savedMessage.setFolderLocation(messagesDb)
+                    val attachments = savedMessage.Attachments
+                    if (attachments.isNotEmpty()) {
+                        msg.setAttachmentList(attachments)
+                    }
                 }
-            }
+                msg
+            }.filterNotNull()
+                .toList()
+                .let {
+                    messageDetailsRepository.saveAllMessagesBlocking(it)
+                }
             saveLastMessageTime(unixTime, location, "")
             val event = MailboxLoadedEvent(Status.SUCCESS, uuid)
             AppUtil.postEventOnUi(event)
             mNetworkResults.setMailboxLoaded(event)
-            Logger.doLog(TAG_MESSAGES_SERVICE, "fetched messages successfully")
+            Timber.v("Fetched messages successfully")
         } catch (e: Exception) {
             val event = MailboxLoadedEvent(Status.FAILED, uuid)
             AppUtil.postEventOnUi(event)
-            Logger.doLogException(TAG_MESSAGES_SERVICE, "fetched messages error", e)
+            Timber.e("Fetch messages error", e)
         }
     }
 
@@ -306,65 +308,66 @@ class MessagesService : JobIntentService() {
         messagesResponse: MessagesResponse,
         location: Constants.MessageLocationType,
         labelId: String,
-        currentUser: String,
+        currentUserId: Id,
         refreshMessages: Boolean = false
     ) {
         val messageList = messagesResponse.messages
         if (messageList.isEmpty()) {
-            Logger.doLog(TAG_MESSAGES_SERVICE, "no more messages")
+            Timber.i("No more messages")
             AppUtil.postEventOnUi(MailboxNoMessagesEvent())
             return
         }
         try {
             var unixTime = 0L
-            val actionsDbFactory = PendingActionsDatabaseFactory.getInstance(applicationContext, currentUser)
-            val messagesDbFactory = MessagesDatabaseFactory.getInstance(applicationContext, currentUser)
-            val messagesDb = messagesDbFactory.getDatabase()
-            val actionsDb = actionsDbFactory.getDatabase()
-            messageDetailsRepository.reloadDependenciesForUser(currentUser)
-            messagesDbFactory.runInTransaction {
-                actionsDbFactory.runInTransaction {
-                    if (refreshMessages) messageDetailsRepository.deleteMessagesByLabel(labelId)
-                    messageList.asSequence().map { msg ->
-                        unixTime = msg.time
-                        val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
-                        msg.setLabelIDs(msg.getEventLabelIDs())
-                        msg.location = location.messageLocationTypeValue
-                        msg.setFolderLocation(messagesDb)
-                        if (savedMessage != null) {
-                            if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
-                                return@map null
-                            }
-                            msg.toList = savedMessage.toList
-                            msg.ccList = savedMessage.ccList
-                            msg.bccList = savedMessage.bccList
-                            msg.replyTos = savedMessage.replyTos
-                            msg.sender = savedMessage.sender
-                            msg.isDownloaded = savedMessage.isDownloaded
-                            msg.header = savedMessage.header
-                            msg.parsedHeaders = savedMessage.parsedHeaders
-                            msg.spamScore = savedMessage.spamScore
-                            if (savedMessage.isDownloaded) {
-                                msg.messageBody = savedMessage.messageBody
-                            }
-                            msg.setIsEncrypted(savedMessage.getIsEncrypted())
-                            msg.isInline = savedMessage.isInline
-                            msg.mimeType = savedMessage.mimeType
-                            savedMessage.location = location.messageLocationTypeValue
-                            savedMessage.setFolderLocation(messagesDb)
-                            val attachments = savedMessage.Attachments
-                            if (attachments.isNotEmpty()) {
-                                msg.setAttachmentList(attachments)
-                            }
-                        }
-                        msg
-                    }.filterNotNull().toList().let(messageDetailsRepository::saveAllMessages)
+            val actionsDbFactory = PendingActionDatabase.getInstance(applicationContext, currentUserId)
+            val messagesDbFactory = MessageDatabase.getInstance(applicationContext, currentUserId)
+            val messagesDb = messagesDbFactory.getDao()
+            val actionsDb = actionsDbFactory.getDao()
+            messageDetailsRepository.reloadDependenciesForUser(currentUserId)
+            if (refreshMessages) messageDetailsRepository.deleteMessagesByLabel(labelId)
+            messageList.asSequence().map { msg ->
+                unixTime = msg.time
+                val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
+                msg.setLabelIDs(msg.getEventLabelIDs())
+                msg.location = location.messageLocationTypeValue
+                msg.setFolderLocation(messagesDb)
+                if (savedMessage != null) {
+                    if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
+                        return@map null
+                    }
+                    msg.toList = savedMessage.toList
+                    msg.ccList = savedMessage.ccList
+                    msg.bccList = savedMessage.bccList
+                    msg.replyTos = savedMessage.replyTos
+                    msg.sender = savedMessage.sender
+                    msg.isDownloaded = savedMessage.isDownloaded
+                    msg.header = savedMessage.header
+                    msg.parsedHeaders = savedMessage.parsedHeaders
+                    msg.spamScore = savedMessage.spamScore
+                    if (savedMessage.isDownloaded) {
+                        msg.messageBody = savedMessage.messageBody
+                    }
+                    msg.setIsEncrypted(savedMessage.getIsEncrypted())
+                    msg.isInline = savedMessage.isInline
+                    msg.mimeType = savedMessage.mimeType
+                    savedMessage.location = location.messageLocationTypeValue
+                    savedMessage.setFolderLocation(messagesDb)
+                    val attachments = savedMessage.Attachments
+                    if (attachments.isNotEmpty()) {
+                        msg.setAttachmentList(attachments)
+                    }
                 }
-            }
+                msg
+            }.filterNotNull()
+                .toList()
+                .let {
+                    messageDetailsRepository.saveAllMessagesBlocking(it)
+                }
+
             saveLastMessageTime(unixTime, location, labelId)
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.SUCCESS, null))
         } catch (e: Exception) {
-            Logger.doLogException(TAG_MESSAGES_SERVICE, "fetched messages error", e)
+            Timber.e("Fetch messages error", e)
         }
     }
 

@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.address
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.address.AddressOrder
 import ch.protonmail.android.api.models.address.AddressSetupBody
@@ -48,7 +48,7 @@ interface AddressService {
 
     @GET("addresses")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchAddressesCall(@Tag retrofitTag: RetrofitTag): Call<AddressesResponse>
+    fun fetchAddressesCall(@Tag userIdTag: UserIdTag): Call<AddressesResponse>
 
     @POST("addresses/setup")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

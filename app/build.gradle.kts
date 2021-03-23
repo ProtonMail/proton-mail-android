@@ -246,11 +246,14 @@ dependencies {
         // Core
         rootProject.aar(Lib.protonCore, version = `old protonCore version`),
         // rootProject.aar(Lib.composer, version = `composer version`),
+
+        // `Proton-data`,
+        `Proton-domain`,
+        `Proton-presentation`,
+
         `Proton-kotlin-util`,
         `Proton-shared-preferences`,
-        `Proton-domain`,
         `Proton-work-manager`,
-        `Proton-presentation`,
 
         // Modules
         project(Module.domain),

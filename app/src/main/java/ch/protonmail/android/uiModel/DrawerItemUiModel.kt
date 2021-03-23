@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,7 +20,8 @@ package ch.protonmail.android.uiModel
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.DrawerOptionType
+import ch.protonmail.android.core.Constants.MessageLocationType
 
 /**
  * Ui Model for Items in Navigation Drawer
@@ -38,13 +39,13 @@ internal sealed class DrawerItemUiModel {
      * @param snoozeEnabled [Boolean] whether snooze is enabled for the current user
      */
     data class Header(
-            val name: String,
-            val email: String,
-            val snoozeEnabled: Boolean
+        val name: String,
+        val email: String,
+        val snoozeEnabled: Boolean
     ) : DrawerItemUiModel()
 
     /** Divider for Drawer Items */
-    object Divider: DrawerItemUiModel()
+    object Divider : DrawerItemUiModel()
 
     /**
      * Primary Item for the Drawer.
@@ -88,40 +89,40 @@ internal sealed class DrawerItemUiModel {
          * @param selected [Boolean] overridden in constructor for `copy` purpose
          */
         data class Static @JvmOverloads constructor (
-                val type: Type,
-                @StringRes val labelRes: Int,
-                @DrawableRes val iconRes: Int,
-                override val notificationCount: Int = 0,
-                override val selected: Boolean = false
+            val type: Type,
+            @StringRes val labelRes: Int,
+            @DrawableRes val iconRes: Int,
+            override val notificationCount: Int = 0,
+            override val selected: Boolean = false
         ) : Primary() {
 
             override fun copyWithNotificationCount(count: Int) = copy(notificationCount = count)
-            override fun copyWithSelected(select: Boolean) = copy( selected = select )
+            override fun copyWithSelected(select: Boolean) = copy(selected = select)
 
             /**
              * Available type of [DrawerItemUiModel.Primary.Static]
              * @param itemId [Int] id of the Item
              */
             enum class Type(
-                    val itemId: Int,
-                    val drawerOptionType: Constants.DrawerOptionType
+                val itemId: Int,
+                val drawerOptionType: DrawerOptionType
             ) {
-                INBOX(Constants.MessageLocationType.INBOX.messageLocationTypeValue, Constants.DrawerOptionType.INBOX),
-                STARRED(Constants.MessageLocationType.STARRED.messageLocationTypeValue, Constants.DrawerOptionType.STARRED),
-                DRAFTS(Constants.MessageLocationType.DRAFT.messageLocationTypeValue, Constants.DrawerOptionType.DRAFTS),
-                SENT(Constants.MessageLocationType.SENT.messageLocationTypeValue, Constants.DrawerOptionType.SENT),
-                ARCHIVE(Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue, Constants.DrawerOptionType.ARCHIVE),
-                TRASH(Constants.MessageLocationType.TRASH.messageLocationTypeValue, Constants.DrawerOptionType.TRASH),
-                SPAM(Constants.MessageLocationType.SPAM.messageLocationTypeValue, Constants.DrawerOptionType.SPAM),
-                LABEL(Constants.MessageLocationType.LABEL.messageLocationTypeValue, Constants.DrawerOptionType.LABEL),
-                ALLMAIL(Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue, Constants.DrawerOptionType.ALL_MAIL),
-                CONTACTS(108, Constants.DrawerOptionType.CONTACTS),
-                SETTINGS(109, Constants.DrawerOptionType.SETTINGS),
-                REPORT_BUGS(101, Constants.DrawerOptionType.REPORT_BUGS),
-                SIGNOUT(111, Constants.DrawerOptionType.SIGN_OUT),
-                LOCK(112, Constants.DrawerOptionType.LOCK),
-                UPSELLING(113, Constants.DrawerOptionType.UPSELLING),
-                ACCOUNT_MANAGER(115, Constants.DrawerOptionType.ACCOUNT_MANAGER)
+                INBOX(MessageLocationType.INBOX.messageLocationTypeValue, DrawerOptionType.INBOX),
+                STARRED(MessageLocationType.STARRED.messageLocationTypeValue, DrawerOptionType.STARRED),
+                DRAFTS(MessageLocationType.DRAFT.messageLocationTypeValue, DrawerOptionType.DRAFTS),
+                SENT(MessageLocationType.SENT.messageLocationTypeValue, DrawerOptionType.SENT),
+                ARCHIVE(MessageLocationType.ARCHIVE.messageLocationTypeValue, DrawerOptionType.ARCHIVE),
+                TRASH(MessageLocationType.TRASH.messageLocationTypeValue, DrawerOptionType.TRASH),
+                SPAM(MessageLocationType.SPAM.messageLocationTypeValue, DrawerOptionType.SPAM),
+                LABEL(MessageLocationType.LABEL.messageLocationTypeValue, DrawerOptionType.LABEL),
+                ALLMAIL(MessageLocationType.ALL_MAIL.messageLocationTypeValue, DrawerOptionType.ALL_MAIL),
+                CONTACTS(108, DrawerOptionType.CONTACTS),
+                SETTINGS(109, DrawerOptionType.SETTINGS),
+                REPORT_BUGS(101, DrawerOptionType.REPORT_BUGS),
+                SIGNOUT(111, DrawerOptionType.SIGN_OUT),
+                LOCK(112, DrawerOptionType.LOCK),
+                UPSELLING(113, DrawerOptionType.UPSELLING),
+                ACCOUNT_MANAGER(115, DrawerOptionType.ACCOUNT_MANAGER)
             }
         }
 
@@ -132,9 +133,9 @@ internal sealed class DrawerItemUiModel {
          * @param selected [Boolean] overridden in constructor for `copy` purpose
          */
         data class Label @JvmOverloads constructor (
-                val uiModel: LabelUiModel,
-                override val notificationCount: Int = 0,
-                override val selected: Boolean = false
+            val uiModel: LabelUiModel,
+            override val notificationCount: Int = 0,
+            override val selected: Boolean = false
         ) : Primary() {
 
             override fun copyWithNotificationCount(count: Int) = copy(notificationCount = count)
@@ -148,7 +149,7 @@ internal sealed class DrawerItemUiModel {
  * the given [header]
  */
 internal fun List<DrawerItemUiModel>.setHeader(
-        header: DrawerItemUiModel.Header?
+    header: DrawerItemUiModel.Header?
 ): List<DrawerItemUiModel> {
     val withoutHeader = dropWhile { it is DrawerItemUiModel.Header }
     val newHeaderToList = header?.let { listOf(it) } ?: listOf()
@@ -163,7 +164,7 @@ internal fun List<DrawerItemUiModel>.setHeader(
  * @return [List] of [DrawerItemUiModel]
  */
 internal fun List<DrawerItemUiModel>.setLabels(
-        labels: List<DrawerItemUiModel.Primary.Label>
+    labels: List<DrawerItemUiModel.Primary.Label>
 ): List<DrawerItemUiModel> {
 
     // Remove all the Labels

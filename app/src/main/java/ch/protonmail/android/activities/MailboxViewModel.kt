@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -24,11 +24,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.api.models.room.messages.Label
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.utils.ApplyRemoveLabels
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.usecase.VerifyConnection
@@ -38,6 +38,7 @@ import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.ArrayList
@@ -94,33 +95,36 @@ class MailboxViewModel @ViewModelInject constructor(
     }
 
     fun usedSpaceActionEvent(limitReachedFlow: Int) {
-        userManager.setShowStorageLimitReached(true)
-        val user = userManager.user
-        val userUsedSpace = user.usedSpace
-        val userMaxSpace = if (user.maxSpace == 0L) Long.MAX_VALUE else user.maxSpace
-        val percentageUsed = userUsedSpace * 100 / userMaxSpace
-        val limitReached = percentageUsed >= 100
-        val limitApproaching = percentageUsed >= Constants.STORAGE_LIMIT_WARNING_PERCENTAGE
+        viewModelScope.launch {
+            userManager.setShowStorageLimitReached(true)
+            val user = userManager.getCurrentUser()
+                ?: return@launch
+            val (usedSpace, totalSpace) = with(user.dedicatedSpace) { used.l.toLong() to total.l.toLong() }
+            val userMaxSpace = if (totalSpace == 0L) Long.MAX_VALUE else totalSpace
+            val percentageUsed = usedSpace * 100L / userMaxSpace
+            val limitReached = percentageUsed >= 100
+            val limitApproaching = percentageUsed >= Constants.STORAGE_LIMIT_WARNING_PERCENTAGE
 
-        when (limitReachedFlow) {
-            FLOW_START_ACTIVITY -> {
-                if (limitReached) {
-                    _manageLimitReachedWarning.postValue(Event(limitReached))
-                } else if (limitApproaching) {
-                    _manageLimitApproachingWarning.postValue(Event(limitApproaching))
+            when (limitReachedFlow) {
+                FLOW_START_ACTIVITY     -> {
+                    if (limitReached) {
+                        _manageLimitReachedWarning.postValue(Event(limitReached))
+                    } else if (limitApproaching) {
+                        _manageLimitApproachingWarning.postValue(Event(limitApproaching))
+                    }
                 }
-            }
-            FLOW_USED_SPACE_CHANGED -> {
-                if (limitReached) {
-                    _manageLimitReachedWarning.postValue(Event(limitReached))
-                } else if (limitApproaching) {
-                    _manageLimitApproachingWarning.postValue(Event(limitApproaching))
-                } else {
-                    _manageLimitBelowCritical.postValue(Event(true))
+                FLOW_USED_SPACE_CHANGED -> {
+                    if (limitReached) {
+                        _manageLimitReachedWarning.postValue(Event(limitReached))
+                    } else if (limitApproaching) {
+                        _manageLimitApproachingWarning.postValue(Event(limitApproaching))
+                    } else {
+                        _manageLimitBelowCritical.postValue(Event(true))
+                    }
                 }
-            }
-            FLOW_TRY_COMPOSE -> {
-                _manageLimitReachedWarningOnTryCompose.postValue(Event(limitReached))
+                FLOW_TRY_COMPOSE        -> {
+                    _manageLimitReachedWarningOnTryCompose.postValue(Event(limitReached))
+                }
             }
         }
     }
@@ -142,7 +146,7 @@ class MailboxViewModel @ViewModelInject constructor(
             withContext(Dispatchers.Default) {
                 while (iterator.hasNext()) {
                     val messageId = iterator.next()
-                    val message = messageDetailsRepository.findMessageById(messageId)
+                    val message = messageDetailsRepository.findMessageById(messageId).first()
 
                     if (message != null) {
                         val currentLabelsIds = message.labelIDsNotIncludingLocations
@@ -195,7 +199,7 @@ class MailboxViewModel @ViewModelInject constructor(
     ): ApplyRemoveLabels? {
         val labelsToRemove = ArrayList<String>()
 
-        //handle the case where too many labels exist for this message
+        // handle the case where too many labels exist for this message
         currentContactLabels?.forEach {
             val labelId = it.id
             if (!checkedLabelIds.contains(labelId) && !unchangedLabels.contains(labelId) && !it.exclusive) {
@@ -221,7 +225,9 @@ class MailboxViewModel @ViewModelInject constructor(
         // update the message with the new contactLabels
         message.addLabels(checkedLabelIds)
         message.removeLabels(labelsToRemove)
-        messageDetailsRepository.saveMessageInDB(message)
+        viewModelScope.launch {
+            messageDetailsRepository.saveMessageInDB(message)
+        }
 
         return ApplyRemoveLabels(checkedLabelIds, labelsToRemove)
     }

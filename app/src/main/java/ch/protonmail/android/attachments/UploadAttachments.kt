@@ -34,15 +34,16 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
+import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.segments.TEN_SECONDS
-import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.di.CurrentUserId
+import ch.protonmail.android.di.CurrentUserMailSettings
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Name
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -62,10 +63,11 @@ class UploadAttachments @WorkerInject constructor(
     @Assisted params: WorkerParameters,
     private val dispatchers: DispatcherProvider,
     private val attachmentsRepository: AttachmentsRepository,
-    private val pendingActionsDao: PendingActionsDao,
+    private val pendingActionDao: PendingActionDao,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val userManager: UserManager,
-    private val addressCryptoFactory: AddressCrypto.Factory
+    private val addressCryptoFactory: AddressCrypto.Factory,
+    @CurrentUserId private val userId: Id,
+    @CurrentUserMailSettings private val mailSettings: MailSettings
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): ListenableWorker.Result = withContext(dispatchers.Io) {
@@ -74,9 +76,9 @@ class UploadAttachments @WorkerInject constructor(
         val messageId = inputData.getString(KEY_INPUT_UPLOAD_ATTACHMENTS_MESSAGE_ID).orEmpty()
         val isMessageSending = inputData.getBoolean(KEY_INPUT_UPLOAD_ATTACHMENTS_IS_MESSAGE_SENDING, false)
 
-        messageDetailsRepository.findMessageById(messageId)?.let { message ->
+        messageDetailsRepository.findMessageById(messageId).first()?.let { message ->
             val addressId = requireNotNull(message.addressID)
-            val addressCrypto = addressCryptoFactory.create(Id(addressId), Name(userManager.username))
+            val addressCrypto = addressCryptoFactory.create(userId, Id(addressId))
 
             return@withContext when (val result = upload(newAttachments, message, addressCrypto, isMessageSending)) {
                 is Result.Success -> ListenableWorker.Result.success()
@@ -97,24 +99,24 @@ class UploadAttachments @WorkerInject constructor(
             val messageId = requireNotNull(message.messageId)
             Timber.i("UploadAttachments started for messageId $messageId - attachmentIds $attachmentIds")
 
-            pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
+            pendingActionDao.insertPendingForUpload(PendingUpload(messageId))
 
             performAttachmentsUpload(attachmentIds, message, crypto, messageId)?.let { failure ->
                 return@withContext failure
             }
 
-            val isAttachPublicKey = userManager.getMailSettings(userManager.username)?.getAttachPublicKey() ?: false
+            val isAttachPublicKey = mailSettings.getAttachPublicKey()
             if (isAttachPublicKey && isMessageSending) {
                 Timber.i("UploadAttachments attaching publicKey for messageId $messageId")
                 val result = attachmentsRepository.uploadPublicKey(message, crypto)
 
                 if (result is AttachmentsRepository.Result.Failure) {
-                    pendingActionsDao.deletePendingUploadByMessageId(messageId)
+                    pendingActionDao.deletePendingUploadByMessageId(messageId)
                     return@withContext Result.Failure(result.error)
                 }
             }
 
-            pendingActionsDao.deletePendingUploadByMessageId(messageId)
+            pendingActionDao.deletePendingUploadByMessageId(messageId)
             return@withContext Result.Success
         }
 
@@ -145,7 +147,7 @@ class UploadAttachments @WorkerInject constructor(
                 }
                 is AttachmentsRepository.Result.Failure -> {
                     Timber.e("UploadAttachment $attachmentId to API for messageId $messageId FAILED.")
-                    pendingActionsDao.deletePendingUploadByMessageId(messageId)
+                    pendingActionDao.deletePendingUploadByMessageId(messageId)
                     return Result.Failure(result.error)
                 }
             }
@@ -169,7 +171,7 @@ class UploadAttachments @WorkerInject constructor(
                     attachments.add(uploadedAttachment)
                 }
             message.setAttachmentList(attachments)
-            messageDetailsRepository.saveMessageLocally(message)
+            messageDetailsRepository.saveMessage(message)
         }
     }
 

@@ -86,16 +86,16 @@ import ch.protonmail.android.activities.contactDetails.ExtractFullContactDetails
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.api.models.ContactEncryptedData;
 import ch.protonmail.android.api.models.User;
-import ch.protonmail.android.api.models.room.contacts.ContactLabel;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
-import ch.protonmail.android.api.models.room.contacts.FullContactDetails;
 import ch.protonmail.android.contacts.ErrorEnum;
 import ch.protonmail.android.contacts.ErrorResponse;
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.crypto.UserCrypto;
+import ch.protonmail.android.data.local.ContactDao;
+import ch.protonmail.android.data.local.ContactDatabase;
+import ch.protonmail.android.data.local.model.ContactLabel;
+import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.usecase.model.FetchContactDetailsResult;
@@ -190,7 +190,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     @BindView(R.id.fabWeb)
     ImageButton fabWeb;
 
-    private ContactsDatabase contactsDatabase;
+    private ContactDao contactDao;
     private User mUser;
     private LayoutInflater inflater;
     private String mContactId;
@@ -220,7 +220,9 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        contactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
+        contactDao = ContactDatabase.Companion
+                .getInstance(getApplicationContext(), mUserManager.requireCurrentUserId())
+                .getDao();
         viewModel = new ViewModelProvider(this).get(ContactDetailsViewModel.class);
 
         setSupportActionBar(toolbar);
@@ -250,7 +252,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             else didSetupComplete = false;
 
             if (didSetupComplete) {
-                new ExtractFullContactDetailsTask(contactsDatabase, mContactId, fullContactDetails -> {
+                new ExtractFullContactDetailsTask(contactDao, mContactId, fullContactDetails -> {
                     onInitialiseContact(fullContactDetails);
                     return Unit.INSTANCE;
                 }).execute();
@@ -376,7 +378,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     }
 
     private void updateDisplayedContact() {
-        new ExtractFullContactDetailsTask(contactsDatabase, mContactId, fullContactDetails -> {
+        new ExtractFullContactDetailsTask(contactDao, mContactId, fullContactDetails -> {
             decryptAndFillVCard(fullContactDetails);
             onEditContact(fullContactDetails, mContactId);
             return Unit.INSTANCE;
@@ -396,7 +398,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     private void decryptAndFillVCard(@Nullable FullContactDetails contact) {
         boolean hasDecryptionError = false;
 
-        Crypto crypto = Crypto.forUser(mUserManager, mUserManager.getUsername());
+        Crypto crypto = Crypto.forUser(mUserManager, mUserManager.requireCurrentUserId());
         List<ContactEncryptedData> encData = new ArrayList<>();
         if (contact != null && contact.getEncryptedData() != null) {
             encData = contact.getEncryptedData();
@@ -648,7 +650,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             mEmptyEncryptedView.setVisibility(View.GONE);
         }
         mEncryptedDataContainer.removeAllViews();
-        UserCrypto crypto = Crypto.forUser(mUserManager, mUserManager.getUsername());
+        UserCrypto crypto = Crypto.forUser(mUserManager, mUserManager.requireCurrentUserId());
         boolean type2Verify = false;
         if (!TextUtils.isEmpty(mVCardType2Signature) && !TextUtils.isEmpty(mVCardType2)) {
             try {

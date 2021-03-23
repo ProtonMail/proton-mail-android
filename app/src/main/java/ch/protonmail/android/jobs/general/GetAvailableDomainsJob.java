@@ -28,9 +28,6 @@ import ch.protonmail.android.jobs.Priority;
 import ch.protonmail.android.jobs.ProtonMailBaseJob;
 import ch.protonmail.android.utils.AppUtil;
 
-/**
- * Created by dkadrikj on 7/13/16.
- */
 public class GetAvailableDomainsJob extends ProtonMailBaseJob {
 
     private boolean retryOnError;

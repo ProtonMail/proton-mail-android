@@ -107,7 +107,7 @@ class ChangePinActivity : BaseActivity(),
     }
 
     private fun logout() {
-        mUserManager.user.apply {
+        mUserManager.requireCurrentLegacyUserBlocking().apply {
             isUsePin = false
             isUseFingerprint = false
             save()
@@ -115,7 +115,7 @@ class ChangePinActivity : BaseActivity(),
         mUserManager.apply {
             savePin("")
             resetPinAttempts()
-            this.logoutAccount(username)
+            logoutBlocking(requireCurrentUserId())
         }
         val intent = Intent()
         intent.putExtra(EXTRA_LOGOUT, true)

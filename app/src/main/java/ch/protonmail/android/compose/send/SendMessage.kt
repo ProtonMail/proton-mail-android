@@ -21,14 +21,13 @@ package ch.protonmail.android.compose.send
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.di.CurrentUsername
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.PendingSend
+import ch.protonmail.android.di.CurrentUserId
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.utils.ServerTime
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -40,10 +39,10 @@ internal const val MISSING_DB_ID = 0L
 class SendMessage @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val dispatchers: DispatcherProvider,
-    private val pendingActionsDao: PendingActionsDao,
+    private val pendingActionDao: PendingActionDao,
     private val sendMessageScheduler: SendMessageWorker.Enqueuer,
     private val addressCryptoFactory: AddressCrypto.Factory,
-    @CurrentUsername private val currentUsername: String
+    @CurrentUserId private val currentUserId: Id
 ) {
 
     suspend operator fun invoke(parameters: SendMessageParameters) = withContext(dispatchers.Io) {
@@ -51,7 +50,7 @@ class SendMessage @Inject constructor(
         Timber.d("Send Message use case called with messageId ${message.messageId}")
         val addressId = requireNotNull(message.addressID)
 
-        val addressCrypto = addressCryptoFactory.create(Id(addressId), Name(currentUsername))
+        val addressCrypto = addressCryptoFactory.create(currentUserId, Id(addressId))
         val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
         message.messageBody = encryptedBody
 
@@ -73,7 +72,7 @@ class SendMessage @Inject constructor(
             localDatabaseId = message.dbId ?: MISSING_DB_ID,
             messageId = message.messageId
         )
-        pendingActionsDao.insertPendingForSend(pendingSend)
+        pendingActionDao.insertPendingForSend(pendingSend)
     }
 
     private suspend fun saveMessageLocally(message: Message): Long {
@@ -83,7 +82,7 @@ class SendMessage @Inject constructor(
         message.time = currentTimeSeconds
         message.isDownloaded = false
 
-        return messageDetailsRepository.saveMessageLocally(message)
+        return messageDetailsRepository.saveMessage(message)
     }
 
     data class SendMessageParameters(

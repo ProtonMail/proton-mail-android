@@ -30,20 +30,26 @@ import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.unmockkObject
 import io.mockk.unmockkStatic
-import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.android.mocks.newMockSharedPreferences
 import org.junit.After
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -68,6 +74,8 @@ class LogoutWorkerTest {
 
     private lateinit var worker: LogoutWorker
 
+    private val testUserId = Id("id")
+
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
@@ -79,53 +87,51 @@ class LogoutWorkerTest {
             accountManager,
             userManager
         )
-        mockkStatic(AppUtil::class)
-        mockkStatic(TokenManager::class)
-        mockkStatic(ProtonMailApplication::class)
+        mockkStatic(AppUtil::class, ProtonMailApplication::class)
+        mockkObject(TokenManager.Companion, SecureSharedPreferences.Companion)
+        every { SecureSharedPreferences.getPrefsForUser(any(), testUserId) } answers { newMockSharedPreferences }
     }
 
     @After
     fun tearDown() {
-        unmockkStatic(AppUtil::class)
-        unmockkStatic(TokenManager::class)
-        unmockkStatic(ProtonMailApplication::class)
+        unmockkStatic(AppUtil::class, ProtonMailApplication::class)
+        unmockkObject(TokenManager.Companion, SecureSharedPreferences.Companion)
     }
 
     @Test
     fun verifyThatWhenUserNameIsNotEmptyDeviceIsUnregisteredAndAccessIsRevoked() =
         runBlockingTest {
             // given
-            val testUserName = "testUserName"
             val registrationId = "Id1234"
+            val userPrefs = newMockSharedPreferences
             every { parameters.inputData } returns workDataOf(
-                KEY_INPUT_USER_NAME to testUserName,
+                KEY_INPUT_USER_ID to testUserId.s,
                 KEY_INPUT_FCM_REGISTRATION_ID to registrationId
             )
-            every { userManager.username } returns ""
+            every { userManager.currentUserId } returns null
             val tokenManager = mockk<TokenManager>(relaxed = true)
-            every { userManager.getTokenManager(testUserName) } returns tokenManager
-            every { userManager.nextLoggedInAccountOtherThanCurrent } returns null
-            every { accountManager.getLoggedInUsers() } returns listOf(testUserName)
-            every { accountManager.clear() } returns Unit
-            every { AppUtil.deleteSecurePrefs(testUserName, any()) } returns Unit
-            every { AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS)) } returns Unit
-            every { ProtonMailApplication.getApplication().getSecureSharedPreferences(testUserName) } returns mockk(relaxed = true)
-            every { TokenManager.getInstance(testUserName) } returns tokenManager
+            coEvery { userManager.getTokenManager(testUserId) } returns tokenManager
+            coEvery { userManager.getNextLoggedInUser() } returns null
+            coEvery { accountManager.allLoggedIn() } returns setOf(testUserId)
+            coEvery { accountManager.clear() } just Runs
+            coEvery { AppUtil.deleteSecurePrefs(userPrefs, any()) } just Runs
+            every { AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS)) } just Runs
+            every { TokenManager.getInstance(any(), testUserId) } returns tokenManager
 
             val revokeResponse = mockk<ResponseBody> {
                 every { code } returns Constants.RESPONSE_CODE_OK
             }
             coEvery { api.unregisterDevice(registrationId) } returns revokeResponse
-            coEvery { api.revokeAccess(testUserName) } returns revokeResponse
+            coEvery { api.revokeAccess(testUserId) } returns revokeResponse
             val expected = ListenableWorker.Result.success()
 
             // when
             val result = worker.doWork()
 
             // then
-            verify { accountManager.clear() }
+            coVerify { accountManager.clear() }
             coVerify { api.unregisterDevice(registrationId) }
-            coVerify { api.revokeAccess(testUserName) }
+            coVerify { api.revokeAccess(testUserId) }
             assertEquals(expected, result)
         }
 
@@ -133,13 +139,15 @@ class LogoutWorkerTest {
     fun verifyThatWhenUserNameIsNotEmptyButAnExceptionOccursFailureWillBeReturned() =
         runBlockingTest {
             // given
-            val testUserName = "testUserName"
             val registrationId = "Id1234"
             val exceptionMessage = "TestException"
             val testException = Exception(exceptionMessage)
-            every { parameters.inputData } returns workDataOf(KEY_INPUT_FCM_REGISTRATION_ID to registrationId)
-            every { userManager.username } returns testUserName
-            every { accountManager.getLoggedInUsers() } returns listOf(testUserName)
+            every { parameters.inputData } returns workDataOf(
+                KEY_INPUT_USER_ID to testUserId.s,
+                KEY_INPUT_FCM_REGISTRATION_ID to registrationId
+            )
+            every { userManager.currentUserId } returns testUserId
+            coEvery { accountManager.allLoggedIn() } returns setOf(testUserId)
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to exceptionMessage)
             )
@@ -158,9 +166,9 @@ class LogoutWorkerTest {
         runBlockingTest {
             // given
             every { parameters.inputData } returns workDataOf()
-            every { userManager.username } returns ""
+            every { userManager.currentUserId } returns null
             val expected = ListenableWorker.Result.failure(
-                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with an empty user name")
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "User id is required")
             )
 
             // when

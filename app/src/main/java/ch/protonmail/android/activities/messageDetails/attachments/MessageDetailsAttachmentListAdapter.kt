@@ -24,7 +24,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.annotation.DrawableRes
 import ch.protonmail.android.R
-import ch.protonmail.android.api.models.room.messages.Attachment
+import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.views.messageDetails.AttachmentDetailView
 
 class MessageDetailsAttachmentListAdapter(

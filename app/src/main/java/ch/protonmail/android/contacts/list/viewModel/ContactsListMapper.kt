@@ -19,9 +19,9 @@
 
 package ch.protonmail.android.contacts.list.viewModel
 
-import ch.protonmail.android.api.models.room.contacts.ContactData
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.list.listView.ContactItem
+import ch.protonmail.android.data.local.model.ContactData
+import ch.protonmail.android.data.local.model.ContactEmail
 import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject

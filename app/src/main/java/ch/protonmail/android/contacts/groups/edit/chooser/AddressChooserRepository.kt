@@ -18,29 +18,33 @@
  */
 package ch.protonmail.android.contacts.groups.edit.chooser
 
-import android.util.Log
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
+import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.ContactEmail
 import io.reactivex.Observable
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/*
- * Created by kadrikj on 9/7/18. */
-
 @Singleton
-class AddressChooserRepository @Inject constructor(private val databaseProvider: DatabaseProvider) {
+class AddressChooserRepository @Inject constructor(
+    private val databaseProvider: DatabaseProvider,
+    private val userManager: UserManager
+) {
 
-    private val contactsDatabase by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in AddressChooserRepository"); databaseProvider.provideContactsDao() }
+    private val contactDao by lazy {
+        Timber.v("Instantiating contactDao in AddressChooserRepository")
+        databaseProvider.provideContactDao(userManager.requireCurrentUserId())
+    }
 
     fun getContactGroupEmails(): Observable<List<ContactEmail>> {
-        return contactsDatabase.findAllContactsEmailsAsyncObservable()
+        return contactDao.findAllContactsEmailsAsyncObservable()
                 .toObservable()
     }
 
     fun filterContactGroupEmails(filter: String): Observable<List<ContactEmail>> {
         val filterString = "%$filter%"
-        return contactsDatabase.findAllContactsEmailsAsyncObservable(filterString)
+        return contactDao.findAllContactsEmailsAsyncObservable(filterString)
                 .toObservable()
     }
 }

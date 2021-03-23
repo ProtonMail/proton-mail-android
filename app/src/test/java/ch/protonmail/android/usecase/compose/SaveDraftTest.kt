@@ -23,9 +23,6 @@ import androidx.work.Data
 import androidx.work.WorkInfo
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.attachments.KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR
 import ch.protonmail.android.attachments.UploadAttachments
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
@@ -36,6 +33,9 @@ import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
 import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.usecase.compose.SaveDraft.SaveDraftParameters
@@ -44,12 +44,9 @@ import ch.protonmail.android.worker.drafts.CreateDraftWorker.Enqueuer
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID
-import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.slot
@@ -64,38 +61,35 @@ import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
 import timber.log.Timber
 import java.util.UUID
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class SaveDraftTest : CoroutinesTest {
 
-    @RelaxedMockK
-    private lateinit var userNotifier: UserNotifier
+    private val userNotifier: UserNotifier = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var uploadAttachments: UploadAttachments.Enqueuer
+    private val uploadAttachments: UploadAttachments = mockk(relaxed = true)
+    private val uploadAttachmentsEnqueuer: UploadAttachments.Enqueuer = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var createDraftScheduler: Enqueuer
+    private val createDraftScheduler: Enqueuer = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var pendingActionsDao: PendingActionsDao
+    private val pendingActionDao: PendingActionDao = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var addressCryptoFactory: AddressCrypto.Factory
+    private val addressCryptoFactory: AddressCrypto.Factory = mockk(relaxed = true)
 
-    @RelaxedMockK
-    lateinit var messageDetailsRepository: MessageDetailsRepository
+    private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true)
 
-    @InjectMockKs
-    lateinit var saveDraft: SaveDraft
+    private val currentUserId = Id("Id")
 
-    private val currentUsername = "username"
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-    }
+    private val saveDraft = SaveDraft(
+        addressCryptoFactory,
+        messageDetailsRepository,
+        dispatchers,
+        pendingActionDao,
+        createDraftScheduler,
+        currentUserId,
+        uploadAttachmentsEnqueuer,
+        userNotifier
+    )
 
     @Test
     fun saveDraftEncryptsMessageAndSavesItToDbWhenTriggerIsUserRequestedSave() {
@@ -110,8 +104,8 @@ class SaveDraftTest : CoroutinesTest {
             val addressCrypto = mockk<AddressCrypto> {
                 every { encrypt("Message body in plain text", true).armored } returns "encrypted armored content"
             }
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
+            every { addressCryptoFactory.create(currentUserId, Id("addressId")) } returns addressCrypto
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 123L
 
             // When
             saveDraft(
@@ -134,7 +128,7 @@ class SaveDraftTest : CoroutinesTest {
                     DRAFT.messageLocationTypeValue.toString()
                 )
             )
-            coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
+            coVerify { messageDetailsRepository.saveMessage(expectedMessage) }
         }
     }
 
@@ -152,8 +146,8 @@ class SaveDraftTest : CoroutinesTest {
             val addressCrypto = mockk<AddressCrypto> {
                 every { encrypt("Message body in plain text auto saving", true).armored } returns encryptedBody
             }
-            every { addressCryptoFactory.create(Id("addressIdAutoSave"), Name(currentUsername)) } returns addressCrypto
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 8923L
+            every { addressCryptoFactory.create(currentUserId, Id("addressIdAutoSave")) } returns addressCrypto
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 8923L
 
             // When
             saveDraft(
@@ -176,7 +170,7 @@ class SaveDraftTest : CoroutinesTest {
                     DRAFT.messageLocationTypeValue.toString()
                 )
             )
-            coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
+            coVerify { messageDetailsRepository.saveMessage(expectedMessage) }
         }
     }
 
@@ -192,7 +186,7 @@ class SaveDraftTest : CoroutinesTest {
                 messageBody = encryptedBody
                 decryptedBody = null
             }
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 823L
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 823L
 
             // When
             saveDraft(
@@ -215,7 +209,7 @@ class SaveDraftTest : CoroutinesTest {
                     DRAFT.messageLocationTypeValue.toString()
                 )
             )
-            coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
+            coVerify { messageDetailsRepository.saveMessage(expectedMessage) }
         }
     }
 
@@ -232,8 +226,8 @@ class SaveDraftTest : CoroutinesTest {
             val addressCrypto = mockk<AddressCrypto> {
                 every { encrypt("", true).armored } returns "encrypted empty message body"
             }
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 7237L
+            every { addressCryptoFactory.create(currentUserId, Id("addressId")) } returns addressCrypto
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 7237L
             mockkStatic(Timber::class)
 
             // When
@@ -253,7 +247,7 @@ class SaveDraftTest : CoroutinesTest {
             verify {
                 Timber.w("Save Draft for messageId 456 - Decrypted Body was null, proceeding...")
             }
-            coVerify { messageDetailsRepository.saveMessageLocally(capture(messageCaptor)) }
+            coVerify { messageDetailsRepository.saveMessage(capture(messageCaptor)) }
             assertEquals("encrypted empty message body", messageCaptor.captured.messageBody)
             unmockkStatic(Timber::class)
         }
@@ -269,7 +263,7 @@ class SaveDraftTest : CoroutinesTest {
                 addressID = "addressId"
                 decryptedBody = "Message body in plain text"
             }
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 9833L
 
             // When
             saveDraft.invoke(
@@ -284,7 +278,15 @@ class SaveDraftTest : CoroutinesTest {
             )
 
             // Then
-            verify { createDraftScheduler.enqueue(message, "parentId123", REPLY_ALL, "previousSenderId1273") }
+            verify {
+                createDraftScheduler.enqueue(
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId123",
+                    actionType = REPLY_ALL,
+                    previousSenderAddressId = "previousSenderId1273"
+                )
+            }
         }
     }
 
@@ -300,9 +302,15 @@ class SaveDraftTest : CoroutinesTest {
                 addressID = "addressId"
                 decryptedBody = "Message body in plain text"
             }
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 9833L
             every {
-                createDraftScheduler.enqueue(message, "parentId123", REPLY_ALL, "previousSenderId1273")
+                createDraftScheduler.enqueue(
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId123",
+                    actionType = REPLY_ALL,
+                    previousSenderAddressId = "previousSenderId1273"
+                )
             } answers { flowOf(null) }
 
             // When
@@ -318,7 +326,7 @@ class SaveDraftTest : CoroutinesTest {
             )
 
             // Then
-            coVerify(exactly = 0) { pendingActionsDao.findPendingSendByMessageId("456") }
+            coVerify(exactly = 0) { pendingActionDao.findPendingSendByMessageId("456") }
         }
     }
 
@@ -333,9 +341,9 @@ class SaveDraftTest : CoroutinesTest {
                 addressID = "addressId"
                 decryptedBody = "Message body in plain text"
             }
-            coEvery { messageDetailsRepository.findMessageById(any()) } returns null
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            every { pendingActionsDao.findPendingSendByMessageId("45623") } answers {
+            coEvery { messageDetailsRepository.findMessageById(any()) } returns flowOf(null)
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 9833L
+            every { pendingActionDao.findPendingSendByMessageId("45623") } answers {
                 PendingSend(
                     "234234", localMessageId, null, false, 834L
                 )
@@ -346,13 +354,14 @@ class SaveDraftTest : CoroutinesTest {
             val workerStatusFlow = buildWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             every {
                 createDraftScheduler.enqueue(
-                    message,
-                    "parentId234",
-                    REPLY_ALL,
-                    "previousSenderId132423"
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId234",
+                    actionType = REPLY_ALL,
+                    previousSenderAddressId = "previousSenderId132423"
                 )
             } answers { workerStatusFlow }
-            coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId", false) } returns buildWorkerResponse(
+            coEvery { uploadAttachmentsEnqueuer.enqueue(any(), "createdDraftMessageId", false) } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )
 
@@ -370,7 +379,7 @@ class SaveDraftTest : CoroutinesTest {
 
             // Then
             val expected = PendingSend("234234", "createdDraftMessageId", null, false, 834L)
-            verify { pendingActionsDao.insertPendingForSend(expected) }
+            verify { pendingActionDao.insertPendingForSend(expected) }
         }
     }
 
@@ -392,20 +401,21 @@ class SaveDraftTest : CoroutinesTest {
             )
             val workerStatusFlow = buildWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             val newAttachmentIds = listOf("2345", "453")
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            coEvery { messageDetailsRepository.findMessageById("45623") } returns message
-            coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns apiDraft
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 9833L
+            coEvery { messageDetailsRepository.findMessageById("45623") } returns flowOf(message)
+            coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns flowOf(apiDraft)
             every {
                 createDraftScheduler.enqueue(
-                    message,
-                    "parentId234",
-                    REPLY_ALL,
-                    "previousSenderId132423"
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId234",
+                    actionType = REPLY_ALL,
+                    previousSenderAddressId = "previousSenderId132423"
                 )
             } answers { workerStatusFlow }
             val addressCrypto = mockk<AddressCrypto>(relaxed = true)
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
-            coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId345", false) } returns buildWorkerResponse(
+            every { addressCryptoFactory.create(currentUserId, Id("addressId")) } returns addressCrypto
+            coEvery { uploadAttachmentsEnqueuer.enqueue(any(), "createdDraftMessageId345", false) } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )
 
@@ -422,7 +432,7 @@ class SaveDraftTest : CoroutinesTest {
             ).first()
 
             // Then
-            coVerify { uploadAttachments.enqueue(newAttachmentIds, "createdDraftMessageId345", false) }
+            coVerify { uploadAttachmentsEnqueuer.enqueue(newAttachmentIds, "createdDraftMessageId345", false) }
         }
     }
 
@@ -444,11 +454,12 @@ class SaveDraftTest : CoroutinesTest {
             )
             val workerStatusFlow = buildWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             val newAttachmentIds = listOf("2345", "453")
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            coEvery { messageDetailsRepository.findMessageById("45623") } returns message
-            coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId346") } returns apiDraft
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 9833L
+            coEvery { messageDetailsRepository.findMessageById("45623") } returns flowOf(message)
+            coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId346") } returns flowOf(apiDraft)
             every {
                 createDraftScheduler.enqueue(
+                    currentUserId,
                     message,
                     "parentId235",
                     REPLY_ALL,
@@ -456,8 +467,8 @@ class SaveDraftTest : CoroutinesTest {
                 )
             } answers { workerStatusFlow }
             val addressCrypto = mockk<AddressCrypto>(relaxed = true)
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
-            coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId346", true) } returns buildWorkerResponse(
+            every { addressCryptoFactory.create(currentUserId, Id("addressId")) } returns addressCrypto
+            coEvery { uploadAttachmentsEnqueuer.enqueue(any(), "createdDraftMessageId346", true) } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )
 
@@ -474,7 +485,7 @@ class SaveDraftTest : CoroutinesTest {
             ).first()
 
             // Then
-            coVerify { uploadAttachments.enqueue(newAttachmentIds, "createdDraftMessageId346", true) }
+            coVerify { uploadAttachmentsEnqueuer.enqueue(newAttachmentIds, "createdDraftMessageId346", true) }
             assertEquals(SaveDraftResult.Success(apiDraft.messageId!!), result)
         }
     }
@@ -497,11 +508,12 @@ class SaveDraftTest : CoroutinesTest {
             )
             val workerStatusFlow = buildWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             val newAttachmentIds = listOf("2345", "453")
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            coEvery { messageDetailsRepository.findMessageById("45623") } returns message
-            coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns apiDraft
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 9833L
+            coEvery { messageDetailsRepository.findMessageById("45623") } returns flowOf(message)
+            coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns flowOf(apiDraft)
             every {
                 createDraftScheduler.enqueue(
+                    currentUserId,
                     message,
                     "parentId234",
                     REPLY_ALL,
@@ -509,7 +521,7 @@ class SaveDraftTest : CoroutinesTest {
                 )
             } answers { workerStatusFlow }
             val addressCrypto = mockk<AddressCrypto>(relaxed = true)
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
+            every { addressCryptoFactory.create(currentUserId, Id("addressId")) } returns addressCrypto
 
             // When
             val result = saveDraft.invoke(
@@ -524,7 +536,7 @@ class SaveDraftTest : CoroutinesTest {
             ).first()
 
             // Then
-            coVerify(exactly = 0) { uploadAttachments.enqueue(any(), any(), any()) }
+            coVerify(exactly = 0) { uploadAttachmentsEnqueuer.enqueue(any(), any(), any()) }
             assertEquals(SaveDraftResult.Success(apiDraft.messageId!!), result)
         }
     }
@@ -545,14 +557,15 @@ class SaveDraftTest : CoroutinesTest {
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM to CreateDraftWorkerErrors.ServerError.name
             )
             val workerStatusFlow = buildWorkerResponse(WorkInfo.State.FAILED, workOutputData)
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            coEvery { messageDetailsRepository.findMessageById("45623") } returns message
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 9833L
+            coEvery { messageDetailsRepository.findMessageById("45623") } returns flowOf(message)
             every {
                 createDraftScheduler.enqueue(
-                    message,
-                    "parentId234",
-                    REPLY_ALL,
-                    "previousSenderId132423"
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId234",
+                    actionType = REPLY_ALL,
+                    previousSenderAddressId = "previousSenderId132423"
                 )
             } answers { workerStatusFlow }
 
@@ -596,19 +609,20 @@ class SaveDraftTest : CoroutinesTest {
             val uploadWorkOutputData = workDataOf(
                 KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to errorMessage
             )
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            coEvery { messageDetailsRepository.findMessageById("newDraftId") } returns message.copy(messageId = "newDraftId")
-            coEvery { messageDetailsRepository.findMessageById("45623") } returns message
-            coEvery { uploadAttachments.enqueue(newAttachmentIds, "newDraftId", false) } returns buildWorkerResponse(
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 9833L
+            coEvery { messageDetailsRepository.findMessageById("newDraftId") } returns flowOf(message.copy(messageId = "newDraftId"))
+            coEvery { messageDetailsRepository.findMessageById("45623") } returns flowOf(message)
+            coEvery { uploadAttachmentsEnqueuer.enqueue(newAttachmentIds, "newDraftId", false) } returns buildWorkerResponse(
                 WorkInfo.State.FAILED,
                 uploadWorkOutputData
             )
             every {
                 createDraftScheduler.enqueue(
-                    message,
-                    "parentId234",
-                    REPLY,
-                    "previousSenderId132423"
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId234",
+                    actionType = REPLY,
+                    previousSenderAddressId = "previousSenderId132423"
                 )
             } answers { createDraftWorkerResult }
 
@@ -648,16 +662,17 @@ class SaveDraftTest : CoroutinesTest {
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to "newDraftId2384"
             )
             val createDraftWorkerResult = buildWorkerResponse(WorkInfo.State.SUCCEEDED, createDraftOutputData)
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 9833L
             coEvery {
                 messageDetailsRepository.findMessageById("UploadDraftAttachmentsFailed")
-            } returns message.copy(messageId = "newDraftId2384")
-            coEvery { messageDetailsRepository.findMessageById("45623") } returns message
-            coEvery { uploadAttachments.enqueue(newAttachmentIds, "newDraftId2384", false) } returns buildWorkerResponse(
+            } returns flowOf(message.copy(messageId = "newDraftId2384"))
+            coEvery { messageDetailsRepository.findMessageById("45623") } returns flowOf(message)
+            coEvery { uploadAttachmentsEnqueuer.enqueue(newAttachmentIds, "newDraftId2384", false) } returns buildWorkerResponse(
                 WorkInfo.State.CANCELLED
             )
             every {
                 createDraftScheduler.enqueue(
+                    currentUserId,
                     message,
                     "parentId234",
                     REPLY,
@@ -700,20 +715,21 @@ class SaveDraftTest : CoroutinesTest {
             )
             val workerStatusFlow = buildWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             val newAttachmentIds = listOf("2345", "453")
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            coEvery { messageDetailsRepository.findMessageById("45623") } returns message
-            coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns apiDraft
+            coEvery { messageDetailsRepository.saveMessage(message) } returns 9833L
+            coEvery { messageDetailsRepository.findMessageById("45623") } returns flowOf(message)
+            coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns flowOf(apiDraft)
             every {
                 createDraftScheduler.enqueue(
-                    message,
-                    "parentId234",
-                    REPLY_ALL,
-                    "previousSenderId132423"
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId234",
+                    actionType = REPLY_ALL,
+                    previousSenderAddressId = "previousSenderId132423"
                 )
             } answers { workerStatusFlow }
             val addressCrypto = mockk<AddressCrypto>(relaxed = true)
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
-            coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId345", false) } returns buildWorkerResponse(
+            every { addressCryptoFactory.create(currentUserId, Id("addressId")) } returns addressCrypto
+            coEvery { uploadAttachmentsEnqueuer.enqueue(any(), "createdDraftMessageId345", false) } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )
 
@@ -730,7 +746,7 @@ class SaveDraftTest : CoroutinesTest {
             ).first()
 
             // Then
-            verify { uploadAttachments.enqueue(newAttachmentIds, "createdDraftMessageId345", false) }
+            verify { uploadAttachmentsEnqueuer.enqueue(newAttachmentIds, "createdDraftMessageId345", false) }
             assertEquals(SaveDraftResult.Success("createdDraftMessageId345"), result)
         }
     }

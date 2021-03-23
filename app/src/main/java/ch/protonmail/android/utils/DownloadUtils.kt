@@ -26,7 +26,6 @@ import android.content.Intent
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.servers.notification.INotificationServer
 import ch.protonmail.android.servers.notification.NotificationServer
 import timber.log.Timber
 import java.util.Locale
@@ -60,7 +59,7 @@ class DownloadUtils @Inject constructor() {
 
             Timber.d("viewAttachmentNotification mimeType: $mimeType uri: $uri")
             val notifyManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val notificationServer: INotificationServer = NotificationServer(context, notifyManager)
+            val notificationServer = NotificationServer(context, notifyManager)
             notificationServer.notifyAboutAttachment(fileName, uri, mimeType, showNotification)
         }
     }

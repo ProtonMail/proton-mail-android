@@ -21,8 +21,7 @@ package ch.protonmail.android.core
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.IntDef
-import androidx.annotation.NonNull
-import androidx.annotation.Nullable
+import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.TokenManager
@@ -31,27 +30,46 @@ import ch.protonmail.android.api.models.LoginInfoResponse
 import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.UserInfo
 import ch.protonmail.android.api.models.UserSettings
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.services.LoginService
 import ch.protonmail.android.api.services.LogoutService
 import ch.protonmail.android.di.BackupSharedPreferences
 import ch.protonmail.android.di.DefaultSharedPreferences
-import ch.protonmail.android.events.ForceSwitchedAccountEvent
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.events.GenerateKeyPairEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.fcm.FcmUtil
+import ch.protonmail.android.events.SwitchUserEvent
+import ch.protonmail.android.fcm.FcmTokenManager
+import ch.protonmail.android.mapper.bridge.UserBridgeMapper
+import ch.protonmail.android.prefs.SecureSharedPreferences
+import ch.protonmail.android.usecase.FindUserIdForUsername
+import ch.protonmail.android.usecase.LoadLegacyUser
+import ch.protonmail.android.usecase.LoadUser
+import ch.protonmail.android.usecase.delete.ClearUserData
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import com.squareup.otto.Produce
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import me.proton.core.util.android.sharedpreferences.clearAll
+import me.proton.core.util.android.sharedpreferences.get
+import me.proton.core.util.android.sharedpreferences.minusAssign
+import me.proton.core.util.android.sharedpreferences.set
+import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.invoke
+import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
-import java.util.HashMap
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.minutes
+import ch.protonmail.android.domain.entity.user.User as NewUser
 
 // region constants
 const val LOGIN_STATE_NOT_INITIALIZED = 0
@@ -59,6 +77,7 @@ const val LOGIN_STATE_LOGIN_FINISHED = 2
 const val LOGIN_STATE_TO_INBOX = 3
 
 const val PREF_PIN = "mailbox_pin"
+private const val PREF_CURRENT_USER_ID = "prefs.current.user.id"
 const val PREF_USERNAME = "username"
 
 /**
@@ -86,25 +105,40 @@ private const val PREF_ENGAGEMENT_SHOWN = "engagement_shown"
  */
 @Singleton
 class UserManager @Inject constructor(
-    val context: Context,
+    private val context: Context,
+    private val accountManager: AccountManager,
+    private val clearUserData: ClearUserData,
+    private val loadUser: LoadUser,
+    private val loadLegacyUser: LoadLegacyUser,
+    private val userMapper: UserBridgeMapper,
     @DefaultSharedPreferences private val prefs: SharedPreferences,
-    @BackupSharedPreferences private val backupPrefs: SharedPreferences
+    @BackupSharedPreferences private val backupPrefs: SharedPreferences,
+    @Deprecated("UserManager is never using this, but it's just providing for other classes, so this " +
+        "should be injected directly there")
+    val openPgp: OpenPGP,
+    private val fcmTokenManagerFactory: FcmTokenManager.Factory,
+    private val dispatchers: DispatcherProvider
 ) {
 
-    private val userReferences = HashMap<String, User>()
-    private var mCheckTimestamp: Float = 0.toFloat()
-    private var mMailboxPassword: String? = null
+    // TODO caching strategy should be in the repository
+    private val cachedUsers = mutableMapOf<Id, NewUser>()
+
+    // TODO caching strategy should be in the repository
+    private val cachedLegacyUsers = mutableMapOf<Id, User>()
+
+    private var _checkTimestamp: Float = 0.toFloat()
+    private var _mailboxPassword: String? = null
     private val app: ProtonMailApplication = context.app
-    private var mGeneratingKeyPair: Boolean = false
+    private var generatingKeyPair: Boolean = false
 
     var privateKey: String? = null
         set(privateKey) {
             field = privateKey
             if (privateKey != null) {
-                mGenerateKeyPairEvent = GenerateKeyPairEvent(true, null)
+                generateKeyPairEvent = GenerateKeyPairEvent(true, null)
             }
-            if (mGenerateKeyPairEvent != null) {
-                AppUtil.postEventOnUi(mGenerateKeyPairEvent)
+            if (generateKeyPairEvent != null) {
+                AppUtil.postEventOnUi(generateKeyPairEvent)
             }
             if (mCreateUserOnKeyPairGenerationFinish) {
                 LoginService.startCreateUser(
@@ -118,39 +152,25 @@ class UserManager @Inject constructor(
 
     var userSettings: UserSettings? = null
         set(value) {
-            if (value == null) {
-                field = value
-                return
-            }
-            if (value.username == null) { // API model UserSettings doesn't contain username, we set it manually
-                value.username = user.username
-            }
             field = value
-            if (field != null) {
-                field!!.save()
-            }
-        }
-    var mailSettings: MailSettings? = null
-        set(value) {
-            if (value == null) {
-                field = value
-                return
-            }
-            if (value.username == null) { // API model MailSettings doesn't contain username, we set it manually
-                value.username = user.username
-            }
-            field = value
-            field!!.save()
+            if (value != null) withCurrentUserPreferences(value::save)
         }
 
-    fun getMailSettings(username: String): MailSettings? {
-        return MailSettings.load(username)
-    }
+    suspend fun getCurrentUserMailSettings(): MailSettings? =
+        currentUserId?.let { getMailSettings(it) }
+
+    @Deprecated("Use suspend function", ReplaceWith("getCurrentUserMailSettings()"))
+    fun getCurrentUserMailSettingsBlocking(): MailSettings? =
+        runBlocking { getCurrentUserMailSettings() }
+
+    suspend fun getMailSettings(userId: Id): MailSettings =
+        MailSettings.load(SecureSharedPreferences.getPrefsForUser(context, userId))
+
+    @Deprecated("Use suspend function", ReplaceWith("getMailSettings(userId)"))
+    fun getMailSettingsBlocking(userId: Id): MailSettings =
+        runBlocking { getMailSettings(userId) }
 
     var snoozeSettings: SnoozeSettings? = null
-
-    @Inject
-    lateinit var openPgp: OpenPGP
 
     private var mNewUserUsername: String? = null
     private var mNewUserPassword: ByteArray? = null
@@ -160,18 +180,22 @@ class UserManager @Inject constructor(
     private var mCreateUserOnKeyPairGenerationFinish: Boolean = false
 
     /**
-     * Returns the username of the next available (if any) account other than current. Currently this
-     * works randomly hopefully it will get refactored by same factor (maybe how often the account
-     * is used recently or something else).
-     * @return the username of the account that is the second one after the current primary logged
-     * in account.
+     * @return [Id] of next logged in User.
+     *   `null` if there is not logged in User, beside the current ( if any )
+     *   @see currentUserId
      */
-    val nextLoggedInAccountOtherThanCurrent: String?
-        get() {
-            val currentActiveAccount = username
-            val accountManager = AccountManager.getInstance(context)
-            return accountManager.getNextLoggedInAccountOtherThan(currentActiveAccount, currentActiveAccount)
-        }
+    suspend fun getNextLoggedInUser(): Id? {
+        val allLoggedIn = accountManager.allLoggedIn()
+        val currentIndex = allLoggedIn.indexOf(currentUserId)
+        val nextIndex = (currentIndex + 1).takeIf { it < allLoggedIn.size } ?: 0
+        return if (nextIndex != currentIndex)
+            allLoggedIn.elementAtOrNull(nextIndex)
+        else null
+    }
+
+    @Deprecated("Use suspend function", ReplaceWith("getNextLoggedInUser()"))
+    fun getNextLoggedInUserBlocking(): Id? =
+        runBlocking { getNextLoggedInUser() }
 
     var isLoggedIn: Boolean
         get() = prefs.getBoolean(PREF_IS_LOGGED_IN, false)
@@ -179,7 +203,7 @@ class UserManager @Inject constructor(
 
     val isFirstLogin: Boolean
         get() = prefs.getBoolean(PREF_IS_FIRST_LOGIN, true) &&
-            prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != AppUtil.getAppVersionCode(context)
+            prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != BuildConfig.VERSION_CODE
 
     val isFirstMailboxLoad: Boolean
         get() = prefs.getBoolean(PREF_IS_FIRST_MAILBOX_LOAD_AFTER_LOGIN, true)
@@ -190,10 +214,21 @@ class UserManager @Inject constructor(
     val isEngagementShown: Boolean
         get() = backupPrefs.getBoolean(PREF_ENGAGEMENT_SHOWN, false)
 
-    /**
-     * @return username of currently "active" user
-     */
-    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    var currentUserId: Id?
+        get() = prefs.get<String>(PREF_CURRENT_USER_ID)?.let(::Id)
+        private set(value) {
+            prefs[PREF_CURRENT_USER_ID] = value?.s
+        }
+
+    private val currentUserPreferences
+        get() = currentUserId?.let { SecureSharedPreferences.getPrefsForUser(context, it) }
+
+    private inline fun <T> withCurrentUserPreferences(block: (SharedPreferences) -> T): T? {
+        currentUserPreferences ?: Timber.e("No current user set")
+        return currentUserPreferences?.let(block)
+    }
+
+    @Deprecated("Use 'currentUserId'", ReplaceWith("currentUserId"), DeprecationLevel.ERROR)
     val username: String
         get() = prefs.getString(PREF_USERNAME, "")!!
 
@@ -203,82 +238,170 @@ class UserManager @Inject constructor(
             return secureSharedPreferences.getInt(PREF_PIN_INCORRECT_ATTEMPTS, 0)
         }
 
-    /**
-     * Gets key salt for current user.
-     */
+    val currentUserKeySalt: String?
+        get() = withCurrentUserPreferences { it[PREF_KEY_SALT] }
+
+    @Deprecated("Use 'currentUser' variant", ReplaceWith("currentUserKeySalt"))
     val keySalt: String?
-        get() {
-            val secureSharedPreferences = app.getSecureSharedPreferences(username)
-            return secureSharedPreferences.getString(PREF_KEY_SALT, null)
+        get() = currentUserKeySalt
+
+    /**
+     * @return [Int] representing [LoginState] for current user
+     *   `null` if there is no current user set
+     *   @see currentUserId
+     */
+    var currentUserLoginState: Int
+        @LoginState
+        get() = withCurrentUserPreferences { it[PREF_LOGIN_STATE] ?: LOGIN_STATE_NOT_INITIALIZED }
+            ?: LOGIN_STATE_NOT_INITIALIZED
+        set(@LoginState value) {
+            withCurrentUserPreferences {
+                it[PREF_LOGIN_STATE] = value
+            }
         }
 
+    @Deprecated("Use 'currentUser' variant", ReplaceWith("currentUserLoginState"))
     var loginState: Int
         @LoginState
-        get() {
-            val secureSharedPreferences = app.getSecureSharedPreferences(username)
-            return secureSharedPreferences.getInt(PREF_LOGIN_STATE, LOGIN_STATE_NOT_INITIALIZED)
-        }
+        get() = currentUserLoginState
         set(@LoginState status) {
-            val secureSharedPreferences = app.getSecureSharedPreferences(username)
-            secureSharedPreferences.edit().putInt(PREF_LOGIN_STATE, status).apply()
+            currentUserLoginState = status
         }
+
+    fun requireCurrentUserId(): Id =
+        checkNotNull(currentUserId)
+
+    suspend fun getCurrentUser(): NewUser? =
+        currentUserId?.let {
+            runCatching { getUser(it) }
+                .getOrElse {
+                    Timber.d("Cannot load user", it)
+                    null
+                }
+        }
+
+    suspend fun requireCurrentUser(): NewUser =
+        getUser(requireCurrentUserId())
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("getCurrentUser()")
+    )
+    fun getCurrentUserBlocking(): NewUser? =
+        runBlocking { getCurrentUser() }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("requireCurrentUser()")
+    )
+    fun requireCurrentUserBlocking(): NewUser =
+        runBlocking { getUser(requireCurrentUserId()) }
+
+    suspend fun getCurrentLegacyUser(): User? =
+        currentUserId?.let {
+            runCatching { getLegacyUser(it) }
+                .getOrElse {
+                    Timber.d("Cannot load user", it)
+                    null
+                }
+        }
+
+    suspend fun requireCurrentLegacyUser(): User =
+        getLegacyUser(requireCurrentUserId())
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("getCurrentLegacyUser()")
+    )
+    fun getCurrentLegacyUserBlocking(): User? =
+        runBlocking { getCurrentLegacyUser() }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("requireCurrentOldUser()")
+    )
+    fun requireCurrentLegacyUserBlocking(): User =
+        runBlocking { getLegacyUser(requireCurrentUserId()) }
 
     /**
      * Use this method to get settings for currently active User.
      */
+    @get:Deprecated("Use ''getCurrentLegacyUser'", ReplaceWith("getCurrentLegacyUser()"))
+    @set:Deprecated("Use 'setCurrentUser' with User Id", ReplaceWith("setCurrentUser(userId)"))
     var user: User
-        @Synchronized get() = getUser(username)
+        @Synchronized get() = requireNotNull(getCurrentLegacyUserBlocking())
         set(user) {
-            val username = user.username
-            if (!username.isBlank()) {
-                userReferences[username] = user
-                user.save()
-            }
+            setCurrentUserBlocking(Id(user.id))
         }
 
+    suspend fun getCurrentUserTokenManager(): TokenManager? =
+        currentUserId?.let { getTokenManager(it) }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("getCurrentUserTokenManager()")
+    )
+    fun getCurrentUserTokenManagerBlocking(): TokenManager? =
+        runBlocking {
+            getCurrentUserTokenManager()
+        }
+
+    @Deprecated("Use 'currentUser' variant", ReplaceWith("getCurrentUserTokenManager()"))
     val tokenManager: TokenManager?
-        get() {
-            return if (!username.isBlank()) getTokenManager(username) else null
+        get() = runBlocking { getCurrentUserTokenManager() }
+
+    suspend fun getUserIdBySessionId(sessionId: String): Id? =
+        accountManager.allLoggedIn().find {
+            sessionId == getTokenManager(it).uid
         }
 
-    @Nullable
-    fun getUsernameBySessionId(@NonNull sessionId: String): String? {
-        for (username in AccountManager.getInstance(context).getLoggedInUsers()) {
-            if (sessionId == getTokenManager(username)?.uid) {
-                return username
-            }
-        }
-        return null
-    }
+    @Deprecated("Use suspend function", ReplaceWith("getUserIdBySessionId(sessionId)"))
+    fun getUserIdBySessionIdBlocking(sessionId: String): Id? =
+        runBlocking { getUserIdBySessionId(sessionId) }
 
     var checkTimestamp: Float
-        get() = mCheckTimestamp
+        get() = _checkTimestamp
         set(checkTimestamp) {
-            if (checkTimestamp > mCheckTimestamp) {
-                mCheckTimestamp = checkTimestamp
-                prefs.edit().putFloat(PREF_CHECK_TIMESTAMP, mCheckTimestamp).apply()
+            if (checkTimestamp > _checkTimestamp) {
+                _checkTimestamp = checkTimestamp
+                prefs.edit().putFloat(PREF_CHECK_TIMESTAMP, _checkTimestamp).apply()
             }
         }
 
-    private var mGenerateKeyPairEvent: GenerateKeyPairEvent? = null
+    private var generateKeyPairEvent: GenerateKeyPairEvent? = null
 
+    suspend fun isCurrentUserBackgroundSyncEnabled(): Boolean {
+        val userId = requireNotNull(currentUserId)
+        return getLegacyUser(userId).isBackgroundSync
+    }
 
+    @Deprecated("Use 'currentUser' variant", ReplaceWith("isCurrentUserBackgroundSyncEnabled()"))
     val isBackgroundSyncEnabled: Boolean
         get() = user.isBackgroundSync
 
-
-    fun isSnoozeScheduledEnabled(): Boolean {
-        return snoozeSettings!!.getScheduledSnooze(username)
+    fun isCurrentUserSnoozeScheduledEnabled(): Boolean {
+        val userId = requireNotNull(currentUserId)
+        return requireNotNull(snoozeSettings).getScheduledSnooze(preferencesFor(userId))
     }
+
+    @Deprecated("Use 'currentUser' variant", ReplaceWith("isCurrentUserSnoozeScheduledEnabled()"))
+    fun isSnoozeScheduledEnabled(): Boolean =
+        isCurrentUserSnoozeScheduledEnabled()
 
     // Very important: don't setSnoozeQuick to false if it already is false otherwise it will
     // keep saving, saving can be super slow on users with a lot of accounts!
-    fun isSnoozeQuickEnabled(): Boolean {
+    suspend fun isSnoozeQuickEnabled(): Boolean {
         if (snoozeSettings!!.snoozeQuick && snoozeSettings!!.snoozeQuickEndTime - System.currentTimeMillis() <= 0) {
             setSnoozeQuick(false, 0)
         }
         return snoozeSettings!!.snoozeQuick
     }
+
+    // Very important: don't setSnoozeQuick to false if it already is false otherwise it will
+    // keep saving, saving can be super slow on users with a lot of accounts!
+    @Deprecated("Use suspend function", ReplaceWith("isSnoozeQuickEnabled"))
+    fun isSnoozeQuickEnabledBlocking(): Boolean =
+        runBlocking { isSnoozeQuickEnabled() }
 
     @IntDef(LOGIN_STATE_NOT_INITIALIZED, LOGIN_STATE_LOGIN_FINISHED, LOGIN_STATE_TO_INBOX)
     internal annotation class LoginState
@@ -289,40 +412,32 @@ class UserManager @Inject constructor(
      * @see MIGRATE_FROM_BUILD_CONFIG_FIELD_DOC
      */
     init {
-        val prefs = app.defaultSharedPreferences
-        val currentAppVersion = AppUtil.getAppVersionCode(app)
+        val currentAppVersion = BuildConfig.VERSION_CODE
         val previousVersion = prefs.getInt(Constants.Prefs.PREF_APP_VERSION, Integer.MIN_VALUE)
         // if this version requires the user to be logged out when updating
         // and if every single previous version should be force logged out
         // or any specific previous version should be logged out
-        if (previousVersion != currentAppVersion) {
-
-            // Removed check for updates where we need to logout as it was always false. See doc ref in method header
-            if (false) {
-                val pin = getMailboxPin()
-                logoutOffline()
-                savePin(pin)
-            } else {
-                loadSettings(username)
-            }
-        } else {
-            loadSettings(username)
-            mCheckTimestamp = this.prefs.getFloat(PREF_CHECK_TIMESTAMP, 0f)
+        runBlocking { currentUserId?.let { loadSettings(it) } }
+        if (previousVersion == currentAppVersion) {
+            _checkTimestamp = this.prefs.getFloat(PREF_CHECK_TIMESTAMP, 0f)
         }
         app.bus.register(this)
     }
 
-    private fun reset() {
-        mCheckTimestamp = 0f
-        userReferences.remove(username)
-        mMailboxPassword = null
+    @Deprecated("Suspended function should be used instead", ReplaceWith("resetReferences"))
+    private fun resetReferencesBlocking() = runBlocking { resetReferences() }
+
+    private suspend fun resetReferences() = withContext(dispatchers.Io) {
+        _checkTimestamp = 0f
+        currentUserId?.let { cachedLegacyUsers -= it }
+        _mailboxPassword = null
 //        mMailboxPin = null
         app.eventManager.clearState()
     }
 
     fun generateKeyPair(username: String, domain: String, password: ByteArray, bits: Int) {
-        mGenerateKeyPairEvent = GenerateKeyPairEvent(false, null)
-        mGeneratingKeyPair = true
+        generateKeyPairEvent = GenerateKeyPairEvent(false, null)
+        generatingKeyPair = true
         LoginService.startGenerateKeys(username, domain, password, bits)
     }
 
@@ -333,7 +448,7 @@ class UserManager @Inject constructor(
         tokenType: Constants.TokenType,
         token: String
     ) {
-        if (this.privateKey == null && mGeneratingKeyPair) {
+        if (privateKey == null && generatingKeyPair) {
             mCreateUserOnKeyPairGenerationFinish = true
             mNewUserUsername = username
             mNewUserPassword = password
@@ -362,7 +477,8 @@ class UserManager @Inject constructor(
     }
 
     fun twoFA(
-        username: String,
+        userId: Id,
+        username: Name,
         password: ByteArray,
         twoFactor: String?,
         infoResponse: LoginInfoResponse?,
@@ -372,13 +488,21 @@ class UserManager @Inject constructor(
         isConnecting: Boolean
     ) {
         LoginService.start2FA(
-            username, password, twoFactor, infoResponse, loginResponse, fallbackAuthVersion,
-            signUp, isConnecting
+            userId,
+            username,
+            password,
+            twoFactor,
+            infoResponse,
+            loginResponse,
+            fallbackAuthVersion,
+            signUp,
+            isConnecting
         )
     }
 
-    fun mailboxLogin(username: String, mailboxPassword: String, keySalt: String?, signUp: Boolean) {
-        LoginService.startMailboxLogin(username, mailboxPassword, keySalt, signUp)
+    // used for two-password mode. Since already the user is logged in, we should have the userID by now
+    fun mailboxLogin(userId: Id, mailboxPassword: String, keySalt: String?, signUp: Boolean) {
+        LoginService.startMailboxLogin(userId, mailboxPassword, keySalt, signUp)
     }
 
     fun setupAddress(domain: String) {
@@ -399,115 +523,156 @@ class UserManager @Inject constructor(
         LoginService.startConnectAccount(username, password, twoFactor, response, fallbackAuthVersion)
     }
 
-    fun connectAccountMailboxLogin(username: String, currentPrimary: String, mailboxPassword: String, keySalt: String) {
-        LoginService.startConnectAccountMailboxLogin(username, currentPrimary, mailboxPassword, keySalt)
+    // used for two-password mode. Since already the user is logged in, we should have the userID by now
+    // TODO: find better name for its purpose
+    suspend fun connectAccountMailboxLogin(
+        userId: Id,
+        currentPrimaryUserId: Id?,
+        mailboxPassword: String,
+        keySalt: String
+    ) {
+        LoginService.startConnectAccountMailboxLogin(userId, currentPrimaryUserId, mailboxPassword, keySalt)
     }
 
-    fun switchToAccount(username: String) {
-        setUsernameAndReload(username)
-        user = User.load(username)
-        loadSettings(username)
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("connectAccountMailboxLoginBlocking(userId, currentPrimaryId, mailboxPassword, keySalt)")
+    )
+    fun connectAccountMailboxLoginBlocking(
+        userId: Id,
+        currentPrimaryUserId: Id,
+        mailboxPassword: String,
+        keySalt: String
+    ) = runBlocking {
+        connectAccountMailboxLogin(userId, currentPrimaryUserId, mailboxPassword, keySalt)
     }
 
-    fun removeAccount(username: String, clearDoneListener: (() -> Unit)? = null) {
-        logoutAccount(username, clearDoneListener)
-        val accountManager = AccountManager.getInstance(context)
-        accountManager.removeFromSaved(username)
+    suspend fun switchTo(userId: Id) {
+        setCurrentUser(userId)
+        user = loadLegacyUser(userId)
+        loadSettings(userId)
+    }
+
+    suspend fun logoutAndRemove(userId: Id) {
+        logout(userId)
+        accountManager.remove(userId)
+    }
+
+    @Deprecated("Use suspend function", ReplaceWith("logoutAndRemove(userId)"))
+    fun logoutAndRemoveBlocking(userId: Id) {
+        runBlocking {
+            logoutAndRemove(userId)
+        }
+    }
+
+    suspend fun logout(userId: Id) = withContext(dispatchers.Io) {
+        val nextLoggedIn = getNextLoggedInUser()
+            // fallback to "last user logout"
+            ?: return@withContext logoutLastActiveAccount()
+        LogoutService.startLogout(context, userId, false)
+        accountManager.setLoggedOut(userId)
+        AppUtil.deleteSecurePrefs(preferencesFor(userId), false)
+        launch {
+            clearUserData(userId)
+        }
+        setCurrentUser(nextLoggedIn)
+        app.eventManager.clearState(userId)
+    }
+
+    @Deprecated("Use suspend function", ReplaceWith("logout(userId)"))
+    fun logoutBlocking(userId: Id) {
+        runBlocking { logout(userId) }
     }
 
     /**
-     * Logs the supplied account out.
-     * @param username the username of the account to be logged out.
+     * Log out the only active ( logged in ) user
      */
-    fun logoutAccount(username: String) {
-        logoutAccount(username, null)
-    }
-
-    /**
-     * Logs the supplied account out.
-     * @param username the username of the account to be logged out.
-     */
-    fun logoutAccount(username: String, clearDoneListener: (() -> Unit)?) {
-        val accountManager = AccountManager.getInstance(context)
-        val currentPrimary = this.username
-        val nextLoggedInAccount = accountManager.getNextLoggedInAccountOtherThan(username, currentPrimary)
-            ?: // fallback to "last user logout"
-            return logoutLastActiveAccount()
-        Timber.v("logoutAccount new user:$nextLoggedInAccount")
-        LogoutService.startLogout(false, username = username)
-        accountManager.onSuccessfulLogout(username)
-        AppUtil.deleteSecurePrefs(username, false)
-        AppUtil.deleteDatabases(context, username, clearDoneListener)
-        switchToAccount(nextLoggedInAccount)
-        setUsernameAndReload(nextLoggedInAccount)
-        app.eventManager.clearState(username)
-    }
-
-    @JvmOverloads
-    fun logoutLastActiveAccount(clearDoneListener: (() -> Unit)? = null) {
+    suspend fun logoutLastActiveAccount() {
+        val userId = requireCurrentUserId()
+        saveCurrentUserBackupSettings()
+        clearUserData(userId)
         isLoggedIn = false
-        loginState = LOGIN_STATE_NOT_INITIALIZED
-        AppUtil.deleteDatabases(app.applicationContext, username, clearDoneListener)
-        saveBackupSettings()
+        currentUserLoginState = LOGIN_STATE_NOT_INITIALIZED
         // Passing FCM token already here to prevent it being deleted from shared prefs before worker starts
-        LogoutService.startLogout(true, username = username, fcmRegistrationId = FcmUtil.getFirebaseToken())
+        val fcmTokenManager = fcmTokenManagerFactory.create(preferencesFor(userId))
+        LogoutService.startLogout(context, userId, true, fcmTokenManager.getTokenBlocking()?.value)
         setRememberMailboxLogin(false)
         firstLoginRemove()
-        reset()
-        AppUtil.deleteSecurePrefs(username, true)
+        resetReferencesBlocking()
+        AppUtil.deleteSecurePrefs(requireNotNull(currentUserPreferences), true)
         AppUtil.deletePrefs()
         AppUtil.deleteBackupPrefs()
         AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
     }
 
-    @JvmOverloads
-    fun logoutOffline(usernameToLogout: String? = null) {
-        val username = usernameToLogout ?: this.username
-        if (username.isEmpty()) {
-            return
+    @Deprecated("Use suspend function", ReplaceWith("logoutLastActiveAccount()"))
+    fun logoutLastActiveAccountBlocking() {
+        runBlocking { logoutLastActiveAccount() }
+    }
+
+    suspend fun logoutOffline(userId: Id) = withContext(dispatchers.Io) {
+        val nextUserId = getNextLoggedInUser()
+
+        if (currentUserId !in accountManager.allLoggedIn()) {
+            return@withContext
         }
-        val nextLoggedInAccount = nextLoggedInAccountOtherThanCurrent
-        val accountManager = AccountManager.getInstance(context)
-        if (!accountManager.getLoggedInUsers().contains(username)) {
-            return
-        }
-        if (nextLoggedInAccount == null) {
+
+        if (nextUserId == null) {
             isLoggedIn = false
-            loginState = LOGIN_STATE_NOT_INITIALIZED
-            saveBackupSettings()
-            LogoutService.startLogout(false)
+            currentUserLoginState = LOGIN_STATE_NOT_INITIALIZED
+            saveCurrentUserBackupSettings()
+            LogoutService.startLogout(context, userId, false)
             setRememberMailboxLogin(false)
-            AppUtil.deleteSecurePrefs(username, true)
+            AppUtil.deleteSecurePrefs(preferencesFor(userId), true)
             AppUtil.deletePrefs()
             AppUtil.deleteBackupPrefs()
             firstLoginRemove()
-            reset()
-            tokenManager?.clear()
-            AppUtil.deleteDatabases(app.applicationContext, username)
+            resetReferences()
+            getCurrentUserTokenManager()?.clear()
+            clearUserData(userId)
             AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
             TokenManager.clearAllInstances()
         } else {
-            accountManager.onSuccessfulLogout(username)
-            AppUtil.deleteSecurePrefs(username, false)
-            AppUtil.deleteDatabases(app.applicationContext, username)
-            setUsernameAndReload(nextLoggedInAccount)
-            val event = ForceSwitchedAccountEvent(nextLoggedInAccount, username)
+            val oldUser = requireCurrentUser()
+            accountManager.setLoggedOut(userId)
+            AppUtil.deleteSecurePrefs(preferencesFor(userId), false)
+            clearUserData(userId)
+            setCurrentUser(nextUserId)
+            val nextUser = loadUser(nextUserId)
+            val event = SwitchUserEvent(from = oldUser.id to oldUser.name, to = nextUser.id to nextUser.name)
             ForceSwitchedAccountNotifier.notifier.postValue(event)
-            TokenManager.clearInstance(username)
+            TokenManager.clearInstance(userId)
         }
     }
 
-    @Synchronized
-    private fun saveBackupSettings() {
-        val user = user
-        user.saveNotificationSettingsBackup()
-        user.saveAutoLogoutBackup()
-        user.saveAutoLockPINPeriodBackup()
-        user.saveUsePinBackup()
-        user.saveUseFingerprintBackup()
-        user.saveNotificationVisibilityLockScreenSettingsBackup()
-        user.saveRingtoneBackup()
-        user.saveCombinedContactsBackup()
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("logoutOffline()")
+    )
+    fun logoutOfflineBlocking(userId: Id) = runBlocking {
+        logoutOffline(userId)
+    }
+
+    suspend fun logoutCurrentUserOffline() {
+        logoutOffline(requireCurrentUserId())
+    }
+
+    @Deprecated("Use suspend function", ReplaceWith("logoutCurrentUserOffline"))
+    fun logoutCurrentUserOfflineBlocking() {
+        runBlocking { logoutOffline(requireCurrentUserId()) }
+    }
+
+    private suspend fun saveCurrentUserBackupSettings() = withContext(dispatchers.Io) {
+        getCurrentLegacyUser()?.apply {
+            saveNotificationSettingsBackup()
+            saveAutoLogoutBackup()
+            saveAutoLockPINPeriodBackup()
+            saveUsePinBackup()
+            saveUseFingerprintBackup()
+            saveNotificationVisibilityLockScreenSettingsBackup()
+            saveRingtoneBackup()
+            saveCombinedContactsBackup()
+        }
     }
 
     private fun setRememberMailboxLogin(remember: Boolean) {
@@ -538,24 +703,29 @@ class UserManager @Inject constructor(
         backupPrefs.edit().putBoolean(PREF_ENGAGEMENT_SHOWN, false).apply()
     }
 
-    /**
-     * This sets the primary user of the application.
-     */
     @Synchronized
-    fun setUsernameAndReload(username: String) {
+    suspend fun setCurrentUser(userId: Id) = withContext(dispatchers.Io) {
         // TODO if it's possible at one point, we need to handle successful login in one place and
         //  make all those setters of shared pref values (like is_logged_in) private to this class
-        prefs.edit().putString(PREF_USERNAME, username).apply()
-        val currentUsername = this.username
-        if (currentUsername != username) {
+        val prevUserId = currentUserId
+        currentUserId = userId
+        backupPrefs[PREF_CURRENT_USER_ID] = userId.s
+        if (userId != prevUserId) {
             clearBackupPrefs()
             savePin("")
         }
-        backupPrefs.edit().putString(PREF_USERNAME, username).apply()
         engagementDone() // we set this to done since it is the same person that has switched account
 
-        AccountManager.getInstance(context).onSuccessfulLogin(username)
-        mMailboxPassword = null
+        accountManager.setLoggedIn(requireCurrentUserId())
+        _mailboxPassword = null
+    }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("setCurrentUser(userId)")
+    )
+    fun setCurrentUserBlocking(userId: Id) {
+        runBlocking { setCurrentUser(userId) }
     }
 
     fun increaseIncorrectPinAttempt() {
@@ -575,28 +745,54 @@ class UserManager @Inject constructor(
 //        mMailboxPin = mailboxPin
     }
 
-    fun getMailboxPin(): String? {
-        return app.secureSharedPreferences.getString(PREF_PIN, "")
+    fun getMailboxPin(): String? =
+        app.secureSharedPreferences.getString(PREF_PIN, "")
+
+    suspend fun saveMailboxPassword(userId: Id, mailboxPassword: ByteArray) = withContext(dispatchers.Io) {
+        val secureSharedPreferences = SecureSharedPreferences.getPrefsForUser(context, userId)
+        secureSharedPreferences[PREF_MAILBOX_PASSWORD] = String(mailboxPassword)
+        // TODO: this should not be saved, mailbox password should not be persisted in memory, especially for this
+        //  class, especially in a multi-user context
+        _mailboxPassword = String(mailboxPassword)
     }
 
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("saveMailboxPassword(userId, mailboxPassword)")
+    )
     @JvmOverloads
-    fun saveMailboxPassword(mailboxPassword: ByteArray, userName: String = username) {
-        val secureSharedPreferences = app.getSecureSharedPreferences(userName)
-        secureSharedPreferences.edit().putString(PREF_MAILBOX_PASSWORD, String(mailboxPassword)).apply()
-        mMailboxPassword = String(mailboxPassword) // TODO passphrase
+    fun saveMailboxPasswordBlocking(userId: Id? = currentUserId, mailboxPassword: ByteArray) = runBlocking {
+        if(userId == null) {
+            // TODO: how to save the mailbox password if the userId is not available yet
+        } else {
+            saveMailboxPassword(userId, mailboxPassword)
+        }
     }
 
-    @JvmOverloads
-    fun saveKeySalt(keysSalt: String?, userName: String = username) {
-        val secureSharedPreferences = app.getSecureSharedPreferences(userName)
-        secureSharedPreferences.edit().putString(PREF_KEY_SALT, keysSalt).apply()
+    suspend fun saveKeySalt(userId: Id, keysSalt: String?) = withContext(dispatchers.Io) {
+        val secureSharedPreferences = SecureSharedPreferences.getPrefsForUser(context, userId)
+        secureSharedPreferences[PREF_KEY_SALT] = keysSalt
     }
 
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("saveKeySalt(userId, keySalt)")
+    )
     @JvmOverloads
-    fun getMailboxPassword(userName: String = username): ByteArray? {
-        val secureSharedPreferences = app.getSecureSharedPreferences(userName) /*TODO passphrase*/
-        return secureSharedPreferences.getString(PREF_MAILBOX_PASSWORD, null)?.toByteArray(Charsets.UTF_8)
+    fun saveKeySaltBlocking(userId: Id? = currentUserId, keysSalt: String?) = runBlocking {
+        if(userId == null) {
+            // TODO: how to save the keySalt when the userId is not available yet
+
+        } else {
+            saveKeySalt(userId, keysSalt)
+        }
     }
+
+    fun getMailboxPassword(userId: Id): ByteArray? =
+        preferencesFor(userId).get<String>(PREF_MAILBOX_PASSWORD)?.toByteArray(Charsets.UTF_8)
+
+    fun getCurrentUserMailboxPassword(): ByteArray? =
+        withCurrentUserPreferences { it.get<String>(PREF_MAILBOX_PASSWORD)?.toByteArray(Charsets.UTF_8) }
 
     fun accessTokenExists(): Boolean {
         val exists = tokenManager?.let {
@@ -605,105 +801,142 @@ class UserManager @Inject constructor(
         return exists ?: false
     }
 
-    @JvmOverloads
-    fun setUserInfo(
-        userInfo: UserInfo,
-        username: String? = null,
+    suspend fun setUserDetails(
+        user: User,
+        addresses: List<Address>,
         mailSettings: MailSettings,
-        userSettings: UserSettings,
-        addresses: List<Address>
-    ) {
-        val user = userInfo.user
-        user.username = username ?: this.username
-        user.setAddressIdEmail()
-        user.setAddresses(addresses)
-        this.mailSettings = mailSettings
-        this.userSettings = userSettings
-        this.snoozeSettings = SnoozeSettings.load(user.username)
-        user.save()
-        this.user = user
+        userSettings: UserSettings
+    ) = withContext(dispatchers.Io) {
+
+        user.apply {
+            setAddressIdEmail()
+            setAddresses(addresses)
+            save()
+        }
+        this@UserManager.apply {
+            this.userSettings = userSettings
+            this.snoozeSettings = SnoozeSettings.load(preferencesFor(Id(user.id)))
+            this.user = user
+        }
+    }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("setUserDetails(user, addreses, mailSettings, userSettings)")
+    )
+    fun setUserDetailsBlocking(
+        user: User,
+        addresses: List<Address>,
+        mailSettings: MailSettings,
+        userSettings: UserSettings
+    ) = runBlocking {
+        currentUserId = Id(user.id)
+        setUserDetails(user, addresses, mailSettings, userSettings)
+    }
+
+    @Synchronized
+    suspend fun getUser(userId: Id): NewUser =
+        cachedUsers.getOrPut(userId) {
+            loadUser(userId)
+        }
+
+    @Deprecated("Suspended function should be used instead", ReplaceWith("getUser(userId)"))
+    fun getUserBlocking(userId: Id): NewUser =
+        runBlocking { getUser(userId) }
+
+    /**
+     * Note, returned [User] might have empty values if user was not saved before
+     */
+    @Synchronized
+    suspend fun getLegacyUser(userId: Id): User =
+        cachedLegacyUsers.getOrPut(userId) {
+            loadLegacyUser(userId)
+                // Also save to cachedUsers
+                .also { legacyUser ->
+                    runCatching { userMapper { legacyUser.toNewUser() } }
+                        .onSuccess { cachedUsers[userId] = it }
+                        .onFailure(Timber::e)
+                }
+        }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("getLegacyUser(userId)")
+    )
+    fun getLegacyUserBlocking(userId: Id) = runBlocking {
+        getLegacyUser(userId)
     }
 
     /**
-     * Use this method to get User's settings for other users than currently active.
-     *
-     * @return [User] object for given username, might have empty values if user was not saved before
+     * @return `true` if another account can be connected
+     *   `false` if there are logged in more than one Free account
+     *   @see NewUser.plans
+     *   @see Plan.Mail.Free
      */
-    @Synchronized
-    fun getUser(username: String): User {
-        if (!userReferences.containsKey(username)) {
-            val newUser = User.load(username)
-            if (!username.isBlank()) {
-                userReferences[username] = newUser
-            }
-            return newUser
-        }
-        return userReferences[username]!!
+    suspend fun canConnectAnotherAccount(): Boolean {
+        val freeLoggedInUserCount = accountManager.allLoggedIn().count { Plan.Mail.Free in getUser(it).plans }
+        return freeLoggedInUserCount <= 1
     }
 
-    fun canConnectAccount(): Boolean {
-        val accountManager = AccountManager.getInstance(context)
-        val freeLoggedInUsersList = accountManager.getLoggedInUsers().map {
-            userReferences[it]
-        }.filter {
-            !(it?.isPaidUser ?: false)
-        }
-        return freeLoggedInUsersList.size <= 1
-    }
+    @Deprecated("Use suspend function", ReplaceWith("canConnectAnotherAccount"))
+    fun canConnectAnotherAccountBlocking(): Boolean =
+        runBlocking { canConnectAnotherAccount() }
 
-    fun getTokenManager(username: String): TokenManager? {
-        val tokenManager = TokenManager.getInstance(username)
+    suspend fun getTokenManager(userId: Id): TokenManager {
+        val tokenManager = TokenManager.getInstance(context, userId)
         // make sure the private key is here
-        tokenManager?.let {
-            if (it.encPrivateKey.isNullOrBlank()) {
-                val user = getUser(username)
-                for (key in user.keys) {
-                    if (key.isPrimary) {
-                        it.encPrivateKey = key.privateKey // it's needed for verification later
-                        break
-                    }
-                }
-            }
+        if (tokenManager.encPrivateKey.isNullOrBlank()) {
+            val user = runCatching { getUser(userId) }
+                .getOrElse { return tokenManager }
+            // it's needed for verification later
+            tokenManager.encPrivateKey = user.keys.primaryKey?.privateKey?.string
         }
         return tokenManager
     }
 
-    fun canShowStorageLimitWarning(): Boolean {
-        val secureSharedPreferences = app.getSecureSharedPreferences(username)
-        return secureSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING, true)
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("getTokenManager(userId)")
+    )
+    fun getTokenManagerBlocking(userId: Id) = runBlocking {
+        getTokenManager(userId)
     }
+
+    fun canShowStorageLimitWarning(): Boolean =
+        withCurrentUserPreferences { it[PREF_SHOW_STORAGE_LIMIT_WARNING] } ?: true
 
     fun setShowStorageLimitWarning(value: Boolean) {
-        val secureSharedPreferences = app.getSecureSharedPreferences(username)
-        secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING, value).apply()
+        withCurrentUserPreferences {
+            it[PREF_SHOW_STORAGE_LIMIT_WARNING] = value
+        }
     }
 
-    fun canShowStorageLimitReached(): Boolean {
-        val secureSharedPreferences = app.getSecureSharedPreferences(username)
-        return secureSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED, true)
-    }
+    fun canShowStorageLimitReached(): Boolean =
+        withCurrentUserPreferences { it[PREF_SHOW_STORAGE_LIMIT_REACHED] } ?: true
 
     fun setShowStorageLimitReached(value: Boolean) {
-        val secureSharedPreferences = app.getSecureSharedPreferences(username)
-        secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED, value).apply()
+        withCurrentUserPreferences {
+            it[PREF_SHOW_STORAGE_LIMIT_REACHED] = value
+        }
     }
 
     @Produce
-    fun produceKeyPairEvent(): GenerateKeyPairEvent? {
-        return mGenerateKeyPairEvent
-    }
+    fun produceKeyPairEvent(): GenerateKeyPairEvent? =
+        generateKeyPairEvent
 
     fun resetGenerateKeyPairEvent() {
-        this.mGenerateKeyPairEvent = GenerateKeyPairEvent(false, null)
+        generateKeyPairEvent = GenerateKeyPairEvent(false, null)
     }
 
 
     private fun clearBackupPrefs() {
-        backupPrefs.edit().clear().apply()
+        backupPrefs.clearAll()
     }
 
-
-    fun setSnoozeScheduled(
+    /**
+     * @throws IllegalStateException if [currentUserId] or [snoozeSettings] is `null`
+     */
+    suspend fun setSnoozeScheduled(
         isOn: Boolean,
         startTimeHour: Int,
         startTimeMinute: Int,
@@ -711,35 +944,70 @@ class UserManager @Inject constructor(
         endTimeMinute: Int,
         repeatingDays: String
     ) {
-        snoozeSettings!!.snoozeScheduled = isOn
-        snoozeSettings!!.snoozeScheduledStartTimeHour = startTimeHour
-        snoozeSettings!!.snoozeScheduledStartTimeMinute = startTimeMinute
-        snoozeSettings!!.snoozeScheduledEndTimeHour = endTimeHour
-        snoozeSettings!!.snoozeScheduledEndTimeMinute = endTimeMinute
-        snoozeSettings!!.snoozeScheduledRepeatingDays = repeatingDays
-        snoozeSettings!!.save(username)
-    }
-
-    fun setSnoozeQuick(isOn: Boolean, minutesFromNow: Int) {
-        snoozeSettings!!.snoozeQuick = isOn
-        snoozeSettings!!.snoozeQuickEndTime = System.currentTimeMillis() + minutesFromNow * 60 * 1000
-        snoozeSettings!!.saveQuickSnoozeBackup(username)
-        snoozeSettings!!.saveQuickSnoozeEndTimeBackup(username)
-        snoozeSettings!!.save(username)
-    }
-
-    private fun loadSettings(username: String) {
-        if (username.isBlank()) {
-            return
+        val preferences = preferencesFor(requireCurrentUserId())
+        checkNotNull(snoozeSettings).apply {
+            snoozeScheduled = isOn
+            snoozeScheduledStartTimeHour = startTimeHour
+            snoozeScheduledStartTimeMinute = startTimeMinute
+            snoozeScheduledEndTimeHour = endTimeHour
+            snoozeScheduledEndTimeMinute = endTimeMinute
+            snoozeScheduledRepeatingDays = repeatingDays
+            save(preferences)
         }
-        userSettings = UserSettings.load(username)
-        mailSettings = MailSettings.load(username)
-        snoozeSettings = SnoozeSettings.load(username)
-        user.autoLockPINPeriod
     }
 
-    fun removeEmptyUserReferences() {
-        userReferences.remove("")
+    /**
+     * @throws IllegalStateException if [currentUserId] or [snoozeSettings] is `null`
+     */
+    @Deprecated(
+        "Use suspend function",
+        ReplaceWith(
+            "setSnoozeScheduled(isOn, startTimeHour, startTimeMinute, endTimeHour, endTimeMinute, repeatingDays)"
+        )
+    )
+    fun setSnoozeScheduledBlocking(
+        isOn: Boolean,
+        startTimeHour: Int,
+        startTimeMinute: Int,
+        endTimeHour: Int,
+        endTimeMinute: Int,
+        repeatingDays: String
+    ) {
+        runBlocking {
+            setSnoozeScheduled(isOn, startTimeHour, startTimeMinute, endTimeHour, endTimeMinute, repeatingDays)
+        }
+    }
+
+    /**
+     * @throws IllegalStateException if [currentUserId] or [snoozeSettings] is `null`
+     */
+    suspend fun setSnoozeQuick(isOn: Boolean, minutesFromNow: Int) {
+        val preferences = preferencesFor(requireCurrentUserId())
+        checkNotNull(snoozeSettings).apply {
+            snoozeQuick = isOn
+            snoozeQuickEndTime = System.currentTimeMillis() + minutesFromNow.minutes.toLongMilliseconds()
+            saveQuickSnoozeBackup(preferences)
+            saveQuickSnoozeEndTimeBackup(preferences)
+            save(preferences)
+        }
+    }
+
+    /**
+     * @throws IllegalStateException if [currentUserId] or [snoozeSettings] is `null`
+     */
+    @Deprecated("Use suspend function", ReplaceWith("setSnoozeQuick(isOn, minutesFromNow)"))
+    fun setSnoozeQuickBlocking(isOn: Boolean, minutesFromNow: Int) {
+        runBlocking { setSnoozeQuick(isOn, minutesFromNow) }
+    }
+
+    private suspend fun loadSettings(userId: Id) {
+        withContext(dispatchers.Io) {
+            val preferences = preferencesFor(userId)
+            userSettings = UserSettings.load(preferences)
+            snoozeSettings = SnoozeSettings.load(preferences)
+            // Reload autoLockPINPeriod
+            getLegacyUser(userId).autoLockPINPeriod
+        }
     }
 
     fun didReachLabelsThreshold(numberOfLabels: Int): Boolean = getMaxLabelsAllowed() < numberOfLabels
@@ -772,5 +1040,26 @@ class UserManager @Inject constructor(
         }
 
         return maxLabelsAllowed
+    }
+
+    private fun preferencesFor(userId: Id) =
+        SecureSharedPreferences.getPrefsForUser(context, userId)
+
+    class UsernameToIdMigration @Inject constructor(
+        @DefaultSharedPreferences private val prefs: SharedPreferences,
+        private val findUserIdForUsername: FindUserIdForUsername,
+        private val dispatchers: DispatcherProvider
+    ) {
+
+        suspend operator fun invoke() {
+            withContext(dispatchers.Io) {
+                val currentUsername = prefs.get<String?>(PREF_USERNAME)?.takeIfNotBlank()
+                    ?: return@withContext
+                prefs -= PREF_USERNAME
+
+                val currentUserId = findUserIdForUsername(Name(currentUsername))
+                prefs[PREF_CURRENT_USER_ID] = currentUserId.s
+            }
+        }
     }
 }

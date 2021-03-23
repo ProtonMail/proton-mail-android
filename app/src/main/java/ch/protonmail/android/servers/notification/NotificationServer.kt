@@ -40,30 +40,38 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
 import androidx.core.text.toSpannable
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER
-import ch.protonmail.android.activities.EXTRA_SWITCHED_USER
+import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
+import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER_ID
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
-import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotification
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_DELETE_MESSAGE
+import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.buildArchiveIntent
-import ch.protonmail.android.utils.buildReplyIntent
 import ch.protonmail.android.utils.buildTrashIntent
 import ch.protonmail.android.utils.extensions.getColorCompat
 import ch.protonmail.android.utils.extensions.showToast
 import timber.log.Timber
 import javax.inject.Inject
-import ch.protonmail.android.api.models.room.notifications.Notification as RoomNotification
+import ch.protonmail.android.api.models.User as LegacyUser
+import ch.protonmail.android.data.local.model.Notification as RoomNotification
 
 const val CHANNEL_ID_EMAIL = "emails"
 const val EXTRA_MAILBOX_LOCATION = "mailbox_location"
+@Deprecated(
+    "Use user Id",
+    ReplaceWith("EXTRA_USER_ID", "ch.protonmail.android.servers.notification.EXTRA_USER_ID"),
+    DeprecationLevel.ERROR
+)
 const val EXTRA_USERNAME = "username"
+const val EXTRA_USER_ID = "user.id"
 const val NOTIFICATION_ID_SENDING_FAILED = 680
 private const val CHANNEL_ID_ONGOING_OPS = "ongoingOperations"
 private const val CHANNEL_ID_ACCOUNT = "account"
@@ -72,6 +80,7 @@ private const val NOTIFICATION_ID_SAVE_DRAFT_ERROR = 6812
 private const val NOTIFICATION_GROUP_ID_EMAIL = 99
 private const val NOTIFICATION_ID_VERIFICATION = 2
 private const val NOTIFICATION_ID_LOGGED_OUT = 3
+// endregion
 
 /**
  * A class that is responsible for creating notification channels, and creating and showing notifications.
@@ -79,13 +88,13 @@ private const val NOTIFICATION_ID_LOGGED_OUT = 3
 class NotificationServer @Inject constructor(
     private val context: Context,
     private val notificationManager: NotificationManager
-) : INotificationServer {
+) {
 
     private val lightIndicatorColor by lazy {
         ContextCompat.getColor(context, R.color.light_indicator)
     }
 
-    override fun createAccountChannel(): String {
+    fun createAccountChannel(): String {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             var channel = notificationManager.getNotificationChannel(CHANNEL_ID_ACCOUNT)
             if (channel != null) {
@@ -103,7 +112,7 @@ class NotificationServer @Inject constructor(
         return CHANNEL_ID_ACCOUNT
     }
 
-    override fun createAttachmentsChannel(): String {
+    fun createAttachmentsChannel(): String {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             var channel = notificationManager.getNotificationChannel(CHANNEL_ID_ATTACHMENTS)
             if (channel != null) {
@@ -122,7 +131,7 @@ class NotificationServer @Inject constructor(
         return CHANNEL_ID_ATTACHMENTS
     }
 
-    override fun createEmailsChannel(): String {
+    fun createEmailsChannel(): String {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             var channel = notificationManager.getNotificationChannel(CHANNEL_ID_EMAIL)
             if (channel != null) {
@@ -162,23 +171,24 @@ class NotificationServer @Inject constructor(
         return CHANNEL_ID_ONGOING_OPS
     }
 
-    override fun notifyVerificationNeeded(
-        username: String,
-        messageSubject: String?,
-        messageId: String?,
+    fun notifyVerificationNeeded(
+        userId: Id,
+        username: Name,
+        messageTitle: String,
+        messageId: String,
         messageInline: Boolean,
-        messageAddressId: String?
+        messageAddressId: String
     ) {
         val inboxStyle = NotificationCompat.BigTextStyle()
         inboxStyle.setBigContentTitle(context.getString(R.string.verification_needed))
         inboxStyle.bigText(
             String.format(
                 context.getString(R.string.verification_needed_description_notification),
-                messageSubject
+                messageTitle
             )
         )
 
-        inboxStyle.setSummaryText(username)
+        inboxStyle.setSummaryText(username.s)
         val composeIntent = Intent(context, ComposeMessageActivity::class.java)
         composeIntent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, messageId)
         composeIntent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, messageInline)
@@ -198,7 +208,9 @@ class NotificationServer @Inject constructor(
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.notification_icon)
             .setContentTitle(context.getString(R.string.verification_needed))
-            .setContentText(String.format(context.getString(R.string.verification_needed_description_notification), messageSubject))
+            .setContentText(
+                context.getString(R.string.verification_needed_description_notification, messageTitle)
+            )
             .setContentIntent(contentIntent)
             .setColor(ContextCompat.getColor(context, R.color.ocean_blue))
             .setStyle(inboxStyle)
@@ -209,7 +221,7 @@ class NotificationServer @Inject constructor(
         notificationManager.notify(NOTIFICATION_ID_VERIFICATION, notification)
     }
 
-    override fun createRetrievingNotificationsNotification(): Notification {
+    fun createRetrievingNotificationsNotification(): Notification {
         val channelId = createOngoingOperationChannel()
         val notificationTitle = context.getString(R.string.retrieving_notifications)
         return NotificationCompat.Builder(context, channelId)
@@ -219,11 +231,16 @@ class NotificationServer @Inject constructor(
             .build()
     }
 
-    override fun notifyUserLoggedOut(user: User?) {
+    fun notifyUserLoggedOut(user: User?) {
+
+        val summaryText = user?.addresses?.primary?.email?.s
+            ?: user?.name?.s
+            ?: context.getString(R.string.app_name)
+
         val inboxStyle = NotificationCompat.BigTextStyle()
             .setBigContentTitle(context.getString(R.string.logged_out))
             .bigText(context.getString(R.string.logged_out_description))
-            .setSummaryText(user?.defaultEmail ?: context.getString(R.string.app_name))
+            .setSummaryText(summaryText)
 
         val channelId = createAccountChannel()
 
@@ -249,7 +266,12 @@ class NotificationServer @Inject constructor(
         notificationManager.notify(NOTIFICATION_ID_LOGGED_OUT, builder.build())
     }
 
-    override fun notifyAboutAttachment(
+    @Deprecated("Use with new User model")
+    fun notifyUserLoggedOut(user: LegacyUser?) {
+        notifyUserLoggedOut(user?.toNewUser())
+    }
+
+    fun notifyAboutAttachment(
         filename: String,
         uri: Uri,
         mimeType: String?,
@@ -290,10 +312,12 @@ class NotificationServer @Inject constructor(
      * @return [NotificationCompat.Builder] with common parameters that will be used from
      * [notifySingleNewEmail] and [notifyMultipleUnreadEmail]
      *
-     * @param user [User] for get some Notification's settings
+     * @param user [LegacyUser] for get some Notification's settings
      */
     private fun createGenericEmailNotification(
-        user: User
+        notificationSettings: Int,
+        ringtoneUri: Uri?,
+        isNotificationVisibleInLockScreen: Boolean
     ): NotificationCompat.Builder {
 
         // Schedule a Wakelock
@@ -325,26 +349,26 @@ class NotificationServer @Inject constructor(
             .setPriority(PRIORITY_HIGH)
 
         // Set Notification visibility
-        if (user.isNotificationVisibilityLockScreen) {
+        if (isNotificationVisibleInLockScreen) {
             builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         }
 
         // Set Vibration - TODO those Int's are not very clear :/
-        if (user.notificationSetting == 2 || user.notificationSetting == 3) {
+        if (notificationSettings == 2 || notificationSettings == 3) {
             builder.setVibrate(longArrayOf(1000, 500))
         }
 
         // Set Sound - TODO those Int's are not very clear :/
-        if (user.notificationSetting == 1 || user.notificationSetting == 3) {
+        if (notificationSettings == 1 || notificationSettings == 3) {
             val notificationSound = try {
                 // TODO Make sure we have needed permissions and sound file can be read -
                 //  I am not sure if this even does anything (Adam)
                 // Asserting the user's ringtone is not null, otherwise an exception will be thrown
                 // and so fallback to default ringtone
-                user.ringtone?.also { ringtoneUri ->
-                    context.contentResolver.openInputStream(ringtoneUri).use {
+                ringtoneUri?.also { uri ->
+                    context.contentResolver.openInputStream(uri).use {
                         context.grantUriPermission(
-                            "com.android.systemui", ringtoneUri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            "com.android.systemui", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
                         )
                     }
                 }  ?: RingtoneManager.getDefaultUri(TYPE_NOTIFICATION)
@@ -371,9 +395,12 @@ class NotificationServer @Inject constructor(
      * @param notificationBody [String] body of the Notification
      * @param sender [String] name of the sender of the email
      */
-    override fun notifySingleNewEmail(
+    fun notifySingleNewEmail(
         userManager: UserManager,
         user: User,
+        notificationSettings: Int,
+        ringtoneUri: Uri?,
+        isNotificationVisibleInLockScreen: Boolean,
         message: Message?,
         messageId: String,
         notificationBody: String?,
@@ -384,7 +411,7 @@ class NotificationServer @Inject constructor(
         val contentIntent = Intent(context, MessageDetailsActivity::class.java)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, messageId)
             .putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, false)
-            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USERNAME, user.username)
+            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USERNAME, user.name.s)
 
         val stackBuilder = TaskStackBuilder.create(context)
             .addParentStack(MessageDetailsActivity::class.java)
@@ -398,7 +425,8 @@ class NotificationServer @Inject constructor(
         val replyIntent = if (primaryUser) message?.let { context.buildReplyIntent(message, user, userManager) } else null
 
         // Create Notification Style
-        val userDisplayName = user.defaultAddress?.displayName?.ifBlank { user.defaultAddress?.email }
+        val userDisplayName = user.addresses.primary?.email?.s
+            ?: user.name.s
         val inboxStyle = NotificationCompat.InboxStyle().run {
             setBigContentTitle(sender)
             setSummaryText(message?.toListString ?: userDisplayName ?: context.getString(R.string.app_name))
@@ -407,33 +435,86 @@ class NotificationServer @Inject constructor(
 
 
         // Create Notification's Builder with the prepared params
-        val builder = createGenericEmailNotification(user).apply {
-            setContentTitle(sender)
-            notificationBody?.let { setContentText(it) }
-            setContentText(notificationBody)
-            setContentIntent(contentPendingIntent)
-            setStyle(inboxStyle)
-            addAction(
-                R.drawable.archive,
-                context.getString(R.string.archive),
-                archiveIntent
-            )
-            addAction(
-                R.drawable.action_notification_trash,
-                context.getString(R.string.trash),
-                trashIntent
-            )
-            if (replyIntent != null)
+        val builder =
+            createGenericEmailNotification(
+                notificationSettings,
+                ringtoneUri,
+                isNotificationVisibleInLockScreen
+            ).apply {
+                setContentTitle(sender)
+                notificationBody?.let { setContentText(it) }
+                setContentText(notificationBody)
+                setContentIntent(contentPendingIntent)
+                setStyle(inboxStyle)
                 addAction(
-                    R.drawable.action_notification_reply,
-                    context.getString(R.string.reply),
-                    replyIntent
+                    R.drawable.archive,
+                    context.getString(R.string.archive),
+                    archiveIntent
                 )
-        }
+                addAction(
+                    R.drawable.action_notification_trash,
+                    context.getString(R.string.trash),
+                    trashIntent
+                )
+                if (replyIntent != null)
+                    addAction(
+                        R.drawable.action_notification_reply,
+                        context.getString(R.string.reply),
+                        replyIntent
+                    )
+            }
 
         // Build the Notification
         val notification = builder.build()
-        notificationManager.notify(user.username.hashCode(), notification)
+        notificationManager.notify(user.id.hashCode(), notification)
+    }
+
+    /**
+     * Show a Notification for a SINGLE new Email. This will be called ONLY if there are not other
+     * unread Notifications
+     *
+     * @param userManager // FIXME: FIND A BETTER SOLUTION - [UserManager] cannot be instantiated on Main Thread :/
+     * @param user current logged [User]
+     * @param message [Message] received to show to the user
+     * @param messageId [String] id for retrieve the [Message] details
+     * @param notificationBody [String] body of the Notification
+     * @param sender [String] name of the sender of the email
+     */
+    @Deprecated("Use with new User model", ReplaceWith(
+        "notifySingleNewEmail(\n" +
+            "    userManager,\n" +
+            "    user.toNewUser(),\n" +
+            "    user.notificationSetting,\n" +
+            "    user.ringtone,\n" +
+            "    user.isNotificationVisibilityLockScreen,\n" +
+            "    message,\n" +
+            "    messageId,\n" +
+            "    notificationBody,\n" +
+            "    sender,\n" +
+            "    primaryUser\n" +
+            ")"
+    ))
+    fun notifySingleNewEmail(
+        userManager: UserManager,
+        user: LegacyUser,
+        message: Message?,
+        messageId: String,
+        notificationBody: String?,
+        sender: String,
+        primaryUser: Boolean
+    ) {
+        notifySingleNewEmail(
+            userManager,
+            user.toNewUser(),
+            user.notificationSetting,
+            user.ringtone,
+            user.isNotificationVisibilityLockScreen,
+            message,
+            messageId,
+            notificationBody,
+            sender,
+            primaryUser
+        )
     }
 
     /**
@@ -443,12 +524,15 @@ class NotificationServer @Inject constructor(
      * @param loggedInUser current logged [User]
      * @param unreadNotifications [List] of [RoomNotification] to show to the user
      */
-    override fun notifyMultipleUnreadEmail(
+    fun notifyMultipleUnreadEmail(
         userManager: UserManager,
         loggedInUser: User,
+        notificationSettings: Int,
+        ringtoneUri: Uri?,
+        isNotificationVisibleInLockScreen: Boolean,
         unreadNotifications: List<RoomNotification>
     ) {
-        val contentPendingIntent = getMailboxActivityIntent(userManager.username, loggedInUser.username)
+        val contentPendingIntent = getMailboxActivityIntent(userManager.requireCurrentUserId(), loggedInUser.id)
 
         // Prepare Notification info
         val notificationTitle = context.getString(R.string.new_emails, unreadNotifications.size)
@@ -456,7 +540,7 @@ class NotificationServer @Inject constructor(
         // Create Notification Style
         val inboxStyle = NotificationCompat.InboxStyle()
             .setBigContentTitle(notificationTitle)
-            .setSummaryText(loggedInUser.username)
+            .setSummaryText(loggedInUser.name.s)
         unreadNotifications.reversed().forEach { notification ->
             inboxStyle.addLine(
                 createSpannableLine(
@@ -467,23 +551,56 @@ class NotificationServer @Inject constructor(
         }
 
         // Create Notification's Builder with the prepared params
-        val builder = createGenericEmailNotification(loggedInUser)
-            .setContentTitle(notificationTitle)
-            .setContentIntent(contentPendingIntent)
-            .setStyle(inboxStyle)
+        val builder =
+            createGenericEmailNotification(notificationSettings, ringtoneUri, isNotificationVisibleInLockScreen)
+                .setContentTitle(notificationTitle)
+                .setContentIntent(contentPendingIntent)
+                .setStyle(inboxStyle)
 
         // Build the Notification
         val notification = builder.build()
 
-        notificationManager.notify(loggedInUser.username.hashCode(), notification)
+        notificationManager.notify(loggedInUser.id.hashCode(), notification)
     }
 
-    private fun getMailboxActivityIntent(currentUserUsername: String, loggedInUser: String): PendingIntent {
+    /**
+     * Show a Notification for MORE THAN ONE unread Emails. This will be called ONLY if there are
+     * MORE than one unread Notifications
+     *
+     * @param user current logged [LegacyUser]
+     * @param unreadNotifications [List] of [RoomNotification] to show to the user
+     */
+    @Deprecated("Use with new User model", ReplaceWith(
+        "notifyMultipleUnreadEmail(\n" +
+            "    userManager,\n" +
+            "    user.toNewUser(),\n" +
+            "    user.notificationSetting,\n" +
+            "    user.ringtone,\n" +
+            "    user.isNotificationVisibilityLockScreen,\n" +
+            "    unreadNotifications\n" +
+            ")"
+    ))
+    fun notifyMultipleUnreadEmail(
+        userManager: UserManager,
+        user: LegacyUser,
+        unreadNotifications: List<RoomNotification>
+    ) {
+        notifyMultipleUnreadEmail(
+            userManager,
+            user.toNewUser(),
+            user.notificationSetting,
+            user.ringtone,
+            user.isNotificationVisibilityLockScreen,
+            unreadNotifications
+        )
+    }
+
+    private fun getMailboxActivityIntent(currentUserId: Id, loggedInUserId: Id): PendingIntent {
         // Create content Intent for open MailboxActivity
         val contentIntent = Intent(context, MailboxActivity::class.java)
-        if (currentUserUsername != loggedInUser) {
-            contentIntent.putExtra(EXTRA_SWITCHED_USER, true)
-            contentIntent.putExtra(EXTRA_SWITCHED_TO_USER, loggedInUser)
+        if (currentUserId != loggedInUserId) {
+            contentIntent.putExtra(EXTRA_HAS_SWITCHED_USER, true)
+            contentIntent.putExtra(EXTRA_SWITCHED_TO_USER_ID, loggedInUserId.s)
         }
         val requestCode = System.currentTimeMillis().toInt()
         return PendingIntent.getActivity(context, requestCode, contentIntent, 0)
@@ -514,7 +631,7 @@ class NotificationServer @Inject constructor(
     }
 
     private fun createGenericErrorSendingMessageNotification(
-        username: String
+        userId: Id
     ): NotificationCompat.Builder {
 
         // Create channel and get id
@@ -523,13 +640,16 @@ class NotificationServer @Inject constructor(
         // Create content Intent to open Drafts
         val contentIntent = Intent(context, MailboxActivity::class.java)
         contentIntent.putExtra(EXTRA_MAILBOX_LOCATION, Constants.MessageLocationType.DRAFT.messageLocationTypeValue)
-        contentIntent.putExtra(EXTRA_USERNAME, username)
+        contentIntent.putExtra(EXTRA_USER_ID, userId.s)
 
         val stackBuilder = TaskStackBuilder.create(context)
             .addParentStack(MailboxActivity::class.java)
             .addNextIntent(contentIntent)
 
-        val contentPendingIntent = stackBuilder.getPendingIntent(username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, PendingIntent.FLAG_UPDATE_CURRENT)
+        val contentPendingIntent = stackBuilder.getPendingIntent(
+            userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
         // Set Notification's colors
         val mainColor = context.getColorCompat(R.color.ocean_blue)
@@ -544,20 +664,36 @@ class NotificationServer @Inject constructor(
             .setAutoCancel(true)
     }
 
-    override fun notifySingleErrorSendingMessage(error: String, username: String) {
+    fun notifySingleErrorSendingMessage(
+        userId: Id,
+        username: Name,
+        error: String,
+    ) {
         val bigTextStyle = NotificationCompat.BigTextStyle()
             .setBigContentTitle(context.getString(R.string.message_failed))
-            .setSummaryText(username)
+            .setSummaryText(username.s)
             .bigText(error)
 
-        val notificationBuilder = createGenericErrorSendingMessageNotification(username)
+        // Create notification builder
+        val notificationBuilder = createGenericErrorSendingMessageNotification(userId)
             .setStyle(bigTextStyle)
 
         val notification = notificationBuilder.build()
-        notificationManager.notify(username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
+        notificationManager.notify(userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
     }
 
-    override fun notifyMultipleErrorSendingMessage(
+    @Deprecated(
+        "Use with new user id and username",
+        ReplaceWith("notifySingleErrorSendingMessage(Id(user.id), Name(user.name), error)")
+    )
+    fun notifySingleErrorSendingMessage(
+        user: LegacyUser,
+        error: String,
+    ) {
+        notifySingleErrorSendingMessage(Id(user.id), Name(user.name), error)
+    }
+
+    fun notifyMultipleErrorSendingMessage(
         unreadSendingFailedNotifications: List<SendingFailedNotification>,
         user: User
     ) {
@@ -567,31 +703,75 @@ class NotificationServer @Inject constructor(
         // Create Notification Style
         val bigTextStyle = NotificationCompat.BigTextStyle()
             .setBigContentTitle(notificationTitle)
-            .setSummaryText(user.defaultEmail ?: user.username ?: context.getString(R.string.app_name))
+            .setSummaryText(user.addresses.primary?.email?.s ?: user.name.s)
             .bigText(createSpannableBigText(unreadSendingFailedNotifications))
 
         // Create notification builder
-        val notificationBuilder = createGenericErrorSendingMessageNotification(user.username)
+        val notificationBuilder = createGenericErrorSendingMessageNotification(user.id)
             .setStyle(bigTextStyle)
 
         // Build and show notification
         val notification = notificationBuilder.build()
-        notificationManager.notify(user.username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
+        notificationManager.notify(user.id.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
     }
 
-    override fun notifySaveDraftError(errorMessage: String, messageSubject: String?, username: String) {
+    @Deprecated("Use with new user model")
+    fun notifyMultipleErrorSendingMessage(
+        unreadSendingFailedNotifications: List<SendingFailedNotification>,
+        user: LegacyUser
+    ) {
+        notifyMultipleErrorSendingMessage(unreadSendingFailedNotifications, user.toNewUser())
+    }
+
+    fun notifySaveDraftError(userId: Id, errorMessage: String, messageSubject: String?, username: Name) {
         val title = context.getString(R.string.failed_saving_draft_online, messageSubject)
 
         val bigTextStyle = NotificationCompat.BigTextStyle()
             .setBigContentTitle(title)
-            .setSummaryText(username)
+            .setSummaryText(username.s)
             .bigText(errorMessage)
 
-        val notificationBuilder = createGenericErrorSendingMessageNotification(username)
+        val notificationBuilder = createGenericErrorSendingMessageNotification(userId)
             .setStyle(bigTextStyle)
 
         val notification = notificationBuilder.build()
         notificationManager.notify(username.hashCode() + NOTIFICATION_ID_SAVE_DRAFT_ERROR, notification)
     }
 
+}
+
+private fun Context.buildReplyIntent(
+    message: Message,
+    user: User,
+    userManager: UserManager
+): PendingIntent? {
+    val intent = Intent(this, ComposeMessageActivity::class.java)
+    MessageUtils.addRecipientsToIntent(
+        intent,
+        ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
+        message.senderEmail,
+        Constants.MessageActionType.REPLY,
+        user.addresses
+    )
+
+    val newMessageTitle = MessageUtils.buildNewMessageTitle(this,
+        Constants.MessageActionType.REPLY, message.subject)
+
+    if (message.messageBody != null) {
+        message.decrypt(userManager, user.id)
+    }
+
+    intent
+        .putExtra(ComposeMessageActivity.EXTRA_REPLY_FROM_GCM, true)
+        .putExtra(ComposeMessageActivity.EXTRA_SENDER_NAME, message.senderName)
+        .putExtra(ComposeMessageActivity.EXTRA_SENDER_ADDRESS, message.sender?.emailAddress)
+        .putExtra(ComposeMessageActivity.EXTRA_MESSAGE_TITLE, newMessageTitle)
+        .putExtra(ComposeMessageActivity.EXTRA_MESSAGE_BODY, message.decryptedHTML)
+        .putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, message.messageId)
+        .putExtra(ComposeMessageActivity.EXTRA_MESSAGE_TIMESTAMP, message.timeMs)
+        .putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ENCRYPTED, message.isEncrypted())
+        .putExtra(ComposeMessageActivity.EXTRA_PARENT_ID, message.messageId)
+        .putExtra(ComposeMessageActivity.EXTRA_ACTION_ID, Constants.MessageActionType.REPLY)
+
+    return PendingIntent.getActivity(this, System.currentTimeMillis().toInt(), intent, 0)
 }

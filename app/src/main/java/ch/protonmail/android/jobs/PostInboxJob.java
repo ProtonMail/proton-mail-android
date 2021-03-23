@@ -26,11 +26,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import ch.protonmail.android.api.models.IDList;
-import ch.protonmail.android.api.models.room.counters.CountersDatabase;
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory;
-import ch.protonmail.android.api.models.room.counters.UnreadLocationCounter;
-import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.data.local.CounterDao;
+import ch.protonmail.android.data.local.CounterDatabase;
+import ch.protonmail.android.data.local.model.Message;
+import ch.protonmail.android.data.local.model.UnreadLocationCounter;
 import ch.protonmail.android.events.RefreshDrawerEvent;
 import ch.protonmail.android.utils.AppUtil;
 
@@ -53,18 +53,19 @@ public class PostInboxJob extends ProtonMailCounterJob {
 
     @Override
     public void onAdded() {
-        final CountersDatabase countersDatabase = CountersDatabaseFactory.Companion.getInstance(
-                getApplicationContext()).getDatabase();
+        final CounterDao counterDao = CounterDatabase.Companion
+                .getInstance(getApplicationContext(), getUserId())
+                .getDao();
 
         int totalUnread = 0;
         for (String id : mMessageIds) {
             final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
                 if (!message.isRead()) {
-                    UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(message.getLocation());
+                    UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
                     if (unreadLocationCounter != null) {
                         unreadLocationCounter.decrement();
-                        countersDatabase.insertUnreadLocation(unreadLocationCounter);
+                        counterDao.insertUnreadLocation(unreadLocationCounter);
                     }
                     totalUnread++;
                 }
@@ -76,16 +77,16 @@ public class PostInboxJob extends ProtonMailCounterJob {
                     }
                 }
                 message.setLocation(Constants.MessageLocationType.INBOX.getMessageLocationTypeValue());
-                getMessageDetailsRepository().saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageBlocking(message);
             }
         }
 
-        UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(Constants.MessageLocationType.INBOX.getMessageLocationTypeValue());
+        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(Constants.MessageLocationType.INBOX.getMessageLocationTypeValue());
         if (unreadLocationCounter == null) {
             return;
         }
         unreadLocationCounter.increment(totalUnread);
-        countersDatabase.insertUnreadLocation(unreadLocationCounter);
+        counterDao.insertUnreadLocation(unreadLocationCounter);
         AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 

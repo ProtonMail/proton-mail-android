@@ -44,7 +44,17 @@ annotation class BackupSharedPreferences
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 @Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
-annotation class CurrentUsername
+annotation class CurrentUserCrypto
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
+annotation class CurrentUserId
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
+annotation class CurrentUserMailSettings
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
@@ -55,3 +65,13 @@ annotation class DefaultSharedPreferences
 @Retention(AnnotationRetention.BINARY)
 @Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
 annotation class DohProviders
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
+annotation class MessageDaoQualifier
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
+annotation class SearchMessageDaoQualifier

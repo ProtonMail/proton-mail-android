@@ -29,7 +29,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.core.UserManager
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -37,15 +36,11 @@ import javax.inject.Inject
 
 /**
  * A Worker that handles fetching mail settings.
- *
- * @author Stefanija Boshkovska
  */
-
 class FetchMailSettingsWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val protonMailApiManager: ProtonMailApiManager,
-    private val userManager: UserManager,
     private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, workerParams) {
 
@@ -56,9 +51,7 @@ class FetchMailSettingsWorker @WorkerInject constructor(
                 protonMailApiManager.fetchMailSettings()
             }
         }.map { mailSettingsResponse ->
-            mailSettingsResponse.mailSettings?.let {
-                userManager.mailSettings = it
-            }
+            mailSettingsResponse.mailSettings
         }.fold(
             onSuccess = { Result.success() },
             onFailure = { Result.retry() }

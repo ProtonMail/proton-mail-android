@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -22,19 +22,19 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.widget.TextViewCompat
-import androidx.recyclerview.widget.RecyclerView
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.TextViewCompat
+import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.api.models.room.messages.Label
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
 import kotlinx.android.synthetic.main.messages_list_item_new.view.*

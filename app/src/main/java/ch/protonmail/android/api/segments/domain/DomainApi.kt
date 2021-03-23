@@ -23,8 +23,9 @@ import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import java.io.IOException
 
-class DomainApi(private val service: DomainPubService): BaseApi(), DomainApiSpec  {
+class DomainApi(private val service: DomainPubService) : BaseApi(), DomainApiSpec {
 
     @Throws(IOException::class)
-    override fun fetchAvailableDomains(): AvailableDomainsResponse = ParseUtils.parse(service.fetchAvailableDomains().execute())
+    override fun fetchAvailableDomains(): AvailableDomainsResponse =
+        ParseUtils.parse(service.fetchAvailableDomains().execute())
 }

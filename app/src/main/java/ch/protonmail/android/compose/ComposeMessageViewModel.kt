@@ -39,10 +39,6 @@ import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.messages.Attachment
-import ch.protonmail.android.api.models.room.messages.LocalAttachment
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.bl.HtmlProcessor
 import ch.protonmail.android.compose.send.SendMessage
@@ -50,6 +46,8 @@ import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
@@ -73,8 +71,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import java.util.HashMap
@@ -99,7 +97,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val dispatchers: DispatcherProvider,
     private val stringResourceResolver: StringResourceResolver,
     private val workManager: WorkManager,
-    private val sendMessageUseCase: SendMessage,
+    private val sendMessage: SendMessage,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -225,17 +223,17 @@ class ComposeMessageViewModel @Inject constructor(
     internal var autoSaveJob: Job? = null
     // endregion
 
-    private val loggedInUsernames = if (userManager.user.combinedContacts) {
-        AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext).getLoggedInUsers()
+    private val loggedInUserIds = if (userManager.user.combinedContacts) {
+        AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext).allLoggedInBlocking()
     } else {
-        listOf(userManager.username)
+        listOf(userManager.currentUserId)
     }
 
 
     fun init(processor: HtmlProcessor) {
         htmlProcessor = processor
         composeMessageRepository.lazyManager.reset()
-        composeMessageRepository.reloadDependenciesForUser(userManager.username)
+        composeMessageRepository.reloadDependenciesForUser(userManager.requireCurrentUserId())
         getSenderEmailAddresses()
         // if the user is free user, then we do not fetch contact groups and announce the setup is complete
         if (!userManager.user.isPaidUser) {
@@ -246,8 +244,10 @@ class ComposeMessageViewModel @Inject constructor(
                 loadPMContacts()
             }
         } else {
-            for (username in loggedInUsernames) {
-                fetchContactGroups(username)
+            for (userId in loggedInUserIds) {
+                userId?.let {
+                    fetchContactGroups(it)
+                }
             }
         }
     }
@@ -291,7 +291,7 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     @SuppressLint("CheckResult")
-    fun fetchContactGroups(username: String) {
+    fun fetchContactGroups(userId: Id) {
         if (!isPaidUser()) {
             return
         }
@@ -299,7 +299,7 @@ class ComposeMessageViewModel @Inject constructor(
             handleContactGroupsResult()
             return
         }
-        composeMessageRepository.getContactGroupsFromDB(username, userManager.user.combinedContacts)
+        composeMessageRepository.getContactGroupsFromDB(userId, userManager.user.combinedContacts)
             .flatMap {
                 for (group in it) {
                     val emails = composeMessageRepository.getContactGroupEmailsSync(group.ID)
@@ -375,7 +375,7 @@ class ComposeMessageViewModel @Inject constructor(
     fun onFetchMessageDetailEvent(event: FetchMessageDetailEvent) {
         if (event.success) {
             val message = event.message
-            message!!.decrypt(userManager, userManager.username)
+            message!!.decrypt(userManager, userManager.requireCurrentUserId())
             val decryptedMessage = message.decryptedHTML // todo check if any var should be set
             val messageId = event.messageId
             composeMessageRepository.markMessageRead(messageId)
@@ -489,7 +489,7 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     private suspend fun onDraftSaved(savedDraftId: String) {
-        val draft = requireNotNull(messageDetailsRepository.findMessageById(savedDraftId))
+        val draft = requireNotNull(messageDetailsRepository.findMessageById(savedDraftId).first())
 
         viewModelScope.launch(dispatchers.Main) {
             _draftId.set(draft.messageId)
@@ -514,9 +514,7 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     private suspend fun saveMessage(message: Message): Long =
-        withContext(dispatchers.Io) {
-            messageDetailsRepository.saveMessageInDB(message)
-        }
+        messageDetailsRepository.saveMessage(message)
 
     private fun getSenderEmailAddresses(userEmailAlias: String? = null) {
         val user = userManager.user
@@ -585,7 +583,7 @@ class ComposeMessageViewModel @Inject constructor(
         viewModelScope.launch {
             var message: Message? = null
             if (draftId.isNotEmpty()) {
-                message = composeMessageRepository.findMessage(draftId, dispatchers.Io)
+                message = composeMessageRepository.findMessage(draftId)
             }
             if (message != null) {
                 _draftId.set(message.messageId)
@@ -667,7 +665,7 @@ class ComposeMessageViewModel @Inject constructor(
 
         viewModelScope.launch {
             if (draftId.isNotEmpty()) {
-                val message = composeMessageRepository.findMessage(draftId, dispatchers.Io)
+                val message = composeMessageRepository.findMessage(draftId)
 
                 if (message != null) {
                     val messageAttachments = composeMessageRepository.getAttachments(message, _messageDataResult.isTransient, dispatchers.Io)
@@ -720,7 +718,7 @@ class ComposeMessageViewModel @Inject constructor(
             } else {
                 // this will ensure the message get latest message id if it was already saved in a create/update draft job
                 // and also that the message has all the latest edits in between draft saving (creation) and sending the message
-                val savedMessage = messageDetailsRepository.findMessageByMessageDbId(_dbId!!)
+                val savedMessage = messageDetailsRepository.findMessageByMessageDbId(_dbId!!).first()
                 message.dbId = _dbId
                 savedMessage?.let {
                     if (!TextUtils.isEmpty(it.localId)) {
@@ -742,7 +740,7 @@ class ComposeMessageViewModel @Inject constructor(
                 val saveDraftUniqueWorkId = "$SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX-${message.messageId})"
                 workManager.cancelUniqueWork(saveDraftUniqueWorkId)
 
-                sendMessageUseCase(
+                sendMessage(
                     SendMessage.SendMessageParameters(
                         message,
                         newAttachments,
@@ -949,9 +947,9 @@ class ComposeMessageViewModel @Inject constructor(
             return
         }
         _protonMailContactsLoaded = true
-        for (username in loggedInUsernames) {
-            fetchContactGroups(username)
-            composeMessageRepository.findAllMessageRecipients(username)
+        for (userId in loggedInUserIds) {
+            fetchContactGroups(userId!!)
+            composeMessageRepository.findAllMessageRecipients(userId)
                 .subscribeOn(ThreadSchedulers.io())
                 .observeOn(ThreadSchedulers.main())
                 .subscribe {

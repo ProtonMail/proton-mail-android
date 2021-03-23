@@ -21,8 +21,8 @@ package ch.protonmail.android.jobs;
 import com.birbit.android.jobqueue.Params;
 
 import ch.protonmail.android.api.models.ResponseBody;
-import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.events.PostPhishingReportEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.utils.AppUtil;

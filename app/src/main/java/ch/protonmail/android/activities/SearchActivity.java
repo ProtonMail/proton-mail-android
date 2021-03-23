@@ -48,13 +48,16 @@ import ch.protonmail.android.activities.mailbox.InvalidateSearchDatabase;
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter;
-import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.ContactsRepository;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
+import ch.protonmail.android.data.local.PendingActionDao;
+import ch.protonmail.android.data.local.PendingActionDatabase;
+import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.NoResultsEvent;
-import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
 import ch.protonmail.android.utils.AppUtil;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -66,6 +69,8 @@ import static ch.protonmail.android.core.Constants.MessageLocationType;
 @AndroidEntryPoint
 public class SearchActivity extends BaseActivity {
 
+    private PendingActionDao pendingActionDao;
+
     private MessagesRecyclerViewAdapter mAdapter;
     private TextView noMessagesView;
     private ProgressBar mProgressBar;
@@ -73,6 +78,7 @@ public class SearchActivity extends BaseActivity {
     private String mQueryText = "";
     private int mCurrentPage;
     private SearchView searchView = null;
+    private MessageDao searchDao;
 
     @Inject
     MessageDetailsRepository messageDetailsRepository;
@@ -87,6 +93,12 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        searchDao = MessageDatabase.Companion
+                .getSearchDatabase(getApplicationContext(), mUserManager.requireCurrentUserId())
+                .getDao();
+        pendingActionDao = PendingActionDatabase.Companion
+                .getInstance(getApplicationContext(), mUserManager.requireCurrentUserId())
+                .getDao();
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -248,11 +260,6 @@ public class SearchActivity extends BaseActivity {
         MessageLocationType messageLocation = MessageLocationType.Companion.fromInt(message.getLocation());
         return messageLocation == MessageLocationType.ALL_DRAFT ||
                 messageLocation == MessageLocationType.DRAFT;
-    }
-
-    @Subscribe
-    public void onMailSettingsEvent(MailSettingsEvent event) {
-        loadMailSettings();
     }
 
     @Subscribe

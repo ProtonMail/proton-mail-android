@@ -34,6 +34,7 @@ import ch.protonmail.android.domain.entity.user.UserKeys
 import ch.protonmail.android.utils.extensions.app
 import com.proton.gopenpgp.helper.Helper
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
@@ -50,21 +51,24 @@ import kotlin.test.assertEquals
 
 class AddressKeyActivationWorkerTest {
 
+    private val testUserId = Id("id")
+
     @RelaxedMockK
     private lateinit var context: Context
 
     @RelaxedMockK
     private lateinit var parameters: WorkerParameters
 
-    @RelaxedMockK
-    private lateinit var userManager: UserManager
+    private val userManager: UserManager = mockk {
+        every { getMailboxPassword(any()) } returns "haslo".toByteArray()
+        every { openPgp } returns mockk(relaxed = true)
+        coEvery { getUser(any()) } returns mockk(relaxed = true)
+    }
 
     @MockK
     private lateinit var api: ProtonMailApiManager
 
     private lateinit var worker: AddressKeyActivationWorker
-
-    private val testUserName = "user1"
 
     @BeforeTest
     fun setUp() {
@@ -78,9 +82,7 @@ class AddressKeyActivationWorkerTest {
             api,
             TestDispatcherProvider
         )
-        every { parameters.inputData } returns workDataOf("KEY_INPUT_DATA_USERNAME" to testUserName)
-        every { userManager.getMailboxPassword(any()) } returns "haslo".toByteArray()
-        every { userManager.openPgp } returns mockk(relaxed = true)
+        every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_USER_ID to testUserId.s)
         every { context.app.organization } returns null
     }
 
@@ -134,7 +136,7 @@ class AddressKeyActivationWorkerTest {
             every { keys } returns testUserKeys
         }
         val testJsonFingerprint = "{\"json\": \"value\"}"
-        every { userManager.getUser(testUserName).toNewUser() } returns testUser
+        coEvery { userManager.getLegacyUser(testUserId).toNewUser() } returns testUser
         every { Helper.getJsonSHA256Fingerprints(any()) } returns testJsonFingerprint.toByteArray()
 
         // when

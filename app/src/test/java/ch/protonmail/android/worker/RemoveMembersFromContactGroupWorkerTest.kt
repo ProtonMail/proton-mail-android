@@ -24,7 +24,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
+import ch.protonmail.android.data.local.ContactDao
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
@@ -46,7 +46,7 @@ class RemoveMembersFromContactGroupWorkerTest {
 
 
     @MockK
-    private lateinit var contactsDb: ContactsDatabase
+    private lateinit var contactDb: ContactDao
 
     @MockK
     private lateinit var api: ProtonMailApiManager
@@ -60,7 +60,7 @@ class RemoveMembersFromContactGroupWorkerTest {
             context,
             parameters,
             api,
-            contactsDb,
+            contactDb,
             TestDispatcherProvider
         )
     }

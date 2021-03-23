@@ -32,9 +32,9 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.IDList
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.ContactDatabase
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -53,8 +53,8 @@ class DeleteContactWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
-    private val contactsDatabase: ContactsDatabase,
-    private val contactsDatabaseFactory: ContactsDatabaseFactory,
+    private val contactDao: ContactDao,
+    private val contactDatabase: ContactDatabase,
     private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 
@@ -92,15 +92,15 @@ class DeleteContactWorker @WorkerInject constructor(
 
     private fun updateDb(contactIds: Array<String>) {
         for (contactId in contactIds) {
-            val contactData = contactsDatabase.findContactDataById(contactId)
+            val contactData = contactDao.findContactDataById(contactId)
 
             contactData?.let { contact ->
-                contactsDatabaseFactory.runInTransaction {
+                contactDatabase.runInTransaction {
                     contact.contactId?.let {
-                        val contactEmails = contactsDatabase.findContactEmailsByContactId(it)
-                        contactsDatabase.deleteAllContactsEmails(contactEmails)
+                        val contactEmails = contactDao.findContactEmailsByContactId(it)
+                        contactDao.deleteAllContactsEmails(contactEmails)
                     }
-                    contactsDatabase.deleteContactData(contact)
+                    contactDao.deleteContactData(contact)
                 }
             }
         }

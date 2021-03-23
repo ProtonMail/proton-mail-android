@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-
 import studio.forface.easygradle.dsl.*
 import studio.forface.easygradle.dsl.android.*
 
@@ -50,7 +49,7 @@ fun initVersions() {
     // endregion
 
     // region Others
-    `assert4k version` =                        "0.5.7"         // Released: Aug 15, 2020
+    `assert4k version` =                        "0.6"           // Released: Jan 21, 2021
     `assistedInject version` =                  "0.6.0"         // Released: Sep 14, 2020
     `dagger version` =                          "2.28.3"        // Released: Jul 18, 2020
 
@@ -74,6 +73,7 @@ const val `Proton-kotlin-test version` =        "0.2"           // Released: Oct
 
 const val `Proton-domain version` =             "0.2.4"         // Released: Nov 18, 2020
 const val `Proton-presentation version` =       "0.5.4"         // Released: Feb 01, 2021
+const val `Proton-data version` =               "0.2.2"         // Released: Jan 20, 2021
 
 @Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
 
@@ -107,6 +107,7 @@ const val `jsoup version` =                     "1.13.1"        // Released: Mar
 const val `minidns version` =                   "0.3.3"         // Released: Oct 14, 2018
 const val `okHttp3 version` =                   "3.14.9"        // Released: May 17, 2020 TODO: 4.x requires some refactor
 const val `okHttp-url-connection version` =     "3.14.9"        // Released: Sep, 2020
+const val `okio version` =                      "2.10.0"        // Released: Jan 07, 2021
 const val `rf2 converter version` =             "2.9.0"         // Released: May 20, 2020
 const val `rxJava version` =                    "2.0.2"         // Released: Dec 02, 201
 const val `rxRelay version` =                   "2.1.1"         // Released: Aug 23, 201
@@ -117,4 +118,3 @@ const val `stetho version` =                    "1.5.1"         // Released: Mar
 const val `timber version` =                    "4.7.1"         // Released:
 const val `trustKit version` =                  "1.1.2"         // Released: Jun 09, 2019
 const val `remark version` =                    "1.1.0"         // Released: Dec 08, 2016
-const val `okio version` =                      "2.10.0"        // Released: Jan 07, 2021

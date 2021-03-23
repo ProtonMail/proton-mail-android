@@ -18,6 +18,9 @@
  */
 package ch.protonmail.android.activities;
 
+import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_DELETE_ORIGINAL_FILE_BOOLEAN;
+import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
+
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
@@ -60,19 +63,20 @@ import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.adapters.AttachmentListAdapter;
-import ch.protonmail.android.api.models.room.messages.Attachment;
-import ch.protonmail.android.api.models.room.messages.LocalAttachment;
 import ch.protonmail.android.attachments.AttachmentsViewModel;
 import ch.protonmail.android.attachments.AttachmentsViewState;
 import ch.protonmail.android.attachments.ImportAttachmentsWorker;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
+import ch.protonmail.android.data.local.model.Attachment;
+import ch.protonmail.android.data.local.model.LocalAttachment;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.PostImportAttachmentEvent;
 import ch.protonmail.android.events.PostImportAttachmentFailureEvent;
 import ch.protonmail.android.events.Status;
-import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.DownloadUtils;
@@ -83,9 +87,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import timber.log.Timber;
-
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_DELETE_ORIGINAL_FILE_BOOLEAN;
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
 
 @AndroidEntryPoint
 public class AddAttachmentsActivity extends BaseStoragePermissionActivity implements AttachmentListAdapter.IAttachmentListener {
@@ -98,6 +99,8 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     private static final int REQUEST_CODE_ATTACH_FILE = 1;
     private static final int REQUEST_CODE_TAKE_PHOTO = 2;
     private static final String STATE_PHOTO_PATH = "STATE_PATH_TO_PHOTO";
+
+    private MessageDao messageDao;
 
     private AttachmentListAdapter mAdapter;
     @BindView(R.id.progress_layout)
@@ -195,6 +198,8 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        messageDao = MessageDatabase.Companion.getInstance(getApplicationContext(), mUserManager.requireCurrentUserId()).getDao();
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -304,11 +309,6 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
 
     private boolean isAttachmentsCountAllowed() {
         return mAdapter != null && mAdapter.getCount() < Constants.MAX_ATTACHMENTS;
-    }
-
-    @Subscribe
-    public void onMailSettingsEvent(MailSettingsEvent event) {
-        loadMailSettings();
     }
 
     @Subscribe

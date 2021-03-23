@@ -36,10 +36,19 @@ public class ReportBugsJob extends ProtonMailEndlessJob {
     private final String mClientVersion;
     private final String mTitle;
     private final String mDescription;
-    private final String mUserName;
+    private final String username;
     private final String mEmail;
 
-    public ReportBugsJob(@NonNull String OSName, @NonNull String appVersion, @NonNull String client, @NonNull String clientVersion, @NonNull String title, @NonNull String description, @NonNull String username, @NonNull String email) {
+    public ReportBugsJob(
+            @NonNull String OSName,
+            @NonNull String appVersion,
+            @NonNull String client,
+            @NonNull String clientVersion,
+            @NonNull String title,
+            @NonNull String description,
+            @NonNull String username,
+            @NonNull String email
+    ) {
         super(new Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_BUGS));
         mOSName = OSName;
         mAppVersion = appVersion;
@@ -47,7 +56,7 @@ public class ReportBugsJob extends ProtonMailEndlessJob {
         mClientVersion = clientVersion;
         mTitle = title;
         mDescription = description;
-        mUserName = username;
+        this.username = username;
         mEmail = email;
     }
 
@@ -61,7 +70,8 @@ public class ReportBugsJob extends ProtonMailEndlessJob {
 
     @Override
     public void onRun() throws Throwable {
-        ResponseBody response = getApi().reportBug(mOSName, mAppVersion, mClient, mClientVersion, mTitle, mDescription, mUserName, mEmail);
+        ResponseBody response =
+                getApi().reportBug(mOSName, mAppVersion, mClient, mClientVersion, mTitle, mDescription, username, mEmail);
         if (response.getCode() == Constants.RESPONSE_CODE_OK) {
             AppUtil.postEventOnUi(new BugReportEvent(Status.SUCCESS));
         } else {

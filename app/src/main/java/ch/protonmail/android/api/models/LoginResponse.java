@@ -50,6 +50,7 @@ public class LoginResponse extends SrpResponseBody {
         AccessToken = in.readString();
         TokenType = in.readString();
         UID = in.readString();
+        UserID = in.readString();
         RefreshToken = in.readString();
         PasswordMode = in.readInt();
         scope = in.readString();
@@ -63,6 +64,7 @@ public class LoginResponse extends SrpResponseBody {
         dest.writeString(AccessToken);
         dest.writeString(TokenType);
         dest.writeString(UID);
+        dest.writeString(UserID);
         dest.writeString(RefreshToken);
         dest.writeInt(PasswordMode);
         dest.writeString(scope);
@@ -92,6 +94,8 @@ public class LoginResponse extends SrpResponseBody {
     public String getUID() {
         return UID;
     }
+
+    public String getUserID() { return UserID; }
 
     public String getPrivateKey() {
         return PrivateKey;

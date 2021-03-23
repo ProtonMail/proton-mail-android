@@ -34,14 +34,18 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.TokenManager
+import ch.protonmail.android.core.PREF_PIN
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.AppUtil
+import me.proton.core.util.android.sharedpreferences.clearAll
 import timber.log.Timber
 import javax.inject.Inject
 
-internal const val KEY_INPUT_USER_NAME = "KeyInputUserName"
+internal const val KEY_INPUT_USER_ID = "KeyInputUserId"
 internal const val KEY_INPUT_FCM_REGISTRATION_ID = "KeyInputRegistrationId"
 
 /**
@@ -59,18 +63,14 @@ class LogoutWorker @WorkerInject constructor(
 
     override suspend fun doWork(): Result =
         runCatching {
-            val userName = inputData.getString(KEY_INPUT_USER_NAME) ?: userManager.username
+            val userId = Id(checkNotNull(inputData.getString(KEY_INPUT_USER_ID)) { "User id is required" })
             val registrationId = inputData.getString(KEY_INPUT_FCM_REGISTRATION_ID) ?: ""
 
-            if (userName.isEmpty()) {
-                throw IllegalArgumentException("Cannot proceed with an empty user name")
-            }
+            Timber.v("Unregistering user: $userId")
 
-            Timber.v("Unregistering user: $userName")
-
-            val loggedInUsers = accountManager.getLoggedInUsers()
+            val loggedInUsers = accountManager.allLoggedIn()
             // Unregister FCM only if this is the last user on the device
-            if (loggedInUsers.isEmpty() || loggedInUsers.size == 1 && loggedInUsers[0] == userName) {
+            if (loggedInUsers.isEmpty() || loggedInUsers.size == 1 && loggedInUsers.first() == userId) {
                 if (registrationId.isNotEmpty()) {
                     Timber.v("Unregistering from Firebase Cloud Messaging (FCM)")
                     api.unregisterDevice(registrationId)
@@ -82,13 +82,16 @@ class LogoutWorker @WorkerInject constructor(
             accountManager.clear()
 
             // Revoke access token through API
-            if (userName.isNotEmpty()) {
-                api.revokeAccess(userName)
-            }
+            api.revokeAccess(userId)
 
-            AppUtil.deleteSecurePrefs(userName, userManager.nextLoggedInAccountOtherThanCurrent == null)
-            userManager.getTokenManager(userName)?.clear()
-            TokenManager.clearInstance(userName)
+            PREF_PIN
+            val prefs = SecureSharedPreferences.getPrefsForUser(applicationContext, userId)
+            val isThereAnotherLoggedInUser = userManager.getNextLoggedInUser() == null
+            if (isThereAnotherLoggedInUser) prefs.clearAll()
+            else prefs.clearAll(excludedKeys = arrayOf(PREF_PIN))
+
+            userManager.getTokenManager(userId).clear()
+            TokenManager.clearInstance(userId)
         }.fold(
             onSuccess = { Result.success() },
             onFailure = { throwable ->
@@ -99,7 +102,7 @@ class LogoutWorker @WorkerInject constructor(
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
-        fun enqueue(userName: String, fcmRegistrationId: String): LiveData<WorkInfo> {
+        fun enqueue(userId: Id, fcmRegistrationId: String?): LiveData<WorkInfo> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -107,14 +110,15 @@ class LogoutWorker @WorkerInject constructor(
                 .setConstraints(constraints)
                 .setInputData(
                     workDataOf(
-                        KEY_INPUT_USER_NAME to userName,
+                        KEY_INPUT_USER_ID to userId.s,
                         KEY_INPUT_FCM_REGISTRATION_ID to fcmRegistrationId
                     )
                 )
                 .build()
             workManager.enqueue(workRequest)
-            Timber.v("Scheduling logout for $userName token: $fcmRegistrationId")
+            Timber.v("Scheduling logout for $userId - token: $fcmRegistrationId")
             return workManager.getWorkInfoByIdLiveData(workRequest.id)
         }
+
     }
 }

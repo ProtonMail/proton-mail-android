@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -36,10 +36,10 @@ import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.domain.entity.user.User;
 import ch.protonmail.android.events.BugReportEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.Status;
-import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.jobs.ReportBugsJob;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
@@ -136,8 +136,9 @@ public class ReportBugsActivity extends BaseActivity {
                 String appVersionName = String.format(getString(R.string.full_version_name_report_bugs), AppUtil.getAppVersionName(this), AppUtil.getAppVersionCode(this));
                 String title = mBugDescriptionTitle.getText().toString();
                 String description = mBugDescription.getText().toString();
-                String username = mUserManager.getUsername();
-                String email = mUserManager.getUser().getDefaultEmail();
+                User user = mUserManager.requireCurrentUserBlocking();
+                String username = user.getName().getS();
+                String email = user.getAddresses().getPrimary().getEmail().getS();
                 mJobManager.addJobInBackground(new ReportBugsJob(OSName, OSVersion, client, appVersionName, title, description, username, email));
                 TextExtensions.showToast(this, R.string.sending_report, Toast.LENGTH_SHORT);
                 saveLastInteraction();
@@ -145,11 +146,6 @@ public class ReportBugsActivity extends BaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Subscribe
-    public void  onMailSettingsEvent(MailSettingsEvent event) {
-        loadMailSettings();
     }
 
     @Subscribe

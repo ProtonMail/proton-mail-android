@@ -73,13 +73,12 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.activities.BaseConnectivityActivity;
 import ch.protonmail.android.activities.UpsellingActivity;
 import ch.protonmail.android.activities.guest.LoginActivity;
-import ch.protonmail.android.api.models.room.contacts.ContactEmail;
 import ch.protonmail.android.contacts.UnsavedChangesDialog;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.LogoutEvent;
-import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.Event;
@@ -802,11 +801,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             viewModel.checkConnectivityDelayed();
             return null;
         };
-    }
-
-    @Subscribe
-    public void onMailSettingsEvent(MailSettingsEvent event) {
-        loadMailSettings();
     }
 
     @Subscribe

@@ -38,7 +38,6 @@ import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.Stat
 import ch.protonmail.android.adapters.LabelColorsAdapter
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
 import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.uiModel.LabelUiModel.Type.FOLDERS
 import ch.protonmail.android.uiModel.LabelUiModel.Type.LABELS
@@ -443,11 +442,6 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     @Suppress("unused") // EventBus
     fun onLogoutEvent( @Suppress("UNUSED_PARAMETER") event: LogoutEvent ) {
         moveToLogin()
-    }
-
-    @Subscribe
-    fun onMailSettingsEvent(event: MailSettingsEvent) {
-        loadMailSettings()
     }
 
     /** The current state of the `Activity` */

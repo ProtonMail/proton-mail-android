@@ -39,7 +39,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
@@ -265,11 +264,6 @@ class PinSettingsActivity : BaseActivity() {
         setResult(RESULT_OK)
         saveLastInteraction()
         finish()
-    }
-
-    @Subscribe
-    fun onMailSettingsEvent(event: MailSettingsEvent) {
-        loadMailSettings()
     }
 
     @Subscribe

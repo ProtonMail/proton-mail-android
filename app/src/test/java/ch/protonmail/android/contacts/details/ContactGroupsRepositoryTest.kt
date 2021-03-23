@@ -19,9 +19,9 @@
 package ch.protonmail.android.contacts.details
 
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -46,7 +46,7 @@ class ContactGroupsRepositoryTest {
     private lateinit var protonMailApi: ProtonMailApiManager
 
     @RelaxedMockK
-    private lateinit var contactsDao: ContactsDao
+    private lateinit var contactDao: ContactDao
 
     @InjectMockKs
     private lateinit var contactGroupsRepository: ContactGroupsRepository
@@ -69,8 +69,8 @@ class ContactGroupsRepositoryTest {
             // given
             val dbContactsList = listOf(label1)
             val searchTerm = "Rob"
-            coEvery { contactsDao.findContactGroupsFlow("%$searchTerm%") } returns flowOf(dbContactsList)
-            coEvery { contactsDao.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { contactDao.findContactGroups("%$searchTerm%") } returns flowOf(dbContactsList)
+            coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
 
             // when
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
@@ -86,8 +86,8 @@ class ContactGroupsRepositoryTest {
             // given
             val dbContactsList = listOf(label1)
             val searchTerm = "Rob"
-            coEvery { contactsDao.findContactGroupsFlow("%$searchTerm%") } returns flowOf(dbContactsList)
-            coEvery { contactsDao.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { contactDao.findContactGroups("%$searchTerm%") } returns flowOf(dbContactsList)
+            coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
 
             // when
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
@@ -103,8 +103,8 @@ class ContactGroupsRepositoryTest {
             // given
             val searchTerm = "search"
             val dbContactsList = listOf(label1)
-            coEvery { contactsDao.findContactGroupsFlow("%$searchTerm%") } returns flowOf(dbContactsList)
-            coEvery { contactsDao.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { contactDao.findContactGroups("%$searchTerm%") } returns flowOf(dbContactsList)
+            coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
 
             // when
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
@@ -120,7 +120,7 @@ class ContactGroupsRepositoryTest {
 
         contactGroupsRepository.saveContactGroup(contactGroup)
 
-        verify { contactsDao.saveContactGroupLabel(contactGroup) }
+        verify { contactDao.saveContactGroupLabel(contactGroup) }
     }
 
 }

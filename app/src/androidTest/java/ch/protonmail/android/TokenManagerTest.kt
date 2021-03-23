@@ -19,11 +19,14 @@
 package ch.protonmail.android
 
 import android.text.TextUtils
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.LargeTest
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.domain.entity.Id
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -35,14 +38,16 @@ import kotlin.test.Test
 @LargeTest
 internal class TokenManagerTest {
 
-    val username = "username"
-    val accessToken = "9c196c6e621ddc7bd55609f274e6174ef7fe2e00"
-    val accessTokenRefreshed = "9c196c6e621ddc7bd55609f274e6174ef7fe2e00_refreshed"
-    val refreshToken = "7790e2067c2a9701745805672eb34fb94c67ac83"
-    val refreshTokenRefreshed = "7790e2067c2a9701745805672eb34fb94c67ac83_refreshed"
-    val tokenType = "Bearer"
-    val loginResponse: LoginResponse
-    val refreshResponse: RefreshResponse
+    private val context = ApplicationProvider.getApplicationContext<ProtonMailApplication>()
+
+    private val userId = Id("username")
+    private val accessToken = "9c196c6e621ddc7bd55609f274e6174ef7fe2e00"
+    private val accessTokenRefreshed = "9c196c6e621ddc7bd55609f274e6174ef7fe2e00_refreshed"
+    private val refreshToken = "7790e2067c2a9701745805672eb34fb94c67ac83"
+    private val refreshTokenRefreshed = "7790e2067c2a9701745805672eb34fb94c67ac83_refreshed"
+    private val tokenType = "Bearer"
+    private val loginResponse: LoginResponse
+    private val refreshResponse: RefreshResponse
 
     init {
         mockkStatic(TextUtils::class)
@@ -71,9 +76,9 @@ internal class TokenManagerTest {
 
     @Test
     fun handle_login() {
-        val tokenManager = TokenManager.getInstance("user for access token")
+        val tokenManager = TokenManager.getInstance(context, Id("user for access token"))
 
-        tokenManager!!.handleLogin(loginResponse)
+        tokenManager.handleLogin(loginResponse)
 
         assertEquals("$tokenType $accessToken", tokenManager.authAccessToken)
         assertEquals(refreshToken, tokenManager.createRefreshBody().refreshToken)
@@ -81,9 +86,9 @@ internal class TokenManagerTest {
 
     @Test
     fun clear_access_token() {
-        val tokenManager = TokenManager.getInstance(username)
+        val tokenManager = TokenManager.getInstance(context, userId)
 
-        tokenManager!!.handleLogin(loginResponse)
+        tokenManager.handleLogin(loginResponse)
 
         tokenManager.clearAccessToken()
         assertNull(tokenManager.authAccessToken)
@@ -92,27 +97,27 @@ internal class TokenManagerTest {
 
     @Test
     fun clear_token_manager_for_user() {
-        var tokenManager = TokenManager.getInstance(username)
+        var tokenManager = TokenManager.getInstance(context, userId)
 
-        tokenManager!!.handleLogin(loginResponse)
+        tokenManager.handleLogin(loginResponse)
 
         tokenManager.clear()
         assertNull(tokenManager.authAccessToken)
         assert(tokenManager.createRefreshBody().refreshToken.isNullOrBlank())
 
         // obtain TokenManager instance again after clearing
-        tokenManager = TokenManager.getInstance(username)
+        tokenManager = TokenManager.getInstance(context, userId)
 
-        assertNull(tokenManager!!.authAccessToken)
+        assertNull(tokenManager.authAccessToken)
         assert(tokenManager.createRefreshBody().refreshToken.isNullOrBlank())
     }
 
     @Test
     fun handle_refresh() {
-        val tokenManager = TokenManager.getInstance(username)
+        val tokenManager = TokenManager.getInstance(context, userId)
 
-        tokenManager!!.handleLogin(loginResponse)
-        tokenManager!!.handleRefresh(refreshResponse)
+        tokenManager.handleLogin(loginResponse)
+        tokenManager.handleRefresh(refreshResponse)
 
         assertEquals("$tokenType $accessTokenRefreshed", tokenManager.authAccessToken)
         assertEquals(refreshTokenRefreshed, tokenManager.createRefreshBody().refreshToken)

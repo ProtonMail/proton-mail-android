@@ -30,7 +30,6 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.Addresses
@@ -46,7 +45,7 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import ch.protonmail.android.api.models.address.Address as OldAddress
 
-private const val KEY_INPUT_DATA_USERNAME = "KEY_INPUT_DATA_USERNAME"
+internal const val KEY_INPUT_DATA_USER_ID = "KEY_INPUT_DATA_USER_ID"
 private const val MAX_RETRY_COUNT = 3
 
 /**
@@ -64,12 +63,13 @@ class AddressKeyActivationWorker @WorkerInject constructor(
 
     override suspend fun doWork(): Result = withContext(dispatchers.Io) {
 
-        val username = inputData.getString(KEY_INPUT_DATA_USERNAME) ?: return@withContext Result.failure()
-        val mailboxPassword = userManager.getMailboxPassword(username) ?: return@withContext Result.failure()
+        val userIdString = inputData.getString(KEY_INPUT_DATA_USER_ID) ?: return@withContext Result.failure()
+        val userId = Id(userIdString)
+        val mailboxPassword = userManager.getMailboxPassword(userId) ?: return@withContext Result.failure()
 
-        Timber.v("AddressKeyActivationWorker started with username: $username")
+        Timber.v("AddressKeyActivationWorker started with user: ${userId.s}")
 
-        val user = userManager.getUser(username).toNewUser()
+        val user = userManager.getUser(userId)
         val primaryKeys = user.addresses.addresses.values.map { it.keys.primaryKey }
         val keysToActivate = user.addresses.addresses.values.flatMap { address ->
             address.keys.keys.filter { it.activation != null }
@@ -137,9 +137,10 @@ class AddressKeyActivationWorker @WorkerInject constructor(
             val signedKeyList = SignedKeyList(keyList, signature)
 
             try {
-                val username = inputData.getString(KEY_INPUT_DATA_USERNAME)!!
-                val user = userManager.getUser(username)
-                if (user.legacyAccount) {
+                val userIdString = inputData.getString(KEY_INPUT_DATA_USER_ID)!!
+                val userId = Id(userIdString)
+                val user = userManager.getUser(userId)
+                if (user.isLegacy) {
                     Timber.v("Activate key for legacy user")
                     api.activateKeyLegacy(
                         KeyActivationBody(
@@ -219,33 +220,33 @@ class AddressKeyActivationWorker @WorkerInject constructor(
             ReplaceWith(
                 """
                     val mapper = AddressBridgeMapper.buildDefault()
-                    runIfNeeded(context, addresses.map(mapper) { it.toNewModel() }, Name(username))
+                    runIfNeeded(workManager, addresses.map(mapper) { it.toNewModel() }, Name(username))
                 """,
                 "me.proton.core.domain.arch.map",
                 "ch.protonmail.android.mapper.bridge.AddressBridgeMapper"
             )
         )
-        fun activateAddressKeysIfNeeded(context: Context, addresses: List<OldAddress>, username: String) {
+        fun activateAddressKeysIfNeeded(context: Context, addresses: List<OldAddress>, userId: Id) {
             val mapper = AddressBridgeMapper.buildDefault()
-            runIfNeeded(context, addresses.map(mapper) { it.toNewModel() }, Name(username))
+            runIfNeeded(WorkManager.getInstance(context), addresses.map(mapper) { it.toNewModel() }, userId)
         }
 
         @Suppress("unused") // When using new User, it will be nicer to user 'user.addresses'
-        fun runIfNeeded(context: Context, addresses: Addresses, username: Name) {
-            runIfNeeded(context, addresses.addresses.values, username)
+        fun runIfNeeded(workManager: WorkManager, addresses: Addresses, userId: Id) {
+            runIfNeeded(workManager, addresses.addresses.values, userId)
         }
 
-        private fun runIfNeeded(context: Context, addresses: Collection<Address>, username: Name) {
+        private fun runIfNeeded(workManager: WorkManager, addresses: Collection<Address>, userId: Id) {
             val isActivationNeeded = addresses.any { address ->
                 address.keys.keys.any { it.activation != null }
             }
 
             if (isActivationNeeded) {
-                val data = workDataOf(KEY_INPUT_DATA_USERNAME to username.s)
+                val data = workDataOf(KEY_INPUT_DATA_USER_ID to userId.s)
                 val work = OneTimeWorkRequestBuilder<AddressKeyActivationWorker>()
                     .setInputData(data)
                     .build()
-                WorkManager.getInstance(context).enqueue(work)
+                workManager.enqueue(work)
             }
         }
     }

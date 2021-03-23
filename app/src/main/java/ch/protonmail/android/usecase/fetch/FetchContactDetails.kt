@@ -23,23 +23,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
-import ch.protonmail.android.api.models.room.contacts.FullContactDetails
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.crypto.UserCrypto
-import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.usecase.model.FetchContactDetailsResult
+import ch.protonmail.android.utils.crypto.OpenPGP
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import javax.inject.Inject
 
 class FetchContactDetails @Inject constructor(
-    private val contactsDao: ContactsDao,
+    private val contactDao: ContactDao,
     private val userManager: UserManager,
     private val api: ProtonMailApiManager,
+    private val openPgp: OpenPGP,
     private val dispatchers: DispatcherProvider
 ) {
 
@@ -50,7 +51,7 @@ class FetchContactDetails @Inject constructor(
             }
 
             // fetch existing data from the DB
-            contactsDao.findFullContactDetailsById(contactId)?.let { fullDetailsFromDb ->
+            contactDao.findFullContactDetailsById(contactId)?.let { fullDetailsFromDb ->
                 val parsedContact = parseContactDetails(fullDetailsFromDb)
                 Timber.v("Fetched existing Contacts Details $parsedContact")
                 if (parsedContact != null) {
@@ -65,7 +66,7 @@ class FetchContactDetails @Inject constructor(
                 onSuccess = { response ->
                     val fetchedContact = response.contact
                     Timber.v("Fetched new Contact Details $fetchedContact")
-                    contactsDao.insertFullContactDetails(fetchedContact)
+                    contactDao.insertFullContactDetails(fetchedContact)
                     val parsedContact = parseContactDetails(fetchedContact)
                     parsedContact?.let {
                         emit(it)
@@ -81,7 +82,7 @@ class FetchContactDetails @Inject constructor(
         val encryptedDataList: List<ContactEncryptedData>? = contact.encryptedData
 
         if (!encryptedDataList.isNullOrEmpty()) {
-            val crypto = UserCrypto(userManager, userManager.openPgp, Name(userManager.username))
+            val crypto = UserCrypto(userManager, openPgp, userManager.requireCurrentUserId())
             var decryptedVCardType0: String = EMPTY_STRING
             var decryptedVCardType2: String = EMPTY_STRING
             var decryptedVCardType3: String = EMPTY_STRING

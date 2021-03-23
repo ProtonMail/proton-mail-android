@@ -20,75 +20,76 @@
 package ch.protonmail.android.di
 
 import android.content.Context
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabaseFactory
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
-import ch.protonmail.android.api.models.room.counters.CountersDatabase
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.AttachmentMetadataDao
+import ch.protonmail.android.data.local.AttachmentMetadataDatabase
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.ContactDatabase
+import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.CounterDatabase
+import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.MessageDatabase
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.PendingActionDatabase
+import ch.protonmail.android.domain.entity.Id
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
     @Provides
-    @Named("messages_factory")
-    fun provideMessagesDatabaseFactory(context: Context, userManager: UserManager): MessagesDatabaseFactory =
-        MessagesDatabaseFactory.getInstance(context, userManager.username)
+    fun provideAttachmentMetadataDao(
+        context: Context,
+        @CurrentUserId userId: Id
+    ): AttachmentMetadataDao = AttachmentMetadataDatabase.getInstance(context, userId).getDao()
+
 
     @Provides
-    @Named("messages")
-    fun provideMessagesDatabase(
-        @Named("messages_factory") messagesDatabaseFactory: MessagesDatabaseFactory
-    ): MessagesDatabase = messagesDatabaseFactory.getDatabase()
+    fun provideContactDatabase(
+        context: Context,
+        @CurrentUserId userId: Id
+    ): ContactDatabase = ContactDatabase.getInstance(context, userId)
 
     @Provides
-    @Named("messages_search")
-    fun provideSearchMessagesDatabase(
-        @Named("messages_search_factory") messagesDatabaseFactory: MessagesDatabaseFactory
-    ): MessagesDatabase = messagesDatabaseFactory.getDatabase()
+    fun provideContactDao(factory: ContactDatabase): ContactDao =
+        factory.getDao()
+
 
     @Provides
-    @Named("messages_search_factory")
-    fun provideSearchMessagesDatabaseFactory(context: Context): MessagesDatabaseFactory =
-        MessagesDatabaseFactory.getSearchDatabase(context)
+    fun provideCounterDatabase(
+        context: Context,
+        @CurrentUserId userId: Id
+    ): CounterDatabase = CounterDatabase.getInstance(context, userId)
 
     @Provides
-    fun providePendingActionsDatabase(
-        pendingActionsDatabaseFactory: PendingActionsDatabaseFactory
-    ): PendingActionsDatabase = pendingActionsDatabaseFactory.getDatabase()
+    fun provideCounterDao(database: CounterDatabase): CounterDao =
+        database.getDao()
 
     @Provides
-    fun providePendingActionsDatabaseFactory(context: Context, userManager: UserManager) =
-        PendingActionsDatabaseFactory.getInstance(context, userManager.username)
+    fun provideMessageDatabase(
+        context: Context,
+        @CurrentUserId userId: Id
+    ): MessageDao = MessageDatabase.getInstance(context, userId).getDao()
+
 
     @Provides
-    fun provideAttachmentMetadataDatabase(context: Context, userManager: UserManager): AttachmentMetadataDatabase =
-        AttachmentMetadataDatabaseFactory.getInstance(context, userManager.username).getDatabase()
+    fun providePendingActionDatabase(context: Context, userManager: UserManager) =
+        PendingActionDatabase.getInstance(context, userManager.requireCurrentUserId())
 
     @Provides
-    fun provideContactsDatabaseFactory(context: Context, userManager: UserManager): ContactsDatabaseFactory =
-        ContactsDatabaseFactory.getInstance(context, userManager.username)
+    fun providePendingActionDao(
+        pendingActionDatabase: PendingActionDatabase
+    ): PendingActionDao = pendingActionDatabase.getDao()
 
     @Provides
-    fun provideContactsDatabase(factory: ContactsDatabaseFactory): ContactsDatabase =
-        factory.getDatabase()
+    @SearchMessageDaoQualifier
+    fun provideSearchMessageDao(
+        context: Context,
+        @CurrentUserId userId: Id
+    ): MessageDao = MessageDatabase.getSearchDatabase(context, userId).getDao()
 
-    @Provides
-    fun provideCountersDatabaseFactory(context: Context, userManager: UserManager): CountersDatabaseFactory =
-        CountersDatabaseFactory.getInstance(context, userManager.username)
-
-    @Provides
-    fun provideCountersDatabase(factory: CountersDatabaseFactory): CountersDatabase =
-        factory.getDatabase()
 }

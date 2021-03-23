@@ -24,11 +24,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.work.Data
 import androidx.work.WorkInfo
 import androidx.work.workDataOf
-import ch.protonmail.android.api.models.room.contacts.ContactData
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.ContactIdGenerator
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.data.local.model.ContactData
+import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.usecase.create.CreateContact.Result
 import ch.protonmail.android.worker.CreateContactWorker
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON

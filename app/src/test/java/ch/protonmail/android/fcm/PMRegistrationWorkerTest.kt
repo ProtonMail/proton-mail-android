@@ -31,22 +31,26 @@ import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.fcm.model.FirebaseToken
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.BuildInfo
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.runs
+import io.mockk.mockkObject
 import io.mockk.slot
-import io.mockk.unmockkStatic
+import io.mockk.unmockkObject
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
-import org.junit.After
+import me.proton.core.test.android.mocks.mockSharedPreferences
+import me.proton.core.test.android.mocks.newMockSharedPreferences
 import java.io.IOException
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -75,6 +79,14 @@ class PMRegistrationWorkerTest {
     @MockK
     private lateinit var accountManager: AccountManager
 
+    private val fcmTokenManager: FcmTokenManager = mockk(relaxed = true) {
+        coEvery { getToken() } returns FirebaseToken("registrationId")
+    }
+
+    private val fcmTokenManagerFactory: FcmTokenManager.Factory = mockk {
+        every { create(any()) } returns fcmTokenManager
+    }
+
     private lateinit var pmRegistrationWorker: PMRegistrationWorker
 
     private lateinit var pmRegistrationWorkerEnqueuer: PMRegistrationWorker.Enqueuer
@@ -83,25 +95,27 @@ class PMRegistrationWorkerTest {
     fun setUp() {
         MockKAnnotations.init(this)
 
-        mockkStatic(FcmUtil::class)
-        every { FcmUtil.getFirebaseToken() } returns "registrationId"
-        every { FcmUtil.setTokenSent(any(), any()) } just runs
+        mockkObject(SecureSharedPreferences.Companion)
+        every { SecureSharedPreferences.getPrefsForUser(any(), any()) } returns mockSharedPreferences
 
         pmRegistrationWorker = PMRegistrationWorker(
             context,
             workerParameters,
             buildInfo,
-            protonMailApiManager
+            protonMailApiManager,
+            fcmTokenManagerFactory = fcmTokenManagerFactory
         )
         pmRegistrationWorkerEnqueuer = PMRegistrationWorker.Enqueuer(
+            context,
             workManager,
-            accountManager
+            accountManager,
+            fcmTokenManagerFactory
         )
     }
 
-    @After
+    @AfterTest
     fun tearDown() {
-        unmockkStatic(FcmUtil::class)
+        unmockkObject(SecureSharedPreferences.Companion)
     }
 
     @Test
@@ -109,7 +123,7 @@ class PMRegistrationWorkerTest {
         runBlocking {
             // given
             val expectedResult = ListenableWorker.Result.failure(
-                workDataOf(KEY_PM_REGISTRATION_WORKER_ERROR to "Username not provided")
+                workDataOf(KEY_PM_REGISTRATION_WORKER_ERROR to "User id not provided")
             )
 
             // when
@@ -124,10 +138,10 @@ class PMRegistrationWorkerTest {
     fun shouldReturnRetryIfApiCallFails() {
         runBlocking {
             // given
-            val username = "username"
+            val userId = Id("id")
             val ioException = IOException()
 
-            every { workerParameters.inputData } returns workDataOf(KEY_PM_REGISTRATION_WORKER_USERNAME to username)
+            every { workerParameters.inputData } returns workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.s)
             coEvery { protonMailApiManager.registerDevice(any(), any()) } throws ioException
 
             val expectedResult = ListenableWorker.Result.retry()
@@ -144,12 +158,12 @@ class PMRegistrationWorkerTest {
     fun shouldReturnSuccessIfApiCallSucceeds() {
         runBlocking {
             // given
-            val username = "username"
+            val userId = Id("id")
             val mockRegisterDeviceResponse = mockk<ResponseBody> {
                 every { code } returns RESPONSE_CODE_OK
             }
 
-            every { workerParameters.inputData } returns workDataOf(KEY_PM_REGISTRATION_WORKER_USERNAME to username)
+            every { workerParameters.inputData } returns workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.s)
             coEvery { protonMailApiManager.registerDevice(any(), any()) } returns mockRegisterDeviceResponse
 
             val expectedResult = ListenableWorker.Result.success()
@@ -166,60 +180,77 @@ class PMRegistrationWorkerTest {
     fun verifySetTokenSentFunctionWasCalledWhenApiCallSucceeds() {
         runBlocking {
             // given
-            val username = "username"
+            val userId = Id("id")
             val mockRegisterDeviceResponse = mockk<ResponseBody> {
                 every { code } returns RESPONSE_CODE_OK
             }
 
-            every { workerParameters.inputData } returns workDataOf(KEY_PM_REGISTRATION_WORKER_USERNAME to username)
+            every { workerParameters.inputData } returns workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.s)
             coEvery { protonMailApiManager.registerDevice(any(), any()) } returns mockRegisterDeviceResponse
 
             // when
             pmRegistrationWorker.doWork()
 
             // then
-            verify { FcmUtil.setTokenSent(username, true) }
+            coVerify { fcmTokenManager.setTokenSent(true) }
         }
     }
 
     @Test
     fun verifyWorkerBeingEnqueuedForEveryUserForWhichATokenHasNotBeenSent() {
-        // given
-        val usernameList = listOf("username1", "username2", "username3")
-        every { accountManager.getLoggedInUsers() } returns usernameList
+        mockkObject(SecureSharedPreferences.Companion) {
+            // given
+            val (userIds, userPrefs) = (1..3).map {
+                Id(it.toString()) to newMockSharedPreferences
+            }.toMap().let { it.keys to it.values.toList() }
+            every { SecureSharedPreferences.getPrefsForUser(any(), any()) } answers {
+                userPrefs[userIds.indexOf(secondArg())]
+            }
+            coEvery { accountManager.allLoggedIn() } returns userIds
+            every { accountManager.allLoggedInBlocking() } returns userIds
 
-        every { FcmUtil.isTokenSent("username1") } returns false
-        every { FcmUtil.isTokenSent("username2") } returns true
-        every { FcmUtil.isTokenSent("username3") } returns false
+            every { fcmTokenManagerFactory.create(userPrefs[0]).isTokenSentBlocking() } returns false
+            every { fcmTokenManagerFactory.create(userPrefs[1]).isTokenSentBlocking() } returns true
+            every { fcmTokenManagerFactory.create(userPrefs[2]).isTokenSentBlocking() } returns false
 
-        // when
-        pmRegistrationWorkerEnqueuer()
+            // when
+            pmRegistrationWorkerEnqueuer()
 
-        // then
-        verify(exactly = 2) { workManager.enqueue(any<WorkRequest>()) }
+            // then
+            verify(exactly = 2) { workManager.enqueue(any<WorkRequest>()) }
+        }
     }
 
     @Test
     fun verifyThatWorkerIsBeingEnqueuedWithTheCorrectParameters() {
-        // given
-        val usernameList = listOf("username1", "username2")
-        every { accountManager.getLoggedInUsers() } returns usernameList
+        mockkObject(SecureSharedPreferences.Companion) {
+            // given
+            val (userIds, userPrefs) = (1..3).map {
+                Id(it.toString()) to newMockSharedPreferences
+            }.toMap().let { it.keys to it.values.toList() }
+            every { SecureSharedPreferences.getPrefsForUser(any(), any()) } answers {
+                userPrefs[userIds.indexOf(secondArg())]
+            }
+            coEvery { accountManager.allLoggedIn() } returns userIds
+            every { accountManager.allLoggedInBlocking() } returns userIds
 
-        every { FcmUtil.isTokenSent("username1") } returns false
-        every { FcmUtil.isTokenSent("username2") } returns true
+            every { fcmTokenManagerFactory.create(userPrefs[0]).isTokenSentBlocking() } returns false
+            every { fcmTokenManagerFactory.create(userPrefs[1]).isTokenSentBlocking() } returns true
+            every { fcmTokenManagerFactory.create(userPrefs[2]).isTokenSentBlocking() } returns true
 
-        val expectedInputData = workDataOf(KEY_PM_REGISTRATION_WORKER_USERNAME to "username1")
-        val expectedConstraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
+            val expectedInputData = workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userIds.first().s)
+            val expectedConstraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
 
-        // when
-        pmRegistrationWorkerEnqueuer()
+            // when
+            pmRegistrationWorkerEnqueuer()
 
-        // then
-        val workRequestSlot = slot<WorkRequest>()
-        verify { workManager.enqueue(capture(workRequestSlot)) }
-        assertEquals(workRequestSlot.captured.workSpec.input, expectedInputData)
-        assertEquals(workRequestSlot.captured.workSpec.constraints, expectedConstraints)
+            // then
+            val workRequestSlot = slot<WorkRequest>()
+            verify { workManager.enqueue(capture(workRequestSlot)) }
+            assertEquals(expectedInputData, workRequestSlot.captured.workSpec.input)
+            assertEquals(expectedConstraints, workRequestSlot.captured.workSpec.constraints)
+        }
     }
 }

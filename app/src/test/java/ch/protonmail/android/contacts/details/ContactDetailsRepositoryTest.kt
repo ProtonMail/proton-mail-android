@@ -21,45 +21,40 @@ package ch.protonmail.android.contacts.details
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.room.contacts.ContactData
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.ContactData
+import ch.protonmail.android.data.local.model.ContactEmail
 import com.birbit.android.jobqueue.JobManager
-import io.mockk.MockKAnnotations
+import io.mockk.Runs
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.just
+import io.mockk.mockk
 import io.mockk.verify
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class ContactDetailsRepositoryTest {
 
-    @RelaxedMockK
-    private lateinit var workManager: WorkManager
+    private val workManager: WorkManager = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var jobManager: JobManager
+    private val jobManager: JobManager = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var apiManager: ProtonMailApiManager
+    private val apiManager: ProtonMailApiManager = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var contactsDao: ContactsDao
-
-    @InjectMockKs
-    private lateinit var repository: ContactDetailsRepository
-
-    private val dispatcherProvider = TestDispatcherProvider
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
+    private val contactDao: ContactDao = mockk {
+        every { deleteContactData(any()) } just Runs
+        every { deleteAllContactsEmails(any()) } just Runs
+        every { saveContactData(any()) } returns 0
+        coEvery { saveAllContactsEmails(any<List<ContactEmail>>()) } returns mockk()
     }
+
+    private val repository = ContactDetailsRepository(
+        workManager, jobManager, apiManager, contactDao, TestDispatcherProvider
+    )
 
     @Test
     fun saveContactEmailsSavesAllTheContactEmailsToContactsDb() {
@@ -71,7 +66,7 @@ class ContactDetailsRepositoryTest {
 
             repository.saveContactEmails(emails)
 
-            coVerify { contactsDao.saveAllContactsEmails(emails) }
+            coVerify { contactDao.saveAllContactsEmails(emails) }
         }
     }
 
@@ -81,13 +76,13 @@ class ContactDetailsRepositoryTest {
             val contactDbId = 782L
             val contactData = ContactData("contactDataId", "name").apply { dbId = contactDbId }
             val contactServerId = "serverId"
-            every { contactsDao.findContactDataByDbId(contactDbId) } returns contactData
+            every { contactDao.findContactDataByDbId(contactDbId) } returns contactData
 
             repository.updateContactDataWithServerId(contactData, contactServerId)
 
-            verify { contactsDao.findContactDataByDbId(contactDbId) }
+            verify { contactDao.findContactDataByDbId(contactDbId) }
             val expectedContactData = contactData.copy(contactId = contactServerId)
-            verify { contactsDao.saveContactData(expectedContactData) }
+            verify { contactDao.saveContactData(expectedContactData) }
         }
     }
 
@@ -103,13 +98,13 @@ class ContactDetailsRepositoryTest {
                 ContactEmail("ID3", "martin@proton.com", "Martin"),
                 ContactEmail("ID4", "kent@proton.com", "kent")
             )
-            every { contactsDao.findContactEmailsByContactId(contactId) } returns localContactEmails
+            every { contactDao.findContactEmailsByContactId(contactId) } returns localContactEmails
 
             repository.updateAllContactEmails(contactId, serverEmails)
 
-            verify { contactsDao.findContactEmailsByContactId(contactId) }
-            verify { contactsDao.deleteAllContactsEmails(localContactEmails) }
-            verify { contactsDao.saveAllContactsEmailsBlocking(serverEmails) }
+            verify { contactDao.findContactEmailsByContactId(contactId) }
+            verify { contactDao.deleteAllContactsEmails(localContactEmails) }
+            coVerify { contactDao.saveAllContactsEmails(serverEmails) }
         }
     }
 
@@ -120,7 +115,7 @@ class ContactDetailsRepositoryTest {
 
             repository.deleteContactData(contactData)
 
-            verify { contactsDao.deleteContactData(contactData) }
+            verify { contactDao.deleteContactData(contactData) }
         }
     }
 
@@ -129,11 +124,11 @@ class ContactDetailsRepositoryTest {
         runBlockingTest {
             val contactData = ContactData("1243", "Tyler")
             val expectedDbId = 8945L
-            every { contactsDao.saveContactData(contactData) } returns expectedDbId
+            every { contactDao.saveContactData(contactData) } returns expectedDbId
 
             val actualDbId = repository.saveContactData(contactData)
 
-            verify { contactsDao.saveContactData(contactData) }
+            verify { contactDao.saveContactData(contactData) }
             assertEquals(expectedDbId, actualDbId)
         }
     }

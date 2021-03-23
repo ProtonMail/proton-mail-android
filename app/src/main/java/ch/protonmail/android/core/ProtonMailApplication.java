@@ -18,6 +18,16 @@
  */
 package ch.protonmail.android.core;
 
+import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
+import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
+import static ch.protonmail.android.core.Constants.PrefsType.BACKUP_PREFS_NAME;
+import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
+import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
+import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
+import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -28,7 +38,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -56,7 +65,9 @@ import com.squareup.otto.Subscribe;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -70,17 +81,16 @@ import ch.protonmail.android.api.NetworkSwitcher;
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.TokenManager;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
-import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.models.Organization;
-import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.doh.Proxies;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
 import ch.protonmail.android.api.services.MessagesService;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
+import ch.protonmail.android.domain.entity.Id;
+import ch.protonmail.android.domain.entity.user.User;
+import ch.protonmail.android.domain.entity.user.UserKey;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
@@ -94,15 +104,13 @@ import ch.protonmail.android.events.PasswordChangeEvent;
 import ch.protonmail.android.events.RequestTimeoutEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.StorageLimitEvent;
-import ch.protonmail.android.events.general.AvailableDomainsEvent;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
-import ch.protonmail.android.fcm.FcmUtil;
+import ch.protonmail.android.fcm.MultiUserFcmTokenManager;
 import ch.protonmail.android.jobs.FetchLabelsJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.jobs.user.FetchUserSettingsJob;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
-import ch.protonmail.android.servers.notification.INotificationServer;
 import ch.protonmail.android.servers.notification.NotificationServer;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
@@ -119,22 +127,15 @@ import io.sentry.android.AndroidSentryClientFactory;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
 
-import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
-import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
-import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
-import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
-import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
-
 @HiltAndroidApp
 public class ProtonMailApplication extends Application implements androidx.work.Configuration.Provider {
 
     private static ProtonMailApplication sInstance;
 
     @Inject
-    UserManager mUserManager;
+    UserManager userManager;
+    @Inject
+    AccountManager accountManager;
     @Inject
     EventManager eventManager;
     @Inject
@@ -153,8 +154,10 @@ public class ProtonMailApplication extends Application implements androidx.work.
     @Inject
     DownloadUtils downloadUtils;
 
+    @Inject
+    MultiUserFcmTokenManager multiUserFcmTokenManager;
+
     private Bus mBus;
-    private boolean mIsInitialized;
     private boolean appInBackground;
     private Snackbar apiOfflineSnackBar;
     @Nullable
@@ -163,15 +166,16 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private boolean mUpdateOccurred;
     private AllCurrencyPlans mAllCurrencyPlans;
     private Organization mOrganization;
-    private List<String> mAvailableDomains;
     private String mCurrentLocale;
-    private boolean mChangedSystemTimeDate;
     private AlertDialog forceUpgradeDialog;
+    private boolean changedSystemTimeDate;
 
-    private ContactsDatabase contactsDatabase;
-    private MessagesDatabase messagesDatabase;
+    private MessageDao messageDao;
 
     @NonNull
+    @Deprecated // Using this is an ERROR!
+    @kotlin.Deprecated(message = "Use a better dependency strategy: ideally inject the needed " +
+            "dependency directly or, where not possible, inject the Application or the Context")
     public static ProtonMailApplication getApplication() {
         return sInstance;
     }
@@ -217,9 +221,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
         ViewStateStoreConfig.INSTANCE
                 .setErrorStateGenerator(ErrorStateGeneratorsKt.getErrorStateGenerator());
 
-        contactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
-        messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
-
         FileUtils.createDownloadsDir(this);
         setupNotificationChannels();
 
@@ -228,37 +229,19 @@ public class ProtonMailApplication extends Application implements androidx.work.
         WorkManager.initialize(this, getWorkManagerConfiguration());
 
         checkForUpdateAndClearCache();
-        initLongRunningTask();
     }
 
     private void upgradeTlsProviderIfNeeded() {
         try {
             ProviderInstaller.installIfNeeded(this);
         } catch (GooglePlayServicesRepairableException e) {
-            final SharedPreferences prefs = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+            final SharedPreferences prefs = getDefaultSharedPreferences();
             if (!prefs.getBoolean(Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES, false)) {
                 GoogleApiAvailability.getInstance().showErrorNotification(this, e.getConnectionStatusCode());
             }
         } catch (GooglePlayServicesNotAvailableException e) {
             // we already handle this by showing prompt about GCM notifications
         }
-    }
-
-    private void initLongRunningTask() {
-        // check if storage limit approaching
-        final User user = mUserManager.getUser();
-        if (user.getMaxSpace() > 0) {
-            long percentageUsed = (user.getUsedSpace() * 100) / user.getMaxSpace();
-            if (percentageUsed >= Constants.STORAGE_LIMIT_WARNING_PERCENTAGE) {
-                mLastStorageLimitEvent = new StorageLimitEvent();
-            }
-        }
-
-        mIsInitialized = true;
-    }
-
-    public boolean isInitialized() {
-        return mIsInitialized;
     }
 
     @NonNull
@@ -268,12 +251,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     @NonNull
     public SharedPreferences getSecureSharedPreferences() {
-        return SecureSharedPreferences.Companion.getPrefs(ProtonMailApplication.getApplication(), "ProtonMailSSP", Context.MODE_PRIVATE);
-    }
-
-    @NonNull
-    public SharedPreferences getSecureSharedPreferences(String username) {
-        return SecureSharedPreferences.Companion.getPrefsForUser(ProtonMailApplication.getApplication(), username);
+        return SecureSharedPreferences.Companion.getPrefs(this, "ProtonMailSSP", Context.MODE_PRIVATE);
     }
 
     @NonNull
@@ -318,7 +296,10 @@ public class ProtonMailApplication extends Application implements androidx.work.
         } else {
             startActivity(intent);
         }
-        mUserManager.logoutOffline();
+        Id currentUserId = userManager.getCurrentUserId();
+        if (currentUserId != null) {
+            userManager.logoutOfflineBlocking(currentUserId);
+        }
     }
 
     @Subscribe
@@ -395,13 +376,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 }
                 TextExtensions.showToast(activity.getApplicationContext(), message);
             }
-        }
-    }
-
-    @Subscribe
-    public void onAvailableDomainsEvent(AvailableDomainsEvent event) {
-        if (event.getStatus() == Status.SUCCESS) {
-            this.mAvailableDomains = event.getDomains();
         }
     }
 
@@ -500,16 +474,16 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     private static class RefreshMessagesAndAttachments extends AsyncTask<Void, Void, Void> {
 
-        private final MessagesDatabase messagesDatabase;
+        private final MessageDao messageDao;
 
-        private RefreshMessagesAndAttachments(MessagesDatabase messagesDatabase) {
-            this.messagesDatabase = messagesDatabase;
+        private RefreshMessagesAndAttachments(MessageDao messageDao) {
+            this.messageDao = messageDao;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            messagesDatabase.clearAttachmentsCache();
-            messagesDatabase.clearMessagesCache();
+            messageDao.clearAttachmentsCache();
+            messageDao.clearMessagesCache();
             return null;
         }
 
@@ -522,7 +496,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private void setupNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            INotificationServer notificationServer = new NotificationServer(this, notificationManager);
+            NotificationServer notificationServer = new NotificationServer(this, notificationManager);
             notificationServer.createEmailsChannel();
             notificationServer.createAttachmentsChannel();
             notificationServer.createRetrievingNotificationsNotification();
@@ -530,124 +504,130 @@ public class ProtonMailApplication extends Application implements androidx.work.
         }
     }
 
-    /**
-     * {@link MIGRATE_FROM_BUILD_CONFIG_FIELD_DOC}
-     */
     private void checkForUpdateAndClearCache() {
         final SharedPreferences prefs = getDefaultSharedPreferences();
-        int currentAppVersion = AppUtil.getAppVersionCode(this);
         mNetworkUtil.setCurrentlyHasConnectivity();
         //refresh local cache if new app version
         int previousVersion = prefs.getInt(Constants.Prefs.PREF_APP_VERSION, Integer.MIN_VALUE);
-        if (previousVersion != currentAppVersion && previousVersion > 0) {
+        if (previousVersion != BuildConfig.VERSION_CODE && previousVersion > 0) {
             prefs.edit().putInt(Constants.Prefs.PREF_PREVIOUS_APP_VERSION, previousVersion).apply();
-            prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, currentAppVersion).apply();
+            prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, BuildConfig.VERSION_CODE).apply();
             mUpdateOccurred = true;
 
-            if (mUserManager.isLoggedIn()){
-                mUserManager.setLoginState(LOGIN_STATE_TO_INBOX);
+            if (userManager.isLoggedIn()) {
+                userManager.setCurrentUserLoginState(LOGIN_STATE_TO_INBOX);
             }
 
-            if (BuildConfig.DEBUG) {
-                new RefreshMessagesAndAttachments(messagesDatabase).execute();
+            Id currentUser = userManager.getCurrentUserId();
+            if (BuildConfig.DEBUG && currentUser != null) {
+                messageDao = MessageDatabase.Companion
+                        .getInstance(this, currentUser)
+                        .getDao();
+                new RefreshMessagesAndAttachments(messageDao).execute();
             }
-            if (BuildConfig.FETCH_FULL_CONTACTS && mUserManager.isLoggedIn()) {
+            if (BuildConfig.FETCH_FULL_CONTACTS && userManager.isLoggedIn()) {
                 new FetchContactsEmailsWorker.Enqueuer(WorkManager.getInstance(this)).enqueue(0);
                 new FetchContactsDataWorker.Enqueuer(WorkManager.getInstance(this)).enqueue();
             }
             if (BuildConfig.REREGISTER_FOR_PUSH) {
-                FcmUtil.setTokenSent(false);
+                multiUserFcmTokenManager.setTokenUnsentForAllSavedUsersBlocking();
             }
             jobManager.addJobInBackground(new FetchLabelsJob());
             //new version will get set in RegisterGcmJob
-            if (mUserManager != null) {
+            if (userManager != null) {
                 // if this version requires the user to be logged out when updatingAttachmentMetadataDatabase
                 // and if every single previous version should be force logged out
                 // or any specific previous version should be logged out
 
-                // Removed check for updates where we need to logout as it was always false. See doc ref in method header
-                if (false) {
-                    mUserManager.logoutOffline();
-                    AppUtil.deleteDatabases(this, mUserManager.getUsername());
-                    AppUtil.deletePrefs();
-                }
-                if (BuildConfig.DEBUG) {
-                    List<String> loggedInUsers = AccountManager.Companion.getInstance(this).getLoggedInUsers();
-                    long elapsedTime = SystemClock.elapsedRealtime();
-                    for (String userName : loggedInUsers) {
-                        User user = mUserManager.getUser(userName);
-                        if (!user.isPaidUser()) {
-                            user.setShowMobileSignature(true);
-                            user.save();
-                        }
-                        user.setLastInteraction(elapsedTime);
-                    }
-                }
+                Id currentUserId = userManager.getCurrentUserId();
                 if (BuildConfig.DEBUG) {
                     AlarmReceiver alarmReceiver = new AlarmReceiver();
                     alarmReceiver.cancelAlarm(this);
                     startJobManager();
-                    mUserManager.removeEmptyUserReferences();
-                    TokenManager.Companion.removeEmptyTokenManagers();
-                    List<String> loggedInUsers = AccountManager.Companion.getInstance(this).getLoggedInUsers();
-                    String currentPrimary = mUserManager.getUsername();
-                    jobManager.addJobInBackground(new FetchUserSettingsJob(currentPrimary));
-                    for (String loggedInUser : loggedInUsers){
-                        if (!loggedInUser.equals(currentPrimary)) {
+                    Set<Id> loggedInUsers = accountManager.allLoggedInBlocking();
+                    jobManager.addJobInBackground(new FetchUserSettingsJob(currentUserId));
+                    for (Id loggedInUser : loggedInUsers) {
+                        if (!loggedInUser.equals(currentUserId)) {
                             jobManager.addJobInBackground(new FetchUserSettingsJob(loggedInUser));
                         }
                     }
                     eventManager.clearState();
                     alarmReceiver.setAlarm(this);
                 }
-                TokenManager tokenManager = mUserManager.getTokenManager();
+                TokenManager tokenManager = userManager.getTokenManager();
                 if (tokenManager != null && TextUtils.isEmpty(tokenManager.getEncPrivateKey())) {
-                    User user = mUserManager.getUser();
-                    for (Keys key : user.getKeys()) {
-                        if (key.isPrimary()) {
-                            tokenManager.setEncPrivateKey(key.getPrivateKey()); // it's needed for verification later
-                            break;
+                    User user = userManager.getCurrentUserBlocking();
+                    if (user != null) {
+                        UserKey primaryKey = user.getKeys().getPrimaryKey();
+                        if (primaryKey != null) {
+                            tokenManager.setEncPrivateKey(primaryKey.getPrivateKey().getString()); // it's needed for verification later
                         }
                     }
                 }
-                SharedPreferences secureSharedPreferences = getSecureSharedPreferences(mUserManager.getUsername());
-                SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
-                List<String> loggedInUsers = AccountManager.Companion.getInstance(this).getLoggedInUsers();
 
-                if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_WARNING)) {
-                    secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING,
-                            defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING, true)).apply();
-                    defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_WARNING).apply();
+                SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
+                if (currentUserId != null) {
+                    SharedPreferences secureSharedPreferences =
+                            SecureSharedPreferences.Companion.getPrefsForUser(
+                                    getApplicationContext(),
+                                    currentUserId
+                            );
+
+                    if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_WARNING)) {
+                        secureSharedPreferences.edit().putBoolean(
+                                PREF_SHOW_STORAGE_LIMIT_WARNING,
+                                defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING, true)
+                        ).apply();
+                        defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_WARNING).apply();
+                    }
+                    if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_REACHED)) {
+                        secureSharedPreferences.edit().putBoolean(
+                                PREF_SHOW_STORAGE_LIMIT_REACHED,
+                                defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED, true)
+                        ).apply();
+                        defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_REACHED).apply();
+                    }
                 }
-                if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_REACHED)) {
-                    secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED,
-                            defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED, true)).apply();
-                    defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_REACHED).apply();
+
+                Set<Id> loggedInUsers = accountManager.allLoggedInBlocking();
+                Map<Id, SharedPreferences> allLoggedInUserPreferences = new HashMap();
+                for (Id user : loggedInUsers) {
+                    allLoggedInUserPreferences.put(
+                            user,
+                            SecureSharedPreferences.Companion.getPrefsForUser(this, user)
+                    );
                 }
+
                 if (defaultSharedPreferences.contains(PREF_LOGIN_STATE)) {
-                    for (String user : loggedInUsers) {
-                        SharedPreferences secureSharedPreferencesForUser = getSecureSharedPreferences(user);
-                        if (mUserManager.getMailboxPassword(user) == null) {
-                            mUserManager.logoutAccount(user);
+                    for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
+                        Id id = entry.getKey();
+                        if (userManager.getMailboxPassword(id) == null) {
+                            userManager.logoutBlocking(id);
                         } else {
-                            secureSharedPreferencesForUser.edit().putInt(PREF_LOGIN_STATE, LOGIN_STATE_TO_INBOX).apply();
+                            entry.getValue().edit().putInt(PREF_LOGIN_STATE, LOGIN_STATE_TO_INBOX).apply();
                         }
                     }
                     defaultSharedPreferences.edit().remove(PREF_LOGIN_STATE).apply();
                 }
-                for (String user : loggedInUsers) {
-                    SharedPreferences secureSharedPreferencesForUser = getSecureSharedPreferences(user);
-                    if (secureSharedPreferencesForUser.contains(PREF_LATEST_EVENT)) {
-                        secureSharedPreferencesForUser.edit().remove(PREF_LATEST_EVENT).apply();
+                for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
+                    SharedPreferences userPrefs = entry.getValue();
+                    if (userPrefs.contains(PREF_LATEST_EVENT)) {
+                        userPrefs.edit().remove(PREF_LATEST_EVENT).apply();
                     }
                 }
                 if (previousVersion < FCM_MIGRATION_VERSION) {
-                    FcmUtil.setTokenSent(false);
+                    multiUserFcmTokenManager.setTokenUnsentForAllSavedUsersBlocking();
                 }
                 if (defaultSharedPreferences.contains(PREF_SENT_TOKEN_TO_SERVER)) {
-                    for (String user : loggedInUsers) {
-                        SharedPreferences secureSharedPreferencesForUser = getSecureSharedPreferences(user);
-                        secureSharedPreferencesForUser.edit().putBoolean(PREF_SENT_TOKEN_TO_SERVER,
+                    for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
+                        SharedPreferences userPrefs = entry.getValue();
+                        userPrefs.edit().putBoolean(PREF_SENT_TOKEN_TO_SERVER,
+                                defaultSharedPreferences.getBoolean(PREF_SENT_TOKEN_TO_SERVER, false)).apply();
+                        defaultSharedPreferences.edit().remove(PREF_SENT_TOKEN_TO_SERVER).apply();
+                    }
+                    for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
+                        SharedPreferences userPrefs = entry.getValue();
+                        userPrefs.edit().putBoolean(PREF_SENT_TOKEN_TO_SERVER,
                                 defaultSharedPreferences.getBoolean(PREF_SENT_TOKEN_TO_SERVER, false)).apply();
                         defaultSharedPreferences.edit().remove(PREF_SENT_TOKEN_TO_SERVER).apply();
                     }
@@ -656,27 +636,31 @@ public class ProtonMailApplication extends Application implements androidx.work.
         } else {
             mUpdateOccurred = false;
             if (previousVersion < 0) {
-                prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, currentAppVersion).apply();
+                prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, BuildConfig.VERSION_CODE).apply();
             }
         }
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = "Please use injected UserManager instead")
     public UserManager getUserManager() {
-        return mUserManager;
+        return userManager;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = "Please use injected ProtonMailApiManager instead")
     public ProtonMailApiManager getApi() {
         return mApi;
     }
 
-    public ContactsDatabase getContactsDatabase() {
-        return contactsDatabase;
-    }
-
+    @Deprecated
+    @kotlin.Deprecated(message = "Please use injected OpenPGP instead")
     public OpenPGP getOpenPGP() {
         return mOpenPGP;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = "Please use injected EventManager instead")
     public EventManager getEventManager() {
         return eventManager;
     }
@@ -718,12 +702,12 @@ public class ProtonMailApplication extends Application implements androidx.work.
         jobManager.addJobInBackground(getOrganizationJob);
     }
 
-    public void notifyLoggedOut(String username) {
+    public void notifyLoggedOut(Id userId) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(
                 Context.NOTIFICATION_SERVICE);
-        INotificationServer notificationServer = new NotificationServer(this, notificationManager);
-        if (mUserManager != null && mUserManager.isLoggedIn()) {
-            notificationServer.notifyUserLoggedOut(mUserManager.getUser(username));
+        NotificationServer notificationServer = new NotificationServer(this, notificationManager);
+        if (userManager != null && userManager.isLoggedIn()) {
+            notificationServer.notifyUserLoggedOut(userManager.getUserBlocking(userId));
         }
     }
 
@@ -734,18 +718,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     public void clearLocaleCache() {
         mCurrentLocale = null;
-    }
-
-    public void setChangedSystemTimeDate(boolean changedSystemTimeDate) {
-        mChangedSystemTimeDate = changedSystemTimeDate;
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
-        pref.edit().putBoolean(PREF_TIME_AND_DATE_CHANGED, mChangedSystemTimeDate).apply();
-    }
-
-    public boolean isChangedSystemTimeDate() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
-        mChangedSystemTimeDate = pref.getBoolean(PREF_TIME_AND_DATE_CHANGED, false);
-        return mChangedSystemTimeDate;
     }
 
     @Override
@@ -759,8 +731,20 @@ public class ProtonMailApplication extends Application implements androidx.work.
         CustomLocale.Companion.apply(this);
     }
 
-    public void changeApiProviders(boolean switchToOld, boolean force) {
-        final SharedPreferences prefs = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+    public void changeApiProviders() {
+        final SharedPreferences prefs = getDefaultSharedPreferences();
         networkConfigurator.networkSwitcher.reconfigureProxy(Proxies.Companion.getInstance(null, prefs));
     }
+
+    public boolean isChangedSystemTimeDate() {
+        final SharedPreferences pref = getSharedPreferences(BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
+        changedSystemTimeDate = pref.getBoolean(PREF_TIME_AND_DATE_CHANGED, false);
+        return changedSystemTimeDate;
+    }
+
+    public void setChangedSystemTimeDate(boolean changed) {
+        final SharedPreferences pref = getSharedPreferences(BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
+        pref.edit().putBoolean(PREF_TIME_AND_DATE_CHANGED, changed).apply();
+    }
+
 }

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -39,7 +39,6 @@ import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.user.UserSettingsEvent;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 
 import static ch.protonmail.android.activities.NavigationActivityKt.EXTRA_FIRST_LOGIN;
@@ -49,10 +48,7 @@ import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 
 public class SplashActivity extends BaseActivity {
 
-    private static final String TAG_SPLASH_ACTIVITY = "SplashActivity";
-
     private static final int DELAY = 2000;
-    private static final int RECHECK_DELAY = 500;
     private final NavigateHandler mNavigateHandler = new NavigateHandler();
     private AlarmReceiver alarmReceiver = new AlarmReceiver();
     private NavigateRunnable mNavigateRunnable;
@@ -105,7 +101,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void navigate() {
-        int loginState = mUserManager.getLoginState();
+        int loginState = mUserManager.getCurrentUserLoginState();
         if (loginState == LOGIN_STATE_NOT_INITIALIZED) {
             if (mUserManager.isEngagementShown()) {
                 startActivity(new Intent(this, LoginActivity.class));
@@ -115,7 +111,7 @@ public class SplashActivity extends BaseActivity {
             finish();
         } else if (loginState == LOGIN_STATE_LOGIN_FINISHED) {
             // login finished but mailbox login not
-            mUserManager.logoutAccount(mUserManager.getUsername());
+            mUserManager.logoutBlocking(mUserManager.requireCurrentUserId());
             if (AccountManager.Companion.getInstance(this).getLoggedInUsers().size() >= 1) {
                 // There were multiple accounts logged in
                 checkUserDetailsAndGoHome();
@@ -152,7 +148,7 @@ public class SplashActivity extends BaseActivity {
         ProtonMailApplication.getApplication().resetLoginInfoEvent();
         switch (event.status) {
             case SUCCESS: {
-                mUserManager.saveKeySalt(event.response.getSalt(), event.username);
+                mUserManager.saveKeySaltBlocking(mUserManager.requireCurrentUserId(), event.response.getSalt());
                 startActivity(new Intent(this, MailboxLoginActivity.class));
                 finish();
             }
@@ -197,13 +193,8 @@ public class SplashActivity extends BaseActivity {
         public void run() {
             SplashActivity splashActivity = splashActivityWeakReference.get();
             if (splashActivity != null) {
-                if (!ProtonMailApplication.getApplication().isInitialized()) {
-                    splashActivity.mNavigateHandler.postDelayed(this, RECHECK_DELAY);
-                    Logger.doLog(TAG_SPLASH_ACTIVITY, "app not initialized, delay navigate");
-                } else {
-                    splashActivity.mNavigateHandler.removeCallbacks(this);
-                    splashActivity.navigate();
-                }
+                splashActivity.mNavigateHandler.removeCallbacks(this);
+                splashActivity.navigate();
             }
         }
     }

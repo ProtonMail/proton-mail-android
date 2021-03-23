@@ -18,16 +18,21 @@
  */
 package ch.protonmail.android.api.segments.event
 
+import android.content.Context
 import android.content.SharedPreferences
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.EventResponse
-import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.prefs.SecureSharedPreferences
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,77 +46,89 @@ const val PREF_LATEST_EVENT = "latest_event"
  */
 @Singleton
 class EventManager @Inject constructor(
-    private val protonMailApplication: ProtonMailApplication,
+    private val context: Context,
     protonMailApiManager: ProtonMailApiManager,
-    private val eventHandlerFactory: EventHandler.AssistedFactory
+    private val eventHandlerFactory: EventHandler.AssistedFactory,
+    private val dispatchers: DispatcherProvider
 ) {
 
     private var service: EventService = protonMailApiManager.getSecuredServices().event
-    private var sharedPrefs = mutableMapOf<String, SharedPreferences>()
-    private var eventHandlers = mutableMapOf<String, EventHandler>()
+    private val sharedPrefs = mutableMapOf<Id, SharedPreferences>()
+    private val eventHandlers = mutableMapOf<Id, EventHandler>()
 
     fun reconfigure(service: EventService) {
         this.service = service
     }
 
+    @OptIn(ObsoleteCoroutinesApi::class)
+    private val hasMoreEventContext = newSingleThreadContext("EventHandler.hasMoreEvent")
+
     /**
-     * @return if there are any more events to process
+     * Handle next event for given [EventHandler]
+     * This will be executed on a single thread
+     * @return `true` if there are any more events to process
+     *
+     * @throws ApiException if service call fails
      */
-    @Throws(IOException::class)
-    private fun nextEvent(handler: EventHandler): Boolean {
-        // This must be done sequentially, parallel should not work at the same time
-        synchronized(this) {
-            if (recoverNextEventId(handler.username) == null) {
+    private suspend fun handleNextEvent(handler: EventHandler): Boolean =
+        withContext(hasMoreEventContext) {
+            // This must be done sequentially, parallel should not work at the same time
+            if (recoverNextEventId(handler.userId) == null) {
                 refreshContacts(handler)
                 refresh(handler) // refresh other things like messages
-                getNewId(handler.username)
+                generateNewEventId(handler.userId)
             }
 
-            val eventID = recoverNextEventId(handler.username)
-            val response = ParseUtils.parse(service.check(eventID!!, RetrofitTag(handler.username)).execute())
+            val eventID = recoverNextEventId(handler.userId)
+            val response = service.check(eventID!!, UserIdTag(handler.userId))
 
             if (response.code == Constants.RESPONSE_CODE_OK) {
                 handleEvents(handler, response)
-                return response.hasMore()
+                response.hasMore()
             } else {
                 throw ApiException(response, response.error)
             }
         }
-    }
 
-    @Throws(IOException::class)
-    fun start(loggedInUsers: List<String>) {
-        loggedInUsers.forEach { username ->
-            if (!eventHandlers.containsKey(username)) {
-                eventHandlers[username] = eventHandlerFactory.create(username)
-            }
-        }
-
-        // go through all of the logged in users and check their event separately
-        eventHandlers.forEach {
-            while (nextEvent(it.value)) {
-                // iterate as long as there are more events to be fetched
-            }
+    private suspend fun handleAllEvents(handler: EventHandler) {
+        while (handleNextEvent(handler)) {
+            // noop - used for handle all the events
         }
     }
+
+    suspend fun consumeEventsFor(loggedInUsers: Collection<Id>) = withContext(dispatchers.Io) {
+        for (user in loggedInUsers) {
+            eventHandlers.putIfAbsent(user, eventHandlerFactory.create(user))
+        }
+
+        for ((_, handler) in eventHandlers) {
+            handleAllEvents(handler)
+        }
+    }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("consumeEventsFor(loggedInUsers)")
+    )
+    fun consumeEventsForBlocking(loggedInUsers: Collection<Id>) =
+        runBlocking { consumeEventsFor(loggedInUsers) }
 
     /**
-     * Clears the state of the EventManager for all users.
+     * Clears the state of the EventManager for all users
      */
     fun clearState() {
-        sharedPrefs = mutableMapOf()
-        eventHandlers = mutableMapOf()
+        sharedPrefs.clear()
+        eventHandlers.clear()
     }
 
     /**
-     * Clears the state of the EventManager for one user only.
+     * Clears the state of the EventManager for the given [userId]
      */
-    fun clearState(username: String) {
-        sharedPrefs.remove(username)
-        eventHandlers.remove(username)
+    fun clearState(userId: Id) {
+        sharedPrefs -= userId
+        eventHandlers -= userId
     }
 
-    @Throws(IOException::class)
     private fun refreshContacts(handler: EventHandler) {
         Timber.d("EventManager handler refreshContacts")
         synchronized(this) {
@@ -119,20 +136,21 @@ class EventManager @Inject constructor(
         }
     }
 
-    @Throws(IOException::class)
     private fun refresh(handler: EventHandler) {
         Timber.d("EventManager handler handleRefresh")
         synchronized(this) {
-            lockState(handler.username)
+            lockState(handler.userId)
             handler.handleRefresh()
         }
     }
 
-    @Throws(IOException::class)
-    private fun getNewId(username: String) {
-        val response = ParseUtils.parse(service.latestID(RetrofitTag(username)).execute())
+    /**
+     * @throws ApiException if service call fails
+     */
+    private suspend fun generateNewEventId(userId: Id) {
+        val response = service.latestId(UserIdTag(userId))
         if (response.code == Constants.RESPONSE_CODE_OK) {
-            backupNextEventId(username, response.eventID)
+            backupNextEventId(userId, response.eventID)
         } else {
             throw ApiException(response, response.error)
         }
@@ -151,30 +169,29 @@ class EventManager @Inject constructor(
             // Write the updates since the staging was completed without any error
             handler.write(response)
             // Update next event id only after writing updates to local cache has finished successfully
-            backupNextEventId(handler.username, response.eventID)
+            backupNextEventId(handler.userId, response.eventID)
         }
     }
 
-    private fun lockState(username: String) {
-        backupNextEventId(username, "")
+    private fun lockState(userId: Id) {
+        backupNextEventId(userId, "")
     }
 
-    private fun recoverNextEventId(username: String): String? {
-        val prefs = sharedPrefs.getOrPut(
-            username,
-            { protonMailApplication.getSecureSharedPreferences(username) }
-        )
+    private fun recoverNextEventId(userId: Id): String? {
+        val prefs = sharedPrefs.getOrPut(userId, {
+            SecureSharedPreferences.getPrefsForUser(context, userId)
+        })
         Timber.d("EventManager recoverLastEventId")
         val lastEventId = prefs.getString(PREF_NEXT_EVENT_ID, null)
         return if (lastEventId.isNullOrEmpty()) null else lastEventId
     }
 
-    private fun backupNextEventId(username: String, eventId: String) {
-        val prefs = sharedPrefs.getOrPut(
-            username,
-            { protonMailApplication.getSecureSharedPreferences(username) }
-        )
+    private fun backupNextEventId(userId: Id, eventId: String) {
+        val prefs = sharedPrefs.getOrPut(userId, {
+            SecureSharedPreferences.getPrefsForUser(context, userId)
+        })
         Timber.d("EventManager backupLastEventId")
         prefs.edit().putString(PREF_NEXT_EVENT_ID, eventId).apply()
     }
+
 }

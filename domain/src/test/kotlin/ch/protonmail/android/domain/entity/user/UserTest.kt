@@ -128,6 +128,7 @@ internal class UserTest {
                     Id("domainId"),
                     EmailAddress("dav@protonmail.ch"),
                     null,
+                    null,
                     enabled = true,
                     type = Address.Type.ORIGINAL,
                     allowedToSend = true,

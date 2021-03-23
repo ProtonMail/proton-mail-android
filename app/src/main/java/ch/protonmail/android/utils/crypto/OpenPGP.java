@@ -111,7 +111,7 @@ public class OpenPGP {
     public String generateKey(String userName, String domain, byte[] passphrase, KeyType keyType, int bits) throws Exception {
 
         if (passphrase == null || passphrase.length == 0) {
-            throw new Exception("passphrase for generating key can't be empty");
+            throw new IllegalArgumentException("passphrase for generating key can't be empty");
         }
 
         Crypto.setKeyGenerationOffset(-86400);

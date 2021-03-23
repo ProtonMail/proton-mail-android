@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -69,10 +69,10 @@ abstract class BaseRequestInterceptor(
     }
 
     private fun check24hExpired(): Boolean {
-        val user = userManager.user
+        val user = userManager.getCurrentLegacyUserBlocking()
         val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
         val proxies = Proxies.getInstance(null, prefs)
-        if (user.allowSecureConnectionsViaThirdParties && !user.usingDefaultApi) {
+        if (user != null && user.allowSecureConnectionsViaThirdParties && !user.usingDefaultApi) {
             if (proxies.proxyList.proxies.isNotEmpty()) {
                 Timber.d("ProxyList is not empty")
                 val proxy: ProxyItem? = try {
@@ -167,7 +167,7 @@ abstract class BaseRequestInterceptor(
     fun applyHeadersToRequest(request: Request): Request {
 
         val requestBuilder = request.newBuilder()
-        val tokenManager = userManager.tokenManager
+        val tokenManager = userManager.getCurrentUserTokenManagerBlocking()
         // by default, we authorize requests using default user from UserManager
         if (tokenManager != null) {
             requestBuilder.header(HEADER_UID, tokenManager.uid)
@@ -186,16 +186,17 @@ abstract class BaseRequestInterceptor(
         }
 
         // we customize auth headers if different than default user has to be authorized
-        request.tag(RetrofitTag::class.java)?.also {
-            if (it.usernameAuth == null) { // clear out default auth and unique session headers
+        request.tag(UserIdTag::class.java)?.also {
+            // TODO: check ID is always non-null
+            if (it.id.s == null) { // clear out default auth and unique session headers
                 requestBuilder.removeHeader(HEADER_AUTH)
                 requestBuilder.removeHeader(HEADER_UID)
-            } else if (it.usernameAuth != tokenManager?.username) {
+            } else if (it.id != userManager.currentUserId) {
                 // if it's the default user, credentials are already there
-                val userTokenManager = userManager.getTokenManager(it.usernameAuth)
+                val userTokenManager = userManager.getTokenManagerBlocking(it.id)
                 userTokenManager?.let { manager ->
                     if (manager.authAccessToken != null) {
-                        Timber.d("setting non-default auth headers for ${it.usernameAuth}")
+                        Timber.d("setting non-default auth headers for ${it.id}")
                         requestBuilder.header(HEADER_AUTH, manager.authAccessToken!!)
                         requestBuilder.header(HEADER_UID, manager.uid)
                     }

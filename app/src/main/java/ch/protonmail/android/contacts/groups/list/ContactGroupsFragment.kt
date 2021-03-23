@@ -37,15 +37,15 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.fragments.BaseFragment
 import ch.protonmail.android.api.models.MessageRecipient
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.IContactsFragment
 import ch.protonmail.android.contacts.IContactsListFragmentListener
 import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsActivity
 import ch.protonmail.android.contacts.groups.details.EXTRA_CONTACT_GROUP
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.extensions.setDefaultIfEmpty
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
@@ -194,7 +194,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         contactGroupsViewModel.contactGroupsError.observe(this) { event ->
             event?.getContentIfNotHandled()?.let {
                 Timber.i("contactGroupsResult Error: $it")
-                context?.showToast(it.setDefaultIfEmpty(getString(R.string.default_error_message)))
+                context?.showToast(it.ifEmpty { getString(R.string.default_error_message) })
             }
         }
         contactGroupsViewModel.observeContactGroups()
@@ -242,14 +242,8 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         }
 
         contactGroupsViewModel.contactGroupEmailsError.observe(this) { event ->
-            event?.getContentIfNotHandled()?.let { message ->
-                context?.showToast(
-                    if (message.isNotBlank()) {
-                        message
-                    } else {
-                        getString(R.string.default_error_message)
-                    }
-                )
+            event?.getContentIfNotHandled()?.let {
+                context?.showToast(it.ifBlank { getString(R.string.default_error_message) })
             }
         }
 

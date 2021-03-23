@@ -23,23 +23,24 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import ch.protonmail.android.R
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.servers.notification.INotificationServer
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.extensions.showToast
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 class AndroidUserNotifier @Inject constructor(
-    private val notificationServer: INotificationServer,
+    private val notificationServer: NotificationServer,
     private val userManager: UserManager,
     private val context: Context,
     private val dispatchers: DispatcherProvider
 ) : UserNotifier {
 
     override fun showPersistentError(errorMessage: String, messageSubject: String?) {
-        notificationServer.notifySaveDraftError(errorMessage, messageSubject, userManager.username)
+        val user = userManager.requireCurrentUserBlocking()
+        notificationServer.notifySaveDraftError(user.id, errorMessage, messageSubject, user.name)
     }
 
     override fun showError(errorMessage: String) {
@@ -50,7 +51,8 @@ class AndroidUserNotifier @Inject constructor(
 
     override fun showSendMessageError(errorMessage: String, messageSubject: String?) {
         val error = "\"$messageSubject\" - $errorMessage"
-        notificationServer.notifySingleErrorSendingMessage(error, userManager.username)
+        val user = userManager.requireCurrentUserBlocking()
+        notificationServer.notifySingleErrorSendingMessage(user.id, user.name, error)
     }
 
     override suspend fun showMessageSent() {
@@ -60,12 +62,14 @@ class AndroidUserNotifier @Inject constructor(
     }
 
     override fun showHumanVerificationNeeded(message: Message) {
+        val user = userManager.requireCurrentUserBlocking()
         notificationServer.notifyVerificationNeeded(
-            userManager.username,
-            message.subject,
-            message.messageId,
+            user.id,
+            user.name,
+            checkNotNull(message.subject) { "'subject' cannot be null" },
+            checkNotNull(message.messageId) { "'messageId' cannot be null" },
             message.isInline,
-            message.addressID
+            checkNotNull(message.addressID) { "'addressID' cannot be null" }
         )
     }
 

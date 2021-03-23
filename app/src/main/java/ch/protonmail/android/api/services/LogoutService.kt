@@ -18,16 +18,15 @@
  */
 package ch.protonmail.android.api.services
 
+import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.worker.LogoutWorker
-import ch.protonmail.libs.core.utils.takeIfNotBlank
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.TagConstraint
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,10 +35,10 @@ import java.io.IOException
 import javax.inject.Inject
 
 // region constants
-private const val ACTION_LOGOUT_ONLINE = "ACTION_LOGOUT_ONLINE"
-private const val ACTION_LOGOUT_OFFLINE = "ACTION_LOGOUT_OFFLINE"
-private const val EXTRA_USERNAME = "EXTRA_USERNAME"
-private const val EXTRA_FCM_REGISTRATION_ID = "EXTRA_FCM_REGISTRATION_ID"
+private const val ACTION_LOGOUT_ONLINE = "action.logout.online"
+private const val ACTION_LOGOUT_OFFLINE = "action.logout.offline"
+private const val EXTRA_USER_ID = "extra.user.id"
+private const val EXTRA_FCM_REGISTRATION_ID = "extra.fcm.registration.id"
 // endregion
 
 @AndroidEntryPoint
@@ -47,9 +46,6 @@ class LogoutService : JobIntentService() {
 
     @Inject
     internal lateinit var jobManager: JobManager
-
-    @Inject
-    internal lateinit var networkUtils: QueueNetworkUtil
 
     @Inject
     internal lateinit var userManager: UserManager
@@ -61,26 +57,21 @@ class LogoutService : JobIntentService() {
     internal lateinit var logoutWorkerEnqueuer: LogoutWorker.Enqueuer
 
     override fun onHandleWork(intent: Intent) {
+        val userId = Id(checkNotNull(intent.getStringExtra(EXTRA_USER_ID)))
         when (intent.action) {
-            ACTION_LOGOUT_ONLINE -> logoutOnline(
-                intent.getStringExtra(EXTRA_USERNAME),
-                intent.getStringExtra(EXTRA_FCM_REGISTRATION_ID) ?: ""
-            )
-            ACTION_LOGOUT_OFFLINE -> logoutOffline(intent.getStringExtra(EXTRA_USERNAME))
+            ACTION_LOGOUT_ONLINE -> logoutOnline(userId, intent.getStringExtra(EXTRA_FCM_REGISTRATION_ID))
+            ACTION_LOGOUT_OFFLINE -> logoutOffline(userId)
         }
     }
 
-    private fun logoutOffline(username: String?) {
+    private fun logoutOffline(userId: Id) {
         try {
-            val hasMailboxPassword = username?.takeIfNotBlank()?.let {
-                userManager.getMailboxPassword(username)?.let { psw ->
-                    String(psw).isNotBlank()
-                }
-            } ?: false
+            val hasMailboxPassword = userManager.getMailboxPassword(userId)
+                ?.let { String(it).isNotBlank() }
+                ?: false
             if (hasMailboxPassword) {
-                username!! // Can not be null if `hasMailboxPassword` is `true`
-                api.revokeAccessBlocking(username)
-                TokenManager.clearInstance(username)
+                api.revokeAccessBlocking(userId)
+                TokenManager.clearInstance(userId)
             }
             jobManager.cancelJobs(TagConstraint.ALL)
             jobManager.clear()
@@ -89,23 +80,23 @@ class LogoutService : JobIntentService() {
         }
     }
 
-    private fun logoutOnline(username: String?, fcmRegistrationId: String) {
+    private fun logoutOnline(userId: Id, fcmRegistrationId: String?) {
         jobManager.cancelJobs(TagConstraint.ALL)
         jobManager.clear()
-        logoutWorkerEnqueuer.enqueue(username ?: userManager.username, fcmRegistrationId)
+        logoutWorkerEnqueuer.enqueue(userId, fcmRegistrationId)
     }
 
     companion object {
 
         @JvmOverloads
-        fun startLogout(online: Boolean, username: String? = null, fcmRegistrationId: String? = null) {
-            Timber.v("start Logout online:$online, username:$username")
-            val context = ProtonMailApplication.getApplication()
+        fun startLogout(context: Context, userId: Id, online: Boolean, fcmRegistrationId: String? = null) {
+            Timber.v("Start Logout for user: $userId - online: $online")
             val intent = Intent(context, LogoutService::class.java)
-            intent.action = if (online) ACTION_LOGOUT_ONLINE else ACTION_LOGOUT_OFFLINE
-            intent.putExtra(EXTRA_USERNAME, username)
-            intent.putExtra(EXTRA_FCM_REGISTRATION_ID, fcmRegistrationId)
+                .setAction(if (online) ACTION_LOGOUT_ONLINE else ACTION_LOGOUT_OFFLINE)
+                .putExtra(EXTRA_USER_ID, userId.s)
+                .putExtra(EXTRA_FCM_REGISTRATION_ID, fcmRegistrationId)
             enqueueWork(context, LogoutService::class.java, Constants.JOB_INTENT_SERVICE_ID_LOGOUT, intent)
         }
+
     }
 }

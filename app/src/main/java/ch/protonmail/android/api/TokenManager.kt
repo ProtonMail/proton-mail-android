@@ -1,30 +1,36 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.api
 
+import android.content.Context
 import android.content.SharedPreferences
-import android.text.TextUtils
+import androidx.core.content.edit
 import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.models.RefreshBody
 import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication.getApplication
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.prefs.SecureSharedPreferences
+import ch.protonmail.libs.core.utils.takeIfNotEmpty
+import me.proton.core.util.android.sharedpreferences.clearAll
+import me.proton.core.util.android.sharedpreferences.get
+import me.proton.core.util.kotlin.unsupported
 
 // region constants
 private const val PREF_ENC_PRIV_KEY = "priv_key"
@@ -39,7 +45,7 @@ private const val PREF_TOKEN_SCOPE = "access_token_scope"
  * [SecureSharedPreferences][ch.protonmail.android.prefs.SecureSharedPreferences] file.
  */
 
-class TokenManager private constructor(val username: String) {
+class TokenManager private constructor(private val pref: SharedPreferences) {
 
     private var accessToken: String? = null
     private var refreshToken: String? = null
@@ -55,10 +61,6 @@ class TokenManager private constructor(val username: String) {
             persist()
         }
 
-    private val pref: SharedPreferences by lazy {
-        getApplication().getSecureSharedPreferences(username)
-    }
-
     init {
         load()
     }
@@ -67,27 +69,24 @@ class TokenManager private constructor(val username: String) {
         get() = uID ?: ""
 
     val authAccessToken: String?
-        get() = if (TextUtils.isEmpty(accessToken)) null else {
-            Constants.TOKEN_TYPE + " " + accessToken
-        }
+        get() = accessToken?.takeIfNotEmpty()?.let { "${Constants.TOKEN_TYPE} $it" }
 
     private fun load() {
-        refreshToken = pref.getString(PREF_REFRESH_TOKEN, "")
-        uID = pref.getString(PREF_USER_UID, "")
-        accessToken = pref.getString(PREF_ACCESS_TOKEN, null)
-        val scope = pref.getString(PREF_TOKEN_SCOPE, Constants.TOKEN_SCOPE_FULL) ?: ""
-        encPrivateKey = pref.getString(PREF_ENC_PRIV_KEY, "")
-        this.scope = scope
+        refreshToken = pref[PREF_REFRESH_TOKEN] ?: ""
+        uID = pref[PREF_USER_UID] ?: ""
+        accessToken = pref[PREF_ACCESS_TOKEN]
+        scope = pref[PREF_TOKEN_SCOPE] ?: Constants.TOKEN_SCOPE_FULL
+        encPrivateKey = pref[PREF_ENC_PRIV_KEY] ?: ""
     }
 
     private fun persist() {
-        pref.edit()
-            .putString(PREF_REFRESH_TOKEN, refreshToken)
-            .putString(PREF_ENC_PRIV_KEY, encPrivateKey)
-            .putString(PREF_USER_UID, uID)
-            .putString(PREF_ACCESS_TOKEN, accessToken)
-            .putString(PREF_TOKEN_SCOPE, scope)
-            .apply()
+        pref.edit {
+            putString(PREF_REFRESH_TOKEN, refreshToken)
+            putString(PREF_ENC_PRIV_KEY, encPrivateKey)
+            putString(PREF_USER_UID, uID)
+            putString(PREF_ACCESS_TOKEN, accessToken)
+            putString(PREF_TOKEN_SCOPE, scope)
+        }
     }
 
     fun handleRefresh(response: RefreshResponse) {
@@ -117,13 +116,12 @@ class TokenManager private constructor(val username: String) {
     }
 
     fun clear() {
-        pref.edit().clear().apply()
+        pref.clearAll()
         load()
     }
 
-    fun createRefreshBody(): RefreshBody {
-        return RefreshBody(refreshToken)
-    }
+    fun createRefreshBody(): RefreshBody =
+        RefreshBody(refreshToken)
 
     // TODO method only for debugging production issue
     fun isRefreshTokenBlank() = refreshToken.isNullOrBlank()
@@ -133,30 +131,37 @@ class TokenManager private constructor(val username: String) {
 
     companion object {
 
-        private val tokenManagers = mutableMapOf<String, TokenManager>()
+        private val cache = mutableMapOf<Id, TokenManager>()
 
         @Synchronized
+        fun clearInstance(userId: Id) {
+            cache -= userId
+        }
+
+        @Synchronized
+        @Deprecated("Use user Id", ReplaceWith("clearInstance(userId)"), DeprecationLevel.ERROR)
         fun clearInstance(username: String) {
-            if (username.isNotEmpty()) tokenManagers.remove(username)
+            unsupported
         }
 
         @Synchronized
         fun clearAllInstances() {
-            tokenManagers.clear()
+            cache.clear()
         }
 
+        @Suppress("DeprecatedCallableAddReplaceWith") // No replacement
+        @Deprecated("Not needed anymore", level = DeprecationLevel.ERROR)
         fun removeEmptyTokenManagers() {
-            tokenManagers.remove("")
+            unsupported
         }
 
         /**
-         * Creates and caches instances of TokenManager for usernames.
+         * Creates and caches instances of TokenManager for given User
          */
         @Synchronized
-        fun getInstance(username: String): TokenManager? {
-            return if (!username.isBlank()) tokenManagers.getOrPut(username) {
-                TokenManager(username)
-            } else null
-        }
+        fun getInstance(context: Context, userId: Id): TokenManager =
+            cache.getOrPut(userId) {
+                TokenManager(SecureSharedPreferences.getPrefsForUser(context, userId))
+            }
     }
 }

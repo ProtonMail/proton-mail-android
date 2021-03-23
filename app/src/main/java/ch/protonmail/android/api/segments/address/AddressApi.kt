@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.address
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.address.AddressOrder
 import ch.protonmail.android.api.models.address.AddressSetupBody
@@ -27,6 +27,7 @@ import ch.protonmail.android.api.models.address.AddressesResponse
 import ch.protonmail.android.api.models.address.CondensedAddress
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
+import ch.protonmail.android.domain.entity.Id
 import java.io.IOException
 
 class AddressApi(val service: AddressService) : BaseApi(), AddressApiSpec {
@@ -39,8 +40,8 @@ class AddressApi(val service: AddressService) : BaseApi(), AddressApiSpec {
         service.fetchAddresses()
 
     @Throws(IOException::class)
-    override fun fetchAddressesBlocking(username: String): AddressesResponse =
-        ParseUtils.parse(service.fetchAddressesCall(RetrofitTag(username)).execute())
+    override fun fetchAddressesBlocking(userId: Id): AddressesResponse =
+        ParseUtils.parse(service.fetchAddressesCall(UserIdTag(userId)).execute())
 
     @Throws(IOException::class)
     override fun updateAlias(addressIds: List<String>): ResponseBody =

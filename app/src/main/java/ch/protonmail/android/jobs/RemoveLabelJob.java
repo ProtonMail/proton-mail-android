@@ -25,11 +25,11 @@ import com.birbit.android.jobqueue.Params;
 import java.util.List;
 
 import ch.protonmail.android.api.models.IDList;
-import ch.protonmail.android.api.models.room.counters.CountersDatabase;
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory;
-import ch.protonmail.android.api.models.room.counters.UnreadLabelCounter;
-import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.data.local.CounterDao;
+import ch.protonmail.android.data.local.CounterDatabase;
+import ch.protonmail.android.data.local.model.Message;
+import ch.protonmail.android.data.local.model.UnreadLabelCounter;
 import ch.protonmail.android.events.RefreshDrawerEvent;
 import ch.protonmail.android.utils.AppUtil;
 
@@ -46,9 +46,9 @@ public class RemoveLabelJob extends ProtonMailBaseJob {
 
     @Override
     protected void onProtonCancel(int cancelReason, @Nullable Throwable throwable) {
-        final CountersDatabase countersDatabase = CountersDatabaseFactory.Companion
-                .getInstance(getApplicationContext())
-                .getDatabase();
+        final CounterDao counterDao = CounterDatabase.Companion
+                .getInstance(getApplicationContext(), getUserId())
+                .getDao();
         int totalUnread = 0;
         for (String messageId : messageIds) {
             Message message = getMessageDetailsRepository().findMessageByIdBlocking(messageId);
@@ -60,19 +60,20 @@ public class RemoveLabelJob extends ProtonMailBaseJob {
             }
         }
 
-        UnreadLabelCounter unreadLabelCounter = countersDatabase.findUnreadLabelById(labelId);
+        UnreadLabelCounter unreadLabelCounter = counterDao.findUnreadLabelById(labelId);
         if (unreadLabelCounter == null) {
             return;
         }
         unreadLabelCounter.increment(totalUnread);
-        countersDatabase.insertUnreadLabel(unreadLabelCounter);
+        counterDao.insertUnreadLabel(unreadLabelCounter);
         AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 
     @Override
     public void onAdded() {
-        final CountersDatabase countersDatabase = CountersDatabaseFactory.Companion.getInstance(
-                getApplicationContext()).getDatabase();
+        final CounterDao counterDao = CounterDatabase.Companion
+                .getInstance(getApplicationContext(), getUserId())
+                .getDao();
 
         int totalUnread = 0;
         for (String messageId : messageIds) {
@@ -85,12 +86,12 @@ public class RemoveLabelJob extends ProtonMailBaseJob {
             }
         }
 
-        UnreadLabelCounter unreadLabelCounter = countersDatabase.findUnreadLabelById(labelId);
+        UnreadLabelCounter unreadLabelCounter = counterDao.findUnreadLabelById(labelId);
         if (unreadLabelCounter == null) {
             return;
         }
         unreadLabelCounter.decrement(totalUnread);
-        countersDatabase.insertUnreadLabel(unreadLabelCounter);
+        counterDao.insertUnreadLabel(unreadLabelCounter);
         AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 

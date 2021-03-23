@@ -22,13 +22,9 @@ import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
-import ch.protonmail.android.api.models.factories.makeInt
-import ch.protonmail.android.api.models.room.contacts.ContactData
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.worker.PostLabelWorker
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
@@ -36,6 +32,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.toInt
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -44,17 +41,17 @@ open class ContactDetailsRepository @Inject constructor(
     private val workManager: WorkManager,
     protected val jobManager: JobManager,
     protected val api: ProtonMailApiManager,
-    protected val contactsDao: ContactsDao,
+    protected val contactDao: ContactDao,
     private val dispatcherProvider: DispatcherProvider
 ) {
 
     fun getContactGroups(id: String): Observable<List<ContactLabel>> {
-        return contactsDao.findAllContactGroupsByContactEmailAsyncObservable(id)
+        return contactDao.findAllContactGroupsByContactEmailAsyncObservable(id)
             .toObservable()
     }
 
     fun getContactEmails(id: String): Observable<List<ContactEmail>> {
-        return contactsDao.findContactEmailsByContactIdObservable(id)
+        return contactDao.findContactEmailsByContactIdObservable(id)
             .toObservable()
     }
 
@@ -68,17 +65,17 @@ open class ContactDetailsRepository @Inject constructor(
 
     private fun getContactGroupsFromApi(): Observable<List<ContactLabel>> {
         return api.fetchContactGroupsAsObservable().doOnNext {
-            contactsDao.clearContactGroupsLabelsTableBlocking()
-            contactsDao.saveContactGroupsListBlocking(it)
+            contactDao.clearContactGroupsLabelsTableBlocking()
+            contactDao.saveContactGroupsListBlocking(it)
         }
     }
 
     private fun getContactGroupsFromDB(): Observable<List<ContactLabel>> {
-        return contactsDao.findContactGroupsObservable()
+        return contactDao.findContactGroupsObservable()
             .flatMap { list ->
                 Observable.fromIterable(list)
                     .map {
-                        it.contactEmailsCount = contactsDao.countContactEmailsByLabelIdBlocking(it.ID)
+                        it.contactEmailsCount = contactDao.countContactEmailsByLabelIdBlocking(it.ID)
                         it
                     }
                     .toList()
@@ -92,9 +89,9 @@ open class ContactDetailsRepository @Inject constructor(
         val labelBody = contactLabelConverterFactory.createServerObjectFromDBObject(contactLabel)
         return api.updateLabelCompletable(contactLabel.ID, labelBody.labelBody)
             .doOnComplete {
-                val joins = contactsDao.fetchJoins(contactLabel.ID)
-                contactsDao.saveContactGroupLabel(contactLabel)
-                contactsDao.saveContactEmailContactLabelBlocking(joins)
+                val joins = contactDao.fetchJoinsBlocking(contactLabel.ID)
+                contactDao.saveContactGroupLabel(contactLabel)
+                contactDao.saveContactEmailContactLabelBlocking(joins)
             }
             .doOnError { throwable ->
                 if (throwable is IOException) {
@@ -102,7 +99,7 @@ open class ContactDetailsRepository @Inject constructor(
                         contactLabel.name,
                         contactLabel.color,
                         contactLabel.display,
-                        contactLabel.exclusive.makeInt(),
+                        contactLabel.exclusive.toInt(),
                         false,
                         contactLabel.ID
                     )
@@ -114,11 +111,11 @@ open class ContactDetailsRepository @Inject constructor(
         val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
         return api.labelContacts(labelContactsBody)
             .doOnComplete {
-                val joins = contactsDao.fetchJoins(contactGroupId) as ArrayList
+                val joins = contactDao.fetchJoinsBlocking(contactGroupId) as ArrayList
                 for (contactEmail in membersList) {
                     joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                 }
-                contactsDao.saveContactEmailContactLabelBlocking(joins)
+                contactDao.saveContactEmailContactLabelBlocking(joins)
             }
             .doOnError { throwable ->
                 if (throwable is IOException) {
@@ -137,7 +134,7 @@ open class ContactDetailsRepository @Inject constructor(
         val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
         return api.unlabelContactEmailsCompletable(labelContactsBody)
             .doOnComplete {
-                contactsDao.deleteJoinByGroupIdAndEmailId(membersList, contactGroupId)
+                contactDao.deleteJoinByGroupIdAndEmailId(membersList, contactGroupId)
             }
             .doOnError { throwable ->
                 if (throwable is IOException) {
@@ -151,14 +148,14 @@ open class ContactDetailsRepository @Inject constructor(
     }
 
     suspend fun saveContactEmails(emails: List<ContactEmail>) = withContext(dispatcherProvider.Io) {
-        contactsDao.saveAllContactsEmails(emails)
+        contactDao.saveAllContactsEmails(emails)
     }
 
     suspend fun updateContactDataWithServerId(contactDataInDb: ContactData, contactServerId: String) {
         withContext(dispatcherProvider.Io) {
-            contactsDao.findContactDataByDbId(contactDataInDb.dbId ?: -1)?.let {
+            contactDao.findContactDataByDbId(contactDataInDb.dbId ?: -1)?.let {
                 it.contactId = contactServerId
-                contactsDao.saveContactData(it)
+                contactDao.saveContactData(it)
             }
         }
     }
@@ -166,21 +163,21 @@ open class ContactDetailsRepository @Inject constructor(
     suspend fun updateAllContactEmails(contactId: String?, contactServerEmails: List<ContactEmail>) {
         withContext(dispatcherProvider.Io) {
             contactId?.let {
-                val localContactEmails = contactsDao.findContactEmailsByContactId(it)
-                contactsDao.deleteAllContactsEmails(localContactEmails)
-                contactsDao.saveAllContactsEmailsBlocking(contactServerEmails)
+                val localContactEmails = contactDao.findContactEmailsByContactId(it)
+                contactDao.deleteAllContactsEmails(localContactEmails)
+                contactDao.saveAllContactsEmails(contactServerEmails)
             }
         }
     }
 
     suspend fun deleteContactData(contactData: ContactData) =
         withContext(dispatcherProvider.Io) {
-            contactsDao.deleteContactData(contactData)
+            contactDao.deleteContactData(contactData)
         }
 
     suspend fun saveContactData(contactData: ContactData): Long =
         withContext(dispatcherProvider.Io) {
-            return@withContext contactsDao.saveContactData(contactData)
+            return@withContext contactDao.saveContactData(contactData)
         }
 
 }

@@ -22,19 +22,19 @@ import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.factories.IConverterFactory
-import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import me.proton.core.util.kotlin.toInt
 import java.io.IOException
 import javax.inject.Inject
 
@@ -42,7 +42,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
     val jobManager: JobManager,
     val workManager: WorkManager,
     val apiManager: ProtonMailApiManager,
-    private val contactsDao: ContactsDao,
+    private val contactDao: ContactDao,
     private val contactLabelFactory: IConverterFactory<ServerLabel, ContactLabel>,
     private val createContactGroupWorker: CreateContactGroupWorker.Enqueuer
 ) {
@@ -51,9 +51,9 @@ class ContactGroupEditCreateRepository @Inject constructor(
         val labelBody = contactLabelFactory.createServerObjectFromDBObject(contactLabel)
         return apiManager.updateLabelCompletable(contactLabel.ID, labelBody.labelBody)
             .doOnComplete {
-                val joins = contactsDao.fetchJoins(contactLabel.ID)
-                contactsDao.saveContactGroupLabel(contactLabel)
-                contactsDao.saveContactEmailContactLabelBlocking(joins)
+                val joins = contactDao.fetchJoinsBlocking(contactLabel.ID)
+                contactDao.saveContactGroupLabel(contactLabel)
+                contactDao.saveContactEmailContactLabelBlocking(joins)
             }
             .doOnError { throwable ->
                 if (throwable is IOException) {
@@ -63,7 +63,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
     }
 
     fun getContactGroupEmails(id: String): Observable<List<ContactEmail>> {
-        return contactsDao.findAllContactsEmailsByContactGroupAsyncObservable(id)
+        return contactDao.findAllContactsEmailsByContactGroupAsyncObservable(id)
             .toObservable()
     }
 
@@ -78,7 +78,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
                 for (contactEmail in membersList) {
                     list.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                 }
-                contactsDao.deleteContactEmailContactLabel(list)
+                contactDao.deleteContactEmailContactLabel(list)
             }.doOnError { throwable ->
                 if (throwable is IOException) {
                     RemoveMembersFromContactGroupWorker.Enqueuer(workManager).enqueue(
@@ -102,7 +102,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
                     list.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                 }
                 getContactGroupEmails(contactGroupId).test().values()
-                contactsDao.saveContactEmailContactLabelBlocking(list)
+                contactDao.saveContactEmailContactLabelBlocking(list)
             }.doOnError { throwable ->
                 if (throwable is IOException) {
                     jobManager.addJobInBackground(SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList))
@@ -113,7 +113,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
     fun createContactGroup(contactLabel: ContactLabel): Single<ContactLabel> {
         val labelBody = contactLabelFactory.createServerObjectFromDBObject(contactLabel)
         return apiManager.createLabelCompletable(labelBody.labelBody)
-            .doOnSuccess { label -> contactsDao.saveContactGroupLabel(label) }
+            .doOnSuccess { label -> contactDao.saveContactGroupLabel(label) }
             .doOnError { throwable ->
                 if (throwable is IOException) {
                     enqueueCreateContactGroupWorker(contactLabel, false)
@@ -126,7 +126,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
             contactLabel.name,
             contactLabel.color,
             contactLabel.display,
-            contactLabel.exclusive.makeInt(),
+            contactLabel.exclusive.toInt(),
             isUpdate,
             contactLabel.ID
         )

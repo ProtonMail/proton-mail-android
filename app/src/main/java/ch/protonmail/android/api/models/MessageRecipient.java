@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -37,8 +37,9 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
 
-import static ch.protonmail.android.api.models.room.contacts.ContactDataKt.COLUMN_CONTACT_DATA_NAME;
-import static ch.protonmail.android.api.models.room.contacts.ContactEmailKt.COLUMN_CONTACT_EMAILS_EMAIL;
+import static ch.protonmail.android.data.local.model.ContactDataKt.COLUMN_CONTACT_DATA_NAME;
+import static ch.protonmail.android.data.local.model.ContactEmailKt.COLUMN_CONTACT_EMAILS_EMAIL;
+
 
 public class MessageRecipient implements Serializable, Comparable<MessageRecipient> {
     @ColumnInfo(name = COLUMN_CONTACT_DATA_NAME)

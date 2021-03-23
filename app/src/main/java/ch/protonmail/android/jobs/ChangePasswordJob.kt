@@ -39,12 +39,11 @@ import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.PasswordChangeEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ConstantTime
-import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.Params
 import com.birbit.android.jobqueue.RetryConstraint
-import me.proton.core.util.kotlin.takeIfNotBlank
+import timber.log.Timber
 
 class ChangePasswordJob(
     private val passwordType: Int,
@@ -56,10 +55,10 @@ class ChangePasswordJob(
 
     @Throws(Throwable::class)
     override fun onRun() {
-        username.takeIfNotBlank()
-            ?: throw IllegalArgumentException("username is empty in UserManager")
+
         val openPGP = applicationContext.app.openPGP
         val user = getUserManager().user
+        val username = user.name ?: user.username
         val infoResponse = getApi().loginInfo(username)
         val proofs = LoginService.srpProofsForInfo(username, oldPassword, infoResponse, 2)
         var keysResponse: Keys? = null
@@ -127,6 +126,7 @@ class ChangePasswordJob(
         val generatedMailboxPassword = openPGP.generateMailboxPassword(keySalt, newPassword)
         val verifier = if (isSingleMode == PasswordMode.SINGLE)
             PasswordVerifier.calculate(newPassword, newModulus) else null
+        val username = user.name ?: user.username
         val proofs = LoginService.srpProofsForInfo(username, oldPassword, infoResponse, 2)
         val userAddresses: List<Address> = user.addresses
         val privateKeyBodies = ArrayList<PrivateKeyBody>()
@@ -135,7 +135,7 @@ class ChangePasswordJob(
         for (keys in userKeys) {
             updateKey(keys, generatedMailboxPassword, openPGP, privateKeyBodies, false)
         }
-        if(!getUserManager().user.legacyAccount) { // non-empty body for UserKeys for migrated users
+        if (!getUserManager().user.legacyAccount) { // non-empty body for UserKeys for migrated users
             userPrivateKeyBodies.addAll(privateKeyBodies)
         }
         for (address in userAddresses) {
@@ -148,8 +148,8 @@ class ChangePasswordJob(
 
         var newOrganizationPrivateKey: String? = ""
         keysResponse?.let { it ->
-            newOrganizationPrivateKey = if (openPGP.checkPassphrase(it.privateKey, getUserManager().getMailboxPassword()!!)) {
-                openPGP.updatePrivateKeyPassphrase(it.privateKey, getUserManager().getMailboxPassword(), generatedMailboxPassword)
+            newOrganizationPrivateKey = if (openPGP.checkPassphrase(it.privateKey, getUserManager().getCurrentUserMailboxPassword()!!)) {
+                openPGP.updatePrivateKeyPassphrase(it.privateKey, getUserManager().getCurrentUserMailboxPassword(), generatedMailboxPassword)
             } else {
                 null
             }
@@ -169,7 +169,7 @@ class ChangePasswordJob(
         generatedMailboxPassword: ByteArray
     ) {
         if (response.code == Constants.RESPONSE_CODE_OK) {
-            getUserManager().saveMailboxPassword(generatedMailboxPassword, username)
+            getUserManager().saveMailboxPasswordBlocking(checkNotNull(userId), generatedMailboxPassword)
             AppUtil.postEventOnUi(PasswordChangeEvent(passwordType, AuthStatus.SUCCESS, response.error))
         } else {
             when (response.code) {
@@ -194,16 +194,15 @@ class ChangePasswordJob(
         throwOnError: Boolean
     ) {
         try {
-            try {
-                val newPrivateKey = openPGP.updatePrivateKeyPassphrase(keys.privateKey,
-                    getUserManager().getMailboxPassword(), generatedMailboxPassword)
-                val privateKeyBody = PrivateKeyBody(newPrivateKey, keys.id)
-                privateKeyBody.let { privateKeyBodies.add(privateKeyBody) }
-            } catch (e: Exception) {
-                // should catch keys that are not "decryptable" with the old mailbox password
-                Logger.doLogException(TAG_CHANGE_PASSWORD_JOB, e)
-            }
+            val newPrivateKey = openPGP.updatePrivateKeyPassphrase(
+                keys.privateKey,
+                getUserManager().getCurrentUserMailboxPassword(),
+                generatedMailboxPassword
+            )
+            val privateKeyBody = PrivateKeyBody(newPrivateKey, keys.id)
+            privateKeyBody.let { privateKeyBodies.add(privateKeyBody) }
         } catch (e: Exception) {
+            Timber.e(e)
             if (throwOnError) {
                 AppUtil.postEventOnUi(PasswordChangeEvent(passwordType, AuthStatus.FAILED))
             }
@@ -217,7 +216,4 @@ class ChangePasswordJob(
         AppUtil.postEventOnUi(PasswordChangeEvent(passwordType, AuthStatus.FAILED))
     }
 
-    companion object {
-        private const val TAG_CHANGE_PASSWORD_JOB = "ChangePasswordJob"
-    }
 }

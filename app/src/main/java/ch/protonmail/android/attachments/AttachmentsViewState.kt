@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.attachments
 
-import ch.protonmail.android.api.models.room.messages.Attachment
+import ch.protonmail.android.data.local.model.Attachment
 
 sealed class AttachmentsViewState {
     object MissingConnectivity : AttachmentsViewState()

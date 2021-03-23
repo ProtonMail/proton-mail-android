@@ -45,10 +45,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
+import androidx.core.os.postDelayed
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.switchMap
 import androidx.loader.app.LoaderManager
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -60,10 +61,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
+import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
 import ch.protonmail.android.activities.EXTRA_LOGOUT
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
-import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER
-import ch.protonmail.android.activities.EXTRA_SWITCHED_USER
+import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER_ID
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.EngagementActivity
 import ch.protonmail.android.activities.FLOW_START_ACTIVITY
@@ -102,17 +103,6 @@ import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.adapters.swipe.TrashSwipeHandler
 import ch.protonmail.android.api.models.MessageCount
 import ch.protonmail.android.api.models.SimpleMessage
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.counters.CountersDatabase
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory
-import ch.protonmail.android.api.models.room.counters.TotalLabelCounter
-import ch.protonmail.android.api.models.room.counters.TotalLocationCounter
-import ch.protonmail.android.api.models.room.messages.Label
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
-import ch.protonmail.android.api.models.room.pendingActions.PendingSend
-import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.api.services.MessagesService.Companion.getLastMessageTime
 import ch.protonmail.android.api.services.MessagesService.Companion.startFetchFirstPage
@@ -123,14 +113,21 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.DrawerOptionType
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
+import ch.protonmail.android.core.Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES
 import ch.protonmail.android.core.Constants.Prefs.PREF_SWIPE_GESTURES_DIALOG_SHOWN
+import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
 import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.CounterDatabase
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.PendingActionDatabase
+import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.FetchUpdatesEvent
-import ch.protonmail.android.events.ForceSwitchedAccountEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxLoginEvent
@@ -139,9 +136,11 @@ import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.events.user.MailSettingsEvent
-import ch.protonmail.android.fcm.FcmUtil
+import ch.protonmail.android.events.SwitchUserEvent
+import ch.protonmail.android.fcm.FcmTokenManager
+import ch.protonmail.android.fcm.MultiUserFcmTokenManager
 import ch.protonmail.android.fcm.PMRegistrationWorker
+import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.jobs.EmptyFolderJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchLabelsJob
@@ -155,7 +154,7 @@ import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
-import ch.protonmail.android.servers.notification.EXTRA_USERNAME
+import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
@@ -165,12 +164,13 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithTwoButtons
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnackbar
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.worker.PostLabelWorker
+import ch.protonmail.libs.core.utils.contains
 import com.birbit.android.jobqueue.Job
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -179,12 +179,20 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
+import kotlinx.android.synthetic.main.fragment_billing.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import me.proton.core.util.android.sharedpreferences.get
+import me.proton.core.util.android.sharedpreferences.observe
+import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.android.workmanager.activity.getWorkManager
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
+import kotlin.time.milliseconds
 import kotlin.time.seconds
 
 private const val TAG_MAILBOX_ACTIVITY = "MailboxActivity"
@@ -209,10 +217,11 @@ class MailboxActivity :
     IMoveMessagesListener,
     DialogInterface.OnDismissListener {
 
-    private lateinit var countersDatabase: CountersDatabase
-    private lateinit var pendingActionsDatabase: PendingActionsDatabase
+    private lateinit var counterDao: CounterDao
+    private lateinit var pendingActionDao: PendingActionDao
 
     @Inject
+    lateinit var messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory
     lateinit var messageDetailsRepository: MessageDetailsRepository
 
     @Inject
@@ -223,6 +232,16 @@ class MailboxActivity :
 
     @Inject
     lateinit var pmRegistrationWorkerEnqueuer: PMRegistrationWorker.Enqueuer
+
+    @Inject
+    lateinit var fcmTokenManagerFactory: FcmTokenManager.Factory
+    private val currentUserTokenManager: FcmTokenManager by lazy {
+        val prefs = SecureSharedPreferences.getPrefsForUser(this, userManager.requireCurrentUserId())
+        fcmTokenManagerFactory.create(prefs)
+    }
+
+    @Inject
+    lateinit var multiUserFcmTokenManager: MultiUserFcmTokenManager
 
     private lateinit var messagesAdapter: MessagesRecyclerViewAdapter
     private val mailboxLocationMain = MutableLiveData<MessageLocationType>()
@@ -238,7 +257,6 @@ class MailboxActivity :
     private var catchLabelEvents = false
     private val mailboxViewModel: MailboxViewModel by viewModels()
     private var storageLimitApproachingAlertDialog: AlertDialog? = null
-    private var liveSharedPreferences: LiveSharedPreferences? = null
     private val handler = Handler(Looper.getMainLooper())
 
     override val currentLabelId get() = mailboxLabelId
@@ -247,18 +265,25 @@ class MailboxActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        countersDatabase = CountersDatabaseFactory.getInstance(this).getDatabase()
-        pendingActionsDatabase = PendingActionsDatabaseFactory.getInstance(this).getDatabase()
+        val userId = userManager.currentUserId
+        if (userId == null) {
+            finish()
+            return
+        }
+
+        messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
+        counterDao = CounterDatabase.getInstance(this, userId).getDao()
+        pendingActionDao = PendingActionDatabase.getInstance(this, userId).getDao()
 
         // force reload of MessageDetailsRepository's internal dependencies in case we just switched user
 
         // TODO if we decide to use special flag for switching (and not login), change this
         if (intent.getBooleanExtra(EXTRA_FIRST_LOGIN, false)) {
-            messageDetailsRepository.reloadDependenciesForUser(mUserManager.username)
-            FcmUtil.setTokenSent(false) // force FCM to re-register
+            messageDetailsRepository.reloadDependenciesForUser(userId)
+            multiUserFcmTokenManager.setTokenUnsentForAllSavedUsersBlocking() // force FCM to re-register
         }
         val extras = intent.extras
-        if (!mUserManager.isEngagementShown) {
+        if (!userManager.isEngagementShown) {
             startActivity(AppUtil.decorInAppIntent(Intent(this, EngagementActivity::class.java)))
         }
         mailboxLocationMain.value = MessageLocationType.INBOX
@@ -273,89 +298,55 @@ class MailboxActivity :
             setupNewMessageLocation(extras.getInt(EXTRA_MAILBOX_LOCATION))
         }
         startObserving()
-        mailboxViewModel.toastMessageMaxLabelsReached.observe(
-            this,
-            { event: Event<MaxLabelsReached?> ->
-                val maxLabelsReached = event.getContentIfNotHandled()
-                if (maxLabelsReached != null) {
-                    val message =
-                        String.format(
-                            getString(R.string.max_labels_exceeded),
-                            maxLabelsReached.subject,
-                            maxLabelsReached.maxAllowedLabels
-                        )
-                    showToast(message, Toast.LENGTH_SHORT)
-                }
+        mailboxViewModel.toastMessageMaxLabelsReached.observe(this) { event: Event<MaxLabelsReached?> ->
+            val maxLabelsReached = event.getContentIfNotHandled()
+            if (maxLabelsReached != null) {
+                val message = getString(
+                    R.string.max_labels_exceeded,
+                    maxLabelsReached.subject,
+                    maxLabelsReached.maxAllowedLabels
+                )
+                showToast(message, Toast.LENGTH_SHORT)
             }
-        )
-        mailboxViewModel.hasConnectivity.observe(
-            this,
-            { onConnectivityEvent(it) }
-        )
+        }
+
+        mailboxViewModel.hasConnectivity.observe(this, ::onConnectivityEvent)
 
         startObservingUsedSpace()
 
-        messagesAdapter = MessagesRecyclerViewAdapter(
-            this,
-            object : Function1<SelectionModeEnum, Unit> {
-                var actionModeAux: ActionMode? = null
-                override fun invoke(selectionModeEvent: SelectionModeEnum) {
-                    when (selectionModeEvent) {
-                        SelectionModeEnum.STARTED -> actionModeAux = startActionMode(this@MailboxActivity)
-                        SelectionModeEnum.ENDED -> {
-                            val actionModeEnd = actionModeAux
-                            if (actionModeEnd != null) {
-                                actionModeEnd.finish()
-                                this.actionModeAux = null
-                            }
-                        }
+        var actionModeAux: ActionMode? = null
+        messagesAdapter = MessagesRecyclerViewAdapter(this) { selectionModeEvent ->
+            when (selectionModeEvent) {
+                SelectionModeEnum.STARTED -> actionModeAux = startActionMode(this@MailboxActivity)
+                SelectionModeEnum.ENDED -> {
+                    val actionModeEnd = actionModeAux
+                    if (actionModeEnd != null) {
+                        actionModeEnd.finish()
+                        actionModeAux = null
                     }
                 }
             }
-        )
+        }
 
-        contactsRepository.findAllContactsEmailsAsync().observe(
-            this,
-            { contactEmails: List<ContactEmail> ->
-                messagesAdapter.setContactsList(contactEmails)
-            }
-        )
+        contactsRepository.findAllContactsEmailsAsync().observe(this, messagesAdapter::setContactsList)
+        mailboxViewModel.pendingSendsLiveData.observe(this, messagesAdapter::setPendingForSendingList)
+        mailboxViewModel.pendingUploadsLiveData.observe(this, messagesAdapter::setPendingUploadsList)
+        messageDetailsRepository.getAllLabels().observe(this, messagesAdapter::setLabels)
 
-        mailboxViewModel.pendingSendsLiveData.observe(
-            this,
-            { pendingSendList: List<PendingSend> ->
-                messagesAdapter.setPendingForSendingList(pendingSendList)
+        mailboxViewModel.hasSuccessfullyDeletedMessages.observe(this) { isSuccess ->
+            Timber.v("Delete message status is success $isSuccess")
+            if (!isSuccess) {
+                showToast(R.string.message_deleted_error)
             }
-        )
-
-        mailboxViewModel.pendingUploadsLiveData.observe(
-            this,
-            { pendingUploadList: List<PendingUpload> ->
-                messagesAdapter.setPendingUploadsList(pendingUploadList)
-            }
-        )
-
-        messageDetailsRepository.getAllLabels().observe(
-            this,
-            { labels: List<Label> ->
-                messagesAdapter.setLabels(labels)
-            }
-        )
-
-        mailboxViewModel.hasSuccessfullyDeletedMessages.observe(
-            this,
-            { isSuccess ->
-                Timber.v("Delete message status is success $isSuccess")
-                if (!isSuccess) {
-                    showToast(R.string.message_deleted_error)
-                }
-            }
-        )
+        }
 
         checkUserAndFetchNews()
 
-        if (extras != null && extras.containsKey(EXTRA_SWITCHED_TO_USER)) {
-            switchAccountProcedure(extras.getString(EXTRA_SWITCHED_TO_USER)!!) // should never be null here
+        if (extras != null && EXTRA_SWITCHED_TO_USER_ID in extras) {
+            lifecycleScope.launchWhenCreated {
+                val plainId = checkNotNull(extras.getString(EXTRA_SWITCHED_TO_USER_ID))
+                switchAccount(Id(plainId))
+            }
         }
 
         setUpDrawer()
@@ -368,7 +359,7 @@ class MailboxActivity :
         initializeSwipeRefreshLayout(spinner_layout)
         initializeSwipeRefreshLayout(no_messages_layout)
 
-        if (mUserManager.isFirstMailboxLoad) {
+        if (userManager.isFirstMailboxLoad) {
             swipeCustomizeSnack = Snackbar.make(
                 findViewById(R.id.drawer_layout),
                 getString(R.string.customize_swipe_actions),
@@ -392,7 +383,7 @@ class MailboxActivity :
                 }
                 setActionTextColor(ContextCompat.getColor(this@MailboxActivity, R.color.icon_purple))
             }
-            mUserManager.firstMailboxLoadDone()
+            userManager.firstMailboxLoadDone()
         }
 
         messagesAdapter.setItemClick { message: Message? ->
@@ -412,24 +403,20 @@ class MailboxActivity :
 
         fetchOrganizationData()
 
-        val messagesLiveData: LiveData<List<Message>> =
-            Transformations.switchMap(mailboxLocationMain) { location: MessageLocationType? ->
-                getLiveDataByLocation(messageDetailsRepository, location!!)
-            }
+        val messagesLiveData = mailboxLocationMain.switchMap { location: MessageLocationType ->
+            getLiveDataByLocation(messageDetailsRepository, location)
+        }
 
-        mailboxLocationMain.observe(
-            this,
-            { newLocation: MessageLocationType? ->
-                messagesAdapter.setNewLocation(newLocation!!)
-            }
-        )
+        mailboxLocationMain.observe(this, messagesAdapter::setNewLocation)
         messagesLiveData.observe(this, MessagesListObserver(messagesAdapter))
         ItemTouchHelper(SwipeController()).attachToRecyclerView(messages_list_view)
 
-        if (extras != null && extras.getBoolean(EXTRA_SWITCHED_USER, false)) {
-            val newUser = extras.getString(EXTRA_SWITCHED_TO_USER)
-            if (!newUser.isNullOrEmpty()) {
-                switchAccountProcedure(newUser)
+        if (extras != null && extras.getBoolean(EXTRA_HAS_SWITCHED_USER, false)) {
+            if (EXTRA_SWITCHED_TO_USER_ID in extras) {
+                lifecycleScope.launchWhenCreated {
+                    val plainId = checkNotNull(extras.getString(EXTRA_SWITCHED_TO_USER_ID))
+                    switchAccount(Id(plainId))
+                }
             } else {
                 onSwitchedAccounts()
             }
@@ -438,46 +425,84 @@ class MailboxActivity :
 
     override fun secureContent(): Boolean = true
 
+    override fun enableScreenshotProtector() {
+        screenShotPreventer.visibility = View.VISIBLE
+    }
+
+    override fun disableScreenshotProtector() {
+        screenShotPreventer.visibility = View.GONE
+    }
+
+    private fun startObserving() {
+        val owner = this
+        mailboxViewModel.run {
+            usedSpaceActionEvent(FLOW_START_ACTIVITY)
+            manageLimitReachedWarning.observe(owner, setupUpLimitReachedObserver)
+            manageLimitApproachingWarning.observe(owner, setupUpLimitApproachingObserver)
+            manageLimitBelowCritical.observe(owner, setupUpLimitBelowCriticalObserver)
+            manageLimitReachedWarningOnTryCompose.observe(owner, setupUpLimitReachedTryComposeObserver)
+        }
+    }
+
+    private fun startObservingUsedSpace() {
+        val preferences = SecureSharedPreferences.getPrefsForUser(this, userManager.requireCurrentUserId())
+        preferences.observe<Long>(PREF_USED_SPACE)
+            .onEach { mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED) }
+            .launchIn(lifecycleScope)
+    }
+
     private val setupUpLimitReachedObserver = Observer { limitReached: Event<Boolean> ->
-        // val _limitReached = limitReached.getContentIfNotHandled()
-        if (limitReached.getContentIfNotHandled() == true /* _limitReached != null */) {
+        if (limitReached.getContentIfNotHandled() == true ) {
             if (storageLimitApproachingAlertDialog != null) {
                 storageLimitApproachingAlertDialog!!.dismiss()
                 storageLimitApproachingAlertDialog = null
             }
-            if (mUserManager.canShowStorageLimitReached()) {
-                showInfoDialogWithTwoButtons(
-                    this@MailboxActivity,
-                    getString(R.string.storage_limit_warning_title),
-                    getString(R.string.storage_limit_reached_text),
-                    getString(R.string.learn_more),
-                    getString(R.string.okay),
-                    {
+            if (userManager.canShowStorageLimitReached()) {
+
+                showTwoButtonInfoDialog(
+                    titleStringId = R.string.storage_limit_warning_title,
+                    messageStringId = R.string.storage_limit_reached_text,
+                    rightStringId = R.string.okay,
+                    leftStringId = R.string.learn_more,
+                    onRight = {
+                        userManager.setShowStorageLimitReached(false)
+                    },
+                    onLeft = {
                         val browserIntent = Intent(
                             Intent.ACTION_VIEW,
                             Uri.parse(getString(R.string.limit_reached_learn_more))
                         )
                         startActivity(browserIntent)
-                        mUserManager.setShowStorageLimitReached(false)
-                    },
-                    {
-                        mUserManager.setShowStorageLimitReached(false)
-                    },
-                    true
+                        userManager.setShowStorageLimitReached(false)
+                    }
                 )
             }
-            mUserManager.setShowStorageLimitWarning(true)
-            storageLimitAlert.visibility = View.VISIBLE
-            storageLimitAlert.setIcon(getDrawable(R.drawable.inbox)!!)
-            storageLimitAlert.setText(getString(R.string.storage_limit_alert))
+            userManager.setShowStorageLimitWarning(true)
+            storageLimitAlert.apply {
+                visibility = View.VISIBLE
+                setIcon(getDrawable(R.drawable.inbox)!!)
+                setText(getString(R.string.storage_limit_alert))
+            }
         }
     }
 
-    private val setupUpLimitApproachingObserver = Observer { limitApproaching: Event<Boolean> ->
-        // val _limitApproaching = limitApproaching.getContentIfNotHandled()
+    private fun showStorageLimitApproachingAlertDialog() {
+        storageLimitApproachingAlertDialog = showTwoButtonInfoDialog(
+            titleStringId = R.string.storage_limit_warning_title,
+            messageStringId = R.string.storage_limit_approaching_text,
+            leftStringId = R.string.dont_remind_again,
+            onRight = { storageLimitApproachingAlertDialog = null },
+            onLeft = {
+                userManager.setShowStorageLimitWarning(false)
+                storageLimitApproachingAlertDialog = null
+            }
+        )
+    }
 
-        if (limitApproaching.getContentIfNotHandled() == true /* _limitApproaching != null */) {
-            if (mUserManager.canShowStorageLimitWarning()) {
+    private val setupUpLimitApproachingObserver = { limitApproaching: Event<Boolean> ->
+
+        if (limitApproaching.getContentIfNotHandled() == true) {
+            if (userManager.canShowStorageLimitWarning()) {
                 if (storageLimitApproachingAlertDialog == null || !storageLimitApproachingAlertDialog!!.isShowing) {
                     // This is the first time the dialog is going to be showed or
                     // the dialog is not showing and had previously been dismissed by clicking the positive
@@ -486,39 +511,34 @@ class MailboxActivity :
                     showStorageLimitApproachingAlertDialog()
                 }
             }
-            mUserManager.setShowStorageLimitReached(true)
+            userManager.setShowStorageLimitReached(true)
             storageLimitAlert.visibility = View.GONE
         }
     }
 
-    private val setupUpLimitBelowCriticalObserver = Observer { limitReached: Event<Boolean> ->
-        // val _limitReached = limitReached.getContentIfNotHandled()
-        if (limitReached.getContentIfNotHandled() == true /* _limitReached != null */) {
-            mUserManager.setShowStorageLimitWarning(true)
-            mUserManager.setShowStorageLimitReached(true)
+    private val setupUpLimitBelowCriticalObserver = { limitReached: Event<Boolean> ->
+        if (limitReached.getContentIfNotHandled() == true) {
+            userManager.setShowStorageLimitWarning(true)
+            userManager.setShowStorageLimitReached(true)
             storageLimitAlert.visibility = View.GONE
         }
     }
 
     private val setupUpLimitReachedTryComposeObserver = Observer { limitReached: Event<Boolean> ->
-        // val _limitReached = limitReached.getContentIfNotHandled()
-        if (limitReached.getContentIfNotHandled() == true /* _limitReached != null && _limitReached */) {
-            showInfoDialogWithTwoButtons(
-                this@MailboxActivity,
-                getString(R.string.storage_limit_warning_title),
-                getString(R.string.storage_limit_reached_text),
-                getString(R.string.learn_more),
-                getString(R.string.okay),
-                {
+        if (limitReached.getContentIfNotHandled() == true) {
+            showTwoButtonInfoDialog(
+                titleStringId = R.string.storage_limit_warning_title,
+                messageStringId = R.string.storage_limit_reached_text,
+                leftStringId = R.string.learn_more,
+                onLeft = {
                     val browserIntent = Intent(
                         Intent.ACTION_VIEW,
                         Uri.parse(getString(R.string.limit_reached_learn_more))
                     )
                     startActivity(browserIntent)
-                },
-                { },
-                true
+                }
             )
+
         } else {
             val intent = AppUtil.decorInAppIntent(
                 Intent(
@@ -534,50 +554,6 @@ class MailboxActivity :
         get() = messagesAdapter.checkedMessages.map { SimpleMessage(it) }
 
     private var firstLogin: Boolean? = null
-
-    override fun enableScreenshotProtector() {
-        screenShotPreventer.visibility = View.VISIBLE
-    }
-
-    override fun disableScreenshotProtector() {
-        screenShotPreventer.visibility = View.GONE
-    }
-
-    private fun startObserving() {
-        mailboxViewModel.usedSpaceActionEvent(FLOW_START_ACTIVITY)
-        mailboxViewModel.manageLimitReachedWarning.observe(this, setupUpLimitReachedObserver)
-        mailboxViewModel.manageLimitApproachingWarning.observe(this, setupUpLimitApproachingObserver)
-        mailboxViewModel.manageLimitBelowCritical.observe(this, setupUpLimitBelowCriticalObserver)
-        mailboxViewModel.manageLimitReachedWarningOnTryCompose.observe(this, setupUpLimitReachedTryComposeObserver)
-    }
-
-    private fun startObservingUsedSpace() {
-        liveSharedPreferences?.removeObservers(this)
-        liveSharedPreferences = LiveSharedPreferences(
-            app.getSecureSharedPreferences(mUserManager.username) as SecureSharedPreferences,
-            Constants.Prefs.PREF_USED_SPACE
-        )
-        liveSharedPreferences!!.observe(
-            this,
-            { mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED) }
-        )
-    }
-
-    private fun showStorageLimitApproachingAlertDialog() {
-        storageLimitApproachingAlertDialog = showInfoDialogWithTwoButtons(
-            this@MailboxActivity,
-            getString(R.string.storage_limit_warning_title),
-            getString(R.string.storage_limit_approaching_text),
-            getString(R.string.dont_remind_again),
-            getString(R.string.okay),
-            {
-                mUserManager.setShowStorageLimitWarning(false)
-                storageLimitApproachingAlertDialog = null
-            },
-            { storageLimitApproachingAlertDialog = null },
-            true
-        )
-    }
 
     private fun getLiveDataByLocation(
         messageDetailsRepository: MessageDetailsRepository,
@@ -615,41 +591,36 @@ class MailboxActivity :
     }
 
     override fun onSwitchedAccounts() {
-        val username = mUserManager.username
+        val currentUserId = userManager.currentUserId
+            ?: return
+
         mJobManager.start()
-        countersDatabase = CountersDatabaseFactory.getInstance(this).getDatabase()
-        pendingActionsDatabase = PendingActionsDatabaseFactory.getInstance(this).getDatabase()
-        messageDetailsRepository.reloadDependenciesForUser(username)
+        counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()
+        pendingActionDao = PendingActionDatabase.getInstance(this, currentUserId).getDao()
+        messageDetailsRepository.reloadDependenciesForUser(currentUserId)
+
         startObservingPendingActions()
-        AppUtil.clearNotifications(this, username)
+        AppUtil.clearNotifications(this, currentUserId)
         lazyManager.reset()
         setUpDrawer()
         setupAccountsList()
         checkRegistration()
-        handler.postDelayed(
-            {
-                mJobManager.addJobInBackground(FetchLabelsJob())
-                setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
-            },
-            500
-        )
+        handler.postDelayed(500) {
+            mJobManager.addJobInBackground(FetchLabelsJob())
+            setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
+        }
 
         val messagesLiveData =
             mailboxLocationMain.switchMap { getLiveDataByLocation(messageDetailsRepository, it) }
         messagesLiveData.observe(this, MessagesListObserver(messagesAdapter))
-        messageDetailsRepository.getAllLabels().observe(
-            this,
-            { labels: List<Label> ->
-                messagesAdapter.setLabels(labels)
-            }
-        )
+        messageDetailsRepository.getAllLabels().observe(this, messagesAdapter::setLabels)
         // Account has been switched, so used space changed as well
         mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED)
         // Observe used space for current account
         startObservingUsedSpace()
 
         // manually update the flags for preventing screenshots
-        if (isPreventingScreenshots || mUserManager.user.isPreventTakingScreenshots) {
+        if (isPreventingScreenshots || userManager.user.isPreventTakingScreenshots) {
             window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
@@ -712,23 +683,25 @@ class MailboxActivity :
 
     private fun checkRegistration() {
         // Check device for Play Services APK.
-        if (checkPlayServices()) {
-            val tokenSent = FcmUtil.isTokenSent()
-            if (!tokenSent) {
-                try {
-                    FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            task.result?.let { result ->
-                                FcmUtil.setFirebaseToken(result.token)
-                                pmRegistrationWorkerEnqueuer()
+        lifecycleScope.launchWhenCreated {
+            if (checkPlayServices()) {
+                val tokenSent = multiUserFcmTokenManager.isTokenSentForAllLoggedUsers()
+                if (!tokenSent) {
+                    try {
+                        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                task.result?.let { result ->
+                                    currentUserTokenManager.saveTokenBlocking(FirebaseToken(result.token))
+                                    pmRegistrationWorkerEnqueuer()
+                                }
+                            } else {
+                                Timber.e(task.exception, "Could not retrieve FirebaseInstanceId")
                             }
-                        } else {
-                            Timber.e(task.exception, "Could not retrieve FirebaseInstanceId")
                         }
+                    } catch (exc: IllegalArgumentException) {
+                        showToast(R.string.invalid_firebase_api_key_message)
+                        Timber.e(exc, getString(R.string.invalid_firebase_api_key_message))
                     }
-                } catch (exc: IllegalArgumentException) {
-                    Toast.makeText(this, R.string.invalid_firebase_api_key_message, Toast.LENGTH_LONG).show()
-                    Timber.e(exc, getString(R.string.invalid_firebase_api_key_message))
                 }
             }
         }
@@ -736,7 +709,7 @@ class MailboxActivity :
 
     private fun checkUserAndFetchNews(): Boolean {
         syncUUID = UUID.randomUUID().toString()
-        if (mUserManager.isBackgroundSyncEnabled) {
+        if (userManager.isBackgroundSyncEnabled) {
             setRefreshing(true)
             layout_sync.visibility = View.VISIBLE
         }
@@ -767,20 +740,32 @@ class MailboxActivity :
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         // force reload of MessageDetailsRepository's internal dependencies in case we just switched user
-        if (intent.extras != null && intent.extras!!.containsKey(EXTRA_SWITCHED_TO_USER)) {
-            switchAccountProcedure(intent.getStringExtra(EXTRA_SWITCHED_TO_USER)!!)
-        } else if (intent.getBooleanExtra(EXTRA_SWITCHED_USER, false)) {
-            onSwitchedAccounts()
-        } else if (intent.getBooleanExtra(EXTRA_LOGOUT, false)) {
-            onLogout()
-        } else if (intent.extras != null && intent.extras!!.containsKey(EXTRA_USERNAME)) {
-            if (mUserManager.username != intent.getStringExtra(EXTRA_USERNAME)) {
-                switchAccountProcedure(intent.getStringExtra(EXTRA_USERNAME)!!)
+        val extras = intent.extras
+
+        lifecycleScope.launchWhenCreated {
+
+            if (extras != null && EXTRA_SWITCHED_TO_USER_ID in extras) {
+                val plainId = checkNotNull(extras.getString(EXTRA_SWITCHED_TO_USER_ID))
+                switchAccount(Id(plainId))
+
+            } else if (intent.getBooleanExtra(EXTRA_HAS_SWITCHED_USER, false)) {
+                onSwitchedAccounts()
+
+            } else if (intent.getBooleanExtra(EXTRA_LOGOUT, false)) {
+                onLogout()
+
+            } else if (extras != null && EXTRA_USER_ID in extras) {
+                val plainId = checkNotNull(extras.getString(EXTRA_USER_ID))
+                val id = Id(plainId)
+                if (userManager.currentUserId != id) {
+                    switchAccount(id)
+                }
+
+            } else {
+                checkRegistration()
+                checkUserAndFetchNews()
+                setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
             }
-        } else {
-            checkRegistration()
-            checkUserAndFetchNews()
-            setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
         }
     }
 
@@ -795,13 +780,11 @@ class MailboxActivity :
 
     private fun showSwipeGesturesChangedDialog() {
         val prefs: SharedPreferences = (applicationContext as ProtonMailApplication).defaultSharedPreferences
-        showInfoDialogWithTwoButtons(
-            this,
-            getString(R.string.swipe_gestures_changed),
-            getString(R.string.swipe_gestures_changed_message),
-            getString(R.string.go_to_settings),
-            getString(R.string.okay),
-            {
+        showTwoButtonInfoDialog(
+            titleStringId = R.string.swipe_gestures_changed,
+            messageStringId = R.string.swipe_gestures_changed_message,
+            leftStringId = R.string.go_to_settings,
+            onLeft = {
                 val swipeGestureIntent = Intent(
                     this,
                     EditSettingsItemActivity::class.java
@@ -811,18 +794,14 @@ class MailboxActivity :
                     AppUtil.decorInAppIntent(swipeGestureIntent),
                     SettingsEnum.SWIPING_GESTURE.ordinal
                 )
-            },
-            { },
-            cancelable = true,
-            dismissible = true,
-            outsideClickCancellable = true
+            }
         )
         prefs.edit().putBoolean(PREF_SWIPE_GESTURES_DIALOG_SHOWN, true).apply()
     }
 
     override fun onResume() {
         super.onResume()
-        if (!mUserManager.isLoggedIn) {
+        if (!userManager.isLoggedIn) {
             return
         }
         reloadMessageCounts()
@@ -832,10 +811,10 @@ class MailboxActivity :
         mailboxViewModel.checkConnectivity()
         val mailboxLocation = mailboxLocationMain.value
         if (mailboxLocation == MessageLocationType.INBOX) {
-            AppUtil.clearNotifications(this, mUserManager.username)
+            AppUtil.clearNotifications(this, userManager.requireCurrentUserId())
         }
         if (mailboxLocation == MessageLocationType.ALL_DRAFT || mailboxLocation == MessageLocationType.DRAFT) {
-            AppUtil.clearSendingFailedNotifications(this, mUserManager.username)
+            AppUtil.clearSendingFailedNotifications(this, userManager.requireCurrentUserId())
         }
         setUpDrawer()
         closeDrawer(true)
@@ -907,22 +886,16 @@ class MailboxActivity :
                 true
             }
             R.id.empty -> {
-                val clickListener = DialogInterface.OnClickListener { dialog: DialogInterface, which: Int ->
-                    if (which == DialogInterface.BUTTON_POSITIVE) {
+                if (!isFinishing) {
+                    showTwoButtonInfoDialog(
+                        titleStringId = R.string.empty_folder,
+                        messageStringId = R.string.are_you_sure_empty,
+                        leftStringId = R.string.no
+                    ) {
                         setRefreshing(true)
                         mJobManager.addJobInBackground(EmptyFolderJob(mailboxLocationMain.value, this.mailboxLabelId))
                         setLoadingMore(false)
                     }
-                    dialog.dismiss()
-                }
-                if (!isFinishing) {
-                    val builder = AlertDialog.Builder(this)
-                    builder.setTitle(R.string.empty_folder)
-                        .setMessage(R.string.are_you_sure_empty)
-                        .setNegativeButton(R.string.no, clickListener)
-                        .setPositiveButton(R.string.yes, clickListener)
-                        .create()
-                        .show()
                 }
                 true
             }
@@ -970,17 +943,13 @@ class MailboxActivity :
     }
 
     @Subscribe
-    fun onSwitchedAccountEvent(event: ForceSwitchedAccountEvent) {
+    fun onSwitchedAccountEvent(event: SwitchUserEvent) {
+        val (fromUsername, toUsername) = event.from.second.s to event.to.second.s
         showSignedInSnack(
             messages_list_view,
-            String.format(getString(R.string.signed_in_with_logged_out_from), event.fromAccount, event.toAccount)
+            getString(R.string.signed_in_with_logged_out_from, fromUsername, toUsername)
         )
         onSwitchedAccounts()
-    }
-
-    @Subscribe
-    fun onMailSettingsEvent(event: MailSettingsEvent?) {
-        loadMailSettings()
     }
 
     override fun onLogout() {
@@ -988,7 +957,7 @@ class MailboxActivity :
     }
 
     override fun onInbox(type: DrawerOptionType) {
-        AppUtil.clearNotifications(applicationContext, mUserManager.username)
+        AppUtil.clearNotifications(applicationContext, userManager.requireCurrentUserId())
         setupNewMessageLocation(type.drawerOptionTypeValue)
     }
 
@@ -1024,14 +993,19 @@ class MailboxActivity :
 
     private fun showNoConnSnackAndScheduleRetry(connectivity: Constants.ConnectionState) {
         Timber.v("show NoConnection Snackbar ${mConnectivitySnackLayout != null}")
-        mConnectivitySnackLayout?.let {
-            networkSnackBarUtil.getNoConnectionSnackBar(
-                parentView = it,
-                user = mUserManager.user,
-                netConfiguratorCallback = this,
-                onRetryClick = { onConnectivityCheckRetry() },
-                isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
-            ).show()
+
+        mConnectivitySnackLayout?.let { snackBarLayout ->
+            lifecycleScope.launchWhenCreated {
+
+                networkSnackBarUtil.getNoConnectionSnackBar(
+                    parentView = snackBarLayout,
+                    user = userManager.requireCurrentLegacyUser(),
+                    netConfiguratorCallback = this@MailboxActivity,
+                    onRetryClick = ::onConnectivityCheckRetry,
+                    isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
+                ).show()
+
+            }
         }
     }
 
@@ -1047,21 +1021,18 @@ class MailboxActivity :
             return
         }
         app.resetMailboxLoginEvent()
-        when (event.status) {
-            AuthStatus.INVALID_CREDENTIAL -> {
-                showToast(R.string.invalid_mailbox_password, Toast.LENGTH_SHORT)
-                startActivity(AppUtil.decorInAppIntent(Intent(this, MailboxLoginActivity::class.java)))
-                finish()
-            }
-            else -> {
-                mUserManager.isLoggedIn = true
-            }
+        if (event.status == AuthStatus.INVALID_CREDENTIAL) {
+            showToast(R.string.invalid_mailbox_password, Toast.LENGTH_SHORT)
+            startActivity(AppUtil.decorInAppIntent(Intent(this, MailboxLoginActivity::class.java)))
+            finish()
+        } else {
+            userManager.isLoggedIn = true
         }
     }
 
     @Subscribe
     fun onSettingsChangedEvent(event: SettingsChangedEvent) {
-        val user = mUserManager.user
+        val user = userManager.requireCurrentUserBlocking()
         if (event.status == AuthStatus.SUCCESS) {
             refreshDrawerHeader(user)
         } else {
@@ -1113,11 +1084,14 @@ class MailboxActivity :
     @Subscribe
     fun onMailboxLoaded(event: MailboxLoadedEvent?) {
         Timber.v("Mailbox loaded status ${event?.status}")
-        if (event == null || (event.uuid != null && event.uuid != syncUUID)) {
+        if (event == null || event.uuid != null && event.uuid != syncUUID) {
             return
         }
         refreshMailboxJobRunning = false
-        handler.postDelayed(SyncDoneRunnable(this), 1000)
+        lifecycleScope.launchWhenCreated {
+            delay(1.seconds)
+            SyncDoneRunnable(this@MailboxActivity).run()
+        }
         setLoadingMore(false)
         if (!isDohOngoing) {
             showToast(event.status)
@@ -1157,7 +1131,10 @@ class MailboxActivity :
     @Subscribe
     fun onMailboxNoMessages(event: MailboxNoMessagesEvent?) {
         // show toast only if user initiated load more
-        handler.postDelayed(SyncDoneRunnable(this), 300)
+        lifecycleScope.launchWhenCreated {
+            delay(300.milliseconds)
+            SyncDoneRunnable(this@MailboxActivity).run()
+        }
         if (isLoadingMore.get()) {
             showToast(R.string.no_more_messages, Toast.LENGTH_SHORT)
             messagesAdapter.notifyDataSetChanged()
@@ -1168,8 +1145,11 @@ class MailboxActivity :
     @Subscribe
     fun onUpdatesLoaded(event: FetchUpdatesEvent?) {
         syncingDone()
-        refreshDrawerHeader(mUserManager.user)
-        handler.postDelayed(SyncDoneRunnable(this), 1000)
+        lifecycleScope.launchWhenCreated {
+            refreshDrawerHeader(userManager.requireCurrentUser())
+            delay(1.seconds)
+            SyncDoneRunnable(this@MailboxActivity).run()
+        }
     }
 
     private fun showToast(status: Status) {
@@ -1205,8 +1185,9 @@ class MailboxActivity :
         }
         val response = event.unreadMessagesResponse ?: return
         val messageCountsList = response.counts ?: emptyList()
-        countersDatabase = CountersDatabaseFactory.getInstance(applicationContext, mUserManager.username).getDatabase()
-        OnMessageCountsListTask(WeakReference(this), countersDatabase, messageCountsList).execute()
+        counterDao = CounterDatabase
+            .getInstance(applicationContext, userManager.requireCurrentUserId()).getDao()
+        OnMessageCountsListTask(WeakReference(this), counterDao, messageCountsList).execute()
         refreshDrawer()
         //endregion
     }
@@ -1452,23 +1433,20 @@ class MailboxActivity :
 
     override fun onLabelCreated(labelName: String, color: String) {
         val postLabelResult = PostLabelWorker.Enqueuer(getWorkManager()).enqueue(labelName, color)
-        postLabelResult.observe(
-            this,
-            {
-                val state: WorkInfo.State = it.state
+        postLabelResult.observe(this) {
+            val state: WorkInfo.State = it.state
 
-                if (state == WorkInfo.State.SUCCEEDED) {
-                    showToast(getString(R.string.label_created), Toast.LENGTH_SHORT)
-                    return@observe
-                }
-
-                if (state == WorkInfo.State.FAILED) {
-                    val errorMessage = it.outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
-                        ?: getString(R.string.label_invalid)
-                    showToast(errorMessage, Toast.LENGTH_SHORT)
-                }
+            if (state == WorkInfo.State.SUCCEEDED) {
+                showToast(getString(R.string.label_created), Toast.LENGTH_SHORT)
+                return@observe
             }
-        )
+
+            if (state == WorkInfo.State.FAILED) {
+                val errorMessage = it.outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
+                    ?: getString(R.string.label_invalid)
+                showToast(errorMessage, Toast.LENGTH_SHORT)
+            }
+        }
     }
 
     override fun onLabelsDeleted(checkedLabelIds: List<String>) {
@@ -1578,7 +1556,7 @@ class MailboxActivity :
         }
         RefreshEmptyViewTask(
             WeakReference(this),
-            countersDatabase,
+            counterDao,
             messagesDatabase,
             newMessageLocationType,
             mailboxLabelId
@@ -1586,7 +1564,7 @@ class MailboxActivity :
         if (newMessageLocationType == MessageLocationType.ALL_DRAFT ||
             newMessageLocationType == MessageLocationType.DRAFT
         ) {
-            AppUtil.clearSendingFailedNotifications(this, mUserManager.username)
+            AppUtil.clearSendingFailedNotifications(this, userManager.requireCurrentUserId())
         }
     }
 
@@ -1609,22 +1587,26 @@ class MailboxActivity :
 
     private var undoSnack: Snackbar? = null
     private fun buildSwipeProcessor() {
-        mSwipeProcessor.addHandler(SwipeAction.TRASH, TrashSwipeHandler())
-        mSwipeProcessor.addHandler(SwipeAction.SPAM, SpamSwipeHandler())
-        mSwipeProcessor.addHandler(SwipeAction.STAR, StarSwipeHandler())
-        mSwipeProcessor.addHandler(SwipeAction.ARCHIVE, ArchiveSwipeHandler())
-        mSwipeProcessor.addHandler(SwipeAction.MARK_READ, MarkReadSwipeHandler())
+        mSwipeProcessor.apply {
+            addHandler(SwipeAction.TRASH, TrashSwipeHandler())
+            addHandler(SwipeAction.SPAM, SpamSwipeHandler())
+            addHandler(SwipeAction.STAR, StarSwipeHandler())
+            addHandler(SwipeAction.ARCHIVE, ArchiveSwipeHandler())
+            addHandler(SwipeAction.MARK_READ, MarkReadSwipeHandler())
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
+
             when (requestCode) {
                 REQUEST_CODE_TRASH_MESSAGE_DETAILS -> {
                     move_to_trash.visibility = View.VISIBLE
                     handler.postDelayed({ move_to_trash.visibility = View.GONE }, 1000)
                 }
                 REQUEST_CODE_VALIDATE_PIN -> {
-                    if (data!!.hasExtra(EXTRA_TOTAL_COUNT_EVENT)) {
+                    requireNotNull(data) { "No data for request $requestCode" }
+                    if (EXTRA_TOTAL_COUNT_EVENT in data) {
                         val totalCountEvent: Any? = data.getSerializableExtra(
                             EXTRA_TOTAL_COUNT_EVENT
                         )
@@ -1635,7 +1617,8 @@ class MailboxActivity :
                     super.onActivityResult(requestCode, resultCode, data)
                 }
                 REQUEST_CODE_SWITCHED_USER -> {
-                    if (data!!.hasExtra(EXTRA_SWITCHED_USER)) {
+                    requireNotNull(data) { "No data for request $requestCode" }
+                    if (EXTRA_HAS_SWITCHED_USER in data) {
                         onSwitchedAccounts()
                     }
                     super.onActivityResult(requestCode, resultCode, data)
@@ -1661,17 +1644,13 @@ class MailboxActivity :
                     )
                 if (setOfConnectionResults.any { it == result }) {
                     val prefs = app.defaultSharedPreferences
-                    val dontShowPlayServices = prefs.getBoolean(Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES, false)
+                    val dontShowPlayServices = prefs[PREF_DONT_SHOW_PLAY_SERVICES] ?: false
                     if (!dontShowPlayServices) {
-                        showInfoDialogWithTwoButtons(
-                            this,
-                            getString(R.string.push_notifications_alert_title),
-                            getString(R.string.push_notifications_alert_subtitle),
-                            getString(R.string.dont_remind_again),
-                            getString(R.string.okay),
-                            { prefs.edit().putBoolean(Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES, true).apply() },
-                            { },
-                            true
+                        showTwoButtonInfoDialog(
+                            titleStringId = R.string.push_notifications_alert_title,
+                            messageStringId = R.string.push_notifications_alert_subtitle,
+                            leftStringId = R.string.dont_remind_again,
+                            onLeft = { prefs[PREF_DONT_SHOW_PLAY_SERVICES] = true }
                         )
                     }
                 } else {
@@ -1728,7 +1707,7 @@ class MailboxActivity :
             if (messageLocation == MessageLocationType.DRAFT || messageLocation == MessageLocationType.ALL_DRAFT) {
                 TryToOpenMessageTask(
                     this.mailboxActivity,
-                    mailboxActivity?.pendingActionsDatabase,
+                    mailboxActivity?.pendingActionDao,
                     message.messageId,
                     message.isInline,
                     message.addressID
@@ -1750,7 +1729,7 @@ class MailboxActivity :
 
     private class TryToOpenMessageTask internal constructor(
         private val mailboxActivity: WeakReference<MailboxActivity>,
-        private val pendingActionsDatabase: PendingActionsDatabase?,
+        private val pendingActionDao: PendingActionDao?,
         private val messageId: String?,
         private val isInline: Boolean,
         private val addressId: String?
@@ -1758,10 +1737,13 @@ class MailboxActivity :
 
         override fun doInBackground(vararg params: Unit): Boolean {
             // return true if message is not in sending process and can be opened
-            val pendingForSending = pendingActionsDatabase?.findPendingSendByMessageId(messageId!!)
-            return pendingForSending == null ||
-                pendingForSending.sent != null &&
-                !pendingForSending.sent!!
+            val pendingUploads = pendingActionDao?.findPendingUploadByMessageId(messageId!!)
+            val pendingForSending = pendingActionDao?.findPendingSendByMessageId(messageId!!)
+            return pendingUploads == null &&
+                (
+                    pendingForSending == null ||
+                        pendingForSending.sent != null && !pendingForSending.sent!!
+                    )
         }
 
         override fun onPostExecute(openMessage: Boolean) {
@@ -1822,7 +1804,7 @@ class MailboxActivity :
             startFetchFirstPageByLabel(fromInt(newLocation), labelId, false)
             RefreshEmptyViewTask(
                 this.mailboxActivity,
-                mailboxActivity.countersDatabase,
+                mailboxActivity.counterDao,
                 mailboxActivity.messagesDatabase,
                 locationToSet,
                 labelId
@@ -1837,22 +1819,19 @@ class MailboxActivity :
                 syncUUID = UUID.randomUUID().toString()
                 checkUserAndFetchNews()
                 if ((messages_list_view.layoutManager as LinearLayoutManager?)!!.findFirstVisibleItemPosition() > 1) {
-                    handler.postDelayed(
-                        {
-                            val newMessageSnack =
-                                Snackbar.make(
-                                    findViewById(R.id.drawer_layout),
-                                    getString(R.string.new_message_arrived),
-                                    Snackbar.LENGTH_LONG
-                                )
-                            val view = newMessageSnack.view
-                            val tv =
-                                view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-                            tv.setTextColor(Color.WHITE)
-                            newMessageSnack.show()
-                        },
-                        750
-                    )
+                    handler.postDelayed(750) {
+                        val newMessageSnack =
+                            Snackbar.make(
+                                findViewById(R.id.drawer_layout),
+                                getString(R.string.new_message_arrived),
+                                Snackbar.LENGTH_LONG
+                            )
+                        val view = newMessageSnack.view
+                        val tv =
+                            view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+                        tv.setTextColor(Color.WHITE)
+                        newMessageSnack.show()
+                    }
                 }
                 messagesAdapter.notifyDataSetChanged()
             }
@@ -1906,9 +1885,10 @@ class MailboxActivity :
             val swipedItem = messagesAdapter.getItem(position)
             val messageSwiped = SimpleMessage(swipedItem)
             val mailboxLocation = mailboxLocationMain.value
+            val mailSettings = requireNotNull(userManager.getCurrentUserMailSettingsBlocking())
             val swipeActionOrdinal: Int = when (direction) {
-                ItemTouchHelper.RIGHT -> mUserManager.mailSettings!!.rightSwipeAction
-                ItemTouchHelper.LEFT -> mUserManager.mailSettings!!.leftSwipeAction
+                ItemTouchHelper.RIGHT -> mailSettings.rightSwipeAction
+                ItemTouchHelper.LEFT -> mailSettings.leftSwipeAction
                 else -> throw IllegalArgumentException("Unrecognised direction: $direction")
             }
             val swipeAction = normalise(SwipeAction.values()[swipeActionOrdinal], mailboxLocationMain.value)
@@ -1930,13 +1910,11 @@ class MailboxActivity :
                 undoSnack!!.show()
             }
             if (swipeCustomizeSnack != null && !customizeSwipeSnackShown) {
-                handler.postDelayed(
-                    {
-                        swipeCustomizeSnack!!.show()
-                        customizeSwipeSnackShown = true
-                    },
-                    2750
-                )
+                handler.postDelayed(2750) {
+                    swipeCustomizeSnack!!.show()
+                    customizeSwipeSnackShown = true
+                }
+
             }
             messagesAdapter.notifyDataSetChanged()
         }
@@ -1950,6 +1928,7 @@ class MailboxActivity :
             actionState: Int,
             isCurrentlyActive: Boolean
         ) {
+            val mailSettings = requireNotNull(userManager.getCurrentUserMailSettingsBlocking())
             if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                 val itemView = viewHolder.itemView
                 val height = itemView.bottom - itemView.top
@@ -1959,14 +1938,12 @@ class MailboxActivity :
                         SwipeAction.TRASH.getActionBackgroundResource(deltaX < 0)
                     }
                     deltaX < 0 -> {
-                        SwipeAction.values()[mUserManager.mailSettings!!.leftSwipeAction].getActionBackgroundResource(
-                            false
-                        )
+                        SwipeAction.values()[mailSettings.leftSwipeAction]
+                            .getActionBackgroundResource(false)
                     }
                     else -> {
-                        SwipeAction.values()[mUserManager.mailSettings!!.rightSwipeAction].getActionBackgroundResource(
-                            true
-                        )
+                        SwipeAction.values()[mailSettings.rightSwipeAction]
+                            .getActionBackgroundResource(true)
                     }
                 }
                 val view = layoutInflater.inflate(layoutId, null)
@@ -1985,12 +1962,12 @@ class MailboxActivity :
 
     private class OnMessageCountsListTask internal constructor(
         private val mailboxActivity: WeakReference<MailboxActivity>,
-        private val countersDatabase: CountersDatabase,
+        private val counterDao: CounterDao,
         private val messageCountsList: List<MessageCount>
     ) : AsyncTask<Unit, Unit, Int>() {
 
         override fun doInBackground(vararg params: Unit): Int {
-            val totalInbox = countersDatabase.findTotalLocationById(MessageLocationType.INBOX.messageLocationTypeValue)
+            val totalInbox = counterDao.findTotalLocationById(MessageLocationType.INBOX.messageLocationTypeValue)
             return totalInbox?.count ?: -1
         }
 
@@ -2028,7 +2005,7 @@ class MailboxActivity :
                 }
             }
             mailboxActivity.setRefreshing(false)
-            RefreshTotalCountersTask(countersDatabase, locationCounters, labelCounters).execute()
+            RefreshTotalCountersTask(counterDao, locationCounters, labelCounters).execute()
         }
     }
 }

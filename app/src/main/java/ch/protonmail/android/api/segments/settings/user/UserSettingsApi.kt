@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.settings.mail
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.SrpResponseBody
 import ch.protonmail.android.api.models.UserSettingsResponse
@@ -29,32 +29,41 @@ import ch.protonmail.android.api.models.requests.UpgradePasswordBody
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.segments.settings.user.UserSettingsService
 import ch.protonmail.android.api.utils.ParseUtils
+import ch.protonmail.android.domain.entity.Id
 import java.io.IOException
-
 
 class UserSettingsApi(private val service: UserSettingsService) : BaseApi(), UserSettingsApiSpec {
 
     @Throws(IOException::class)
     override fun fetchUserSettings(): UserSettingsResponse =
-            ParseUtils.parse(service.fetchUserSettings().execute())
+        ParseUtils.parse(service.fetchUserSettings().execute())
 
     @Throws(IOException::class)
-    override fun fetchUserSettings(username:String): UserSettingsResponse =
-            ParseUtils.parse(service.fetchUserSettings(RetrofitTag(username)).execute())
+    override fun fetchUserSettings(userId: Id): UserSettingsResponse =
+        ParseUtils.parse(service.fetchUserSettings(UserIdTag(userId)).execute())
 
     @Throws(IOException::class)
     override fun updateNotify(updateNotify: Boolean): ResponseBody? =
-            ParseUtils.parse(service.updateNotify(UpdateNotify(updateNotify)).execute())
+        ParseUtils.parse(service.updateNotify(UpdateNotify(updateNotify)).execute())
 
     @Throws(IOException::class)
-    override fun updateNotificationEmail(srpSession: String, clientEpheremal: String, clientProof: String, twoFactorCode: String?, email: String): SrpResponseBody? =
-            ParseUtils.parse(service.updateNotificationEmail(NotificationEmail(srpSession, clientEpheremal, clientProof, twoFactorCode, email)).execute())
+    override fun updateNotificationEmail(
+        srpSession: String,
+        clientEpheremal: String,
+        clientProof: String,
+        twoFactorCode: String?,
+        email: String
+    ): SrpResponseBody? = ParseUtils.parse(
+        service.updateNotificationEmail(
+            NotificationEmail(srpSession, clientEpheremal, clientProof, twoFactorCode, email)
+        ).execute()
+    )
 
     @Throws(IOException::class)
     override fun updateLoginPassword(passwordChangeBody: PasswordChange): SrpResponseBody? =
-            ParseUtils.parse(service.updateLoginPassword(passwordChangeBody).execute())
+        ParseUtils.parse(service.updateLoginPassword(passwordChangeBody).execute())
 
     @Throws(IOException::class)
     override fun upgradeLoginPassword(upgradePasswordBody: UpgradePasswordBody): ResponseBody? =
-            ParseUtils.parse(service.upgradeLoginPassword(upgradePasswordBody).execute())
+        ParseUtils.parse(service.upgradeLoginPassword(upgradePasswordBody).execute())
 }

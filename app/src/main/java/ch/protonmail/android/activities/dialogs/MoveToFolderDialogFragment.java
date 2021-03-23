@@ -1,31 +1,28 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.activities.dialogs;
 
 import android.app.Activity;
-import androidx.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.Nullable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,22 +32,30 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.adapters.FoldersAdapter;
-import ch.protonmail.android.api.models.room.messages.Label;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.core.UserManager;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
+import ch.protonmail.android.data.local.model.Label;
+import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Created by dino on 2/20/17.
- */
-
+@AndroidEntryPoint
 public class MoveToFolderDialogFragment extends AbstractDialogFragment implements AdapterView.OnItemClickListener {
+
+    @Inject
+    UserManager userManager;
 
     private static final String ARGUMENT_MESSAGE_LOCATION = "ch.protonmail.android.ARG_LOCATION";
 
@@ -188,9 +193,10 @@ public class MoveToFolderDialogFragment extends AbstractDialogFragment implement
         mList.setOnItemLongClickListener(labelItemLongClick);
         mList.setOnItemClickListener(this);
 
-        final MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(
-                getContext().getApplicationContext()).getDatabase();
-        messagesDatabase.getAllLabels().observe(this, new LabelsObserver());
+        final MessageDao messageDao = MessageDatabase.Companion
+                .getInstance(requireContext().getApplicationContext(), userManager.requireCurrentUserId())
+                .getDao();
+        messageDao.getAllLabels().observe(this, new LabelsObserver());
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {

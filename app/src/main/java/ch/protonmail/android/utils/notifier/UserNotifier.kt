@@ -19,10 +19,13 @@
 
 package ch.protonmail.android.utils.notifier
 
+import ch.protonmail.android.data.local.model.Message
+
 interface UserNotifier {
+
     fun showPersistentError(errorMessage: String, messageSubject: String?)
     fun showError(errorMessage: String)
     fun showSendMessageError(errorMessage: String, messageSubject: String?)
     suspend fun showMessageSent()
-    fun showHumanVerificationNeeded(message: ch.protonmail.android.api.models.room.messages.Message)
+    fun showHumanVerificationNeeded(message: Message)
 }

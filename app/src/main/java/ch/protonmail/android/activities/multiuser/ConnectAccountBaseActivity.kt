@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -27,15 +27,19 @@ import android.widget.ToggleButton
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseConnectivityActivity
 import ch.protonmail.android.core.LOGIN_STATE_TO_INBOX
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.ConnectAccountMailboxLoginEvent
-import ch.protonmail.android.fcm.FcmUtil
+import ch.protonmail.android.fcm.FcmTokenManager
+import ch.protonmail.android.prefs.SecureSharedPreferences
+import ch.protonmail.android.utils.extensions.app
+import ch.protonmail.android.utils.extensions.getColorCompat
 import ch.protonmail.android.utils.extensions.setBarColors
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToMailbox
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.toolbar_white.*
+import javax.inject.Inject
 
 // region constants
 const val EXTRA_USERNAME = "connect_account_username"
@@ -44,14 +48,17 @@ const val EXTRA_USERNAME = "connect_account_username"
 /**
  * The base activity for handling connecting an account.
  */
+@AndroidEntryPoint
 abstract class ConnectAccountBaseActivity : BaseConnectivityActivity() {
+
+    @Inject
+    lateinit var fcmTokenManagerFactory: FcmTokenManager.Factory
 
     protected abstract val togglePasswordView: ToggleButton
     protected abstract val passwordEditView: EditText
 
     abstract fun unsubscribeFromEvents()
     abstract fun resetState()
-    abstract fun removeAccount(username: String)
 
     private var eventsUnregistered = false
 
@@ -62,7 +69,7 @@ abstract class ConnectAccountBaseActivity : BaseConnectivityActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
-        window?.setBarColors(resources.getColor(R.color.new_purple_dark))
+        window?.setBarColors(getColorCompat(R.color.new_purple_dark))
 
         togglePasswordView.setOnClickListener { onTogglePasswordClick(it as ToggleButton) }
     }
@@ -84,12 +91,15 @@ abstract class ConnectAccountBaseActivity : BaseConnectivityActivity() {
     }
 
     open fun onConnectAccountMailboxLoginEvent(event: ConnectAccountMailboxLoginEvent) {
-        ProtonMailApplication.getApplication().resetMailboxLoginEvent()
+        app.resetMailboxLoginEvent()
         when (event.status) {
             AuthStatus.SUCCESS -> {
                 eventsUnregistered = true
-                ProtonMailApplication.getApplication().bus.unregister(this)
-                FcmUtil.setTokenSent(mUserManager.username, false) // force FCM to register new user
+                app.bus.unregister(this)
+                val userPreferences = SecureSharedPreferences
+                    .getPrefsForUser(this, mUserManager.requireCurrentUserId())
+                val fcmTokenManager = fcmTokenManagerFactory.create(userPreferences)
+                fcmTokenManager.setTokenSentBlocking(false)
                 mUserManager.loginState = LOGIN_STATE_TO_INBOX
                 moveToMailbox()
                 saveLastInteraction()

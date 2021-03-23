@@ -23,50 +23,38 @@ import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
-import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
-import io.mockk.MockKAnnotations
+import io.mockk.coVerifyOrder
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
 import io.mockk.verify
-import io.mockk.verifyOrder
 import io.reactivex.Completable
 import io.reactivex.Single
+import kotlinx.coroutines.flow.flowOf
 import java.io.IOException
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class ContactGroupEditCreateRepositoryTest {
 
-    @RelaxedMockK
-    private lateinit var jobManager: JobManager
+    private val jobManager: JobManager = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var workManager: WorkManager
+    private val workManager: WorkManager = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var apiManager: ProtonMailApiManager
+    private val apiManager: ProtonMailApiManager = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var contactsDao: ContactsDao
+    private val contactDao: ContactDao = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var contactLabelFactory: ContactLabelFactory
+    private val contactLabelFactory: ContactLabelFactory = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var createContactGroupWorker: CreateContactGroupWorker.Enqueuer
+    private val createContactGroupWorker: CreateContactGroupWorker.Enqueuer = mockk(relaxed = true)
 
-    @InjectMockKs
-    private lateinit var repository: ContactGroupEditCreateRepository
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-    }
+    private val repository = ContactGroupEditCreateRepository(
+        jobManager, workManager, apiManager, contactDao, contactLabelFactory, createContactGroupWorker
+    )
 
     @Test
     fun `when editContactGroup is called labelConverterFactory maps DB object to Server Object`() {
@@ -95,15 +83,16 @@ class ContactGroupEditCreateRepositoryTest {
         val contactLabel = ContactLabel(contactGroupId, "name", "color")
         val emailLabelJoinedList = listOf(ContactEmailContactLabelJoin("emailId", "labelId"))
         every { apiManager.updateLabelCompletable(any(), any()) } returns Completable.complete()
-        every { contactsDao.fetchJoins(contactGroupId) } returns emailLabelJoinedList
+        every { contactDao.fetchJoins(contactGroupId) } returns flowOf(emailLabelJoinedList)
+        every { contactDao.fetchJoinsBlocking(contactGroupId) } returns emailLabelJoinedList
 
         val testObserver = repository.editContactGroup(contactLabel).test()
 
         testObserver.awaitTerminalEvent()
-        verifyOrder {
-            contactsDao.fetchJoins(contactGroupId)
-            contactsDao.saveContactGroupLabel(contactLabel)
-            contactsDao.saveContactEmailContactLabelBlocking(emailLabelJoinedList)
+        coVerifyOrder {
+            contactDao.fetchJoinsBlocking(contactGroupId)
+            contactDao.saveContactGroupLabel(contactLabel)
+            contactDao.saveContactEmailContactLabelBlocking(emailLabelJoinedList)
         }
     }
 
@@ -150,7 +139,7 @@ class ContactGroupEditCreateRepositoryTest {
         val testObserver = repository.createContactGroup(contactLabel).test()
 
         testObserver.awaitTerminalEvent()
-        verify { contactsDao.saveContactGroupLabel(contactLabel) }
+        verify { contactDao.saveContactGroupLabel(contactLabel) }
     }
 
     @Test

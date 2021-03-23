@@ -20,10 +20,10 @@ package ch.protonmail.android.contacts.details.edit
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.jobs.UpdateContactJob
 import com.birbit.android.jobqueue.JobManager
 import ezvcard.VCard
@@ -35,10 +35,10 @@ class EditContactDetailsRepository @Inject constructor(
     jobManager: JobManager,
     api: ProtonMailApiManager,
     dispatcherProvider: DispatcherProvider,
-    contactsDao: ContactsDao) : ContactDetailsRepository(workManager, jobManager, api, contactsDao, dispatcherProvider) {
+    contactDao: ContactDao) : ContactDetailsRepository(workManager, jobManager, api, contactDao, dispatcherProvider) {
 
     fun clearEmail(email: String) {
-        contactsDao.clearByEmail(email)
+        contactDao.clearByEmail(email)
     }
 
     fun updateContact(contactId: String, contactName: String, emails: List<ContactEmail>,

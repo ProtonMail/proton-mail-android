@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.user
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.CreateUserBody
 import ch.protonmail.android.api.models.DirectEnabledResponse
 import ch.protonmail.android.api.models.HumanVerifyOptionsResponse
@@ -29,6 +29,7 @@ import ch.protonmail.android.api.models.UserInfo
 import ch.protonmail.android.api.models.VerificationCodeBody
 import ch.protonmail.android.api.models.requests.PostHumanVerificationBody
 import ch.protonmail.android.api.utils.ParseUtils
+import ch.protonmail.android.domain.entity.Id
 import java.io.IOException
 
 // region constants
@@ -48,8 +49,8 @@ class UserApi(
         service.fetchUserInfo()
 
     @Throws(IOException::class)
-    override fun fetchUserInfoBlocking(username: String): UserInfo =
-        ParseUtils.parse(service.fetchUserInfoCall(RetrofitTag(username)).execute())
+    override fun fetchUserInfoBlocking(userId: Id): UserInfo =
+        ParseUtils.parse(service.fetchUserInfoCall(UserIdTag(userId)).execute())
 
     @Throws(IOException::class)
     override fun fetchKeySalts(): KeySalts =

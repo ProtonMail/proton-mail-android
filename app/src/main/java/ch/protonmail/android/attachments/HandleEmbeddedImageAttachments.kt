@@ -23,10 +23,10 @@ import android.content.Context
 import android.text.TextUtils
 import androidx.core.content.FileProvider
 import androidx.work.ListenableWorker
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadata
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.data.local.AttachmentMetadataDao
+import ch.protonmail.android.data.local.model.AttachmentMetadata
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
@@ -44,7 +44,7 @@ import javax.inject.Inject
  */
 class HandleEmbeddedImageAttachments @Inject constructor(
     private val context: Context,
-    private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
+    private val attachmentMetadataDao: AttachmentMetadataDao,
     private val clearingServiceHelper: AttachmentClearingServiceHelper,
     private val attachmentsRepository: AttachmentsRepository
 ) {
@@ -74,7 +74,7 @@ class HandleEmbeddedImageAttachments @Inject constructor(
                 attachmentsDirectoryFile,
                 messageId,
                 embeddedImages,
-                attachmentMetadataDatabase
+                attachmentMetadataDao
             )
         ) {
             Timber.v("All attachments already downloaded")
@@ -126,7 +126,7 @@ class HandleEmbeddedImageAttachments @Inject constructor(
                 Timber.v(
                     "Insert embd attachment id: ${embeddedImageWithFile.attachmentId} messageId: ${embeddedImageWithFile.messageId}"
                 )
-                attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
+                attachmentMetadataDao.insertAttachmentMetadata(attachmentMetadata)
 
             } catch (ioException: IOException) {
                 Timber.e(ioException, "handleEmbeddedImages exception")
@@ -159,12 +159,12 @@ class HandleEmbeddedImageAttachments @Inject constructor(
         attachmentsDirectoryFile: File,
         messageId: String,
         embeddedImages: List<EmbeddedImage>,
-        attachmentMetadataDatabase: AttachmentMetadataDatabase
+        attachmentMetadataDao: AttachmentMetadataDao
     ): Boolean {
 
         if (attachmentsDirectoryFile.exists()) {
 
-            val attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsForMessage(messageId)
+            val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(messageId)
 
             val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
             embeddedImages.forEach { embeddedImage ->

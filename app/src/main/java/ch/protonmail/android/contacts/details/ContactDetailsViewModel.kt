@@ -30,14 +30,14 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.SELECTED
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.UNSELECTED
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.exceptions.BadImageUrlException

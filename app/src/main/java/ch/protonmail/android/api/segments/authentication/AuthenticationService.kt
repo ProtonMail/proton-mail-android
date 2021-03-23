@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.authentication
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.ResponseBody
 import retrofit2.Call
 import retrofit2.http.DELETE
@@ -32,6 +32,6 @@ interface AuthenticationService {
 
     @DELETE("auth")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun revoke(@Tag retrofitTag: RetrofitTag): Call<ResponseBody>
+    fun revoke(@Tag userIdTag: UserIdTag): Call<ResponseBody>
 
 }

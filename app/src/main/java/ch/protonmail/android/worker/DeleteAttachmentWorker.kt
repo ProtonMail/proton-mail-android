@@ -31,14 +31,13 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_ID
 import ch.protonmail.android.attachments.KEY_INPUT_DATA_ATTACHMENT_ID_STRING
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.*
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
-import javax.inject.Named
 
 internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
 
@@ -55,7 +54,7 @@ class DeleteAttachmentWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
-    @Named("messages") var messagesDatabase: MessagesDatabase,
+    private val messageDao: MessageDao,
     private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 
@@ -78,9 +77,9 @@ class DeleteAttachmentWorker @WorkerInject constructor(
                 response.code == RESPONSE_CODE_INVALID_ID
             ) {
                 Timber.v("Attachment ID: $attachmentId deleted on remote")
-                val attachment = messagesDatabase.findAttachmentById(attachmentId)
+                val attachment = messageDao.findAttachmentById(attachmentId)
                 attachment?.let {
-                    messagesDatabase.deleteAttachment(it)
+                    messageDao.deleteAttachment(it)
                     return@withContext Result.success()
                 }
             }

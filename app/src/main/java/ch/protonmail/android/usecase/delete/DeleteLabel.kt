@@ -22,8 +22,8 @@ package ch.protonmail.android.usecase.delete
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import androidx.work.WorkInfo
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.DeleteLabelWorker
 import kotlinx.coroutines.ensureActive
@@ -31,7 +31,6 @@ import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 
 /**
  * Use case responsible for removing a label from the DB and scheduling
@@ -39,8 +38,8 @@ import javax.inject.Named
  */
 class DeleteLabel @Inject constructor(
     private val dispatchers: DispatcherProvider,
-    private val contactsDatabase: ContactsDatabase,
-    @Named("messages") private val messagesDatabase: MessagesDatabase,
+    private val contactDao: ContactDao,
+    private val messageDao: MessageDao,
     private val deleteLabelWorker: DeleteLabelWorker.Enqueuer
 ) {
 
@@ -51,13 +50,13 @@ class DeleteLabel @Inject constructor(
             labelIds.forEach { labelId ->
                 ensureActive()
 
-                val contactLabel = contactsDatabase.findContactGroupById(labelId)
+                val contactLabel = contactDao.findContactGroupByIdBlocking(labelId)
                 contactLabel?.let { label ->
                     Timber.v("Delete DB contact group $label")
-                    contactsDatabase.deleteContactGroup(label)
+                    contactDao.deleteContactGroup(label)
                 }
                 Timber.v("Delete DB label $labelId")
-                messagesDatabase.deleteLabelById(labelId)
+                messageDao.deleteLabelById(labelId)
             }
 
             // schedule worker to remove label ids over the network

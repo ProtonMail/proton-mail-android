@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.settings.mail
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.MailSettingsResponse
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.requests.DisplayName
@@ -49,7 +49,7 @@ interface MailSettingsService {
 
     @GET("mail/v4/settings")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchMailSettingsCall(@Tag retrofitTag: RetrofitTag): Call<MailSettingsResponse>
+    fun fetchMailSettingsCall(@Tag userIdTag: UserIdTag): Call<MailSettingsResponse>
 
     @PUT("mail/v4/settings/display")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

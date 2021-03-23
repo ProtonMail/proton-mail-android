@@ -26,9 +26,9 @@ import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.model.ContactLabel
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coVerify

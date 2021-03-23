@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.SpannableString;
-import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.text.method.SingleLineTransformationMethod;
 import android.text.util.Linkify;
@@ -44,6 +43,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
@@ -53,6 +54,9 @@ import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.core.UserManager;
+import ch.protonmail.android.domain.entity.Id;
+import ch.protonmail.android.domain.entity.Name;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.events.Login2FAEvent;
 import ch.protonmail.android.events.LoginEvent;
@@ -75,6 +79,12 @@ import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 @AndroidEntryPoint
 public class LoginActivity extends BaseLoginActivity {
 
+    @Inject
+    UserManager userManager;
+
+    @Inject
+    ProtonMailApplication app;
+
     @BindView(R.id.username)
     EditText mUsernameEditText;
     @BindView(R.id.password)
@@ -85,8 +95,10 @@ public class LoginActivity extends BaseLoginActivity {
     Button mSignIn;
     @BindView(R.id.app_version)
     TextView mAppVersion;
+
     private boolean mDisableBack = false;
     private AlertDialog m2faAlertDialog;
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     private ConnectivityBaseViewModel viewModel;
 
@@ -127,22 +139,22 @@ public class LoginActivity extends BaseLoginActivity {
         // clickable sign up link
         AppUtil.clearNotifications(this, 3); // TODO: check which notification Id is this one
 
-        final String username = mUserManager.getUsername();
-        mUsernameEditText.setText(username);
         mUsernameEditText.setFocusable(false);
         mPasswordEditText.setFocusable(false);
         mUsernameEditText.setOnTouchListener(mTouchListener);
         mPasswordEditText.setOnTouchListener(mTouchListener);
-        if (!username.isEmpty()) {
+        final ch.protonmail.android.domain.entity.user.User currentUser = userManager.getCurrentUserBlocking();
+        if (currentUser != null) {
+            mUsernameEditText.setText(currentUser.getName().getS());
             mPasswordEditText.requestFocus();
         }
 
         Intent intent = getIntent();
-        if (intent.getBooleanExtra(EXTRA_API_OFFLINE, false)){
+        if (intent.getBooleanExtra(EXTRA_API_OFFLINE, false)) {
             final SpannableString s = new SpannableString(getResources().getString(R.string.api_offline));
             Linkify.addLinks(s, Linkify.ALL);
             DialogUtils.Companion.showInfoDialog(this, getString(R.string.api_offline_title), s.toString(), null);
-        } else if (intent.getBooleanExtra(EXTRA_FORCE_UPGRADE, false)){
+        } else if (intent.getBooleanExtra(EXTRA_FORCE_UPGRADE, false)) {
             DialogUtils.Companion.showInfoDialog(this, getString(R.string.update_app_title), getString(R.string.update_app), null);
         }
         mAppVersion.setText(String.format(getString(R.string.app_version_code_login), AppUtil.getAppVersionName(this), AppUtil.getAppVersionCode(this)));
@@ -152,27 +164,22 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        ProtonMailApplication.getApplication().getBus().register(this);
+        app.getBus().register(this);
         UiUtil.hideKeyboard(LoginActivity.this);
-        ProtonMailApplication.getApplication().resetLoginInfoEvent();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+        app.resetLoginInfoEvent();
         viewModel.checkConnectivity();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        ProtonMailApplication.getApplication().getBus().unregister(this);
+        app.getBus().unregister(this);
     }
 
     @Override
     public void onBackPressed() {
         if (!mDisableBack) {
-            if (mUserManager == null || !mUserManager.isEngagementShown()) {
+            if (!userManager.isEngagementShown()) {
                 startActivity(AppUtil.decorInAppIntent(new Intent(this, FirstActivity.class)));
             }
             super.onBackPressed();
@@ -200,9 +207,9 @@ public class LoginActivity extends BaseLoginActivity {
             mProgressContainer.setVisibility(View.VISIBLE);
             final String username = mUsernameEditText.getText().toString();
             final String password = mPasswordEditText.getText().toString();
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            handler.postDelayed(() -> {
                 mDisableBack = false;
-                mUserManager.info(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/);
+                userManager.info(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/);
             }, 1500);
         }
     }
@@ -222,7 +229,7 @@ public class LoginActivity extends BaseLoginActivity {
         if (connectivity != Constants.ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                     mSnackLayout,
-                    mUserManager.getUser(),
+                    userManager.getUser(),
                     this,
                     null,
                     null,
@@ -235,13 +242,20 @@ public class LoginActivity extends BaseLoginActivity {
 
     @Subscribe
     public void onLogin2FAEvent(final Login2FAEvent event) {
-        if (event == null || TextUtils.isEmpty(event.username)) {
+        if (event == null || event.userId == null) {
             return;
         }
-        ProtonMailApplication.getApplication().resetLogin2FAEvent();
+        app.resetLogin2FAEvent();
         hideProgress();
         enableInput();
-        showTwoFactorDialog(event.username, event.password, event.infoResponse, event.loginResponse, event.fallbackAuthVersion);
+        showTwoFactorDialog(
+                event.userId,
+                event.username,
+                event.password,
+                event.infoResponse,
+                event.loginResponse,
+                event.fallbackAuthVersion
+        );
     }
 
     @Subscribe
@@ -251,8 +265,8 @@ public class LoginActivity extends BaseLoginActivity {
         }
         switch (event.status) {
             case SUCCESS: {
-                    ProtonMailApplication.getApplication().resetLoginInfoEvent();
-                    mUserManager.login(event.username, event.password, event.response, event.fallbackAuthVersion,false);
+                app.resetLoginInfoEvent();
+                userManager.login(event.username, event.password, event.response, event.fallbackAuthVersion, false);
             }
             break;
             case NO_NETWORK: {
@@ -279,7 +293,7 @@ public class LoginActivity extends BaseLoginActivity {
 
     @Override
     protected void onMailboxSuccess() {
-        mUserManager.setLoginState(LOGIN_STATE_TO_INBOX);
+        userManager.setCurrentUserLoginState(LOGIN_STATE_TO_INBOX);
     }
 
     @Subscribe
@@ -292,7 +306,7 @@ public class LoginActivity extends BaseLoginActivity {
         if (event == null) {
             return;
         }
-        ProtonMailApplication.getApplication().resetLoginEvent();
+        app.resetLoginEvent();
         switch (event.getStatus()) {
             case SUCCESS: {
                 if (event.isRedirectToSetup()) {
@@ -301,8 +315,8 @@ public class LoginActivity extends BaseLoginActivity {
                     return;
                 }
                 hideProgress();
-                mUserManager.setLoginState(LOGIN_STATE_LOGIN_FINISHED);
-                mUserManager.saveKeySalt(event.getKeySalt(), event.getUsername());
+                userManager.setCurrentUserLoginState(LOGIN_STATE_LOGIN_FINISHED);
+                userManager.saveKeySaltBlocking(event.getUserId(), event.getKeySalt());
                 Intent mailboxLoginIntent = new Intent(this, MailboxLoginActivity.class);
                 mailboxLoginIntent.putExtra(MailboxLoginActivity.EXTRA_KEY_SALT, event.getKeySalt());
                 startActivity(AppUtil.decorInAppIntent(mailboxLoginIntent));
@@ -332,7 +346,8 @@ public class LoginActivity extends BaseLoginActivity {
                 enableInput();
                 mSignIn.setClickable(true);
                 TextExtensions.showToast(this, R.string.invalid_server_proof);
-            } break;
+            }
+            break;
             case FAILED:
             default: {
                 if (event.isRedirectToSetup()) {
@@ -363,7 +378,7 @@ public class LoginActivity extends BaseLoginActivity {
             }
         }
         showAccountCreation(address, finalUsername, domain);
-        new Handler().postDelayed(() -> hideProgress(), 500);
+        handler.postDelayed(() -> hideProgress(), 500);
         enableInput();
     }
 
@@ -395,29 +410,59 @@ public class LoginActivity extends BaseLoginActivity {
         startActivity(intent);
     }
 
-    private void showTwoFactorDialog(final String username, final byte[] password, final LoginInfoResponse infoResponse,
-                                     final LoginResponse loginResponse, int fallbackAuthVersion) {
+    private void showTwoFactorDialog(
+            final Id userId,
+            final Name username,
+            final byte[] password,
+            final LoginInfoResponse infoResponse,
+            final LoginResponse loginResponse,
+            int fallbackAuthVersion
+    ) {
         if (m2faAlertDialog != null && m2faAlertDialog.isShowing()) {
             return;
         }
         m2faAlertDialog = DialogUtils.Companion.show2FADialog(this,
-            twoFactorString -> {
-            UiUtil.hideKeyboard(this);
-            mProgressContainer.setVisibility(View.VISIBLE);
-            twoFA(username, password, twoFactorString, infoResponse, loginResponse, fallbackAuthVersion);
-            ProtonMailApplication.getApplication().resetLoginInfoEvent();
-            return null;
-        }, () -> {
-            mUserManager.logoutLastActiveAccount();
-            UiUtil.hideKeyboard(LoginActivity.this);
-            ProtonMailApplication.getApplication().resetLoginInfoEvent();
-            return null;
-        });
+                twoFactorString -> {
+                    UiUtil.hideKeyboard(this);
+                    mProgressContainer.setVisibility(View.VISIBLE);
+                    twoFA(
+                            userId,
+                            username,
+                            password,
+                            twoFactorString,
+                            infoResponse,
+                            loginResponse,
+                            fallbackAuthVersion
+                    );
+                    app.resetLoginInfoEvent();
+                    return null;
+                }, () -> {
+                    userManager.logoutLastActiveAccountBlocking();
+                    UiUtil.hideKeyboard(LoginActivity.this);
+                    app.resetLoginInfoEvent();
+                    return null;
+                });
     }
 
-    private void twoFA(String username, byte[] password, String twoFactor, LoginInfoResponse infoResponse,
-                       LoginResponse loginResponse, int fallbackAuthVersion) {
-        mUserManager.twoFA(username, password, twoFactor, infoResponse, loginResponse,  fallbackAuthVersion,false, false);
+    private void twoFA(
+            Id userId,
+            Name username,
+            byte[] password,
+            String twoFactor,
+            LoginInfoResponse infoResponse,
+            LoginResponse loginResponse, int fallbackAuthVersion
+    ) {
+        userManager.twoFA(
+                userId,
+                username,
+                password,
+                twoFactor,
+                infoResponse,
+                loginResponse,
+                fallbackAuthVersion,
+                false,
+                false
+        );
     }
 
     private void disableInput() {

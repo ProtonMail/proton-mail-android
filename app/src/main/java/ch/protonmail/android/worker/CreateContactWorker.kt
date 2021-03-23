@@ -36,13 +36,14 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.CreateContact
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.UserCrypto
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.di.CurrentUserCrypto
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.ContactAlreadyExistsError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.DuplicatedEmailError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.InvalidEmailError
@@ -63,7 +64,7 @@ class CreateContactWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val apiManager: ProtonMailApiManager,
-    private val crypto: UserCrypto,
+    @CurrentUserCrypto private val crypto: UserCrypto,
     private val dispatcherProvider: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 
@@ -72,28 +73,25 @@ class CreateContactWorker @WorkerInject constructor(
         val request = buildCreateContactRequestBody()
         val response = withContext(dispatcherProvider.Io) { apiManager.createContact(request) }
 
-        if (response?.code != Constants.RESPONSE_CODE_MULTIPLE_OK) {
-            return failureWithError(ServerError)
+        return when {
+            response?.code != Constants.RESPONSE_CODE_MULTIPLE_OK -> {
+                failureWithError(ServerError)
+            }
+            response.contactId.isNotEmpty() -> {
+                val outputData = contactIdAndEmailsOutputData(response)
+                Result.success(outputData)
+            }
+            isContactAlreadyExistsError(response) -> {
+                failureWithError(ContactAlreadyExistsError)
+            }
+            isInvalidEmailError(response) -> {
+                failureWithError(InvalidEmailError)
+            }
+            isDuplicatedEmailError(response) -> {
+                failureWithError(DuplicatedEmailError)
+            }
+            else -> Result.failure()
         }
-
-        if (response.contactId.isNotEmpty()) {
-            val outputData = contactIdAndEmailsOutputData(response)
-            return Result.success(outputData)
-        }
-
-        if (isContactAlreadyExistsError(response)) {
-            return failureWithError(ContactAlreadyExistsError)
-        }
-
-        if (isInvalidEmailError(response)) {
-            return failureWithError(InvalidEmailError)
-        }
-
-        if (isDuplicatedEmailError(response)) {
-            return failureWithError(DuplicatedEmailError)
-        }
-
-        return Result.failure()
     }
 
 

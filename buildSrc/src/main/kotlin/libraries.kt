@@ -30,6 +30,7 @@ val DependencyHandler.`Proton-android-test` get() =                 protonTest("
 val DependencyHandler.`Proton-android-instrumented-test` get() =    protonTest("android-instrumented") version `Proton-android-instr-test version`
 val DependencyHandler.`Proton-kotlin-test` get() =                  protonTest("kotlin") version `Proton-kotlin-test version`
 
+val DependencyHandler.`Proton-data` get() =                         proton("data") version `Proton-data version`
 val DependencyHandler.`Proton-domain` get() =                       proton("domain") version `Proton-domain version`
 val DependencyHandler.`Proton-presentation` get() =                 proton("presentation") version `Proton-presentation version`
 
@@ -85,6 +86,7 @@ val DependencyHandler.`gotev-cookieStore` get() =           dependency("net.gote
 val DependencyHandler.`gson` get() =                        google("code.gson", "gson") version `gson version`
 val DependencyHandler.`jsoup` get() =                       dependency("org.jsoup", module = "jsoup") version `jsoup version`
 val DependencyHandler.`okhttp-url-connection` get() =       squareup("okhttp3", "okhttp-urlconnection") version `okHttp-url-connection version`
+val DependencyHandler.`okio` get() =                        dependency("com.squareup.okio", module = "okio") version `okio version`
 val DependencyHandler.`sentry-android` get() =              dependency("io.sentry", module = "sentry-android") version `sentry version`
 val DependencyHandler.`sentry-android-plugin` get() =       dependency("io.sentry", module = "sentry-android-gradle-plugin") version `sentry-plugin version`
 val DependencyHandler.`stetho` get() =                      dependency("com.facebook", "stetho") version `stetho version`
@@ -97,7 +99,6 @@ val DependencyHandler.`fasterxml-jackson-core` get() =      dependency("com.fast
 val DependencyHandler.`fasterxml-jackson-anno` get() =      dependency("com.fasterxml.jackson.core", module = "jackson-annotations") version `jackson version`
 val DependencyHandler.`fasterxml-jackson-databind` get() =  dependency("com.fasterxml.jackson.core", module = "jackson-databind") version `jackson version`
 val DependencyHandler.`remark` get() =                      dependency("com.overzealous", module = "remark") version `remark version`
-val DependencyHandler.`okio` get() =                        dependency("com.squareup.okio", module = "okio") version `okio version`
 // endregion
 
 // endregion

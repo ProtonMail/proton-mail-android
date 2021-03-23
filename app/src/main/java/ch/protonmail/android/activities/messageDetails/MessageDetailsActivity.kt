@@ -42,11 +42,12 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
-import ch.protonmail.android.activities.EXTRA_SWITCHED_USER
+import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelCreationListener
@@ -63,37 +64,34 @@ import ch.protonmail.android.activities.messageDetails.attachments.MessageDetail
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.api.models.SimpleMessage
-import ch.protonmail.android.api.models.room.messages.Attachment
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
-import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.MODE_ACCORDION
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithTwoButtons
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.MessageActionButton
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
@@ -160,35 +158,35 @@ internal class MessageDetailsActivity :
         messageId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_ID))
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
         isTransientMessage = intent.getBooleanExtra(EXTRA_TRANSIENT_MESSAGE, false)
-        val currentAccountUsername = mUserManager.username
-        AppUtil.clearNotifications(this)
+        val user = mUserManager.requireCurrentUserBlocking()
+        AppUtil.clearNotifications(this, user.id)
         if (!mUserManager.isLoggedIn) {
             startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
         }
-        loadMailSettings()
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             title = null
         }
         initAdapters()
-        if (messageRecipientUsername != null && currentAccountUsername != messageRecipientUsername) {
-            showInfoDialogWithTwoButtons(
-                this,
-                getString(R.string.switch_accounts_question),
-                String.format(getString(R.string.switch_to_account), messageRecipientUsername),
-                getString(R.string.cancel),
-                getString(R.string.okay),
-                { finish() },
-                {
-                    mUserManager.switchToAccount(messageRecipientUsername!!)
-                    continueSetup()
-                    invalidateOptionsMenu()
-                    showSignedInSnack(
-                        coordinatorLayout,
-                        String.format(getString(R.string.signed_in_with), messageRecipientUsername)
-                    )
+        if (messageRecipientUsername != null && user.name.s != messageRecipientUsername) {
+            showTwoButtonInfoDialog(
+                title = getString(R.string.switch_accounts_question),
+                message = String.format(getString(R.string.switch_to_account), messageRecipientUsername),
+                rightStringId = R.string.okay,
+                leftStringId = R.string.cancel,
+                cancelable = false,
+                onRight = {
+                    lifecycleScope.launchWhenCreated {
+                        mUserManager.switchTo(user.id)
+                        continueSetup()
+                        invalidateOptionsMenu()
+                        showSignedInSnack(
+                            coordinatorLayout,
+                            getString(R.string.signed_in_with, messageRecipientUsername)
+                        )
+                    }
                 },
-                false
+                onLeft = { finish() }
             )
         } else {
             continueSetup()
@@ -508,12 +506,6 @@ internal class MessageDetailsActivity :
     }
 
     @Subscribe
-    @Suppress("UNUSED_PARAMETER")
-    fun onMailSettingsEvent(event: MailSettingsEvent?) {
-        loadMailSettings()
-    }
-
-    @Subscribe
     @Suppress("unused", "UNUSED_PARAMETER")
     fun onLogoutEvent(event: LogoutEvent?) {
         startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
@@ -554,7 +546,7 @@ internal class MessageDetailsActivity :
         if (messageRecipientUsername != null) {
             val mailboxIntent = AppUtil.decorInAppIntent(Intent(this, MailboxActivity::class.java))
             mailboxIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            mailboxIntent.putExtra(EXTRA_SWITCHED_USER, true)
+            mailboxIntent.putExtra(EXTRA_HAS_SWITCHED_USER, true)
             startActivity(mailboxIntent)
         }
         finish()
@@ -854,7 +846,8 @@ internal class MessageDetailsActivity :
                         messageAction,
                         message.subject
                     )
-                    val userUsedSpace = app.getSecureSharedPreferences(mUserManager.username)
+                    val userUsedSpace = SecureSharedPreferences
+                        .getPrefsForUser(this@MessageDetailsActivity, mUserManager.requireCurrentUserId())
                         .getLong(Constants.Prefs.PREF_USED_SPACE, 0)
                     val userMaxSpace = if (mUserManager.user.maxSpace == 0L) {
                         Long.MAX_VALUE
@@ -863,21 +856,18 @@ internal class MessageDetailsActivity :
                     }
                     val percentageUsed = userUsedSpace * 100 / userMaxSpace
                     if (percentageUsed >= 100) {
-                        showInfoDialogWithTwoButtons(
-                            this@MessageDetailsActivity,
-                            getString(R.string.storage_limit_warning_title),
-                            getString(R.string.storage_limit_reached_text),
-                            getString(R.string.learn_more),
-                            getString(R.string.okay),
-                            {
+                        this@MessageDetailsActivity.showTwoButtonInfoDialog(
+                            title = getString(R.string.storage_limit_warning_title),
+                            message = getString(R.string.storage_limit_reached_text),
+                            rightStringId = R.string.okay,
+                            leftStringId = R.string.learn_more,
+                            onLeft = {
                                 val browserIntent = Intent(
                                     Intent.ACTION_VIEW,
                                     Uri.parse(getString(R.string.limit_reached_learn_more))
                                 )
                                 startActivity(browserIntent)
-                            },
-                            { },
-                            true
+                            }
                         )
                     } else {
                         viewModel.prepareEditMessageIntent.observe(

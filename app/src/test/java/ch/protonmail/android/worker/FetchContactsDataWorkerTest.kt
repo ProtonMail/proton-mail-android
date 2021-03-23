@@ -24,9 +24,9 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactsDataResponse
-import ch.protonmail.android.api.models.room.contacts.ContactData
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.ContactData
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -35,6 +35,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.android.workmanager.toWorkData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -49,7 +50,7 @@ class FetchContactsDataWorkerTest {
     private lateinit var parameters: WorkerParameters
 
     @MockK
-    private lateinit var contactsDao: ContactsDao
+    private lateinit var contactDao: ContactDao
 
     @MockK
     private lateinit var api: ProtonMailApiManager
@@ -59,7 +60,7 @@ class FetchContactsDataWorkerTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        worker = FetchContactsDataWorker(context, parameters, api, contactsDao)
+        worker = FetchContactsDataWorker(context, parameters, api, contactDao, TestDispatcherProvider)
     }
 
     @Test
@@ -73,14 +74,14 @@ class FetchContactsDataWorkerTest {
                 every { total } returns contactsList.size
             }
             coEvery { api.fetchContacts(0, Constants.CONTACTS_PAGE_SIZE) } returns response
-            coEvery { contactsDao.saveAllContactsData(contactsList) } returns listOf(1)
+            coEvery { contactDao.saveAllContactsData(contactsList) } returns listOf(1)
             val expected = ListenableWorker.Result.success()
 
             // when
             val operationResult = worker.doWork()
 
             // then
-            coVerify { contactsDao.saveAllContactsData(contactsList) }
+            coVerify { contactDao.saveAllContactsData(contactsList) }
             assertEquals(expected, operationResult)
         }
 

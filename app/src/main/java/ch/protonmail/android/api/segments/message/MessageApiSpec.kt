@@ -19,7 +19,7 @@
 package ch.protonmail.android.api.segments.message
 
 import androidx.annotation.WorkerThread
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
@@ -35,18 +35,18 @@ import java.io.IOException
 interface MessageApiSpec {
 
     @Throws(IOException::class)
-    fun fetchMessagesCount(retrofitTag: RetrofitTag): UnreadTotalMessagesResponse
+    fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse
 
     @Throws(IOException::class)
     fun messages(location: Int): MessagesResponse?
 
     @Throws(IOException::class)
-    fun messages(location: Int, retrofitTag: RetrofitTag): MessagesResponse?
+    fun messages(location: Int, userIdTag: UserIdTag): MessagesResponse?
 
     @Throws(IOException::class)
     fun fetchMessages(location: Int, time: Long): MessagesResponse?
 
-    suspend fun fetchMessageMetadata(messageId: String, retrofitTag: RetrofitTag): MessagesResponse
+    suspend fun fetchMessageMetadata(messageId: String, userIdTag: UserIdTag): MessagesResponse
 
     @Throws(IOException::class)
     fun markMessageAsRead(messageIds: IDList)
@@ -72,10 +72,10 @@ interface MessageApiSpec {
     @Throws(Exception::class)
     fun fetchMessageDetailsBlocking(messageId: String): MessageResponse
 
-    suspend fun fetchMessageDetails(messageId: String, retrofitTag: RetrofitTag): MessageResponse
+    suspend fun fetchMessageDetails(messageId: String, userIdTag: UserIdTag): MessageResponse
 
     @WorkerThread
-    fun fetchMessageDetailsBlocking(messageId: String, retrofitTag: RetrofitTag): MessageResponse?
+    fun fetchMessageDetailsBlocking(messageId: String, userIdTag: UserIdTag): MessageResponse?
 
     @WorkerThread
     @Throws(Exception::class)
@@ -96,13 +96,13 @@ interface MessageApiSpec {
     suspend fun updateDraft(
         messageId: String,
         draftBody: DraftBody,
-        retrofitTag: RetrofitTag
+        userIdTag: UserIdTag
     ): MessageResponse
 
     suspend fun sendMessage(
         messageId: String,
         message: MessageSendBody,
-        retrofitTag: RetrofitTag
+        userIdTag: UserIdTag
     ): MessageSendResponse
 
     @Throws(IOException::class)

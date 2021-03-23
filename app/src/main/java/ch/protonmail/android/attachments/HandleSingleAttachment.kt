@@ -26,10 +26,10 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import androidx.work.ListenableWorker
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadata
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
-import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.data.local.AttachmentMetadataDao
+import ch.protonmail.android.data.local.model.Attachment
+import ch.protonmail.android.data.local.model.AttachmentMetadata
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.storage.AttachmentClearingServiceHelper
@@ -49,7 +49,7 @@ private const val ATTACHMENT_UNKNOWN_FILE_NAME = "attachment"
  */
 class HandleSingleAttachment @Inject constructor(
     private val context: Context,
-    private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
+    private val attachmentMetadataDao: AttachmentMetadataDao,
     private val attachmentsHelper: AttachmentsHelper,
     private val clearingServiceHelper: AttachmentClearingServiceHelper,
     private val attachmentsRepository: AttachmentsRepository
@@ -83,7 +83,7 @@ class HandleSingleAttachment @Inject constructor(
                 attachmentUri
             )
 
-            attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
+            attachmentMetadataDao.insertAttachmentMetadata(attachmentMetadata)
 
             AppUtil.postEventOnUi(
                 DownloadedAttachmentEvent(

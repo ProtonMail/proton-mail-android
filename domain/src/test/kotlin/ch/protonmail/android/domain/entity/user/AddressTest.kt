@@ -75,6 +75,7 @@ internal class AddressTest {
         Id("domain_id"),
         EmailAddress("$id@mail.com"),
         null,
+        null,
         true,
         Address.Type.ORIGINAL,
         allowedToSend = true,

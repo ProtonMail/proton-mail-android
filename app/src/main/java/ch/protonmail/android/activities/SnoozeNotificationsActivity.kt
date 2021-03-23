@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -23,17 +23,23 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.CompoundButton
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import butterknife.OnClick
 import ch.protonmail.android.R
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.utils.extensions.*
+import ch.protonmail.android.utils.extensions.app
+import ch.protonmail.android.utils.extensions.buildRepeatingDaysString
+import ch.protonmail.android.utils.extensions.buildUILabel
+import ch.protonmail.android.utils.extensions.countSelected
+import ch.protonmail.android.utils.extensions.countTrue
+import ch.protonmail.android.utils.extensions.roundHourOrMinute
+import ch.protonmail.android.utils.extensions.selectAll
 import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.views.SnoozeRepeatDayView
 import com.squareup.otto.Subscribe
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.activity_snooze_notifications.*
-import java.util.*
+import java.util.ArrayList
+import java.util.Arrays
 
 // region constants
 private const val TAG_START_TIME_PICKED = "StartTimePicker"
@@ -73,7 +79,12 @@ class SnoozeNotificationsActivity : BaseActivity() {
         snoozeScheduledEnabled = isChecked
         notificationsSnoozeScheduledContainer.visibility = if (isChecked) View.VISIBLE else View.GONE
         if (mUserManager != null) {
-            mUserManager.setSnoozeScheduled(isChecked, startTimeHour, startTimeMinute, endTimeHour, endTimeMinute, buildRepeatingDaysString())
+            mUserManager.setSnoozeScheduledBlocking(isChecked,
+                startTimeHour,
+                startTimeMinute,
+                endTimeHour,
+                endTimeMinute,
+                buildRepeatingDaysString())
         }
         setCurrentStatus()
         if (isChecked) {
@@ -115,7 +126,7 @@ class SnoozeNotificationsActivity : BaseActivity() {
         endTimePicker.version = TimePickerDialog.Version.VERSION_2
 
         snoozeScheduledEnabled = mUserManager.isSnoozeScheduledEnabled()
-        quickSnoozeEnabled = mUserManager.isSnoozeQuickEnabled()
+        quickSnoozeEnabled = mUserManager.isSnoozeQuickEnabledBlocking()
         val snoozeSettings = mUserManager.snoozeSettings
         snoozeSettings?.let {
             startTimeHour = it.snoozeScheduledStartTimeHour
@@ -156,13 +167,18 @@ class SnoozeNotificationsActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        ProtonMailApplication.getApplication().bus.register(this)
+        app.bus.register(this)
     }
 
     override fun onStop() {
         super.onStop()
-        ProtonMailApplication.getApplication().bus.unregister(this)
-        mUserManager.setSnoozeScheduled(snoozeScheduledEnabled, startTimeHour, startTimeMinute, endTimeHour, endTimeMinute, buildRepeatingDaysString())
+        app.bus.unregister(this)
+        mUserManager.setSnoozeScheduledBlocking(snoozeScheduledEnabled,
+            startTimeHour,
+            startTimeMinute,
+            endTimeHour,
+            endTimeMinute,
+            buildRepeatingDaysString())
     }
 
     override fun onBackPressed() {

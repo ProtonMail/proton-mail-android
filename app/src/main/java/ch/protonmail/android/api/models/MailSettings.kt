@@ -1,33 +1,30 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.api.models
 
 import android.content.SharedPreferences
-import android.text.TextUtils
-import android.util.Log
-
-import com.google.gson.annotations.SerializedName
-
-import java.io.Serializable
-
+import androidx.core.content.edit
 import ch.protonmail.android.api.models.enumerations.PackageType
-import ch.protonmail.android.core.ProtonMailApplication
+import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.runBlocking
+import me.proton.core.util.kotlin.unsupported
+import java.io.Serializable
 
 // region constants
 private const val FIELD_DISPLAY_NAME = "DisplayName"
@@ -75,10 +72,6 @@ private const val PREF_RECEIVE_MIME_TYPE = "mail_settings_ReceiveMIMEType"
 private const val PREF_SHOW_MIME_TYPE = "mail_settings_ShowMIMEType"
 // endregion
 
-/**
- * Created by dino on 2/4/18.
- */
-
 class MailSettings : Serializable {
 
     @SerializedName(FIELD_DISPLAY_NAME)
@@ -96,7 +89,9 @@ class MailSettings : Serializable {
      * @return 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
      */
     @SerializedName(FIELD_SHOW_IMAGES)
-    var showImages: Int = 0 // 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
+    // TODO this field should be changed to 'ShowImagesFrom' enum, once using Kotlinx serialization
+    @Deprecated("Use 'showImagesFrom' field", ReplaceWith("showImagesFrom"))
+    var showImages: Int = 0
     @SerializedName(FIELD_SHOW_MOVED)
     private val showMoved: Int = 0
     @SerializedName(FIELD_SWIPE_RIGHT)
@@ -129,7 +124,16 @@ class MailSettings : Serializable {
     private val showMIMEType: String? = null
 
     @Transient
+    @Deprecated("We should not rely on username. No replacement", level = DeprecationLevel.ERROR)
     var username: String? = null
+
+    @Suppress("DEPRECATION")
+    var showImagesFrom: ShowImageFrom
+        get() = ShowImageFrom.fromFlag(showImages)
+        set(value) {
+            showImages = value.flag
+        }
+
 
     var leftSwipeAction: Int
         get() = if (swipeLeft in 0..4) swipeLeft else 0
@@ -146,67 +150,122 @@ class MailSettings : Serializable {
     val defaultSign: Boolean
         get() = sign != 0
 
-    fun getPGPScheme(): PackageType? {
-        return PackageType.fromInteger(pgpScheme)
-    }
+    fun getPGPScheme(): PackageType? =
+        PackageType.fromInteger(pgpScheme)
 
-    fun getAttachPublicKey(): Boolean {
-        return attachPublicKey != 0
-    }
+    fun getAttachPublicKey(): Boolean =
+        attachPublicKey != 0
 
     fun setAttachPublicKey(attachPublicKey: Int) {
         this.attachPublicKey = attachPublicKey
     }
 
-    fun save() {
-        val pref: SharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username)
-        Log.d("PMTAG", "saving MailSettings for username: `" + this.username + "`")
+    @Suppress("RedundantSuspendModifier") // Can't inject dispatcher for use `withContext`,
+    //                                                  but still better than a blocking call
+    suspend fun save(userPreferences: SharedPreferences) {
+        userPreferences.edit {
+            putString(PREF_DISPLAY_NAME, displayName)
+            putString(PREF_SIGNATURE, signature)
+            putString(PREF_THEME, theme)
+            putInt(PREF_AUTO_SAVE_CONTACTS, autoSaveContacts)
+            putInt(PREF_AUTO_WILDCARD_SEARCH, autoWildcardSearch)
+            putInt(PREF_SHOW_IMAGES, showImagesFrom.flag)
+            putInt(PREF_SHOW_MOVED, showMoved)
+            putInt(PREF_SWIPE_RIGHT, swipeRight)
+            putInt(PREF_SWIPE_LEFT, swipeLeft)
+            putInt(PREF_ALSO_ARCHIVE, alsoArchive)
+            putInt(PREF_PM_SIGNATURE, pmSignature)
+            putInt(PREF_RIGHT_TO_LEFT, rightToLeft)
+            putInt(PREF_ATTACH_PUBLIC_KEY, attachPublicKey)
+            putInt(PREF_SIGN, sign)
+            putInt(PREF_PGP_SCHEME, pgpScheme)
+            putInt(PREF_PROMPT_PIN, promptPin)
+            putInt(PREF_AUTOCRYPT, autocrypt)
+            putInt(PREF_NUM_MESSAGE_PER_PAGE, numMessagePerPage)
+            putString(PREF_DRAFT_MIME_TYPE, draftMIMEType)
+            putString(PREF_RECEIVE_MIME_TYPE, receiveMIMEType)
+            putString(PREF_SHOW_MIME_TYPE, showMIMEType)
+        }
+    }
 
-        pref.edit()
-                .putString(PREF_DISPLAY_NAME, displayName)
-                .putString(PREF_SIGNATURE, signature)
-                .putString(PREF_THEME, theme)
-                .putInt(PREF_AUTO_SAVE_CONTACTS, autoSaveContacts)
-                .putInt(PREF_AUTO_WILDCARD_SEARCH, autoWildcardSearch)
-                .putInt(PREF_SHOW_IMAGES, showImages)
-                .putInt(PREF_SHOW_MOVED, showMoved)
-                .putInt(PREF_SWIPE_RIGHT, swipeRight)
-                .putInt(PREF_SWIPE_LEFT, swipeLeft)
-                .putInt(PREF_ALSO_ARCHIVE, alsoArchive)
-                .putInt(PREF_PM_SIGNATURE, pmSignature)
-                .putInt(PREF_RIGHT_TO_LEFT, rightToLeft)
-                .putInt(PREF_ATTACH_PUBLIC_KEY, attachPublicKey)
-                .putInt(PREF_SIGN, sign)
-                .putInt(PREF_PGP_SCHEME, pgpScheme)
-                .putInt(PREF_PROMPT_PIN, promptPin)
-                .putInt(PREF_AUTOCRYPT, autocrypt)
-                .putInt(PREF_NUM_MESSAGE_PER_PAGE, numMessagePerPage)
-                .putString(PREF_DRAFT_MIME_TYPE, draftMIMEType)
-                .putString(PREF_RECEIVE_MIME_TYPE, receiveMIMEType)
-                .putString(PREF_SHOW_MIME_TYPE, showMIMEType)
-                .apply()
+    @Deprecated("Use suspend function", ReplaceWith("save(userPreferences)"))
+    fun saveBlocking(userPreferences: SharedPreferences) {
+        runBlocking { save(userPreferences) }
+    }
+
+    @Deprecated(
+        "Save using Preferences directly",
+        ReplaceWith("save(preferences)"),
+        DeprecationLevel.ERROR
+    )
+    fun save() {
+        unsupported
+    }
+
+    @Suppress("TooManyFunctions") // It would be nice to have them as extension functions, but sadly this code
+    //                                          is  also used form Java, so it would make the code even uglier than the
+    //                                          usual  Java code
+    enum class ShowImageFrom(val flag: Int) {
+        None(0),
+        Remote(1),
+        Embedded(2),
+        All(3);
+
+        fun includesRemote() =
+            this == Remote || this == All
+
+        fun includesEmbedded() =
+            this == Embedded || this == All
+
+        fun toggleRemote() =
+            when (this) {
+                None -> Remote
+                Remote -> None
+                Embedded -> All
+                All -> Embedded
+            }
+
+        fun toggleEmbedded() =
+            when (this) {
+                None -> Embedded
+                Remote -> All
+                Embedded -> None
+                All -> Remote
+            }
+
+        companion object {
+            fun fromFlag(flag: Int) =
+                values().first { it.flag == flag }
+        }
     }
 
     companion object {
 
-        fun load(username: String): MailSettings {
-            Log.d("PMTAG", "loading MailSettings for user `$username`")
-            val prefs: SharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
-            val mailSettings = MailSettings()
-            mailSettings.showImages = prefs.getInt(PREF_SHOW_IMAGES, 0)
-            mailSettings.autoSaveContacts = prefs.getInt(PREF_AUTO_SAVE_CONTACTS, 0)
-            mailSettings.leftSwipeAction = prefs.getInt(PREF_SWIPE_LEFT, 0)
-            mailSettings.swipeLeft = mailSettings.leftSwipeAction
-            mailSettings.rightSwipeAction = prefs.getInt(PREF_SWIPE_RIGHT, 0)
-            mailSettings.swipeRight = mailSettings.rightSwipeAction
-            mailSettings.setAttachPublicKey(prefs.getInt(PREF_ATTACH_PUBLIC_KEY, 0))
-            mailSettings.pgpScheme = prefs.getInt(PREF_PGP_SCHEME, 1)
-            mailSettings.sign = prefs.getInt(PREF_SIGN, 0)
-            if (!TextUtils.isEmpty(username)) {
-                mailSettings.username = username
+        @Suppress("RedundantSuspendModifier") // Can't inject dispatcher for use `withContext`,
+        //                                                  but still better than a blocking call
+        suspend fun load(userPreferences: SharedPreferences): MailSettings {
+            return MailSettings().apply {
+                with(userPreferences) {
+                    showImagesFrom = ShowImageFrom.fromFlag(getInt(PREF_SHOW_IMAGES, 0))
+                    autoSaveContacts = getInt(PREF_AUTO_SAVE_CONTACTS, 0)
+                    leftSwipeAction = getInt(PREF_SWIPE_LEFT, 0)
+                    swipeLeft = leftSwipeAction
+                    rightSwipeAction = getInt(PREF_SWIPE_RIGHT, 0)
+                    swipeRight = rightSwipeAction
+                    setAttachPublicKey(getInt(PREF_ATTACH_PUBLIC_KEY, 0))
+                    pgpScheme = getInt(PREF_PGP_SCHEME, 1)
+                    sign = getInt(PREF_SIGN, 0)
+                }
             }
+        }
 
-            return mailSettings
+        @Deprecated(
+            "Load using Preferences directly",
+            ReplaceWith("load(preferences)"),
+            DeprecationLevel.ERROR
+        )
+        fun load(username: String): MailSettings {
+            unsupported
         }
     }
 }

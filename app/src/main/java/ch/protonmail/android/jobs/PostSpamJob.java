@@ -26,11 +26,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import ch.protonmail.android.api.models.IDList;
-import ch.protonmail.android.api.models.room.counters.CountersDatabase;
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory;
-import ch.protonmail.android.api.models.room.counters.UnreadLocationCounter;
-import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.data.local.CounterDao;
+import ch.protonmail.android.data.local.CounterDatabase;
+import ch.protonmail.android.data.local.model.Message;
+import ch.protonmail.android.data.local.model.UnreadLocationCounter;
 import ch.protonmail.android.events.RefreshDrawerEvent;
 import ch.protonmail.android.utils.AppUtil;
 
@@ -53,14 +53,14 @@ public class PostSpamJob extends ProtonMailCounterJob {
 
     @Override
     public void onAdded() {
-        final CountersDatabase countersDatabase = CountersDatabaseFactory.Companion
-                .getInstance(getApplicationContext())
-                .getDatabase();
+        final CounterDao counterDao = CounterDatabase.Companion
+                .getInstance(getApplicationContext(), getUserId())
+                .getDao();
         int totalUnread = 0;
         for (String id : mMessageIds) {
             final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
-                if (markMessageLocally(countersDatabase,message)) {
+                if (markMessageLocally(counterDao,message)) {
                     totalUnread++;
                 }
                 if (!TextUtils.isEmpty(mFolderId)) {
@@ -69,28 +69,28 @@ public class PostSpamJob extends ProtonMailCounterJob {
             }
         }
 
-        UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(Constants.MessageLocationType.SPAM.getMessageLocationTypeValue());
+        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(Constants.MessageLocationType.SPAM.getMessageLocationTypeValue());
         if (unreadLocationCounter == null) {
             return;
         }
         unreadLocationCounter.increment(totalUnread);
-        countersDatabase.insertUnreadLocation(unreadLocationCounter);
+        counterDao.insertUnreadLocation(unreadLocationCounter);
         AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 
-    private boolean markMessageLocally(CountersDatabase countersDatabase, Message message) {
+    private boolean markMessageLocally(CounterDao counterDao, Message message) {
         boolean unreadIncrease = false;
         if (!message.isRead()) {
-            UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(message.getLocation());
+            UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
             if (unreadLocationCounter != null) {
                 unreadLocationCounter.decrement();
-                countersDatabase.insertUnreadLocation(unreadLocationCounter);
+                counterDao.insertUnreadLocation(unreadLocationCounter);
             }
             unreadIncrease = true;
         }
         message.setLocation(Constants.MessageLocationType.SPAM.getMessageLocationTypeValue());
         message.setLabelIDs(Arrays.asList(String.valueOf(Constants.MessageLocationType.SPAM.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue())));
-        getMessageDetailsRepository().saveMessageInDB(message);
+        getMessageDetailsRepository().saveMessageBlocking(message);
         return unreadIncrease;
     }
 

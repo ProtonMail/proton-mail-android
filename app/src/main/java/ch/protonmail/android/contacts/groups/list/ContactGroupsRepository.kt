@@ -19,11 +19,12 @@
 package ch.protonmail.android.contacts.groups.list
 
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.local.model.ContactLabel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -31,31 +32,31 @@ import javax.inject.Inject
 
 class ContactGroupsRepository @Inject constructor(
     private val api: ProtonMailApiManager,
-    private val contactsDao: ContactsDao,
+    private val contactDao: ContactDao,
     private val dispatchers: DispatcherProvider
 ) {
 
-    fun getJoins(): Flow<List<ContactEmailContactLabelJoin>> = contactsDao.fetchJoins()
+    fun getJoins(): Flow<List<ContactEmailContactLabelJoin>> = contactDao.fetchJoins()
 
     fun observeContactGroups(filter: String): Flow<List<ContactLabel>> =
-        contactsDao.findContactGroupsFlow("$SEARCH_DELIMITER$filter$SEARCH_DELIMITER")
+        contactDao.findContactGroups("$SEARCH_DELIMITER$filter$SEARCH_DELIMITER")
             .map { labels ->
-                labels.map { label -> label.contactEmailsCount = contactsDao.countContactEmailsByLabelId(label.ID) }
+                labels.map { label -> label.contactEmailsCount = contactDao.countContactEmailsByLabelId(label.ID) }
                 labels
             }
             .flowOn(dispatchers.Io)
 
     suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
-        contactsDao.findAllContactsEmailsByContactGroupId(id)
+        contactDao.findAllContactsEmailsByContactGroup(id).first()
 
     fun saveContactGroup(contactLabel: ContactLabel) {
-        contactsDao.saveContactGroupLabel(contactLabel)
+        contactDao.saveContactGroupLabel(contactLabel)
     }
 
     suspend fun getContactGroupsFromApi(): List<ContactLabel> {
         return api.fetchContactGroupsList().also { labels ->
-            contactsDao.clearContactGroupsLabelsTable()
-            contactsDao.saveContactGroupsList(labels)
+            contactDao.clearContactGroupsLabelsTable()
+            contactDao.saveContactGroupsList(labels)
         }
     }
 

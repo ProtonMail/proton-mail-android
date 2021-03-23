@@ -23,8 +23,8 @@ import ch.protonmail.android.api.models.enumerations.MessageFlag
 import ch.protonmail.android.api.models.factories.checkIfSet
 import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.factories.parseBoolean
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.extensions.notNull
 import javax.inject.Inject

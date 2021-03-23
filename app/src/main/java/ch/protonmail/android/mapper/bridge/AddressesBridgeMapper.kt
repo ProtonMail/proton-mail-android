@@ -23,6 +23,7 @@ package ch.protonmail.android.mapper.bridge
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.Addresses
 import me.proton.core.util.kotlin.invoke
@@ -73,12 +74,12 @@ class AddressBridgeMapper @Inject constructor(
 ) : BridgeMapper<OldAddress, Address> {
 
     override fun OldAddress.toNewModel(): Address {
-
         return Address(
             id = Id(id),
             domainId = domainId?.let(::Id),
             email = EmailAddress(email),
             displayName = displayName?.takeIfNotBlank()?.let(::Name),
+            signature = signature?.takeIfNotBlank()?.let(::NotBlankString),
             enabled = status.toBoolean(),
             type = getType(type),
             allowedToSend = send.toBoolean(),

@@ -21,14 +21,13 @@ package ch.protonmail.android.compose.send
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.utils.ServerTime
 import io.mockk.MockKAnnotations
 import io.mockk.coVerify
@@ -48,6 +47,8 @@ import kotlin.test.assertEquals
 
 class SendMessageTest : CoroutinesTest {
 
+    private val testUserId = Id("id")
+
     @RelaxedMockK
     private lateinit var addressCryptoFactory: AddressCrypto.Factory
 
@@ -55,15 +56,13 @@ class SendMessageTest : CoroutinesTest {
     private lateinit var sendMessageScheduler: SendMessageWorker.Enqueuer
 
     @RelaxedMockK
-    private lateinit var pendingActionsDao: PendingActionsDao
+    private lateinit var pendingActionDao: PendingActionDao
 
     @RelaxedMockK
     lateinit var messageDetailsRepository: MessageDetailsRepository
 
     @InjectMockKs
     lateinit var sendMessage: SendMessage
-
-    private val currentUsername = "username"
 
     @Before
     fun setUp() {
@@ -81,7 +80,7 @@ class SendMessageTest : CoroutinesTest {
         val addressCrypto = mockk<AddressCrypto> {
             every { encrypt(decryptedBody, true).armored } returns "encrypted armored content"
         }
-        every { addressCryptoFactory.create(Id(senderAddressId), Name(currentUsername)) } returns addressCrypto
+        every { addressCryptoFactory.create(testUserId, Id(senderAddressId)) } returns addressCrypto
 
         // When
         val parameters = SendMessage.SendMessageParameters(message, listOf(), "", NONE, "", securityOptions)
@@ -91,7 +90,7 @@ class SendMessageTest : CoroutinesTest {
 
         val messageCaptor = slot<Message>()
         verify { addressCrypto.encrypt(decryptedBody, true) }
-        coVerify(exactly = 1) { messageDetailsRepository.saveMessageLocally(capture(messageCaptor)) }
+        coVerify(exactly = 1) { messageDetailsRepository.saveMessage(capture(messageCaptor)) }
         assertEquals("encrypted armored content", messageCaptor.captured.messageBody)
     }
 
@@ -115,7 +114,7 @@ class SendMessageTest : CoroutinesTest {
             time = currentTimeSeconds,
             isDownloaded = false
         )
-        coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
+        coVerify { messageDetailsRepository.saveMessage(expectedMessage) }
         unmockkStatic(ServerTime::class)
     }
 
@@ -137,7 +136,7 @@ class SendMessageTest : CoroutinesTest {
 
         // Then
         val pendingSend = PendingSend(messageId = messageId, localDatabaseId = messageDbId)
-        coVerify { pendingActionsDao.insertPendingForSend(pendingSend) }
+        coVerify { pendingActionDao.insertPendingForSend(pendingSend) }
     }
 
     @Test

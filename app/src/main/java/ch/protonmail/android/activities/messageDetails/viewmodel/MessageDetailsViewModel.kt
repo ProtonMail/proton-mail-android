@@ -42,12 +42,6 @@ import ch.protonmail.android.activities.messageDetails.RegisterReloadTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.messages.Attachment
-import ch.protonmail.android.api.models.room.messages.Label
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.attachments.AttachmentsHelper
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
@@ -56,6 +50,8 @@ import ch.protonmail.android.core.Constants.DIR_EMB_ATTACHMENT_DOWNLOADS
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.local.AttachmentMetadataDao
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
@@ -70,6 +66,7 @@ import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -93,7 +90,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val userManager: UserManager,
     private val contactsRepository: ContactsRepository,
-    private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
+    private val attachmentMetadataDao: AttachmentMetadataDao,
     private val deleteMessageUseCase: DeleteMessage,
     private val fetchVerificationKeys: FetchVerificationKeys,
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
@@ -206,6 +203,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     init {
         tryFindMessage()
+        messageDetailsRepository.reloadDependenciesForUser(userManager.requireCurrentUserId())
 
         viewModelScope.launch {
             for (body in messageRenderer.renderedBody) {
@@ -217,7 +215,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     }
 
     fun tryFindMessage() {
-        messageDetailsRepository.reloadDependenciesForUser(userManager.username)
+        messageDetailsRepository.reloadDependenciesForUser(userManager.requireCurrentUserId())
         message = if (isTransientMessage) {
             messageDetailsRepository.findSearchMessageByIdAsync(messageId)
         } else {
@@ -266,7 +264,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
         viewModelScope.launch(dispatchers.Io) {
 
-            val attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsForMessage(messageId)
+            val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(messageId)
             val embeddedImages = _embeddedImagesAttachments.mapNotNull {
                 attachmentsHelper.fromAttachmentToEmbeddedImage(
                     it, decryptedMessageData.value!!.embeddedImageIds.toList()
@@ -288,7 +286,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             ) {
                 AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImagesWithLocalFiles))
             } else {
-                messageDetailsRepository.startDownloadEmbeddedImages(messageId, userManager.username)
+                messageDetailsRepository.startDownloadEmbeddedImages(messageId, userManager.requireCurrentUserId())
             }
         }
     }
@@ -386,7 +384,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
             private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
                 return try {
-                    decrypt(userManager = userManager, username = userManager.username, verKeys = verificationKeys)
+                    decrypt(userManager, userManager.requireCurrentUserId(), verificationKeys)
                     true
                 } catch (exception: Exception) {
                     // signature verification failed with special case, try to decrypt again without verification
@@ -395,7 +393,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                         exception.message == "Signature Verification Error: No matching signature"
                     ) {
                         Timber.d(exception, "Decrypting message again without verkeys")
-                        decrypt(userManager = userManager, username = userManager.username)
+                        decrypt(userManager, userManager.requireCurrentUserId())
                         this.hasValidSignature = false
                         this.hasInvalidSignature = true
                         true
@@ -442,7 +440,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                                 with(messageDetailsRepository) {
 
                                     if (isTransientMessage) {
-                                        val savedMessage = findSearchMessageById(messageId)
+                                        val savedMessage = findSearchMessageById(messageId).first()
                                         if (savedMessage != null) {
                                             messageResponse.message.writeTo(savedMessage)
                                             saveSearchMessageInDB(savedMessage)
@@ -451,7 +449,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                                         }
 
                                     } else {
-                                        val savedMessage = findMessageById(messageId)
+                                        val savedMessage = findMessageById(messageId).first()
                                         if (savedMessage != null) {
                                             messageResponse.message.writeTo(savedMessage)
                                             saveMessageInDB(savedMessage)
@@ -495,7 +493,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     fun viewOrDownloadAttachment(context: Context, attachmentToDownloadId: String, messageId: String) {
 
         viewModelScope.launch(dispatchers.Io) {
-            val metadata = attachmentMetadataDatabase
+            val metadata = attachmentMetadataDao
                 .getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
             Timber.v("viewOrDownloadAttachment Id: $attachmentToDownloadId metadataId: ${metadata?.id}")
             if (metadata != null) {
@@ -510,12 +508,12 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                     }
                     else -> {
                         Timber.v("No file attachment id: $attachmentToDownloadId downloading again")
-                        attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
+                        attachmentsWorker.enqueue(messageId, userManager.requireCurrentUserId(), attachmentToDownloadId)
                     }
                 }
             } else {
                 Timber.v("No metadata found for attachment id: $attachmentToDownloadId")
-                attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
+                attachmentsWorker.enqueue(messageId, userManager.requireCurrentUserId(), attachmentToDownloadId)
             }
         }
     }

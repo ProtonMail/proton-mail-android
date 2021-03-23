@@ -23,13 +23,13 @@ import androidx.annotation.Nullable;
 import com.birbit.android.jobqueue.Params;
 
 import java.net.ConnectException;
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import ch.protonmail.android.api.AccountManager;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
+import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.FetchUpdatesEvent;
 import ch.protonmail.android.events.Status;
@@ -37,6 +37,7 @@ import ch.protonmail.android.jobs.Priority;
 import ch.protonmail.android.jobs.ProtonMailBaseJob;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
+import timber.log.Timber;
 
 public class FetchUpdatesJob extends ProtonMailBaseJob {
 
@@ -54,7 +55,7 @@ public class FetchUpdatesJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
+        MessageDao messageDao = MessageDatabase.Companion.getInstance(getApplicationContext(), getUserId()).getDao();
         if (!getQueueNetworkUtil().isConnected()) {
             Logger.doLog(TAG_FETCH_UPDATES_JOB, "no network cannot fetch updates");
             AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.NO_NETWORK));
@@ -63,12 +64,13 @@ public class FetchUpdatesJob extends ProtonMailBaseJob {
 
         //check for expired messages in the cache and delete them
         long currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-        messagesDatabase.deleteExpiredMessages(currentTime);
+        messageDao.deleteExpiredMessages(currentTime);
         try {
-            List<String> loggedInUsers = AccountManager.Companion.getInstance(ProtonMailApplication.getApplication()).getLoggedInUsers();
-            eventManager.start(loggedInUsers);
+            Set<Id> loggedInUsers = getAccountManager().allLoggedInBlocking();
+            eventManager.consumeEventsForBlocking(loggedInUsers);
             AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.SUCCESS));
         } catch (Exception e) {
+            Timber.e(e);
             if (e.getCause() instanceof ConnectException) {
                 AppUtil.postEventOnUi(new ConnectivityEvent(false));
             }

@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.settings.mail
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.MailSettingsResponse
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.requests.DisplayName
@@ -28,6 +28,7 @@ import ch.protonmail.android.api.models.requests.SwipeLeft
 import ch.protonmail.android.api.models.requests.SwipeRight
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
+import ch.protonmail.android.domain.entity.Id
 import java.io.IOException
 
 class MailSettingsApi(private val service: MailSettingsService) : BaseApi(), MailSettingsApiSpec {
@@ -39,8 +40,8 @@ class MailSettingsApi(private val service: MailSettingsService) : BaseApi(), Mai
     override suspend fun fetchMailSettings(): MailSettingsResponse = service.fetchMailSettings()
 
     @Throws(IOException::class)
-    override fun fetchMailSettingsBlocking(username: String): MailSettingsResponse =
-        ParseUtils.parse(service.fetchMailSettingsCall(RetrofitTag(username)).execute())
+    override fun fetchMailSettingsBlocking(userId: Id): MailSettingsResponse =
+        ParseUtils.parse(service.fetchMailSettingsCall(UserIdTag(userId)).execute())
 
     @Throws(IOException::class)
     override fun updateSignature(signature: String): ResponseBody? =

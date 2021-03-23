@@ -21,6 +21,7 @@ package ch.protonmail.android.jobs
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.di.JobEntryPoint
+import ch.protonmail.android.domain.entity.Id
 import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.Params
 import com.birbit.android.jobqueue.RetryConstraint
@@ -29,20 +30,24 @@ import timber.log.Timber
 
 abstract class ProtonMailBaseJob @JvmOverloads protected constructor(
     params: Params?,
-    username: String? = null
+    userId: Id? = null
 ) : Job(params) {
 
-    protected val entryPoint get() =
-        EntryPoints.get(ProtonMailApplication.getApplication(), JobEntryPoint::class.java)
+    protected val entryPoint
+        get() = EntryPoints.get(ProtonMailApplication.getApplication(), JobEntryPoint::class.java)
 
+    // This property is serialized by JobQueue library.
+    private var userIdString: String = userId?.s ?: getUserManager().requireCurrentUserId().s
+
+    protected val userId: Id
+        get() = Id(userIdString)
+
+    protected fun getAccountManager() = entryPoint.accountManager()
     protected fun getApi() = entryPoint.apiManager()
     protected fun getJobManager() = entryPoint.jobManager()
     protected fun getMessageDetailsRepository() = entryPoint.messageDetailsRepository()
     protected fun getQueueNetworkUtil() = entryPoint.queueNetworkUtil()
     protected fun getUserManager() = entryPoint.userManager()
-
-    @JvmField
-    protected var username: String = username ?: getUserManager().username
 
     override fun onAdded() {}
 
@@ -57,7 +62,7 @@ abstract class ProtonMailBaseJob @JvmOverloads protected constructor(
             onProtonCancel(cancelReason, throwable)
 
         } catch (ignored: Exception) {
-            Timber.e(ignored, this.javaClass.name + " threw exception in onProtonCancel")
+            Timber.e(ignored, "%s threw exception in onProtonCancel", this.javaClass.name)
         }
     }
 

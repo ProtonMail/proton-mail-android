@@ -23,6 +23,7 @@ import ch.protonmail.android.api.models.SrpResponseBody
 import ch.protonmail.android.api.models.UserSettingsResponse
 import ch.protonmail.android.api.models.requests.PasswordChange
 import ch.protonmail.android.api.models.requests.UpgradePasswordBody
+import ch.protonmail.android.domain.entity.Id
 import java.io.IOException
 
 interface UserSettingsApiSpec {
@@ -31,13 +32,19 @@ interface UserSettingsApiSpec {
     fun fetchUserSettings(): UserSettingsResponse
 
     @Throws(IOException::class)
-    fun fetchUserSettings(username : String): UserSettingsResponse
+    fun fetchUserSettings(userId: Id): UserSettingsResponse
 
     @Throws(IOException::class)
     fun updateNotify(updateNotify: Boolean): ResponseBody?
 
     @Throws(IOException::class)
-    fun updateNotificationEmail(srpSession: String, clientEpheremal: String, clientProof: String, twoFactorCode: String?, email: String): SrpResponseBody?
+    fun updateNotificationEmail(
+        srpSession: String,
+        clientEpheremal: String,
+        clientProof: String,
+        twoFactorCode: String?,
+        email: String
+    ): SrpResponseBody?
 
     @Throws(IOException::class)
     fun updateLoginPassword(passwordChangeBody: PasswordChange): SrpResponseBody?

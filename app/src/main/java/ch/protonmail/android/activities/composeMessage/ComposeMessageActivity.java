@@ -95,6 +95,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -117,10 +118,6 @@ import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.api.models.enumerations.MessageEncryption;
-import ch.protonmail.android.api.models.room.contacts.ContactLabel;
-import ch.protonmail.android.api.models.room.messages.LocalAttachment;
-import ch.protonmail.android.api.models.room.messages.Message;
-import ch.protonmail.android.api.models.room.messages.MessageSender;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker;
 import ch.protonmail.android.attachments.ImportAttachmentsWorker;
@@ -133,6 +130,11 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.crypto.Crypto;
+import ch.protonmail.android.data.local.model.ContactLabel;
+import ch.protonmail.android.data.local.model.LocalAttachment;
+import ch.protonmail.android.data.local.model.Message;
+import ch.protonmail.android.data.local.model.MessageSender;
+import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
@@ -145,7 +147,6 @@ import ch.protonmail.android.events.PostLoadContactsEvent;
 import ch.protonmail.android.events.ResignContactEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.contacts.SendPreferencesEvent;
-import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.events.verification.PostHumanVerificationEvent;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
 import ch.protonmail.android.tasks.EmbeddedImagesThread;
@@ -307,6 +308,8 @@ public class ComposeMessageActivity
     private ComposeMessageViewModel composeMessageViewModel;
     @Inject
     MessageDetailsRepository messageDetailsRepository;
+    @Inject
+    AccountManager accountManager;
 
     @Inject
     DownloadEmbeddedAttachmentsWorker.Enqueuer attachmentsWorker;
@@ -347,7 +350,6 @@ public class ComposeMessageActivity
             return;
         }
         setUpActionBar();
-        loadMailSettings();
         composeMessageViewModel = ViewModelProviders.of(this, composeMessageViewModelFactory).get(ComposeMessageViewModel.class);
         composeMessageViewModel.init(mHtmlProcessor);
         observeSetup();
@@ -972,11 +974,6 @@ public class ComposeMessageActivity
     }
 
     @Subscribe
-    public void onMailSettingsEvent(MailSettingsEvent event) {
-        loadMailSettings();
-    }
-
-    @Subscribe
     public void onLogoutEvent(LogoutEvent event) {
         startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
         finishActivity();
@@ -1048,7 +1045,7 @@ public class ComposeMessageActivity
                 if (!TextUtils.isEmpty(localAttachment.getMessageId())) {
                     attachmentsWorker.enqueue(
                             localAttachment.getMessageId(),
-                            mUserManager.getUsername(),
+                            mUserManager.getCurrentUserId(),
                             null
                     );
                     break;
@@ -1647,7 +1644,7 @@ public class ComposeMessageActivity
             mScrollContentView.setVisibility(View.VISIBLE);
             mProgressView.setVisibility(View.GONE);
         }
-        AddressCrypto crypto = Crypto.forAddress(mUserManager, mUserManager.getUsername(), loadedMessage.getAddressID());
+        AddressCrypto crypto = Crypto.forAddress(mUserManager, mUserManager.requireCurrentUserId(), new Id(loadedMessage.getAddressID()));
         if (updateAttachments) {
             composeMessageViewModel.createLocalAttachments(loadedMessage);
         }
@@ -1885,9 +1882,9 @@ public class ComposeMessageActivity
             composeMessageViewModel.getMergedContactsLiveData().observe(this, messageRecipients -> {
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });
-            List<String> usernames = AccountManager.Companion.getInstance(this).getLoggedInUsers();
-            for (String username : usernames) {
-                composeMessageViewModel.fetchContactGroups(username);
+            Set<Id> userIds = accountManager.allLoggedInBlocking();
+            for(Id userId : userIds) {
+                composeMessageViewModel.fetchContactGroups(userId);
             }
             composeMessageViewModel.loadPMContacts();
         } else {
@@ -1895,7 +1892,7 @@ public class ComposeMessageActivity
             composeMessageViewModel.getContactGroupsResult().observe(this, messageRecipients -> {
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });
-            composeMessageViewModel.fetchContactGroups(mUserManager.getUsername());
+            composeMessageViewModel.fetchContactGroups(mUserManager.getCurrentUserId());
             composeMessageViewModel.getPmMessageRecipientsResult().observe(this, messageRecipients -> {
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });

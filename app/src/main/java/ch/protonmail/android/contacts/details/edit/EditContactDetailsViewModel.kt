@@ -28,13 +28,13 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import ch.protonmail.android.R
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.contacts.details.ContactDetailsViewModel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.create.CreateContact

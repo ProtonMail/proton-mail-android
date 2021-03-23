@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.settings.user
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.UserSettingsResponse
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.SrpResponseBody
@@ -30,7 +30,11 @@ import retrofit2.Call
 
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.PUT
+import retrofit2.http.Tag
 
 interface UserSettingsService {
 
@@ -40,7 +44,7 @@ interface UserSettingsService {
 
     @GET("settings")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchUserSettings(@Tag retrofitTag: RetrofitTag) : Call<UserSettingsResponse>
+    fun fetchUserSettings(@Tag userIdTag: UserIdTag) : Call<UserSettingsResponse>
 
     @PUT("settings/email/notify")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

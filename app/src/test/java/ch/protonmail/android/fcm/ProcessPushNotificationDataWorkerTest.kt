@@ -27,24 +27,23 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.notifications.Notification
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.Notification
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.fcm.model.PushNotification
 import ch.protonmail.android.fcm.model.PushNotificationData
 import ch.protonmail.android.fcm.model.PushNotificationSender
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.AppUtil
-import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.coVerifyOrder
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.just
 import io.mockk.justRun
 import io.mockk.mockk
@@ -56,7 +55,6 @@ import io.mockk.spyk
 import io.mockk.unmockkConstructor
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import io.mockk.verifyOrder
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.util.kotlin.deserialize
 import org.junit.After
@@ -70,56 +68,54 @@ import kotlin.test.assertEquals
 
 class ProcessPushNotificationDataWorkerTest {
 
-    @RelaxedMockK
-    private lateinit var context: Context
-    @RelaxedMockK
-    private lateinit var userManager: UserManager
-    @RelaxedMockK
-    private lateinit var workerParameters: WorkerParameters
-    @RelaxedMockK
-    private lateinit var workManager: WorkManager
+    private val testUserId = Id("id")
 
-    @MockK
-    private lateinit var alarmReceiver: AlarmReceiver
-    @MockK
-    private lateinit var databaseProvider: DatabaseProvider
-    @MockK
-    private lateinit var messageRepository: MessageRepository
-    @MockK
-    private lateinit var notificationServer: NotificationServer
-    @MockK
-    private lateinit var queueNetworkUtil: QueueNetworkUtil
+    private val context: Context = mockk(relaxed = true)
 
-    private lateinit var processPushNotificationDataWorker: ProcessPushNotificationDataWorker
-    private lateinit var processPushNotificationDataWorkerEnqueuer: ProcessPushNotificationDataWorker.Enqueuer
+    private val userManager: UserManager = mockk(relaxed = true) {
+        coEvery { getUserIdBySessionId(any()) } returns mockk()
+        coEvery { getLegacyUser(any()) } returns mockk(relaxed = true)
+    }
+
+    private val workerParameters: WorkerParameters = mockk(relaxed = true)
+
+    private val workManager: WorkManager = mockk(relaxed = true)
+
+    private val alarmReceiver: AlarmReceiver = mockk(relaxed = true)
+
+    private val databaseProvider: DatabaseProvider = mockk(relaxed = true)
+
+    private val messageRepository: MessageRepository = mockk(relaxed = true)
+
+    private val notificationServer: NotificationServer = mockk(relaxed = true) {
+        every { createRetrievingNotificationsNotification() } returns mockk()
+    }
+
+    private val queueNetworkUtil: QueueNetworkUtil = mockk(relaxed = true)
+
+    private val processPushNotificationDataWorker: ProcessPushNotificationDataWorker = spyk(
+        ProcessPushNotificationDataWorker(
+            context,
+            workerParameters,
+            notificationServer,
+            alarmReceiver,
+            queueNetworkUtil,
+            userManager,
+            databaseProvider,
+            messageRepository
+        ),
+        recordPrivateCalls = true
+    ) {
+        coEvery { setForeground(any()) } just Runs
+    }
+    private val processPushNotificationDataWorkerEnqueuer =
+        ProcessPushNotificationDataWorker.Enqueuer(workManager)
 
     @BeforeTest
     fun setUp() {
-        MockKAnnotations.init(this, relaxUnitFun = true)
-
         mockkConstructor(UserCrypto::class)
         mockkStatic(AppUtil::class)
         mockkStatic("me.proton.core.util.kotlin.SerializationUtilsKt")
-        every { notificationServer.createRetrievingNotificationsNotification() } returns mockk()
-
-        processPushNotificationDataWorker = spyk(
-            ProcessPushNotificationDataWorker(
-                context,
-                workerParameters,
-                notificationServer,
-                alarmReceiver,
-                queueNetworkUtil,
-                userManager,
-                databaseProvider,
-                messageRepository
-            ),
-            recordPrivateCalls = true
-        ) {
-            coEvery { setForeground(any()) } just Runs
-        }
-        processPushNotificationDataWorkerEnqueuer = ProcessPushNotificationDataWorker.Enqueuer(
-            workManager
-        )
     }
 
     @After
@@ -206,7 +202,7 @@ class ProcessPushNotificationDataWorkerTest {
                 every { getString(KEY_PUSH_NOTIFICATION_ENCRYPTED_MESSAGE) } returns "encryptedMessage"
             }
             every { AppUtil.isAppInBackground() } returns false
-            every { userManager.getUsernameBySessionId("uid") } returns null
+            coEvery { userManager.getUserIdBySessionId("uid") } returns null
 
             val expectedResult = ListenableWorker.Result.failure(
                 workDataOf(KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR to "User is unknown or inactive")
@@ -229,8 +225,8 @@ class ProcessPushNotificationDataWorkerTest {
                 every { getString(KEY_PUSH_NOTIFICATION_ENCRYPTED_MESSAGE) } returns "encryptedMessage"
             }
             every { AppUtil.isAppInBackground() } returns false
-            every { userManager.getUsernameBySessionId("uid") } returns "username"
-            every { userManager.getUser("username") } returns mockk {
+            coEvery { userManager.getUserIdBySessionId("uid") } returns testUserId
+            coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isBackgroundSync } returns false
             }
 
@@ -255,8 +251,8 @@ class ProcessPushNotificationDataWorkerTest {
                 every { getString(KEY_PUSH_NOTIFICATION_ENCRYPTED_MESSAGE) } returns "encryptedMessage"
             }
             every { AppUtil.isAppInBackground() } returns false
-            every { userManager.getUsernameBySessionId("uid") } returns "username"
-            every { userManager.getUser("username") } returns mockk {
+            coEvery { userManager.getUserIdBySessionId("uid") } returns testUserId
+            coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isBackgroundSync } returns true
             }
             every { userManager.openPgp } returns mockk(relaxed = true)
@@ -283,8 +279,8 @@ class ProcessPushNotificationDataWorkerTest {
                 every { getString(KEY_PUSH_NOTIFICATION_ENCRYPTED_MESSAGE) } returns "encryptedMessage"
             }
             every { AppUtil.isAppInBackground() } returns false
-            every { userManager.getUsernameBySessionId("uid") } returns "username"
-            every { userManager.getUser("username") } returns mockk {
+            coEvery { userManager.getUserIdBySessionId("uid") } returns testUserId
+            coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isBackgroundSync } returns true
             }
             every { userManager.openPgp } returns mockk(relaxed = true)
@@ -313,10 +309,12 @@ class ProcessPushNotificationDataWorkerTest {
             every { getString(KEY_PUSH_NOTIFICATION_ENCRYPTED_MESSAGE) } returns "encryptedMessage"
         }
         every { AppUtil.isAppInBackground() } returns false
-        every { userManager.getUsernameBySessionId("uid") } returns "username"
-        every { userManager.getUser("username") } returns mockk {
+        coEvery { userManager.getUserIdBySessionId("uid") } returns testUserId
+        coEvery { userManager.getLegacyUser(testUserId) } returns mockk(relaxed = true) {
             every { isBackgroundSync } returns true
-            every { username } returns "username"
+            every { toNewUser() } returns mockk(relaxed = true) {
+                every { id } returns testUserId
+            }
         }
         every { userManager.openPgp } returns mockk(relaxed = true)
         every { anyConstructed<UserCrypto>().decryptMessage(any()) } returns mockk {
@@ -334,8 +332,9 @@ class ProcessPushNotificationDataWorkerTest {
         every { "decryptedData".deserialize<PushNotification>(any()) } returns mockk {
             every { data } returns mockNotificationEncryptedData
         }
-        every { userManager.username } returns "username"
-        every { userManager.isSnoozeQuickEnabled() } returns false
+        every { userManager.currentUserId } returns testUserId
+        every { userManager.requireCurrentUserId() } returns testUserId
+        coEvery { userManager.isSnoozeQuickEnabled() } returns false
         every { userManager.isSnoozeScheduledEnabled() } returns true
         every { processPushNotificationDataWorker invokeNoArgs "shouldSuppressNotification" } returns false
 
@@ -348,19 +347,29 @@ class ProcessPushNotificationDataWorkerTest {
             // given
             val (mockNotificationSender, mockNotificationEncryptedData) = mockForCallingSendNotificationSuccessfully()
 
-            justRun { processPushNotificationDataWorker invoke "sendNotification" withArguments listOf(any<User>(), any<String>(), any<String>(), any<String>(), any<Boolean>()) }
+            justRun {
+                val arguments = listOf(
+                    any<Id>(), // userId
+                    any<User>(), // user
+                    any<String>(), // messageId
+                    any<String>(), // notificationBody
+                    any<String>(), // sender
+                    any<Boolean>() // isPrimaryUser
+                )
+                processPushNotificationDataWorker invoke "sendNotification" withArguments arguments
+            }
 
             // when
             processPushNotificationDataWorker.doWork()
 
             // then
-            verifyOrder {
+            coVerifyOrder {
                 mockNotificationEncryptedData.messageId
                 mockNotificationEncryptedData.body
                 mockNotificationEncryptedData.sender
                 mockNotificationSender.senderName
                 mockNotificationSender.senderAddress
-                userManager.username
+                userManager.currentUserId
                 userManager.isSnoozeQuickEnabled()
                 userManager.isSnoozeScheduledEnabled()
                 processPushNotificationDataWorker invokeNoArgs "shouldSuppressNotification"
@@ -375,29 +384,53 @@ class ProcessPushNotificationDataWorkerTest {
             mockForCallingSendNotificationSuccessfully()
 
             val mockNotification = mockk<Notification>()
-            every { databaseProvider.provideNotificationsDao("username") } returns mockk(relaxed = true) {
+            every { databaseProvider.provideNotificationDao(testUserId) } returns mockk(relaxed = true) {
                 every { insertNewNotificationAndReturnAll(any()) } returns listOf(mockNotification)
             }
             val mockMessage = mockk<Message>()
-            coEvery { messageRepository.getMessage("messageId", "username") } returns mockMessage
-            every { notificationServer.notifySingleNewEmail(any(), any(), any(), any(), any(), any(), any()) } just runs
+            coEvery { messageRepository.getMessage("messageId", testUserId) } returns mockMessage
+            every {
+                notificationServer.notifySingleNewEmail(
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any()
+                )
+            } just runs
 
             // when
             processPushNotificationDataWorker.doWork()
 
             // then
             val userManagerSlot = slot<UserManager>()
-            val userSlot = slot<User>()
+            val userSlot = slot<ch.protonmail.android.domain.entity.user.User>()
             val messageSlot = slot<Message>()
             val messageIdSlot = slot<String>()
             val notificationBodySlot = slot<String>()
             val senderSlot = slot<String>()
             val primaryUserSlot = slot<Boolean>()
             verify {
-                notificationServer.notifySingleNewEmail(capture(userManagerSlot), capture(userSlot), capture(messageSlot), capture(messageIdSlot), capture(notificationBodySlot), capture(senderSlot), capture(primaryUserSlot))
+                notificationServer.notifySingleNewEmail(
+                    capture(userManagerSlot),
+                    capture(userSlot),
+                    any(),
+                    any(),
+                    any(),
+                    capture(messageSlot),
+                    capture(messageIdSlot),
+                    capture(notificationBodySlot),
+                    capture(senderSlot),
+                    capture(primaryUserSlot)
+                )
             }
             assertEquals(userManager, userManagerSlot.captured)
-            assertEquals(userManager.getUser("username"), userSlot.captured)
+            assertEquals(testUserId, userSlot.captured.id)
             assertEquals(mockMessage, messageSlot.captured)
             assertEquals("messageId", messageIdSlot.captured)
             assertEquals("body", notificationBodySlot.captured)
@@ -415,25 +448,32 @@ class ProcessPushNotificationDataWorkerTest {
             val mockNotification1 = mockk<Notification>()
             val mockNotification2 = mockk<Notification>()
             val unreadNotifications = listOf(mockNotification1, mockNotification2)
-            every { databaseProvider.provideNotificationsDao("username") } returns mockk(relaxed = true) {
+            every { databaseProvider.provideNotificationDao(testUserId) } returns mockk(relaxed = true) {
                 every { insertNewNotificationAndReturnAll(any()) } returns unreadNotifications
             }
             val mockMessage = mockk<Message>()
-            coEvery { messageRepository.getMessage("messageId", "username") } returns mockMessage
-            every { notificationServer.notifyMultipleUnreadEmail(any(), any(), any()) } just runs
+            coEvery { messageRepository.getMessage("messageId", testUserId) } returns mockMessage
+            every { notificationServer.notifyMultipleUnreadEmail(any(), any(), any(), any(), any(), any()) } just runs
 
             // when
             processPushNotificationDataWorker.doWork()
 
             // then
             val userManagerSlot = slot<UserManager>()
-            val userSlot = slot<User>()
+            val userSlot = slot<ch.protonmail.android.domain.entity.user.User>()
             val unreadNotificationsSlot = slot<List<Notification>>()
             verify {
-                notificationServer.notifyMultipleUnreadEmail(capture(userManagerSlot), capture(userSlot), capture(unreadNotificationsSlot))
+                notificationServer.notifyMultipleUnreadEmail(
+                    capture(userManagerSlot),
+                    capture(userSlot),
+                    any(),
+                    any(),
+                    any(),
+                    capture(unreadNotificationsSlot)
+                )
             }
             assertEquals(userManager, userManagerSlot.captured)
-            assertEquals(userManager.getUser("username"), userSlot.captured)
+            assertEquals(testUserId, userSlot.captured.id)
             assertEquals(unreadNotifications, unreadNotificationsSlot.captured)
         }
     }
@@ -445,11 +485,11 @@ class ProcessPushNotificationDataWorkerTest {
             mockForCallingSendNotificationSuccessfully()
 
             val mockNotification = mockk<Notification>()
-            every { databaseProvider.provideNotificationsDao("username") } returns mockk(relaxed = true) {
+            every { databaseProvider.provideNotificationDao(testUserId) } returns mockk(relaxed = true) {
                 every { insertNewNotificationAndReturnAll(any()) } returns listOf(mockNotification)
             }
             val mockMessage = mockk<Message>()
-            coEvery { messageRepository.getMessage("messageId", "username") } returns mockMessage
+            coEvery { messageRepository.getMessage("messageId", testUserId) } returns mockMessage
             every { notificationServer.notifySingleNewEmail(any(), any(), any(), any(), any(), any(), any()) } just runs
 
             val expectedResult = ListenableWorker.Result.success()

@@ -23,6 +23,7 @@ import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
@@ -32,24 +33,25 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import ch.protonmail.android.worker.failure
+import kotlinx.coroutines.flow.first
+import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import java.security.GeneralSecurityException
 import javax.inject.Inject
 
 // region constants
 internal const val KEY_INPUT_DATA_MESSAGE_ID_STRING = "KEY_INPUT_DATA_MESSAGE_ID_STRING"
-internal const val KEY_INPUT_DATA_USERNAME_STRING = "KEY_INPUT_DATA_USERNAME_STRING"
+internal const val KEY_INPUT_DATA_USER_ID_STRING = "KEY_INPUT_DATA_USER_ID_STRING"
 internal const val KEY_INPUT_DATA_ATTACHMENT_ID_STRING = "KEY_INPUT_DATA_ATTACHMENT_ID_STRING"
 // endregion
 
 /**
  * Represents one unit of work downloading embedded attachments for
- * [Message][ch.protonmail.android.api.models.room.messages.Message] and saving them to local app storage.
+ * [Message][ch.protonmail.android.data.local.model.Message] and saving them to local app storage.
  *
  * Downloading of files on Android Q is based on the information from
  * https://commonsware.com/blog/2020/01/11/scoped-storage-stories-diabolical-details-downloads.html
@@ -74,29 +76,31 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
     override suspend fun doWork(): Result {
 
         // sanitize input
-        val messageId = requireNotNull(inputData.getString(KEY_INPUT_DATA_MESSAGE_ID_STRING))
-        val username = requireNotNull(inputData.getString(KEY_INPUT_DATA_USERNAME_STRING))
+        val messageId = inputData.getString(KEY_INPUT_DATA_MESSAGE_ID_STRING)?.takeIfNotBlank()
+            ?: return Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty message id")
+            )
+        val userIdString = inputData.getString(KEY_INPUT_DATA_USER_ID_STRING)?.takeIfNotBlank()
+            ?: return Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty user id")
+            )
+        val userId = Id(userIdString)
+
         val singleAttachmentId = inputData.getString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING)
 
-        if (messageId.isEmpty() || username.isEmpty()) {
-            return Result.failure(
-                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty messageId or username")
-            )
-        }
-
-        var message = messageDetailsRepository.findSearchMessageById(messageId)
+        var message = messageDetailsRepository.findSearchMessageById(messageId).first()
         var attachments = if (message != null) {
             // use search or standard message database, if Message comes from search
             messageDetailsRepository.findSearchAttachmentsByMessageId(messageId)
         } else {
-            message = messageDetailsRepository.findMessageById(messageId)
+            message = messageDetailsRepository.findMessageById(messageId).first()
             messageDetailsRepository.findAttachmentsByMessageId(messageId)
         }
 
         requireNotNull(message)
         val addressId = requireNotNull(message.addressID)
 
-        val addressCrypto = AddressCrypto(userManager, userManager.openPgp, Name(username), Id(addressId))
+        val addressCrypto = Crypto.forAddress(userManager, userId, Id(addressId))
         // We need this outside of this because the embedded attachments are set once the message is actually decrypted
         try {
             message.decrypt(addressCrypto)
@@ -130,7 +134,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
 
         fun enqueue(
             messageId: String,
-            username: String,
+            userId: Id,
             attachmentId: String
         ): Operation {
 
@@ -138,16 +142,16 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
+            val data = Data.Builder()
+                .putString(KEY_INPUT_DATA_MESSAGE_ID_STRING, messageId)
+                .putString(KEY_INPUT_DATA_USER_ID_STRING, userId.s)
+                .putString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING, attachmentId)
+                .build()
+
             val attachmentsWorkRequest =
                 OneTimeWorkRequest.Builder(DownloadEmbeddedAttachmentsWorker::class.java)
                     .setConstraints(constraints)
-                    .setInputData(
-                        workDataOf(
-                            KEY_INPUT_DATA_MESSAGE_ID_STRING to messageId,
-                            KEY_INPUT_DATA_USERNAME_STRING to username,
-                            KEY_INPUT_DATA_ATTACHMENT_ID_STRING to attachmentId
-                        )
-                    )
+                    .setInputData(data)
                     .build()
 
             return workManager.enqueueUniqueWork(

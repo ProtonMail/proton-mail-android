@@ -19,16 +19,15 @@
 
 package ch.protonmail.android.compose
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.testAndroid.rx.TrampolineScheduler
 import ch.protonmail.android.usecase.VerifyConnection
@@ -38,78 +37,67 @@ import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
-import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
-class ComposeMessageViewModelTest : CoroutinesTest {
+class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     @get:Rule
     val trampolineSchedulerRule = TrampolineScheduler()
 
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
+    private val stringResourceResolver: StringResourceResolver = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var stringResourceResolver: StringResourceResolver
+    private val composeMessageRepository: ComposeMessageRepository = mockk(relaxed = true)
 
-    @RelaxedMockK
-    lateinit var composeMessageRepository: ComposeMessageRepository
-
-    @RelaxedMockK
-    lateinit var userManager: UserManager
-
-    @RelaxedMockK
-    lateinit var messageDetailsRepository: MessageDetailsRepository
-
-    @RelaxedMockK
-    lateinit var saveDraft: SaveDraft
-
-    @RelaxedMockK
-    lateinit var sendMessage: SendMessage
-
-    @MockK
-    lateinit var deleteMessage: DeleteMessage
-
-    @MockK
-    lateinit var fetchPublicKeys: FetchPublicKeys
-
-    @MockK
-    lateinit var networkConfigurator: NetworkConfigurator
-
-    @MockK
-    lateinit var verifyConnection: VerifyConnection
-
-    @MockK
-    lateinit var workManager: WorkManager
-
-    @InjectMockKs
-    lateinit var viewModel: ComposeMessageViewModel
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
-        // To avoid `EmptyList` to be returned by Mockk automatically as that causes
-        // UnsupportedOperationException: Operation is not supported for read-only collection
-        // when trying to add elements (in prod we ArrayList so this doesn't happen)
-        every { userManager.user.senderEmailAddresses } returns mutableListOf()
+    private val userManager: UserManager = mockk(relaxed = true) {
+        every { user.senderEmailAddresses } returns mutableListOf()
     }
+
+    private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true) {
+        coEvery { saveMessage(any()) } returns 1L
+    }
+
+    private val saveDraft: SaveDraft = mockk(relaxed = true)
+
+    private val sendMessage: SendMessage = mockk(relaxed = true)
+
+    private val deleteMessage: DeleteMessage = mockk()
+
+    private val fetchPublicKeys: FetchPublicKeys = mockk()
+
+    private val networkConfigurator: NetworkConfigurator = mockk()
+
+    private val verifyConnection: VerifyConnection = mockk()
+
+    private val workManager: WorkManager = mockk(relaxed = true)
+
+    private val viewModel = ComposeMessageViewModel(
+        composeMessageRepository,
+        userManager,
+        messageDetailsRepository,
+        deleteMessage,
+        fetchPublicKeys,
+        saveDraft,
+        dispatchers,
+        stringResourceResolver,
+        workManager,
+        sendMessage,
+        verifyConnection,
+        networkConfigurator
+    )
 
     @Test
     fun saveDraftCallsSaveDraftUseCaseWithUserRequestedTriggerWhenTheDraftIsNewAndTheUserDidRequestSaving() {
@@ -120,7 +108,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             // This indicates that saving draft was requested by the user
             viewModel.setUploadAttachments(true)
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
-            coEvery { messageDetailsRepository.findMessageById("draftId") } returns message
+            coEvery { messageDetailsRepository.findMessageById("draftId") } returns flowOf(message)
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
@@ -147,7 +135,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             // This indicates that saving draft was not requested by the user
             viewModel.setUploadAttachments(false)
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
-            coEvery { messageDetailsRepository.findMessageById("draftId") } returns message
+            coEvery { messageDetailsRepository.findMessageById("draftId") } returns flowOf(message)
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
@@ -175,7 +163,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val savedDraftObserver = viewModel.savingDraftComplete.testObserver()
             givenViewModelPropertiesAreInitialised()
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
-            coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
+            every { messageDetailsRepository.findMessageById(createdDraftId) } returns flowOf(createdDraft)
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
@@ -194,7 +182,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val createdDraft = Message(messageId = createdDraftId, localId = localDraftId)
             givenViewModelPropertiesAreInitialised()
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
-            coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
+            coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns flowOf(createdDraft)
 
             // When
             viewModel.saveDraft(Message(), hasConnectivity = false)
@@ -214,7 +202,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             viewModel.draftId = "non-empty-draftId"
             viewModel.setUploadAttachments(true)
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
-            coEvery { messageDetailsRepository.findMessageById("draftId") } returns message
+            coEvery { messageDetailsRepository.findMessageById("draftId") } returns flowOf(message)
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
@@ -285,7 +273,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             givenViewModelPropertiesAreInitialised()
             viewModel.draftId = "non-empty draftId triggers update draft"
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(updatedDraftId))
-            coEvery { messageDetailsRepository.findMessageById(updatedDraftId) } returns updatedDraft
+            coEvery { messageDetailsRepository.findMessageById(updatedDraftId) } returns flowOf(updatedDraft)
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
@@ -311,7 +299,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             mockkStatic(UiUtil::class)
             every { UiUtil.toHtml(messageBody) } returns "<html> $messageBody <html>"
             every { UiUtil.fromHtml(any()) } returns mockk(relaxed = true)
-            coEvery { composeMessageRepository.findMessage(messageId, dispatchers.Io) } returns message
+            coEvery { composeMessageRepository.findMessage(messageId) } returns message
             coEvery { composeMessageRepository.createAttachmentList(any(), dispatchers.Io) } returns emptyList()
 
             // When
@@ -341,7 +329,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             mockkStatic(UiUtil::class)
             every { UiUtil.toHtml(messageBody) } returns "<html> $messageBody <html>"
             every { UiUtil.fromHtml(any()) } returns mockk(relaxed = true)
-            coEvery { composeMessageRepository.findMessage(messageId, dispatchers.Io) } returns message
+            coEvery { composeMessageRepository.findMessage(messageId) } returns message
             coEvery { composeMessageRepository.createAttachmentList(any(), dispatchers.Io) } returns emptyList()
 
             // When

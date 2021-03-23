@@ -19,9 +19,10 @@
 package ch.protonmail.android.api.segments.event
 
 import android.content.Context
+import androidx.work.WorkManager
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.EventResponse
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.MessageCount
@@ -37,28 +38,29 @@ import ch.protonmail.android.api.models.messages.receive.LabelFactory
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.messages.receive.MessageSenderFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
-import ch.protonmail.android.api.models.room.contacts.ContactData
-import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
-import ch.protonmail.android.api.models.room.counters.CountersDao
-import ch.protonmail.android.api.models.room.messages.Label
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.messages.MessageSender
-import ch.protonmail.android.api.models.room.messages.MessagesDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
 import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_ID
 import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_READING_RESTRICTED
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.model.ContactData
+import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.MessageSender
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.events.user.UserSettingsEvent
+import ch.protonmail.android.mapper.bridge.AddressBridgeMapper
+import ch.protonmail.android.mapper.bridge.UserBridgeMapper
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.MessageUtils
@@ -69,29 +71,32 @@ import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import com.google.gson.JsonSyntaxException
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.runBlocking
+import me.proton.core.util.kotlin.invoke
 import timber.log.Timber
-import javax.inject.Named
-import kotlin.collections.set
 import kotlin.math.max
 
 class EventHandler @AssistedInject constructor(
     private val context: Context,
     private val protonMailApiManager: ProtonMailApiManager,
     private val userManager: UserManager,
+    private val workManager: WorkManager,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
+    private val contactDao: ContactDao,
+    private val counterDao: CounterDao,
+    private val messageDao: MessageDao,
+    private val pendingActionDao: PendingActionDao,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
-    private val pendingActionsDao: PendingActionsDao,
-    private val contactsDao: ContactsDao,
-    private val countersDao: CountersDao,
-    @Named("messages") private val messagesDao: MessagesDao,
-    @Assisted val username: String
+    private val mapper: AddressBridgeMapper,
+    private val userMapper: UserBridgeMapper,
+    @Assisted val userId: Id
 ) {
 
     @AssistedInject.Factory
     interface AssistedFactory {
-        fun create(username: String): EventHandler
+        fun create(userId: Id): EventHandler
     }
 
     private val messageFactory: MessageFactory
@@ -102,14 +107,16 @@ class EventHandler @AssistedInject constructor(
         val attachmentFactory = AttachmentFactory()
         val messageSenderFactory = MessageSenderFactory()
         messageFactory = MessageFactory(attachmentFactory, messageSenderFactory)
-        messageDetailsRepository.reloadDependenciesForUser(username)
+        messageDetailsRepository.reloadDependenciesForUser(userId)
     }
 
     fun handleRefreshContacts() {
-        contactsDao.clearContactDataCache()
-        contactsDao.clearContactEmailsLabelsJoin()
-        contactsDao.clearContactEmailsCacheBlocking()
-        contactsDao.clearContactGroupsLabelsTableBlocking()
+        contactDao.run {
+            clearContactDataCache()
+            clearContactEmailsLabelsJoin()
+            clearContactEmailsCache()
+            clearContactGroupsLabelsTableBlocking()
+        }
         fetchContactEmails.enqueue()
         fetchContactsData.enqueue()
     }
@@ -120,13 +127,17 @@ class EventHandler @AssistedInject constructor(
      * anyway.
      */
     fun handleRefresh() {
-        messagesDao.clearMessagesCache()
-        messagesDao.clearAttachmentsCache()
-        messagesDao.clearLabelsCache()
-        countersDao.clearUnreadLocationsTable()
-        countersDao.clearUnreadLabelsTable()
-        countersDao.clearTotalLocationsTable()
-        countersDao.clearTotalLabelsTable()
+        messageDao.run {
+            clearMessagesCache()
+            clearAttachmentsCache()
+            clearLabelsCache()
+        }
+        counterDao.run {
+            clearUnreadLocationsTable()
+            clearUnreadLabelsTable()
+            clearTotalLocationsTable()
+            clearTotalLabelsTable()
+        }
         launchInitialDataFetch(
             shouldRefreshDetails = false,
             shouldRefreshContacts = false
@@ -153,11 +164,11 @@ class EventHandler @AssistedInject constructor(
                 continue
             }
 
-            if (checkPendingForSending(pendingActionsDao, messageID)) {
+            if (checkPendingForSending(pendingActionDao, messageID)) {
                 continue
             }
 
-            val messageResponse = protonMailApiManager.fetchMessageDetailsBlocking(messageID, RetrofitTag(username))
+            val messageResponse = protonMailApiManager.fetchMessageDetailsBlocking(messageID, UserIdTag(userId))
             val isMessageStaged = if (messageResponse == null) {
                 // If the response is null, an exception has been thrown while fetching message details
                 // Return false and with that terminate processing this event any further
@@ -190,7 +201,7 @@ class EventHandler @AssistedInject constructor(
     }
 
     fun write(response: EventResponse) {
-        unsafeWrite(contactsDao, messagesDao, pendingActionsDao, response)
+        unsafeWrite(contactDao, messageDao, pendingActionDao, response)
     }
 
     private fun eventMessageSortSelector(message: EventResponse.MessageEventBody): Int = message.type
@@ -199,13 +210,13 @@ class EventHandler @AssistedInject constructor(
      * NOTE we should not do api requests here because we are in a transaction
      */
     private fun unsafeWrite(
-        contactsDao: ContactsDao,
-        messagesDao: MessagesDao,
-        pendingActionsDao: PendingActionsDao,
+        contactDao: ContactDao,
+        messageDao: MessageDao,
+        pendingActionDao: PendingActionDao,
         response: EventResponse
     ) {
 
-        val savedUser = userManager.getUser(username)
+        val savedUser = runBlocking { userManager.getLegacyUser(userId) }
 
         if (response.usedSpace > 0) {
             savedUser.setAndSaveUsedSpace(response.usedSpace)
@@ -224,27 +235,27 @@ class EventHandler @AssistedInject constructor(
         val addresses = response.addresses
 
         if (labels != null) {
-            writeLabelsUpdates(messagesDao, contactsDao, labels)
+            writeLabelsUpdates(messageDao, contactDao, labels)
         }
         if (messages != null) {
             messages.sortByDescending { eventMessageSortSelector(it) }
-            writeMessagesUpdates(messagesDao, pendingActionsDao, messages)
+            writeMessagesUpdates(messageDao, pendingActionDao, messages)
         }
         if (contacts != null) {
-            writeContactsUpdates(contactsDao, contacts)
+            writeContactsUpdates(contactDao, contacts)
         }
         if (contactsEmails != null) {
-            writeContactEmailsUpdates(contactsDao, contactsEmails)
+            writeContactEmailsUpdates(contactDao, contactsEmails)
         }
         if (mailSettings != null) {
-            writeMailSettings(mailSettings)
+            writeMailSettings(context, mailSettings)
         }
         if (userSettings != null) {
-            writeUserSettings(userSettings)
+            writeUserSettings(context, userSettings)
         }
 
         if (user != null) {
-            user.username = username
+            user.username = userId.s
             if (addresses != null && addresses.size > 0) {
                 writeAddressUpdates(addresses, ArrayList(savedUser.addresses!!), user)
             } else {
@@ -267,36 +278,31 @@ class EventHandler @AssistedInject constructor(
     }
 
 
-    private fun writeMailSettings(mSettings: MailSettings) {
+    private fun writeMailSettings(context: Context, mSettings: MailSettings) {
         var mailSettings: MailSettings? = mSettings
         if (mailSettings == null) {
             mailSettings = MailSettings()
         }
-        mailSettings.username = username
-        mailSettings.showImages = mSettings.showImages
+        mailSettings.showImagesFrom = mSettings.showImagesFrom
         mailSettings.autoSaveContacts = mSettings.autoSaveContacts
         mailSettings.sign = mSettings.sign
         mailSettings.pgpScheme = mSettings.pgpScheme
         mailSettings.setAttachPublicKey(if (mSettings.getAttachPublicKey()) 1 else 0)
-        mailSettings.save()
-        AppUtil.postEventOnUi(MailSettingsEvent(mailSettings))
+
+        val prefs = SecureSharedPreferences.getPrefsForUser(context, userId)
+        mailSettings.saveBlocking(prefs)
     }
 
-    private fun writeUserSettings(uSettings: UserSettings) {
-        var userSettings: UserSettings? = uSettings
-        if (userSettings == null) {
-            userSettings = UserSettings()
-        }
-        userSettings.username = username
-        userSettings.notificationEmail
-        userSettings.save()
+    private fun writeUserSettings(context: Context, userSettings: UserSettings) {
+        val prefs = SecureSharedPreferences.getPrefsForUser(context, userId)
+        userSettings.save(prefs)
         userManager.userSettings = userSettings
         AppUtil.postEventOnUi(UserSettingsEvent(userSettings))
     }
 
     private fun writeMessagesUpdates(
-        messagesDatabase: MessagesDao,
-        pendingActionsDatabase: PendingActionsDatabase,
+        messageDao: MessageDao,
+        pendingActionDao: PendingActionDao,
         events: List<EventResponse.MessageEventBody>
     ) {
         var latestTimestamp = userManager.checkTimestamp
@@ -305,19 +311,19 @@ class EventHandler @AssistedInject constructor(
                 latestTimestamp = max(event.message.Time.toFloat(), latestTimestamp)
             }
             val messageID = event.messageID
-            writeMessageUpdate(event, pendingActionsDatabase, messageID, messagesDatabase)
+            writeMessageUpdate(event, pendingActionDao, messageID, messageDao)
         }
         userManager.checkTimestamp = latestTimestamp
     }
 
     private fun writeMessageUpdate(
         event: EventResponse.MessageEventBody,
-        pendingActionsDatabase: PendingActionsDatabase,
+        pendingActionDao: PendingActionDao,
         messageId: String,
-        messagesDatabase: MessagesDao
+        messageDao: MessageDao
     ) {
         val type = EventType.fromInt(event.type)
-        if (type != EventType.DELETE && checkPendingForSending(pendingActionsDatabase, messageId)) {
+        if (type != EventType.DELETE && checkPendingForSending(pendingActionDao, messageId)) {
             return
         }
         Timber.v("Update message type: $type Id: $messageId")
@@ -326,9 +332,9 @@ class EventHandler @AssistedInject constructor(
                 try {
                     val savedMessage = messageDetailsRepository.findMessageByIdBlocking(messageId)
                     if (savedMessage == null) {
-                        messageDetailsRepository.saveMessageInDB(messageFactory.createMessage(event.message))
+                        messageDetailsRepository.saveMessageBlocking(messageFactory.createMessage(event.message))
                     } else {
-                        updateMessageFlags(messagesDatabase, messageId, event)
+                        updateMessageFlags(messageDao, messageId, event)
                     }
 
                 } catch (syntaxException: JsonSyntaxException) {
@@ -339,7 +345,7 @@ class EventHandler @AssistedInject constructor(
             EventType.DELETE -> {
                 val message = messageDetailsRepository.findMessageByIdBlocking(messageId)
                 if (message != null) {
-                    messagesDatabase.deleteMessage(message)
+                    messageDao.deleteMessage(message)
                 }
             }
 
@@ -356,25 +362,25 @@ class EventHandler @AssistedInject constructor(
 
                     if (serverTime > dbTime && message != null && messageUpdate.messageBody != null) {
                         message.messageBody = messageUpdate.messageBody
-                        messageDetailsRepository.saveMessageInDB(message)
+                        messageDetailsRepository.saveMessageBlocking(message)
                     }
 
                     Timber.v("Message Id: $messageId processed, staged size:${stagedMessages.size}")
                     stagedMessages.remove(messageId)
                 }
 
-                updateMessageFlags(messagesDatabase, messageId, event)
+                updateMessageFlags(messageDao, messageId, event)
             }
 
             EventType.UPDATE_FLAGS -> {
-                updateMessageFlags(messagesDatabase, messageId, event)
+                updateMessageFlags(messageDao, messageId, event)
             }
         }
         return
     }
 
     private fun updateMessageFlags(
-        messagesDatabase: MessagesDao,
+        messageDao: MessageDao,
         messageId: String,
         item: EventResponse.MessageEventBody
     ) {
@@ -449,27 +455,27 @@ class EventHandler @AssistedInject constructor(
             }
             if (locationPotentiallyChanged) {
                 message.calculateLocation()
-                message.setFolderLocation(messagesDatabase)
+                message.setFolderLocation(messageDao)
             }
             if (expired) {
                 messageDetailsRepository.deleteMessage(message)
             } else {
-                messageDetailsRepository.saveMessageInDB(message)
+                messageDetailsRepository.saveMessageBlocking(message)
             }
         } else {
             stagedMessages[messageId]?.let {
-                messageDetailsRepository.saveMessageInDB(it)
+                messageDetailsRepository.saveMessageBlocking(it)
             }
         }
         stagedMessages.remove(messageId)
     }
 
-    private fun checkPendingForSending(pendingActionsDao: PendingActionsDao, messageId: String): Boolean {
-        var pendingForSending = pendingActionsDao.findPendingSendByMessageId(messageId)
+    private fun checkPendingForSending(pendingActionDao: PendingActionDao, messageId: String): Boolean {
+        var pendingForSending = pendingActionDao.findPendingSendByMessageId(messageId)
         if (pendingForSending != null) {
             return true
         }
-        pendingForSending = pendingActionsDao.findPendingSendByOfflineMessageId(messageId)
+        pendingForSending = pendingActionDao.findPendingSendByOfflineMessageId(messageId)
         return pendingForSending != null
     }
 
@@ -500,11 +506,11 @@ class EventHandler @AssistedInject constructor(
             }
         }
 
-        AddressKeyActivationWorker.activateAddressKeysIfNeeded(context, eventAddresses, username)
+        AddressKeyActivationWorker.runIfNeeded(workManager, userMapper { user.toNewUser() }.addresses, userId)
         user.setAddresses(addresses)
     }
 
-    private fun writeContactsUpdates(contactsDatabase: ContactsDatabase, events: List<EventResponse.ContactEventBody>) {
+    private fun writeContactsUpdates(contactDao: ContactDao, events: List<EventResponse.ContactEventBody>) {
         for (event in events) {
             Timber.v("New contacts event type: ${event.type} id: ${event.contactID}")
             when (EventType.fromInt(event.type)) {
@@ -514,31 +520,31 @@ class EventHandler @AssistedInject constructor(
                     val contactId = contact.contactId
                     val contactName = contact.name
                     val contactData = ContactData(contactId, contactName!!)
-                    contactsDatabase.saveContactData(contactData)
-                    contactsDatabase.insertFullContactDetails(contact)
+                    contactDao.saveContactData(contactData)
+                    contactDao.insertFullContactDetails(contact)
                 }
 
                 EventType.UPDATE -> {
                     val fullContact = event.contact
                     val contactId = fullContact.contactId
-                    val contactData = contactsDatabase.findContactDataById(contactId)
+                    val contactData = contactDao.findContactDataById(contactId)
                     if (contactData != null) {
                         contactData.name = event.contact.name!!
-                        contactsDatabase.saveContactData(contactData)
+                        contactDao.saveContactData(contactData)
                     }
 
-                    val localFullContact = contactsDatabase.findFullContactDetailsById(contactId)
+                    val localFullContact = contactDao.findFullContactDetailsById(contactId)
                     if (localFullContact != null) {
-                        contactsDatabase.deleteFullContactsDetails(localFullContact)
+                        contactDao.deleteFullContactsDetails(localFullContact)
                     }
-                    contactsDatabase.insertFullContactDetails(fullContact)
+                    contactDao.insertFullContactDetails(fullContact)
                 }
 
                 EventType.DELETE -> {
                     val contactId = event.contactID
-                    val contactData = contactsDatabase.findContactDataById(contactId)
+                    val contactData = contactDao.findContactDataById(contactId)
                     if (contactData != null) {
-                        contactsDatabase.deleteContactData(contactData)
+                        contactDao.deleteContactData(contactData)
                     }
                 }
 
@@ -549,7 +555,7 @@ class EventHandler @AssistedInject constructor(
     }
 
     private fun writeContactEmailsUpdates(
-        contactsDatabase: ContactsDatabase,
+        contactDao: ContactDao,
         events: List<EventResponse.ContactEmailEventBody>
     ) {
         for (event in events) {
@@ -559,21 +565,21 @@ class EventHandler @AssistedInject constructor(
                     val contactEmail = event.contactEmail
                     val contactId = event.contactEmail.contactEmailId
                     // get current contact email saved in local DB
-                    val oldContactEmail = contactsDatabase.findContactEmailById(contactId)
+                    val oldContactEmail = contactDao.findContactEmailById(contactId)
                     if (oldContactEmail != null) {
                         val contactEmailId = oldContactEmail.contactEmailId
-                        val joins = contactsDatabase.fetchJoinsByEmail(contactEmailId).toMutableList()
-                        contactsDatabase.saveContactEmail(contactEmail)
-                        contactsDatabase.saveContactEmailContactLabelBlocking(joins)
+                        val joins = contactDao.fetchJoinsByEmail(contactEmailId).toMutableList()
+                        contactDao.saveContactEmail(contactEmail)
+                        contactDao.saveContactEmailContactLabelBlocking(joins)
                     } else {
-                        contactsDatabase.saveContactEmail(contactEmail)
+                        contactDao.saveContactEmail(contactEmail)
                         val newJoins = mutableListOf<ContactEmailContactLabelJoin>()
                         contactEmail.labelIds?.forEach { labelId ->
                             newJoins.add(ContactEmailContactLabelJoin(contactEmail.contactEmailId, labelId))
                         }
                         Timber.v("Create new email contact: ${contactEmail.email} newJoins size: ${newJoins.size}")
                         if (newJoins.isNotEmpty()) {
-                            contactsDatabase.saveContactEmailContactLabelBlocking(newJoins)
+                            contactDao.saveContactEmailContactLabelBlocking(newJoins)
                         }
                     }
                 }
@@ -581,33 +587,33 @@ class EventHandler @AssistedInject constructor(
                 EventType.UPDATE -> {
                     val contactId = event.contactEmail.contactEmailId
                     // get current contact email saved in local DB
-                    val oldContactEmail = contactsDatabase.findContactEmailById(contactId)
+                    val oldContactEmail = contactDao.findContactEmailById(contactId)
                     Timber.v("Update contact id: $contactId oldContactEmail: ${oldContactEmail?.email}")
                     if (oldContactEmail != null) {
                         val updatedContactEmail = event.contactEmail
                         val labelIds = updatedContactEmail.labelIds ?: ArrayList()
                         val contactEmailId = updatedContactEmail.contactEmailId
                         contactEmailId.let {
-                            contactsDatabase.saveContactEmail(updatedContactEmail)
-                            val joins = contactsDatabase.fetchJoinsByEmail(contactEmailId).toMutableList()
+                            contactDao.saveContactEmail(updatedContactEmail)
+                            val joins = contactDao.fetchJoinsByEmail(contactEmailId).toMutableList()
                             for (labelId in labelIds) {
                                 joins.add(ContactEmailContactLabelJoin(contactEmailId, labelId))
                             }
                             if (joins.isNotEmpty()) {
-                                contactsDatabase.saveContactEmailContactLabelBlocking(joins)
+                                contactDao.saveContactEmailContactLabelBlocking(joins)
                             }
                         }
                     } else {
-                        contactsDatabase.saveContactEmail(event.contactEmail)
+                        contactDao.saveContactEmail(event.contactEmail)
                     }
                 }
 
                 EventType.DELETE -> {
                     val contactId = event.contactID
-                    val contactEmail = contactsDatabase.findContactEmailById(contactId)
+                    val contactEmail = contactDao.findContactEmailById(contactId)
                     if (contactEmail != null) {
                         Timber.v("Delete contact id: $contactId")
-                        contactsDatabase.deleteContactEmail(contactEmail)
+                        contactDao.deleteContactEmail(contactEmail)
                     }
                 }
 
@@ -618,8 +624,8 @@ class EventHandler @AssistedInject constructor(
     }
 
     private fun writeLabelsUpdates(
-        messagesDatabase: MessagesDao,
-        contactsDatabase: ContactsDatabase,
+        messageDao: MessageDao,
+        contactDao: ContactDao,
         events: List<EventResponse.LabelsEventBody>
     ) {
         for (event in events) {
@@ -635,10 +641,10 @@ class EventHandler @AssistedInject constructor(
                     val exclusive = item.exclusive!!
                     if (labelType == Constants.LABEL_TYPE_MESSAGE) {
                         val label = Label(id!!, name!!, color!!, display, order, exclusive == 1)
-                        messagesDatabase.saveLabel(label)
+                        messageDao.saveLabel(label)
                     } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
                         val label = ContactLabel(id!!, name!!, color!!, display, order, exclusive == 1)
-                        contactsDatabase.saveContactGroupLabel(label)
+                        contactDao.saveContactGroupLabel(label)
                     }
                 }
 
@@ -646,18 +652,18 @@ class EventHandler @AssistedInject constructor(
                     val labelType = item.type!!
                     val labelId = item.ID
                     if (labelType == Constants.LABEL_TYPE_MESSAGE) {
-                        val label = messagesDatabase.findLabelById(labelId!!)
-                        writeMessageLabel(label, item, messagesDatabase)
+                        val label = messageDao.findLabelById(labelId!!)
+                        writeMessageLabel(label, item, messageDao)
                     } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
-                        val contactLabel = contactsDatabase.findContactGroupByIdBlocking(labelId!!)
-                        writeContactGroup(contactLabel, item, contactsDatabase)
+                        val contactLabel = contactDao.findContactGroupByIdBlocking(labelId!!)
+                        writeContactGroup(contactLabel, item, contactDao)
                     }
                 }
 
                 EventType.DELETE -> {
                     val labelId = event.id
-                    messagesDatabase.deleteLabelById(labelId)
-                    contactsDatabase.deleteByContactGroupLabelId(labelId)
+                    messageDao.deleteLabelById(labelId)
+                    contactDao.deleteByContactGroupLabelId(labelId)
                 }
 
                 EventType.UPDATE_FLAGS -> {
@@ -671,25 +677,25 @@ class EventHandler @AssistedInject constructor(
         AppUtil.postEventOnUi(MessageCountsEvent(Status.SUCCESS, response))
     }
 
-    private fun writeMessageLabel(currentLabel: Label?, updatedLabel: ServerLabel, messagesDatabase: MessagesDao) {
+    private fun writeMessageLabel(currentLabel: Label?, updatedLabel: ServerLabel, messageDao: MessageDao) {
         if (currentLabel != null) {
             val labelFactory = LabelFactory()
             val labelToSave = labelFactory.createDBObjectFromServerObject(updatedLabel)
-            messagesDatabase.saveLabel(labelToSave)
+            messageDao.saveLabel(labelToSave)
         }
     }
 
     private fun writeContactGroup(
         currentGroup: ContactLabel?,
         updatedGroup: ServerLabel,
-        contactsDatabase: ContactsDatabase
+        contactDao: ContactDao
     ) {
         if (currentGroup != null) {
             val contactLabelFactory = ContactLabelFactory()
             val labelToSave = contactLabelFactory.createDBObjectFromServerObject(updatedGroup)
-            val joins = contactsDatabase.fetchJoins(labelToSave.ID)
-            contactsDatabase.saveContactGroupLabel(labelToSave)
-            contactsDatabase.saveContactEmailContactLabelBlocking(joins)
+            val joins = contactDao.fetchJoinsBlocking(labelToSave.ID)
+            contactDao.saveContactGroupLabel(labelToSave)
+            contactDao.saveContactEmailContactLabelBlocking(joins)
         }
     }
 
@@ -701,6 +707,21 @@ class EventHandler @AssistedInject constructor(
 
         companion object {
             fun fromInt(eventType: Int) = values().find { eventType == it.eventType } ?: DELETE
+        }
+    }
+}
+
+enum class EventType(val eventType: Int) {
+    DELETE(0),
+    CREATE(1),
+    UPDATE(2),
+    UPDATE_FLAGS(3);
+
+    companion object {
+        fun fromInt(eventType: Int): EventType {
+            return values().find {
+                eventType == it.eventType
+            } ?: DELETE
         }
     }
 }

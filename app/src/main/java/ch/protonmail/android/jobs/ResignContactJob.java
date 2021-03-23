@@ -27,14 +27,14 @@ import ch.protonmail.android.api.models.CreateContactV2BodyItem;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.enumerations.ContactEncryption;
-import ch.protonmail.android.api.models.room.contacts.ContactEmail;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
-import ch.protonmail.android.api.models.room.contacts.FullContactDetails;
-import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.crypto.UserCrypto;
+import ch.protonmail.android.data.local.ContactDao;
+import ch.protonmail.android.data.local.ContactDatabase;
+import ch.protonmail.android.data.local.model.ContactEmail;
+import ch.protonmail.android.data.local.model.FullContactDetails;
+import ch.protonmail.android.data.local.model.FullContactDetailsResponse;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.ResignContactEvent;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
@@ -59,14 +59,16 @@ public class ResignContactJob extends ProtonMailEndlessJob {
 
     @Override
     public void onAdded() {
-        ContactsDatabase contactsDatabase= ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
+        ContactDao contactDao = ContactDatabase.Companion
+                .getInstance(getApplicationContext(), getUserId())
+                .getDao();
         User user = getUserManager().getUser();
-        String contactId = getContactId(contactsDatabase, mContactEmail);
+        String contactId = getContactId(contactDao, mContactEmail);
         if (contactId == null) {
             AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.ERROR, mDestination));
             return;
         }
-        FullContactDetails fullContactDetails =contactsDatabase.findFullContactDetailsById(contactId);
+        FullContactDetails fullContactDetails = contactDao.findFullContactDetailsById(contactId);
 
         if (user == null || fullContactDetails == null) {
             AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.ERROR, mDestination));
@@ -96,17 +98,17 @@ public class ResignContactJob extends ProtonMailEndlessJob {
 
     @Override
     public void onRun() throws Throwable {
-        ContactsDatabase contactsDatabase = ContactsDatabaseFactory.Companion.getInstance(
-                getApplicationContext()).getDatabase();
-        String contactId = getContactId(contactsDatabase, mContactEmail);
+        ContactDao contactDao = ContactDatabase.Companion
+                .getInstance(getApplicationContext(), getUserId()).getDao();
+        String contactId = getContactId(contactDao, mContactEmail);
         if (contactId == null) {
             AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.ERROR, mDestination));
             return;
         }
 
-        FullContactDetails fullContactDetails = contactsDatabase.findFullContactDetailsById(
+        FullContactDetails fullContactDetails = contactDao.findFullContactDetailsById(
                 contactId);
-        UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().getUsername());
+        UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().requireCurrentUserId());
         ContactEncryptedData signedCard = getCardByType(fullContactDetails.getEncryptedData(), ContactEncryption.SIGNED);
 
         if (signedCard == null) {
@@ -120,7 +122,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
             AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.ERROR, mDestination));
             return;
         }
-        contactsDatabase.insertFullContactDetails(fullContactDetails);
+        contactDao.insertFullContactDetails(fullContactDetails);
 
         ContactEncryptedData encCard = getCardByType(fullContactDetails.getEncryptedData(), ContactEncryption.ENCRYPTED_AND_SIGNED);
         CreateContactV2BodyItem body;
@@ -143,14 +145,14 @@ public class ResignContactJob extends ProtonMailEndlessJob {
                 AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.DUPLICATE_EMAIL, mDestination));
             } else {
                 //TODO this insert is probably not needed as it is already saved some lines above
-                contactsDatabase.insertFullContactDetails(fullContactDetails);
+                contactDao.insertFullContactDetails(fullContactDetails);
                 AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.SUCCESS, mDestination));
             }
         }
     }
     //TODO move database to receiver after kotlin
-    private String getContactId(ContactsDatabase contactsDatabase, String contactEmailText) {
-        ContactEmail contactEmail =  contactsDatabase.findContactEmailByEmail(contactEmailText);
+    private String getContactId(ContactDao contactDao, String contactEmailText) {
+        ContactEmail contactEmail =  contactDao.findContactEmailByEmail(contactEmailText);
         if (contactEmail == null) {
             return null;
         }

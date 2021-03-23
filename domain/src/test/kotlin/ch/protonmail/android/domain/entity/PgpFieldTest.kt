@@ -66,7 +66,7 @@ internal class PgpFieldTest {
     @Test
     fun `PgpField fails with empty input WITH prefix and suffix`() {
         val input = "$MSG_PREFIX   $MSG_SUFFIX"
-        assert that fails<ValidationException> { PgpField.Message(NotBlankString(input)) }
+        assert that fails<ValidationException> { PgpField.Message(NotBlankString(input)).content }
     }
 
     @Test

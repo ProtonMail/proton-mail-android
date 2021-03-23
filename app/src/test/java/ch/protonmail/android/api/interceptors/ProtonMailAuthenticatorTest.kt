@@ -28,9 +28,12 @@ import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.doh.PREF_DNS_OVER_HTTPS_API_URL_LIST
 import ch.protonmail.android.api.segments.HEADER_AUTH
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.usecase.NotifyLoggedOut
 import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -45,6 +48,7 @@ import org.junit.Test
 private const val AUTH_ACCESS_TOKEN = "auth_access_token"
 private const val TEST_URL = "https://legit_url"
 private const val TEST_USERNAME = "testuser"
+private val TEST_ID = Id("test_id")
 private const val NON_NULL_ERROR_MESSAGE = "non null error message"
 
 class ProtonMailAuthenticatorTest {
@@ -69,19 +73,24 @@ class ProtonMailAuthenticatorTest {
     }
 
     private val userManagerMock = mockk<UserManager> {
-        every { username } answers { TEST_USERNAME }
-        every { getTokenManager(TEST_USERNAME) } returns tokenManagerMock
-        every { getMailboxPassword(TEST_USERNAME) } returns "mailbox password".toByteArray()
+        every { currentUserId } returns TEST_ID
+        every { requireCurrentUserId() } returns TEST_ID
+        coEvery { getTokenManager(TEST_ID) } returns tokenManagerMock
+        every { getTokenManagerBlocking(TEST_ID) } returns tokenManagerMock
+        every { getMailboxPassword(TEST_ID) } returns "mailbox password".toByteArray()
         every { user } returns userMock
-        every { logoutOffline(TEST_USERNAME) } just runs
+        coEvery { logoutOffline(TEST_ID) } just runs
+        every { logoutOfflineBlocking(TEST_ID) } just runs
     }
 
     private val jobManagerMock = mockk<JobManager> (relaxed = true)
 
+    private val notifyLoggedOut = mockk<NotifyLoggedOut> (relaxed = true)
+
     private val appContextMock = mockk<Context> (relaxed = true)
 
     private val authenticator =
-        ProtonMailAuthenticator(userManagerMock, jobManagerMock, appContextMock)
+        ProtonMailAuthenticator(userManagerMock, jobManagerMock, notifyLoggedOut, appContextMock)
 
     @Before
     fun setup() {
@@ -91,7 +100,7 @@ class ProtonMailAuthenticatorTest {
             appContextMock.app.defaultSharedPreferences
         } returns prefsMock
 
-        every { appContextMock.app.notifyLoggedOut(TEST_USERNAME) } just runs
+        every { appContextMock.app.notifyLoggedOut(TEST_ID) } just runs
     }
 
     @Test

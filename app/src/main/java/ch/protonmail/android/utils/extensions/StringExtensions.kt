@@ -1,38 +1,32 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.utils.extensions
 
 import android.text.Editable
+import me.proton.core.util.kotlin.EMPTY_STRING
 
-/**
- * Created by kadrikj on 9/13/18. */
-fun String.setDefaultIfEmpty(defaultString: String): String {
-    return if (isEmpty()) defaultString
-    else this
-}
-
-fun String?.notNullOrEmpty(variableName: String = ""): String {
-    val result = this.notNull(variableName)
-    if (result.isEmpty())
-        throw RuntimeException("$variableName is empty")
-    return result
-}
+@Deprecated(
+    "Should use regular Kotlin syntax",
+    ReplaceWith("this ?: EMPTY_STRING", "me.proton.core.util.kotlin.EMPTY_STRING")
+)
+fun String?.notNullOrEmpty(variableName: String = "") =
+    this ?: EMPTY_STRING
 
 /**
  * @return [CharSequence]. If receiver [CharSequence] is shorted than the given [maxLength], return
@@ -41,9 +35,9 @@ fun String?.notNullOrEmpty(variableName: String = ""): String {
  val hello = "Hello world!"
  println( hello.truncateToLength( 9 ) ) // Hello Wo...
  */
-fun CharSequence.truncateToLength( maxLength: Int ) : CharSequence {
-    return if ( length <= maxLength ) this
-    else "${this[0, maxLength-1]}..."
+fun CharSequence.truncateToLength(maxLength: Int): CharSequence {
+    return if (length <= maxLength) this
+    else "${this[0, maxLength - 1]}..."
 }
 
 /**
@@ -52,10 +46,10 @@ fun CharSequence.truncateToLength( maxLength: Int ) : CharSequence {
  *
  * @return [CharSequence]
  */
-operator fun CharSequence.get( from: Int, to: Int ) = this.subSequence( from, to )
+operator fun CharSequence.get(from: Int, to: Int) = this.subSequence(from, to)
 
 /**
- * Substring the receiver [CharSequence]
+ * Subsequence the receiver [CharSequence]
  *
  * @param start [String] where to start substring-ing, optionally define a [startIndex] for exclude
  * matching before the given index
@@ -78,15 +72,15 @@ operator fun CharSequence.get( from: Int, to: Int ) = this.subSequence( from, to
  * @param ignoreCase [Boolean] whether [start] and [end] must be matched ignoring their case
  * Default is `false`
  */
-fun CharSequence.substring(
-        start: String? = null,
-        end: String? = null,
-        startIndex: Int = 0,
-        endIndex: Int = length,
-        startInclusive: Boolean = false,
-        endInclusive: Boolean = false,
-        ignoreCase: Boolean = false
-) : CharSequence {
+fun CharSequence.subsequence(
+    start: String? = null,
+    end: String? = null,
+    startIndex: Int = 0,
+    endIndex: Int = length,
+    startInclusive: Boolean = false,
+    endInclusive: Boolean = false,
+    ignoreCase: Boolean = false
+): CharSequence {
     // Calculate the index where to start substring-ing
     val from = if (start != null) {
         val relative = indexOf(start, startIndex, ignoreCase)
@@ -110,6 +104,27 @@ fun CharSequence.substring(
 
     return get(from, to.coerceAtLeast(from))
 }
+
+/**
+ * Remove whitespaces from receiver [Editable]
+ * @return [String]
+ */
+fun Editable.removeWhitespaces(): String =
+    toString().replace("\\s".toRegex(), "")
+
+/**
+ * Obfuscate a rance from receiver [String]
+ * @param replacement [Char] that will be used as replacement for chars to obfuscate
+ * @param keepFirst count of initial chars to do not obfuscate
+ *   Default is `0`
+ * @param keepLast count of final chars to do not obfuscate
+ *   Default is `3`
+ */
+fun String.obfuscate(replacement: Char = '*', keepFirst: Int = 0, keepLast: Int = 3) =
+    mapIndexed { i, c ->
+        if (i < keepFirst || i > length - keepLast - 1) c
+        else replacement
+    }.joinToString(separator = EMPTY_STRING)
 
 /**
  * Substring the receiver [CharSequence]
@@ -136,17 +151,13 @@ fun CharSequence.substring(
  * Default is `false`
  */
 fun String.substring(
-        start: String? = null,
-        end: String? = null,
-        startIndex: Int = 0,
-        endIndex: Int = length,
-        startInclusive: Boolean = false,
-        endInclusive: Boolean = false,
-        ignoreCase: Boolean = false
+    start: String? = null,
+    end: String? = null,
+    startIndex: Int = 0,
+    endIndex: Int = length,
+    startInclusive: Boolean = false,
+    endInclusive: Boolean = false,
+    ignoreCase: Boolean = false
 ) = (this as CharSequence)
-        .substring(start, end, startIndex, endIndex, startInclusive, endInclusive, ignoreCase)
+        .subsequence(start, end, startIndex, endIndex, startInclusive, endInclusive, ignoreCase)
         .toString()
-
-fun Editable.removeWhitespaces() = toString().replace("\\s".toRegex(), "")
-
-fun String.compare(other: String) = this == other

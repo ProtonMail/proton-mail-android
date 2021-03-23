@@ -19,7 +19,7 @@
 package ch.protonmail.android.api.segments.message
 
 import androidx.annotation.WorkerThread
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
@@ -38,25 +38,24 @@ import java.io.IOException
 class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpec {
 
     @Throws(IOException::class)
-    override fun fetchMessagesCount(retrofitTag: RetrofitTag): UnreadTotalMessagesResponse =
-        ParseUtils.parse(service.fetchMessagesCount(retrofitTag).execute())
+    override fun fetchMessagesCount(userIdTag: UserIdTag): UnreadTotalMessagesResponse =
+        ParseUtils.parse(service.fetchMessagesCount(userIdTag).execute())
 
     @Throws(IOException::class)
     override fun messages(location: Int): MessagesResponse? =
         ParseUtils.parse(service.messages(location, "time", "", "").execute())
 
-    override fun messages(location: Int, retrofitTag: RetrofitTag): MessagesResponse? =
-        ParseUtils.parse(service.messages(location, "time", "", "", retrofitTag).execute())
+    override fun messages(location: Int, userIdTag: UserIdTag): MessagesResponse =
+        ParseUtils.parse(service.messages(location, "time", "", "", userIdTag).execute())
 
-    @Throws(IOException::class)
     override fun fetchMessages(location: Int, time: Long): MessagesResponse? {
         return if (Constants.MessageLocationType.fromInt(location) == Constants.MessageLocationType.STARRED) {
             ParseUtils.parse(service.fetchStarredMessages(1, time).execute())
         } else ParseUtils.parse(service.fetchMessages(location, time).execute())
     }
 
-    override suspend fun fetchMessageMetadata(messageId: String, retrofitTag: RetrofitTag): MessagesResponse =
-        service.fetchMessageMetadata(messageId, retrofitTag)
+    override suspend fun fetchMessageMetadata(messageId: String, userIdTag: UserIdTag): MessagesResponse =
+        service.fetchMessageMetadata(messageId, userIdTag)
 
     @Throws(IOException::class)
     override fun markMessageAsRead(messageIds: IDList) {
@@ -95,13 +94,13 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     override fun fetchMessageDetailsBlocking(messageId: String): MessageResponse =
         ParseUtils.parse(service.fetchMessageDetailsBlocking(messageId).execute())
 
-    override suspend fun fetchMessageDetails(messageId: String, retrofitTag: RetrofitTag): MessageResponse =
-        service.fetchMessageDetails(messageId, retrofitTag)
+    override suspend fun fetchMessageDetails(messageId: String, userIdTag: UserIdTag): MessageResponse =
+        service.fetchMessageDetails(messageId, userIdTag)
 
     @WorkerThread
-    override fun fetchMessageDetailsBlocking(messageId: String, retrofitTag: RetrofitTag): MessageResponse? =
+    override fun fetchMessageDetailsBlocking(messageId: String, userIdTag: UserIdTag): MessageResponse? =
         try {
-            ParseUtils.parse(service.fetchMessageDetailsBlocking(messageId, retrofitTag).execute())
+            ParseUtils.parse(service.fetchMessageDetailsBlocking(messageId, userIdTag).execute())
         } catch (exc: Exception) {
             Timber.e(exc, "An exception was thrown while fetching message details")
             null
@@ -130,14 +129,14 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     override suspend fun updateDraft(
         messageId: String,
         draftBody: DraftBody,
-        retrofitTag: RetrofitTag
-    ): MessageResponse = service.updateDraft(messageId, draftBody, retrofitTag)
+        userIdTag: UserIdTag
+    ): MessageResponse = service.updateDraft(messageId, draftBody, userIdTag)
 
     override suspend fun sendMessage(
         messageId: String,
         message: MessageSendBody,
-        retrofitTag: RetrofitTag
-    ): MessageSendResponse = service.sendMessage(messageId, message, retrofitTag)
+        userIdTag: UserIdTag
+    ): MessageSendResponse = service.sendMessage(messageId, message, userIdTag)
 
     @Throws(IOException::class)
     override fun unlabelMessages(idList: IDList) {
