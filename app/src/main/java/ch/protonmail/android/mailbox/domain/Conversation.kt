@@ -19,8 +19,8 @@
 
 package ch.protonmail.android.mailbox.domain
 
-import ch.protonmail.android.api.models.room.messages.Label
-import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.Message
 
 data class Conversation(
     val id: String,
