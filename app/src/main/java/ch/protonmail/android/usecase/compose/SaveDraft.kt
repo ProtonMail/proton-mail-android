@@ -36,9 +36,9 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -59,7 +59,7 @@ class SaveDraft @Inject constructor(
 
     suspend operator fun invoke(
         params: SaveDraftParameters
-    ): Flow<SaveDraftResult> = withContext(dispatchers.Io) {
+    ): SaveDraftResult = withContext(dispatchers.Io) {
         Timber.i("Save Draft for messageId ${params.message.messageId}")
 
         val message = params.message
@@ -81,11 +81,11 @@ class SaveDraft @Inject constructor(
         return@withContext saveDraftOnline(message, params, messageId)
     }
 
-    private fun saveDraftOnline(
+    private suspend fun saveDraftOnline(
         localDraft: Message,
         params: SaveDraftParameters,
         localDraftId: String
-    ): Flow<SaveDraftResult> {
+    ): SaveDraftResult {
         return createDraftWorker.enqueue(
             localDraft,
             params.parentId,
@@ -115,6 +115,7 @@ class SaveDraft @Inject constructor(
                 }
             }
             .flowOn(dispatchers.Io)
+            .firstOrNull() ?: SaveDraftResult.OnlineDraftCreationFailed
     }
 
     private suspend fun uploadAttachments(

@@ -65,7 +65,6 @@ import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.serialize
 import timber.log.Timber
@@ -258,7 +257,7 @@ class SendMessageWorker @WorkerInject constructor(
                 previousSenderAddressId,
                 SaveDraft.SaveDraftTrigger.SendingMessage
             )
-        ).first()
+        )
     }
 
     private fun retryOrFail(

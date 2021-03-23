@@ -71,7 +71,6 @@ import io.reactivex.Single
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -461,7 +460,7 @@ class ComposeMessageViewModel @Inject constructor(
         oldSenderAddress: String,
         saveDraftTrigger: SaveDraft.SaveDraftTrigger
     ) {
-        saveDraft(
+        val saveDraftResult = saveDraft(
             SaveDraft.SaveDraftParameters(
                 message,
                 newAttachments,
@@ -470,19 +469,19 @@ class ComposeMessageViewModel @Inject constructor(
                 oldSenderAddress,
                 saveDraftTrigger
             )
-        ).collect { saveDraftResult ->
-            when (saveDraftResult) {
-                is SaveDraftResult.Success -> onDraftSaved(saveDraftResult.draftId)
-                SaveDraftResult.OnlineDraftCreationFailed -> {
-                    val errorMessage = stringResourceResolver(
-                        R.string.failed_saving_draft_online
-                    ).format(message.subject)
-                    _savingDraftError.postValue(errorMessage)
-                }
-                SaveDraftResult.UploadDraftAttachmentsFailed -> {
-                    val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
-                    _savingDraftError.postValue(errorMessage)
-                }
+        )
+
+        when (saveDraftResult) {
+            is SaveDraftResult.Success -> onDraftSaved(saveDraftResult.draftId)
+            SaveDraftResult.OnlineDraftCreationFailed -> {
+                val errorMessage = stringResourceResolver(
+                    R.string.failed_saving_draft_online
+                ).format(message.subject)
+                _savingDraftError.postValue(errorMessage)
+            }
+            SaveDraftResult.UploadDraftAttachmentsFailed -> {
+                val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
+                _savingDraftError.postValue(errorMessage)
             }
         }
     }
