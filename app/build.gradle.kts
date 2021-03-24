@@ -73,7 +73,11 @@ val testUser3 = properties["TEST_USER3"] ?: privateProperties["TEST_USER3"]
 val testUser4 = properties["TEST_USER4"] ?: privateProperties["TEST_USER4"]
 val testUser5 = properties["TEST_USER5"] ?: privateProperties["TEST_USER5"]
 
-android(appIdSuffix = "android") {
+android(
+    appIdSuffix = "android",
+    minSdk = 23,
+    useDataBinding = true
+) {
 
     useLibrary("org.apache.http.legacy")
     flavorDimensions("default")
@@ -246,13 +250,20 @@ dependencies {
         rootProject.aar(Lib.protonCore, version = `old protonCore version`),
         // rootProject.aar(Lib.composer, version = `composer version`),
 
-        // `Proton-data`,
+        // Proton Core
+        `Proton-data`,
         `Proton-domain`,
         `Proton-presentation`,
         `Proton-network`,
         `Proton-kotlin-util`,
         `Proton-shared-preferences`,
         `Proton-work-manager`,
+        `Proton-crypto`,
+        `Proton-auth`,
+        `Proton-account`,
+        `Proton-account-manager`,
+        `Proton-user`,
+        `Proton-key`,
 
         // Modules
         project(Module.domain),

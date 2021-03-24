@@ -2,18 +2,18 @@ package ch.protonmail.android.di
 
 import android.content.Context
 import ch.protonmail.android.api.ProtonMailApiClient
-import ch.protonmail.android.api.TokenSessionManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.CoreLogger
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import me.proton.core.auth.domain.ClientSecret
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.data.di.ApiFactory
 import me.proton.core.network.data.di.NetworkManager
@@ -27,8 +27,12 @@ import me.proton.core.util.kotlin.Logger
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    @Provides
+    @ClientSecret
+    fun provideClientSecret(): String = ""
 
     @Provides
     @Singleton
@@ -72,14 +76,9 @@ object NetworkModule {
 }
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 abstract class NetworkBindsModule {
+
     @Binds
     abstract fun provideApiClient(apiClient: ProtonMailApiClient): ApiClient
-
-    @Binds
-    abstract fun provideSessionProvider(sessionManager: TokenSessionManager): SessionProvider
-
-    @Binds
-    abstract fun provideSessionListener(sessionManager: TokenSessionManager): SessionListener
 }

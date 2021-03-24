@@ -79,7 +79,7 @@ public class MailboxLoginActivity extends BaseLoginActivity {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_mailbox_login;
+        return R.layout.activity_mailbox_login_old;
     }
 
     @Override

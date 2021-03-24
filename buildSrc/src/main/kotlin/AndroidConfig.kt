@@ -37,6 +37,7 @@ fun org.gradle.api.Project.android(
     version: Version? = null,
     versionCode: Int = ProtonMail.versionCode,
     versionName: String = ProtonMail.versionName,
+    useDataBinding: Boolean = false,
     config: ExtraConfig = {}
 
 ) = (this as ExtensionAware).extensions.configure<TestedExtension> {
@@ -81,6 +82,11 @@ fun org.gradle.api.Project.android(
             }
         }
     }
+
+    // Data/View Binding turned off by default to prevent unneeded generation.
+    // You must turn it on if you need it in your module:  android(useDataBinding = true).
+    buildFeatures.viewBinding = useDataBinding
+    dataBinding.isEnabled = useDataBinding
 
     lintOptions {
         disable("InvalidPackage")

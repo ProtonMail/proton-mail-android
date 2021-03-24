@@ -198,7 +198,7 @@ class ChangePasswordActivity : BaseActivity() {
     private fun showTwoFactorDialog() {
         val builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
-        val dialogView = inflater.inflate(R.layout.layout_2fa, null)
+        val dialogView = inflater.inflate(R.layout.layout_2fa_old, null)
         val twoFactorCode = dialogView.findViewById<EditText>(R.id.two_factor_code)
         val toggleInputText = dialogView.findViewById<ToggleButton>(R.id.toggle_input_text)
         toggleInputText.setOnClickListener { v ->

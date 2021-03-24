@@ -320,7 +320,7 @@ class DialogUtils {
                           okListener: (String) -> Unit,
                           cancelListener: () -> Unit): AlertDialog {
             val builder = AlertDialog.Builder(context)
-            val dialogView = context.layoutInflater.inflate(R.layout.layout_2fa, null)
+            val dialogView = context.layoutInflater.inflate(R.layout.layout_2fa_old, null)
             val twoFactorCode = dialogView.findViewById(R.id.two_factor_code) as EditText
             val toggleInputText = dialogView.findViewById(R.id.toggle_input_text) as ToggleButton
             toggleInputText.setOnClickListener { v ->
