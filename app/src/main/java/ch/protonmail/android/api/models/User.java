@@ -18,34 +18,6 @@
  */
 package ch.protonmail.android.api.models;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.SystemClock;
-import android.text.TextUtils;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import ch.protonmail.android.R;
-import ch.protonmail.android.api.models.address.Address;
-import ch.protonmail.android.api.utils.Fields;
-import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.domain.entity.Id;
-import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
-import ch.protonmail.android.prefs.SecureSharedPreferences;
-import timber.log.Timber;
-
 import static ch.protonmail.android.core.Constants.LogTags.SENDING_FAILED_REASON_TAG;
 import static ch.protonmail.android.core.Constants.LogTags.SENDING_FAILED_TAG;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS;
@@ -87,6 +59,34 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_SERVICES;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_FINGERPRINT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_PIN;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.SystemClock;
+import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import ch.protonmail.android.R;
+import ch.protonmail.android.api.models.address.Address;
+import ch.protonmail.android.api.utils.Fields;
+import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.domain.entity.Id;
+import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
+import ch.protonmail.android.prefs.SecureSharedPreferences;
+import timber.log.Timber;
 
 
 public class User {
@@ -240,13 +240,6 @@ public class User {
         user.isLegacyAccount = securePrefs.getBoolean(PREF_USER_LEGACY_ACCOUNT, true);
 
         return user;
-    }
-
-    @NonNull
-    @Deprecated
-    @kotlin.Deprecated(message = "Load using a Context")
-    public static User load(Id userId) {
-        return load(userId, ProtonMailApplication.getApplication());
     }
 
     public void save() {

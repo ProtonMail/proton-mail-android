@@ -18,6 +18,9 @@
  */
 package ch.protonmail.android.api.services;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static ch.protonmail.android.BuildConfig.SAFETY_NET_API_KEY;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -92,7 +95,6 @@ import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.user.UserSettingsEvent;
 import ch.protonmail.android.usecase.FindUserIdForUsername;
-import ch.protonmail.android.usecase.LoadUser;
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.ConstantTime;
@@ -105,9 +107,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import kotlin.text.Charsets;
 import timber.log.Timber;
-
-import static ch.protonmail.android.BuildConfig.SAFETY_NET_API_KEY;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @AndroidEntryPoint
 public class LoginService extends ProtonJobIntentService {
@@ -171,8 +170,6 @@ public class LoginService extends ProtonJobIntentService {
     FindUserIdForUsername findUserIdForUsername;
     @Inject
     LaunchInitialDataFetch launchInitialDataFetch;
-    @Inject
-    LoadUser loadUser;
 
     private TokenManager tokenManager;
 
@@ -553,7 +550,7 @@ public class LoginService extends ProtonJobIntentService {
                         true,
                         null
                 );
-                handleAfterConnect(infoResponse, loginHelperData, userId, password, 4);
+                handleAfterConnect(infoResponse, loginHelperData, userId, username, password, 4);
             } else {
                 LoginHelperData loginHelperData = handleSuccessLogin(
                         loginResponse,
@@ -674,7 +671,7 @@ public class LoginService extends ProtonJobIntentService {
 
         Id userId = findUserIdForUsername.blocking(new Name(username));
         loginHelperData.userId = userId;
-        handleAfterConnect(infoResponse, loginHelperData, userId, password, fallbackAuthVersion);
+        handleAfterConnect(infoResponse, loginHelperData, userId, new Name(username), password, fallbackAuthVersion);
     }
 
     private void connectAccountMailboxLogin(final Id userId, final Id currentPrimaryUserId, final byte[] mailboxPassword, final String keySalt) {
@@ -756,23 +753,30 @@ public class LoginService extends ProtonJobIntentService {
     }
 
     // region support functions
-    private void handleAfterConnect(LoginInfoResponse infoResponse, LoginHelperData loginHelperData, Id userId, byte[] password, int fallbackAuthVersion) {
+    private void handleAfterConnect(
+            LoginInfoResponse infoResponse,
+            LoginHelperData loginHelperData,
+            Id userId,
+            Name username,
+            byte[] password,
+            int fallbackAuthVersion
+    ) {
         if (infoResponse == null || loginHelperData.status == AuthStatus.FAILED) {
             userManager.logoutBlocking(userId);
             AppUtil.postEventOnUi(new ConnectAccountLoginEvent(AuthStatus.FAILED, null, loginHelperData.redirectToSetup, loginHelperData.user, null));
             return;
         }
         // username necessary for subsequent calls
-        String username = loadUser.blocking(userId).getName().getS();
         if (infoResponse.getAuthVersion() == 0 && loginHelperData.status.equals(AuthStatus.INVALID_CREDENTIAL) && fallbackAuthVersion != 0) {
             final int newFallback;
-            if (fallbackAuthVersion == 2 && !PasswordUtils.cleanUserName(username).equals(username.toLowerCase())) {
+            String usernameString = username.getS();
+            if (fallbackAuthVersion == 2 && !PasswordUtils.cleanUserName(usernameString).equals(usernameString.toLowerCase())) {
                 newFallback = 1;
             } else {
                 newFallback = 0;
             }
 
-            startInfo(username, password, newFallback);
+            startInfo(usernameString, password, newFallback);
         } else {
             if (loginHelperData.postLoginEvent) {
                 AppUtil.postEventOnUi(new ConnectAccountLoginEvent(loginHelperData.status, loginHelperData.keySalt, loginHelperData.redirectToSetup, loginHelperData.user, loginHelperData.domainName));
@@ -1003,12 +1007,10 @@ public class LoginService extends ProtonJobIntentService {
     }
 
     private void doOfflineMailboxLogin(byte[] mailboxPassword, Id userId) {
-        User user = userManager.getUser();
+        User user = userManager.getCurrentLegacyUserBlocking();
         String addressId = null;
-        try {
+        if (user != null) {
             addressId = user.getAddressId();
-        } catch (NullPointerException e) {
-            // noop
         }
         if (TextUtils.isEmpty(addressId) || !userManager.isLoggedIn()) {
             AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.NO_NETWORK));

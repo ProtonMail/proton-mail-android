@@ -1006,7 +1006,11 @@ class UserManager @Inject constructor(
             userSettings = UserSettings.load(preferences)
             snoozeSettings = SnoozeSettings.load(preferences)
             // Reload autoLockPINPeriod
-            getLegacyUser(userId).autoLockPINPeriod
+            runCatching { getLegacyUser(userId) }
+                .onSuccess { it.autoLockPINPeriod }
+                // This is expected in some scenarios, as the user is not saved yet, so logging higher than info is
+                //  not necessary
+                .onFailure { Timber.i("Cannot load user settings") }
         }
     }
 

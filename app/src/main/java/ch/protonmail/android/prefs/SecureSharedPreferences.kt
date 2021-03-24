@@ -146,9 +146,19 @@ class SecureSharedPreferences(
 
     override fun edit() = Editor()
 
-    override fun getAll(): Map<String, *> {
-        throw UnsupportedOperationException()
-    }
+    /**
+     * @return [Map] of decrypted [String] and [String]
+     *  If the content can't be decrypted, it will be served as encrypted
+     */
+    override fun getAll(): Map<String, *> =
+        delegate.all.map { (encryptedKey, encryptedValue) ->
+            val key = decrypt(encryptedKey)
+            val value = decrypt(encryptedValue as String)
+            Pair(
+                key ?: encryptedKey,
+                value ?: encryptedValue
+            )
+        }.toMap()
 
     @Synchronized
     override fun getBoolean(key: String, defValue: Boolean): Boolean {
