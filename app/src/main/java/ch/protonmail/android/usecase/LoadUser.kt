@@ -19,13 +19,14 @@
 
 package ch.protonmail.android.usecase
 
+import ch.protonmail.android.domain.either.Either
+import ch.protonmail.android.domain.either.map
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
-import me.proton.core.util.kotlin.invoke
 import javax.inject.Inject
 
 class LoadUser @Inject constructor(
@@ -35,10 +36,11 @@ class LoadUser @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) {
 
-    suspend operator fun invoke(userId: Id): User = withContext(dispatchers.Io) {
-        val legacyUser = loadLegacyUser(userId)
-        mapper { legacyUser.toNewUser() }
-    }
+    suspend operator fun invoke(userId: Id): Either<Error, User> =
+        withContext(dispatchers.Io) {
+            loadLegacyUser(userId)
+                .map(mapper) { it.toNewUser() }
+        }
 
 
     @Deprecated(
@@ -48,4 +50,6 @@ class LoadUser @Inject constructor(
     fun blocking(userId: Id) = runBlocking {
         invoke(userId)
     }
+
+    object Error : ch.protonmail.android.domain.either.Error()
 }

@@ -29,7 +29,7 @@ class NotifyLoggedOut @Inject constructor(
     private val notificationServer: NotificationServer
 ) {
     suspend operator fun invoke(userId: Id) {
-        val user = runCatching { loadUser(userId) }.getOrNull()
+        val user = loadUser(userId).rightOrNull()
         notificationServer.notifyUserLoggedOut(user)
     }
 

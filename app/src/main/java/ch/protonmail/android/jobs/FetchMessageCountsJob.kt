@@ -26,12 +26,10 @@ import ch.protonmail.android.data.local.model.UnreadLocationCounter
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.usecase.FindUserIdForUsername
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Params
 import com.birbit.android.jobqueue.RetryConstraint
 import timber.log.Timber
-import javax.inject.Inject
 
 private const val FETCH_COUNTS_ID = "instanceIdCounts"
 
@@ -41,9 +39,6 @@ class FetchMessageCountsJob(
     Params(Priority.MEDIUM).singleInstanceBy(FETCH_COUNTS_ID).groupBy(Constants.JOB_GROUP_MISC),
     userId
 ) {
-
-    @Inject
-    lateinit var findUserIdForUsername: FindUserIdForUsername
 
     @Throws(Throwable::class)
     override fun onRun() {

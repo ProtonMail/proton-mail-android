@@ -20,6 +20,7 @@
 package ch.protonmail.android.usecase
 
 import android.content.Context
+import ch.protonmail.android.domain.either.Either
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -32,9 +33,12 @@ class LoadLegacyUser @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) {
 
-    suspend operator fun invoke(userId: Id): LegacyUser = withContext(dispatchers.Io) {
-        @Suppress("DEPRECATION")
-        LegacyUser.load(userId, context)
-    }
+    suspend operator fun invoke(userId: Id): Either<LoadUser.Error, LegacyUser> =
+        withContext(dispatchers.Io) {
+            Either.tryOrLeft(LoadUser.Error) {
+                @Suppress("DEPRECATION")
+                LegacyUser.load(userId, context)
+            }
+        }
 
 }

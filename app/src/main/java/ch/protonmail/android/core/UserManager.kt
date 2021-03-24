@@ -549,7 +549,7 @@ class UserManager @Inject constructor(
 
     suspend fun switchTo(userId: Id) {
         setCurrentUser(userId)
-        user = loadLegacyUser(userId)
+        user = loadLegacyUser(userId).rightOrThrow()
         loadSettings(userId)
     }
 
@@ -638,7 +638,7 @@ class UserManager @Inject constructor(
             AppUtil.deleteSecurePrefs(preferencesFor(userId), false)
             clearUserData(userId)
             setCurrentUser(nextUserId)
-            val nextUser = loadUser(nextUserId)
+            val nextUser = loadUser(nextUserId).rightOrThrow()
             val event = SwitchUserEvent(from = oldUser.id to oldUser.name, to = nextUser.id to nextUser.name)
             ForceSwitchedAccountNotifier.notifier.postValue(event)
             TokenManager.clearInstance(userId)
@@ -837,7 +837,7 @@ class UserManager @Inject constructor(
     @Synchronized
     suspend fun getUser(userId: Id): NewUser =
         cachedUsers.getOrPut(userId) {
-            loadUser(userId)
+            loadUser(userId).rightOrThrow()
         }
 
     @Deprecated("Suspended function should be used instead", ReplaceWith("getUser(userId)"))
@@ -850,7 +850,7 @@ class UserManager @Inject constructor(
     @Synchronized
     suspend fun getLegacyUser(userId: Id): User =
         cachedLegacyUsers.getOrPut(userId) {
-            loadLegacyUser(userId)
+            loadLegacyUser(userId).rightOrThrow()
                 // Also save to cachedUsers
                 .also { legacyUser ->
                     runCatching { userMapper { legacyUser.toNewUser() } }
@@ -874,7 +874,12 @@ class UserManager @Inject constructor(
      *   @see Plan.Mail.Free
      */
     suspend fun canConnectAnotherAccount(): Boolean {
-        val freeLoggedInUserCount = accountManager.allLoggedIn().count { Plan.Mail.Free in getUser(it).plans }
+        val freeLoggedInUserCount = accountManager.allLoggedIn().count {
+            val user = runCatching { getUser(it) }
+                .getOrNull()
+                ?: return@count false
+            Plan.Mail.Free in user.plans
+        }
         return freeLoggedInUserCount <= 1
     }
 
@@ -1061,7 +1066,7 @@ class UserManager @Inject constructor(
                     ?: return@withContext
                 prefs -= PREF_USERNAME
 
-                val currentUserId = findUserIdForUsername(Name(currentUsername))
+                val currentUserId = findUserIdForUsername(Name(currentUsername)).rightOrThrow()
                 prefs[PREF_CURRENT_USER_ID] = currentUserId.s
             }
         }
