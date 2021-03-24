@@ -19,16 +19,14 @@
 package ch.protonmail.android.data.local.model
 
 import androidx.room.TypeConverter
-import ch.protonmail.android.utils.extensions.deserialize
-import ch.protonmail.android.utils.extensions.serialize
+import ch.protonmail.android.data.local.model.AttachmentHeaders
 
 class AttachmentTypesConverter {
 
     @TypeConverter
-    fun attachmentHeadersToString(attachmentHeaders: AttachmentHeaders?) =
-        attachmentHeaders?.serialize()
+    fun attachmentHeadersToString(attachmentHeaders: AttachmentHeaders?) = attachmentHeaders?.toString()
 
     @TypeConverter
     fun stringToAttachmentHeaders(attachmentHeadersString: String?) =
-        attachmentHeadersString?.deserialize<AttachmentHeaders>()
+        attachmentHeadersString?.let(AttachmentHeaders::fromString)
 }
