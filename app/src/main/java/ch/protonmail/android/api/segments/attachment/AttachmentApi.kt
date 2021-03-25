@@ -45,47 +45,6 @@ class AttachmentApi(
     override fun downloadAttachmentBlocking(attachmentId: String): ByteArray =
         downloadService.downloadAttachmentBlocking(attachmentId).execute().body()!!.bytes()
 
-    @Throws(IOException::class)
-    override fun uploadAttachmentInlineBlocking(
-        attachment: Attachment,
-        MessageID: String,
-        contentID: String,
-        KeyPackage: RequestBody,
-        DataPackage: RequestBody,
-        Signature: RequestBody
-    ): AttachmentUploadResponse {
-        val filename = attachment.fileName!!
-        val mimeType = attachment.mimeType!!
-        return ParseUtils.parse(
-            uploadService.uploadAttachmentBlocking(
-                filename, MessageID, contentID, mimeType, KeyPackage, DataPackage, Signature
-            )
-                .execute()
-        )
-    }
-
-    @Throws(IOException::class)
-    override fun uploadAttachmentBlocking(
-        attachment: Attachment,
-        keyPackage: RequestBody,
-        dataPackage: RequestBody,
-        signature: RequestBody
-    ): AttachmentUploadResponse {
-        val filename = attachment.fileName!!
-        val mimeType = attachment.mimeType!!
-        val messageId = attachment.messageId
-        return ParseUtils.parse(
-            uploadService.uploadAttachmentBlocking(
-                filename,
-                messageId,
-                mimeType,
-                keyPackage,
-                dataPackage,
-                signature
-            ).execute()
-        )
-    }
-
     override suspend fun uploadAttachmentInline(
         attachment: Attachment,
         messageID: String,

@@ -20,35 +20,11 @@ package ch.protonmail.android.api.segments.attachment
 
 import ch.protonmail.android.api.models.AttachmentUploadResponse
 import okhttp3.RequestBody
-import retrofit2.Call
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
 interface AttachmentUploadService {
-
-    @Multipart
-    @POST("mail/v4/attachments")
-    fun uploadAttachmentBlocking(
-        @Part("Filename") Filename: String,
-        @Part("MessageID") MessageID: String,
-        @Part("MIMEType") MIMEType: String,
-        @Part("KeyPackets\"; filename=\"temp1") KeyPackets: RequestBody,
-        @Part("DataPacket\"; filename=\"temp2") DataPacket: RequestBody,
-        @Part("Signature\"; filename=\"temp3") Signature: RequestBody
-    ): Call<AttachmentUploadResponse>
-
-    @Multipart
-    @POST("mail/v4/attachments")
-    fun uploadAttachmentBlocking(
-        @Part("Filename") Filename: String,
-        @Part("MessageID") MessageID: String,
-        @Part("ContentID") ContentID: String,
-        @Part("MIMEType") MIMEType: String,
-        @Part("KeyPackets\"; filename=\"temp1") KeyPackets: RequestBody,
-        @Part("DataPacket\"; filename=\"temp2") DataPacket: RequestBody,
-        @Part("Signature\"; filename=\"temp3") Signature: RequestBody
-    ): Call<AttachmentUploadResponse>
 
     @Multipart
     @POST("mail/v4/attachments")
