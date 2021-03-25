@@ -725,7 +725,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_description_account">账户状态</string>
     <string name="channel_name_ongoing_operations">正在进行的操作</string>
     <string name="channel_description_ongoing_operations">显示所有正在进行的操作，例如后台下载新邮件</string>
-    <string name="checking_mailbox">正在查收新邮件</string>
+    <string name="retrieving_notifications">Retrieving notifications</string>
     <string name="report_phishing">举报欺诈邮件</string>
     <string name="print">打印</string>
     <string name="phishing_dialog_title">确认举报欺诈邮件</string>

@@ -743,7 +743,7 @@ redefina sua senha caso você necessite.</string>
     <string name="channel_name_ongoing_operations">Operações em andamento</string>
     <string name="channel_description_ongoing_operations">Mostra todas as operações em andamento,
 		como o download de novas mensagens em segundo plano</string>
-    <string name="checking_mailbox">Verificando caixa de correio</string>
+    <string name="retrieving_notifications">Obtendo notificações</string>
     <string name="report_phishing">Reportar phishing</string>
     <string name="print">Imprimir</string>
     <string name="phishing_dialog_title">Confirmar reporte de phishing</string>

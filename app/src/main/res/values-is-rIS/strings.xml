@@ -744,7 +744,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_name_ongoing_operations">Aðgerðir í gangi</string>
     <string name="channel_description_ongoing_operations">Sýnir allar aðgerðir í gangi eins og þegar
 		náð er í ný skilaboð í bakgrunni</string>
-    <string name="checking_mailbox">Athuga pósthólf</string>
+    <string name="retrieving_notifications">Retrieving notifications</string>
     <string name="report_phishing">Tilkynna um veiðipóst (phishing)</string>
     <string name="print">Prenta</string>
     <string name="phishing_dialog_title">Staðfesta skýrslu um veiðipóst</string>

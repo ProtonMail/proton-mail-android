@@ -742,7 +742,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_name_ongoing_operations">Operações em curso</string>
     <string name="channel_description_ongoing_operations">Mostra todas as operações em curso,
 		como a transferência de novas mensagens em segundo plano</string>
-    <string name="checking_mailbox">A verificar a caixa de correio</string>
+    <string name="retrieving_notifications">Recuperar notificações</string>
     <string name="report_phishing">Denunciar phishing</string>
     <string name="print">Imprimir</string>
     <string name="phishing_dialog_title">Confirmar relatório de phishing</string>

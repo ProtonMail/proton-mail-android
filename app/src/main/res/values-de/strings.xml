@@ -735,7 +735,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="channel_description_account">Kontenstatus</string>
     <string name="channel_name_ongoing_operations">Laufende Aktionen</string>
     <string name="channel_description_ongoing_operations">Zeigt alle laufenden Aktionen, wie das Herunterladen neuer Nachrichten im Hintergrund, an.</string>
-    <string name="checking_mailbox">Postfach wird geprüft</string>
+    <string name="retrieving_notifications">Benachrichtigungen werden abgerufen</string>
     <string name="report_phishing">Phishing melden</string>
     <string name="print">Drucken</string>
     <string name="phishing_dialog_title">Phishing-Bericht bestätigen</string>

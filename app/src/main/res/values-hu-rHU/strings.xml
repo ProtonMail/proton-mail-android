@@ -741,7 +741,7 @@ Svájci székhellyel</string>
     <string name="channel_name_ongoing_operations">Folyamatban lévő műveletek</string>
     <string name="channel_description_ongoing_operations">Mutatja az összes folyamatban lévő műveletet,
 	mint új üzenet letöltése a háttérben</string>
-    <string name="checking_mailbox">Fiók ellenőrzése</string>
+    <string name="retrieving_notifications">Retrieving notifications</string>
     <string name="report_phishing">Adathalászat bejelentése</string>
     <string name="print">Nyomtatás</string>
     <string name="phishing_dialog_title">Erősítse meg az adathalász bejelentést</string>

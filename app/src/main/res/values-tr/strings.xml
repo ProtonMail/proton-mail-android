@@ -53,7 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Ağ bağlantısı yok. İleti sıraya alındı.</string>
     <string name="update_app_title">Güncelleme gerekli</string>
     <string name="update_app">ProtonMail uygulamanız güncellenene kadar kullanılamaz.</string>
-    <string name="you_are_offline">You are offline</string>
+    <string name="you_are_offline">Çevrimdışısınız</string>
     <string name="api_offline_title">ProtonMail API\'si çevrimdışı</string>
     <string name="api_offline">ProtonMail şu anda çevrimdışı. Lütfen mevcut durum için https://protonstatus.com veya https://twitter.com/protonmail adresini kontrol edin.</string>
     <string name="contact_saved">Kişi kaydedildi</string>
@@ -286,7 +286,7 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="message_deleted_error">Bazı mesajlar silinirken hata oluştu. Seçilen mesajlardan bazıları gönderim aşamasında mı?!</string>
     <string name="respond_inline">Satır içinde yanıtla</string>
     <string name="no_connectivity_detected">Bağlantı bulunamadı...</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Sunucu erişilemiyor… (<u>Sorun giderme</u>)</string>
     <string name="connectivity_checking">Bağlantı kontrol ediliyor...</string>
     <string name="sync_short">eşitleme</string>
     <string name="draft_attachments_uploading">Taslak hala yükleniyor...</string>
@@ -735,7 +735,7 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="channel_description_account">Hesap durumu</string>
     <string name="channel_name_ongoing_operations">Devam eden işlemler</string>
     <string name="channel_description_ongoing_operations">Arka planda yeni mesaj indirme gibi devam eden tüm işlemleri gösterir</string>
-    <string name="checking_mailbox">Posta kutusu kontrol ediliyor</string>
+    <string name="retrieving_notifications">Bildirimler alınıyor</string>
     <string name="report_phishing">Kimlik avını raporla</string>
     <string name="print">Yazdır</string>
     <string name="phishing_dialog_title">Kimlik avı raporunu onayla</string>
