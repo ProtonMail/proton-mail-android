@@ -17,6 +17,6 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.domain.either
+package ch.protonmail.android.domain
 
 abstract class Error

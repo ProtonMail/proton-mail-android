@@ -20,7 +20,7 @@
 package ch.protonmail.android.usecase
 
 import android.content.Context
-import ch.protonmail.android.domain.either.Either
+import arrow.core.Either
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -29,16 +29,25 @@ import ch.protonmail.android.api.models.User as LegacyUser
 
 @Deprecated("Use new User entity", ReplaceWith("LoadUser"))
 class LoadLegacyUser @Inject constructor(
-    private val context: Context,
+    private val loadLegacyUserDelegate: LoadLegacyUserDelegate,
     private val dispatchers: DispatcherProvider
 ) {
 
     suspend operator fun invoke(userId: Id): Either<LoadUser.Error, LegacyUser> =
         withContext(dispatchers.Io) {
-            Either.tryOrLeft(LoadUser.Error) {
-                @Suppress("DEPRECATION")
-                LegacyUser.load(userId, context)
-            }
+            Either.catch {
+                loadLegacyUserDelegate(userId)
+            }.mapLeft { LoadUser.Error }
         }
 
+}
+
+// Implemented for testing easiness purpose
+class LoadLegacyUserDelegate @Inject constructor(
+    private val context: Context
+) {
+
+    operator fun invoke(userId: Id): LegacyUser =
+        @Suppress("DEPRECATION")
+        LegacyUser.load(userId, context)
 }

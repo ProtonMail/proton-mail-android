@@ -19,12 +19,13 @@
 
 package ch.protonmail.android.usecase
 
+import arrow.core.Either
+import arrow.core.Left
+import arrow.core.Right
 import ch.protonmail.android.api.AccountManager
-import ch.protonmail.android.domain.either.Either
-import ch.protonmail.android.domain.either.Left
-import ch.protonmail.android.domain.either.Right
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.util.orThrow
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -45,7 +46,7 @@ class FindUserIdForUsername @Inject constructor(
                 failedToLoadUser = true
                 false
             } else {
-                userEither.rightOrThrow().name == username
+                userEither.orThrow().name == username
             }
         }
 
@@ -60,7 +61,8 @@ class FindUserIdForUsername @Inject constructor(
         "Should not be used, necessary only for old and Java classes",
         ReplaceWith("invoke(username)")
     )
-    fun blocking(username: Name) = runBlocking { invoke(username) }
+    fun blocking(username: Name): Either<Error, Id> =
+        runBlocking { invoke(username) }
 
     sealed class Error {
         object UserNotFound : Error()

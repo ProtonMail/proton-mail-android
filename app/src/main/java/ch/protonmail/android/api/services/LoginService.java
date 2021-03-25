@@ -82,6 +82,7 @@ import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.domain.entity.Name;
+import ch.protonmail.android.domain.util.EitherKt;
 import ch.protonmail.android.events.AddressSetupEvent;
 import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.ConnectAccountLoginEvent;
@@ -669,7 +670,7 @@ public class LoginService extends ProtonJobIntentService {
             loginHelperData.status = AuthStatus.FAILED;
         }
 
-        Id userId = findUserIdForUsername.blocking(new Name(username)).rightOrThrow();
+        Id userId = EitherKt.orThrow(findUserIdForUsername.blocking(new Name(username)));
         loginHelperData.userId = userId;
         handleAfterConnect(infoResponse, loginHelperData, userId, new Name(username), password, fallbackAuthVersion);
     }
@@ -817,7 +818,8 @@ public class LoginService extends ProtonJobIntentService {
                                 null
                         )
                 );
-                userManager.logoutBlocking(findUserIdForUsername.blocking(new Name(username)).rightOrThrow());
+                Id userId = EitherKt.orThrow(findUserIdForUsername.blocking(new Name(username)));
+                userManager.logoutBlocking(userId);
             }
             return;
         }
