@@ -16,40 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-import studio.forface.easygradle.dsl.*
 
-plugins {
-    `java-library`
-    `kotlin`
-    `kotlin-serialization`
-}
+package ch.protonmail.android.domain.util
 
-dependencies {
-    implementation(
+import kotlin.coroutines.cancellation.CancellationException
 
-        // Core
-        `Proton-kotlin-util`,
-        `Proton-domain`,
+/**
+ * Executes a [runCatching] that throws in case of [CancellationException]
+ */
+inline fun <T> suspendRunCatching(block: () -> T): Result<T> =
+    runCatching(block)
+        .onFailure { if (it is CancellationException) throw it }
 
-        // Kotlin
-        `kotlin-jdk8`,
-        `coroutines-core`,
-        `serialization-json`,
-
-        // Arrow
-        `arrow-core`,
-
-        // DI
-        `dagger`
-    )
-
-    testImplementation(project(Module.testKotlin))
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs +
-            // Allow to use kotlin.Result as return type
-            "-Xallow-result-return-type"
-    }
-}

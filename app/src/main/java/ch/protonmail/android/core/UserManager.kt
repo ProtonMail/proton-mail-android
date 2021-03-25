@@ -40,6 +40,7 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.domain.util.orThrow
+import ch.protonmail.android.domain.util.suspendRunCatching
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.events.GenerateKeyPairEvent
 import ch.protonmail.android.events.LogoutEvent
@@ -876,7 +877,7 @@ class UserManager @Inject constructor(
      */
     suspend fun canConnectAnotherAccount(): Boolean {
         val freeLoggedInUserCount = accountManager.allLoggedIn().count {
-            val user = runCatching { getUser(it) }
+            val user = suspendRunCatching { getUser(it) }
                 .getOrNull()
                 ?: return@count false
             Plan.Mail.Free in user.plans
@@ -1012,7 +1013,7 @@ class UserManager @Inject constructor(
             userSettings = UserSettings.load(preferences)
             snoozeSettings = SnoozeSettings.load(preferences)
             // Reload autoLockPINPeriod
-            runCatching { getLegacyUser(userId) }
+            suspendRunCatching { getLegacyUser(userId) }
                 .onSuccess { it.autoLockPINPeriod }
                 // This is expected in some scenarios, as the user is not saved yet, so logging higher than info is
                 //  not necessary
