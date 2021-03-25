@@ -36,6 +36,9 @@ dependencies {
         `coroutines-core`,
         `serialization-json`,
 
+        // Arrow
+        `arrow-core`,
+
         // DI
         `dagger`
     )

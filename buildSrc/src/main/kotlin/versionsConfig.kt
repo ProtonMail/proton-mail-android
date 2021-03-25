@@ -98,6 +98,7 @@ const val `playServices version` =              "17.0.0"        // Released: Jun
 
 // Other
 const val `apache-commons-lang version` =       "3.4"           // Released: Apr 03, 2015
+const val `arrow version` =                     "0.11.0"        // Released: Sep 09, 2020
 const val `butterKnife version` =               "10.1.0"        // Released: Feb 14, 201
 const val `firebase-messaging version` =        "20.2.4"        // Released: Jul 30, 2020
 const val `gotev-cookieStore version` =         "1.3.1"         // Released: Oct 24, 2020

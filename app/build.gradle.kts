@@ -265,6 +265,9 @@ dependencies {
         `coroutines-android`,
         `serialization-json`,
 
+        // Arrow
+        `arrow-core`,
+
         // Android
         `android-annotation`,
         `appcompat`,
