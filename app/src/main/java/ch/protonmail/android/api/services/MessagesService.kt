@@ -83,7 +83,7 @@ class MessagesService : JobIntentService() {
     internal lateinit var mNetworkResults: NetworkResults
 
     @Inject
-    lateinit var contactEmailsManager: ContactEmailsManager
+    lateinit var contactEmailsManagerFactory: ContactEmailsManager.AssistedFactory
 
     @Inject
     lateinit var messageDetailsRepository: MessageDetailsRepository
@@ -211,8 +211,15 @@ class MessagesService : JobIntentService() {
     }
 
     private fun handleFetchContactGroups() {
+        val userId = userManager.currentUserId
+
+        if (userId == null) {
+            Timber.i("No logged in user")
+            return
+        }
+
         try {
-            contactEmailsManager.refreshBlocking()
+            contactEmailsManagerFactory.create(userId).refreshBlocking()
         } catch (e: Exception) {
             Timber.i(e, "handleFetchContactGroups has failed")
         }
