@@ -41,10 +41,11 @@ private const val BODY = "body"
 
 /** A replacement to [android.net.MailTo] that is pretty broken */
 data class MailTo(
-        val addresses: List<String>,
-        val cc: List<String>,
-        val subject: String,
-        val body: String
+    val addresses: List<String>,
+    val cc: List<String>,
+    val subject: String,
+    val body: String,
+    val bcc: List<String> = emptyList()
 ) {
     /** @return [Array] of [String] of [addresses] - Helper for Java */
     val addressesArray get() = addresses.map {
@@ -62,7 +63,7 @@ data class MailTo(
  * @throws IllegalArgumentException if [Uri.getScheme] is not [MAILTO_SCHEME]
  */
 @JvmName("parseIntent")
-fun Intent.toMailTo() : MailTo {
+fun Intent.toMailTo(): MailTo {
     if (scheme != MAILTO_SCHEME) throw IllegalArgumentException("Not a $MAILTO_SCHEME scheme")
 
     // Get the content Uri without the scheme
@@ -74,26 +75,26 @@ fun Intent.toMailTo() : MailTo {
 }
 
 /** @return [MailTo] created using [Intent] extras */
-private fun Intent.toMailToFromExtras() : MailTo {
+private fun Intent.toMailToFromExtras(): MailTo {
     return MailTo(
-            getStringArrayListExtra(Intent.EXTRA_EMAIL) ?: listOf(),
-            getStringArrayListExtra(Intent.EXTRA_CC) ?: listOf(),
-            getStringExtra(Intent.EXTRA_SUBJECT) ?: "",
-            getStringExtra(Intent.EXTRA_TEXT) ?: ""
+        getStringArrayListExtra(Intent.EXTRA_EMAIL) ?: listOf(),
+        getStringArrayListExtra(Intent.EXTRA_CC) ?: listOf(),
+        getStringExtra(Intent.EXTRA_SUBJECT) ?: "",
+        getStringExtra(Intent.EXTRA_TEXT) ?: ""
     )
 }
 
 /** @return [MailTo] created parsing [Intent.getDataString] ( [Uri] ) */
-private fun Intent.toMailToFromParse() : MailTo {
+private fun Intent.toMailToFromParse(): MailTo {
     val decodedString = Uri.decode(dataString)
 
     // Addresses
     val addresses = decodedString.substring(start = ":", end = "?")
-            .split(",").map { it.trim() }
+        .split(",").map { it.trim() }
 
     // CC
     val cc = decodedString.substring(start = "$CC=", end = "&")
-            .split(",").map { it.trim() }
+        .split(",").map { it.trim() }
 
     // Subject
     val subject = decodedString.substring(start = "$SUBJECT=", end = "&")

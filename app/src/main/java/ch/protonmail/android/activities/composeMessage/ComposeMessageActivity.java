@@ -159,7 +159,6 @@ import ch.protonmail.android.utils.HTMLTransformer.AbstractTransformer;
 import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer;
 import ch.protonmail.android.utils.HTMLTransformer.Transformer;
 import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer;
-import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.MailTo;
 import ch.protonmail.android.utils.MailToUtils;
 import ch.protonmail.android.utils.MessageUtils;
@@ -198,7 +197,6 @@ public class ComposeMessageActivity
         HumanVerificationCaptchaDialogFragment.IHumanVerificationListener,
         GroupRecipientsDialogFragment.IGroupRecipientsListener {
     //region extras
-    private static final String TAG_COMPOSE_MESSAGE_ACTIVITY = "ComposeMessageActivity";
     public static final String EXTRA_PARENT_ID = "parent_id";
     public static final String EXTRA_ACTION_ID = "action_id";
     public static final String EXTRA_MESSAGE_ID = "message_id";
@@ -846,7 +844,7 @@ public class ComposeMessageActivity
                 ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
                 addRecipientsToView(emails, mToRecipientsView);
             } catch (Exception e) {
-                Logger.doLogException(TAG_COMPOSE_MESSAGE_ACTIVITY, "Extract mail to getting extra email", e);
+                Timber.e(e, "Extract mail to getting extra email");
             }
         }
     }
@@ -878,7 +876,7 @@ public class ComposeMessageActivity
                 ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
                 addRecipientsToView(emails, mToRecipientsView);
             } catch (Exception e) {
-                Logger.doLogException(TAG_COMPOSE_MESSAGE_ACTIVITY, "Extract mail to getting extra email", e);
+                Timber.w(e, "Extract mail to getting extra email");
             }
         }
     }
@@ -910,7 +908,7 @@ public class ComposeMessageActivity
         try {
             extractMailTo(intent);
         } catch (Exception e) {
-            Logger.doLogException(TAG_COMPOSE_MESSAGE_ACTIVITY, "Handle set text: extracting email", e);
+            Timber.w(e, "Handle set text: extracting email");
         }
         handleSendFileUri(uri);
     }
@@ -1671,7 +1669,7 @@ public class ComposeMessageActivity
             TextDecryptionResult tct = crypto.decrypt(new CipherText(messageBody));
             messageBody = tct.getDecryptedData();
         } catch (Exception e) {
-            Timber.e(e, "Decryption error");
+            Timber.w(e, "Decryption error");
         }
         composeMessageViewModel.setInitialMessageContent(messageBody);
         if (loadedMessage.isInline()) {
