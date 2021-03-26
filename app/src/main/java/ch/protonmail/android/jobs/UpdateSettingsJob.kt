@@ -33,9 +33,9 @@ import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ConstantTime
-import ch.protonmail.android.utils.Logger
 import com.birbit.android.jobqueue.Params
 import me.proton.core.util.kotlin.EMPTY_STRING
+import timber.log.Timber
 import java.util.ArrayList
 
 class UpdateSettingsJob(
@@ -48,7 +48,6 @@ class UpdateSettingsJob(
     private val actionLeftSwipeChanged: Boolean = false,
     private val actionRightSwipeChanged: Boolean = false,
     private val newEmail: String = "",
-    private val mailSettings: MailSettings? = null,
     private val backPressed: Boolean = false,
     private val addressId: String = "",
     private val password: ByteArray = byteArrayOf(),
@@ -136,10 +135,10 @@ class UpdateSettingsJob(
                     for (address in addresses) {
                         if (address.id == addressId) {
                             val responseBody = getApi().editAddress(address.id, newDisplayName, address.signature)
-                            Logger.doLog(
-                                "editAddress",
-                                "address: " + address.email + " new DN: " +
-                                    newDisplayName + " response: " + responseBody.code
+                            Timber.d(
+                                "editAddress address: ${address.email} " +
+                                    "new display name: $newDisplayName " +
+                                    "response: ${responseBody.code}"
                             )
                             address.displayName = newDisplayName
                             break

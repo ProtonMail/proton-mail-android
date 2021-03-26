@@ -75,7 +75,7 @@ class UpdateSettingsJobTest {
     @Test
     fun jobCallsApiToUpdateAutoShowImagesSettingWhenMailSettingsAreValidAndNotificationEmailDidNotChange() {
         val mailSettings = MailSettings()
-        updateSettings = UpdateSettingsJob(mailSettings = mailSettings)
+        updateSettings = UpdateSettingsJob()
 
         updateSettings.onRun()
 
@@ -87,8 +87,7 @@ class UpdateSettingsJobTest {
         val mailSettings = MailSettings()
         mailSettings.viewMode = VIEW_MODE_CONVERSATION
         updateSettings = UpdateSettingsJob(
-            featureFlags = featureFlagsManager,
-            mailSettings = mailSettings
+            featureFlags = featureFlagsManager
         )
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
 
@@ -101,8 +100,7 @@ class UpdateSettingsJobTest {
     fun jobDoesNotCallApiToUpdateViewModeToggleWhenViewModeFeatureFlagIsFalse() {
         val mailSettings = MailSettings()
         updateSettings = UpdateSettingsJob(
-            featureFlags = featureFlagsManager,
-            mailSettings = mailSettings
+            featureFlags = featureFlagsManager
         )
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns false
 

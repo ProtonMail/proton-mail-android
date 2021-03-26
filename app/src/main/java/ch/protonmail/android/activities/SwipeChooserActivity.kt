@@ -137,8 +137,10 @@ class SwipeChooserActivity : BaseActivity() {
                     val userPreferences =
                         SecureSharedPreferences.getPrefsForUser(this, mUserManager.requireCurrentUserId())
                     mailSettings.saveBlocking(userPreferences)
-                    val job = UpdateSettingsJob(actionRightSwipeChanged = actionRightSwipeChanged,
-                            actionLeftSwipeChanged = actionLeftSwipeChanged)
+                    val job = UpdateSettingsJob(
+                        actionLeftSwipeChanged = actionLeftSwipeChanged,
+                        actionRightSwipeChanged = actionRightSwipeChanged
+                    )
                     mJobManager.addJobInBackground(job)
                     break
                 }

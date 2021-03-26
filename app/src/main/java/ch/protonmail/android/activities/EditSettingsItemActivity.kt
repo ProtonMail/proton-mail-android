@@ -312,7 +312,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                         mailSettings.showImagesFrom = mailSettings.showImagesFrom.toggleRemote()
 
                         mailSettings.saveBlocking(SecureSharedPreferences.getPrefsForUser(this, user.id))
-                        val job = UpdateSettingsJob(mailSettings = mailSettings)
+                        val job = UpdateSettingsJob()
                         mJobManager.addJobInBackground(job)
                     }
                 }
@@ -327,7 +327,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                         mailSettings.showImagesFrom = mailSettings.showImagesFrom.toggleEmbedded()
 
                         mailSettings.saveBlocking(SecureSharedPreferences.getPrefsForUser(this, user.id))
-                        val job = UpdateSettingsJob(mailSettings = mailSettings)
+                        val job = UpdateSettingsJob()
                         mJobManager.addJobInBackground(job)
                     }
                 }

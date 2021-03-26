@@ -20,7 +20,6 @@ package ch.protonmail.android.activities
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.View
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
@@ -155,18 +154,13 @@ class AccountSettingsActivity : BaseSettingsActivity() {
     }
 
     private fun setupViewModeChangedListener(mailSettings: MailSettings?) {
-        setToggleListener(
-            SettingsEnum.CONVERSATION_MODE,
-            object : (View, Boolean) -> Unit {
-                override fun invoke(view: View, isEnabled: Boolean) {
-                    mailSettings?.viewMode = if (isEnabled) 0 else 1
-                    mailSettings?.saveBlocking(
-                        SecureSharedPreferences.getPrefsForUser(this@AccountSettingsActivity, user.id)
-                    )
-                    mJobManager.addJobInBackground(UpdateSettingsJob(mailSettings = mailSettings))
-                }
-            }
-        )
+        setToggleListener(SettingsEnum.CONVERSATION_MODE) { _, isEnabled ->
+            mailSettings?.viewMode = if (isEnabled) 0 else 1
+            mailSettings?.saveBlocking(
+                SecureSharedPreferences.getPrefsForUser(this@AccountSettingsActivity, user.id)
+            )
+            mJobManager.addJobInBackground(UpdateSettingsJob())
+        }
     }
 
     private fun getSettingsItems(): Int {
