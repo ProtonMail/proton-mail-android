@@ -73,16 +73,6 @@ class UpdateSettingsJobTest {
     }
 
     @Test
-    fun jobSavesMailSettingsToUserManagerWhenMailSettingsAreValid() {
-        val mailSettings = MailSettings()
-        updateSettings = UpdateSettingsJob(mailSettings = mailSettings)
-
-        updateSettings.onRun()
-
-        verify { mockUserManager.mailSettings = mailSettings }
-    }
-
-    @Test
     fun jobCallsApiToUpdateAutoShowImagesSettingWhenMailSettingsAreValidAndNotificationEmailDidNotChange() {
         val mailSettings = MailSettings()
         updateSettings = UpdateSettingsJob(mailSettings = mailSettings)

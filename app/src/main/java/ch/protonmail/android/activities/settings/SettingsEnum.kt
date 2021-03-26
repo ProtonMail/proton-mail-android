@@ -42,7 +42,7 @@ enum class SettingsEnum {
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String = context.resources.getString(R.string.storage)
     },
-    CONVERSATION_MODE_TOGGLE {
+    CONVERSATION_MODE {
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String = context.resources.getString(R.string.enable_conversation_mode)
     },

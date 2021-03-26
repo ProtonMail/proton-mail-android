@@ -20,9 +20,9 @@ package ch.protonmail.android.activities
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.View
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.BuildConfig
-import android.view.View
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
@@ -39,10 +39,10 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import javax.inject.Inject
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.equalsNoCase
+import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AccountSettingsActivity : BaseSettingsActivity() {
@@ -151,12 +151,12 @@ class AccountSettingsActivity : BaseSettingsActivity() {
      */
     private fun showCurrentViewModeSetting(mailSettings: MailSettings?) {
         Timber.d("MailSettings ViewMode = ${mailSettings?.viewMode}")
-        setEnabled(SettingsEnum.CONVERSATION_MODE_TOGGLE, mailSettings?.viewMode == 0)
+        setEnabled(SettingsEnum.CONVERSATION_MODE, mailSettings?.viewMode == 0)
     }
 
     private fun setupViewModeChangedListener(mailSettings: MailSettings?) {
         setToggleListener(
-            SettingsEnum.CONVERSATION_MODE_TOGGLE,
+            SettingsEnum.CONVERSATION_MODE,
             object : (View, Boolean) -> Unit {
                 override fun invoke(view: View, isEnabled: Boolean) {
                     mailSettings?.viewMode = if (isEnabled) 0 else 1
