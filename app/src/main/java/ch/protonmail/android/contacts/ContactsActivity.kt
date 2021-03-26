@@ -26,7 +26,6 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
@@ -223,15 +222,6 @@ class ContactsActivity :
         val searchView = actionView as SearchView
         val searchListeners = pagerAdapter.getSearchListeners(supportFragmentManager)
         setOnActionExpandListener(SearchExpandListener(searchView, searchListeners))
-        val searchTextView =
-            searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
-        try {
-            val mCursorDrawableRes = TextView::class.java.getDeclaredField("mCursorDrawableRes")
-            mCursorDrawableRes.isAccessible = true
-            mCursorDrawableRes.set(searchTextView, R.drawable.cursor)
-        } catch (ignored: Exception) {
-            // NOOP
-        }
         searchView.maxWidth = Integer.MAX_VALUE
         searchView.queryHint = getString(R.string.search_contacts)
         searchView.imeOptions = EditorInfo.IME_ACTION_SEARCH or EditorInfo.IME_FLAG_NO_EXTRACT_UI or

@@ -24,7 +24,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -36,8 +35,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.otto.Subscribe;
-
-import java.lang.reflect.Field;
 
 import javax.inject.Inject;
 
@@ -189,15 +186,6 @@ public class SearchActivity extends BaseActivity {
         MenuItem searchItem = menu.findItem(R.id.search);
 
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-
-        AutoCompleteTextView searchTextView = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
-        try {
-            Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
-            mCursorDrawableRes.setAccessible(true);
-            mCursorDrawableRes.set(searchTextView, R.drawable.cursor);
-        } catch (Exception e) {
-            // NOOP
-        }
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setQueryHint(getString(R.string.search_messages));
         searchView.onActionViewExpanded();
