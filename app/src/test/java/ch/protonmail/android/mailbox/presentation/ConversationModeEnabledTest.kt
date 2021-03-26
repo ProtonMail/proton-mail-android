@@ -52,7 +52,7 @@ class ConversationModeEnabledTest {
     @Test
     fun conversationModeIsEnabledWhenFeatureFlagIsEnabledAndUserViewModeIsConversationMode() {
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        every { userManager.mailSettings } returns mailSettingsWithConversationViewMode()
+        every { userManager.getCurrentUserMailSettingsBlocking() } returns mailSettingsWithConversationViewMode()
 
         val actual = conversationModeEnabled(Constants.MessageLocationType.INBOX)
 
@@ -71,7 +71,7 @@ class ConversationModeEnabledTest {
     @Test
     fun conversationModeIsDisabledWhenFeatureFlagIsEnabledButUserViewModeIsMessagesMode() {
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        every { userManager.mailSettings } returns mailSettingsWithMessagesViewMode()
+        every { userManager.getCurrentUserMailSettingsBlocking() } returns mailSettingsWithMessagesViewMode()
 
         val actual = conversationModeEnabled(Constants.MessageLocationType.INBOX)
 
@@ -81,7 +81,7 @@ class ConversationModeEnabledTest {
     @Test
     fun conversationModeIsDisabledWhenInputLocationIsDraft() {
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        every { userManager.mailSettings } returns mailSettingsWithConversationViewMode()
+        every { userManager.getCurrentUserMailSettingsBlocking() } returns mailSettingsWithConversationViewMode()
 
         val actual = conversationModeEnabled(Constants.MessageLocationType.DRAFT)
 
@@ -91,7 +91,7 @@ class ConversationModeEnabledTest {
     @Test
     fun conversationModeIsDisabledWhenInputLocationIsSent() {
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        every { userManager.mailSettings } returns mailSettingsWithConversationViewMode()
+        every { userManager.getCurrentUserMailSettingsBlocking() } returns mailSettingsWithConversationViewMode()
 
         val actual = conversationModeEnabled(Constants.MessageLocationType.ALL_SENT)
 
@@ -101,7 +101,7 @@ class ConversationModeEnabledTest {
     @Test
     fun conversationModeIsDisabledWhenInputLocationIsSearch() {
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        every { userManager.mailSettings } returns mailSettingsWithConversationViewMode()
+        every { userManager.getCurrentUserMailSettingsBlocking() } returns mailSettingsWithConversationViewMode()
 
         val actual = conversationModeEnabled(Constants.MessageLocationType.SEARCH)
 
@@ -111,14 +111,14 @@ class ConversationModeEnabledTest {
     @Test
     fun conversationModeIsEnabledWhenLocationIsArchive() {
         every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-        every { userManager.mailSettings } returns mailSettingsWithConversationViewMode()
+        every { userManager.getCurrentUserMailSettingsBlocking() } returns mailSettingsWithConversationViewMode()
 
         val actual = conversationModeEnabled(Constants.MessageLocationType.ARCHIVE)
 
         assertEquals(true, actual)
     }
 
-    private fun mailSettingsWithMessagesViewMode(): MailSettings? {
+    private fun mailSettingsWithMessagesViewMode(): MailSettings {
         val mailSettings = MailSettings()
         mailSettings.viewMode = 1
         return mailSettings

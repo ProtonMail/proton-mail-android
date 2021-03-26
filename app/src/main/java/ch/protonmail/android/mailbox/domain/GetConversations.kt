@@ -23,14 +23,11 @@ import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 
 class GetConversations @Inject constructor(
-    private val dispatchers: DispatcherProvider,
     private val conversationRepository: ConversationsRepository
 ) {
 
@@ -46,6 +43,5 @@ class GetConversations @Inject constructor(
             .catch {
                 Timber.i("GetConversations Failed with Exception: $it")
             }
-            .flowOn(dispatchers.Io)
     }
 }

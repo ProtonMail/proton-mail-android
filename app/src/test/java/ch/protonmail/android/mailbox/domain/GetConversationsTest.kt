@@ -45,7 +45,6 @@ class GetConversationsTest : CoroutinesTest {
     fun setUp() {
         MockKAnnotations.init(this)
         getConversations = GetConversations(
-            dispatchers,
             conversationRepository
         )
     }
@@ -94,7 +93,6 @@ class GetConversationsTest : CoroutinesTest {
         0,
         "addressId",
         listOf(),
-        listOf(),
-        null
+        listOf()
     )
 }
