@@ -32,11 +32,10 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants.CONTACTS_PAGE_SIZE
-import ch.protonmail.android.data.local.ContactDao
-import kotlinx.coroutines.withContext
-import me.proton.core.util.kotlin.DispatcherProvider
+import ch.protonmail.android.core.UserManager
 import timber.log.Timber
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
@@ -56,12 +55,17 @@ class FetchContactsDataWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
-    private val contactDao: ContactDao,
-    private val dispatchers: DispatcherProvider
+    private val databaseProvider: DatabaseProvider,
+    private val userManager: UserManager
 ) : CoroutineWorker(context, params) {
 
-    override suspend fun doWork(): Result =
-        runCatching {
+    override suspend fun doWork(): Result {
+        val userId = userManager.currentUserId
+            ?: return failure("Can't fetch contacts without a logged in user")
+
+        val contactDao = databaseProvider.provideContactDao(userId)
+
+        return runCatching {
             Timber.v("Fetch Contacts Worker started")
             var page = 0
             var response = api.fetchContacts(page, CONTACTS_PAGE_SIZE)
@@ -91,6 +95,7 @@ class FetchContactsDataWorker @WorkerInject constructor(
                 shouldReRunOnThrowable(it)
             }
         )
+    }
 
     private fun shouldReRunOnThrowable(throwable: Throwable): Result {
         if (throwable is CancellationException) {

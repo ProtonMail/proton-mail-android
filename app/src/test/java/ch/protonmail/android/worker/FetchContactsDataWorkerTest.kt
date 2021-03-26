@@ -24,18 +24,19 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactsDataResponse
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
+import ch.protonmail.android.domain.entity.Id
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
+import me.proton.core.test.kotlin.assertIs
 import me.proton.core.util.android.workmanager.toWorkData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -43,24 +44,33 @@ import kotlin.test.assertEquals
 
 class FetchContactsDataWorkerTest {
 
-    @RelaxedMockK
-    private lateinit var context: Context
+    private val context: Context = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var parameters: WorkerParameters
+    private val parameters: WorkerParameters = mockk(relaxed = true)
 
-    @MockK
-    private lateinit var contactDao: ContactDao
+    private val contactDao: ContactDao = mockk()
+    private val databaseProvider: DatabaseProvider = mockk {
+        every { provideContactDao(any()) } returns contactDao
+    }
 
-    @MockK
-    private lateinit var api: ProtonMailApiManager
+    private val api: ProtonMailApiManager = mockk()
+
+    private val userManager: UserManager = mockk {
+        every { currentUserId } returns Id("id")
+    }
 
     private lateinit var worker: FetchContactsDataWorker
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        worker = FetchContactsDataWorker(context, parameters, api, contactDao, TestDispatcherProvider)
+        worker = FetchContactsDataWorker(
+            context = context,
+            params = parameters,
+            api = api,
+            databaseProvider = databaseProvider,
+            userManager = userManager
+        )
     }
 
     @Test
@@ -85,6 +95,19 @@ class FetchContactsDataWorkerTest {
             assertEquals(expected, operationResult)
         }
 
+    @Test
+    fun properErrorIsReturnedIfNoLoggedInUser() = runBlockingTest {
+        // given
+        every { userManager.currentUserId } returns null
+
+        // when
+        val operationResult = worker.doWork()
+
+        // then
+        assertIs<ListenableWorker.Result.Failure>(operationResult)
+        val failure = operationResult as ListenableWorker.Result.Failure
+        assertEquals(WorkerError("Can't fetch contacts without a logged in user"), failure.outputData.error())
+    }
 
     @Test
     fun verityThatWhenExceptionIsThrownJustOnceRetryResultIsReturned() =
