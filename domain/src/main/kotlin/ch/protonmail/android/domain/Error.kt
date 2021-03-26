@@ -16,40 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-import studio.forface.easygradle.dsl.*
 
-plugins {
-    `java-library`
-    `kotlin`
-    `kotlin-serialization`
-}
+package ch.protonmail.android.domain
 
-dependencies {
-    implementation(
-
-        // Core
-        `Proton-kotlin-util`,
-        `Proton-domain`,
-
-        // Kotlin
-        `kotlin-jdk8`,
-        `coroutines-core`,
-        `serialization-json`,
-
-        // Arrow
-        `arrow-core`,
-
-        // DI
-        `dagger`
-    )
-
-    testImplementation(project(Module.testKotlin))
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs +
-            // Allow to use kotlin.Result as return type
-            "-Xallow-result-return-type"
-    }
-}
+abstract class Error

@@ -66,6 +66,12 @@ val DependencyHandler.`hamcrest` get() =                    dependency("org.hamc
 // testRail
 val DependencyHandler.`json-simple` get() =                 dependency("com.googlecode.json-simple", module = "json-simple") version `json-simple version`
 
+// region Arrow
+fun DependencyHandler.arrow(moduleSuffix: String) =
+    dependency("io.arrow-kt", module = "arrow", moduleSuffix = moduleSuffix) version `arrow version`
+val DependencyHandler.`arrow-core` get() = arrow("core")
+// endregion
+
 // region Retrofit
 val DependencyHandler.`retrofit-gson` get() =               squareup("retrofit2", "converter-gson") version `retrofit version`
 val DependencyHandler.`retrofit-rxJava` get() =             squareup("retrofit2", "adapter-rxjava2") version `retrofit version`

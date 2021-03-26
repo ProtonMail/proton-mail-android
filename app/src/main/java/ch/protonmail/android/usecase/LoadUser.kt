@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.usecase
 
+import arrow.core.Either
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper
@@ -35,10 +36,11 @@ class LoadUser @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) {
 
-    suspend operator fun invoke(userId: Id): User = withContext(dispatchers.Io) {
-        val legacyUser = loadLegacyUser(userId)
-        mapper { legacyUser.toNewUser() }
-    }
+    suspend operator fun invoke(userId: Id): Either<Error, User> =
+        withContext(dispatchers.Io) {
+            loadLegacyUser(userId)
+                .map { mapper { it.toNewUser() } }
+        }
 
 
     @Deprecated(
@@ -48,4 +50,6 @@ class LoadUser @Inject constructor(
     fun blocking(userId: Id) = runBlocking {
         invoke(userId)
     }
+
+    object Error : ch.protonmail.android.domain.Error()
 }

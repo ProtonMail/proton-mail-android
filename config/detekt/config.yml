@@ -109,9 +109,11 @@ complexity:
     ignoredLabels: []
   LargeClass:
     active: true
+    excludes: ['**/test/**', '**/**Test/**']
     threshold: 500
   LongMethod:
     active: true
+    excludes: ['**/test/**', '**/**Test/**']
     threshold: 60
   LongParameterList:
     active: true

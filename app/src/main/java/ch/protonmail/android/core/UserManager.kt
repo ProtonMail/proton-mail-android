@@ -39,6 +39,8 @@ import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.Plan
+import ch.protonmail.android.domain.util.orThrow
+import ch.protonmail.android.domain.util.suspendRunCatching
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.events.GenerateKeyPairEvent
 import ch.protonmail.android.events.LogoutEvent
@@ -549,7 +551,7 @@ class UserManager @Inject constructor(
 
     suspend fun switchTo(userId: Id) {
         setCurrentUser(userId)
-        user = loadLegacyUser(userId)
+        user = loadLegacyUser(userId).orThrow()
         loadSettings(userId)
     }
 
@@ -638,7 +640,7 @@ class UserManager @Inject constructor(
             AppUtil.deleteSecurePrefs(preferencesFor(userId), false)
             clearUserData(userId)
             setCurrentUser(nextUserId)
-            val nextUser = loadUser(nextUserId)
+            val nextUser = loadUser(nextUserId).orThrow()
             val event = SwitchUserEvent(from = oldUser.id to oldUser.name, to = nextUser.id to nextUser.name)
             ForceSwitchedAccountNotifier.notifier.postValue(event)
             TokenManager.clearInstance(userId)
@@ -837,7 +839,7 @@ class UserManager @Inject constructor(
     @Synchronized
     suspend fun getUser(userId: Id): NewUser =
         cachedUsers.getOrPut(userId) {
-            loadUser(userId)
+            loadUser(userId).orThrow()
         }
 
     @Deprecated("Suspended function should be used instead", ReplaceWith("getUser(userId)"))
@@ -850,7 +852,7 @@ class UserManager @Inject constructor(
     @Synchronized
     suspend fun getLegacyUser(userId: Id): User =
         cachedLegacyUsers.getOrPut(userId) {
-            loadLegacyUser(userId)
+            loadLegacyUser(userId).orThrow()
                 // Also save to cachedUsers
                 .also { legacyUser ->
                     runCatching { userMapper { legacyUser.toNewUser() } }
@@ -874,7 +876,12 @@ class UserManager @Inject constructor(
      *   @see Plan.Mail.Free
      */
     suspend fun canConnectAnotherAccount(): Boolean {
-        val freeLoggedInUserCount = accountManager.allLoggedIn().count { Plan.Mail.Free in getUser(it).plans }
+        val freeLoggedInUserCount = accountManager.allLoggedIn().count {
+            val user = suspendRunCatching { getUser(it) }
+                .getOrNull()
+                ?: return@count false
+            Plan.Mail.Free in user.plans
+        }
         return freeLoggedInUserCount <= 1
     }
 
@@ -1006,7 +1013,11 @@ class UserManager @Inject constructor(
             userSettings = UserSettings.load(preferences)
             snoozeSettings = SnoozeSettings.load(preferences)
             // Reload autoLockPINPeriod
-            getLegacyUser(userId).autoLockPINPeriod
+            suspendRunCatching { getLegacyUser(userId) }
+                .onSuccess { it.autoLockPINPeriod }
+                // This is expected in some scenarios, as the user is not saved yet, so logging higher than info is
+                //  not necessary
+                .onFailure { Timber.i("Cannot load user settings") }
         }
     }
 
@@ -1057,7 +1068,7 @@ class UserManager @Inject constructor(
                     ?: return@withContext
                 prefs -= PREF_USERNAME
 
-                val currentUserId = findUserIdForUsername(Name(currentUsername))
+                val currentUserId = findUserIdForUsername(Name(currentUsername)).orThrow()
                 prefs[PREF_CURRENT_USER_ID] = currentUserId.s
             }
         }

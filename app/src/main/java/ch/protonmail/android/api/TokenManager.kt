@@ -30,7 +30,6 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.libs.core.utils.takeIfNotEmpty
 import me.proton.core.util.android.sharedpreferences.clearAll
 import me.proton.core.util.android.sharedpreferences.get
-import me.proton.core.util.kotlin.unsupported
 
 // region constants
 private const val PREF_ENC_PRIV_KEY = "priv_key"
@@ -139,20 +138,8 @@ class TokenManager private constructor(private val pref: SharedPreferences) {
         }
 
         @Synchronized
-        @Deprecated("Use user Id", ReplaceWith("clearInstance(userId)"), DeprecationLevel.ERROR)
-        fun clearInstance(username: String) {
-            unsupported
-        }
-
-        @Synchronized
         fun clearAllInstances() {
             cache.clear()
-        }
-
-        @Suppress("DeprecatedCallableAddReplaceWith") // No replacement
-        @Deprecated("Not needed anymore", level = DeprecationLevel.ERROR)
-        fun removeEmptyTokenManagers() {
-            unsupported
         }
 
         /**
