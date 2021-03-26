@@ -18,13 +18,8 @@
  */
 package ch.protonmail.android.jobs.user
 
-import ch.protonmail.android.api.models.MailSettingsResponse
-import ch.protonmail.android.api.models.UserInfo
-import ch.protonmail.android.api.models.UserSettingsResponse
 import ch.protonmail.android.api.models.address.AddressKeyActivationWorker
-import ch.protonmail.android.api.models.address.AddressesResponse
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.user.UserSettingsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
@@ -46,70 +41,52 @@ class FetchUserSettingsJob(
 
         Timber.v("FetchUserSettingsJob started for user: $userId")
 
-        val userInfo: UserInfo
-        val userSettings: UserSettingsResponse
-        val mailSettings: MailSettingsResponse
-        val addresses: AddressesResponse
-
         val userId = userId
-        if (userId != null) {
-            val user = getUserManager().getLegacyUserBlocking(checkNotNull(userId))
-            userInfo = getApi().fetchUserInfoBlocking(userId)
-            userSettings = getApi().fetchUserSettings(userId)
-            mailSettings = getApi().fetchMailSettingsBlocking(userId)
-            addresses = getApi().fetchAddressesBlocking(userId)
-            getUserManager().setUserDetailsBlocking(
-                user,
-                addresses.addresses,
-                mailSettings.mailSettings,
-                userSettings.userSettings
-            )
-
-            AddressKeyActivationWorker.activateAddressKeysIfNeeded(
-                applicationContext,
-                addresses.addresses,
-                userId
-            )
-            user.notificationSetting = getUserManager().user.notificationSetting
-            user.save()
-
-            if (userId == getUserManager().currentUserId) {
-                // if primary
-                AppUtil.deleteDatabases(applicationContext, userId, true)
-                getJobManager().addJobInBackground(
-                    FetchByLocationJob(
-                        Constants.MessageLocationType.INBOX,
-                        null,
-                        true,
-                        null,
-                        false
-                    )
-                )
-                fetchContactsData.enqueue()
-                fetchContactsEmails.enqueue(2.seconds.toLongMilliseconds())
-            } else {
-                AppUtil.deleteDatabases(ProtonMailApplication.getApplication(), userId, false)
+            ?: getUserManager().currentUserId
+            ?: run {
+                Timber.w("Cannot fetch user settings as there is no logged in user")
+                return
             }
-        } else {
-            val user = getUserManager().getCurrentLegacyUserBlocking()
-            userSettings = getApi().fetchUserSettings()
-            mailSettings = getApi().fetchMailSettingsBlocking()
-            addresses = getApi().fetchAddressesBlocking()
-            getUserManager().setUserDetailsBlocking(
-                user!!,
-                mailSettings = mailSettings.mailSettings,
-                userSettings = userSettings.userSettings,
-                addresses = addresses.addresses
-            )
 
-            AddressKeyActivationWorker.activateAddressKeysIfNeeded(
-                applicationContext,
-                addresses.addresses,
-                getUserManager().requireCurrentUserId()
-            )
-            user.notificationSetting = getUserManager().user.notificationSetting
-            user.save()
+        val user = getUserManager().getLegacyUserBlocking(userId)
+        val userSettings = getApi().fetchUserSettings(userId)
+        val mailSettings = getApi().fetchMailSettingsBlocking(userId)
+        val addresses = getApi().fetchAddressesBlocking(userId)
+        getUserManager().setUserDetailsBlocking(
+            user,
+            addresses.addresses,
+            mailSettings.mailSettings,
+            userSettings.userSettings
+        )
+
+        AddressKeyActivationWorker.activateAddressKeysIfNeeded(
+            applicationContext,
+            addresses.addresses,
+            userId
+        )
+        getUserManager().getCurrentLegacyUserBlocking()?.let { currentUser ->
+            user.notificationSetting = currentUser.notificationSetting
         }
+        user.save()
+
+        val isCurrentUser = userId == getUserManager().currentUserId
+        if (isCurrentUser) {
+            AppUtil.deleteDatabases(applicationContext, userId, true)
+            getJobManager().addJobInBackground(
+                FetchByLocationJob(
+                    Constants.MessageLocationType.INBOX,
+                    null,
+                    true,
+                    null,
+                    false
+                )
+            )
+            fetchContactsData.enqueue()
+            fetchContactsEmails.enqueue(2.seconds.toLongMilliseconds())
+        } else {
+            AppUtil.deleteDatabases(applicationContext, userId, false)
+        }
+
         AppUtil.postEventOnUi(UserSettingsEvent(userSettings.userSettings))
     }
 }
