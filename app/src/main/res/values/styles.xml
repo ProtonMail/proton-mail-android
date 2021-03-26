@@ -37,7 +37,7 @@
         <item name="colorControlNormal">@color/dark_purple</item>
         <item name="colorControlActivated">@color/dark_purple</item>
         <item name="colorControlHighlight">@color/dark_purple</item>
-        <item name="android:autoCompleteTextViewStyle">@style/PMAutoCompleteView</item>
+        <item name="autoCompleteTextViewStyle">@style/PMAutoCompleteView</item>
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowDisablePreview">true</item>
     </style>
