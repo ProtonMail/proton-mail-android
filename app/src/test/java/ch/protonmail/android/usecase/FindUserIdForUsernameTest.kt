@@ -22,16 +22,20 @@ package ch.protonmail.android.usecase
 import arrow.core.Left
 import arrow.core.Right
 import arrow.core.right
-import assert4k.*
+import assert4k.assert
+import assert4k.equals
+import assert4k.that
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.usecase.FindUserIdForUsername.Error.CantLoadUser
 import ch.protonmail.android.usecase.FindUserIdForUsername.Error.UserNotFound
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
 import me.proton.core.test.kotlin.CoroutinesTest
-import kotlin.test.*
+import kotlin.test.Test
 
 /**
  * Test suite for [FindUserIdForUsername]

@@ -20,12 +20,19 @@
 package ch.protonmail.android.usecase
 
 import arrow.core.Either
-import assert4k.*
+import assert4k.`is`
+import assert4k.assert
+import assert4k.equals
+import assert4k.that
+import assert4k.times
+import assert4k.type
+import assert4k.unaryPlus
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.util.leftOrThrow
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
 import me.proton.core.test.kotlin.CoroutinesTest
-import kotlin.test.*
+import kotlin.test.Test
 
 /**
  * Test suite for [LoadLegacyUser]
