@@ -22,6 +22,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.text.Spanned
 import android.text.TextUtils
+import androidx.core.net.MailTo
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -58,6 +59,7 @@ import ch.protonmail.android.usecase.fetch.FetchPublicKeys
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import ch.protonmail.android.utils.Event
+import ch.protonmail.android.utils.MailToData
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
@@ -72,6 +74,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.util.HashMap
 import java.util.UUID
@@ -413,7 +416,9 @@ class ComposeMessageViewModel @Inject constructor(
                 message.messageId = draftId
                 val newAttachments = calculateNewAttachments(uploadAttachments)
 
-                invokeSaveDraftUseCase(message, newAttachments, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger)
+                invokeSaveDraftUseCase(
+                    message, newAttachments, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger
+                )
 
                 // overwrite "old sender ID" when updating draft
                 _oldSenderAddressId = message.addressID ?: _messageDataResult.addressId
@@ -434,11 +439,15 @@ class ComposeMessageViewModel @Inject constructor(
                     message.numAttachments = listOfAttachments.size
                     saveMessage(message)
                     newAttachmentIds = filterUploadedAttachments(
-                        composeMessageRepository.createAttachmentList(_messageDataResult.attachmentList, dispatchers.Io),
+                        composeMessageRepository.createAttachmentList(
+                            _messageDataResult.attachmentList, dispatchers.Io
+                        ),
                         uploadAttachments
                     )
                 }
-                invokeSaveDraftUseCase(message, newAttachmentIds, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger)
+                invokeSaveDraftUseCase(
+                    message, newAttachmentIds, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger
+                )
 
                 _oldSenderAddressId = ""
                 setIsDirty(false)
@@ -495,7 +504,8 @@ class ComposeMessageViewModel @Inject constructor(
 
     private suspend fun calculateNewAttachments(uploadAttachments: Boolean): List<String> {
         var newAttachments: List<String> = ArrayList()
-        val localAttachmentsList = _messageDataResult.attachmentList.filter { !it.isUploaded } // these are composer attachments
+        val localAttachmentsList =
+            _messageDataResult.attachmentList.filter { !it.isUploaded } // these are composer attachments
 
         // we need to compare them and find out which are new attachments
         if (uploadAttachments && localAttachmentsList.isNotEmpty()) {
@@ -570,7 +580,11 @@ class ComposeMessageViewModel @Inject constructor(
         composeMessageRepository.getSendPreference(emailList, destination)
     }
 
-    fun startResignContactJobJob(contactEmail: String, sendPreference: SendPreference, destination: GetSendPreferenceJob.Destination) {
+    fun startResignContactJobJob(
+        contactEmail: String,
+        sendPreference: SendPreference,
+        destination: GetSendPreferenceJob.Destination
+    ) {
         composeMessageRepository.resignContactJob(contactEmail, sendPreference, destination)
     }
 
@@ -663,7 +677,8 @@ class ComposeMessageViewModel @Inject constructor(
                 val message = composeMessageRepository.findMessage(draftId)
 
                 if (message != null) {
-                    val messageAttachments = composeMessageRepository.getAttachments(message, _messageDataResult.isTransient, dispatchers.Io)
+                    val messageAttachments =
+                        composeMessageRepository.getAttachments(message, _messageDataResult.isTransient, dispatchers.Io)
                     if (oldList.size <= messageAttachments.size) {
                         val attachments = LocalAttachment.createLocalAttachmentList(messageAttachments)
                         _messageDataResult = MessageBuilderData.Builder()
@@ -755,7 +770,8 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun createLocalAttachments(loadedMessage: Message) {
         viewModelScope.launch {
-            val messageAttachments = composeMessageRepository.getAttachments(loadedMessage, _messageDataResult.isTransient, dispatchers.Io)
+            val messageAttachments =
+                composeMessageRepository.getAttachments(loadedMessage, _messageDataResult.isTransient, dispatchers.Io)
             val localAttachments = LocalAttachment.createLocalAttachmentList(messageAttachments).toMutableList()
             _messageDataResult = MessageBuilderData.Builder()
                 .fromOld(_messageDataResult)
@@ -961,7 +977,13 @@ class ComposeMessageViewModel @Inject constructor(
     private fun handleContactGroupsResult() {
         val messageRecipientList = java.util.ArrayList<MessageRecipient>()
         for (contactLabel in _data) {
-            val recipient = MessageRecipient(String.format(_composerGroupCountOf, contactLabel.name, contactLabel.contactEmailsCount, contactLabel.contactEmailsCount), "")
+            val recipient = MessageRecipient(
+                String.format(
+                    _composerGroupCountOf, contactLabel.name, contactLabel.contactEmailsCount,
+                    contactLabel.contactEmailsCount
+                ),
+                ""
+            )
             recipient.group = contactLabel.name
             recipient.groupRecipients = getContactGroupRecipients(contactLabel)
             recipient.groupIcon = R.string.contact_group_groups_icon
@@ -999,7 +1021,10 @@ class ComposeMessageViewModel @Inject constructor(
             var signatureBuilder = StringBuilder()
             if (composerBody == null) {
                 signatureBuilder = initSignatures()
-                if (!TextUtils.isEmpty(messageDataResult.signature) && MessageUtils.containsRealContent(messageDataResult.signature) && user.isShowSignature) {
+                if (!TextUtils.isEmpty(messageDataResult.signature) && MessageUtils.containsRealContent(
+                        messageDataResult.signature
+                    ) && user.isShowSignature
+                ) {
                     signatureBuilder.append(messageDataResult.signature)
                     signatureBuilder.append(NEW_LINE)
                     signatureBuilder.append(NEW_LINE)
@@ -1019,7 +1044,9 @@ class ComposeMessageViewModel @Inject constructor(
         if (!TextUtils.isEmpty(messageBody)) {
             messageBodySetup.webViewVisibility = true
             val sender =
-                String.format(senderNameAddressFormat, _messageDataResult.senderName, _messageDataResult.senderEmailAddress)
+                String.format(
+                    senderNameAddressFormat, _messageDataResult.senderName, _messageDataResult.senderEmailAddress
+                )
             setQuotationHeader(sender, originalMessageDividerString, replyPrefixOnString, formattedDateTimeString)
             builder.append("<blockquote class=\"protonmail_quote\">")
             builder.append(NEW_LINE)
@@ -1119,6 +1146,7 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     class MessageBodySetup {
+
         var composeBody: Spanned? = null
         var webViewVisibility: Boolean = false
         var respondInlineVisibility: Boolean = false
@@ -1143,7 +1171,9 @@ class ComposeMessageViewModel @Inject constructor(
         content = UiUtil.createLinksSending(content)
 
         if (signatureContainsHtml) {
-            val fromHtmlSignature = UiUtil.createLinksSending(UiUtil.fromHtml(_messageDataResult.signature).toString().replace("\n", NEW_LINE))
+            val fromHtmlSignature = UiUtil.createLinksSending(
+                UiUtil.fromHtml(_messageDataResult.signature).toString().replace("\n", NEW_LINE)
+            )
             if (!TextUtils.isEmpty(fromHtmlSignature)) {
                 content = content.replace(fromHtmlSignature, _messageDataResult.signature)
             }
@@ -1177,7 +1207,9 @@ class ComposeMessageViewModel @Inject constructor(
         content = UiUtil.createLinksSending(content)
 
         if (signatureContainsHtml) {
-            val fromHtmlSignature = UiUtil.createLinksSending((UiUtil.fromHtml(_messageDataResult.signature).toString()).replace("\n", NEW_LINE))
+            val fromHtmlSignature = UiUtil.createLinksSending(
+                (UiUtil.fromHtml(_messageDataResult.signature).toString()).replace("\n", NEW_LINE)
+            )
             if (!TextUtils.isEmpty(fromHtmlSignature)) {
                 content = content.replace(fromHtmlSignature, _messageDataResult.signature)
             }
@@ -1219,7 +1251,12 @@ class ComposeMessageViewModel @Inject constructor(
                 .observeOn(ThreadSchedulers.main())
                 .subscribe(
                     {
-                        if (Constants.MessageLocationType.fromInt(it.location) == Constants.MessageLocationType.SENT || Constants.MessageLocationType.fromInt(it.location) == Constants.MessageLocationType.ALL_SENT) {
+                        if (Constants.MessageLocationType.fromInt(
+                                it.location
+                            ) == Constants.MessageLocationType.SENT || Constants.MessageLocationType.fromInt(
+                                    it.location
+                                ) == Constants.MessageLocationType.ALL_SENT
+                        ) {
                             _closeComposer.postValue(Event(true))
                         }
                     },
@@ -1254,5 +1291,29 @@ class ComposeMessageViewModel @Inject constructor(
             Timber.d("Draft auto save triggered")
             setBeforeSaveDraft(false, messageBody)
         }
+    }
+
+    fun parseMailTo(dataString: String?): MailToData {
+        requireNotNull(dataString)
+        val mailTo = MailTo.parse(dataString)
+
+        // Addresses
+        val addresses = mailTo.to
+            ?.split(",")
+            ?.map { it.trim() } ?: emptyList()
+
+        val cc: List<String> = mailTo.cc
+            ?.split(",") ?: emptyList()
+
+        val bcc: List<String> = mailTo.bcc
+            ?.split(",") ?: emptyList()
+
+        val subject = mailTo.subject ?: EMPTY_STRING
+
+        val body = mailTo.body ?: EMPTY_STRING
+
+        val mailToData = MailToData(addresses, cc, subject, body, bcc)
+        Timber.v("Parsed mailto: $dataString to $mailToData")
+        return mailToData
     }
 }

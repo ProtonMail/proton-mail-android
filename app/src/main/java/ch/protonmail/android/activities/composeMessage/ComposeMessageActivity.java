@@ -159,7 +159,7 @@ import ch.protonmail.android.utils.HTMLTransformer.AbstractTransformer;
 import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer;
 import ch.protonmail.android.utils.HTMLTransformer.Transformer;
 import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer;
-import ch.protonmail.android.utils.MailTo;
+import ch.protonmail.android.utils.MailToData;
 import ch.protonmail.android.utils.MailToUtils;
 import ch.protonmail.android.utils.MessageUtils;
 import ch.protonmail.android.utils.ServerTime;
@@ -547,7 +547,7 @@ public class ComposeMessageActivity
                     }
                     String[] recipientEmails = extras.getStringArray(EXTRA_TO_RECIPIENTS);
                     if (recipientEmails != null && recipientEmails.length > 0) {
-                        addRecipientsToView(new ArrayList<>(Arrays.asList(recipientEmails)), mToRecipientsView);
+                        addStringRecipientsToView(new ArrayList<>(Arrays.asList(recipientEmails)), mToRecipientsView);
                     }
                     mComposeBodyEditText.requestFocus();
                 } else {
@@ -555,7 +555,7 @@ public class ComposeMessageActivity
                 }
                 if (extras.containsKey(EXTRA_CC_RECIPIENTS)) {
                     String[] recipientEmails = extras.getStringArray(EXTRA_CC_RECIPIENTS);
-                    addRecipientsToView(new ArrayList<>(Arrays.asList(recipientEmails)), mCcRecipientsView);
+                    addStringRecipientsToView(new ArrayList<>(Arrays.asList(recipientEmails)), mCcRecipientsView);
                     mAreAdditionalRowsVisible = true;
                     focusRespondInline();
                 }
@@ -836,13 +836,12 @@ public class ComposeMessageActivity
     private void extractMailTo(Intent intent) {
         Uri mailtoUri = intent.getData();
         if (mailtoUri != null && MailToUtils.MAILTO_SCHEME.equals(mailtoUri.getScheme())) {
-            MailTo mailTo = MailToUtils.parseIntent(intent);
-            ArrayList<String> recipients = new ArrayList<>(mailTo.getAddresses());
-            addRecipientsToView(recipients, mToRecipientsView);
+            MailToData mailToData = composeMessageViewModel.parseMailTo(intent.getDataString());
+            addStringRecipientsToView(mailToData.getAddresses(), mToRecipientsView);
         } else {
             try {
                 ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
-                addRecipientsToView(emails, mToRecipientsView);
+                addStringRecipientsToView(emails, mToRecipientsView);
             } catch (Exception e) {
                 Timber.e(e, "Extract mail to getting extra email");
             }
@@ -857,24 +856,28 @@ public class ComposeMessageActivity
         Uri uri = Objects.requireNonNull(intent.getData());
         String stringUri = uri.toString();
         if (stringUri.startsWith(MailToUtils.MAILTO_SCHEME)) {
-            MailTo mailTo = MailToUtils.parseIntent(intent);
+            MailToData mailToData = composeMessageViewModel.parseMailTo(stringUri);
             // Set recipient
-            ArrayList<String> recipients = new ArrayList<>(mailTo.getAddresses());
-            addRecipientsToView(recipients, mToRecipientsView);
+            addStringRecipientsToView(mailToData.getAddresses(), mToRecipientsView);
             // Set cc
-            ArrayList<String> ccRecipients = new ArrayList<>(mailTo.getCc());
-            addRecipientsToView(ccRecipients, mCcRecipientsView);
+            if (!mailToData.getCc().isEmpty() || !mailToData.getBcc().isEmpty()) {
+                setAdditionalRowVisibility(true);
+                mAreAdditionalRowsVisible = true;
+            }
+            addStringRecipientsToView(mailToData.getCc(), mCcRecipientsView);
+            // Set bcc
+            addStringRecipientsToView(mailToData.getBcc(), mBccRecipientsView);
             // Set subject
-            mMessageTitleEditText.setText(mailTo.getSubject());
+            mMessageTitleEditText.setText(mailToData.getSubject());
             // Set body
             Editable oldBody = mComposeBodyEditText.getText();
-            Editable newBody = Editable.Factory.getInstance().newEditable(mailTo.getBody());
+            Editable newBody = Editable.Factory.getInstance().newEditable(mailToData.getBody());
             mComposeBodyEditText.setText(newBody.append(oldBody));
 
         } else {
             try {
                 ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
-                addRecipientsToView(emails, mToRecipientsView);
+                addStringRecipientsToView(emails, mToRecipientsView);
             } catch (Exception e) {
                 Timber.w(e, "Extract mail to getting extra email");
             }
@@ -1739,7 +1742,9 @@ public class ComposeMessageActivity
         renderViews();
     }
 
-    private void addRecipientsToView(ArrayList<String> recipients, MessageRecipientView messageRecipientView) {
+    private Map<MessageRecipientView, List<MessageRecipient>> pendingRecipients = new HashMap<>();
+
+    private void addStringRecipientsToView(List<String> recipients, MessageRecipientView messageRecipientView) {
         for (String recipient : recipients) {
             if (CommonExtensionsKt.isValidEmail(recipient)) {
                 messageRecipientView.addObject(new MessageRecipient("", recipient));
@@ -1749,8 +1754,6 @@ public class ComposeMessageActivity
             }
         }
     }
-
-    private Map<MessageRecipientView, List<MessageRecipient>> pendingRecipients = new HashMap<>();
 
     private void addRecipientsToView(List<MessageRecipient> recipients, MessageRecipientView messageRecipientView) {
         if (!composeMessageViewModel.getSetupCompleteValue()) {

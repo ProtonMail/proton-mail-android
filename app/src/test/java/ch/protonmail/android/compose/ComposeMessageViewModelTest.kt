@@ -95,7 +95,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         stringResourceResolver,
         sendMessage,
         verifyConnection,
-        networkConfigurator
+        networkConfigurator,
     )
 
     @Test
