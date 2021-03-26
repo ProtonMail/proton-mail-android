@@ -246,6 +246,10 @@ class AccountManager(
 
             userManagerMigration()
         }
+
+        fun blocking() {
+            runBlocking { invoke() }
+        }
     }
 
     companion object {

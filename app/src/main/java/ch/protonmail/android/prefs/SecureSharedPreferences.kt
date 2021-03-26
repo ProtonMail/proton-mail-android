@@ -496,7 +496,6 @@ class SecureSharedPreferences(
         private const val keyStoreName = "AndroidKeyStore"
         private const val asymmetricKeyAlias = "ProtonMailKey"
 
-        private var decryptionErrorFlag = false
         private lateinit var SEKRIT: CharArray
         @SuppressLint("StaticFieldLeak")
         private var prefs: SecureSharedPreferences? = null

@@ -157,6 +157,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
     @Inject
     MultiUserFcmTokenManager multiUserFcmTokenManager;
 
+    @Inject
+    AccountManager.UsernameToIdMigration accountManagerUserIdMigration;
+
     private Bus mBus;
     private boolean appInBackground;
     private Snackbar apiOfflineSnackBar;
@@ -225,6 +228,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         super.onCreate();
 
         WorkManager.initialize(this, getWorkManagerConfiguration());
+        accountManagerUserIdMigration.blocking();
 
         checkForUpdateAndClearCache();
     }
