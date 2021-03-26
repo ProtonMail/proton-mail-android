@@ -104,13 +104,6 @@ sealed class ProtonOkHttpClient(
         }
         okClientBuilder.connectionSpecs(connectionSpecs)
     }
-
-    fun timeout(timeout: Long): OkHttpClient.Builder {
-        okClientBuilder.connectTimeout(timeout, TimeUnit.SECONDS)
-        okClientBuilder.readTimeout(timeout, TimeUnit.SECONDS)
-        okClientBuilder.writeTimeout(timeout, TimeUnit.SECONDS)
-        return okClientBuilder
-    }
 }
 
 /**
