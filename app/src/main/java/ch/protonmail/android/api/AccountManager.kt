@@ -27,14 +27,15 @@ import ch.protonmail.android.di.ApplicationModule
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
+import ch.protonmail.android.utils.extensions.obfuscateUsername
 import ch.protonmail.android.utils.getStringList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.DispatcherProvider
-import me.proton.core.util.kotlin.takeIfNotEmpty
 import me.proton.core.util.kotlin.unsupported
+import timber.log.Timber
 import javax.inject.Inject
 
 // region constants
@@ -225,12 +226,21 @@ class AccountManager(
             // Read directly from SharedPreferences as no function for get usernames will be available from
             //  AccountManager after the migration
             val allSavedUsernames = defaultSharedPreferences
-                .getStringList(PREF_USERNAMES_LOGGED_OUT, null)
-                ?.takeIfNotEmpty() ?: return@withContext
+                .getStringList(PREF_USERNAMES_LOGGED_OUT, null) ?: emptyList()
             val allLoggedUsernames = defaultSharedPreferences
-                .getStringList(PREF_USERNAMES_LOGGED_IN, emptyList())!!
+                .getStringList(PREF_USERNAMES_LOGGED_IN, null) ?: emptyList()
 
-            val allUsernamesToIds = secureSharedPreferencesMigration(allSavedUsernames + allLoggedUsernames)
+            val allUsernames = allSavedUsernames + allLoggedUsernames
+            if (allUsernames.isEmpty())
+                return@withContext
+
+            Timber.v("""
+                |Migrating AccountManger:
+                |  saved username: ${ allSavedUsernames.joinToString { it.obfuscateUsername() } }
+                |  logged in usernames: ${ allLoggedUsernames.joinToString { it.obfuscateUsername() } }
+            """.trimMargin("|"))
+
+            val allUsernamesToIds = secureSharedPreferencesMigration(allUsernames)
 
             accountManager.apply {
                 // SecureSharedPreferences.UsernameToIdMigration has already printed to log if some id is not
@@ -244,7 +254,7 @@ class AccountManager(
                 remove(PREF_USERNAMES_LOGGED_IN)
             }
 
-            userManagerMigration()
+            userManagerMigration(allUsernamesToIds)
         }
 
         fun blocking() {

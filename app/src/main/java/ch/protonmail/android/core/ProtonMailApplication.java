@@ -226,9 +226,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
         setupNotificationChannels();
 
         super.onCreate();
+        accountManagerUserIdMigration.blocking();
 
         WorkManager.initialize(this, getWorkManagerConfiguration());
-        accountManagerUserIdMigration.blocking();
 
         checkForUpdateAndClearCache();
     }

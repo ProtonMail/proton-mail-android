@@ -31,10 +31,11 @@ import android.security.keystore.KeyProperties
 import android.text.TextUtils
 import android.util.Base64
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
-import ch.protonmail.android.core.PREF_USERNAME
+import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.obfuscate
+import ch.protonmail.android.utils.extensions.obfuscateUsername
 import kotlinx.coroutines.withContext
 import me.proton.core.util.android.sharedpreferences.clearAll
 import me.proton.core.util.android.sharedpreferences.get
@@ -469,7 +470,7 @@ class SecureSharedPreferences(
             }
 
         private fun migrateForUser(username: String): Pair<String, Id>? {
-            Timber.v("Migrating SecureSharedPreferences for ${username.obfuscate()}")
+            Timber.v("Migrating SecureSharedPreferences for ${username.obfuscateUsername()}")
 
             val oldPrefs = _getPrefsForUser(context, username)
             val userId = oldPrefs.get<String>(PREF_USER_ID)?.let(::Id)
@@ -478,8 +479,8 @@ class SecureSharedPreferences(
                 val newPrefs = getPrefsForUser(context, userId)
                 for ((key, value) in oldPrefs.all) {
                     newPrefs[key] = value
-                    newPrefs[PREF_USERNAME] = username
                 }
+                newPrefs[PREF_USER_NAME] = username
                 username to userId
 
             } else {
