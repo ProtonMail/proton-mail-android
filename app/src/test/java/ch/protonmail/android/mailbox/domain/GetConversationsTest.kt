@@ -81,7 +81,6 @@ class GetConversationsTest : CoroutinesTest {
         assertEquals(error, actual.first())
     }
 
-
     private fun buildRandomConversation() = Conversation(
         UUID.randomUUID().toString(),
         "Conversation subject",

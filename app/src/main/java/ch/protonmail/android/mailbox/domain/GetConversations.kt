@@ -22,9 +22,7 @@ package ch.protonmail.android.mailbox.domain
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import timber.log.Timber
 import javax.inject.Inject
 
 class GetConversations @Inject constructor(
@@ -39,9 +37,6 @@ class GetConversations @Inject constructor(
                     return@map GetConversationsResult.Success(it)
                 }
                 return@map GetConversationsResult.Error
-            }
-            .catch {
-                Timber.i("GetConversations Failed with Exception: $it")
             }
     }
 }
