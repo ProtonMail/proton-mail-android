@@ -1171,6 +1171,7 @@ class MailboxActivity :
             messagesAdapter.notifyDataSetChanged()
         }
         setLoadingMore(false)
+        refreshEmptyView(0)
     }
 
     @Subscribe
