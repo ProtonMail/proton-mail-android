@@ -173,7 +173,6 @@
     <string name="confirm_destructive_action">Sigur? Această acțiune nu poate fi anulată.</string>
     <string name="create">Creare</string>
     <string name="email">E-mail</string>
-    <string name="email_address">Adresă e-mail</string>
     <string name="phone">Număr de telefon</string>
     <string name="save">Salvare</string>
     <string name="syncing_messages">Se sincronizează...</string>
@@ -233,12 +232,6 @@
     <string name="lock_the_app">Blocare aplicație</string>
     <string name="display_name_banned_chars">Nume afișat nevalid. \'&gt;\' și \'&lt;\' nu sunt permise.</string>
     <string name="cont">Continuare</string>
-    <string name="email_verification_code">Vom trimite un cod de verificare la adresa de e-mail de mai sus.</string>
-    <string name="sms_verification_code">Vă vom trimite un cod de verificare la numărul de telefon de mai sus.</string>
-    <string name="send_verification_code">Trimitere cod de verificare</string>
-    <string name="resend_verification_code">Retrimite</string>
-    <string name="enter_verification_code">Introducere cod verificare</string>
-    <string name="verify">Verificare</string>
     <string name="reply_prefix_on">Activat</string>
     <string name="create_new_account">Creare cont</string>
     <string name="setup_new_account">Configurare cont</string>
@@ -254,14 +247,6 @@
         Nu pierdeți parola, noi nu o putem recupera. Dacă o pierdeți nu mai puteți citi mesajele.</string>
     <string name="username_note"><b>Notă:</b> Numele utilizatorului este adresa dvs. din ProtonMail</string>
     <string name="terms_and_conditions">Folosind ProtonMail, sunteți de acord cu\n<a href="https://protonmail.com/terms-and-conditions">\"Termenii și condițiile\"</a> noastre precum și cu <a href="https://protonmail.com/privacy-policy">\"Politica de confidențialitate\"</a></string>
-    <string name="human_verification">Verificare persoană</string>
-    <string name="human_verification_subtitle">Pentru a preveni abuzarea ProtonMail,\nverificăm dacă sunteți persoană.</string>
-    <string name="select_options">Vă rugăm selectați o opțiune:</string>
-    <string name="no_verification_methods_found">Nu s-a găsit nici o metodă de verificare</string>
-    <string name="email_verification">Verificare e-mail</string>
-    <string name="phone_verification">Verificare telefon</string>
-    <string name="existing_email_address">Introduceți adresa de e-mail curentă</string>
-    <string name="phone_number">Introduceți numărul de telefon</string>
     <string name="encryption_setup">Configurare criptare</string>
     <string name="high_security">Securitate ridicată (2048 de biți)</string>
     <string name="current_standard">Standard curent</string>
@@ -314,7 +299,6 @@
          permite să resetați parola de conectare dacă o uitați.</string>
     <string name="optional_display_name">Când trimiteți un e-mail, acesta este numele care
         apare în câmpul expeditorului.</string>
-    <string name="error_captcha_not_valid">Nevalid</string>
     <string name="close_engagement">închide ghid</string>
     <string name="engagement_title_welcome">Bine ați venit la ProtonMail!</string>
     <string name="engagement_title_swipe">Acțiuni rapide glisare</string>
@@ -613,10 +597,6 @@
     </string-array>
     <string name="logged_out">Deconectat</string>
     <string name="logged_out_description">Ați fost deconectat. Vă rugăm reautentificați-vă.</string>
-    <string name="verification_needed">Verificare obligatorie</string>
-    <string name="verification_needed_description">Din motive de securitate, verificăm că nu sunteţi un robot.</string>
-    <string name="verification_needed_description_notification">Demonstrați că sunteți o persoană înainte de a trimite acest mesaj: %s</string>
-    <string name="message_drafted_verification_needed">Mesajul nu a fost trimis - este necesară o verificare. Mesajele sunt salvate în folderul «Ciorne».</string>
     <string name="error_message_zip_code_invalid">Eroare: cod poștal nevalid</string>
     <string name="error_message_cvc_invalid">Eroare: Număr CVC nevalid</string>
     <string name="error_message_card_name_invalid">Eroare: Nume card nevalid</string>

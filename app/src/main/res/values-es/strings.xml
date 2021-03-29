@@ -168,7 +168,6 @@
     <string name="confirm_destructive_action">¿Está seguro? Esto no se puede deshacer.</string>
     <string name="create">Crear</string>
     <string name="email">Correo</string>
-    <string name="email_address">Dirección de email</string>
     <string name="phone">Número de teléfono</string>
     <string name="save">Guardar</string>
     <string name="syncing_messages">Sincronizando...</string>
@@ -228,12 +227,6 @@
     <string name="lock_the_app">Bloquear la aplicación</string>
     <string name="display_name_banned_chars">Nombre inválido. \'&gt;\' y \'&lt;\' no están permitidos</string>
     <string name="cont">Continuar</string>
-    <string name="email_verification_code">Enviaremos un código de verificación a la dirección de email indicada arriba.</string>
-    <string name="sms_verification_code">Enviaremos un código de verificación al número de teléfono indicado.</string>
-    <string name="send_verification_code">Enviar el código de verificación</string>
-    <string name="resend_verification_code">Reenviar</string>
-    <string name="enter_verification_code">Introducir código de verificación</string>
-    <string name="verify">Verificar</string>
     <string name="reply_prefix_on">On</string>
     <string name="create_new_account">Crear una cuenta nueva</string>
     <string name="setup_new_account">Configurar su cuenta</string>
@@ -250,14 +243,6 @@
     <string name="username_note"><b>Nota:</b> El nombre de usuario también es tu dirección de ProtonMail</string>
     <string name="terms_and_conditions">Al usar ProtonMail, aceptas nuestros\n
          <a href="https://protonmail.com/terms-and-conditions">términos y condiciones</a> y la <a href="https://protonmail.com/privacy-policy">política de privacidad</a></string>
-    <string name="human_verification">Captcha</string>
-    <string name="human_verification_subtitle">Para evitar el abuso de ProtonMail,\ndebemos verificar que es humano.</string>
-    <string name="select_options">Por favor, selecciona una de las siguientes opciones:</string>
-    <string name="no_verification_methods_found">No se encontraron métodos de verificación</string>
-    <string name="email_verification">Verificación Email</string>
-    <string name="phone_verification">Verificación de teléfono</string>
-    <string name="existing_email_address">Ingrese su dirección de email existente</string>
-    <string name="phone_number">Ingrese su número de teléfono</string>
     <string name="encryption_setup">Configuración de cifrado</string>
     <string name="high_security">Alta seguridad (2048 bit)</string>
     <string name="current_standard">El estándar actual</string>
@@ -310,7 +295,6 @@
          restablecer su contraseña de acceso si la olvida.</string>
     <string name="optional_display_name">Cuando envía un email, este es el nombre que se
          muestra en el campo remitente.</string>
-    <string name="error_captcha_not_valid">No es válido</string>
     <string name="close_engagement">cerrar recorrido</string>
     <string name="engagement_title_welcome">¡Bienvenido/a a ProtonMail!</string>
     <string name="engagement_title_swipe">Acciones de desplazamiento rápido</string>
@@ -607,10 +591,6 @@
     </string-array>
     <string name="logged_out">Desconectado</string>
     <string name="logged_out_description">Ha sido desconectado. Inicie sesión nuevamente.</string>
-    <string name="verification_needed">Verificación requerida</string>
-    <string name="verification_needed_description">Por razones de seguridad, compruebe que no es un robot.</string>
-    <string name="verification_needed_description_notification">Compruebe que es humano antes de enviar este mensaje: %s</string>
-    <string name="message_drafted_verification_needed">Mensaje no enviado: se requiere verificación. Sus mensajes se guardarán en la carpeta de borradores.</string>
     <string name="error_message_zip_code_invalid">Error: código postal inválido</string>
     <string name="error_message_cvc_invalid">Error: Número CVC no válido</string>
     <string name="error_message_card_name_invalid">Error: Nombre de la tarjeta inválido</string>

@@ -163,7 +163,6 @@
     <string name="confirm_destructive_action">您确定吗？此操作不能撤销。</string>
     <string name="create">创建</string>
     <string name="email">邮箱</string>
-    <string name="email_address">邮箱地址</string>
     <string name="phone">电话号码</string>
     <string name="save">保存​​</string>
     <string name="syncing_messages">同步中...</string>
@@ -223,12 +222,6 @@
     <string name="lock_the_app">锁定应用</string>
     <string name="display_name_banned_chars">此名称无效，名称不能包含 &gt; 或 &lt; 符号。</string>
     <string name="cont">继续</string>
-    <string name="email_verification_code">我们将向该邮箱发送一条验证码。</string>
-    <string name="sms_verification_code">我们将向该手机号发送一条验证码。</string>
-    <string name="send_verification_code">发送验证码</string>
-    <string name="resend_verification_code">重新发送</string>
-    <string name="enter_verification_code">输入验证码</string>
-    <string name="verify">验证</string>
     <string name="reply_prefix_on">在</string>
     <string name="create_new_account">注册账户</string>
     <string name="setup_new_account">配置账户</string>
@@ -243,14 +236,6 @@
     <string name="password_note"><b>注意：</b>加解密邮件均需要此密码，切勿遗忘，否则您将永远无法查看已加密的邮件，我们也无能为力。</string>
     <string name="username_note"><b>注意：</b>用户名即为您的 ProtonMail 邮箱地址</string>
     <string name="terms_and_conditions">使用 ProtonMail 即表示您同意我们的\n<a href="https://protonmail.com/terms-and-conditions">服务条款</a>和<a href="https://protonmail.com/privacy-policy">隐私协议</a></string>
-    <string name="human_verification">身份验证</string>
-    <string name="human_verification_subtitle">为避免 ProtonMail 被滥用，\n我们需要验证您不是机器人。</string>
-    <string name="select_options">请选择验证方式：</string>
-    <string name="no_verification_methods_found">未找到验证方式</string>
-    <string name="email_verification">电子邮件验证</string>
-    <string name="phone_verification">短信验证</string>
-    <string name="existing_email_address">输入您已有的某个邮箱</string>
-    <string name="phone_number">输入您的手机号</string>
     <string name="encryption_setup">加密设置</string>
     <string name="high_security">安全性高（2048 位）</string>
     <string name="current_standard">当代的标准安全等级</string>
@@ -302,7 +287,6 @@
 已经就绪</string>
     <string name="optional_email_note">若您忘记登录密码，可通过密保邮箱将其重置。</string>
     <string name="optional_display_name">这将是别人收到您的邮件时看到的“发件人”名称。</string>
-    <string name="error_captcha_not_valid">验证码无效</string>
     <string name="close_engagement">关闭导览</string>
     <string name="engagement_title_welcome">欢迎使用 ProtonMail！</string>
     <string name="engagement_title_swipe">快速滑动操作</string>
@@ -590,10 +574,6 @@
     </string-array>
     <string name="logged_out">退出账户</string>
     <string name="logged_out_description">您已退出，请重新登录。</string>
-    <string name="verification_needed">需要验证</string>
-    <string name="verification_needed_description">出于安全考虑，请确认您不是机器人。</string>
-    <string name="verification_needed_description_notification">发送邮件前，请验证您不是机器人：%s</string>
-    <string name="message_drafted_verification_needed">由于需要验证，邮件尚未发送，并已存为草稿。</string>
     <string name="error_message_zip_code_invalid">错误：邮编无效</string>
     <string name="error_message_cvc_invalid">错误：信用卡安全码无效</string>
     <string name="error_message_card_name_invalid">错误：持卡人姓名无效</string>

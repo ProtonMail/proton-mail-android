@@ -168,7 +168,6 @@
     <string name="confirm_destructive_action">S tidett? Ulac tuɣalin ar deffir.</string>
     <string name="create">Rnu</string>
     <string name="email">Imayl</string>
-    <string name="email_address">Tansa imayl</string>
     <string name="phone">Uṭṭun n tiliɣri</string>
     <string name="save">Sekles</string>
     <string name="syncing_messages">Amtaw...</string>
@@ -228,12 +227,6 @@
     <string name="lock_the_app">Sekkeṛ asnas</string>
     <string name="display_name_banned_chars">Yir isem n uskan. \'&gt;\' and \'&lt;\' ur ttwasirgen ara</string>
     <string name="cont">Kemmel</string>
-    <string name="email_verification_code">Ad yzen tangalt n usenqed ar tansa n yimayl ddaw-a.</string>
-    <string name="sms_verification_code">Ad yzen tangalt n usenqed ar quṭṭun n tiliɣri ddaw-a.</string>
-    <string name="send_verification_code">Azen tangalt n usentem</string>
-    <string name="resend_verification_code">Ales tuzna</string>
-    <string name="enter_verification_code">Sekcem tangalt n usentem</string>
-    <string name="verify">Senqed</string>
     <string name="reply_prefix_on">Irmed</string>
     <string name="create_new_account">Rnu amiḍan amaynut</string>
     <string name="setup_new_account">Sbadu amiḍan-ik</string>
@@ -250,14 +243,6 @@
     <string name="username_note"><b>Tamawt:</b> Isem n useqdac d tansa-ik ProtonMail</string>
     <string name="terms_and_conditions">By using ProtonMail, you agree to our\n
         <a href="https://protonmail.com/terms-and-conditions">terms and conditions</a> and <a href="https://protonmail.com/privacy-policy">privacy policy</a></string>
-    <string name="human_verification">Asenqed b-umdan</string>
-    <string name="human_verification_subtitle">Akken ad nekk mgal yir aseqdec n ProtonMail.\nnesra ad nsenqed d akken kečč d amdan.</string>
-    <string name="select_options">Ma ulac aɣilif, fren yiwen seg iɣewwaṛen-agi:</string>
-    <string name="no_verification_methods_found">Ula d yiwet n tarrayt n usenqed ur tettwaf</string>
-    <string name="email_verification">Imayl n usenqed</string>
-    <string name="phone_verification">Asenqed n tiliɣri</string>
-    <string name="existing_email_address">Sekcem tansa-yik imayl yellan</string>
-    <string name="phone_number">Sekcem uṭṭun n tiliɣri</string>
     <string name="encryption_setup">Tawila n uwgelhen</string>
     <string name="high_security">Taɣellist meqqren (2048 n ibiten)</string>
     <string name="current_standard">Tagnut tamirant</string>
@@ -308,7 +293,6 @@
     <string name="new_account_ready">Amiḍan-ik amaynut n \nyimayl aɣelsan ihegga.</string>
     <string name="optional_email_note">Tansa imayl n tririt tafrayant ad k-teǧǧ ad talseḍ awennez n wawal-ik uffir ma tettuḍ-ṭ.</string>
     <string name="optional_display_name">Ticki tuzneḍ imayl, d isem ara d-ibanen deg urti amazan.</string>
-    <string name="error_captcha_not_valid">Mačči d ameɣtu</string>
     <string name="close_engagement">mdel tirza tafessast</string>
     <string name="engagement_title_welcome">Anṣuf yiswen ɣer ProntonMail!</string>
     <string name="engagement_title_swipe">Tigawin n uḍummu tiriraḍin</string>
@@ -601,10 +585,6 @@
     </string-array>
     <string name="logged_out">Teffɣeḍ</string>
     <string name="logged_out_description">Tuffɣeḍ. Ma ulac aɣilif, qqen tikelt-nniḍen.</string>
-    <string name="verification_needed">Ilaw usenqed</string>
-    <string name="verification_needed_description">I teɣẓint n tɣellist, senqed mur telliḍ ara d arubu.</string>
-    <string name="verification_needed_description_notification">Mmel-aɣ-d d akken d amdan i telliḍ send ad tazneḍ izen-agi: %s</string>
-    <string name="message_drafted_verification_needed">Message not sent - verification required. Your messages are saved in drafts folder.</string>
     <string name="error_message_zip_code_invalid">Error: Postal Code invalid</string>
     <string name="error_message_cvc_invalid">Tuccḍa: Yir uṭṭun CVC</string>
     <string name="error_message_card_name_invalid">Tuccḍa: Yir isem n tkarḍa</string>

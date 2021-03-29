@@ -168,7 +168,6 @@
     <string name="confirm_destructive_action">Êtes-vous sûr ? Cette action ne peut être annulée.</string>
     <string name="create">Créer</string>
     <string name="email">Adresse électronique</string>
-    <string name="email_address">Adresse électronique</string>
     <string name="phone">Numéro de téléphone</string>
     <string name="save">Enregister</string>
     <string name="syncing_messages">Synchronisation en cours...</string>
@@ -228,12 +227,6 @@
     <string name="lock_the_app">Verrouiller l\'App</string>
     <string name="display_name_banned_chars">Nom d\'affichage invalide. \'&gt;\' et \'&lt;\' ne sont pas autorisés</string>
     <string name="cont">Continuer</string>
-    <string name="email_verification_code">Nous enverrons un code de vérification à l’adresse électronique ci-dessus.</string>
-    <string name="sms_verification_code">Nous enverrons un code de vérification au numéro de téléphone ci-dessus.</string>
-    <string name="send_verification_code">Envoyer un code de vérification</string>
-    <string name="resend_verification_code">Renvoyer</string>
-    <string name="enter_verification_code">Saisir le code de vérification</string>
-    <string name="verify">Vérifier </string>
     <string name="reply_prefix_on">Le</string>
     <string name="create_new_account">Créer un nouveau compte</string>
     <string name="setup_new_account">Configurer votre compte</string>
@@ -250,14 +243,6 @@
     <string name="username_note"><b>Remarque :</b> le nom d\'utilisateur est également votre adresse ProtonMail</string>
     <string name="terms_and_conditions">En utilisant ProtonMail, vous acceptez nos\n
         <a href="https://protonmail.com/terms-and-conditions">conditions générales d\'utilisation</a> et notre <a href="https://protonmail.com/privacy-policy">politique de confidentialité</a></string>
-    <string name="human_verification">Vérification humaine</string>
-    <string name="human_verification_subtitle">Afin de prévenir les abus sur ProtonMail,\nnous devons vérifier que vous êtes bien humain.</string>
-    <string name="select_options">Veuillez sélectionner l\'une des options suivantes :</string>
-    <string name="no_verification_methods_found">Aucune méthode de vérification trouvée</string>
-    <string name="email_verification">Vérification par courriel</string>
-    <string name="phone_verification">Vérification par téléphone</string>
-    <string name="existing_email_address">Saisissez votre adresse électronique existante</string>
-    <string name="phone_number">Saisissez votre numéro de téléphone</string>
     <string name="encryption_setup">Configuration du chiffrement</string>
     <string name="high_security">Sécurité élevée (2048 bits)</string>
     <string name="current_standard">La norme actuelle</string>
@@ -310,7 +295,6 @@
         réinitialiser votre mot de passe si vous l\'oubliez.</string>
     <string name="optional_display_name">Lorsque vous envoyez un courriel, c\'est le nom qui 
         apparaît dans le champ expéditeur.</string>
-    <string name="error_captcha_not_valid">Invalide</string>
     <string name="close_engagement">fermer la visite guidée</string>
     <string name="engagement_title_welcome">Bienvenue sur ProtonMail !</string>
     <string name="engagement_title_swipe">Actions rapides de balayage</string>
@@ -607,10 +591,6 @@
     </string-array>
     <string name="logged_out">Déconnecté</string>
     <string name="logged_out_description">Vous avez été déconnecté. Veuillez vous reconnecter.</string>
-    <string name="verification_needed">Vérification requise</string>
-    <string name="verification_needed_description">Pour des raisons de sécurité, veuillez nous prouver que vous n\'êtes pas un robot.</string>
-    <string name="verification_needed_description_notification">Veuillez nous prouver que vous êtes humain avant d\'envoyer ce message : %s</string>
-    <string name="message_drafted_verification_needed">Message non envoyé - vérification requise. Vos messages sont enregistrés dans le dossier Brouillons.</string>
     <string name="error_message_zip_code_invalid">Erreur : code postal invalide</string>
     <string name="error_message_cvc_invalid">Erreur : code de sécurité invalide</string>
     <string name="error_message_card_name_invalid">Erreur : nom du titulaire de la carte invalide</string>

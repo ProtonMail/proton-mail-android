@@ -168,7 +168,6 @@
     <string name="confirm_destructive_action">Esteu segur? Això no es pot desfer.</string>
     <string name="create">Crear</string>
     <string name="email">Correu electrònic</string>
-    <string name="email_address">Adreça de correu electrònic</string>
     <string name="phone">Número de telèfon</string>
     <string name="save">Desa</string>
     <string name="syncing_messages">Sincronitzant...</string>
@@ -228,12 +227,6 @@
     <string name="lock_the_app">Bloqueja l\'aplicació</string>
     <string name="display_name_banned_chars">Nom de visualització no vàlid. \'&gt;\' i \'&lt;\' no estan permesos</string>
     <string name="cont">Continua</string>
-    <string name="email_verification_code">Enviarem un codi de verificació a l\'adreça electrònica de dalt.</string>
-    <string name="sms_verification_code">Enviarem un codi de verificació al número de telèfon anterior.</string>
-    <string name="send_verification_code">Envia el codi de verificació</string>
-    <string name="resend_verification_code">Reenviar</string>
-    <string name="enter_verification_code">Entrar codi de verificació</string>
-    <string name="verify">Verificar</string>
     <string name="reply_prefix_on">A</string>
     <string name="create_new_account">Crea un compte nou</string>
     <string name="setup_new_account">Configureu el vostre compte</string>
@@ -250,14 +243,6 @@
     <string name="username_note"><b> Nota: </b> El nom d\'usuari també és l\'adreça de ProtonMail</string>
     <string name="terms_and_conditions">En utilitzar ProtonMail, accepteu la nostra\n
       <a href="https://protonmail.com/terms-and-conditions">termes i condicions</a>i<a href="https://protonmail.com/privacy-policy">política de privacitat</a></string>
-    <string name="human_verification">Verificació humana</string>
-    <string name="human_verification_subtitle">Per evitar l\'ús abusiu de ProtonMail, \nnecessitem verificar que sou humà.</string>
-    <string name="select_options">Seleccioneu una de les opcions següents:</string>
-    <string name="no_verification_methods_found">No s\'ha trobat cap mètode de verificació</string>
-    <string name="email_verification">Verificació de correu electrònic</string>
-    <string name="phone_verification">Verificació del telèfon</string>
-    <string name="existing_email_address">Introduïu la vostra adreça electrònica existent</string>
-    <string name="phone_number">Introduïu el vostre número de telèfon</string>
     <string name="encryption_setup">Configuració de xifratge</string>
     <string name="high_security">Alta seguretat (2048 bits)</string>
     <string name="current_standard">L\'estàndard actual</string>
@@ -310,7 +295,6 @@
         restableix la contrasenya d\'inici de sessió si l\'oblideu.</string>
     <string name="optional_display_name">Quan envieu un correu electrònic, aquest és el nom que
         apareix al camp del remitent.</string>
-    <string name="error_captcha_not_valid">Invàlid</string>
     <string name="close_engagement">tancar recorregut</string>
     <string name="engagement_title_welcome">Benvingut/benvinguda a ProtonMail!</string>
     <string name="engagement_title_swipe">Accions de desplaçament ràpid</string>
@@ -606,10 +590,6 @@
     </string-array>
     <string name="logged_out">Desconnectat</string>
     <string name="logged_out_description">Heu tancat la sessió. Torneu a iniciar sessió.</string>
-    <string name="verification_needed">Verificació obligatòria</string>
-    <string name="verification_needed_description">Per raons de seguretat, si us plau verifiqueu que no sou un robot.</string>
-    <string name="verification_needed_description_notification">Verifiqueu que sou un usuari abans d\'enviar aquest missatge: %s</string>
-    <string name="message_drafted_verification_needed">Missatge no enviat: es requereix verificació. Els vostres missatges es desen a la carpeta d\'esborranys.</string>
     <string name="error_message_zip_code_invalid">Error: codi postal no és vàlid</string>
     <string name="error_message_cvc_invalid">Error: Nombre CVC no es invàlid</string>
     <string name="error_message_card_name_invalid">Error: el nom de la targeta no és vàlid</string>

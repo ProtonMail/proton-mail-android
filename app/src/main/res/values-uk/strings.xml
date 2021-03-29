@@ -179,7 +179,6 @@
     <string name="confirm_destructive_action">Ви впевнені? Це неможливо скасувати.</string>
     <string name="create">Створити</string>
     <string name="email">Електронна пошта</string>
-    <string name="email_address">Адреса електронної пошти</string>
     <string name="phone">Номер телефону</string>
     <string name="save">Зберегти</string>
     <string name="syncing_messages">Синхронізація...</string>
@@ -239,12 +238,6 @@
     <string name="lock_the_app">Заблокувати додаток</string>
     <string name="display_name_banned_chars">Неприпустиме показуване ім\'я. \'&gt;\' і \'&lt;\' не дозволені</string>
     <string name="cont">Продовжити</string>
-    <string name="email_verification_code">Ми надішлемо код підтвердження на адресу електронної пошти, вказану вище.</string>
-    <string name="sms_verification_code">Ми відправимо код на вказаний вище номер телефону.</string>
-    <string name="send_verification_code">Надіслати код підтвердження</string>
-    <string name="resend_verification_code">Надіслати повторно</string>
-    <string name="enter_verification_code">Введіть перевірковий код</string>
-    <string name="verify">Перевірити</string>
     <string name="reply_prefix_on">Увімкнено</string>
     <string name="create_new_account">Створити новий обліковий запис</string>
     <string name="setup_new_account">Налаштувати обліковий запис</string>
@@ -260,14 +253,6 @@
          Не загубіть це гасло, ми не можемо його відновити. Якщо ви втратили ваше гасло, ви не зможете читати ваші листи.</string>
     <string name="username_note"><b>Примітка:</b> Ім\'я користувача – це також ваша ProtonMail адреса</string>
     <string name="terms_and_conditions">Користуючись ProtonMail-ом, Ви погоджуєтесь з нашими\n <a href="https://protonmail.com/terms-and-conditions"> умовами</a> та <a href="https://protonmail.com/privacy-policy"> політикою конфіденційності</a></string>
-    <string name="human_verification">Перевірка \"Я не робот\"</string>
-    <string name="human_verification_subtitle">Щоб запобігти зловживанню ProtonMail,\n нам необхідно переконатися, що ви є людина.</string>
-    <string name="select_options">Будь ласка, виберіть один з варіантів:</string>
-    <string name="no_verification_methods_found">Не знайдено способів перевірки</string>
-    <string name="email_verification">Підтвердження адреси е-пошти</string>
-    <string name="phone_verification">Телефон для підтвердження</string>
-    <string name="existing_email_address">Введіть чинну адресу е-пошти</string>
-    <string name="phone_number">Уведіть номер телефону</string>
     <string name="encryption_setup">Параметри шифрування</string>
     <string name="high_security">Велика безпека (2048 бітів)</string>
     <string name="current_standard">Чинний стандарт</string>
@@ -320,7 +305,6 @@
         скинути вхідне гасло, якщо Ви його забудете.</string>
     <string name="optional_display_name">Коли ви надсилаєте е-лист, це ім\'я
         відображається в полі відправника.</string>
-    <string name="error_captcha_not_valid">Не дійсний</string>
     <string name="close_engagement">закрити тур</string>
     <string name="engagement_title_welcome">Ласкаво просимо до ProtonMail-а!</string>
     <string name="engagement_title_swipe">Дії на швидкі відрухи</string>
@@ -620,10 +604,6 @@
     </string-array>
     <string name="logged_out">Ви вийшли</string>
     <string name="logged_out_description">Ви вийшли. Будь ласка, увійдіть знов.</string>
-    <string name="verification_needed">Потрібно перевірити</string>
-    <string name="verification_needed_description">З міркувань безпеки, будь ласка підтвердьте, що ви не робот.</string>
-    <string name="verification_needed_description_notification">Будь ласка, підтвердіть, що ви людина перш ніж слати цього листа: %s</string>
-    <string name="message_drafted_verification_needed">Листа не відіслано - потрібна перевірка. Ваш лист збережено до теки чернеток.</string>
     <string name="error_message_zip_code_invalid">Помилка: Поштовий код не правильний</string>
     <string name="error_message_cvc_invalid">Помилка: Неприпустимий CVC</string>
     <string name="error_message_card_name_invalid">Помилка: Неприпустиме ім\'я картки</string>

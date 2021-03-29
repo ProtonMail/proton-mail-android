@@ -63,11 +63,7 @@ interface PaymentApiSpec {
     fun verifyPayment(body: VerifyBody): VerifyResponse
 
     @Throws(IOException::class)
-    fun createPaymentToken(
-        body: CreatePaymentTokenBody,
-        token: String?,
-        tokenType: String?
-    ): Call<CreatePaymentTokenSuccessResponse>
+    fun createPaymentToken(body: CreatePaymentTokenBody): Call<CreatePaymentTokenSuccessResponse>
 
     @Throws(IOException::class)
     fun getPaymentToken(@Path("token") token: String): Call<GetPaymentTokenResponse>

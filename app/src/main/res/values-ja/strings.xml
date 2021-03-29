@@ -163,7 +163,6 @@
     <string name="confirm_destructive_action">元には戻せませんが、本当によろしいですか？</string>
     <string name="create">作成</string>
     <string name="email">電子メール</string>
-    <string name="email_address">メールアドレス</string>
     <string name="phone">電話番号</string>
     <string name="save">保存</string>
     <string name="syncing_messages">同期中...</string>
@@ -223,12 +222,6 @@
     <string name="lock_the_app">アプリをロック</string>
     <string name="display_name_banned_chars">無効な表示名です。\' &gt;\'および、\' &lt;\'は利用できません。</string>
     <string name="cont">続行</string>
-    <string name="email_verification_code">上記のメールアドレスに検証コードを送信します。</string>
-    <string name="sms_verification_code">上記の電話番号に検証コードを送信します。</string>
-    <string name="send_verification_code">検証コードを送信します。</string>
-    <string name="resend_verification_code">再送信</string>
-    <string name="enter_verification_code">検証コードを入力</string>
-    <string name="verify">検証</string>
     <string name="reply_prefix_on">　</string>
     <string name="create_new_account">新しいアカウントを作成</string>
     <string name="setup_new_account">アカウントの設定</string>
@@ -244,14 +237,6 @@
         このパスワードを失くした場合、電子メールが読めなくなります。</string>
     <string name="username_note"><b>注意:</b>ユーザー名はProtonMailアドレスに使用されます。</string>
     <string name="terms_and_conditions">ProtonMailを使用することによって、あなたは\n<a href="https://protonmail.com/terms-and-conditions"> 利用規約</a> と <a href="https://protonmail.com/privacy-policy"> プライバシー ポリシー</a> に同意したことになります。</string>
-    <string name="human_verification">機械でないことの確認</string>
-    <string name="human_verification_subtitle">ProtonMailの乱用を防ぐために、\nあなたがボットでないことを検証する必要があります。</string>
-    <string name="select_options">次のオプションのいずれかを選択してください。</string>
-    <string name="no_verification_methods_found">検証方法が選択されていません。</string>
-    <string name="email_verification">メールによる検証</string>
-    <string name="phone_verification">電話による検証</string>
-    <string name="existing_email_address">既存のメールアドレスを入力してください。</string>
-    <string name="phone_number">電話番号を入力してください。</string>
     <string name="encryption_setup">暗号化のセットアップ</string>
     <string name="high_security">高水準のセキュリティ (2048 ビット)</string>
     <string name="current_standard">現在の標準</string>
@@ -303,7 +288,6 @@
 が用意できました。</string>
     <string name="optional_email_note">ログインパスワードを忘れた場合、オプションの回復用のメールアドレスによってリセットすることができます。</string>
     <string name="optional_display_name">メールを送信する際に、これが送信者フィールドに表示される名前になります。</string>
-    <string name="error_captcha_not_valid">無効</string>
     <string name="close_engagement">ツアーを閉じる</string>
     <string name="engagement_title_welcome">ProtonMail へようこそ</string>
     <string name="engagement_title_swipe">クイックスワイプ操作</string>
@@ -592,10 +576,6 @@
     </string-array>
     <string name="logged_out">ログアウトしました。</string>
     <string name="logged_out_description">ログアウトされています。もう一度ログインをしてください。</string>
-    <string name="verification_needed">検証が必要です。</string>
-    <string name="verification_needed_description">セキュリティ上の理由から、あなたが機械でないことの立証が必要です。</string>
-    <string name="verification_needed_description_notification">このメッセージを送信する前に、あなたが人間であることを立証してください：%s</string>
-    <string name="message_drafted_verification_needed">検証が必要なため、メッセージが送信されませんでした。メッセージは、下書きフォルダーに保存されました。</string>
     <string name="error_message_zip_code_invalid">エラー：郵便番号が無効です。</string>
     <string name="error_message_cvc_invalid">エラー：CVC 番号が無効です。</string>
     <string name="error_message_card_name_invalid">エラー：カード名が無効です。</string>

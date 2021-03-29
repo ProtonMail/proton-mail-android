@@ -34,8 +34,6 @@ import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.fragments.BillingFragment;
 import ch.protonmail.android.activities.fragments.CreateAccountBaseFragment;
-import ch.protonmail.android.activities.fragments.HumanVerificationCaptchaDialogFragment;
-import ch.protonmail.android.activities.fragments.HumanVerificationDialogFragment;
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.LoginInfoResponse;
@@ -47,15 +45,13 @@ import ch.protonmail.android.jobs.CheckUsernameAvailableJob;
 import ch.protonmail.android.jobs.DonateJob;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.UiUtil;
 
 /**
  * Created by dkadrikj on 6/30/16.
  */
 public class BillingActivity extends BaseActivity implements
         CreateAccountBaseFragment.ICreateAccountListener,
-        BillingFragment.IBillingListener,
-        HumanVerificationDialogFragment.IHumanVerificationListener {
+        BillingFragment.IBillingListener {
 
     public static final String EXTRA_WINDOW_SIZE = "window_size";
     public static final String EXTRA_AMOUNT = "billing_extra_amount";
@@ -73,7 +69,6 @@ public class BillingActivity extends BaseActivity implements
     View fragmentContainer;
 
     private BillingFragment billingFragment;
-    private HumanVerificationCaptchaDialogFragment humanVerificationCaptchaDialogFragment;
     private Constants.CurrencyType currency;
     private int amount;
     private String selectedPlanId;
@@ -137,34 +132,6 @@ public class BillingActivity extends BaseActivity implements
     public ProtonMailApiManager getProtonMailApiManager() {
         return mApi;
     }
-
-    @Override
-    public void onRequestCaptchaVerification(String token) {
-        humanVerificationCaptchaDialogFragment = HumanVerificationCaptchaDialogFragment.newInstance(token);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragmentContainer, humanVerificationCaptchaDialogFragment)
-                .commitAllowingStateLoss();
-    }
-    // endregion
-
-    // region HumanVerificationDialogFragment.IHumanVerificationListener
-    @Override
-    public void verify(Constants.TokenType tokenType, String token) {
-        if (humanVerificationCaptchaDialogFragment != null && humanVerificationCaptchaDialogFragment.isAdded()) {
-            humanVerificationCaptchaDialogFragment.dismiss();
-        }
-        billingFragment.retryPaymentAfterCaptchaValidation(token, tokenType.getTokenTypeValue());
-    }
-
-    @Override
-    public void viewLoaded() {
-        UiUtil.hideKeyboard(this);
-    }
-
-    @Override
-    public void verificationOptionChose(Constants.TokenType tokenType, String token) {
-        // noop
-    }
     // endregion
 
     @Override
@@ -190,11 +157,6 @@ public class BillingActivity extends BaseActivity implements
     @Override
     public ArrayList<String> getMethods() {
         return null;
-    }
-
-    @Override
-    public void sendVerificationCode(String email, String phoneNumber) {
-
     }
 
     @Override

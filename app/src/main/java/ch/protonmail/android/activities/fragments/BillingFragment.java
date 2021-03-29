@@ -23,7 +23,6 @@ import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EX
 import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.RESULT_CODE_ERROR;
 import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_TYPE_CARD;
 import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_TYPE_PAYPAL;
-import static ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponseKt.FIELD_HUMAN_VERIFICATION_TOKEN;
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED;
 
 import android.app.Activity;
@@ -365,11 +364,6 @@ public class BillingFragment extends CreateAccountBaseFragment {
         this.billingListener = billingListener;
     }
 
-    public void retryPaymentAfterCaptchaValidation(String token, String tokenType) {
-        mProgressContainer.setVisibility(View.VISIBLE);
-        viewModel.retryCreatePaymentToken(token, tokenType);
-    }
-
     @OnClick(R.id.submit_picker_card)
     public void onSubmitPickerCardClicked() {
         mInputFormLayout.setVisibility(View.VISIBLE);
@@ -492,7 +486,6 @@ public class BillingFragment extends CreateAccountBaseFragment {
                     errorResponse.setEventConsumed(true);
                     if (errorResponse.getCode() == RESPONSE_CODE_ERROR_VERIFICATION_NEEDED) {
                         mProgressContainer.setVisibility(View.GONE);
-                        billingListener.onRequestCaptchaVerification((String) errorResponse.getDetails().get(FIELD_HUMAN_VERIFICATION_TOKEN));
                     } else {
                         showPaymentError(null, errorResponse.getError());
                     }
@@ -833,7 +826,5 @@ public class BillingFragment extends CreateAccountBaseFragment {
 
     public interface IBillingListener {
         ProtonMailApiManager getProtonMailApiManager();
-
-        void onRequestCaptchaVerification(String token);
     }
 }

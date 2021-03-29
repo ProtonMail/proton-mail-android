@@ -168,7 +168,6 @@
     <string name="confirm_destructive_action">Är du riktigt säker? Detta kan inte ångras.</string>
     <string name="create">Skapa</string>
     <string name="email">E-post</string>
-    <string name="email_address">E-postadress</string>
     <string name="phone">Telefonnummer</string>
     <string name="save">Spara</string>
     <string name="syncing_messages">Synkroniserar...</string>
@@ -228,12 +227,6 @@
     <string name="lock_the_app">Lås appen</string>
     <string name="display_name_banned_chars">Ogiltigt visningsnamn. \'&gt;\' och \'&lt;\' är inte tillåtna</string>
     <string name="cont">Fortsätt</string>
-    <string name="email_verification_code">Vi kommer att skicka en verifieringskod till ovanstående e-postadress.</string>
-    <string name="sms_verification_code">Vi kommer att skicka en verifieringskod till ovanstående telefonnummer.</string>
-    <string name="send_verification_code">Skicka verifieringskod</string>
-    <string name="resend_verification_code">Skicka igen</string>
-    <string name="enter_verification_code">Ange verifieringskod</string>
-    <string name="verify">Bekräfta</string>
     <string name="reply_prefix_on">På</string>
     <string name="create_new_account">Skapa ett nytt konto</string>
     <string name="setup_new_account">Ställ in ditt konto</string>
@@ -248,14 +241,6 @@
     <string name="password_note"><b>Notera:</b> Detta används för att kryptera och avkryptera dina meddelanden.        Tappa inte bort detta lösenord, vi kan inte återställa det. Om du förlorar ditt lösenord, kommer du inte kunna läsa din epost.</string>
     <string name="username_note"><b>Notera:</b> Användarnamnet är också din ProtonMail-adress</string>
     <string name="terms_and_conditions">Genom att använda ProtonMail godkänner du våra\n        <a href="https://protonmail.com/terms-and-conditions">villkor</a> och vår <a href="https://protonmail.com/privacy-policy">integritetspolicy</a></string>
-    <string name="human_verification">Robotfilter</string>
-    <string name="human_verification_subtitle">För att förhindra missbruk av ProtonMail\nbehöver vi verifiera att du inte är en robot.</string>
-    <string name="select_options">Välj ett av följande alternativ:</string>
-    <string name="no_verification_methods_found">Ingen verifieringsmetod hittades</string>
-    <string name="email_verification">E-postverifiering</string>
-    <string name="phone_verification">Telefonverifiering</string>
-    <string name="existing_email_address">Ange din e-postadress</string>
-    <string name="phone_number">Ange ditt telefonnummer</string>
     <string name="encryption_setup">Konfigurera kryptering</string>
     <string name="high_security">Hög säkerhet (2048 bitar)</string>
     <string name="current_standard">Nuvarande standard</string>
@@ -308,7 +293,6 @@
         att återställa ditt lösenord om du glömmer det.</string>
     <string name="optional_display_name">När du skickar e-post, är det detta namn som
         syns i avsändarfältet.</string>
-    <string name="error_captcha_not_valid">Ogiltigt</string>
     <string name="close_engagement">Stäng rundturen</string>
     <string name="engagement_title_welcome">Välkommen till ProtonMail!</string>
     <string name="engagement_title_swipe">Snabba svepgester</string>
@@ -603,10 +587,6 @@
     </string-array>
     <string name="logged_out">Utloggad</string>
     <string name="logged_out_description">Du har blivit utloggad. Vänligen logga in igen.</string>
-    <string name="verification_needed">Verifiering Krävs</string>
-    <string name="verification_needed_description">Av säkerhetsskäl, vänligen verifiera att du inte är en robot.</string>
-    <string name="verification_needed_description_notification">Vänligen verifiera att du är en människa innan du skickar meddelandet:%s</string>
-    <string name="message_drafted_verification_needed">Meddelandet är inte skickat - verifiering krävs. Ditt meddelande har sparats i utkorgen.</string>
     <string name="error_message_zip_code_invalid">Fel: Ogiltigt postnummer</string>
     <string name="error_message_cvc_invalid">Fel: Ogiltig CVC-kod</string>
     <string name="error_message_card_name_invalid">Fel: Ogiltigt namn</string>

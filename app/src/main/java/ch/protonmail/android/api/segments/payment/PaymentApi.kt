@@ -71,11 +71,7 @@ class PaymentApi(
     override fun verifyPayment(body: VerifyBody): VerifyResponse = ParseUtils.parse(pubService.verifyPayment(body).execute())
 
     @Throws(IOException::class)
-    override fun createPaymentToken(
-        body: CreatePaymentTokenBody,
-        token: String?,
-        tokenType: String?
-    ): Call<CreatePaymentTokenSuccessResponse> = pubService.createPaymentToken(body, token, tokenType)
+    override fun createPaymentToken(body: CreatePaymentTokenBody): Call<CreatePaymentTokenSuccessResponse> = pubService.createPaymentToken(body)
 
     @Throws(IOException::class)
     override fun getPaymentToken(token: String): Call<GetPaymentTokenResponse> = pubService.getPaymentToken(token)

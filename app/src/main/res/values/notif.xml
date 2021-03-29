@@ -22,5 +22,4 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="notification_action_archive" translatable="false">protonmail_notif_action_archive</string>
     <string name="notification_action_delete" translatable="false">protonmail_notif_action_delete</string>
     <string name="notification_action_trash" translatable="false">protonmail_notif_action_trash</string>
-    <string name="notification_action_verify" translatable="false">protonmail_notif_action_verify</string>
 </resources>

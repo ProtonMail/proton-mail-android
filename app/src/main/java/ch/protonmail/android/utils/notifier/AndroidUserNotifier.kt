@@ -60,17 +60,4 @@ class AndroidUserNotifier @Inject constructor(
             context.showToast(R.string.message_sent)
         }
     }
-
-    override fun showHumanVerificationNeeded(message: Message) {
-        val user = userManager.requireCurrentUserBlocking()
-        notificationServer.notifyVerificationNeeded(
-            user.id,
-            user.name,
-            checkNotNull(message.subject) { "'subject' cannot be null" },
-            checkNotNull(message.messageId) { "'messageId' cannot be null" },
-            message.isInline,
-            checkNotNull(message.addressID) { "'addressID' cannot be null" }
-        )
-    }
-
 }

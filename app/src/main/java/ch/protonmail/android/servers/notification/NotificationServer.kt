@@ -170,56 +170,6 @@ class NotificationServer @Inject constructor(
         return CHANNEL_ID_ONGOING_OPS
     }
 
-    fun notifyVerificationNeeded(
-        userId: Id,
-        username: Name,
-        messageTitle: String,
-        messageId: String,
-        messageInline: Boolean,
-        messageAddressId: String
-    ) {
-        val inboxStyle = NotificationCompat.BigTextStyle()
-        inboxStyle.setBigContentTitle(context.getString(R.string.verification_needed))
-        inboxStyle.bigText(
-            String.format(
-                context.getString(R.string.verification_needed_description_notification),
-                messageTitle
-            )
-        )
-
-        inboxStyle.setSummaryText(username.s)
-        val composeIntent = Intent(context, ComposeMessageActivity::class.java)
-        composeIntent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, messageId)
-        composeIntent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, messageInline)
-        composeIntent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID, messageAddressId)
-        composeIntent.putExtra(ComposeMessageActivity.EXTRA_VERIFY, true)
-
-        val stackBuilder = TaskStackBuilder.create(context)
-        stackBuilder.addParentStack(ComposeMessageActivity::class.java)
-        stackBuilder.addNextIntent(composeIntent)
-        val contentIntent = stackBuilder.getPendingIntent(
-            0,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        val channelId = createAccountChannel()
-
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.notification_icon)
-            .setContentTitle(context.getString(R.string.verification_needed))
-            .setContentText(
-                context.getString(R.string.verification_needed_description_notification, messageTitle)
-            )
-            .setContentIntent(contentIntent)
-            .setColor(ContextCompat.getColor(context, R.color.ocean_blue))
-            .setStyle(inboxStyle)
-            .setLights(lightIndicatorColor, 1500, 2000)
-            .setAutoCancel(true)
-
-        val notification = builder.build()
-        notificationManager.notify(NOTIFICATION_ID_VERIFICATION, notification)
-    }
-
     fun createRetrievingNotificationsNotification(): Notification {
         val channelId = createOngoingOperationChannel()
         val notificationTitle = context.getString(R.string.retrieving_notifications)

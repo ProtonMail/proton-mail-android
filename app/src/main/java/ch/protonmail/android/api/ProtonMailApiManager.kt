@@ -40,7 +40,6 @@ import ch.protonmail.android.api.models.DonateBody
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.GetPaymentTokenResponse
 import ch.protonmail.android.api.models.GetSubscriptionResponse
-import ch.protonmail.android.api.models.HumanVerifyOptionsResponse
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.KeySalts
 import ch.protonmail.android.api.models.Keys
@@ -71,7 +70,6 @@ import ch.protonmail.android.api.models.TwoFAResponse
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.UserInfo
 import ch.protonmail.android.api.models.UserSettingsResponse
-import ch.protonmail.android.api.models.VerificationCodeBody
 import ch.protonmail.android.api.models.VerifyBody
 import ch.protonmail.android.api.models.VerifyResponse
 import ch.protonmail.android.api.models.address.AddressSetupBody
@@ -88,7 +86,6 @@ import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.models.requests.PasswordChange
-import ch.protonmail.android.api.models.requests.PostHumanVerificationBody
 import ch.protonmail.android.api.models.requests.UpgradePasswordBody
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.segments.address.AddressApiSpec
@@ -447,11 +444,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun verifyPayment(body: VerifyBody): VerifyResponse = api.verifyPayment(body)
 
-    override fun createPaymentToken(
-        body: CreatePaymentTokenBody,
-        token: String?,
-        tokenType: String?
-    ): Call<CreatePaymentTokenSuccessResponse> = api.createPaymentToken(body, token, tokenType)
+    override fun createPaymentToken(body: CreatePaymentTokenBody): Call<CreatePaymentTokenSuccessResponse> =
+        api.createPaymentToken(body)
 
     override fun getPaymentToken(token: String): Call<GetPaymentTokenResponse> = api.getPaymentToken(token)
 
@@ -531,10 +525,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     @Deprecated("Use with user Id", ReplaceWith("fetchKeySalts(userId)"))
     override fun fetchKeySalts(): KeySalts = api.fetchKeySalts()
 
-    override fun fetchHumanVerificationOptions(): HumanVerifyOptionsResponse = api.fetchHumanVerificationOptions()
-
-    override fun postHumanVerification(body: PostHumanVerificationBody): ResponseBody? = api.postHumanVerification(body)
-
     override fun createUser(
         username: String,
         password: PasswordVerifier,
@@ -544,10 +534,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         timestamp: String,
         payload: String
     ): UserInfo = api.createUser(username, password, updateMe, tokenType, token, timestamp, payload)
-
-    override fun sendVerificationCode(
-        verificationCodeBody: VerificationCodeBody
-    ): ResponseBody = api.sendVerificationCode(verificationCodeBody)
 
     override fun isUsernameAvailable(username: String): ResponseBody = api.isUsernameAvailable(username)
 

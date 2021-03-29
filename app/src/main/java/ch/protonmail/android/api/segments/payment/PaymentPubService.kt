@@ -28,7 +28,6 @@ import ch.protonmail.android.api.segments.RetrofitConstants
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -49,11 +48,7 @@ interface PaymentPubService {
 
     @POST("payments/tokens")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
-    fun createPaymentToken(
-        @Body body: CreatePaymentTokenBody,
-        @Header("X-PM-Human-Verification-Token") token: String?,
-        @Header("X-PM-Human-Verification-Token-Type") tokenType: String?
-    ): Call<CreatePaymentTokenSuccessResponse>
+    fun createPaymentToken(@Body body: CreatePaymentTokenBody): Call<CreatePaymentTokenSuccessResponse>
 
     @GET("payments/tokens/{token}")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)

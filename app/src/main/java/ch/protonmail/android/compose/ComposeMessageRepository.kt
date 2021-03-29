@@ -41,8 +41,6 @@ import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.ResignContactJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
 import ch.protonmail.android.jobs.general.GetAvailableDomainsJob
-import ch.protonmail.android.jobs.verification.FetchHumanVerificationOptionsJob
-import ch.protonmail.android.jobs.verification.PostHumanVerificationJob
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import com.birbit.android.jobqueue.JobManager
@@ -164,20 +162,12 @@ class ComposeMessageRepository @Inject constructor(
         jobManager.addJobInBackground(GetAvailableDomainsJob(true))
     }
 
-    fun startFetchHumanVerificationOptions() {
-        jobManager.addJobInBackground(FetchHumanVerificationOptionsJob())
-    }
-
     fun startFetchDraftDetail(messageId: String) {
         jobManager.addJobInBackground(FetchDraftDetailJob(messageId))
     }
 
     fun startFetchMessageDetail(messageId: String) {
         jobManager.addJobInBackground(FetchMessageDetailJob(messageId))
-    }
-
-    fun startPostHumanVerification(tokenType: Constants.TokenType, token: String) {
-        jobManager.addJobInBackground(PostHumanVerificationJob(tokenType, token))
     }
 
     suspend fun createAttachmentList(attachmentList: List<LocalAttachment>, dispatcher: CoroutineDispatcher) =

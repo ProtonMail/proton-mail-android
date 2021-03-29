@@ -168,7 +168,6 @@
     <string name="confirm_destructive_action">Weet u het zeker? Dit kan niet ongedaan worden gemaakt.</string>
     <string name="create">Aanmaken</string>
     <string name="email">E-mail</string>
-    <string name="email_address">E-mailadres</string>
     <string name="phone">Telefoonnummer</string>
     <string name="save">Opslaan</string>
     <string name="syncing_messages">Synchroniseren...</string>
@@ -228,12 +227,6 @@
     <string name="lock_the_app">App vergrendelen</string>
     <string name="display_name_banned_chars">Ongeldige weergavenaam. \'&gt;\' en \'&lt;\' zijn niet toegestaan</string>
     <string name="cont">Doorgaan</string>
-    <string name="email_verification_code">We sturen een verificatiecode naar het bovenstaande e-mailadres.</string>
-    <string name="sms_verification_code">We sturen een verificatiecode naar het bovenstaande telefoonnummer.</string>
-    <string name="send_verification_code">Stuur verificatiecode</string>
-    <string name="resend_verification_code">Opnieuw versturen</string>
-    <string name="enter_verification_code">Voer verificatiecode in</string>
-    <string name="verify">Verifiëer</string>
     <string name="reply_prefix_on">Aan</string>
     <string name="create_new_account">Account aanmaken</string>
     <string name="setup_new_account">Account instellen</string>
@@ -250,14 +243,6 @@
     <string name="username_note"><b>Opmerking:</b> uw gebruikersnaam is tevens ook uw e-mailadres</string>
     <string name="terms_and_conditions">Door ProtonMail te gebruiken, ga je akkoord met onze\n
         <a href="https://protonmail.com/terms-and-conditions">Algemene voorwaarden</a> en <a href="https://protonmail.com/privacy-policy">privacybeleid</a></string>
-    <string name="human_verification">Captcha</string>
-    <string name="human_verification_subtitle">Om misbruik van ProtonMail te voorkomen,\nmoeten we verifiëren dat u een mens bent.</string>
-    <string name="select_options">Gelieve één van de volgende opties te selecteren:</string>
-    <string name="no_verification_methods_found">Geen verificatiemethodes gevonden</string>
-    <string name="email_verification">E-mailverificatie</string>
-    <string name="phone_verification">Telefoonverificatie</string>
-    <string name="existing_email_address">Voer uw bestaande e-mailadres in</string>
-    <string name="phone_number">Voer uw telefoonnummer in</string>
     <string name="encryption_setup">Versleutelingsconfiguratie</string>
     <string name="high_security">Hoog beveiligingsniveau (2048 bit)</string>
     <string name="current_standard">De huidige standaard</string>
@@ -310,7 +295,6 @@
         resetten als u deze bent vergeten.</string>
     <string name="optional_display_name">Wanneer u een e-mail verstuurt, is dit de naam
         die bij \'afzender\' verschijnt.</string>
-    <string name="error_captcha_not_valid">Ongeldig</string>
     <string name="close_engagement">sluit rondleiding</string>
     <string name="engagement_title_welcome">Welkom bij ProtonMail!</string>
     <string name="engagement_title_swipe">Snelle veegacties</string>
@@ -602,10 +586,6 @@
     </string-array>
     <string name="logged_out">Uitgelogd</string>
     <string name="logged_out_description">U bent uitgelogd. Log opnieuw in.</string>
-    <string name="verification_needed">Verificatie vereist</string>
-    <string name="verification_needed_description">Om veiligheidsredenen, bevestig dat u geen robot bent.</string>
-    <string name="verification_needed_description_notification">Bevestig dat u een natuurlijk persoon bent voordat u dit bericht verzendt: %s</string>
-    <string name="message_drafted_verification_needed">Bericht niet verstuurd - verificatie vereist. Uw berichten zijn opgeslagen in de conceptmap.</string>
     <string name="error_message_zip_code_invalid">Fout: Ongeldige postcode</string>
     <string name="error_message_cvc_invalid">Fout: Ongeldig CVC-nummer</string>
     <string name="error_message_card_name_invalid">Fout: Kaartnaam ongeldig</string>

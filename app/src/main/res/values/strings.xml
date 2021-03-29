@@ -187,7 +187,6 @@
     <string name="confirm_destructive_action">Are you sure? This cannot be undone.</string>
     <string name="create">Create</string>
     <string name="email">Email</string>
-    <string name="email_address">Email address</string>
     <string name="phone">Phone number</string>
     <string name="save">Save</string>
     <string name="syncing_messages">Syncing...</string>
@@ -257,12 +256,6 @@
     <string name="lock_the_app">Lock the App</string>
     <string name="display_name_banned_chars">Invalid Display Name. \'&gt;\' and \'&lt;\' are not allowed</string>
     <string name="cont">Continue</string>
-    <string name="email_verification_code">We will send a verification code to the email address above.</string>
-    <string name="sms_verification_code">We will send a verification code to the phone number above.</string>
-    <string name="send_verification_code">Send Verification Code</string>
-    <string name="resend_verification_code">Resend</string>
-    <string name="enter_verification_code">Enter verification code</string>
-    <string name="verify">Verify</string>
 
     <string name="reply_prefix_on">On</string>
     <string name="create_new_account">Create a new account</string>
@@ -281,15 +274,6 @@
     <string name="username_note"><b>Note:</b> The Username is also your ProtonMail address</string>
     <string name="terms_and_conditions">By using ProtonMail, you agree to our\n
         <a href="https://protonmail.com/terms-and-conditions">terms and conditions</a> and <a href="https://protonmail.com/privacy-policy">privacy policy</a></string>
-    <string name="human_verification">Human Verification</string>
-    <string name="human_verification_subtitle">To prevent abuse of ProtonMail,\nwe need to verify that you are human.</string>
-    <string name="select_options">Please select one of the following options:</string>
-    <string name="no_verification_methods_found">No verification methods found</string>
-    <string name="captcha" translatable="false">CAPTCHA</string>
-    <string name="email_verification">Email Verification</string>
-    <string name="phone_verification">Phone Verification</string>
-    <string name="existing_email_address">Enter your existing email address</string>
-    <string name="phone_number">Enter your phone number</string>
     <string name="encryption_setup">Encryption Setup</string>
     <string name="high_security">High Security (2048 bit)</string>
     <string name="current_standard">The current standard</string>
@@ -345,7 +329,6 @@
         reset your login password if you forget it.</string>
     <string name="optional_display_name">When you send an email, this is the name that
         appears in the sender field.</string>
-    <string name="error_captcha_not_valid">Not valid</string>
     <string name="close_engagement">close tour</string>
 
     <string name="engagement_title_welcome">Welcome to ProtonMail!</string>
@@ -670,10 +653,6 @@
 
     <string name="logged_out">Logged out</string>
     <string name="logged_out_description">You have been logged out. Please login again.</string>
-    <string name="verification_needed">Verification Required</string>
-    <string name="verification_needed_description">For security reasons, please verify that you are not a robot.</string>
-    <string name="verification_needed_description_notification">Please verify you are a human before sending this message: %s</string>
-    <string name="message_drafted_verification_needed">Message not sent - verification required. Your messages are saved in drafts folder.</string>
 
     <string name="error_message_zip_code_invalid">Error: Postal Code invalid</string>
     <string name="error_message_cvc_invalid">Error: CVC number invalid</string>

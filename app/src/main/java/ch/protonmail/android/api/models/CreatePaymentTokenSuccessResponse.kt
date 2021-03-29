@@ -25,7 +25,6 @@ private const val FIELD_APPROVAL_URL = "ApprovalURL"
 private const val FIELD_TOKEN = "Token"
 private const val FIELD_TOKEN_STATUS = "Status"
 private const val FIELD_RETURN_HOST = "ReturnHost"
-const val FIELD_HUMAN_VERIFICATION_TOKEN = "HumanVerificationToken"
 // endregion
 
 interface CreatePaymentTokenResponse

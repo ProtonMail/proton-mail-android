@@ -168,7 +168,6 @@
     <string name="confirm_destructive_action">Sei sicuro? L’azione non può essere annullata.</string>
     <string name="create">Crea</string>
     <string name="email">Email</string>
-    <string name="email_address">Indirizzo email</string>
     <string name="phone">Numero di telefono</string>
     <string name="save">Salva</string>
     <string name="syncing_messages">Sincronizzazione...</string>
@@ -228,12 +227,6 @@
     <string name="lock_the_app">Blocca l\'app</string>
     <string name="display_name_banned_chars">Nome visualizzato non valido. \'&gt;\' and \'&lt;\' non sono ammessi</string>
     <string name="cont">Continua</string>
-    <string name="email_verification_code">Le invieremo un codice di verifica all\'indirizzo email indicato sopra.</string>
-    <string name="sms_verification_code">Le invieremo un sms di verifica al numero di telefono indicato sopra.</string>
-    <string name="send_verification_code">Invia codice di verifica</string>
-    <string name="resend_verification_code">Invia di nuovo</string>
-    <string name="enter_verification_code">Inserisca il codice di verifica</string>
-    <string name="verify">Verifica</string>
     <string name="reply_prefix_on">On</string>
     <string name="create_new_account">Crea un nuovo account</string>
     <string name="setup_new_account">Imposti il suo account</string>
@@ -250,14 +243,6 @@
     <string name="username_note"><b>Nota:</b> Il nome utente è anche il tuo indirizzo ProtonMail</string>
     <string name="terms_and_conditions">Utilizzando ProtonMail, accetti i nostri\n
         <a href="https://protonmail.com/terms-and-conditions">termini e condizioni</a> e l\'<a href="https://protonmail.com/privacy-policy"> informativa sulla privacy</a></string>
-    <string name="human_verification">Verifica umana</string>
-    <string name="human_verification_subtitle">Per prevenire abusi di ProtonMail,\ndobbiamo verificare che tu sia umano.</string>
-    <string name="select_options">Seleziona una delle seguenti opzioni:</string>
-    <string name="no_verification_methods_found">Nessun metodo di verifica trovato</string>
-    <string name="email_verification">Verifica email</string>
-    <string name="phone_verification">Verifica telefonica</string>
-    <string name="existing_email_address">Inserisca il suo indirizzo email esistente</string>
-    <string name="phone_number">Inserisca il suo numero di telefono</string>
     <string name="encryption_setup">Configurazione cifratura</string>
     <string name="high_security">Sicurezza alta (2048 bit)</string>
     <string name="current_standard">Lo standard attuale</string>
@@ -310,7 +295,6 @@
         reimpostare la password di login se è stata dimenticata.</string>
     <string name="optional_display_name">Quando invia un\'email, questo è il nome che
         appare nel campo del mittente.</string>
-    <string name="error_captcha_not_valid">Non valido</string>
     <string name="close_engagement">termina tour</string>
     <string name="engagement_title_welcome">Benvenuto in ProtonMail!</string>
     <string name="engagement_title_swipe">Azioni rapide con gesti di scorrimento</string>
@@ -607,10 +591,6 @@
     </string-array>
     <string name="logged_out">Disconnesso</string>
     <string name="logged_out_description">Sei stato disconnesso. Effettua nuovamente l\'accesso.</string>
-    <string name="verification_needed">Verifica richiesta</string>
-    <string name="verification_needed_description">Per motivi di sicurezza, si prega di verificare di non essere un robot.</string>
-    <string name="verification_needed_description_notification">Per favore, verifichi di essere un umano prima di inviare questo messaggio: %s</string>
-    <string name="message_drafted_verification_needed">Messaggio non inviato - verifica necessaria. I messaggi verranno salvati nella cartella bozze.</string>
     <string name="error_message_zip_code_invalid">Errore: codice postale non valido</string>
     <string name="error_message_cvc_invalid">Errore: Numero CVC non valido</string>
     <string name="error_message_card_name_invalid">Errore: Nome carta non valido</string>

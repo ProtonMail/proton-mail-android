@@ -67,16 +67,13 @@ class BillingViewModel @Inject constructor(
     val fetchPaymentMethodsResult: LiveData<FetchPaymentMethodsResult>
         get() = fetchPaymentMethodsData
 
-    @JvmOverloads
     fun createPaymentToken(
         amount: Int,
         currency: Constants.CurrencyType,
-        payment: PaymentType,
-        token: String? = null,
-        tokenType: String? = null
+        payment: PaymentType
     ): LiveData<CreatePaymentTokenResponse> {
         lastCreatePaymentTokenBody = CreatePaymentTokenBody(amount, currency.name, payment, null)
-        protonMailApiManager.createPaymentToken(lastCreatePaymentTokenBody, token, tokenType)
+        protonMailApiManager.createPaymentToken(lastCreatePaymentTokenBody)
             .enqueue(
                 object : Callback<CreatePaymentTokenSuccessResponse> {
 
@@ -97,16 +94,13 @@ class BillingViewModel @Inject constructor(
         return _createPaymentToken // TODO eliminate multiple calls by marking request pending?
     }
 
-    @JvmOverloads
     fun createPaymentTokenFromPaymentMethodId(
         amount: Int,
         currency: Constants.CurrencyType,
-        paymentMethodId: String,
-        token: String? = null,
-        tokenType: String? = null
+        paymentMethodId: String
     ): LiveData<CreatePaymentTokenResponse> {
         lastCreatePaymentTokenBody = CreatePaymentTokenBody(amount, currency.name, null, paymentMethodId)
-        protonMailApiManager.createPaymentToken(lastCreatePaymentTokenBody, token, tokenType)
+        protonMailApiManager.createPaymentToken(lastCreatePaymentTokenBody)
             .enqueue(
                 object : Callback<CreatePaymentTokenSuccessResponse> {
 
@@ -127,15 +121,20 @@ class BillingViewModel @Inject constructor(
         return _createPaymentTokenFromPaymentMethodId // TODO eliminate multiple calls by marking request pending?
     }
 
-    fun retryCreatePaymentToken(token: String, tokenType: String) {
+    fun retryCreatePaymentToken() {
         if (this::lastCreatePaymentTokenBody.isInitialized) {
             with(lastCreatePaymentTokenBody) {
                 if (paymentMethodId == null) {
-                    createPaymentToken(amount, Constants.CurrencyType.valueOf(currency), payment!!, token, tokenType)
+                    createPaymentToken(
+                        amount,
+                        Constants.CurrencyType.valueOf(currency),
+                        payment!!
+                    )
                 } else {
                     createPaymentTokenFromPaymentMethodId(
-                        amount, Constants.CurrencyType.valueOf(currency),
-                        paymentMethodId!!, token, tokenType
+                        amount,
+                        Constants.CurrencyType.valueOf(currency),
+                        paymentMethodId!!
                     )
                 }
             }

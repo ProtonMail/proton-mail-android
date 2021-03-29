@@ -42,7 +42,6 @@ import ch.protonmail.android.api.models.factories.PackageFactory
 import ch.protonmail.android.api.models.factories.SendPreferencesFactory
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
-import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.compose.send.SendMessageWorkerError.ApiRequestReturnedBadBodyCode
 import ch.protonmail.android.compose.send.SendMessageWorkerError.DraftCreationFailed
@@ -51,7 +50,6 @@ import ch.protonmail.android.compose.send.SendMessageWorkerError.FailureBuilding
 import ch.protonmail.android.compose.send.SendMessageWorkerError.FetchSendPreferencesFailed
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageNotFound
 import ch.protonmail.android.compose.send.SendMessageWorkerError.SavedDraftMessageNotFound
-import ch.protonmail.android.compose.send.SendMessageWorkerError.UserVerificationNeeded
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_SENT
@@ -171,11 +169,6 @@ class SendMessageWorker @AssistedInject constructor(
             RESPONSE_CODE_OK -> {
                 Timber.i("Send Message API call succeeded for messageId $messageId, Message Sent.")
                 handleMessageSentSuccess(response.sent, savedDraftMessage)
-            }
-            RESPONSE_CODE_ERROR_VERIFICATION_NEEDED -> {
-                Timber.w("Send Message API call failed, human verification required for messageId $messageId")
-                userNotifier.showHumanVerificationNeeded(savedDraftMessage)
-                failureWithError(UserVerificationNeeded)
             }
             else -> {
                 Timber.e("Send Message API call failed for messageId $messageId with error ${response.error}")

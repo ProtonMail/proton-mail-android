@@ -178,7 +178,6 @@
     <string name="confirm_destructive_action">Вы уверены? Это действие не может быть отменено.</string>
     <string name="create">Создать</string>
     <string name="email">Эл. почта</string>
-    <string name="email_address">Адрес эл. почты</string>
     <string name="phone">Hомер телефона</string>
     <string name="save">Сохранить</string>
     <string name="syncing_messages">Синхронизация...</string>
@@ -238,12 +237,6 @@
     <string name="lock_the_app">Заблокировать приложение</string>
     <string name="display_name_banned_chars">Недопустимое отображаемое имя. Символы \'&gt;\' и \'&lt;\' запрещены</string>
     <string name="cont">Продолжить</string>
-    <string name="email_verification_code">Мы вышлем код подтверждения на адрес электронной почты, указанный выше.</string>
-    <string name="sms_verification_code">Мы отправим код подтверждения на указанный выше номер телефона.</string>
-    <string name="send_verification_code">Отправить код подтверждения</string>
-    <string name="resend_verification_code">Отправить заново</string>
-    <string name="enter_verification_code">Введите код подтверждения</string>
-    <string name="verify">Подтвердить</string>
     <string name="reply_prefix_on">В</string>
     <string name="create_new_account">Создать новую учётную запись</string>
     <string name="setup_new_account">Настройте свою учётную запись</string>
@@ -260,14 +253,6 @@
     <string name="username_note"><b>Примечание:</b> Имя пользователя также является вашим адресом в ProtonMail</string>
     <string name="terms_and_conditions">Используя ProtonMail, вы соглашаетесь с нашими\n
         <a href="https://protonmail.com/terms-and-conditions">условиями и положениями</a> и <a href="https://protonmail.com/privacy-policy">политикой конфиденциальности</a></string>
-    <string name="human_verification">Проверка \"Я не робот\"</string>
-    <string name="human_verification_subtitle">Для предотвращения злоупотребления ProtonMail\nнам необходимо убедиться, что вы – человек.</string>
-    <string name="select_options">Пожалуйста, выберите один из вариантов:</string>
-    <string name="no_verification_methods_found">Методы подтверждения не обнаружены</string>
-    <string name="email_verification">Проверка адреса эл. почты</string>
-    <string name="phone_verification">Подтверждение номера телефона</string>
-    <string name="existing_email_address">Введите ваш действующий адрес эл. почты</string>
-    <string name="phone_number">Введите ваш номер телефона</string>
     <string name="encryption_setup">Настройка шифрования</string>
     <string name="high_security">Высокий уровень безопасности (2048 бит)</string>
     <string name="current_standard">Текущий стандарт</string>
@@ -320,7 +305,6 @@
         сбросить пароль для входа, если вы его забудете.</string>
     <string name="optional_display_name">Когда вы отправляете письмо, указанное имя будет
         отображено в графе отправителя.</string>
-    <string name="error_captcha_not_valid">Неправильно</string>
     <string name="close_engagement">закрыть тур</string>
     <string name="engagement_title_welcome">Добро пожаловать в ProtonMail!</string>
     <string name="engagement_title_swipe">Действия при быстрых смахиваниях</string>
@@ -623,10 +607,6 @@
     </string-array>
     <string name="logged_out">Вы вышли</string>
     <string name="logged_out_description">Вы вышли из системы. Пожалуйста, войдите заново.</string>
-    <string name="verification_needed">Требуется проверка данных</string>
-    <string name="verification_needed_description">Из соображений безопасности подтвердите, что вы не являетесь роботом.</string>
-    <string name="verification_needed_description_notification">Пожалуйста, подтвердите, что вы являетесь человеком, прежде чем отправить сообщение: %s</string>
-    <string name="message_drafted_verification_needed">Сообщение не отправлено – требуется проверка. Ваши сообщения сохранены в папке черновиков.</string>
     <string name="error_message_zip_code_invalid">Ошибка: неправильный почтовый индекс</string>
     <string name="error_message_cvc_invalid">Ошибка: неверный номер CVC</string>
     <string name="error_message_card_name_invalid">Ошибка: недопустимое имя на карте</string>

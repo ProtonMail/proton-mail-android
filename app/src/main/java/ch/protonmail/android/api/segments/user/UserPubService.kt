@@ -37,9 +37,6 @@ interface UserPubService {
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
     fun createUser(@Body createUserBody: CreateUserBody): Call<UserInfo>
 
-    @POST("users/code")
-    fun sendVerificationCode(@Body verificationCodeBody: VerificationCodeBody): Call<ResponseBody>
-
     @GET("users/available")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
     fun isUsernameAvailable(@Query(QUERY_USERNAME) username: String): Call<ResponseBody>

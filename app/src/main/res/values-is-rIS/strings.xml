@@ -168,7 +168,6 @@
     <string name="confirm_destructive_action">Ertu viss? Það er ekki hægt að taka þetta aftur.</string>
     <string name="create">Búa til</string>
     <string name="email">Tölvupóstur</string>
-    <string name="email_address">Tölvupóstfang</string>
     <string name="phone">Símanúmer</string>
     <string name="save">Vista</string>
     <string name="syncing_messages">Samstilli...</string>
@@ -228,12 +227,6 @@
     <string name="lock_the_app">Læsa forritinu</string>
     <string name="display_name_banned_chars">Ógilt birtingarnafn. \'&gt;\' og \'&lt;\' eru ekki leyfilegt</string>
     <string name="cont">Halda áfram</string>
-    <string name="email_verification_code">Við munum senda sannvottunarkóða á tölvupóstfangið hér fyrir ofan.</string>
-    <string name="sms_verification_code">Við munum senda sannvottunarkóða á símanúmerið hér fyrir ofan.</string>
-    <string name="send_verification_code">Senda sannvottunarkóða</string>
-    <string name="resend_verification_code">Endursenda</string>
-    <string name="enter_verification_code">Settu inn sannvottunarkóða</string>
-    <string name="verify">Sannreyna</string>
     <string name="reply_prefix_on">Kveikt</string>
     <string name="create_new_account">Búa til nýjan notandaaðgang</string>
     <string name="setup_new_account">Setja upp notandaaðganginn þinn</string>
@@ -250,14 +243,6 @@
     <string name="username_note">&lt;bAthugaðu:&lt;/b&gt; Notandanafnið er líka vistfang þitt hjá ProtonMail</string>
     <string name="terms_and_conditions">Með því að nota ProtonMail, samþykkir þú\n
         <a href="https://protonmail.com/terms-and-conditions">ákvæði okkar og skilyrði</a> auk <a href="https://protonmail.com/privacy-policy">stefnu okkar varðandi gagnaleynd</a></string>
-    <string name="human_verification">Mennskupróf</string>
-    <string name="human_verification_subtitle">Til að koma í veg fyrir misnotkun á ProtonMail,\nverðum við að ganga úr skugga um að þú sért mannvera.</string>
-    <string name="select_options">Veldu einn af eftirfarandi möguleikum:</string>
-    <string name="no_verification_methods_found">Engar staðfestingaraðgerðir fundust</string>
-    <string name="email_verification">Sannvottun tölvupósts</string>
-    <string name="phone_verification">Sannvottun símanúmers</string>
-    <string name="existing_email_address">Settu inn núverandi tölvupóstfangið þitt</string>
-    <string name="phone_number">Settu inn símanúmerið þitt</string>
     <string name="encryption_setup">Uppsetning dulritunar</string>
     <string name="high_security">Mikið öryggi (2048 bita)</string>
     <string name="current_standard">Núverandi staðall</string>
@@ -310,7 +295,6 @@
         endurstilla innskráningarlykilorðið ef þú gleymir því.</string>
     <string name="optional_display_name">Þegar þú sendir tölvupóst, þá er þetta nafnið
         sem birtist í reitnum fyrir sendanda.</string>
-    <string name="error_captcha_not_valid">Ekki gilt</string>
     <string name="close_engagement">loka yfirferð</string>
     <string name="engagement_title_welcome">Velkomin í ProtonMail!</string>
     <string name="engagement_title_swipe">Flýtiaðgerðir við stroku</string>
@@ -608,10 +592,6 @@
     </string-array>
     <string name="logged_out">Skráður út</string>
     <string name="logged_out_description">Þú hefur verið skráð(ur) út. Skráðu þig aftur inn.</string>
-    <string name="verification_needed">Sannvottunar krafist</string>
-    <string name="verification_needed_description">Af öryggisástæðum þarftu að sanna að þú sért ekki vélmenni.</string>
-    <string name="verification_needed_description_notification">Staðfestu að þú sért mannvera áður en þessi skilaboð eru send: %s</string>
-    <string name="message_drafted_verification_needed">Skilaboð ekki send - sannvottunar er krafist. Skilaboðin eru vistuð í Drög-möppunni.</string>
     <string name="error_message_zip_code_invalid">Villa: Ógilt póstnúmer</string>
     <string name="error_message_cvc_invalid">Villa: Ógilt CVC-númer</string>
     <string name="error_message_card_name_invalid">Villa: Ógilt nafn á korti</string>

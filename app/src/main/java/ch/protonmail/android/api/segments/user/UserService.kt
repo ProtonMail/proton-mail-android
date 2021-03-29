@@ -19,26 +19,17 @@
 package ch.protonmail.android.api.segments.user
 
 import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.api.models.HumanVerifyOptionsResponse
 import ch.protonmail.android.api.models.KeySalts
-import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.UserInfo
-import ch.protonmail.android.api.models.requests.PostHumanVerificationBody
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
 import retrofit2.Call
-import retrofit2.http.Body
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers
-import retrofit2.http.POST
 import retrofit2.http.Tag
 
 interface UserService {
-
-    // TODO: 2/26/18 token missing ???
-    @GET("users/human")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchHumanVerificationOptions(): Call<HumanVerifyOptionsResponse>
 
     @GET("users")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
@@ -60,9 +51,4 @@ interface UserService {
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     @Deprecated("Use with user Id", ReplaceWith("fetchKeySalts(userId)"))
     fun fetchKeySalts(): Call<KeySalts>
-
-    @POST("users/human")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun postHumanVerification(@Body body: PostHumanVerificationBody): Call<ResponseBody>
-
 }

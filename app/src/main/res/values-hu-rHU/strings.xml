@@ -169,7 +169,6 @@ Svájci székhellyel</string>
     <string name="confirm_destructive_action">Biztos benne? Ezt nem lehet visszavonni.</string>
     <string name="create">Létrehozás</string>
     <string name="email">E-mail</string>
-    <string name="email_address">E-mail cím</string>
     <string name="phone">Telefonszám</string>
     <string name="save">Mentés</string>
     <string name="syncing_messages">Szinkronizálás...</string>
@@ -229,12 +228,6 @@ Svájci székhellyel</string>
     <string name="lock_the_app">Alkalmazás zárolása</string>
     <string name="display_name_banned_chars">Érvénytelen megjelenítési név. \"&gt;\" és \"&lt;\" nem megengedett</string>
     <string name="cont">Tovább</string>
-    <string name="email_verification_code">Egy ellenőrző kódot küldünk a fenti e-mail címre.</string>
-    <string name="sms_verification_code">Egy ellenőrző kódot küldünk a fenti telefonszámra.</string>
-    <string name="send_verification_code">Ellenőrző kód küldése</string>
-    <string name="resend_verification_code">Újraküldés</string>
-    <string name="enter_verification_code">Írja be az ellenőrző kódot</string>
-    <string name="verify">Ellenőrzés</string>
     <string name="reply_prefix_on">Be</string>
     <string name="create_new_account">Új fiók létrehozása</string>
     <string name="setup_new_account">Fiók beállítása</string>
@@ -251,14 +244,6 @@ Svájci székhellyel</string>
     <string name="username_note"><b>Megjegyzés:</b> A felhasználónév egyben a ProtonMail e-mail cím is</string>
     <string name="terms_and_conditions">A ProtonMail használatával elfogadja a\n
         <a href="https://protonmail.com/terms-and-conditions">felhasználási feltételeket</a> és az <a href="https://protonmail.com/privacy-policy">adatvédelmi irányelveket</a></string>
-    <string name="human_verification">Bizonyítsa, hogy nem robot</string>
-    <string name="human_verification_subtitle">A ProtonMaillel való visszaélések elkerülése érdekében\nellenőriznünk kell, hogy nem robot.</string>
-    <string name="select_options">Kérjük, válasszon egyet az alábbi lehetőségek közül:</string>
-    <string name="no_verification_methods_found">Nem található ellenőrzési módszer</string>
-    <string name="email_verification">E-mailes ellenőrzés</string>
-    <string name="phone_verification">Telefonos ellenőrzés</string>
-    <string name="existing_email_address">Adjon meg egy létező e-mail címet</string>
-    <string name="phone_number">Adja meg a telefonszámát</string>
     <string name="encryption_setup">Titkosítás beállítása</string>
     <string name="high_security">Magas szintű biztonság (2048 bit)</string>
     <string name="current_standard">A jelenlegi szabvány</string>
@@ -311,7 +296,6 @@ Svájci székhellyel</string>
         a bejelentkezési jelszó visszaállítására, ha elfelejtené azt.</string>
     <string name="optional_display_name">E-mail küldésekor, ez a név fog megjelenni
         feladóként.</string>
-    <string name="error_captcha_not_valid">Nem érvényes</string>
     <string name="close_engagement">bemutató bezárása</string>
     <string name="engagement_title_welcome">Üdvözöljük a ProtonMailnél!</string>
     <string name="engagement_title_swipe">Gyors csúsztatási műveletek</string>
@@ -605,10 +589,6 @@ Svájci székhellyel</string>
     </string-array>
     <string name="logged_out">Kijelentkezve</string>
     <string name="logged_out_description">Kijelentkezett. Kérjük, jelentkezzen be újra.</string>
-    <string name="verification_needed">Ellenőrzés szükséges</string>
-    <string name="verification_needed_description">Biztonsági okokból, kérjük, igazolja, hogy nem egy robot.</string>
-    <string name="verification_needed_description_notification">Kérjük, hogy az üzenet (%s) elküldése előtt igazolja, hogy nem robot</string>
-    <string name="message_drafted_verification_needed">Üzenet nincs elküldve - ellenőrzés szükséges. Az üzenetet a piszkozatokhoz került elmentésre.</string>
     <string name="error_message_zip_code_invalid">Hiba: Az irányítószám érvénytelen</string>
     <string name="error_message_cvc_invalid">Hiba: az ellenőrző kód érvénytelen</string>
     <string name="error_message_card_name_invalid">Hiba: a kártyabirtokos neve érvénytelen</string>

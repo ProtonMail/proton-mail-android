@@ -168,7 +168,6 @@
     <string name="confirm_destructive_action">Sind Sie sicher? Dies kann nicht widerrufen werden.</string>
     <string name="create">Erstellen</string>
     <string name="email">E-Mail-Adresse</string>
-    <string name="email_address">E-Mail-Adresse</string>
     <string name="phone">Rufnummer</string>
     <string name="save">Speichern</string>
     <string name="syncing_messages">Wird synchronisiert …</string>
@@ -228,12 +227,6 @@
     <string name="lock_the_app">App sperren</string>
     <string name="display_name_banned_chars">Ungültiger Anzeigename. Die Zeichen „&gt;” und „&lt;” sind nicht erlaubt.</string>
     <string name="cont">Weiter</string>
-    <string name="email_verification_code">Sie erhalten einen Verifizierungscode an die oben genannte E-Mail-Adresse.</string>
-    <string name="sms_verification_code">Sie erhalten einen Verifizierungscode an die oben genannte Rufnummer.</string>
-    <string name="send_verification_code">Bestätigungscode senden</string>
-    <string name="resend_verification_code">Erneut senden</string>
-    <string name="enter_verification_code">Bestätigungsschlüssel eingeben</string>
-    <string name="verify">Bestätigen</string>
     <string name="reply_prefix_on">Am</string>
     <string name="create_new_account">Neues Konto erstellen</string>
     <string name="setup_new_account">Richten Sie Ihr Konto ein</string>
@@ -249,14 +242,6 @@
 Verlieren Sie dieses Passwort nicht, wir können es nicht wiederherstellen. Wenn Sie Ihr Passwort verlieren, können Sie Ihre E-Mails nicht mehr lesen.</string>
     <string name="username_note"><b>Hinweis:</b> Der Benutzername entspricht Ihrer ProtonMail-Adresse</string>
     <string name="terms_and_conditions">Mit der Nutzung von ProtonMail erklären Sie sich mit unseren\n <a href="https://protonmail.com/terms-and-conditions">Geschäftsbedingungen</a> und <a href="https://protonmail.com/privacy-policy">Datenschutzerklärung</a> einverstanden.</string>
-    <string name="human_verification">Captcha</string>
-    <string name="human_verification_subtitle">Um den Missbrauch von ProtonMail zu verhindern, müssen wir sicherstellen, dass Sie ein Mensch sind.</string>
-    <string name="select_options">Bitte ein der folgenden Optionen wählen:</string>
-    <string name="no_verification_methods_found">Keine Verifizierungsmethoden gefunden</string>
-    <string name="email_verification">E-Mail-Adresse bestätigen</string>
-    <string name="phone_verification">Telefonische Bestätigung</string>
-    <string name="existing_email_address">Geben Sie Ihre bereits vorhandene E-Mail-Adresse ein</string>
-    <string name="phone_number">Rufnummer eingeben</string>
     <string name="encryption_setup">Verschlüsselung einrichten</string>
     <string name="high_security">Hohe Sicherheit (2048 Bit)</string>
     <string name="current_standard">Der aktuelle Standard</string>
@@ -308,7 +293,6 @@ Verlieren Sie dieses Passwort nicht, wir können es nicht wiederherstellen. Wenn
     <string name="optional_email_note">Die optionale Wiederherstellungs-E-Mail-Adresse ermöglicht es Ihnen,
 das Anmeldepasswort zurückzusetzen, sollten Sie es vergessen haben.</string>
     <string name="optional_display_name">Wenn Sie eine E-Mail senden, ist dies der Name, der im Absenderfeld angezeigt wird.</string>
-    <string name="error_captcha_not_valid">Ungültig</string>
     <string name="close_engagement">Einführung schließen</string>
     <string name="engagement_title_welcome">Willkommen bei ProtonMail!</string>
     <string name="engagement_title_swipe">Aktionen für Wischgesten</string>
@@ -600,10 +584,6 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     </string-array>
     <string name="logged_out">Abgemeldet</string>
     <string name="logged_out_description">Sie wurden abgemeldet. Bitte erneut anmelden.</string>
-    <string name="verification_needed">Bestätigung benötigt</string>
-    <string name="verification_needed_description">Aus Sicherheitsgründen wird überprüft, ob Sie ein Mensch sind.</string>
-    <string name="verification_needed_description_notification">Bitte bestätigen Sie, dass Sie ein Mensch sind, bevor Sie diese Nachricht senden können: %s</string>
-    <string name="message_drafted_verification_needed">Nachricht nicht gesendet - Überprüfung erforderlich. Ihre Nachrichten werden im Ordner „Entwürfe” gespeichert.</string>
     <string name="error_message_zip_code_invalid">Fehler: Ungültige Postleitzahl</string>
     <string name="error_message_cvc_invalid">Fehler: CVC-Nummer ungültig</string>
     <string name="error_message_card_name_invalid">Fehler: Kartennummer ungültig</string>

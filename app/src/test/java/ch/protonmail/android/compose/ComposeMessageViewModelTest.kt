@@ -397,7 +397,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
     private fun givenViewModelPropertiesAreInitialised() {
         // Needed to set class fields to the right value and allow code under test to get executed
         viewModel.prepareMessageData(false, "addressId", "mail-alias", false)
-        viewModel.setupComposingNewMessage(false, Constants.MessageActionType.FORWARD, "parentId823", "")
+        viewModel.setupComposingNewMessage(Constants.MessageActionType.FORWARD, "parentId823", "")
         viewModel.oldSenderAddressId = "previousSenderAddressId"
     }
 

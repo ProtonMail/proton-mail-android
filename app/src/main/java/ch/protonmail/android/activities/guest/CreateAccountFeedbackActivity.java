@@ -124,11 +124,6 @@ public class CreateAccountFeedbackActivity extends BaseActivity implements
     }
 
     @Override
-    public void sendVerificationCode(String email, String phoneNumber) {
-        // noop
-    }
-
-    @Override
     public void createUser(Constants.TokenType tokenType, String token) {
         // noop
     }

@@ -168,7 +168,6 @@
     <string name="confirm_destructive_action">Sikker? Handlingen er irreversibel.</string>
     <string name="create">Opret</string>
     <string name="email">E-mail</string>
-    <string name="email_address">E-mail</string>
     <string name="phone">Telefonnummer</string>
     <string name="save">Gem</string>
     <string name="syncing_messages">Synkroniserer...</string>
@@ -228,12 +227,6 @@
     <string name="lock_the_app">Lås app\'en</string>
     <string name="display_name_banned_chars">Ugyldigt visningsnavn. \'&gt;\', \'&lt;\' og \' @\' er ikke tilladt</string>
     <string name="cont">Fortsæt</string>
-    <string name="email_verification_code">Du får tilsendt en bekræftelseskode til ovenstående e-mail.</string>
-    <string name="sms_verification_code">Du får tilsendt en bekræftelseskode til ovenstående mobilnummer.</string>
-    <string name="send_verification_code">Send bekræftelseskode</string>
-    <string name="resend_verification_code">Gensend</string>
-    <string name="enter_verification_code">Angiv bekræftelseskode</string>
-    <string name="verify">Bekræft</string>
     <string name="reply_prefix_on">Til</string>
     <string name="create_new_account">Opret en ny konto</string>
     <string name="setup_new_account">Opsæt din konto</string>
@@ -250,14 +243,6 @@
     <string name="username_note"><b>Bemærk:</b> Brugeravnet er også din ProtonMail-e-mail</string>
     <string name="terms_and_conditions">Ved at benytte ProtonMail accepterer du vores\n
         <a href="https://protonmail.com/terms-and-conditions">Vilkår og Betingelse</a> samt <a href="https://protonmail.com/privacy-policy">Fortrolighedspolitik</a></string>
-    <string name="human_verification">Anti-bot bekræftelse</string>
-    <string name="human_verification_subtitle">For at forhindre misbrug af ProtonMail\nskal du bekræfte, at du er en person.</string>
-    <string name="select_options">Vælg én af flg. muligheder:</string>
-    <string name="no_verification_methods_found">Ingen bekræftelsesmetoder fundet</string>
-    <string name="email_verification">E-mail-bekræftelse</string>
-    <string name="phone_verification">Telefonbekræftelse</string>
-    <string name="existing_email_address">Angiv din aktuelle e-mail</string>
-    <string name="phone_number">Angiv dit telefonnummer</string>
     <string name="encryption_setup">Krypteringsopsætning</string>
     <string name="high_security">Høj sikkerhed (2.048-bit)</string>
     <string name="current_standard">Aktuelle standard</string>
@@ -310,7 +295,6 @@
         af din loginadgangskode, hvis du glemmer den.</string>
     <string name="optional_display_name">Når du afsender en e-mail, er dette dét navn,
          der vises i afsenderfeltet.</string>
-    <string name="error_captcha_not_valid">Ugyldig</string>
     <string name="close_engagement">luk rundvisning</string>
     <string name="engagement_title_welcome">Velkommen til ProtonMail!</string>
     <string name="engagement_title_swipe">Hurtig-stryg handlinger</string>
@@ -607,10 +591,6 @@
     </string-array>
     <string name="logged_out">Logget ud</string>
     <string name="logged_out_description">Du er logget ud. Log ind igen for at fortsætte.</string>
-    <string name="verification_needed">Bekræftelse kræves</string>
-    <string name="verification_needed_description">Af sikkerhedshensyn bedes du bekræfte, at du ikke er en robot.</string>
-    <string name="verification_needed_description_notification">Bekræft, at du ikke er en robot, før du sender denne besked: %s</string>
-    <string name="message_drafted_verification_needed">Besked ikke afsendt - bekræftelse kræves. Beskeder gemmes i mappen Udkast.</string>
     <string name="error_message_zip_code_invalid">Fejl: Ugyldigt postnummer</string>
     <string name="error_message_cvc_invalid">Fejl: CVC-nummer ugyldigt</string>
     <string name="error_message_card_name_invalid">Fejl: Kortnavn ugyldigt</string>

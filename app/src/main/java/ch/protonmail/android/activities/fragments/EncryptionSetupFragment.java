@@ -97,12 +97,14 @@ public class EncryptionSetupFragment extends CreateAccountBaseFragment {
             mListener.generateKeyPairDone();
             mListener.allowBackPress();
             CreateAccountBaseFragment nextFragment;
-            if (mListener.getSelectedAccountType() == Constants.AccountType.FREE) {
-                nextFragment = HumanVerificationFragment.newInstance(windowHeight, mListener.getMethods());
-            } else {
-                nextFragment = BillingFragment.newInstance(Constants.BillingType.CREATE, windowHeight,
-                        mListener.getCurrency(), mListener.getAmount(), mListener.getSelectedPlanId(), mListener.getSelectedCycle());
-            }
+            nextFragment = BillingFragment.newInstance(
+                    Constants.BillingType.CREATE,
+                    windowHeight,
+                    mListener.getCurrency(),
+                    mListener.getAmount(),
+                    mListener.getSelectedPlanId(),
+                    mListener.getSelectedCycle()
+            );
             mListener.replaceFragment(nextFragment, nextFragment.getFragmentKey());
         }
     }

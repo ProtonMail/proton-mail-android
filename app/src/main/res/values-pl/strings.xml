@@ -178,7 +178,6 @@
     <string name="confirm_destructive_action">Czy na pewno? Tej akcji nie można cofnąć.</string>
     <string name="create">Utwórz</string>
     <string name="email">E-mail</string>
-    <string name="email_address">Adres e-mail</string>
     <string name="phone">Numer telefonu</string>
     <string name="save">Zapisz</string>
     <string name="syncing_messages">Trwa synchronizacja...</string>
@@ -238,12 +237,6 @@
     <string name="lock_the_app">Zablokuj aplikację</string>
     <string name="display_name_banned_chars">Nazwa wyświetlana jest nieprawidłowa. \'&gt;\' i \'&lt;\' są niedozwolone</string>
     <string name="cont">Kontynuuj</string>
-    <string name="email_verification_code">Wyślemy kod weryfikacyjny na powyższy adres e-mail.</string>
-    <string name="sms_verification_code">Wyślemy kod weryfikacyjny na powyższy numer telefonu komórkowego.</string>
-    <string name="send_verification_code">Wyślij kod weryfikacyjny</string>
-    <string name="resend_verification_code">Wyślij ponownie</string>
-    <string name="enter_verification_code">Wpisz kod weryfikacyjny</string>
-    <string name="verify">Zweryfikuj</string>
     <string name="reply_prefix_on">‎</string>
     <string name="create_new_account">Utwórz konto</string>
     <string name="setup_new_account">Skonfiguruj swoje konto</string>
@@ -260,14 +253,6 @@
     <string name="username_note"><b>Uwaga:</b> Nazwa użytkownika jest również Twoim adresem ProtonMail</string>
     <string name="terms_and_conditions">Korzystając z poczty ProtonMail, akceptujesz nasz\n
         <a href="https://protonmail.com/terms-and-conditions">regulamin</a> oraz <a href="https://protonmail.com/privacy-policy">politykę prywatności</a></string>
-    <string name="human_verification">Weryfikacja antyspamowa</string>
-    <string name="human_verification_subtitle">Aby zapobiec nadużyciom poczty ProtonMail,\nmusimy zweryfikować, czy jesteś człowiekiem.</string>
-    <string name="select_options">Wybierz jedną z następujących opcji:</string>
-    <string name="no_verification_methods_found">Nie znaleziono metod weryfikacji</string>
-    <string name="email_verification">Weryfikacja adresu e-mail</string>
-    <string name="phone_verification">Weryfikacja przez telefon</string>
-    <string name="existing_email_address">Wpisz swój adres e-mail</string>
-    <string name="phone_number">Wpisz numer telefonu</string>
     <string name="encryption_setup">Konfiguracja szyfrowania</string>
     <string name="high_security">Wysoki poziom bezpieczeństwa (2048 bitów)</string>
     <string name="current_standard">Obecny standard</string>
@@ -320,7 +305,6 @@
 zresetować hasło logowania, jeśli je zapomnisz.</string>
     <string name="optional_display_name">Po wysłaniu wiadomości ta nazwa
         pojawi się w polu nadawcy.</string>
-    <string name="error_captcha_not_valid">Nieprawidłowy</string>
     <string name="close_engagement">zamknij przewodnik</string>
     <string name="engagement_title_welcome">Witaj w ProtonMail!</string>
     <string name="engagement_title_swipe">Szybkie gesty</string>
@@ -620,10 +604,6 @@ zresetować hasło logowania, jeśli je zapomnisz.</string>
     </string-array>
     <string name="logged_out">Wylogowano</string>
     <string name="logged_out_description">Zostałeś wylogowany. Zaloguj się ponownie.</string>
-    <string name="verification_needed">Weryfikacja jest wymagana</string>
-    <string name="verification_needed_description">Ze względów bezpieczeństwa potwierdź, że nie jesteś robotem.</string>
-    <string name="verification_needed_description_notification">Zanim wyślesz tę wiadomość, potwierdź, że jesteś człowiekiem: %s</string>
-    <string name="message_drafted_verification_needed">Wiadomość nie została wysłana - weryfikacja jest wymagana. Wiadomość została zapisana w folderze Szkice.</string>
     <string name="error_message_zip_code_invalid">Błąd: Kod pocztowy jest nieprawidłowy</string>
     <string name="error_message_cvc_invalid">Błąd: Numer CVC jest nieprawidłowy</string>
     <string name="error_message_card_name_invalid">Błąd: Właściciel karty jest nieprawidłowy</string>

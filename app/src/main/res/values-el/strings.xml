@@ -168,7 +168,6 @@
     <string name="confirm_destructive_action">Είστε σίγουρος/η; Δεν υπάρχει τρόπος επαναφοράς.</string>
     <string name="create">Δημιουργία</string>
     <string name="email">Email</string>
-    <string name="email_address">Διεύθυνση email</string>
     <string name="phone">Αριθμός τηλεφώνου</string>
     <string name="save">Αποθήκευση</string>
     <string name="syncing_messages">Συγχρονισμός...</string>
@@ -228,12 +227,6 @@
     <string name="lock_the_app">Κλείδωμα εφαρμογής</string>
     <string name="display_name_banned_chars">Μή Έγκυρο Εμφανιζόμενο Όνομα. &gt; και &lt; δεν επιτρέπονται</string>
     <string name="cont">Συνέχεια</string>
-    <string name="email_verification_code">Θα στείλουμε έναν κωδικό επαλήθευσης στην παραπάνω διεύθυνση E-Mail.</string>
-    <string name="sms_verification_code">Θα στείλουμε έναν κωδικό επαλήθευσης στον παραπάνω αριθμό τηλεφώνου.</string>
-    <string name="send_verification_code">Αποστολή Κωδικού Επαλήθευσης</string>
-    <string name="resend_verification_code">Αποστολή ξανά</string>
-    <string name="enter_verification_code">Εισάγετε τον κωδικό επαλήθευσης</string>
-    <string name="verify">Επαλήθευση</string>
     <string name="reply_prefix_on">Ενεργό</string>
     <string name="create_new_account">Δημιουργήστε ένα νέο λογαριασμό</string>
     <string name="setup_new_account">Ρυθμίστε το λογαριασμό σας</string>
@@ -250,14 +243,6 @@
     <string name="username_note"><b>Σημείωση:</b> Το όνομα χρήστη είναι επίσης και η διεύθυνση ProtonMail σας</string>
     <string name="terms_and_conditions">Χρησιμοποιώντας το ProtonMail, συμφωνείτε με τους\n
         &lt;a href="https://protonmail.com/terms-and-conditions"&gt;Όρους και προϋποθέσεις&lt;/a&gt; και &lt;a href="https://protonmail.com/privacy-policy"&gt;&lt;a href="https://protonmail.com/privacy-policy"&gt;Πολιτική Απορρήτου&lt;/a&gt;</string>
-    <string name="human_verification">Ανθρώπινη Επαλήθευση</string>
-    <string name="human_verification_subtitle">Για να αποτρέψουμε την κατάχρηση του ProtonMail,\nπρέπει να επαληθεύσουμε ότι είστε άνθρωπος.</string>
-    <string name="select_options">Παρακαλώ επιλέξτε μία από τις παρακάτω επιλογές:</string>
-    <string name="no_verification_methods_found">Δεν βρέθηκαν μέθοδοι επαλήθευσης</string>
-    <string name="email_verification">Επαλήθευση E-mail</string>
-    <string name="phone_verification">Επαλήθευση Τηλεφώνου</string>
-    <string name="existing_email_address">Εισάγετε την υπάρχουσα διεύθυνση E-mail σας</string>
-    <string name="phone_number">Εισάγετε τον αριθμό τηλεφώνου σας</string>
     <string name="encryption_setup">Ρύθμιση Κρυπτογράφησης</string>
     <string name="high_security">Υψηλή Ασφάλεια (2048 bit)</string>
     <string name="current_standard">Το ισχύον πρότυπο</string>
@@ -310,7 +295,6 @@
          επαναφέρετε τον κωδικό σύνδεσης σας εάν τον ξεχάσετε.</string>
     <string name="optional_display_name">Όταν στέλνετε ένα μήνυμα ηλεκτρονικού ταχυδρομείου, αυτό είναι το όνομα
          εμφανίζεται στο πεδίο αποστολέα.</string>
-    <string name="error_captcha_not_valid">Δεν είναι έγκυρο</string>
     <string name="close_engagement">κλείσιμο οδηγιών</string>
     <string name="engagement_title_welcome">Καλώς ήρθατε στο ProtonMail!</string>
     <string name="engagement_title_swipe">Γρήγορες ενέργειες ολίσθησης</string>
@@ -607,10 +591,6 @@
     </string-array>
     <string name="logged_out">Αποσυνδεδεμένος</string>
     <string name="logged_out_description">Έχετε αποσυνδεθεί. Παρακαλούμε συνδεθείτε ξανά.</string>
-    <string name="verification_needed">Απαιτείται επαλήθευση</string>
-    <string name="verification_needed_description">Για λόγους ασφαλείας, παρακαλώ επαληθεύστε ότι δεν είστε ρομπότ.</string>
-    <string name="verification_needed_description_notification">Παρακαλώ επιβεβαιώστε ότι είστε άνθρωπος πριν στείλετε αυτό το μήνυμα: %s</string>
-    <string name="message_drafted_verification_needed">Το μήνυμα δεν στάλθηκε - απαιτείται επαλήθευση. Τα μηνύματα σας αποθηκεύονται στο φάκελο προχείρου.</string>
     <string name="error_message_zip_code_invalid">Σφάλμα: Ο ταχυδρομικός κώδικας δεν είναι έγκυρος</string>
     <string name="error_message_cvc_invalid">Σφάλμα: Ο αριθμός CVC δεν είναι έγκυρος</string>
     <string name="error_message_card_name_invalid">Σφάλμα: Το όνομα κάρτας δεν είναι έγκυρο</string>

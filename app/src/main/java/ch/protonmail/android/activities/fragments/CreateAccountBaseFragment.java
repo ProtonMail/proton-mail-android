@@ -398,8 +398,6 @@ public abstract class CreateAccountBaseFragment extends BaseFragment implements 
 
         ArrayList<String> getMethods();
 
-        void sendVerificationCode(String email, String phoneNumber);
-
         void createUser(Constants.TokenType tokenType, String token);
 
         void saveEncryptionBits(int bits);

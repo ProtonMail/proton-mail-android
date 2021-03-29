@@ -19,13 +19,10 @@
 package ch.protonmail.android.api.segments.user
 
 import ch.protonmail.android.api.models.DirectEnabledResponse
-import ch.protonmail.android.api.models.HumanVerifyOptionsResponse
 import ch.protonmail.android.api.models.KeySalts
 import ch.protonmail.android.api.models.PasswordVerifier
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.UserInfo
-import ch.protonmail.android.api.models.VerificationCodeBody
-import ch.protonmail.android.api.models.requests.PostHumanVerificationBody
 import ch.protonmail.android.domain.entity.Id
 import java.io.IOException
 
@@ -45,12 +42,6 @@ interface UserApiSpec {
     fun fetchKeySalts(): KeySalts
 
     @Throws(IOException::class)
-    fun fetchHumanVerificationOptions(): HumanVerifyOptionsResponse
-
-    @Throws(IOException::class)
-    fun postHumanVerification(body: PostHumanVerificationBody): ResponseBody?
-
-    @Throws(IOException::class)
     fun createUser(
         username: String,
         password: PasswordVerifier,
@@ -60,9 +51,6 @@ interface UserApiSpec {
         timestamp:String,
         payload:String
     ): UserInfo
-
-    @Throws(IOException::class)
-    fun sendVerificationCode(verificationCodeBody: VerificationCodeBody): ResponseBody
 
     @Throws(IOException::class)
     fun isUsernameAvailable(username: String): ResponseBody

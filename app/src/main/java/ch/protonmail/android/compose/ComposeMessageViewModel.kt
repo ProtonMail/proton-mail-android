@@ -139,7 +139,6 @@ class ComposeMessageViewModel @Inject constructor(
     private var _actionType = UserAction.NONE
     var _actionId = Constants.MessageActionType.NONE
     private var _parentId: String? = null
-    private var _verify: Boolean = false
     private val _draftId = AtomicReference<String>()
     private lateinit var _data: List<ContactLabel>
     private lateinit var _senderAddresses: List<String>
@@ -199,8 +198,6 @@ class ComposeMessageViewModel @Inject constructor(
 
     // endregion
     // region getters
-    val verify: Boolean
-        get() = _verify
     var draftId: String
         get() = _draftId.get() ?: ""
         set(value) { // this is temporary until all setters are moved from the activity into this class
@@ -252,20 +249,17 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
-    fun setupEditDraftMessage(verify: Boolean, draftId: String, composerGroupCountOf: String) {
-        _verify = verify
+    fun setupEditDraftMessage(draftId: String, composerGroupCountOf: String) {
         _draftId.set(draftId)
         _composerGroupCountOf = composerGroupCountOf
         watchForMessageSent()
     }
 
     fun setupComposingNewMessage(
-        verify: Boolean,
         actionId: Constants.MessageActionType,
         parentId: String?,
         composerGroupCountOf: String
     ) {
-        _verify = verify
         _actionId = actionId
         _parentId = parentId
         _composerGroupCountOf = composerGroupCountOf
@@ -563,10 +557,6 @@ class ComposeMessageViewModel @Inject constructor(
         composeMessageRepository.startGetAvailableDomains()
     }
 
-    fun startFetchHumanVerificationOptionsJob() {
-        composeMessageRepository.startFetchHumanVerificationOptions()
-    }
-
     fun startFetchMessageDetailJob(draftId: String) {
         composeMessageRepository.startFetchMessageDetail(draftId)
     }
@@ -707,10 +697,6 @@ class ComposeMessageViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    fun startPostHumanVerification(tokenType: Constants.TokenType, token: String) {
-        composeMessageRepository.startPostHumanVerification(tokenType, token)
     }
 
     @Synchronized

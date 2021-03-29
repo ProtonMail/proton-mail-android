@@ -178,7 +178,6 @@
     <string name="confirm_destructive_action">Jste si jisti? Nelze to vrátit zpět.</string>
     <string name="create">Nové</string>
     <string name="email">Email</string>
-    <string name="email_address">Emailová adresa</string>
     <string name="phone">Telefonní číslo</string>
     <string name="save">Uložit</string>
     <string name="syncing_messages">Synchronizování...</string>
@@ -238,12 +237,6 @@
     <string name="lock_the_app">Zamknout aplikaci</string>
     <string name="display_name_banned_chars">Neplatné zobrazované jméno. \'&gt;\' a \'&lt;\' nejsou povoleny</string>
     <string name="cont">Pokračovat</string>
-    <string name="email_verification_code">Na výše uvedenou adresu zašleme ověřovací kód.</string>
-    <string name="sms_verification_code">Na výše uvedené telefonní číslo Vám zašleme ověřovací kód.</string>
-    <string name="send_verification_code">Odeslat ověřovací kód</string>
-    <string name="resend_verification_code">Poslat znovu</string>
-    <string name="enter_verification_code">Zadejte ověřovací kód</string>
-    <string name="verify">Ověřit</string>
     <string name="reply_prefix_on">Dne</string>
     <string name="create_new_account">Vytvořit nový účet</string>
     <string name="setup_new_account">Nastavení účtu</string>
@@ -260,14 +253,6 @@
     <string name="username_note"><b>Poznámka:</b> Uživatelské jméno je zároveň také vaše e-mailová adresa služby ProtonMail</string>
     <string name="terms_and_conditions">Užíváním služby ProtonMail, souhlasíte s našimi\n
         <a href="https://protonmail.com/terms-and-conditions">pravidly a podmínkami</a> a <a href="https://protonmail.com/privacy-policy">ochranou soukromí</a></string>
-    <string name="human_verification">Captcha</string>
-    <string name="human_verification_subtitle">Pro ochranu proti zneužití služby ProtonMail,\npotřebujeme oveřit, že jste člověk.</string>
-    <string name="select_options">Zvolte prosím jednu z následujících možností:</string>
-    <string name="no_verification_methods_found">Žádná metoda k ověření nebyla nalezena</string>
-    <string name="email_verification">Ověření e-mailu</string>
-    <string name="phone_verification">Ověření pomocí telefonu</string>
-    <string name="existing_email_address">Vložte svou současnou e-mailovou adresu</string>
-    <string name="phone_number">Vložte své telefonní číslo</string>
     <string name="encryption_setup">Nastavení šifrování</string>
     <string name="high_security">Vysoký stupeň zabezpečení (2048 bitů)</string>
     <string name="current_standard">Současný standard</string>
@@ -318,7 +303,6 @@
     <string name="new_account_ready">Váš nový zabezpečený e-mailový účet je připraven.</string>
     <string name="optional_email_note">Pokud zapomenete heslo, volitelný sekundární e-mail Vám umožňuje provést obnovu hesla pro přihlášení.</string>
     <string name="optional_display_name">Toto je název, který se zobrazí v poli odesílatele při odeslání e-mailu.</string>
-    <string name="error_captcha_not_valid">Neplatné</string>
     <string name="close_engagement">ukončit průvodce</string>
     <string name="engagement_title_welcome">Vítejte na ProtonMail!</string>
     <string name="engagement_title_swipe">Akce gesta rychlého přejetí</string>
@@ -620,10 +604,6 @@
     </string-array>
     <string name="logged_out">Odhlášen(a)</string>
     <string name="logged_out_description">Byli jste odhlášeni. Přihlaste se prosím znovu.</string>
-    <string name="verification_needed">Požadováno ověření</string>
-    <string name="verification_needed_description">Z bezpečnostních důvodů ověřte, že nejste robot.</string>
-    <string name="verification_needed_description_notification">Prosím ověřte, že jste člověk, před odesláním této zprávy: %s</string>
-    <string name="message_drafted_verification_needed">Zpráva nebyla odeslána - vyžadováno ověření. Zprávy byly uloženy do složky Koncepty.</string>
     <string name="error_message_zip_code_invalid">Chyba: Neplatné PSČ</string>
     <string name="error_message_cvc_invalid">Chyba: Neplatné číslo CVC</string>
     <string name="error_message_card_name_invalid">Chyba: Neplatné jméno karty</string>

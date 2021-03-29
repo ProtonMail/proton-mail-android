@@ -163,7 +163,6 @@
     <string name="confirm_destructive_action">Apakah Anda yakin? Tindakan ini tidak dapat dibatalkan.</string>
     <string name="create">Buat</string>
     <string name="email">Email</string>
-    <string name="email_address">Alamat email</string>
     <string name="phone">Nomor telepon</string>
     <string name="save">Simpan</string>
     <string name="syncing_messages">Menyinkronkan...</string>
@@ -223,12 +222,6 @@
     <string name="lock_the_app">Kunci Aplikasi</string>
     <string name="display_name_banned_chars">Nama tampilan tidak valid. \'&gt;\' dan \'&lt;\' tidak diizinkan</string>
     <string name="cont">Lanjutkan</string>
-    <string name="email_verification_code">Kami akan mengirimkan kode verifikasi ke alamat email di atas.</string>
-    <string name="sms_verification_code">Kami akan mengirimkan kode verifikasi ke nomor telepon di atas.</string>
-    <string name="send_verification_code">Kirim Kode Verifikasi</string>
-    <string name="resend_verification_code">Kirim ulang</string>
-    <string name="enter_verification_code">Masukkan kode verifikasi</string>
-    <string name="verify">Verifikasi</string>
     <string name="reply_prefix_on">Aktif</string>
     <string name="create_new_account">Buat akun baru</string>
     <string name="setup_new_account">Siapkan akun Anda</string>
@@ -245,14 +238,6 @@
     <string name="username_note"><b>Catatan:</b> Nama pengguna ini juga merupakan alamat ProtonMail Anda</string>
     <string name="terms_and_conditions">Dengan menggunakan ProtonMail, anda setuju dengan\n
         <a href="https://protonmail.com/terms-and-conditions">syarat dan ketentuan</a> kami, dan <a href="https://protonmail.com/privacy-policy">kebijakan privasi</a>kami</string>
-    <string name="human_verification">Verifikasi</string>
-    <string name="human_verification_subtitle">Untuk mencegah penyalahgunaan ProtonMail,\nkami perlu memverifikasi bahwa anda adalah manusia.</string>
-    <string name="select_options">Silahkan pilih salah satu opsi berikut:</string>
-    <string name="no_verification_methods_found">Tidak ada metode verifikasi yang ditemukan</string>
-    <string name="email_verification">Verifikasi email</string>
-    <string name="phone_verification">Verifikasi Telepon</string>
-    <string name="existing_email_address">Masukkan alamat email anda yang ada</string>
-    <string name="phone_number">Masukan nomor telepon anda</string>
     <string name="encryption_setup">Pengaturan enkripsi</string>
     <string name="high_security">Keamanan Tinggi (2048 bit)</string>
     <string name="current_standard">Standar saat ini</string>
@@ -305,7 +290,6 @@
         mengatur ulang kata sandi masuk anda jika anda lupa.</string>
     <string name="optional_display_name">Saat anda mengirim email, nama inilah yang
          muncul di bidang pengirim.</string>
-    <string name="error_captcha_not_valid">Tidak valid</string>
     <string name="close_engagement">tutup tur</string>
     <string name="engagement_title_welcome">Selamat Datang di ProtonMail!</string>
     <string name="engagement_title_swipe">Tindakan Gesek Cepat</string>
@@ -600,10 +584,6 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     </string-array>
     <string name="logged_out">Keluar</string>
     <string name="logged_out_description">Anda telah keluar. Silakan masuk lagi.</string>
-    <string name="verification_needed">Verifikasi Dibutuhkan</string>
-    <string name="verification_needed_description">Demi keamanan, buktikan Anda bukan robot.</string>
-    <string name="verification_needed_description_notification">Harap verifikasi bahwa Anda adalah manusia sebelum mengirim pesan ini: %s</string>
-    <string name="message_drafted_verification_needed">Pesan tidak terkirim - verifikasi diperlukan. Pesan Anda disimpan di folder konsep.</string>
     <string name="error_message_zip_code_invalid">Kesalahan: Kode Pos tidak valid</string>
     <string name="error_message_cvc_invalid">Kesalahan: Nomor CVC tidak valid</string>
     <string name="error_message_card_name_invalid">Kesalahan: Nama Kartu tidak valid</string>

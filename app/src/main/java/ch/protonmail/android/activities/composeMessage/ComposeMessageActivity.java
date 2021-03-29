@@ -71,7 +71,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
@@ -110,7 +109,6 @@ import butterknife.OnClick;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.AddAttachmentsActivity;
 import ch.protonmail.android.activities.BaseContactsActivity;
-import ch.protonmail.android.activities.fragments.HumanVerificationCaptchaDialogFragment;
 import ch.protonmail.android.activities.guest.FirstActivity;
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.activities.mailbox.MailboxActivity;
@@ -143,7 +141,6 @@ import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
-import ch.protonmail.android.events.HumanVerifyOptionsEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.MessageSavedEvent;
 import ch.protonmail.android.events.PostImportAttachmentEvent;
@@ -151,7 +148,6 @@ import ch.protonmail.android.events.PostLoadContactsEvent;
 import ch.protonmail.android.events.ResignContactEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.contacts.SendPreferencesEvent;
-import ch.protonmail.android.events.verification.PostHumanVerificationEvent;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
 import ch.protonmail.android.tasks.EmbeddedImagesThread;
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest;
@@ -191,7 +187,6 @@ public class ComposeMessageActivity
         implements MessagePasswordButton.OnMessagePasswordChangedListener,
         MessageExpirationView.OnMessageExpirationChangedListener,
         LoaderManager.LoaderCallbacks<Cursor>,
-        HumanVerificationCaptchaDialogFragment.IHumanVerificationListener,
         GroupRecipientsDialogFragment.IGroupRecipientsListener {
     //region extras
     public static final String EXTRA_PARENT_ID = "parent_id";
@@ -217,7 +212,6 @@ public class ComposeMessageActivity
     public static final String EXTRA_REPLY_FROM_GCM = "reply_from_gcm";
     public static final String EXTRA_LOAD_IMAGES = "load_images";
     public static final String EXTRA_LOAD_REMOTE_CONTENT = "load_remote_content";
-    public static final String EXTRA_VERIFY = "verify";
     private static final int REQUEST_CODE_ADD_ATTACHMENTS = 1;
     private static final String STATE_ATTACHMENT_LIST = "attachment_list";
     private static final String STATE_ADDITIONAL_ROWS_VISIBLE = "additional_rows_visible";
@@ -260,8 +254,6 @@ public class ComposeMessageActivity
     EditText mMessageTitleEditText;
     @BindView(R.id.scroll_parent)
     View mScrollParentView;
-    @BindView(R.id.human_verification)
-    View mHumanVerificationView;
     @BindView(R.id.progress)
     View mProgressView;
     @BindView(R.id.progress_spinner)
@@ -285,14 +277,12 @@ public class ComposeMessageActivity
     //endregion
     private WebView mMessageBody;
     private PMWebViewClient pmWebViewClient;
-    private HumanVerificationCaptchaDialogFragment mHumanVerificationDialogFragment;
     final String newline = "<br>";
     private MessageRecipientViewAdapter mMessageRecipientViewAdapter;
     private boolean mAreAdditionalRowsVisible;
 
     private int mSelectedAddressPosition = 0;
     private boolean askForPermission;
-    private boolean mHumanVerifyInProgress;
 
     private String mAction;
     private boolean mUpdateDraftPmMeChanged;
@@ -439,13 +429,6 @@ public class ComposeMessageActivity
         mAddressesSpinner.getViewTreeObserver().addOnGlobalLayoutListener(new AddressSpinnerGlobalLayoutListener());
         askForPermission = true;
         composeMessageViewModel.startGetAvailableDomainsJob();
-
-        if (composeMessageViewModel.getVerify()) {
-            mHumanVerificationView.setVisibility(View.VISIBLE);
-            composeMessageViewModel.startFetchHumanVerificationOptionsJob();
-            mProgressView.setVisibility(View.VISIBLE);
-        }
-
         composeMessageViewModel.setSignature(composeMessageViewModel.getSignatureByEmailAddress((String) mAddressesSpinner.getSelectedItem()));
     }
 
@@ -515,7 +498,6 @@ public class ComposeMessageActivity
         composeMessageViewModel.getLoadingDraftResult().observe(ComposeMessageActivity.this, new LoadDraftObserver(extras, intent, type));
         if (extras != null) {
             composeMessageViewModel.prepareMessageData(extras.getBoolean(EXTRA_PGP_MIME, false), extras.getString(EXTRA_MESSAGE_ADDRESS_ID, ""), extras.getString(EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS), extras.getBoolean(EXTRA_MESSAGE_IS_TRANSIENT));
-            boolean verify = extras.getBoolean(EXTRA_VERIFY, false);
             composeMessageViewModel.setShowImages(extras.getBoolean(EXTRA_LOAD_IMAGES, false));
             composeMessageViewModel.setShowRemoteContent(extras.getBoolean(EXTRA_LOAD_REMOTE_CONTENT, false));
             boolean replyFromGcm = extras.getBoolean(EXTRA_REPLY_FROM_GCM, false);
@@ -533,7 +515,7 @@ public class ComposeMessageActivity
                 }
                 mAddressesSpinner.setSelection(mSelectedAddressPosition);
 
-                composeMessageViewModel.setupEditDraftMessage(verify, messageId, getString(R.string.composer_group_count_of));
+                composeMessageViewModel.setupEditDraftMessage(messageId, getString(R.string.composer_group_count_of));
                 composeMessageViewModel.findDraftMessageById();
             } else {
                 // composing new message here
@@ -572,7 +554,7 @@ public class ComposeMessageActivity
                 mMessageTitleEditText.setText(messageTitle);
 
                 Constants.MessageActionType messageActionType = (Constants.MessageActionType) extras.getSerializable(EXTRA_ACTION_ID);
-                composeMessageViewModel.setupComposingNewMessage(verify, messageActionType != null ? messageActionType : Constants.MessageActionType.NONE,
+                composeMessageViewModel.setupComposingNewMessage(messageActionType != null ? messageActionType : Constants.MessageActionType.NONE,
                         extras.getString(EXTRA_PARENT_ID, null), getString(R.string.composer_group_count_of));
 
                 composeMessageViewModel.prepareMessageData(messageTitle, new ArrayList(attachmentsList));
@@ -698,34 +680,6 @@ public class ComposeMessageActivity
         }
     }
 
-    @Subscribe
-    public void onHumanVerifyOptionsEvent(HumanVerifyOptionsEvent event) {
-        UiUtil.hideKeyboard(this);
-        mHumanVerifyInProgress = true;
-        List<String> verificationMethods = event.getVerifyMethods();
-        if (verificationMethods.size() > 1) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, mHumanVerificationDialogFragment, "fragment_human_verification")
-                    .commitAllowingStateLoss();
-        } else {
-            Constants.TokenType method = Constants.TokenType.Companion.fromString(verificationMethods.get(0));
-            if (method == Constants.TokenType.CAPTCHA) {
-                verificationOptionChose(Constants.TokenType.CAPTCHA, event.getToken());
-            }
-        }
-    }
-
-    @Subscribe
-    public void onPostHumanVerificationEvent(PostHumanVerificationEvent event) {
-        if (mHumanVerificationDialogFragment != null && mHumanVerificationDialogFragment.isAdded()) {
-            mHumanVerificationDialogFragment.dismiss();
-        }
-        if (event.getStatus() == Status.SUCCESS) {
-            UiUtil.hideKeyboard(this);
-            composeMessageViewModel.finishBuildingMessage(mComposeBodyEditText.getText().toString());
-        }
-    }
-
     private void focusRespondInline() {
         new Handler().postDelayed(() -> mScrollView.scrollTo(0, mRespondInlineButton.getBottom()), 1000);
     }
@@ -765,32 +719,6 @@ public class ComposeMessageActivity
 
         }
     };
-
-    @Override
-    public boolean hasConnectivity() {
-        return true;
-    }
-
-    @Override
-    public void verify(Constants.TokenType tokenType, String token) {
-        mHumanVerifyInProgress = false;
-        composeMessageViewModel.startPostHumanVerification(tokenType, token);
-    }
-
-    @Override
-    public void viewLoaded() {
-        UiUtil.hideKeyboard(this);
-    }
-
-    @Override
-    public void verificationOptionChose(Constants.TokenType tokenType, String token) {
-        if (tokenType.equals(Constants.TokenType.CAPTCHA)) {
-            mHumanVerificationDialogFragment = HumanVerificationCaptchaDialogFragment.newInstance(token);
-        }
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, mHumanVerificationDialogFragment);
-        fragmentTransaction.commitAllowingStateLoss();
-    }
 
     @Override
     public void recipientsSelected(@NonNull ArrayList<MessageRecipient> recipients, @Nonnull Constants.RecipientLocationType location) {
@@ -1135,9 +1063,6 @@ public class ComposeMessageActivity
                 onBackPressed();
                 return true;
             case R.id.send_message:
-                if (mHumanVerifyInProgress) {
-                    return true;
-                }
                 if (mSendingPressed) {
                     return true;
                 }

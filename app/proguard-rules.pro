@@ -153,9 +153,6 @@
 -keep public class ch.protonmail.android.views.behavior.** { *; }
 -keep public class ch.protonmail.android.utils.MIME.** { *; }
 -keep public class ch.protonmail.android.data.local.model.MessagesTypesConverter { }
--keep class ch.protonmail.android.activities.fragments.HumanVerificationCaptchaFragment$WebAppInterface {
-  *;
-}
 -keep public interface ch.protonmail.android.adapters.base.ClickableAdapter { *; }
 
 # PM goopenpgp

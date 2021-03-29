@@ -168,7 +168,6 @@
     <string name="confirm_destructive_action">Emin misiniz? Bu geri alınamaz.</string>
     <string name="create">Oluştur</string>
     <string name="email">E-posta</string>
-    <string name="email_address">E-posta adresi</string>
     <string name="phone">Telefon numarası</string>
     <string name="save">Kaydet</string>
     <string name="syncing_messages">Eşitleniyor...</string>
@@ -228,12 +227,6 @@
     <string name="lock_the_app">Uygulamayı kilitle</string>
     <string name="display_name_banned_chars">Geçersiz görüntü adı. \'&gt;\' ve \'&lt;\' geçersiz</string>
     <string name="cont">Devam et</string>
-    <string name="email_verification_code">Yukarıdaki e-posta adresine bir doğrulama kodu göndereceğiz.</string>
-    <string name="sms_verification_code">Yukarıdaki telefon numarasına bir doğrulama kodu göndereceğiz.</string>
-    <string name="send_verification_code">Doğrulama Kodu Gönder</string>
-    <string name="resend_verification_code">Tekrar Gönder</string>
-    <string name="enter_verification_code">Doğrulama kodunu girin</string>
-    <string name="verify">Doğrula</string>
     <string name="reply_prefix_on"/>
     <string name="create_new_account">Yeni bir hesap oluştur</string>
     <string name="setup_new_account">Hesabınızı ayarlayın</string>
@@ -250,14 +243,6 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="username_note"><b>Not:</b> Kullanıcı adı aynı zamanda ProtonMail adresinizdir</string>
     <string name="terms_and_conditions">ProtonMail\'i kullanarak\n
         <a href="https://protonmail.com/terms-and-conditions">şartlar ve koşulları</a> ve <a href="https://protonmail.com/privacy-policy">gizlilik politikamızı</a> kabul etmiş olursunuz</string>
-    <string name="human_verification">İnsan Doğrulama</string>
-    <string name="human_verification_subtitle">ProtonMail\'in kötüye kullanılmasını önlemek için,\nsizin insan olduğunuzu doğrulamalıyız.</string>
-    <string name="select_options">Lütfen aşağıdaki seçeneklerden birini seçin:</string>
-    <string name="no_verification_methods_found">Hiçbir doğrulama yöntemi bulunamadı</string>
-    <string name="email_verification">E-posta Doğrulaması</string>
-    <string name="phone_verification">Telefon Doğrulaması</string>
-    <string name="existing_email_address">Mevcut e-posta adresinizi girin</string>
-    <string name="phone_number">Telefon numaranızı girin</string>
     <string name="encryption_setup">Şifreleme Kurulumu</string>
     <string name="high_security">Yüksek Güvenlik (2048 bit)</string>
     <string name="current_standard">Mevcut standart</string>
@@ -308,7 +293,6 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="new_account_ready">Yeni güvenli e-posta\nhesabınız hazır.</string>
     <string name="optional_email_note">İsteğe bağlı kurtarma e-posta adresi, şifrenizi unutursanız oturum açma şifrenizi sıfırlamanızı sağlar.</string>
     <string name="optional_display_name">Bir e-posta gönderdiğinizde, bu isim gönderen alanında görünür.</string>
-    <string name="error_captcha_not_valid">Geçerli değil</string>
     <string name="close_engagement">turu kapat</string>
     <string name="engagement_title_welcome">ProtonMail\'e Hoş Geldiniz!</string>
     <string name="engagement_title_swipe">Hızlı kaydırma eylemleri</string>
@@ -600,10 +584,6 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     </string-array>
     <string name="logged_out">Oturum kapatıldı</string>
     <string name="logged_out_description">Oturumu kapattınız. Lütfen tekrar oturum açın.</string>
-    <string name="verification_needed">Doğrulama gerekli</string>
-    <string name="verification_needed_description">Güvenlik nedeniyle, lütfen robot olmadığınızı doğrulayın.</string>
-    <string name="verification_needed_description_notification">Lütfen bu iletiyi göndermeden önce bir insan olduğunuzu doğrulayın: %s</string>
-    <string name="message_drafted_verification_needed">İleti gönderilmedi, doğrulama gerekiyor. İletileriniz taslaklar klasörüne kaydedilir.</string>
     <string name="error_message_zip_code_invalid">Hata: Posta kodu geçersiz</string>
     <string name="error_message_cvc_invalid">Hata: CVC numarası geçersiz</string>
     <string name="error_message_card_name_invalid">Hata: Kart adı geçersiz</string>

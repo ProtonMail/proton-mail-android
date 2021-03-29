@@ -163,7 +163,6 @@
     <string name="confirm_destructive_action">您確定嗎？這個操作無法被復原！</string>
     <string name="create">建立</string>
     <string name="email">電子郵件</string>
-    <string name="email_address">電子郵件地址</string>
     <string name="phone">電話號碼</string>
     <string name="save">儲存</string>
     <string name="syncing_messages">正在同步……</string>
@@ -223,12 +222,6 @@
     <string name="lock_the_app">鎖定應用程式</string>
     <string name="display_name_banned_chars">顯示名稱無效。不允許使用 \'&gt;\' 和 \'&lt;\'</string>
     <string name="cont">繼續</string>
-    <string name="email_verification_code">我們會傳送驗證碼至上述的電子郵件地址。</string>
-    <string name="sms_verification_code">我們會傳送驗證碼至上述的手機號碼。</string>
-    <string name="send_verification_code">傳送驗證碼</string>
-    <string name="resend_verification_code">重新傳送</string>
-    <string name="enter_verification_code">輸入驗證碼</string>
-    <string name="verify">驗證</string>
     <string name="reply_prefix_on">在</string>
     <string name="create_new_account">建立新帳號</string>
     <string name="setup_new_account">設定您的帳號</string>
@@ -245,14 +238,6 @@
     <string name="username_note"><b>注意：</b> 使用者名稱同時為您的 ProtonMail 郵箱地址</string>
     <string name="terms_and_conditions">使用 ProtonMail 即代表您同意我們的\n
         <a href="https://protonmail.com/terms-and-conditions">條款及細則</a>和<a href="https://protonmail.com/privacy-policy">隱私權政策</a></string>
-    <string name="human_verification">人類驗證</string>
-    <string name="human_verification_subtitle">為了避免 ProtonMail 的服務被濫用，\n我們必須驗證您是人類。</string>
-    <string name="select_options">請選取以下其中一個選項：</string>
-    <string name="no_verification_methods_found">找不到驗證方法</string>
-    <string name="email_verification">電子郵件驗證</string>
-    <string name="phone_verification">手機驗證</string>
-    <string name="existing_email_address">輸入您現有的電子郵件地址</string>
-    <string name="phone_number">輸入您的電話號碼</string>
     <string name="encryption_setup">加密設定</string>
     <string name="high_security">高安全性（2048 位元）</string>
     <string name="current_standard">目前標準</string>
@@ -305,7 +290,6 @@
         在您忘記密碼時重設登入密碼。</string>
     <string name="optional_display_name">當您寄出郵件時，此名稱
         將會顯示在寄件人欄位。</string>
-    <string name="error_captcha_not_valid">無效</string>
     <string name="close_engagement">關閉教學</string>
     <string name="engagement_title_welcome">歡迎使用 ProtonMail！</string>
     <string name="engagement_title_swipe">快速滑動動作</string>
@@ -599,10 +583,6 @@
     </string-array>
     <string name="logged_out">已登出</string>
     <string name="logged_out_description">您已登出。請再次登入。</string>
-    <string name="verification_needed">需要驗證</string>
-    <string name="verification_needed_description">為安全理由，請證明您不是機器人。</string>
-    <string name="verification_needed_description_notification">請在傳送此郵件前驗證您是否為人類：%s</string>
-    <string name="message_drafted_verification_needed">郵件未傳送 - 需要驗證。您的郵件已儲存在「草稿」資料夾中。</string>
     <string name="error_message_zip_code_invalid">錯誤：郵遞區碼無效</string>
     <string name="error_message_cvc_invalid">錯誤：CVC 號碼無效</string>
     <string name="error_message_card_name_invalid">錯誤：卡片持有人名稱無效</string>
