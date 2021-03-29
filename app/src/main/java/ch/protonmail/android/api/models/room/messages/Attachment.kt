@@ -226,8 +226,9 @@ data class Attachment @JvmOverloads constructor(
                 part.contentType,
                 encoding,
                 listOf(part.disposition),
-                contentId!!,
-                contentLocation!!, ""
+                contentId,
+                contentLocation,
+                ""
             )
 
             Formatter().use { format ->
