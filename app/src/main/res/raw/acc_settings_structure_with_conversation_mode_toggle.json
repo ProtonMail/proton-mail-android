@@ -32,7 +32,7 @@
     "setting_type": "info"
   },
   {
-    "setting_id": "conversation_mode_toggle",
+    "setting_id": "conversation_mode",
     "is_section": false,
     "setting_value": "",
     "setting_hasValue": false,
