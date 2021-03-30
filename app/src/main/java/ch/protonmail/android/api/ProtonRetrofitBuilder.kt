@@ -28,7 +28,8 @@ import ch.protonmail.android.api.models.BugsBody
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.segments.ATTACH_PATH
-import ch.protonmail.android.api.segments.TEN_SECONDS
+import ch.protonmail.android.api.segments.ONE_MINUTE
+import ch.protonmail.android.api.segments.THIRTY_SECONDS
 import ch.protonmail.android.api.utils.StringConverterFactory
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
@@ -233,7 +234,7 @@ class ProtonRetrofitPublic(
         val okHttpClient = okHttpProvider.provideOkHttpClient(
             endpointUri,
             endpointUri,
-            TEN_SECONDS,
+            THIRTY_SECONDS,
             interceptor,
             authenticator,
             HttpLoggingInterceptor.Level.HEADERS,
@@ -241,7 +242,7 @@ class ProtonRetrofitPublic(
             serverTimeInterceptor,
             cookieStore
         )
-        return okHttpClient.timeout(TEN_SECONDS).build()
+        return okHttpClient.okClientBuilder.build()
     }
 }
 
@@ -264,7 +265,7 @@ class ProtonRetrofitPing(
         val okHttpClient = okHttpProvider.provideOkHttpClient(
             endpointUri,
             endpointUri,
-            TEN_SECONDS,
+            THIRTY_SECONDS,
             interceptor,
             authenticator,
             HttpLoggingInterceptor.Level.HEADERS,
@@ -272,7 +273,7 @@ class ProtonRetrofitPing(
             serverTimeInterceptor,
             cookieStore
         )
-        return okHttpClient.timeout(TEN_SECONDS).build()
+        return okHttpClient.okClientBuilder.build()
     }
 }
 
@@ -295,7 +296,7 @@ class ProtonRetrofitExtended(
         val okHttpClient = okHttpProvider.provideOkHttpClient(
             endpointUri,
             endpointUri,
-            TEN_SECONDS, // it was 2 minutes
+            ONE_MINUTE,
             interceptor,
             authenticator,
             HttpLoggingInterceptor.Level.HEADERS,
@@ -303,7 +304,7 @@ class ProtonRetrofitExtended(
             serverTimeInterceptor,
             cookieStore
         )
-        return okHttpClient.timeout(TEN_SECONDS).build()
+        return okHttpClient.okClientBuilder.build()
     }
 }
 
@@ -327,7 +328,7 @@ class ProtonRetrofitAttachments(
         val okHttpClient = okHttpProvider.provideOkHttpClient(
             endpointUri,
             endpointUri + ATTACH_PATH,
-            TEN_SECONDS, // it was 3 minutes
+            THIRTY_SECONDS,
             attachReqInter,
             authenticator,
             HttpLoggingInterceptor.Level.BASIC,
@@ -335,7 +336,7 @@ class ProtonRetrofitAttachments(
             serverTimeInterceptor,
             cookieStore
         )
-        return okHttpClient.timeout(TEN_SECONDS).build()
+        return okHttpClient.okClientBuilder.build()
     }
 }
 
@@ -358,7 +359,7 @@ class ProtonRetrofitSecure(
         val okHttpClient = okHttpProvider.provideOkHttpClient(
             endpointUri,
             endpointUri,
-            TEN_SECONDS,
+            THIRTY_SECONDS,
             interceptor,
             authenticator,
             HttpLoggingInterceptor.Level.BASIC,
@@ -366,7 +367,7 @@ class ProtonRetrofitSecure(
             serverTimeInterceptor,
             cookieStore
         )
-        return okHttpClient.timeout(TEN_SECONDS).build()
+        return okHttpClient.okClientBuilder.build()
     }
 }
 

@@ -65,7 +65,6 @@ import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.serialize
 import timber.log.Timber
@@ -151,7 +150,9 @@ class SendMessageWorker @WorkerInject constructor(
                 throw exception
             }
         } else {
-            retryOrFail(DraftCreationFailed, message)
+            pendingActionsDao.deletePendingSendByMessageId(message.messageId ?: "")
+            showSendMessageError(message.subject)
+            failureWithError(DraftCreationFailed)
         }
 
     }
@@ -256,7 +257,7 @@ class SendMessageWorker @WorkerInject constructor(
                 previousSenderAddressId,
                 SaveDraft.SaveDraftTrigger.SendingMessage
             )
-        ).first()
+        )
     }
 
     private fun retryOrFail(
@@ -264,7 +265,7 @@ class SendMessageWorker @WorkerInject constructor(
         message: Message,
         exception: Throwable? = null
     ): Result {
-        if (runAttemptCount <= SEND_MESSAGE_MAX_RETRIES) {
+        if (runAttemptCount < SEND_MESSAGE_MAX_RETRIES) {
             Timber.d("Send Message Worker failed with error = ${error.name}, exception = $exception. Retrying...")
             return Result.retry()
         }

@@ -2107,7 +2107,8 @@ public class ComposeMessageActivity
                             mComposeBodyEditText.setText(UiUtil.fromHtml(sb.toString().replace("\n", newline)));
                             composeMessageViewModel.processSignature(newSignature);
                         }
-//                        composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
+                        // Trigger Save Draft after changing sender to ensure attachments are encrypted with the right key
+                        composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
                     }
                 }
 

@@ -28,7 +28,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
-import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.composeMessage.UserAction
@@ -65,14 +64,12 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
-import ch.protonmail.android.worker.drafts.SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX
 import com.squareup.otto.Subscribe
 import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -98,7 +95,6 @@ class ComposeMessageViewModel @Inject constructor(
     private val saveDraft: SaveDraft,
     private val dispatchers: DispatcherProvider,
     private val stringResourceResolver: StringResourceResolver,
-    private val workManager: WorkManager,
     private val sendMessageUseCase: SendMessage,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
@@ -418,10 +414,8 @@ class ComposeMessageViewModel @Inject constructor(
 
                 invokeSaveDraftUseCase(message, newAttachments, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger)
 
-                if (newAttachments.isNotEmpty() && uploadAttachments) {
-                    _oldSenderAddressId = message.addressID
-                        ?: _messageDataResult.addressId // overwrite "old sender ID" when updating draft
-                }
+                // overwrite "old sender ID" when updating draft
+                _oldSenderAddressId = message.addressID ?: _messageDataResult.addressId
                 setIsDirty(false)
                 //endregion
             } else {
@@ -462,7 +456,7 @@ class ComposeMessageViewModel @Inject constructor(
         oldSenderAddress: String,
         saveDraftTrigger: SaveDraft.SaveDraftTrigger
     ) {
-        saveDraft(
+        val saveDraftResult = saveDraft(
             SaveDraft.SaveDraftParameters(
                 message,
                 newAttachments,
@@ -471,19 +465,19 @@ class ComposeMessageViewModel @Inject constructor(
                 oldSenderAddress,
                 saveDraftTrigger
             )
-        ).collect { saveDraftResult ->
-            when (saveDraftResult) {
-                is SaveDraftResult.Success -> onDraftSaved(saveDraftResult.draftId)
-                SaveDraftResult.OnlineDraftCreationFailed -> {
-                    val errorMessage = stringResourceResolver(
-                        R.string.failed_saving_draft_online
-                    ).format(message.subject)
-                    _savingDraftError.postValue(errorMessage)
-                }
-                SaveDraftResult.UploadDraftAttachmentsFailed -> {
-                    val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
-                    _savingDraftError.postValue(errorMessage)
-                }
+        )
+
+        when (saveDraftResult) {
+            is SaveDraftResult.Success -> onDraftSaved(saveDraftResult.draftId)
+            SaveDraftResult.OnlineDraftCreationFailed -> {
+                val errorMessage = stringResourceResolver(
+                    R.string.failed_saving_draft_online
+                ).format(message.subject)
+                _savingDraftError.postValue(errorMessage)
+            }
+            SaveDraftResult.UploadDraftAttachmentsFailed -> {
+                val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
+                _savingDraftError.postValue(errorMessage)
             }
         }
     }
@@ -734,13 +728,6 @@ class ComposeMessageViewModel @Inject constructor(
 
             if (_dbId != null) {
                 val newAttachments = calculateNewAttachments(true)
-
-                // Cancel scheduled save draft work to allow attachments removal while offline
-                // This is needed to replace the logic to block draft creation while sending, which being in
-                // SaveDraft use case has no effect when CreateDraft is scheduled offline. As this logic
-                // was removed in the send refactor, this solution was adopted over moving the check in CreateDraftWorker
-                val saveDraftUniqueWorkId = "$SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX-${message.messageId})"
-                workManager.cancelUniqueWork(saveDraftUniqueWorkId)
 
                 sendMessageUseCase(
                     SendMessage.SendMessageParameters(
