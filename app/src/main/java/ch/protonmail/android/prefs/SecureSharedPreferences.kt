@@ -32,6 +32,7 @@ import android.text.TextUtils
 import android.util.Base64
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
+import ch.protonmail.android.core.PREF_USERNAME
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.obfuscate
@@ -481,6 +482,7 @@ class SecureSharedPreferences(
                     newPrefs[key] = value
                 }
                 newPrefs[PREF_USER_NAME] = username
+                newPrefs[PREF_USERNAME] = username
                 username to userId
 
             } else {

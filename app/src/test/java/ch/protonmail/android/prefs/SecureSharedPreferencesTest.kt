@@ -44,8 +44,14 @@ import org.junit.After
 import org.junit.Before
 import kotlin.test.Test
 
+/**
+ * Test suite for [SecureSharedPreferences]
+ */
 class SecureSharedPreferencesTest {
 
+    /**
+     * Test suite for [SecureSharedPreferences.UsernameToIdMigration]
+     */
     class UsernameToIdMigrationTest : CoroutinesTest {
 
         private val user1 = "username1" to Id("id1")
