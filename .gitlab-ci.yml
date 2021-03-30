@@ -51,7 +51,7 @@ detekt analysis:
   only:
     refs:
       - merge_requests
-      - branches
+      - develop
       - schedules
   except:
     - release
@@ -78,12 +78,8 @@ build debug:
   extends: .build-debug-common
   needs:
     - job: detekt analysis
-  except:
-    - develop
-    - release
-    - prerelease
-    - tags
-    - schedules
+  only:
+    - merge_requests
 
 build debug develop:
   extends: .build-debug-common
@@ -150,7 +146,6 @@ build release:
   stage: test
   only:
     - merge_requests
-    - branches
   except:
     - schedules
   tags:
@@ -162,12 +157,6 @@ unit tests:
   extends: .unit-tests-common
   needs:
     - job: build debug
-  except:
-    - develop
-    - release
-    - prerelease
-    - tags
-    - schedules
 
 unit tests develop:
   extends: .unit-tests-common
@@ -188,7 +177,6 @@ unit tests release:
   stage: test
   only:
     - merge_requests
-    - branches
   except:
     - schedules
   tags:
@@ -217,12 +205,6 @@ firebase tests:
   extends: .firebase-tests-common
   needs:
     - job: build debug
-  except:
-    - develop
-    - release
-    - prerelease
-    - tags
-    - schedules
 
 firebase tests develop:
   extends: .firebase-tests-common
