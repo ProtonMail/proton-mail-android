@@ -1751,13 +1751,11 @@ class MailboxActivity :
 
         override fun doInBackground(vararg params: Unit): Boolean {
             // return true if message is not in sending process and can be opened
-            val pendingUploads = pendingActionDao?.findPendingUploadByMessageId(messageId!!)
             val pendingForSending = pendingActionDao?.findPendingSendByMessageId(messageId!!)
-            return pendingUploads == null &&
-                (
-                    pendingForSending == null ||
-                        pendingForSending.sent != null && !pendingForSending.sent!!
-                    )
+            return pendingForSending == null ||
+                pendingForSending.sent != null &&
+                !pendingForSending.sent!!
+
         }
 
         override fun onPostExecute(openMessage: Boolean) {
