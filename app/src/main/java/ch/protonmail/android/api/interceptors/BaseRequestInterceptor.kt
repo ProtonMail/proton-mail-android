@@ -210,14 +210,9 @@ abstract class BaseRequestInterceptor(
 
         // we customize auth headers if different than default user has to be authorized
         request.tag(UserIdTag::class.java)?.also {
-            // TODO: check ID is always non-null
-            if (it.id.s == null) { // clear out default auth and unique session headers
-                requestBuilder.removeHeader(HEADER_AUTH)
-                requestBuilder.removeHeader(HEADER_UID)
-            } else if (it.id != userManager.currentUserId) {
+            if (it.id != userManager.currentUserId) {
                 // if it's the default user, credentials are already there
-                val userTokenManager = userManager.getTokenManagerBlocking(it.id)
-                userTokenManager?.let { manager ->
+                userManager.getTokenManager(it.id).let { manager ->
                     if (manager.authAccessToken != null) {
                         Timber.d("setting non-default auth headers for ${it.id}")
                         requestBuilder.header(HEADER_AUTH, manager.authAccessToken!!)

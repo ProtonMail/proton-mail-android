@@ -34,14 +34,11 @@ import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
 import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateActivity
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.utils.ui.RecyclerViewEmptyViewSupport
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
-import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contact_group_details.*
 import kotlinx.android.synthetic.main.content_contact_group_details.*
@@ -216,11 +213,5 @@ class ContactGroupDetailsActivity : BaseActivity() {
         setResult(Activity.RESULT_OK)
         saveLastInteraction()
         finish()
-    }
-
-    @Subscribe
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onLogoutEvent(event: LogoutEvent?) {
-        moveToLogin()
     }
 }

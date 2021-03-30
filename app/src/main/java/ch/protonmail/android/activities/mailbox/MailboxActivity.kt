@@ -82,8 +82,6 @@ import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabe
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelsChangeListener
 import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment
 import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment.IMoveMessagesListener
-import ch.protonmail.android.activities.guest.LoginActivity
-import ch.protonmail.android.activities.guest.MailboxLoginActivity
 import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
@@ -131,9 +129,7 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.FetchUpdatesEvent
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
-import ch.protonmail.android.events.MailboxLoginEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
@@ -185,7 +181,6 @@ import kotlinx.android.synthetic.main.activity_mailbox.*
 import kotlinx.android.synthetic.main.activity_mailbox.mailboxRecyclerView
 import kotlinx.android.synthetic.main.activity_mailbox.screenShotPreventerView
 import kotlinx.android.synthetic.main.activity_mailbox.storageLimitAlert
-import kotlinx.android.synthetic.main.fragment_billing.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.util.android.sharedpreferences.get
@@ -351,10 +346,8 @@ class MailboxActivity :
         checkUserAndFetchNews()
 
         if (extras != null && EXTRA_SWITCHED_TO_USER_ID in extras) {
-            lifecycleScope.launchWhenCreated {
-                val plainId = checkNotNull(extras.getString(EXTRA_SWITCHED_TO_USER_ID))
-                switchAccount(Id(plainId))
-            }
+            val plainId = checkNotNull(extras.getString(EXTRA_SWITCHED_TO_USER_ID))
+            switchAccount(Id(plainId))
         }
 
         setUpDrawer()
@@ -437,10 +430,8 @@ class MailboxActivity :
 
         if (extras != null && extras.getBoolean(EXTRA_HAS_SWITCHED_USER, false)) {
             if (EXTRA_SWITCHED_TO_USER_ID in extras) {
-                lifecycleScope.launchWhenCreated {
-                    val plainId = checkNotNull(extras.getString(EXTRA_SWITCHED_TO_USER_ID))
-                    switchAccount(Id(plainId))
-                }
+                val plainId = checkNotNull(extras.getString(EXTRA_SWITCHED_TO_USER_ID))
+                switchAccount(Id(plainId))
             } else {
                 onSwitchedAccounts()
             }
@@ -799,30 +790,27 @@ class MailboxActivity :
         // force reload of MessageDetailsRepository's internal dependencies in case we just switched user
         val extras = intent.extras
 
-        lifecycleScope.launchWhenCreated {
+        if (extras != null && EXTRA_SWITCHED_TO_USER_ID in extras) {
+            val plainId = checkNotNull(extras.getString(EXTRA_SWITCHED_TO_USER_ID))
+            switchAccount(Id(plainId))
 
-            if (extras != null && EXTRA_SWITCHED_TO_USER_ID in extras) {
-                val plainId = checkNotNull(extras.getString(EXTRA_SWITCHED_TO_USER_ID))
-                switchAccount(Id(plainId))
+        } else if (intent.getBooleanExtra(EXTRA_HAS_SWITCHED_USER, false)) {
+            onSwitchedAccounts()
 
-            } else if (intent.getBooleanExtra(EXTRA_HAS_SWITCHED_USER, false)) {
-                onSwitchedAccounts()
+        } else if (intent.getBooleanExtra(EXTRA_LOGOUT, false)) {
+            onLogout()
 
-            } else if (intent.getBooleanExtra(EXTRA_LOGOUT, false)) {
-                onLogout()
-
-            } else if (extras != null && EXTRA_USER_ID in extras) {
-                val plainId = checkNotNull(extras.getString(EXTRA_USER_ID))
-                val id = Id(plainId)
-                if (userManager.currentUserId != id) {
-                    switchAccount(id)
-                }
-
-            } else {
-                checkRegistration()
-                checkUserAndFetchNews()
-                setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
+        } else if (extras != null && EXTRA_USER_ID in extras) {
+            val plainId = checkNotNull(extras.getString(EXTRA_USER_ID))
+            val id = Id(plainId)
+            if (userManager.currentUserId != id) {
+                switchAccount(id)
             }
+
+        } else {
+            checkRegistration()
+            checkUserAndFetchNews()
+            setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
         }
     }
 
@@ -1003,7 +991,8 @@ class MailboxActivity :
     }
 
     override fun onLogout() {
-        onLogoutEvent(LogoutEvent(Status.SUCCESS))
+        TODO("disable user")
+        onLogoutEvent()
     }
 
     override fun onInbox(type: DrawerOptionType) {
@@ -1066,59 +1055,20 @@ class MailboxActivity :
     }
 
     @Subscribe
-    fun onMailboxLoginEvent(event: MailboxLoginEvent?) {
-        if (event == null) {
-            return
-        }
-        app.resetMailboxLoginEvent()
-        if (event.status == AuthStatus.INVALID_CREDENTIAL) {
-            showToast(R.string.invalid_mailbox_password, Toast.LENGTH_SHORT)
-            startActivity(AppUtil.decorInAppIntent(Intent(this, MailboxLoginActivity::class.java)))
-            finish()
-        } else {
-            userManager.isLoggedIn = true
-        }
-    }
-
-    @Subscribe
     fun onSettingsChangedEvent(event: SettingsChangedEvent) {
         val user = userManager.requireCurrentUserBlocking()
-        if (event.status == AuthStatus.SUCCESS) {
+        if (event.success) {
             refreshDrawerHeader(user)
         } else {
-            when (event.status) {
-                AuthStatus.INVALID_CREDENTIAL -> {
-                    showToast(R.string.settings_not_saved_password, Toast.LENGTH_SHORT, Gravity.CENTER)
-                }
-                AuthStatus.INVALID_SERVER_PROOF -> {
-                    showToast(R.string.invalid_server_proof, Toast.LENGTH_SHORT, Gravity.CENTER)
-                }
-                AuthStatus.FAILED -> {
-                    if (event.oldEmail != null) {
-                        showToast(R.string.settings_not_saved_email, Toast.LENGTH_SHORT, Gravity.CENTER)
-                    } else {
-                        showToast(R.string.saving_failed_no_conn, Toast.LENGTH_LONG, Gravity.CENTER)
-                    }
-                }
-                else -> {
-                    if (event.oldEmail != null) {
-                        showToast(R.string.settings_not_saved_email, Toast.LENGTH_SHORT, Gravity.CENTER)
-                    } else {
-                        showToast(R.string.saving_failed_no_conn, Toast.LENGTH_LONG, Gravity.CENTER)
-                    }
-                }
-            }
+            showToast(R.string.saving_failed_no_conn, Toast.LENGTH_LONG, Gravity.CENTER)
         }
     }
 
     @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) {
+    fun onLogoutEvent() {
         if (overlayDialog != null) {
             overlayDialog!!.dismiss()
             overlayDialog = null
-        }
-        if (event.status == Status.NO_NETWORK) {
-            showToast(R.string.no_network, Toast.LENGTH_SHORT)
         }
 
         // destroy loader as database will be deleted on logout
@@ -1127,7 +1077,8 @@ class MailboxActivity :
             destroyLoader(LOADER_ID_LABELS_OFFLINE)
         }
         messagesAdapter.clear()
-        startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
+        // startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
+        TODO("startLoginWorkflow()")
         finish()
     }
 

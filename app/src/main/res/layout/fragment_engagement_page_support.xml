@@ -74,7 +74,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:layout_height="42dp"
             android:layout_gravity="top|center_horizontal"
             android:layout_marginTop="@dimen/fields_default_space_large"
-            android:background="@drawable/login_button_selector_inverted"
+            android:background="@drawable/button_selector_inverted"
             android:paddingEnd="@dimen/fields_default_space"
             android:paddingLeft="@dimen/fields_default_space"
             android:paddingRight="@dimen/fields_default_space"

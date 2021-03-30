@@ -18,10 +18,13 @@
  */
 package ch.protonmail.android.api.segments.user
 
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.DirectEnabledResponse
+import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.segments.RetrofitConstants
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.Query
 
 // region constants
 private const val QUERY_USERNAME = "Name"
@@ -32,10 +35,6 @@ interface UserPubService {
     @GET("users/direct")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
     fun fetchDirectEnabled(@Query("Type") type: Int): Call<DirectEnabledResponse>
-
-    @POST("users")
-    @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
-    fun createUser(@Body createUserBody: CreateUserBody): Call<UserInfo>
 
     @GET("users/available")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)

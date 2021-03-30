@@ -30,13 +30,11 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.FetchDraftDetailEvent
 import ch.protonmail.android.events.FetchMessageDetailEvent
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.PostImportAttachmentEvent
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.views.SecureEditText
 import com.squareup.otto.Subscribe
@@ -165,11 +163,6 @@ class ValidatePinActivity : BaseActivity(),
 
     override fun onPinMaxDigitReached() {
         // noop
-    }
-
-    @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) {
-        moveToLogin()
     }
 
     private fun initBiometricPrompt() {

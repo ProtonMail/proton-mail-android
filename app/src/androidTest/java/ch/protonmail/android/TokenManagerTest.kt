@@ -22,7 +22,6 @@ import android.text.TextUtils
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.LargeTest
 import ch.protonmail.android.api.TokenManager
-import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
@@ -30,6 +29,8 @@ import ch.protonmail.android.domain.entity.Id
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import me.proton.core.network.domain.session.Session
+import me.proton.core.network.domain.session.SessionId
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -46,7 +47,7 @@ internal class TokenManagerTest {
     private val refreshToken = "7790e2067c2a9701745805672eb34fb94c67ac83"
     private val refreshTokenRefreshed = "7790e2067c2a9701745805672eb34fb94c67ac83_refreshed"
     private val tokenType = "Bearer"
-    private val loginResponse: LoginResponse
+    private val session: Session
     private val refreshResponse: RefreshResponse
 
     init {
@@ -55,16 +56,11 @@ internal class TokenManagerTest {
         every { TextUtils.isEmpty(null) } returns true
         every { TextUtils.isEmpty("") } returns true
 
-        loginResponse = mockk()
-        every { loginResponse.accessToken } returns accessToken
-        every { loginResponse.passwordMode } returns Constants.PasswordMode.SINGLE
-        every { loginResponse.refreshToken } returns refreshToken
-        every { loginResponse.tokenType } returns tokenType
-        every { loginResponse.uid } returns "02db5fe7b95506438326ea6c036f1b24b2914eba"
-        every { loginResponse.scope } returns "full self organization payments keys paid nondelinquent mail"
-        every { loginResponse.keySalt } returns null
-        every { loginResponse.isAccessTokenArmored } returns false
-        every { loginResponse.privateKey } returns null
+        session = mockk()
+        every { session.accessToken } returns accessToken
+        every { session.refreshToken } returns refreshToken
+        every { session.sessionId } returns SessionId("02db5fe7b95506438326ea6c036f1b24b2914eba")
+        every { session.scopes } returns listOf("full", "self", "organization", "payments", "keys", "paid", "nondelinquent", "mail")
 
         refreshResponse = mockk()
         every { refreshResponse.accessToken } returns accessTokenRefreshed
@@ -78,7 +74,7 @@ internal class TokenManagerTest {
     fun handle_login() {
         val tokenManager = TokenManager.getInstance(context, Id("user for access token"))
 
-        tokenManager.handleLogin(loginResponse)
+        tokenManager.handleLogin(session)
 
         assertEquals("$tokenType $accessToken", tokenManager.authAccessToken)
         assertEquals(refreshToken, tokenManager.createRefreshBody().refreshToken)
@@ -88,7 +84,7 @@ internal class TokenManagerTest {
     fun clear_access_token() {
         val tokenManager = TokenManager.getInstance(context, userId)
 
-        tokenManager.handleLogin(loginResponse)
+        tokenManager.handleLogin(session)
 
         tokenManager.clearAccessToken()
         assertNull(tokenManager.authAccessToken)
@@ -99,7 +95,7 @@ internal class TokenManagerTest {
     fun clear_token_manager_for_user() {
         var tokenManager = TokenManager.getInstance(context, userId)
 
-        tokenManager.handleLogin(loginResponse)
+        tokenManager.handleLogin(session)
 
         tokenManager.clear()
         assertNull(tokenManager.authAccessToken)
@@ -116,7 +112,7 @@ internal class TokenManagerTest {
     fun handle_refresh() {
         val tokenManager = TokenManager.getInstance(context, userId)
 
-        tokenManager.handleLogin(loginResponse)
+        tokenManager.handleLogin(session)
         tokenManager.handleRefresh(refreshResponse)
 
         assertEquals("$tokenType $accessTokenRefreshed", tokenManager.authAccessToken)

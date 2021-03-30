@@ -42,14 +42,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
-import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.api.models.CardDetails;
 import ch.protonmail.android.api.models.Organization;
 import ch.protonmail.android.api.models.PaymentMethod;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
@@ -236,15 +234,12 @@ public class AccountTypeActivity extends BaseActivity {
 
     @OnClick(R.id.upgrade)
     public void onUpgrade() {
+        /*
         Intent upgradeIntent = new Intent(this, UpsellingActivity.class);
         upgradeIntent.putExtra(UpsellingActivity.EXTRA_OPEN_UPGRADE_CONTAINER, true);
         startActivityForResult(AppUtil.decorInAppIntent(upgradeIntent), REQUEST_CODE_UPGRADE);
-    }
-
-    @Subscribe
-    public void onLogoutEvent(LogoutEvent event) {
-        startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
-        finish();
+        TODO("startUpgradePlanWorkflow")
+        */
     }
 
     @Override
@@ -252,7 +247,7 @@ public class AccountTypeActivity extends BaseActivity {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_UPGRADE) {
             Bundle extras = data.getExtras();
             if (extras != null) {
-                boolean success = extras.getBoolean(BillingActivity.EXTRA_SUCCESS);
+                boolean success = false; // TODO: extras.getBoolean(BillingActivity.EXTRA_SUCCESS);
                 if (success) {
                     accountTypeProgress.setVisibility(View.VISIBLE);
                     final User user = mUserManager.getUser();

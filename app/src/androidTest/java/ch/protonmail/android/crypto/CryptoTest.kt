@@ -754,7 +754,6 @@ internal class CryptoTest {
         every { userManagerMock.requireCurrentUserId() } returns tokenAndSignatureUserId
         coEvery { userManagerMock.getTokenManager(tokenAndSignatureUserId) } returns tokenManagerMock
         every { userManagerMock.getMailboxPassword(tokenAndSignatureUserId) } returns passphrase
-        every { tokenManagerMock.encPrivateKey } returns armoredPrivateKey
         every { openPgpMock.randomToken() } returns randomToken
     }
 

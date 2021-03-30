@@ -26,13 +26,10 @@ import ch.protonmail.android.R
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.local.SnoozeSettings
-import ch.protonmail.android.api.models.LoginInfoResponse
-import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.UserSettings
 import ch.protonmail.android.api.models.address.Address
-import ch.protonmail.android.api.services.LoginService
 import ch.protonmail.android.api.services.LogoutService
 import ch.protonmail.android.di.BackupSharedPreferences
 import ch.protonmail.android.di.DefaultSharedPreferences
@@ -42,9 +39,6 @@ import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.domain.util.orThrow
 import ch.protonmail.android.domain.util.suspendRunCatching
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier
-import ch.protonmail.android.events.GenerateKeyPairEvent
-import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.SwitchUserEvent
 import ch.protonmail.android.fcm.FcmTokenManager
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper
@@ -131,26 +125,8 @@ class UserManager @Inject constructor(
     private var _checkTimestamp: Float = 0.toFloat()
     private var _mailboxPassword: String? = null
     private val app: ProtonMailApplication = context.app
-    private var generatingKeyPair: Boolean = false
 
     var privateKey: String? = null
-        set(privateKey) {
-            field = privateKey
-            if (privateKey != null) {
-                generateKeyPairEvent = GenerateKeyPairEvent(true, null)
-            }
-            if (generateKeyPairEvent != null) {
-                AppUtil.postEventOnUi(generateKeyPairEvent)
-            }
-            if (mCreateUserOnKeyPairGenerationFinish) {
-                LoginService.startCreateUser(
-                    mNewUserUsername, mNewUserPassword, mNewUserUpdateMe,
-                    mNewUserTokenType, mNewUserToken
-                )
-            } else {
-                mCreateUserOnKeyPairGenerationFinish = false
-            }
-        }
 
     var userSettings: UserSettings? = null
         set(value) {
@@ -177,13 +153,6 @@ class UserManager @Inject constructor(
         runBlocking { getMailSettings(userId) }
 
     var snoozeSettings: SnoozeSettings? = null
-
-    private var mNewUserUsername: String? = null
-    private var mNewUserPassword: ByteArray? = null
-    private var mNewUserUpdateMe: Boolean = false
-    private var mNewUserTokenType: Constants.TokenType? = null
-    private var mNewUserToken: String? = null
-    private var mCreateUserOnKeyPairGenerationFinish: Boolean = false
 
     /**
      * @param exclude the user [Id] to exclude from the query
@@ -382,8 +351,6 @@ class UserManager @Inject constructor(
             }
         }
 
-    private var generateKeyPairEvent: GenerateKeyPairEvent? = null
-
     suspend fun isCurrentUserBackgroundSyncEnabled(): Boolean {
         val userId = requireNotNull(currentUserId)
         return getLegacyUser(userId).isBackgroundSync
@@ -449,118 +416,6 @@ class UserManager @Inject constructor(
         app.eventManager.clearState()
     }
 
-    fun generateKeyPair(username: String, domain: String, password: ByteArray, bits: Int) {
-        generateKeyPairEvent = GenerateKeyPairEvent(false, null)
-        generatingKeyPair = true
-        LoginService.startGenerateKeys(username, domain, password, bits)
-    }
-
-    fun createUser(
-        username: String,
-        password: ByteArray,
-        updateMe: Boolean,
-        tokenType: Constants.TokenType,
-        token: String
-    ) {
-        if (privateKey == null && generatingKeyPair) {
-            mCreateUserOnKeyPairGenerationFinish = true
-            mNewUserUsername = username
-            mNewUserPassword = password
-            mNewUserUpdateMe = updateMe
-            mNewUserTokenType = tokenType
-            mNewUserToken = token
-            return
-        }
-        LoginService.startCreateUser(username, password, updateMe, tokenType, token)
-    }
-
-    fun info(username: String, password: ByteArray?) {
-        LoginService.startInfo(username, password, 2)
-    }
-
-    fun login(
-        username: String,
-        password: ByteArray,
-        response: LoginInfoResponse?,
-        fallbackAuthVersion: Int,
-        signUp: Boolean
-    ) {
-        LoginService.startLogin(
-            username, password, response, fallbackAuthVersion, signUp
-        )
-    }
-
-    fun twoFA(
-        userId: Id,
-        username: Name,
-        password: ByteArray,
-        twoFactor: String?,
-        infoResponse: LoginInfoResponse?,
-        loginResponse: LoginResponse?,
-        fallbackAuthVersion: Int,
-        signUp: Boolean,
-        isConnecting: Boolean
-    ) {
-        LoginService.start2FA(
-            userId,
-            username,
-            password,
-            twoFactor,
-            infoResponse,
-            loginResponse,
-            fallbackAuthVersion,
-            signUp,
-            isConnecting
-        )
-    }
-
-    // used for two-password mode. Since already the user is logged in, we should have the userID by now
-    fun mailboxLogin(userId: Id, mailboxPassword: String, keySalt: String?, signUp: Boolean) {
-        LoginService.startMailboxLogin(userId, mailboxPassword, keySalt, signUp)
-    }
-
-    fun setupAddress(domain: String) {
-        LoginService.startSetupAddress(domain)
-    }
-
-    fun setupKeys(addressId: String, password: ByteArray) {
-        LoginService.startSetupKeys(addressId, password)
-    }
-
-    fun connectAccountLogin(
-        username: String,
-        password: ByteArray,
-        twoFactor: String?,
-        response: LoginInfoResponse?,
-        fallbackAuthVersion: Int
-    ) {
-        LoginService.startConnectAccount(username, password, twoFactor, response, fallbackAuthVersion)
-    }
-
-    // used for two-password mode. Since already the user is logged in, we should have the userID by now
-    // TODO: find better name for its purpose
-    suspend fun connectAccountMailboxLogin(
-        userId: Id,
-        currentPrimaryUserId: Id?,
-        mailboxPassword: String,
-        keySalt: String
-    ) {
-        LoginService.startConnectAccountMailboxLogin(userId, currentPrimaryUserId, mailboxPassword, keySalt)
-    }
-
-    @Deprecated(
-        "Should not be used, necessary only for old and Java classes",
-        ReplaceWith("connectAccountMailboxLoginBlocking(userId, currentPrimaryId, mailboxPassword, keySalt)")
-    )
-    fun connectAccountMailboxLoginBlocking(
-        userId: Id,
-        currentPrimaryUserId: Id,
-        mailboxPassword: String,
-        keySalt: String
-    ) = runBlocking {
-        connectAccountMailboxLogin(userId, currentPrimaryUserId, mailboxPassword, keySalt)
-    }
-
     suspend fun switchTo(userId: Id) {
         setCurrentUser(userId)
         user = loadLegacyUser(userId).orThrow()
@@ -616,7 +471,7 @@ class UserManager @Inject constructor(
         AppUtil.deleteSecurePrefs(requireNotNull(currentUserPreferences), true)
         AppUtil.deletePrefs()
         AppUtil.deleteBackupPrefs()
-        AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
+        // TODO: AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
     }
 
     @Deprecated("Use suspend function", ReplaceWith("logoutLastActiveAccount()"))
@@ -644,7 +499,7 @@ class UserManager @Inject constructor(
             resetReferences()
             getCurrentUserTokenManager()?.clear()
             clearUserData(userId)
-            AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
+            //TODO: AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
             TokenManager.clearAllInstances()
         } else {
             val oldUser = requireCurrentUser()
@@ -664,6 +519,7 @@ class UserManager @Inject constructor(
         ReplaceWith("logoutOffline()")
     )
     fun logoutOfflineBlocking(userId: Id) = runBlocking {
+        // On invalid token
         logoutOffline(userId)
     }
 
@@ -914,25 +770,7 @@ class UserManager @Inject constructor(
     fun canConnectAnotherAccountBlocking(): Boolean =
         runBlocking { canConnectAnotherAccount() }
 
-    suspend fun getTokenManager(userId: Id): TokenManager {
-        val tokenManager = TokenManager.getInstance(context, userId)
-        // make sure the private key is here
-        if (tokenManager.encPrivateKey.isNullOrBlank()) {
-            val user = runCatching { getUser(userId) }
-                .getOrElse { return tokenManager }
-            // it's needed for verification later
-            tokenManager.encPrivateKey = user.keys.primaryKey?.privateKey?.string
-        }
-        return tokenManager
-    }
-
-    @Deprecated(
-        "Should not be used, necessary only for old and Java classes",
-        ReplaceWith("getTokenManager(userId)")
-    )
-    fun getTokenManagerBlocking(userId: Id) = runBlocking {
-        getTokenManager(userId)
-    }
+    fun getTokenManager(userId: Id): TokenManager = TokenManager.getInstance(context, userId)
 
     fun canShowStorageLimitWarning(): Boolean =
         withCurrentUserPreferences { it[PREF_SHOW_STORAGE_LIMIT_WARNING] } ?: true
@@ -951,15 +789,6 @@ class UserManager @Inject constructor(
             it[PREF_SHOW_STORAGE_LIMIT_REACHED] = value
         }
     }
-
-    @Produce
-    fun produceKeyPairEvent(): GenerateKeyPairEvent? =
-        generateKeyPairEvent
-
-    fun resetGenerateKeyPairEvent() {
-        generateKeyPairEvent = GenerateKeyPairEvent(false, null)
-    }
-
 
     private fun clearBackupPrefs() {
         backupPrefs.clearAll()

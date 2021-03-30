@@ -39,11 +39,9 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.AccountSettingsActivity
 import ch.protonmail.android.activities.AccountTypeActivity
 import ch.protonmail.android.activities.BaseConnectivityActivity
-import ch.protonmail.android.activities.ChangePasswordActivity
 import ch.protonmail.android.activities.DefaultAddressActivity
 import ch.protonmail.android.activities.EXTRA_CURRENT_ACTION
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
-import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_VALUE
 import ch.protonmail.android.activities.EXTRA_SWIPE_ID
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.SettingsItem
@@ -131,7 +129,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     var mAttachmentStorageValue: Int = 0
     var mAutoDownloadGcmMessages: Boolean = false
     var mPinValue: Boolean = false
-    var mRecoveryEmail: String = ""
     var mNotificationOptionValue: Int = 0
     lateinit var selectedAddress: Address
     var mDisplayName: String = ""
@@ -268,16 +265,10 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 startActivity(accountTypeIntent)
             }
             PASSWORD_MANAGEMENT -> {
-                val passwordManagerIntent =
-                    AppUtil.decorInAppIntent(Intent(this, ChangePasswordActivity::class.java))
-                startActivityForResult(passwordManagerIntent, PASSWORD_MANAGEMENT.ordinal)
+                TODO("startChangePasswordWorkflow")
             }
             RECOVERY_EMAIL -> {
-                val recoveryEmailIntent =
-                    AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
-                recoveryEmailIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.RECOVERY_EMAIL)
-                recoveryEmailIntent.putExtra(EXTRA_SETTINGS_ITEM_VALUE, mRecoveryEmail)
-                startActivityForResult(recoveryEmailIntent, RECOVERY_EMAIL.ordinal)
+                TODO("startRecoverySetupWorkflow")
             }
             DEFAULT_EMAIL -> {
                 showSortAliasDialog()

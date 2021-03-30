@@ -87,7 +87,6 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.activities.BaseActivity;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.activities.contactDetails.ExtractFullContactDetailsTask;
-import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.api.models.ContactEncryptedData;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.contacts.ErrorEnum;
@@ -101,7 +100,6 @@ import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.model.ContactLabel;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.events.ContactEvent;
-import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.usecase.model.FetchContactDetailsResult;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
@@ -1108,12 +1106,6 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         float percentage = (float) Math.abs(offset) / (float) maxScroll;
         handleAlphaOnTitle(percentage);
         handleToolbarTitleVisibility(percentage);
-    }
-
-    @Subscribe
-    public void onLogoutEvent(LogoutEvent event) {
-        startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
-        finish();
     }
 
     private void handleToolbarTitleVisibility(float percentage) {

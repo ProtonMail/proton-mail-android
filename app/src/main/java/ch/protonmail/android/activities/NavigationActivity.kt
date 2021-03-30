@@ -24,7 +24,6 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
@@ -34,8 +33,6 @@ import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.dialogs.QuickSnoozeDialogFragment
 import ch.protonmail.android.activities.multiuser.AccountManagerActivity
-import ch.protonmail.android.activities.multiuser.ConnectAccountActivity
-import ch.protonmail.android.activities.multiuser.EXTRA_USERNAME
 import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
 import ch.protonmail.android.activities.navigation.NavigationViewModel
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
@@ -194,12 +191,15 @@ abstract class NavigationActivity :
             if (account is DrawerUserModel.BaseUser) {
                 val currentUser = userManager.currentUserId
                 if (account.id !in accountManager.allLoggedInBlocking()) {
+                    /*
                     val intent = Intent(this, ConnectAccountActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     intent.putExtra(EXTRA_USERNAME, account.name)
                     ContextCompat.startActivity(this, AppUtil.decorInAppIntent(intent), null)
+                    */
+                    TODO("startLoginWorkflow(username/userId)")
                 } else if (currentUser != account.id) {
-                    switchAccount(account.id, account.name)
+                    switchAccount(account.id)
                 }
             }
         }
@@ -249,25 +249,13 @@ abstract class NavigationActivity :
         }
     }
 
-    protected fun switchAccount(userId: Id, username: String) {
+    protected fun switchAccount(userId: Id) {
         lifecycleScope.launchWhenCreated {
+            val username = userManager.getUser(userId).name.s
             userManager.switchTo(userId)
             onSwitchedAccounts()
             DialogUtils.showSignedInSnack(drawerLayout, String.format(getString(R.string.signed_in_with), username))
         }
-    }
-
-    protected suspend fun switchAccount(userId: Id) {
-        switchAccount(userId, userManager.getUser(userId).name.s)
-    }
-
-    @Deprecated(
-        "Use with user id",
-        ReplaceWith("switchAccount(userId, accountName)"),
-        DeprecationLevel.ERROR
-    )
-    protected fun switchAccount(accountName: String) {
-        unsupported
     }
 
     @JvmOverloads
@@ -425,7 +413,6 @@ abstract class NavigationActivity :
             Primary.Static(Type.REPORT_BUGS, R.string.report_bugs, R.drawable.bug),
             if (hasPin) Primary.Static(Type.LOCK, R.string.lock_the_app, R.drawable.notification_icon)
             else null,
-            Primary.Static(Type.UPSELLING, R.string.upselling, R.drawable.cubes),
             Primary.Static(Type.SIGNOUT, R.string.logout, R.drawable.signout)
         )
     }
@@ -552,9 +539,6 @@ abstract class NavigationActivity :
             Type.INBOX -> onInbox(type.drawerOptionType)
             Type.ARCHIVE, Type.STARRED, Type.DRAFTS, Type.SENT, Type.TRASH, Type.SPAM, Type.ALLMAIL ->
                 onOtherMailBox(type.drawerOptionType)
-            Type.UPSELLING -> startActivity(
-                AppUtil.decorInAppIntent(Intent(this, UpsellingActivity::class.java))
-            )
             Type.LOCK -> {
                 val user = userManager.user
                 if (user.isUsePin && userManager.getMailboxPin() != null) {

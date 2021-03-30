@@ -158,7 +158,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                         <!-- Display name edit text -->
                         <ch.protonmail.android.views.CustomFontEditText
                             android:id="@+id/contact_display_name"
-                            style="@style/LoginEditText.Gray"
+                            style="@style/V3EditText.Gray"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/fields_default_space_medium"

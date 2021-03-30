@@ -26,14 +26,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContextCompat.startActivity
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
 import ch.protonmail.android.activities.REQUEST_CODE_ACCOUNT_MANAGER
-import ch.protonmail.android.activities.REQUEST_CODE_SWITCHED_USER
 import ch.protonmail.android.activities.multiuser.AccountManagerActivity
-import ch.protonmail.android.activities.multiuser.ConnectAccountActivity
-import ch.protonmail.android.activities.multiuser.EXTRA_USERNAME
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.uiModel.DrawerUserModel
 import ch.protonmail.android.utils.AppUtil
@@ -143,6 +138,7 @@ internal class AccountsAdapter :
         override fun onBind(item: DrawerUserModel.AccFooter) = with(itemView) {
             super.onBind(item)
             addNewUserAccount.setOnClickListener {
+                /*
                 val activity = context as Activity
                 val intent = Intent(context, ConnectAccountActivity::class.java)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -154,6 +150,8 @@ internal class AccountsAdapter :
                     null
                 )
                 activity.finish()
+                */
+                TODO("startLoginWorkflow(username)")
             }
         }
     }
@@ -209,10 +207,13 @@ internal class AccountsAdapter :
                             onLogoutAccountInvoker(item.id)
                         }
                         R.id.action_login -> {
+                            /*
                             val intent = Intent(context, ConnectAccountActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             intent.putExtra(EXTRA_USERNAME, item.name)
                             startActivity(context, AppUtil.decorInAppIntent(intent), null)
+                            */
+                            TODO("startLoginWorkflow(username)")
                         }
                     }
                     true
@@ -248,10 +249,13 @@ internal class AccountsAdapter :
                 userName.setStyle(R.style.DrawerNameText_Red)
                 userEmailAddress.setStyle(R.style.DrawerEmailAddressText_Red)
                 userSignIn.setOnClickListener {
+                    /*
                     val intent = Intent(context, ConnectAccountActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     intent.putExtra(EXTRA_USERNAME, item.name)
                     startActivity(context, AppUtil.decorInAppIntent(intent), null)
+                    */
+                    TODO("startLoginWorkflow(username)")
                 }
             }
         }

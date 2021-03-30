@@ -110,7 +110,6 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.activities.AddAttachmentsActivity;
 import ch.protonmail.android.activities.BaseContactsActivity;
 import ch.protonmail.android.activities.guest.FirstActivity;
-import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.activities.mailbox.MailboxActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.MessageRecipientViewAdapter;
@@ -141,7 +140,6 @@ import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
-import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.MessageSavedEvent;
 import ch.protonmail.android.events.PostImportAttachmentEvent;
 import ch.protonmail.android.events.PostLoadContactsEvent;
@@ -644,13 +642,7 @@ public class ComposeMessageActivity
     private boolean checkIfUserLoggedIn() {
         if (!mUserManager.isLoggedIn()) {
             TextExtensions.showToast(this, R.string.need_to_be_logged_in);
-            Class activityToRun;
-            if (mUserManager != null && mUserManager.isEngagementShown()) {
-                activityToRun = LoginActivity.class;
-            } else {
-                activityToRun = FirstActivity.class;
-            }
-            startActivity(AppUtil.decorInAppIntent(new Intent(this, activityToRun)));
+            startActivity(AppUtil.decorInAppIntent(new Intent(this, FirstActivity.class)));
             finishActivity();
             return false;
         }
@@ -897,12 +889,6 @@ public class ComposeMessageActivity
                 }
             });
         }
-    }
-
-    @Subscribe
-    public void onLogoutEvent(LogoutEvent event) {
-        startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
-        finishActivity();
     }
 
     @Subscribe

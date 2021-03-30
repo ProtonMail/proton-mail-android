@@ -68,14 +68,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.BaseConnectivityActivity;
-import ch.protonmail.android.activities.UpsellingActivity;
-import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.contacts.UnsavedChangesDialog;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.events.ContactEvent;
-import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.Event;
@@ -803,12 +800,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     }
 
     @Subscribe
-    public void onLogoutEvent(LogoutEvent event) {
-        startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
-        finish();
-    }
-
-    @Subscribe
     public void onContactEvent(ContactEvent event) {
         switch (event.status) {
             case ContactEvent.SUCCESS:
@@ -868,9 +859,12 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     }
 
     private View.OnClickListener mUpgradeClickListener = v -> {
+        /*
         Intent upgradeIntent = new Intent(EditContactDetailsActivity.this, UpsellingActivity.class);
         upgradeIntent.putExtra(UpsellingActivity.EXTRA_OPEN_UPGRADE_CONTAINER, true);
         startActivityForResult(AppUtil.decorInAppIntent(upgradeIntent), REQUEST_CODE_UPGRADE);
+        TODO("startUpgradePlanWorkflow")
+        */
     };
 
     private void showUnsavedChangesDialog() {

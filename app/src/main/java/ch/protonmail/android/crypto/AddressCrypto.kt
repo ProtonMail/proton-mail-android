@@ -93,8 +93,8 @@ class AddressCrypto @AssistedInject constructor(
                 "primary = ${key.isPrimary}, " +
                 "has activation = ${key.activation != null}"
 
-            val tokenManager = runBlocking { userManager.getCurrentUserTokenManager() }
-            val armoredPrivateKey = tokenManager?.encPrivateKey
+            val user = runBlocking { userManager.getCurrentUserBlocking() }
+            val armoredPrivateKey: String? = user?.keys?.primaryKey?.privateKey?.string
             armoredPrivateKey?.let {
                 val decryptedToken = openPgp.decryptMessage(token.string, armoredPrivateKey, mailboxPassword)
                 val validSignature = verifySignature(it, decryptedToken, signature.string, errorMessage)

@@ -19,10 +19,7 @@
 package ch.protonmail.android.api.segments.settings.mail
 
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.SrpResponseBody
 import ch.protonmail.android.api.models.UserSettingsResponse
-import ch.protonmail.android.api.models.requests.PasswordChange
-import ch.protonmail.android.api.models.requests.UpgradePasswordBody
 import ch.protonmail.android.domain.entity.Id
 import java.io.IOException
 
@@ -36,20 +33,4 @@ interface UserSettingsApiSpec {
 
     @Throws(IOException::class)
     fun updateNotify(updateNotify: Boolean): ResponseBody?
-
-    @Throws(IOException::class)
-    fun updateNotificationEmail(
-        srpSession: String,
-        clientEpheremal: String,
-        clientProof: String,
-        twoFactorCode: String?,
-        email: String
-    ): SrpResponseBody?
-
-    @Throws(IOException::class)
-    fun updateLoginPassword(passwordChangeBody: PasswordChange): SrpResponseBody?
-
-    @Throws(IOException::class)
-    fun upgradeLoginPassword(upgradePasswordBody: UpgradePasswordBody): ResponseBody?
-
 }

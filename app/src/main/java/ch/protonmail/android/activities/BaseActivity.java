@@ -70,7 +70,6 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier;
-import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.settings.pin.ValidatePinActivity;
@@ -329,7 +328,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
                 boolean logout = data.getBooleanExtra(EXTRA_LOGOUT, false);
                 if (logout) {
                     mUserManager.logoutLastActiveAccountBlocking();
-                    AppUtil.postEventOnUi(new LogoutEvent(Status.SUCCESS));
                 } else {
                     validationCanceled = true;
                     finish();

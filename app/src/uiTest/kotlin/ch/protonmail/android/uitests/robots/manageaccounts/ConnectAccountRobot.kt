@@ -79,7 +79,7 @@ open class ConnectAccountRobot {
     }
 
     private fun signIn(): InboxRobot {
-        UIActions.text.clickViewWithText(R.string.sign_in)
+        UIActions.text.clickViewWithText(R.string.sign_in_)
         return InboxRobot()
     }
 
@@ -130,7 +130,7 @@ open class ConnectAccountRobot {
     }
 
     private fun signInWithMailboxPasswordOrTwoFa(): ConnectAccountRobot {
-        UIActions.text.clickViewWithText(R.string.sign_in)
+        UIActions.text.clickViewWithText(R.string.sign_in_)
         return this
     }
 

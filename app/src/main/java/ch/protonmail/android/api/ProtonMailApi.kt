@@ -51,8 +51,6 @@ import ch.protonmail.android.api.segments.payment.PaymentApiSpec
 import ch.protonmail.android.api.segments.payment.PaymentPubService
 import ch.protonmail.android.api.segments.report.ReportApi
 import ch.protonmail.android.api.segments.report.ReportApiSpec
-import ch.protonmail.android.api.segments.reset.ResetApi
-import ch.protonmail.android.api.segments.reset.ResetApiSpec
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApi
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
 import ch.protonmail.android.api.segments.settings.mail.UserSettingsApi
@@ -79,7 +77,6 @@ class ProtonMailApi private constructor(
     private val organizationApi: OrganizationApiSpec,
     private val paymentApi: PaymentApiSpec,
     private val reportApi: ReportApiSpec,
-    private val resetApi: ResetApiSpec,
     private val mailSettingsApi: MailSettingsApiSpec,
     private val userSettingsApi: UserSettingsApiSpec,
     private val userApi: UserApiSpec,
@@ -101,7 +98,6 @@ class ProtonMailApi private constructor(
     OrganizationApiSpec by organizationApi,
     PaymentApiSpec by paymentApi,
     ReportApiSpec by reportApi,
-    ResetApiSpec by resetApi,
     UserSettingsApiSpec by userSettingsApi,
     MailSettingsApiSpec by mailSettingsApi,
     UserApiSpec by userApi,
@@ -127,12 +123,11 @@ class ProtonMailApi private constructor(
         params[9] as OrganizationApiSpec,
         params[10] as PaymentApiSpec,
         params[11] as ReportApiSpec,
-        params[12] as ResetApiSpec,
-        params[13] as MailSettingsApiSpec,
-        params[14] as UserSettingsApiSpec,
-        params[15] as UserApiSpec,
-        params[16] as DomainApiSpec,
-        params[18] as SecuredServices
+        params[12] as MailSettingsApiSpec,
+        params[13] as UserSettingsApiSpec,
+        params[14] as UserApiSpec,
+        params[15] as DomainApiSpec,
+        params[17] as SecuredServices
         // endregion
     )
 
@@ -156,7 +151,7 @@ class ProtonMailApi private constructor(
 
             val addressApi = AddressApi(services.address)
             val attachmentApi = AttachmentApi(services.attachment, mAttachmentsService, protonRetrofitBuilder.attachReqInter, mUploadService)
-            val authenticationApi = AuthenticationApi(services.authentication, authPubService)
+            val authenticationApi = AuthenticationApi(authPubService)
             val connectivityApi = ConnectivityApi(servicePing)
             val contactApi = ContactApi(services.contact)
             val deviceApi = DeviceApi(services.device)
@@ -166,7 +161,6 @@ class ProtonMailApi private constructor(
             val organizationApi = OrganizationApi(services.organization)
             val paymentApi = PaymentApi(services.payment, paymentPubService)
             val reportApi = ReportApi(services.report)
-            val resetApi = ResetApi(services.reset)
             val mailSettingsApi = MailSettingsApi(services.mailSettings)
             val userSettingsApi = UserSettingsApi(services.userSettings)
             val domainApi = DomainApi(domainPubService)
@@ -174,7 +168,7 @@ class ProtonMailApi private constructor(
             // endregion
             return arrayOf(addressApi, attachmentApi, authenticationApi, connectivityApi, contactApi,
                     deviceApi, keyApi, messageApi, labelApi, organizationApi, paymentApi, reportApi,
-                    resetApi, mailSettingsApi, userSettingsApi, userApi, domainApi, protonRetrofitBuilder.attachReqInter,
+                    mailSettingsApi, userSettingsApi, userApi, domainApi, protonRetrofitBuilder.attachReqInter,
                     services)
         }
     }

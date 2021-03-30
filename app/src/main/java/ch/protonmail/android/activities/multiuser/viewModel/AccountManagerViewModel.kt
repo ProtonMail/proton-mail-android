@@ -36,13 +36,10 @@ class AccountManagerViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _removedAccountResult: MutableLiveData<Boolean> = MutableLiveData()
-    private val _removedAllAccountsResult: MutableLiveData<Boolean> = MutableLiveData()
     private val _logoutAccountResult: MutableLiveData<Boolean> = MutableLiveData()
 
     val removedAccountResult: LiveData<Boolean>
         get() = _removedAccountResult
-    val removedAllAccountsResult: LiveData<Boolean>
-        get() = _removedAllAccountsResult
     val logoutAccountResult: LiveData<Boolean>
         get() = _logoutAccountResult
 

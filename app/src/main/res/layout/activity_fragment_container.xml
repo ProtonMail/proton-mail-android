@@ -33,7 +33,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_centerInParent="true"
         android:visibility="gone">
 
-        <include layout="@layout/login_background_mountain" />
+        <include layout="@layout/splash_background_mountain" />
 
         <ProgressBar
             android:id="@+id/progress_circular"

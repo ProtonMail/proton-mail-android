@@ -23,7 +23,6 @@ import android.content.Context
 import android.content.Intent
 import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
 import ch.protonmail.android.activities.EXTRA_LOGOUT
-import ch.protonmail.android.activities.guest.LoginActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
 
 fun Context.moveToMailbox() {
@@ -41,6 +40,9 @@ fun Activity.moveToMailboxLogout() {
 }
 
 fun Activity.moveToLogin() {
+    /*
     startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
     finish()
+    */
+    TODO("startLoginWorkflow")
 }

@@ -30,14 +30,11 @@ import ch.protonmail.android.R
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
-import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.activity_default_address.*
-import java.util.*
+import java.util.Collections
 
 /**
  * Created by dkadrikj on 10/23/16.
@@ -205,10 +202,5 @@ class DefaultAddressActivity : BaseActivity() {
         setResult(Activity.RESULT_OK)
         saveLastInteraction()
         finish()
-    }
-
-    @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) {
-        moveToLogin()
     }
 }

@@ -30,7 +30,8 @@
     <!-- enabled -->
     <item>
         <ripple android:color="@color/new_purple">
-            <item android:drawable="@drawable/login_button_shape_inverted" />
+            <item android:drawable="@drawable/button_shape_inverted" />
         </ripple>
     </item>
+
 </selector>

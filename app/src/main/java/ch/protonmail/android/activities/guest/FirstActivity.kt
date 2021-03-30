@@ -19,14 +19,12 @@
 
 package ch.protonmail.android.activities.guest
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import butterknife.OnClick
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.feature.account.AccountViewModel
-import ch.protonmail.android.utils.AppUtil
 
 class FirstActivity : BaseActivity() {
 
@@ -50,8 +48,5 @@ class FirstActivity : BaseActivity() {
 
     @OnClick(R.id.create_account)
     fun onCreateAccountClicked() {
-        val intent = AppUtil.decorInAppIntent(Intent(this, CreateAccountActivity::class.java))
-        intent.putExtra(CreateAccountActivity.EXTRA_WINDOW_SIZE, window.decorView.height)
-        startActivity(intent)
     }
 }

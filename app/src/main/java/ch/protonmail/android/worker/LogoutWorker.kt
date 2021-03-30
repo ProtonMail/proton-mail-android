@@ -36,7 +36,6 @@ import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.core.PREF_PIN
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.AppUtil
@@ -66,25 +65,11 @@ class LogoutWorker @AssistedInject constructor(
     override suspend fun doWork(): Result =
         runCatching {
             val userId = Id(checkNotNull(inputData.getString(KEY_INPUT_USER_ID)) { "User id is required" })
-            val registrationId = inputData.getString(KEY_INPUT_FCM_REGISTRATION_ID) ?: ""
 
             Timber.v("Unregistering user: $userId")
 
-            val loggedInUsers = accountManager.allLoggedIn()
-            // Unregister FCM only if this is the last user on the device
-            if (loggedInUsers.isEmpty() || loggedInUsers.size == 1 && loggedInUsers.first() == userId) {
-                if (registrationId.isNotEmpty()) {
-                    Timber.v("Unregistering from Firebase Cloud Messaging (FCM)")
-                    api.unregisterDevice(registrationId)
-                } else {
-                    Timber.w("LogoutWorker called with empty FCM registration token")
-                }
-            }
-            AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
             accountManager.clear()
-
-            // Revoke access token through API
-            api.revokeAccess(userId)
+            // TODO: accountManager.disableAccount(userId)
 
             PREF_PIN
             val prefs = SecureSharedPreferences.getPrefsForUser(applicationContext, userId)

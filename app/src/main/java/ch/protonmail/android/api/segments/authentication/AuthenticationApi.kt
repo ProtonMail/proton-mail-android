@@ -19,68 +19,16 @@
 package ch.protonmail.android.api.segments.authentication
 
 import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.api.interceptors.UsernameTag
-import ch.protonmail.android.api.models.LoginBody
-import ch.protonmail.android.api.models.LoginInfoBody
-import ch.protonmail.android.api.models.LoginInfoResponse
-import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.models.ModulusResponse
 import ch.protonmail.android.api.models.RefreshBody
 import ch.protonmail.android.api.models.RefreshResponse
-import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.TwoFABody
-import ch.protonmail.android.api.models.TwoFAResponse
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
-import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.utils.ConstantTime
 import java.io.IOException
 
 class AuthenticationApi(
-    private val service: AuthenticationService,
     private val pubService: AuthenticationPubService
 ) : BaseApi(), AuthenticationApiSpec {
-
-    @Throws(IOException::class)
-    override fun twoFactor(twoFABody: TwoFABody): TwoFAResponse =
-        ParseUtils.parse(pubService.post2fa(twoFABody).execute())
-
-    @Throws(IOException::class)
-    override fun revokeAccessBlocking(userId: Id): ResponseBody =
-        ParseUtils.parse(service.revoke(UserIdTag(userId)).execute())
-
-    override suspend fun revokeAccess(userId: Id): ResponseBody =
-        ParseUtils.parse(service.revoke(UserIdTag(userId)).execute())
-
-    override fun loginInfo(username: String): LoginInfoResponse {
-        val infoBody = LoginInfoBody(username)
-        return ParseUtils.parse(pubService.loginInfo(infoBody, UsernameTag(username)).execute())
-    }
-
-    override fun loginInfoForAuthentication(username: String): LoginInfoResponse {
-        val infoBody = LoginInfoBody(username)
-        return ParseUtils.parse(pubService.loginInfo(infoBody, UsernameTag(username)).execute())
-    }
-
-    @Throws(IOException::class)
-    override fun login(
-        username: String,
-        srpSession: String,
-        clientEphemeral: ByteArray,
-        clientProof: ByteArray
-    ): LoginResponse {
-        // We don't actually need constant time encoding here, assuming that SRP is secure. However,
-        // given that the data has information about passwords in it, it is better to be safe than
-        // sorry.
-        val loginBody = LoginBody(
-            username,
-            srpSession,
-            ConstantTime.encodeBase64(clientEphemeral, true),
-            ConstantTime.encodeBase64(clientProof, true),
-            null
-        )
-        return ParseUtils.parse(pubService.login(loginBody).execute())
-    }
 
     @Throws(IOException::class)
     override fun randomModulus(): ModulusResponse = ParseUtils.parse(pubService.randomModulus().execute())

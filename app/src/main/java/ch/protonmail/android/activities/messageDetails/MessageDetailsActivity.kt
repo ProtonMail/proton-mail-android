@@ -59,7 +59,6 @@ import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabe
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelsChangeListener
 import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment
 import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment.IMoveMessagesListener
-import ch.protonmail.android.activities.guest.LoginActivity
 import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
@@ -78,7 +77,6 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostArchiveJob
@@ -94,6 +92,7 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.utils.ui.MODE_ACCORDION
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
@@ -208,7 +207,8 @@ internal class MessageDetailsActivity :
         val user = mUserManager.requireCurrentUserBlocking()
         AppUtil.clearNotifications(this, user.id)
         if (!mUserManager.isLoggedIn) {
-            startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
+            // startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
+            TODO("startLoginWorkflow()")
         }
         supportActionBar?.title = null
         initAdapters()
@@ -481,13 +481,6 @@ internal class MessageDetailsActivity :
             else -> throw IllegalStateException("Unknown message status: $status")
         }
         showToast(toastMessageId, Toast.LENGTH_SHORT)
-    }
-
-    @Subscribe
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onLogoutEvent(event: LogoutEvent?) {
-        startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
-        finish()
     }
 
     private fun getDecryptedBody(decryptedHtml: String?): String {

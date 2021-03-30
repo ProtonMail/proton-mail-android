@@ -31,8 +31,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.events.Status
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.MockKAnnotations
@@ -118,14 +116,14 @@ class LogoutWorkerTest {
             coEvery { accountManager.allLoggedIn() } returns setOf(testUserId)
             coEvery { accountManager.clear() } just Runs
             coEvery { AppUtil.deleteSecurePrefs(userPrefs, any()) } just Runs
-            every { AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS)) } just Runs
+            //every { AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS)) } just Runs
             every { TokenManager.getInstance(any(), testUserId) } returns tokenManager
 
             val revokeResponse = mockk<ResponseBody> {
                 every { code } returns Constants.RESPONSE_CODE_OK
             }
             coEvery { api.unregisterDevice(registrationId) } returns revokeResponse
-            coEvery { api.revokeAccess(testUserId) } returns revokeResponse
+            //coEvery { api.revokeAccess(testUserId) } returns revokeResponse
             val expected = ListenableWorker.Result.success()
 
             // when
@@ -134,7 +132,7 @@ class LogoutWorkerTest {
             // then
             coVerify { accountManager.clear() }
             coVerify { api.unregisterDevice(registrationId) }
-            coVerify { api.revokeAccess(testUserId) }
+            //coVerify { api.revokeAccess(testUserId) }
             assertEquals(expected, result)
         }
 

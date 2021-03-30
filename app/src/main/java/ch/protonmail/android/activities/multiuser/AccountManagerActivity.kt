@@ -23,7 +23,6 @@ import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
@@ -33,15 +32,12 @@ import ch.protonmail.android.adapters.AccountsAdapter
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.user.User
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.uiModel.DrawerUserModel
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.setBarColors
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToMailbox
-import ch.protonmail.android.utils.moveToMailboxLogout
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
-import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_account_manager.*
 import kotlinx.android.synthetic.main.toolbar_white.*
@@ -49,9 +45,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class AccountManagerActivity : BaseActivity() {
-
-
-    private var movingToMailbox = false
 
     private val viewModel by viewModels<AccountManagerViewModel>()
 
@@ -115,19 +108,6 @@ class AccountManagerActivity : BaseActivity() {
         accountsRecyclerView.layoutManager = LinearLayoutManager(this)
     }
 
-    @Synchronized
-    private fun closeAndMoveToLogin(result: Boolean) {
-        if (result && !movingToMailbox) {
-            movingToMailbox = true
-            window.decorView.postDelayed(500, ::moveToMailboxLogout)
-        }
-    }
-
-    @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) {
-        closeAndMoveToLogin(true)
-    }
-
     private fun closeActivity(result: Boolean) {
         if (result) {
             Handler().postDelayed({
@@ -168,7 +148,6 @@ class AccountManagerActivity : BaseActivity() {
             }
             R.id.action_remove_all -> {
                 showToast(R.string.account_manager_remove_all_accounts)
-                viewModel.removedAllAccountsResult.observe(this@AccountManagerActivity, ::closeAndMoveToLogin)
                 viewModel.removeAllLoggedIn()
                 true
             }

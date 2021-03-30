@@ -44,19 +44,9 @@ class AccountSettingsRobot {
         return SubscriptionRobot()
     }
 
-    fun passwordManagement(): PasswordManagementRobot {
-        clickOnSettingsItemWithHeader(R.string.password_manager)
-        return PasswordManagementRobot()
-    }
-
     fun privacy(): PrivacySettingsRobot {
         clickOnSettingsItemWithHeader(R.string.privacy)
         return PrivacySettingsRobot()
-    }
-
-    fun recoveryEmail(): RecoveryEmailRobot {
-        clickOnSettingsItemWithHeader(R.string.recovery_email)
-        return RecoveryEmailRobot()
     }
 
     fun defaultEmailAddress(): DefaultEmailAddressRobot {
@@ -97,14 +87,6 @@ class AccountSettingsRobot {
 
         fun accountSettingsOpened() {
             view.withText(R.string.account_settings).isDescendantOf(view.withId(R.id.toolbar)).wait().checkDisplayed()
-        }
-
-        fun passwordChanged() {
-            UIActions.wait.forToastWithText(R.string.new_login_password_saved)
-        }
-
-        fun mailboxPasswordChanged() {
-            UIActions.wait.forToastWithText(R.string.new_mailbox_password_saved)
         }
     }
 

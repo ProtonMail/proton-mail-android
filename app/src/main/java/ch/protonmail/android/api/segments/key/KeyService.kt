@@ -18,21 +18,15 @@
  */
 package ch.protonmail.android.api.segments.key
 
-import ch.protonmail.android.api.models.KeysSetupBody
 import ch.protonmail.android.api.models.PublicKeyResponse
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.SinglePasswordChange
-import ch.protonmail.android.api.models.UserInfo
-import ch.protonmail.android.api.models.address.AddressPrivateKey
 import ch.protonmail.android.api.models.address.KeyActivationBody
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-import ch.protonmail.android.domain.entity.user.AddressKey
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
-import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -46,10 +40,6 @@ interface KeyService {
     @GET("keys")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun getPublicKeys(@Query("Email") email: String): PublicKeyResponse
-
-    @PUT("keys/private")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun updatePrivateKeys(@Body privateKeyBody: SinglePasswordChange): Call<ResponseBody>
 
     // migrated user
     @PUT("keys/address/{addressId}")
@@ -66,43 +56,4 @@ interface KeyService {
         @Body keyActivationBody: KeyActivationBody,
         @Path("keyId") keyId: String
     ): ResponseBody
-
-    @POST("keys/setup")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun setupKeys(@Body keysSetupBody: KeysSetupBody): Call<UserInfo>
-
-    // TODO: not implemented yet (evaluation necessary for mail android client)
-    @PUT("/keys/private/upgrade")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun upgradePrivateKeys(@Body privateKeyBody: SinglePasswordChange): Call<ResponseBody>
-
-    @POST("/keys/reset")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun resetKeys(@Body keysSetupBody: KeysSetupBody): Call<ResponseBody>
-
-    @POST("/keys/address")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createAddressKey(@Body addressPrivateKey: AddressPrivateKey): Call<ResponseBody>
-
-    @POST("/keys")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createAddressKeyLegacy(@Body addressPrivateKey: AddressPrivateKey): Call<ResponseBody>
-
-    @PUT("/keys/user/{userkeyid}")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun reactivateAddressKeys(@Body addressPrivateKey: AddressPrivateKey): Call<ResponseBody>
-
-    @PUT("/keys/{keyid}")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun reactivateAddressKeysLegacy(@Body addressPrivateKey: AddressPrivateKey): Call<ResponseBody>
-
-    // probably not necessary for mail android client
-    @POST("/members/{memberid}/keys")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createMembersAddressKeys(@Body addressKey: AddressKey): Call<ResponseBody>
-
-    @POST("/members/{memberid}/keys/setup")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun setupMembersKeys(@Body keysSetupBody: KeysSetupBody): Call<UserInfo>
-
 }

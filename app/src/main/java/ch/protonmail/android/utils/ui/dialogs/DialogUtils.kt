@@ -316,41 +316,6 @@ class DialogUtils {
             return undoSnack
         }
 
-        fun show2FADialog(context: Activity,
-                          okListener: (String) -> Unit,
-                          cancelListener: () -> Unit): AlertDialog {
-            val builder = AlertDialog.Builder(context)
-            val dialogView = context.layoutInflater.inflate(R.layout.layout_2fa_old, null)
-            val twoFactorCode = dialogView.findViewById(R.id.two_factor_code) as EditText
-            val toggleInputText = dialogView.findViewById(R.id.toggle_input_text) as ToggleButton
-            toggleInputText.setOnClickListener { v ->
-                if ((v as ToggleButton).isChecked) {
-                    twoFactorCode.inputType = InputType.TYPE_CLASS_TEXT
-                } else {
-                    twoFactorCode.inputType = InputType.TYPE_CLASS_NUMBER
-                }
-            }
-            builder.setView(dialogView)
-            builder.setPositiveButton(R.string.enter) { dialog, _ ->
-                okListener(twoFactorCode.text.toString())
-                dialog.cancel()
-            }
-            builder.setNegativeButton(R.string.cancel) { dialog, _ ->
-                cancelListener()
-                dialog.cancel()
-            }
-            val twoFADialog = builder.create()
-            twoFADialog.setOnShowListener {
-                twoFADialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.resources.getColor(R.color.iron_gray))
-                val positiveButton = twoFADialog.getButton(DialogInterface.BUTTON_POSITIVE)
-                positiveButton.setTextColor(context.resources.getColor(R.color.new_purple_dark))
-                positiveButton.text = context.getString(R.string.enter)
-            }
-            twoFADialog.setCanceledOnTouchOutside(false)
-            twoFADialog.show()
-            return twoFADialog
-        }
-
         fun showSignedInSnack(view: View, message: String) {
             val snackBar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT)
             snackBar.setColorWhite()

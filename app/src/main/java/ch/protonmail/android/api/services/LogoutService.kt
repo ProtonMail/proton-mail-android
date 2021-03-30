@@ -30,6 +30,9 @@ import ch.protonmail.android.worker.LogoutWorker
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.TagConstraint
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.runBlocking
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
@@ -43,6 +46,9 @@ private const val EXTRA_FCM_REGISTRATION_ID = "extra.fcm.registration.id"
 
 @AndroidEntryPoint
 class LogoutService : JobIntentService() {
+
+    @Inject
+    internal lateinit var accountManager: AccountManager
 
     @Inject
     internal lateinit var jobManager: JobManager
@@ -66,13 +72,8 @@ class LogoutService : JobIntentService() {
 
     private fun logoutOffline(userId: Id) {
         try {
-            val hasMailboxPassword = userManager.getMailboxPassword(userId)
-                ?.let { String(it).isNotBlank() }
-                ?: false
-            if (hasMailboxPassword) {
-                api.revokeAccessBlocking(userId)
-                TokenManager.clearInstance(userId)
-            }
+            runBlocking { accountManager.disableAccount(UserId(userId.s)) }
+            TokenManager.clearInstance(userId)
             jobManager.cancelJobs(TagConstraint.ALL)
             jobManager.clear()
         } catch (ioException: IOException) {

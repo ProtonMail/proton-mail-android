@@ -19,10 +19,8 @@
 package ch.protonmail.android.api.segments.user
 
 import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.api.models.CreateUserBody
 import ch.protonmail.android.api.models.DirectEnabledResponse
 import ch.protonmail.android.api.models.KeySalts
-import ch.protonmail.android.api.models.PasswordVerifier
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.UserInfo
 import ch.protonmail.android.api.utils.ParseUtils
@@ -55,20 +53,6 @@ class UserApi(
     @Deprecated("Use with user Id", ReplaceWith("fetchKeySalts(userId)"))
     override fun fetchKeySalts(): KeySalts =
         ParseUtils.parse(service.fetchKeySalts().execute())
-
-    @Throws(IOException::class)
-    override fun createUser(
-        username: String,
-        password: PasswordVerifier,
-        updateMe: Boolean,
-        tokenType: String,
-        token: String,
-        timestamp: String,
-        jwsResult: String
-    ): UserInfo {
-        val body = CreateUserBody(username, password, if (updateMe) 1 else 0, tokenType, token, timestamp, jwsResult)
-        return ParseUtils.parse(pubService.createUser(body).execute())
-    }
 
     @Throws(IOException::class)
     override fun isUsernameAvailable(username: String): ResponseBody =

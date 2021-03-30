@@ -19,7 +19,6 @@
 package ch.protonmail.android.activities
 
 import android.os.Bundle
-import android.text.TextUtils
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
@@ -33,8 +32,6 @@ import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
-import ch.protonmail.android.utils.moveToLogin
-import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -86,12 +83,6 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         }
         setValue(SettingsEnum.SUBSCRIPTION, getString(R.string.protonmail) + " " + planName)
 
-        mRecoveryEmail = mUserManager.userSettings?.notificationEmail ?: ""
-        setValue(
-            SettingsEnum.RECOVERY_EMAIL,
-            if (!TextUtils.isEmpty(mRecoveryEmail)) mRecoveryEmail else getString(R.string.none)
-        )
-
         val (used, total) = with(user.dedicatedSpace) { used.l to total.l }
         val usedSpace = UiUtil.readableFileSize(used.toLong())
         val maxSpace = UiUtil.readableFileSize(total.toLong())
@@ -135,12 +126,6 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         val mailSettings = mUserManager.getCurrentUserMailSettingsBlocking()
         showCurrentViewModeSetting(mailSettings)
         setupViewModeChangedListener(mailSettings)
-    }
-
-    @Subscribe
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onLogoutEvent(event: LogoutEvent?) {
-        moveToLogin()
     }
 
     /**

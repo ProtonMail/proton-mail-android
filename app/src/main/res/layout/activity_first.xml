@@ -25,10 +25,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_purple"
-    android:fitsSystemWindows="true"
-    tools:context="ch.protonmail.android.activities.guest.LoginActivity">
+    android:fitsSystemWindows="true">
 
-    <include layout="@layout/login_background_mountain" />
+    <include layout="@layout/splash_background_mountain" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -79,8 +78,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="40dp"
                 android:layout_marginTop="40dp"
-                android:background="@drawable/login_button_selector"
-                android:text="@string/create_account"
+                android:text="@string/create_account_"
                 android:textAllCaps="false"
                 android:textColor="@color/dark_purple"
                 android:textSize="@dimen/h3"
@@ -94,8 +92,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="40dp"
                 android:layout_marginTop="40dp"
-                android:background="@drawable/login_button_selector_inverted"
-                android:text="@string/sign_in"
+                android:background="@drawable/button_selector_inverted"
+                android:text="@string/sign_in_"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="@dimen/h3"

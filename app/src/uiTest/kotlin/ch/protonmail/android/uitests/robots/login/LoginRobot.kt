@@ -48,7 +48,7 @@ class LoginRobot : CoreRobot {
     }
 
     private fun signIn(): InboxRobot {
-        view.withId(signInButtonId).withText(R.string.sign_in).click()
+        view.withId(signInButtonId).withText(R.string.sign_in_).click()
         return InboxRobot()
     }
 
@@ -63,12 +63,12 @@ class LoginRobot : CoreRobot {
     }
 
     private fun username(name: String): LoginRobot {
-        view.withId(R.id.username).replaceText(name)
+        // view.withId(R.id.username).replaceText(name)
         return this
     }
 
     private fun password(password: String): LoginRobot {
-        view.withId(R.id.password).replaceText(password)
+        // view.withId(R.id.password).replaceText(password)
         return this
     }
 

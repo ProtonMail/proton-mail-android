@@ -20,7 +20,6 @@ package ch.protonmail.android.api.segments.user
 
 import ch.protonmail.android.api.models.DirectEnabledResponse
 import ch.protonmail.android.api.models.KeySalts
-import ch.protonmail.android.api.models.PasswordVerifier
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.UserInfo
 import ch.protonmail.android.domain.entity.Id
@@ -40,17 +39,6 @@ interface UserApiSpec {
 
     @Deprecated("Use with user Id", ReplaceWith("fetchKeySalts(userId)"))
     fun fetchKeySalts(): KeySalts
-
-    @Throws(IOException::class)
-    fun createUser(
-        username: String,
-        password: PasswordVerifier,
-        updateMe: Boolean,
-        tokenType: String,
-        token: String,
-        timestamp:String,
-        payload:String
-    ): UserInfo
 
     @Throws(IOException::class)
     fun isUsernameAvailable(username: String): ResponseBody

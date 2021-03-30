@@ -36,12 +36,9 @@ import butterknife.OnClick
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.views.SettingsDefaultItemView
-import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.activity_pin_settings.*
 
 // region constants
@@ -258,11 +255,6 @@ class PinSettingsActivity : BaseActivity() {
         setResult(RESULT_OK)
         saveLastInteraction()
         finish()
-    }
-
-    @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) {
-        moveToLogin()
     }
 
     @SuppressLint("NewApi")

@@ -30,11 +30,11 @@ class GenerateTokenAndSignature @Inject constructor (
     private val openPgp: OpenPGP
 ) {
     operator fun invoke(orgKeys: UserKey?): TokenAndSignature {
-        val tokenManager = userManager.getCurrentUserTokenManagerBlocking()
+        val user = userManager.getCurrentUserBlocking()
         val secret = openPgp.randomToken()
         val tokenString = secret.joinToString("") { String.format("%02x", (it.toInt() and 0xff)) }
         val binMessage = Crypto.newPlainMessageFromString(tokenString)
-        val armoredPrivateKey: String? = tokenManager?.encPrivateKey
+        val armoredPrivateKey: String? = user?.keys?.primaryKey?.privateKey?.string
         val mailboxPassword = userManager.getCurrentUserMailboxPassword()
         val unlockedUserKey = Crypto.newKeyFromArmored(armoredPrivateKey).unlock(mailboxPassword)
         val tokenKeyRing = Crypto.newKeyRing(unlockedUserKey)

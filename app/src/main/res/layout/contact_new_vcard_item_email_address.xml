@@ -129,7 +129,7 @@
 
             <ch.protonmail.android.views.CustomFontEditText
                 android:id="@+id/option"
-                style="@style/LoginEditText.NoBg"
+                style="@style/V3EditText.NoBg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@id/btn_minus"

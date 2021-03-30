@@ -32,11 +32,8 @@ import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
 import ch.protonmail.android.contacts.groups.GroupsItemAdapterMode
 import ch.protonmail.android.data.local.model.*
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.moveToLogin
-import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.content_contact_group_details.*
 import javax.inject.Inject
@@ -139,11 +136,5 @@ class AddressChooserActivity : BaseActivity() {
                 }
             })
         }
-    }
-
-    @Subscribe
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onLogoutEvent(event: LogoutEvent?) {
-        moveToLogin()
     }
 }

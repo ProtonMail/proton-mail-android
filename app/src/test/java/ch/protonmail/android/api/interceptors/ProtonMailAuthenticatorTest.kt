@@ -78,7 +78,7 @@ class ProtonMailAuthenticatorTest {
         every { currentUserId } returns TEST_ID
         every { requireCurrentUserId() } returns TEST_ID
         coEvery { getTokenManager(TEST_ID) } returns tokenManagerMock
-        every { getTokenManagerBlocking(TEST_ID) } returns tokenManagerMock
+        every { getTokenManager(TEST_ID) } returns tokenManagerMock
         every { getMailboxPassword(TEST_ID) } returns "mailbox password".toByteArray()
         every { user } returns userMock
         coEvery { logoutOffline(TEST_ID) } just runs

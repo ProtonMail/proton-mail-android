@@ -19,19 +19,14 @@
 package ch.protonmail.android.activities
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.core.view.children
-import butterknife.OnClick
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
@@ -39,16 +34,12 @@ import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants.Prefs.PREF_HYPERLINK_CONFIRM
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.AuthStatus
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.extensions.isValidEmail
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.views.CustomFontEditText
 import com.google.gson.Gson
 import com.squareup.otto.Subscribe
@@ -56,7 +47,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_edit_settings_item.*
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.EMPTY_STRING
-import me.proton.core.util.kotlin.takeIfNotEmpty
 import timber.log.Timber
 
 // region constants
@@ -72,7 +62,6 @@ enum class SettingsItem {
     PUSH_NOTIFICATIONS,
     CONNECTIONS_VIA_THIRD_PARTIES,
     COMBINED_CONTACTS,
-    RECOVERY_EMAIL,
     AUTO_DOWNLOAD_MESSAGES,
     BACKGROUND_SYNC
 }
@@ -86,19 +75,9 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
     private var settingsItemType: SettingsItem = SettingsItem.DISPLAY_NAME_AND_SIGNATURE
     private var settingsItemValue: String? = null
     private var title: String? = null
-    private var recoveryEmailValue: String? = null
     private var actionBarTitle: Int = -1
     private var initializedRemote = false
     private var initializedEmbedded = false
-
-    private val isValidNewConfirmEmail: Boolean
-        get() {
-            val newRecoveryEmail = newRecoveryEmail!!.text.toString().trim()
-            val newConfirmRecoveryEmail = newRecoveryEmailConfirm!!.text.toString().trim()
-            return if (newRecoveryEmail.isEmpty() && newConfirmRecoveryEmail.isEmpty()) {
-                true
-            } else newRecoveryEmail == newConfirmRecoveryEmail && newRecoveryEmail.isValidEmail()
-        }
 
     override fun getLayoutId(): Int = R.layout.activity_edit_settings_item
 
@@ -113,8 +92,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
         mSnackLayout = findViewById(R.id.layout_no_connectivity_info)
 
-        val oldSettings =
-            arrayOf(SettingsItem.RECOVERY_EMAIL, SettingsItem.AUTO_DOWNLOAD_MESSAGES, SettingsItem.BACKGROUND_SYNC)
+        val oldSettings = arrayOf(SettingsItem.AUTO_DOWNLOAD_MESSAGES, SettingsItem.BACKGROUND_SYNC)
 
         if (settingsItemType !in oldSettings) {
             val jsonSettingsListResponse =
@@ -153,15 +131,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
     override fun renderViews() {
 
         when (settingsItemType) {
-            SettingsItem.RECOVERY_EMAIL -> {
-                settingsRecyclerViewParent.visibility = View.GONE
-                recoveryEmailValue = settingsItemValue
-                currentRecoveryEmail.setText(recoveryEmailValue?.takeIfNotEmpty() ?: getString(R.string.not_set))
-                recoveryEmailParent.visibility = View.VISIBLE
-                header.visibility = View.GONE
-                title = getString(R.string.edit_notification_email)
-                actionBarTitle = R.string.recovery_email
-            }
             SettingsItem.DISPLAY_NAME_AND_SIGNATURE -> {
 
                 selectedAddress = checkNotNull(user.addresses.primary)
@@ -479,10 +448,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         }
 
         intent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, settingsItemType)
-        if (settingsItemType == SettingsItem.RECOVERY_EMAIL) {
-            intent.putExtra(EXTRA_SETTINGS_ITEM_VALUE, recoveryEmailValue)
-        }
-
         setResult(Activity.RESULT_OK, intent)
         saveLastInteraction()
         finish()
@@ -496,125 +461,19 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         }
     }
 
-    @OnClick(R.id.save_new_email)
-    fun onSaveNewRecoveryClicked() {
-        if (isValidNewConfirmEmail) {
-            showEmailChangeDialog(false)
-        } else {
-            showToast(R.string.recovery_emails_invalid, Toast.LENGTH_SHORT)
-        }
-    }
-
     @Subscribe
     fun onSettingsChangedEvent(event: SettingsChangedEvent) {
         progressBar.visibility = View.GONE
-        if (event.status == AuthStatus.SUCCESS) {
-            val user = mUserManager.user
-            if (settingsItemType == SettingsItem.RECOVERY_EMAIL) {
-                settingsItemValue = recoveryEmailValue
-                if (recoveryEmailValue.isNullOrEmpty()) {
-                    mUserManager.userSettings!!.notificationEmail = resources.getString(R.string.not_set)
-                } else {
-                    mUserManager.userSettings!!.notificationEmail = recoveryEmailValue
-                }
-                user.save()
-            }
-            if (!event.isBackPressed) {
-                enableRecoveryEmailInput()
-            } else {
+        if (event.success) {
+            if (event.isBackPressed) {
                 val intent = Intent()
                     .putExtra(EXTRA_SETTINGS_ITEM_TYPE, settingsItemType)
-                    .putExtra(EXTRA_SETTINGS_ITEM_VALUE, recoveryEmailValue)
                 setResult(RESULT_OK, intent)
                 saveLastInteraction()
                 finish()
             }
         } else {
-            recoveryEmailValue = settingsItemValue
-            when (event.status) {
-                AuthStatus.INVALID_SERVER_PROOF -> {
-                    showToast(R.string.invalid_server_proof, Toast.LENGTH_SHORT)
-                }
-                AuthStatus.FAILED -> {
-                    showToast(event.error)
-                }
-                else -> {
-                    showToast(event.error)
-                }
-            }
+            showToast(event.error)
         }
-    }
-
-    private fun disableRecoveryEmailInput() {
-        newRecoveryEmail.isFocusable = false
-        newRecoveryEmail.isFocusableInTouchMode = false
-    }
-
-    private fun enableRecoveryEmailInput() {
-        newRecoveryEmail.isFocusable = true
-        newRecoveryEmail.isFocusableInTouchMode = true
-        currentRecoveryEmail.setText(recoveryEmailValue)
-        newRecoveryEmail.setText("")
-        newRecoveryEmailConfirm.setText("")
-    }
-
-    private fun showEmailChangeDialog(backPressed: Boolean) {
-        val hasTwoFactor = mUserManager.userSettings!!.twoFactor == 1
-        val builder = AlertDialog.Builder(this)
-        val inflater = this.layoutInflater
-        val dialogView = inflater.inflate(R.layout.layout_password_confirm, null)
-        val password = dialogView.findViewById<EditText>(R.id.current_password)
-        val twoFactorCode = dialogView.findViewById<EditText>(R.id.two_factor_code)
-        if (hasTwoFactor) {
-            twoFactorCode.visibility = View.VISIBLE
-        }
-        builder.setView(dialogView)
-        builder.setPositiveButton(R.string.okay) { dialog, _ ->
-            val passString = password.text.toString()
-            var twoFactorString = ""
-            if (hasTwoFactor) {
-                twoFactorString = twoFactorCode.text.toString()
-            }
-            if (passString.isEmpty() || twoFactorString.isEmpty() && hasTwoFactor) {
-                showToast(R.string.password_not_valid, Toast.LENGTH_SHORT)
-                newRecoveryEmail.setText("")
-                newRecoveryEmailConfirm.setText("")
-                dialog.cancel()
-            } else {
-                progressBar.visibility = View.VISIBLE
-                recoveryEmailValue = newRecoveryEmail.text.toString()
-                val job = UpdateSettingsJob(
-                    notificationEmailChanged = true,
-                    newEmail = recoveryEmailValue!!,
-                    backPressed = backPressed,
-                    password = passString.toByteArray() /*TODO passphrase*/,
-                    twoFactor = twoFactorString
-                )
-                mJobManager.addJobInBackground(job)
-                dialog.dismiss()
-                disableRecoveryEmailInput()
-            }
-        }
-        builder.setNegativeButton(R.string.cancel) { dialog, _ ->
-            dialog.cancel()
-            if (backPressed) {
-                saveLastInteraction()
-                finish()
-            }
-        }
-        val alert = builder.create()
-        alert.setOnShowListener {
-            alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this, R.color.iron_gray))
-            val positiveButton = alert.getButton(DialogInterface.BUTTON_POSITIVE)
-            positiveButton.setTextColor(ContextCompat.getColor(this, R.color.new_purple_dark))
-            positiveButton.text = getString(R.string.enter)
-        }
-        alert.setCanceledOnTouchOutside(false)
-        alert.show()
-    }
-
-    @Subscribe
-    fun onLogoutEvent(event: LogoutEvent?) {
-        moveToLogin()
     }
 }

@@ -24,7 +24,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
              tools:context="ch.protonmail.android.activities.SplashActivity">
 
     <include
-        layout="@layout/login_background_mountain"/>
+        layout="@layout/splash_background_mountain"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

@@ -19,16 +19,9 @@
 package ch.protonmail.android.api.segments.authentication
 
 import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.api.interceptors.UsernameTag
-import ch.protonmail.android.api.models.LoginBody
-import ch.protonmail.android.api.models.LoginInfoBody
-import ch.protonmail.android.api.models.LoginInfoResponse
-import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.models.ModulusResponse
 import ch.protonmail.android.api.models.RefreshBody
 import ch.protonmail.android.api.models.RefreshResponse
-import ch.protonmail.android.api.models.TwoFABody
-import ch.protonmail.android.api.models.TwoFAResponse
 import ch.protonmail.android.api.segments.RetrofitConstants
 import retrofit2.Call
 import retrofit2.http.Body
@@ -39,21 +32,9 @@ import retrofit2.http.Tag
 
 interface AuthenticationPubService {
 
-    @POST("auth")
-    @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
-    fun login(@Body loginBody: LoginBody): Call<LoginResponse>
-
     @GET("auth/modulus")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
     fun randomModulus(): Call<ModulusResponse>
-
-    @POST("auth/info")
-    @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
-    fun loginInfo(@Body infoBody: LoginInfoBody, @Tag usernameTag: UsernameTag): Call<LoginInfoResponse>
-
-    @POST("auth/2fa")
-    @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
-    fun post2fa(@Body twoFaBody: TwoFABody, @Tag userIdTag: UserIdTag? = null): Call<TwoFAResponse>
 
     @POST("auth/refresh")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)

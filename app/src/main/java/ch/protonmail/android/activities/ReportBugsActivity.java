@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.activities;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -34,11 +33,9 @@ import com.squareup.otto.Subscribe;
 
 import butterknife.BindView;
 import ch.protonmail.android.R;
-import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.domain.entity.user.User;
 import ch.protonmail.android.events.BugReportEvent;
-import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.jobs.ReportBugsJob;
 import ch.protonmail.android.utils.AppUtil;
@@ -146,12 +143,6 @@ public class ReportBugsActivity extends BaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Subscribe
-    public void onLogoutEvent(LogoutEvent event) {
-        startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
-        finish();
     }
 
     @Subscribe

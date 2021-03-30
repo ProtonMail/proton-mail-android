@@ -53,8 +53,8 @@ class AccountTypeViewModelTest : CoroutinesTest, ArchTest {
     fun verifyThatFetchPaymentMethodsCallsFetchPaymentMethodsUseCase() = runBlockingTest {
         // given
         val paymentMethod = mockk<PaymentMethod>()
-        val createSubscriptionSuccess = FetchPaymentMethodsResult.Success(listOf(paymentMethod))
-        coEvery { fetchPaymentMethodsUseCase() } returns createSubscriptionSuccess
+        val fetchPaymentMethodSuccess = FetchPaymentMethodsResult.Success(listOf(paymentMethod))
+        coEvery { fetchPaymentMethodsUseCase() } returns fetchPaymentMethodSuccess
 
         // when
         viewModel.fetchPaymentMethods()
@@ -62,6 +62,6 @@ class AccountTypeViewModelTest : CoroutinesTest, ArchTest {
 
         // then
         coVerify { fetchPaymentMethodsUseCase() }
-        assertEquals(createSubscriptionSuccess, testObserver.observedValues[0])
+        assertEquals(fetchPaymentMethodSuccess, testObserver.observedValues[0])
     }
 }

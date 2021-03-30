@@ -25,7 +25,6 @@ import android.view.View
 import android.widget.CompoundButton
 import butterknife.OnClick
 import ch.protonmail.android.R
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.buildRepeatingDaysString
 import ch.protonmail.android.utils.extensions.buildUILabel
@@ -33,9 +32,7 @@ import ch.protonmail.android.utils.extensions.countSelected
 import ch.protonmail.android.utils.extensions.countTrue
 import ch.protonmail.android.utils.extensions.roundHourOrMinute
 import ch.protonmail.android.utils.extensions.selectAll
-import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.views.SnoozeRepeatDayView
-import com.squareup.otto.Subscribe
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.activity_snooze_notifications.*
 import java.util.ArrayList
@@ -263,11 +260,5 @@ class SnoozeNotificationsActivity : BaseActivity() {
         setResult(Activity.RESULT_OK)
         saveLastInteraction()
         finish()
-    }
-
-    @Subscribe
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onLogoutEvent(event: LogoutEvent?) {
-        moveToLogin()
     }
 }

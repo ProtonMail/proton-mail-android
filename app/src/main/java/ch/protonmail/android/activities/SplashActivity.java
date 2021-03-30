@@ -33,18 +33,12 @@ import java.lang.ref.WeakReference;
 
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.guest.FirstActivity;
-import ch.protonmail.android.activities.guest.LoginActivity;
-import ch.protonmail.android.activities.guest.MailboxLoginActivity;
 import ch.protonmail.android.activities.mailbox.MailboxActivity;
 import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.services.LoginService;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.events.ForceUpgradeEvent;
-import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.user.UserSettingsEvent;
-import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.extensions.TextExtensions;
 
 public class SplashActivity extends BaseActivity {
 
@@ -104,11 +98,7 @@ public class SplashActivity extends BaseActivity {
     private void navigate() {
         int loginState = mUserManager.getCurrentUserLoginState();
         if (loginState == LOGIN_STATE_NOT_INITIALIZED) {
-            if (mUserManager.isEngagementShown()) {
-                startActivity(new Intent(this, LoginActivity.class));
-            } else {
-                startActivity(new Intent(this, FirstActivity.class));
-            }
+            startActivity(new Intent(this, FirstActivity.class));
             finish();
         } else if (loginState == LOGIN_STATE_LOGIN_FINISHED) {
             // login finished but mailbox login not
@@ -118,8 +108,11 @@ public class SplashActivity extends BaseActivity {
                 checkUserDetailsAndGoHome();
             } else {
                 // There was only one account logged in
+                /*
                 startActivity(new Intent(this, LoginActivity.class));
                 finish();
+                TODO("startLoginWorkflow")
+                */
             }
         } else {
             checkUserDetailsAndGoHome();
@@ -138,34 +131,6 @@ public class SplashActivity extends BaseActivity {
         if (event != null && event.getUserSettings() != null) {
             mUserManager.setLoggedIn(true);
             goHome();
-        }
-    }
-
-    @Subscribe
-    public void onLoginInfoEvent(final LoginInfoEvent event) {
-        if (event == null) {
-            return;
-        }
-        ProtonMailApplication.getApplication().resetLoginInfoEvent();
-        switch (event.status) {
-            case SUCCESS: {
-                mUserManager.saveKeySaltBlocking(mUserManager.requireCurrentUserId(), event.response.getSalt());
-                startActivity(new Intent(this, MailboxLoginActivity.class));
-                finish();
-            }
-            break;
-            case NO_NETWORK: {
-                startActivity(new Intent(this, LoginActivity.class));
-            }
-            break;
-            case UPDATE: {
-                AppUtil.postEventOnUi(new ForceUpgradeEvent(event.getError()));
-            }
-            break;
-            case FAILED:
-            default: {
-                TextExtensions.showToast(this, R.string.login_failure);
-            }
         }
     }
 
