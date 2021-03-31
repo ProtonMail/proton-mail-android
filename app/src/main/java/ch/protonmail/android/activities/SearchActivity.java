@@ -20,6 +20,7 @@ package ch.protonmail.android.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.otto.Subscribe;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import ch.protonmail.android.R;
@@ -49,7 +56,10 @@ import ch.protonmail.android.data.ContactsRepository;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.events.NoResultsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
+import ch.protonmail.android.mailbox.presentation.MailboxUiItem;
+import ch.protonmail.android.mailbox.presentation.MessageData;
 import ch.protonmail.android.utils.AppUtil;
+import ch.protonmail.android.utils.DateUtil;
 import dagger.hilt.android.AndroidEntryPoint;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING;
@@ -120,15 +130,15 @@ public class SearchActivity extends BaseActivity {
 
         });
 
-        mAdapter.setItemClick(message -> {
-            if (isDraftMessage(message)) {
+        mAdapter.setItemClick(mailboxUiItem -> {
+            if (isDraft(mailboxUiItem)) {
                 Intent intent = AppUtil.decorInAppIntent(new Intent(SearchActivity.this, ComposeMessageActivity.class));
-                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, message.getMessageId());
-                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, message.isInline());
+                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, mailboxUiItem.getItemId());
+                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, mailboxUiItem.getMessageData().isInline());
                 startActivity(intent);
             } else {
                 Intent intent = AppUtil.decorInAppIntent(new Intent(SearchActivity.this, MessageDetailsActivity.class));
-                intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, message.getMessageId());
+                intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, mailboxUiItem.getItemId());
                 intent.putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, true);
                 startActivity(intent);
             }
@@ -136,13 +146,12 @@ public class SearchActivity extends BaseActivity {
         });
 
         messageDetailsRepository.getAllSearchMessages().observe(this, messages -> {
-            if (messages != null) {
-                mAdapter.clear();
-                mAdapter.addAll(messages);
-                setLoadingMore(false);
-                mProgressBar.setVisibility(View.GONE);
-                mAdapter.setNewLocation(MessageLocationType.SEARCH);
-            }
+            List<MailboxUiItem> mailboxUiItems = messagesToMailboxUiItems(messages);
+            mAdapter.clear();
+            mAdapter.addAll(mailboxUiItems);
+            setLoadingMore(false);
+            mProgressBar.setVisibility(View.GONE);
+            mAdapter.setNewLocation(MessageLocationType.SEARCH);
         });
 
         messageDetailsRepository.getAllLabels().observe(this, labels -> {
@@ -150,6 +159,48 @@ public class SearchActivity extends BaseActivity {
                 mAdapter.setLabels(labels);
             }
         });
+    }
+
+    @NotNull
+    private List<MailboxUiItem> messagesToMailboxUiItems(List<Message> messages) {
+        List<MailboxUiItem> mailboxUiItems = new ArrayList<>();
+
+        for (Message message : messages) {
+            MessageData messageData = new MessageData(
+                    message.getLocation(),
+                    message.isReplied() != null ? message.isReplied() : false,
+                    message.isRepliedAll() != null ? message.isRepliedAll() : false,
+                    message.isForwarded() != null ? message.isForwarded() : false,
+                    message.isBeingSent(),
+                    message.isAttachmentsBeingUploaded(),
+                    message.isInline());
+
+            String senderName = message.getSenderEmail();
+            if (!TextUtils.isEmpty(message.getSenderDisplayName())) {
+                senderName = message.getSenderDisplayName();
+            } else if (!TextUtils.isEmpty(message.getSenderName())) {
+                senderName = message.getSenderName();
+            }
+
+            mailboxUiItems.add(
+                    new MailboxUiItem(
+                            message.getMessageId(),
+                            senderName,
+                            message.getSubject(),
+                            DateUtil.formatDateTime(this, message.getTimeMs()),
+                            message.getNumAttachments() > 0,
+                            message.isStarred() != null ? message.isStarred() : false,
+                            message.isRead(),
+                            message.getExpirationTime(),
+                            0,
+                            messageData,
+                            message.getDeleted(),
+                            message.getAllLabelIDs(),
+                            message.getToListStringGroupsAware()
+                    )
+            );
+        }
+        return mailboxUiItems;
     }
 
     @Override
@@ -228,8 +279,8 @@ public class SearchActivity extends BaseActivity {
         mJobManager.addJobInBackground(new SearchMessagesJob(mQueryText, mCurrentPage, newSearch));
     }
 
-    private boolean isDraftMessage(Message message) {
-        MessageLocationType messageLocation = MessageLocationType.Companion.fromInt(message.getLocation());
+    private boolean isDraft(MailboxUiItem item) {
+        MessageLocationType messageLocation = MessageLocationType.Companion.fromInt(item.getMessageData().getLocation());
         return messageLocation == MessageLocationType.ALL_DRAFT ||
                 messageLocation == MessageLocationType.DRAFT;
     }

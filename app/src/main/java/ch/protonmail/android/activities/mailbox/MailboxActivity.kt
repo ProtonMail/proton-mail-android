@@ -146,10 +146,13 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
+import ch.protonmail.android.mailbox.presentation.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.MessageData
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.NetworkSnackBarUtil
@@ -368,14 +371,12 @@ class MailboxActivity :
             userManager.firstMailboxLoadDone()
         }
 
-        messagesAdapter.setItemClick { message: Message? ->
-            if (message != null && !message.messageId.isNullOrEmpty()) {
-                OnMessageClickTask(
-                    WeakReference(this@MailboxActivity),
-                    messageDetailsRepository,
-                    message
-                ).execute()
-            }
+        messagesAdapter.setItemClick { mailboxUiItem: MailboxUiItem ->
+            OnMessageClickTask(
+                WeakReference(this@MailboxActivity),
+                messageDetailsRepository,
+                mailboxUiItem.itemId
+            ).execute()
         }
 
         messagesAdapter.setOnItemSelectionChangedListener {
@@ -623,8 +624,35 @@ class MailboxActivity :
         private val adapter: MessagesRecyclerViewAdapter?
     ) : Observer<List<Message>> {
         override fun onChanged(messages: List<Message>) {
+
+            val mailboxUiItems = messages.map {
+                val messageData = MessageData(
+                    it.location,
+                    it.isReplied ?: false,
+                    it.isRepliedAll ?: false,
+                    it.isForwarded ?: false,
+                    it.isBeingSent,
+                    it.isAttachmentsBeingUploaded,
+                    it.isInline,
+                )
+                MailboxUiItem(
+                    it.messageId!!,
+                    it.senderDisplayName ?: it.senderEmail,
+                    it.subject!!,
+                    DateUtil.formatDateTime(this@MailboxActivity, it.timeMs),
+                    it.numAttachments > 0,
+                    it.isStarred ?: false,
+                    it.isRead,
+                    it.expirationTime,
+                    0,
+                    messageData,
+                    it.deleted,
+                    it.allLabelIDs,
+                    it.toListStringGroupsAware
+                )
+            }
             adapter!!.clear()
-            adapter.addAll(messages)
+            adapter.addAll(mailboxUiItems)
         }
     }
 
@@ -1548,25 +1576,22 @@ class MailboxActivity :
     private class OnMessageClickTask internal constructor(
         private val mailboxActivity: WeakReference<MailboxActivity>,
         private val messageDetailsRepository: MessageDetailsRepository,
-        private val message: Message
+        private val messageId: String
     ) : AsyncTask<Unit, Unit, Message>() {
 
         override fun doInBackground(vararg params: Unit): Message? =
-            messageDetailsRepository.findMessageByIdBlocking(message.messageId!!)
+            messageDetailsRepository.findMessageByIdBlocking(messageId)
 
         public override fun onPostExecute(savedMessage: Message?) {
             val mailboxActivity = mailboxActivity.get()
-            if (savedMessage != null) {
-                message.isInline = savedMessage.isInline
-            }
-            val messageLocation = message.locationFromLabel()
+            val messageLocation = savedMessage?.locationFromLabel()
             if (messageLocation == MessageLocationType.DRAFT || messageLocation == MessageLocationType.ALL_DRAFT) {
                 TryToOpenMessageTask(
                     this.mailboxActivity,
                     mailboxActivity?.pendingActionDao,
-                    message.messageId,
-                    message.isInline,
-                    message.addressID
+                    savedMessage.messageId,
+                    savedMessage.isInline,
+                    savedMessage.addressID
                 ).execute()
             } else {
                 val intent = AppUtil.decorInAppIntent(
@@ -1577,7 +1602,7 @@ class MailboxActivity :
                 if (!mailboxActivity!!.mailboxLabelId.isNullOrEmpty()) {
                     intent.putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, false)
                 }
-                intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, message.messageId)
+                intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, messageId)
                 mailboxActivity.startActivityForResult(intent, REQUEST_CODE_TRASH_MESSAGE_DETAILS)
             }
         }
@@ -1756,7 +1781,8 @@ class MailboxActivity :
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position = viewHolder.adapterPosition
-            val swipedItem = messagesAdapter.getItem(position)
+            val mailboxItemId = messagesAdapter.getItem(position).itemId
+            val swipedItem = messageDetailsRepository.findMessageByIdBlocking(mailboxItemId) ?: return
             val messageSwiped = SimpleMessage(swipedItem)
             val mailboxLocation = mailboxLocationMain.value
             val settings = mailSettings ?: return

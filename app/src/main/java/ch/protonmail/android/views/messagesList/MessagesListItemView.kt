@@ -30,8 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
-import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.utils.DateUtil
+import ch.protonmail.android.mailbox.presentation.MailboxUiItem
 import ch.protonmail.android.utils.UiUtil
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
 import me.proton.core.presentation.utils.inflate
@@ -112,13 +111,13 @@ class MessagesListItemView constructor(
     }
 
     fun bind(
-        message: Message,
+        mailboxUiItem: MailboxUiItem,
         labels: List<Label>,
         isMultiSelectionMode: Boolean,
         mailboxLocation: Constants.MessageLocationType
     ) {
-        val readStatus = message.isRead
-        val messageLocation = Constants.MessageLocationType.fromInt(message.location)
+        val readStatus = mailboxUiItem.isRead
+        val messageLocation = Constants.MessageLocationType.fromInt(mailboxUiItem.messageData?.location)
 
         setTextViewStyles(readStatus)
         setIconsTint(readStatus)
