@@ -38,27 +38,26 @@ import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import java.util.ArrayList
 import java.util.HashMap
 import javax.inject.Inject
 import kotlin.collections.set
 
-// region constants
 const val FLOW_START_ACTIVITY = 1
 const val FLOW_USED_SPACE_CHANGED = 2
 const val FLOW_TRY_COMPOSE = 3
-// endregion
 
 @HiltViewModel
 class MailboxViewModel @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
-    val userManager: UserManager,
+    private val userManager: UserManager,
     private val jobManager: JobManager,
     private val deleteMessage: DeleteMessage,
+    private val dispatchers: DispatcherProvider,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -66,15 +65,10 @@ class MailboxViewModel @Inject constructor(
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
     var pendingUploadsLiveData = messageDetailsRepository.findAllPendingUploadsAsync()
 
-    //used data actions
-    private val _manageLimitReachedWarning: MutableLiveData<Event<Boolean>> =
-        MutableLiveData()
-    private val _manageLimitApproachingWarning: MutableLiveData<Event<Boolean>> =
-        MutableLiveData()
-    private val _manageLimitBelowCritical: MutableLiveData<Event<Boolean>> =
-        MutableLiveData()
-    private val _manageLimitReachedWarningOnTryCompose: MutableLiveData<Event<Boolean>> =
-        MutableLiveData()
+    private val _manageLimitReachedWarning = MutableLiveData<Event<Boolean>>()
+    private val _manageLimitApproachingWarning = MutableLiveData<Event<Boolean>>()
+    private val _manageLimitBelowCritical = MutableLiveData<Event<Boolean>>()
+    private val _manageLimitReachedWarningOnTryCompose = MutableLiveData<Event<Boolean>>()
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
 
@@ -111,7 +105,7 @@ class MailboxViewModel @Inject constructor(
             val limitApproaching = percentageUsed >= Constants.STORAGE_LIMIT_WARNING_PERCENTAGE
 
             when (limitReachedFlow) {
-                FLOW_START_ACTIVITY     -> {
+                FLOW_START_ACTIVITY -> {
                     if (limitReached) {
                         _manageLimitReachedWarning.postValue(Event(limitReached))
                     } else if (limitApproaching) {
@@ -127,20 +121,20 @@ class MailboxViewModel @Inject constructor(
                         _manageLimitBelowCritical.postValue(Event(true))
                     }
                 }
-                FLOW_TRY_COMPOSE        -> {
+                FLOW_TRY_COMPOSE -> {
                     _manageLimitReachedWarningOnTryCompose.postValue(Event(limitReached))
                 }
             }
         }
     }
 
-    private fun getAllLabelsByIds(labelIds: List<String>) =
-        messageDetailsRepository.findAllLabelsWithIds(labelIds)
+    fun deleteMessages(messageIds: List<String>) =
+        viewModelScope.launch {
+            val deleteMessagesResult = deleteMessage(messageIds)
+            _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
+        }
 
     fun processLabels(messageIds: List<String>, checkedLabelIds: List<String>, unchangedLabels: List<String>) {
-        // check for case of too many labels being added to a message- will need to edit this if
-        // removing labels
-        // is introduced to mailbox view
         val iterator = messageIds.iterator()
 
         val labelsToApplyMap = HashMap<String, MutableList<String>>()
@@ -148,7 +142,7 @@ class MailboxViewModel @Inject constructor(
         var result: Pair<Map<String, List<String>>, Map<String, List<String>>>? = null
 
         viewModelScope.launch {
-            withContext(Dispatchers.Default) {
+            withContext(dispatchers.Comp) {
                 while (iterator.hasNext()) {
                     val messageId = iterator.next()
                     val message = messageDetailsRepository.findMessageById(messageId).first()
@@ -196,6 +190,9 @@ class MailboxViewModel @Inject constructor(
         }
     }
 
+    private fun getAllLabelsByIds(labelIds: List<String>) =
+        messageDetailsRepository.findAllLabelsWithIds(labelIds)
+
     private fun resolveMessageLabels(
         message: Message,
         checkedLabelIds: MutableList<String>,
@@ -204,14 +201,11 @@ class MailboxViewModel @Inject constructor(
     ): ApplyRemoveLabels? {
         val labelsToRemove = ArrayList<String>()
 
-        // handle the case where too many labels exist for this message
         currentContactLabels?.forEach {
             val labelId = it.id
             if (!checkedLabelIds.contains(labelId) && !unchangedLabels.contains(labelId) && !it.exclusive) {
-                // this label should be removed
                 labelsToRemove.add(labelId)
             } else if (checkedLabelIds.contains(labelId)) {
-                // the label remains
                 checkedLabelIds.remove(labelId)
             }
         }
@@ -227,7 +221,6 @@ class MailboxViewModel @Inject constructor(
             return null
         }
 
-        // update the message with the new contactLabels
         message.addLabels(checkedLabelIds)
         message.removeLabels(labelsToRemove)
         viewModelScope.launch {
