@@ -629,7 +629,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Pogreška u ispisu</string>
     <string name="download_complete">Preuzimanje završeno</string>
     <string name="download_in_progress">Preuzimanje u tijeku</string>
-    <string name="expires_in">\tIstječe %s</string>
+    <string name="message_expires_in">\tIstječe %s</string>
     <string name="unsaved_changes_title">Nespremljene promjene</string>
     <string name="unsaved_changes_subtitle">U obrascu postoje nespremljeni unosi. Jeste li sigurni da ih želite odbaciti?</string>
     <string name="request_timeout">Zahtjev je istekao, molimo pokušajte ponovno</string>

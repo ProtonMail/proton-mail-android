@@ -621,7 +621,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Erreur d\'impression</string>
     <string name="download_complete">Téléchargement terminé</string>
     <string name="download_in_progress">Téléchargement en cours</string>
-    <string name="expires_in">\tExpire dans %s</string>
+    <string name="message_expires_in">\tExpire dans %s</string>
     <string name="unsaved_changes_title">Modifications non enregistrées</string>
     <string name="unsaved_changes_subtitle">Le formulaire contient des modifications non enregistrées. Êtes-vous sûr de ne pas vouloir les conserver ?</string>
     <string name="request_timeout">La requête a expiré, veuillez réessayer</string>

@@ -20,6 +20,7 @@ package ch.protonmail.android.activities.messageDetails
 
 import android.graphics.Color
 import android.util.TypedValue
+import android.view.View
 import androidx.lifecycle.Observer
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.utils.UiUtil
@@ -29,25 +30,28 @@ import ch.protonmail.android.views.messagesList.ItemLabelMarginlessSmallView
 // TODO change to immutable list after changing all uses to kotlin
 
 /**
- * Created by Kamil Rajtar on 13.08.18.
+ * A class that observes changes in message labels
  */
-
-/**
- * LabelsObserver
- */
-internal class LabelsObserver(
+class LabelsObserver(
     private val adapter: MessageDetailsAdapter,
     private val folderIds: MutableList<String>
 ) : Observer<List<Label>> {
 
     override fun onChanged(labels: List<Label>?) {
-        labels ?: return
+        if (labels.isNullOrEmpty()) {
+            adapter.labelsView.visibility = View.GONE
+            return
+        } else {
+            adapter.labelsView.visibility = View.VISIBLE
+        }
 
-        val labelView = adapter.labels
+        val labelView = adapter.labelsView
         val context = labelView.context
         labelView.removeAllViews()
-        val strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1f,
-            labelView.resources.displayMetrics).toInt()
+        val strokeWidth = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, 1f,
+            labelView.resources.displayMetrics
+        ).toInt()
         for (label in labels) {
             if (label.exclusive) {
                 val colorString = label.color

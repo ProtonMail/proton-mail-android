@@ -613,7 +613,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">列印錯誤</string>
     <string name="download_complete">下載已完成</string>
     <string name="download_in_progress">正在下載</string>
-    <string name="expires_in">\t%s 後過期</string>
+    <string name="message_expires_in">\t%s 後過期</string>
     <string name="unsaved_changes_title">未儲存的變更</string>
     <string name="unsaved_changes_subtitle">表單中有未儲存的項目。是否確定要丟棄它們？</string>
     <string name="request_timeout">請求逾時，請重試</string>

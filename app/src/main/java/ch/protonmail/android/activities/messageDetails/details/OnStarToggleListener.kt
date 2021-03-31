@@ -24,21 +24,23 @@ import ch.protonmail.android.jobs.PostUnstarJob
 import com.birbit.android.jobqueue.JobManager
 
 /**
- * Created by Kamil Rajtar on 13.08.18.
+ * A class which listens to changes in star toggle button in message details
  */
-internal class OnStarToggleListener(private val jobManager: JobManager,
-									private val messageId: String) : CompoundButton.OnCheckedChangeListener {
+class OnStarToggleListener(
+    private val jobManager: JobManager,
+    private val messageId: String
+) : CompoundButton.OnCheckedChangeListener {
 
-	override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
-		if (!buttonView.isPressed) {
-			return
-		}
-		val messageList = listOf(messageId)
-		val job = if (isChecked) {
-			PostStarJob(messageList)
-		} else {
-			PostUnstarJob(messageList)
-		}
-		jobManager.addJobInBackground(job)
-	}
+    override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
+        if (!buttonView.isPressed) {
+            return
+        }
+        val messageList = listOf(messageId)
+        val job = if (isChecked) {
+            PostStarJob(messageList)
+        } else {
+            PostUnstarJob(messageList)
+        }
+        jobManager.addJobInBackground(job)
+    }
 }

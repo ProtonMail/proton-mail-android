@@ -20,10 +20,7 @@ package ch.protonmail.android.activities.messageDetails
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
-import android.graphics.Typeface
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
 import android.view.LayoutInflater
@@ -36,64 +33,53 @@ import android.webkit.WebView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.getSystemService
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyScaleListener
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyTouchListener
-import ch.protonmail.android.activities.messageDetails.details.OnDetailsCheckChangeListener
-import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
 import ch.protonmail.android.activities.messageDetails.details.RecipientContextMenuFactory
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.utils.DateUtil
-import ch.protonmail.android.utils.ServerTime
-import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.views.PMWebViewClient
-import ch.protonmail.android.views.messageDetails.AttachmentsView
+import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.LoadContentButton
+import ch.protonmail.android.views.messageDetails.MessageDetailsExpirationInfoView
 import ch.protonmail.android.views.messageDetails.MessageDetailsRecipientsLayout
-import com.birbit.android.jobqueue.JobManager
 import com.google.android.material.chip.ChipGroup
-import kotlinx.android.synthetic.main.message_details_header_item.view.*
-import kotlinx.android.synthetic.main.message_details_item.view.*
-import kotlinx.android.synthetic.main.view_attachments_message_details.view.*
+import kotlinx.android.synthetic.main.layout_message_details.view.*
+import kotlinx.android.synthetic.main.layout_message_details_header.view.*
+import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
 import me.proton.core.util.kotlin.takeIfNotEmpty
 import org.apache.http.protocol.HTTP.UTF_8
 import java.util.ArrayList
-import java.util.concurrent.TimeUnit
 
 // region constants
 private const val TYPE_ITEM = 1001
 private const val TYPE_HEADER = 1000
 // endregion
 
+// TODO: The adapter needs to be changed in order to work properly with conversation view - MAILAND-1535
 class MessageDetailsAdapter(
-        private val context: Context,
-        private var mJobManager: JobManager,
-        private var message: Message,
-        private var content: String,
-        private val wvScrollView: RecyclerView,
-        private var pmWebViewClient: PMWebViewClient,
-        private val onLoadEmbeddedImagesCLick: (() -> Unit)?,
-        private val onDisplayImagesCLick: (() -> Unit)?
-): ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
-
-    /** Lazy instance of [ClipboardManager] that will be used for copy content into the Clipboard */
-    private val clipboardManager by lazy { context.getSystemService<ClipboardManager>() }
+    private val context: Context,
+    private var message: Message,
+    private var content: String,
+    private val wvScrollView: RecyclerView,
+    private var pmWebViewClient: PMWebViewClient,
+    private val onLoadEmbeddedImagesCLick: (() -> Unit)?,
+    private val onDisplayImagesCLick: (() -> Unit)?
+) : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
 
     var containerDisplayImages = LoadContentButton(context)
     var loadEmbeddedImagesContainer = LoadContentButton(context)
     var embeddedImagesDownloadProgress = ProgressBar(context)
-    var attachmentsContainer = AttachmentsView(context)
-    var attachmentIcon = TextView(context)
+    var attachmentsView = MessageDetailsAttachmentsView(context)
     var attachmentsViewDivider = View(context)
-    var labels = ChipGroup(context)
-    var messageInfoView = View(context)
+    var expirationInfoView = MessageDetailsExpirationInfoView(context)
+    var labelsView = ChipGroup(context)
+    var messageDetailsView = View(context)
     var recipientsLayout = MessageDetailsRecipientsLayout(context)
 
     init {
@@ -104,33 +90,39 @@ class MessageDetailsAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        when (getItemViewType(position)) {
-            TYPE_HEADER -> {
-                (holder as HeaderViewHolder).bind(context, position, visibleItems!![position].message, onLoadEmbeddedImagesCLick, onDisplayImagesCLick)
-            }
-            else -> {
-                (holder as ItemViewHolder).bind(context, position, visibleItems!![position - 1].message)
-            }
+        if (getItemViewType(position) == TYPE_HEADER) {
+            (holder as HeaderViewHolder).bind(
+                position,
+                visibleItems!![position].message,
+                onLoadEmbeddedImagesCLick,
+                onDisplayImagesCLick
+            )
+        } else {
+            (holder as ItemViewHolder).bind(
+                context,
+                position,
+                visibleItems!![position - 1].message
+            )
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return when (viewType) {
-            TYPE_HEADER -> {
-                HeaderViewHolder(
-                        LayoutInflater.from(context).inflate(
-                                R.layout.message_details_header_item,
-                                parent,
-                                false
-                        ))
-            }
-            else -> {
-                ItemViewHolder(
-                        LayoutInflater.from(context).inflate(
-                                R.layout.message_details_item,
-                                parent,
-                                false))
-            }
+        return if (viewType == TYPE_HEADER) {
+            HeaderViewHolder(
+                LayoutInflater.from(context).inflate(
+                    R.layout.layout_message_details,
+                    parent,
+                    false
+                )
+            )
+        } else {
+            ItemViewHolder(
+                LayoutInflater.from(context).inflate(
+                    R.layout.layout_message_details_web_view,
+                    parent,
+                    false
+                )
+            )
         }
     }
 
@@ -147,115 +139,65 @@ class MessageDetailsAdapter(
             content = contentData
         }
 
-        fun isInit(): Boolean {
-            return ::messageWebView.isInitialized
-        }
+        fun isInit(): Boolean = ::messageWebView.isInitialized
     }
 
-    inner class HeaderViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.HeaderViewHolder(view) {
+    inner class HeaderViewHolder(
+        view: View
+    ) : ExpandableRecyclerAdapter<MessageDetailsListItem>.HeaderViewHolder(view) {
 
         fun bind(
-                context: Context,
-                position: Int,
-                message: Message,
-                onLoadEmbeddedImagesCLick: (() -> Unit)?,
-                onDisplayImagesCLick: (() -> Unit)?) {
-            val typeface = Typeface.createFromAsset(context.assets, "protonmail-mobile-icons.ttf")
-
-            messageInfoView = itemView.messageInfoView
-
-            itemView.attachmentIcon.typeface = typeface
-            itemView.messageStarView.typeface = typeface
-            itemView.messageReplyTextView.typeface = typeface
-            itemView.messageReplyAllTextView.typeface = typeface
-            itemView.messageForwardTextView.typeface = typeface
-
+            position: Int,
+            message: Message,
+            onLoadEmbeddedImagesCLick: (() -> Unit)?,
+            onDisplayImagesCLick: (() -> Unit)?
+        ) {
+            messageDetailsView = itemView.messageDetailsView
+            labelsView = itemView.labels
+            attachmentsView = itemView.attachmentsView
+            attachmentsViewDivider = itemView.attachmentsDividerView
+            expirationInfoView = itemView.expirationInfoView
             containerDisplayImages = itemView.containerDisplayImages
             loadEmbeddedImagesContainer = itemView.containerLoadEmbeddedImagesContainer
-            embeddedImagesDownloadProgress = itemView.attachmentsContainer.embeddedImagesDownloadProgress
-            attachmentsContainer = itemView.attachmentsContainer
-            attachmentIcon = itemView.attachmentIcon
-            attachmentsViewDivider = itemView.attachmentsViewDivider
-            recipientsLayout = itemView.recipientsLayout
 
-            itemView.detailsToggleButton.setOnCheckedChangeListener(OnDetailsCheckChangeListener(itemView.recipientsLayout, itemView.messageTitle))
-            itemView.messageStarView.setOnCheckedChangeListener(OnStarToggleListener(mJobManager, message.messageId!!))
+            itemView.headerView.bind(message)
+            itemView.expirationInfoView.bind(message.expirationTime)
 
-            val subject = message.subject
-            itemView.messageTitle.text = subject
-
-            val isMessageReplied = message.isReplied
-            val isMessageRepliedAll = message.isRepliedAll
-            val isMessageForwarded = message.isForwarded
-            if (isMessageReplied != null && isMessageRepliedAll != null) {
-                itemView.messageReplyTextView.visibility = if (isMessageReplied && !isMessageRepliedAll) View.VISIBLE else View.GONE
-            }
-            if (isMessageRepliedAll != null) {
-                itemView.messageReplyAllTextView.visibility = if (isMessageRepliedAll) View.VISIBLE else View.GONE
-            }
-            if (isMessageForwarded != null) {
-                itemView.messageForwardTextView.visibility = if (isMessageForwarded) View.VISIBLE else View.GONE
-            }
-
-            recipientsLayout.bind(message, RecipientContextMenuFactory(context as MessageDetailsActivity))
-
-            val simpleDateText = DateUtil.formatDateTime(context, message.timeMs)
-            itemView.shortDate.text = simpleDateText
-
-
-            val starred = message.isStarred != null && message.isStarred!!
-            itemView.messageStarView.isChecked = starred
-
-            itemView.messageInfoView.visibility = View.VISIBLE
-            itemView.labels.visibility = View.VISIBLE
-
-            val expirationTime = message.expirationTime
-            val expirationTimerVisibility: Int
-            val dividerVisibility: Int
-            if (expirationTime > 0) {
-                val remainingSeconds = expirationTime - TimeUnit.MILLISECONDS.toSeconds(ServerTime.currentTimeMillis())
-                itemView.expirationTimeView.remainingSeconds = remainingSeconds
-                expirationTimerVisibility = View.VISIBLE
-                dividerVisibility = View.GONE
-            } else {
-                expirationTimerVisibility = View.GONE
-                dividerVisibility = View.VISIBLE
-                itemView.expirationTimeView.visibility = View.GONE
-            }
-            itemView.divider.visibility = dividerVisibility
-            itemView.expirationTimeView.visibility = expirationTimerVisibility
-
-            val spamScore = message.spamScore
-            setUpSpamScoreView(spamScore, itemView.spamScoreView)
-
-            labels = itemView.labels
-
-            // Copy Subject to Clipboard at long press
-            itemView.messageTitle.setOnLongClickListener {
-                clipboardManager?.let {
-                    it.setPrimaryClip(
-                        ClipData.newPlainText(context.getString(R.string.email_subject), itemView.messageTitle.text)
-                    )
-                    context.showToast(R.string.subject_copied, Toast.LENGTH_SHORT)
-                    true
-                } ?: false
-            }
+            setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
 
             itemView.containerLoadEmbeddedImagesContainer.setOnClickListener {
                 itemView.containerLoadEmbeddedImagesContainer.visibility = View.GONE
-                itemView.embeddedImagesDownloadProgress.visibility = View.VISIBLE
                 onLoadEmbeddedImagesCLick?.invoke()
             }
 
             itemView.containerDisplayImages.setOnClickListener {
-
                 val item = visibleItems!![position + 1]
-                if (item.isInit() && item.messageWebView.contentHeight > 0) { // isInit will prevent clicking the button before the webview is ready. Webview init can take a bit longer.
+                // isInit will prevent clicking the button before the WebView is ready.
+                // WebView init can take a bit longer.
+                if (item.isInit() && item.messageWebView.contentHeight > 0) {
                     itemView.containerDisplayImages.visibility = View.GONE
                     pmWebViewClient.loadRemoteResources()
                     onDisplayImagesCLick?.invoke()
                 }
             }
+
+            setUpViewDividers()
+        }
+
+        // TODO: Update this method when all the banners are added to the design
+        private fun setUpViewDividers() {
+            itemView.headerDividerView.visibility = if (
+                itemView.attachmentsView.visibility == View.GONE &&
+                itemView.expirationInfoView.visibility == View.VISIBLE
+            ) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+
+            itemView.attachmentsDividerView.visibility = if (itemView.attachmentsView.visibility == View.VISIBLE) {
+                if (itemView.expirationInfoView.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+            } else View.GONE
         }
     }
 
@@ -272,7 +214,7 @@ class MessageDetailsAdapter(
                 return
             }
             configureWebView(webView, pmWebViewClient)
-            setUpScrollListener(webView, messageInfoView, itemView.messageWebViewContainer)
+            setUpScrollListener(webView, messageDetailsView, itemView.messageWebViewContainer)
 
             webView.invalidate()
             (context as MessageDetailsActivity).registerForContextMenu(webView)
@@ -328,8 +270,15 @@ class MessageDetailsAdapter(
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setUpScrollListener(webView: WebView, messageInfoView: View, directParent: LinearLayout) {
-        val mScaleDetector = ScaleGestureDetector(context,
-                MessageBodyScaleListener(wvScrollView, messageInfoView, webView, directParent))
+        val mScaleDetector = ScaleGestureDetector(
+            context,
+            MessageBodyScaleListener(
+                wvScrollView,
+                messageInfoView,
+                webView,
+                directParent
+            )
+        )
 
         val scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
         val touchListener = MessageBodyTouchListener(wvScrollView, mScaleDetector, scaledTouchSlop)
@@ -350,9 +299,8 @@ class MessageDetailsAdapter(
     }
 
     fun displayAttachmentsViews(visibility: Int) {
-        attachmentsContainer.visibility = visibility
-        attachmentIcon.visibility = visibility
-        attachmentsViewDivider.visibility = visibility
+        attachmentsView.visibility = visibility
+        attachmentsViewDivider.visibility = if (expirationInfoView.visibility == View.VISIBLE) View.GONE else visibility
     }
 
     fun refreshRecipientsLayout() {
@@ -364,7 +312,9 @@ class MessageDetailsAdapter(
         webView.isVerticalScrollBarEnabled = false
         webView.isHorizontalScrollBarEnabled = false
         val webViewParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
         webViewParams.height = LinearLayout.LayoutParams.WRAP_CONTENT
         webViewParams.setMargins(0, 0, 0, 0)
         webView.layoutParams = webViewParams

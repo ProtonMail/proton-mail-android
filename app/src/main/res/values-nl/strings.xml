@@ -616,7 +616,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Afdrukfout</string>
     <string name="download_complete">Download voltooid</string>
     <string name="download_in_progress">Bezig met downloaden</string>
-    <string name="expires_in">\tVerloopt over %s</string>
+    <string name="message_expires_in">\tVerloopt over %s</string>
     <string name="unsaved_changes_title">Niet-opgeslagen wijzigingen</string>
     <string name="unsaved_changes_subtitle">Er zijn niet-opgeslagen gegevens aanwezig in het formulier. Weet u zeker dat u deze gegevens wil weggooien?</string>
     <string name="request_timeout">Aanvraag duurde te lang, probeer opnieuw</string>

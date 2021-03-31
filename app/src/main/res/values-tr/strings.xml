@@ -614,7 +614,7 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="print_error">Yazdırma Hatası</string>
     <string name="download_complete">İndirme tamamlandı</string>
     <string name="download_in_progress">İndirme devam ediyor</string>
-    <string name="expires_in">\t %s süresi doluyor</string>
+    <string name="message_expires_in">\t %s süresi doluyor</string>
     <string name="unsaved_changes_title">Kaydedilmemiş Değişiklikler</string>
     <string name="unsaved_changes_subtitle">Formda kaydedilmemiş girişler var. Onları atmak istediğinden emin misin?</string>
     <string name="request_timeout">İstek zaman aşımına uğradı. Lütfen tekrar deneyin</string>

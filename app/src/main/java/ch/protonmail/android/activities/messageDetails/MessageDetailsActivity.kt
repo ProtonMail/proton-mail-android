@@ -20,6 +20,8 @@ package ch.protonmail.android.activities.messageDetails
 
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -33,11 +35,14 @@ import android.view.ContextMenu.ContextMenuInfo
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.AlphaAnimation
 import android.webkit.WebView
 import android.webkit.WebView.HitTestResult
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.ToggleButton
 import androidx.activity.viewModels
+import androidx.core.content.getSystemService
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
@@ -62,6 +67,7 @@ import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
+import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
@@ -75,10 +81,7 @@ import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostArchiveJob
-import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostSpamJob
-import ch.protonmail.android.jobs.PostTrashJobV2
-import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.AppUtil
@@ -89,22 +92,27 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.MODE_ACCORDION
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.MessageActionButton
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.worker.PostLabelWorker
-import com.birbit.android.jobqueue.Job
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
+import kotlinx.android.synthetic.main.layout_star_action.*
 import me.proton.core.util.android.workmanager.activity.getWorkManager
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.abs
+
+private const val TITLE_ANIMATION_THRESHOLD = 0.9
+private const val TITLE_ANIMATION_DURATION = 200L
+private const val ONE_HUNDRED_PERCENT = 1.0
 
 @AndroidEntryPoint
 internal class MessageDetailsActivity :
@@ -116,6 +124,7 @@ internal class MessageDetailsActivity :
     private lateinit var messageId: String
     private lateinit var pmWebViewClient: PMWebViewClient
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
+    // TODO: Remove attachments adapter from this activity with MAILAND-1545 since it isn't needed
     private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
     private lateinit var primaryBaseActivity: Context
 
@@ -128,9 +137,44 @@ internal class MessageDetailsActivity :
     private val attachmentToDownloadId = AtomicReference<String?>(null)
     private var markAsRead = false
     private var showPhishingReportButton = true
+    private var shouldTitleFadeOut = false
+    private var shouldTitleFadeIn = true
     private val viewModel: MessageDetailsViewModel by viewModels()
 
+    /** Lazy instance of [ClipboardManager] that will be used for copy content into the Clipboard */
+    private val clipboardManager by lazy { getSystemService<ClipboardManager>() }
+
     private var buttonsVisibilityRunnable = Runnable { action_buttons.visibility = View.VISIBLE }
+
+    private val onOffsetChangedListener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+        val scrolledPercentage = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange.toFloat()
+        // Animate collapsed title
+        if (scrolledPercentage >= TITLE_ANIMATION_THRESHOLD && shouldTitleFadeIn) {
+            startTitleAlphaAnimation(collapsedToolbarTitleTextView, View.VISIBLE)
+            collapsedToolbarTitleTextView.visibility = View.VISIBLE
+            shouldTitleFadeIn = false
+            shouldTitleFadeOut = true
+        } else if (scrolledPercentage < TITLE_ANIMATION_THRESHOLD && shouldTitleFadeOut) {
+            startTitleAlphaAnimation(collapsedToolbarTitleTextView, View.INVISIBLE)
+            collapsedToolbarTitleTextView.visibility = View.INVISIBLE
+            shouldTitleFadeIn = true
+            shouldTitleFadeOut = false
+        }
+        // Animate expanded title
+        if (scrolledPercentage < ONE_HUNDRED_PERCENT) {
+            expandedToolbarTitleTextView.visibility = View.VISIBLE
+            expandedToolbarTitleTextView.alpha = 1 - scrolledPercentage
+        } else {
+            expandedToolbarTitleTextView.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun startTitleAlphaAnimation(view: View, visibility: Int) {
+        val alphaAnimation = if (visibility == View.VISIBLE) AlphaAnimation(0f, 1f) else AlphaAnimation(1f, 0f)
+        alphaAnimation.duration = TITLE_ANIMATION_DURATION
+        alphaAnimation.fillAfter = true
+        view.startAnimation(alphaAnimation)
+    }
 
     override fun getLayoutId(): Int = R.layout.activity_message_details
 
@@ -163,10 +207,7 @@ internal class MessageDetailsActivity :
         if (!mUserManager.isLoggedIn) {
             startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
         }
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            title = null
-        }
+        supportActionBar?.title = null
         initAdapters()
         if (messageRecipientUsername != null && user.name.s != messageRecipientUsername) {
             showTwoButtonInfoDialog(
@@ -181,7 +222,7 @@ internal class MessageDetailsActivity :
                         continueSetup()
                         invalidateOptionsMenu()
                         showSignedInSnack(
-                            coordinatorLayout,
+                            messageDetailsView,
                             getString(R.string.signed_in_with, messageRecipientUsername)
                         )
                     }
@@ -195,6 +236,19 @@ internal class MessageDetailsActivity :
         findViewById<MessageActionButton>(R.id.reply).isEnabled = false
         findViewById<MessageActionButton>(R.id.reply_all).isEnabled = false
         findViewById<MessageActionButton>(R.id.forward).isEnabled = false
+
+        // Copy Subject to Clipboard at long press
+        expandedToolbarTitleTextView.setOnLongClickListener {
+            clipboardManager?.let {
+                it.setPrimaryClip(
+                    ClipData.newPlainText(getString(R.string.email_subject), expandedToolbarTitleTextView.text)
+                )
+                showToast(R.string.subject_copied, Toast.LENGTH_SHORT)
+                true
+            } ?: false
+        }
+
+        appBarLayout.addOnOffsetChangedListener(onOffsetChangedListener)
     }
 
     private fun continueSetup() {
@@ -221,10 +275,9 @@ internal class MessageDetailsActivity :
         pmWebViewClient = MessageDetailsPmWebViewClient(mUserManager, this)
         messageExpandableAdapter = MessageDetailsAdapter(
             this,
-            mJobManager,
             Message(),
             "",
-            wv_scroll,
+            messageDetailsRecyclerView,
             pmWebViewClient,
             { onLoadEmbeddedImagesCLick() }
         ) { onDisplayImagesCLick() }
@@ -296,11 +349,11 @@ internal class MessageDetailsActivity :
     override fun secureContent(): Boolean = true
 
     override fun enableScreenshotProtector() {
-        screenShotPreventer.visibility = View.VISIBLE
+        screenShotPreventerView.visibility = View.VISIBLE
     }
 
     override fun disableScreenshotProtector() {
-        screenShotPreventer.visibility = View.GONE
+        screenShotPreventerView.visibility = View.GONE
     }
 
     private fun stopEmbeddedImagesTask() {
@@ -308,101 +361,31 @@ internal class MessageDetailsActivity :
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.message_details_menu, menu)
+        menuInflater.inflate(R.menu.menu_message_details, menu)
         return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-
         val message = viewModel.decryptedMessageData.value
         if (message != null) {
-            val trash = menu.findItem(R.id.move_to_trash)
-            val viewHeaders = menu.findItem(R.id.view_headers)
-            val delete = menu.findItem(R.id.delete_message)
-            val spam = menu.findItem(R.id.move_to_spam)
-            val inbox = menu.findItem(R.id.move_to_inbox)
-            val archive = menu.findItem(R.id.move_to_archive)
-            val reportPhishing = menu.findItem(R.id.action_report_phishing)
-            val printItem = menu.findItem(R.id.action_print)
-            trash.isVisible = fromInt(message.location) != Constants.MessageLocationType.TRASH
-            viewHeaders.isVisible = true
-            delete.isVisible = fromInt(message.location) == Constants.MessageLocationType.TRASH
-            spam.isVisible = fromInt(message.location) != Constants.MessageLocationType.SPAM
-            inbox.isVisible = fromInt(message.location) != Constants.MessageLocationType.INBOX
-            archive.isVisible = fromInt(message.location) != Constants.MessageLocationType.ARCHIVE
-            reportPhishing.isVisible = showPhishingReportButton
-            printItem.isVisible = true
+            (menu.findItem(R.id.star).actionView.findViewById(R.id.starToggleButton) as ToggleButton)
+                .apply {
+                    isChecked = message.isStarred ?: false
+                    setOnCheckedChangeListener(OnStarToggleListener(mJobManager, messageId))
+                }
         }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        var job: Job? = null
-        val message = viewModel.decryptedMessageData.value
         when (item.itemId) {
             android.R.id.home -> {
                 viewModel.markRead(true)
                 onBackPressed()
                 return true
             }
-            R.id.move_to_trash ->
-                if (message != null) {
-                    job = PostTrashJobV2(listOf(message.messageId), null)
-                } else {
-                    showToast(R.string.message_not_loaded, Toast.LENGTH_SHORT)
-                }
-            R.id.view_headers -> if (message != null) {
-                startActivity(
-                    AppUtil.decorInAppIntent(
-                        Intent(
-                            this,
-                            MessageViewHeadersActivity::class.java
-                        ).putExtra(EXTRA_VIEW_HEADERS, message.header)
-                    )
-                )
-            }
-            R.id.delete_message ->
-                showDeleteConfirmationDialog(
-                    this,
-                    getString(R.string.delete_message),
-                    getString(R.string.confirm_destructive_action)
-                ) {
-                    viewModel.deleteMessage(messageId)
-                    onBackPressed()
-                }
-            R.id.move_to_spam -> job = PostSpamJob(listOf(messageId))
-            R.id.mark_unread -> {
-                if (message != null) {
-                    markAsRead = false
-                    viewModel.markRead(false)
-                }
-                job = PostUnreadJob(listOf(messageId))
-            }
-            R.id.move_to_inbox -> job = PostInboxJob(listOf(messageId))
-            R.id.move_to_archive -> job = PostArchiveJob(listOf(messageId))
-            R.id.add_label -> {
-                if (message == null) {
-                    showToast(R.string.message_not_loaded, Toast.LENGTH_SHORT)
-                } else {
-                    showLabelsManagerDialog(supportFragmentManager, message)
-                }
-            }
-            R.id.add_folder -> {
-                if (message == null) {
-                    showToast(R.string.message_not_loaded, Toast.LENGTH_SHORT)
-                } else {
-                    showFoldersManagerDialog(supportFragmentManager, message)
-                }
-            }
-            R.id.action_report_phishing -> showReportPhishingDialog(message)
-            R.id.action_print -> viewModel.printMessage(primaryBaseActivity) // do not change context type
         }
-        if (job != null) {
-            mJobManager.addJobInBackground(job)
-            onBackPressed()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 
     private fun showReportPhishingDialog(message: Message?) {
@@ -411,7 +394,6 @@ internal class MessageDetailsActivity :
             .setMessage(R.string.phishing_dialog_message)
             .setPositiveButton(R.string.send) { _: DialogInterface?, _: Int ->
                 showPhishingReportButton = false
-                invalidateOptionsMenu()
                 mJobManager.addJobInBackground(ReportPhishingJob(message))
             }
             .setNegativeButton(R.string.cancel, null).show()
@@ -433,7 +415,6 @@ internal class MessageDetailsActivity :
             anchorViewId = R.id.action_buttons,
             isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
         ).show()
-        invalidateOptionsMenu()
     }
 
     private fun onConnectivityCheckRetry() {
@@ -448,7 +429,6 @@ internal class MessageDetailsActivity :
 
     private fun hideNoConnSnackExtended() {
         networkSnackBarUtil.hideNoConnectionSnackBar()
-        invalidateOptionsMenu()
     }
 
     private fun listenForConnectivityEvent() {
@@ -497,7 +477,6 @@ internal class MessageDetailsActivity :
             Status.NO_NETWORK,
             Status.UNAUTHORIZED -> {
                 showPhishingReportButton = true
-                invalidateOptionsMenu()
                 toastMessageId = R.string.cannot_send_report_send
             }
             else -> throw IllegalStateException("Unknown message status: $status")
@@ -805,9 +784,11 @@ internal class MessageDetailsActivity :
         val totalAttachmentSize = attachments.map { it.fileSize }.sum()
         val attachmentsVisibility: Int
 
-        messageExpandableAdapter.attachmentsContainer.setTitle(attachmentsCount, totalAttachmentSize)
+        messageExpandableAdapter.attachmentsView.bind(attachmentsCount, totalAttachmentSize)
         attachmentsListAdapter.setList(attachments)
-        messageExpandableAdapter.attachmentsContainer.attachmentsAdapter = attachmentsListAdapter
+        // This line is commented because in the new designs we don't show
+        // a list of attachments in the message details view. To be removed with MAILAND-1545.
+//        messageExpandableAdapter.attachmentsContainer.attachmentsAdapter = attachmentsListAdapter
         attachmentsVisibility = if (attachmentsCount > 0) View.VISIBLE else View.GONE
         messageExpandableAdapter.displayAttachmentsViews(attachmentsVisibility)
     }
@@ -829,14 +810,19 @@ internal class MessageDetailsActivity :
             findViewById<MessageActionButton>(R.id.reply_all).isEnabled = true
             findViewById<MessageActionButton>(R.id.forward).isEnabled = true
 
+            val subject = if (message.subject.isNullOrEmpty()) getString(R.string.empty_subject) else message.subject
+            collapsedToolbarTitleTextView.text = subject
+            collapsedToolbarTitleTextView.visibility = View.INVISIBLE
+            expandedToolbarTitleTextView.text = subject
+
             messageExpandableAdapter.setMessageData(message)
             messageExpandableAdapter.refreshRecipientsLayout()
             if (viewModel.refreshedKeys) {
                 filterAndLoad(decryptedBody)
                 messageExpandableAdapter.mode = MODE_ACCORDION
-                wv_scroll.layoutManager = LinearLayoutManager(this@MessageDetailsActivity)
+                messageDetailsRecyclerView.layoutManager = LinearLayoutManager(this@MessageDetailsActivity)
                 listenForRecipientsKeys()
-                wv_scroll.adapter = messageExpandableAdapter
+                messageDetailsRecyclerView.adapter = messageExpandableAdapter
             }
             viewModel.triggerVerificationKeyLoading()
             action_buttons.setOnMessageActionListener { messageAction: MessageActionType? ->

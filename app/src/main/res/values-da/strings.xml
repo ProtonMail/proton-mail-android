@@ -621,7 +621,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Udskrivningsfejl</string>
     <string name="download_complete">Download fuldført</string>
     <string name="download_in_progress">Download i gang</string>
-    <string name="expires_in">\tUdløber om %s</string>
+    <string name="message_expires_in">\tUdløber om %s</string>
     <string name="unsaved_changes_title">Ugemte ændringer</string>
     <string name="unsaved_changes_subtitle">Der er ugemte poster i formularen. Sikker på, at de skal kasseres?</string>
     <string name="request_timeout">Forespørgsel fik timeout. Forsøg igen</string>

@@ -620,7 +620,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Erro de impressão</string>
     <string name="download_complete">Transferência concluída</string>
     <string name="download_in_progress">Transferência em curso</string>
-    <string name="expires_in">\tExpira em %s</string>
+    <string name="message_expires_in">\tExpira em %s</string>
     <string name="unsaved_changes_title">Alterações por gravar</string>
     <string name="unsaved_changes_subtitle">Há entradas por gravar no formulário. Tem a certeza de que deseja descartá-las?</string>
     <string name="request_timeout">O tempo do pedido expirou. Por favor, tente novamente</string>

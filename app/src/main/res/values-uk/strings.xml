@@ -634,7 +634,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Помилка друку</string>
     <string name="download_complete">Звантаження завершено</string>
     <string name="download_in_progress">Звантаження триває</string>
-    <string name="expires_in">\tНе буде чинною у %s</string>
+    <string name="message_expires_in">\tНе буде чинною у %s</string>
     <string name="unsaved_changes_title">Незбережені зміни</string>
     <string name="unsaved_changes_subtitle">Виявлено незбереженні записи у формі. Ви дійсно бажаєте скасувати їх?</string>
     <string name="request_timeout">Request timed out, please try again</string>

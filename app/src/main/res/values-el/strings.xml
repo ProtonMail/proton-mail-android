@@ -621,7 +621,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Σφάλμα Εκτύπωσης</string>
     <string name="download_complete">Η λήψη ολοκληρώθηκε</string>
     <string name="download_in_progress">Λήψη σε εξέλιξη</string>
-    <string name="expires_in">\tΛήγει σε %s</string>
+    <string name="message_expires_in">\tΛήγει σε %s</string>
     <string name="unsaved_changes_title">Μη αποθηκευμένες αλλαγές</string>
     <string name="unsaved_changes_subtitle">Υπάρχουν μη αποθηκευμένες καταχωρήσεις στη φόρμα. Είστε βέβαιοι ότι θέλετε να τα απορρίψετε;</string>
     <string name="request_timeout">Η σύνδεση έληξε, παρακαλώ προσπαθήστε ξανά</string>

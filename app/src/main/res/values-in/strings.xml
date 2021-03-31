@@ -614,7 +614,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="print_error">Mencetak Kesalahan</string>
     <string name="download_complete">Unduhan selesai</string>
     <string name="download_in_progress">Unduhan sedang berlangsung</string>
-    <string name="expires_in">\tKedaluwarsa dalam %s</string>
+    <string name="message_expires_in">\tKedaluwarsa dalam %s</string>
     <string name="unsaved_changes_title">Perubahan Belum Disimpan</string>
     <string name="unsaved_changes_subtitle">Ada entri yang belum disimpan dalam formulir. Apakah Anda yakin ingin membuangnya?</string>
     <string name="request_timeout">Waktu permintaan habis, silakan coba lagi</string>

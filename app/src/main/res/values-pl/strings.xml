@@ -634,7 +634,7 @@ zresetować hasło logowania, jeśli je zapomnisz.</string>
     <string name="print_error">Błąd wydruku</string>
     <string name="download_complete">Pobieranie zostało zakończone</string>
     <string name="download_in_progress">Pobieranie jest w toku</string>
-    <string name="expires_in">\tWygasa za %s</string>
+    <string name="message_expires_in">\tWygasa za %s</string>
     <string name="unsaved_changes_title">Niezapisane zmiany</string>
     <string name="unsaved_changes_subtitle">W formularzu są niezapisane dane. Czy na pewno chcesz je odrzucić?</string>
     <string name="request_timeout">Upłynął limit czasu żądania, spróbuj ponownie</string>

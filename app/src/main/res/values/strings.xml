@@ -151,6 +151,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
     </plurals>
+    <string name="expiration_days">%dD</string>
+    <string name="expiration_hours">%dH</string>
+    <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
         <item quantity="one">One Attachment</item>
         <item quantity="other">%d Attachments</item>
@@ -158,6 +161,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <plurals name="attachments_non_descriptive">
         <item quantity="one">\u0020 1 Attachment</item>
         <item quantity="other">\u0020 %d Attachments</item>
+    </plurals>
+    <plurals name="attachments_number">
+        <item quantity="one">1 Attachment</item>
+        <item quantity="other">%d Attachments</item>
     </plurals>
     <string name="add_attachment">Add attachment</string>
     <string name="select_file">Select file</string>
@@ -669,7 +676,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Printing Error</string>
     <string name="download_complete">Download complete</string>
     <string name="download_in_progress">Download in progress</string>
-    <string name="expires_in">\tExpires in %s</string>
+    <string name="message_expires_in">This message will expire in %s</string>
     <string name="unsaved_changes_title">Unsaved Changes</string>
     <string name="unsaved_changes_subtitle">There are unsaved entries in the form. Are you sure you want to discard them?</string>
     <string name="request_timeout">Request timed out, please try again</string>

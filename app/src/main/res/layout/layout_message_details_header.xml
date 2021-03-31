@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/message_details_header_padding_horizontal"
+    android:paddingVertical="@dimen/message_details_header_padding_vertical">
+
+    <!-- TODO: Consider replacing with MAILAND-1501 -->
+    <TextView
+        android:id="@+id/senderInitialTextView"
+        android:layout_width="@dimen/sender_initial_view_size"
+        android:layout_height="@dimen/sender_initial_view_size"
+        android:layout_marginStart="@dimen/sender_initial_view_margin_start"
+        android:layout_marginEnd="@dimen/sender_initial_view_margin_end"
+        android:layout_marginTop="@dimen/sender_initial_view_margin_top"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/senderInitialBarrier"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:background="@drawable/background_sender_initial"
+        tools:text="S" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/senderInitialBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/senderTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
+        app:layout_constraintRight_toLeftOf="@id/lockIconTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constrainedWidth="true"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textAppearance="@style/Text.Default"
+        tools:text="@tools:sample/full_names" />
+
+    <!-- TODO: Should be replaced with a view with the v4 icons -->
+    <TextView
+        android:id="@+id/lockIconTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/message_details_header_views_margin_normal"
+        android:layout_marginEnd="@dimen/message_details_header_views_margin_normal"
+        app:layout_constraintLeft_toRightOf="@id/senderTextView"
+        app:layout_constraintRight_toLeftOf="@+id/locationImageView"
+        app:layout_constraintBottom_toBottomOf="@id/senderTextView"
+        android:textSize="18sp"
+        tools:text="@string/lock_default" />
+
+    <ImageView
+        android:id="@+id/locationImageView"
+        android:layout_width="@dimen/message_details_header_small_icon_size"
+        android:layout_height="@dimen/message_details_header_small_icon_size"
+        android:layout_marginEnd="@dimen/message_details_header_views_margin_normal"
+        app:layout_constraintRight_toLeftOf="@id/timeDateTextView"
+        app:layout_constraintTop_toTopOf="@id/timeDateTextView"
+        app:layout_constraintBottom_toBottomOf="@id/timeDateTextView"
+        app:tint="@color/icon_weak"
+        tools:src="@drawable/ic_inbox" />
+
+    <TextView
+        android:id="@+id/timeDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/senderTextView"
+        app:layout_constraintBottom_toBottomOf="@id/senderTextView"
+        android:textAppearance="@style/Text.Caption.Weak"
+        tools:text="@tools:sample/date/ddmmyy" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/firstRowBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/senderTextView" />
+
+    <TextView
+        android:id="@+id/toTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/message_details_header_views_margin_small"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
+        app:layout_constraintRight_toLeftOf="@id/recipientsTextView"
+        app:layout_constraintTop_toTopOf="@id/recipientsTextView"
+        app:layout_constraintBottom_toBottomOf="@id/recipientsTextView"
+        android:text="@string/to_prefix"
+        android:textAppearance="@style/Text.DefaultSmall" />
+
+    <TextView
+        android:id="@+id/recipientsTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/message_details_header_views_margin_small"
+        android:layout_marginEnd="@dimen/message_details_header_views_margin_normal"
+        app:layout_constraintLeft_toRightOf="@id/toTextView"
+        app:layout_constraintRight_toLeftOf="@id/expandCollapseChevronImageView"
+        app:layout_constraintTop_toBottomOf="@id/firstRowBarrier"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textAppearance="@style/Text.DefaultSmall.Weak"
+        tools:text="@tools:sample/lorem" />
+
+    <ImageView
+        android:id="@+id/expandCollapseChevronImageView"
+        android:layout_width="@dimen/message_details_header_small_icon_size"
+        android:layout_height="@dimen/message_details_header_small_icon_size"
+        app:layout_constraintLeft_toRightOf="@id/recipientsTextView"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/recipientsTextView"
+        android:src="@drawable/ic_chevron_down"
+        app:tint="@color/icon_weak" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/secondRowBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recipientsTextView" />
+
+    <!-- TODO: Should be changed and replaced with MAILAND-1502 -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/labels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/message_details_header_views_margin_normal"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
+        app:layout_constraintTop_toBottomOf="@id/secondRowBarrier"
+        android:visibility="gone" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

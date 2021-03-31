@@ -621,7 +621,7 @@ redefina sua senha caso você necessite.</string>
     <string name="print_error">Erro de Impressão</string>
     <string name="download_complete">Download concluído</string>
     <string name="download_in_progress">Download em progresso</string>
-    <string name="expires_in">\tExpira em %s</string>
+    <string name="message_expires_in">\tExpira em %s</string>
     <string name="unsaved_changes_title">Alterações não salvas</string>
     <string name="unsaved_changes_subtitle">Existem alterações não salvas no formulário. Tem certeza de que deseja descartá-las?</string>
     <string name="request_timeout">Solicitação expirada. Por favor, tente novamente</string>

@@ -604,7 +604,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">打印错误</string>
     <string name="download_complete">下载完成</string>
     <string name="download_in_progress">正在下载</string>
-    <string name="expires_in">\t%s后过期</string>
+    <string name="message_expires_in">\t%s后过期</string>
     <string name="unsaved_changes_title">未保存的更改</string>
     <string name="unsaved_changes_subtitle">表单中有未保存的内容，是否要放弃？</string>
     <string name="request_timeout">请求超时，请重试</string>
