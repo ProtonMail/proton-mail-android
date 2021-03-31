@@ -288,7 +288,8 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
                     photoCardViewWrapper.setVisibility(View.VISIBLE);
                     contactInitials.setVisibility(View.GONE);
-                    contactPhoto.setImageBitmap(bitmap);
+                    // resize bitmap to prevent problems with too big images
+                    contactPhoto.setImageBitmap(resizeBitmap(bitmap));
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -299,8 +300,13 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
             photoCardViewWrapper.setVisibility(View.VISIBLE);
             contactInitials.setVisibility(View.GONE);
-            contactPhoto.setImageBitmap(thumbnail);
+            contactPhoto.setImageBitmap(resizeBitmap(thumbnail));
         }
+    }
+
+    private Bitmap resizeBitmap(Bitmap bitmap) {
+        int imageSize = getResources().getDimensionPixelSize(R.dimen.image_width);
+        return Bitmap.createScaledBitmap(bitmap, imageSize, imageSize, true);
     }
 
     @Override
@@ -896,10 +902,12 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         }
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) { }
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
 
         @Override
         public void afterTextChanged(Editable s) {
@@ -1246,14 +1254,14 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     }
     // endregion
 
-    private void enableControls(boolean enable, View v){
+    private void enableControls(boolean enable, View v) {
 
         if (!(v instanceof ViewGroup)) {
             ArrayList<View> viewArrayList = new ArrayList<View>();
             viewArrayList.add(v);
             v.setEnabled(enable);
             v.setFocusable(enable);
-            return ;
+            return;
         }
 
         ViewGroup vg = (ViewGroup) v;
