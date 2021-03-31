@@ -245,7 +245,7 @@ class MessageDetailsRepository @Inject constructor(
 
     @Deprecated(
         "Use 'saveMessage'",
-        ReplaceWith("saveMessageLocally(message, isSearchMessage = isTransient)")
+        ReplaceWith("saveMessage(message, isSearchMessage = isTransient)")
     )
     suspend fun saveMessageInDB(message: Message, isTransient: Boolean) {
         saveMessage(message, isSearchMessage = isTransient)

@@ -1071,7 +1071,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 every { messageId } returns "created_draft_id"
                 every { this@mockk.message } returns responseMessage
             }
-            val retrofitTag = RetrofitTag(userManager.username)
+            val retrofitTag = UserIdTag(testUserId)
             givenMessageIdInput(messageDbId)
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
@@ -1107,7 +1107,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 this.localId = localMessage.messageId
             }
             val actualMessage = slot<Message>()
-            coVerify { messageDetailsRepository.saveMessageLocally(capture(actualMessage)) }
+            coVerify { messageDetailsRepository.saveMessage(capture(actualMessage)) }
             assertEquals(expectedMessage, actualMessage.captured)
             assertEquals(expectedMessage.Attachments, actualMessage.captured.Attachments)
         }

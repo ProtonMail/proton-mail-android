@@ -93,7 +93,6 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         saveDraft,
         dispatchers,
         stringResourceResolver,
-        workManager,
         sendMessage,
         verifyConnection,
         networkConfigurator
@@ -384,7 +383,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             viewModel.oldSenderAddressId = ""
             viewModel.draftId = "non-empty draftId triggers update draft"
             coEvery { saveDraft(any()) } returns SaveDraftResult.Success(updatedDraftId)
-            coEvery { messageDetailsRepository.findMessageById(updatedDraftId) } returns updatedDraft
+            coEvery { messageDetailsRepository.findMessageById(updatedDraftId) } returns flowOf(updatedDraft)
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
