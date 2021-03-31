@@ -23,7 +23,7 @@ data class MailboxUiItem(
     val itemId: String,
     val sender: String,
     val subject: String,
-    val date: String,
+    val timeMs: Long,
     val hasAttachments: Boolean,
     val isStarred: Boolean,
     val isRead: Boolean,

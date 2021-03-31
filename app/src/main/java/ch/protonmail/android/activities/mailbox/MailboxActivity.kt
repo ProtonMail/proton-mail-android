@@ -147,12 +147,10 @@ import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.mailbox.presentation.MailboxUiItem
-import ch.protonmail.android.mailbox.presentation.MessageData
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.NetworkSnackBarUtil
@@ -624,33 +622,7 @@ class MailboxActivity :
         private val adapter: MessagesRecyclerViewAdapter?
     ) : Observer<List<Message>> {
         override fun onChanged(messages: List<Message>) {
-
-            val mailboxUiItems = messages.map {
-                val messageData = MessageData(
-                    it.location,
-                    it.isReplied ?: false,
-                    it.isRepliedAll ?: false,
-                    it.isForwarded ?: false,
-                    it.isBeingSent,
-                    it.isAttachmentsBeingUploaded,
-                    it.isInline,
-                )
-                MailboxUiItem(
-                    it.messageId!!,
-                    it.senderDisplayName ?: it.senderEmail,
-                    it.subject!!,
-                    DateUtil.formatDateTime(this@MailboxActivity, it.timeMs),
-                    it.numAttachments > 0,
-                    it.isStarred ?: false,
-                    it.isRead,
-                    it.expirationTime,
-                    0,
-                    messageData,
-                    it.deleted,
-                    it.allLabelIDs,
-                    it.toListStringGroupsAware
-                )
-            }
+            val mailboxUiItems = mailboxViewModel.messagesToMailboxItems(messages)
             adapter!!.clear()
             adapter.addAll(mailboxUiItems)
         }

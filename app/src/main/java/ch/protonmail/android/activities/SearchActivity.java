@@ -59,7 +59,6 @@ import ch.protonmail.android.jobs.SearchMessagesJob;
 import ch.protonmail.android.mailbox.presentation.MailboxUiItem;
 import ch.protonmail.android.mailbox.presentation.MessageData;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.DateUtil;
 import dagger.hilt.android.AndroidEntryPoint;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING;
@@ -187,7 +186,7 @@ public class SearchActivity extends BaseActivity {
                             message.getMessageId(),
                             senderName,
                             message.getSubject(),
-                            DateUtil.formatDateTime(this, message.getTimeMs()),
+                            message.getTimeMs(),
                             message.getNumAttachments() > 0,
                             message.isStarred() != null ? message.isStarred() : false,
                             message.isRead(),

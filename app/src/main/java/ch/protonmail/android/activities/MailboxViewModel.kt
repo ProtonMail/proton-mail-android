@@ -31,6 +31,8 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.mailbox.presentation.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.MessageData
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.Event
@@ -187,6 +189,35 @@ class MailboxViewModel @Inject constructor(
             removeKeySet?.forEach {
                 jobManager.addJobInBackground(RemoveLabelJob(labelsToRemoveMap[it], it))
             }
+        }
+    }
+
+    fun messagesToMailboxItems(messages: List<Message>): List<MailboxUiItem> {
+        return messages.map {
+            val messageData = MessageData(
+                it.location,
+                it.isReplied ?: false,
+                it.isRepliedAll ?: false,
+                it.isForwarded ?: false,
+                it.isBeingSent,
+                it.isAttachmentsBeingUploaded,
+                it.isInline,
+            )
+            MailboxUiItem(
+                it.messageId!!,
+                it.senderDisplayName ?: it.senderEmail,
+                it.subject!!,
+                it.timeMs,
+                it.numAttachments > 0,
+                it.isStarred ?: false,
+                it.isRead,
+                it.expirationTime,
+                0,
+                messageData,
+                it.deleted,
+                it.allLabelIDs,
+                it.toListStringGroupsAware
+            )
         }
     }
 
