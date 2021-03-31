@@ -34,6 +34,7 @@ import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import org.junit.experimental.categories.Category
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class DraftsTests : BaseTest() {
@@ -282,6 +283,7 @@ class DraftsTests : BaseTest() {
             }
     }
 
+    @Ignore("Enable when attachments UI on v4 is finalized - MAILAND-1545")
     @TestId("43003")
     @Test
     fun replaceAttachmentsSavingDraftsAndSend() {
