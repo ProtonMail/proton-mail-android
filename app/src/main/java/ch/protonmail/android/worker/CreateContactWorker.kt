@@ -44,6 +44,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.di.CurrentUserCrypto
+import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.ContactAlreadyExistsError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.DuplicatedEmailError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.InvalidEmailError
@@ -52,9 +53,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import me.proton.core.util.kotlin.DispatcherProvider
-import okio.buffer
-import okio.source
-import java.io.File
 import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA_PATH = "keyCreateContactInputDataEncryptedData"
@@ -68,6 +66,7 @@ class CreateContactWorker @WorkerInject constructor(
     @Assisted params: WorkerParameters,
     private val apiManager: ProtonMailApiManager,
     @CurrentUserCrypto private val crypto: UserCrypto,
+    private val fileHelper: FileHelper,
     private val dispatcherProvider: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 
@@ -127,18 +126,20 @@ class CreateContactWorker @WorkerInject constructor(
         return Result.failure(errorData)
     }
 
-    private fun buildCreateContactRequestBody(): CreateContact {
+    private suspend fun buildCreateContactRequestBody(): CreateContact {
         val encryptedDataParamPath = getInputEncryptedData()
         val signedDataParam = getInputSignedData()
 
-        val encryptedDataParam = File(encryptedDataParamPath).source().buffer().readUtf8()
+        val encryptedDataParam = fileHelper.readStringFromFilePath(encryptedDataParamPath)
 
         val encryptedData = crypto.encrypt(encryptedDataParam, false).armored
         val encryptDataSignature = crypto.sign(encryptedDataParam)
         val signedDataSignature = crypto.sign(signedDataParam)
 
-        val contactEncryptedDataType2 = ContactEncryptedData(signedDataParam, signedDataSignature, Constants.VCardType.SIGNED)
-        val contactEncryptedDataType3 = ContactEncryptedData(encryptedData, encryptDataSignature, Constants.VCardType.SIGNED_ENCRYPTED)
+        val contactEncryptedDataType2 =
+            ContactEncryptedData(signedDataParam, signedDataSignature, Constants.VCardType.SIGNED)
+        val contactEncryptedDataType3 =
+            ContactEncryptedData(encryptedData, encryptDataSignature, Constants.VCardType.SIGNED_ENCRYPTED)
 
         val contactEncryptedDataList = ArrayList<ContactEncryptedData>()
         contactEncryptedDataList.add(contactEncryptedDataType2)

@@ -21,15 +21,18 @@ package ch.protonmail.android.utils
 
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import okio.buffer
+import okio.sink
+import okio.source
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 /**
  * A helper class that serves as a wrapper for file operations.
  */
-
 class FileHelper @Inject constructor(
     private val dispatcherProvider: DispatcherProvider
 ) {
@@ -56,4 +59,16 @@ class FileHelper @Inject constructor(
         }.isSuccess
     }
 
+    suspend fun saveStringToFile(filePath: String, dataToSave: String) = withContext(dispatcherProvider.Io) {
+        File(filePath).sink().buffer().use { sink ->
+            sink.writeString(dataToSave, StandardCharsets.UTF_8)
+        }
+    }
+
+    suspend fun readStringFromFilePath(filePath: String): String = withContext(dispatcherProvider.Io) {
+        return@withContext File(filePath)
+            .source()
+            .buffer()
+            .readUtf8()
+    }
 }
