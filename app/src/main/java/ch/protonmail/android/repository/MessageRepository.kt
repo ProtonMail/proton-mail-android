@@ -21,7 +21,6 @@ package ch.protonmail.android.repository
 
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.core.Constants.FeatureFlags.SAVE_MESSAGE_BODY_TO_FILE
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
@@ -50,7 +49,7 @@ class MessageRepository @Inject constructor(
         withContext(dispatcherProvider.Io) {
             return@withContext messageDao.findMessageById(messageId).first()?.apply {
                 messageBody?.let {
-                    if (SAVE_MESSAGE_BODY_TO_FILE && it.startsWith("file://"))
+                    if (it.startsWith("file://"))
                         messageBody = messageBodyFileManager.readMessageBodyFromFile(this)
                 }
             }
@@ -60,7 +59,7 @@ class MessageRepository @Inject constructor(
         withContext(dispatcherProvider.Io) {
             val messageToBeSaved = message.apply {
                 messageBody = messageBody?.let {
-                    return@let if (SAVE_MESSAGE_BODY_TO_FILE && it.toByteArray().size > MAX_BODY_SIZE_IN_DB) {
+                    return@let if (it.toByteArray().size > MAX_BODY_SIZE_IN_DB) {
                         messageBodyFileManager.saveMessageBodyToFile(this)
                     } else {
                         null

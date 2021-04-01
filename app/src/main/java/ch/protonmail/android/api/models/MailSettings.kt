@@ -26,13 +26,13 @@ import kotlinx.coroutines.runBlocking
 import me.proton.core.util.kotlin.unsupported
 import java.io.Serializable
 
-// region constants
 private const val FIELD_DISPLAY_NAME = "DisplayName"
 private const val FIELD_SIGNATURE = "Signature"
 private const val FIELD_THEME = "Theme"
 private const val FIELD_AUTO_SAVE_CONTACTS = "AutoSaveContacts"
 private const val FIELD_AUTO_WILDCARD_SEARCH = "AutoWildcardSearch"
 private const val FIELD_SHOW_IMAGES = "ShowImages" // 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
+private const val FIELD_VIEW_MODE = "ViewMode" // 0 for conversation view, 1 for message view
 private const val FIELD_SHOW_MOVED = "ShowMoved"
 private const val FIELD_SWIPE_LEFT = "SwipeLeft"
 private const val FIELD_SWIPE_RIGHT = "SwipeRight"
@@ -55,6 +55,7 @@ private const val PREF_THEME = "mail_settings_Theme"
 private const val PREF_AUTO_SAVE_CONTACTS = "mail_settings_AutoSaveContacts"
 private const val PREF_AUTO_WILDCARD_SEARCH = "mail_settings_AutoWildcardSearch"
 private const val PREF_SHOW_IMAGES = "mail_settings_ShowImages" // 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
+private const val PREF_VIEW_MODE = "mail_settings_ViewMode" // 0 for conversation view, 1 for message view
 private const val PREF_SHOW_MOVED = "mail_settings_ShowMoved"
 private const val PREF_SWIPE_LEFT = "mail_settings_SwipeLeft"
 private const val PREF_SWIPE_RIGHT = "mail_settings_SwipeRight"
@@ -70,20 +71,24 @@ private const val PREF_NUM_MESSAGE_PER_PAGE = "mail_settings_NumMessagePerPage"
 private const val PREF_DRAFT_MIME_TYPE = "mail_settings_DraftMIMEType"
 private const val PREF_RECEIVE_MIME_TYPE = "mail_settings_ReceiveMIMEType"
 private const val PREF_SHOW_MIME_TYPE = "mail_settings_ShowMIMEType"
-// endregion
 
 class MailSettings : Serializable {
 
     @SerializedName(FIELD_DISPLAY_NAME)
     private val displayName: String? = null
+
     @SerializedName(FIELD_SIGNATURE)
     private val signature: String? = null
+
     @SerializedName(FIELD_THEME)
     private val theme: String? = null
+
     @SerializedName(FIELD_AUTO_SAVE_CONTACTS)
     var autoSaveContacts: Int = 0
+
     @SerializedName(FIELD_AUTO_WILDCARD_SEARCH)
     private val autoWildcardSearch: Int = 0
+
     /**
      * Auto showing remote and embedded images.
      * @return 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
@@ -92,36 +97,54 @@ class MailSettings : Serializable {
     // TODO this field should be changed to 'ShowImagesFrom' enum, once using Kotlinx serialization
     @Deprecated("Use 'showImagesFrom' field", ReplaceWith("showImagesFrom"))
     var showImages: Int = 0
+
     @SerializedName(FIELD_SHOW_MOVED)
     private val showMoved: Int = 0
+
     @SerializedName(FIELD_SWIPE_RIGHT)
     private var swipeRight: Int = 0
+
     @SerializedName(FIELD_SWIPE_LEFT)
     private var swipeLeft: Int = 0
+
     @SerializedName(FIELD_ALSO_ARCHIVE)
     private val alsoArchive: Int = 0
+
     @SerializedName(FIELD_PM_SIGNATURE)
     private val pmSignature: Int = 0
+
     @SerializedName(FIELD_RIGHT_TO_LEFT)
     private val rightToLeft: Int = 0
+
     @SerializedName(FIELD_ATTACH_PUBLIC_KEY)
     private var attachPublicKey: Int = 0
+
     @SerializedName(FIELD_SIGN)
     var sign: Int = 0
+
     @SerializedName(FIELD_PGP_SCHEME)
     var pgpScheme: Int = 0
+
     @SerializedName(FIELD_PROMPT_PIN)
     private val promptPin: Int = 0
+
     @SerializedName(FIELD_AUTOCRYPT)
     private val autocrypt: Int = 0
+
     @SerializedName(FIELD_NUM_MESSAGE_PER_PAGE)
     private val numMessagePerPage: Int = 0
+
     @SerializedName(FIELD_DRAFT_MIME_TYPE)
     private val draftMIMEType: String? = null
+
     @SerializedName(FIELD_RECEIVE_MIME_TYPE)
     private val receiveMIMEType: String? = null
+
     @SerializedName(FIELD_SHOW_MIME_TYPE)
     private val showMIMEType: String? = null
+
+    @SerializedName(FIELD_VIEW_MODE)
+    var viewMode: Int = 1
 
     @Transient
     @Deprecated("We should not rely on username. No replacement", level = DeprecationLevel.ERROR)
@@ -150,11 +173,9 @@ class MailSettings : Serializable {
     val defaultSign: Boolean
         get() = sign != 0
 
-    fun getPGPScheme(): PackageType? =
-        PackageType.fromInteger(pgpScheme)
+    fun getPGPScheme(): PackageType? = PackageType.fromInteger(pgpScheme)
 
-    fun getAttachPublicKey(): Boolean =
-        attachPublicKey != 0
+    fun getAttachPublicKey(): Boolean = attachPublicKey != 0
 
     fun setAttachPublicKey(attachPublicKey: Int) {
         this.attachPublicKey = attachPublicKey
@@ -170,6 +191,7 @@ class MailSettings : Serializable {
             putInt(PREF_AUTO_SAVE_CONTACTS, autoSaveContacts)
             putInt(PREF_AUTO_WILDCARD_SEARCH, autoWildcardSearch)
             putInt(PREF_SHOW_IMAGES, showImagesFrom.flag)
+            putInt(PREF_VIEW_MODE, viewMode)
             putInt(PREF_SHOW_MOVED, showMoved)
             putInt(PREF_SWIPE_RIGHT, swipeRight)
             putInt(PREF_SWIPE_LEFT, swipeLeft)
@@ -255,6 +277,7 @@ class MailSettings : Serializable {
                     setAttachPublicKey(getInt(PREF_ATTACH_PUBLIC_KEY, 0))
                     pgpScheme = getInt(PREF_PGP_SCHEME, 1)
                     sign = getInt(PREF_SIGN, 0)
+                    viewMode = getInt(PREF_VIEW_MODE, 1)
                 }
             }
         }

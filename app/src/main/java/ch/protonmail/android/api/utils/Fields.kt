@@ -367,6 +367,7 @@ object Fields {
         const val DISPLAY_NAME = "DisplayName"
         const val SIGNATURE = "Signature"
         const val SHOW_IMAGES = "ShowImages"
+        const val VIEW_MODE = "ViewMode"
         const val SWIPE_RIGHT = "SwipeRight"
         const val SWIPE_LEFT = "SwipeLeft"
     }

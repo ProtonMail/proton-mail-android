@@ -204,14 +204,6 @@ object Constants {
         const val BACKUP_PREFS_NAME = "backup_prefs"
     }
 
-    object FeatureFlags {
-        const val SAVE_MESSAGE_BODY_TO_FILE = true
-        const val CUSTOM_LANGUAGE_SELECTION = true
-        const val HYPERLINK_CONFIRMATION = true
-        const val PAYPAL_PAYMENT = false
-        const val TLS_12_UPGRADE = true
-    }
-
     // Enums
     enum class MessageLocationType(val messageLocationTypeValue: Int) {
         INVALID(-1),

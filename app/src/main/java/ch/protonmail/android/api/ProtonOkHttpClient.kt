@@ -81,9 +81,7 @@ sealed class ProtonOkHttpClient(
             okClientBuilder.cookieJar(JavaNetCookieJar(cookieManager))
         }
 
-        if (Constants.FeatureFlags.TLS_12_UPGRADE) {
-            okClientBuilder.enableTls12()
-        }
+        okClientBuilder.enableTls12()
 
         okClientBuilder.connectTimeout(timeout, TimeUnit.SECONDS)
         okClientBuilder.readTimeout(timeout, TimeUnit.SECONDS)

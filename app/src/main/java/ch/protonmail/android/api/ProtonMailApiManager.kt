@@ -514,6 +514,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun updateAutoShowImages(autoShowImages: Int): ResponseBody? = api.updateAutoShowImages(autoShowImages)
 
+    override fun updateViewMode(viewMode: Int): ResponseBody? = api.updateViewMode(viewMode)
+
     override fun fetchUserInfoBlocking(): UserInfo = api.fetchUserInfoBlocking()
 
     override suspend fun fetchUserInfo(): UserInfo = api.fetchUserInfo()

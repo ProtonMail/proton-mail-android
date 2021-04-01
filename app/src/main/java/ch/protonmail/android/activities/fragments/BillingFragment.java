@@ -269,7 +269,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
                 snackBarView.findViewById(com.google.android.material.R.id.snackbar_text);
         snackBarTextView.setTextColor(Color.WHITE);
 
-        rootView.findViewById(R.id.submit_picker_paypal).setVisibility(Constants.FeatureFlags.PAYPAL_PAYMENT ? View.VISIBLE : View.GONE);
+        rootView.findViewById(R.id.submit_picker_paypal).setVisibility(View.GONE);
 
         return rootView;
     }
@@ -300,20 +300,15 @@ public class BillingFragment extends CreateAccountBaseFragment {
     private void showPaymentMethods() {
         if (mPaymentMethods != null && mPaymentMethods.size() > 0) {
             List<String> paymentMethodsStrings = new ArrayList<>();
-            boolean payPalMethodExists = false;
             for (PaymentMethod paymentMethod : mPaymentMethods) {
                 CardDetails cardDetails = paymentMethod.getCardDetails();
                 if (cardDetails.getBillingAgreementId() != null) {
-                    payPalMethodExists = true;
                     paymentMethodsStrings.add(String.format(getString(R.string.payment_method_paypal_placeholder), cardDetails.getPayer()));
                 } else {
                     paymentMethodsStrings.add(String.format(getString(R.string.payment_method_card_placeholder), cardDetails.getLast4(), cardDetails.getExpirationMonth(), cardDetails.getExpirationYear()));
                 }
             }
             paymentMethodsStrings.add(getString(R.string.try_another_card));
-            if (!payPalMethodExists && Constants.FeatureFlags.PAYPAL_PAYMENT) {
-                paymentMethodsStrings.add(getString(R.string.try_another_paypal));
-            }
             ArrayAdapter<String> paymentMethodsAdapter = new ArrayAdapter<>(getContext(), R.layout.month_spinner_item, paymentMethodsStrings);
             mPaymentMethodsSpinner.setAdapter(paymentMethodsAdapter);
 

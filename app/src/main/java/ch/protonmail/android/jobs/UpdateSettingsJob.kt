@@ -30,25 +30,29 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_OLD_PASSWORD_INCORRECT
 import ch.protonmail.android.api.services.LoginService
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.SettingsChangedEvent
+import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ConstantTime
-import ch.protonmail.android.utils.Logger
 import com.birbit.android.jobqueue.Params
 import me.proton.core.util.kotlin.EMPTY_STRING
+import timber.log.Timber
 import java.util.ArrayList
 
 class UpdateSettingsJob(
-    private val displayChanged: Boolean = false, private val newDisplayName: String = "",
+    private val displayChanged: Boolean = false,
+    private val newDisplayName: String = "",
     private val notificationEmailChanged: Boolean = false,
-    private val signatureChanged: Boolean = false, private val newSignature: String = "",
+    private val signatureChanged: Boolean = false,
+    private val newSignature: String = "",
     private val sortAliasChanged: Boolean = false,
     private val actionLeftSwipeChanged: Boolean = false,
     private val actionRightSwipeChanged: Boolean = false,
     private val newEmail: String = "",
-    private val mailSettings: MailSettings? = null,
     private val backPressed: Boolean = false,
     private val addressId: String = "",
-    private val password: ByteArray = byteArrayOf(), private val twoFactor: String = ""
+    private val password: ByteArray = byteArrayOf(),
+    private val twoFactor: String = "",
+    private val featureFlags: FeatureFlagsManager = FeatureFlagsManager()
 ) : ProtonMailBaseJob(Params(Priority.LOW).requireNetwork()) {
     private var oldEmail: String? = null
 
@@ -61,28 +65,50 @@ class UpdateSettingsJob(
                 val username = user.username ?: user.name
                 val infoResponse = getApi().loginInfo(username)
                 val proofs = LoginService.srpProofsForInfo(username, password, infoResponse, 2)
-                val response = getApi().updateNotificationEmail(infoResponse.srpSession,
+                val response = getApi().updateNotificationEmail(
+                    infoResponse.srpSession,
                     ConstantTime.encodeBase64(proofs!!.clientEphemeral, true),
-                    ConstantTime.encodeBase64(proofs.clientProof, true), twoFactor, newEmail)
+                    ConstantTime.encodeBase64(proofs.clientProof, true), twoFactor, newEmail
+                )
 
                 if (response!!.code == RESPONSE_CODE_INVALID_EMAIL) {
-                    AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.FAILED,
-                        getUserManager().userSettings?.notificationEmail, backPressed, response.error))
+                    AppUtil.postEventOnUi(
+                        SettingsChangedEvent(
+                            AuthStatus.FAILED,
+                            getUserManager().userSettings?.notificationEmail, backPressed, response.error
+                        )
+                    )
                     failed = true
                 } else if (response.code == RESPONSE_CODE_INCORRECT_PASSWORD ||
                     response.code == RESPONSE_CODE_OLD_PASSWORD_INCORRECT ||
-                    response.code == RESPONSE_CODE_NEW_PASSWORD_INCORRECT) {
-                    AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.FAILED,
-                        getUserManager().userSettings?.notificationEmail, backPressed, response.error))
+                    response.code == RESPONSE_CODE_NEW_PASSWORD_INCORRECT
+                ) {
+                    AppUtil.postEventOnUi(
+                        SettingsChangedEvent(
+                            AuthStatus.FAILED,
+                            getUserManager().userSettings?.notificationEmail, backPressed, response.error
+                        )
+                    )
                     failed = true
                 } else if (response.code == RESPONSE_CODE_EMAIL_FAILED_VALIDATION) {
-                    AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.FAILED,
-                        getUserManager().userSettings?.notificationEmail, backPressed, response.error))
+                    AppUtil.postEventOnUi(
+                        SettingsChangedEvent(
+                            AuthStatus.FAILED,
+                            getUserManager().userSettings?.notificationEmail, backPressed, response.error
+                        )
+                    )
                     failed = true
-                } else if (!ConstantTime.isEqual(Base64.decode(response.serverProof, Base64.DEFAULT),
-                        proofs.expectedServerProof)) {
-                    AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.INVALID_SERVER_PROOF,
-                        getUserManager().userSettings?.notificationEmail, backPressed, EMPTY_STRING))
+                } else if (!ConstantTime.isEqual(
+                        Base64.decode(response.serverProof, Base64.DEFAULT),
+                        proofs.expectedServerProof
+                    )
+                ) {
+                    AppUtil.postEventOnUi(
+                        SettingsChangedEvent(
+                            AuthStatus.INVALID_SERVER_PROOF,
+                            getUserManager().userSettings?.notificationEmail, backPressed, EMPTY_STRING
+                        )
+                    )
                     failed = true
                 }
                 if (!failed) {
@@ -109,8 +135,11 @@ class UpdateSettingsJob(
                     for (address in addresses) {
                         if (address.id == addressId) {
                             val responseBody = getApi().editAddress(address.id, newDisplayName, address.signature)
-                            Logger.doLog("editAddress", "address: " + address.email + " new DN: "
-                                    + newDisplayName + " response: " + responseBody.code)
+                            Timber.d(
+                                "editAddress address: ${address.email} " +
+                                    "new display name: $newDisplayName " +
+                                    "response: ${responseBody.code}"
+                            )
                             address.displayName = newDisplayName
                             break
                         }
@@ -137,9 +166,8 @@ class UpdateSettingsJob(
                 if (actionRightSwipeChanged) {
                     getApi().updateRightSwipe(mailSettings.rightSwipeAction)
                 }
-                if (this.mailSettings != null) {
-                    getApi().updateAutoShowImages(this.mailSettings.showImagesFrom.flag)
-
+                if (mailSettings != null) {
+                    updateMailSettings(mailSettings)
                 }
                 AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.SUCCESS, oldEmail, backPressed, null))
             }
@@ -147,5 +175,13 @@ class UpdateSettingsJob(
             AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.FAILED, null, backPressed, e.message))
         }
 
+    }
+
+    private fun updateMailSettings(mailSettings: MailSettings) {
+        getApi().updateAutoShowImages(mailSettings.showImages)
+
+        if (featureFlags.isChangeViewModeFeatureEnabled()) {
+            getApi().updateViewMode(mailSettings.viewMode)
+        }
     }
 }
