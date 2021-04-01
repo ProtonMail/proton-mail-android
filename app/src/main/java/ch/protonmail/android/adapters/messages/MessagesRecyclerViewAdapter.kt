@@ -47,7 +47,6 @@ class MessagesRecyclerViewAdapter(
 
     private var pendingUploadList: List<PendingUpload>? = null
     private var pendingSendList: List<PendingSend>? = null
-    private var contactsList: List<ContactEmail>? = null
 
     private var onItemClick: ((MailboxUiItem) -> Unit)? = null
     private var onItemSelectionChangedListener: (() -> Unit)? = null
@@ -162,8 +161,6 @@ class MessagesRecyclerViewAdapter(
 //        val pendingSend = pendingSendList?.find { it.messageId == mailboxItem.itemId }
 //        mailboxItem.isBeingSent = pendingSend != null && pendingSend.sent == null
 //        mailboxItem.isAttachmentsBeingUploaded = pendingUploadList?.find { it.messageId == mailboxItem.messageId } != null
-//        mailboxItem.senderDisplayName = contactsList?.find { mailboxItem.senderEmail == it.email }?.name
-//            ?: mailboxItem.senderName
 
         this.view.bind(mailboxItem, messageLabels, selectedMessageIds.isNotEmpty(), mMailboxLocation)
 
@@ -212,11 +209,6 @@ class MessagesRecyclerViewAdapter(
 
     fun setPendingForSendingList(pendingSendList: List<PendingSend>) {
         this.pendingSendList = pendingSendList
-        notifyDataSetChanged()
-    }
-
-    fun setContactsList(contactsList: List<ContactEmail>?) {
-        this.contactsList = contactsList
         notifyDataSetChanged()
     }
 

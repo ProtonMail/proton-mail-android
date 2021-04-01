@@ -19,30 +19,49 @@
 
 package ch.protonmail.android.activities
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.mailbox.presentation.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.MessageData
+import ch.protonmail.android.testAndroid.lifecycle.testObserver
+import ch.protonmail.android.testAndroid.rx.TrampolineScheduler
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.MessageUtils.toContactsAndGroupsString
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import me.proton.core.test.kotlin.CoroutinesTest
+import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
 class MailboxViewModelTest : CoroutinesTest {
+
+    @get:Rule
+    val trampolineSchedulerRule = TrampolineScheduler()
+
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @RelaxedMockK
+    private lateinit var contactsRepository: ContactsRepository
 
     @RelaxedMockK
     private lateinit var messageDetailsRepository: MessageDetailsRepository
@@ -73,19 +92,215 @@ class MailboxViewModelTest : CoroutinesTest {
             jobManager,
             deleteMessage,
             dispatchers,
+            contactsRepository,
             verifyConnection,
             networkConfigurator
         )
     }
 
     @Test
-    fun messagesToMailboxMapsAValidMessageToAMailboxItemCorrectly() {
+    fun messagesToMailboxMapsSenderNameToMessageSenderNameWhenSenderEmailDoesNotExistInContacts() {
         // Given
         val recipients = listOf(MessageRecipient("recipientName", "recipient@pm.ch"))
         val messages = listOf(
             Message().apply {
                 messageId = "messageId"
-                senderDisplayName = "senderName"
+                sender = MessageSender("senderName9238", "anySenderEmail@pm.me")
+                subject = "subject"
+            }
+        )
+        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
+            listOf(ContactEmail("contactId", "anotherContact@pm.me", "anotherContactName"))
+        )
+        mockk<MessageUtils> {
+            every { toContactsAndGroupsString(recipients) } returns "recipientName"
+        }
+
+        // When
+        val actual = viewModel.messagesToMailboxItems(messages).testObserver()
+
+        // Then
+        val expected = MailboxUiItem(
+            itemId = "messageId",
+            senderName = "senderName9238",
+            subject = "subject",
+            timeMs = 0,
+            hasAttachments = false,
+            isStarred = false,
+            isRead = true,
+            expirationTime = 0,
+            messagesCount = 0,
+            isDeleted = false,
+            labelIds = emptyList(),
+            recipients = "",
+            messageData = MessageData(
+                location = Constants.MessageLocationType.INVALID.messageLocationTypeValue,
+                isReplied = false,
+                isRepliedAll = false,
+                isForwarded = false,
+                isBeingSent = false,
+                isAttachmentsBeingUploaded = false,
+                isInline = false
+            )
+        )
+        val actualMailboxItems = actual.observedValues.first()
+        assertEquals(expected, actualMailboxItems?.first())
+    }
+
+    @Test
+    fun messagesToMailboxMapsSenderNameToContactNameWhenSenderEmailExistsInContactsList() {
+        // Given
+        val recipients = listOf(MessageRecipient("recipientName", "recipient@pm.ch"))
+        val contactName = "contactNameTest"
+        val senderEmailAddress = "sender@email.pm"
+        val messages = listOf(
+            Message().apply {
+                messageId = "messageId"
+                sender = MessageSender("anySenderName", senderEmailAddress)
+                subject = "subject"
+            }
+        )
+        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
+            listOf(ContactEmail("contactId", senderEmailAddress, contactName))
+        )
+        mockk<MessageUtils> {
+            every { toContactsAndGroupsString(recipients) } returns "recipientName"
+        }
+
+        // When
+        val actual = viewModel.messagesToMailboxItems(messages).testObserver()
+
+        // Then
+        val expected = MailboxUiItem(
+            itemId = "messageId",
+            senderName = contactName,
+            subject = "subject",
+            timeMs = 0,
+            hasAttachments = false,
+            isStarred = false,
+            isRead = true,
+            expirationTime = 0,
+            messagesCount = 0,
+            isDeleted = false,
+            labelIds = emptyList(),
+            recipients = "",
+            messageData = MessageData(
+                location = Constants.MessageLocationType.INVALID.messageLocationTypeValue,
+                isReplied = false,
+                isRepliedAll = false,
+                isForwarded = false,
+                isBeingSent = false,
+                isAttachmentsBeingUploaded = false,
+                isInline = false
+            )
+        )
+        val actualMailboxItems = actual.observedValues.first()
+        assertEquals(expected, actualMailboxItems?.first())
+        coVerify { contactsRepository.findAllContactEmails() }
+    }
+
+    @Test
+    fun messagesToMailboxMapsSenderNameToMessageSenderEmailWhenSenderEmailDoesNotExistInContactsAndSenderNameIsNull() {
+        // Given
+        val recipients = listOf(MessageRecipient("recipientName", "recipient@pm.ch"))
+        val messages = listOf(
+            Message().apply {
+                messageId = "messageId"
+                sender = MessageSender(null, "anySenderEmail@protonmail.ch")
+                subject = "subject"
+            }
+        )
+        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
+        mockk<MessageUtils> {
+            every { toContactsAndGroupsString(recipients) } returns "recipientName"
+        }
+
+        // When
+        val actual = viewModel.messagesToMailboxItems(messages).testObserver()
+
+        // Then
+        val expected = MailboxUiItem(
+            itemId = "messageId",
+            senderName = "anySenderEmail@protonmail.ch",
+            subject = "subject",
+            timeMs = 0,
+            hasAttachments = false,
+            isStarred = false,
+            isRead = true,
+            expirationTime = 0,
+            messagesCount = 0,
+            isDeleted = false,
+            labelIds = emptyList(),
+            recipients = "",
+            messageData = MessageData(
+                location = Constants.MessageLocationType.INVALID.messageLocationTypeValue,
+                isReplied = false,
+                isRepliedAll = false,
+                isForwarded = false,
+                isBeingSent = false,
+                isAttachmentsBeingUploaded = false,
+                isInline = false
+            )
+        )
+        val actualMailboxItems = actual.observedValues.first()
+        assertEquals(expected, actualMailboxItems?.first())
+    }
+
+    @Test
+    fun messagesToMailboxMapsSenderNameToMessageSenderEmailWhenSenderEmailDoesNotExistInContactsAndSenderNameIsEmpty() {
+        // Given
+        val recipients = listOf(MessageRecipient("recipientName", "recipient@pm.ch"))
+        val messages = listOf(
+            Message().apply {
+                messageId = "messageId"
+                sender = MessageSender("", "anySenderEmail8437@protonmail.ch")
+                subject = "subject"
+            }
+        )
+        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
+        mockk<MessageUtils> {
+            every { toContactsAndGroupsString(recipients) } returns "recipientName"
+        }
+
+        // When
+        val actual = viewModel.messagesToMailboxItems(messages).testObserver()
+
+        // Then
+        val expected = MailboxUiItem(
+            itemId = "messageId",
+            senderName = "anySenderEmail8437@protonmail.ch",
+            subject = "subject",
+            timeMs = 0,
+            hasAttachments = false,
+            isStarred = false,
+            isRead = true,
+            expirationTime = 0,
+            messagesCount = 0,
+            isDeleted = false,
+            labelIds = emptyList(),
+            recipients = "",
+            messageData = MessageData(
+                location = Constants.MessageLocationType.INVALID.messageLocationTypeValue,
+                isReplied = false,
+                isRepliedAll = false,
+                isForwarded = false,
+                isBeingSent = false,
+                isAttachmentsBeingUploaded = false,
+                isInline = false
+            )
+        )
+        val actualMailboxItems = actual.observedValues.first()
+        assertEquals(expected, actualMailboxItems?.first())
+    }
+
+    @Test
+    fun messagesToMailboxMapsAllFieldsOfMailboxUiItemFromMessageCorrectly() {
+        // Given
+        val recipients = listOf(MessageRecipient("recipientName", "recipient@pm.ch"))
+        val messages = listOf(
+            Message().apply {
+                messageId = "messageId"
+                sender = MessageSender("senderName", "senderEmail@pm.ch")
                 subject = "subject"
                 time = 1617205075 // Wednesday, March 31, 2021 5:37:55 PM GMT+02:00 in seconds
                 numAttachments = 1
@@ -104,17 +319,18 @@ class MailboxViewModelTest : CoroutinesTest {
                 isInline = false
             }
         )
+        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
         mockk<MessageUtils> {
             every { toContactsAndGroupsString(recipients) } returns "recipientName"
         }
 
         // When
-        val actual = viewModel.messagesToMailboxItems(messages)
+        val actual = viewModel.messagesToMailboxItems(messages).testObserver()
 
         // Then
         val expected = MailboxUiItem(
             itemId = "messageId",
-            sender = "senderName",
+            senderName = "senderName",
             subject = "subject",
             timeMs = 1617205075000, // Wednesday, March 31, 2021 5:37:55 PM GMT+02:00 in millis
             hasAttachments = true,
@@ -137,7 +353,9 @@ class MailboxViewModelTest : CoroutinesTest {
                 isInline = false
             )
         )
-        assertEquals(expected, actual.first())
+        val actualMailboxItems = actual.observedValues.first()
+        assertEquals(expected, actualMailboxItems?.first())
     }
+
 
 }

@@ -21,7 +21,7 @@ package ch.protonmail.android.mailbox.presentation
 
 data class MailboxUiItem(
     val itemId: String,
-    val sender: String,
+    val senderName: String,
     val subject: String,
     val timeMs: Long,
     val hasAttachments: Boolean,

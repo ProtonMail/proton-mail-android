@@ -26,6 +26,8 @@ import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.utils.ApplyRemoveLabels
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
@@ -60,6 +62,7 @@ class MailboxViewModel @Inject constructor(
     private val jobManager: JobManager,
     private val deleteMessage: DeleteMessage,
     private val dispatchers: DispatcherProvider,
+    val contactsRepository: ContactsRepository,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -192,33 +195,58 @@ class MailboxViewModel @Inject constructor(
         }
     }
 
-    fun messagesToMailboxItems(messages: List<Message>): List<MailboxUiItem> {
-        return messages.map {
-            val messageData = MessageData(
-                it.location,
-                it.isReplied ?: false,
-                it.isRepliedAll ?: false,
-                it.isForwarded ?: false,
-                it.isBeingSent,
-                it.isAttachmentsBeingUploaded,
-                it.isInline,
-            )
-            MailboxUiItem(
-                it.messageId!!,
-                it.senderDisplayName ?: it.senderEmail,
-                it.subject!!,
-                it.timeMs,
-                it.numAttachments > 0,
-                it.isStarred ?: false,
-                it.isRead,
-                it.expirationTime,
-                0,
-                messageData,
-                it.deleted,
-                it.allLabelIDs,
-                it.toListStringGroupsAware
+    fun messagesToMailboxItems(messages: List<Message>): LiveData<List<MailboxUiItem>> {
+        val mailboxItems = MutableLiveData<List<MailboxUiItem>>()
+        viewModelScope.launch(dispatchers.Io) {
+            val contacts = contactsRepository.findAllContactEmails().first()
+
+            mailboxItems.postValue(
+                messages.map { message ->
+                    val senderName = defineSenderNameToDisplay(contacts, message)
+
+                    val messageData = MessageData(
+                        message.location,
+                        message.isReplied ?: false,
+                        message.isRepliedAll ?: false,
+                        message.isForwarded ?: false,
+                        message.isBeingSent,
+                        message.isAttachmentsBeingUploaded,
+                        message.isInline,
+                    )
+
+                    MailboxUiItem(
+                        message.messageId!!,
+                        senderName,
+                        message.subject!!,
+                        message.timeMs,
+                        message.numAttachments > 0,
+                        message.isStarred ?: false,
+                        message.isRead,
+                        message.expirationTime,
+                        0,
+                        messageData,
+                        message.deleted,
+                        message.allLabelIDs,
+                        message.toListStringGroupsAware
+                    )
+                }
             )
         }
+        return mailboxItems
+    }
+
+    private fun defineSenderNameToDisplay(contacts: List<ContactEmail>, message: Message): String {
+        val senderNameFromContacts = contacts.find { message.senderEmail == it.email }?.name
+
+        senderNameFromContacts?.let {
+            return it
+        }
+
+        message.senderName?.let {
+            if (it.isNotEmpty()) return it
+        }
+
+        return message.senderEmail
     }
 
     private fun getAllLabelsByIds(labelIds: List<String>) =

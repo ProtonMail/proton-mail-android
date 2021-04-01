@@ -52,7 +52,6 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.data.ContactsRepository;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.events.NoResultsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
@@ -78,8 +77,6 @@ public class SearchActivity extends BaseActivity {
 
     @Inject
     MessageDetailsRepository messageDetailsRepository;
-    @Inject
-    ContactsRepository contactsRepository;
 
     @Override
     protected int getLayoutId() {
@@ -101,8 +98,6 @@ public class SearchActivity extends BaseActivity {
         noMessagesView = findViewById(R.id.no_messages);
 
         mAdapter = new MessagesRecyclerViewAdapter(this,null);
-
-        contactsRepository.findAllContactsEmailsAsync().observe(this, contactEmails -> mAdapter.setContactsList(contactEmails));
 
         messagesListView.setAdapter(mAdapter);
         messagesListView.setLayoutManager(new LinearLayoutManager(this));

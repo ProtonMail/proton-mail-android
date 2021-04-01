@@ -114,7 +114,6 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_SWIPE_GESTURES_DIALOG_SHO
 import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
 import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.PendingActionDao
@@ -214,9 +213,6 @@ class MailboxActivity :
     lateinit var messageDetailsRepository: MessageDetailsRepository
 
     @Inject
-    lateinit var contactsRepository: ContactsRepository
-
-    @Inject
     lateinit var networkSnackBarUtil: NetworkSnackBarUtil
 
     @Inject
@@ -314,7 +310,6 @@ class MailboxActivity :
             }
         }
 
-        contactsRepository.findAllContactsEmailsAsync().observe(this, messagesAdapter::setContactsList)
         mailboxViewModel.pendingSendsLiveData.observe(this, messagesAdapter::setPendingForSendingList)
         mailboxViewModel.pendingUploadsLiveData.observe(this, messagesAdapter::setPendingUploadsList)
         messageDetailsRepository.getAllLabels().observe(this, messagesAdapter::setLabels)
@@ -622,9 +617,10 @@ class MailboxActivity :
         private val adapter: MessagesRecyclerViewAdapter?
     ) : Observer<List<Message>> {
         override fun onChanged(messages: List<Message>) {
-            val mailboxUiItems = mailboxViewModel.messagesToMailboxItems(messages)
-            adapter!!.clear()
-            adapter.addAll(mailboxUiItems)
+            mailboxViewModel.messagesToMailboxItems(messages).observe(this@MailboxActivity) { mailboxUiItems ->
+                adapter!!.clear()
+                adapter.addAll(mailboxUiItems)
+            }
         }
     }
 

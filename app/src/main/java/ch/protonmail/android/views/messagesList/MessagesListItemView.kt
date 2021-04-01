@@ -89,15 +89,12 @@ class MessagesListItemView constructor(
         }
     }
 
-    private fun getSenderText(messageLocation: Constants.MessageLocationType, message: Message) = when {
-        messageLocation in arrayOf(
-            Constants.MessageLocationType.DRAFT,
-            Constants.MessageLocationType.SENT
-        ) -> message.toListStringGroupsAware
-
-        !message.senderDisplayName.isNullOrEmpty() -> message.senderDisplayName
-
-        else -> message.senderEmail
+    private fun getSenderText(messageLocation: Constants.MessageLocationType, message: Message) =
+        if (isDraft(mailboxUiItem)) {
+            mailboxUiItem.recipients
+        } else {
+            mailboxUiItem.senderName
+        }
     }
 
     private fun getIconForMessageLocation(messageLocation: Constants.MessageLocationType) = when (messageLocation) {
