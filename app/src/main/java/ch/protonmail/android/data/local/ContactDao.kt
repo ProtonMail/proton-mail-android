@@ -239,7 +239,10 @@ interface ContactDao {
     fun findAllMessageRecipients(): Flowable<List<MessageRecipient>>
 
     @Query("DELETE FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_EMAIL = :email")
-    fun clearByEmail(email: String)
+    suspend fun clearByEmail(email: String)
+
+    @Query("DELETE FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_EMAIL = :email")
+    fun clearByEmailBlocking(email: String)
 
     @Query("DELETE FROM $TABLE_CONTACT_EMAILS")
     fun clearContactEmailsCache()

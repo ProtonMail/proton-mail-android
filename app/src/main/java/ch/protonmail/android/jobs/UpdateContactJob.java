@@ -72,7 +72,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             @NonNull List<ContactEmail> contactEmails,
             String encryptedData,
             String signedData,
-            HashMap<ContactEmail, List<ContactLabel>> mapEmailGroupsIds
+            Map<ContactEmail, List<ContactLabel>> mapEmailGroupsIds
     ) {
         super(new Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT));
         mContactId = contactId;
@@ -152,7 +152,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
 
         for (ContactEmail email : contactEmails) {
             final String emailToClear = email.getEmail();
-            mContactDao.clearByEmail(emailToClear);
+            mContactDao.clearByEmailBlocking(emailToClear);
         }
         mContactDao.saveAllContactsEmailsBlocking(contactEmails);
         Map<ContactLabel, List<String>> mapContactGroupContactEmails = new HashMap<>();

@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.contacts.details.edit
 
-import android.annotation.SuppressLint
 import android.text.TextUtils
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -28,8 +27,6 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import ch.protonmail.android.R
-import ch.protonmail.android.api.rx.ThreadSchedulers
-import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.contacts.details.ContactDetailsViewModel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
@@ -47,7 +44,6 @@ import ezvcard.VCard
 import ezvcard.VCardVersion
 import ezvcard.property.Anniversary
 import ezvcard.property.Birthday
-import ezvcard.property.Email
 import ezvcard.property.Gender
 import ezvcard.property.Key
 import ezvcard.property.Nickname
@@ -60,15 +56,11 @@ import ezvcard.property.Role
 import ezvcard.property.Title
 import ezvcard.property.Uid
 import ezvcard.property.Url
-import io.reactivex.Observable
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
-import java.util.ArrayList
+import timber.log.Timber
 import java.util.UUID
 
 const val FLOW_NEW_CONTACT = 1
@@ -122,7 +114,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
     private lateinit var _contactId: String
     private var _localContact: LocalContact? = null
     private lateinit var _email: String
-    private var _flow: Int = 0
+    private var flowType: Int = 0
     private var _changed: Boolean = false
     private lateinit var _vCardPhoneUIOptions: List<String>
     private lateinit var _vCardPhoneOptions: List<String>
@@ -140,7 +132,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
     private var _vCardCustomProperties: List<RawProperty>? = null
     private lateinit var _vCardSigned: VCard
     private lateinit var _vCardEncrypted: VCard
-    private lateinit var _mapEmailGroupsIds: HashMap<ContactEmail, List<ContactLabel>>
+    private lateinit var _mapEmailGroupsIds: Map<ContactEmail, List<ContactLabel>>
 
     // endregion
     // region default options
@@ -161,6 +153,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         get() = _vCardAddressUIOptions[0]
     val defaultOtherOption: String
         get() = _vCardOtherOptions[0]
+
     // endregion
     //region options lists
     val emailOptions: List<String>
@@ -178,16 +171,20 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         get() = _vCardAddressUIOptions
     val otherOptions: List<String>
         get() = _vCardOtherOptions
+
     // endregion
     // region others
     val localContact: LocalContact?
         get() = _localContact
     val contactId: String
         get() = _contactId
+
     private fun postSetupFlowEvent() {
-        when (_flow) {
+        when (flowType) {
             FLOW_NEW_CONTACT -> _setupNewContactFlow.postValue(_email)
-            FLOW_EDIT_CONTACT -> _setupEditContactFlow.postValue(EditContactCardsHolder(_vCardType0, _vCardType2, _vCardType3))
+            FLOW_EDIT_CONTACT -> _setupEditContactFlow.postValue(
+                EditContactCardsHolder(_vCardType0, _vCardType2, _vCardType3)
+            )
             FLOW_CONVERT_CONTACT -> _setupConvertContactFlow.postValue(null)
         }
     }
@@ -210,7 +207,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         vCardStringType2: String?,
         vCardStringType3: String?
     ) {
-        _flow = flow
+        flowType = flow
         _contactId = contactId
         _localContact = localContact
         _email = email
@@ -227,7 +224,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
             _freeUserEvent.postValue(null)
         }
         postSetupFlowEvent()
-        if (_flow == FLOW_EDIT_CONTACT) {
+        if (flowType == FLOW_EDIT_CONTACT) {
             fetchContactGroupsAndContactEmails(_contactId)
         }
     }
@@ -270,7 +267,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         _vCardCustomProperties = _vCardType3.extendedProperties
     }
 
-    fun isConvertContactFlow(): Boolean = _flow == FLOW_CONVERT_CONTACT
+    fun isConvertContactFlow(): Boolean = flowType == FLOW_CONVERT_CONTACT
 
     // endregion
     // region card properties
@@ -306,25 +303,26 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         return vCardSigned
     }
 
-    fun save(emailsToBeRemoved: List<String>, contactName: String, _emails: List<ContactEmail>) {
-        val emails = validateEmails(_emails)
-        val emailFromVCard = ArrayList<Email>()
-        emailFromVCard.addAll(_vCardSigned.emails)
-        _vCardSigned.emails.removeAll(emailFromVCard)
-        _vCardSigned.emails.addAll(emailFromVCard.distinctBy { it.value })
-        GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-            withContext(Dispatchers.Default) {
-                emailsToBeRemoved.forEach {
-                    editContactDetailsRepository.clearEmail(it)
+    fun save(emailsToBeRemoved: List<String>, contactName: String, emailsList: List<ContactEmail>) {
+        Timber.v("Save contactName: $contactName")
+        viewModelScope.launch {
+            val emails = validateEmails(emailsList)
+            val uniqueEmails = _vCardSigned.emails.toSet()
+            _vCardSigned.emails.clear()
+            _vCardSigned.emails.addAll(uniqueEmails)
+            emailsToBeRemoved.forEach {
+                editContactDetailsRepository.clearEmail(it)
+            }
+
+            when (flowType) {
+                FLOW_EDIT_CONTACT -> {
+                    val mapEmailGroupsIds = getContactGroupsForEmailsList(allContactEmails, allContactGroups)
+                    editContactDetailsRepository.updateContact(
+                        _contactId, contactName, emails, _vCardEncrypted, _vCardSigned, mapEmailGroupsIds
+                    )
                 }
-            }
-        }
-        when (_flow) {
-            FLOW_EDIT_CONTACT -> {
-                editContactDetailsRepository.updateContact(_contactId, contactName, emails, _vCardEncrypted, _vCardSigned, _mapEmailGroupsIds)
-            }
-            FLOW_CONVERT_CONTACT, FLOW_NEW_CONTACT -> {
-                viewModelScope.launch(dispatchers.Main) {
+                FLOW_CONVERT_CONTACT,
+                FLOW_NEW_CONTACT -> {
                     createContact(contactName, emails, _vCardEncrypted.write(), _vCardSigned.write())
                         .observeForever { result: CreateContact.Result ->
                             val resultMessage = getMessageForResult(result)
@@ -359,29 +357,24 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         _changed = false
     }
 
-    @SuppressLint("CheckResult")
     fun fetchContactGroupsForEmails() {
-        Observable.just(allContactEmails)
-            .flatMap {
-                _mapEmailGroupsIds = HashMap()
-                Observable.fromIterable(it)
-                    .map { email ->
-                        val groupsForThisEmail = allContactGroups.filter { group ->
-                            email.labelIds?.contains(group.ID) ?: false
-                        }
-                        _mapEmailGroupsIds[email] = groupsForThisEmail
-                    }
+        viewModelScope.launch {
+            _mapEmailGroupsIds = getContactGroupsForEmailsList(allContactEmails, allContactGroups)
+        }
+    }
+
+    private suspend fun getContactGroupsForEmailsList(
+        contactEmails: List<ContactEmail>,
+        contactGroups: List<ContactLabel>
+    ): Map<ContactEmail, List<ContactLabel>> = withContext(dispatchers.Comp) {
+        val contactsMap = mutableMapOf<ContactEmail, List<ContactLabel>>()
+        contactEmails.map { contactEmail ->
+            val groupsForThisEmail = contactGroups.filter { group ->
+                contactEmail.labelIds?.contains(group.ID) ?: false
             }
-            .subscribeOn(ThreadSchedulers.main())
-            .observeOn(ThreadSchedulers.main())
-            .subscribe(
-                {
-                    val size = _mapEmailGroupsIds.size
-                },
-                {
-                    ParseUtils.doOnError(it)
-                }
-            )
+            contactsMap[contactEmail] = groupsForThisEmail
+        }
+        return@withContext contactsMap
     }
 
     private fun validateEmails(emails: List<ContactEmail>): List<ContactEmail> = emails.distinctBy { it.email }

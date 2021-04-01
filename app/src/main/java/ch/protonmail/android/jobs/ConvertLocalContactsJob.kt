@@ -100,11 +100,13 @@ class ConvertLocalContactsJob(
             for (contactItem in mLocalContacts) {
 
                 val c = ProtonMailApplication.getApplication()
-                        .contentResolver
-                        .query(ContactsContract.Data.CONTENT_URI,
-                                AndroidContactDetailsRepository.ANDROID_DETAILS_PROJECTION,
-                                AndroidContactDetailsRepository.ANDROID_DETAILS_SELECTION,
-                                arrayOf(contactItem.id), null) ?: continue
+                    .contentResolver
+                    .query(
+                        ContactsContract.Data.CONTENT_URI,
+                        AndroidContactDetailsRepository.ANDROID_DETAILS_PROJECTION,
+                        AndroidContactDetailsRepository.ANDROID_DETAILS_SELECTION,
+                        arrayOf(contactItem.id), null
+                    ) ?: continue
 
                 val localContact = createLocalContact(c, contactsGroups)
                 c.close()
@@ -119,8 +121,10 @@ class ConvertLocalContactsJob(
                 vCard.uid = Uid("proton-android-" + UUID.randomUUID().toString())
                 vCard.setFormattedName(contactItem.name)
 
-                val contactData = ContactData(ContactData.generateRandomContactId(),
-                        contactItem.name)
+                val contactData = ContactData(
+                    ContactData.generateRandomContactId(),
+                    contactItem.name
+                )
 
                 val dbId = contactsDatabase.saveContactData(contactData)
                 var emailGroupCounter = 1
@@ -136,8 +140,10 @@ class ConvertLocalContactsJob(
                 }
                 for (address in localContact.addresses) {
                     val isEmpty = TextUtils.isEmpty(address.street) && TextUtils.isEmpty(
-                            address.city) && TextUtils.isEmpty(
-                            address.region) && TextUtils.isEmpty(address.postcode) && TextUtils.isEmpty(address.country)
+                        address.city
+                    ) && TextUtils.isEmpty(
+                        address.region
+                    ) && TextUtils.isEmpty(address.postcode) && TextUtils.isEmpty(address.country)
                     if (!isEmpty) {
                         val vCardAddress = Address()
                         vCardAddress.streetAddress = address.street
@@ -156,7 +162,8 @@ class ConvertLocalContactsJob(
                 val encryptedData = crypto.encrypt(vCardEncryptedData, false)
                 val encryptDataSignature = crypto.sign(vCardEncryptedData)
                 val contactEncryptedDataType3 = ContactEncryptedData(
-                        encryptedData.armored, encryptDataSignature, Constants.VCardType.SIGNED_ENCRYPTED)
+                    encryptedData.armored, encryptDataSignature, Constants.VCardType.SIGNED_ENCRYPTED
+                )
 
                 val contactEncryptedDataList = ArrayList<ContactEncryptedData>()
                 contactEncryptedDataList.add(contactEncryptedDataType2)
@@ -177,8 +184,12 @@ class ConvertLocalContactsJob(
         if (executionResults.isEmpty()) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.SUCCESS, false))
         } else {
-            AppUtil.postEventOnUi(ContactEvent(ContactEvent.NOT_ALL_SYNC, false,
-                    executionResults))
+            AppUtil.postEventOnUi(
+                ContactEvent(
+                    ContactEvent.NOT_ALL_SYNC, false,
+                    executionResults
+                )
+            )
         }
     }
 
@@ -196,16 +207,21 @@ class ConvertLocalContactsJob(
                 }
                 ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE -> {
                     name = data.getString(
-                            data.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                    emails.add(data.getString(
-                            data.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)))
+                        data.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
+                    )
+                    emails.add(
+                        data.getString(
+                            data.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)
+                        )
+                    )
                 }
                 StructuredPostal.CONTENT_ITEM_TYPE -> {
                     val street = data.getString(data.getColumnIndex(StructuredPostal.STREET))
                     val city = data.getString(data.getColumnIndex(StructuredPostal.CITY))
                     val region = data.getString(data.getColumnIndex(StructuredPostal.REGION))
                     val postcode = data.getString(
-                            data.getColumnIndex(StructuredPostal.POSTCODE))
+                        data.getColumnIndex(StructuredPostal.POSTCODE)
+                    )
                     val country = data.getString(data.getColumnIndex(StructuredPostal.COUNTRY))
                     addresses.add(LocalContactAddress(street, city, region, postcode, country))
                 }
@@ -226,11 +242,12 @@ class ConvertLocalContactsJob(
         val groups = mutableMapOf<Long, String>()
 
         val groupsCursor = ProtonMailApplication.getApplication().contentResolver.query(
-                ContactsContract.Groups.CONTENT_URI,
-                arrayOf(ContactsContract.Groups._ID, ContactsContract.Groups.TITLE),
-                String.format("%s = 0", ContactsContract.Groups.GROUP_VISIBLE),
-                null,
-                null)
+            ContactsContract.Groups.CONTENT_URI,
+            arrayOf(ContactsContract.Groups._ID, ContactsContract.Groups.TITLE),
+            String.format("%s = 0", ContactsContract.Groups.GROUP_VISIBLE),
+            null,
+            null
+        )
 
         groupsCursor?.use {
             it.moveToFirst()
@@ -267,10 +284,10 @@ class ConvertLocalContactsJob(
 
         if (someGroupsAlreadyExist) { // at least one local group already exist on server, we fetch all of them to get IDs
             val serverGroups = getApi().fetchContactGroups()
-                    .map { it.contactGroups }
-                    .subscribeOn(ThreadSchedulers.io())
-                    .observeOn(ThreadSchedulers.io())
-                    .blockingGet()
+                .map { it.contactGroups }
+                .subscribeOn(ThreadSchedulers.io())
+                .observeOn(ThreadSchedulers.io())
+                .blockingGet()
 
             localGroups.filterNot { result.containsKey(it.value) }.forEach { localGroupEntry ->
                 serverGroups.find { it.name == localGroupEntry.value }?.run {
@@ -293,7 +310,8 @@ class ConvertLocalContactsJob(
         val previousContactData = contactDao.findContactDataByDbId(contactDataDbId)
         if (remoteContactId != "") {
             val contactEmails = contactDao.findContactEmailsByContactId(
-                    previousContactData!!.contactId!!)
+                previousContactData!!.contactId!!
+            )
             previousContactData.contactId = remoteContactId
             contactDao.saveContactData(previousContactData)
             contactDao.deleteAllContactsEmails(contactEmails)
@@ -304,14 +322,14 @@ class ConvertLocalContactsJob(
                 contactGroupIds.forEach { contactGroupId ->
                     val emailsList = contact.emails!!.map { it.contactEmailId }
                     getApi().labelContacts(LabelContactsBody(contactGroupId, emailsList))
-                            .doOnComplete {
-                                val joins = contactDao.fetchJoinsBlocking(contactGroupId) as ArrayList
-                                for (contactEmail in emailsList) {
-                                    joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
-                                }
-                                contactDao.saveContactEmailContactLabelBlocking(joins)
+                        .doOnComplete {
+                            val joins = contactDao.fetchJoinsBlocking(contactGroupId) as ArrayList
+                            for (contactEmail in emailsList) {
+                                joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                             }
-                            .blockingAwait()
+                            contactDao.saveContactEmailContactLabelBlocking(joins)
+                        }
+                        .blockingAwait()
                 }
             }
             return ContactEvent.SUCCESS
@@ -319,7 +337,8 @@ class ConvertLocalContactsJob(
             contactDao.deleteContactData(previousContactData!!)
             return ContactEvent.ALREADY_EXIST
         } else if (response.responseErrorCode == RESPONSE_CODE_ERROR_INVALID_EMAIL || response
-                        .responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED) {
+            .responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED
+        ) {
             contactDao.deleteContactData(previousContactData!!)
             return ContactEvent.INVALID_EMAIL
         } else if (response.responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED) {
