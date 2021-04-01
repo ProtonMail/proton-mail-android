@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.usecase.create
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
@@ -39,14 +40,21 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import me.proton.core.util.kotlin.DispatcherProvider
+import okio.buffer
+import okio.sink
+import java.io.File
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
+
+private const val VCARD_TEMP_FILE_NAME = "temp_card.vcard"
 
 class CreateContact @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val contactsRepository: ContactDetailsRepository,
     private val createContactScheduler: Enqueuer,
     private val contactIdGenerator: ContactIdGenerator,
-    private val connectivityManager: NetworkConnectivityManager
+    private val connectivityManager: NetworkConnectivityManager,
+    private val context: Context
 ) {
 
     suspend operator fun invoke(
@@ -64,7 +72,18 @@ class CreateContact @Inject constructor(
             contactEmails.forEach { it.contactId = contactData.contactId }
             contactsRepository.saveContactEmails(contactEmails)
 
-            createContactScheduler.enqueue(encryptedContactData, signedContactData)
+            // we have to save encrypted vCard to a file due to worker arguments size limitations
+            // they are limited to 10240 bytes, if it is exceeded we get
+            // IllegalStateException: Data cannot occupy more than 10240 bytes when serialized
+            // but if we add an image to a contact we exceed this value
+            // therefore we will just pass to the worker a cached file path
+            val vCardPath = context.cacheDir.toString() + VCARD_TEMP_FILE_NAME
+            val vCardFile = File(vCardPath)
+            vCardFile.sink().buffer().use { sink ->
+                sink.writeString(encryptedContactData, StandardCharsets.UTF_8)
+            }
+
+            createContactScheduler.enqueue(vCardPath, signedContactData)
                 .filter { it?.state?.isFinished == true || it?.state == WorkInfo.State.ENQUEUED }
                 .switchMap { workInfo: WorkInfo? ->
                     liveData(dispatcherProvider.Io) {

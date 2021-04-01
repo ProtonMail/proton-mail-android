@@ -93,7 +93,7 @@ class CreateContactWorkerTest {
 
         val constraints = requestSlot.captured.workSpec.constraints
         val inputData = requestSlot.captured.workSpec.input
-        val actualEncryptedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA)
+        val actualEncryptedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA_PATH)
         val actualSignedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA)
         assertEquals(encryptedData, actualEncryptedData)
         assertEquals(signedData, actualSignedData)
@@ -237,7 +237,7 @@ class CreateContactWorkerTest {
     }
 
     private fun givenEncryptedContactDataParamsIsValid(encryptedContactData: String? = "encrypted-data") {
-        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA) } answers { encryptedContactData!! }
+        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA_PATH) } answers { encryptedContactData!! }
     }
 
     private fun givenSignedContactDataParamsIsValid(signedContactData: String? = "signed-data") {
