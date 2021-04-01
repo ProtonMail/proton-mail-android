@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -140,8 +140,11 @@ interface ContactsDatabase {
     @Query("SELECT ${TABLE_CONTACT_DATA}.${COLUMN_CONTACT_DATA_NAME},${TABLE_CONTACT_EMAILS}.${COLUMN_CONTACT_EMAILS_EMAIL} FROM $TABLE_CONTACT_DATA JOIN $TABLE_CONTACT_EMAILS ON ${TABLE_CONTACT_DATA}.${COLUMN_CONTACT_DATA_ID}=${TABLE_CONTACT_EMAILS}.${COLUMN_CONTACT_EMAILS_CONTACT_ID}")
     fun findAllMessageRecipients(): Flowable<List<MessageRecipient>>
 
-    @Query("DELETE FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_EMAIL=:email")
-    fun clearByEmail(email: String)
+    @Query("DELETE FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_EMAIL = :email")
+    suspend fun clearByEmail(email: String)
+
+    @Query("DELETE FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_EMAIL = :email")
+    fun clearByEmailBlocking(email: String)
 
     @Query("DELETE FROM $TABLE_CONTACT_EMAILS")
     fun clearContactEmailsCacheBlocking()

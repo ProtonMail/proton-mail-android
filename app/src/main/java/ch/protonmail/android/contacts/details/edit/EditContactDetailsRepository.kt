@@ -35,16 +35,27 @@ class EditContactDetailsRepository @Inject constructor(
     jobManager: JobManager,
     api: ProtonMailApiManager,
     dispatcherProvider: DispatcherProvider,
-    contactsDao: ContactsDao) : ContactDetailsRepository(workManager, jobManager, api, contactsDao, dispatcherProvider) {
+    contactsDao: ContactsDao
+) : ContactDetailsRepository(workManager, jobManager, api, contactsDao, dispatcherProvider) {
 
-    fun clearEmail(email: String) {
+    suspend fun clearEmail(email: String) {
         contactsDao.clearByEmail(email)
     }
 
-    fun updateContact(contactId: String, contactName: String, emails: List<ContactEmail>,
-                      vCardEncrypted: VCard, vCardSigned: VCard, mapEmailGroupsIds: HashMap<ContactEmail, List<ContactLabel>>) {
-        jobManager.addJobInBackground(UpdateContactJob(contactId, contactName, emails, vCardEncrypted.write(),
-            vCardSigned.write(), mapEmailGroupsIds))
+    fun updateContact(
+        contactId: String,
+        contactName: String,
+        emails: List<ContactEmail>,
+        vCardEncrypted: VCard,
+        vCardSigned: VCard,
+        mapEmailGroupsIds: Map<ContactEmail, List<ContactLabel>>
+    ) {
+        jobManager.addJobInBackground(
+            UpdateContactJob(
+                contactId, contactName, emails, vCardEncrypted.write(),
+                vCardSigned.write(), mapEmailGroupsIds
+            )
+        )
     }
 
 }
