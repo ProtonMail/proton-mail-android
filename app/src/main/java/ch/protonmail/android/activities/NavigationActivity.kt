@@ -146,8 +146,10 @@ abstract class NavigationActivity :
 
     @Inject
     lateinit var accountManager: AccountManager
+
     @Inject
     lateinit var databaseProvider: DatabaseProvider
+
     @Inject
     lateinit var userManager: UserManager
 
@@ -296,7 +298,7 @@ abstract class NavigationActivity :
         )
         drawerLayout.setStatusBarBackgroundColor(
             UiUtil.scaleColor(
-                getColor(R.color.dark_purple),
+                ContextCompat.getColor(this, R.color.dark_purple),
                 0.6f,
                 true
             )
@@ -351,25 +353,28 @@ abstract class NavigationActivity :
     protected fun setupAccountsList() {
         navigationViewModel.reloadDependencies()
         navigationViewModel.notificationsCounts()
-        navigationViewModel.notificationsCounterLiveData.observe(this, { counters ->
+        navigationViewModel.notificationsCounterLiveData.observe(
+            this,
+            { counters ->
 
-            val currentUser = userManager.currentUserId
-            lifecycleScope.launchWhenCreated {
+                val currentUser = userManager.currentUserId
+                lifecycleScope.launchWhenCreated {
 
-                val allUsers = accountManager.allLoggedIn().map { it to true } +
-                    accountManager.allLoggedOut().map { it to false }
+                    val allUsers = accountManager.allLoggedIn().map { it to true } +
+                        accountManager.allLoggedOut().map { it to false }
 
-                val accounts = allUsers
-                    // Current user as first position, then logged in first
-                    .sortedByDescending { it.first == currentUser && it.second }
-                    .map { (id, loggedIn) ->
-                        val user = userManager.getUser(id)
-                        user.toDrawerUser(loggedIn, counters[id] ?: 0)
-                    }
+                    val accounts = allUsers
+                        // Current user as first position, then logged in first
+                        .sortedByDescending { it.first == currentUser && it.second }
+                        .map { (id, loggedIn) ->
+                            val user = userManager.getUser(id)
+                            user.toDrawerUser(loggedIn, counters[id] ?: 0)
+                        }
 
-                accountsAdapter.items = accounts + DrawerUserModel.Footer
+                    accountsAdapter.items = accounts + DrawerUserModel.Footer
+                }
             }
-        })
+        )
     }
 
     private fun User.toDrawerUser(loggedIn: Boolean, notificationsCount: Int): DrawerUserModel.BaseUser.DrawerUser {
