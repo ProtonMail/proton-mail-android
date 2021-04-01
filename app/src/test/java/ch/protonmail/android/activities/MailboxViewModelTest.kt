@@ -138,8 +138,6 @@ class MailboxViewModelTest : CoroutinesTest {
                 isReplied = false,
                 isRepliedAll = false,
                 isForwarded = false,
-                isBeingSent = false,
-                isAttachmentsBeingUploaded = false,
                 isInline = false
             )
         )
@@ -189,8 +187,6 @@ class MailboxViewModelTest : CoroutinesTest {
                 isReplied = false,
                 isRepliedAll = false,
                 isForwarded = false,
-                isBeingSent = false,
-                isAttachmentsBeingUploaded = false,
                 isInline = false
             )
         )
@@ -237,8 +233,6 @@ class MailboxViewModelTest : CoroutinesTest {
                 isReplied = false,
                 isRepliedAll = false,
                 isForwarded = false,
-                isBeingSent = false,
-                isAttachmentsBeingUploaded = false,
                 isInline = false
             )
         )
@@ -284,8 +278,6 @@ class MailboxViewModelTest : CoroutinesTest {
                 isReplied = false,
                 isRepliedAll = false,
                 isForwarded = false,
-                isBeingSent = false,
-                isAttachmentsBeingUploaded = false,
                 isInline = false
             )
         )
@@ -314,8 +306,6 @@ class MailboxViewModelTest : CoroutinesTest {
                 isReplied = true
                 isRepliedAll = false
                 isForwarded = false
-                isBeingSent = false
-                isAttachmentsBeingUploaded = false
                 isInline = false
             }
         )
@@ -348,8 +338,6 @@ class MailboxViewModelTest : CoroutinesTest {
                 isReplied = true,
                 isRepliedAll = false,
                 isForwarded = false,
-                isBeingSent = false,
-                isAttachmentsBeingUploaded = false,
                 isInline = false
             )
         )

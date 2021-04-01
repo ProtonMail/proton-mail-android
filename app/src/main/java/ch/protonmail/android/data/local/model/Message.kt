@@ -127,7 +127,6 @@ data class Message @JvmOverloads constructor(
     @ColumnInfo(name = COLUMN_MESSAGE_NUM_ATTACHMENTS)
     var numAttachments: Int = 0,
 
-    // TODO merge methods
     @ColumnInfo(name = COLUMN_MESSAGE_IS_ENCRYPTED)
     var messageEncryption: MessageEncryption? = null,
 
@@ -286,25 +285,21 @@ data class Message @JvmOverloads constructor(
                         Constants.MessageLocationType.STARRED,
                         Constants.MessageLocationType.ALL_MAIL,
                         Constants.MessageLocationType.INVALID
-                    ) && newLocation.messageLocationTypeValue < location.messageLocationTypeValue) {
+                    ) && newLocation.messageLocationTypeValue < location.messageLocationTypeValue
+                ) {
                     newLocation
 
                 } else if (newLocation in listOf(
                         Constants.MessageLocationType.DRAFT,
                         Constants.MessageLocationType.SENT
-                    )) {
+                    )
+                ) {
                     newLocation
 
                 } else {
                     location
                 }
             }
-
-    @Ignore
-    var isBeingSent: Boolean = false
-
-    @Ignore
-    var isAttachmentsBeingUploaded: Boolean = false
 
     val isSent: Boolean
         get() {

@@ -158,14 +158,18 @@ class MessagesRecyclerViewAdapter(
         val mailboxItem = mailboxItems[position]
         val messageLabels = mailboxItem.labelIds.mapNotNull { labels[it] }
 
-//        val pendingSend = pendingSendList?.find { it.messageId == mailboxItem.itemId }
-//        mailboxItem.isBeingSent = pendingSend != null && pendingSend.sent == null
-//        mailboxItem.isAttachmentsBeingUploaded = pendingUploadList?.find { it.messageId == mailboxItem.messageId } != null
+        val pendingSend = pendingSendList?.find { it.messageId == mailboxItem.itemId }
+        val isBeingSent = pendingSend != null && pendingSend.sent == null
+        val isAttachmentsBeingUploaded = pendingUploadList?.find { it.messageId == mailboxItem.itemId } != null
 
-        this.view.bind(mailboxItem, messageLabels, selectedMessageIds.isNotEmpty(), mMailboxLocation)
-
-        val isSelected = selectedMessageIds.contains(message.messageId)
-        this.view.checkImageView.isActivated = isSelected
+        this.view.bind(
+            mailboxItem,
+            messageLabels,
+            selectedMessageIds.isNotEmpty(),
+            mMailboxLocation,
+            isBeingSent,
+            isAttachmentsBeingUploaded
+        )
 
         this.view.tag = mailboxItem.itemId
         this.view.senderInitialView.tag = mailboxItem.itemId

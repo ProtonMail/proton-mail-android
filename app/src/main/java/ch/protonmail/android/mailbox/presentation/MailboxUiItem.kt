@@ -40,7 +40,5 @@ data class MessageData(
     val isReplied: Boolean,
     val isRepliedAll: Boolean,
     val isForwarded: Boolean,
-    val isBeingSent: Boolean,
-    val isAttachmentsBeingUploaded: Boolean,
     val isInline: Boolean
 )

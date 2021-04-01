@@ -165,8 +165,6 @@ public class SearchActivity extends BaseActivity {
                     message.isReplied() != null ? message.isReplied() : false,
                     message.isRepliedAll() != null ? message.isRepliedAll() : false,
                     message.isForwarded() != null ? message.isForwarded() : false,
-                    message.isBeingSent(),
-                    message.isAttachmentsBeingUploaded(),
                     message.isInline());
 
             String senderName = message.getSenderEmail();

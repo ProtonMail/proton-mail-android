@@ -112,7 +112,9 @@ class MessagesListItemView constructor(
         mailboxUiItem: MailboxUiItem,
         labels: List<Label>,
         isMultiSelectionMode: Boolean,
-        mailboxLocation: Constants.MessageLocationType
+        mailboxLocation: Constants.MessageLocationType,
+        isBeingSent: Boolean,
+        isAttachmentsBeingUploaded: Boolean
     ) {
         val readStatus = mailboxUiItem.isRead
         val messageLocation = Constants.MessageLocationType.fromInt(mailboxUiItem.messageData?.location)

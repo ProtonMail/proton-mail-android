@@ -209,8 +209,6 @@ class MailboxViewModel @Inject constructor(
                         message.isReplied ?: false,
                         message.isRepliedAll ?: false,
                         message.isForwarded ?: false,
-                        message.isBeingSent,
-                        message.isAttachmentsBeingUploaded,
                         message.isInline,
                     )
 
