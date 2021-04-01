@@ -30,6 +30,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.ContactIdGenerator
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors
 import ch.protonmail.android.worker.CreateContactWorker.Enqueuer
@@ -46,7 +47,7 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
-private const val VCARD_TEMP_FILE_NAME = "temp_card.vcard"
+internal const val VCARD_TEMP_FILE_NAME = "temp_card.vcard"
 
 class CreateContact @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
@@ -54,7 +55,8 @@ class CreateContact @Inject constructor(
     private val createContactScheduler: Enqueuer,
     private val contactIdGenerator: ContactIdGenerator,
     private val connectivityManager: NetworkConnectivityManager,
-    private val context: Context
+    private val context: Context,
+    private val fileHelper: FileHelper
 ) {
 
     suspend operator fun invoke(
@@ -77,13 +79,10 @@ class CreateContact @Inject constructor(
             // IllegalStateException: Data cannot occupy more than 10240 bytes when serialized
             // but if we add an image to a contact we exceed this value
             // therefore we will just pass to the worker a cached file path
-            val vCardPath = context.cacheDir.toString() + VCARD_TEMP_FILE_NAME
-            val vCardFile = File(vCardPath)
-            vCardFile.sink().buffer().use { sink ->
-                sink.writeString(encryptedContactData, StandardCharsets.UTF_8)
-            }
+            val vCardFilePath = context.cacheDir.toString() + VCARD_TEMP_FILE_NAME
+            fileHelper.saveStringToFile(vCardFilePath, encryptedContactData)
 
-            createContactScheduler.enqueue(vCardPath, signedContactData)
+            createContactScheduler.enqueue(vCardFilePath, signedContactData)
                 .filter { it?.state?.isFinished == true || it?.state == WorkInfo.State.ENQUEUED }
                 .switchMap { workInfo: WorkInfo? ->
                     liveData(dispatcherProvider.Io) {
@@ -98,6 +97,18 @@ class CreateContact @Inject constructor(
                 }
         }
 
+    }
+
+    /**
+     *  Saves string data to a file and returns file path.
+     */
+    private fun saveCardDataToFile(encryptedContactData: String): String {
+        val vCardPath = context.cacheDir.toString() + VCARD_TEMP_FILE_NAME
+        val vCardFile = File(vCardPath)
+        vCardFile.sink().buffer().use { sink ->
+            sink.writeString(encryptedContactData, StandardCharsets.UTF_8)
+        }
+        return vCardPath
     }
 
     private suspend fun handleWorkResult(workInfo: WorkInfo, contactData: ContactData): Result {
