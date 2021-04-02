@@ -45,6 +45,8 @@ import ch.protonmail.android.api.segments.report.ReportApi
 import ch.protonmail.android.api.segments.report.ReportApiSpec
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApi
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
+import ch.protonmail.android.mailbox.data.remote.ConversationApi
+import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
 import javax.inject.Inject
 
 /**
@@ -57,6 +59,7 @@ class ProtonMailApi private constructor(
     private val deviceApi: DeviceApiSpec,
     private val keyApi: KeyApiSpec,
     private val messageApi: MessageApiSpec,
+    private val conversationApi: ConversationApiSpec,
     private val labelApi: LabelApiSpec,
     private val organizationApi: OrganizationApiSpec,
     private val paymentApi: PaymentApiSpec,
@@ -72,6 +75,7 @@ class ProtonMailApi private constructor(
     KeyApiSpec by keyApi,
     LabelApiSpec by labelApi,
     MessageApiSpec by messageApi,
+    ConversationApiSpec by conversationApi,
     OrganizationApiSpec by organizationApi,
     PaymentApiSpec by paymentApi,
     ReportApiSpec by reportApi,
@@ -90,12 +94,13 @@ class ProtonMailApi private constructor(
         params[3] as DeviceApiSpec,
         params[4] as KeyApiSpec,
         params[5] as MessageApi,
-        params[6] as LabelApiSpec,
-        params[7] as OrganizationApiSpec,
-        params[8] as PaymentApiSpec,
-        params[9] as ReportApiSpec,
-        params[10] as MailSettingsApiSpec,
-        params[11] as SecuredServices
+        params[6] as ConversationApi,
+        params[7] as LabelApiSpec,
+        params[8] as OrganizationApiSpec,
+        params[9] as PaymentApiSpec,
+        params[10] as ReportApiSpec,
+        params[11] as MailSettingsApiSpec,
+        params[12] as SecuredServices
         // endregion
     )
 
@@ -121,6 +126,7 @@ class ProtonMailApi private constructor(
             val deviceApi = DeviceApi(services.device)
             val keyApi = KeyApi(services.key)
             val messageApi = MessageApi(services.message)
+            val conversationApi = ConversationApi(services.conversation)
             val labelApi = LabelApi(services.label)
             val organizationApi = OrganizationApi(services.organization)
             val paymentApi = PaymentApi(services.payment, paymentPubService)
@@ -134,6 +140,7 @@ class ProtonMailApi private constructor(
                 deviceApi,
                 keyApi,
                 messageApi,
+                conversationApi,
                 labelApi,
                 organizationApi,
                 paymentApi,

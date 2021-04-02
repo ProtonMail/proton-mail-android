@@ -372,4 +372,22 @@ object Fields {
         const val SWIPE_RIGHT = "SwipeRight"
         const val SWIPE_LEFT = "SwipeLeft"
     }
+
+    object Conversation {
+        const val TOTAL = "Total"
+        const val CONVERSATIONS = "Conversations"
+        const val ID = "ID"
+        const val ORDER = "Order"
+        const val SUBJECT = "Subject"
+        const val SENDERS = "Senders"
+        const val RECIPIENTS = "Recipients"
+        const val NUM_MESSAGES = "NumMessages"
+        const val NUM_UNREAD = "NumUnread"
+        const val NUM_ATTACHMENTS = "NumAttachments"
+        const val EXPIRATION_TIME = "ExpirationTime"
+        const val ADDRESS_ID = "AddressID"
+        const val SIZE = "Size"
+        const val LABEL_IDS = "LabelIDs"
+        const val LABELS = "Labels"
+    }
 }
