@@ -21,9 +21,19 @@ package ch.protonmail.android.mailbox.domain.model
 
 import ch.protonmail.android.core.Constants
 
-data class GetConversationsParameters(
-    val location: Constants.MessageLocationType,
-    val page: Int? = 0,
-    val pageSize: Int? = 50,
-    val labelId: String? = null
-)
+sealed class Parameters(
+    location: Constants.MessageLocationType,
+    page: Int?,
+    pageSize: Int?,
+    labelId: String?
+) {
+
+    data class GetConversationsParameters(
+        val userId: String,
+        val location: Constants.MessageLocationType,
+        val page: Int? = 0,
+        val pageSize: Int? = 50,
+        val labelId: String? = null
+    ) : Parameters(location, page, pageSize, labelId)
+
+}
