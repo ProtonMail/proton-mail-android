@@ -28,20 +28,34 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessagesTypesConverter
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mailbox.data.local.ConversationDao
+import ch.protonmail.android.mailbox.data.local.model.ConversationEntity
 
 @Database(
-	entities = [Attachment::class, Message::class, Label::class],
-	version = 8
+	entities = [
+		Attachment::class,
+		Message::class,
+		Label::class,
+		ConversationEntity::class
+	],
+	version = 9
 )
-@TypeConverters(value = [MessagesTypesConverter::class, AttachmentTypesConverter::class])
+@TypeConverters(
+	value = [
+		MessagesTypesConverter::class,
+		AttachmentTypesConverter::class
+	]
+)
 abstract class MessageDatabase : RoomDatabase() {
 
 	abstract fun getDao(): MessageDao
+	abstract fun getConversationDao(): ConversationDao
 
 	companion object : DatabaseFactory<MessageDatabase>(
 		MessageDatabase::class,
 		"MessagesDatabase.db"
 	) {
+
 		private val searchCache = mutableMapOf<Id, MessageDatabase>()
 
 		@Synchronized
