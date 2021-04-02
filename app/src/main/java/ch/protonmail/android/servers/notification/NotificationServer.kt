@@ -366,7 +366,8 @@ class NotificationServer @Inject constructor(
         // Create Action Intent's
         val archiveIntent = context.buildArchiveIntent(messageId)
         val trashIntent = context.buildTrashIntent(messageId)
-        val replyIntent = if (primaryUser) message?.let { context.buildReplyIntent(message, user, userManager) } else null
+        val replyIntent =
+            if (primaryUser) message?.let { context.buildReplyIntent(message, user, userManager) } else null
 
         // Create Notification Style
         val userDisplayName = user.addresses.primary?.email?.s
@@ -424,7 +425,8 @@ class NotificationServer @Inject constructor(
      * @param notificationBody [String] body of the Notification
      * @param sender [String] name of the sender of the email
      */
-    @Deprecated("Use with new User model", ReplaceWith(
+    @Deprecated(
+        "Use with new User model", ReplaceWith(
         "notifySingleNewEmail(\n" +
             "    userManager,\n" +
             "    user.toNewUser(),\n" +
@@ -437,7 +439,8 @@ class NotificationServer @Inject constructor(
             "    sender,\n" +
             "    primaryUser\n" +
             ")"
-    ))
+    )
+    )
     fun notifySingleNewEmail(
         userManager: UserManager,
         user: LegacyUser,
@@ -514,7 +517,8 @@ class NotificationServer @Inject constructor(
      * @param user current logged [LegacyUser]
      * @param unreadNotifications [List] of [RoomNotification] to show to the user
      */
-    @Deprecated("Use with new User model", ReplaceWith(
+    @Deprecated(
+        "Use with new User model", ReplaceWith(
         "notifyMultipleUnreadEmail(\n" +
             "    userManager,\n" +
             "    user.toNewUser(),\n" +
@@ -523,7 +527,8 @@ class NotificationServer @Inject constructor(
             "    user.isNotificationVisibilityLockScreen,\n" +
             "    unreadNotifications\n" +
             ")"
-    ))
+    )
+    )
     fun notifyMultipleUnreadEmail(
         userManager: UserManager,
         user: LegacyUser,
@@ -552,22 +557,6 @@ class NotificationServer @Inject constructor(
         spannableText.setSpan(StyleSpan(BOLD), 0, title.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
         return spannableText
-    }
-
-    private fun createSpannableBigText(
-        sendingFailedNotifications: List<SendingFailedNotification>
-    ): Spannable {
-        val spannableStringBuilder = SpannableStringBuilder()
-        sendingFailedNotifications.reversed().forEach { sendingFailedNotification ->
-            spannableStringBuilder.append(
-                createSpannableLine(
-                    sendingFailedNotification.messageSubject ?: context.getString(R.string.message_failed),
-                    sendingFailedNotification.errorMessage
-                )
-            )
-                .append("\n")
-        }
-        return spannableStringBuilder.toSpannable()
     }
 
     private fun createGenericErrorSendingMessageNotification(
@@ -631,36 +620,6 @@ class NotificationServer @Inject constructor(
         notifySingleErrorSendingMessage(Id(user.id), Name(user.name), error)
     }
 
-    fun notifyMultipleErrorSendingMessage(
-        unreadSendingFailedNotifications: List<SendingFailedNotification>,
-        user: User
-    ) {
-
-        val notificationTitle = context.getString(R.string.message_sending_failures, unreadSendingFailedNotifications.size)
-
-        // Create Notification Style
-        val bigTextStyle = NotificationCompat.BigTextStyle()
-            .setBigContentTitle(notificationTitle)
-            .setSummaryText(user.addresses.primary?.email?.s ?: user.name.s)
-            .bigText(createSpannableBigText(unreadSendingFailedNotifications))
-
-        // Create notification builder
-        val notificationBuilder = createGenericErrorSendingMessageNotification(user.id)
-            .setStyle(bigTextStyle)
-
-        // Build and show notification
-        val notification = notificationBuilder.build()
-        notificationManager.notify(user.id.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
-    }
-
-    @Deprecated("Use with new user model")
-    fun notifyMultipleErrorSendingMessage(
-        unreadSendingFailedNotifications: List<SendingFailedNotification>,
-        user: LegacyUser
-    ) {
-        notifyMultipleErrorSendingMessage(unreadSendingFailedNotifications, user.toNewUser())
-    }
-
     fun notifySaveDraftError(userId: Id, errorMessage: String, messageSubject: String?, username: Name) {
         val title = context.getString(R.string.failed_saving_draft_online, messageSubject)
 
@@ -692,8 +651,10 @@ private fun Context.buildReplyIntent(
         user.addresses
     )
 
-    val newMessageTitle = MessageUtils.buildNewMessageTitle(this,
-        Constants.MessageActionType.REPLY, message.subject)
+    val newMessageTitle = MessageUtils.buildNewMessageTitle(
+        this,
+        Constants.MessageActionType.REPLY, message.subject
+    )
 
     if (message.messageBody != null) {
         message.decrypt(userManager, user.id)

@@ -60,8 +60,6 @@ import ch.protonmail.android.data.local.NotificationDao;
 import ch.protonmail.android.data.local.NotificationDatabase;
 import ch.protonmail.android.data.local.PendingActionDao;
 import ch.protonmail.android.data.local.PendingActionDatabase;
-import ch.protonmail.android.data.local.SendingFailedNotificationDao;
-import ch.protonmail.android.data.local.SendingFailedNotificationDatabase;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
@@ -75,7 +73,6 @@ import static ch.protonmail.android.core.Constants.RESPONSE_CODE_API_OFFLINE;
 import static ch.protonmail.android.core.ProtonMailApplication.getApplication;
 import static ch.protonmail.android.core.UserManagerKt.PREF_PIN;
 import static ch.protonmail.android.prefs.SecureSharedPreferencesKt.PREF_SYMMETRIC_KEY;
-import static ch.protonmail.android.servers.notification.NotificationServerKt.NOTIFICATION_ID_SENDING_FAILED;
 
 public class AppUtil {
 
@@ -247,15 +244,6 @@ public class AppUtil {
     public static void clearNotifications(Context context, int notificationId) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(notificationId);
-    }
-
-    public static void clearSendingFailedNotifications(Context context, Id userId) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED);
-        final SendingFailedNotificationDao sendingFailedNotificationDao = SendingFailedNotificationDatabase.Companion
-                .getInstance(context, userId)
-                .getDao();
-        new ClearSendingFailedNotificationsFromDatabaseTask(sendingFailedNotificationDao).execute();
     }
 
     /// read string from raw
@@ -439,22 +427,6 @@ public class AppUtil {
         protected Void doInBackground(Void... voids) {
             notificationDao.clearNotificationCache();
             return null;
-        }
-    }
-
-    // TODO: Rewrite with coroutines after the whole AppUtil file is converted to Kotlin
-    private static class ClearSendingFailedNotificationsFromDatabaseTask extends AsyncTask<Void, Void, Void> {
-        private final SendingFailedNotificationDao sendingFailedNotificationDao;
-
-        ClearSendingFailedNotificationsFromDatabaseTask(SendingFailedNotificationDao sendingFailedNotificationDao) {
-            this.sendingFailedNotificationDao = sendingFailedNotificationDao;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            sendingFailedNotificationDao.clearSendingFailedNotifications();
-            return null;
-
         }
     }
 

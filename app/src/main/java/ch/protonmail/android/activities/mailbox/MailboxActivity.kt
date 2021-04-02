@@ -806,9 +806,6 @@ class MailboxActivity :
         if (mailboxLocation == MessageLocationType.INBOX) {
             AppUtil.clearNotifications(this, userManager.requireCurrentUserId())
         }
-        if (mailboxLocation == MessageLocationType.ALL_DRAFT || mailboxLocation == MessageLocationType.DRAFT) {
-            AppUtil.clearSendingFailedNotifications(this, userManager.requireCurrentUserId())
-        }
         setUpDrawer()
         closeDrawer(true)
 
@@ -1136,6 +1133,7 @@ class MailboxActivity :
     }
 
     internal inner class ActionModeInteractionRunnable(private val actionModeAux: ActionMode?) : Runnable {
+
         override fun run() {
             actionModeAux?.finish()
         }
@@ -1419,11 +1417,6 @@ class MailboxActivity :
             newMessageLocationType,
             mailboxLabelId
         ).execute()
-        if (newMessageLocationType == MessageLocationType.ALL_DRAFT ||
-            newMessageLocationType == MessageLocationType.DRAFT
-        ) {
-            AppUtil.clearSendingFailedNotifications(this, userManager.requireCurrentUserId())
-        }
     }
 
     // version for label views

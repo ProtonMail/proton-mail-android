@@ -31,8 +31,6 @@ import ch.protonmail.android.data.local.NotificationDao
 import ch.protonmail.android.data.local.NotificationDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
-import ch.protonmail.android.data.local.SendingFailedNotificationDao
-import ch.protonmail.android.data.local.SendingFailedNotificationDatabase
 import ch.protonmail.android.domain.entity.Id
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -72,7 +70,4 @@ class DatabaseProvider @Inject constructor(
     fun providePendingActionDao(userId: Id): PendingActionDao =
         PendingActionDatabase.getInstance(context, userId).getDao()
 
-    // Sending failed notification
-    fun provideSendingFailedNotificationDao(userId: Id): SendingFailedNotificationDao =
-        SendingFailedNotificationDatabase.getInstance(context, userId).getDao()
 }
