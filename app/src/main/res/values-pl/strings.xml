@@ -696,7 +696,7 @@ zresetować hasło logowania, jeśli je zapomnisz.</string>
     <string name="refresh_contacts">Odśwież</string>
     <string name="upload">Prześlij</string>
     <string name="invalid_email_some_contacts">Adres e-mail nie jest prawidłowy dla niektórych kontaktów</string>
-    <string name="protonmail_contacts">Kontakty ProtonMail</string>
+    <string name="protonmail_contacts">Kontakty ProtonMaila</string>
     <string name="device_contacts">Kontakty urządzenia</string>
     <string name="print_date_template">Data: %s</string>
     <string name="print_attachment_template">Załącznik: %s;  </string>

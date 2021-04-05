@@ -642,7 +642,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="all_mail">Todos los mensajes</string>
     <string name="allmail_option">TODOS LOS MENSAJES</string>
     <string name="empty_emails">Sin mensajes</string>
-    <string name="empty_email_list">No hay correo electrónico</string>
+    <string name="empty_email_list">No hay dirección de correo electrónico</string>
     <string name="no_contacts">No hay contactos</string>
     <string name="sender_name_address">%1$s &lt; %2$s&gt; escribió:</string>
     <string name="update_label">Actualizar etiqueta</string>
