@@ -24,7 +24,7 @@ import com.google.gson.annotations.SerializedName
 
 data class MessageDeleteRequest(
     @SerializedName(Fields.Message.IDS)
-    var ids: List<String>? = null,
+    val ids: List<String>? = null,
     @SerializedName(Fields.Message.CURRENT_LABEL_ID)
-    var currentLabelId: String? = null
+    val currentLabelId: String? = null
 )
