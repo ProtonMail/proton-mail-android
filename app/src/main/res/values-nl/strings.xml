@@ -900,8 +900,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="settings_prevent_taking_screenshots">Schermafdrukken voorkomen</string>
     <string name="hyperlink_confirmation">Bevestigingslink aanvragen</string>
     <string name="labels_and_folders">Labels &amp; Mappen </string>
-    <string name="labels_manage">Labels manager</string>
-    <string name="folders_manage">Mappen manager</string>
+    <string name="labels_manage">Labels beheren</string>
+    <string name="folders_manage">Mappen beheren</string>
     <string name="swiping_gesture">Swipe gebaren</string>
     <string name="swipe_action_right">Naar rechts vegen</string>
     <string name="swipe_action_left">Naar links vegen</string>

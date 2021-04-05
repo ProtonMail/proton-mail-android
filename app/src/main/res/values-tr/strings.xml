@@ -646,7 +646,7 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="saving">Kaydediliyor...</string>
     <string name="update_folder">Klasörü Güncelle</string>
     <string name="spam_score_100">Bu e-posta, bir ProtonMail adresinden gelmiş gibi görünüyor. Ancak sistemimizin dışından geldi ve kimlik doğrulama gereksinimlerimizde başarısız oldu. Sahte veya yanlış yönlendirilmiş olabilir!</string>
-    <string name="spam_score_101">Bu e-posta, etki alanının kimlik doğrulama gereksinimlerinde başarısız oldu. Sahte veya yanlış yönlendirilmiş olabilir!</string>
+    <string name="spam_score_101">Bu e-posta, etki alanının doğrulama gereksinimlerini geçemedi. E-posta, sahte veya yanlış yönlendirilmiş olabilir!</string>
     <string name="spam_score_102">Bu ileti bir kimlik avı girişimi olabilir. Lütfen yasal olduklarından emin olmak için göndereni ve içeriği kontrol edin. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">DAHA FAZLASINI ÖĞRENİN</a></string>
     <string name="print_from_template">Kimden: %s</string>
     <string name="print_to_template">Kime: %s;  </string>
