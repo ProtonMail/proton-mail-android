@@ -50,7 +50,7 @@ data class ConversationRemote(
     val numAttachments: Int = 0,
 
     @SerializedName(Fields.Conversation.EXPIRATION_TIME)
-    val expirationTime: Int = 0,
+    val expirationTime: Long = 0,
 
 //    @SerialName(Fields.Conversation.ADDRESS_ID)
 //    val addressID: String,
@@ -63,22 +63,4 @@ data class ConversationRemote(
 
 //    @SerialName(Fields.Conversation.LABELS)
 //    val labels: List<String> = mutableListOf()
-) {
-
-    fun toConversationLocal(userId: String) = ConversationEntity(
-        id = id,
-        order = order,
-        userId = userId,
-        subject = subject,
-//        listOf(),
-//        listOf(),
-        numMessages = numMessages,
-        numUnread = numUnread,
-        numAttachments = numAttachments,
-        expirationTime = expirationTime,
-//        EMPTY_STRING,
-        size = size,
-//        labelIds,
-//        listOf()
-    )
-}
+)

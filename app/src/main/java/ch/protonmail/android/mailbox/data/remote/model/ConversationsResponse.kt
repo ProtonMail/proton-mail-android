@@ -19,20 +19,12 @@
 
 package ch.protonmail.android.mailbox.data.remote.model
 
-import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.utils.Fields
 import com.google.gson.annotations.SerializedName
 
-class ConversationsResponse(
+data class ConversationsResponse(
     @SerializedName(Fields.Conversation.TOTAL)
-    var total: Int = 0,
+    val total: Int = 0,
     @SerializedName(Fields.Conversation.CONVERSATIONS)
-    var conversationResponse: List<ConversationRemote>
-) {
-
-    /**
-     * Converts the response to a list of local conversation modal
-     */
-    fun toConversationsLocal(userId: String) = conversationResponse.map { it.toConversationLocal(userId) }
-
-}
+    val conversationResponse: List<ConversationRemote>
+)

@@ -75,7 +75,7 @@ data class ConversationEntity constructor(
     val numAttachments: Int = 0,
 
     @ColumnInfo(name = COLUMN_EXPIRATION_TIME)
-    val expirationTime: Int = 0,
+    val expirationTime: Long = 0,
 
 //    @ColumnInfo(name = COLUMN_ADDRESS_ID)
 //    val addressID: String,

@@ -43,5 +43,5 @@ interface ConversationsRepository {
      * @return an empty optional when the repository encounters a handled failure getting the given conversation
      * @throws exception when the repository fails getting this conversation for any unhandled reasons
      */
-    suspend fun getConversation(conversationId: String, messageId: String): Conversation?
+    //suspend fun getConversation(conversationId: String, messageId: String): Conversation?
 }
