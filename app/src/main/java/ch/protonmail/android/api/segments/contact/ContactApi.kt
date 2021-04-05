@@ -25,7 +25,7 @@ import ch.protonmail.android.api.models.ContactsDataResponse
 import ch.protonmail.android.api.models.CreateContact
 import ch.protonmail.android.api.models.CreateContactBody
 import ch.protonmail.android.api.models.CreateContactV2BodyItem
-import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.segments.BaseApi
@@ -92,9 +92,9 @@ class ContactApi(private val service: ContactService) : BaseApi(), ContactApiSpe
         ParseUtils.parse(service.updateContact(contactId, body).execute())
 
     @Throws(IOException::class)
-    override fun deleteContactSingle(contactIds: IDList): Single<DeleteContactResponse> =
+    override fun deleteContactSingle(contactIds: IDList): Single<DeleteResponse> =
         service.deleteContactSingle(contactIds)
 
-    override suspend fun deleteContact(contactIds: IDList): DeleteContactResponse =
+    override suspend fun deleteContact(contactIds: IDList): DeleteResponse =
         service.deleteContact(contactIds)
 }

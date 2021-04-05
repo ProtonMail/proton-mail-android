@@ -34,7 +34,7 @@ import ch.protonmail.android.api.models.CreatePaymentTokenBody
 import ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponse
 import ch.protonmail.android.api.models.CreateSubscriptionBody
 import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
-import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.api.models.DirectEnabledResponse
 import ch.protonmail.android.api.models.DonateBody
 import ch.protonmail.android.api.models.DraftBody
@@ -80,7 +80,7 @@ import ch.protonmail.android.api.models.address.AddressesResponse
 import ch.protonmail.android.api.models.address.KeyActivationBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
-import ch.protonmail.android.api.models.messages.delete.MessageDeletePayload
+import ch.protonmail.android.api.models.messages.delete.MessageDeleteRequest
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.api.models.messages.receive.LabelsResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
@@ -286,10 +286,10 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override fun updateContact(contactId: String, body: CreateContactV2BodyItem): FullContactDetailsResponse? =
         api.updateContact(contactId, body)
 
-    override fun deleteContactSingle(contactIds: IDList): Single<DeleteContactResponse> =
+    override fun deleteContactSingle(contactIds: IDList): Single<DeleteResponse> =
         api.deleteContactSingle(contactIds)
 
-    override suspend fun deleteContact(contactIds: IDList): DeleteContactResponse = api.deleteContact(contactIds)
+    override suspend fun deleteContact(contactIds: IDList): DeleteResponse = api.deleteContact(contactIds)
 
     override fun labelContacts(labelContactsBody: LabelContactsBody): Completable = api.labelContacts(labelContactsBody)
 
@@ -363,8 +363,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun markMessageAsUnRead(messageIds: IDList) = api.markMessageAsUnRead(messageIds)
 
-    override suspend fun deleteMessage(messageDeletePayload: MessageDeletePayload) =
-        api.deleteMessage(messageDeletePayload)
+    override suspend fun deleteMessage(messageDeleteRequest: MessageDeleteRequest) =
+        api.deleteMessage(messageDeleteRequest)
 
     override fun emptyDrafts() = api.emptyDrafts()
 

@@ -31,7 +31,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.messages.delete.MessageDeletePayload
+import ch.protonmail.android.api.models.messages.delete.MessageDeleteRequest
 import ch.protonmail.android.core.Constants
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -71,7 +71,7 @@ class DeleteMessageWorker @WorkerInject constructor(
 
         return withContext(dispatcher.Io) {
             // delete messages on remote
-            val response = api.deleteMessage(MessageDeletePayload(validMessageIdList.toList(), currentLabelId))
+            val response = api.deleteMessage(MessageDeleteRequest(validMessageIdList.toList(), currentLabelId))
             if (response.code == Constants.RESPONSE_CODE_OK ||
                 response.code == Constants.RESPONSE_CODE_MULTIPLE_OK
             ) {

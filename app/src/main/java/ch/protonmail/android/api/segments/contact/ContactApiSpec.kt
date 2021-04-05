@@ -23,7 +23,7 @@ import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.ContactsDataResponse
 import ch.protonmail.android.api.models.CreateContact
 import ch.protonmail.android.api.models.CreateContactV2BodyItem
-import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
@@ -58,9 +58,9 @@ interface ContactApiSpec {
     fun updateContact(contactId: String, body: CreateContactV2BodyItem): FullContactDetailsResponse?
 
     @Throws(IOException::class)
-    fun deleteContactSingle(contactIds: IDList): Single<DeleteContactResponse>
+    fun deleteContactSingle(contactIds: IDList): Single<DeleteResponse>
 
-    suspend fun deleteContact(contactIds: IDList): DeleteContactResponse
+    suspend fun deleteContact(contactIds: IDList): DeleteResponse
 
     @Throws(IOException::class)
     fun labelContacts(labelContactsBody: LabelContactsBody): Completable

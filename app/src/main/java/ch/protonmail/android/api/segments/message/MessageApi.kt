@@ -24,7 +24,7 @@ import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
-import ch.protonmail.android.api.models.messages.delete.MessageDeletePayload
+import ch.protonmail.android.api.models.messages.delete.MessageDeleteRequest
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
@@ -68,8 +68,8 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
         service.unRead(messageIds).execute()
     }
 
-    override suspend fun deleteMessage(messageDeletePayload: MessageDeletePayload) =
-        service.delete(messageDeletePayload)
+    override suspend fun deleteMessage(messageDeleteRequest: MessageDeleteRequest) =
+        service.delete(messageDeleteRequest)
 
     @Throws(IOException::class)
     override fun emptyDrafts() {

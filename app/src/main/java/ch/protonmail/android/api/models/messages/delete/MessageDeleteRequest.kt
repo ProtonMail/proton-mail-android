@@ -22,7 +22,7 @@ package ch.protonmail.android.api.models.messages.delete
 import ch.protonmail.android.api.utils.Fields
 import com.google.gson.annotations.SerializedName
 
-data class MessageDeletePayload(
+data class MessageDeleteRequest(
     @SerializedName(Fields.Message.IDS)
     var ids: List<String>? = null,
     @SerializedName(Fields.Message.CURRENT_LABEL_ID)
