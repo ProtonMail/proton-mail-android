@@ -27,7 +27,6 @@ import okio.source
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 /**
@@ -61,7 +60,7 @@ class FileHelper @Inject constructor(
 
     fun saveStringToFile(filePath: String, dataToSave: String) =
         File(filePath).sink().buffer().use { sink ->
-            sink.writeString(dataToSave, StandardCharsets.UTF_8)
+            sink.writeUtf8(dataToSave)
         }
 
 
