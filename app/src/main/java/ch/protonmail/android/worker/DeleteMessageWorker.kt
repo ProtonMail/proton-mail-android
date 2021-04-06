@@ -31,7 +31,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.IDList
+import ch.protonmail.android.api.models.messages.delete.MessageDeleteRequest
 import ch.protonmail.android.core.Constants
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -39,6 +39,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 internal const val KEY_INPUT_VALID_MESSAGES_IDS = "KeyInputValidMessageIds"
+internal const val KEY_INPUT_CURRENT_LABEL_ID = "KeyInputCurrentLabelId"
 
 /**
  * Work Manager Worker responsible for deleting messages.
@@ -59,6 +60,7 @@ class DeleteMessageWorker @WorkerInject constructor(
 
         val validMessageIdList = inputData.getStringArray(KEY_INPUT_VALID_MESSAGES_IDS)
             ?: emptyArray()
+        val currentLabelId = inputData.getString(KEY_INPUT_CURRENT_LABEL_ID)
 
         // skip empty input
         if (validMessageIdList.isEmpty()) {
@@ -69,7 +71,7 @@ class DeleteMessageWorker @WorkerInject constructor(
 
         return withContext(dispatcher.Io) {
             // delete messages on remote
-            val response = api.deleteMessage(IDList(validMessageIdList.toList()))
+            val response = api.deleteMessage(MessageDeleteRequest(validMessageIdList.toList(), currentLabelId))
             if (response.code == Constants.RESPONSE_CODE_OK ||
                 response.code == Constants.RESPONSE_CODE_MULTIPLE_OK
             ) {
@@ -84,13 +86,18 @@ class DeleteMessageWorker @WorkerInject constructor(
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
-        fun enqueue(messageIds: List<String>): Operation {
+        fun enqueue(messageIds: List<String>, currentLabelId: String?): Operation {
             val networkConstraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
             val networkWorkRequest = OneTimeWorkRequestBuilder<DeleteMessageWorker>()
                 .setConstraints(networkConstraints)
-                .setInputData(workDataOf(KEY_INPUT_VALID_MESSAGES_IDS to messageIds.toTypedArray()))
+                .setInputData(
+                    workDataOf(
+                        KEY_INPUT_VALID_MESSAGES_IDS to messageIds.toTypedArray(),
+                        KEY_INPUT_CURRENT_LABEL_ID to currentLabelId
+                    )
+                )
                 .build()
             Timber.v("Scheduling delete messages worker for ${messageIds.size} message(s)")
             return workManager.enqueue(networkWorkRequest)

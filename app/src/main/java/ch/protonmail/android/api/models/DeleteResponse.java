@@ -24,7 +24,7 @@ import java.util.List;
 
 import ch.protonmail.android.api.utils.Fields;
 
-public class DeleteContactResponse {
+public class DeleteResponse {
 
     @SerializedName(Fields.Response.CODE)
     private int code;

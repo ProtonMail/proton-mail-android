@@ -24,7 +24,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.core.Constants
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -79,7 +79,7 @@ class DeleteMessageWorkerTest {
             // given
             val messageId = "Id1"
             val arrayOfMessagedIds = arrayOf(messageId)
-            val deleteResponse = mockk<DeleteContactResponse> {
+            val deleteResponse = mockk<DeleteResponse> {
                 every { code } returns Constants.RESPONSE_CODE_OK
             }
             val expected = ListenableWorker.Result.success()
@@ -104,7 +104,7 @@ class DeleteMessageWorkerTest {
             val messageId = "Id1"
             val arrayOfMessagedIds = arrayOf(messageId)
             val randomErrorCode = 11212
-            val deleteResponse = mockk<DeleteContactResponse> {
+            val deleteResponse = mockk<DeleteResponse> {
                 every { code } returns randomErrorCode
             }
             val expected = ListenableWorker.Result.failure(

@@ -24,7 +24,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.ContactDatabase
@@ -96,7 +96,7 @@ class DeleteContactWorkerTest {
         runBlockingTest {
             // given
             val contactId = "id111"
-            val deleteResponse = mockk<DeleteContactResponse> {
+            val deleteResponse = mockk<DeleteResponse> {
                 every { code } returns Constants.RESPONSE_CODE_OK
             }
             val contactData = mockk<ContactData>()
@@ -125,7 +125,7 @@ class DeleteContactWorkerTest {
             // given
             val contactId = "id111"
             val randomErrorCode = 11212
-            val deleteResponse = mockk<DeleteContactResponse> {
+            val deleteResponse = mockk<DeleteResponse> {
                 every { code } returns randomErrorCode
             }
             val contactData = mockk<ContactData>()

@@ -23,7 +23,7 @@ import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.ContactsDataResponse
 import ch.protonmail.android.api.models.CreateContactBody
 import ch.protonmail.android.api.models.CreateContactV2BodyItem
-import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
@@ -81,11 +81,11 @@ interface ContactService {
 
     @PUT("contacts/delete")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun deleteContactSingle(@Body contactId: IDList): Single<DeleteContactResponse>
+    fun deleteContactSingle(@Body contactId: IDList): Single<DeleteResponse>
 
     @PUT("contacts/delete")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun deleteContact(@Body contactId: IDList): DeleteContactResponse
+    suspend fun deleteContact(@Body contactId: IDList): DeleteResponse
 
     @DELETE("contacts")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

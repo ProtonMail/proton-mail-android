@@ -190,7 +190,7 @@ sealed class ProtonRetrofit(
         .registerTypeAdapter(BugsBody::class.java, BugsBody.BugsBodySerializer())
         .registerTypeAdapter(BugsBody::class.java, BugsBody.BugsBodyDeserializer())
         .registerTypeAdapter(AttachmentHeaders::class.java, AttachmentHeaders.AttachmentHeadersDeserializer())
-        .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)
+        .excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.STATIC)
         .create()
     // endregion
 

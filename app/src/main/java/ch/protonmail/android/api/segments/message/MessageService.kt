@@ -19,11 +19,12 @@
 package ch.protonmail.android.api.segments.message
 
 import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
+import ch.protonmail.android.api.models.messages.delete.MessageDeleteRequest
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
@@ -51,7 +52,7 @@ interface MessageService {
 
     @PUT("mail/v4/messages/delete")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun delete(@Body messageIds: IDList): DeleteContactResponse
+    suspend fun delete(@Body messages: MessageDeleteRequest): DeleteResponse
 
     @PUT("mail/v4/messages/read")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
