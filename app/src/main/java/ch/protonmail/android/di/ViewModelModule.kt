@@ -21,70 +21,94 @@
 package ch.protonmail.android.di
 
 import androidx.lifecycle.ViewModelProvider
+import ch.protonmail.android.activities.MailboxViewModel
+import ch.protonmail.android.activities.MailboxViewModelFactory
+import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
+import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.compose.ComposeMessageViewModelFactory
 import ch.protonmail.android.compose.recipients.GroupRecipientsViewModelFactory
 import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateViewModelFactory
 import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserViewModelFactory
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
+import ch.protonmail.android.usecase.VerifyConnection
+import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel
+import com.birbit.android.jobqueue.JobManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.util.kotlin.DispatcherProvider
 
-/*
- * Created by kadrikj on 8/28/18. */
-
-// TODO here we're providing factories by injecting the ViewModel, this is wrong, we should get rid of it!
-//  With Hilt + Assisted Inject we can avoid the Factory - see `val myViewModel by viewModels<MyViewModel>()`
 @Module
 @InstallIn(SingletonComponent::class)
 internal class ViewModelModule {
 
     @Provides
-    fun provideAddressChooserViewModelFactory(addressChooserViewModelFactory: AddressChooserViewModelFactory):
-            ViewModelProvider.NewInstanceFactory {
-        return addressChooserViewModelFactory
-    }
+    fun provideAddressChooserViewModelFactory(
+        addressChooserViewModelFactory: AddressChooserViewModelFactory
+    ): ViewModelProvider.NewInstanceFactory = addressChooserViewModelFactory
 
     @Provides
-    fun provideContactGroupEditCreateViewModelFactory(contactGroupEditCreateViewModelFactory: ContactGroupEditCreateViewModelFactory): ViewModelProvider.NewInstanceFactory {
-        return contactGroupEditCreateViewModelFactory
-    }
+    fun provideContactGroupEditCreateViewModelFactory(
+        contactGroupEditCreateViewModelFactory: ContactGroupEditCreateViewModelFactory
+    ): ViewModelProvider.NewInstanceFactory = contactGroupEditCreateViewModelFactory
 
     @Provides
-    fun provideComposeMessageViewModelFactory(composeMessageViewModelFactory: ComposeMessageViewModelFactory): ViewModelProvider.NewInstanceFactory {
-        return composeMessageViewModelFactory
-    }
+    fun provideComposeMessageViewModelFactory(
+        composeMessageViewModelFactory: ComposeMessageViewModelFactory
+    ): ViewModelProvider.NewInstanceFactory = composeMessageViewModelFactory
 
     @Provides
-    fun provideGroupRecipientsViewModelFactory(groupRecipientsViewModelFactory: GroupRecipientsViewModelFactory): ViewModelProvider.NewInstanceFactory {
-        return groupRecipientsViewModelFactory
-    }
+    fun provideGroupRecipientsViewModelFactory(
+        groupRecipientsViewModelFactory: GroupRecipientsViewModelFactory
+    ): ViewModelProvider.NewInstanceFactory = groupRecipientsViewModelFactory
 
     @Provides
-    internal fun provideNotificationSettingsViewModelFactory(
-            application: ProtonMailApplication,
-            userManager: UserManager
-    ) = NotificationSettingsViewModel.Factory( application, userManager )
+    fun provideNotificationSettingsViewModelFactory(
+        application: ProtonMailApplication,
+        userManager: UserManager
+    ) = NotificationSettingsViewModel.Factory(application, userManager)
 
     @Provides
     internal fun provideAccountManager(application: ProtonMailApplication) = AccountManager.getInstance(application)
 
     @Provides
-    fun providePinFragmentViewModelFactory(pinFragmentViewModelFactory: PinFragmentViewModelFactory):
-        ViewModelProvider.NewInstanceFactory {
-        return pinFragmentViewModelFactory
-    }
+    fun providePinFragmentViewModelFactory(
+        pinFragmentViewModelFactory: PinFragmentViewModelFactory
+    ): ViewModelProvider.NewInstanceFactory = pinFragmentViewModelFactory
 
     @Provides
-    fun provideManageLabelsDialogViewModelFactory(factory: ManageLabelsDialogViewModel.ManageLabelsDialogViewModelFactory):
-        ViewModelProvider.NewInstanceFactory {
-        return factory
-    }
+    fun provideManageLabelsDialogViewModelFactory(
+        factory: ManageLabelsDialogViewModel.ManageLabelsDialogViewModelFactory
+    ): ViewModelProvider.NewInstanceFactory = factory
 
+    @Provides
+    fun provideMailboxViewModelFactory(factory: MailboxViewModelFactory): ViewModelProvider.NewInstanceFactory = factory
+
+    @Provides
+    fun provideMailboxViewModel(
+        messageDetailsRepository: MessageDetailsRepository,
+        userManager: UserManager,
+        jobManager: JobManager,
+        deleteMessage: DeleteMessage,
+        dispatchers: DispatcherProvider,
+        contactsRepository: ContactsRepository,
+        verifyConnection: VerifyConnection,
+        networkConfigurator: NetworkConfigurator
+    ) = MailboxViewModel(
+        messageDetailsRepository,
+        userManager,
+        jobManager,
+        deleteMessage,
+        dispatchers,
+        contactsRepository,
+        verifyConnection,
+        networkConfigurator
+    )
 }

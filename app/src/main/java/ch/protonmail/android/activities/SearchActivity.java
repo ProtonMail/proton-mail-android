@@ -20,7 +20,6 @@ package ch.protonmail.android.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,12 +35,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.otto.Subscribe;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import ch.protonmail.android.R;
@@ -52,11 +45,9 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.events.NoResultsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
 import ch.protonmail.android.mailbox.presentation.MailboxUiItem;
-import ch.protonmail.android.mailbox.presentation.MessageData;
 import ch.protonmail.android.utils.AppUtil;
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -77,6 +68,8 @@ public class SearchActivity extends BaseActivity {
 
     @Inject
     MessageDetailsRepository messageDetailsRepository;
+    @Inject
+    MailboxViewModelFactory mailboxViewModelFactory;
 
     @Override
     protected int getLayoutId() {
@@ -86,6 +79,7 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MailboxViewModel mailboxViewModel = mailboxViewModelFactory.create(MailboxViewModel.class);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -140,12 +134,13 @@ public class SearchActivity extends BaseActivity {
         });
 
         messageDetailsRepository.getAllSearchMessages().observe(this, messages -> {
-            List<MailboxUiItem> mailboxUiItems = messagesToMailboxUiItems(messages);
-            mAdapter.clear();
-            mAdapter.addAll(mailboxUiItems);
-            setLoadingMore(false);
-            mProgressBar.setVisibility(View.GONE);
-            mAdapter.setNewLocation(MessageLocationType.SEARCH);
+            mailboxViewModel.messagesToMailboxItems(messages).observe(this, mailboxUiItems -> {
+                mAdapter.clear();
+                mAdapter.addAll(mailboxUiItems);
+                setLoadingMore(false);
+                mProgressBar.setVisibility(View.GONE);
+                mAdapter.setNewLocation(MessageLocationType.SEARCH);
+            });
         });
 
         messageDetailsRepository.getAllLabels().observe(this, labels -> {
@@ -153,46 +148,6 @@ public class SearchActivity extends BaseActivity {
                 mAdapter.setLabels(labels);
             }
         });
-    }
-
-    @NotNull
-    private List<MailboxUiItem> messagesToMailboxUiItems(List<Message> messages) {
-        List<MailboxUiItem> mailboxUiItems = new ArrayList<>();
-
-        for (Message message : messages) {
-            MessageData messageData = new MessageData(
-                    message.getLocation(),
-                    message.isReplied() != null ? message.isReplied() : false,
-                    message.isRepliedAll() != null ? message.isRepliedAll() : false,
-                    message.isForwarded() != null ? message.isForwarded() : false,
-                    message.isInline());
-
-            String senderName = message.getSenderEmail();
-            if (!TextUtils.isEmpty(message.getSenderDisplayName())) {
-                senderName = message.getSenderDisplayName();
-            } else if (!TextUtils.isEmpty(message.getSenderName())) {
-                senderName = message.getSenderName();
-            }
-
-            mailboxUiItems.add(
-                    new MailboxUiItem(
-                            message.getMessageId(),
-                            senderName,
-                            message.getSubject(),
-                            message.getTimeMs(),
-                            message.getNumAttachments() > 0,
-                            message.isStarred() != null ? message.isStarred() : false,
-                            message.isRead(),
-                            message.getExpirationTime(),
-                            0,
-                            messageData,
-                            message.getDeleted(),
-                            message.getAllLabelIDs(),
-                            message.getToListStringGroupsAware()
-                    )
-            );
-        }
-        return mailboxUiItems;
     }
 
     @Override
