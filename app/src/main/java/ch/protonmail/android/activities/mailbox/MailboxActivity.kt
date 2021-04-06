@@ -1106,9 +1106,6 @@ class MailboxActivity :
         if (event.status == Status.NO_NETWORK && setOfLabels.any { it == mailboxLocation }) {
             mailboxLocationMain.value = MessageLocationType.LABEL_OFFLINE
         }
-        if (event.status == Status.FAILED && event.errorMessage.isNotEmpty()) {
-            showToast(event.errorMessage, Toast.LENGTH_LONG)
-        }
         mNetworkResults.setMailboxLoaded(MailboxLoadedEvent(Status.SUCCESS, null))
         setRefreshing(false)
     }

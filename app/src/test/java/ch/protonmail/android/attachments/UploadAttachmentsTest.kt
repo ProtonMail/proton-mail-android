@@ -328,7 +328,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             coEvery { attachmentsRepository.uploadPublicKey(message, crypto) } answers {
                 AttachmentsRepository.Result.Failure("Failed to upload public key")
             }
-            every { parameters.runAttemptCount } returns 3
+            every { parameters.runAttemptCount } returns 2
 
             val result = uploadAttachments.doWork()
 

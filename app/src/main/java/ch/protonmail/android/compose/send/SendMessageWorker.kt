@@ -151,7 +151,9 @@ class SendMessageWorker @WorkerInject constructor(
                 throw exception
             }
         } else {
-            retryOrFail(DraftCreationFailed, message)
+            pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
+            showSendMessageError(message.subject)
+            failureWithError(DraftCreationFailed)
         }
 
     }
@@ -255,7 +257,7 @@ class SendMessageWorker @WorkerInject constructor(
                 previousSenderAddressId,
                 SaveDraft.SaveDraftTrigger.SendingMessage
             )
-        ).first()
+        )
     }
 
     private fun retryOrFail(
@@ -263,7 +265,7 @@ class SendMessageWorker @WorkerInject constructor(
         message: Message,
         exception: Throwable? = null
     ): Result {
-        if (runAttemptCount <= SEND_MESSAGE_MAX_RETRIES) {
+        if (runAttemptCount < SEND_MESSAGE_MAX_RETRIES) {
             Timber.d("Send Message Worker failed with error = ${error.name}, exception = $exception. Retrying...")
             return Result.retry()
         }

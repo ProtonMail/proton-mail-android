@@ -230,7 +230,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             val apiAttachmentId = "456"
             val apiKeyPackets = "apiKeyPackets"
             val apiSignature = "apiSignature"
-            val headers = AttachmentHeaders(contentType = "testAttachments headers")
+            val headers = AttachmentHeaders()
             val fileSize = 1234L
             val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
             val attachment = mockk<Attachment>(relaxed = true)
