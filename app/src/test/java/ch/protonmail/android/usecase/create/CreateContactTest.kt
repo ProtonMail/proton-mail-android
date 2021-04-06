@@ -89,7 +89,7 @@ class CreateContactTest : CoroutinesTest {
     )
 
     private val cacheDirPath = "CacheDirPath"
-    private val encryptedVCardFilePath = cacheDirPath + VCARD_TEMP_FILE_NAME
+    private val encryptedVCardFilePath = cacheDirPath + File.separator + VCARD_TEMP_FILE_NAME
 
     @BeforeTest
     fun setUp() {
