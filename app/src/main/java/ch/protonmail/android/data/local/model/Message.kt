@@ -360,10 +360,12 @@ data class Message @JvmOverloads constructor(
     fun isEncrypted(): Boolean = messageEncryption!!.isEndToEndEncrypted
 
     @WorkerThread
+    @Deprecated("We target removing all logic from Models. `MessageDao` can be used to get attachments instead")
     fun attachmentsBlocking(messageDao: MessageDao): List<Attachment> = runBlocking {
         attachments(messageDao)
     }
 
+    @Deprecated("We target removing all logic from Models. `MessageDao` can be used to get attachments instead")
     suspend fun attachments(messageDao: MessageDao): List<Attachment> {
         if (isPGPMime) {
             return this.Attachments
@@ -388,6 +390,7 @@ data class Message @JvmOverloads constructor(
     }
 
     @MainThread
+    @Deprecated("We target removing all logic from Models. `MessageDao` can be used to get attachments instead")
     fun getAttachmentsAsync(messageDao: MessageDao): LiveData<List<Attachment>> {
         if (isPGPMime) {
             val result = MutableLiveData<List<Attachment>>()
@@ -416,6 +419,7 @@ data class Message @JvmOverloads constructor(
      * @throws Exception
      */
     @JvmOverloads
+    @Deprecated("This logic should be extracted to a testable component for any new usages. Tracked in MAILAND-1566")
     fun decrypt(userManager: UserManager, userId: Id, verKeys: List<KeyInformation>? = null) {
         val addressId = Id(checkNotNull(addressID))
         val addressCrypto = Crypto.forAddress(userManager, userId, addressId)
@@ -476,6 +480,7 @@ data class Message @JvmOverloads constructor(
      * @throws Exception
      */
     @JvmOverloads
+    @Deprecated("This logic should be extracted to a testable component for any new usages. Tracked in MAILAND-1566")
     fun decrypt(addressCrypto: AddressCrypto, verKeys: List<KeyInformation>? = null) {
         var decryptedMessage: String
         val keys = ArrayList<ByteArray>()
@@ -523,12 +528,6 @@ data class Message @JvmOverloads constructor(
         setEmbeddedImagesArray(decryptedMessage)
         decryptedHTML = decryptedMessage
     }
-
-    fun searchForLocation(location: Int) = allLabelIDs
-        .asSequence()
-        .filter { it.length <= 2 }
-        .map { Integer.valueOf(it) }
-        .contains(location)
 
     fun setAttachmentList(attachmentList: List<Attachment>) {
         Attachments = attachmentList

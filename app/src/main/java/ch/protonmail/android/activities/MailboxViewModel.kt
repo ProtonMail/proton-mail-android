@@ -133,12 +133,6 @@ class MailboxViewModel @Inject constructor(
         }
     }
 
-    fun deleteMessages(messageIds: List<String>) =
-        viewModelScope.launch {
-            val deleteMessagesResult = deleteMessage(messageIds)
-            _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
-        }
-
     fun processLabels(messageIds: List<String>, checkedLabelIds: List<String>, unchangedLabels: List<String>) {
         val iterator = messageIds.iterator()
 
