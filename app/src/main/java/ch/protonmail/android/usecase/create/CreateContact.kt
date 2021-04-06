@@ -41,10 +41,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import me.proton.core.util.kotlin.DispatcherProvider
-import okio.buffer
-import okio.sink
 import java.io.File
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 internal const val VCARD_TEMP_FILE_NAME = "temp_card.vcard"
@@ -79,7 +76,7 @@ class CreateContact @Inject constructor(
             // IllegalStateException: Data cannot occupy more than 10240 bytes when serialized
             // but if we add an image to a contact we exceed this value
             // therefore we will just pass to the worker a cached file path
-            val vCardFilePath = context.cacheDir.toString() + VCARD_TEMP_FILE_NAME
+            val vCardFilePath = context.cacheDir.toString() + File.separator + VCARD_TEMP_FILE_NAME
             fileHelper.saveStringToFile(vCardFilePath, encryptedContactData)
 
             createContactScheduler.enqueue(vCardFilePath, signedContactData)
@@ -97,18 +94,6 @@ class CreateContact @Inject constructor(
                 }
         }
 
-    }
-
-    /**
-     *  Saves string data to a file and returns file path.
-     */
-    private fun saveCardDataToFile(encryptedContactData: String): String {
-        val vCardPath = context.cacheDir.toString() + VCARD_TEMP_FILE_NAME
-        val vCardFile = File(vCardPath)
-        vCardFile.sink().buffer().use { sink ->
-            sink.writeString(encryptedContactData, StandardCharsets.UTF_8)
-        }
-        return vCardPath
     }
 
     private suspend fun handleWorkResult(workInfo: WorkInfo, contactData: ContactData): Result {

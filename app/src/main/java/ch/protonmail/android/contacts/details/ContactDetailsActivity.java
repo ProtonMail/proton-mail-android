@@ -76,6 +76,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
@@ -101,6 +103,7 @@ import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.usecase.model.FetchContactDetailsResult;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
+import ch.protonmail.android.utils.FileHelper;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.VCardUtil;
@@ -135,6 +138,7 @@ import ezvcard.util.PartialDate;
 import kotlin.Unit;
 import timber.log.Timber;
 
+import static ch.protonmail.android.usecase.create.CreateContactKt.VCARD_TEMP_FILE_NAME;
 import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_INITIALS;
 import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_PHOTO;
 
@@ -189,6 +193,9 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     ImageButton fabPhone;
     @BindView(R.id.fabWeb)
     ImageButton fabWeb;
+
+    @Inject
+    FileHelper fileHelper;
 
     private ContactsDatabase contactsDatabase;
     private User mUser;
@@ -715,7 +722,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             if (mEmptyEncryptedView == null) {
                 mEmptyEncryptedView = mEmptyEncryptedStub.inflate();
                 mEmptyEncryptedView.findViewById(R.id.add_contact_details).setOnClickListener(v ->
-                        EditContactDetailsActivity.startEditContactActivity(ContactDetailsActivity.this, mContactId, REQUEST_CODE_EDIT_CONTACT, mVCardType0, mVCardType2, mVCardType3));
+                        startEditContacts());
             } else {
                 if (!hasDecryptionError) {
                     mEmptyEncryptedView.setVisibility(View.VISIBLE);
@@ -1040,7 +1047,18 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
     @OnClick(R.id.editContactDetails)
     public void onEditContactDetailsClicked() {
-        EditContactDetailsActivity.startEditContactActivity(this, mContactId, REQUEST_CODE_EDIT_CONTACT, mVCardType0, mVCardType2, mVCardType3);
+        startEditContacts();
+    }
+
+    private void startEditContacts() {
+        String vCardFilePath = "";
+        if (mVCardType3 != null && mVCardType3.length() > 0) {
+            vCardFilePath = getCacheDir().toString() + File.separator +  VCARD_TEMP_FILE_NAME;
+            fileHelper.saveStringToFile(vCardFilePath, mVCardType3);
+        }
+        EditContactDetailsActivity.startEditContactActivity(
+                this, mContactId, REQUEST_CODE_EDIT_CONTACT, mVCardType0, mVCardType2, vCardFilePath
+        );
     }
 
     private void copyValueToClipboard(CharSequence title, CharSequence value) {
