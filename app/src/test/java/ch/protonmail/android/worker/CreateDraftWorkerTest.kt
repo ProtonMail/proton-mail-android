@@ -1076,7 +1076,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns localMessage
+            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns flowOf(localMessage)
             every { messageFactory.createDraftApiRequest(localMessage) } returns apiDraftRequest
             coEvery { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) } returns apiDraftResponse
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
