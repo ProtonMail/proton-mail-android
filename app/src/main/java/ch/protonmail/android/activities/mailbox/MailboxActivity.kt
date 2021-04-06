@@ -88,7 +88,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
 import ch.protonmail.android.activities.settings.SettingsEnum
-import ch.protonmail.android.adapters.messages.MessagesListViewHolder.MessageViewHolder
+import ch.protonmail.android.adapters.messages.MailboxItemViewHolder.MessageViewHolder
 import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter
 import ch.protonmail.android.adapters.swipe.ArchiveSwipeHandler
 import ch.protonmail.android.adapters.swipe.MarkReadSwipeHandler
@@ -530,7 +530,7 @@ class MailboxActivity :
     }
 
     private val selectedMessages: List<SimpleMessage>
-        get() = messagesAdapter.checkedMessages.map { SimpleMessage(it) }
+        get() = messagesAdapter.checkedMailboxItems.map { SimpleMessage(it) }
 
     private var firstLogin: Boolean? = null
 

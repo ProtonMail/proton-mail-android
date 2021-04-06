@@ -16,14 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.adapters.messages
+package ch.protonmail.android.views.messagesList
 
+import android.content.Context
+import android.util.AttributeSet
+import android.view.ViewGroup
+import android.widget.RelativeLayout
 import androidx.recyclerview.widget.RecyclerView
-import android.view.View
-import ch.protonmail.android.views.messagesList.MessagesListFooterView
-import ch.protonmail.android.views.messagesList.MessagesListItemView
+import ch.protonmail.android.R
 
-sealed class MessagesListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    class MessageViewHolder(val view: MessagesListItemView) : MessagesListViewHolder(view)
-    class FooterViewHolder(val view: MessagesListFooterView) : MessagesListViewHolder(view)
+class MailboxItemFooterView(
+	context: Context,
+	attrs: AttributeSet? = null,
+	defStyleAttr: Int = 0
+) : RelativeLayout(
+	context,
+	attrs,
+	defStyleAttr
+) {
+
+	init {
+		inflate(context, R.layout.messages_list_footer_view, this)
+		layoutParams = RecyclerView.LayoutParams(
+			ViewGroup.LayoutParams.MATCH_PARENT,
+			ViewGroup.LayoutParams.WRAP_CONTENT
+		)
+	}
 }

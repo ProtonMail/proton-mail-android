@@ -39,12 +39,11 @@ import me.proton.core.util.kotlin.EMPTY_STRING
 
 private const val MAX_LABELS_WITH_TEXT = 1
 
-/**
- * A view that represents one item in the mailbox list when conversation mode is turned off.
- */
-class MessagesListItemView constructor(
-    context: Context
-) : ConstraintLayout(context) {
+class MailboxItemView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     init {
         inflate(R.layout.list_item_mailbox, true)
