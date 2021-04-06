@@ -126,7 +126,7 @@ class CreateContactWorker @WorkerInject constructor(
         return Result.failure(errorData)
     }
 
-    private suspend fun buildCreateContactRequestBody(): CreateContact {
+    private fun buildCreateContactRequestBody(): CreateContact {
         val encryptedDataParamPath = getInputEncryptedData()
         val signedDataParam = getInputSignedData()
 

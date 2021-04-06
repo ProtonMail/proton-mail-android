@@ -37,6 +37,7 @@ import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.create.CreateContact
 import ch.protonmail.android.usecase.fetch.FetchContactDetails
 import ch.protonmail.android.utils.Event
+import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.viewmodel.NETWORK_CHECK_DELAY
 import ch.protonmail.android.views.models.LocalContact
 import ezvcard.Ezvcard
@@ -72,7 +73,7 @@ const val EXTRA_NAME = "extra_name"
 const val EXTRA_EMAIL = "extra_email"
 const val EXTRA_CONTACT_VCARD_TYPE0 = "extra_vcard_type0"
 const val EXTRA_CONTACT_VCARD_TYPE2 = "extra_vcard_type2"
-const val EXTRA_CONTACT_VCARD_TYPE3 = "extra_vcard_type3"
+const val EXTRA_CONTACT_VCARD_TYPE3_PATH = "extra_vcard_type3"
 const val EXTRA_LOCAL_CONTACT = "extra_local_contact"
 
 private const val VCARD_PROD_ID = "-//ProtonMail//ProtonMail for Android vCard 1.0.0//EN"
@@ -84,6 +85,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
     private val userManager: UserManager,
     private val verifyConnection: VerifyConnection,
     private val createContact: CreateContact,
+    private val fileHelper: FileHelper,
     workManager: WorkManager,
     fetchContactDetails: FetchContactDetails
 ) : ContactDetailsViewModel(dispatchers, downloadFile, editContactDetailsRepository, workManager, fetchContactDetails) {
@@ -205,7 +207,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         vCardOtherOptions: List<String>,
         vCardStringType0: String?,
         vCardStringType2: String?,
-        vCardStringType3: String?
+        vCardStringType3Path: String?
     ) {
         flowType = flow
         _contactId = contactId
@@ -218,7 +220,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         _vCardAddressUIOptions = vCardAddressUIOptions
         _vCardAddressOptions = vCardAddressOptions
         _vCardOtherOptions = vCardOtherOptions
-        setupVCards(vCardStringType0, vCardStringType2, vCardStringType3)
+        setupVCards(vCardStringType0, vCardStringType2, vCardStringType3Path)
         val isPaid = userManager.user?.isPaidUser ?: false
         if (!isPaid) {
             _freeUserEvent.postValue(null)
@@ -229,7 +231,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun setupVCards(vCardStringType0: String?, vCardStringType2: String?, vCardStringType3: String?) {
+    private fun setupVCards(vCardStringType0: String?, vCardStringType2: String?, vCardStringType3Path: String?) {
         var vCard0: VCard? = null
         if (!TextUtils.isEmpty(vCardStringType0)) {
             vCard0 = Ezvcard.parse(vCardStringType0).first()
@@ -252,7 +254,8 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
             _uid = _vCardType2.uid.value
         }
         var vCard3: VCard? = null
-        if (!TextUtils.isEmpty(vCardStringType3)) {
+        if (!vCardStringType3Path.isNullOrEmpty()) {
+            val vCardStringType3 = fileHelper.readStringFromFilePath(vCardStringType3Path)
             vCard3 = Ezvcard.parse(vCardStringType3).first()
         }
         _vCardType3 = vCard3 ?: VCard()

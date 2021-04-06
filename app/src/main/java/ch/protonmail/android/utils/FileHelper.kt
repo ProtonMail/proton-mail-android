@@ -59,16 +59,15 @@ class FileHelper @Inject constructor(
         }.isSuccess
     }
 
-    suspend fun saveStringToFile(filePath: String, dataToSave: String) = withContext(dispatcherProvider.Io) {
+    fun saveStringToFile(filePath: String, dataToSave: String) =
         File(filePath).sink().buffer().use { sink ->
             sink.writeString(dataToSave, StandardCharsets.UTF_8)
         }
-    }
 
-    suspend fun readStringFromFilePath(filePath: String): String = withContext(dispatcherProvider.Io) {
-        return@withContext File(filePath)
+
+    fun readStringFromFilePath(filePath: String): String =
+        File(filePath)
             .source()
             .buffer()
             .readUtf8()
-    }
 }

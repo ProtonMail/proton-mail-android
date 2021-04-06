@@ -124,7 +124,7 @@ import timber.log.Timber;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE0;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE2;
-import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE3;
+import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE3_PATH;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_EMAIL;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_FLOW;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_LOCAL_CONTACT;
@@ -198,14 +198,22 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         return intent;
     }
 
-    public static void startEditContactActivity(@NonNull Activity context, String contactId, int requestCode, String vCardType0, String vCardType2, String vCardType3) {
+    public static void startEditContactActivity(
+            @NonNull Activity context,
+            String contactId,
+            int requestCode,
+            String vCardType0,
+            String vCardType2,
+            String vCardType3FilePath
+    ) {
         final Intent intent = AppUtil.decorInAppIntent(
                 new Intent(context, EditContactDetailsActivity.class));
         intent.putExtra(EXTRA_FLOW, FLOW_EDIT_CONTACT)
                 .putExtra(EXTRA_CONTACT, contactId)
                 .putExtra(EXTRA_CONTACT_VCARD_TYPE0, vCardType0)
                 .putExtra(EXTRA_CONTACT_VCARD_TYPE2, vCardType2)
-                .putExtra(EXTRA_CONTACT_VCARD_TYPE3, vCardType3);
+                .putExtra(EXTRA_CONTACT_VCARD_TYPE3_PATH, vCardType3FilePath);
+
         context.startActivityForResult(intent, requestCode);
     }
 
@@ -242,7 +250,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 Arrays.asList(getResources().getStringArray(R.array.vcard_option_other)),
                 extras.getString(EXTRA_CONTACT_VCARD_TYPE0),
                 extras.getString(EXTRA_CONTACT_VCARD_TYPE2),
-                extras.getString(EXTRA_CONTACT_VCARD_TYPE3));
+                extras.getString(EXTRA_CONTACT_VCARD_TYPE3_PATH));
 
         viewModel.getSetupComplete().observe(this, setupCompleteObserver);
 
