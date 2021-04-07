@@ -99,8 +99,6 @@ import ch.protonmail.android.api.models.MessageCount
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.api.services.MessagesService.Companion.getLastMessageTime
-import ch.protonmail.android.api.services.MessagesService.Companion.startFetchFirstPage
-import ch.protonmail.android.api.services.MessagesService.Companion.startFetchFirstPageByLabel
 import ch.protonmail.android.api.services.MessagesService.Companion.startFetchMessages
 import ch.protonmail.android.api.services.MessagesService.Companion.startFetchMessagesByLabel
 import ch.protonmail.android.core.Constants
@@ -1394,20 +1392,16 @@ class MailboxActivity :
         mailboxRecyclerView.clearFocus()
         mailboxRecyclerView.scrollToPosition(0)
         setUpMailboxActionsView()
-        if (newMessageLocationType == MessageLocationType.STARRED) {
-            startFetchFirstPage(applicationContext, userManager.requireCurrentUserId(), newMessageLocationType)
-        } else {
-            syncUUID = UUID.randomUUID().toString()
-            mJobManager.addJobInBackground(
-                FetchByLocationJob(
-                    newMessageLocationType,
-                    mailboxLabelId,
-                    false,
-                    syncUUID,
-                    false
-                )
+        syncUUID = UUID.randomUUID().toString()
+        mJobManager.addJobInBackground(
+            FetchByLocationJob(
+                newMessageLocationType,
+                mailboxLabelId,
+                false,
+                syncUUID,
+                false
             )
-        }
+        )
         RefreshEmptyViewTask(
             WeakReference(this),
             counterDao,
@@ -1638,14 +1632,18 @@ class MailboxActivity :
                 }
             }
             mailboxActivity.closeDrawer()
-            mailboxActivity.mailboxRecyclerView.scrollToPosition(0)
-            startFetchFirstPageByLabel(
-                mailboxActivity,
-                userId,
-                fromInt(newLocation),
-                labelId,
-                false
+            mailboxActivity.messages_list_view.scrollToPosition(0)
+
+            mailboxActivity.mJobManager.addJobInBackground(
+                FetchByLocationJob(
+                    fromInt(newLocation),
+                    labelId,
+                    false,
+                    mailboxActivity.syncUUID,
+                    false
+                )
             )
+
             RefreshEmptyViewTask(
                 this.mailboxActivity,
                 mailboxActivity.counterDao,

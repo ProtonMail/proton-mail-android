@@ -43,7 +43,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
 
-// region constants
 private const val ACTION_FETCH_MESSAGE_LABELS = "ACTION_FETCH_MESSAGE_LABELS"
 private const val ACTION_FETCH_CONTACT_GROUPS_LABELS = "ACTION_FETCH_CONTACT_GROUPS_LABELS"
 private const val ACTION_FETCH_MESSAGES_BY_PAGE = "ACTION_FETCH_MESSAGES_BY_PAGE"
@@ -65,7 +64,6 @@ private const val PREF_LAST_MESSAGE_TIME_ARCHIVE = "lastMessageTimeArchive"
 private const val PREF_LAST_MESSAGE_TIME_SPAM = "lastMessageTimeSpam"
 private const val PREF_LAST_MESSAGE_TIME_TRASH = "lastMessageTimeTrash"
 private const val PREF_LAST_MESSAGE_TIME_ALL = "lastMessageTimeAll"
-// endregion
 
 @AndroidEntryPoint
 class MessagesService : JobIntentService() {
@@ -400,21 +398,6 @@ class MessagesService : JobIntentService() {
             val intent = Intent(context, MessagesService::class.java)
                 .setAction(ACTION_FETCH_CONTACT_GROUPS_LABELS)
                 .putExtra(EXTRA_USER_ID, userId.s)
-            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
-        }
-
-        /**
-         * Load initial page and detail of every message it fetch
-         */
-        fun startFetchFirstPage(
-            context: Context,
-            userId: Id,
-            location: Constants.MessageLocationType
-        ) {
-            val intent = Intent(context, MessagesService::class.java)
-                .setAction(ACTION_FETCH_MESSAGES_BY_PAGE)
-                .putExtra(EXTRA_USER_ID, userId.s)
-                .putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
