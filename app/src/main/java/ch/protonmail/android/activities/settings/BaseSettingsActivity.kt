@@ -71,6 +71,7 @@ import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.mailbox.data.local.ConversationDao
+import ch.protonmail.android.mailbox.presentation.MailboxActivity
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.uiModel.SettingsItemUiModel

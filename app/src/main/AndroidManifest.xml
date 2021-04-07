@@ -150,7 +150,7 @@
             android:label="@string/local_storage"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.mailbox.MailboxActivity"
+            android:name=".mailbox.presentation.MailboxActivity"
             android:exported="false"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask"
@@ -159,10 +159,10 @@
             android:name=".activities.messageDetails.MessageDetailsActivity"
             android:exported="false"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.mailbox.MailboxActivity">
+            android:parentActivityName=".mailbox.presentation.MailboxActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.mailbox.MailboxActivity" />
+                android:value=".mailbox.presentation.MailboxActivity" />
         </activity>
         <activity
             android:name=".activities.messageDetails.MessageViewHeadersActivity"
@@ -177,11 +177,11 @@
             android:name=".activities.composeMessage.ComposeMessageActivity"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.mailbox.MailboxActivity"
+            android:parentActivityName=".mailbox.presentation.MailboxActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.mailbox.MailboxActivity" />
+                android:value=".mailbox.presentation.MailboxActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

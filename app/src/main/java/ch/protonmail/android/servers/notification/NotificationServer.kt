@@ -41,7 +41,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.toSpannable
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
-import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
@@ -50,6 +49,7 @@ import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.User
+import ch.protonmail.android.mailbox.presentation.MailboxActivity
 import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_DELETE_MESSAGE
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.buildArchiveIntent

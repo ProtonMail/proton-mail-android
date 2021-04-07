@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities.mailbox
+package ch.protonmail.android.mailbox.presentation
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -65,11 +65,6 @@ import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.EngagementActivity
-import ch.protonmail.android.activities.FLOW_START_ACTIVITY
-import ch.protonmail.android.activities.FLOW_TRY_COMPOSE
-import ch.protonmail.android.activities.FLOW_USED_SPACE_CHANGED
-import ch.protonmail.android.activities.MailboxViewModel
-import ch.protonmail.android.activities.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.activities.NavigationActivity
 import ch.protonmail.android.activities.SearchActivity
 import ch.protonmail.android.activities.SettingsActivity
@@ -83,6 +78,9 @@ import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
+import ch.protonmail.android.activities.mailbox.RefreshEmptyViewTask
+import ch.protonmail.android.activities.mailbox.RefreshTotalCountersTask
+import ch.protonmail.android.activities.mailbox.ShowLabelsManagerDialogTask
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
@@ -145,7 +143,7 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
-import ch.protonmail.android.mailbox.presentation.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT

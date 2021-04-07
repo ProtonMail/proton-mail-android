@@ -21,7 +21,6 @@
 package ch.protonmail.android.di
 
 import androidx.lifecycle.ViewModelProvider
-import ch.protonmail.android.activities.MailboxViewModel
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
@@ -33,6 +32,7 @@ import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserViewMode
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage

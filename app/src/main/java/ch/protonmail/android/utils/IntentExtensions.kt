@@ -28,6 +28,7 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import me.proton.core.domain.entity.UserId
+import ch.protonmail.android.mailbox.presentation.MailboxActivity
 
 fun Context.startSplashActivity() =
     startActivity(getSplashActivityIntent())

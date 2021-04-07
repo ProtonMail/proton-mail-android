@@ -30,6 +30,7 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.mailbox.presentation.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.MessageData
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.testAndroid.rx.TrampolineScheduler
