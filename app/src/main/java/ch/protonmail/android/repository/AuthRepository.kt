@@ -16,20 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.segments.authentication
 
-import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.api.models.ModulusResponse
-import ch.protonmail.android.api.models.RefreshBody
-import ch.protonmail.android.api.models.RefreshResponse
-import java.io.IOException
+package ch.protonmail.android.repository
 
-interface AuthenticationApiSpec {
+import kotlinx.coroutines.runBlocking
+import me.proton.core.auth.domain.repository.AuthRepository
 
-    @Throws(IOException::class)
-    fun randomModulus(): ModulusResponse
-
-    suspend fun refreshAuth(refreshBody: RefreshBody, userIdTag: UserIdTag?): RefreshResponse
-
-    fun refreshAuthBlocking(refreshBody: RefreshBody, userIdTag: UserIdTag): RefreshResponse
-}
+@Deprecated(
+    "Please convert caller Java file to Kotlin.",
+    ReplaceWith("runBlocking { randomModulus() }", "kotlinx.coroutines.runBlocking")
+)
+fun AuthRepository.randomModulusBlocking() = runBlocking { randomModulus() }

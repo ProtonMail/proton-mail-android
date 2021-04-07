@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.api.segments.attachment
 
-import ch.protonmail.android.api.ProgressListener
 import ch.protonmail.android.api.models.AttachmentUploadResponse
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.data.local.model.Attachment
@@ -28,8 +27,6 @@ import java.io.IOException
 interface AttachmentApiSpec {
 
     fun deleteAttachment(attachmentId: String): ResponseBody
-
-    fun downloadAttachmentBlocking(attachmentId: String, progressListener: ProgressListener): ByteArray
 
     fun downloadAttachmentBlocking(attachmentId: String): ByteArray
 

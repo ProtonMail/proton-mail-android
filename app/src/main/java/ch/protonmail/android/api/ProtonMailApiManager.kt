@@ -39,14 +39,11 @@ import ch.protonmail.android.api.models.KeySalts
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.MailSettingsResponse
-import ch.protonmail.android.api.models.ModulusResponse
 import ch.protonmail.android.api.models.MoveToFolderResponse
 import ch.protonmail.android.api.models.OrganizationResponse
 import ch.protonmail.android.api.models.PaymentMethodsResponse
 import ch.protonmail.android.api.models.PaymentsStatusResponse
 import ch.protonmail.android.api.models.PublicKeyResponse
-import ch.protonmail.android.api.models.RefreshBody
-import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
@@ -68,7 +65,6 @@ import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.segments.address.AddressApiSpec
 import ch.protonmail.android.api.segments.attachment.AttachmentApiSpec
-import ch.protonmail.android.api.segments.authentication.AuthenticationApiSpec
 import ch.protonmail.android.api.segments.connectivity.ConnectivityApiSpec
 import ch.protonmail.android.api.segments.contact.ContactApiSpec
 import ch.protonmail.android.api.segments.device.DeviceApiSpec
@@ -102,7 +98,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     BaseApi(),
     AddressApiSpec,
     AttachmentApiSpec,
-    AuthenticationApiSpec,
     ConnectivityApiSpec,
     ContactApiSpec,
     DeviceApiSpec,
@@ -142,14 +137,11 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         signature: String
     ): ResponseBody = api.editAddress(addressId, displayName, signature)
 
-    override fun deleteAttachment(attachmentId: String): ResponseBody = api.deleteAttachment(attachmentId)
-
+    override fun deleteAttachment(attachmentId: String): ResponseBody =
+        api.deleteAttachment(attachmentId)
 
     override fun downloadAttachmentBlocking(attachmentId: String): ByteArray =
         api.downloadAttachmentBlocking(attachmentId)
-
-    override fun downloadAttachmentBlocking(attachmentId: String, progressListener: ProgressListener): ByteArray =
-        api.downloadAttachmentBlocking(attachmentId, progressListener)
 
     override suspend fun downloadAttachment(attachmentId: String): okhttp3.ResponseBody? =
         api.downloadAttachment(attachmentId)
@@ -189,18 +181,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     ): AttachmentUploadResponse = api.uploadAttachment(attachment, keyPackage, dataPackage, signature)
 
     override fun getAttachmentUrl(attachmentId: String): String = api.getAttachmentUrl(attachmentId)
-
-    override fun randomModulus(): ModulusResponse = api.randomModulus()
-
-    override suspend fun refreshAuth(
-        refreshBody: RefreshBody,
-        userIdTag: UserIdTag?
-    ): RefreshResponse = api.refreshAuth(refreshBody, userIdTag)
-
-    override fun refreshAuthBlocking(
-        refreshBody: RefreshBody,
-        userIdTag: UserIdTag
-    ): RefreshResponse = api.refreshAuthBlocking(refreshBody, userIdTag)
 
     override suspend fun pingAsync(): ResponseBody = api.pingAsync()
 

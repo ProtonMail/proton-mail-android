@@ -20,147 +20,42 @@ package ch.protonmail.android.api
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.core.content.edit
-import ch.protonmail.android.api.models.RefreshBody
-import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
-import me.proton.core.util.android.sharedpreferences.clearAll
+import me.proton.core.util.android.sharedpreferences.clearOnly
 import me.proton.core.util.android.sharedpreferences.get
-import me.proton.core.util.kotlin.unsupported
-import me.proton.core.network.domain.session.Session
-import me.proton.core.network.domain.session.SessionId
 
 // region constants
+private const val PREF_ENC_PRIV_KEY = "priv_key"
 private const val PREF_REFRESH_TOKEN = "refresh_token"
-private const val PREF_USER_UID = "user_uid"
+private const val PREF_SESSION_ID = "user_uid"
 private const val PREF_ACCESS_TOKEN = "access_token_plain"
 private const val PREF_TOKEN_SCOPE = "access_token_scope"
 // endregion
 
-/**
- * TokenManager stores separate credentials for every user in
- * [SecureSharedPreferences][ch.protonmail.android.prefs.SecureSharedPreferences] file.
- */
-
+@Deprecated("Replaced by SessionProvider. Now fully handled by Core AccountManager.")
 class TokenManager private constructor(private val pref: SharedPreferences) {
 
-    private var accessToken: String? = null
-    private var refreshToken: String? = null
-    private var uID: String? = null
-    var scope: String = Constants.TOKEN_SCOPE_FULL
-        set(value) {
-            field = value
-            persist()
-        }
-
-    init {
-        load()
-    }
-
-    val uid: String
-        get() = uID ?: ""
-
-    val authAccessToken: String?
-        get() = if (accessToken.isNullOrEmpty()) {
-            null
-        } else {
-            Constants.TOKEN_TYPE + " " + accessToken
-        }
-
-    val session: Session?
-        get() {
-            val sessionAccessToken = accessToken ?: return null
-            val sessionRefreshToken = refreshToken ?: return null
-            return Session(
-                sessionId = SessionId(uid),
-                accessToken = sessionAccessToken,
-                refreshToken = sessionRefreshToken,
-                headers = null, // TODO: Add HumanVerification headers if exist,
-                scopes = scope.split(" ")
-            )
-        }
-
-    private fun load() {
-        refreshToken = pref[PREF_REFRESH_TOKEN] ?: ""
-        uID = pref[PREF_USER_UID] ?: ""
-        accessToken = pref[PREF_ACCESS_TOKEN]
-        scope = pref[PREF_TOKEN_SCOPE] ?: Constants.TOKEN_SCOPE_FULL
-    }
-
-    private fun persist() {
-        pref.edit {
-            putString(PREF_REFRESH_TOKEN, refreshToken)
-            putString(PREF_USER_UID, uID)
-            putString(PREF_ACCESS_TOKEN, accessToken)
-            putString(PREF_TOKEN_SCOPE, scope)
-        }
-    }
-
-    fun handleRefresh(response: RefreshResponse) {
-        if (response.refreshToken != null) {
-            refreshToken = response.refreshToken
-        }
-        accessToken = response.accessToken
-        scope = response.scope
-        persist()
-    }
-
-    fun handleRefresh(session: Session) {
-        refreshToken = session.refreshToken
-        accessToken = session.accessToken
-        persist()
-    }
-
-    fun handleLogin(session: Session) {
-        accessToken = session.accessToken
-        scope = session.scopes.toString()
-        refreshToken = session.refreshToken
-        uID = session.sessionId.id
-        persist()
-    }
-
-    fun clearAccessToken() {
-        accessToken = null
-        scope = ""
-    }
+    internal var accessToken: String? = pref[PREF_ACCESS_TOKEN]
+    internal var refreshToken: String? = pref[PREF_REFRESH_TOKEN]
+    internal var sessionId: String? = pref[PREF_SESSION_ID]
+    internal var scope: String = pref[PREF_TOKEN_SCOPE] ?: Constants.TOKEN_SCOPE_FULL
 
     fun clear() {
-        pref.clearAll()
-        load()
+        pref.clearOnly(
+            PREF_REFRESH_TOKEN,
+            PREF_SESSION_ID,
+            PREF_ACCESS_TOKEN,
+            PREF_TOKEN_SCOPE,
+            PREF_ENC_PRIV_KEY
+        )
     }
-
-    fun createRefreshBody(): RefreshBody =
-        RefreshBody(refreshToken)
-
-    // TODO method only for debugging production issue
-    fun isRefreshTokenBlank() = refreshToken.isNullOrBlank()
-
-    // TODO method only for debugging production issue
-    fun isUidBlank() = uid.isNullOrBlank()
 
     companion object {
 
-        private val cache = mutableMapOf<Id, TokenManager>()
-
-        @Synchronized
-        fun clearInstance(userId: Id) {
-            cache -= userId
-        }
-
-        @Synchronized
-        fun clearAllInstances() {
-            cache.clear()
-        }
-
-        /**
-         * Creates and caches instances of TokenManager for given User
-         */
-        @Synchronized
+        @Deprecated("Replaced by SessionProvider. Now fully handled by Core AccountManager.")
         fun getInstance(context: Context, userId: Id): TokenManager =
-            cache.getOrPut(userId) {
-                TokenManager(SecureSharedPreferences.getPrefsForUser(context, userId))
-            }
+            TokenManager(SecureSharedPreferences.getPrefsForUser(context, userId))
     }
 }

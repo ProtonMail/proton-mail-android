@@ -24,6 +24,7 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
@@ -74,7 +75,6 @@ import ch.protonmail.android.views.DrawerHeaderView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
 import kotlinx.android.synthetic.main.drawer_header.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.proton.core.util.kotlin.unsupported
@@ -320,19 +320,6 @@ abstract class NavigationActivity :
 
         lifecycleScope.launchWhenCreated {
             refreshDrawerHeader(checkNotNull(userManager.getCurrentUser()))
-            for (userId in accountManager.allLoggedIn()) {
-                val tokenManager = userManager.getTokenManager(userId)
-                val scopes = tokenManager.scope.toLowerCase().split(" ")
-                if (Constants.TOKEN_SCOPE_FULL !in scopes) {
-                    val nextLoggedIn = userManager.getNextLoggedInUser()
-                    userManager.logout(userId)
-                    nextLoggedIn?.let {
-                        delay(100)
-                        switchAccount(it)
-                    }
-                    onSwitchedAccounts()
-                }
-            }
         }
 
         setupAccountsList()

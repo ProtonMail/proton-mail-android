@@ -24,7 +24,6 @@ import androidx.annotation.IntDef
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.api.AccountManager
-import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.local.SnoozeSettings
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.User
@@ -317,31 +316,6 @@ class UserManager @Inject constructor(
             setCurrentUserBlocking(Id(user.id))
         }
 
-    suspend fun getCurrentUserTokenManager(): TokenManager? =
-        currentUserId?.let { getTokenManager(it) }
-
-    @Deprecated(
-        "Should not be used, necessary only for old and Java classes",
-        ReplaceWith("getCurrentUserTokenManager()")
-    )
-    fun getCurrentUserTokenManagerBlocking(): TokenManager? =
-        runBlocking {
-            getCurrentUserTokenManager()
-        }
-
-    @Deprecated("Use 'currentUser' variant", ReplaceWith("getCurrentUserTokenManager()"))
-    val tokenManager: TokenManager?
-        get() = runBlocking { getCurrentUserTokenManager() }
-
-    suspend fun getUserIdBySessionId(sessionId: String): Id? =
-        accountManager.allLoggedIn().find {
-            sessionId == getTokenManager(it).uid
-        }
-
-    @Deprecated("Use suspend function", ReplaceWith("getUserIdBySessionId(sessionId)"))
-    fun getUserIdBySessionIdBlocking(sessionId: String): Id? =
-        runBlocking { getUserIdBySessionId(sessionId) }
-
     var checkTimestamp: Float
         get() = _checkTimestamp
         set(checkTimestamp) {
@@ -497,10 +471,8 @@ class UserManager @Inject constructor(
             AppUtil.deleteBackupPrefs()
             firstLoginRemove()
             resetReferences()
-            getCurrentUserTokenManager()?.clear()
             clearUserData(userId)
             //TODO: AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
-            TokenManager.clearAllInstances()
         } else {
             val oldUser = requireCurrentUser()
             accountManager.setLoggedOut(userId)
@@ -510,7 +482,6 @@ class UserManager @Inject constructor(
             val nextUser = loadUser(nextUserId).orThrow()
             val event = SwitchUserEvent(from = oldUser.id to oldUser.name, to = nextUser.id to nextUser.name)
             ForceSwitchedAccountNotifier.notifier.postValue(event)
-            TokenManager.clearInstance(userId)
         }
     }
 
@@ -677,13 +648,6 @@ class UserManager @Inject constructor(
     fun getCurrentUserMailboxPassword(): ByteArray? =
         withCurrentUserPreferences { it.get<String>(PREF_MAILBOX_PASSWORD)?.toByteArray(Charsets.UTF_8) }
 
-    fun accessTokenExists(): Boolean {
-        val exists = tokenManager?.let {
-            it.authAccessToken?.isNotEmpty()
-        }
-        return exists ?: false
-    }
-
     suspend fun setUserDetails(
         user: User,
         addresses: List<Address>,
@@ -769,8 +733,6 @@ class UserManager @Inject constructor(
     @Deprecated("Use suspend function", ReplaceWith("canConnectAnotherAccount"))
     fun canConnectAnotherAccountBlocking(): Boolean =
         runBlocking { canConnectAnotherAccount() }
-
-    fun getTokenManager(userId: Id): TokenManager = TokenManager.getInstance(context, userId)
 
     fun canShowStorageLimitWarning(): Boolean =
         withCurrentUserPreferences { it[PREF_SHOW_STORAGE_LIMIT_WARNING] } ?: true

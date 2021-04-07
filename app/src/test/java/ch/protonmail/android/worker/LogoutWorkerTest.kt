@@ -24,7 +24,6 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.AccountManager
-import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
@@ -70,9 +69,6 @@ class LogoutWorkerTest {
     @MockK
     private lateinit var parameters: WorkerParameters
 
-    @MockK
-    private lateinit var api: ProtonMailApiManager
-
     private lateinit var worker: LogoutWorker
 
     private val testUserId = Id("id")
@@ -84,7 +80,6 @@ class LogoutWorkerTest {
         worker = LogoutWorker(
             context,
             parameters,
-            api,
             accountManager,
             userManager
         )
@@ -111,7 +106,6 @@ class LogoutWorkerTest {
             )
             every { userManager.currentUserId } returns null
             val tokenManager = mockk<TokenManager>(relaxed = true)
-            coEvery { userManager.getTokenManager(testUserId) } returns tokenManager
             coEvery { userManager.getNextLoggedInUser(any()) } returns null
             coEvery { accountManager.allLoggedIn() } returns setOf(testUserId)
             coEvery { accountManager.clear() } just Runs
@@ -122,7 +116,7 @@ class LogoutWorkerTest {
             val revokeResponse = mockk<ResponseBody> {
                 every { code } returns Constants.RESPONSE_CODE_OK
             }
-            coEvery { api.unregisterDevice(registrationId) } returns revokeResponse
+            //coEvery { api.unregisterDevice(registrationId) } returns revokeResponse
             //coEvery { api.revokeAccess(testUserId) } returns revokeResponse
             val expected = ListenableWorker.Result.success()
 
@@ -131,7 +125,7 @@ class LogoutWorkerTest {
 
             // then
             coVerify { accountManager.clear() }
-            coVerify { api.unregisterDevice(registrationId) }
+            //coVerify { api.unregisterDevice(registrationId) }
             //coVerify { api.revokeAccess(testUserId) }
             assertEquals(expected, result)
         }
@@ -152,13 +146,13 @@ class LogoutWorkerTest {
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to exceptionMessage)
             )
-            coEvery { api.unregisterDevice(registrationId) } throws testException
+            //coEvery { api.unregisterDevice(registrationId) } throws testException
 
             // when
             val result = worker.doWork()
 
             // then
-            coVerify { api.unregisterDevice(registrationId) }
+            //coVerify { api.unregisterDevice(registrationId) }
             assertEquals(expected, result)
         }
 

@@ -31,12 +31,9 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.AccountManager
-import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.core.PREF_PIN
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.events.Status
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.AppUtil
 import dagger.assisted.Assisted
@@ -57,7 +54,6 @@ internal const val KEY_INPUT_FCM_REGISTRATION_ID = "KeyInputRegistrationId"
 class LogoutWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val api: ProtonMailApiManager,
     private val accountManager: AccountManager,
     private val userManager: UserManager
 ) : CoroutineWorker(context, params) {
@@ -76,9 +72,6 @@ class LogoutWorker @AssistedInject constructor(
             val isThereAnotherLoggedInUser = userManager.getNextLoggedInUser(userId) == null
             if (isThereAnotherLoggedInUser) prefs.clearAll()
             else prefs.clearAll(excludedKeys = arrayOf(PREF_PIN))
-
-            userManager.getTokenManager(userId).clear()
-            TokenManager.clearInstance(userId)
         }.fold(
             onSuccess = { Result.success() },
             onFailure = { throwable ->

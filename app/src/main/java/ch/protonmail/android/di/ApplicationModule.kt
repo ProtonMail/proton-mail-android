@@ -30,7 +30,6 @@ import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
 import ch.protonmail.android.api.ProtonRetrofitBuilder
 import ch.protonmail.android.api.cookie.ProtonCookieStore
-import ch.protonmail.android.api.interceptors.ProtonMailAuthenticator
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.factories.IConverterFactory
@@ -70,6 +69,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import me.proton.core.accountmanager.domain.SessionManager
 import me.proton.core.util.kotlin.DispatcherProvider
 import java.io.File
 import java.io.InputStream
@@ -194,8 +194,8 @@ object ApplicationModule {
         networkUtil: QueueNetworkUtil,
         okHttpProvider: OkHttpProvider,
         @DefaultSharedPreferences prefs: SharedPreferences,
-        authenticator: ProtonMailAuthenticator,
-        userNotifier: UserNotifier
+        userNotifier: UserNotifier,
+        sessionManager: SessionManager
     ): ProtonRetrofitBuilder {
 
         // userManager.user.allowSecureConnectionsViaThirdParties)
@@ -209,9 +209,9 @@ object ApplicationModule {
             userManager,
             jobManager,
             networkUtil,
-            authenticator,
             ProtonCookieStore(context),
-            userNotifier
+            userNotifier,
+            sessionManager
         ).apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
     }
 

@@ -68,7 +68,19 @@ class AccountViewModel @ViewModelInject constructor(
                 .onSessionHumanVerificationNeeded { startHumanVerificationWorkflow(it) }
                 .onAccountTwoPassModeFailed { accountManager.disableAccount(it.userId) }
                 .onAccountCreateAddressFailed { accountManager.disableAccount(it.userId) }
-                .onAccountDisabled { accountManager.removeAccount(it.userId) }
+                .onAccountDisabled {
+
+                    /*
+                    notifyLoggedOut.blocking(userId)
+                    jobManager.stop()
+                    jobManager.clear()
+                    jobManager.cancelJobsInBackground(null, TagConstraint.ALL)
+                    userManager.logoutOfflineBlocking(userId)
+                    */
+
+
+                    accountManager.removeAccount(it.userId)
+                }
         }
 
         // Raise LoginNeeded on empty account list.

@@ -24,6 +24,7 @@ import ch.protonmail.android.events.ConnectivityEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.notifier.UserNotifier
 import com.birbit.android.jobqueue.JobManager
+import me.proton.core.accountmanager.domain.SessionManager
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -31,71 +32,63 @@ import timber.log.Timber
 import java.io.IOException
 
 /**
- * ProtonMailRequestInterceptor intercepts every request and if HTTP response status is 401
- * It try to refresh token and make original request again with refreshed access token
+ * ProtonMailRequestInterceptor intercepts every request and check response.
  */
 class ProtonMailRequestInterceptor private constructor(
     userManager: UserManager,
     jobManager: JobManager,
     networkUtil: QueueNetworkUtil,
-    userNotifier: UserNotifier
-) : BaseRequestInterceptor(userManager, jobManager, networkUtil, userNotifier) {
+    userNotifier: UserNotifier,
+    sessionManager: SessionManager,
+) : BaseRequestInterceptor(userManager, jobManager, networkUtil, userNotifier, sessionManager) {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
-
-        val request: Request = applyHeadersToRequest(chain.request())
-
-        // try the request
-        var response: Response? = null
+        val request: Request = getRequestWithHeaders(chain.request())
         try {
-            requestCount++
             Timber.d("Intercept: advancing request with url: " + request.url)
-            response = chain.proceed(request)
+            requestCount++
+            val response: Response = chain.proceed(request)
+
+            networkUtils.setCurrentlyHasConnectivity()
+            AppUtil.postEventOnUi(ConnectivityEvent(true))
+
+            // check validity of response (DoH expiration and error codes)
+            return checkResponse(response, chain)
 
         } catch (exception: IOException) {
             Timber.d(exception, "Intercept: IOException with url: " + request.url)
             AppUtil.postEventOnUi(ConnectivityEvent(false))
             networkUtils.setConnectivityHasFailed(exception)
+            throw exception
+        } finally {
+            requestCount--
         }
-
-        requestCount--
-        if (response == null) {
-            return chain.proceed(request)
-        } else {
-            networkUtils.setCurrentlyHasConnectivity()
-            AppUtil.postEventOnUi(ConnectivityEvent(true))
-        }
-
-        // check validity of response (DoH expiration and error codes)
-        checkResponse(response)
-        return response
     }
 
     companion object {
 
-        var requestCount = 0
+        private var instance: ProtonMailRequestInterceptor? = null
 
-        @Volatile
-        private var INSTANCE: ProtonMailRequestInterceptor? = null
+        var requestCount = 0
 
         fun getInstance(
             userManager: UserManager,
             jobManager: JobManager,
             networkUtil: QueueNetworkUtil,
-            userNotifier: UserNotifier
-        ): ProtonMailRequestInterceptor =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE
-                    ?: buildInstance(userManager, jobManager, networkUtil, userNotifier).also { INSTANCE = it }
+            userNotifier: UserNotifier,
+            sessionManager: SessionManager
+        ): ProtonMailRequestInterceptor = synchronized(this) {
+            if (instance == null) {
+                instance = ProtonMailRequestInterceptor(
+                    userManager,
+                    jobManager,
+                    networkUtil,
+                    userNotifier,
+                    sessionManager
+                )
             }
-
-        private fun buildInstance(
-            userManager: UserManager,
-            jobManager: JobManager,
-            networkUtil: QueueNetworkUtil,
-            userNotifier: UserNotifier
-        ) = ProtonMailRequestInterceptor(userManager, jobManager, networkUtil, userNotifier)
-
+            instance!!
+        }
     }
 }

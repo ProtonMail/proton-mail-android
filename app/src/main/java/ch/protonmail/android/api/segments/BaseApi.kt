@@ -28,9 +28,6 @@ import java.util.Collections
 import java.util.concurrent.ArrayBlockingQueue
 
 // region constants
-const val REFRESH_PATH = "/auth/refresh"
-const val AUTH_PATH = "auth"
-const val AUTH_INFO_PATH = "auth/info"
 const val ATTACH_PATH = "attach"
 
 const val ONE_MINUTE = 60L

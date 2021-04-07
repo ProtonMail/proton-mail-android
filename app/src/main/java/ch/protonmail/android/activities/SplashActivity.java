@@ -85,6 +85,8 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void checkUserDetailsAndGoHome() {
+        /*
+        TODO("accountViewModel.getAccounts")
         if (mUserManager.accessTokenExists() && !mUserManager.getUser().getAddresses().isEmpty()) {
             mUserManager.setLoggedIn(true);
             fetchMailSettingsWorkerEnqueuer.enqueue();
@@ -93,6 +95,7 @@ public class SplashActivity extends BaseActivity {
         } else {
             LoginService.fetchUserDetails();
         }
+        */
     }
 
     private void navigate() {

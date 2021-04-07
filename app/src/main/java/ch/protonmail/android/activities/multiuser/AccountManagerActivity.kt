@@ -159,29 +159,20 @@ class AccountManagerActivity : BaseActivity() {
 
     private fun loadData() {
         lifecycleScope.launchWhenCreated {
-            val hasAccessToken = userManager.accessTokenExists()
-            val hasAddresses = userManager.getCurrentUser()?.addresses?.hasAddresses ?: false
-            if (hasAccessToken.not() || hasAddresses.not()) {
-                userManager.logoutOffline(checkNotNull(userManager.currentUserId))
-            }
-
             val currentUser = userManager.currentUserId
-            lifecycleScope.launchWhenCreated {
+            val allUsers = accountManager.allLoggedIn().map { it to true } +
+                accountManager.allLoggedOut().map { it to false }
 
-                val allUsers = accountManager.allLoggedIn().map { it to true } +
-                    accountManager.allLoggedOut().map { it to false }
+            val accounts = allUsers
+                // Current user as first position, then logged in first
+                .sortedByDescending { it.first == currentUser && it.second }
+                .map { (id, loggedIn) ->
+                    val user = userManager.getUser(id)
+                    user.toUiModel(loggedIn, id == currentUser)
+                }
 
-                val accounts = allUsers
-                    // Current user as first position, then logged in first
-                    .sortedByDescending { it.first == currentUser && it.second }
-                    .map { (id, loggedIn) ->
-                        val user = userManager.getUser(id)
-                        user.toUiModel(loggedIn, id == currentUser)
-                    }
-
-                accountsAdapter.items = accounts + DrawerUserModel.AccFooter
-                accountsRecyclerView.adapter = accountsAdapter
-            }
+            accountsAdapter.items = accounts + DrawerUserModel.AccFooter
+            accountsRecyclerView.adapter = accountsAdapter
         }
     }
 

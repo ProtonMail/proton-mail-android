@@ -26,7 +26,6 @@ import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -155,5 +154,4 @@ class AccountSettingsActivity : BaseSettingsActivity() {
             R.raw.acc_settings_structure
         }
     }
-
 }

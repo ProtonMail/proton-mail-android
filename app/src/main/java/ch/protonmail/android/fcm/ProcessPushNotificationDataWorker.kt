@@ -43,6 +43,8 @@ import ch.protonmail.android.fcm.model.PushNotificationData
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.AppUtil
+import me.proton.core.accountmanager.domain.SessionManager
+import me.proton.core.network.domain.session.SessionId
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -67,7 +69,8 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
     private val queueNetworkUtil: QueueNetworkUtil,
     private val userManager: UserManager,
     private val databaseProvider: DatabaseProvider,
-    private val messageRepository: MessageRepository
+    private val messageRepository: MessageRepository,
+    private val sessionManager: SessionManager
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
@@ -95,7 +98,7 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
 
         queueNetworkUtil.setCurrentlyHasConnectivity()
 
-        val notificationUserId = userManager.getUserIdBySessionId(sessionId)
+        val notificationUserId = sessionManager.getUserId(SessionId(sessionId))
             // we do not show notifications for unknown/inactive users
             ?: return Result.failure(
                 workDataOf(
@@ -103,7 +106,8 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
                 )
             )
 
-        val user = userManager.getLegacyUser(notificationUserId)
+        val userId = Id(notificationUserId.id)
+        val user = userManager.getLegacyUser(userId)
         if (!user.isBackgroundSync) {
             // we do not show notifications for users who have disabled background sync
             return Result.failure(
@@ -116,7 +120,7 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
         var pushNotification: PushNotification? = null
         var pushNotificationData: PushNotificationData? = null
         try {
-            val userCrypto = UserCrypto(userManager, userManager.openPgp, notificationUserId)
+            val userCrypto = UserCrypto(userManager, userManager.openPgp, userId)
             val textDecryptionResult = userCrypto.decryptMessage(encryptedMessage)
             val decryptedData = textDecryptionResult.decryptedData
             pushNotification = decryptedData.deserialize(PushNotification.serializer())
@@ -138,12 +142,12 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
             it.senderName.ifEmpty { it.senderAddress }
         } ?: EMPTY_STRING
 
-        val isPrimaryUser = userManager.currentUserId == notificationUserId
+        val isPrimaryUser = userManager.currentUserId == userId
         val isQuickSnoozeEnabled = userManager.isSnoozeQuickEnabled()
         val isScheduledSnoozeEnabled = userManager.isSnoozeScheduledEnabled()
 
         if (!isQuickSnoozeEnabled && (!isScheduledSnoozeEnabled || !shouldSuppressNotification())) {
-            sendNotification(notificationUserId, user, messageId, notificationBody, sender, isPrimaryUser)
+            sendNotification(userId, user, messageId, notificationBody, sender, isPrimaryUser)
         }
 
         return Result.success()

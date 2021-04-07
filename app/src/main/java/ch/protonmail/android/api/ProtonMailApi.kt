@@ -25,9 +25,6 @@ import ch.protonmail.android.api.segments.attachment.AttachmentApi
 import ch.protonmail.android.api.segments.attachment.AttachmentApiSpec
 import ch.protonmail.android.api.segments.attachment.AttachmentDownloadService
 import ch.protonmail.android.api.segments.attachment.AttachmentUploadService
-import ch.protonmail.android.api.segments.authentication.AuthenticationApi
-import ch.protonmail.android.api.segments.authentication.AuthenticationApiSpec
-import ch.protonmail.android.api.segments.authentication.AuthenticationPubService
 import ch.protonmail.android.api.segments.connectivity.ConnectivityApi
 import ch.protonmail.android.api.segments.connectivity.ConnectivityApiSpec
 import ch.protonmail.android.api.segments.connectivity.PingService
@@ -64,10 +61,8 @@ import javax.inject.Inject
  * Base API class that all API calls should go through.
  */
 class ProtonMailApi private constructor(
-    // region constructor params
     private val addressApi: AddressApiSpec,
     private val attachmentApi: AttachmentApiSpec,
-    private val authenticationApi: AuthenticationApiSpec,
     val connectivityApi: ConnectivityApiSpec,
     private val contactApi: ContactApiSpec,
     private val deviceApi: DeviceApiSpec,
@@ -82,13 +77,10 @@ class ProtonMailApi private constructor(
     private val userApi: UserApiSpec,
     private val domainApi: DomainApiSpec,
     var securedServices: SecuredServices
-    // endregion
 ) :
-    // region super classes and interfaces
     BaseApi(),
     AddressApiSpec by addressApi,
     AttachmentApiSpec by attachmentApi,
-    AuthenticationApiSpec by authenticationApi,
     ConnectivityApiSpec by connectivityApi,
     ContactApiSpec by contactApi,
     DeviceApiSpec by deviceApi,
@@ -102,8 +94,8 @@ class ProtonMailApi private constructor(
     MailSettingsApiSpec by mailSettingsApi,
     UserApiSpec by userApi,
     DomainApiSpec by domainApi
-    // endregion
 {
+
     // region hack to insert parameters in the constructor instead of init, otherwise delegation doesn't work
     @Inject
     constructor(protonRetrofitBuilder: ProtonRetrofitBuilder) :
@@ -113,25 +105,25 @@ class ProtonMailApi private constructor(
         // region params
         params[0] as AddressApiSpec,
         params[1] as AttachmentApiSpec,
-        params[2] as AuthenticationApiSpec,
-        params[3] as ConnectivityApiSpec,
-        params[4] as ContactApiSpec,
-        params[5] as DeviceApiSpec,
-        params[6] as KeyApiSpec,
-        params[7] as MessageApi,
-        params[8] as LabelApiSpec,
-        params[9] as OrganizationApiSpec,
-        params[10] as PaymentApiSpec,
-        params[11] as ReportApiSpec,
-        params[12] as MailSettingsApiSpec,
-        params[13] as UserSettingsApiSpec,
-        params[14] as UserApiSpec,
-        params[15] as DomainApiSpec,
-        params[17] as SecuredServices
+        params[2] as ConnectivityApiSpec,
+        params[3] as ContactApiSpec,
+        params[4] as DeviceApiSpec,
+        params[5] as KeyApiSpec,
+        params[6] as MessageApi,
+        params[7] as LabelApiSpec,
+        params[8] as OrganizationApiSpec,
+        params[9] as PaymentApiSpec,
+        params[10] as ReportApiSpec,
+        params[11] as MailSettingsApiSpec,
+        params[12] as UserSettingsApiSpec,
+        params[13] as UserApiSpec,
+        params[14] as DomainApiSpec,
+        params[15] as SecuredServices
         // endregion
     )
 
     companion object {
+
         /**
          * We inject the base url, which is now becoming dynamic instead of previously kept in Constants.ENDPOINT_URI.
          * Retrofit builders should now depend on a dynamic base url and also we should not recreate
@@ -141,7 +133,6 @@ class ProtonMailApi private constructor(
 
             // region config
             val services = SecuredServices(protonRetrofitBuilder.provideRetrofit(RetrofitType.SECURE))
-            val authPubService = protonRetrofitBuilder.provideRetrofit(RetrofitType.PUBLIC).create(AuthenticationPubService::class.java)
             val paymentPubService = protonRetrofitBuilder.provideRetrofit(RetrofitType.PUBLIC).create(PaymentPubService::class.java)
             val userPubService = protonRetrofitBuilder.provideRetrofit(RetrofitType.PUBLIC).create(UserPubService::class.java)
             val domainPubService = protonRetrofitBuilder.provideRetrofit(RetrofitType.PUBLIC).create(DomainPubService::class.java)
@@ -150,8 +141,7 @@ class ProtonMailApi private constructor(
             val mAttachmentsService = protonRetrofitBuilder.provideRetrofit(RetrofitType.ATTACHMENTS).create(AttachmentDownloadService::class.java)
 
             val addressApi = AddressApi(services.address)
-            val attachmentApi = AttachmentApi(services.attachment, mAttachmentsService, protonRetrofitBuilder.attachReqInter, mUploadService)
-            val authenticationApi = AuthenticationApi(authPubService)
+            val attachmentApi = AttachmentApi(services.attachment, mAttachmentsService, mUploadService)
             val connectivityApi = ConnectivityApi(servicePing)
             val contactApi = ContactApi(services.contact)
             val deviceApi = DeviceApi(services.device)
@@ -166,10 +156,24 @@ class ProtonMailApi private constructor(
             val domainApi = DomainApi(domainPubService)
             val userApi = UserApi(services.user, userPubService)
             // endregion
-            return arrayOf(addressApi, attachmentApi, authenticationApi, connectivityApi, contactApi,
-                    deviceApi, keyApi, messageApi, labelApi, organizationApi, paymentApi, reportApi,
-                    mailSettingsApi, userSettingsApi, userApi, domainApi, protonRetrofitBuilder.attachReqInter,
-                    services)
+            return arrayOf(
+                addressApi,
+                attachmentApi,
+                connectivityApi,
+                contactApi,
+                deviceApi,
+                keyApi,
+                messageApi,
+                labelApi,
+                organizationApi,
+                paymentApi,
+                reportApi,
+                mailSettingsApi,
+                userSettingsApi,
+                userApi,
+                domainApi,
+                services
+            )
         }
     }
 }

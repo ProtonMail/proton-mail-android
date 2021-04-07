@@ -73,7 +73,6 @@ class LogoutService : JobIntentService() {
     private fun logoutOffline(userId: Id) {
         try {
             runBlocking { accountManager.disableAccount(UserId(userId.s)) }
-            TokenManager.clearInstance(userId)
             jobManager.cancelJobs(TagConstraint.ALL)
             jobManager.clear()
         } catch (ioException: IOException) {

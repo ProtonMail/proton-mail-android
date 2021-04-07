@@ -27,6 +27,7 @@ import java.security.SecureRandom;
 import ch.protonmail.android.utils.ConstantTime;
 import ch.protonmail.android.utils.PasswordUtils;
 import ch.protonmail.android.utils.SRPClient;
+import me.proton.core.auth.domain.entity.Modulus;
 
 public class PasswordVerifier {
     public final int AuthVersion;
@@ -41,7 +42,7 @@ public class PasswordVerifier {
         SRPVerifier = srpVerifier;
     }
 
-    public static PasswordVerifier calculate(final byte[] password, final ModulusResponse modulusResp) {
+    public static PasswordVerifier calculate(final byte[] password, final Modulus modulusResp) {
         final byte[] salt = new byte[10];
         new SecureRandom().nextBytes(salt);
         final byte[] modulus;
@@ -53,6 +54,6 @@ public class PasswordVerifier {
         }
         final byte[] hashedPassword = PasswordUtils.hashPassword(PasswordUtils.CURRENT_AUTH_VERSION, password, null, salt, modulus);
         final byte[] verifier = SRPClient.generateVerifier(2048, modulus, hashedPassword);
-        return new PasswordVerifier(PasswordUtils.CURRENT_AUTH_VERSION, modulusResp.getModulusID(), ConstantTime.encodeBase64(salt, true), ConstantTime.encodeBase64(verifier, true));
+        return new PasswordVerifier(PasswordUtils.CURRENT_AUTH_VERSION, modulusResp.getModulusId(), ConstantTime.encodeBase64(salt, true), ConstantTime.encodeBase64(verifier, true));
     }
 }
