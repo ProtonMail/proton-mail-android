@@ -25,6 +25,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.api.services.MessagesService
 import ch.protonmail.android.compose.ComposeMessageViewModelFactory
 import ch.protonmail.android.compose.recipients.GroupRecipientsViewModelFactory
 import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateViewModelFactory
@@ -96,7 +97,8 @@ internal class ViewModelModule {
         dispatchers: DispatcherProvider,
         contactsRepository: ContactsRepository,
         verifyConnection: VerifyConnection,
-        networkConfigurator: NetworkConfigurator
+        networkConfigurator: NetworkConfigurator,
+        messageServiceScheduler: MessagesService.Scheduler
     ) = MailboxViewModel(
         messageDetailsRepository,
         userManager,
@@ -105,6 +107,7 @@ internal class ViewModelModule {
         dispatchers,
         contactsRepository,
         verifyConnection,
-        networkConfigurator
+        networkConfigurator,
+        messageServiceScheduler
     )
 }

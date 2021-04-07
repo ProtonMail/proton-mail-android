@@ -23,6 +23,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
+import ch.protonmail.android.api.services.MessagesService
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
@@ -52,6 +53,7 @@ import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
+import io.mockk.verifySequence
 import kotlinx.coroutines.flow.flowOf
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Rule
@@ -89,6 +91,9 @@ class MailboxViewModelTest : CoroutinesTest {
     @RelaxedMockK
     private lateinit var networkConfigurator: NetworkConfigurator
 
+    @RelaxedMockK
+    private lateinit var messageServiceScheduler: MessagesService.Scheduler
+
     private lateinit var viewModel: MailboxViewModel
 
     @BeforeTest
@@ -102,7 +107,8 @@ class MailboxViewModelTest : CoroutinesTest {
             dispatchers,
             contactsRepository,
             verifyConnection,
-            networkConfigurator
+            networkConfigurator,
+            messageServiceScheduler
         )
     }
 
@@ -381,5 +387,50 @@ class MailboxViewModelTest : CoroutinesTest {
         assertEquals(uuid, actual.captured.uuid)
         assertEquals(false, actual.captured.refreshMessages)
         unmockkStatic(EntryPoints::class)
+    }
+
+    @Test
+    fun fetchMessagesCallsMessageServiceStartFetchMessagesWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsNotALabel() {
+        val location = Constants.MessageLocationType.ARCHIVE
+        val labelId = "labelId92323"
+        val includeLabels = false
+        val uuid = "9238423bbe2h3283742h3hh2bjsd"
+        val refreshMessages = true
+        // Represents pagination. Only messages older than the given timestamp will be returned
+        val timestamp = 123L
+
+        viewModel.fetchMessages(
+            location,
+            labelId,
+            includeLabels,
+            uuid,
+            refreshMessages,
+            timestamp
+        )
+
+        verifySequence { messageServiceScheduler.fetchMessagesOlderThanTime(location, timestamp) }
+        verify(exactly = 0) { jobManager.addJobInBackground(any()) }
+    }
+
+    @Test
+    fun fetchMessagesCallsMessageServiceStartFetchMessagesByLabelWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsALabelOrFolder() {
+        val location = Constants.MessageLocationType.LABEL_FOLDER
+        val labelId = "folderIdi2384"
+        val includeLabels = false
+        val uuid = "9238h82388sdfa8sdf8asd3hh2bjsd"
+        val refreshMessages = false
+        // Represents pagination. Only messages older than the given timestamp will be returned
+        val earliestTime = 1323L
+
+        viewModel.fetchMessages(
+            location,
+            labelId,
+            includeLabels,
+            uuid,
+            refreshMessages,
+            earliestTime
+        )
+
+        verifySequence { messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(location, earliestTime, labelId) }
     }
 }

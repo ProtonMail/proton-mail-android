@@ -23,8 +23,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.api.services.MessagesService
 import ch.protonmail.android.api.utils.ApplyRemoveLabels
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType.*
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
@@ -63,7 +65,8 @@ class MailboxViewModel @Inject constructor(
     private val dispatchers: DispatcherProvider,
     private val contactsRepository: ContactsRepository,
     verifyConnection: VerifyConnection,
-    networkConfigurator: NetworkConfigurator
+    networkConfigurator: NetworkConfigurator,
+    val messageServiceScheduler: MessagesService.Scheduler
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -285,8 +288,21 @@ class MailboxViewModel @Inject constructor(
         labelId: String?,
         includeLabels: Boolean,
         uuid: String,
-        refreshMessages: Boolean
+        refreshMessages: Boolean,
+        earliestTime: Long? = null
     ) {
+        earliestTime?.let {
+            val isCustomLocation = location == LABEL || location == LABEL_FOLDER
+
+            if (isCustomLocation) {
+                messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(location, earliestTime, labelId ?: "")
+            } else {
+                messageServiceScheduler.fetchMessagesOlderThanTime(location, earliestTime)
+            }
+
+            return
+        }
+
         jobManager.addJobInBackground(
             FetchByLocationJob(
                 location,

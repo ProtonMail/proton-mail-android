@@ -422,20 +422,6 @@ class MessagesService : JobIntentService() {
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
-        fun startFetchMessages(
-            context: Context,
-            userId: Id,
-            location: Constants.MessageLocationType,
-            time: Long
-        ) {
-            val intent = Intent(context, MessagesService::class.java)
-                .setAction(ACTION_FETCH_MESSAGES_BY_TIME)
-                .putExtra(EXTRA_USER_ID, userId.s)
-                .putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
-                .putExtra(EXTRA_TIME, time)
-            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
-        }
-
         /**
          * Load initial page and detail of every message it fetch dino
          */
@@ -452,22 +438,6 @@ class MessagesService : JobIntentService() {
                 .putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
                 .putExtra(EXTRA_LABEL_ID, labelId)
                 .putExtra(EXTRA_REFRESH_MESSAGES, refreshMessages)
-            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
-        }
-
-        fun startFetchMessagesByLabel(
-            context: Context,
-            userId: Id,
-            location: Constants.MessageLocationType,
-            time: Long,
-            labelId: String
-        ) {
-            val intent = Intent(context, MessagesService::class.java)
-                .setAction(ACTION_FETCH_MESSAGES_BY_TIME)
-                .putExtra(EXTRA_USER_ID, userId.s)
-                .putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
-                .putExtra(EXTRA_TIME, time)
-                .putExtra(EXTRA_LABEL_ID, labelId)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
@@ -497,5 +467,30 @@ class MessagesService : JobIntentService() {
                 else -> null
             }
         }
+    }
+
+    class Scheduler @Inject constructor() {
+
+        fun fetchMessagesOlderThanTime(location: Constants.MessageLocationType, userId: Id, time: Long) {
+            val context = ProtonMailApplication.getApplication()
+            val intent = Intent(context, MessagesService::class.java)
+            intent.action = ACTION_FETCH_MESSAGES_BY_TIME
+            intent.putExtra(EXTRA_USER_ID, userId.s)
+            intent.putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
+            intent.putExtra(EXTRA_TIME, time)
+            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
+        }
+
+        fun fetchMessagesOlderThanTimeByLabel(location: Constants.MessageLocationType, userId: Id, time: Long, labelId: String) {
+            val context = ProtonMailApplication.getApplication()
+            val intent = Intent(context, MessagesService::class.java)
+            intent.action = ACTION_FETCH_MESSAGES_BY_TIME
+            intent.putExtra(EXTRA_USER_ID, userId.s)
+            intent.putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
+            intent.putExtra(EXTRA_TIME, time)
+            intent.putExtra(EXTRA_LABEL_ID, labelId)
+            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
+        }
+
     }
 }
