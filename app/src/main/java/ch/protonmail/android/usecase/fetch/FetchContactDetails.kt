@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.usecase.fetch
 
+import android.database.sqlite.SQLiteBlobTooBigException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import ch.protonmail.android.api.ProtonMailApiManager
@@ -51,7 +52,13 @@ class FetchContactDetails @Inject constructor(
             }
 
             // fetch existing data from the DB
-            contactDao.findFullContactDetailsById(contactId)?.let { fullDetailsFromDb ->
+            val fullContact = try {
+                contactDao.findFullContactDetailsById(contactId)
+            } catch (tooBigException: SQLiteBlobTooBigException) {
+                Timber.i(tooBigException, "Data too big to be fetched")
+                null
+            }
+            fullContact?.let { fullDetailsFromDb ->
                 val parsedContact = parseContactDetails(fullDetailsFromDb)
                 Timber.v("Fetched existing Contacts Details $parsedContact")
                 if (parsedContact != null) {

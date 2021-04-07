@@ -19,6 +19,7 @@
 package ch.protonmail.android.api.segments.event
 
 import android.content.Context
+import android.database.sqlite.SQLiteBlobTooBigException
 import androidx.work.WorkManager
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
@@ -86,7 +87,7 @@ class EventHandler @AssistedInject constructor(
     databaseProvider: DatabaseProvider,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val userMapper: UserBridgeMapper,
-    @Assisted val userId: Id
+    @Assisted val userId: Id,
 ) {
 
     private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
@@ -184,7 +185,8 @@ class EventHandler @AssistedInject constructor(
                     }
                     RESPONSE_CODE_INVALID_ID,
                     RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST,
-                    RESPONSE_CODE_MESSAGE_READING_RESTRICTED -> {
+                    RESPONSE_CODE_MESSAGE_READING_RESTRICTED,
+                    -> {
                         Timber.e("Error when fetching message: ${messageResponse.error}")
                     }
                     else -> {
@@ -215,7 +217,7 @@ class EventHandler @AssistedInject constructor(
         contactDao: ContactDao,
         messageDao: MessageDao,
         pendingActionDao: PendingActionDao,
-        response: EventResponse
+        response: EventResponse,
     ) {
 
         val savedUser = runBlocking { userManager.getLegacyUser(userId) }
@@ -305,7 +307,7 @@ class EventHandler @AssistedInject constructor(
     private fun writeMessagesUpdates(
         messageDao: MessageDao,
         pendingActionDao: PendingActionDao,
-        events: List<EventResponse.MessageEventBody>
+        events: List<EventResponse.MessageEventBody>,
     ) {
         var latestTimestamp = userManager.checkTimestamp
         for (event in events) {
@@ -322,7 +324,7 @@ class EventHandler @AssistedInject constructor(
         event: EventResponse.MessageEventBody,
         pendingActionDao: PendingActionDao,
         messageId: String,
-        messageDao: MessageDao
+        messageDao: MessageDao,
     ) {
         val type = EventType.fromInt(event.type)
         if (type != EventType.DELETE && checkPendingForSending(pendingActionDao, messageId)) {
@@ -384,7 +386,7 @@ class EventHandler @AssistedInject constructor(
     private fun updateMessageFlags(
         messageDao: MessageDao,
         messageId: String,
-        item: EventResponse.MessageEventBody
+        item: EventResponse.MessageEventBody,
     ) {
         val message = messageDetailsRepository.findMessageByIdBlocking(messageId)
         val newMessage = item.message
@@ -484,7 +486,7 @@ class EventHandler @AssistedInject constructor(
     private fun writeAddressUpdates(
         events: List<EventResponse.AddressEventBody>,
         currentAddresses: MutableList<Address>?,
-        user: User
+        user: User,
     ) {
         val addresses = currentAddresses?.toMutableList() ?: mutableListOf()
         val eventAddresses = mutableListOf<Address>()
@@ -535,7 +537,12 @@ class EventHandler @AssistedInject constructor(
                         contactDao.saveContactData(contactData)
                     }
 
-                    val localFullContact = contactDao.findFullContactDetailsById(contactId)
+                    val localFullContact = try {
+                        contactDao.findFullContactDetailsById(contactId)
+                    } catch (tooBigException: SQLiteBlobTooBigException) {
+                        Timber.i(tooBigException, "Data too big to be fetched")
+                        null
+                    }
                     if (localFullContact != null) {
                         contactDao.deleteFullContactsDetails(localFullContact)
                     }
@@ -558,7 +565,7 @@ class EventHandler @AssistedInject constructor(
 
     private fun writeContactEmailsUpdates(
         contactDao: ContactDao,
-        events: List<EventResponse.ContactEmailEventBody>
+        events: List<EventResponse.ContactEmailEventBody>,
     ) {
         for (event in events) {
             Timber.v("New contacts emails event type: ${event.type} id: ${event.contactID}")
@@ -628,7 +635,7 @@ class EventHandler @AssistedInject constructor(
     private fun writeLabelsUpdates(
         messageDao: MessageDao,
         contactDao: ContactDao,
-        events: List<EventResponse.LabelsEventBody>
+        events: List<EventResponse.LabelsEventBody>,
     ) {
         for (event in events) {
             val item = event.label
@@ -690,7 +697,7 @@ class EventHandler @AssistedInject constructor(
     private fun writeContactGroup(
         currentGroup: ContactLabel?,
         updatedGroup: ServerLabel,
-        contactDao: ContactDao
+        contactDao: ContactDao,
     ) {
         if (currentGroup != null) {
             val contactLabelFactory = ContactLabelFactory()

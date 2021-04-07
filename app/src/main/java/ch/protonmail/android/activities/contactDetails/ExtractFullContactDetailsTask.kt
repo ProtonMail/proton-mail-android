@@ -18,9 +18,11 @@
  */
 package ch.protonmail.android.activities.contactDetails
 
+import android.database.sqlite.SQLiteBlobTooBigException
 import android.os.AsyncTask
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.FullContactDetails
+import timber.log.Timber
 
 class ExtractFullContactDetailsTask(
     private val contactDao: ContactDao,
@@ -29,7 +31,12 @@ class ExtractFullContactDetailsTask(
 ) : AsyncTask<Void, Void, FullContactDetails>() {
 
     override fun doInBackground(vararg voids: Void): FullContactDetails? {
-        return contactDao.findFullContactDetailsById(contactId)
+        return try {
+            contactDao.findFullContactDetailsById(contactId)
+        } catch (tooBigException: SQLiteBlobTooBigException) {
+            Timber.i(tooBigException, "Data too big to be fetched")
+            null
+        }
     }
 
     override fun onPostExecute(fullContactDetails: FullContactDetails?) {
