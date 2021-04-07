@@ -32,11 +32,11 @@ import timber.log.Timber
  * be executed after we get network access if were offline before
  */
 class FetchByLocationJob(
-    private val location: MessageLocationType,
-    private val labelId: String?,
-    private val includeLabels: Boolean,
-    private val uuid: String?,
-    private val refreshMessages: Boolean
+    val location: MessageLocationType,
+    val labelId: String?,
+    val includeLabels: Boolean,
+    val uuid: String?,
+    val refreshMessages: Boolean
 ) : ProtonMailBaseJob(Params(Priority.MEDIUM).groupBy(Constants.JOB_GROUP_MESSAGE)) {
 
     override fun onRun() {

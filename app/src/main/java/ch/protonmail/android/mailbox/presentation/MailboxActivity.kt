@@ -131,7 +131,6 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
-import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchLabelsJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
@@ -734,14 +733,12 @@ class MailboxActivity :
             firstLogin = false
             refreshMailboxJobRunning = true
             app.updateDone()
-            mJobManager.addJobInBackground(
-                FetchByLocationJob(
-                    mailboxLocationMain.value ?: MessageLocationType.INVALID,
-                    mailboxLabelId,
-                    false,
-                    syncUUID,
-                    false
-                )
+            fetchMessages(
+                mailboxLocationMain.value ?: MessageLocationType.INVALID,
+                mailboxLabelId,
+                false,
+                syncUUID,
+                false
             )
             true
         }
@@ -1351,27 +1348,16 @@ class MailboxActivity :
 
     /* SwipeRefreshLayout.OnRefreshListener */
     override fun onRefresh() {
-        fetchUpdates(true)
-    }
-
-    /**
-     * Request messages reload.
-     *
-     * @param isRefreshMessagesRequired flag set to true refreshes all the messages and deletes mesage content in the DB
-     */
-    private fun fetchUpdates(isRefreshMessagesRequired: Boolean = false) {
-        setRefreshing(true)
+      setRefreshing(true)
         syncUUID = UUID.randomUUID().toString()
         reloadMessageCounts()
-        mJobManager.addJobInBackground(
-            FetchByLocationJob(
-                mailboxLocationMain.value ?: MessageLocationType.INVALID,
-                mailboxLabelId,
-                true,
-                syncUUID,
-                isRefreshMessagesRequired
+        fetchMessages(
+            mailboxLocationMain.value ?: MessageLocationType.INVALID,
+            mailboxLabelId,
+            true,
+            syncUUID,
+            true
             )
-        )
     }
 
     private fun setupNewMessageLocation(newLocation: Int) {
@@ -1393,15 +1379,7 @@ class MailboxActivity :
         mailboxRecyclerView.scrollToPosition(0)
         setUpMailboxActionsView()
         syncUUID = UUID.randomUUID().toString()
-        mJobManager.addJobInBackground(
-            FetchByLocationJob(
-                newMessageLocationType,
-                mailboxLabelId,
-                false,
-                syncUUID,
-                false
-            )
-        )
+        fetchMessages(newMessageLocationType, mailboxLabelId, false, syncUUID, false)
         RefreshEmptyViewTask(
             WeakReference(this),
             counterDao,
@@ -1510,18 +1488,15 @@ class MailboxActivity :
     private val fcmBroadcastReceiver: BroadcastReceiver = FcmBroadcastReceiver()
 
     private class FetchMessagesRetryRunnable internal constructor(activity: MailboxActivity) : Runnable {
-        // non leaky runnable
         private val mailboxActivityWeakReference = WeakReference(activity)
         override fun run() {
             val mailboxActivity = mailboxActivityWeakReference.get()
-            mailboxActivity?.mJobManager?.addJobInBackground(
-                FetchByLocationJob(
-                    mailboxActivity.mailboxLocationMain.value ?: MessageLocationType.INVALID,
-                    mailboxActivity.mailboxLabelId,
-                    true,
-                    mailboxActivity.syncUUID,
-                    false
-                )
+            mailboxActivity?.fetchMessages(
+                mailboxActivity.mailboxLocationMain.value ?: MessageLocationType.INVALID,
+                mailboxActivity.mailboxLabelId,
+                true,
+                mailboxActivity.syncUUID,
+                false
             )
         }
     }
@@ -1634,14 +1609,8 @@ class MailboxActivity :
             mailboxActivity.closeDrawer()
             mailboxActivity.messages_list_view.scrollToPosition(0)
 
-            mailboxActivity.mJobManager.addJobInBackground(
-                FetchByLocationJob(
-                    fromInt(newLocation),
-                    labelId,
-                    false,
-                    mailboxActivity.syncUUID,
-                    false
-                )
+            mailboxActivity.fetchMessages(
+                fromInt(newLocation), labelId, false, mailboxActivity.syncUUID, false
             )
 
             RefreshEmptyViewTask(
@@ -1654,7 +1623,24 @@ class MailboxActivity :
         }
     }
 
+    private fun fetchMessages(
+        location: MessageLocationType,
+        labelId: String?,
+        includeLabels: Boolean,
+        uuid: String,
+        refreshMessages: Boolean
+    ) {
+        mailboxViewModel.fetchMessages(
+            location,
+            labelId,
+            includeLabels,
+            uuid,
+            refreshMessages
+        )
+    }
+
     private inner class FcmBroadcastReceiver : BroadcastReceiver() {
+
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.extras != null
             ) {

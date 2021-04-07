@@ -29,6 +29,8 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
+import ch.protonmail.android.di.JobEntryPoint
+import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.mailbox.presentation.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.MessageData
@@ -39,12 +41,17 @@ import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.MessageUtils.toContactsAndGroupsString
 import com.birbit.android.jobqueue.JobManager
+import dagger.hilt.EntryPoints
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.slot
+import io.mockk.unmockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Rule
@@ -346,5 +353,33 @@ class MailboxViewModelTest : CoroutinesTest {
         assertEquals(expected, actualMailboxItems?.first())
     }
 
+    @Test
+    fun fetchMessagesCallsFetchByLocationForwardingTheGivenParameters() {
+        val location = Constants.MessageLocationType.SENT
+        val labelId = "labelId923842"
+        val includeLabels = true
+        val uuid = "9238423bbe2h3423489wssdf"
+        val refreshMessages = false
+        val jobEntryPoint = mockk<JobEntryPoint>()
+        mockkStatic(EntryPoints::class)
+        every { EntryPoints.get(any(), JobEntryPoint::class.java) } returns jobEntryPoint
+        every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
 
+        viewModel.fetchMessages(
+            location,
+            labelId,
+            includeLabels,
+            uuid,
+            refreshMessages
+        )
+
+        val actual = slot<FetchByLocationJob>()
+        verify { jobManager.addJobInBackground(capture(actual)) }
+        assertEquals(location, actual.captured.location)
+        assertEquals(labelId, actual.captured.labelId)
+        assertEquals(includeLabels, actual.captured.includeLabels)
+        assertEquals(uuid, actual.captured.uuid)
+        assertEquals(false, actual.captured.refreshMessages)
+        unmockkStatic(EntryPoints::class)
+    }
 }

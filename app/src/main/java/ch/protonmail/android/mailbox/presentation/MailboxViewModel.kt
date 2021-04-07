@@ -32,6 +32,7 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
+import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -279,11 +280,23 @@ class MailboxViewModel @Inject constructor(
         return ApplyRemoveLabels(checkedLabelIds, labelsToRemove)
     }
 
-    fun deleteMessages(messageIds: List<String>, currentLabelId: String?) =
-        viewModelScope.launch {
-            val deleteMessagesResult = deleteMessage(messageIds, currentLabelId)
-            _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
-        }
+    fun fetchMessages(
+        location: Constants.MessageLocationType,
+        labelId: String?,
+        includeLabels: Boolean,
+        uuid: String,
+        refreshMessages: Boolean
+    ) {
+        jobManager.addJobInBackground(
+            FetchByLocationJob(
+                location,
+                labelId,
+                includeLabels,
+                uuid,
+                refreshMessages
+            )
+        )
+    }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)
 }
