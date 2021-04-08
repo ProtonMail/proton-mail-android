@@ -22,7 +22,6 @@ package ch.protonmail.android.repository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.core.Constants.FeatureFlags.SAVE_MESSAGE_BODY_TO_FILE
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
