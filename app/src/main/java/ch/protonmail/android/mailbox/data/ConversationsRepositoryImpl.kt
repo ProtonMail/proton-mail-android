@@ -19,7 +19,6 @@
 package ch.protonmail.android.mailbox.data
 
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
@@ -37,7 +36,6 @@ import me.proton.core.domain.arch.DataResult
 import javax.inject.Inject
 
 class ConversationsRepositoryImpl @Inject constructor(
-    val databaseProvider: DatabaseProvider,
     private val conversationDao: ConversationDao,
     private val api: ProtonMailApiManager
 ) : ConversationsRepository {
@@ -60,7 +58,7 @@ class ConversationsRepositoryImpl @Inject constructor(
     private fun geConversationsLocal(userId: Id): Flow<List<Conversation>> =
         conversationDao.getConversations(userId.s).map { list -> list.toDomainModelList() }
 
-    override fun getConversations(params: Parameters.GetConversationsParameters, refresh: Boolean):
+    override fun getConversations(params: Parameters.GetConversationsParameters):
         Flow<DataResult<List<Conversation>>> =
-        store.stream(StoreRequest.cached(StoreKey(params), refresh = refresh)).map { it.toDataResult() }
+            store.stream(StoreRequest.cached(StoreKey(params), true)).map { it.toDataResult() }
 }

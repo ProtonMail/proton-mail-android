@@ -23,7 +23,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
-import ch.protonmail.android.mailbox.data.remote.model.ConversationRemote
+import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.model.Parameters
@@ -51,27 +51,27 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
         total = 5,
         listOf(
-            ConversationRemote(
+            ConversationApiModel(
                 id = "conversation5",
                 order = 4,
                 subject = "subject5"
             ),
-            ConversationRemote(
+            ConversationApiModel(
                 id = "conversation4",
                 order = 3,
                 subject = "subject4"
             ),
-            ConversationRemote(
+            ConversationApiModel(
                 id = "conversation3",
                 order = 2,
                 subject = "subject3"
             ),
-            ConversationRemote(
+            ConversationApiModel(
                 id = "conversation2",
                 order = 1,
                 subject = "subject2"
             ),
-            ConversationRemote(
+            ConversationApiModel(
                 id = "conversation1",
                 order = 0,
                 subject = "subject1"

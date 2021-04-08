@@ -17,23 +17,16 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.data.remote
+package ch.protonmail.android.mailbox.data.remote.model
 
-import ch.protonmail.android.api.segments.RetrofitConstants
-import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.Query
+import com.google.gson.annotations.SerializedName
 
-interface ConversationService {
+const val NAME = "Name"
+const val ADDRESS = "Address"
 
-    @GET("mail/v4/conversations")
-    @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
-    suspend fun fetchConversations(
-        @Query("Location") location: Int,
-        @Query("Page") page: Int?,
-        @Query("PageSize") pageSize: Int?,
-        @Query("LabelID") labelId: String?
-    ): ConversationsResponse
-
-}
+data class CorrespondentApiModel(
+    @SerializedName(NAME)
+    val name: String,
+    @SerializedName(ADDRESS)
+    val address: String
+)

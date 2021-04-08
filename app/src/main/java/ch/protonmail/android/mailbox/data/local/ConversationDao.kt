@@ -21,11 +21,10 @@ package ch.protonmail.android.mailbox.data.local
 
 import androidx.room.Dao
 import androidx.room.Query
-import ch.protonmail.android.mailbox.data.local.model.COLUMN_ORDER
-import ch.protonmail.android.mailbox.data.local.model.COLUMN_TIME
-import ch.protonmail.android.mailbox.data.local.model.COLUMN_USER_ID
 import ch.protonmail.android.mailbox.data.local.model.ConversationEntity
-import ch.protonmail.android.mailbox.data.local.model.TABLE_CONVERSATIONS
+import ch.protonmail.android.mailbox.data.local.model.ConversationEntity.Companion.COLUMN_ORDER
+import ch.protonmail.android.mailbox.data.local.model.ConversationEntity.Companion.COLUMN_USER_ID
+import ch.protonmail.android.mailbox.data.local.model.ConversationEntity.Companion.TABLE_CONVERSATIONS
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.data.db.BaseDao
 
@@ -34,10 +33,10 @@ abstract class ConversationDao : BaseDao<ConversationEntity>() {
 
     @Query(
         """
-            SELECT * FROM $TABLE_CONVERSATIONS 
-            WHERE $COLUMN_USER_ID = :userId
-            ORDER BY $COLUMN_TIME DESC, `$COLUMN_ORDER` DESC
-            """
+        SELECT * FROM $TABLE_CONVERSATIONS 
+        WHERE $COLUMN_USER_ID = :userId
+        ORDER BY `$COLUMN_ORDER` DESC
+        """
     )
     abstract fun getConversations(userId: String): Flow<List<ConversationEntity>>
 

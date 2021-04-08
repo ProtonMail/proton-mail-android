@@ -23,7 +23,8 @@ import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.model.ConversationEntity
-import ch.protonmail.android.mailbox.data.remote.model.ConversationRemote
+import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
+import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import kotlin.test.assertEquals
@@ -34,27 +35,27 @@ class ConversationMapperTest {
 
     private val testUserId = Id("id")
     private val conversationsRemote = listOf(
-        ConversationRemote(
+        ConversationApiModel(
             id = "conversation1",
             order = 1,
             subject = "subject1",
-//            listOf(MessageSender("sender1", "sender1@pm.com")),
-//            listOf(MessageRecipient("recipient1", "recipient1@pm.com")),
+            listOf(CorrespondentApiModel("sender1", "sender1@pm.com")),
+            listOf(CorrespondentApiModel("recipient1", "recipient1@pm.com")),
             numMessages = 3,
             numUnread = 1,
             numAttachments = 0,
             expirationTime = 0L,
             size = 0L
         ),
-        ConversationRemote(
+        ConversationApiModel(
             id = "conversation2",
             order = 0,
             subject = "subject2",
-//            listOf(MessageSender("sender1", "sender1@pm.com")),
-//            listOf(
-//                MessageRecipient("recipient1", "recipient1@pm.com"),
-//                MessageRecipient("recipient2", "recipient2@pm.com")
-//            ),
+            listOf(CorrespondentApiModel("sender1", "sender1@pm.com")),
+            listOf(
+                CorrespondentApiModel("recipient1", "recipient1@pm.com"),
+                CorrespondentApiModel("recipient2", "recipient2@pm.com")
+            ),
             numMessages = 1,
             numUnread = 1,
             numAttachments = 0,
@@ -69,8 +70,8 @@ class ConversationMapperTest {
             order = 1,
             userId = "id",
             subject = "subject1",
-//            listOf(MessageSender("sender1", "sender1@pm.com")),
-//            listOf(MessageRecipient("recipient1", "recipient1@pm.com")),
+            listOf(MessageSender("sender1", "sender1@pm.com")),
+            listOf(MessageRecipient("recipient1", "recipient1@pm.com")),
             numMessages = 3,
             numUnread = 1,
             numAttachments = 0,
@@ -82,11 +83,11 @@ class ConversationMapperTest {
             order = 0,
             userId = "id",
             subject = "subject2",
-//            listOf(MessageSender("sender1", "sender1@pm.com")),
-//            listOf(
-//                MessageRecipient("recipient1", "recipient1@pm.com"),
-//                MessageRecipient("recipient2", "recipient2@pm.com")
-//            ),
+            listOf(MessageSender("sender1", "sender1@pm.com")),
+            listOf(
+                MessageRecipient("recipient1", "recipient1@pm.com"),
+                MessageRecipient("recipient2", "recipient2@pm.com")
+            ),
             numMessages = 1,
             numUnread = 1,
             numAttachments = 0,
@@ -123,9 +124,9 @@ class ConversationMapperTest {
     )
 
     @Test
-    fun verifyThatEmptyConversationRemoteAreMappedProperly() {
+    fun verifyThatEmptyConversationApiModelListIsMappedProperly() {
         // given
-        val conversation = listOf<ConversationRemote>()
+        val conversation = listOf<ConversationApiModel>()
         val expected = emptyList<ConversationEntity>()
 
         // when
@@ -136,7 +137,7 @@ class ConversationMapperTest {
     }
 
     @Test
-    fun verifyThatEmptyConversationEntityAreMappedProperly() {
+    fun verifyThatEmptyConversationDatabaseModelListIsMappedProperly() {
         // given
         val conversation = listOf<ConversationEntity>()
         val expected = emptyList<Conversation>()
@@ -149,7 +150,7 @@ class ConversationMapperTest {
     }
 
     @Test
-    fun verifyThatConversationRemoteIsMappedProperly() {
+    fun verifyThatConversationApiModelIsMappedProperly() {
 
         // when
         val result = conversationsRemote[0].toLocal(testUserId.s)
@@ -162,7 +163,7 @@ class ConversationMapperTest {
 
 
     @Test
-    fun verifyThatConversationEntityIsMappedProperly() {
+    fun verifyThatConversationDatabaseModelIsMappedProperly() {
 
         // when
         val result = conversationsEntity[0].toDomainModel()
@@ -175,7 +176,7 @@ class ConversationMapperTest {
 
 
     @Test
-    fun verifyThatConversationRemoteListIsMappedProperly() {
+    fun verifyThatConversationApiModelListIsMappedProperly() {
 
         // when
         val result = conversationsRemote.toListLocal(testUserId.s)
@@ -187,7 +188,7 @@ class ConversationMapperTest {
     }
 
     @Test
-    fun verifyThatConversationEntityListIsMappedProperly() {
+    fun verifyThatConversationDatabaseModelListIsMappedProperly() {
 
         // when
         val result = conversationsEntity.toDomainModelList()

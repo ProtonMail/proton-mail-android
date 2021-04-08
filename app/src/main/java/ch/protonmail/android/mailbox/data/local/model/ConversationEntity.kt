@@ -23,23 +23,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-
-const val TABLE_CONVERSATIONS = "conversations"
-const val COLUMN_ID = "ID"
-const val COLUMN_USER_ID = "UserID"
-const val COLUMN_ORDER = "Order"
-const val COLUMN_SUBJECT = "Subject"
-const val COLUMN_SENDERS = "Senders"
-const val COLUMN_RECIPIENTS = "Recipients"
-const val COLUMN_NUM_MESSAGES = "NumMessages"
-const val COLUMN_NUM_UNREAD = "NumUnread"
-const val COLUMN_NUM_ATTACHMENTS = "NumAttachments"
-const val COLUMN_EXPIRATION_TIME = "ExpirationTime"
-const val COLUMN_ADDRESS_ID = "AddressID"
-const val COLUMN_SIZE = "Size"
-const val COLUMN_TIME = "Time"
-const val COLUMN_LABEL_IDS = "LabelIDs"
-const val COLUMN_LABELS = "Labels"
+import ch.protonmail.android.api.models.MessageRecipient
+import ch.protonmail.android.data.local.model.MessageSender
+import ch.protonmail.android.mailbox.data.local.model.ConversationEntity.Companion.COLUMN_ID
+import ch.protonmail.android.mailbox.data.local.model.ConversationEntity.Companion.TABLE_CONVERSATIONS
 
 @Entity(
     tableName = TABLE_CONVERSATIONS,
@@ -59,11 +46,11 @@ data class ConversationEntity constructor(
     @ColumnInfo(name = COLUMN_SUBJECT)
     val subject: String = "",
 
-//    @ColumnInfo(name = COLUMN_SENDERS)
-//    val senders: List<String> = mutableListOf(),
-//
-//    @ColumnInfo(name = COLUMN_RECIPIENTS)
-//    val recipients: List<String> = mutableListOf(),
+    @ColumnInfo(name = COLUMN_SENDERS)
+    val senders: List<MessageSender> = mutableListOf(),
+
+    @ColumnInfo(name = COLUMN_RECIPIENTS)
+    val recipients: List<MessageRecipient> = mutableListOf(),
 
     @ColumnInfo(name = COLUMN_NUM_MESSAGES)
     val numMessages: Int = 0,
@@ -81,15 +68,28 @@ data class ConversationEntity constructor(
 //    val addressID: String,
 
     @ColumnInfo(name = COLUMN_SIZE)
-    val size: Long = 0L,
-
-    @ColumnInfo(name = COLUMN_TIME)
-    val time: Long = 0L
-
-//    @ColumnInfo(name = COLUMN_LABEL_IDS)
-//    val labelIds: List<String> = mutableListOf(),
+    val size: Long = 0L
 //
 //    @ColumnInfo(name = COLUMN_LABELS)
 //    val labels: List<String> = mutableListOf()
+) {
 
-)
+    companion object {
+
+        const val TABLE_CONVERSATIONS = "conversations"
+        const val COLUMN_ID = "ID"
+        const val COLUMN_USER_ID = "UserID"
+        const val COLUMN_ORDER = "Order"
+        const val COLUMN_SUBJECT = "Subject"
+        const val COLUMN_SENDERS = "Senders"
+        const val COLUMN_RECIPIENTS = "Recipients"
+        const val COLUMN_NUM_MESSAGES = "NumMessages"
+        const val COLUMN_NUM_UNREAD = "NumUnread"
+        const val COLUMN_NUM_ATTACHMENTS = "NumAttachments"
+        const val COLUMN_EXPIRATION_TIME = "ExpirationTime"
+        const val COLUMN_ADDRESS_ID = "AddressID"
+        const val COLUMN_SIZE = "Size"
+        const val COLUMN_LABELS = "Labels"
+    }
+}
+

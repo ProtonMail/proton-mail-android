@@ -19,49 +19,83 @@
 
 package ch.protonmail.android.mailbox.data
 
+import ch.protonmail.android.api.models.MessageRecipient
+import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.mailbox.data.local.model.ConversationEntity
-import ch.protonmail.android.mailbox.data.remote.model.ConversationRemote
+import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
+import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
 import ch.protonmail.android.mailbox.domain.Conversation
+import ch.protonmail.android.mailbox.domain.model.Correspondent
 
 
-internal fun ConversationRemote.toLocal(userId: String) = ConversationEntity(
+internal fun ConversationApiModel.toLocal(userId: String) = ConversationEntity(
     id = id,
     order = order,
     userId = userId,
     subject = subject,
-//        listOf(),
-//        listOf(),
+    senders = senders.toMessageSender(),
+    recipients = recipients.toMessageRecipient(),
     numMessages = numMessages,
     numUnread = numUnread,
     numAttachments = numAttachments,
     expirationTime = expirationTime,
 //        EMPTY_STRING,
     size = size,
-//        labelIds,
 //        listOf()
 )
 
 internal fun ConversationEntity.toDomainModel() = Conversation(
     id = id,
     subject = subject,
-    listOf(),
-    listOf(),
+    senders = senders.senderToCorespondent(),
+    receivers = recipients.recipientToCorespondent(),
     messagesCount = numMessages,
     unreadCount = numUnread,
     attachmentsCount = numAttachments,
-    expirationTime = expirationTime
+    expirationTime = expirationTime,
 //        EMPTY_STRING,
-//        labelIds,
 //        listOf()
 )
 
+/**
+ * Converts a correspondent api model list to sender db model list
+ */
+internal fun List<CorrespondentApiModel>.toMessageSender() =
+    map { sender -> MessageSender(sender.name, sender.address) }
 
 /**
- * Converts the response list to a list of local conversation modal
+ * Converts a correspondent api model list to recipient db model list
  */
-internal fun List<ConversationRemote>.toListLocal(userId: String) =
+internal fun List<CorrespondentApiModel>.toMessageRecipient() =
+    map { recipient ->
+        MessageRecipient(recipient.name, recipient.address)
+    }
+
+/**
+ * Converts a sender db model list to corespondent domain model list
+ */
+internal fun List<MessageSender>.senderToCorespondent() =
+    map { sender ->
+        Correspondent(sender.name ?: "", sender.emailAddress ?: "")
+    }
+
+/**
+ * Converts a recipients db model list to corespondent domain model list
+ */
+internal fun List<MessageRecipient>.recipientToCorespondent() =
+    map { recipient ->
+        Correspondent(recipient.name ?: "", recipient.emailAddress ?: "")
+    }
+
+/**
+ * Converts a response conversations list to a list of local conversation modal
+ */
+internal fun List<ConversationApiModel>.toListLocal(userId: String) =
     map { conversation -> conversation.toLocal(userId) }
 
+/**
+ * Converts a list of conversations from db to a list of domain conversation model
+ */
 internal fun List<ConversationEntity>.toDomainModelList() =
     map { conversation -> conversation.toDomainModel() }
 

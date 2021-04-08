@@ -19,48 +19,57 @@
 
 package ch.protonmail.android.mailbox.data.remote.model
 
-import ch.protonmail.android.api.utils.Fields
-import ch.protonmail.android.mailbox.data.local.model.ConversationEntity
 import com.google.gson.annotations.SerializedName
 import me.proton.core.util.kotlin.EMPTY_STRING
 
-data class ConversationRemote(
-    @SerializedName(Fields.Conversation.ID)
+const val ID = "ID"
+const val ORDER = "Order"
+const val SUBJECT = "Subject"
+const val SENDERS = "Senders"
+const val RECIPIENTS = "Recipients"
+const val NUM_MESSAGES = "NumMessages"
+const val NUM_UNREAD = "NumUnread"
+const val NUM_ATTACHMENTS = "NumAttachments"
+const val EXPIRATION_TIME = "ExpirationTime"
+const val ADDRESS_ID = "AddressID"
+const val SIZE = "Size"
+const val LABELS = "Labels"
+const val TIME = "ContextTime"
+
+data class ConversationApiModel(
+    @SerializedName(ID)
     val id: String,
 
-    @SerializedName(Fields.Conversation.ORDER)
+    @SerializedName(ORDER)
     val order: Long = 0,
 
-    @SerializedName(Fields.Conversation.SUBJECT)
+    @SerializedName(SUBJECT)
     val subject: String = EMPTY_STRING,
 
-//    @SerialName(Fields.Conversation.SENDERS)
-//    val senders: List<String> = mutableListOf(),
-//
-//    @SerialName(Fields.Conversation.RECIPIENTS)
-//    val recipients: List<String> = mutableListOf(),
+    @SerializedName(SENDERS)
+    val senders: List<CorrespondentApiModel> = mutableListOf(),
 
-    @SerializedName(Fields.Conversation.NUM_MESSAGES)
+    @SerializedName(RECIPIENTS)
+    val recipients: List<CorrespondentApiModel> = mutableListOf(),
+
+    @SerializedName(NUM_MESSAGES)
     val numMessages: Int = 0,
 
-    @SerializedName(Fields.Conversation.NUM_UNREAD)
+    @SerializedName(NUM_UNREAD)
     val numUnread: Int = 0,
 
-    @SerializedName(Fields.Conversation.NUM_ATTACHMENTS)
+    @SerializedName(NUM_ATTACHMENTS)
     val numAttachments: Int = 0,
 
-    @SerializedName(Fields.Conversation.EXPIRATION_TIME)
+    @SerializedName(EXPIRATION_TIME)
     val expirationTime: Long = 0,
 
-//    @SerialName(Fields.Conversation.ADDRESS_ID)
+//    @SerialName(ADDRESS_ID)
 //    val addressID: String,
 
-    @SerializedName(Fields.Conversation.SIZE)
+    @SerializedName(SIZE)
     val size: Long = 0L,
 
-    @SerializedName(Fields.Conversation.LABEL_IDS)
-    val labelIds: List<String> = mutableListOf(),
-
-//    @SerialName(Fields.Conversation.LABELS)
+//    @SerialName(LABELS)
 //    val labels: List<String> = mutableListOf()
 )

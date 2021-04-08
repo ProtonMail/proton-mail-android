@@ -17,23 +17,21 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.data.remote
+package ch.protonmail.android.mailbox.data.local.model
 
-import ch.protonmail.android.api.segments.RetrofitConstants
-import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.Query
+import androidx.room.TypeConverter
+import ch.protonmail.android.data.local.model.MessageSender
+import com.google.gson.Gson
 
-interface ConversationService {
+class ConversationTypesConverter {
 
-    @GET("mail/v4/conversations")
-    @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
-    suspend fun fetchConversations(
-        @Query("Location") location: Int,
-        @Query("Page") page: Int?,
-        @Query("PageSize") pageSize: Int?,
-        @Query("LabelID") labelId: String?
-    ): ConversationsResponse
+    @TypeConverter
+    fun messageRecipientsListToString(messageSenders: List<MessageSender>?): String? =
+        Gson().toJson(messageSenders)
 
+    @TypeConverter
+    fun stringToMessageSendersList(messageSendersString: String?): List<MessageSender>? {
+        messageSendersString ?: return null
+        return Gson().fromJson(messageSendersString, Array<MessageSender>::class.java).asList()
+    }
 }
