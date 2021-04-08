@@ -187,6 +187,7 @@ import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.android.workmanager.activity.getWorkManager
+import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -660,9 +661,20 @@ class MailboxActivity :
             val mailboxLocation = mailboxLocationMain.value ?: MessageLocationType.INBOX
             val earliestTime = getLastMessageTime(mailboxLocation, mailboxLabelId)
             if (mailboxLocation != MessageLocationType.LABEL && mailboxLocation != MessageLocationType.LABEL_FOLDER) {
-                startFetchMessages(mailboxLocation, earliestTime)
+                startFetchMessages(
+                    this@MailboxActivity,
+                    userManager.requireCurrentUserId(),
+                    mailboxLocation,
+                    earliestTime
+                )
             } else {
-                startFetchMessagesByLabel(mailboxLocation, earliestTime, mailboxLabelId ?: "")
+                startFetchMessagesByLabel(
+                    this@MailboxActivity,
+                    userManager.requireCurrentUserId(),
+                    mailboxLocation,
+                    earliestTime,
+                    mailboxLabelId ?: EMPTY_STRING
+                )
             }
         }
     }
@@ -1542,7 +1554,7 @@ class MailboxActivity :
         messages_list_view.clearFocus()
         messages_list_view.scrollToPosition(0)
         if (newMessageLocationType == MessageLocationType.STARRED) {
-            startFetchFirstPage(newMessageLocationType)
+            startFetchFirstPage(applicationContext, userManager.requireCurrentUserId(), newMessageLocationType)
         } else {
             syncUUID = UUID.randomUUID().toString()
             mJobManager.addJobInBackground(
@@ -1578,6 +1590,7 @@ class MailboxActivity :
     ) {
         SetUpNewMessageLocationTask(
             WeakReference(this),
+            userManager.requireCurrentUserId(),
             messageDetailsRepository,
             labelId,
             isFolder,
@@ -1763,6 +1776,7 @@ class MailboxActivity :
 
     private class SetUpNewMessageLocationTask internal constructor(
         private val mailboxActivity: WeakReference<MailboxActivity>,
+        private val userId: Id,
         private val messageDetailsRepository: MessageDetailsRepository,
         private val labelId: String,
         private val isFolder: Boolean,
@@ -1802,7 +1816,13 @@ class MailboxActivity :
             }
             mailboxActivity.closeDrawer()
             mailboxActivity.messages_list_view.scrollToPosition(0)
-            startFetchFirstPageByLabel(fromInt(newLocation), labelId, false)
+            startFetchFirstPageByLabel(
+                mailboxActivity,
+                userId,
+                fromInt(newLocation),
+                labelId,
+                false
+            )
             RefreshEmptyViewTask(
                 this.mailboxActivity,
                 mailboxActivity.counterDao,

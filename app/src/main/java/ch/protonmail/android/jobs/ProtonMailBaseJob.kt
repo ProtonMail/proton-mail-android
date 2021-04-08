@@ -41,6 +41,7 @@ abstract class ProtonMailBaseJob @JvmOverloads protected constructor(
 
     protected val userId: Id?
         get() = userIdString?.let(::Id)
+            ?: getUserManager().currentUserId
 
     protected fun requireUserId(): Id =
         requireNotNull(userId)

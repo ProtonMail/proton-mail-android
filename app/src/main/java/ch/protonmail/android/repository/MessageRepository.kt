@@ -21,8 +21,9 @@ package ch.protonmail.android.repository
 
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
+import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.core.Constants.FeatureFlags.SAVE_MESSAGE_BODY_TO_FILE
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.MessageBodyFileManager
@@ -39,14 +40,15 @@ const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
 
 class MessageRepository @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
-    private var messageDao: MessageDao,
+    private val databaseProvider: DatabaseProvider,
     private val protonMailApiManager: ProtonMailApiManager,
     private val messageBodyFileManager: MessageBodyFileManager,
     private val userManager: UserManager
 ) {
 
-    private suspend fun findMessage(messageId: String): Message? =
+    private suspend fun findMessage(userId: Id, messageId: String): Message? =
         withContext(dispatcherProvider.Io) {
+            val messageDao = databaseProvider.provideMessageDao(userId)
             return@withContext messageDao.findMessageById(messageId).first()?.apply {
                 messageBody?.let {
                     if (it.startsWith("file://"))
@@ -55,7 +57,7 @@ class MessageRepository @Inject constructor(
             }
         }
 
-    private suspend fun saveMessage(message: Message): Long =
+    private suspend fun saveMessage(userId: Id, message: Message): Long =
         withContext(dispatcherProvider.Io) {
             val messageToBeSaved = message.apply {
                 messageBody = messageBody?.let {
@@ -66,12 +68,13 @@ class MessageRepository @Inject constructor(
                     }
                 }
             }
+            val messageDao = databaseProvider.provideMessageDao(userId)
             return@withContext messageDao.saveMessage(messageToBeSaved)
         }
 
-    private suspend fun getMessageDetails(messageId: String, userId: Id): Message? =
+    private suspend fun getMessageDetails(userId: Id, messageId: String): Message? =
         withContext(dispatcherProvider.Io) {
-            val message = findMessage(messageId)
+            val message = findMessage(userId, messageId)
 
             if (message?.messageBody != null) {
                 return@withContext message
@@ -80,14 +83,14 @@ class MessageRepository @Inject constructor(
             return@withContext runCatching {
                 protonMailApiManager.fetchMessageDetails(messageId, UserIdTag(userId))
             }.map { messageResponse ->
-                saveMessage(messageResponse.message)
+                saveMessage(userId, messageResponse.message)
                 return@map messageResponse.message
             }.getOrNull()
         }
 
-    private suspend fun getMessageMetadata(messageId: String, userId: Id): Message? =
+    private suspend fun getMessageMetadata(userId: Id, messageId: String): Message? =
         withContext(dispatcherProvider.Io) {
-            val message = findMessage(messageId)
+            val message = findMessage(userId, messageId)
 
             if (message != null) {
                 return@withContext message
@@ -97,7 +100,7 @@ class MessageRepository @Inject constructor(
                 protonMailApiManager.fetchMessageMetadata(messageId, UserIdTag(userId))
             }.map { messageResponse ->
                 return@map messageResponse.messages.firstOrNull()?.let { message ->
-                    saveMessage(message)
+                    saveMessage(userId, message)
                     return@let message
                 }
             }.getOrNull()
@@ -114,13 +117,13 @@ class MessageRepository @Inject constructor(
      *        should be fetched, even if the user settings say otherwise. Example: When a message is being open.
      * @return An instance of Message
      */
-    suspend fun getMessage(messageId: String, userId: Id, shouldFetchMessageDetails: Boolean = false): Message? =
+    suspend fun getMessage(userId: Id, messageId: String, shouldFetchMessageDetails: Boolean = false): Message? =
         withContext(dispatcherProvider.Io) {
             val user = userManager.getLegacyUser(userId)
             return@withContext if (user.isGcmDownloadMessageDetails || shouldFetchMessageDetails) {
-                getMessageDetails(messageId, userId)
+                getMessageDetails(userId, messageId)
             } else {
-                getMessageMetadata(messageId, userId)
+                getMessageMetadata(userId, messageId)
             }
         }
 }

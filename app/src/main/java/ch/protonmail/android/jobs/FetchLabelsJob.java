@@ -22,6 +22,8 @@ import com.birbit.android.jobqueue.Params;
 
 import ch.protonmail.android.api.services.MessagesService;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.domain.entity.Id;
+import timber.log.Timber;
 
 public class FetchLabelsJob extends ProtonMailBaseJob {
 
@@ -35,7 +37,14 @@ public class FetchLabelsJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        MessagesService.Companion.startFetchLabels();
-        MessagesService.Companion.startFetchContactGroups();
+
+        Id userId = getUserId();
+        if (userId == null) {
+            Timber.w("Can't fetch labels without any logged in user");
+            return;
+        }
+
+        MessagesService.Companion.startFetchLabels(getApplicationContext(), userId);
+        MessagesService.Companion.startFetchContactGroups(getApplicationContext(), userId);
     }
 }

@@ -476,9 +476,13 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     private static class RefreshMessagesAndAttachments extends AsyncTask<Void, Void, Void> {
 
+        private final Context context;
+        private final Id userId;
         private final MessageDao messageDao;
 
-        private RefreshMessagesAndAttachments(MessageDao messageDao) {
+        private RefreshMessagesAndAttachments(Context context, Id userId, MessageDao messageDao) {
+            this.context = context;
+            this.userId = userId;
             this.messageDao = messageDao;
         }
 
@@ -491,7 +495,14 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            MessagesService.Companion.startFetchFirstPage(Constants.MessageLocationType.INBOX, false, null, false);
+            MessagesService.Companion.startFetchFirstPage(
+                    context,
+                    userId,
+                    Constants.MessageLocationType.INBOX,
+                    false,
+                    null,
+                    false
+            );
         }
     }
 
@@ -525,7 +536,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 messageDao = MessageDatabase.Companion
                         .getInstance(this, currentUser)
                         .getDao();
-                new RefreshMessagesAndAttachments(messageDao).execute();
+                new RefreshMessagesAndAttachments(this, currentUser, messageDao).execute();
             }
             if (BuildConfig.FETCH_FULL_CONTACTS && userManager.isLoggedIn()) {
                 new FetchContactsEmailsWorker.Enqueuer(WorkManager.getInstance(this)).enqueue(0);

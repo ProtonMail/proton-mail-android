@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.api.services
 
+import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
@@ -43,13 +44,12 @@ import timber.log.Timber
 import javax.inject.Inject
 
 // region constants
-private const val TAG_MESSAGES_SERVICE = "MessagesService"
-
 private const val ACTION_FETCH_MESSAGE_LABELS = "ACTION_FETCH_MESSAGE_LABELS"
 private const val ACTION_FETCH_CONTACT_GROUPS_LABELS = "ACTION_FETCH_CONTACT_GROUPS_LABELS"
 private const val ACTION_FETCH_MESSAGES_BY_PAGE = "ACTION_FETCH_MESSAGES_BY_PAGE"
 private const val ACTION_FETCH_MESSAGES_BY_TIME = "ACTION_FETCH_MESSAGES_BY_TIME_MESSAGE_ID"
 
+private const val EXTRA_USER_ID = "extra.user.id"
 private const val EXTRA_LABEL_ID = "label"
 private const val EXTRA_MESSAGE_LOCATION = "location"
 private const val EXTRA_REFRESH_DETAILS = "refreshDetails"
@@ -86,12 +86,15 @@ class MessagesService : JobIntentService() {
     lateinit var contactEmailsManagerFactory: ContactEmailsManager.AssistedFactory
 
     @Inject
+    lateinit var messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory
     lateinit var messageDetailsRepository: MessageDetailsRepository
 
     override fun onHandleWork(intent: Intent) {
 
-        val currentUserId = userManager.requireCurrentUserId()
-        messageDetailsRepository.reloadDependenciesForUser(currentUserId)
+        val userId = Id(requireNotNull(intent.getStringExtra(EXTRA_USER_ID)))
+        messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
+
+        messageDetailsRepository.reloadDependenciesForUser(userId)
         when (intent.action) {
             ACTION_FETCH_MESSAGES_BY_PAGE -> {
                 val location = intent.getIntExtra(EXTRA_MESSAGE_LOCATION, 0)
@@ -104,7 +107,7 @@ class MessagesService : JobIntentService() {
                     handleFetchFirstLabelPage(
                         Constants.MessageLocationType.LABEL,
                         labelId,
-                        currentUserId,
+                        userId,
                         refreshMessages
                     )
                 } else {
@@ -112,7 +115,7 @@ class MessagesService : JobIntentService() {
                         Constants.MessageLocationType.fromInt(location),
                         refreshDetails,
                         intent.getStringExtra(EXTRA_UUID),
-                        currentUserId,
+                        userId,
                         refreshMessages
                     )
                 }
@@ -133,10 +136,10 @@ class MessagesService : JobIntentService() {
                         Constants.MessageLocationType.fromInt(location),
                         labelTime,
                         labelId,
-                        currentUserId
+                        userId
                     )
                 } else {
-                    handleFetchMessages(Constants.MessageLocationType.fromInt(location), time, currentUserId)
+                    handleFetchMessages(Constants.MessageLocationType.fromInt(location), time, userId)
                 }
             }
             ACTION_FETCH_MESSAGE_LABELS -> handleFetchLabels()
@@ -380,28 +383,23 @@ class MessagesService : JobIntentService() {
 
     companion object {
 
-        fun startFetchLabels() {
-            val context = ProtonMailApplication.getApplication()
+        fun startFetchLabels(
+            context: Context,
+            userId: Id
+        ) {
             val intent = Intent(context, MessagesService::class.java)
-            intent.action = ACTION_FETCH_MESSAGE_LABELS
+                .setAction(ACTION_FETCH_MESSAGE_LABELS)
+                .putExtra(EXTRA_USER_ID, userId.s)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
-        fun startFetchContactGroups() {
-            val context = ProtonMailApplication.getApplication()
+        fun startFetchContactGroups(
+            context: Context,
+            userId: Id
+        ) {
             val intent = Intent(context, MessagesService::class.java)
-            intent.action = ACTION_FETCH_CONTACT_GROUPS_LABELS
-            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
-        }
-
-        /**
-         * Load initial page and detail of every message it fetch
-         */
-        fun startFetchFirstPage(location: Constants.MessageLocationType) {
-            val context = ProtonMailApplication.getApplication()
-            val intent = Intent(context, MessagesService::class.java)
-            intent.action = ACTION_FETCH_MESSAGES_BY_PAGE
-            intent.putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
+                .setAction(ACTION_FETCH_CONTACT_GROUPS_LABELS)
+                .putExtra(EXTRA_USER_ID, userId.s)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
@@ -409,27 +407,49 @@ class MessagesService : JobIntentService() {
          * Load initial page and detail of every message it fetch
          */
         fun startFetchFirstPage(
+            context: Context,
+            userId: Id,
+            location: Constants.MessageLocationType
+        ) {
+            val intent = Intent(context, MessagesService::class.java)
+                .setAction(ACTION_FETCH_MESSAGES_BY_PAGE)
+                .putExtra(EXTRA_USER_ID, userId.s)
+                .putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
+            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
+        }
+
+        /**
+         * Load initial page and detail of every message it fetch
+         */
+        fun startFetchFirstPage(
+            context: Context,
+            userId: Id,
             location: Constants.MessageLocationType,
             refreshDetails: Boolean,
             uuid: String?,
             refreshMessages: Boolean
         ) {
-            val context = ProtonMailApplication.getApplication()
             val intent = Intent(context, MessagesService::class.java)
-            intent.action = ACTION_FETCH_MESSAGES_BY_PAGE
-            intent.putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
-            intent.putExtra(EXTRA_REFRESH_DETAILS, refreshDetails)
-            intent.putExtra(EXTRA_UUID, uuid)
-            intent.putExtra(EXTRA_REFRESH_MESSAGES, refreshMessages)
+                .setAction(ACTION_FETCH_MESSAGES_BY_PAGE)
+                .putExtra(EXTRA_USER_ID, userId.s)
+                .putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
+                .putExtra(EXTRA_REFRESH_DETAILS, refreshDetails)
+                .putExtra(EXTRA_UUID, uuid)
+                .putExtra(EXTRA_REFRESH_MESSAGES, refreshMessages)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
-        fun startFetchMessages(location: Constants.MessageLocationType, time: Long) {
-            val context = ProtonMailApplication.getApplication()
+        fun startFetchMessages(
+            context: Context,
+            userId: Id,
+            location: Constants.MessageLocationType,
+            time: Long
+        ) {
             val intent = Intent(context, MessagesService::class.java)
-            intent.action = ACTION_FETCH_MESSAGES_BY_TIME
-            intent.putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
-            intent.putExtra(EXTRA_TIME, time)
+                .setAction(ACTION_FETCH_MESSAGES_BY_TIME)
+                .putExtra(EXTRA_USER_ID, userId.s)
+                .putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
+                .putExtra(EXTRA_TIME, time)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
@@ -437,26 +457,34 @@ class MessagesService : JobIntentService() {
          * Load initial page and detail of every message it fetch dino
          */
         fun startFetchFirstPageByLabel(
+            context: Context,
+            userId: Id,
             location: Constants.MessageLocationType,
             labelId: String?,
             refreshMessages: Boolean
         ) {
-            val context = ProtonMailApplication.getApplication()
             val intent = Intent(context, MessagesService::class.java)
-            intent.action = ACTION_FETCH_MESSAGES_BY_PAGE
-            intent.putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
-            intent.putExtra(EXTRA_LABEL_ID, labelId)
-            intent.putExtra(EXTRA_REFRESH_MESSAGES, refreshMessages)
+                .setAction(ACTION_FETCH_MESSAGES_BY_PAGE)
+                .putExtra(EXTRA_USER_ID, userId.s)
+                .putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
+                .putExtra(EXTRA_LABEL_ID, labelId)
+                .putExtra(EXTRA_REFRESH_MESSAGES, refreshMessages)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
-        fun startFetchMessagesByLabel(location: Constants.MessageLocationType, time: Long, labelId: String) {
-            val context = ProtonMailApplication.getApplication()
+        fun startFetchMessagesByLabel(
+            context: Context,
+            userId: Id,
+            location: Constants.MessageLocationType,
+            time: Long,
+            labelId: String
+        ) {
             val intent = Intent(context, MessagesService::class.java)
-            intent.action = ACTION_FETCH_MESSAGES_BY_TIME
-            intent.putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
-            intent.putExtra(EXTRA_TIME, time)
-            intent.putExtra(EXTRA_LABEL_ID, labelId)
+                .setAction(ACTION_FETCH_MESSAGES_BY_TIME)
+                .putExtra(EXTRA_USER_ID, userId.s)
+                .putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
+                .putExtra(EXTRA_TIME, time)
+                .putExtra(EXTRA_LABEL_ID, labelId)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 

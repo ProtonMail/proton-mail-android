@@ -1,22 +1,24 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.activities.guest;
+
+import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -63,6 +65,7 @@ import ch.protonmail.android.api.models.address.AddressSetupResponse;
 import ch.protonmail.android.api.services.LoginService;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.AddressSetupEvent;
 import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.AvailablePlansEvent;
@@ -84,8 +87,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import timber.log.Timber;
-
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 
 @AndroidEntryPoint
 public class CreateAccountActivity extends BaseConnectivityActivity implements
@@ -541,7 +542,10 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
             if (mUserManager.isFirstLogin()) {
                 LoginService.fetchUserDetails();
                 mJobManager.start();
-                launchInitialDataFetch.invoke(true, true);
+                // If status is success, response can't be null
+                assert event.getResponse() != null;
+                Id userId = new Id(event.getResponse().getUser().getId());
+                launchInitialDataFetch.invoke(userId, true, true);
                 mUserManager.firstLoginDone();
             }
         }

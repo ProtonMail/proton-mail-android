@@ -161,7 +161,7 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
         val notificationsDatabase = databaseProvider.provideNotificationDao(userId)
         val notification = Notification(messageId, sender, notificationBody)
         val notifications = notificationsDatabase.insertNewNotificationAndReturnAll(notification)
-        val message = messageRepository.getMessage(messageId, userId)
+        val message = messageRepository.getMessage(userId, messageId)
 
         if (notifications.size > 1) {
             notificationServer.notifyMultipleUnreadEmail(

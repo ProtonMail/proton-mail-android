@@ -23,6 +23,7 @@ import androidx.work.WorkManager
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.EventResponse
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.MessageCount
@@ -44,7 +45,6 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_READING_RESTRICT
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.ContactData
@@ -58,7 +58,6 @@ import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.UserSettingsEvent
-import ch.protonmail.android.mapper.bridge.AddressBridgeMapper
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
@@ -81,18 +80,20 @@ class EventHandler @AssistedInject constructor(
     private val protonMailApiManager: ProtonMailApiManager,
     private val userManager: UserManager,
     private val workManager: WorkManager,
-    private val messageDetailsRepository: MessageDetailsRepository,
+    messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
     private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
-    private val contactDao: ContactDao,
-    private val counterDao: CounterDao,
-    private val messageDao: MessageDao,
-    private val pendingActionDao: PendingActionDao,
+    databaseProvider: DatabaseProvider,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
-    private val mapper: AddressBridgeMapper,
     private val userMapper: UserBridgeMapper,
     @Assisted val userId: Id
 ) {
+
+    private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
+    private val contactDao = databaseProvider.provideContactDao(userId)
+    private val counterDao = databaseProvider.provideCounterDao(userId)
+    private val messageDao = databaseProvider.provideMessageDao(userId)
+    private val pendingActionDao = databaseProvider.providePendingActionDao(userId)
 
     @AssistedInject.Factory
     interface AssistedFactory {
@@ -139,6 +140,7 @@ class EventHandler @AssistedInject constructor(
             clearTotalLabelsTable()
         }
         launchInitialDataFetch(
+            userId,
             shouldRefreshDetails = false,
             shouldRefreshContacts = false
         )
