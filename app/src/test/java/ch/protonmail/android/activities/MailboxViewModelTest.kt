@@ -20,6 +20,7 @@
 package ch.protonmail.android.activities
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.liveData
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
@@ -36,7 +37,6 @@ import ch.protonmail.android.mailbox.presentation.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.MessageData
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
-import ch.protonmail.android.testAndroid.rx.TrampolineScheduler
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.MessageUtils
@@ -63,9 +63,6 @@ import kotlin.test.assertEquals
 
 
 class MailboxViewModelTest : CoroutinesTest {
-
-    @get:Rule
-    val trampolineSchedulerRule = TrampolineScheduler()
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -390,7 +387,36 @@ class MailboxViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun fetchMessagesCallsMessageServiceStartFetchMessagesWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsNotALabel() {
+    fun fetchMessagesReturnsMailboxItemsLiveDataMappedFromMessageDetailsRepositoryWhenFetchingFirstPage() {
+        val message = Message(
+            messageId = "messageId9238482",
+            sender = MessageSender("senderName", "sender@pm.me"),
+            subject = "subject1283"
+        )
+        val jobEntryPoint = mockk<JobEntryPoint>()
+        mockkStatic(EntryPoints::class)
+        every { EntryPoints.get(any(), JobEntryPoint::class.java) } returns jobEntryPoint
+        every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
+        coEvery { messageDetailsRepository.getAllMessages() } returns liveData { emit(listOf(message)) }
+        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
+
+        val actual = viewModel.fetchMessages(
+            Constants.MessageLocationType.ALL_MAIL,
+            "labelId923842",
+            true,
+            "9238423bbe2h3423489wssdf",
+            false
+        ).testObserver()
+
+        val expected = listOf(
+            fakeMailboxUiData("messageId9238482", "senderName", "subject1283")
+        )
+        assertEquals(expected, actual.observedValues.first())
+        unmockkStatic(EntryPoints::class)
+    }
+
+    @Test
+    fun fetchMessagesCallsMessageServiceStartFetchMessagesWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsNotALabelOrFolder() {
         val location = Constants.MessageLocationType.ARCHIVE
         val labelId = "labelId92323"
         val includeLabels = false
@@ -433,4 +459,65 @@ class MailboxViewModelTest : CoroutinesTest {
 
         verifySequence { messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(location, earliestTime, labelId) }
     }
+
+    @Test
+    fun fetchMessagesReturnsMailboxItemsLiveDataMappedFromMessageDetailsRepositoryWhenFetchingSubsequentPages() {
+        val message = Message(
+            messageId = "messageId92384823",
+            sender = MessageSender("senderName1", "sender@pm.me"),
+            subject = "subject12834"
+        )
+        val location = Constants.MessageLocationType.LABEL_FOLDER
+        val labelId = "folderIdi2384"
+        val includeLabels = false
+        val uuid = "9238h82388sdfa8sdf8asd3hh2283"
+        val refreshMessages = false
+        // Represents pagination. Only messages older than the given timestamp will be returned
+        val earliestTime = 1323L
+        coEvery { messageDetailsRepository.getMessagesByLabelIdAsync(labelId) } returns liveData {
+            emit(listOf(message))
+        }
+        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
+
+        val actual = viewModel.fetchMessages(
+            location,
+            labelId,
+            includeLabels,
+            uuid,
+            refreshMessages,
+            earliestTime
+        ).testObserver()
+
+        val expected = listOf(
+            fakeMailboxUiData("messageId92384823", "senderName1", "subject12834")
+        )
+        assertEquals(expected, actual.observedValues.first())
+    }
+
+    private fun fakeMailboxUiData(
+        itemId: String,
+        senderName: String,
+        subject: String
+    ) = MailboxUiItem(
+        itemId,
+        senderName,
+        subject,
+        0,
+        hasAttachments = false,
+        isStarred = false,
+        isRead = true,
+        expirationTime = 0,
+        messagesCount = 0,
+        messageData = MessageData(
+            Constants.MessageLocationType.INVALID.messageLocationTypeValue,
+            false,
+            false,
+            false,
+            false
+        ),
+        isDeleted = false,
+        labelIds = emptyList(),
+        recipients = ""
+    )
+
 }

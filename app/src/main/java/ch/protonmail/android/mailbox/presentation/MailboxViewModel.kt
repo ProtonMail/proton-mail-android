@@ -20,6 +20,7 @@ package ch.protonmail.android.mailbox.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
@@ -66,7 +67,7 @@ class MailboxViewModel @Inject constructor(
     private val contactsRepository: ContactsRepository,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator,
-    val messageServiceScheduler: MessagesService.Scheduler
+    private val messageServiceScheduler: MessagesService.Scheduler
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -290,8 +291,9 @@ class MailboxViewModel @Inject constructor(
         uuid: String,
         refreshMessages: Boolean,
         earliestTime: Long? = null
-    ) {
-        earliestTime?.let {
+    ): LiveData<List<MailboxUiItem>> {
+        // When earliest time is valid the request is about paginated messages (page > 1)
+        if (earliestTime != null) {
             val isCustomLocation = location == LABEL || location == LABEL_FOLDER
 
             if (isCustomLocation) {
@@ -299,19 +301,44 @@ class MailboxViewModel @Inject constructor(
             } else {
                 messageServiceScheduler.fetchMessagesOlderThanTime(location, earliestTime)
             }
-
-            return
+        } else {
+            jobManager.addJobInBackground(
+                FetchByLocationJob(
+                    location,
+                    labelId,
+                    includeLabels,
+                    uuid,
+                    refreshMessages
+                )
+            )
         }
 
-        jobManager.addJobInBackground(
-            FetchByLocationJob(
-                location,
-                labelId,
-                includeLabels,
-                uuid,
-                refreshMessages
-            )
-        )
+        return getLiveDataByLocation(location, labelId).switchMap {
+            messagesToMailboxItems(it)
+        }
+    }
+
+    private fun getLiveDataByLocation(
+        mailboxLocation: Constants.MessageLocationType,
+        labelId: String?
+    ): LiveData<List<Message>> {
+        return when (mailboxLocation) {
+            STARRED -> messageDetailsRepository.getStarredMessagesAsync()
+            LABEL,
+            LABEL_OFFLINE,
+            LABEL_FOLDER -> messageDetailsRepository.getMessagesByLabelIdAsync(labelId!!)
+            DRAFT,
+            SENT,
+            ARCHIVE,
+            INBOX,
+            SEARCH,
+            SPAM,
+            TRASH ->
+                messageDetailsRepository.getMessagesByLocationAsync(mailboxLocation.messageLocationTypeValue)
+            ALL_MAIL -> messageDetailsRepository.getAllMessages()
+            INVALID -> throw IllegalArgumentException("Invalid location.")
+            else -> throw IllegalArgumentException("Unknown location: $mailboxLocation")
+        }
     }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)

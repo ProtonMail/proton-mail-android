@@ -46,7 +46,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.os.postDelayed
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -383,13 +382,9 @@ class MailboxActivity :
 
         fetchOrganizationData()
 
-        val messagesLiveData = mailboxLocationMain.switchMap { location: MessageLocationType ->
-            getLiveDataByLocation(messageDetailsRepository, location)
-        }
+        observeMailboxItemsByLocation()
 
         mailboxLocationMain.observe(this, messagesAdapter::setNewLocation)
-        messagesLiveData.observe(this, MessagesListObserver(messagesAdapter))
-
         ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
 
         setUpMailboxActionsView()
@@ -527,29 +522,6 @@ class MailboxActivity :
 
     private var firstLogin: Boolean? = null
 
-    private fun getLiveDataByLocation(
-        messageDetailsRepository: MessageDetailsRepository,
-        mMailboxLocation: MessageLocationType
-    ): LiveData<List<Message>> {
-        return when (mMailboxLocation) {
-            MessageLocationType.STARRED -> messageDetailsRepository.getStarredMessagesAsync()
-            MessageLocationType.LABEL,
-            MessageLocationType.LABEL_OFFLINE,
-            MessageLocationType.LABEL_FOLDER -> messageDetailsRepository.getMessagesByLabelIdAsync(mailboxLabelId!!)
-            MessageLocationType.DRAFT,
-            MessageLocationType.SENT,
-            MessageLocationType.ARCHIVE,
-            MessageLocationType.INBOX,
-            MessageLocationType.SEARCH,
-            MessageLocationType.SPAM,
-            MessageLocationType.TRASH ->
-                messageDetailsRepository.getMessagesByLocationAsync(mMailboxLocation.messageLocationTypeValue)
-            MessageLocationType.ALL_MAIL -> messageDetailsRepository.getAllMessages()
-            MessageLocationType.INVALID -> throw IllegalArgumentException("Invalid location.")
-            else -> throw IllegalArgumentException("Unknown location: $mMailboxLocation")
-        }
-    }
-
     private fun startObservingPendingActions() {
         val owner = this
         mailboxViewModel.run {
@@ -586,9 +558,8 @@ class MailboxActivity :
             setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
         }
 
-        val messagesLiveData =
-            mailboxLocationMain.switchMap { getLiveDataByLocation(messageDetailsRepository, it) }
-        messagesLiveData.observe(this, MessagesListObserver(messagesAdapter))
+        observeMailboxItemsByLocation()
+
         messageDetailsRepository.getAllLabels().observe(this, messagesAdapter::setLabels)
         // Account has been switched, so used space changed as well
         mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED)
@@ -606,14 +577,18 @@ class MailboxActivity :
         setElevationOnToolbarAndStatusView(false)
     }
 
-    private inner class MessagesListObserver(
-        private val adapter: MessagesRecyclerViewAdapter?
-    ) : Observer<List<Message>> {
-        override fun onChanged(messages: List<Message>) {
-            mailboxViewModel.messagesToMailboxItems(messages).observe(this@MailboxActivity) { mailboxUiItems ->
-                adapter!!.clear()
-                adapter.addAll(mailboxUiItems)
-            }
+    private fun observeMailboxItemsByLocation() {
+        mailboxLocationMain.switchMap { location ->
+            mailboxViewModel.fetchMessages(
+                location,
+                mailboxLabelId,
+                false,
+                syncUUID,
+                true
+            )
+        }.observe(this) {
+            messagesAdapter.clear()
+            messagesAdapter.addAll(it)
         }
     }
 
