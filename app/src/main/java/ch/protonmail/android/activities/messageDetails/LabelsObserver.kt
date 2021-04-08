@@ -38,11 +38,16 @@ class LabelsObserver(
 ) : Observer<List<Label>> {
 
     override fun onChanged(labels: List<Label>?) {
+        adapter.labelsList = labels
         if (labels.isNullOrEmpty()) {
             adapter.labelsView.visibility = View.GONE
             return
         } else {
-            adapter.labelsView.visibility = View.VISIBLE
+            if (labels.any { it.exclusive.not() }) {
+                adapter.labelsView.visibility = View.VISIBLE
+            } else {
+                adapter.labelsView.visibility = View.GONE
+            }
         }
 
         val labelView = adapter.labelsView
