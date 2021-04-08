@@ -213,7 +213,7 @@ class MailboxActivity :
     @Inject
     lateinit var multiUserFcmTokenManager: MultiUserFcmTokenManager
 
-    private lateinit var messagesAdapter: MessagesRecyclerViewAdapter
+    private lateinit var mailboxAdapter: MessagesRecyclerViewAdapter
     private var swipeController: SwipeController = SwipeController()
     private val mailboxLocationMain = MutableLiveData<MessageLocationType>()
     private val isLoadingMore = AtomicBoolean(false)
@@ -285,7 +285,7 @@ class MailboxActivity :
         startObservingUsedSpace()
 
         var actionModeAux: ActionMode? = null
-        messagesAdapter = MessagesRecyclerViewAdapter(this) { selectionModeEvent ->
+        mailboxAdapter = MessagesRecyclerViewAdapter(this) { selectionModeEvent ->
             when (selectionModeEvent) {
                 SelectionModeEnum.STARTED -> {
                     actionModeAux = startActionMode(this@MailboxActivity)
@@ -302,9 +302,9 @@ class MailboxActivity :
             }
         }
 
-        mailboxViewModel.pendingSendsLiveData.observe(this, messagesAdapter::setPendingForSendingList)
-        mailboxViewModel.pendingUploadsLiveData.observe(this, messagesAdapter::setPendingUploadsList)
-        messageDetailsRepository.getAllLabels().observe(this, messagesAdapter::setLabels)
+        mailboxViewModel.pendingSendsLiveData.observe(this, mailboxAdapter::setPendingForSendingList)
+        mailboxViewModel.pendingUploadsLiveData.observe(this, mailboxAdapter::setPendingUploadsList)
+        messageDetailsRepository.getAllLabels().observe(this, mailboxAdapter::setLabels)
 
         mailboxViewModel.hasSuccessfullyDeletedMessages.observe(this) { isSuccess ->
             Timber.v("Delete message status is success $isSuccess")
@@ -318,7 +318,7 @@ class MailboxActivity :
         setUpDrawer()
         setTitle()
 
-        mailboxRecyclerView.adapter = messagesAdapter
+        mailboxRecyclerView.adapter = mailboxAdapter
         mailboxRecyclerView.layoutManager = LinearLayoutManager(this)
         // Set the list divider
         val itemDecoration = DividerItemDecoration(mailboxRecyclerView.context, DividerItemDecoration.VERTICAL)
@@ -356,7 +356,7 @@ class MailboxActivity :
             userManager.firstMailboxLoadDone()
         }
 
-        messagesAdapter.setItemClick { mailboxUiItem: MailboxUiItem ->
+        mailboxAdapter.setItemClick { mailboxUiItem: MailboxUiItem ->
             OnMessageClickTask(
                 WeakReference(this@MailboxActivity),
                 messageDetailsRepository,
@@ -384,7 +384,7 @@ class MailboxActivity :
 
         observeMailboxItemsByLocation()
 
-        mailboxLocationMain.observe(this, messagesAdapter::setNewLocation)
+        mailboxLocationMain.observe(this, mailboxAdapter::setNewLocation)
         ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
 
         setUpMailboxActionsView()
@@ -518,7 +518,7 @@ class MailboxActivity :
     }
 
     private val selectedMessages: List<SimpleMessage>
-        get() = messagesAdapter.checkedMailboxItems.map { SimpleMessage(it) }
+        get() = mailboxAdapter.checkedMailboxItems.map { SimpleMessage(it) }
 
     private var firstLogin: Boolean? = null
 
@@ -528,8 +528,8 @@ class MailboxActivity :
             pendingSendsLiveData.removeObservers(owner)
             pendingUploadsLiveData.removeObservers(owner)
             reloadDependenciesForUser()
-            pendingSendsLiveData.observe(owner) { messagesAdapter.setPendingForSendingList(it) }
-            pendingUploadsLiveData.observe(owner) { messagesAdapter.setPendingUploadsList(it) }
+            pendingSendsLiveData.observe(owner) { mailboxAdapter.setPendingForSendingList(it) }
+            pendingUploadsLiveData.observe(owner) { mailboxAdapter.setPendingUploadsList(it) }
 
         }
     }
@@ -560,7 +560,7 @@ class MailboxActivity :
 
         observeMailboxItemsByLocation()
 
-        messageDetailsRepository.getAllLabels().observe(this, messagesAdapter::setLabels)
+        messageDetailsRepository.getAllLabels().observe(this, mailboxAdapter::setLabels)
         // Account has been switched, so used space changed as well
         mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED)
         // Observe used space for current account
@@ -579,7 +579,7 @@ class MailboxActivity :
 
     private fun observeMailboxItemsByLocation() {
         mailboxLocationMain.switchMap { location ->
-            mailboxViewModel.fetchMessages(
+            mailboxViewModel.getMailboxItems(
                 location,
                 mailboxLabelId,
                 false,
@@ -587,8 +587,8 @@ class MailboxActivity :
                 true
             )
         }.observe(this) {
-            messagesAdapter.clear()
-            messagesAdapter.addAll(it)
+            mailboxAdapter.clear()
+            mailboxAdapter.addAll(it)
         }
     }
 
@@ -622,7 +622,7 @@ class MailboxActivity :
         private fun loadMoreMessages() {
             val mailboxLocation = mailboxLocationMain.value ?: MessageLocationType.INBOX
             val earliestTime = getLastMessageTime(mailboxLocation, mailboxLabelId)
-            mailboxViewModel.fetchMessages(
+            mailboxViewModel.getMailboxItems(
                 mailboxLocation,
                 mailboxLabelId,
                 false,
@@ -879,7 +879,7 @@ class MailboxActivity :
 
     private fun setLoadingMore(loadingMore: Boolean): Boolean {
         val previousValue = isLoadingMore.getAndSet(loadingMore)
-        mailboxRecyclerView.post { messagesAdapter.includeFooter = isLoadingMore.get() }
+        mailboxRecyclerView.post { mailboxAdapter.includeFooter = isLoadingMore.get() }
         return previousValue
     }
 
@@ -997,7 +997,7 @@ class MailboxActivity :
         // show toast only if user initiated load more
         if (isLoadingMore.get()) {
             showToast(R.string.no_more_messages, Toast.LENGTH_SHORT)
-            messagesAdapter.notifyDataSetChanged()
+            mailboxAdapter.notifyDataSetChanged()
         }
         setLoadingMore(false)
     }
@@ -1029,7 +1029,7 @@ class MailboxActivity :
     @Subscribe
     fun onLabelsLoadedEvent(event: FetchLabelsEvent) {
         if (/* messagesAdapter != null && */ event.status == Status.SUCCESS) {
-            messagesAdapter.notifyDataSetChanged()
+            mailboxAdapter.notifyDataSetChanged()
         }
     }
 
@@ -1166,7 +1166,7 @@ class MailboxActivity :
         if (job != null) {
             // show progress bar for visual representation of work in background,
             // if all the messages inside the folder are impacted by the action
-            if (messagesAdapter.itemCount == messageIds.size) {
+            if (mailboxAdapter.itemCount == messageIds.size) {
                 setRefreshing(true)
             }
             mJobManager.addJobInBackground(job)
@@ -1247,13 +1247,13 @@ class MailboxActivity :
         actionMode = null
         mailboxActionsView.visibility = View.GONE
         mailboxSwipeRefreshLayout.isEnabled = true
-        messagesAdapter.endSelectionMode()
+        mailboxAdapter.endSelectionMode()
     }
 
     private fun showFoldersManagerDialog(messageIds: List<String>) {
         // show progress bar for visual representation of work in background,
         // if all the messages inside the folder are impacted by the action
-        if (messagesAdapter.itemCount == messageIds.size) {
+        if (mailboxAdapter.itemCount == messageIds.size) {
             setRefreshing(true)
         }
 
@@ -1595,7 +1595,7 @@ class MailboxActivity :
         uuid: String,
         refreshMessages: Boolean
     ) {
-        mailboxViewModel.fetchMessages(
+        mailboxViewModel.getMailboxItems(
             location,
             labelId,
             includeLabels,
@@ -1626,7 +1626,7 @@ class MailboxActivity :
                         newMessageSnack.show()
                     }
                 }
-                messagesAdapter.notifyDataSetChanged()
+                mailboxAdapter.notifyDataSetChanged()
             }
         }
     }
@@ -1689,7 +1689,7 @@ class MailboxActivity :
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position = viewHolder.adapterPosition
-            val mailboxItem = messagesAdapter.getItem(position)
+            val mailboxItem = mailboxAdapter.getItem(position)
             val messageSwiped = SimpleMessage(mailboxItem)
             val mailboxLocation = mailboxLocationMain.value
             val settings = mailSettings ?: return
@@ -1709,7 +1709,7 @@ class MailboxActivity :
                 getString(swipeAction.actionDescription),
                 {
                     mSwipeProcessor.handleUndo(swipeAction, messageSwiped, mJobManager, mailboxLocation, mailboxLabelId)
-                    messagesAdapter.notifyDataSetChanged()
+                    mailboxAdapter.notifyDataSetChanged()
                 },
                 true
             )
@@ -1723,7 +1723,7 @@ class MailboxActivity :
                 }
 
             }
-            messagesAdapter.notifyDataSetChanged()
+            mailboxAdapter.notifyDataSetChanged()
         }
 
         override fun onChildDraw(

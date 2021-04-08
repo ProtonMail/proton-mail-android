@@ -357,7 +357,7 @@ class MailboxViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun fetchMessagesCallsFetchByLocationForwardingTheGivenParameters() {
+    fun getMailboxItemsCallsFetchByLocationForwardingTheGivenParameters() {
         val location = Constants.MessageLocationType.SENT
         val labelId = "labelId923842"
         val includeLabels = true
@@ -368,7 +368,7 @@ class MailboxViewModelTest : CoroutinesTest {
         every { EntryPoints.get(any(), JobEntryPoint::class.java) } returns jobEntryPoint
         every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
 
-        viewModel.fetchMessages(
+        viewModel.getMailboxItems(
             location,
             labelId,
             includeLabels,
@@ -387,7 +387,7 @@ class MailboxViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun fetchMessagesReturnsMailboxItemsLiveDataMappedFromMessageDetailsRepositoryWhenFetchingFirstPage() {
+    fun getMailboxItemsReturnsMailboxItemsLiveDataMappedFromMessageDetailsRepositoryWhenFetchingFirstPage() {
         val message = Message(
             messageId = "messageId9238482",
             sender = MessageSender("senderName", "sender@pm.me"),
@@ -400,7 +400,7 @@ class MailboxViewModelTest : CoroutinesTest {
         coEvery { messageDetailsRepository.getAllMessages() } returns liveData { emit(listOf(message)) }
         coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
 
-        val actual = viewModel.fetchMessages(
+        val actual = viewModel.getMailboxItems(
             Constants.MessageLocationType.ALL_MAIL,
             "labelId923842",
             true,
@@ -416,7 +416,7 @@ class MailboxViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun fetchMessagesCallsMessageServiceStartFetchMessagesWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsNotALabelOrFolder() {
+    fun getMailboxItemsCallsMessageServiceStartFetchMessagesWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsNotALabelOrFolder() {
         val location = Constants.MessageLocationType.ARCHIVE
         val labelId = "labelId92323"
         val includeLabels = false
@@ -425,7 +425,7 @@ class MailboxViewModelTest : CoroutinesTest {
         // Represents pagination. Only messages older than the given timestamp will be returned
         val timestamp = 123L
 
-        viewModel.fetchMessages(
+        viewModel.getMailboxItems(
             location,
             labelId,
             includeLabels,
@@ -439,7 +439,7 @@ class MailboxViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun fetchMessagesCallsMessageServiceStartFetchMessagesByLabelWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsALabelOrFolder() {
+    fun getMailboxItemsCallsMessageServiceStartFetchMessagesByLabelWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsALabelOrFolder() {
         val location = Constants.MessageLocationType.LABEL_FOLDER
         val labelId = "folderIdi2384"
         val includeLabels = false
@@ -448,7 +448,7 @@ class MailboxViewModelTest : CoroutinesTest {
         // Represents pagination. Only messages older than the given timestamp will be returned
         val earliestTime = 1323L
 
-        viewModel.fetchMessages(
+        viewModel.getMailboxItems(
             location,
             labelId,
             includeLabels,
@@ -461,7 +461,7 @@ class MailboxViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun fetchMessagesReturnsMailboxItemsLiveDataMappedFromMessageDetailsRepositoryWhenFetchingSubsequentPages() {
+    fun getMailboxItemsReturnsMailboxItemsLiveDataMappedFromMessageDetailsRepositoryWhenFetchingSubsequentPages() {
         val message = Message(
             messageId = "messageId92384823",
             sender = MessageSender("senderName1", "sender@pm.me"),
@@ -479,7 +479,7 @@ class MailboxViewModelTest : CoroutinesTest {
         }
         coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
 
-        val actual = viewModel.fetchMessages(
+        val actual = viewModel.getMailboxItems(
             location,
             labelId,
             includeLabels,

@@ -192,6 +192,40 @@ class MailboxViewModel @Inject constructor(
         }
     }
 
+    fun getMailboxItems(
+        location: Constants.MessageLocationType,
+        labelId: String?,
+        includeLabels: Boolean,
+        uuid: String,
+        refreshMessages: Boolean,
+        earliestTime: Long? = null
+    ): LiveData<List<MailboxUiItem>> {
+        // When earliest time is valid the request is about paginated messages (page > 1)
+        if (earliestTime != null) {
+            val isCustomLocation = location == LABEL || location == LABEL_FOLDER
+
+            if (isCustomLocation) {
+                messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(location, earliestTime, labelId ?: "")
+            } else {
+                messageServiceScheduler.fetchMessagesOlderThanTime(location, earliestTime)
+            }
+        } else {
+            jobManager.addJobInBackground(
+                FetchByLocationJob(
+                    location,
+                    labelId,
+                    includeLabels,
+                    uuid,
+                    refreshMessages
+                )
+            )
+        }
+
+        return getLiveDataByLocation(location, labelId).switchMap {
+            messagesToMailboxItems(it)
+        }
+    }
+
     fun messagesToMailboxItems(messages: List<Message>): LiveData<List<MailboxUiItem>> {
         val mailboxItems = MutableLiveData<List<MailboxUiItem>>()
         viewModelScope.launch(dispatchers.Io) {
@@ -282,40 +316,6 @@ class MailboxViewModel @Inject constructor(
         }
 
         return ApplyRemoveLabels(checkedLabelIds, labelsToRemove)
-    }
-
-    fun fetchMessages(
-        location: Constants.MessageLocationType,
-        labelId: String?,
-        includeLabels: Boolean,
-        uuid: String,
-        refreshMessages: Boolean,
-        earliestTime: Long? = null
-    ): LiveData<List<MailboxUiItem>> {
-        // When earliest time is valid the request is about paginated messages (page > 1)
-        if (earliestTime != null) {
-            val isCustomLocation = location == LABEL || location == LABEL_FOLDER
-
-            if (isCustomLocation) {
-                messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(location, earliestTime, labelId ?: "")
-            } else {
-                messageServiceScheduler.fetchMessagesOlderThanTime(location, earliestTime)
-            }
-        } else {
-            jobManager.addJobInBackground(
-                FetchByLocationJob(
-                    location,
-                    labelId,
-                    includeLabels,
-                    uuid,
-                    refreshMessages
-                )
-            )
-        }
-
-        return getLiveDataByLocation(location, labelId).switchMap {
-            messagesToMailboxItems(it)
-        }
     }
 
     private fun getLiveDataByLocation(
