@@ -35,12 +35,12 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.TagConstraint
+import me.proton.core.util.kotlin.EMPTY_STRING
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -64,18 +64,23 @@ class ProtonMailAuthenticator @Inject constructor(
 
     // api instance cannot be injected, due to a circular dependency
 
-    @Throws(IOException::class)
     override fun authenticate(route: Route?, response: Response): Request? = refreshAuthToken(response)
 
     @Synchronized
     private fun refreshAuthToken(response: Response): Request? {
-        val userId = response.request().tag(UserIdTag::class.java)?.id ?: userManager.requireCurrentUserId()
+        val originalRequest = response.request()
+
+        val userId = response.request().tag(UserIdTag::class.java)?.id ?: userManager.currentUserId
+        if (userId == null) {
+            Timber.w("No logged in user for refresh auth token")
+            return updateRequestHeaders(originalRequest)
+        }
+
         val tokenManager = userManager.getTokenManagerBlocking(userId)
 
-        val originalRequest = response.request()
         if (originalRequest.header(HEADER_AUTH) != tokenManager.authAccessToken) {
             // update request with new token
-            return updateRequestHeaders(tokenManager, originalRequest)
+            return updateRequestHeaders(originalRequest, tokenManager)
         } else {
             if (response.priorResponse() != null) { // NOT NULL -> triggered by automatic retry,
                 // requests triggered by auto-retry will be discarded for refreshing tokens
@@ -120,7 +125,7 @@ class ProtonMailAuthenticator @Inject constructor(
             // update request with new token
             if (tokenManager.authAccessToken != null) {
                 Timber.d("access token expired, updating request with new token")
-                return updateRequestHeaders(tokenManager, originalRequest)
+                return updateRequestHeaders(originalRequest, tokenManager)
             } else {
                 Timber.tag("429").i(
                     "access token expired: " +
@@ -146,10 +151,10 @@ class ProtonMailAuthenticator @Inject constructor(
         }
     }
 
-    private fun updateRequestHeaders(tokenManager: TokenManager, originalRequest: Request): Request {
+    private fun updateRequestHeaders(originalRequest: Request, tokenManager: TokenManager? = null): Request {
         return originalRequest.newBuilder()
-            .header(HEADER_AUTH, tokenManager.authAccessToken!!)
-            .header(HEADER_UID, tokenManager.uid)
+            .header(HEADER_AUTH, tokenManager?.authAccessToken ?: EMPTY_STRING)
+            .header(HEADER_UID, tokenManager?.uid ?: EMPTY_STRING)
             .header(HEADER_APP_VERSION, appVersionName)
             .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
             .header(HEADER_LOCALE, appContext.app.currentLocale)

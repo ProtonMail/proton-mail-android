@@ -670,7 +670,8 @@ public class LoginService extends ProtonJobIntentService {
             loginHelperData.status = AuthStatus.FAILED;
         }
 
-        Id userId = EitherKt.orThrow(findUserIdForUsername.blocking(new Name(username)));
+        Id userId = findUserIdForUsername.blocking(new Name(username))
+                .fold(error -> null, id -> id);
         loginHelperData.userId = userId;
         handleAfterConnect(infoResponse, loginHelperData, userId, new Name(username), password, fallbackAuthVersion);
     }

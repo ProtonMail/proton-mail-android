@@ -182,22 +182,20 @@ class UserManager @Inject constructor(
     private var mCreateUserOnKeyPairGenerationFinish: Boolean = false
 
     /**
-     * @return [Id] of next logged in User.
-     *   `null` if there is not logged in User, beside the current ( if any )
-     *   @see currentUserId
+     * @param exclude the user [Id] to exclude from the query
+     *   Default is [currentUserId]
+     *
+     * @return [Id] of next logged in User, other than the specified by [exclude]
+     *   `null` if there isn't other logged in User, beside [exclude]
      */
-    suspend fun getNextLoggedInUser(): Id? {
+    suspend fun getNextLoggedInUser(exclude: Id? = currentUserId): Id? {
         val allLoggedIn = accountManager.allLoggedIn()
-        val currentIndex = allLoggedIn.indexOf(currentUserId)
-        val nextIndex = (currentIndex + 1).takeIf { it < allLoggedIn.size } ?: 0
-        return if (nextIndex != currentIndex)
+        val excludeIndex = allLoggedIn.indexOf(exclude)
+        val nextIndex = (excludeIndex + 1).takeIf { it < allLoggedIn.size } ?: 0
+        return if (nextIndex != excludeIndex)
             allLoggedIn.elementAtOrNull(nextIndex)
         else null
     }
-
-    @Deprecated("Use suspend function", ReplaceWith("getNextLoggedInUser()"))
-    fun getNextLoggedInUserBlocking(): Id? =
-        runBlocking { getNextLoggedInUser() }
 
     var isLoggedIn: Boolean
         get() = prefs.getBoolean(PREF_IS_LOGGED_IN, false)
@@ -568,7 +566,7 @@ class UserManager @Inject constructor(
     }
 
     suspend fun logout(userId: Id) = withContext(dispatchers.Io) {
-        val nextLoggedIn = getNextLoggedInUser()
+        val nextLoggedIn = getNextLoggedInUser(userId)
             // fallback to "last user logout"
             ?: return@withContext logoutLastActiveAccount()
         LogoutService.startLogout(context, userId, false)
@@ -613,7 +611,7 @@ class UserManager @Inject constructor(
     }
 
     suspend fun logoutOffline(userId: Id) = withContext(dispatchers.Io) {
-        val nextUserId = getNextLoggedInUser()
+        val nextUserId = getNextLoggedInUser(currentUserId)
 
         if (currentUserId !in accountManager.allLoggedIn()) {
             return@withContext

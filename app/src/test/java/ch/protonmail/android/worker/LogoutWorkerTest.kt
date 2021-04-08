@@ -55,6 +55,9 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * Test suite for [LogoutWorker]
+ */
 class LogoutWorkerTest {
 
     @MockK
@@ -111,7 +114,7 @@ class LogoutWorkerTest {
             every { userManager.currentUserId } returns null
             val tokenManager = mockk<TokenManager>(relaxed = true)
             coEvery { userManager.getTokenManager(testUserId) } returns tokenManager
-            coEvery { userManager.getNextLoggedInUser() } returns null
+            coEvery { userManager.getNextLoggedInUser(any()) } returns null
             coEvery { accountManager.allLoggedIn() } returns setOf(testUserId)
             coEvery { accountManager.clear() } just Runs
             coEvery { AppUtil.deleteSecurePrefs(userPrefs, any()) } just Runs

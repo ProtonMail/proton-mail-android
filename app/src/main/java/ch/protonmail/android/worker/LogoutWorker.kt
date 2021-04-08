@@ -86,7 +86,7 @@ class LogoutWorker @WorkerInject constructor(
 
             PREF_PIN
             val prefs = SecureSharedPreferences.getPrefsForUser(applicationContext, userId)
-            val isThereAnotherLoggedInUser = userManager.getNextLoggedInUser() == null
+            val isThereAnotherLoggedInUser = userManager.getNextLoggedInUser(userId) == null
             if (isThereAnotherLoggedInUser) prefs.clearAll()
             else prefs.clearAll(excludedKeys = arrayOf(PREF_PIN))
 
