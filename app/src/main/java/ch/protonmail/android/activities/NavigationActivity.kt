@@ -68,6 +68,7 @@ import ch.protonmail.android.uiModel.setLabels
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
+import ch.protonmail.android.utils.extensions.getColorCompat
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
@@ -298,7 +299,7 @@ abstract class NavigationActivity :
         )
         drawerLayout.setStatusBarBackgroundColor(
             UiUtil.scaleColor(
-                ContextCompat.getColor(this, R.color.dark_purple),
+                getColorCompat(R.color.dark_purple),
                 0.6f,
                 true
             )
