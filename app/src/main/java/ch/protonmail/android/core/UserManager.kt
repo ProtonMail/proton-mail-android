@@ -241,6 +241,16 @@ class UserManager @Inject constructor(
     val currentUserKeySalt: String?
         get() = withCurrentUserPreferences { it[PREF_KEY_SALT] }
 
+    fun getKeySalt(userId: Id): String? =
+        with(preferencesFor(userId)) {
+            this[PREF_KEY_SALT]
+        }
+
+    fun getTempKeySalt(): String? =
+        with(preferencesFor(TEMP_USER_ID)) {
+            this[PREF_KEY_SALT]
+        }
+
     @Deprecated("Use 'currentUser' variant", ReplaceWith("currentUserKeySalt"))
     val keySalt: String?
         get() = currentUserKeySalt
@@ -769,22 +779,35 @@ class UserManager @Inject constructor(
         }
     }
 
-    suspend fun saveKeySalt(userId: Id, keysSalt: String?) = withContext(dispatchers.Io) {
-        val secureSharedPreferences = SecureSharedPreferences.getPrefsForUser(context, userId)
-        secureSharedPreferences[PREF_KEY_SALT] = keysSalt
+    suspend fun saveKeySalt(userId: Id, keysSalt: String?) {
+        withContext(dispatchers.Io) {
+            val secureSharedPreferences = SecureSharedPreferences.getPrefsForUser(context, userId)
+            secureSharedPreferences[PREF_KEY_SALT] = keysSalt
+        }
     }
 
     @Deprecated(
         "Should not be used, necessary only for old and Java classes",
         ReplaceWith("saveKeySalt(userId, keySalt)")
     )
-    @JvmOverloads
-    fun saveKeySaltBlocking(userId: Id? = currentUserId, keysSalt: String?) = runBlocking {
-        if(userId == null) {
-            // TODO: how to save the keySalt when the userId is not available yet
-
-        } else {
+    fun saveKeySaltBlocking(userId: Id, keysSalt: String?) {
+        runBlocking {
             saveKeySalt(userId, keysSalt)
+        }
+    }
+
+    suspend fun saveTempKeySalt(keysSalt: String?) {
+        saveKeySalt(TEMP_USER_ID, keysSalt)
+    }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("saveTempKeySalt(keySalt)")
+    )
+    @JvmOverloads
+    fun saveTempKeySaltBlocking(keysSalt: String?) {
+        runBlocking {
+            saveKeySalt(TEMP_USER_ID, keysSalt)
         }
     }
 
@@ -1074,5 +1097,10 @@ class UserManager @Inject constructor(
                 prefs[PREF_CURRENT_USER_ID] = currentUserId.s
             }
         }
+    }
+
+    private companion object {
+
+        val TEMP_USER_ID = Id("temp")
     }
 }

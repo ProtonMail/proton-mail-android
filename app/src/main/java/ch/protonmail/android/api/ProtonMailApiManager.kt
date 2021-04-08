@@ -518,12 +518,17 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun updateViewMode(viewMode: Int): ResponseBody? = api.updateViewMode(viewMode)
 
+    override fun fetchUserInfoBlocking(userId: Id): UserInfo = api.fetchUserInfoBlocking(userId)
+
+    @Deprecated("Use with user Id", ReplaceWith("fetchUserInfoBlocking(userId)"))
     override fun fetchUserInfoBlocking(): UserInfo = api.fetchUserInfoBlocking()
 
     override suspend fun fetchUserInfo(): UserInfo = api.fetchUserInfo()
 
-    override fun fetchUserInfoBlocking(userId: Id): UserInfo = api.fetchUserInfoBlocking(userId)
 
+    override fun fetchKeySalts(userId: Id): KeySalts = api.fetchKeySalts(userId)
+
+    @Deprecated("Use with user Id", ReplaceWith("fetchKeySalts(userId)"))
     override fun fetchKeySalts(): KeySalts = api.fetchKeySalts()
 
     override fun fetchHumanVerificationOptions(): HumanVerifyOptionsResponse = api.fetchHumanVerificationOptions()
