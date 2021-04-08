@@ -33,12 +33,20 @@ data class WorkerError(
 )
 
 /**
- * @return [ListenableWorker.Result] for a failed work, with [WorkerError] as data
+ * @return [ListenableWorker.Result] for a failed work, with [WorkerError] generated from a [Throwable] as data
  * @see androidx.work.ListenableWorker.Result.failure
  */
 @Suppress("unused") // Receiver is unused, but we want it to be scoped to ListenableWorker
 fun ListenableWorker.failure(throwable: Throwable) =
-    failure(WorkerError(throwable.message ?: EMPTY_STRING).toWorkData())
+    failure(throwable.message ?: EMPTY_STRING)
+
+/**
+ * @return [ListenableWorker.Result] for a failed work, with [WorkerError] generated from a [String] as data
+ * @see androidx.work.ListenableWorker.Result.failure
+ */
+@Suppress("unused") // Receiver is unused, but we want it to be scoped to ListenableWorker
+fun ListenableWorker.failure(message: String) =
+    failure(WorkerError(message).toWorkData())
 
 /**
  * @return [WorkerError] from receiver [Data]

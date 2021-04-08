@@ -18,6 +18,12 @@
  */
 package ch.protonmail.android.activities;
 
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_LOGOUT;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
+import static ch.protonmail.android.worker.FetchUserInfoWorkerKt.FETCH_USER_INFO_WORKER_NAME;
+import static ch.protonmail.android.worker.FetchUserInfoWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
+
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -76,12 +82,6 @@ import ch.protonmail.android.worker.FetchMailSettingsWorker;
 import ch.protonmail.android.worker.FetchUserInfoWorker;
 import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
-
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_LOGOUT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
-import static ch.protonmail.android.worker.FetchUserInfoWorkerKt.FETCH_USER_INFO_WORKER_NAME;
-import static ch.protonmail.android.worker.FetchUserInfoWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
 
 @AndroidEntryPoint
 public abstract class BaseActivity extends AppCompatActivity implements INetworkConfiguratorCallback {
@@ -391,8 +391,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     protected void saveLastInteraction() {
-        if (mUserManager.isLoggedIn()) {
-            User user = mUserManager.requireCurrentLegacyUserBlocking();
+        User user = mUserManager.getCurrentLegacyUserBlocking();
+        if (user != null) {
             user.setLastInteraction(SystemClock.elapsedRealtime());
         }
     }

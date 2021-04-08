@@ -19,6 +19,7 @@
 package ch.protonmail.android.utils.extensions
 
 import android.text.Editable
+import ch.protonmail.android.domain.entity.EmailAddress
 import me.proton.core.util.kotlin.EMPTY_STRING
 
 @Deprecated(
@@ -112,19 +113,58 @@ fun CharSequence.subsequence(
 fun Editable.removeWhitespaces(): String =
     toString().replace("\\s".toRegex(), "")
 
+private const val OBFUSCATE_DEFAULT_REPLACEMENT = '*'
+private const val OBFUSCATE_DEFAULT_KEEP_FIRST = 0
+private const val OBFUSCATE_DEFAULT_KEEP_LAST = 3
+
 /**
- * Obfuscate a rance from receiver [String]
+ * Obfuscate a range from receiver [String]
  * @param replacement [Char] that will be used as replacement for chars to obfuscate
+ *   Default is [OBFUSCATE_DEFAULT_REPLACEMENT]
  * @param keepFirst count of initial chars to do not obfuscate
- *   Default is `0`
+ *   Default is [OBFUSCATE_DEFAULT_KEEP_FIRST]
  * @param keepLast count of final chars to do not obfuscate
- *   Default is `3`
+ *   Default is [OBFUSCATE_DEFAULT_KEEP_LAST]
  */
-fun String.obfuscate(replacement: Char = '*', keepFirst: Int = 0, keepLast: Int = 3) =
-    mapIndexed { i, c ->
-        if (i < keepFirst || i > length - keepLast - 1) c
-        else replacement
-    }.joinToString(separator = EMPTY_STRING)
+fun String.obfuscate(
+    replacement: Char = OBFUSCATE_DEFAULT_REPLACEMENT,
+    keepFirst: Int = OBFUSCATE_DEFAULT_KEEP_FIRST,
+    keepLast: Int = OBFUSCATE_DEFAULT_KEEP_LAST
+) = mapIndexed { i, c ->
+    if (i < keepFirst || i > length - keepLast - 1) c
+    else replacement
+}.joinToString(separator = EMPTY_STRING)
+
+/**
+ * Obfuscate a range from receiver **eMail** [String]
+ * @throws IllegalArgumentException if receiver [String] is no an email
+ * @see obfuscate
+ */
+fun String.obfuscateEmail(
+    replacement: Char = OBFUSCATE_DEFAULT_REPLACEMENT,
+    keepFirst: Int = OBFUSCATE_DEFAULT_KEEP_FIRST,
+    keepLast: Int = OBFUSCATE_DEFAULT_KEEP_LAST
+): String {
+    require(matches(EmailAddress.VALIDATION_REGEX)) {
+        "String is not an email"
+    }
+    val (id, host) = split("@")
+    return "${id.obfuscate(replacement, keepFirst, keepLast)}@$host"
+}
+
+/**
+ * Obfuscate a range from receiver **username or eMail** [String]
+ * @see obfuscate
+ */
+fun String.obfuscateUsername(
+    replacement: Char = OBFUSCATE_DEFAULT_REPLACEMENT,
+    keepFirst: Int = OBFUSCATE_DEFAULT_KEEP_FIRST,
+    keepLast: Int = OBFUSCATE_DEFAULT_KEEP_LAST
+): String =
+    if (matches(EmailAddress.VALIDATION_REGEX))
+        obfuscateEmail(replacement, keepFirst, keepLast)
+    else
+        obfuscate(replacement, keepFirst, keepLast)
 
 /**
  * Substring the receiver [CharSequence]

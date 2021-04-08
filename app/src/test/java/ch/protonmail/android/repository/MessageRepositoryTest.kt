@@ -21,16 +21,15 @@ package ch.protonmail.android.repository
 
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.MessageBodyFileManager
-import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
@@ -38,7 +37,6 @@ import io.mockk.spyk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Before
 import org.junit.Test
 import kotlin.random.Random.Default.nextBytes
 import kotlin.test.assertEquals
@@ -52,30 +50,24 @@ class MessageRepositoryTest {
 
     private val testUserId = Id("id")
 
-    @MockK
-    private lateinit var messageDao: MessageDao
-    @MockK
-    private lateinit var messageBodyFileManager: MessageBodyFileManager
-    @MockK
-    private lateinit var protonMailApiManager: ProtonMailApiManager
-    @MockK
-    private lateinit var userManager: UserManager
-
-    private lateinit var messageRepository: MessageRepository
-
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
-
-        messageRepository =
-            MessageRepository(
-                TestDispatcherProvider,
-                messageDao,
-                protonMailApiManager,
-                messageBodyFileManager,
-                userManager
-            )
+    private val messageDao: MessageDao = mockk()
+    private val databaseProvider: DatabaseProvider = mockk {
+        every { provideMessageDao(any()) } returns messageDao
     }
+
+    private val messageBodyFileManager: MessageBodyFileManager = mockk()
+
+    private val protonMailApiManager: ProtonMailApiManager = mockk()
+
+    private val userManager: UserManager = mockk()
+
+    private val messageRepository = MessageRepository(
+        TestDispatcherProvider,
+        databaseProvider,
+        protonMailApiManager,
+        messageBodyFileManager,
+        userManager
+    )
 
     @Test
     fun verifyMessageIsFetchedAndSavedIfMessageDoesNotExistInDbWhenGetMessageIsCalledForUserWithAutoDownloadMessagesSettingTurnedOn() {
@@ -96,7 +88,7 @@ class MessageRepositoryTest {
             }
 
             // when
-            val result = messageRepository.getMessage(messageId, testUserId)
+            val result = messageRepository.getMessage(testUserId, messageId)
 
             // then
             assertEquals(mockMessage, result)
@@ -127,7 +119,7 @@ class MessageRepositoryTest {
             }
 
             // when
-            val result = messageRepository.getMessage(messageId, testUserId)
+            val result = messageRepository.getMessage(testUserId, messageId)
 
             // then
             assertEquals(mockMessageFetched, result)
@@ -154,7 +146,7 @@ class MessageRepositoryTest {
             }
 
             // when
-            val result = messageRepository.getMessage(messageId, testUserId)
+            val result = messageRepository.getMessage(testUserId, messageId)
 
             // then
             assertEquals(mockMessage, result)
@@ -177,7 +169,7 @@ class MessageRepositoryTest {
             coEvery { messageDao.findMessageById(messageId) } returns flowOf(mockMessage)
 
             // when
-            val result = messageRepository.getMessage(messageId, testUserId)
+            val result = messageRepository.getMessage(testUserId, messageId)
 
             // then
             assertEquals(mockMessage, result)
@@ -199,7 +191,7 @@ class MessageRepositoryTest {
             coEvery { messageDao.findMessageById(messageId) } returns flowOf(mockMessage)
 
             // when
-            val result = messageRepository.getMessage(messageId, testUserId)
+            val result = messageRepository.getMessage(testUserId, messageId)
 
             // then
             assertEquals(mockMessage, result)
@@ -219,7 +211,7 @@ class MessageRepositoryTest {
             coEvery { messageBodyFileManager.readMessageBodyFromFile(mockMessage) } returns "messageBody"
 
             // when
-            val result = messageRepository.getMessage(messageId, testUserId)
+            val result = messageRepository.getMessage(testUserId, messageId)
 
             // then
             assertEquals("messageBody", result?.messageBody)
@@ -243,7 +235,7 @@ class MessageRepositoryTest {
             coEvery { messageBodyFileManager.saveMessageBodyToFile(mockMessage) } returns "file://messageBody"
 
             // when
-            val result = messageRepository.getMessage(messageId, testUserId)
+            val result = messageRepository.getMessage(testUserId, messageId)
 
             // then
             assertEquals("file://messageBody", result?.messageBody)
@@ -263,7 +255,7 @@ class MessageRepositoryTest {
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, UserIdTag(testUserId)) } throws Exception()
 
             // when
-            val result = messageRepository.getMessage(messageId, testUserId)
+            val result = messageRepository.getMessage(testUserId, messageId)
 
             // then
             assertNull(result)
@@ -282,7 +274,7 @@ class MessageRepositoryTest {
             coEvery { protonMailApiManager.fetchMessageMetadata(messageId, UserIdTag(testUserId)) } throws Exception()
 
             // when
-            val result = messageRepository.getMessage(messageId, testUserId)
+            val result = messageRepository.getMessage(testUserId, messageId)
 
             // then
             assertNull(result)
@@ -308,7 +300,7 @@ class MessageRepositoryTest {
             }
 
             // when
-            val result = messageRepository.getMessage(messageId, testUserId, shouldFetchMessageDetails = true)
+            val result = messageRepository.getMessage(testUserId, messageId, shouldFetchMessageDetails = true)
 
             // then
             assertEquals(mockMessage, result)

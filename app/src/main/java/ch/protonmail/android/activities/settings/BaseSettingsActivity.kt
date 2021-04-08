@@ -428,7 +428,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                         pendingActionDao,
                         true
                     )
-                    launchInitialDataFetch()
+                    launchInitialDataFetch(userManager.requireCurrentUserId())
                     mJobManager.addJobInBackground(
                         FetchByLocationJob(
                             mMailboxLocation,

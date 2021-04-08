@@ -18,6 +18,11 @@
  */
 package ch.protonmail.android.activities;
 
+import static ch.protonmail.android.activities.NavigationActivityKt.EXTRA_FIRST_LOGIN;
+import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_LOGIN_FINISHED;
+import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_NOT_INITIALIZED;
+import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,11 +46,6 @@ import ch.protonmail.android.events.user.UserSettingsEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 
-import static ch.protonmail.android.activities.NavigationActivityKt.EXTRA_FIRST_LOGIN;
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_LOGIN_FINISHED;
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_NOT_INITIALIZED;
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
-
 public class SplashActivity extends BaseActivity {
 
     private static final int DELAY = 2000;
@@ -66,9 +66,10 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ProtonMailApplication.getApplication().startJobManager();
-        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0 && mUserManager.getLoginState() == LOGIN_STATE_TO_INBOX) {
-            alarmReceiver.setAlarm(ProtonMailApplication.getApplication(), true);
+        mApp.startJobManager();
+        boolean notFromHistory = (getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
+        if (notFromHistory && mUserManager.getCurrentUserLoginState() == LOGIN_STATE_TO_INBOX) {
+            alarmReceiver.setAlarm(getApplicationContext(), true);
             Intent home = new Intent(this, MailboxActivity.class);
             home.putExtra(EXTRA_FIRST_LOGIN, ProtonMailApplication.getApplication().hasUpdateOccurred());
             home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -81,7 +82,7 @@ public class SplashActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         startRunning();
-        ProtonMailApplication.getApplication().getBus().register(this);
+        mApp.getBus().register(this);
     }
 
     private void startRunning() {

@@ -49,13 +49,13 @@ import ch.protonmail.android.events.SwitchUserEvent
 import ch.protonmail.android.fcm.FcmTokenManager
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
-import ch.protonmail.android.usecase.FindUserIdForUsername
 import ch.protonmail.android.usecase.LoadLegacyUser
 import ch.protonmail.android.usecase.LoadUser
 import ch.protonmail.android.usecase.delete.ClearUserData
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
+import ch.protonmail.android.utils.extensions.obfuscateUsername
 import com.squareup.otto.Produce
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -1058,17 +1058,21 @@ class UserManager @Inject constructor(
 
     class UsernameToIdMigration @Inject constructor(
         @DefaultSharedPreferences private val prefs: SharedPreferences,
-        private val findUserIdForUsername: FindUserIdForUsername,
         private val dispatchers: DispatcherProvider
     ) {
 
-        suspend operator fun invoke() {
+        suspend operator fun invoke(allUsernamesToIds: Map<String, Id>) {
             withContext(dispatchers.Io) {
                 val currentUsername = prefs.get<String?>(PREF_USERNAME)?.takeIfNotBlank()
-                    ?: return@withContext
+                if (currentUsername == null) {
+                    Timber.v("Cannot load current username for UserManager migration")
+                    return@withContext
+                }
+                Timber.v("Migrating UserManager for user: ${currentUsername.obfuscateUsername()}")
+
                 prefs -= PREF_USERNAME
 
-                val currentUserId = findUserIdForUsername(Name(currentUsername)).orThrow()
+                val currentUserId = allUsernamesToIds.getValue(currentUsername)
                 prefs[PREF_CURRENT_USER_ID] = currentUserId.s
             }
         }

@@ -19,8 +19,10 @@
 
 package ch.protonmail.android.usecase.fetch
 
+import android.content.Context
 import ch.protonmail.android.api.services.MessagesService
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.worker.FetchContactsDataWorker
 import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import ch.protonmail.android.worker.FetchMailSettingsWorker
@@ -33,18 +35,27 @@ private const val FETCH_CONTACT_DELAY_MS: Long = 2000
  * Launches fetching of initial data required after the first login
  */
 class LaunchInitialDataFetch @Inject constructor(
+    private val context: Context,
     private val fetchContactsDataWorker: FetchContactsDataWorker.Enqueuer,
     private val fetchContactsEmailsWorker: FetchContactsEmailsWorker.Enqueuer,
-    private val fetchMailSettingsWorker: FetchMailSettingsWorker.Enqueuer
+    private val fetchMailSettingsWorker: FetchMailSettingsWorker.Enqueuer,
 ) {
 
     operator fun invoke(
+        userId: Id,
         shouldRefreshDetails: Boolean = true,
         shouldRefreshContacts: Boolean = true
     ) {
         Timber.v("LaunchInitialDataFetch started")
-        MessagesService.startFetchLabels()
-        MessagesService.startFetchFirstPage(Constants.MessageLocationType.INBOX, shouldRefreshDetails, null, false)
+        MessagesService.startFetchLabels(context, userId)
+        MessagesService.startFetchFirstPage(
+            context,
+            userId,
+            Constants.MessageLocationType.INBOX,
+            shouldRefreshDetails,
+            null,
+            false
+        )
         fetchMailSettingsWorker.enqueue()
 
         if (shouldRefreshContacts) {
