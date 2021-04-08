@@ -351,7 +351,10 @@ dependencies {
         `butterknife-compiler`
     )
 
-    testImplementation(project(Module.testAndroid))
+    testImplementation(
+        project(Module.testAndroid),
+        `turbine`
+    )
     androidTestUtil(`orchestrator`)
     androidTestImplementation(
         project(Module.testAndroidInstrumented),
