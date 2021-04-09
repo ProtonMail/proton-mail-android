@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.presentation
+package ch.protonmail.android.mailbox.presentation.model
 
 data class MailboxUiItem(
     val itemId: String,

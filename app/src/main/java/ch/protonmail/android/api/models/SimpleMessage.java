@@ -19,7 +19,7 @@
 package ch.protonmail.android.api.models;
 
 import ch.protonmail.android.data.local.model.Message;
-import ch.protonmail.android.mailbox.presentation.MailboxUiItem;
+import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem;
 
 public class SimpleMessage {
 

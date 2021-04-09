@@ -138,6 +138,7 @@ import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
+import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT

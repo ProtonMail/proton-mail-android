@@ -34,9 +34,15 @@ import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.di.JobEntryPoint
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.FetchByLocationJob
-import ch.protonmail.android.mailbox.presentation.MailboxUiItem
+import ch.protonmail.android.mailbox.domain.Conversation
+import ch.protonmail.android.mailbox.domain.GetConversations
+import ch.protonmail.android.mailbox.domain.GetConversationsResult
+import ch.protonmail.android.mailbox.domain.model.Correspondent
+import ch.protonmail.android.mailbox.domain.model.MessageEntity
+import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
-import ch.protonmail.android.mailbox.presentation.MessageData
+import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.model.MessageData
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -44,9 +50,11 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.MessageUtils.toContactsAndGroupsString
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.EntryPoints
+import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifySequence
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
@@ -56,6 +64,7 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import io.mockk.verifySequence
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Rule
 import kotlin.test.BeforeTest
@@ -92,6 +101,12 @@ class MailboxViewModelTest : CoroutinesTest {
     @RelaxedMockK
     private lateinit var messageServiceScheduler: MessagesService.Scheduler
 
+    @RelaxedMockK
+    private lateinit var conversationModeEnabled: ConversationModeEnabled
+
+    @RelaxedMockK
+    private lateinit var getConversations: GetConversations
+
     private lateinit var viewModel: MailboxViewModel
 
     @BeforeTest
@@ -106,7 +121,9 @@ class MailboxViewModelTest : CoroutinesTest {
             contactsRepository,
             verifyConnection,
             networkConfigurator,
-            messageServiceScheduler
+            messageServiceScheduler,
+            conversationModeEnabled,
+            getConversations
         )
     }
 
@@ -502,6 +519,109 @@ class MailboxViewModelTest : CoroutinesTest {
         )
         assertEquals(expected, actual.observedValues.first())
     }
+
+    @Test
+    fun getMailboxItemsCallsGetConversationsUseCaseWhenConversationModeIsEnabled() = runBlockingTest {
+        val location = Constants.MessageLocationType.INBOX
+        val labelId = "labelId923842"
+        val includeLabels = true
+        val uuid = "9238423bbe2h3423489wssdf"
+        val refreshMessages = false
+        every { conversationModeEnabled(location) } returns true
+
+        viewModel.getMailboxItems(
+            location,
+            labelId,
+            includeLabels,
+            uuid,
+            refreshMessages,
+            123L
+        )
+
+        coVerifySequence { getConversations(location) }
+        verify { messageServiceScheduler wasNot Called }
+    }
+
+    @Test
+    fun getMailboxItemsReturnsMailboxItemsMappedFromConversationsWhenGetConversationsUseCaseSucceeds() =
+        runBlockingTest {
+            val location = Constants.MessageLocationType.INBOX
+            val labelId = "labelId923842"
+            val includeLabels = true
+            val uuid = "9238423bbe2h3423489wssdf"
+            val refreshMessages = false
+            val sender = Correspondent("senderName", "sender@protonmail.com")
+            val recipients = listOf(
+                Correspondent("recipient", "recipient@protonmail.com"),
+                Correspondent("recipient1", "recipient1@pm.ch")
+            )
+            val conversation = buildFakeConversation(sender, recipients)
+            val successResult = GetConversationsResult.Success(listOf(conversation))
+            every { conversationModeEnabled(location) } returns true
+            coEvery { getConversations(location) } returns flowOf(successResult)
+
+            val actual = viewModel.getMailboxItems(
+                location,
+                labelId,
+                includeLabels,
+                uuid,
+                refreshMessages,
+            ).testObserver()
+
+            val expected = listOf(
+                MailboxUiItem(
+                    "conversationId",
+                    "senderName",
+                    "subject",
+                    0,
+                    hasAttachments = true,
+                    isStarred = false,
+                    isRead = false,
+                    expirationTime = 0,
+                    messagesCount = 4,
+                    messageData = null,
+                    isDeleted = false,
+                    labelIds = emptyList(),
+                    recipients = "recipient, recipient1"
+                )
+            )
+            assertEquals(expected, actual.observedValues.first())
+        }
+
+    private fun buildFakeConversation(
+        sender: Correspondent,
+        recipients: List<Correspondent>
+    ) = Conversation(
+        "conversationId",
+        "subject",
+        listOf(sender),
+        recipients,
+        4,
+        1,
+        2,
+        0,
+        "senderAddressId",
+        listOf(),
+        listOf(
+            MessageEntity(
+                "messageId",
+                "conversationId",
+                "subject",
+                true,
+                sender,
+                recipients,
+                123421L,
+                0,
+                0,
+                false,
+                false,
+                true,
+                emptyList(),
+                emptyList(),
+                ""
+            )
+        )
+    )
 
     private fun fakeMailboxUiData(
         itemId: String,

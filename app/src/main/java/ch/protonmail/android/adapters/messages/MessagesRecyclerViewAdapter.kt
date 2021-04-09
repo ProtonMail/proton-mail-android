@@ -27,7 +27,7 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
-import ch.protonmail.android.mailbox.presentation.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import kotlinx.android.synthetic.main.layout_sender_initial.view.*
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
@@ -179,7 +179,7 @@ class MessagesRecyclerViewAdapter(
         }
 
         this.view.setOnClickListener {
-            if (selectedMessageIds.isNotEmpty()) {
+            if (selectedMailboxItemsIds.isNotEmpty()) {
                 val messageId = it.tag as String
                 selectOrDeselectMessage(messageId, position)
             } else {
@@ -187,7 +187,7 @@ class MessagesRecyclerViewAdapter(
             }
         }
         this.view.setOnLongClickListener {
-            if (selectedMessageIds.isEmpty()) {
+            if (selectedMailboxItemsIds.isEmpty()) {
                 val messageId = it.tag as String
                 return@setOnLongClickListener selectOrDeselectMessage(messageId, position)
             }

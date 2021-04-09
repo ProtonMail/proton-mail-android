@@ -20,6 +20,8 @@ package ch.protonmail.android.mailbox.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
@@ -37,6 +39,10 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.mailbox.domain.GetConversations
+import ch.protonmail.android.mailbox.domain.GetConversationsResult
+import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.model.MessageData
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.Event
@@ -67,7 +73,9 @@ class MailboxViewModel @Inject constructor(
     private val contactsRepository: ContactsRepository,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator,
-    private val messageServiceScheduler: MessagesService.Scheduler
+    private val messageServiceScheduler: MessagesService.Scheduler,
+    private val conversationModeEnabled: ConversationModeEnabled,
+    private val getConversations: GetConversations
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -200,6 +208,28 @@ class MailboxViewModel @Inject constructor(
         refreshMessages: Boolean,
         earliestTime: Long? = null
     ): LiveData<List<MailboxUiItem>> {
+        if (conversationModeEnabled(location)) {
+            return getConversationsAsMailboxItems(location)
+        }
+
+        return getMessagesAsMailboxItems(
+            earliestTime,
+            location,
+            labelId,
+            includeLabels,
+            uuid,
+            refreshMessages
+        )
+    }
+
+    private fun getMessagesAsMailboxItems(
+        earliestTime: Long?,
+        location: Constants.MessageLocationType,
+        labelId: String?,
+        includeLabels: Boolean,
+        uuid: String,
+        refreshMessages: Boolean
+    ): LiveData<List<MailboxUiItem>> {
         // When earliest time is valid the request is about paginated messages (page > 1)
         if (earliestTime != null) {
             val isCustomLocation = location == LABEL || location == LABEL_FOLDER
@@ -232,6 +262,33 @@ class MailboxViewModel @Inject constructor(
 
         return getLiveDataByLocation(location, labelId).switchMap {
             messagesToMailboxItems(it)
+        }
+    }
+
+    private fun getConversationsAsMailboxItems(
+        location: Constants.MessageLocationType
+    ): LiveData<List<MailboxUiItem>> {
+        return getConversations(location).asLiveData().map { result ->
+            if (result is GetConversationsResult.Success) {
+                return@map result.conversations.map { conversation ->
+                    MailboxUiItem(
+                        conversation.id,
+                        conversation.senders.first().name,
+                        conversation.subject,
+                        0L,
+                        conversation.attachmentsCount > 0,
+                        false,
+                        conversation.unreadCount == 0,
+                        conversation.expirationTime,
+                        conversation.messagesCount,
+                        null,
+                        false,
+                        conversation.labelIds,
+                        conversation.receivers.joinToString { it.name }
+                    )
+                }
+            }
+            return@map listOf()
         }
     }
 

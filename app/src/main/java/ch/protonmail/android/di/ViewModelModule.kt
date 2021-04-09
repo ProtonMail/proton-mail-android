@@ -33,6 +33,8 @@ import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserViewMode
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.mailbox.domain.GetConversations
+import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
 import ch.protonmail.android.usecase.VerifyConnection
@@ -98,7 +100,9 @@ internal class ViewModelModule {
         contactsRepository: ContactsRepository,
         verifyConnection: VerifyConnection,
         networkConfigurator: NetworkConfigurator,
-        messageServiceScheduler: MessagesService.Scheduler
+        messageServiceScheduler: MessagesService.Scheduler,
+        conversationModeEnabled: ConversationModeEnabled,
+        getConversations: GetConversations
     ) = MailboxViewModel(
         messageDetailsRepository,
         userManager,
@@ -108,6 +112,8 @@ internal class ViewModelModule {
         contactsRepository,
         verifyConnection,
         networkConfigurator,
-        messageServiceScheduler
+        messageServiceScheduler,
+        conversationModeEnabled,
+        getConversations
     )
 }

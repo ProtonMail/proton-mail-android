@@ -30,7 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
-import ch.protonmail.android.mailbox.presentation.MailboxUiItem
+import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
