@@ -32,6 +32,7 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.di.JobEntryPoint
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.mailbox.presentation.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
@@ -424,6 +425,8 @@ class MailboxViewModelTest : CoroutinesTest {
         val refreshMessages = true
         // Represents pagination. Only messages older than the given timestamp will be returned
         val timestamp = 123L
+        val userId = Id("userId")
+        every { userManager.requireCurrentUserId() } returns userId
 
         viewModel.getMailboxItems(
             location,
@@ -434,7 +437,7 @@ class MailboxViewModelTest : CoroutinesTest {
             timestamp
         )
 
-        verifySequence { messageServiceScheduler.fetchMessagesOlderThanTime(location, timestamp) }
+        verifySequence { messageServiceScheduler.fetchMessagesOlderThanTime(location, userId, timestamp) }
         verify(exactly = 0) { jobManager.addJobInBackground(any()) }
     }
 
@@ -447,6 +450,8 @@ class MailboxViewModelTest : CoroutinesTest {
         val refreshMessages = false
         // Represents pagination. Only messages older than the given timestamp will be returned
         val earliestTime = 1323L
+        val userId = Id("userId1")
+        every { userManager.requireCurrentUserId() } returns userId
 
         viewModel.getMailboxItems(
             location,
@@ -457,7 +462,11 @@ class MailboxViewModelTest : CoroutinesTest {
             earliestTime
         )
 
-        verifySequence { messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(location, earliestTime, labelId) }
+        verifySequence {
+            messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(
+                location, userId, earliestTime, labelId
+            )
+        }
     }
 
     @Test

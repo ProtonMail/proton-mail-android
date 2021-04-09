@@ -205,9 +205,18 @@ class MailboxViewModel @Inject constructor(
             val isCustomLocation = location == LABEL || location == LABEL_FOLDER
 
             if (isCustomLocation) {
-                messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(location, earliestTime, labelId ?: "")
+                messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(
+                    location,
+                    userManager.requireCurrentUserId(),
+                    earliestTime,
+                    labelId ?: ""
+                )
             } else {
-                messageServiceScheduler.fetchMessagesOlderThanTime(location, earliestTime)
+                messageServiceScheduler.fetchMessagesOlderThanTime(
+                    location,
+                    userManager.requireCurrentUserId(),
+                    earliestTime
+                )
             }
         } else {
             jobManager.addJobInBackground(
@@ -340,6 +349,12 @@ class MailboxViewModel @Inject constructor(
             else -> throw IllegalArgumentException("Unknown location: $mailboxLocation")
         }
     }
+
+    fun deleteMessages(messageIds: List<String>, currentLabelId: String?) =
+        viewModelScope.launch {
+            val deleteMessagesResult = deleteMessage(messageIds, currentLabelId)
+            _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
+        }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)
 }
