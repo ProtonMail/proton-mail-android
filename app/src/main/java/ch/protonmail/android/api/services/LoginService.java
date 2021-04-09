@@ -228,7 +228,7 @@ public class LoginService extends ProtonJobIntentService {
                 generatedMailboxPassword = openPGP.generateMailboxPassword(keySalt, password.getBytes(Charsets.UTF_8));
                 String privateKey = openPGP.generateKey(username, domain, generatedMailboxPassword, KeyType.RSA, bits);
 
-                userManager.saveKeySaltBlocking(keySalt); // should save the keySalt with or without userId
+                userManager.saveTempKeySaltBlocking(keySalt); // should save the keySalt with or without userId
                 userManager.saveMailboxPasswordBlocking(generatedMailboxPassword); // should save the password with or without userId
 
                 userManager.setPrivateKey(privateKey);
@@ -586,6 +586,9 @@ public class LoginService extends ProtonJobIntentService {
             Logger.doLogException(TAG_LOGIN_SERVICE, e);
             AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
         }
+        if (generatedMailboxPassword == mailboxPassword) {
+            generatedMailboxPassword = userManager.getMailboxPassword(userId);
+        }
         try {
             if (networkUtils.isConnected()) {
                 tokenManager = userManager.getTokenManagerBlocking(userId);
@@ -684,6 +687,9 @@ public class LoginService extends ProtonJobIntentService {
         } catch (UnsupportedEncodingException e) {
             Logger.doLogException(TAG_LOGIN_SERVICE, e);
             AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
+        }
+        if (generatedMailboxPassword == mailboxPassword) {
+            generatedMailboxPassword = userManager.getMailboxPassword(userId);
         }
 
         try {
@@ -867,8 +873,8 @@ public class LoginService extends ProtonJobIntentService {
             keySalt = loginResponse.getKeySalt();
 
             if (keySalt == null) { // new response doesn't contain salt
-                UserInfo userInfo = api.fetchUserInfoBlocking();
-                KeySalts keySalts = api.fetchKeySalts();
+                UserInfo userInfo = api.fetchUserInfoBlocking(userId);
+                KeySalts keySalts = api.fetchKeySalts(userId);
 
                 String primaryKeyId = null;
                 for (Keys key : userInfo.getUser().getKeys()) {
@@ -931,7 +937,8 @@ public class LoginService extends ProtonJobIntentService {
                         if (TextUtils.isEmpty(tokenManager.getEncPrivateKey())) {
                             tokenManager.setEncPrivateKey(userManager.getPrivateKey());
                         }
-                        handleMailboxLogin(userId, password, keySalt != null ? keySalt : userManager.getCurrentUserKeySalt(), true);
+                        userManager.saveKeySaltBlocking(userId, userManager.getTempKeySalt());
+                        handleMailboxLogin(userId, password, keySalt != null ? keySalt : userManager.getKeySalt(userId), true);
                     } else {
                         handleMailboxLogin(userId, password, keySalt, false);
                     }
