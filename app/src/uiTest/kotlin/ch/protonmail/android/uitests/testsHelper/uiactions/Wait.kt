@@ -25,6 +25,7 @@ import androidx.annotation.StringRes
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isEnabled
@@ -42,6 +43,7 @@ import me.proton.core.test.android.instrumented.uiwaits.UIWaits
 import me.proton.core.test.android.instrumented.uiwaits.UIWaits.waitForView
 import me.proton.core.test.android.instrumented.uiwaits.UIWaits.waitUntilMatcherFulfilled
 import me.proton.core.test.android.instrumented.uiwaits.UIWaits.waitUntilViewIsGone
+import me.proton.core.test.android.instrumented.utils.ActivityProvider.currentActivity
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.instanceOf
@@ -113,4 +115,7 @@ object Wait {
         waitUntilMatcherFulfilled(onView(withId(id)), matches(not(isDisplayed())))
 
     fun forIntent(matcher: Matcher<Intent>) = waitUntilIntentMatcherFulfilled(matcher)
+
+    fun forToastWithText(@StringRes id: Int) =
+        forViewByViewInteraction(onView(withText(id)).inRoot(withDecorView(not(currentActivity!!.window.decorView))))
 }

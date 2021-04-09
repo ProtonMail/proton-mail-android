@@ -300,7 +300,7 @@ class ComposerRobot : CoreRobot, DeviceRobot() {
     }
 
     private fun sendToContact(): ContactsRobot {
-        waitForConditionAndSend()
+        waitForConditionAndSendToContact()
         return ContactsRobot()
     }
 
@@ -315,6 +315,13 @@ class ComposerRobot : CoreRobot, DeviceRobot() {
     }
 
     private fun waitForConditionAndSend() {
+        view.withId(R.id.text1).waitUntilGone()
+        UIActions.wait.untilViewWithIdEnabled(sendMessageId)
+        view.withId(sendMessageId).click()
+        UIActions.wait.forToastWithText(R.string.message_sent)
+    }
+
+    private fun waitForConditionAndSendToContact() {
         view.withId(R.id.text1).waitUntilGone()
         UIActions.wait.untilViewWithIdEnabled(sendMessageId)
         view.withId(sendMessageId).click()

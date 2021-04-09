@@ -76,15 +76,16 @@ interface MailboxRobotInterface : CoreRobot {
     }
 
     fun clickMessageByPosition(position: Int): MessageRobot {
-        UIActions.wait.forViewWithId(messagesRecyclerViewId)
+        recyclerView.withId(messagesRecyclerViewId).waitUntilPopulated()
+        // TODO replace below line with core test lib code
         UIActions.recyclerView
             .messages.saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetSelectMessage)())
-        UIActions.recyclerView.common.clickOnRecyclerViewItemByPosition(messagesRecyclerViewId, position)
+        view.withId(messagesRecyclerViewId)
+        recyclerView.withId(messagesRecyclerViewId).onItemAtPosition(position).click()
         return MessageRobot()
     }
 
     fun clickMessageBySubject(subject: String): MessageRobot {
-        view.instanceOf(ImageView::class.java).withParent(view.withId(R.id.messages_list_view)).waitUntilGone()
         recyclerView
             .withId(messagesRecyclerViewId)
             .waitUntilPopulated()
@@ -104,7 +105,11 @@ interface MailboxRobotInterface : CoreRobot {
     }
 
     fun refreshMessageList(): Any {
+        recyclerView.withId(messagesRecyclerViewId).waitUntilPopulated()
         view.withId(messagesRecyclerViewId).swipeDown()
+        // Waits for loading icon to disappear
+        view.instanceOf(ImageView::class.java).withParent(view.withId(messagesRecyclerViewId)).waitUntilGone()
+        recyclerView.withId(messagesRecyclerViewId).waitUntilPopulated()
         return Any()
     }
 
@@ -113,6 +118,10 @@ interface MailboxRobotInterface : CoreRobot {
      */
     @Suppress("ClassName")
     open class verify : CoreRobot {
+
+        fun messageExists(messageSubject: String) {
+            UIActions.wait.forViewWithIdAndText(messageTitleTextViewId, messageSubject)
+        }
 
         fun draftWithAttachmentSaved(draftSubject: String) {
             UIActions.wait.forViewWithIdAndText(messageTitleTextViewId, draftSubject)
@@ -129,10 +138,10 @@ interface MailboxRobotInterface : CoreRobot {
         }
 
         fun messageWithSubjectExists(subject: String) {
-            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
-            UIActions.wait.forViewWithText(subject)
-            UIActions.recyclerView.common
-                .scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withFirstInstanceMessageSubject(subject))
+            recyclerView
+                .withId(messagesRecyclerViewId)
+                .waitUntilPopulated()
+                .scrollToHolder(withFirstInstanceMessageSubject(subject))
         }
 
         fun messageWithSubjectHasRepliedFlag(subject: String) {

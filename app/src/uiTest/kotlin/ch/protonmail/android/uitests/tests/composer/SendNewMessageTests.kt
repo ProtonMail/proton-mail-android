@@ -18,9 +18,7 @@
  */
 package ch.protonmail.android.uitests.tests.composer
 
-import ch.protonmail.android.uitests.robots.device.DeviceRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
-import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.editedPassword
@@ -40,8 +38,6 @@ import kotlin.test.Test
 class SendNewMessageTests : BaseTest() {
 
     private val loginRobot = LoginRobot()
-    private val composeRobot = ComposerRobot()
-    private val deviceRobot = DeviceRobot()
     private lateinit var subject: String
     private lateinit var body: String
 
@@ -62,7 +58,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -76,7 +71,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -91,7 +85,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -106,7 +99,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -120,7 +112,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessageTOandCC(to, cc, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -136,7 +127,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessageTOandCCandBCC(to, cc, bcc, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -150,7 +140,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessageExpiryTimeInDays(to, subject, body, 2)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -167,7 +156,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessageEOAndExpiryTime(to, subject, body, 1, password, hint)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -183,7 +171,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -199,7 +186,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessageWithPassword(to, subject, body, password, hint)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -213,7 +199,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessageExpiryTimeInDaysWithConfirmation(to, subject, body, 2)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -229,7 +214,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -244,7 +228,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -261,7 +244,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessageEOAndExpiryTime(to, subject, body, 1, password, hint)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -280,7 +262,6 @@ class SendNewMessageTests : BaseTest() {
             .sendMessageEOAndExpiryTime(toExternal, subject, body, 3, password, hint)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 }
