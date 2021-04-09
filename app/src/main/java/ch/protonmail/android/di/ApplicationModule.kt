@@ -132,7 +132,7 @@ object ApplicationModule {
     @CurrentUserMailSettings
     fun currentUserMailSettings(
         userManager: UserManager
-    ) = userManager.getCurrentUserMailSettingsBlocking()
+    ) = userManager.requireCurrentUserMailSettingsBlocking()
 
     @Provides
     @Singleton
@@ -178,7 +178,7 @@ object ApplicationModule {
     @Provides
     fun mailSettings(
         userManager: UserManager
-    ) = userManager.getCurrentUserMailSettingsBlocking()
+    ) = userManager.requireCurrentUserMailSettingsBlocking()
 
     @Provides
     @Singleton

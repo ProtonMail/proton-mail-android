@@ -19,8 +19,7 @@
 package ch.protonmail.android.attachments
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.asFlow
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
@@ -41,6 +40,8 @@ import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.di.CurrentUserId
 import ch.protonmail.android.di.CurrentUserMailSettings
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -58,7 +59,8 @@ internal const val KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR = "keyUploadAttach
 private const val UPLOAD_ATTACHMENTS_WORK_NAME_PREFIX = "uploadAttachmentUniqueWorkName"
 private const val UPLOAD_ATTACHMENTS_MAX_RETRIES = 3
 
-class UploadAttachments @WorkerInject constructor(
+@HiltWorker
+class UploadAttachments @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val dispatchers: DispatcherProvider,

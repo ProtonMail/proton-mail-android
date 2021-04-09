@@ -35,11 +35,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -214,7 +213,7 @@ public class LoginActivity extends BaseLoginActivity {
         }
     }
 
-    @NotNull
+    @NonNull
     private Function0<Unit> onConnectivityCheckRetry() {
         return () -> {
             networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();

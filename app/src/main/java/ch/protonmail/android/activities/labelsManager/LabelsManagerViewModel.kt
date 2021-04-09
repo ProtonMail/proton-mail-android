@@ -20,8 +20,6 @@ package ch.protonmail.android.activities.labelsManager
 
 import android.graphics.Color
 import androidx.annotation.ColorInt
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -40,19 +38,22 @@ import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.worker.PostLabelWorker
+import dagger.hilt.android.lifecycle.HiltViewModel
 import studio.forface.viewstatestore.ViewStateStore
 import studio.forface.viewstatestore.from
 import studio.forface.viewstatestore.paging.PagedViewStateStore
 import studio.forface.viewstatestore.paging.ViewStateStoreScope
+import javax.inject.Inject
 
 /**
  * A [ViewModel] for Manage Labels
  * Inherit from [ViewModel]
  * Implements [ViewStateStoreScope] for being able to publish to a Locked [ViewStateStore]
  */
-internal class LabelsManagerViewModel @ViewModelInject constructor(
+@HiltViewModel
+internal class LabelsManagerViewModel @Inject constructor(
     messageDao: MessageDao,
-    @Assisted private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val deleteLabel: DeleteLabel,
     private val workManager: WorkManager
 ) : ViewModel(), ViewStateStoreScope {

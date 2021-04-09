@@ -19,8 +19,7 @@
 package ch.protonmail.android.attachments
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.Data
@@ -37,6 +36,8 @@ import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import ch.protonmail.android.worker.failure
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
 import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
@@ -63,7 +64,8 @@ internal const val KEY_INPUT_DATA_ATTACHMENT_ID_STRING = "KEY_INPUT_DATA_ATTACHM
  * @see androidx.work.Data
  */
 
-class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
+@HiltWorker
+class DownloadEmbeddedAttachmentsWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val userManager: UserManager,

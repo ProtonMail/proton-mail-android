@@ -20,8 +20,7 @@
 package ch.protonmail.android.worker.drafts
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.asFlow
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
@@ -51,6 +50,8 @@ import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.notifier.UserNotifier
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import me.proton.core.util.kotlin.takeIfNotBlank
@@ -73,7 +74,8 @@ internal const val KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID = "keySaveDraftSucces
 private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
 private const val SAVE_DRAFT_MAX_RETRIES = 3
 
-class CreateDraftWorker @WorkerInject constructor(
+@HiltWorker
+class CreateDraftWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val messageDetailsRepository: MessageDetailsRepository,

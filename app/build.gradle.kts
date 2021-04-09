@@ -105,7 +105,7 @@ android(appIdSuffix = "android") {
         buildConfigField("String", "TEST_USER5", testUser5.toString())
 
         // Experimental
-        buildConfigField("boolean", "EXPERIMENTAL_USERS_MANAGEMENT", "${experimentalProperties["users-management"]}")
+        buildConfigField("boolean", "EXPERIMENTAL_USERS_MANAGEMENT", "${experimentalProperties["users-management"] ?: false}")
 
         buildConfigField("boolean", "FETCH_FULL_CONTACTS", "true")
         buildConfigField("boolean", "REREGISTER_FOR_PUSH", "true")
@@ -294,7 +294,8 @@ dependencies {
         // Hilt
         `hilt-android`,
         `hilt-androidx-annotations`,
-        `hilt-androidx-viewModel`,
+//        `hilt-androidx-viewModel`,
+        `hilt-androidx-view-model`, // special case as this currently does not follow other hilt-androidx version
         `hilt-androidx-workManager`,
 
         // Retrofit

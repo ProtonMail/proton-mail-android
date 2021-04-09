@@ -20,8 +20,7 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.LiveData
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
@@ -36,6 +35,8 @@ import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants.CONTACTS_PAGE_SIZE
 import ch.protonmail.android.core.UserManager
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import timber.log.Timber
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
@@ -51,7 +52,8 @@ private const val MAX_RETRY_COUNT = 3
  *
  * @see androidx.work.WorkManager
  */
-class FetchContactsDataWorker @WorkerInject constructor(
+@HiltWorker
+class FetchContactsDataWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,

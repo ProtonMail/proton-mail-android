@@ -20,8 +20,7 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.LiveData
 import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
@@ -34,6 +33,8 @@ import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.core.Constants
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
@@ -46,7 +47,8 @@ internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_DISPLAY = "keyCreateConta
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXCLUSIVE = "keyCreateContactGroupInputDataExclusive"
 internal const val KEY_RESULT_DATA_CREATE_CONTACT_GROUP_ERROR = "keyCreateContactGroupResultWorkerError"
 
-class CreateContactGroupWorker @WorkerInject constructor(
+@HiltWorker
+class CreateContactGroupWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val apiManager: ProtonMailApiManager,

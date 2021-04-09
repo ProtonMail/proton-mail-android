@@ -165,6 +165,10 @@ class UserManager @Inject constructor(
     fun getCurrentUserMailSettingsBlocking(): MailSettings? =
         runBlocking { getCurrentUserMailSettings() }
 
+    @Deprecated("Use suspend function", ReplaceWith("getCurrentUserMailSettings()"))
+    fun requireCurrentUserMailSettingsBlocking(): MailSettings =
+       requireNotNull(getCurrentUserMailSettingsBlocking())
+
     suspend fun getMailSettings(userId: Id): MailSettings =
         MailSettings.load(SecureSharedPreferences.getPrefsForUser(context, userId))
 

@@ -19,7 +19,6 @@
 package ch.protonmail.android.contacts.details.edit
 
 import android.text.TextUtils
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
@@ -39,6 +38,7 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.viewmodel.NETWORK_CHECK_DELAY
 import ch.protonmail.android.views.models.LocalContact
+import dagger.hilt.android.lifecycle.HiltViewModel
 import ezvcard.Ezvcard
 import ezvcard.VCard
 import ezvcard.VCardVersion
@@ -62,6 +62,7 @@ import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import java.util.UUID
+import javax.inject.Inject
 
 const val FLOW_NEW_CONTACT = 1
 const val FLOW_EDIT_CONTACT = 2
@@ -77,7 +78,8 @@ const val EXTRA_LOCAL_CONTACT = "extra_local_contact"
 
 private const val VCARD_PROD_ID = "-//ProtonMail//ProtonMail for Android vCard 1.0.0//EN"
 
-class EditContactDetailsViewModel @ViewModelInject constructor(
+@HiltViewModel
+class EditContactDetailsViewModel @Inject constructor(
     private val dispatchers: DispatcherProvider,
     downloadFile: DownloadFile,
     private val editContactDetailsRepository: EditContactDetailsRepository,

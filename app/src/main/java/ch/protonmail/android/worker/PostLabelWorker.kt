@@ -20,8 +20,7 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.LiveData
 import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
@@ -33,6 +32,8 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.data.LabelRepository
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
 internal const val KEY_INPUT_DATA_LABEL_NAME = "keyInputDataLabelName"
 internal const val KEY_INPUT_DATA_LABEL_ID = "keyInputDataLabelId"
@@ -42,7 +43,8 @@ internal const val KEY_INPUT_DATA_LABEL_DISPLAY = "keyInputDataLabelIsDisplay"
 internal const val KEY_INPUT_DATA_LABEL_EXCLUSIVE = "keyInputDataLabelExclusive"
 internal const val KEY_POST_LABEL_WORKER_RESULT_ERROR = "keyResultDataPostLabelWorkerError"
 
-class PostLabelWorker @WorkerInject constructor(
+@HiltWorker
+class PostLabelWorker @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted val workerParams: WorkerParameters,
     private val apiManager: ProtonMailApiManager,

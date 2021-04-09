@@ -19,8 +19,6 @@
 
 package ch.protonmail.android.attachments
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -30,16 +28,18 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.utils.MessageUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.DispatcherProvider
+import javax.inject.Inject
 
-
-class AttachmentsViewModel @ViewModelInject constructor(
-    @Assisted private val savedStateHandle: SavedStateHandle,
+@HiltViewModel
+class AttachmentsViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val dispatchers: DispatcherProvider,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val networkConnectivityManager: NetworkConnectivityManager

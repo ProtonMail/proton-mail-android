@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.activities.navigation
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -29,11 +28,14 @@ import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Label
+import dagger.hilt.android.lifecycle.HiltViewModel
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.DispatcherProvider
+import javax.inject.Inject
 
-class NavigationViewModel @ViewModelInject constructor(
+@HiltViewModel
+class NavigationViewModel @Inject constructor(
     private val dispatchers: DispatcherProvider,
     private val accountManager: AccountManager,
     private val databaseProvider: DatabaseProvider,
