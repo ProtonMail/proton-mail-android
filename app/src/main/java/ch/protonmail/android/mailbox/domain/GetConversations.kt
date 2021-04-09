@@ -20,8 +20,7 @@
 package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants.MessageLocationType
-import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.mailbox.domain.model.Parameters
+import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.arch.DataResult
@@ -31,13 +30,14 @@ class GetConversations @Inject constructor(
     private val conversationRepository: ConversationsRepository
 ) {
 
-    suspend operator fun invoke(userId: Id, location: MessageLocationType): Flow<GetConversationsResult> {
-        val params = Parameters.GetConversationsParameters(userId = userId.s, location)
-        return conversationRepository.getConversations(params, true)
-            .map {
-                when (it) {
-                    is DataResult.Success -> return@map GetConversationsResult.Success(it.value as List<Conversation>)
-                    else -> return@map GetConversationsResult.Error
+    operator fun invoke(location: MessageLocationType): Flow<GetConversationsResult> {
+        val params = GetConversationsParameters(location)
+        return conversationRepository.getConversations(params)
+            .map { result ->
+                if (result is DataResult.Success) {
+                    return@map GetConversationsResult.Success(result.value)
+                } else {
+                    return@map GetConversationsResult.Error
                 }
             }
     }

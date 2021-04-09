@@ -20,8 +20,7 @@
 package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants.MessageLocationType
-import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.mailbox.domain.model.Parameters
+import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -30,7 +29,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
-import me.proton.core.domain.arch.ResponseSource.Local
+import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.test.kotlin.CoroutinesTest
 import java.util.UUID
 import kotlin.test.BeforeTest
@@ -55,22 +54,21 @@ class GetConversationsTest : CoroutinesTest {
     @Test
     fun getConversationsCallsRepositoryWithReceivedLocation() = runBlockingTest {
         val location = MessageLocationType.ARCHIVE
-        val testUserId = Id("id")
+        coEvery { conversationRepository.getConversations(any()) } returns flowOf()
 
-        coEvery { conversationRepository.getConversations(any(), true) } returns flowOf()
+        getConversations.invoke(location)
 
-        getConversations.invoke(testUserId, location)
-
-        val params = Parameters.GetConversationsParameters(testUserId.s, location)
-        coVerify { conversationRepository.getConversations(params, true) }
+        val params = GetConversationsParameters(location)
+        coVerify { conversationRepository.getConversations(params) }
     }
 
     @Test
     fun getConversationsReturnsConversationsFlowWhenRepositoryRequestSucceeds() = runBlockingTest {
         val conversations = listOf(buildRandomConversation())
-        coEvery { conversationRepository.getConversations(any(), true)} returns flowOf(DataResult.Success(Local, conversations))
+        val dataResult = DataResult.Success(ResponseSource.Remote, conversations)
+        coEvery { conversationRepository.getConversations(any()) } returns flowOf(dataResult)
 
-        val actual = getConversations.invoke(Id("id"), MessageLocationType.INBOX)
+        val actual = getConversations.invoke(MessageLocationType.INBOX)
 
         val expected = GetConversationsResult.Success(conversations)
         assertEquals(expected, actual.first())
@@ -78,9 +76,9 @@ class GetConversationsTest : CoroutinesTest {
 
     @Test
     fun getConversationsReturnsErrorWhenRepositoryFailsGettingConversations() = runBlockingTest {
-        coEvery { conversationRepository.getConversations(any(), true) } returns flowOf(DataResult.Error.Local(null))
+        coEvery { conversationRepository.getConversations(any()) } returns flowOf(DataResult.Error.Local(null))
 
-        val actual = getConversations.invoke(Id("id"), MessageLocationType.INBOX)
+        val actual = getConversations.invoke(MessageLocationType.INBOX)
 
         val error = GetConversationsResult.Error
         assertEquals(error, actual.first())

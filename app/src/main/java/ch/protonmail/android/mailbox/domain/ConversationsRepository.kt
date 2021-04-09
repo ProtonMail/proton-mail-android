@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.mailbox.domain
 
-import ch.protonmail.android.mailbox.domain.model.Parameters
+import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
 
@@ -32,10 +32,7 @@ interface ConversationsRepository {
      * @return an empty optional when the repository encounters a handled failure getting conversations
      * @throws exception when the repository fails getting conversations for any unhandled reasons
      */
-    fun getConversations(
-        params: Parameters.GetConversationsParameters,
-        refresh: Boolean
-    ): Flow<DataResult<List<Conversation?>>>
+    fun getConversations(params: GetConversationsParameters): Flow<DataResult<List<Conversation>>>
 
     /**
      * @param conversationId the encrypted id of the conversation to get
