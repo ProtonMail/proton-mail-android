@@ -50,7 +50,6 @@ import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.minusAssign
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.DispatcherProvider
-import me.proton.core.util.kotlin.invoke
 import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import javax.inject.Inject
@@ -84,20 +83,15 @@ class UserManager @Inject constructor(
     private val coreAccountManager: AccountManager,
     private val loadUser: LoadUser,
     private val loadLegacyUser: LoadLegacyUser,
-    private val userMapper: UserBridgeMapper,
     @DefaultSharedPreferences private val prefs: SharedPreferences,
     @BackupSharedPreferences private val backupPrefs: SharedPreferences,
-    @Deprecated("UserManager is never using this, but it's just providing for other classes, so this " +
-        "should be injected directly there")
+    @Deprecated(
+        "UserManager is never using this, but it's just providing for other classes, so this " +
+            "should be injected directly there"
+    )
     val openPgp: OpenPGP,
     private val dispatchers: DispatcherProvider
 ) {
-    // TODO caching strategy should be in the repository
-    private val cachedUsers = mutableMapOf<Id, NewUser>()
-
-    // TODO caching strategy should be in the repository
-    private val cachedLegacyUsers = mutableMapOf<Id, User>()
-
     private val app: ProtonMailApplication = context.app
 
     suspend fun getCurrentUserMailSettings(): MailSettings? =
@@ -307,9 +301,7 @@ class UserManager @Inject constructor(
 
     @Synchronized
     suspend fun getUser(userId: Id): NewUser =
-        cachedUsers.getOrPut(userId) {
-            loadUser(userId).orThrow()
-        }
+        loadUser(userId).orThrow()
 
     @Deprecated("Suspended function should be used instead", ReplaceWith("getUser(userId)"))
     fun getUserBlocking(userId: Id): NewUser =
@@ -320,15 +312,7 @@ class UserManager @Inject constructor(
      */
     @Synchronized
     suspend fun getLegacyUser(userId: Id): User =
-        cachedLegacyUsers.getOrPut(userId) {
-            loadLegacyUser(userId).orThrow()
-                // Also save to cachedUsers
-                .also { legacyUser ->
-                    runCatching { userMapper { legacyUser.toNewUser() } }
-                        .onSuccess { cachedUsers[userId] = it }
-                        .onFailure(Timber::e)
-                }
-        }
+        loadLegacyUser(userId).orThrow()
 
     @Deprecated(
         "Should not be used, necessary only for old and Java classes",
