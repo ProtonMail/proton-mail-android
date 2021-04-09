@@ -26,7 +26,7 @@ import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.domain.Conversation
-import ch.protonmail.android.mailbox.domain.model.Parameters
+import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -148,7 +148,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         conversationsRepository =
             ConversationsRepositoryImpl(
                 conversationDao,
-                api
+                api,
+                testUserId
             )
     }
 
@@ -156,8 +157,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     fun verifyConversationsIsFetchedFromLocalInitially() {
         runBlockingTest {
             // given
-            val parameters = Parameters.GetConversationsParameters(
-                userId = testUserId,
+            val parameters = GetConversationsParameters(
                 location = Constants.MessageLocationType.INBOX,
                 page = 0,
                 pageSize = 2
@@ -178,8 +178,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         runBlockingTest {
 
             // given
-            val parameters = Parameters.GetConversationsParameters(
-                userId = testUserId,
+            val parameters = GetConversationsParameters(
                 location = Constants.MessageLocationType.INBOX,
                 page = 0,
                 pageSize = 5

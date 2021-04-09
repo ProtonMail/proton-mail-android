@@ -33,7 +33,7 @@ interface ConversationsRepository {
      * @return an empty optional when the repository encounters a handled failure getting conversations
      * @throws exception when the repository fails getting conversations for any unhandled reasons
      */
-    fun getConversations(params: GetConversationsParameters, userId : Id): Flow<DataResult<List<Conversation>>>
+    fun getConversations(params: GetConversationsParameters, userId: Id): Flow<DataResult<List<Conversation>>>
 
     /**
      * @param conversationId the encrypted id of the conversation to get

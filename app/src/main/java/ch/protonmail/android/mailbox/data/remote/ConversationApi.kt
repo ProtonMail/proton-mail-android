@@ -19,11 +19,11 @@
 package ch.protonmail.android.mailbox.data.remote
 
 import ch.protonmail.android.api.segments.BaseApi
-import ch.protonmail.android.mailbox.domain.model.Parameters
+import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 
 class ConversationApi(private val service: ConversationService) : BaseApi(), ConversationApiSpec {
 
-    override suspend fun fetchConversations(conversationsParameters: Parameters.GetConversationsParameters) =
+    override suspend fun fetchConversations(conversationsParameters: GetConversationsParameters) =
         service.fetchConversations(
             conversationsParameters.location.messageLocationTypeValue,
             conversationsParameters.page,
