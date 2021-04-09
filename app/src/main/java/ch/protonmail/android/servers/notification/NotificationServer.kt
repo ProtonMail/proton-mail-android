@@ -354,6 +354,7 @@ class NotificationServer @Inject constructor(
         val contentIntent = Intent(context, MessageDetailsActivity::class.java)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, messageId)
             .putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, false)
+            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USER_ID, user.id.s)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USERNAME, user.name.s)
 
         val stackBuilder = TaskStackBuilder.create(context)

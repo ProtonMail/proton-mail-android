@@ -177,17 +177,7 @@ class AccountViewModel @ViewModelInject constructor(
         message = "Use UserId version of the function",
         replaceWith = ReplaceWith("switch(UserId(userId.s))", "me.proton.core.domain.entity.UserId")
     )
-    fun switch(userId: Id) = this.switch(UserId(userId.s))
-
-    @Deprecated(
-        message = "Use UserId version of the function",
-        replaceWith = ReplaceWith("switch(UserId(userId.s))", "me.proton.core.domain.entity.UserId")
-    )
-    fun switch(username: String) = viewModelScope.launch {
-        getAccounts().first().firstOrNull { it.username == username }?.let { account ->
-            this@AccountViewModel.switch(account.userId)
-        }
-    }
+    fun switch(userId: Id) = switch(UserId(userId.s))
 
     @Deprecated(
         message = "Use UserId version of the function",

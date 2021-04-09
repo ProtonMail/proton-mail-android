@@ -73,6 +73,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
@@ -131,6 +132,7 @@ internal class MessageDetailsActivity :
      * Whether the current message needs to be store in database. If transient if won't be stored
      */
     private var isTransientMessage = false
+    private var messageRecipientUserId: Id? = null
     private var messageRecipientUsername: String? = null
     private val buttonsVisibilityHandler = Handler(Looper.getMainLooper())
     private val attachmentToDownloadId = AtomicReference<String?>(null)
@@ -199,6 +201,7 @@ internal class MessageDetailsActivity :
 
         markAsRead = true
         messageId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_ID))
+        messageRecipientUserId = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USER_ID)?.let(::Id)
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
         isTransientMessage = intent.getBooleanExtra(EXTRA_TRANSIENT_MESSAGE, false)
         val currentUser = mUserManager.requireCurrentUserBlocking()
@@ -215,7 +218,8 @@ internal class MessageDetailsActivity :
                 cancelable = false,
                 onPositiveButtonClicked = {
                     lifecycleScope.launchWhenCreated {
-                        accountViewModel.switch(recipientUsername)
+                        val userId = checkNotNull(messageRecipientUserId) { "Username found in extras, but user id" }
+                        accountViewModel.switch(userId)
                         continueSetup()
                         invalidateOptionsMenu()
                     }
@@ -1035,6 +1039,7 @@ internal class MessageDetailsActivity :
 
         // if transient is true it will not save Message object to db
         const val EXTRA_TRANSIENT_MESSAGE = "transient_message"
+        const val EXTRA_MESSAGE_RECIPIENT_USER_ID = "message_recipient_user_id"
         const val EXTRA_MESSAGE_RECIPIENT_USERNAME = "message_recipient_username"
     }
 }
