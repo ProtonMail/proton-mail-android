@@ -1749,9 +1749,8 @@ class MailboxActivity :
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position = viewHolder.adapterPosition
-            val mailboxItemId = messagesAdapter.getItem(position).itemId
-            val swipedItem = messageDetailsRepository.findMessageByIdBlocking(mailboxItemId) ?: return
-            val messageSwiped = SimpleMessage(swipedItem)
+            val mailboxItem = messagesAdapter.getItem(position)
+            val messageSwiped = SimpleMessage(mailboxItem)
             val mailboxLocation = mailboxLocationMain.value
             val settings = mailSettings ?: return
             val swipeActionOrdinal: Int = when (direction) {
