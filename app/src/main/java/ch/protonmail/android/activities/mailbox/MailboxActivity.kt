@@ -704,7 +704,7 @@ class MailboxActivity :
                         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 task.result?.let { result ->
-                                    currentUserTokenManager.saveTokenBlocking(FirebaseToken(result.token))
+                                    multiUserFcmTokenManager.saveTokenBlocking(FirebaseToken(result.token))
                                     pmRegistrationWorkerEnqueuer()
                                 }
                             } else {

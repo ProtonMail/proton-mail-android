@@ -35,7 +35,8 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 
 /**
- * Local cache for Firebase token
+ * Local cache for Firebase token for a single user!
+ * For multi-user variant, use [MultiUserFcmTokenManager]
  */
 class FcmTokenManager @AssistedInject constructor(
     @Assisted private val userPreferences: SharedPreferences,
