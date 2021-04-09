@@ -320,7 +320,7 @@ internal class ContactDaoTest {
     fun clearByEmail() {
         val deletedEmail = contactEmails[1].email
         val expected = contactEmails.filterNot { it.email == deletedEmail }
-        database.clearByEmail(deletedEmail)
+        database.clearByEmailBlocking(deletedEmail)
         assertDatabaseState(expectedContactEmails = expected)
     }
 

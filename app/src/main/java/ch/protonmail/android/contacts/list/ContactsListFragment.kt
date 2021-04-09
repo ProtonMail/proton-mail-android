@@ -225,7 +225,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     private fun startObserving() {
         viewModel.contactItems.observe(viewLifecycleOwner) { contactItems ->
-            Timber.v("New Contact items: $contactItems size: ${contactItems.size}")
+            Timber.v("New Contact items size: ${contactItems.size}")
             if (contactItems.isEmpty()) {
                 noResults.visibility = VISIBLE
             } else {

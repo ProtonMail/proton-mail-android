@@ -18,6 +18,8 @@
  */
 package ch.protonmail.android.jobs;
 
+import android.database.sqlite.SQLiteBlobTooBigException;
+
 import androidx.annotation.NonNull;
 
 import com.birbit.android.jobqueue.Params;
@@ -50,6 +52,7 @@ import ch.protonmail.android.utils.AppUtil;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.property.Email;
+import timber.log.Timber;
 
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED;
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_EMAIL_EXIST;
@@ -72,7 +75,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             @NonNull List<ContactEmail> contactEmails,
             String encryptedData,
             String signedData,
-            HashMap<ContactEmail, List<ContactLabel>> mapEmailGroupsIds
+            Map<ContactEmail, List<ContactLabel>> mapEmailGroupsIds
     ) {
         super(new Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT));
         mContactId = contactId;
@@ -152,7 +155,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
 
         for (ContactEmail email : contactEmails) {
             final String emailToClear = email.getEmail();
-            mContactDao.clearByEmail(emailToClear);
+            mContactDao.clearByEmailBlocking(emailToClear);
         }
         mContactDao.saveAllContactsEmailsBlocking(contactEmails);
         Map<ContactLabel, List<String>> mapContactGroupContactEmails = new HashMap<>();
@@ -169,7 +172,12 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
                 }
             }
         }
-        FullContactDetails contact = mContactDao.findFullContactDetailsById(mContactId);
+        FullContactDetails contact = null;
+        try {
+            contact = mContactDao.findFullContactDetailsById(mContactId);
+        } catch (SQLiteBlobTooBigException tooBigException) {
+            Timber.i(tooBigException,"Data too big to be fetched");
+        }
         if (contact != null) {
             ContactEncryptedData contactEncryptedData = new ContactEncryptedData(encryptedData, encryptedDataSignature, Constants.VCardType.SIGNED_ENCRYPTED);
             ContactEncryptedData contactSignedData = new ContactEncryptedData(mSignedData, signedDataSignature, Constants.VCardType.SIGNED);

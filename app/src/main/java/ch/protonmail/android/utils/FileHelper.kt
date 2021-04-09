@@ -21,6 +21,9 @@ package ch.protonmail.android.utils
 
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import okio.buffer
+import okio.sink
+import okio.source
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -29,7 +32,6 @@ import javax.inject.Inject
 /**
  * A helper class that serves as a wrapper for file operations.
  */
-
 class FileHelper @Inject constructor(
     private val dispatcherProvider: DispatcherProvider
 ) {
@@ -56,4 +58,15 @@ class FileHelper @Inject constructor(
         }.isSuccess
     }
 
+    fun saveStringToFile(filePath: String, dataToSave: String) =
+        File(filePath).sink().buffer().use { sink ->
+            sink.writeUtf8(dataToSave)
+        }
+
+
+    fun readStringFromFilePath(filePath: String): String =
+        File(filePath)
+            .source()
+            .buffer()
+            .readUtf8()
 }
