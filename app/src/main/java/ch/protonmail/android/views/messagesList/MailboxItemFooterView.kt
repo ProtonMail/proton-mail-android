@@ -26,20 +26,20 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 
 class MailboxItemFooterView(
-	context: Context,
-	attrs: AttributeSet? = null,
-	defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : RelativeLayout(
-	context,
-	attrs,
-	defStyleAttr
+    context,
+    attrs,
+    defStyleAttr
 ) {
 
-	init {
-		inflate(context, R.layout.messages_list_footer_view, this)
-		layoutParams = RecyclerView.LayoutParams(
-			ViewGroup.LayoutParams.MATCH_PARENT,
-			ViewGroup.LayoutParams.WRAP_CONTENT
-		)
-	}
+    init {
+        inflate(context, R.layout.messages_list_footer_view, this)
+        layoutParams = RecyclerView.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
 }

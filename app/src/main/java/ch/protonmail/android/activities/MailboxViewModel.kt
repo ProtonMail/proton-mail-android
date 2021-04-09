@@ -62,7 +62,7 @@ class MailboxViewModel @Inject constructor(
     private val jobManager: JobManager,
     private val deleteMessage: DeleteMessage,
     private val dispatchers: DispatcherProvider,
-    val contactsRepository: ContactsRepository,
+    private val contactsRepository: ContactsRepository,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -196,7 +196,7 @@ class MailboxViewModel @Inject constructor(
 
             mailboxItems.postValue(
                 messages.map { message ->
-                    val senderName = defineSenderNameToDisplay(contacts, message)
+                    val senderName = getSenderNameToDisplay(contacts, message)
 
                     val messageData = MessageData(
                         message.location,
@@ -227,7 +227,7 @@ class MailboxViewModel @Inject constructor(
         return mailboxItems
     }
 
-    private fun defineSenderNameToDisplay(contacts: List<ContactEmail>, message: Message): String {
+    private fun getSenderNameToDisplay(contacts: List<ContactEmail>, message: Message): String {
         val senderNameFromContacts = contacts.find { message.senderEmail == it.email }?.name
 
         senderNameFromContacts?.let {
