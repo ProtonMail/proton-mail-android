@@ -19,8 +19,8 @@
 package ch.protonmail.android.api
 
 import ch.protonmail.android.api.cookie.ProtonCookieStore
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.di.AlternativeApiPins
+import ch.protonmail.android.di.BaseUrl
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
@@ -30,7 +30,8 @@ import javax.inject.Singleton
 
 @Singleton
 class OkHttpProvider @Inject constructor(
-    @AlternativeApiPins private val pinnedKeyHashes: List<String>
+    @AlternativeApiPins private val pinnedKeyHashes: List<String>,
+    @BaseUrl private val baseUrl: String
 ) {
     // cache the clients, this way we can have separate client for every Uri/Url
     private val okHttpClients = HashMap<String, ProtonOkHttpClient>()
@@ -51,13 +52,14 @@ class OkHttpProvider @Inject constructor(
         if (okHttpClients.containsKey(id)) {
             return okHttpClients[id]!! // we can safely enforce here because we are sure it exists
         }
-        okHttpClients[id] = if (endpointUri == Constants.ENDPOINT_URI) {
+        okHttpClients[id] = if (endpointUri == baseUrl) {
             DefaultOkHttpClient(
                 timeout,
                 interceptor,
                 loggingLevel,
                 connectionSpecs,
                 serverTimeInterceptor,
+                baseUrl,
                 cookieStore
             )
         } else {

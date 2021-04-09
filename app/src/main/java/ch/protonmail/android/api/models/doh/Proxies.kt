@@ -20,7 +20,6 @@ package ch.protonmail.android.api.models.doh
 
 import android.content.SharedPreferences
 import ch.protonmail.android.core.Constants
-import ch.protonmail.libs.core.preferences.get
 import com.google.gson.Gson
 
 // region constants
@@ -28,14 +27,13 @@ const val PREF_DNS_OVER_HTTPS_API_URL_LIST = "pref_dns_over_https_api_url_list"
 const val PREF_DNS_OVER_HTTPS_API_URL = "pref_dns_over_https_api_url"
 // endregion
 
-/**
- * Created by dinokadrikj on 3/5/20.
- */
-class Proxies constructor(
-        val proxyList: ProxyList,
-        val prefs: SharedPreferences) {
 
-    var isDohActive : Boolean = false
+class Proxies constructor(
+    val proxyList: ProxyList,
+    val prefs: SharedPreferences
+) {
+
+    var isDohActive: Boolean = false
 
     // init {
     //     save()
@@ -92,7 +90,7 @@ class Proxies constructor(
         prefs.edit().putString(PREF_DNS_OVER_HTTPS_API_URL, domain).apply()
     }
 
-    fun getCurrentWorkingProxyDomain() : String {
+    fun getCurrentWorkingProxyDomain(): String {
         return prefs.getString(PREF_DNS_OVER_HTTPS_API_URL, Constants.ENDPOINT_URI)!!
     }
 
@@ -104,10 +102,11 @@ class Proxies constructor(
          * If you want to only get what has already been saved, just do not use that parameter.
          */
         fun getInstance(proxyList: ProxyList? = null, prefs: SharedPreferences): Proxies {
-            return INSTANCE ?: synchronized(this) { INSTANCE ?:
-                if (proxyList != null) {
-                    return Proxies(proxyList, prefs)
-                }
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE
+                    ?: if (proxyList != null) {
+                        return Proxies(proxyList, prefs)
+                    }
                 val storedValue = prefs.getString(PREF_DNS_OVER_HTTPS_API_URL_LIST, null)
                 val proxyItems = if (storedValue != null) {
                     Gson().fromJson(storedValue, ProxyList::class.java)

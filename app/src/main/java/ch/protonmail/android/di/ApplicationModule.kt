@@ -197,7 +197,8 @@ object ApplicationModule {
         okHttpProvider: OkHttpProvider,
         @DefaultSharedPreferences prefs: SharedPreferences,
         userNotifier: UserNotifier,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
+        @BaseUrl baseUrl: String
     ): ProtonRetrofitBuilder {
 
         // userManager.user.allowSecureConnectionsViaThirdParties)
@@ -205,7 +206,7 @@ object ApplicationModule {
         val dnsOverHttpsHost =
             if (user != null && !user.usingDefaultApi)
                 Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
-            else Constants.ENDPOINT_URI
+            else baseUrl
 
         return ProtonRetrofitBuilder(
             userManager,

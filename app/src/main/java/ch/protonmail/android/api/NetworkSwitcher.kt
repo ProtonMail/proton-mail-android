@@ -21,8 +21,8 @@ package ch.protonmail.android.api
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.segments.connectivity.ConnectivityApi
 import ch.protonmail.android.api.segments.connectivity.PingService
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.di.BaseUrl
 import ch.protonmail.android.utils.Logger
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
@@ -34,14 +34,12 @@ interface INetworkSwitcher {
     fun <T> tryRequest(callFun: suspend (PingService) -> Response<T>)
 }
 
-/**
- * Created by dinokadrikj on 3/6/20.
- */
 @Singleton
 class NetworkSwitcher @Inject constructor(
     private val api: ProtonMailApiManager,
     private val apiProvider: ProtonMailApiProvider,
     private val protonOkHttpProvider: OkHttpProvider,
+    @BaseUrl private val baseUrl: String,
     networkConfigurator: NetworkConfigurator
 ) : INetworkSwitcher {
 
@@ -54,7 +52,7 @@ class NetworkSwitcher @Inject constructor(
      * party proxies.
      */
     override fun reconfigureProxy(proxies: Proxies?) { // TODO: DoH this can be done without null
-        val proxyItem = proxies?.getCurrentActiveProxy()?.baseUrl ?: Constants.ENDPOINT_URI
+        val proxyItem = proxies?.getCurrentActiveProxy()?.baseUrl ?: baseUrl
         Logger.doLog("NetworkSwitcher", "proxyItem url is: $proxyItem")
         val newApi: ProtonMailApi = apiProvider.rebuild(protonOkHttpProvider, proxyItem)
         api.reset(newApi)
