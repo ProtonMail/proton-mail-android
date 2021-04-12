@@ -71,7 +71,6 @@ import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListe
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.Constants.MessageActionType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
@@ -84,6 +83,8 @@ import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostSpamJob
+import ch.protonmail.android.jobs.PostTrashJobV2
+import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.AppUtil
@@ -96,7 +97,6 @@ import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.MODE_ACCORDION
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
-import ch.protonmail.android.views.MessageActionButton
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.worker.PostLabelWorker
@@ -146,7 +146,7 @@ internal class MessageDetailsActivity :
     /** Lazy instance of [ClipboardManager] that will be used for copy content into the Clipboard */
     private val clipboardManager by lazy { getSystemService<ClipboardManager>() }
 
-    private var buttonsVisibilityRunnable = Runnable { action_buttons.visibility = View.VISIBLE }
+    private var buttonsVisibilityRunnable = Runnable { messageDetailsActionsView.visibility = View.VISIBLE }
 
     private val onOffsetChangedListener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
         val scrolledPercentage = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange.toFloat()
@@ -234,10 +234,6 @@ internal class MessageDetailsActivity :
         } else {
             continueSetup()
         }
-
-        findViewById<MessageActionButton>(R.id.reply).isEnabled = false
-        findViewById<MessageActionButton>(R.id.reply_all).isEnabled = false
-        findViewById<MessageActionButton>(R.id.forward).isEnabled = false
 
         // Copy Subject to Clipboard at long press
         expandedToolbarTitleTextView.setOnLongClickListener {
@@ -414,7 +410,7 @@ internal class MessageDetailsActivity :
             mUserManager.user,
             this,
             { onConnectivityCheckRetry() },
-            anchorViewId = R.id.action_buttons,
+            anchorViewId = R.id.messageDetailsActionsView,
             isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
         ).show()
     }
@@ -423,7 +419,7 @@ internal class MessageDetailsActivity :
         viewModel.fetchMessageDetails(false)
         networkSnackBarUtil.getCheckingConnectionSnackBar(
             mSnackLayout,
-            R.id.action_buttons
+            R.id.messageDetailsActionsView
         ).show()
 
         viewModel.checkConnectivityDelayed()
@@ -808,9 +804,6 @@ internal class MessageDetailsActivity :
                 UiUtil.showInfoSnack(mSnackLayout, this@MessageDetailsActivity, R.string.decryption_error_desc).show()
                 return
             }
-            findViewById<MessageActionButton>(R.id.reply).isEnabled = true
-            findViewById<MessageActionButton>(R.id.reply_all).isEnabled = true
-            findViewById<MessageActionButton>(R.id.forward).isEnabled = true
 
             val subject = if (message.subject.isNullOrEmpty()) getString(R.string.empty_subject) else message.subject
             collapsedToolbarTitleTextView.text = subject
@@ -827,7 +820,22 @@ internal class MessageDetailsActivity :
                 messageDetailsRecyclerView.adapter = messageExpandableAdapter
             }
             viewModel.triggerVerificationKeyLoading()
-            action_buttons.setOnMessageActionListener { messageAction: MessageActionType? ->
+
+            messageDetailsActionsView.bind(message)
+            messageDetailsActionsView.setOnTrashActionClickListener {
+                val job = PostTrashJobV2(listOf(message.messageId), null)
+                mJobManager.addJobInBackground(job)
+                onBackPressed()
+            }
+            messageDetailsActionsView.setOnMarkUnreadActionClickListener {
+                markAsRead = false
+                viewModel.markRead(false)
+                val job = PostUnreadJob(listOf(messageId))
+                mJobManager.addJobInBackground(job)
+                onBackPressed()
+            }
+            messageDetailsActionsView.setOnReplyActionClickListener(message) {
+                messageAction: Constants.MessageActionType ->
                 try {
                     val newMessageTitle = MessageUtils.buildNewMessageTitle(
                         this@MessageDetailsActivity,
@@ -963,7 +971,7 @@ internal class MessageDetailsActivity :
                             }
                         )
                         viewModel.prepareEditMessageIntent(
-                            messageAction!!,
+                            messageAction,
                             message,
                             newMessageTitle,
                             decryptedBody,
@@ -1013,7 +1021,7 @@ internal class MessageDetailsActivity :
                 val tv = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
                 tv.setTextColor(Color.WHITE)
                 cannotEditSnack.show()
-                action_buttons.visibility = View.INVISIBLE
+                messageDetailsActionsView.visibility = View.INVISIBLE
             } else {
                 showActionButtons = true
             }

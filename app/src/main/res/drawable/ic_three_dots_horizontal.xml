@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2020 Proton Technologies AG
   ~
@@ -17,7 +16,19 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
-<resources>
-    <integer name="fab_label_start">0</integer>
-    <integer name="fab_label_end">1</integer>
-</resources>
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="16"
+    android:viewportHeight="16">
+  <path
+      android:pathData="M14,7C14.5523,7 15,7.4477 15,8C15,8.5523 14.5523,9 14,9C13.4477,9 13,8.5523 13,8C13,7.4477 13.4477,7 14,7Z"
+      android:fillColor="@color/icon_norm"/>
+  <path
+      android:pathData="M2,7C2.5523,7 3,7.4477 3,8C3,8.5523 2.5523,9 2,9C1.4477,9 1,8.5523 1,8C1,7.4477 1.4477,7 2,7Z"
+      android:fillColor="@color/icon_norm"/>
+  <path
+      android:pathData="M8,9C8.5523,9 9,8.5523 9,8C9,7.4477 8.5523,7 8,7C7.4477,7 7,7.4477 7,8C7,8.5523 7.4477,9 8,9Z"
+      android:fillColor="@color/icon_norm"/>
+</vector>

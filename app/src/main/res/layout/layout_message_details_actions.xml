@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/interaction_strong">
+
+    <ImageButton
+        android:id="@+id/replyActionImageView"
+        android:layout_width="@dimen/message_details_actions_button_size"
+        android:layout_height="@dimen/message_details_actions_button_size"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/markUnreadActionImageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/ripple_message_details_actions"
+        android:src="@drawable/ic_reply"
+        app:tint="@color/icon_inverted" />
+
+    <ImageButton
+        android:id="@+id/markUnreadActionImageView"
+        android:layout_width="@dimen/message_details_actions_button_size"
+        android:layout_height="@dimen/message_details_actions_button_size"
+        app:layout_constraintLeft_toRightOf="@id/replyActionImageView"
+        app:layout_constraintRight_toLeftOf="@id/trashActionImageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/ripple_message_details_actions"
+        android:src="@drawable/ic_envelope_dot"
+        app:tint="@color/icon_inverted" />
+
+    <ImageButton
+        android:id="@+id/trashActionImageView"
+        android:layout_width="@dimen/message_details_actions_button_size"
+        android:layout_height="@dimen/message_details_actions_button_size"
+        app:layout_constraintLeft_toRightOf="@id/markUnreadActionImageView"
+        app:layout_constraintRight_toLeftOf="@id/moreActionImageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/ripple_message_details_actions"
+        android:src="@drawable/ic_trash"
+        app:tint="@color/icon_inverted" />
+
+    <ImageButton
+        android:id="@+id/moreActionImageView"
+        android:layout_width="@dimen/message_details_actions_button_size"
+        android:layout_height="@dimen/message_details_actions_button_size"
+        app:layout_constraintLeft_toRightOf="@id/trashActionImageView"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/ripple_message_details_actions"
+        android:src="@drawable/ic_three_dots_horizontal"
+        app:tint="@color/icon_inverted" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

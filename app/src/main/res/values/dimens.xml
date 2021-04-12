@@ -62,6 +62,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <dimen name="message_details_banner_drawable_padding">8dp</dimen>
     <dimen name="message_details_banner_small_icon_size">16dp</dimen>
 
+    <dimen name="message_details_actions_button_size">40dp</dimen>
+
     <dimen name="divider_size">2px</dimen>
     <!-- V4 -->
 
