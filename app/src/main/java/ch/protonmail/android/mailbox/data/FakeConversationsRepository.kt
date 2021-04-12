@@ -72,7 +72,8 @@ class FakeConversationsRepository @Inject constructor() : ConversationsRepositor
                                 emptyList(),
                                 ""
                             )
-                        )
+                        ),
+                        1617205075000
                     )
                 )
             )

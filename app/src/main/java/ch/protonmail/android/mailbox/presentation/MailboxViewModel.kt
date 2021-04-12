@@ -65,6 +65,7 @@ import kotlin.collections.set
 const val FLOW_START_ACTIVITY = 1
 const val FLOW_USED_SPACE_CHANGED = 2
 const val FLOW_TRY_COMPOSE = 3
+private const val STARRED_LABEL_ID = "10"
 
 @HiltViewModel
 class MailboxViewModel @Inject constructor(
@@ -286,9 +287,9 @@ class MailboxViewModel @Inject constructor(
                 conversation.id,
                 conversation.senders.joinToString { getCorrespondentDisplayName(it, contacts) },
                 conversation.subject,
-                conversation.messages?.maxOf { it.timeMs } ?: 0L,
+                conversation.contextTimeMs,
                 conversation.attachmentsCount > 0,
-                false,
+                conversation.labelIds.contains(STARRED_LABEL_ID),
                 conversation.unreadCount == 0,
                 conversation.expirationTime,
                 conversation.messagesCount,

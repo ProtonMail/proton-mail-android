@@ -71,6 +71,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+private const val STARRED_LABEL_ID = "10"
 
 class MailboxViewModelTest : CoroutinesTest {
 
@@ -583,10 +584,6 @@ class MailboxViewModelTest : CoroutinesTest {
     fun getMailboxItemsReturnsMailboxItemsMappedFromConversationsWhenGetConversationsUseCaseSucceeds() =
         runBlockingTest {
             val location = Constants.MessageLocationType.INBOX
-            val labelId = "labelId923842"
-            val includeLabels = true
-            val uuid = "9238423bbe2h3423489wssdf"
-            val refreshMessages = false
             val senders = listOf(
                 Correspondent("firstSender", "firstsender@protonmail.com")
             )
@@ -601,7 +598,8 @@ class MailboxViewModelTest : CoroutinesTest {
                 823764623,
                 "senderAddressId",
                 listOf(),
-                null
+                null,
+                0
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
@@ -609,10 +607,10 @@ class MailboxViewModelTest : CoroutinesTest {
 
             val actual = viewModel.getMailboxItems(
                 location,
-                labelId,
-                includeLabels,
-                uuid,
-                refreshMessages,
+                "labelId923842",
+                true,
+                "9238423bbe2h3423489wssdf",
+                false,
             ).testObserver()
 
             val expected = listOf(
@@ -639,10 +637,6 @@ class MailboxViewModelTest : CoroutinesTest {
     fun getMailboxItemsMapsConversationsSendersUsingContactNameOrSenderNameOrEmailInThisPreferenceOrder() =
         runBlockingTest {
             val location = Constants.MessageLocationType.INBOX
-            val labelId = "labelId923842"
-            val includeLabels = true
-            val uuid = "9238423bbe2h3423489wssdf"
-            val refreshMessages = false
             val senders = listOf(
                 Correspondent("firstSender", "firstsender@protonmail.com"),
                 Correspondent("secondSender", "anotherSender@protonmail.com"),
@@ -663,7 +657,8 @@ class MailboxViewModelTest : CoroutinesTest {
                 123423423,
                 "senderAddressId",
                 listOf(),
-                null
+                null,
+                0
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
@@ -674,10 +669,10 @@ class MailboxViewModelTest : CoroutinesTest {
 
             val actual = viewModel.getMailboxItems(
                 location,
-                labelId,
-                includeLabels,
-                uuid,
-                refreshMessages,
+                "labelId923842",
+                true,
+                "9238423bbe2h3423489wssdf",
+                false,
             ).testObserver()
 
             val expected = listOf(
@@ -700,6 +695,60 @@ class MailboxViewModelTest : CoroutinesTest {
             assertEquals(expected, actual.observedValues.first())
         }
 
+    @Test
+    fun getMailboxItemsMapsConversationAsStarredIfLabelIdsContainsStarredLabelId() =
+        runBlockingTest {
+            val location = Constants.MessageLocationType.INBOX
+            val conversation = Conversation(
+                "conversationId9238",
+                "subject9237472",
+                emptyList(),
+                emptyList(),
+                2,
+                1,
+                0,
+                0,
+                "senderAddressId",
+                listOf(STARRED_LABEL_ID, "randomLabelId"),
+                null,
+                1617982191
+            )
+            val successResult = GetConversationsResult.Success(listOf(conversation))
+            every { conversationModeEnabled(location) } returns true
+            coEvery { getConversations(location) } returns flowOf(successResult)
+            coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
+                listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
+            )
+
+            val actual = viewModel.getMailboxItems(
+                location,
+                "labelId923842",
+                true,
+                "9238423bbe2h3423489wssdf",
+                false,
+            ).testObserver()
+
+            val expected = listOf(
+                MailboxUiItem(
+                    "conversationId9238",
+                    "",
+                    "subject9237472",
+                    lastMessageTimeMs = 1617982191,
+                    hasAttachments = false,
+                    isStarred = true,
+                    isRead = false,
+                    expirationTime = 0,
+                    messagesCount = 2,
+                    messageData = null,
+                    isDeleted = false,
+                    labelIds = listOf(STARRED_LABEL_ID, "randomLabelId"),
+                    recipients = ""
+                )
+            )
+            assertEquals(expected, actual.observedValues.first())
+        }
+
+   
     private fun fakeMailboxUiData(
         itemId: String,
         senderName: String,

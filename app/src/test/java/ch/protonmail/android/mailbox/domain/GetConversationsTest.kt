@@ -98,5 +98,9 @@ class GetConversationsTest : CoroutinesTest {
         1,
         0,
         listOf()
+        "addressId",
+        listOf(),
+        listOf(),
+        823747238
     )
 }

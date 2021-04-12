@@ -32,4 +32,8 @@ data class Conversation(
     val attachmentsCount: Int,
     val expirationTime: Long,
     val labels: List<LabelContext>,
+    val addressId: String,
+    val labelIds: List<String>,
+    val messages: List<MessageEntity>?,
+    val contextTimeMs: Long
 )
