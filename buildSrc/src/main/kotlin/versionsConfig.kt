@@ -99,6 +99,7 @@ const val `browserstack-plugin version` =       "3.0.1"         // Released: Jun
 const val `uiautomator version` =               "2.2.0"         // Released: Oct 25, 2018
 const val `sun-mail-android version` =          "1.5.5"         // Released: Mar 06, 2020
 const val `turbine version` =                   "0.5.1"         // Released: Mar 15, 2021
+const val `junit-ktx version` =                 "1.1.2"         // Released: Aug 06, 2020
 
 // Android
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020

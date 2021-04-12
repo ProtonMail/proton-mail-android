@@ -17,27 +17,26 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.uitests.tests
+package ch.protonmail.android
 
 import ch.protonmail.android.di.BaseUrl
-import ch.protonmail.android.uitests.robots.login.LoginRobot
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import dagger.hilt.android.testing.HiltTestApplication
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
-import org.robolectric.annotation.Config
 import javax.inject.Inject
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @HiltAndroidTest
-@Config(application = HiltTestApplication::class)
-class HiltTestDemo {
+class ExampleCustomInjectionTest {
 
-    @get:Rule
+    @get:Rule(order = 0) // Ensures that the Hilt component is initialized before running the ActivityScenarioRule
     var hiltRule = HiltAndroidRule(this)
 
-    private val loginRobot = LoginRobot()
+//    @get:Rule(order = 1)
+//    val activityRule = activityScenarioRule<SplashActivity>()
 
     @Inject
     @BaseUrl
@@ -49,9 +48,10 @@ class HiltTestDemo {
     }
 
     @Test
-    fun justTestIt() {
+    fun verifyBaseUrl() {
 
+        assertThat(baseUrl).isNotNull
+        assertEquals("http://localhost:8080/", baseUrl)
     }
-
 
 }
