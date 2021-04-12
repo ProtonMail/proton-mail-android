@@ -21,7 +21,7 @@ package ch.protonmail.android.mailbox.presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.map
+import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
@@ -39,8 +39,10 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetConversationsResult
+import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
 import ch.protonmail.android.usecase.VerifyConnection
@@ -51,6 +53,7 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -261,87 +264,92 @@ class MailboxViewModel @Inject constructor(
         }
 
         return getLiveDataByLocation(location, labelId).switchMap {
-            messagesToMailboxItems(it)
+            liveData { emit(messagesToMailboxItems(it)) }
         }
     }
 
     private fun getConversationsAsMailboxItems(
         location: Constants.MessageLocationType
     ): LiveData<List<MailboxUiItem>> {
-        return getConversations(location).asLiveData().map { result ->
+        return getConversations(location).map { result ->
             if (result is GetConversationsResult.Success) {
-                return@map result.conversations.map { conversation ->
-                    MailboxUiItem(
-                        conversation.id,
-                        conversation.senders.first().name,
-                        conversation.subject,
-                        0L,
-                        conversation.attachmentsCount > 0,
-                        false,
-                        conversation.unreadCount == 0,
-                        conversation.expirationTime,
-                        conversation.messagesCount,
-                        null,
-                        false,
-                        conversation.labelIds,
-                        conversation.receivers.joinToString { it.name }
-                    )
-                }
+                return@map conversationsToMailboxItems(result.conversations)
             }
             return@map listOf()
-        }
+        }.asLiveData()
     }
 
-    fun messagesToMailboxItems(messages: List<Message>): LiveData<List<MailboxUiItem>> {
-        val mailboxItems = MutableLiveData<List<MailboxUiItem>>()
-        viewModelScope.launch(dispatchers.Io) {
-            val contacts = contactsRepository.findAllContactEmails().first()
-
-            mailboxItems.postValue(
-                messages.map { message ->
-                    val senderName = getSenderNameToDisplay(contacts, message)
-
-                    val messageData = MessageData(
-                        message.location,
-                        message.isReplied ?: false,
-                        message.isRepliedAll ?: false,
-                        message.isForwarded ?: false,
-                        message.isInline,
-                    )
-
-                    MailboxUiItem(
-                        message.messageId!!,
-                        senderName,
-                        message.subject!!,
-                        message.timeMs,
-                        message.numAttachments > 0,
-                        message.isStarred ?: false,
-                        message.isRead,
-                        message.expirationTime,
-                        0,
-                        messageData,
-                        message.deleted,
-                        message.allLabelIDs,
-                        message.toListStringGroupsAware
-                    )
-                }
+    private suspend fun conversationsToMailboxItems(conversations: List<Conversation>): List<MailboxUiItem> {
+        val contacts = contactsRepository.findAllContactEmails().first()
+        return conversations.map { conversation ->
+            MailboxUiItem(
+                conversation.id,
+                conversation.senders.joinToString { getCorrespondentDisplayName(it, contacts) },
+                conversation.subject,
+                conversation.messages?.maxOf { it.timeMs } ?: 0L,
+                conversation.attachmentsCount > 0,
+                false,
+                conversation.unreadCount == 0,
+                conversation.expirationTime,
+                conversation.messagesCount,
+                null,
+                false,
+                conversation.labelIds,
+                conversation.receivers.joinToString { it.name }
             )
         }
-        return mailboxItems
     }
 
-    private fun getSenderNameToDisplay(contacts: List<ContactEmail>, message: Message): String {
-        val senderNameFromContacts = contacts.find { message.senderEmail == it.email }?.name
+    private suspend fun messagesToMailboxItems(messages: List<Message>): List<MailboxUiItem> {
+        val contacts = contactsRepository.findAllContactEmails().first()
 
-        senderNameFromContacts?.let {
-            return it
+        return messages.map { message ->
+            val senderName = getSenderDisplayName(message, contacts)
+
+            val messageData = MessageData(
+                message.location,
+                message.isReplied ?: false,
+                message.isRepliedAll ?: false,
+                message.isForwarded ?: false,
+                message.isInline,
+            )
+
+            MailboxUiItem(
+                message.messageId!!,
+                senderName,
+                message.subject!!,
+                message.timeMs,
+                message.numAttachments > 0,
+                message.isStarred ?: false,
+                message.isRead,
+                message.expirationTime,
+                0,
+                messageData,
+                message.deleted,
+                message.allLabelIDs,
+                message.toListStringGroupsAware
+            )
+        }
+    }
+
+    private fun getSenderDisplayName(message: Message, contacts: List<ContactEmail>) =
+        getCorrespondentDisplayName(
+            Correspondent(message.senderName ?: "", message.senderEmail),
+            contacts
+        )
+
+    private fun getCorrespondentDisplayName(correspondent: Correspondent, contacts: List<ContactEmail>): String {
+        val senderNameFromContacts = contacts.find { correspondent.address == it.email }?.name
+
+        if (!senderNameFromContacts.isNullOrEmpty()) {
+            return senderNameFromContacts
         }
 
-        message.senderName?.let {
-            if (it.isNotEmpty()) return it
+        if (correspondent.name.isNotEmpty()) {
+            return correspondent.name
         }
 
-        return message.senderEmail
+        return correspondent.address
     }
 
     private fun getAllLabelsByIds(labelIds: List<String>) =
@@ -393,14 +401,13 @@ class MailboxViewModel @Inject constructor(
             LABEL,
             LABEL_OFFLINE,
             LABEL_FOLDER -> messageDetailsRepository.getMessagesByLabelIdAsync(labelId!!)
+            SEARCH -> messageDetailsRepository.getAllSearchMessages()
             DRAFT,
             SENT,
             ARCHIVE,
             INBOX,
-            SEARCH,
             SPAM,
-            TRASH ->
-                messageDetailsRepository.getMessagesByLocationAsync(mailboxLocation.messageLocationTypeValue)
+            TRASH -> messageDetailsRepository.getMessagesByLocationAsync(mailboxLocation.messageLocationTypeValue)
             ALL_MAIL -> messageDetailsRepository.getAllMessages()
             INVALID -> throw IllegalArgumentException("Invalid location.")
             else -> throw IllegalArgumentException("Unknown location: $mailboxLocation")

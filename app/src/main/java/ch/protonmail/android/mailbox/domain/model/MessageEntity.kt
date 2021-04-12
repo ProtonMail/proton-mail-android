@@ -26,7 +26,7 @@ data class MessageEntity(
     val isUnread: Boolean,
     val sender: Correspondent,
     val receivers: List<Correspondent>,
-    val time: Long,
+    val timeMs: Long,
     val attachmentsCount: Int,
     val expirationTime: Int,
     val isReplied: Boolean,

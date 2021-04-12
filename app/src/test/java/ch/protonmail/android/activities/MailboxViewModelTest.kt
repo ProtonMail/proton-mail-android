@@ -38,7 +38,6 @@ import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.Correspondent
-import ch.protonmail.android.mailbox.domain.model.MessageEntity
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
@@ -66,6 +65,7 @@ import io.mockk.verifySequence
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import org.junit.After
 import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -125,6 +125,17 @@ class MailboxViewModelTest : CoroutinesTest {
             conversationModeEnabled,
             getConversations
         )
+
+        val jobEntryPoint = mockk<JobEntryPoint>()
+        mockkStatic(EntryPoints::class)
+        every { EntryPoints.get(any(), JobEntryPoint::class.java) } returns jobEntryPoint
+        every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
+        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
+    }
+
+    @After
+    fun tearDown() {
+        unmockkStatic(EntryPoints::class)
     }
 
     @Test
@@ -144,16 +155,24 @@ class MailboxViewModelTest : CoroutinesTest {
         mockk<MessageUtils> {
             every { toContactsAndGroupsString(recipients) } returns "recipientName"
         }
+        every { conversationModeEnabled(any()) } returns false
+        every { messageDetailsRepository.getMessagesByLocationAsync(any()) } returns liveData { emit(messages) }
 
         // When
-        val actual = viewModel.messagesToMailboxItems(messages).testObserver()
+        val actual = viewModel.getMailboxItems(
+            Constants.MessageLocationType.INBOX,
+            "",
+            false,
+            "",
+            false
+        ).testObserver()
 
         // Then
         val expected = MailboxUiItem(
             itemId = "messageId",
             senderName = "senderName9238",
             subject = "subject",
-            timeMs = 0,
+            lastMessageTimeMs = 0,
             hasAttachments = false,
             isStarred = false,
             isRead = true,
@@ -193,16 +212,24 @@ class MailboxViewModelTest : CoroutinesTest {
         mockk<MessageUtils> {
             every { toContactsAndGroupsString(recipients) } returns "recipientName"
         }
+        every { conversationModeEnabled(any()) } returns false
+        every { messageDetailsRepository.getMessagesByLocationAsync(any()) } returns liveData { emit(messages) }
 
         // When
-        val actual = viewModel.messagesToMailboxItems(messages).testObserver()
+        val actual = viewModel.getMailboxItems(
+            Constants.MessageLocationType.INBOX,
+            "",
+            false,
+            "",
+            false
+        ).testObserver()
 
         // Then
         val expected = MailboxUiItem(
             itemId = "messageId",
             senderName = contactName,
             subject = "subject",
-            timeMs = 0,
+            lastMessageTimeMs = 0,
             hasAttachments = false,
             isStarred = false,
             isRead = true,
@@ -235,20 +262,27 @@ class MailboxViewModelTest : CoroutinesTest {
                 subject = "subject"
             }
         )
-        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
         mockk<MessageUtils> {
             every { toContactsAndGroupsString(recipients) } returns "recipientName"
         }
+        every { conversationModeEnabled(any()) } returns false
+        every { messageDetailsRepository.getMessagesByLocationAsync(any()) } returns liveData { emit(messages) }
 
         // When
-        val actual = viewModel.messagesToMailboxItems(messages).testObserver()
+        val actual = viewModel.getMailboxItems(
+            Constants.MessageLocationType.INBOX,
+            "",
+            false,
+            "",
+            false
+        ).testObserver()
 
         // Then
         val expected = MailboxUiItem(
             itemId = "messageId",
             senderName = "anySenderEmail@protonmail.ch",
             subject = "subject",
-            timeMs = 0,
+            lastMessageTimeMs = 0,
             hasAttachments = false,
             isStarred = false,
             isRead = true,
@@ -280,20 +314,27 @@ class MailboxViewModelTest : CoroutinesTest {
                 subject = "subject"
             }
         )
-        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
         mockk<MessageUtils> {
             every { toContactsAndGroupsString(recipients) } returns "recipientName"
         }
+        every { conversationModeEnabled(any()) } returns false
+        every { messageDetailsRepository.getMessagesByLocationAsync(any()) } returns liveData { emit(messages) }
 
         // When
-        val actual = viewModel.messagesToMailboxItems(messages).testObserver()
+        val actual = viewModel.getMailboxItems(
+            Constants.MessageLocationType.INBOX,
+            "",
+            false,
+            "",
+            false
+        ).testObserver()
 
         // Then
         val expected = MailboxUiItem(
             itemId = "messageId",
             senderName = "anySenderEmail8437@protonmail.ch",
             subject = "subject",
-            timeMs = 0,
+            lastMessageTimeMs = 0,
             hasAttachments = false,
             isStarred = false,
             isRead = true,
@@ -338,20 +379,27 @@ class MailboxViewModelTest : CoroutinesTest {
                 isInline = false
             }
         )
-        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
         mockk<MessageUtils> {
             every { toContactsAndGroupsString(recipients) } returns "recipientName"
         }
+        every { conversationModeEnabled(any()) } returns false
+        every { messageDetailsRepository.getMessagesByLocationAsync(any()) } returns liveData { emit(messages) }
 
         // When
-        val actual = viewModel.messagesToMailboxItems(messages).testObserver()
+        val actual = viewModel.getMailboxItems(
+            Constants.MessageLocationType.INBOX,
+            "",
+            false,
+            "",
+            false
+        ).testObserver()
 
         // Then
         val expected = MailboxUiItem(
             itemId = "messageId",
             senderName = "senderName",
             subject = "subject",
-            timeMs = 1617205075000, // Wednesday, March 31, 2021 5:37:55 PM GMT+02:00 in millis
+            lastMessageTimeMs = 1617205075000, // Wednesday, March 31, 2021 5:37:55 PM GMT+02:00 in millis
             hasAttachments = true,
             isStarred = true,
             isRead = false,
@@ -381,10 +429,6 @@ class MailboxViewModelTest : CoroutinesTest {
         val includeLabels = true
         val uuid = "9238423bbe2h3423489wssdf"
         val refreshMessages = false
-        val jobEntryPoint = mockk<JobEntryPoint>()
-        mockkStatic(EntryPoints::class)
-        every { EntryPoints.get(any(), JobEntryPoint::class.java) } returns jobEntryPoint
-        every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
 
         viewModel.getMailboxItems(
             location,
@@ -411,12 +455,7 @@ class MailboxViewModelTest : CoroutinesTest {
             sender = MessageSender("senderName", "sender@pm.me"),
             subject = "subject1283"
         )
-        val jobEntryPoint = mockk<JobEntryPoint>()
-        mockkStatic(EntryPoints::class)
-        every { EntryPoints.get(any(), JobEntryPoint::class.java) } returns jobEntryPoint
-        every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
         coEvery { messageDetailsRepository.getAllMessages() } returns liveData { emit(listOf(message)) }
-        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
 
         val actual = viewModel.getMailboxItems(
             Constants.MessageLocationType.ALL_MAIL,
@@ -430,7 +469,6 @@ class MailboxViewModelTest : CoroutinesTest {
             fakeMailboxUiData("messageId9238482", "senderName", "subject1283")
         )
         assertEquals(expected, actual.observedValues.first())
-        unmockkStatic(EntryPoints::class)
     }
 
     @Test
@@ -503,7 +541,6 @@ class MailboxViewModelTest : CoroutinesTest {
         coEvery { messageDetailsRepository.getMessagesByLabelIdAsync(labelId) } returns liveData {
             emit(listOf(message))
         }
-        coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
 
         val actual = viewModel.getMailboxItems(
             location,
@@ -550,12 +587,22 @@ class MailboxViewModelTest : CoroutinesTest {
             val includeLabels = true
             val uuid = "9238423bbe2h3423489wssdf"
             val refreshMessages = false
-            val sender = Correspondent("senderName", "sender@protonmail.com")
-            val recipients = listOf(
-                Correspondent("recipient", "recipient@protonmail.com"),
-                Correspondent("recipient1", "recipient1@pm.ch")
+            val senders = listOf(
+                Correspondent("firstSender", "firstsender@protonmail.com")
             )
-            val conversation = buildFakeConversation(sender, recipients)
+            val conversation = Conversation(
+                "conversationId124",
+                "subject2345",
+                senders,
+                emptyList(),
+                4,
+                0,
+                2,
+                823764623,
+                "senderAddressId",
+                listOf(),
+                null
+            )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
             coEvery { getConversations(location) } returns flowOf(successResult)
@@ -570,15 +617,80 @@ class MailboxViewModelTest : CoroutinesTest {
 
             val expected = listOf(
                 MailboxUiItem(
+                    "conversationId124",
+                    "firstSender",
+                    "subject2345",
+                    lastMessageTimeMs = 0,
+                    hasAttachments = true,
+                    isStarred = false,
+                    isRead = true,
+                    expirationTime = 823764623,
+                    messagesCount = 4,
+                    messageData = null,
+                    isDeleted = false,
+                    labelIds = emptyList(),
+                    recipients = ""
+                )
+            )
+            assertEquals(expected, actual.observedValues.first())
+        }
+
+    @Test
+    fun getMailboxItemsMapsConversationsSendersUsingContactNameOrSenderNameOrEmailInThisPreferenceOrder() =
+        runBlockingTest {
+            val location = Constants.MessageLocationType.INBOX
+            val labelId = "labelId923842"
+            val includeLabels = true
+            val uuid = "9238423bbe2h3423489wssdf"
+            val refreshMessages = false
+            val senders = listOf(
+                Correspondent("firstSender", "firstsender@protonmail.com"),
+                Correspondent("secondSender", "anotherSender@protonmail.com"),
+                Correspondent("", "thirdsender@pm.me"),
+            )
+            val recipients = listOf(
+                Correspondent("recipient", "recipient@protonmail.com"),
+                Correspondent("recipient1", "recipient1@pm.ch")
+            )
+            val conversation = Conversation(
+                "conversationId",
+                "subject",
+                senders,
+                recipients,
+                2,
+                1,
+                2,
+                123423423,
+                "senderAddressId",
+                listOf(),
+                null
+            )
+            val successResult = GetConversationsResult.Success(listOf(conversation))
+            every { conversationModeEnabled(location) } returns true
+            coEvery { getConversations(location) } returns flowOf(successResult)
+            coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
+                listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
+            )
+
+            val actual = viewModel.getMailboxItems(
+                location,
+                labelId,
+                includeLabels,
+                uuid,
+                refreshMessages,
+            ).testObserver()
+
+            val expected = listOf(
+                MailboxUiItem(
                     "conversationId",
-                    "senderName",
+                    "firstContactName, secondSender, thirdsender@pm.me",
                     "subject",
-                    0,
+                    lastMessageTimeMs = 0,
                     hasAttachments = true,
                     isStarred = false,
                     isRead = false,
-                    expirationTime = 0,
-                    messagesCount = 4,
+                    expirationTime = 123423423,
+                    messagesCount = 2,
                     messageData = null,
                     isDeleted = false,
                     labelIds = emptyList(),
@@ -587,41 +699,6 @@ class MailboxViewModelTest : CoroutinesTest {
             )
             assertEquals(expected, actual.observedValues.first())
         }
-
-    private fun buildFakeConversation(
-        sender: Correspondent,
-        recipients: List<Correspondent>
-    ) = Conversation(
-        "conversationId",
-        "subject",
-        listOf(sender),
-        recipients,
-        4,
-        1,
-        2,
-        0,
-        "senderAddressId",
-        listOf(),
-        listOf(
-            MessageEntity(
-                "messageId",
-                "conversationId",
-                "subject",
-                true,
-                sender,
-                recipients,
-                123421L,
-                0,
-                0,
-                false,
-                false,
-                true,
-                emptyList(),
-                emptyList(),
-                ""
-            )
-        )
-    )
 
     private fun fakeMailboxUiData(
         itemId: String,
@@ -639,10 +716,10 @@ class MailboxViewModelTest : CoroutinesTest {
         messagesCount = 0,
         messageData = MessageData(
             Constants.MessageLocationType.INVALID.messageLocationTypeValue,
-            false,
-            false,
-            false,
-            false
+            isReplied = false,
+            isRepliedAll = false,
+            isForwarded = false,
+            isInline = false
         ),
         isDeleted = false,
         labelIds = emptyList(),

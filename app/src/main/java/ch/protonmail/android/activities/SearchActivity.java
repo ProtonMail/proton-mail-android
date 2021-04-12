@@ -35,6 +35,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.otto.Subscribe;
 
+import java.util.UUID;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -136,14 +138,19 @@ public class SearchActivity extends BaseActivity {
             return null;
         });
 
-        messageDetailsRepository.getAllSearchMessages().observe(this, messages -> {
-            mailboxViewModel.messagesToMailboxItems(messages).observe(this, mailboxUiItems -> {
-                mAdapter.clear();
-                mAdapter.addAll(mailboxUiItems);
-                setLoadingMore(false);
-                mProgressBar.setVisibility(View.GONE);
-                mAdapter.setNewLocation(MessageLocationType.SEARCH);
-            });
+        mailboxViewModel.getMailboxItems(
+                MessageLocationType.SEARCH,
+                "",
+                false,
+                UUID.randomUUID().toString(),
+                false,
+                null
+        ).observe(this, mailboxUiItems -> {
+            mAdapter.clear();
+            mAdapter.addAll(mailboxUiItems);
+            setLoadingMore(false);
+            mProgressBar.setVisibility(View.GONE);
+            mAdapter.setNewLocation(MessageLocationType.SEARCH);
         });
 
         messageDetailsRepository.getAllLabels().observe(this, labels -> {
