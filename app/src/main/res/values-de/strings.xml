@@ -987,4 +987,5 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="invalid_firebase_api_key_message">Ungültiger Firebase API-Schlüssel. Push-Benachrichtigungen werden nicht funktionieren.</string>
     <string name="failed_saving_draft_online">Speichern des Online-Entwurfs für Nachricht „%s” fehlgeschlagen</string>
     <string name="cannot_open_message_while_being_sent">Nachricht kann während des Sendens nicht geöffnet werden</string>
+    <string name="enable_conversation_mode">Themenbaum aktivieren</string>
 </resources>

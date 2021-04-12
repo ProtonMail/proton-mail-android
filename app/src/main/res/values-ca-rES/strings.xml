@@ -1001,4 +1001,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_firebase_api_key_message">La clau de l\'API de Firebase no és vàlida. Les notificacions Push no funcionaran.</string>
     <string name="failed_saving_draft_online">Error en desar un borrador en línia pel missatge: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">No es pot obrir aquest missatge mentre s\'envia</string>
+    <string name="enable_conversation_mode">Habilitar el mode de conversa</string>
 </resources>

@@ -988,4 +988,5 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="invalid_firebase_api_key_message">Kunci API Firebase tidak valid. Notifikasi dorong tidak akan bekerja.</string>
     <string name="failed_saving_draft_online">Gagal menyimpan draf daring pesan: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Tidak dapat membuka pesan ini saat sedang dikirim</string>
+    <string name="enable_conversation_mode">Aktifkan mode percakapan</string>
 </resources>
