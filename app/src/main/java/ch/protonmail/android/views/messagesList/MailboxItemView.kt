@@ -88,12 +88,20 @@ class MailboxItemView @JvmOverloads constructor(
         }
     }
 
-    private fun getSenderText(messageLocation: Constants.MessageLocationType, message: Message) =
+    private fun getSenderText(messageLocation: Constants.MessageLocationType, mailboxUiItem: MailboxUiItem) =
         if (isDraft(mailboxUiItem)) {
             mailboxUiItem.recipients
         } else {
             mailboxUiItem.senderName
         }
+
+    private fun isDraft(mailboxUiItem: MailboxUiItem): Boolean {
+        val messageLocation = mailboxUiItem.messageData?.location
+            ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
+        return Constants.MessageLocationType.fromInt(messageLocation) in arrayOf(
+            Constants.MessageLocationType.DRAFT,
+            Constants.MessageLocationType.SENT
+        )
     }
 
     private fun getIconForMessageLocation(messageLocation: Constants.MessageLocationType) = when (messageLocation) {
@@ -116,25 +124,27 @@ class MailboxItemView @JvmOverloads constructor(
         isAttachmentsBeingUploaded: Boolean
     ) {
         val readStatus = mailboxUiItem.isRead
-        val messageLocation = Constants.MessageLocationType.fromInt(mailboxUiItem.messageData?.location)
+        val messageLocation = Constants.MessageLocationType.fromInt(
+            mailboxUiItem.messageData?.location
+                ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
+        )
 
         setTextViewStyles(readStatus)
         setIconsTint(readStatus)
 
-        val senderText = getSenderText(messageLocation, message)
+        val senderText = getSenderText(messageLocation, mailboxUiItem)
         // Sender text can only be empty in drafts where we show recipients instead of senders
         senderTextView.text =
             if (senderText.isNullOrEmpty()) context.getString(R.string.empty_recipients) else senderText
         senderInitialView.bind(senderText ?: EMPTY_STRING, isMultiSelectionMode)
 
-        subjectTextView.text = message.subject
+        subjectTextView.text = mailboxUiItem.subject
 
-        timeDateTextView.text = DateUtil.formatDateTime(context, message.timeMs)
+        timeDateTextView.text = DateUtil.formatDateTime(context, mailboxUiItem.timeMs)
 
-        replyImageView.visibility =
-            if (message.isReplied == true && message.isRepliedAll != true) View.VISIBLE else View.GONE
-        replyAllImageView.visibility = if (message.isRepliedAll == true) View.VISIBLE else View.GONE
-        forwardImageView.visibility = if (message.isForwarded == true) View.VISIBLE else View.GONE
+        replyImageView.visibility = if (mailboxUiItem.messageData?.isReplied == true && !mailboxUiItem.messageData.isRepliedAll) View.VISIBLE else View.GONE
+        replyAllImageView.visibility = if (mailboxUiItem.messageData?.isRepliedAll == true) View.VISIBLE else View.GONE
+        forwardImageView.visibility = if (mailboxUiItem.messageData?.isForwarded == true) View.VISIBLE else View.GONE
 
         draftImageView.visibility = if (mailboxLocation in arrayOf(
                 Constants.MessageLocationType.DRAFT,
@@ -158,17 +168,16 @@ class MailboxItemView @JvmOverloads constructor(
             }
         }
 
-        val hasAttachments = message.Attachments.isNotEmpty() || message.numAttachments >= 1
-        attachmentImageView.visibility = if (hasAttachments) View.VISIBLE else View.GONE
+        attachmentImageView.visibility = if (mailboxUiItem.hasAttachments) View.VISIBLE else View.GONE
 
-        starImageView.visibility = if (message.isStarred == true) View.VISIBLE else View.GONE
+        starImageView.visibility = if (mailboxUiItem.isStarred) View.VISIBLE else View.GONE
 
         emptySpaceView.visibility = if (
             attachmentImageView.visibility == View.VISIBLE ||
             starImageView.visibility == View.VISIBLE
         ) View.VISIBLE else View.GONE
 
-        expirationImageView.visibility = if (message.expirationTime > 0) View.VISIBLE else View.GONE
+        expirationImageView.visibility = if (mailboxUiItem.expirationTime > 0) View.VISIBLE else View.GONE
 
         showLabels(labels)
     }

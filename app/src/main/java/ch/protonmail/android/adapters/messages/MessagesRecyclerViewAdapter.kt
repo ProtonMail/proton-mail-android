@@ -19,6 +19,7 @@
 package ch.protonmail.android.adapters.messages
 
 import android.content.Context
+import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
@@ -37,7 +38,6 @@ class MessagesRecyclerViewAdapter(
     private val context: Context,
     private val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?
 ) : RecyclerView.Adapter<MailboxItemViewHolder>() {
-
 
     private var mMailboxLocation = Constants.MessageLocationType.INVALID
 
@@ -163,7 +163,6 @@ class MessagesRecyclerViewAdapter(
         this.view.bind(
             mailboxItem,
             itemLabels,
-            selectedMailboxItemsIds.isNotEmpty(),
             mMailboxLocation,
             isBeingSent,
             isAttachmentsBeingUploaded
