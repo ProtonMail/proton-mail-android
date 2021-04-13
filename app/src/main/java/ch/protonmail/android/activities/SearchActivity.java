@@ -51,7 +51,6 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.NoResultsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel;
-import ch.protonmail.android.mailbox.presentation.MailboxViewModelFactory;
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem;
 import ch.protonmail.android.utils.AppUtil;
 import dagger.hilt.android.AndroidEntryPoint;

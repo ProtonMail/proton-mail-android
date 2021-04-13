@@ -19,6 +19,10 @@
 
 package ch.protonmail.android.featureflags
 
+import ch.protonmail.android.utils.AppUtil
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,7 +37,22 @@ class FeatureFlagsManagerTest {
     }
 
     @Test
-    fun changeViewModeFeatureFlagIsDisabled() {
+    fun changeViewModeFeatureFlagIsDisabledForNonDebugBuilds() {
+        mockkStatic(AppUtil::class)
+        every { AppUtil.isDebug() } returns false
+
         assertEquals(false, featureFlags.isChangeViewModeFeatureEnabled())
+
+        unmockkStatic(AppUtil::class)
+    }
+
+    @Test
+    fun changeViewModeFeatureFlagIsEnabledForDebugBuilds() {
+        mockkStatic(AppUtil::class)
+        every { AppUtil.isDebug() } returns true
+
+        assertEquals(true, featureFlags.isChangeViewModeFeatureEnabled())
+
+        unmockkStatic(AppUtil::class)
     }
 }
