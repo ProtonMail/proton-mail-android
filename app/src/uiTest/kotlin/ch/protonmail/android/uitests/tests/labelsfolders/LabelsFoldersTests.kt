@@ -40,6 +40,7 @@ class LabelsFoldersTests : BaseTest() {
         val newFolderName = StringUtils.getEmailString()
         loginRobot
             .loginUser(onePassUser)
+            .refreshMessageList()
             .clickMessageByPosition(1)
             .openFoldersModal()
             .clickCreateFolder()
@@ -65,6 +66,7 @@ class LabelsFoldersTests : BaseTest() {
             .loginUser(onePassUser)
             .menuDrawer()
             .sent()
+            .refreshMessageList()
             .clickMessageByPosition(1)
             .openFoldersModal()
             .moveMessageFromSentToFolder(folderName)
@@ -79,9 +81,12 @@ class LabelsFoldersTests : BaseTest() {
         val newLabelName = StringUtils.getAlphaNumericStringWithSpecialCharacters()
         loginRobot
             .loginUser(onePassUser)
+            .refreshMessageList()
             .clickMessageByPosition(1)
             .openLabelsModal()
             .addLabel(labelName)
+            .closeLabelModal()
+            .openLabelsModal()
             .selectLabelByName(labelName)
             .apply()
             .navigateUpToInbox()
@@ -103,6 +108,7 @@ class LabelsFoldersTests : BaseTest() {
             .loginUser(onePassUser)
             .menuDrawer()
             .sent()
+            .refreshMessageList()
             .clickMessageByPosition(1)
             .openLabelsModal()
             .selectLabelByName(labelName)
@@ -140,6 +146,7 @@ class LabelsFoldersTests : BaseTest() {
         val labelName = "Label 1"
         loginRobot
             .loginUser(onePassUser)
+            .refreshMessageList()
             .clickMessageByPosition(1)
             .openLabelsModal()
             .selectLabelByName(labelName)

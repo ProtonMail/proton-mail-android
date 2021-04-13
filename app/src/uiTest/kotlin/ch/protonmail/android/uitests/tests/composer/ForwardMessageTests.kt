@@ -56,6 +56,7 @@ class ForwardMessageTests : BaseTest() {
             .forward()
             .forwardMessage(to, body)
             .navigateUpToSent()
+            .refreshMessageList()
             .verify {
                 messageWithSubjectExists(fwSubject(subject))
                 messageWithSubjectHasForwardedFlag(subject)

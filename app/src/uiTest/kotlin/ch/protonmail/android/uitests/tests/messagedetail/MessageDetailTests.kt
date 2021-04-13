@@ -46,6 +46,7 @@ class MessageDetailTests : BaseTest() {
         inboxRobot
             .menuDrawer()
             .sent()
+            .refreshMessageList()
             .clickMessageByPosition(0)
             .moreOptions()
             .viewHeaders()

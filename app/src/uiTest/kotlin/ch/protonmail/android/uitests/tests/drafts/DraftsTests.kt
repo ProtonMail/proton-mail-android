@@ -186,6 +186,7 @@ class DraftsTests : BaseTest() {
     fun minimiseTheAppWhileReplyingToMessage() {
         loginRobot
             .loginUser(onePassUser)
+            .refreshMessageList()
             .clickMessageByPosition(0)
             .reply()
             .draftSubjectBody(subject, body)

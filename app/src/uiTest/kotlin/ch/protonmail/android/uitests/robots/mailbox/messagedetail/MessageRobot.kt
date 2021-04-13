@@ -187,6 +187,11 @@ class MessageRobot {
             super.apply()
             return InboxRobot()
         }
+
+        override fun closeLabelModal(): MessageRobot {
+            super.closeLabelModal()
+            return MessageRobot()
+        }
     }
 
     class FoldersDialogRobot : CoreRobot {

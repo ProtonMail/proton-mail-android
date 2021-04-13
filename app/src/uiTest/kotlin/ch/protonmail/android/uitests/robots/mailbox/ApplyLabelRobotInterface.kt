@@ -24,8 +24,9 @@ import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import ch.protonmail.android.uitests.testsHelper.uiactions.click
 import ch.protonmail.android.uitests.testsHelper.uiactions.type
+import me.proton.core.test.android.instrumented.CoreRobot
 
-interface ApplyLabelRobotInterface {
+interface ApplyLabelRobotInterface: CoreRobot {
 
     fun addLabel(name: String): Any {
         labelName(name)
@@ -52,12 +53,12 @@ interface ApplyLabelRobotInterface {
     }
 
     fun checkAlsoArchiveCheckBox(): ApplyLabelRobotInterface {
-        UIActions.wait.forViewWithId(R.id.also_archive).click()
+        view.withId(R.id.also_archive).click()
         return this
     }
 
     fun apply(): Any {
-        UIActions.wait.forViewWithId(R.id.done).click()
+        view.withId(R.id.done).click()
         return this
     }
 
@@ -67,6 +68,11 @@ interface ApplyLabelRobotInterface {
     }
 
     fun add() {
-        UIActions.wait.forViewWithId(R.id.done).click()
+        view.withId(R.id.done).click()
+    }
+
+    fun closeLabelModal(): Any {
+        view.withId(R.id.close).click()
+        return Any()
     }
 }
