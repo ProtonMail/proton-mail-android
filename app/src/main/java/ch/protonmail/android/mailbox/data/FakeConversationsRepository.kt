@@ -39,14 +39,16 @@ class FakeConversationsRepository @Inject constructor() : ConversationsRepositor
             Correspondent("recipient1", "recipient1@pm.ch")
         )
         val correspondent = Correspondent("conversation sender", "bomber@pm.me")
+        val anotherCorrespondent = Correspondent("Ronaldo", "anotherSender@protonmail.com")
+        val yetAnotherCorrespondent = Correspondent("Messi", "yetanotherfootballplayer@protonmail.com")
         return flowOf(
             DataResult.Success(
                 ResponseSource.Local,
                 listOf(
                     Conversation(
                         "conversationId",
-                        "A Fake conversation for you",
-                        listOf(correspondent),
+                        "A Fake conversation for you with a long subject that we expect to be truncated",
+                        listOf(correspondent, anotherCorrespondent, yetAnotherCorrespondent),
                         recipients,
                         4,
                         1,
@@ -74,6 +76,38 @@ class FakeConversationsRepository @Inject constructor() : ConversationsRepositor
                             )
                         ),
                         1617205075000
+                    ),
+                    Conversation(
+                        "conversationId1",
+                        "Another fake conversation",
+                        listOf(anotherCorrespondent),
+                        recipients,
+                        10,
+                        2,
+                        5,
+                        23492348,
+                        "senderAddress923942834",
+                        listOf("10", "Mylabel82384", "82374"),
+                        listOf(
+                            MessageEntity(
+                                "messageId",
+                                "conversationId",
+                                "subject",
+                                true,
+                                sender,
+                                recipients,
+                                123421L,
+                                0,
+                                0,
+                                false,
+                                false,
+                                true,
+                                emptyList(),
+                                emptyList(),
+                                ""
+                            )
+                        ),
+                        1718906095000
                     )
                 )
             )

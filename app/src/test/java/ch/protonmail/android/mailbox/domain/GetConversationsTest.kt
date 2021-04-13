@@ -21,6 +21,7 @@ package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mailbox.data.FakeConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -36,6 +37,7 @@ import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class GetConversationsTest : CoroutinesTest {
 
@@ -86,6 +88,14 @@ class GetConversationsTest : CoroutinesTest {
 
         val error = GetConversationsResult.Error
         assertEquals(error, actual.first())
+    }
+
+    @Test
+    fun conversationsRepositoryIsNotFake() {
+        // Avoid merging / releasing Fake Conversation Repository!
+        // This test should be deleted together with FakeConversationRepo once the real one is merged
+        val fakeConversationRepo = FakeConversationsRepository()
+        assertNull(fakeConversationRepo)
     }
 
     private fun buildRandomConversation() = Conversation(
