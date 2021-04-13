@@ -73,8 +73,6 @@ class AccountViewModel @ViewModelInject constructor(
 
     private val _state = MutableStateFlow(State.Processing as State)
 
-    private suspend fun UserId?.getAccount() = this?.let { getAccount(it).firstOrNull() }
-
     sealed class State {
         object Processing : State()
         object LoginClosed : State()
@@ -122,6 +120,8 @@ class AccountViewModel @ViewModelInject constructor(
 
     fun getAccount(userId: UserId) = accountManager.getAccount(userId)
 
+    suspend fun getAccountOrNull(userId: UserId) = getAccount(userId).firstOrNull()
+
     fun getAccounts() = accountManager.getAccounts()
 
     /* Order: Primary account, ready account(s), other account(s). */
@@ -145,7 +145,7 @@ class AccountViewModel @ViewModelInject constructor(
     }
 
     fun switch(userId: UserId) = viewModelScope.launch {
-        val account = userId.getAccount() ?: return@launch
+        val account = getAccountOrNull(userId) ?: return@launch
         when {
             account.isDisabled() -> authOrchestrator.startLoginWorkflow(AccountType.Internal) // TODO: Add userId.
             account.isReady() -> accountManager.setAsPrimary(userId)
@@ -166,12 +166,18 @@ class AccountViewModel @ViewModelInject constructor(
 
     fun onAccountSwitched() = getPrimaryUserId().scan(AccountSwitch()) { previous, currentUserId ->
         AccountSwitch(
-            previous = previous.current?.userId?.getAccount(),
-            current = currentUserId.getAccount()
+            previous = previous.current?.userId?.let { getAccountOrNull(it) },
+            current = currentUserId?.let { getAccountOrNull(it) }
         )
     }.filter { it.previous != null && it.current != it.previous }
 
     // region Deprecated
+
+    @Deprecated(
+        message = "Use UserId version of the function",
+        replaceWith = ReplaceWith("getAccountOrNull(UserId(userId.s))", "me.proton.core.domain.entity.UserId")
+    )
+    suspend fun getAccountOrNull(userId: Id) = getAccountOrNull(UserId(userId.s))
 
     @Deprecated(
         message = "Use UserId version of the function",

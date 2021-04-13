@@ -32,6 +32,7 @@ import android.util.Base64
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
 import ch.protonmail.android.core.PREF_USERNAME
+import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.obfuscate
@@ -57,6 +58,7 @@ import java.util.UUID
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
+import javax.inject.Singleton
 import javax.security.auth.x500.X500Principal
 
 // region constants
@@ -450,8 +452,8 @@ class SecureSharedPreferences(
      *  A [Map] of [String] usernames associated by its [Id]
      */
     class UsernameToIdMigration @Inject constructor(
-        private val dispatchers: DispatcherProvider,
-        private val context: Context
+        private val preferencesFactory: Factory,
+        private val dispatchers: DispatcherProvider
     ) {
 
         suspend operator fun invoke(usernames: Collection<String>): Map<String, Id> =
@@ -462,11 +464,11 @@ class SecureSharedPreferences(
         private fun migrateForUser(username: String): Pair<String, Id>? {
             Timber.v("Migrating SecureSharedPreferences for ${username.obfuscateUsername()}")
 
-            val oldPrefs = _getPrefsForUser(context, username)
+            @Suppress("DEPRECATION") val oldPrefs = preferencesFactory._usernamePreferences(username)
             val userId = oldPrefs.get<String>(PREF_USER_ID)?.let(::Id)
 
             return if (userId != null) {
-                val newPrefs = getPrefsForUser(context, userId)
+                val newPrefs = preferencesFactory.userPreferences(userId)
                 for ((key, value) in oldPrefs.all) {
                     newPrefs[key] = value
                 }
@@ -483,6 +485,40 @@ class SecureSharedPreferences(
 
     }
 
+    @Singleton
+    class Factory @Inject constructor(
+        private val context: Context,
+        @DefaultSharedPreferences private val defaultSharedPreferences: SharedPreferences
+    ) {
+
+        fun appPreferences(): SharedPreferences = SecureSharedPreferences(
+            context,
+            context.getSharedPreferences("ProtonMailSSP", Context.MODE_PRIVATE),
+            defaultSharedPreferences
+        )
+
+        @Suppress("FunctionName")
+        @Deprecated("This should not be used! needed only for migration!")
+        fun _usernamePreferences(
+            username: String
+        ): SharedPreferences {
+            val name = "${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-SSP"
+            return SecureSharedPreferences(
+                context,
+                context.getSharedPreferences(name, Context.MODE_PRIVATE),
+                defaultSharedPreferences
+            )
+        }
+
+        fun userPreferences(userId: Id): SharedPreferences =
+            SecureSharedPreferences(
+                context,
+                context.getSharedPreferences(userId.s, Context.MODE_PRIVATE),
+                defaultSharedPreferences
+            )
+
+    }
+
     companion object {
 
         private const val keyStoreName = "AndroidKeyStore"
@@ -494,16 +530,11 @@ class SecureSharedPreferences(
         private val userSSPs = mutableMapOf<String, SecureSharedPreferences>()
         private val usersPreferences = mutableMapOf<Id, SecureSharedPreferences>()
 
-        /**
-         * Accessor to grab the preferences in a singleton.  This stores the reference in a singleton so it can be
-         * accessed repeatedly with no performance penalty
-         *
-         * @param context     - the context used to access the preferences.
-         * @param appName     - domain the shared preferences should be stored under
-         * @param contextMode - Typically Context.MODE_PRIVATE
-         * @return
-         */
         @Synchronized
+        @Deprecated(
+            "Use SecureSharedPreferences.Factory",
+            ReplaceWith("secureSharedPreferencesFactory.appPreferences()")
+        )
         fun getPrefs(
             context: Context,
             appName: String,
@@ -519,18 +550,10 @@ class SecureSharedPreferences(
             return prefs!!
         }
 
-        private fun _getPrefsForUser(
-            context: Context,
-            username: String
-        ): SharedPreferences = userSSPs.getOrPut(username) {
-            val name = "${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-SSP"
-            SecureSharedPreferences(
-                context.applicationContext,
-                context.applicationContext.getSharedPreferences(name, Context.MODE_PRIVATE),
-                PreferenceManager.getDefaultSharedPreferences(context)
-            )
-        }
-
+        @Deprecated(
+            "Use SecureSharedPreferences.Factory",
+            ReplaceWith("secureSharedPreferencesFactory.userPreferences(userId)")
+        )
         @Synchronized
         fun getPrefsForUser(context: Context, userId: Id): SharedPreferences =
             usersPreferences.getOrPut(userId) {

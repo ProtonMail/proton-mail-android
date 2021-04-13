@@ -36,9 +36,7 @@ class LoadLegacyUser @Inject constructor(
 
     suspend operator fun invoke(userId: Id): Either<LoadUser.Error, LegacyUser> =
         withContext(dispatchers.Io) {
-            Either.catch {
-                loadLegacyUserDelegate(userId)
-            }.mapLeft { LoadUser.Error }
+            loadLegacyUserDelegate(userId)
         }
 
 }
@@ -49,7 +47,7 @@ class LoadLegacyUserDelegate @Inject constructor(
     private val userManager: UserManager
 ) {
 
-    operator fun invoke(userId: Id): LegacyUser =
+    operator fun invoke(userId: Id): Either<LoadUser.Error, LegacyUser> =
         @Suppress("DEPRECATION")
         LegacyUser.load(userId, context, userManager)
 }

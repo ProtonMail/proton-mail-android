@@ -35,7 +35,6 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_CREDIT
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_CURRENCY
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
-import ch.protonmail.android.core.Constants.Prefs.PREF_USER_LEGACY_ACCOUNT
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE
 import ch.protonmail.android.core.ProtonMailApplication
@@ -45,6 +44,7 @@ import ch.protonmail.android.domain.entity.user.Delinquent
 import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.domain.entity.user.Role
 import ch.protonmail.android.domain.entity.user.UserKeys
+import ch.protonmail.android.domain.util.orThrow
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import io.mockk.every
 import io.mockk.mockk
@@ -149,7 +149,7 @@ internal class UserBridgeMapperTest {
             every { SystemClock.elapsedRealtime() } returns 0
 
             // GIVEN
-            val oldUser = LegacyUser.load(Id("id"), mockk())
+            val oldUser = LegacyUser.load(Id("id"), mockk(), mockk()).orThrow()
 
             // WHEN
             val legacyUser = mapper { oldUser.toNewModel() }

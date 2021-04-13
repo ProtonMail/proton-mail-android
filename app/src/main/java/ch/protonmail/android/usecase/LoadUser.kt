@@ -51,5 +51,7 @@ class LoadUser @Inject constructor(
         invoke(userId)
     }
 
-    object Error : ch.protonmail.android.domain.Error()
+    sealed class Error : ch.protonmail.android.domain.Error() {
+        object NoPreferencesStored : Error()
+    }
 }

@@ -25,7 +25,6 @@ import arrow.core.right
 import assert4k.assert
 import assert4k.equals
 import assert4k.that
-import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.User
@@ -34,6 +33,7 @@ import ch.protonmail.android.usecase.FindUserIdForUsername.Error.UserNotFound
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test
 
@@ -47,9 +47,8 @@ class FindUserIdForUsernameTest : CoroutinesTest {
     private val users = setOf(user1)
     // endregion
 
-    private val accountManager: AccountManager = mockk {
-        coEvery { allSaved() } returns users.map { it.userId }.toSet()
-    }
+    private val accountManager: AccountManager = mockk()
+
     private val loadUser: LoadUser = mockk {
         coEvery { this@mockk(any()) } answers {
             users.find { it.userId == firstArg() }
@@ -58,7 +57,7 @@ class FindUserIdForUsernameTest : CoroutinesTest {
                         every { id } returns it.userId
                         every { name } returns it.username
                     }.right()
-                } ?: Left(LoadUser.Error)
+                } ?: Left(LoadUser.Error.NoPreferencesStored)
         }
     }
 
@@ -76,7 +75,7 @@ class FindUserIdForUsernameTest : CoroutinesTest {
     @Test
     fun returnsCantLoadUser() = coroutinesTest {
         // given
-        coEvery { loadUser(any()) } returns Left(LoadUser.Error)
+        coEvery { loadUser(any()) } returns Left(LoadUser.Error.NoPreferencesStored)
 
         // when
         val result = findUserIdForUsername(user1.username)

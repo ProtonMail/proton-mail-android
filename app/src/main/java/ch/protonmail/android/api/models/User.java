@@ -27,6 +27,10 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import arrow.core.Either;
+import arrow.core.Either.Left;
+import arrow.core.Either.Right;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +42,7 @@ import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.feature.user.UserManagerKt;
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
+import ch.protonmail.android.usecase.LoadUser;
 import me.proton.core.user.domain.UserManager;
 import timber.log.Timber;
 
@@ -116,8 +121,12 @@ public class User {
     @NonNull
     @Deprecated
     @kotlin.Deprecated(message = "Use usecase/LoadLegacyUser")
-    public static User load(Id userId, Context context, UserManager userManager) {
+    public static Either<LoadUser.Error, User> load(Id userId, Context context, UserManager userManager) {
         final SharedPreferences securePrefs = SecureSharedPreferences.Companion.getPrefsForUser(context, userId);
+
+        if (securePrefs.getAll().isEmpty()) {
+            return new Left(LoadUser.Error.NoPreferencesStored.INSTANCE);
+        }
 
         // Note: Core UserManager (UserRepository & UserAddressRepository) have a memory cache.
         // Get User/Keys from Core.
@@ -183,7 +192,7 @@ public class User {
             user.ringtone = Uri.parse(notificationRingtone);
         }
 
-        return user;
+        return new Right(user);
     }
 
     // region SecureSharePref

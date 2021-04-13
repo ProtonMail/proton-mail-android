@@ -20,6 +20,7 @@
 package ch.protonmail.android.usecase
 
 import arrow.core.Either
+import arrow.core.Left
 import assert4k.`is`
 import assert4k.assert
 import assert4k.equals
@@ -57,11 +58,11 @@ class LoadLegacyUserTest : CoroutinesTest {
     }
 
     @Test
-    fun returnsErrorIfDelegateThrowException() = coroutinesTest {
+    fun returnsNoPreferencesStoredFromDelegate() = coroutinesTest {
         // given
         val loadLegacyUser = LoadLegacyUser(
             loadLegacyUserDelegate = mockk {
-                every { this@mockk.invoke(any()) } answers { throw IllegalStateException() }
+                every { this@mockk.invoke(any()) } returns Left(LoadUser.Error.NoPreferencesStored)
             },
             dispatchers
         )
@@ -71,8 +72,8 @@ class LoadLegacyUserTest : CoroutinesTest {
 
         // then
         assert that result * {
-            it `is` type<Either.Left<LoadUser.Error>>()
-            +leftOrThrow() equals LoadUser.Error
+            it `is` type<Either.Left<LoadUser.Error.NoPreferencesStored>>()
+            +leftOrThrow() equals LoadUser.Error.NoPreferencesStored
         }
     }
 }

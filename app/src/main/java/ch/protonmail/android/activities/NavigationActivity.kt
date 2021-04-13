@@ -25,7 +25,6 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
@@ -85,6 +84,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.isReady
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.unsupported
@@ -192,7 +192,7 @@ abstract class NavigationActivity :
 
         accountsAdapter.onItemClick = { account ->
             if (account is DrawerUserModel.BaseUser) {
-                accountViewModel.switch(UserId(account.id.s))
+                accountViewModel.switch(account.id)
             }
         }
     }
@@ -352,28 +352,27 @@ abstract class NavigationActivity :
             lifecycleScope.launchWhenCreated {
                 val accounts = accountViewModel.getSortedAccounts().first().map { account ->
                     val id = Id(account.userId.id)
-                    val user = userManager.getUser(id)
-                    user.toDrawerUser(account.isReady(), counters[id] ?: 0)
+                    val user = userManager.getLegacyUserOrNull(id)
+                    account.toDrawerUser(account.isReady(), counters[id] ?: 0, user)
                 }
                 accountsAdapter.items = accounts + DrawerUserModel.Footer
             }
         }
     }
 
-    private fun User.toDrawerUser(loggedIn: Boolean, notificationsCount: Int): DrawerUserModel.BaseUser.DrawerUser {
-        val primaryAddress = addresses.primary
-        val username = name.s
-        val displayName = primaryAddress?.displayName?.s
-        return DrawerUserModel.BaseUser.DrawerUser(
-            id = id,
-            name = displayName ?: username,
-            emailAddress = primaryAddress?.email?.s ?: username,
-            loggedIn = loggedIn,
-            notifications = notificationsCount,
-            notificationsSnoozed = areNotificationSnoozedBlocking(id),
-            displayName = displayName ?: username
-        )
-    }
+    private fun Account.toDrawerUser(
+        loggedIn: Boolean,
+        notificationsCount: Int,
+        user: OldUser?
+    ) = DrawerUserModel.BaseUser.DrawerUser(
+        id = userId,
+        name = username,
+        emailAddress = email ?: user?.defaultAddressEmail ?: username,
+        loggedIn = loggedIn,
+        notifications = notificationsCount,
+        notificationsSnoozed = areNotificationSnoozedBlocking(Id(userId.id)),
+        displayName = user?.displayName ?: username
+    )
 
     private suspend fun areNotificationsSnoozed(userId: Id): Boolean {
         val userPreferences = SecureSharedPreferences.getPrefsForUser(this, userId)

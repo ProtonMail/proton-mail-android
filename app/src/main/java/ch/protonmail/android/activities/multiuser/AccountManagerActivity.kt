@@ -28,9 +28,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.adapters.AccountsAdapter
+import ch.protonmail.android.api.models.User
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.uiModel.DrawerUserModel
 import ch.protonmail.android.utils.extensions.setBarColors
 import ch.protonmail.android.utils.extensions.showToast
@@ -41,7 +41,9 @@ import kotlinx.android.synthetic.main.toolbar_white.*
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.isReady
+import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -75,16 +77,18 @@ class AccountManagerActivity : BaseActivity() {
             .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
             .onEach { (sortedAccounts, primaryUserId) ->
                 val accounts = sortedAccounts.map { account ->
-                    val user = userManager.getUser(Id(account.userId.id))
-                    user.toUiModel(account.isReady(), account.userId == primaryUserId)
+                    val id = Id(account.userId.id)
+                    val user = userManager.getLegacyUserOrNull(id)
+                    account.toUiModel(account.isReady(), account.userId == primaryUserId, user)
                 }
                 accountsAdapter.items = accounts + DrawerUserModel.AccFooter
             }.launchIn(lifecycleScope)
     }
 
-    private fun onRemoveClicked(userId: Id) {
+    private fun onRemoveClicked(userId: UserId) {
         lifecycleScope.launchWhenCreated {
-            val username = checkNotNull(userManager.getUser(userId)).name.s
+            val account = checkNotNull(accountViewModel.getAccountOrNull(userId))
+            val username = account.username
             showTwoButtonInfoDialog(
                 titleStringId = R.string.logout,
                 message = getString(R.string.remove_account_question, username)
@@ -94,7 +98,7 @@ class AccountManagerActivity : BaseActivity() {
         }
     }
 
-    private fun onLogoutClicked(userId: Id) {
+    private fun onLogoutClicked(userId: UserId) {
         lifecycleScope.launchWhenCreated {
             val nextLoggedInUserId = userManager.getPreviousCurrentUserId()
             val (title, message) = if (nextLoggedInUserId != null) {
@@ -139,19 +143,16 @@ class AccountManagerActivity : BaseActivity() {
         super.onBackPressed()
     }
 
-    private fun User.toUiModel(loggedIn: Boolean, currentPrimary: Boolean): DrawerUserModel.BaseUser.AccountUser {
-        val primaryAddress = addresses.primary
-        val username = name.s
-        val displayName = primaryAddress?.displayName?.s
-        return DrawerUserModel.BaseUser.AccountUser(
-            id = id,
-            name = displayName ?: username,
-            emailAddress = primaryAddress?.email?.s ?: username,
-            loggedIn = loggedIn,
-            primary = currentPrimary,
-            displayName = displayName ?: username
-        )
-    }
-
-
+    private fun Account.toUiModel(
+        loggedIn: Boolean,
+        currentPrimary: Boolean,
+        user: User?
+    ) = DrawerUserModel.BaseUser.AccountUser(
+        id = userId,
+        name = username,
+        emailAddress = email ?: user?.defaultAddressEmail ?: username,
+        loggedIn = loggedIn,
+        primary = currentPrimary,
+        displayName = user?.displayName ?: username
+    )
 }

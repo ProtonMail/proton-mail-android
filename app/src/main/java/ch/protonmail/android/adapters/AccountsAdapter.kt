@@ -29,7 +29,6 @@ import androidx.core.app.ActivityCompat.startActivityForResult
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.REQUEST_CODE_ACCOUNT_MANAGER
 import ch.protonmail.android.activities.multiuser.AccountManagerActivity
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.uiModel.DrawerUserModel
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.setAccountLetters
@@ -41,6 +40,7 @@ import kotlinx.android.synthetic.main.drawer_user_list_item.view.*
 import kotlinx.android.synthetic.main.drawer_user_list_item_footer.view.*
 import kotlinx.android.synthetic.main.user_list_item.view.*
 import kotlinx.android.synthetic.main.user_list_item_footer.view.*
+import me.proton.core.domain.entity.UserId
 import me.proton.core.presentation.ui.adapter.ProtonAdapter
 import me.proton.core.presentation.utils.inflate
 
@@ -63,13 +63,13 @@ private const val VIEW_TYPE_ACC_FOOTER = 4 // for footer list item in accounts m
 internal class AccountsAdapter :
     BaseAdapter<DrawerUserModel, AccountsAdapter.ViewHolder<DrawerUserModel>>(ModelsComparator) {
 
-    var onLoginAccount: (Id?) -> Unit = { }
-    var onLogoutAccount: (Id) -> Unit = { }
-    var onRemoveAccount: (Id) -> Unit = { }
+    var onLoginAccount: (UserId?) -> Unit = { }
+    var onLogoutAccount: (UserId) -> Unit = { }
+    var onRemoveAccount: (UserId) -> Unit = { }
 
-    private val onLoginAccountInvoker: (Id?) -> Unit get() = { onLoginAccount(it) }
-    private val onLogoutAccountInvoker: (Id) -> Unit get() = { onLogoutAccount(it) }
-    private val onRemoveAccountInvoker: (Id) -> Unit get() = { onRemoveAccount(it) }
+    private val onLoginAccountInvoker: (UserId?) -> Unit get() = { onLoginAccount(it) }
+    private val onLogoutAccountInvoker: (UserId) -> Unit get() = { onLogoutAccount(it) }
+    private val onRemoveAccountInvoker: (UserId) -> Unit get() = { onRemoveAccount(it) }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<DrawerUserModel> =
         parent.viewHolderForViewType(viewType)
@@ -85,9 +85,9 @@ internal class AccountsAdapter :
     override fun getItemViewType(position: Int) = items[position].viewType
 
     abstract class ViewHolder<DUM : DrawerUserModel>(itemView: View) : ClickableAdapter.ViewHolder<DUM>(itemView) {
-        internal var onLoginAccountInvoker: (Id?) -> Unit = { }
-        internal var onLogoutAccountInvoker: (Id) -> Unit = { }
-        internal var onRemoveAccountInvoker: (Id) -> Unit = { }
+        internal var onLoginAccountInvoker: (UserId?) -> Unit = { }
+        internal var onLogoutAccountInvoker: (UserId) -> Unit = { }
+        internal var onRemoveAccountInvoker: (UserId) -> Unit = { }
     }
 
     /** A [BaseAdapter.ItemsComparator] for the Adapter */

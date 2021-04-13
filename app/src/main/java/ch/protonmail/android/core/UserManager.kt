@@ -314,6 +314,10 @@ class UserManager @Inject constructor(
     suspend fun getLegacyUser(userId: Id): User =
         loadLegacyUser(userId).orThrow()
 
+    @Synchronized
+    suspend fun getLegacyUserOrNull(userId: Id): User? =
+        loadLegacyUser(userId).orNull()
+
     @Deprecated(
         "Should not be used, necessary only for old and Java classes",
         ReplaceWith("getLegacyUser(userId)")
