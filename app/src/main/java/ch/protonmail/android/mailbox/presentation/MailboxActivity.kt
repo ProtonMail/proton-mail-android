@@ -170,7 +170,6 @@ import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.android.workmanager.activity.getWorkManager
-import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -1573,7 +1572,7 @@ class MailboxActivity :
                 }
             }
             mailboxActivity.closeDrawer()
-            mailboxActivity.messages_list_view.scrollToPosition(0)
+            mailboxActivity.mailboxRecyclerView.scrollToPosition(0)
 
             mailboxActivity.fetchMessages(
                 fromInt(newLocation), labelId, false, mailboxActivity.syncUUID, false

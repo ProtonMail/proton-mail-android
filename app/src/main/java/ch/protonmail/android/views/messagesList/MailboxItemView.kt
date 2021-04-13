@@ -140,7 +140,7 @@ class MailboxItemView @JvmOverloads constructor(
 
         subjectTextView.text = mailboxUiItem.subject
 
-        timeDateTextView.text = DateUtil.formatDateTime(context, mailboxUiItem.timeMs)
+        timeDateTextView.text = DateUtil.formatDateTime(context, mailboxUiItem.lastMessageTimeMs)
 
         replyImageView.visibility = if (mailboxUiItem.messageData?.isReplied == true && !mailboxUiItem.messageData.isRepliedAll) View.VISIBLE else View.GONE
         replyAllImageView.visibility = if (mailboxUiItem.messageData?.isRepliedAll == true) View.VISIBLE else View.GONE
