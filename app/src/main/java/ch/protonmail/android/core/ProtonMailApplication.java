@@ -128,6 +128,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
     @Inject
     ProtonMailApiManager mApi;
     @Inject
+    SecureSharedPreferences.Factory secureSharedPreferencesFactory;
+    @Inject
     OpenPGP mOpenPGP;
 
     @Inject
@@ -238,8 +240,10 @@ public class ProtonMailApplication extends Application implements androidx.work.
     }
 
     @NonNull
+    @Deprecated
+    @kotlin.Deprecated(message = "Use SecureSharedPreferences.Factory.appPreferences")
     public SharedPreferences getSecureSharedPreferences() {
-        return SecureSharedPreferences.Companion.getPrefs(this, "ProtonMailSSP", Context.MODE_PRIVATE);
+        return secureSharedPreferencesFactory.appPreferences();
     }
 
     @NonNull

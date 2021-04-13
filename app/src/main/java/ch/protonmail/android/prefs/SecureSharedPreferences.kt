@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.prefs
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -58,7 +57,6 @@ import java.util.UUID
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
-import javax.inject.Singleton
 import javax.security.auth.x500.X500Principal
 
 // region constants
@@ -485,7 +483,6 @@ class SecureSharedPreferences(
 
     }
 
-    @Singleton
     class Factory @Inject constructor(
         private val context: Context,
         @DefaultSharedPreferences private val defaultSharedPreferences: SharedPreferences
@@ -525,30 +522,6 @@ class SecureSharedPreferences(
         private const val asymmetricKeyAlias = "ProtonMailKey"
 
         private lateinit var SEKRIT: CharArray
-        @SuppressLint("StaticFieldLeak")
-        private var prefs: SecureSharedPreferences? = null
-        private val userSSPs = mutableMapOf<String, SecureSharedPreferences>()
-        private val usersPreferences = mutableMapOf<Id, SecureSharedPreferences>()
-
-        @Synchronized
-        @Deprecated(
-            "Use SecureSharedPreferences.Factory",
-            ReplaceWith("secureSharedPreferencesFactory.appPreferences()")
-        )
-        fun getPrefs(
-            context: Context,
-            appName: String,
-            contextMode: Int = Context.MODE_PRIVATE
-        ): SharedPreferences {
-            if (prefs == null) {
-                prefs = SecureSharedPreferences(
-                    context.applicationContext,
-                    context.applicationContext.getSharedPreferences(appName, contextMode),
-                    PreferenceManager.getDefaultSharedPreferences(context)
-                )
-            }
-            return prefs!!
-        }
 
         @Deprecated(
             "Use SecureSharedPreferences.Factory",
@@ -556,12 +529,9 @@ class SecureSharedPreferences(
         )
         @Synchronized
         fun getPrefsForUser(context: Context, userId: Id): SharedPreferences =
-            usersPreferences.getOrPut(userId) {
-                SecureSharedPreferences(
-                    context.applicationContext,
-                    context.applicationContext.getSharedPreferences(userId.s, Context.MODE_PRIVATE),
-                    PreferenceManager.getDefaultSharedPreferences(context)
-                )
-            }
+            Factory(
+                context.applicationContext,
+                PreferenceManager.getDefaultSharedPreferences(context)
+            ).userPreferences(userId)
     }
 }
