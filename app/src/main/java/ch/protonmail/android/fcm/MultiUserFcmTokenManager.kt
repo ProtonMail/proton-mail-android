@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.fcm
 
-import android.content.Context
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.allLoggedIn
 import ch.protonmail.android.feature.account.allSaved
@@ -29,8 +28,8 @@ import me.proton.core.accountmanager.domain.AccountManager
 import javax.inject.Inject
 
 class MultiUserFcmTokenManager @Inject constructor(
-    private val context: Context,
     private val accountManager: AccountManager,
+    private val secureSharedPreferencesFactory: SecureSharedPreferences.Factory,
     private val userFcmTokenManagerFactory: FcmTokenManager.Factory
 ) {
 
@@ -70,7 +69,7 @@ class MultiUserFcmTokenManager @Inject constructor(
 
     private suspend inline fun withEachLoggedUserTokenManager(block: FcmTokenManager.() -> Unit) {
         for (userId in accountManager.allLoggedIn()) {
-            val userPrefs = SecureSharedPreferences.getPrefsForUser(context, userId)
+            val userPrefs = secureSharedPreferencesFactory.userPreferences(userId)
             val userTokenManger = userFcmTokenManagerFactory.create(userPrefs)
             block(userTokenManger)
         }
@@ -78,7 +77,7 @@ class MultiUserFcmTokenManager @Inject constructor(
 
     private suspend inline fun withEachSavedUserTokenManager(block: FcmTokenManager.() -> Unit) {
         for (userId in accountManager.allSaved()) {
-            val userPrefs = SecureSharedPreferences.getPrefsForUser(context, userId)
+            val userPrefs = secureSharedPreferencesFactory.userPreferences(userId)
             val userTokenManger = userFcmTokenManagerFactory.create(userPrefs)
             block(userTokenManger)
         }

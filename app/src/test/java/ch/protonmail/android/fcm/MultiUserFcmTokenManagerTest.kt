@@ -28,12 +28,8 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
-import io.mockk.unmockkObject
 import me.proton.core.test.android.mocks.newMockSharedPreferences
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.After
-import org.junit.Before
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -69,9 +65,16 @@ class MultiUserFcmTokenManagerTest : CoroutinesTest {
         coEvery { allSaved() } returns allSavedUsers.map { it.userId }.toSet()
     }
 
+    private val preferencesFactory: SecureSharedPreferences.Factory = mockk {
+        every { userPreferences(any()) } answers {
+            val userIdParam = secondArg<Id>()
+            allLoggedInUsers.first { it.userId == userIdParam }.sharedPreferences
+        }
+    }
+
     private val multiUserTokenManager = MultiUserFcmTokenManager(
-        context = mockk(),
         accountManager,
+        preferencesFactory,
         userFcmTokenManagerFactory = mockk {
             every { create(any()) } answers {
                 val sharedPreferencesParam = firstArg<SharedPreferences>()
@@ -79,20 +82,6 @@ class MultiUserFcmTokenManagerTest : CoroutinesTest {
             }
         }
     )
-
-    @Before
-    fun setup() {
-        mockkObject(SecureSharedPreferences.Companion)
-        every { SecureSharedPreferences.getPrefsForUser(any(), any()) } answers {
-            val userIdParam = secondArg<Id>()
-            allLoggedInUsers.first { it.userId == userIdParam }.sharedPreferences
-        }
-    }
-
-    @After
-    fun tearDown() {
-        unmockkObject(SecureSharedPreferences.Companion)
-    }
 
 
     @Test

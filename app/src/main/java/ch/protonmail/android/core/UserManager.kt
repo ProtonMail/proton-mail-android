@@ -27,12 +27,10 @@ import ch.protonmail.android.api.models.User
 import ch.protonmail.android.di.BackupSharedPreferences
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.domain.util.orThrow
 import ch.protonmail.android.domain.util.suspendRunCatching
 import ch.protonmail.android.feature.account.allLoggedIn
-import ch.protonmail.android.mapper.bridge.UserBridgeMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.LoadLegacyUser
 import ch.protonmail.android.usecase.LoadUser
@@ -90,6 +88,7 @@ class UserManager @Inject constructor(
             "should be injected directly there"
     )
     val openPgp: OpenPGP,
+    private val secureSharedPreferencesFactory: SecureSharedPreferences.Factory,
     private val dispatchers: DispatcherProvider
 ) {
     private val app: ProtonMailApplication = context.app
@@ -106,7 +105,7 @@ class UserManager @Inject constructor(
        requireNotNull(getCurrentUserMailSettingsBlocking())
 
     suspend fun getMailSettings(userId: Id): MailSettings =
-        MailSettings.load(SecureSharedPreferences.getPrefsForUser(context, userId))
+        MailSettings.load(preferencesFor(userId))
 
     @Deprecated("Use suspend function", ReplaceWith("getMailSettings(userId)"))
     fun getMailSettingsBlocking(userId: Id): MailSettings =
@@ -128,7 +127,7 @@ class UserManager @Inject constructor(
         get() =  runBlocking { coreAccountManager.getPrimaryUserId().firstOrNull()?.let { Id(it.id) } }
 
     private val currentUserPreferences
-        get() = currentUserId?.let { SecureSharedPreferences.getPrefsForUser(context, it) }
+        get() = currentUserId?.let(::preferencesFor)
 
     private inline fun <T> withCurrentUserPreferences(block: (SharedPreferences) -> T): T? {
         currentUserPreferences ?: Timber.e("No current user set")
@@ -269,7 +268,7 @@ class UserManager @Inject constructor(
 
     suspend fun saveKeySalt(userId: Id, keysSalt: String?) {
         withContext(dispatchers.Io) {
-            val secureSharedPreferences = SecureSharedPreferences.getPrefsForUser(context, userId)
+            val secureSharedPreferences = preferencesFor(userId)
             secureSharedPreferences[PREF_KEY_SALT] = keysSalt
         }
     }
@@ -468,7 +467,7 @@ class UserManager @Inject constructor(
     }
 
     fun preferencesFor(userId: Id) =
-        SecureSharedPreferences.getPrefsForUser(context, userId)
+        secureSharedPreferencesFactory.userPreferences(userId)
 
     class UsernameToIdMigration @Inject constructor(
         @DefaultSharedPreferences private val prefs: SharedPreferences,

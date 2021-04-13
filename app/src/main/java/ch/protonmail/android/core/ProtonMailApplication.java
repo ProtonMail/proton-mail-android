@@ -432,10 +432,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
                 if (currentUserId != null) {
                     SharedPreferences secureSharedPreferences =
-                            SecureSharedPreferences.Companion.getPrefsForUser(
-                                    getApplicationContext(),
-                                    currentUserId
-                            );
+                            secureSharedPreferencesFactory.userPreferences(currentUserId);
 
                     if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_WARNING)) {
                         secureSharedPreferences.edit().putBoolean(
@@ -458,7 +455,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 for (Id user : loggedInUsers) {
                     allLoggedInUserPreferences.put(
                             user,
-                            SecureSharedPreferences.Companion.getPrefsForUser(this, user)
+                            secureSharedPreferencesFactory.userPreferences(user)
                     );
                 }
                 for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
