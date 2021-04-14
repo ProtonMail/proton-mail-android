@@ -22,7 +22,6 @@ package ch.protonmail.android.di
 
 import androidx.lifecycle.ViewModelProvider
 import ch.protonmail.android.activities.MailboxViewModel
-import ch.protonmail.android.activities.MailboxViewModelFactory
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
@@ -87,9 +86,6 @@ internal class ViewModelModule {
     fun provideManageLabelsDialogViewModelFactory(
         factory: ManageLabelsDialogViewModel.ManageLabelsDialogViewModelFactory
     ): ViewModelProvider.NewInstanceFactory = factory
-
-    @Provides
-    fun provideMailboxViewModelFactory(factory: MailboxViewModelFactory): ViewModelProvider.NewInstanceFactory = factory
 
     @Provides
     fun provideMailboxViewModel(

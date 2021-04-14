@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.otto.Subscribe;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
@@ -69,7 +70,7 @@ public class SearchActivity extends BaseActivity {
     @Inject
     MessageDetailsRepository messageDetailsRepository;
     @Inject
-    MailboxViewModelFactory mailboxViewModelFactory;
+    Provider<MailboxViewModel> mailboxViewModelProvider;
 
     @Override
     protected int getLayoutId() {
@@ -79,7 +80,7 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MailboxViewModel mailboxViewModel = mailboxViewModelFactory.create(MailboxViewModel.class);
+        MailboxViewModel mailboxViewModel = mailboxViewModelProvider.get();
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
