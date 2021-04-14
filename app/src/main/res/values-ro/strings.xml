@@ -1017,4 +1017,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_firebase_api_key_message">Cheie API Firebase nevalidă. Notificările push nu vor funcționa.</string>
     <string name="failed_saving_draft_online">Nu s-a reușit salvarea ciornei pentru mesajul: „%s”</string>
     <string name="cannot_open_message_while_being_sent">Acest mesaj nu poate fi deschis în timp ce este trimis</string>
+    <string name="enable_conversation_mode">Activare mod conversaţie</string>
 </resources>

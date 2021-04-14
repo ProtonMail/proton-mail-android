@@ -1003,4 +1003,5 @@ redefina sua senha caso você necessite.</string>
     <string name="invalid_firebase_api_key_message">Chave API do Firebase inválida. As notificações push não funcionarão.</string>
     <string name="failed_saving_draft_online">Falha ao salvar o rascunho da mensagem: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Não é possível abrir esta mensagem enquanto ela está sendo enviada</string>
+    <string name="enable_conversation_mode">Ativar modo conversa</string>
 </resources>

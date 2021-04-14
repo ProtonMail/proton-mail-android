@@ -997,4 +997,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_firebase_api_key_message">Tasarut API i Firebase d mačči d tameɣtut. Ilɣuten push ur tteddun ara.</string>
     <string name="failed_saving_draft_online">Yecceḍ usekles n urewway deg uẓeṭṭa i yizen: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Ur izmir ara ad ildi izen-a mi ara yettwazen</string>
+    <string name="enable_conversation_mode">Rmed askar n udiwenni</string>
 </resources>

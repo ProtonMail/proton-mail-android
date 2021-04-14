@@ -1032,4 +1032,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_firebase_api_key_message">Недійсний ключ API Firebas. Push-сповіщення не працюватимуть.</string>
     <string name="failed_saving_draft_online">Не вдалося зберегти мережну чернетку повідомлення: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Це повідомлення не можна відкрити, доки воно надсилається</string>
+    <string name="enable_conversation_mode">Enable conversation mode</string>
 </resources>

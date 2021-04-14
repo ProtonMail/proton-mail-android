@@ -1001,4 +1001,5 @@ Svájci székhellyel</string>
     <string name="invalid_firebase_api_key_message">Helytelen Firebase API kulcs. A Push értesítések nem fognak működni.</string>
     <string name="failed_saving_draft_online">Hiba történt a piszkozat mentése közben: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Nem nyitható meg az üzenet, miközben elküldés alatt van</string>
+    <string name="enable_conversation_mode">Enable conversation mode</string>
 </resources>

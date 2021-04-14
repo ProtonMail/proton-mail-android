@@ -1003,4 +1003,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_firebase_api_key_message">Chiave API Firebase non valida. Le notifiche push non funzioneranno.</string>
     <string name="failed_saving_draft_online">Salvataggio della bozza online per il messaggio: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Impossibile aprire questo messaggio mentre viene inviato</string>
+    <string name="enable_conversation_mode">Abilita modalità conversazione</string>
 </resources>

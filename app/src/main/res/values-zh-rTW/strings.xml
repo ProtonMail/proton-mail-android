@@ -114,7 +114,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="to_prefix">收件者：</string>
     <string name="cc_prefix">副本：</string>
     <string name="bcc_prefix">密件副本：</string>
-    <string name="from_prefix">來自：</string>
+    <string name="from_prefix">寄件者：</string>
     <string name="date_prefix">日期：</string>
     <string name="view_details">詳細訊息</string>
     <string name="hide_details">隱藏詳細訊息</string>
@@ -985,4 +985,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_firebase_api_key_message">無效的 Firebase API 金鑰。推送通知將無法運作。</string>
     <string name="failed_saving_draft_online">無法儲存郵件的線上草稿：「%s」</string>
     <string name="cannot_open_message_while_being_sent">傳送時無法開啟此郵件</string>
+    <string name="enable_conversation_mode">啟用會話模式</string>
 </resources>

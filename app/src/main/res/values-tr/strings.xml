@@ -991,4 +991,5 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="invalid_firebase_api_key_message">Geçersiz Firebase API anahtarı. Anlık bildirimler çalışmayacaktır.</string>
     <string name="failed_saving_draft_online">İleti taslağı çevrimiçi olarak kaydedilemedi: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Bu ileti gönderilirken açılamaz</string>
+    <string name="enable_conversation_mode">Konuşma modunu etkinleştir</string>
 </resources>

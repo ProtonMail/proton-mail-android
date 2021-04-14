@@ -1003,4 +1003,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_firebase_api_key_message">Μη έγκυρο κλειδί API Firebase. Οι ειδοποιήσεις push δεν θα λειτουργήσουν.</string>
     <string name="failed_saving_draft_online">Απέτυχε η αποθήκευση του online προσχεδίου για το μήνυμα: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Δεν μπορεί να ανοίξει αυτό το μήνυμα κατά την αποστολή του</string>
+    <string name="enable_conversation_mode">Ενεργοποίηση λειτουργίας συνομιλίας</string>
 </resources>
