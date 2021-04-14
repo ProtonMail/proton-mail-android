@@ -63,6 +63,7 @@ import ch.protonmail.android.data.local.PendingActionDatabase;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
+import ch.protonmail.android.mailbox.data.local.ConversationDao;
 import ch.protonmail.android.storage.AttachmentClearingService;
 import ch.protonmail.android.storage.MessageBodyClearingService;
 import timber.log.Timber;
@@ -174,6 +175,7 @@ public class AppUtil {
                     ContactDatabase.Companion.getInstance(context, userId).getDao(),
                     MessageDatabase.Companion.getInstance(context, userId).getDao(),
                     MessageDatabase.Companion.getSearchDatabase(context, userId).getDao(),
+                    MessageDatabase.Companion.getInstance(context, userId).getConversationDao(),
                     NotificationDatabase.Companion.getInstance(context, userId).getDao(),
                     CounterDatabase.Companion.getInstance(context, userId).getDao(),
                     AttachmentMetadataDatabase.Companion.getInstance(context, userId).getDao(),
@@ -302,6 +304,7 @@ public class AppUtil {
             final ContactDao contactDao,
             final MessageDao messageDao,
             final MessageDao searchDatabase,
+            final ConversationDao conversationDao,
             final NotificationDao notificationDao,
             final CounterDao counterDao,
             final AttachmentMetadataDao attachmentMetadataDao,
@@ -314,6 +317,7 @@ public class AppUtil {
                 contactDao,
                 messageDao,
                 searchDatabase,
+                conversationDao,
                 notificationDao,
                 counterDao,
                 attachmentMetadataDao,
@@ -330,6 +334,7 @@ public class AppUtil {
             final ContactDao contactDao,
             final MessageDao messageDao,
             final MessageDao searchDatabase,
+            final ConversationDao conversationDao,
             final NotificationDao notificationDao,
             final CounterDao counterDao,
             final AttachmentMetadataDao attachmentMetadataDao,
@@ -354,6 +359,7 @@ public class AppUtil {
                 messageDao.clearMessagesCache();
                 messageDao.clearAttachmentsCache();
                 messageDao.clearLabelsCache();
+                conversationDao.clear();
                 searchDatabase.clearMessagesCache();
                 searchDatabase.clearAttachmentsCache();
                 searchDatabase.clearLabelsCache();

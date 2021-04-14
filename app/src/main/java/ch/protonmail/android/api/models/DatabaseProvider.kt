@@ -32,6 +32,7 @@ import ch.protonmail.android.data.local.NotificationDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mailbox.data.local.ConversationDao
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -61,6 +62,11 @@ class DatabaseProvider @Inject constructor(
 
     fun provideMessageSearchDao(userId: Id): MessageDao =
         MessageDatabase.getSearchDatabase(context, userId).getDao()
+
+    // TODO remove once the usage in ClearUserData use-case is removed
+    //Conversation
+    fun provideConversationDao(userId: Id): ConversationDao =
+        MessageDatabase.getInstance(context, userId).getConversationDao()
 
     // Notification
     fun provideNotificationDao(userId: Id): NotificationDao =

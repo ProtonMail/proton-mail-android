@@ -19,23 +19,25 @@
 package ch.protonmail.android.mailbox.data
 
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.di.CurrentUserId
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import com.dropbox.android.external.store4.ExperimentalStoreApi
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
 import com.dropbox.android.external.store4.StoreRequest
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.data.arch.toDataResult
 import me.proton.core.domain.arch.DataResult
 import javax.inject.Inject
 
+@FlowPreview
 class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
     private val api: ProtonMailApiManager
@@ -52,7 +54,8 @@ class ConversationsRepositoryImpl @Inject constructor(
             writer = { key: StoreKey, output: ConversationsResponse ->
                 val conversations = output.conversationResponse.toListLocal(key.userId.s)
                 conversationDao.insertOrUpdate(*conversations.toTypedArray())
-            }
+            },
+            deleteAll = { conversationDao.clear() }
         )
     ).build()
 
@@ -62,4 +65,7 @@ class ConversationsRepositoryImpl @Inject constructor(
     override fun getConversations(params: GetConversationsParameters, userId: Id):
         Flow<DataResult<List<Conversation>>> =
             store.stream(StoreRequest.cached(StoreKey(params, userId), true)).map { it.toDataResult() }
+
+    @ExperimentalStoreApi
+    override suspend fun clearConversations() = store.clearAll()
 }
