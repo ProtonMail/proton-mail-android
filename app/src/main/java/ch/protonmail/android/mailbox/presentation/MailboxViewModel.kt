@@ -66,6 +66,7 @@ const val FLOW_START_ACTIVITY = 1
 const val FLOW_USED_SPACE_CHANGED = 2
 const val FLOW_TRY_COMPOSE = 3
 private const val STARRED_LABEL_ID = "10"
+private const val MIN_MESSAGES_TO_SHOW_COUNT = 2
 
 @HiltViewModel
 class MailboxViewModel @Inject constructor(
@@ -166,7 +167,7 @@ class MailboxViewModel @Inject constructor(
                         val labels = getAllLabelsByIds(currentLabelsIds)
                         val applyRemoveLabels = resolveMessageLabels(
                             message, ArrayList(checkedLabelIds),
-                            ArrayList<String>(unchangedLabels),
+                            ArrayList(unchangedLabels),
                             labels
                         )
                         val apply = applyRemoveLabels?.labelsToApply
@@ -292,7 +293,7 @@ class MailboxViewModel @Inject constructor(
                 conversation.labelIds.contains(STARRED_LABEL_ID),
                 conversation.unreadCount == 0,
                 conversation.expirationTime,
-                conversation.messagesCount,
+                getDisplayMessageCount(conversation),
                 null,
                 false,
                 conversation.labelIds,
@@ -300,6 +301,15 @@ class MailboxViewModel @Inject constructor(
             )
         }
     }
+
+    private fun getDisplayMessageCount(conversation: Conversation) =
+        conversation.messagesCount.let {
+            if (it >= MIN_MESSAGES_TO_SHOW_COUNT) {
+                it
+            } else {
+                null
+            }
+        }
 
     private suspend fun messagesToMailboxItems(messages: List<Message>): List<MailboxUiItem> {
         val contacts = contactsRepository.findAllContactEmails().first()

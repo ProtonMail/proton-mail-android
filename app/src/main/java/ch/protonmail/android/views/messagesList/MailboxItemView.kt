@@ -88,7 +88,7 @@ class MailboxItemView @JvmOverloads constructor(
         }
     }
 
-    private fun getSenderText(messageLocation: Constants.MessageLocationType, mailboxUiItem: MailboxUiItem) =
+    private fun getSenderText(mailboxUiItem: MailboxUiItem) =
         if (isDraft(mailboxUiItem)) {
             mailboxUiItem.recipients
         } else {
@@ -132,7 +132,7 @@ class MailboxItemView @JvmOverloads constructor(
         setTextViewStyles(readStatus)
         setIconsTint(readStatus)
 
-        val senderText = getSenderText(messageLocation, mailboxUiItem)
+        val senderText = getSenderText(mailboxUiItem)
         // Sender text can only be empty in drafts where we show recipients instead of senders
         senderTextView.text =
             if (senderText.isNullOrEmpty()) context.getString(R.string.empty_recipients) else senderText
@@ -168,8 +168,9 @@ class MailboxItemView @JvmOverloads constructor(
             }
         }
 
+        messagesNumberTextView.visibility = if (mailboxUiItem.messagesCount != null) View.VISIBLE else View.GONE
+        messagesNumberTextView.text = mailboxUiItem.messagesCount.toString()
         attachmentImageView.visibility = if (mailboxUiItem.hasAttachments) View.VISIBLE else View.GONE
-
         starImageView.visibility = if (mailboxUiItem.isStarred) View.VISIBLE else View.GONE
 
         emptySpaceView.visibility = if (

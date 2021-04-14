@@ -748,7 +748,59 @@ class MailboxViewModelTest : CoroutinesTest {
             assertEquals(expected, actual.observedValues.first())
         }
 
-   
+    @Test
+    fun getMailboxItemsMapsMessagesNumberToNullWhenItsLowerThanTwoSoThatItIsNotDisplayed() =
+        runBlockingTest {
+            val location = Constants.MessageLocationType.INBOX
+            val conversation = Conversation(
+                "conversationId9239",
+                "subject9237473",
+                emptyList(),
+                emptyList(),
+                1,
+                1,
+                0,
+                0,
+                "senderAddressId",
+                listOf("randomLabelId"),
+                null,
+                1617982192
+            )
+            val successResult = GetConversationsResult.Success(listOf(conversation))
+            every { conversationModeEnabled(location) } returns true
+            coEvery { getConversations(location) } returns flowOf(successResult)
+            coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
+                listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
+            )
+
+            val actual = viewModel.getMailboxItems(
+                location,
+                "labelId923843",
+                true,
+                "9238423bbe4h3423489wssdf",
+                false,
+            ).testObserver()
+
+            val expected = listOf(
+                MailboxUiItem(
+                    "conversationId9239",
+                    "",
+                    "subject9237473",
+                    lastMessageTimeMs = 1617982192,
+                    hasAttachments = false,
+                    isStarred = false,
+                    isRead = false,
+                    expirationTime = 0,
+                    messagesCount = null,
+                    messageData = null,
+                    isDeleted = false,
+                    labelIds = listOf("randomLabelId"),
+                    recipients = ""
+                )
+            )
+            assertEquals(expected, actual.observedValues.first())
+        }
+
     private fun fakeMailboxUiData(
         itemId: String,
         senderName: String,

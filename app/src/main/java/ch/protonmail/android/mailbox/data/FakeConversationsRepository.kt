@@ -50,7 +50,7 @@ class FakeConversationsRepository @Inject constructor() : ConversationsRepositor
                         "A Fake conversation for you with a long subject that we expect to be truncated",
                         listOf(correspondent, anotherCorrespondent, yetAnotherCorrespondent),
                         recipients,
-                        4,
+                        1,
                         1,
                         2,
                         0,

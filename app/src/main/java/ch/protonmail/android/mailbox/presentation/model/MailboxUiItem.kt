@@ -28,7 +28,7 @@ data class MailboxUiItem(
     val isStarred: Boolean,
     val isRead: Boolean,
     val expirationTime: Long,
-    val messagesCount: Int,
+    val messagesCount: Int?,
     val messageData: MessageData?,
     val isDeleted: Boolean,
     val labelIds: List<String>,
