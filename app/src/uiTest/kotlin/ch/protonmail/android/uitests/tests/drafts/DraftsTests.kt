@@ -26,8 +26,10 @@ import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.TestData.fwSubject
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
+import ch.protonmail.android.uitests.testsHelper.TestData.updatedSubject
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import org.junit.experimental.categories.Category
@@ -277,6 +279,42 @@ class DraftsTests : BaseTest() {
                 messageWithSubjectOpened(subjectEditTwo)
                 bodyWithText(bodyEditTwo)
             }
+    }
+
+    @TestId("43003")
+    @Test
+    fun replaceAttachmentsSavingDraftsAndSend() {
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .sendMessageWithFileAttachment(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .clickMessageBySubject(subject)
+            .forward()
+            .draftToBody(to, body)
+            .clickUpButton()
+            .confirmDraftSavingFromSent()
+            .navigateUpToSent()
+            .menuDrawer()
+            .drafts()
+            .clickDraftBySubject(fwSubject(subject))
+            .attachments()
+            .removeAttachment()
+            .navigateUpToComposerView()
+            .clickUpButton()
+            .confirmDraftSavingFromDrafts()
+            .refreshMessageList()
+            .clickDraftBySubject(fwSubject(subject))
+            .attachments()
+            .addFileAttachment(welcomeDrawable)
+            .updateSubject(subject)
+            .send()
+            .menuDrawer()
+            .sent()
+            .clickMessageBySubject(updatedSubject(subject))
+            .expandAttachments()
+            .verify { messageContainsOneAttachment() }
     }
 
     private companion object {

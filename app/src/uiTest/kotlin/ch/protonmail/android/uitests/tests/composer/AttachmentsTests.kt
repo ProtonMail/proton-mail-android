@@ -67,7 +67,7 @@ class AttachmentsTests : BaseTest() {
 
     @Test
     fun loadInlinePngImage() {
-        val messageSubject = "Fw: One inline image and one attachment"
+        val messageSubject = "One inline image and one attachment"
         loginRobot
             .loginUser(onePassUser)
             .searchBar()

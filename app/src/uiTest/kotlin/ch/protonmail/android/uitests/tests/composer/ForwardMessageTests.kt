@@ -24,7 +24,7 @@ import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.fwSubject
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
-import ch.protonmail.android.uitests.testsHelper.TestData.reSubject
+import ch.protonmail.android.uitests.testsHelper.TestData.updatedSubject
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -85,12 +85,12 @@ class ForwardMessageTests : BaseTest() {
     @Test
     fun forwardMessageFromSearchWithAttachment() {
         val to = internalEmailTrustedKeys.email
-        val searchMessageSubject = "Twitter Account Security Issue – Update Twitter for Android"
-        val searchMessageSubjectPart = "Twitter Account Security Issue"
+        val searchMessageSubject = "ProtonMail Logo attachment"
+        val searchMessageSubjectPart = "ProtonMail Logo"
         loginRobot
             .loginUser(onePassUser)
             .searchBar()
-            .searchMessageText(reSubject(searchMessageSubject))
+            .searchMessageText(searchMessageSubject)
             .clickSearchedMessageBySubjectPart(searchMessageSubjectPart)
             .forward()
             .changeSubjectAndForwardMessage(to, subject)
@@ -99,6 +99,51 @@ class ForwardMessageTests : BaseTest() {
             .menuDrawer()
             .sent()
             .refreshMessageList()
-            .verify { messageWithSubjectExists(subject) }
+            .clickMessageBySubject(updatedSubject(subject))
+            .expandAttachments()
+            .verify { messageContainsOneAttachment() }
+    }
+
+    @TestId("43000")
+    @Test
+    fun forwardMessageWithAttachmentsAndRemoveAttachment() {
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .sendMessageTwoImageCaptureAttachments(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .forward()
+            .attachments()
+            .removeAttachment()
+            .navigateUpToComposerView()
+            .forwardMessage(to, body)
+            .navigateUpToSent()
+            .clickMessageBySubject(fwSubject(subject))
+            .expandAttachments()
+            .verify { messageContainsOneAttachment() }
+    }
+
+    @TestId("43001")
+    @Test
+    fun forwardMessageWithAttachmentAndChangeSender() {
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .sendMessageWithFileAttachment(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .clickMessageBySubject(subject)
+            .forward()
+            .changeSenderTo(onePassUser.pmMe)
+            .forwardMessage(to, body)
+            .navigateUpToSent()
+            .clickMessageBySubject(fwSubject(subject))
+            .expandAttachments()
+            .verify { messageContainsOneAttachment() }
     }
 }

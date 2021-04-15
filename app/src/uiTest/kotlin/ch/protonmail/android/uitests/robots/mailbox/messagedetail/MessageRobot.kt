@@ -20,12 +20,8 @@ package ch.protonmail.android.uitests.robots.mailbox.messagedetail
 
 import android.content.Intent
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
-import androidx.test.espresso.intent.matcher.IntentMatchers.hasData
-import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasType
-import androidx.test.espresso.intent.matcher.UriMatchers.hasPath
 import androidx.test.espresso.matcher.ViewMatchers.withTagValue
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.espresso.web.sugar.Web.onWebView
 import androidx.test.espresso.web.webdriver.DriverAtoms
 import androidx.test.espresso.web.webdriver.Locator
@@ -43,30 +39,27 @@ import ch.protonmail.android.uitests.testsHelper.TestData.pgpEncryptedTextDecryp
 import ch.protonmail.android.uitests.testsHelper.TestData.pgpSignedTextDecrypted
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import ch.protonmail.android.uitests.testsHelper.uiactions.click
-import ch.protonmail.android.uitests.testsHelper.uiactions.type
 import me.proton.core.test.android.instrumented.CoreRobot
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
-import org.hamcrest.CoreMatchers.containsString
 
 /**
  * [MessageRobot] class contains actions and verifications for Message detail view functionality.
  */
-class MessageRobot {
+class MessageRobot : CoreRobot {
 
     fun selectFolder(folderName: String): MessageRobot {
-        UIActions.wait.forViewWithId(R.id.folders_list_view)
-        UIActions.allOf.clickViewWithIdAndText(R.id.folder_name, folderName)
+        view.withId(R.id.folder_name).withText(folderName).click()
         return this
     }
 
     fun expandAttachments(): MessageRobot {
-        UIActions.wait.forViewWithId(R.id.attachments_toggle).click()
+        view.withId(R.id.attachments_toggle).click()
         return this
     }
 
     fun clickAttachment(attachmentFileName: String): MessageRobot {
-        UIActions.wait.forViewWithIdAndText(R.id.attachment_name, attachmentFileName).click()
+        view.withId(R.id.attachment_name).withText(attachmentFileName).click()
         return this
     }
 
@@ -80,26 +73,22 @@ class MessageRobot {
     }
 
     fun moveFromSpamToFolder(folderName: String): SpamRobot {
-        UIActions.wait.forViewWithId(R.id.folders_list_view)
-        UIActions.allOf.clickViewWithIdAndText(R.id.folder_name, folderName)
+        view.withId(R.id.folder_name).withText(folderName).click()
         return SpamRobot()
     }
 
     fun moveToTrash(): InboxRobot {
-        UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
-        UIActions.wait.forViewWithId(R.id.move_to_trash).click()
+        view.withId(R.id.move_to_trash).click()
         return InboxRobot()
     }
 
     fun openFoldersModal(): FoldersDialogRobot {
-        UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
-        UIActions.wait.forViewWithId(R.id.add_folder).click()
+        view.withId(R.id.add_folder).click()
         return FoldersDialogRobot()
     }
 
     fun openLabelsModal(): LabelsDialogRobot {
-        UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
-        UIActions.wait.forViewWithId(R.id.add_label).click()
+        view.withId(R.id.add_label).click()
         return LabelsDialogRobot()
     }
 
@@ -145,18 +134,15 @@ class MessageRobot {
     }
 
     fun clickSendButtonFromDrafts(): DraftsRobot {
-        UIActions.id.clickViewWithId(sendMessageId)
-        UIActions.wait.forViewWithText(R.string.message_sent)
+        view.withId(sendMessageId).click()
+        view.withText(R.string.message_sent).checkDisplayed()
         return DraftsRobot()
     }
 
     fun clickLoadEmbeddedImagesButton(): MessageRobot {
-        UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
-        UIActions.wait
-            .forViewWithIdAndAncestorId(
-                R.id.loadContentButton,
-                R.id.containerLoadEmbeddedImagesContainer
-            )
+        view
+            .withId(R.id.loadContentButton)
+            .isDescendantOf(view.withId(R.id.containerLoadEmbeddedImagesContainer))
             .click()
         return this
     }
@@ -251,20 +237,20 @@ class MessageRobot {
         fun addFolderWithName(name: String): FoldersDialogRobot = typeName(name).saveNewFolder()
 
         private fun saveNewFolder(): FoldersDialogRobot {
-            UIActions.wait.forViewWithId(R.id.save_new_label).click()
+            view.withId(R.id.save_new_label).click()
             return FoldersDialogRobot()
         }
 
         private fun typeName(folderName: String): AddFolderRobot {
-            UIActions.wait.forViewWithId(R.id.label_name).type(folderName)
+            view.withId(R.id.label_name).typeText(folderName)
             return this
         }
     }
 
-    class MessageMoreOptions {
+    class MessageMoreOptions : CoreRobot {
 
         fun viewHeaders(): ViewHeadersRobot {
-            UIActions.allOf.clickViewWithIdAndText(R.id.title, R.string.view_headers)
+            view.withId(R.id.title).withText(R.string.view_headers).click()
             return ViewHeadersRobot()
         }
     }
@@ -284,27 +270,32 @@ class MessageRobot {
     class Verify : CoreRobot {
 
         fun publicKeyIsAttached(publicKey: String) {
-            UIActions.check.viewWithTextIsDisplayed(publicKey)
+            view.withText(publicKey).checkDisplayed()
         }
 
         fun messageContainsAttachment() {
-            UIActions.wait.forViewWithId(R.id.attachment_title)
+            view.withId(R.id.attachment_title).checkDisplayed()
+        }
+
+        fun messageContainsOneAttachment() {
+            view.withId(R.id.attachment_title).withSubstring("1 Attachment").checkDisplayed()
+            view.withId(R.id.attachment_name).checkDisplayed()
         }
 
         fun quotedHeaderShown() {
-            UIActions.wait.forViewWithId(R.id.quoted_header)
+            view.withId(R.id.quoted_header).checkDisplayed()
         }
 
         fun attachmentsNotAdded() {
-            UIActions.check.viewWithIdIsNotDisplayed(R.id.attachment_count)
+            view.withId(R.id.attachment_count).checkNotDisplayed()
         }
 
         fun attachmentsAdded() {
-            view.withId(R.id.attachment_count).wait()
+            view.withId(R.id.attachment_count).checkDisplayed()
         }
 
         fun pgpIconShown() {
-            UIActions.wait.forViewWithId(R.id.pgp_icon)
+            view.withId(R.id.pgp_icon).checkDisplayed()
         }
 
         fun pgpEncryptedMessageDecrypted() {
@@ -316,17 +307,17 @@ class MessageRobot {
         }
 
         fun messageWebViewContainerShown() {
-            UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
+            view.withId(R.id.messageWebViewContainer).wait().checkDisplayed()
         }
 
         fun loadEmbeddedImagesButtonIsGone() {
-            view.withId(R.id.messageWebViewContainer).wait()
-            view.withId(R.id.containerLoadEmbeddedImagesContainer).checkDisplayed()
+            view.withId(R.id.messageWebViewContainer).wait().checkDisplayed()
+            view.withId(R.id.containerLoadEmbeddedImagesContainer).checkNotDisplayed()
         }
 
         fun showRemoteContentButtonIsGone() {
-            UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
-            UIActions.wait.untilViewWithIdIsNotShown(R.id.containerDisplayImages)
+            view.withId(R.id.messageWebViewContainer).wait().checkDisplayed()
+            view.withId(R.id.containerDisplayImages).checkNotDisplayed()
         }
 
         fun intentWithActionFileNameAndMimeTypeSent(mimeType: String) {
