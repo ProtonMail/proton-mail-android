@@ -22,10 +22,13 @@ package ch.protonmail.android.mailbox.data
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.mailbox.data.local.model.ConversationEntity
+import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
+import ch.protonmail.android.mailbox.data.remote.model.LabelContextApiModel
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
+import ch.protonmail.android.mailbox.domain.model.LabelContext
 
 
 internal fun ConversationApiModel.toLocal(userId: String) = ConversationEntity(
@@ -39,9 +42,8 @@ internal fun ConversationApiModel.toLocal(userId: String) = ConversationEntity(
     numUnread = numUnread,
     numAttachments = numAttachments,
     expirationTime = expirationTime,
-//        EMPTY_STRING,
     size = size,
-//        listOf()
+    labels = labels.toLabelContextDatabaseModel()
 )
 
 internal fun ConversationEntity.toDomainModel() = Conversation(
@@ -53,8 +55,7 @@ internal fun ConversationEntity.toDomainModel() = Conversation(
     unreadCount = numUnread,
     attachmentsCount = numAttachments,
     expirationTime = expirationTime,
-//        EMPTY_STRING,
-//        listOf()
+    labels = labels.toLabelContextDomainModel()
 )
 
 /**
@@ -86,6 +87,36 @@ internal fun List<MessageRecipient>.recipientToCorespondent() =
     map { recipient ->
         Correspondent(recipient.name ?: "", recipient.emailAddress ?: "")
     }
+
+/**
+ * Converts a label context api model list to label context database model list
+ */
+internal fun List<LabelContextApiModel>.toLabelContextDatabaseModel() =
+    map { label ->
+        LabelContextDatabaseModel(
+            label.id,
+            label.contextNumUnread,
+            label.contextNumMessages,
+            label.contextTime,
+            label.contextSize,
+            label.contextNumAttachments
+        )
+    }
+
+/**
+ * Converts a label context api model list to label context domain model list
+ */internal fun List<LabelContextDatabaseModel>.toLabelContextDomainModel() =
+    map { label ->
+        LabelContext(
+            label.id,
+            label.contextNumUnread,
+            label.contextNumMessages,
+            label.contextTime,
+            label.contextSize,
+            label.contextNumAttachments
+        )
+    }
+
 
 /**
  * Converts a response conversations list to a list of local conversation modal

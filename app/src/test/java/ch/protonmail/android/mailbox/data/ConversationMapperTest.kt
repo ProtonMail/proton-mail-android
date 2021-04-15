@@ -23,10 +23,13 @@ import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.model.ConversationEntity
+import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
+import ch.protonmail.android.mailbox.data.remote.model.LabelContextApiModel
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
+import ch.protonmail.android.mailbox.domain.model.LabelContext
 import kotlin.test.assertEquals
 import org.junit.Test
 
@@ -45,7 +48,11 @@ class ConversationMapperTest {
             numUnread = 1,
             numAttachments = 0,
             expirationTime = 0L,
-            size = 0L
+            size = 30L,
+            listOf(
+                LabelContextApiModel("0", 1, 2, 2, 30, 0),
+                LabelContextApiModel("7", 0, 1, 0, 0, 0)
+            )
         ),
         ConversationApiModel(
             id = "conversation2",
@@ -57,10 +64,11 @@ class ConversationMapperTest {
                 CorrespondentApiModel("recipient2", "recipient2@pm.com")
             ),
             numMessages = 1,
-            numUnread = 1,
-            numAttachments = 0,
-            expirationTime = 0L,
-            size = 0L
+            numUnread = 0,
+            numAttachments = 4,
+            expirationTime = 12_345L,
+            size = 0L,
+            listOf(LabelContextApiModel("0", 0, 1, 3, 0, 4))
         )
     )
 
@@ -76,7 +84,11 @@ class ConversationMapperTest {
             numUnread = 1,
             numAttachments = 0,
             expirationTime = 0L,
-            size = 0L
+            size = 30L,
+            listOf(
+                LabelContextDatabaseModel("0", 1, 2, 2, 30, 0),
+                LabelContextDatabaseModel("7", 0, 1, 0, 0, 0)
+            )
         ),
         ConversationEntity(
             id = "conversation2",
@@ -89,10 +101,11 @@ class ConversationMapperTest {
                 MessageRecipient("recipient2", "recipient2@pm.com")
             ),
             numMessages = 1,
-            numUnread = 1,
-            numAttachments = 0,
-            expirationTime = 0L,
-            size = 0L
+            numUnread = 0,
+            numAttachments = 4,
+            expirationTime = 12_345L,
+            size = 0L,
+            listOf(LabelContextDatabaseModel("0", 0, 1, 3, 0, 4))
         )
     )
 
@@ -106,7 +119,11 @@ class ConversationMapperTest {
             messagesCount = 3,
             unreadCount = 1,
             attachmentsCount = 0,
-            expirationTime = 0L
+            expirationTime = 0L,
+            listOf(
+                LabelContext("0", 1, 2, 2, 30, 0),
+                LabelContext("7", 0, 1, 0, 0, 0)
+            )
         ),
         Conversation(
             id = "conversation2",
@@ -117,9 +134,10 @@ class ConversationMapperTest {
                 Correspondent("recipient2", "recipient2@pm.com")
             ),
             messagesCount = 1,
-            unreadCount = 1,
-            attachmentsCount = 0,
-            expirationTime = 0L
+            unreadCount = 0,
+            attachmentsCount = 4,
+            expirationTime = 12_345L,
+            listOf(LabelContext("0", 0, 1, 3, 0, 4))
         )
     )
 

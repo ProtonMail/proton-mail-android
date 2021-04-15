@@ -34,4 +34,14 @@ class ConversationTypesConverter {
         messageSendersString ?: return null
         return Gson().fromJson(messageSendersString, Array<MessageSender>::class.java).asList()
     }
+
+    @TypeConverter
+    fun labelsContextListToString(labelsContext: List<LabelContextDatabaseModel>?): String? =
+        Gson().toJson(labelsContext)
+
+    @TypeConverter
+    fun stringToLabelsContextList(labelContextString: String?): List<LabelContextDatabaseModel>? {
+        labelContextString ?: return null
+        return Gson().fromJson(labelContextString, Array<LabelContextDatabaseModel>::class.java).asList()
+    }
 }

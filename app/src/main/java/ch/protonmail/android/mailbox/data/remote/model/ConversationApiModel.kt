@@ -31,10 +31,8 @@ const val NUM_MESSAGES = "NumMessages"
 const val NUM_UNREAD = "NumUnread"
 const val NUM_ATTACHMENTS = "NumAttachments"
 const val EXPIRATION_TIME = "ExpirationTime"
-const val ADDRESS_ID = "AddressID"
 const val SIZE = "Size"
 const val LABELS = "Labels"
-const val TIME = "ContextTime"
 
 data class ConversationApiModel(
     @SerializedName(ID)
@@ -64,12 +62,9 @@ data class ConversationApiModel(
     @SerializedName(EXPIRATION_TIME)
     val expirationTime: Long = 0,
 
-//    @SerialName(ADDRESS_ID)
-//    val addressID: String,
-
     @SerializedName(SIZE)
     val size: Long = 0L,
 
-//    @SerialName(LABELS)
-//    val labels: List<String> = mutableListOf()
+    @SerializedName(LABELS)
+    val labels: List<LabelContextApiModel> = mutableListOf()
 )

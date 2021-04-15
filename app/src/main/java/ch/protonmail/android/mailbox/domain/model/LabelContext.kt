@@ -17,19 +17,15 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain
+package ch.protonmail.android.mailbox.domain.model
 
-import ch.protonmail.android.mailbox.domain.model.Correspondent
-import ch.protonmail.android.mailbox.domain.model.LabelContext
+import me.proton.core.util.kotlin.EMPTY_STRING
 
-data class Conversation(
-    val id: String,
-    val subject: String,
-    val senders: List<Correspondent>,
-    val receivers: List<Correspondent>,
-    val messagesCount: Int,
-    val unreadCount: Int,
-    val attachmentsCount: Int,
-    val expirationTime: Long,
-    val labels: List<LabelContext>,
+data class LabelContext(
+    val id: String = EMPTY_STRING,
+    val contextNumUnread: Int = 0,
+    val contextNumMessages: Int = 0,
+    val contextTime: Long = 0L,
+    val contextSize: Int = 0,
+    val contextNumAttachments: Int = 0
 )

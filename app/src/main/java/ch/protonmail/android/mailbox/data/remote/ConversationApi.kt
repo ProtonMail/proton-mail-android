@@ -25,7 +25,6 @@ class ConversationApi(private val service: ConversationService) : BaseApi(), Con
 
     override suspend fun fetchConversations(conversationsParameters: GetConversationsParameters) =
         service.fetchConversations(
-            conversationsParameters.location.messageLocationTypeValue,
             conversationsParameters.page,
             conversationsParameters.pageSize,
             conversationsParameters.labelId

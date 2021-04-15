@@ -25,8 +25,10 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
+import ch.protonmail.android.mailbox.data.remote.model.LabelContextApiModel
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.LabelContext
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -53,28 +55,45 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         listOf(
             ConversationApiModel(
                 id = "conversation5",
-                order = 4,
-                subject = "subject5"
+                order = 0,
+                subject = "subject5",
+                labels = listOf(
+                    LabelContextApiModel("0", 0, 1, 0, 0, 0),
+                    LabelContextApiModel("7", 0, 1, 3, 0, 0)
+                )
             ),
             ConversationApiModel(
                 id = "conversation4",
-                order = 3,
-                subject = "subject4"
+                order = 2,
+                subject = "subject4",
+                labels = listOf(
+                    LabelContextApiModel("0", 0, 1, 1, 0, 0)
+                )
             ),
             ConversationApiModel(
                 id = "conversation3",
-                order = 2,
-                subject = "subject3"
+                order = 3,
+                subject = "subject3",
+                labels = listOf(
+                    LabelContextApiModel("0", 0, 1, 1, 0, 0),
+                    LabelContextApiModel("7", 0, 1, 1, 0, 0)
+                )
             ),
             ConversationApiModel(
                 id = "conversation2",
                 order = 1,
-                subject = "subject2"
+                subject = "subject2",
+                labels = listOf(
+                    LabelContextApiModel("0", 0, 1, 1, 0, 0)
+                )
             ),
             ConversationApiModel(
                 id = "conversation1",
-                order = 0,
-                subject = "subject1"
+                order = 4,
+                subject = "subject1",
+                labels = listOf(
+                    LabelContextApiModel("0", 0, 1, 4, 0, 0)
+                )
             )
         )
     )
@@ -82,24 +101,17 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     private val conversationsOrdered =
         listOf(
             Conversation(
-                id = "conversation5",
-                subject = "subject5",
+                id = "conversation1",
+                subject = "subject1",
                 listOf(),
                 listOf(),
                 0,
                 0,
                 0,
-                0
-            ),
-            Conversation(
-                id = "conversation4",
-                subject = "subject4",
-                listOf(),
-                listOf(),
                 0,
-                0,
-                0,
-                0
+                labels = listOf(
+                    LabelContext("0", 0, 1, 4, 0, 0)
+                )
             ),
             Conversation(
                 id = "conversation3",
@@ -109,7 +121,24 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 0,
                 0,
                 0,
-                0
+                0,
+                labels = listOf(
+                    LabelContext("0", 0, 1, 1, 0, 0),
+                    LabelContext("7", 0, 1, 1, 0, 0)
+                )
+            ),
+            Conversation(
+                id = "conversation4",
+                subject = "subject4",
+                listOf(),
+                listOf(),
+                0,
+                0,
+                0,
+                0,
+                labels = listOf(
+                    LabelContext("0", 0, 1, 1, 0, 0)
+                )
             ),
             Conversation(
                 id = "conversation2",
@@ -119,17 +148,24 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 0,
                 0,
                 0,
-                0
+                0,
+                labels = listOf(
+                    LabelContext("0", 0, 1, 1, 0, 0)
+                )
             ),
             Conversation(
-                id = "conversation1",
-                subject = "subject1",
+                id = "conversation5",
+                subject = "subject5",
                 listOf(),
                 listOf(),
                 0,
                 0,
                 0,
-                0
+                0,
+                labels = listOf(
+                    LabelContext("0", 0, 1, 0, 0, 0),
+                    LabelContext("7", 0, 1, 3, 0, 0)
+                )
             )
         )
 
@@ -148,8 +184,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         conversationsRepository =
             ConversationsRepositoryImpl(
                 conversationDao,
-                api,
-                testUserId
+                api
             )
     }
 
@@ -158,14 +193,14 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         runBlockingTest {
             // given
             val parameters = GetConversationsParameters(
-                location = Constants.MessageLocationType.INBOX,
                 page = 0,
-                pageSize = 2
+                pageSize = 2,
+                labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
             )
             coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(listOf())
 
             // when
-            val result = conversationsRepository.getConversations(parameters).first()
+            val result = conversationsRepository.getConversations(parameters, testUserId).first()
 
             // then
             assertEquals(DataResult.Success(ResponseSource.Local, listOf()), result)
@@ -174,21 +209,21 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
 
     @Test
-    fun verifyConversationsAreRetrievedCorrectly() =
+    fun verifyConversationsAreRetrievedInCorrectOrder() =
         runBlockingTest {
 
             // given
             val parameters = GetConversationsParameters(
-                location = Constants.MessageLocationType.INBOX,
                 page = 0,
-                pageSize = 5
+                pageSize = 5,
+                labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
             )
 
             val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
             coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(conversationsEntity)
 
             // when
-            val result = conversationsRepository.getConversations(parameters).first()
+            val result = conversationsRepository.getConversations(parameters, testUserId).first()
 
             // then
             assertEquals(DataResult.Success(ResponseSource.Local, conversationsOrdered), result)
@@ -219,8 +254,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 //                expectItem()
 //
 //                // then
-////            coVerify(exactly = 1) { conversationDao.getConversations(testUserId.s)}
-////            coVerify(exactly = 1) { conversationDao.insertOrUpdate(*emptyList<ConversationEntity>().toTypedArray()) }
+// //            coVerify(exactly = 1) { conversationDao.getConversations(testUserId.s)}
+// //            coVerify(exactly = 1) { conversationDao.insertOrUpdate(*emptyList<ConversationEntity>().toTypedArray()) }
 //            }
 //        }
 

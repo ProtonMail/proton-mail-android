@@ -64,14 +64,11 @@ data class ConversationEntity constructor(
     @ColumnInfo(name = COLUMN_EXPIRATION_TIME)
     val expirationTime: Long = 0,
 
-//    @ColumnInfo(name = COLUMN_ADDRESS_ID)
-//    val addressID: String,
-
     @ColumnInfo(name = COLUMN_SIZE)
-    val size: Long = 0L
-//
-//    @ColumnInfo(name = COLUMN_LABELS)
-//    val labels: List<String> = mutableListOf()
+    val size: Long = 0L,
+
+    @ColumnInfo(name = COLUMN_LABELS)
+    val labels: List<LabelContextDatabaseModel> = mutableListOf()
 ) {
 
     companion object {
@@ -87,7 +84,6 @@ data class ConversationEntity constructor(
         const val COLUMN_NUM_UNREAD = "NumUnread"
         const val COLUMN_NUM_ATTACHMENTS = "NumAttachments"
         const val COLUMN_EXPIRATION_TIME = "ExpirationTime"
-        const val COLUMN_ADDRESS_ID = "AddressID"
         const val COLUMN_SIZE = "Size"
         const val COLUMN_LABELS = "Labels"
     }
