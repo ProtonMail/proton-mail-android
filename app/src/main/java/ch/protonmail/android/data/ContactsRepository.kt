@@ -23,15 +23,12 @@ import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
-import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 
 class ContactsRepository @Inject constructor(
     private val databaseProvider: DatabaseProvider,
-    private val userManager: UserManager,
-    private val dispatchers: DispatcherProvider
+    private val userManager: UserManager
 ) {
 
     private val contactDao by lazy {
@@ -42,9 +39,6 @@ class ContactsRepository @Inject constructor(
     fun findContactEmailByEmailLiveData(email: String): LiveData<ContactEmail> =
         contactDao.findContactEmailByEmailLiveData(email)
 
-    suspend fun findAllContactEmails(): Flow<List<ContactEmail>> =
-        withContext(dispatchers.Io) {
-            contactDao.findAllContactsEmails()
-        }
+    fun findAllContactEmails(): Flow<List<ContactEmail>> = contactDao.findAllContactsEmails()
 
 }
