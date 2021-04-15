@@ -107,7 +107,7 @@
     <string name="add_label">Add Label</string>
     <string name="add_star">Add star</string>
     <string name="remove_star">Remove star</string>
-    <string name="star_unstar">Star/unstar</string>
+    <string name="star_unstar">Star/Unstar</string>
     <string name="mark_read">Mark read</string>
     <string name="mark_unread">Mark unread</string>
     <string name="move_to_archive">Move to Archive</string>
@@ -983,5 +983,11 @@
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
     <string name="error_loading_conversations">Error loading conversations, please try again</string>
 
-    <string name="personalise">Personalise</string>
+    <string name="personalize">Personalize</string>
+    <string name="others">Others</string>
+
+    <plurals name="messages_count">
+        <item quantity="one">%d message</item>
+        <item quantity="other">%d messages</item>
+    </plurals>
 </resources>

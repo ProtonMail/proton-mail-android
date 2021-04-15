@@ -126,6 +126,7 @@ internal class MessageDetailsActivity :
     private lateinit var messageId: String
     private lateinit var pmWebViewClient: PMWebViewClient
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
+
     // TODO: Remove attachments adapter from this activity with MAILAND-1545 since it isn't needed
     private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
     private lateinit var primaryBaseActivity: Context
@@ -645,6 +646,7 @@ internal class MessageDetailsActivity :
     private var showActionButtons = false
 
     private inner class Copy(private val text: CharSequence?) : MenuItem.OnMenuItemClickListener {
+
         override fun onMenuItemClick(item: MenuItem): Boolean {
             UiUtil.copy(this@MessageDetailsActivity, text)
             return true
@@ -652,6 +654,7 @@ internal class MessageDetailsActivity :
     }
 
     private inner class Share(private val uri: String?) : MenuItem.OnMenuItemClickListener {
+
         override fun onMenuItemClick(item: MenuItem): Boolean {
             val send = Intent(Intent.ACTION_SEND)
             send.type = "text/plain"
@@ -667,6 +670,7 @@ internal class MessageDetailsActivity :
     }
 
     private inner class MessageObserver : Observer<Message?> {
+
         override fun onChanged(message: Message?) {
             if (message != null) {
                 onMessageFound(message)
@@ -699,6 +703,7 @@ internal class MessageDetailsActivity :
         userManager: UserManager,
         activity: MessageDetailsActivity
     ) : PMWebViewClient(userManager, activity, false) {
+
         override fun onPageFinished(view: WebView, url: String) {
             if (amountOfRemoteResourcesBlocked() > 0) {
                 messageExpandableAdapter.displayContainerDisplayImages(View.VISIBLE)
@@ -715,6 +720,7 @@ internal class MessageDetailsActivity :
     private var prevAttachments: List<Attachment>? = null
 
     private inner class AttachmentsObserver : Observer<List<Attachment>?> {
+
         override fun onChanged(newAttachments: List<Attachment>?) {
             /* Workaround for don't let it loop. TODO: Find the cause of the infinite loop after
             Attachments are downloaded and screen has been locked / unlocked */
@@ -765,6 +771,7 @@ internal class MessageDetailsActivity :
     }
 
     private inner class DecryptedMessageObserver : Observer<Message?> {
+
         override fun onChanged(message: Message?) {
             if (message == null) {
                 return
@@ -963,8 +970,14 @@ internal class MessageDetailsActivity :
                     Timber.tag("588").e(exc, "Exception on reply panel press")
                 }
             }
-            messageDetailsActionsView.setOnMoreActionClickListener{
-                MessageDetailsActionSheet().show(supportFragmentManager, null)
+            messageDetailsActionsView.setOnMoreActionClickListener {
+                val messageDetailsActionSheet = MessageDetailsActionSheet().apply {
+                    arguments = bundleOf(
+                        MessageDetailsActionSheet.EXTRA_ARG_TITLE to getCurrentSubject(),
+                        MessageDetailsActionSheet.EXTRA_ARG_SUBTITLE to getMessagesCount()
+                    )
+                }
+                messageDetailsActionSheet.show(supportFragmentManager, null)
             }
             progress.visibility = View.GONE
             invalidateOptionsMenu()
@@ -972,62 +985,71 @@ internal class MessageDetailsActivity :
         }
     }
 
-    private inner class MessageDetailsErrorObserver : Observer<Event<String>> {
-        override fun onChanged(status: Event<String>?) {
-            if (status != null) {
-                val content = status.getContentIfNotHandled()
-                if (content.isNullOrEmpty()) {
-                    showToast(R.string.default_error_message)
-                } else {
-                    showToast(content)
-                    progress.visibility = View.GONE
+    private fun getCurrentSubject() = expandedToolbarTitleTextView.text ?: getString(R.string.empty_subject)
+
+    private fun getMessagesCount(messagesCount: Int = 1) =
+        resources.getQuantityString(R.plurals.messages_count, messagesCount, messagesCount)
+
+        private inner class MessageDetailsErrorObserver : Observer<Event<String>> {
+
+            override fun onChanged(status: Event<String>?) {
+                if (status != null) {
+                    val content = status.getContentIfNotHandled()
+                    if (content.isNullOrEmpty()) {
+                        showToast(R.string.default_error_message)
+                    } else {
+                        showToast(content)
+                        progress.visibility = View.GONE
+                    }
                 }
             }
         }
-    }
 
-    private inner class WebViewContentObserver : Observer<String?> {
-        override fun onChanged(content: String?) {
-            messageExpandableAdapter.loadDataFromUrlToMessageView(content!!)
-        }
-    }
+        private inner class WebViewContentObserver : Observer<String?> {
 
-    private inner class PendingSendObserver : Observer<PendingSend?> {
-        override fun onChanged(pendingSend: PendingSend?) {
-            if (pendingSend != null) {
-                val cannotEditSnack = Snackbar.make(
-                    findViewById(R.id.root_layout),
-                    R.string.message_can_not_edit,
-                    Snackbar.LENGTH_INDEFINITE
-                )
-                val view = cannotEditSnack.view
-                view.setBackgroundColor(getColor(R.color.red))
-                val tv = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-                tv.setTextColor(Color.WHITE)
-                cannotEditSnack.show()
-                messageDetailsActionsView.visibility = View.INVISIBLE
-            } else {
-                showActionButtons = true
+            override fun onChanged(content: String?) {
+                messageExpandableAdapter.loadDataFromUrlToMessageView(content!!)
             }
         }
-    }
 
-    private fun onLoadEmbeddedImagesCLick() {
-        // this will ensure that the message has been loaded
-        // and will protect from premature clicking on download attachments button
-        if (viewModel.renderingPassed) {
-            viewModel.startDownloadEmbeddedImagesJob()
+        private inner class PendingSendObserver : Observer<PendingSend?> {
+
+            override fun onChanged(pendingSend: PendingSend?) {
+                if (pendingSend != null) {
+                    val cannotEditSnack = Snackbar.make(
+                        findViewById(R.id.root_layout),
+                        R.string.message_can_not_edit,
+                        Snackbar.LENGTH_INDEFINITE
+                    )
+                    val view = cannotEditSnack.view
+                    view.setBackgroundColor(getColor(R.color.red))
+                    val tv = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+                    tv.setTextColor(Color.WHITE)
+                    cannotEditSnack.show()
+                    messageDetailsActionsView.visibility = View.INVISIBLE
+                } else {
+                    showActionButtons = true
+                }
+            }
         }
-        return
-    }
 
-    private fun onDisplayImagesCLick() {
-        viewModel.displayRemoteContentClicked()
-        viewModel.checkStoragePermission.observe(this, { storagePermissionHelper.checkPermission() })
-        return
-    }
+        private fun onLoadEmbeddedImagesCLick() {
+            // this will ensure that the message has been loaded
+            // and will protect from premature clicking on download attachments button
+            if (viewModel.renderingPassed) {
+                viewModel.startDownloadEmbeddedImagesJob()
+            }
+            return
+        }
 
-    companion object {
+        private fun onDisplayImagesCLick() {
+            viewModel.displayRemoteContentClicked()
+            viewModel.checkStoragePermission.observe(this, { storagePermissionHelper.checkPermission() })
+            return
+        }
+
+        companion object {
+
         const val EXTRA_MESSAGE_ID = "messageId"
 
         // if transient is true it will not save Message object to db

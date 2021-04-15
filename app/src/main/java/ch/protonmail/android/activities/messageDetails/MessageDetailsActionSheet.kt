@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import ch.protonmail.android.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -33,6 +34,20 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_message_details_action_sheet, container, false)
+        val title = arguments?.getString(EXTRA_ARG_TITLE)
+        if (!title.isNullOrEmpty()) {
+            rootView.findViewById<TextView>(R.id.detailsActionsTitleTextView).text = title
+        }
+        val subtitle = arguments?.getString(EXTRA_ARG_SUBTITLE)
+        if (!subtitle.isNullOrEmpty()) {
+            rootView.findViewById<TextView>(R.id.detailsActionsSubTitleTextView).text = subtitle
+        }
         return rootView
+    }
+
+    companion object {
+
+        const val EXTRA_ARG_TITLE = "arg_message_details_actions_title"
+        const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
     }
 }

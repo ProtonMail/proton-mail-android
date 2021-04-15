@@ -88,7 +88,7 @@
             style="@style/ActionSheetSectionTitleItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/personalise" />
+            android:text="@string/personalize" />
 
         <TextView
             android:id="@+id/detailsActionsLabelAsTextView"
@@ -112,7 +112,7 @@
             style="@style/ActionSheetSectionTitleItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/personalise" />
+            android:text="@string/others" />
 
         <TextView
             android:id="@+id/detailsActionsReportPhishingTextView"
