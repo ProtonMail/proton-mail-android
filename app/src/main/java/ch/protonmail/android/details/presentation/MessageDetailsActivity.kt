@@ -977,7 +977,7 @@ internal class MessageDetailsActivity :
                         MessageDetailsActionSheet.EXTRA_ARG_SUBTITLE to getMessagesCount()
                     )
                 }
-                messageDetailsActionSheet.show(supportFragmentManager, null)
+                messageDetailsActionSheet.show(supportFragmentManager, MessageDetailsActionSheet::class.qualifiedName)
             }
             progress.visibility = View.GONE
             invalidateOptionsMenu()
@@ -990,65 +990,65 @@ internal class MessageDetailsActivity :
     private fun getMessagesCount(messagesCount: Int = 1) =
         resources.getQuantityString(R.plurals.messages_count, messagesCount, messagesCount)
 
-        private inner class MessageDetailsErrorObserver : Observer<Event<String>> {
+    private inner class MessageDetailsErrorObserver : Observer<Event<String>> {
 
-            override fun onChanged(status: Event<String>?) {
-                if (status != null) {
-                    val content = status.getContentIfNotHandled()
-                    if (content.isNullOrEmpty()) {
-                        showToast(R.string.default_error_message)
-                    } else {
-                        showToast(content)
-                        progress.visibility = View.GONE
-                    }
-                }
-            }
-        }
-
-        private inner class WebViewContentObserver : Observer<String?> {
-
-            override fun onChanged(content: String?) {
-                messageExpandableAdapter.loadDataFromUrlToMessageView(content!!)
-            }
-        }
-
-        private inner class PendingSendObserver : Observer<PendingSend?> {
-
-            override fun onChanged(pendingSend: PendingSend?) {
-                if (pendingSend != null) {
-                    val cannotEditSnack = Snackbar.make(
-                        findViewById(R.id.root_layout),
-                        R.string.message_can_not_edit,
-                        Snackbar.LENGTH_INDEFINITE
-                    )
-                    val view = cannotEditSnack.view
-                    view.setBackgroundColor(getColor(R.color.red))
-                    val tv = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-                    tv.setTextColor(Color.WHITE)
-                    cannotEditSnack.show()
-                    messageDetailsActionsView.visibility = View.INVISIBLE
+        override fun onChanged(status: Event<String>?) {
+            if (status != null) {
+                val content = status.getContentIfNotHandled()
+                if (content.isNullOrEmpty()) {
+                    showToast(R.string.default_error_message)
                 } else {
-                    showActionButtons = true
+                    showToast(content)
+                    progress.visibility = View.GONE
                 }
             }
         }
+    }
 
-        private fun onLoadEmbeddedImagesCLick() {
-            // this will ensure that the message has been loaded
-            // and will protect from premature clicking on download attachments button
-            if (viewModel.renderingPassed) {
-                viewModel.startDownloadEmbeddedImagesJob()
+    private inner class WebViewContentObserver : Observer<String?> {
+
+        override fun onChanged(content: String?) {
+            messageExpandableAdapter.loadDataFromUrlToMessageView(content!!)
+        }
+    }
+
+    private inner class PendingSendObserver : Observer<PendingSend?> {
+
+        override fun onChanged(pendingSend: PendingSend?) {
+            if (pendingSend != null) {
+                val cannotEditSnack = Snackbar.make(
+                    findViewById(R.id.root_layout),
+                    R.string.message_can_not_edit,
+                    Snackbar.LENGTH_INDEFINITE
+                )
+                val view = cannotEditSnack.view
+                view.setBackgroundColor(getColor(R.color.red))
+                val tv = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+                tv.setTextColor(Color.WHITE)
+                cannotEditSnack.show()
+                messageDetailsActionsView.visibility = View.INVISIBLE
+            } else {
+                showActionButtons = true
             }
-            return
         }
+    }
 
-        private fun onDisplayImagesCLick() {
-            viewModel.displayRemoteContentClicked()
-            viewModel.checkStoragePermission.observe(this, { storagePermissionHelper.checkPermission() })
-            return
+    private fun onLoadEmbeddedImagesCLick() {
+        // this will ensure that the message has been loaded
+        // and will protect from premature clicking on download attachments button
+        if (viewModel.renderingPassed) {
+            viewModel.startDownloadEmbeddedImagesJob()
         }
+        return
+    }
 
-        companion object {
+    private fun onDisplayImagesCLick() {
+        viewModel.displayRemoteContentClicked()
+        viewModel.checkStoragePermission.observe(this, { storagePermissionHelper.checkPermission() })
+        return
+    }
+
+    companion object {
 
         const val EXTRA_MESSAGE_ID = "messageId"
 
