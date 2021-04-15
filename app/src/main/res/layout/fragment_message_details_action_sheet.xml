@@ -19,7 +19,7 @@
 
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:animateLayoutChanges="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -27,28 +27,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="@dimen/space_l"
+        android:paddingTop="@dimen/space_m"
         android:paddingBottom="@dimen/space_l">
 
-        <TextView
-            android:id="@+id/detailsActionsTitleTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="@dimen/space_l"
-            android:paddingEnd="@dimen/space_l"
-            android:textAppearance="@style/Text.Headline"
-            tools:text="RE: Possible project underway at..." />
+        <include layout="@layout/layout_message_details_actions_sheet_header" />
 
-        <TextView
-            android:id="@+id/detailsActionsSubTitleTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="@dimen/space_l"
-            android:paddingEnd="@dimen/space_l"
-            android:textAppearance="@style/Text.Caption.Weak"
-            tools:text="1 message" />
-
-        <include layout="@layout/layout_message_details_main_actions" />
+        <include layout="@layout/layout_message_details_actions_sheet_buttons" />
 
         <TextView
             android:id="@+id/detailsActionsStarUnstarTextView"

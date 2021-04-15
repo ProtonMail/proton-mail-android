@@ -19,18 +19,26 @@
 
 package ch.protonmail.android.activities.messageDetails
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.isVisible
 import ch.protonmail.android.R
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import timber.log.Timber
 
 /**
  * Fragment popping up with actions for message details screen.
  */
 class MessageDetailsActionSheet : BottomSheetDialogFragment() {
+
+    private lateinit var closeViewIcon: View
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_message_details_action_sheet, container, false)
@@ -42,7 +50,48 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         if (!subtitle.isNullOrEmpty()) {
             rootView.findViewById<TextView>(R.id.detailsActionsSubTitleTextView).text = subtitle
         }
+        closeViewIcon = rootView.findViewById<TextView>(R.id.detailsActionsCloseView)
+        closeViewIcon.setOnClickListener {
+            dismiss()
+        }
         return rootView
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val bottomSheetDialog = super.onCreateDialog(savedInstanceState)
+        bottomSheetDialog.setOnShowListener { dialogInterface ->
+            val dialog = dialogInterface as BottomSheetDialog
+            val bottomSheet: View? = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet)
+            if (bottomSheet != null) {
+                val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+                bottomSheetBehavior.addBottomSheetCallback(
+                    object : BottomSheetBehavior.BottomSheetCallback() {
+                        override fun onStateChanged(bottomSheet: View, newState: Int) {
+                            Timber.v("State changed to $newState")
+                            if (newState == STATE_EXPANDED) {
+                                showCloseIcon()
+                            } else {
+                                hideCloseIcon()
+                            }
+                        }
+
+                        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                            Timber.v("onSlide to offset $slideOffset")
+                        }
+                    }
+
+                )
+            }
+        }
+        return bottomSheetDialog
+    }
+
+    private fun hideCloseIcon() {
+        closeViewIcon.isVisible = false
+    }
+
+    private fun showCloseIcon() {
+        closeViewIcon.isVisible = true
     }
 
     companion object {
