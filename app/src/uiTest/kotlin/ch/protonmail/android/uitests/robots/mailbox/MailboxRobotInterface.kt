@@ -21,9 +21,6 @@
 package ch.protonmail.android.uitests.robots.mailbox
 
 import android.widget.ImageView
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withParent
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFirstInstanceMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
@@ -35,12 +32,9 @@ import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
-import ch.protonmail.android.uitests.testsHelper.uiactions.click
-import ch.protonmail.android.uitests.testsHelper.uiactions.swipeViewDown
-import org.hamcrest.CoreMatchers.allOf
-import org.hamcrest.CoreMatchers.instanceOf
+import me.proton.core.test.android.instrumented.CoreRobot
 
-interface MailboxRobotInterface {
+interface MailboxRobotInterface : CoreRobot {
 
     fun swipeLeftMessageAtPosition(position: Int): Any {
         UIActions.recyclerView
@@ -67,46 +61,50 @@ interface MailboxRobotInterface {
     }
 
     fun searchBar(): SearchRobot {
-        UIActions.wait.forViewWithId(R.id.search).click()
+        view.withId(R.id.search).click()
         return SearchRobot()
     }
 
     fun compose(): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.compose).click()
+        view.withId(R.id.compose).click()
         return ComposerRobot()
     }
 
     fun menuDrawer(): MenuRobot {
-        UIActions.wait.forViewWithId(drawerLayoutId, 15_000L)
-        UIActions.id.openMenuDrawerWithId(drawerLayoutId)
+        view.withId(drawerLayoutId).wait(15_000L).openDrawer()
         return MenuRobot()
     }
 
     fun clickMessageByPosition(position: Int): MessageRobot {
         UIActions.wait.forViewWithId(messagesRecyclerViewId)
-        UIActions.recyclerView.messages.saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetSelectMessage)())
-        UIActions.recyclerView.common.clickOnRecyclerViewItemByPosition(messagesRecyclerViewId, 1)
+        UIActions.recyclerView
+            .messages.saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetSelectMessage)())
+        UIActions.recyclerView.common.clickOnRecyclerViewItemByPosition(messagesRecyclerViewId, position)
         return MessageRobot()
     }
 
     fun clickMessageBySubject(subject: String): MessageRobot {
-        UIActions.wait
-            .untilViewByViewInteractionIsGone(
-                onView(
-                    allOf(
-                        instanceOf(ImageView::class.java), withParent(withId(R.id.messages_list_view))
-                    )
-                )
-            )
-        UIActions.wait.forViewWithId(messagesRecyclerViewId)
-        UIActions.recyclerView
-            .common.waitForBeingPopulated(messagesRecyclerViewId)
-            .common.clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
+        view.instanceOf(ImageView::class.java).withParent(view.withId(R.id.messages_list_view)).waitUntilGone()
+        recyclerView
+            .withId(messagesRecyclerViewId)
+            .waitUntilPopulated()
+            .onHolderItem(withMessageSubject(subject))
+            .click()
+        return MessageRobot()
+    }
+
+    fun clickFirstMatchedMessageBySubject(subject: String): MessageRobot {
+        view.instanceOf(ImageView::class.java).withParent(view.withId(R.id.messages_list_view)).waitUntilGone()
+        recyclerView
+            .withId(messagesRecyclerViewId)
+            .waitUntilPopulated()
+            .onHolderItem(withFirstInstanceMessageSubject(subject))
+            .click()
         return MessageRobot()
     }
 
     fun refreshMessageList(): Any {
-        UIActions.wait.forViewWithId(messagesRecyclerViewId).swipeViewDown()
+        view.withId(messagesRecyclerViewId).swipeDown()
         return Any()
     }
 
@@ -114,18 +112,14 @@ interface MailboxRobotInterface {
      * Contains all the validations that can be performed by [InboxRobot].
      */
     @Suppress("ClassName")
-    open class verify {
-
-        fun messageExists(messageSubject: String) {
-            UIActions.wait.forViewWithIdAndText(messageTitleTextViewId, messageSubject)
-        }
+    open class verify : CoreRobot {
 
         fun draftWithAttachmentSaved(draftSubject: String) {
             UIActions.wait.forViewWithIdAndText(messageTitleTextViewId, draftSubject)
         }
 
         fun mailboxLayoutShown() {
-            UIActions.wait.forViewWithId(R.id.swipe_refresh_layout)
+            view.withId(R.id.swipe_refresh_layout).wait()
         }
 
         fun messageDeleted(subject: String, date: String) {
@@ -137,13 +131,12 @@ interface MailboxRobotInterface {
         fun messageWithSubjectExists(subject: String) {
             UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
             UIActions.wait.forViewWithText(subject)
-            UIActions.recyclerView
-                .common.scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withFirstInstanceMessageSubject(subject))
+            UIActions.recyclerView.common
+                .scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withFirstInstanceMessageSubject(subject))
         }
 
         fun messageWithSubjectHasRepliedFlag(subject: String) {
             UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
-            UIActions.wait.forViewWithText(subject)
             UIActions.recyclerView
                 .common.scrollToRecyclerViewMatchedItem(
                     messagesRecyclerViewId,
@@ -153,7 +146,6 @@ interface MailboxRobotInterface {
 
         fun messageWithSubjectHasRepliedAllFlag(subject: String) {
             UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
-            UIActions.wait.forViewWithText(subject)
             UIActions.recyclerView
                 .common.scrollToRecyclerViewMatchedItem(
                     messagesRecyclerViewId,
@@ -163,7 +155,6 @@ interface MailboxRobotInterface {
 
         fun messageWithSubjectHasForwardedFlag(subject: String) {
             UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
-            UIActions.wait.forViewWithText(subject)
             UIActions.recyclerView
                 .common.scrollToRecyclerViewMatchedItem(
                     messagesRecyclerViewId,
@@ -172,10 +163,10 @@ interface MailboxRobotInterface {
         }
 
         fun messageWithSubjectAndRecipientExists(subject: String, to: String) {
-            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
-            UIActions.wait.forViewWithText(subject)
-            UIActions.recyclerView
-                .common.scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubjectAndRecipient(subject, to))
+            recyclerView
+                .withId(messagesRecyclerViewId)
+                .waitUntilPopulated()
+                .scrollToHolder(withMessageSubjectAndRecipient(subject, to))
         }
     }
 

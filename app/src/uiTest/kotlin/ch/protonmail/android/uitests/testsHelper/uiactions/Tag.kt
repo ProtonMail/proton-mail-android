@@ -24,7 +24,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withTagValue
-import ch.protonmail.android.uitests.tests.BaseTest.Companion.targetContext
+import me.proton.core.test.android.instrumented.CoreTest.Companion.targetContext
 import org.hamcrest.CoreMatchers.`is`
 
 object Tag {

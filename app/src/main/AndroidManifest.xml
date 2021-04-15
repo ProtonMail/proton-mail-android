@@ -72,7 +72,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:theme">
 
         <!-- Disable default WorkManagerInitializer for use Hilt injection -->
         <provider
@@ -126,11 +127,6 @@
                 <action android:name="protonmail_notif_action_archive" />
                 <action android:name="protonmail_notif_action_delete" />
                 <action android:name="protonmail_notif_action_trash" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".receivers.VerificationOnSendReceiver">
-            <intent-filter android:priority="1">
-                <action android:name="protonmail_notif_action_verify" />
             </intent-filter>
         </receiver>
         <receiver android:name=".receivers.TimeChangedReceiver">

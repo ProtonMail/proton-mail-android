@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Nema mreže, poruka stoji na čekanju</string>
     <string name="update_app_title">Potrebno ažuriranje</string>
     <string name="update_app">Ne možete koristiti ProtonMail aplikaciju dok se ne ažurira</string>
+    <string name="you_are_offline">Niste na mreži</string>
     <string name="api_offline_title">ProtonMail API je van mreže</string>
     <string name="api_offline">ProtonMail je trenutno nedostupan, provjerite naš twitter za trenutni status: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt je dodan</string>
@@ -290,7 +291,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Pogreška tijekom brisanja nekih poruka. Neke od odabranih poruka su u procesu slanja?!</string>
     <string name="respond_inline">Odgovori u ravnini s ostalim tekstom</string>
     <string name="no_connectivity_detected">Nije otkrivena veza...</string>
-    <string name="no_connectivity_detected_troubleshoot">Nije otkrivena internetska veza… (<u>Rješavanje problema</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Poslužitelj nije dostupan… (<u>Rješavanje problema</u>)</string>
     <string name="connectivity_checking">Provjera veze...</string>
     <string name="sync_short">sinkroniziraj</string>
     <string name="draft_attachments_uploading">Skica se još učitava...</string>
@@ -425,7 +426,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_free_with_price">FREE</string>
     <string name="plan_plus_with_price">PLUS %s /mjesečno</string>
     <string name="plan_visionary_with_price">VISIONARY %s /mjesečno</string>
-    <string name="plan_business_with_price">BUSINESS %s /mjesečno</string>
+    <string name="plan_business_with_price">TVRTKE %s /mjesečno</string>
     <string name="plan_free_title">Osnovni račun s ograničenim značajkama</string>
     <string name="plan_plus_title">Sigurna e-pošta s naprednim značajkama</string>
     <string name="plan_visionary_title">Posebni računi za naše pobornike</string>

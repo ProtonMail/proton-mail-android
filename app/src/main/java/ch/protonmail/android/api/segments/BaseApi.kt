@@ -36,6 +36,7 @@ const val ATTACH_PATH = "attach"
 const val ONE_MINUTE = 60L
 const val THREE_SECONDS = 3L
 const val TEN_SECONDS = 10L
+const val THIRTY_SECONDS = 30L
 
 const val HEADER_LOCALE = "x-pm-locale"
 const val HEADER_UID = "x-pm-uid"
@@ -46,6 +47,7 @@ const val HEADER_USER_AGENT = "User-Agent"
 const val RESPONSE_CODE_UNAUTHORIZED = 401
 const val RESPONSE_CODE_GATEWAY_TIMEOUT = 504
 const val RESPONSE_CODE_TOO_MANY_REQUESTS = 429
+const val RESPONSE_CODE_UNPROCESSABLE_ENTITY = 422
 const val RESPONSE_CODE_SERVICE_UNAVAILABLE = 503
 const val RESPONSE_CODE_INVALID_ID = 2061
 const val RESPONSE_CODE_MESSAGE_READING_RESTRICTED = 2028
@@ -54,6 +56,10 @@ const val RESPONSE_CODE_INVALID_APP_CODE = 5002
 const val RESPONSE_CODE_FORCE_UPGRADE = 5003
 const val RESPONSE_CODE_OLD_PASSWORD_INCORRECT = 8002
 const val RESPONSE_CODE_ERROR_VERIFICATION_NEEDED = 9001
+const val RESPONSE_CODE_NOT_ALLOWED = 2011
+const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_FAILED_GENERIC = 10_001
+const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DELETED = 10_002
+const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DISABLED = 10_003
 const val RESPONSE_CODE_ATTACHMENT_DELETE_ID_INVALID = 11_123
 const val RESPONSE_CODE_EMAIL_FAILED_VALIDATION = 12_006
 const val RESPONSE_CODE_NEW_PASSWORD_INCORRECT = 12_022
@@ -101,6 +107,6 @@ open class BaseApi {
             throw RuntimeException("Interrupted!")
         }
 
-        return List(list.size) { i : Int -> result[i] }
+        return List(list.size) { i: Int -> result[i] }
     }
 }

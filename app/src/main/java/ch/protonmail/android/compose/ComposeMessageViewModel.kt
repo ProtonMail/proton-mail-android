@@ -28,7 +28,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
-import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.composeMessage.UserAction
@@ -38,13 +37,14 @@ import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.address.Address
+import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.LocalAttachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.rx.ThreadSchedulers
-import ch.protonmail.android.api.services.PostMessageServiceFactory
 import ch.protonmail.android.bl.HtmlProcessor
+import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
@@ -64,14 +64,12 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
-import ch.protonmail.android.worker.drafts.SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX
 import com.squareup.otto.Subscribe
 import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -92,13 +90,12 @@ class ComposeMessageViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository,
     private val userManager: UserManager,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val postMessageServiceFactory: PostMessageServiceFactory,
     private val deleteMessage: DeleteMessage,
     private val fetchPublicKeys: FetchPublicKeys,
     private val saveDraft: SaveDraft,
     private val dispatchers: DispatcherProvider,
     private val stringResourceResolver: StringResourceResolver,
-    private val workManager: WorkManager,
+    private val sendMessageUseCase: SendMessage,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -402,6 +399,11 @@ class ComposeMessageViewModel @Inject constructor(
                 message.dbId = _dbId
                 saveMessage(message)
             }
+            val saveDraftTrigger = if (uploadAttachments) {
+                SaveDraft.SaveDraftTrigger.UserRequested
+            } else {
+                SaveDraft.SaveDraftTrigger.AutoSave
+            }
             if (draftId.isNotEmpty()) {
                 if (MessageUtils.isLocalMessageId(_draftId.get()) && hasConnectivity) {
                     return@launch
@@ -410,12 +412,10 @@ class ComposeMessageViewModel @Inject constructor(
                 message.messageId = draftId
                 val newAttachments = calculateNewAttachments(uploadAttachments)
 
-                invokeSaveDraftUseCase(message, newAttachments, parentId, _actionId, _oldSenderAddressId)
+                invokeSaveDraftUseCase(message, newAttachments, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger)
 
-                if (newAttachments.isNotEmpty() && uploadAttachments) {
-                    _oldSenderAddressId = message.addressID
-                        ?: _messageDataResult.addressId // overwrite "old sender ID" when updating draft
-                }
+                // overwrite "old sender ID" when updating draft
+                _oldSenderAddressId = message.addressID ?: _messageDataResult.addressId
                 setIsDirty(false)
                 //endregion
             } else {
@@ -437,7 +437,7 @@ class ComposeMessageViewModel @Inject constructor(
                         uploadAttachments
                     )
                 }
-                invokeSaveDraftUseCase(message, newAttachmentIds, parentId, _actionId, _oldSenderAddressId)
+                invokeSaveDraftUseCase(message, newAttachmentIds, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger)
 
                 _oldSenderAddressId = ""
                 setIsDirty(false)
@@ -453,31 +453,31 @@ class ComposeMessageViewModel @Inject constructor(
         newAttachments: List<String>,
         parentId: String?,
         messageActionType: Constants.MessageActionType,
-        oldSenderAddress: String
+        oldSenderAddress: String,
+        saveDraftTrigger: SaveDraft.SaveDraftTrigger
     ) {
-        saveDraft(
+        val saveDraftResult = saveDraft(
             SaveDraft.SaveDraftParameters(
                 message,
                 newAttachments,
                 parentId,
                 messageActionType,
-                oldSenderAddress
+                oldSenderAddress,
+                saveDraftTrigger
             )
-        ).collect { saveDraftResult ->
-            when (saveDraftResult) {
-                is SaveDraftResult.Success -> onDraftSaved(saveDraftResult.draftId)
-                SaveDraftResult.OnlineDraftCreationFailed -> {
-                    val errorMessage = stringResourceResolver(
-                        R.string.failed_saving_draft_online
-                    ).format(message.subject)
-                    _savingDraftError.postValue(errorMessage)
-                }
-                SaveDraftResult.UploadDraftAttachmentsFailed -> {
-                    val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
-                    _savingDraftError.postValue(errorMessage)
-                }
-                SaveDraftResult.SendingInProgressError -> {
-                }
+        )
+
+        when (saveDraftResult) {
+            is SaveDraftResult.Success -> onDraftSaved(saveDraftResult.draftId)
+            SaveDraftResult.OnlineDraftCreationFailed -> {
+                val errorMessage = stringResourceResolver(
+                    R.string.failed_saving_draft_online
+                ).format(message.subject)
+                _savingDraftError.postValue(errorMessage)
+            }
+            SaveDraftResult.UploadDraftAttachmentsFailed -> {
+                val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
+                _savingDraftError.postValue(errorMessage)
             }
         }
     }
@@ -714,7 +714,7 @@ class ComposeMessageViewModel @Inject constructor(
             } else {
                 // this will ensure the message get latest message id if it was already saved in a create/update draft job
                 // and also that the message has all the latest edits in between draft saving (creation) and sending the message
-                val savedMessage = messageDetailsRepository.findMessageByMessageDbIdBlocking(_dbId!!, dispatchers.Io)
+                val savedMessage = messageDetailsRepository.findMessageByMessageDbId(_dbId!!)
                 message.dbId = _dbId
                 savedMessage?.let {
                     if (!TextUtils.isEmpty(it.localId)) {
@@ -729,23 +729,19 @@ class ComposeMessageViewModel @Inject constructor(
             if (_dbId != null) {
                 val newAttachments = calculateNewAttachments(true)
 
-                // Cancel scheduled save draft work to allow attachments removal while offline
-                // This is needed to replace the logic to block draft creation while sending, which being in
-                // SaveDraft use case has no effect when CreateDraft is scheduled offline. As this logic
-                // was removed in the send refactor, this solution was adopted over moving the check in CreateDraftWorker
-                val saveDraftUniqueWorkId = "$SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX-${message.messageId})"
-                workManager.cancelUniqueWork(saveDraftUniqueWorkId)
-
-                postMessageServiceFactory.startSendingMessage(
-                    _dbId!!,
-                    messageDataResult.message.decryptedBody ?: "",
-                    messageDataResult.messagePassword,
-                    messageDataResult.passwordHint,
-                    messageDataResult.expirationTime!!,
-                    parentId, _actionId,
-                    newAttachments,
-                    ArrayList(messageDataResult.sendPreferences.values),
-                    _oldSenderAddressId
+                sendMessageUseCase(
+                    SendMessage.SendMessageParameters(
+                        message,
+                        newAttachments,
+                        parentId,
+                        _actionId,
+                        _oldSenderAddressId,
+                        MessageSecurityOptions(
+                            messageDataResult.messagePassword,
+                            messageDataResult.passwordHint,
+                            messageDataResult.expirationTime!!
+                        )
+                    )
                 )
             } else {
                 sendingInProcess = false
@@ -1201,7 +1197,7 @@ class ComposeMessageViewModel @Inject constructor(
         buildMessage()
     }
 
-    private fun setUploadAttachments(uploadAttachments: Boolean) {
+    fun setUploadAttachments(uploadAttachments: Boolean) {
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)
             .uploadAttachments(uploadAttachments)
@@ -1254,7 +1250,7 @@ class ComposeMessageViewModel @Inject constructor(
         autoSaveJob = viewModelScope.launch(dispatchers.Io) {
             delay(1.seconds)
             Timber.d("Draft auto save triggered")
-            setBeforeSaveDraft(true, messageBody)
+            setBeforeSaveDraft(false, messageBody)
         }
     }
 }

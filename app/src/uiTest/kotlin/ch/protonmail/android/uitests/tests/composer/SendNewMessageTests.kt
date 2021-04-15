@@ -216,4 +216,71 @@ class SendNewMessageTests : BaseTest() {
             .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
+
+    @TestId("4279")
+    @Test
+    fun changeSenderAndSendMessageToExternalContact() {
+        val onePassUserPmMeAddress = onePassUser.pmMe
+        val to = externalGmailPGPEncrypted.email
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .changeSenderTo(onePassUserPmMeAddress)
+            .sendMessage(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("15880")
+    @Test
+    fun sendMessageWithInlineImageInSignature() {
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginTwoPasswordUser(twoPassUser)
+            .decryptMailbox(twoPassUser.mailboxPassword)
+            .compose()
+            .sendMessage(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("1554")
+    @Test
+    fun sendMessageToExternalContactWithPasswordAndExpiryTime() {
+        val to = externalOutlookPGPSigned.email
+        val password = editedPassword
+        val hint = editedPasswordHint
+        loginRobot
+            .loginTwoPasswordUser(twoPassUser)
+            .decryptMailbox(password)
+            .compose()
+            .sendMessageEOAndExpiryTime(to, subject, body, 1, password, hint)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("1556")
+    @Test
+    fun sendMessageToExternalAndInternalContactsWithPasswordAndExpiryTime() {
+        val toInternal = internalEmailTrustedKeys.email
+        val toExternal = externalGmailPGPEncrypted.email
+        val password = editedPassword
+        val hint = editedPasswordHint
+        loginRobot
+            .loginTwoPasswordUser(twoPassUser)
+            .decryptMailbox(twoPassUser.mailboxPassword)
+            .compose()
+            .recipients(toInternal)
+            .sendMessageEOAndExpiryTime(toExternal, subject, body, 3, password, hint)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
+    }
 }

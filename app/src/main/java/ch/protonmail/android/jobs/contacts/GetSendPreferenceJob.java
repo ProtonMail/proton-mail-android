@@ -63,7 +63,7 @@ public class GetSendPreferenceJob extends ProtonMailBaseJob {
     @Override
     public void onRun() throws Throwable {
         MailSettings mailSettings = getUserManager().getMailSettings();
-        SendPreferencesFactory factory = new SendPreferencesFactory(getApi(), getUserManager(), getUserManager().getUsername(), mailSettings, contactsDatabase);
+        SendPreferencesFactory factory = new SendPreferencesFactory(getApi(), getUserManager(), getUserManager().getUsername(), contactsDatabase);
         Map<String, SendPreference> sendPreferenceMap = new HashMap<>();
         sendPreferenceMap.put(mEmails.get(0), null);
         try {

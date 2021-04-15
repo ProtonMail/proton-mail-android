@@ -23,12 +23,13 @@ import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import me.proton.core.test.android.instrumented.CoreRobot
 
 /**
  * [DraftsRobot] implements [MailboxRobotInterface],
  * contains actions and verifications for Drafts composer functionality.
  */
-class DraftsRobot : MailboxRobotInterface {
+class DraftsRobot : MailboxRobotInterface, CoreRobot {
 
     override fun swipeLeftMessageAtPosition(position: Int): DraftsRobot {
         super.swipeLeftMessageAtPosition(position)
@@ -56,7 +57,7 @@ class DraftsRobot : MailboxRobotInterface {
     }
 
     fun emptyFolder(): DraftsRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.title, R.string.empty_folder)
+        view.withId(R.id.title).withText(R.string.empty_folder).click()
         return this
     }
 
@@ -70,18 +71,28 @@ class DraftsRobot : MailboxRobotInterface {
         return ComposerRobot()
     }
 
+    fun clickFirstMatchedDraftBySubject(subject: String): ComposerRobot {
+        super.clickFirstMatchedMessageBySubject(subject)
+        return ComposerRobot()
+    }
+
+    fun clickDraftByPosition(position: Int): ComposerRobot {
+        super.clickMessageByPosition(position)
+        return ComposerRobot()
+    }
+
     /**
      * Contains all the validations that can be performed by [MenuRobot].
      */
-    class Verify : MailboxRobotInterface.verify() {
+    class Verify : MailboxRobotInterface.verify(), CoreRobot {
 
         fun folderEmpty() {
-            //TODO - remove this workaround with 20 sec waiting time when possible
+            // TODO - remove this workaround with 20 sec waiting time when possible
             UIActions.wait.forViewWithIdAndText(R.id.no_messages, R.string.no_messages, 20000)
         }
 
-        fun draftMessageSaved(draftSubject: String?): DraftsRobot {
-            UIActions.wait.forViewWithIdAndText(R.id.messageTitleTextView, draftSubject!!)
+        fun draftMessageSaved(draftSubject: String): DraftsRobot {
+            view.withId(R.id.messageTitleTextView).withText(draftSubject).click()
             return DraftsRobot()
         }
     }

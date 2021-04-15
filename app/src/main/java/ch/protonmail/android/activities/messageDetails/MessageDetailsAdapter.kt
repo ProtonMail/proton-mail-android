@@ -371,6 +371,7 @@ class MessageDetailsAdapter(
         webViewParams.setMargins(0, 0, 0, 0)
         webView.layoutParams = webViewParams
         webView.webViewClient = pmWebViewClient
+        webView.tag = "messageWebView"
         val webSettings = webView.settings
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             webSettings.layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING

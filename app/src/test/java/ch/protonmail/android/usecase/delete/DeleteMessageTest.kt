@@ -27,6 +27,7 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.worker.DeleteMessageWorker
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
@@ -66,9 +67,9 @@ class DeleteMessageTest {
             val operation = mockk<Operation>(relaxed = true)
             every { db.findPendingUploadByMessageId(any()) } returns null
             every { db.findPendingSendByMessageId(any()) } returns null
-            every { repository.findMessageByIdBlocking(messId) } returns message
+            coEvery { repository.findMessageById(messId) } returns message
             every { repository.saveMessageInDB(message) } returns 1L
-            every { repository.findSearchMessageById(messId) } returns null
+            coEvery { repository.findSearchMessageById(messId) } returns null
             every { repository.saveMessagesInOneTransaction(any()) } returns Unit
             every { repository.saveSearchMessagesInOneTransaction(any()) } returns Unit
             every { workScheduler.enqueue(any()) } returns operation
@@ -93,8 +94,8 @@ class DeleteMessageTest {
             val searchMessage = mockk<Message>(relaxed = true)
             every { db.findPendingUploadByMessageId(any()) } returns null
             every { db.findPendingSendByMessageId(any()) } returns null
-            every { repository.findMessageByIdBlocking(messId) } returns null
-            every { repository.findSearchMessageById(messId) } returns searchMessage
+            coEvery { repository.findMessageById(messId) } returns null
+            coEvery { repository.findSearchMessageById(messId) } returns searchMessage
             every { repository.saveSearchMessageInDB(searchMessage) } returns Unit
             every { repository.saveMessagesInOneTransaction(any()) } returns Unit
             every { repository.saveSearchMessagesInOneTransaction(any()) } returns Unit
@@ -123,7 +124,7 @@ class DeleteMessageTest {
             every { db.findPendingSendByMessageId(any()) } returns null
             every { repository.findMessageByIdBlocking(messId) } returns message
             every { repository.saveMessageInDB(message) } returns 1L
-            every { repository.findSearchMessageById(messId) } returns null
+            coEvery { repository.findSearchMessageById(messId) } returns null
             every { repository.saveMessagesInOneTransaction(any()) } returns Unit
             every { repository.saveSearchMessagesInOneTransaction(any()) } returns Unit
             every { workScheduler.enqueue(any()) } returns operation
@@ -152,7 +153,7 @@ class DeleteMessageTest {
             every { db.findPendingUploadByMessageId(any()) } returns null
             every { db.findPendingSendByMessageId(any()) } returns pendingSend
             every { repository.findMessageByIdBlocking(messId) } returns null
-            every { repository.findSearchMessageById(messId) } returns message
+            every { repository.findSearchMessageByIdBlocking(messId) } returns message
             every { repository.saveMessageInDB(message) } returns 1L
             every { repository.saveSearchMessageInDB(message) } returns Unit
             every { repository.saveMessagesInOneTransaction(any()) } returns Unit

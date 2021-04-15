@@ -160,15 +160,22 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun updateAlias(addressIds: List<String>): ResponseBody = api.updateAlias(addressIds)
 
-    override fun setupAddress(addressSetupBody: AddressSetupBody): AddressSetupResponse = api.setupAddress(addressSetupBody)
+    override fun setupAddress(addressSetupBody: AddressSetupBody): AddressSetupResponse =
+        api.setupAddress(addressSetupBody)
 
-    override fun editAddress(addressId: String, displayName: String, signature: String): ResponseBody = api.editAddress(addressId, displayName, signature)
+    override fun editAddress(addressId: String, displayName: String, signature: String): ResponseBody =
+        api.editAddress(addressId, displayName, signature)
 
     override fun deleteAttachment(attachmentId: String): ResponseBody = api.deleteAttachment(attachmentId)
 
-    override fun downloadAttachment(attachmentId: String, progressListener: ProgressListener): ByteArray = api.downloadAttachment(attachmentId)
+    override fun downloadAttachmentBlocking(attachmentId: String, progressListener: ProgressListener): ByteArray =
+        api.downloadAttachmentBlocking(attachmentId, progressListener)
 
-    override fun downloadAttachment(attachmentId: String): ByteArray = api.downloadAttachment(attachmentId)
+    override fun downloadAttachmentBlocking(attachmentId: String): ByteArray =
+        api.downloadAttachmentBlocking(attachmentId)
+
+    override suspend fun downloadAttachment(attachmentId: String): okhttp3.ResponseBody? =
+        api.downloadAttachment(attachmentId)
 
     override fun uploadAttachmentInlineBlocking(attachment: Attachment, MessageID: String, contentID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentInlineBlocking(attachment, MessageID, contentID, KeyPackage, DataPackage, Signature)
 
@@ -323,15 +330,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse = api.searchByLabelAndTime(query, unixTime)
 
-    override fun createDraftBlocking(draftBody: DraftBody): MessageResponse? = api.createDraftBlocking(draftBody)
-
     override suspend fun createDraft(draftBody: DraftBody): MessageResponse = api.createDraft(draftBody)
-
-    override fun updateDraftBlocking(
-        messageId: String,
-        draftBody: DraftBody,
-        retrofitTag: RetrofitTag
-    ): MessageResponse? = api.updateDraftBlocking(messageId, draftBody, retrofitTag)
 
     override suspend fun updateDraft(
         messageId: String,
@@ -339,7 +338,11 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         retrofitTag: RetrofitTag
     ): MessageResponse = api.updateDraft(messageId, draftBody, retrofitTag)
 
-    override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> = api.sendMessage(messageId, message, retrofitTag)
+    override suspend fun sendMessage(
+        messageId: String,
+        message: MessageSendBody,
+        retrofitTag: RetrofitTag
+    ): MessageSendResponse = api.sendMessage(messageId, message, retrofitTag)
 
     override fun unlabelMessages(idList: IDList) = api.unlabelMessages(idList)
 

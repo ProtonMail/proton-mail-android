@@ -28,6 +28,7 @@ import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.settings.autolock.PinRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.TestData.autoAttachPublicKeyUser
 import ch.protonmail.android.uitests.testsHelper.TestData.docxFile
 import ch.protonmail.android.uitests.testsHelper.TestData.editedPassword
 import ch.protonmail.android.uitests.testsHelper.TestData.editedPasswordHint
@@ -41,7 +42,7 @@ import ch.protonmail.android.uitests.testsHelper.TestData.pngFile
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.zipFile
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
-import ch.protonmail.android.uitests.testsHelper.intentutils.MimeTypes
+import me.proton.core.test.android.instrumented.intentutils.MimeTypes
 import org.hamcrest.CoreMatchers.not
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -96,7 +97,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(pngFile)
             .clickAttachment(pngFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(pngFile, MimeTypes.image.png) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.png) }
     }
 
     @Test
@@ -119,7 +120,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(jpegFile)
             .clickAttachment(jpegFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(jpegFile, MimeTypes.image.jpeg) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.jpeg) }
     }
 
     @Test
@@ -142,7 +143,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(docxFile)
             .clickAttachment(docxFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(docxFile, MimeTypes.application.docx) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.application.docx) }
     }
 
     @Test
@@ -165,7 +166,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(zipFile)
             .clickAttachment(zipFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(zipFile, MimeTypes.application.zip) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.application.zip) }
     }
 
     @Test
@@ -188,7 +189,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(pdfFile)
             .clickAttachment(pdfFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(pdfFile, MimeTypes.application.pdf) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.application.pdf) }
     }
 
     @Test
@@ -219,7 +220,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(pngFile)
             .clickAttachment(pngFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(pngFile, MimeTypes.image.png) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.png) }
     }
 
     @Test
@@ -251,7 +252,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(pngFile)
             .clickAttachment(pngFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(pngFile, MimeTypes.image.png) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.png) }
     }
 
     @Test
@@ -351,5 +352,22 @@ class AttachmentsTests : BaseTest() {
             .sent()
             .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("1558")
+    @Test
+    fun automaticallyAttachPublicKey() {
+        val to = internalEmailNotTrustedKeys.email
+        val publicKey = "publickey - EmailAddress(s=${autoAttachPublicKeyUser.email}) - 0xA9FF792E.asc"
+        loginRobot
+            .loginUser(autoAttachPublicKeyUser)
+            .compose()
+            .sendMessage(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .expandAttachments()
+            .verify { publicKeyIsAttached(publicKey)}
     }
 }

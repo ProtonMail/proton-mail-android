@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">ネットワークに接続がありません。メッセージは接続確認後に処理されます。</string>
     <string name="update_app_title">アップデートが必要です。</string>
     <string name="update_app">アップデートされるまで、Protonmailアプリはご利用いただけません。</string>
+    <string name="you_are_offline">You are offline</string>
     <string name="api_offline_title">Protonmail APIはご利用になれません。</string>
     <string name="api_offline">ProtonMailは現在ご利用できません。https://protonstatus.com または https://twitter.com/protonmail で現在の状態を確認してください。</string>
     <string name="contact_saved">連絡先が保存されました。</string>
@@ -279,7 +280,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">メッセージ削除中にエラーが起きました。選択したメッセージのうち何通かは送信作業中ですか。</string>
     <string name="respond_inline">インラインで返信</string>
     <string name="no_connectivity_detected">接続が検出できません...</string>
-    <string name="no_connectivity_detected_troubleshoot">接続が検出できません… (<u>トラブルシュート</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">接続を確認しています...</string>
     <string name="sync_short">同期</string>
     <string name="draft_attachments_uploading">まだ下書きをアップロードしている最中です...</string>

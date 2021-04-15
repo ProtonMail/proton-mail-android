@@ -20,6 +20,7 @@ package ch.protonmail.android.uitests.robots.mailbox
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withLabelName
+import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import ch.protonmail.android.uitests.testsHelper.uiactions.click
 import ch.protonmail.android.uitests.testsHelper.uiactions.type
@@ -50,8 +51,18 @@ interface ApplyLabelRobotInterface {
         return this
     }
 
+    fun checkAlsoArchiveCheckBox(): ApplyLabelRobotInterface {
+        UIActions.wait.forViewWithId(R.id.also_archive).click()
+        return this
+    }
+
     fun apply(): Any {
         UIActions.wait.forViewWithId(R.id.done).click()
+        return this
+    }
+
+    fun applyAndArchive(): Any {
+        apply()
         return this
     }
 

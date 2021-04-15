@@ -26,7 +26,6 @@ import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -82,6 +81,9 @@ object Check {
 
     fun alertDialogWithTextIsDisplayed(@StringRes textId: Int): ViewInteraction =
         onView(withText(textId)).inRoot(RootMatchers.isDialog()).check(matches(isDisplayed()))
+
+    fun alertDialogWithPartialTextIsDisplayed(text: String): ViewInteraction =
+        onView(withText(containsString(text))).inRoot(RootMatchers.isDialog()).check(matches(isDisplayed()))
 
     fun viewWithTextIsChecked(@StringRes textId: Int): ViewInteraction =
         onView(withText(textId)).inRoot(RootMatchers.isDialog()).check(matches(isChecked()))

@@ -49,10 +49,10 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class AttachmentClearingService extends ProtonJobIntentService {
 
-    private static final String ACTION_REGULAR_CHECK = "ACTION_REGULAR_CHECK";
-    private static final String ACTION_CLEAR_CACHE_IMMEDIATELY = "ACTION_CLEAR_CACHE_IMMEDIATELY";
-    private static final String ACTION_CLEAR_CACHE_IMMEDIATELY_DELETE_TABLES = "ACTION_CLEAR_CACHE_IMMEDIATELY_DELETE_TABLES";
-    private static final String EXTRA_USERNAME = "EXTRA_USERNAME";
+    public static final String ACTION_REGULAR_CHECK = "ACTION_REGULAR_CHECK";
+    public static final String ACTION_CLEAR_CACHE_IMMEDIATELY = "ACTION_CLEAR_CACHE_IMMEDIATELY";
+    public static final String ACTION_CLEAR_CACHE_IMMEDIATELY_DELETE_TABLES = "ACTION_CLEAR_CACHE_IMMEDIATELY_DELETE_TABLES";
+    public static final String EXTRA_USERNAME = "EXTRA_USERNAME";
 
     @Inject
     UserManager mUserManager;
@@ -72,25 +72,10 @@ public class AttachmentClearingService extends ProtonJobIntentService {
         attachmentMetadataDatabase = AttachmentMetadataDatabaseFactory.Companion.getInstance(this).getDatabase();
     }
 
-    public static void startRegularClearUpService() {
-        final Context context = ProtonMailApplication.getApplication();
-        final Intent intent = new Intent(context, AttachmentClearingService.class);
-        intent.setAction(ACTION_REGULAR_CHECK);
-        enqueueWork(context, AttachmentClearingService.class, Constants.JOB_INTENT_SERVICE_ID_ATTACHMENT_CLEARING, intent);
-    }
-
     public static void startClearUpImmediatelyService() {
         final Context context = ProtonMailApplication.getApplication();
         final Intent intent = new Intent(context, AttachmentClearingService.class);
         intent.setAction(ACTION_CLEAR_CACHE_IMMEDIATELY);
-        enqueueWork(context, AttachmentClearingService.class, Constants.JOB_INTENT_SERVICE_ID_ATTACHMENT_CLEARING, intent);
-    }
-
-    public static void startClearUpImmediatelyServiceAndDeleteTables(String username) {
-        final Context context = ProtonMailApplication.getApplication();
-        final Intent intent = new Intent(context, AttachmentClearingService.class);
-        intent.setAction(ACTION_CLEAR_CACHE_IMMEDIATELY_DELETE_TABLES);
-        intent.putExtra(EXTRA_USERNAME, username);
         enqueueWork(context, AttachmentClearingService.class, Constants.JOB_INTENT_SERVICE_ID_ATTACHMENT_CLEARING, intent);
     }
 

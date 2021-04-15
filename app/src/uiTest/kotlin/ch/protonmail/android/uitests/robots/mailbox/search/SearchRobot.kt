@@ -27,21 +27,24 @@ import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import me.proton.core.test.android.instrumented.CoreRobot
 
 /**
  * [SearchRobot] class contains actions and verifications for Search functionality.
  */
-class SearchRobot {
+class SearchRobot : CoreRobot {
 
     fun searchMessageText(subject: String): SearchRobot {
-        UIActions.id.insertTextInFieldWithIdAndPressImeAction(R.id.search_src_text, subject)
+        view.withId(R.id.search_src_text).typeText(subject).pressImeActionBtn()
         return this
     }
 
     fun clickSearchedMessageBySubject(subject: String): MessageRobot {
-        UIActions.recyclerView
-            .common.waitForBeingPopulated(messagesRecyclerViewId)
-            .common.clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
+        recyclerView
+            .withId(messagesRecyclerViewId)
+            .waitUntilPopulated()
+            .onHolderItem(withMessageSubject(subject))
+            .click()
         return MessageRobot()
     }
 

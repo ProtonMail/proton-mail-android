@@ -22,13 +22,26 @@ package ch.protonmail.android.uitests.robots.device
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
-import ch.protonmail.android.uitests.testsHelper.intentutils.IntentHelper.sendShareFileIntent
+import me.proton.core.test.android.instrumented.intentutils.IntentHelper.sendShareFileIntent
 
-class DeviceRobot {
+open class DeviceRobot {
 
     fun clickHomeButton(): DeviceRobot {
         device.pressHome()
+        return this
+    }
+
+    fun clickRecentAppsButton(): DeviceRobot {
+        device.pressRecentApps()
+        return this
+    }
+
+    fun clickRecentAppView(): DeviceRobot {
+        val recentAppSelector = UiSelector().resourceId("com.google.android.apps.nexuslauncher:id/overview_panel")
+        device.findObject(recentAppSelector).waitForExists(5000)
+        device.findObject(recentAppSelector).click()
         return this
     }
 

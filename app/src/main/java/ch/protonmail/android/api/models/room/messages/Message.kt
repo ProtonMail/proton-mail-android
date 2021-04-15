@@ -43,7 +43,9 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.runBlocking
 import org.apache.commons.lang3.StringEscapeUtils
+import timber.log.Timber
 import java.io.Serializable
 import java.util.ArrayList
 import java.util.concurrent.TimeUnit
@@ -88,8 +90,10 @@ const val COLUMN_MESSAGE_ACCESS_TIME = "AccessTime"
 const val COLUMN_MESSAGE_DELETED = "Deleted"
 // endregion
 
-@Entity(tableName = TABLE_MESSAGES,
-        indices = [Index(value = [COLUMN_MESSAGE_ID], unique = true), Index(value = [COLUMN_MESSAGE_LOCATION])])
+@Entity(
+    tableName = TABLE_MESSAGES,
+    indices = [Index(value = [COLUMN_MESSAGE_ID], unique = true), Index(value = [COLUMN_MESSAGE_LOCATION])]
+)
 data class Message @JvmOverloads constructor(
     @ColumnInfo(name = COLUMN_MESSAGE_ID)
     var messageId: String? = null,
@@ -111,7 +115,7 @@ data class Message @JvmOverloads constructor(
     var isStarred: Boolean? = null,
     @ColumnInfo(name = COLUMN_MESSAGE_NUM_ATTACHMENTS)
     var numAttachments: Int = 0,
-    //TODO merge methods
+    // TODO merge methods
     @ColumnInfo(name = COLUMN_MESSAGE_IS_ENCRYPTED)
     var messageEncryption: MessageEncryption? = null,
     @ColumnInfo(name = COLUMN_MESSAGE_EXPIRATION_TIME)
@@ -180,7 +184,7 @@ data class Message @JvmOverloads constructor(
     var hasInvalidSignature: Boolean = false
 
     @Ignore
-    var embeddedImagesArray = listOf<String>()
+    var embeddedImageIds = listOf<String>()
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = BaseColumns._ID)
@@ -200,8 +204,9 @@ data class Message @JvmOverloads constructor(
         get() = sender?.name
         set(senderName) {
             sender = sender?.copy(name = senderName) ?: MessageSender(
-                    senderName,
-                    null)
+                senderName,
+                null
+            )
         }
 
     @Ignore
@@ -232,27 +237,33 @@ data class Message @JvmOverloads constructor(
     val ccListString
         get() = MessageUtils.toContactString(ccList)
 
-    val bccListString:String
-		get() = MessageUtils.toContactString(bccList)
+    val bccListString: String
+        get() = MessageUtils.toContactString(bccList)
 
     fun locationFromLabel(): Constants.MessageLocationType =
-            allLabelIDs
-                    .asSequence()
-                    .filter { it.length <= 2 }
-                    .map { Constants.MessageLocationType.fromInt(it.toInt()) }
-                    .fold(Constants.MessageLocationType.STARRED) { location, newLocation ->
-                        if (newLocation !in listOf(Constants.MessageLocationType.STARRED,
-                                        Constants.MessageLocationType.ALL_MAIL,
-                                        Constants.MessageLocationType.INVALID) &&
-                                newLocation.messageLocationTypeValue < location.messageLocationTypeValue) {
-                            newLocation
-                        } else if (newLocation in listOf(Constants.MessageLocationType.DRAFT,
-                                        Constants.MessageLocationType.SENT)) {
-                            newLocation
-                        } else {
-                            location
-                        }
-                    }
+        allLabelIDs
+            .asSequence()
+            .filter { it.length <= 2 }
+            .map { Constants.MessageLocationType.fromInt(it.toInt()) }
+            .fold(Constants.MessageLocationType.STARRED) { location, newLocation ->
+                if (newLocation !in listOf(
+                        Constants.MessageLocationType.STARRED,
+                        Constants.MessageLocationType.ALL_MAIL,
+                        Constants.MessageLocationType.INVALID
+                    ) &&
+                    newLocation.messageLocationTypeValue < location.messageLocationTypeValue
+                ) {
+                    newLocation
+                } else if (newLocation in listOf(
+                        Constants.MessageLocationType.DRAFT,
+                        Constants.MessageLocationType.SENT
+                    )
+                ) {
+                    newLocation
+                } else {
+                    location
+                }
+            }
 
     @Ignore
     var isBeingSent: Boolean = false
@@ -273,7 +284,7 @@ data class Message @JvmOverloads constructor(
 
     fun writeTo(message: Message) {
         message.messageBody = messageBody
-        message.embeddedImagesArray = embeddedImagesArray
+        message.embeddedImageIds = embeddedImageIds
         message.numAttachments = numAttachments
         val attachments = Attachments
         attachments.forEach { attachment ->
@@ -303,7 +314,7 @@ data class Message @JvmOverloads constructor(
             val match = matcher.group()
             embedded.add(match.removePrefix("cid:"))
         }
-        embeddedImagesArray = embedded
+        embeddedImageIds = embedded
 
     }
 
@@ -313,17 +324,17 @@ data class Message @JvmOverloads constructor(
         location = locationFromLabel().messageLocationTypeValue
     }
 
-    fun getIsEncrypted(): MessageEncryption? {
-        return messageEncryption
-    }
+    fun getIsEncrypted(): MessageEncryption? = messageEncryption
 
     @Deprecated("Use getMessageEncryption()")
-    fun isEncrypted(): Boolean {
-        return messageEncryption!!.isEndToEndEncrypted
-    }
+    fun isEncrypted(): Boolean = messageEncryption!!.isEndToEndEncrypted
 
     @WorkerThread
-    fun attachments(messagesDatabase: MessagesDatabase): List<Attachment> {
+    fun attachmentsBlocking(messagesDatabase: MessagesDatabase): List<Attachment> = runBlocking {
+        attachments(messagesDatabase)
+    }
+
+    suspend fun attachments(messagesDatabase: MessagesDatabase): List<Attachment> {
         if (isPGPMime) {
             return this.Attachments
         }
@@ -459,7 +470,7 @@ data class Message @JvmOverloads constructor(
             hasInvalidSignature = hasSense && !tct.isSignatureValid
             decryptedMessage = tct.decryptedData
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.i(e, "decrypt error verkeys size: ${verKeys?.size}, keys size: ${keys.size}")
             decryptedBody = messageBody
             decryptedHTML = messageBody
             throw e
@@ -479,10 +490,10 @@ data class Message @JvmOverloads constructor(
     }
 
     fun searchForLocation(location: Int) = allLabelIDs
-            .asSequence()
-            .filter { it.length <= 2 }
-            .map { Integer.valueOf(it) }
-            .contains(location)
+        .asSequence()
+        .filter { it.length <= 2 }
+        .map { Integer.valueOf(it) }
+        .contains(location)
 
     fun setAttachmentList(attachmentList: List<Attachment>) {
         Attachments = attachmentList
@@ -512,16 +523,15 @@ data class Message @JvmOverloads constructor(
     fun calculateLocation() {
         location = locationFromLabel().messageLocationTypeValue
         isStarred = allLabelIDs
-                .asSequence()
-                .filter { it.length <= 2 }
-                .map { Constants.MessageLocationType.fromInt(it.toInt()) }
-                .contains(Constants.MessageLocationType.STARRED)
+            .asSequence()
+            .filter { it.length <= 2 }
+            .map { Constants.MessageLocationType.fromInt(it.toInt()) }
+            .contains(Constants.MessageLocationType.STARRED)
     }
 
     @WorkerThread
-    fun checkIfAttHeadersArePresent(messagesDatabase: MessagesDatabase): Boolean {
-        return attachments(messagesDatabase).asSequence().map(Attachment::headers).any { it == null }
-    }
+    fun checkIfAttHeadersArePresent(messagesDatabase: MessagesDatabase): Boolean =
+        attachmentsBlocking(messagesDatabase).asSequence().map(Attachment::headers).any { it == null }
 
     fun getList(recipientType: RecipientType): List<MessageRecipient> {
         return when (recipientType) {

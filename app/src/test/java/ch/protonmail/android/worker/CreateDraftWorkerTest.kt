@@ -54,7 +54,7 @@ import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKeys
 import ch.protonmail.android.utils.base64.Base64Encoder
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
 import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_ACTION_TYPE
@@ -84,7 +84,7 @@ import kotlin.test.Test
 class CreateDraftWorkerTest : CoroutinesTest {
 
     @RelaxedMockK
-    private lateinit var errorNotifier: ErrorNotifier
+    private lateinit var userNotifier: UserNotifier
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -123,6 +123,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
     fun setUp() {
         MockKAnnotations.init(this)
         coEvery { apiManager.createDraft(any()) } returns mockk(relaxed = true)
+        coEvery { messageDetailsRepository.findAttachmentsByMessageId(any()) } returns emptyList()
     }
 
     @Test
@@ -136,14 +137,6 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val message = Message(messageId = messageId)
             message.dbId = messageDbId
             val previousSenderAddressId = "previousSenderId82348"
-            val requestSlot = slot<OneTimeWorkRequest>()
-            every {
-                workManager.enqueueUniqueWork(
-                    "saveDraftUniqueWork-$messageId",
-                    ExistingWorkPolicy.REPLACE,
-                    capture(requestSlot)
-                )
-            } answers { mockk() }
 
             // When
             CreateDraftWorker.Enqueuer(workManager).enqueue(
@@ -154,6 +147,14 @@ class CreateDraftWorkerTest : CoroutinesTest {
             )
 
             // Then
+            val requestSlot = slot<OneTimeWorkRequest>()
+            verify {
+                workManager.enqueueUniqueWork(
+                    "saveDraftUniqueWork-$messageId",
+                    ExistingWorkPolicy.REPLACE,
+                    capture(requestSlot)
+                )
+            }
             val workSpec = requestSlot.captured.workSpec
             val constraints = workSpec.constraints
             val inputData = workSpec.input
@@ -195,7 +196,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerSetsParentIdAndActionTypeOnCreateDraftRequestWhenParentIdIsGiven() {
+    fun workerSetsParentIdAndActionTypeOnCreateDraftRequestWhenParentIdIsGivenAndDraftIsBeingCreated() {
         runBlockingTest {
             // Given
             val parentId = "89345"
@@ -213,6 +214,11 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenActionTypeInput(actionType)
             every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
 
             // When
             worker.doWork()
@@ -227,7 +233,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerSetsSenderAndMessageBodyOnCreateDraftRequest() {
+    fun workerSetsSenderAndMessageBodyOnCreateOrUpdateDraftRequest() {
         runBlockingTest {
             // Given
             val messageDbId = 345L
@@ -258,6 +264,11 @@ class CreateDraftWorkerTest : CoroutinesTest {
             every { userManager.getUser("username").loadNew("username") } returns mockk {
                 every { findAddressById(Id(addressId)) } returns address
             }
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking("") } returns parentMessage
 
             // When
             worker.doWork()
@@ -287,6 +298,11 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenActionTypeInput()
             every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking("") } returns parentMessage
 
             // When
             worker.doWork()
@@ -320,7 +336,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             val apiDraftMessage = mockk<DraftBody>(relaxed = true)
             val parentMessage = mockk<Message> {
-                every { attachments(any()) } returns listOf(attachment)
+                coEvery { attachments(any()) } returns listOf(attachment)
             }
             val senderAddress = mockk<Address>(relaxed = true) {
                 every { keys.primaryKey?.privateKey } returns privateKey
@@ -352,7 +368,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             // Then
             val attachmentReEncrypted = attachment.copy(keyPackets = "encrypted encoded packets")
-            verify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao()) }
+            coVerify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao()) }
             verify { addressCrypto.buildArmoredPublicKey(privateKey) }
             verify { apiDraftMessage.addAttachmentKeyPacket("attachment1", attachmentReEncrypted.keyPackets!!) }
         }
@@ -376,7 +392,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             val apiDraftMessage = mockk<DraftBody>(relaxed = true)
             val parentMessage = mockk<Message> {
-                every { attachments(any()) } returns listOf(attachment, attachment2)
+                coEvery { attachments(any()) } returns listOf(attachment, attachment2)
             }
             givenMessageIdInput(messageDbId)
             givenParentIdInput(parentId)
@@ -409,7 +425,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             }
             val apiDraftMessage = mockk<DraftBody>(relaxed = true)
             val parentMessage = mockk<Message> {
-                every { attachments(any()) } returns listOf(
+                coEvery { attachments(any()) } returns listOf(
                     Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true),
                     Attachment("attachment1", keyPackets = "Attachment1KeyPackets", inline = false),
                     Attachment("attachment2", keyPackets = "Attachment2KeyPackets", inline = true)
@@ -427,7 +443,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             worker.doWork()
 
             // Then
-            verify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao()) }
+            coVerify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao()) }
             verifyOrder {
                 apiDraftMessage.addAttachmentKeyPacket("attachment", "OriginalAttachmentPackets")
                 apiDraftMessage.addAttachmentKeyPacket("attachment1", "Attachment1KeyPackets")
@@ -450,7 +466,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             }
             val apiDraftMessage = mockk<DraftBody>(relaxed = true)
             val parentMessage = mockk<Message> {
-                every { attachments(any()) } returns listOf(
+                coEvery { attachments(any()) } returns listOf(
                     Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true),
                     Attachment("attachment1", keyPackets = "Attachment1KeyPackets", inline = false),
                     Attachment("attachment2", keyPackets = "Attachment2KeyPackets", inline = true)
@@ -468,7 +484,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             worker.doWork()
 
             // Then
-            verify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao()) }
+            coVerify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao()) }
             verifyOrder {
                 apiDraftMessage.addAttachmentKeyPacket("attachment", "OriginalAttachmentPackets")
                 apiDraftMessage.addAttachmentKeyPacket("attachment2", "Attachment2KeyPackets")
@@ -502,12 +518,195 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenPreviousSenderAddress("")
             every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
 
             // When
             worker.doWork()
 
             // Then
             verify(exactly = 0) { apiDraftMessage.addAttachmentKeyPacket(any(), any()) }
+        }
+    }
+
+    @Test
+    fun workerDoesNotAddParentDataToRequestWhenDraftCreationAlreadyHappenedAndDraftIsBeingUpdated() {
+        runBlockingTest {
+            // Given
+            val parentId = "88237"
+            val messageDbId = 9238L
+            val message = Message().apply {
+                dbId = messageDbId
+                messageId = "remote-message-id2837"
+                addressID = "addressId835"
+                messageBody = "messageBody"
+            }
+
+            val apiDraftMessage = mockk<DraftBody>(relaxed = true)
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            givenActionTypeInput(FORWARD)
+            givenPreviousSenderAddress("")
+            every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
+            every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
+
+            // When
+            worker.doWork()
+
+            // Then
+            verify(exactly = 0) { apiDraftMessage.parentID = any() }
+            verify(exactly = 0) { apiDraftMessage.addAttachmentKeyPacket(any(), any()) }
+        }
+    }
+
+    @Test
+    fun workerAddsExistingMessageAttachmentsKeyPacketsToRequestWhenSenderChangedAndPacketsWereAlreadyEncryptedWithTheCurrentSender() {
+        // This case will happen when changing sender and then performing multiple draft updates (eg. through auyo save)
+        runBlockingTest {
+            // Given
+            val parentId = "8238"
+            val messageDbId = 1275L
+            val messageId = "remote-message-ID-draft-being-updated8723"
+            val messageAttachments = listOf(
+                Attachment("attachment1", keyPackets = "MessageAtta1KeyPacketsBase64", inline = false),
+            )
+            val message = mockk<Message>(relaxed = true) {
+                coEvery { attachments(any()) } returns messageAttachments
+                every { dbId } returns messageDbId
+                every { this@mockk.messageId } returns messageId
+                every { addressID } returns "currentAddressId12346"
+                every { messageBody } returns "messageBody"
+            }
+            val apiDraftMessage = mockk<DraftBody>(relaxed = true)
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            val previousSenderAddressId = "senderAddressUsedInFirstDraftCreation1"
+            givenPreviousSenderAddress(previousSenderAddressId)
+            every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
+            coEvery { messageDetailsRepository.findAttachmentsByMessageId(messageId) } returns messageAttachments
+            every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
+
+            every { userManager.username } returns "username"
+            every { addressCryptoFactory.create(Id(previousSenderAddressId), Name("username")) } returns mockk(relaxed = true) {
+                every { decryptKeyPacket(any()) } throws Exception("Decryption failed")
+            }
+
+            // When
+            worker.doWork()
+
+            // Then
+            coVerify { messageDetailsRepository.findAttachmentsByMessageId(messageId) }
+            verifyOrder {
+                apiDraftMessage.addAttachmentKeyPacket("attachment1", "MessageAtta1KeyPacketsBase64")
+            }
+        }
+    }
+
+    @Test
+    fun workerReEncryptsMessageAttachmentsKeyPacketsAndAddsThemToRequestWhenSenderAddressWasChanged() {
+        runBlockingTest {
+            // Given
+            val parentId = "8823"
+            val messageDbId = 1274L
+            val messageId = "remote-message-ID-draft-being-updated2323"
+            val messageAttachments = listOf(
+                Attachment("attachment1", keyPackets = "MessageAtta1KeyPacketsBase64", inline = true),
+                Attachment("attachment2", keyPackets = "MessageAtta2KeyPacketsBase64", inline = false),
+                Attachment("attachment3", keyPackets = "MessageAtta3KeyPacketsBase64", inline = false)
+            )
+            val message = mockk<Message>(relaxed = true) {
+                coEvery { attachments(any()) } returns messageAttachments
+                every { dbId } returns messageDbId
+                every { this@mockk.messageId } returns messageId
+                every { addressID } returns "currentAddressId12345"
+                every { messageBody } returns "messageBody"
+            }
+            val apiDraftMessage = mockk<DraftBody>(relaxed = true)
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            val previousSenderAddressId = "senderAddressUsedInFirstDraftCreation"
+            givenPreviousSenderAddress(previousSenderAddressId)
+            every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
+            coEvery { messageDetailsRepository.findAttachmentsByMessageId(messageId) } returns messageAttachments
+            every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
+
+            every { userManager.username } returns "username"
+
+            every { base64.decode("MessageAtta1KeyPacketsBase64") } returns "MessageAtta1KeyPackets".toByteArray()
+            every { base64.decode("MessageAtta2KeyPacketsBase64") } returns "MessageAtta2KeyPackets".toByteArray()
+            every { base64.decode("MessageAtta3KeyPacketsBase64") } returns "MessageAtta3KeyPackets".toByteArray()
+
+            every { addressCryptoFactory.create(Id(previousSenderAddressId), Name("username")) } returns mockk(relaxed = true) {
+                every { decryptKeyPacket("MessageAtta1KeyPackets".toByteArray()) } returns "decryptedKeyPackets1".toByteArray()
+                every { decryptKeyPacket("MessageAtta2KeyPackets".toByteArray()) } returns "decryptedKeyPackets2".toByteArray()
+                every { decryptKeyPacket("MessageAtta3KeyPackets".toByteArray()) } returns "decryptedKeyPackets3".toByteArray()
+
+                every { encryptKeyPacket("decryptedKeyPackets1".toByteArray(), any()) } returns "MessageAtt1ReEncryptedPackets".toByteArray()
+                every { encryptKeyPacket("decryptedKeyPackets2".toByteArray(), any()) } returns "MessageAtt2ReEncryptedPackets".toByteArray()
+                every { encryptKeyPacket("decryptedKeyPackets3".toByteArray(), any()) } returns "MessageAtt3ReEncryptedPackets".toByteArray()
+            }
+            every { base64.encode("MessageAtt1ReEncryptedPackets".toByteArray()) } returns "MessageAtt1ReEncryptedPacketsBase64"
+            every { base64.encode("MessageAtt2ReEncryptedPackets".toByteArray()) } returns "MessageAtt2ReEncryptedPacketsBase64"
+            every { base64.encode("MessageAtt3ReEncryptedPackets".toByteArray()) } returns "MessageAtt3ReEncryptedPacketsBase64"
+
+            // When
+            worker.doWork()
+
+            // Then
+            coVerify { messageDetailsRepository.findAttachmentsByMessageId(messageId) }
+            verifyOrder {
+                apiDraftMessage.addAttachmentKeyPacket("attachment1", "MessageAtt1ReEncryptedPacketsBase64")
+                apiDraftMessage.addAttachmentKeyPacket("attachment2", "MessageAtt2ReEncryptedPacketsBase64")
+                apiDraftMessage.addAttachmentKeyPacket("attachment3", "MessageAtt3ReEncryptedPacketsBase64")
+            }
+        }
+    }
+
+    @Test
+    fun workerAddsExistingMessageAttachmentsKeyPacketsToRequestWhenSenderAddressWasNotChanged() {
+        runBlockingTest {
+            // Given
+            val parentId = "8234"
+            val messageDbId = 1273L
+            val messageId = "remote-message-ID-draft-being-updated2348"
+            val messageAttachments = listOf(
+                Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true),
+                Attachment("attachment1", keyPackets = "Attachment1KeyPackets", inline = false),
+                Attachment("attachment2", keyPackets = "Attachment2KeyPackets", inline = false)
+            )
+            val message = mockk<Message>(relaxed = true) {
+                coEvery { attachments(any()) } returns messageAttachments
+                every { dbId } returns messageDbId
+                every { this@mockk.messageId } returns messageId
+                every { addressID } returns "addressId12345"
+                every { messageBody } returns "messageBody"
+            }
+            val apiDraftMessage = mockk<DraftBody>(relaxed = true)
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            givenPreviousSenderAddress("")
+            every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
+            coEvery { messageDetailsRepository.findAttachmentsByMessageId(messageId) } returns messageAttachments
+            every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
+
+            // When
+            worker.doWork()
+
+            // Then
+            coVerify { messageDetailsRepository.findAttachmentsByMessageId(messageId) }
+            verifyOrder {
+                apiDraftMessage.addAttachmentKeyPacket("attachment", "OriginalAttachmentPackets")
+                apiDraftMessage.addAttachmentKeyPacket("attachment1", "Attachment1KeyPackets")
+                apiDraftMessage.addAttachmentKeyPacket("attachment2", "Attachment2KeyPackets")
+            }
         }
     }
 
@@ -545,6 +744,11 @@ class CreateDraftWorkerTest : CoroutinesTest {
             every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } returns apiDraftRequest
             coEvery { apiManager.createDraft(apiDraftRequest) } returns apiDraftResponse
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
 
             // When
             worker.doWork()
@@ -611,6 +815,11 @@ class CreateDraftWorkerTest : CoroutinesTest {
             every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } returns apiDraftRequest
             coEvery { apiManager.createDraft(apiDraftRequest) } returns apiDraftResponse
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
 
             // When
             val result = worker.doWork()
@@ -652,12 +861,17 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 every { this@mockk.message.subject } returns "Subject002"
             }
             coEvery { apiManager.createDraft(any()) } returns errorAPIResponse
-            every { parameters.runAttemptCount } returns 0
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
+            every { parameters.runAttemptCount } returns 1
 
             // When
             val result = worker.doWork()
 
-            verify { errorNotifier.showPersistentError(errorMessage, "Subject002") }
+            verify { userNotifier.showPersistentError(errorMessage, "Subject002") }
             val expected = ListenableWorker.Result.failure(
                 Data.Builder().putString(
                     KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
@@ -691,7 +905,12 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 every { this@mockk.message.subject } returns "Subject001"
             }
             coEvery { apiManager.createDraft(any()) } throws IOException(errorMessage)
-            every { parameters.runAttemptCount } returns 3
+            every { parameters.runAttemptCount } returns 2
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
 
             // When
             val result = worker.doWork()
@@ -725,13 +944,18 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 every { this@mockk.message.subject } returns "Subject001"
             }
             coEvery { apiManager.createDraft(any()) } throws IOException(errorMessage)
-            every { parameters.runAttemptCount } returns 11
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
+            every { parameters.runAttemptCount } returns 4
 
             // When
             val result = worker.doWork()
 
             // Then
-            verify { errorNotifier.showPersistentError(errorMessage, "Subject001") }
+            verify { userNotifier.showPersistentError(errorMessage, "Subject001") }
             val expected = ListenableWorker.Result.failure(
                 Data.Builder().putString(
                     KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
@@ -778,6 +1002,11 @@ class CreateDraftWorkerTest : CoroutinesTest {
             every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } returns apiDraftRequest
             coEvery { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) } returns apiDraftResponse
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
 
             // When
             worker.doWork()
@@ -799,6 +1028,78 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 this.numAttachments = message.numAttachments
                 this.Attachments = responseMessage.Attachments
                 this.localId = message.messageId
+            }
+            val actualMessage = slot<Message>()
+            coVerify { messageDetailsRepository.saveMessageLocally(capture(actualMessage)) }
+            assertEquals(expectedMessage, actualMessage.captured)
+            assertEquals(expectedMessage.Attachments, actualMessage.captured.Attachments)
+        }
+    }
+
+    @Test
+    fun workerSavesMessageLocallyWithAttachmentsFromApiDraftPlusAnyLocalAttachmentThatWasNotUploaded() {
+        runBlockingTest {
+            // Given
+            val parentId = "8238482"
+            val messageDbId = 345L
+            val remoteMessageId = "7pmfkkkyCO69Ch5Gzn0b517H-x-zycdj1Urhn-pj6Eam38FnYY3IxZ62jJ-gbwxVg=="
+            val localAttachment = Attachment(attachmentId = "LOCAL-82374", isUploaded = false)
+            val localMessage = Message().apply {
+                dbId = messageDbId
+                messageId = remoteMessageId
+                addressID = "addressId8238"
+                messageBody = "messageBody12"
+                sender = MessageSender("sender92384", "senderEmail@8238.com")
+                setLabelIDs(listOf("label", "label1", "label2"))
+                parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
+                numAttachments = 1
+                Attachments = listOf(localAttachment)
+            }
+
+            val apiDraftRequest = mockk<DraftBody>(relaxed = true)
+            val remoteAttachment = Attachment(attachmentId = "REMOTE-12736", isUploaded = true)
+            val responseMessage = Message(messageId = "created_draft_id").apply {
+                Attachments = listOf(remoteAttachment)
+            }
+            val apiDraftResponse = mockk<MessageResponse> {
+                every { code } returns 1000
+                every { messageId } returns "created_draft_id"
+                every { this@mockk.message } returns responseMessage
+            }
+            val retrofitTag = RetrofitTag(userManager.username)
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            givenActionTypeInput(NONE)
+            givenPreviousSenderAddress("")
+            every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns localMessage
+            every { messageFactory.createDraftApiRequest(localMessage) } returns apiDraftRequest
+            coEvery { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) } returns apiDraftResponse
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
+
+            // When
+            worker.doWork()
+
+            // Then
+            coVerify { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) }
+            val expectedMessage = Message().apply {
+                this.dbId = messageDbId
+                this.messageId = "created_draft_id"
+                this.toList = listOf()
+                this.ccList = listOf()
+                this.bccList = listOf()
+                this.replyTos = listOf()
+                this.sender = localMessage.sender
+                this.setLabelIDs(localMessage.getEventLabelIDs())
+                this.parsedHeaders = localMessage.parsedHeaders
+                this.isDownloaded = true
+                this.setIsRead(true)
+                this.numAttachments = localMessage.numAttachments
+                this.Attachments = listOf(localAttachment, remoteAttachment)
+                this.localId = localMessage.messageId
             }
             val actualMessage = slot<Message>()
             coVerify { messageDetailsRepository.saveMessageLocally(capture(actualMessage)) }

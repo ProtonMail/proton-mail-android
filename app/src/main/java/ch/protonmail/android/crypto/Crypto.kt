@@ -162,7 +162,9 @@ abstract class Crypto<K>(
             }.onFailure(Timber::w)
         }
         val messagePrefix = errorMessage?.let { "$it. " } ?: EMPTY_STRING
-        throw IllegalStateException("${messagePrefix}There is no valid decryption key")
+        throw IllegalStateException(
+            "${messagePrefix}There is no valid decryption key, currentKeys size: ${currentKeys.size}"
+        )
     }
 
     companion object {

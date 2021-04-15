@@ -217,15 +217,16 @@ public class LoginActivity extends BaseLoginActivity {
         };
     }
 
-    private void onConnectivityEvent(boolean hasConnectivity) {
-        Timber.v("onConnectivityEvent hasConnectivity:%s", hasConnectivity);
-        if (!hasConnectivity) {
+    private void onConnectivityEvent(Constants.ConnectionState connectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s", connectivity.name());
+        if (connectivity != Constants.ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                     mSnackLayout,
                     mUserManager.getUser(),
                     this,
-                    onConnectivityCheckRetry(),
-                    null
+                    null,
+                    null,
+                    connectivity == Constants.ConnectionState.NO_INTERNET
             ).show();
         } else {
             networkSnackBarUtil.hideAllSnackBars();
@@ -324,7 +325,6 @@ public class LoginActivity extends BaseLoginActivity {
                 hideProgress();
                 enableInput();
                 mSignIn.setClickable(true);
-                TextExtensions.showToast(this, R.string.invalid_credentials);
             }
             break;
             case INVALID_SERVER_PROOF: {

@@ -21,44 +21,32 @@ package ch.protonmail.android.uitests.tests
 import android.Manifest.permission.READ_CONTACTS
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.app.Activity
-import android.app.Instrumentation
 import android.content.Context
-import android.preference.PreferenceManager
-import android.util.Log
 import android.widget.Toast
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.matcher.IntentMatchers.isInternal
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
-import androidx.test.uiautomator.UiDevice
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.activities.guest.LoginActivity
-import ch.protonmail.android.uitests.testsHelper.ProtonFailureHandler
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
 import ch.protonmail.android.uitests.testsHelper.User
-import ch.protonmail.android.uitests.testsHelper.devicesetup.DeviceSetup.clearLogcat
-import ch.protonmail.android.uitests.testsHelper.devicesetup.DeviceSetup.copyAssetFileToInternalFilesStorage
-import ch.protonmail.android.uitests.testsHelper.devicesetup.DeviceSetup.deleteDownloadArtifactsFolder
-import ch.protonmail.android.uitests.testsHelper.devicesetup.DeviceSetup.prepareArtifactsDir
-import ch.protonmail.android.uitests.testsHelper.devicesetup.DeviceSetup.setupDevice
 import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
-import org.hamcrest.CoreMatchers.not
+import me.proton.core.test.android.instrumented.CoreTest
+import me.proton.core.test.android.instrumented.devicesetup.DeviceSetup.copyAssetFileToInternalFilesStorage
+import me.proton.core.test.android.instrumented.devicesetup.DeviceSetup.deleteDownloadArtifactsFolder
+import me.proton.core.test.android.instrumented.devicesetup.DeviceSetup.prepareArtifactsDir
+import me.proton.core.test.android.instrumented.devicesetup.DeviceSetup.setupDevice
 import org.junit.After
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.rules.RuleChain
-import org.junit.rules.TestName
 import org.junit.runner.RunWith
 import kotlin.test.BeforeTest
 
 @RunWith(AndroidJUnit4ClassRunner::class)
-open class BaseTest {
+open class BaseTest : CoreTest() {
 
     private val activityRule = ActivityTestRule(LoginActivity::class.java)
 
@@ -71,53 +59,31 @@ open class BaseTest {
         .around(activityRule)!!
 
     @BeforeTest
-    open fun setUp() {
-        Espresso.setFailureHandler(ProtonFailureHandler(InstrumentationRegistry.getInstrumentation()))
-        PreferenceManager.getDefaultSharedPreferences(targetContext).edit().clear().apply()
-        Intents.init()
-        clearLogcat()
-        Log.d(testTag, "Starting test execution for test: ${testName.methodName}")
-        // Show toast with test case name for better test analysis in recorded videos especially on Firebase.
+    override fun setUp() {
+        super.setUp()
         InstrumentationRegistry.getInstrumentation().runOnMainSync {
             Toast.makeText(targetContext, testName.methodName, tenSeconds).show()
         }
-        Intents.intending(not(isInternal()))
-            .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, null))
     }
 
     @After
-    open fun tearDown() {
-        Intents.release()
-        for (idlingResource in IdlingRegistry.getInstance().resources) {
-            if (idlingResource == null) {
-                continue
-            }
-            IdlingRegistry.getInstance().unregister(idlingResource)
-        }
+    override fun tearDown() {
+        super.tearDown()
         device.removeWatcher("SystemDialogWatcher")
-        Log.d(testTag, "Finished test execution: ${testName.methodName}")
     }
 
     companion object {
-        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext!!
-        val testContext = InstrumentationRegistry.getInstrumentation().context!!
         var shouldReportToTestRail = false
-        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation!!
-        val testName = TestName()
-        val artifactsPath = "${targetContext.filesDir.path}/artifacts"
-        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        const val testApp = "testApp"
-        const val testRailRunId = "testRailRunId"
-        const val testTag = "PROTON_UI_TEST"
-        const val downloadArtifactsPath = "/sdcard/Download/artifacts"
         private val testExecutionWatcher = TestExecutionWatcher()
-        private const val reportToTestRail = "reportToTestRail"
         private const val oneTimeRunFlag = "oneTimeRunFlag"
         private const val email = 0
         private const val password = 1
         private const val mailboxPassword = 2
         private const val twoFaKey = 3
-        private const val tenSeconds = 10000
+        private const val tenSeconds = 10_000
+        private val grantPermissionRule = GrantPermissionRule.grant(
+            READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, READ_CONTACTS
+        )
 
         @JvmStatic
         @BeforeClass
@@ -130,7 +96,7 @@ open class BaseTest {
             // BeforeClass workaround for Android Test Orchestrator - shared prefs are not cleared
             val isFirstRun = sharedPrefs.getBoolean(oneTimeRunFlag, true)
             if (isFirstRun) {
-                setupDevice()
+                setupDevice(true)
                 prepareArtifactsDir(artifactsPath)
                 prepareArtifactsDir(downloadArtifactsPath)
                 deleteDownloadArtifactsFolder()
@@ -153,6 +119,7 @@ open class BaseTest {
             TestData.twoPassUser = setUser(BuildConfig.TEST_USER2)
             TestData.onePassUserWith2FA = setUser(BuildConfig.TEST_USER3)
             TestData.twoPassUserWith2FA = setUser(BuildConfig.TEST_USER4)
+            TestData.autoAttachPublicKeyUser = setUser(BuildConfig.TEST_USER5)
 
             TestData.externalGmailPGPEncrypted = setUser(BuildConfig.TEST_RECIPIENT1)
             TestData.externalOutlookPGPSigned = setUser(BuildConfig.TEST_RECIPIENT2)
@@ -164,10 +131,6 @@ open class BaseTest {
             val userParams = user.split(",")
             return User(userParams[email], userParams[password], userParams[mailboxPassword], userParams[twoFaKey])
         }
-
-        private val grantPermissionRule = GrantPermissionRule.grant(
-            READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, READ_CONTACTS
-        )
 
         private fun copyAssetsToDownload() {
             copyAssetFileToInternalFilesStorage("lorem_ipsum.docx")

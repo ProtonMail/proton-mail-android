@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Ağ bağlantısı yok. İleti sıraya alındı.</string>
     <string name="update_app_title">Güncelleme gerekli</string>
     <string name="update_app">ProtonMail uygulamanız güncellenene kadar kullanılamaz.</string>
+    <string name="you_are_offline">You are offline</string>
     <string name="api_offline_title">ProtonMail API\'si çevrimdışı</string>
     <string name="api_offline">ProtonMail şu anda çevrimdışı. Lütfen mevcut durum için https://protonstatus.com veya https://twitter.com/protonmail adresini kontrol edin.</string>
     <string name="contact_saved">Kişi kaydedildi</string>
@@ -89,7 +90,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="compose">Oluştur</string>
     <string name="compose_message">İleti oluştur</string>
     <string name="empty_folder">Klasörü boşalt</string>
-    <string name="view_headers">Başlıkları görüntüle</string>
+    <string name="view_headers">Başlıkları Görüntüle</string>
     <string name="message_headers">Mesaj başlığı</string>
     <string name="delete_message">Mesajı sil</string>
     <string name="delete_messages">Mesajları sil</string>
@@ -285,7 +286,7 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="message_deleted_error">Bazı mesajlar silinirken hata oluştu. Seçilen mesajlardan bazıları gönderim aşamasında mı?!</string>
     <string name="respond_inline">Satır içinde yanıtla</string>
     <string name="no_connectivity_detected">Bağlantı bulunamadı...</string>
-    <string name="no_connectivity_detected_troubleshoot">Bağlantı algılanmadı… (<u>Sorun gider</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Bağlantı kontrol ediliyor...</string>
     <string name="sync_short">eşitleme</string>
     <string name="draft_attachments_uploading">Taslak hala yükleniyor...</string>

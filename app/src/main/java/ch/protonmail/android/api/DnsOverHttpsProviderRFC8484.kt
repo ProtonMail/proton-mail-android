@@ -20,8 +20,10 @@ package ch.protonmail.android.api
 
 import android.util.Base64
 import ch.protonmail.android.BuildConfig
+import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.api.segments.DnsOverHttpsRetrofitApi
 import ch.protonmail.android.api.utils.Json
+import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 // import org.apache.commons.codec.binary.Base32
@@ -31,9 +33,14 @@ import org.minidns.record.Record
 import org.minidns.record.TXT
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.net.CookieManager
+import java.net.CookiePolicy
 import java.util.concurrent.TimeUnit
 
-class DnsOverHttpsProviderRFC8484(private val baseUrl: String) {
+class DnsOverHttpsProviderRFC8484(
+    private val baseUrl: String,
+    cookieStore: ProtonCookieStore? = null
+) {
 
     private val api: DnsOverHttpsRetrofitApi
 
@@ -48,9 +55,17 @@ class DnsOverHttpsProviderRFC8484(private val baseUrl: String) {
         if (BuildConfig.DEBUG) {
             httpClientBuilder.addInterceptor(
                 HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
+                    level = HttpLoggingInterceptor.Level.HEADERS
                 }
             )
+        }
+        if (cookieStore != null) {
+            val cookieManager = CookieManager(
+                cookieStore,
+                CookiePolicy.ACCEPT_ALL
+            )
+            CookieManager.setDefault(cookieManager)
+            httpClientBuilder.cookieJar(JavaNetCookieJar(cookieManager))
         }
 
         val okClient = httpClientBuilder.build()

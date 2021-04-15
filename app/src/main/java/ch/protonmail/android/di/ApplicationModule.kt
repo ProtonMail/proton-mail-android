@@ -29,6 +29,7 @@ import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
 import ch.protonmail.android.api.ProtonRetrofitBuilder
+import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.api.interceptors.ProtonMailAuthenticator
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.doh.Proxies
@@ -52,8 +53,8 @@ import ch.protonmail.android.utils.BuildInfo
 import ch.protonmail.android.utils.base64.AndroidBase64Encoder
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.app
-import ch.protonmail.android.utils.notifier.AndroidErrorNotifier
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.AndroidUserNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import com.birbit.android.jobqueue.JobManager
 import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
@@ -164,24 +165,29 @@ object ApplicationModule {
     @Provides
     @Singleton
     fun protonRetrofitBuilder(
+        context: Context,
         userManager: UserManager,
         jobManager: JobManager,
         networkUtil: QueueNetworkUtil,
         okHttpProvider: OkHttpProvider,
         @DefaultSharedPreferences prefs: SharedPreferences,
-        authenticator: ProtonMailAuthenticator
+        authenticator: ProtonMailAuthenticator,
+        userNotifier: UserNotifier
     ): ProtonRetrofitBuilder {
 
-        // userManager.user.allowSecureConnectionsViaThirdParties)
         val dnsOverHttpsHost =
             if (!userManager.user.usingDefaultApi)
                 Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
             else Constants.ENDPOINT_URI
 
-        // val dnsOverHttpsHost = Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
-
-        return ProtonRetrofitBuilder(userManager, jobManager, networkUtil, authenticator)
-            .apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
+        return ProtonRetrofitBuilder(
+            userManager,
+            jobManager,
+            networkUtil,
+            authenticator,
+            ProtonCookieStore(context),
+            userNotifier
+        ).apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
     }
 
     @Provides
@@ -217,10 +223,11 @@ object ApplicationModule {
     fun base64Encoder(): Base64Encoder = AndroidBase64Encoder()
 
     @Provides
-    fun errorNotifier(
+    fun userNotifier(
         notificationServer: NotificationServer,
-        userManager: UserManager
-    ): ErrorNotifier = AndroidErrorNotifier(notificationServer, userManager)
+        userManager: UserManager,
+        context: Context
+    ): UserNotifier = AndroidUserNotifier(notificationServer, userManager, context, dispatcherProvider())
 }
 
 @Module

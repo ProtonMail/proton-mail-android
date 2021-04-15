@@ -19,6 +19,7 @@
 package ch.protonmail.android.api
 
 import ch.protonmail.android.api.Tls12SocketFactory.Companion.enableTls12
+import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
@@ -27,8 +28,11 @@ import com.datatheorem.android.trustkit.config.PublicKeyPin
 import okhttp3.Authenticator
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
+import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.net.CookieManager
+import java.net.CookiePolicy
 import java.net.URL
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
@@ -45,6 +49,9 @@ const val TLS = "TLS"
 
 /**
  * Created by dinokadrikj on 2/29/20.
+ *
+ * @param cookieStore The cookie store. If set to null, a default InMemory cookie store will be used. Otherwise, for
+ * permanent Cookie Store please use instance of [ProtonCookieStore].
  */
 sealed class ProtonOkHttpClient(
     timeout: Long,
@@ -53,7 +60,8 @@ sealed class ProtonOkHttpClient(
     loggingLevel: HttpLoggingInterceptor.Level,
     connectionSpecs: List<ConnectionSpec?>,
     serverTimeInterceptor: ServerTimeInterceptor?,
-    endpointUri: String
+    endpointUri: String,
+    cookieStore: ProtonCookieStore? = null
 ) {
 
     // the OkHttp builder instance
@@ -64,6 +72,15 @@ sealed class ProtonOkHttpClient(
     val serverHostname: String = URL(endpointUri).host
 
     init {
+        if (cookieStore != null) {
+            val cookieManager = CookieManager(
+                cookieStore,
+                CookiePolicy.ACCEPT_ALL
+            )
+            CookieManager.setDefault(cookieManager)
+            okClientBuilder.cookieJar(JavaNetCookieJar(cookieManager))
+        }
+
         if (Constants.FeatureFlags.TLS_12_UPGRADE) {
             okClientBuilder.enableTls12()
         }
@@ -87,13 +104,6 @@ sealed class ProtonOkHttpClient(
         }
         okClientBuilder.connectionSpecs(connectionSpecs)
     }
-
-    fun timeout(timeout: Long): OkHttpClient.Builder {
-        okClientBuilder.connectTimeout(timeout, TimeUnit.SECONDS)
-        okClientBuilder.readTimeout(timeout, TimeUnit.SECONDS)
-        okClientBuilder.writeTimeout(timeout, TimeUnit.SECONDS)
-        return okClientBuilder
-    }
 }
 
 /**
@@ -105,7 +115,8 @@ class DefaultOkHttpClient(
     authenticator: Authenticator,
     loggingLevel: HttpLoggingInterceptor.Level,
     connectionSpecs: List<ConnectionSpec?>,
-    serverTimeInterceptor: ServerTimeInterceptor?
+    serverTimeInterceptor: ServerTimeInterceptor?,
+    cookieStore: ProtonCookieStore?
 ) : ProtonOkHttpClient(
     timeout,
     interceptor,
@@ -113,7 +124,8 @@ class DefaultOkHttpClient(
     loggingLevel,
     connectionSpecs,
     serverTimeInterceptor,
-    Constants.ENDPOINT_URI
+    Constants.ENDPOINT_URI,
+    cookieStore
 ) {
 
     init {
@@ -136,7 +148,8 @@ class ProxyOkHttpClient(
     connectionSpecs: List<ConnectionSpec?>,
     serverTimeInterceptor: ServerTimeInterceptor?,
     endpointUri: String,
-    pinnedKeyHashes: List<String>
+    pinnedKeyHashes: List<String>,
+    cookieStore: ProtonCookieStore?
 ) : ProtonOkHttpClient(
     timeout,
     interceptor,
@@ -144,7 +157,8 @@ class ProxyOkHttpClient(
     loggingLevel,
     connectionSpecs,
     serverTimeInterceptor,
-    endpointUri
+    endpointUri,
+    cookieStore
 ) {
 
     init {

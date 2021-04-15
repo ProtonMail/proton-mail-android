@@ -85,8 +85,8 @@ class ImportAttachmentsWorker(context: Context, params: WorkerParameters) : Work
                                 if (cursor != null && cursor.moveToFirst()) {
                                     displayName = try {
                                         cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                                    } catch (e: java.lang.Exception){
-                                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)).split("/")[cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)).split("/").size-1]
+                                    } catch (e: java.lang.Exception) {
+                                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)).split("/")[cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)).split("/").size - 1]
                                     }
                                     size = cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE))
                                     size = if (size > 0) size else importedFile.length()
@@ -109,7 +109,7 @@ class ImportAttachmentsWorker(context: Context, params: WorkerParameters) : Work
                             }
                         }
 
-                        postImportAttachmentEvents.add(PostImportAttachmentEvent(Uri.fromFile(importedFile), displayName, size, mimeType ?: Constants.MIME_TYPE_UNKNOWN_FILE,composerInstanceId))
+                        postImportAttachmentEvents.add(PostImportAttachmentEvent(Uri.fromFile(importedFile), displayName, size, mimeType ?: Constants.MIME_TYPE_UNKNOWN_FILE, composerInstanceId))
                     }
                 }
 
@@ -128,7 +128,7 @@ class ImportAttachmentsWorker(context: Context, params: WorkerParameters) : Work
 
         // Mapping the import events by their `composerInstanceId`
         val outputEventPairs = postImportAttachmentEvents
-                .map { ( it.composerInstanceId ?: "" ) to it.serialize() }
+            .map { (it.composerInstanceId ?: "") to it.serialize() }
         return Result.success(workDataOf(*outputEventPairs.toTypedArray()))
     }
 }

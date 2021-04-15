@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -24,18 +24,16 @@ import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
+import ch.protonmail.android.uitests.robots.device.DeviceRobot
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot.MessageExpirationRobot
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot.MessagePasswordRobot
 import ch.protonmail.android.uitests.robots.mailbox.drafts.DraftsRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_15S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.setValueInNumberPicker
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
-import ch.protonmail.android.uitests.testsHelper.uiactions.click
-import ch.protonmail.android.uitests.testsHelper.uiactions.insert
-import ch.protonmail.android.uitests.testsHelper.uiactions.type
+import me.proton.core.test.android.instrumented.CoreRobot
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
 
@@ -43,7 +41,7 @@ import org.hamcrest.CoreMatchers.allOf
  * [ComposerRobot] class contains actions and verifications for email composer functionality.
  * Inner classes: [MessagePasswordRobot], [MessageExpirationRobot], [MessageAttachmentsRobot].
  */
-class ComposerRobot {
+class ComposerRobot : CoreRobot, DeviceRobot() {
 
     fun sendMessage(to: String, subject: String, body: String): InboxRobot =
         recipients(to)
@@ -185,6 +183,10 @@ class ComposerRobot {
             .subject(messageSubject)
             .body(TestData.messageBody)
 
+    fun draftToBody(to: String, body: String): ComposerRobot =
+        recipients(to)
+            .body(body)
+
     fun draftSubjectBody(messageSubject: String, body: String): ComposerRobot =
         subject(messageSubject)
             .body(body)
@@ -195,7 +197,7 @@ class ComposerRobot {
             .addImageCaptureAttachment(logoDrawable)
     }
 
-    fun editBodyAndReply(currentBody: String, newBody: String): MessageRobot =
+    fun editBodyAndReply(newBody: String): MessageRobot =
         body(newBody).reply()
 
     fun clickUpButton(): ComposerRobot {
@@ -219,70 +221,71 @@ class ComposerRobot {
             .body(body)
 
     fun recipients(email: String): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.to_recipients, TIMEOUT_15S)
-        UIActions.id.typeTextIntoFieldWithIdAndPressImeAction(R.id.to_recipients, email)
+        view.withId(toRecipientsId).typeText(email).pressImeActionBtn()
         return this
     }
 
     fun changeSenderTo(email: String): ComposerRobot = clickFromField().selectSender(email)
 
     private fun clickFromField(): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.addresses_spinner).click()
+        UIActions.wait.untilViewWithIdEnabled(sendMessageId)
+        view.withId(R.id.addresses_spinner).click()
         return this
     }
 
     private fun selectSender(email: String): ComposerRobot {
-        UIActions.wait.forViewWithText(email).click()
+        view.withText(email).click()
         return this
     }
 
     private fun ccRecipients(email: String): ComposerRobot {
-        UIActions.id.typeTextIntoFieldWithIdAndPressImeAction(R.id.cc_recipients, email)
+        view.withId(R.id.cc_recipients).typeText(email).pressImeActionBtn()
         return this
     }
 
     private fun bccRecipients(email: String): ComposerRobot {
-        UIActions.id.typeTextIntoFieldWithIdAndPressImeAction(R.id.bcc_recipients, email)
+        view.withId(R.id.bcc_recipients).typeText(email).pressImeActionBtn()
         return this
     }
 
     fun subject(text: String): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.message_title).type(text)
+        view.withId(subjectId).click().clearText().typeText(text)
         return this
     }
 
-    fun updateSubject(text: String): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.message_title).insert(text)
+    private fun updateSubject(text: String): ComposerRobot {
+        view.withId(subjectId).click().clearText().typeText(text)
         return this
     }
 
     private fun body(text: String): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.message_body).insert(text)
+        view.withId(messageBodyId).clearText().typeText(text)
         return this
     }
 
     private fun showAdditionalRows(): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.show_additional_rows).click()
+        view.withId(R.id.show_additional_rows).click()
         return this
     }
 
     private fun setMessagePassword(): MessagePasswordRobot {
-        UIActions.id.clickViewWithId(R.id.set_message_password)
+        view.withId(R.id.set_message_password).click()
         return MessagePasswordRobot()
     }
 
     private fun messageExpiration(): MessageExpirationRobot {
-        UIActions.id.clickViewWithId(R.id.set_message_expiration)
+        view.withId(R.id.set_message_expiration).click()
         return MessageExpirationRobot()
     }
 
     private fun hideExpirationView(): ComposerRobot {
-        UIActions.id.clickViewWithId(R.id.hide_view)
+        view.withId(R.id.hide_view).click()
         return this
     }
 
-    private fun attachments(): MessageAttachmentsRobot {
-        UIActions.id.clickViewWithId(R.id.add_attachments)
+    fun attachments(): MessageAttachmentsRobot {
+        UIActions.wait.untilViewWithIdEnabled(sendMessageId)
+        view.withId(R.id.add_attachments).click()
         return MessageAttachmentsRobot()
     }
 
@@ -312,15 +315,15 @@ class ComposerRobot {
     }
 
     private fun waitForConditionAndSend() {
-        UIActions.wait.untilViewWithIdIsGone(R.id.text1)
+        view.withId(R.id.text1).waitUntilGone()
         UIActions.wait.untilViewWithIdEnabled(sendMessageId)
-        UIActions.id.clickViewWithId(sendMessageId)
+        view.withId(sendMessageId).click()
     }
 
     /**
      * Class represents Message Password dialog.
      */
-    class MessagePasswordRobot {
+    class MessagePasswordRobot : CoreRobot {
 
         fun definePasswordWithHint(password: String, hint: String): ComposerRobot {
             return definePassword(password)
@@ -330,22 +333,22 @@ class ComposerRobot {
         }
 
         private fun definePassword(password: String): MessagePasswordRobot {
-            UIActions.id.insertTextIntoFieldWithId(R.id.define_password, password)
+            view.withId(R.id.define_password).replaceText(password)
             return this
         }
 
         private fun confirmPassword(password: String): MessagePasswordRobot {
-            UIActions.id.insertTextIntoFieldWithId(R.id.confirm_password, password)
+            view.withId(R.id.confirm_password).replaceText(password)
             return this
         }
 
         private fun defineHint(hint: String): MessagePasswordRobot {
-            UIActions.id.insertTextIntoFieldWithId(R.id.define_hint, hint)
+            view.withId(R.id.define_hint).replaceText(hint)
             return this
         }
 
         private fun applyPassword(): ComposerRobot {
-            UIActions.id.clickViewWithId(R.id.apply)
+            view.withId(R.id.apply).click()
             return ComposerRobot()
         }
     }
@@ -357,7 +360,7 @@ class ComposerRobot {
 
         fun setExpirationInDays(days: Int): ComposerRobot =
             expirationDays(days)
-                .confirmMessageExpiration()
+                .confirmsetMessageExpiration()
 
         private fun expirationDays(days: Int): MessageExpirationRobot {
             onView(allOf(withClassName(`is`(NumberPicker::class.java.canonicalName)), withId(R.id.days_picker)))
@@ -365,7 +368,7 @@ class ComposerRobot {
             return this
         }
 
-        private fun confirmMessageExpiration(): ComposerRobot {
+        private fun confirmsetMessageExpiration(): ComposerRobot {
             UIActions.system.clickPositiveDialogButton()
             return ComposerRobot()
         }
@@ -374,10 +377,10 @@ class ComposerRobot {
     /**
      * Class represents Message Expiration dialog.
      */
-    class NotSupportedExpirationRobot {
+    class NotSupportedExpirationRobot : CoreRobot {
 
         fun sendAnyway(): InboxRobot {
-            UIActions.wait.forViewWithId(ok).click()
+            view.withId(ok).click()
             return InboxRobot()
         }
     }
@@ -385,18 +388,18 @@ class ComposerRobot {
     /**
      * Contains all the validations that can be performed by [ComposerRobot].
      */
-    class Verify {
+    class Verify : CoreRobot {
 
         fun messageWithSubjectOpened(subject: String) {
-            UIActions.wait.forViewWithIdAndText(R.id.message_title, subject)
+            view.withId(subjectId).withText(subject).wait().checkDisplayed()
         }
 
-        fun toFieldContains(email: String) {
-            UIActions.check.viewWithIdIsContainsText(R.id.to_recipients, email)
+        fun bodyWithText(text: String) {
+            view.withId(messageBodyId).withText(text).wait().checkDisplayed()
         }
 
         fun fromEmailIs(email: String): DraftsRobot {
-            UIActions.wait.forViewWithTextAndParentId(email, addressSpinnerId)
+            view.withText(email).withParent(view.withId(addressSpinnerId)).wait().checkDisplayed()
             return DraftsRobot()
         }
     }
@@ -405,9 +408,12 @@ class ComposerRobot {
 
     companion object {
         const val sendMessageId = R.id.send_message
+        const val messageBodyId = R.id.message_body
+        const val subjectId = R.id.message_title
         const val logoDrawable = R.drawable.logo
         const val welcomeDrawable = R.drawable.welcome
         const val addressSpinnerId = R.id.addresses_spinner
+        const val toRecipientsId = R.id.to_recipients
         const val ok = R.id.ok
     }
 }

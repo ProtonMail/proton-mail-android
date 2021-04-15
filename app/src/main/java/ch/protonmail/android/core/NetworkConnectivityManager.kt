@@ -61,7 +61,7 @@ class NetworkConnectivityManager @Inject constructor(
     /**
      * Flow of boolean connection events. True when internet connection is established, false when it is lost.
      */
-    fun isConnectionAvailableFlow(): Flow<Boolean> = callbackFlow {
+    fun isConnectionAvailableFlow(): Flow<Constants.ConnectionState> = callbackFlow {
         val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 Timber.v("Network $network available")
@@ -72,7 +72,7 @@ class NetworkConnectivityManager @Inject constructor(
                     delay(2.seconds)
                     Timber.d("Network $network lost isInternetPossible: ${isInternetConnectionPossible()}")
                     if (!isInternetConnectionPossible()) {
-                        offer(false)
+                        offer(Constants.ConnectionState.NO_INTERNET)
                     }
                 }
             }
@@ -84,7 +84,7 @@ class NetworkConnectivityManager @Inject constructor(
             override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
                 if (networkCapabilities.hasCapability(NET_CAPABILITY_INTERNET)) {
                     Timber.v("Network $network has internet capability")
-                    offer(true)
+                    offer(Constants.ConnectionState.CONNECTED)
                 }
             }
         }

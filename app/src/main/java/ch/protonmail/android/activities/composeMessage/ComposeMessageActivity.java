@@ -308,6 +308,9 @@ public class ComposeMessageActivity
     @Inject
     MessageDetailsRepository messageDetailsRepository;
 
+    @Inject
+    DownloadEmbeddedAttachmentsWorker.Enqueuer attachmentsWorker;
+
     String composerInstanceId;
 
     Menu menu;
@@ -468,7 +471,7 @@ public class ComposeMessageActivity
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show());
         composeMessageViewModel.getSavingDraftComplete().observe(this, event -> {
             if (mUpdateDraftPmMeChanged) {
-                composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
+                composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
                 mUpdateDraftPmMeChanged = false;
             }
             disableSendButton(false);
@@ -812,16 +815,17 @@ public class ComposeMessageActivity
         };
     }
 
-    private void onConnectivityEvent(boolean hasConnectivity) {
-        Timber.v("onConnectivityEvent hasConnectivity:%s DoHOngoing:%s", hasConnectivity, isDohOngoing);
+    private void onConnectivityEvent(Constants.ConnectionState connectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s DoHOngoing:%s", connectivity.name(), isDohOngoing);
         if (!isDohOngoing) {
-            if (!hasConnectivity) {
+            if (connectivity != Constants.ConnectionState.CONNECTED) {
                 networkSnackBarUtil.getNoConnectionSnackBar(
                         mSnackLayout,
                         mUserManager.getUser(),
                         this,
-                        onConnectivityCheckRetry(),
-                        null
+                        null,
+                        null,
+                        connectivity == Constants.ConnectionState.NO_INTERNET
                 ).show();
             } else {
                 networkSnackBarUtil.hideAllSnackBars();
@@ -1042,7 +1046,7 @@ public class ComposeMessageActivity
             // get messageId from one of the attachments and use it to start DownloadEmbeddedAttachmentsWorker
             for (LocalAttachment localAttachment : embeddedAttachmentsList) {
                 if (!TextUtils.isEmpty(localAttachment.getMessageId())) {
-                    DownloadEmbeddedAttachmentsWorker.Companion.enqueue(
+                    attachmentsWorker.enqueue(
                             localAttachment.getMessageId(),
                             mUserManager.getUsername(),
                             null
@@ -2103,7 +2107,8 @@ public class ComposeMessageActivity
                             mComposeBodyEditText.setText(UiUtil.fromHtml(sb.toString().replace("\n", newline)));
                             composeMessageViewModel.processSignature(newSignature);
                         }
-//                        composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
+                        // Trigger Save Draft after changing sender to ensure attachments are encrypted with the right key
+                        composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
                     }
                 }
 

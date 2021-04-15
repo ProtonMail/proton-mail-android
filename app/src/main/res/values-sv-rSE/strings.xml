@@ -29,7 +29,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sign_out">Logga ut</string>
     <string name="sign_out_question">Är du säker på att du vill logga ut?</string>
     <string name="mailbox_password">Lösenord för brevlådan</string>
-    <string name="two_factor_code">Tvåfaktors Kod</string>
+    <string name="two_factor_code">Tvåfaktorskod</string>
     <string name="processing_request">Din begäran behandlas</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">Du är inte inloggad!</string>
@@ -46,13 +46,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Inloggningen misslyckades</string>
     <string name="invalid_server_proof">Ogiltigt server autentisering</string>
     <string name="invalid_credentials">Ogiltiga inloggningsuppgifter</string>
-    <string name="incorrect_key_parameters">Felaktig nyckelparametrar</string>
+    <string name="incorrect_key_parameters">Felaktiga nyckelparametrar</string>
     <string name="invalid_mailbox_password">Ogiltigt lösenord</string>
     <string name="not_signed_up">ProtonMail Android Beta ingår inte i ditt konto</string>
     <string name="no_network">Inget nätverk</string>
     <string name="no_network_queued">Inget nätverk, meddelandet är köat</string>
     <string name="update_app_title">Uppdatering krävs</string>
     <string name="update_app">Din ProtonMail app måste uppdateras innan den går att använda</string>
+    <string name="you_are_offline">Du är offline</string>
     <string name="api_offline_title">Protonmail API är offline</string>
     <string name="api_offline">ProtonMail är för närvarande offline. Besök https://protonstatus.com eller https://twitter.com/protonmail för aktuell status.</string>
     <string name="contact_saved">Kontakt sparad</string>
@@ -90,9 +91,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="compose_message">Skriv meddelande</string>
     <string name="empty_folder">Töm mapp</string>
     <string name="view_headers">Visa Headers</string>
-    <string name="message_headers">Meddelandets Header</string>
+    <string name="message_headers">Message Header</string>
     <string name="delete_message">Radera meddelande</string>
-    <string name="delete_messages">Radera meddelande</string>
+    <string name="delete_messages">Radera meddelanden</string>
     <string name="add_label">Lägg till etikett</string>
     <string name="add_star">Stjärnmärk</string>
     <string name="remove_star">Ta bort stjärnmärkning</string>
@@ -102,7 +103,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="move_to_trash">Flytta till papperskorgen</string>
     <string name="move_to_spam">Flytta till Skräppost</string>
     <string name="move_to_inbox">Flytta till Inkorgen</string>
-    <string name="are_you_sure_empty">Är du säker på att du vill radera alla meddelanden från denna katalog?</string>
+    <string name="are_you_sure_empty">Är du säker på att du vill radera alla meddelanden från denna mapp?</string>
     <string name="send">Skicka</string>
     <string name="selected">Valda</string>
     <string name="no_messages">Inga meddelanden</string>
@@ -122,13 +123,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="forward">Vidarebefordra</string>
     <string name="subject">Ämne</string>
     <string name="email_subject">E-post ämne</string>
-    <string name="define_message_password">Meddelande Lösenord</string>
-    <string name="confirm_message_password">Bekräfta Lösenord</string>
-    <string name="define_password_hint">Ange Ledtråd (Valfritt)</string>
+    <string name="define_message_password">Meddelandelösenord</string>
+    <string name="confirm_message_password">Bekräfta lösenord</string>
+    <string name="define_password_hint">Definiera ledtråd (valfritt)</string>
     <string name="message_passwords_do_not_match">Inloggningslösenordet stämmer inte</string>
     <string name="eo_passwords_do_not_match">Lösenorden matchar inte</string>
-    <string name="define_expiration_period">Ange ett Utgångsdatum</string>
-    <string name="set_message_expiration">Ange när Meddelandet ska Upphöra att gälla</string>
+    <string name="define_expiration_period">Define Expiration Period</string>
+    <string name="set_message_expiration">Set Message Expiration</string>
     <string name="days">Dagar</string>
     <string name="hours">Timmar</string>
     <string name="max_labels_exceeded">Meddelandet %1$s kan inte ha mer än %2$d etiketter.</string>
@@ -188,7 +189,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="forward_prefix">Vb:</string>
     <string name="original_message_divider">-------- Originalmeddelande --------</string>
     <string name="invalid_email_address">Adressen \'%s\' är ogiltig</string>
-    <string name="invalid_email_address_removed">The address \'%s\' is invalid and was removed</string>
+    <string name="invalid_email_address_removed">Adressen \'%s\' är ogiltig och har tagits bort</string>
     <string name="no_recipients_specified">Ange minst en mottagare</string>
     <string name="no_password_specified">Utgångstid kan bara anges på fullständigt krypterade meddelanden. Vänligen ange ett lösenord för dina icke-ProtonMail-mottagare.</string>
     <string name="attachment_limit">Bilagor är begränsat till %1$s. Totalt antal bilagor skulle uppgå till %2$s.</string>
@@ -207,7 +208,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="enter">Mata in</string>
     <string name="cancel">Avbryt</string>
     <string name="close">Stäng</string>
-    <string name="change_password">Byt Lösenord</string>
+    <string name="change_password">Ändra lösenord</string>
     <string name="change_mailbox_password">Ändra lösenord för brevlådan</string>
     <string name="eo_password_title">Ange lösenord</string>
     <string name="eo_password_subtitle">Ange ett lösenord för att kryptera detta meddelande för icke-ProtonMail-användare</string>
@@ -283,7 +284,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Svara i tråd</string>
     <string name="no_connectivity_detected">Ingen anslutning funnen...</string>
-    <string name="no_connectivity_detected_troubleshoot">No connectivity detected… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server kan inte nås… (<u>Felsök</u>)</string>
     <string name="connectivity_checking">Kontrollerar nätverksanslutning...</string>
     <string name="sync_short">synka</string>
     <string name="draft_attachments_uploading">Utkastet laddas fortfarande...</string>

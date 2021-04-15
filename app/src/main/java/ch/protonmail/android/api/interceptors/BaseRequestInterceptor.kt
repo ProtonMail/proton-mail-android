@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.api.interceptors
 
+import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.doh.ProxyItem
@@ -28,19 +29,31 @@ import ch.protonmail.android.api.segments.HEADER_AUTH
 import ch.protonmail.android.api.segments.HEADER_LOCALE
 import ch.protonmail.android.api.segments.HEADER_UID
 import ch.protonmail.android.api.segments.HEADER_USER_AGENT
+import ch.protonmail.android.api.segments.RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DELETED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DISABLED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_AUTH_AUTH_ACCOUNT_FAILED_GENERIC
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED
 import ch.protonmail.android.api.segments.RESPONSE_CODE_GATEWAY_TIMEOUT
+import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_READING_RESTRICTED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_NOT_ALLOWED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_OLD_PASSWORD_INCORRECT
 import ch.protonmail.android.api.segments.RESPONSE_CODE_SERVICE_UNAVAILABLE
 import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
+import ch.protonmail.android.api.segments.RESPONSE_CODE_UNPROCESSABLE_ENTITY
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.RequestTimeoutEvent
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.notifier.UserNotifier
 import com.birbit.android.jobqueue.JobManager
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import timber.log.Timber
+import java.io.IOException
 
 // region constants
 private const val TWENTY_FOUR_HOURS_IN_MILLIS = 24 * 60 * 60 * 1000L
@@ -49,7 +62,8 @@ private const val TWENTY_FOUR_HOURS_IN_MILLIS = 24 * 60 * 60 * 1000L
 abstract class BaseRequestInterceptor(
     protected val userManager: UserManager,
     protected val jobManager: JobManager,
-    protected val networkUtils: QueueNetworkUtil
+    protected val networkUtils: QueueNetworkUtil,
+    protected val userNotifier: UserNotifier
 ) : Interceptor {
 
     private val appVersionName by lazy {
@@ -137,6 +151,38 @@ abstract class BaseRequestInterceptor(
             response.code() == RESPONSE_CODE_SERVICE_UNAVAILABLE -> { // 503
                 Timber.d("'service unavailable' when processing request")
             }
+            response.code() == RESPONSE_CODE_UNPROCESSABLE_ENTITY -> {
+                Timber.d("'unprocessable entity' when processing request")
+                var responseBodyError = response.message()
+                var responseBody: ResponseBody? = null
+                try {
+                    responseBody = Gson().fromJson(
+                        response.peekBody(Long.MAX_VALUE).string(),
+                        ResponseBody::class.java
+                    )
+                    responseBodyError = responseBody.error
+                } catch (e: JsonSyntaxException) {
+                    Timber.d(e, "response had more bytes than MAX_VALUE")
+                } catch (e: IOException) {
+                    Timber.d(e)
+                }
+                // when we introduced global handling of 422 http error code it resulted with toast
+                // showing up in places where we have questionable behaviours that don't really cause
+                // issues for the end user. And sadly the errors provided by the API weren't of any
+                // particular use to the end user. So for now we show only the errors for this error codes.
+                if (responseBody?.code in arrayOf(
+                        RESPONSE_CODE_MESSAGE_READING_RESTRICTED,
+                        RESPONSE_CODE_OLD_PASSWORD_INCORRECT,
+                        RESPONSE_CODE_ERROR_VERIFICATION_NEEDED,
+                        RESPONSE_CODE_NOT_ALLOWED,
+                        RESPONSE_CODE_AUTH_AUTH_ACCOUNT_FAILED_GENERIC,
+                        RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DELETED,
+                        RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DISABLED
+                    )
+                ) {
+                    userNotifier.showError(responseBodyError)
+                }
+            }
         }
         return null
     }
@@ -167,7 +213,8 @@ abstract class BaseRequestInterceptor(
             if (it.usernameAuth == null) { // clear out default auth and unique session headers
                 requestBuilder.removeHeader(HEADER_AUTH)
                 requestBuilder.removeHeader(HEADER_UID)
-            } else if (it.usernameAuth != tokenManager?.username) { // if it's the default user, credentials are already there
+            } else if (it.usernameAuth != tokenManager?.username) {
+                // if it's the default user, credentials are already there
                 val userTokenManager = userManager.getTokenManager(it.usernameAuth)
                 userTokenManager?.let { manager ->
                     if (manager.authAccessToken != null) {

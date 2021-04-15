@@ -25,11 +25,14 @@ import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
+import ch.protonmail.android.attachments.AttachmentsHelper
+import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
+import ch.protonmail.android.utils.DownloadUtils
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -49,6 +52,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { get<Boolean>(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE) } returns false
     }
 
+    private val downloadUtils = DownloadUtils()
+
     @RelaxedMockK
     private lateinit var messageDetailsRepository: MessageDetailsRepository
 
@@ -57,6 +62,9 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     @RelaxedMockK
     private lateinit var contactsRepository: ContactsRepository
+
+    @RelaxedMockK
+    private lateinit var attachmentsHelper: AttachmentsHelper
 
     @RelaxedMockK
     private lateinit var attachmentMetadataDatabase: AttachmentMetadataDatabase
@@ -79,6 +87,9 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     @RelaxedMockK
     private lateinit var networkConfigurator: NetworkConfigurator
 
+    @RelaxedMockK
+    private lateinit var attachemntsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer
+
     @InjectMockKs
     private lateinit var viewModel: MessageDetailsViewModel
 
@@ -88,12 +99,12 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun getParsedMessage() {
+    fun verifyThatMessageIsParsedProperly() {
+        // given
         val decryptedMessage = "decrypted message content"
         val windowWidth = 500
         val defaultErrorMessage = "errorHappened"
         val cssContent = "css"
-        // given
         val expected = "<html>\n <head>\n  <style>$cssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessage  \n  </div>\n </body>\n</html>"
 
         // when

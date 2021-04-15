@@ -55,8 +55,9 @@ class ReplyToMessageTests : BaseTest() {
             .refreshMessageList()
             .clickMessageBySubject(subject)
             .reply()
-            .editBodyAndReply(body, "Robot Reply")
+            .editBodyAndReply("Robot Reply")
             .navigateUpToSent()
+            .refreshMessageList()
             .verify {
                 messageWithSubjectExists(TestData.reSubject(subject))
                 messageWithSubjectHasRepliedFlag(subject)
@@ -76,7 +77,7 @@ class ReplyToMessageTests : BaseTest() {
             .refreshMessageList()
             .clickMessageBySubject(subject)
             .reply()
-            .editBodyAndReply(body, "Robot Reply With Attachment ")
+            .editBodyAndReply("Robot Reply With Attachment")
             .navigateUpToSent()
             .verify { messageWithSubjectExists(TestData.reSubject(subject)) }
     }
@@ -94,7 +95,7 @@ class ReplyToMessageTests : BaseTest() {
             .refreshMessageList()
             .clickMessageBySubject(subject)
             .replyAll()
-            .editBodyAndReply(body, "Robot ReplyAll ")
+            .editBodyAndReply("Robot ReplyAll")
             .navigateUpToSent()
             .verify {
                 messageWithSubjectExists(TestData.reSubject(subject))

@@ -20,9 +20,9 @@ package ch.protonmail.android.api.segments.message
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
@@ -103,23 +103,11 @@ interface MessageService {
 
     @POST("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createDraftCall(@Body draftBody: DraftBody): Call<MessageResponse>
-
-    @POST("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun createDraft(@Body draftBody: DraftBody): MessageResponse
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun fetchSingleMessageMetadata(@Query("ID") messageId: String): Call<MessagesResponse>
-
-    @PUT("mail/v4/messages/{messageId}")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun updateDraftCall(
-        @Path("messageId") messageId: String,
-        @Body draftBody: DraftBody,
-        @Tag retrofitTag: RetrofitTag
-    ): Call<MessageResponse>
 
     @PUT("mail/v4/messages/{messageId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
@@ -131,8 +119,11 @@ interface MessageService {
 
     @POST("mail/v4/messages/{messageId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun sendMessage(@Path("messageId") messageId: String,
-                    @Body message: MessageSendBody, @Tag retrofitTag: RetrofitTag): Call<MessageSendResponse>
+    suspend fun sendMessage(
+        @Path("messageId") messageId: String,
+        @Body message: MessageSendBody,
+        @Tag retrofitTag: RetrofitTag
+    ): MessageSendResponse
 
     @GET("mail/v4/messages/{messageId}")
     @Headers(ACCEPT_HEADER_V1)

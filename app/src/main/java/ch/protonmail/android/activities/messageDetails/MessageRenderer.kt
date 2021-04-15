@@ -37,6 +37,7 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
@@ -128,7 +129,7 @@ internal class MessageRenderer(
                     if (!file.exists() || file.length() == 0L) continue
 
                     val size = (MAX_IMAGES_TOTAL_SIZE / embeddedImages.size)
-                            .coerceAtMost(MAX_IMAGE_SINGLE_SIZE)
+                        .coerceAtMost(MAX_IMAGE_SINGLE_SIZE)
 
                     val compressed = try {
                         ByteArrayOutputStream().also {
@@ -139,6 +140,7 @@ internal class MessageRenderer(
                             bitmap.compress(Bitmap.CompressFormat.WEBP, 80, it)
                         }
                     } catch (t: Throwable) {
+                        Timber.i(t, "Skip the image")
                         // Skip the image
                         continue
                     }
@@ -183,7 +185,7 @@ internal class MessageRenderer(
                 val contentType = embeddedImage.contentType.formatContentType()
 
                 document.findImageElements(contentId)
-                        ?.attr("src", "data:$contentType;$encoding,$image64")
+                    ?.attr("src", "data:$contentType;$encoding,$image64")
             }
             documentStringifier.send(Unit) // Deliver after all the elements for now
         }
@@ -244,7 +246,7 @@ private const val ID_PLACEHOLDER = "%id"
 
 /** [Array] of html attributes that could contain an image */
 private val IMAGE_ATTRIBUTES =
-        arrayOf("img[src=$ID_PLACEHOLDER]", "img[src=cid:$ID_PLACEHOLDER]", "img[rel=$ID_PLACEHOLDER]")
+    arrayOf("img[src=$ID_PLACEHOLDER]", "img[src=cid:$ID_PLACEHOLDER]", "img[rel=$ID_PLACEHOLDER]")
 // endregion
 
 // region typealiases
@@ -256,8 +258,8 @@ private typealias ImageString = Pair<EmbeddedImage, String>
 private fun String.formatEncoding() = toLowerCase()
 private fun String.formatContentId() = trimStart('<').trimEnd('>')
 private fun String.formatContentType() = toLowerCase()
-        .replace("\r", "").replace("\n", "")
-        .replaceFirst(";.*$".toRegex(), "")
+    .replace("\r", "").replace("\n", "")
+    .replaceFirst(";.*$".toRegex(), "")
 
 /**
  * Flatten the receiver [Document] by removing the indentation and disabling prettyPrint.
@@ -268,12 +270,12 @@ private fun Document.flatten() = apply { outputSettings().indentAmount(0).pretty
 /** @return [Elements] matching the image attribute for the given [id] */
 private fun Document.findImageElements(id: String): Elements? {
     return IMAGE_ATTRIBUTES
-            .map { attr -> attr.replace(ID_PLACEHOLDER, id) }
-            // with `asSequence` iteration will stop when the first usable element
-            // is found and so avoid to make too many calls to document.select
-            .asSequence()
-            .map { select(it) }
-            .find { it.isNotEmpty() }
+        .map { attr -> attr.replace(ID_PLACEHOLDER, id) }
+        // with `asSequence` iteration will stop when the first usable element
+        // is found and so avoid to make too many calls to document.select
+        .asSequence()
+        .map { select(it) }
+        .find { it.isNotEmpty() }
 }
 // endregion
 
