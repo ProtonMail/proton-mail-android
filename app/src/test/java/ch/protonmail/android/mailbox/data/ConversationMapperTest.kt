@@ -22,7 +22,7 @@ package ch.protonmail.android.mailbox.data
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.mailbox.data.local.model.ConversationEntity
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
@@ -73,7 +73,7 @@ class ConversationMapperTest {
     )
 
     private val conversationsEntity = listOf(
-        ConversationEntity(
+        ConversationDatabaseModel(
             id = "conversation1",
             order = 1,
             userId = "id",
@@ -90,7 +90,7 @@ class ConversationMapperTest {
                 LabelContextDatabaseModel("7", 0, 1, 0, 0, 0)
             )
         ),
-        ConversationEntity(
+        ConversationDatabaseModel(
             id = "conversation2",
             order = 0,
             userId = "id",
@@ -145,7 +145,7 @@ class ConversationMapperTest {
     fun verifyThatEmptyConversationApiModelListIsMappedProperly() {
         // given
         val conversation = listOf<ConversationApiModel>()
-        val expected = emptyList<ConversationEntity>()
+        val expected = emptyList<ConversationDatabaseModel>()
 
         // when
         val result = conversation.toListLocal(testUserId.s)
@@ -157,7 +157,7 @@ class ConversationMapperTest {
     @Test
     fun verifyThatEmptyConversationDatabaseModelListIsMappedProperly() {
         // given
-        val conversation = listOf<ConversationEntity>()
+        val conversation = listOf<ConversationDatabaseModel>()
         val expected = emptyList<Conversation>()
 
         // when

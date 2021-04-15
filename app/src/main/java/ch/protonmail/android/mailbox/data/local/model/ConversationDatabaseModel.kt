@@ -25,14 +25,14 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.data.local.model.MessageSender
-import ch.protonmail.android.mailbox.data.local.model.ConversationEntity.Companion.COLUMN_ID
-import ch.protonmail.android.mailbox.data.local.model.ConversationEntity.Companion.TABLE_CONVERSATIONS
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel.Companion.COLUMN_ID
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel.Companion.TABLE_CONVERSATIONS
 
 @Entity(
     tableName = TABLE_CONVERSATIONS,
     indices = [Index(COLUMN_ID, unique = true)]
 )
-data class ConversationEntity constructor(
+data class ConversationDatabaseModel constructor(
     @PrimaryKey
     @ColumnInfo(name = COLUMN_ID)
     val id: String,

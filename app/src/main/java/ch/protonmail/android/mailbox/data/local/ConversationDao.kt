@@ -21,14 +21,14 @@ package ch.protonmail.android.mailbox.data.local
 
 import androidx.room.Dao
 import androidx.room.Query
-import ch.protonmail.android.mailbox.data.local.model.ConversationEntity
-import ch.protonmail.android.mailbox.data.local.model.ConversationEntity.Companion.COLUMN_USER_ID
-import ch.protonmail.android.mailbox.data.local.model.ConversationEntity.Companion.TABLE_CONVERSATIONS
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel.Companion.COLUMN_USER_ID
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel.Companion.TABLE_CONVERSATIONS
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.data.db.BaseDao
 
 @Dao
-abstract class ConversationDao : BaseDao<ConversationEntity>() {
+abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
 
     @Query(
         """
@@ -36,7 +36,7 @@ abstract class ConversationDao : BaseDao<ConversationEntity>() {
         WHERE $COLUMN_USER_ID = :userId
         """
     )
-    abstract fun getConversations(userId: String): Flow<List<ConversationEntity>>
+    abstract fun getConversations(userId: String): Flow<List<ConversationDatabaseModel>>
 
     @Query("DELETE FROM $TABLE_CONVERSATIONS")
     abstract fun clear()

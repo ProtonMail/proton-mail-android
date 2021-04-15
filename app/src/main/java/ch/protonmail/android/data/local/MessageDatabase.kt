@@ -29,7 +29,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessagesTypesConverter
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
-import ch.protonmail.android.mailbox.data.local.model.ConversationEntity
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.ConversationTypesConverter
 
 @Database(
@@ -37,7 +37,7 @@ import ch.protonmail.android.mailbox.data.local.model.ConversationTypesConverter
         Attachment::class,
         Message::class,
         Label::class,
-        ConversationEntity::class
+        ConversationDatabaseModel::class
     ],
     version = 9
 )

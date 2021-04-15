@@ -21,12 +21,16 @@ package ch.protonmail.android.mailbox.data.remote.model
 
 import com.google.gson.annotations.SerializedName
 
-const val NAME = "Name"
-const val ADDRESS = "Address"
-
 data class CorrespondentApiModel(
     @SerializedName(NAME)
     val name: String,
     @SerializedName(ADDRESS)
     val address: String
-)
+) {
+
+    companion object {
+
+        private const val NAME = "Name"
+        private const val ADDRESS = "Address"
+    }
+}

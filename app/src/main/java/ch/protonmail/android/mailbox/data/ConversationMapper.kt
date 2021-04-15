@@ -21,7 +21,7 @@ package ch.protonmail.android.mailbox.data
 
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.data.local.model.MessageSender
-import ch.protonmail.android.mailbox.data.local.model.ConversationEntity
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
@@ -31,7 +31,7 @@ import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 
 
-internal fun ConversationApiModel.toLocal(userId: String) = ConversationEntity(
+internal fun ConversationApiModel.toLocal(userId: String) = ConversationDatabaseModel(
     id = id,
     order = order,
     userId = userId,
@@ -46,7 +46,7 @@ internal fun ConversationApiModel.toLocal(userId: String) = ConversationEntity(
     labels = labels.toLabelContextDatabaseModel()
 )
 
-internal fun ConversationEntity.toDomainModel() = Conversation(
+internal fun ConversationDatabaseModel.toDomainModel() = Conversation(
     id = id,
     subject = subject,
     senders = senders.senderToCorespondent(),
@@ -127,7 +127,7 @@ internal fun List<ConversationApiModel>.toListLocal(userId: String) =
 /**
  * Converts a list of conversations from db to a list of domain conversation model
  */
-internal fun List<ConversationEntity>.toDomainModelList() =
+internal fun List<ConversationDatabaseModel>.toDomainModelList() =
     map { conversation -> conversation.toDomainModel() }
 
 

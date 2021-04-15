@@ -22,13 +22,6 @@ package ch.protonmail.android.mailbox.data.remote.model
 import com.google.gson.annotations.SerializedName
 import me.proton.core.util.kotlin.EMPTY_STRING
 
-const val LABEL_ID = "ID"
-const val CONTEXT_NUM_UNREAD = "ContextNumUnread"
-const val CONTEXT_NUM_MESSAGES = "ContextNumMessages"
-const val CONTEXT_TIME = "ContextTime"
-const val CONTEXT_SIZE = "ContextSize"
-const val CONTEXT_NUM_ATTACHMENTS = "ContextNumAttachments"
-
 data class LabelContextApiModel(
     @SerializedName(LABEL_ID)
     val id: String = EMPTY_STRING,
@@ -42,4 +35,15 @@ data class LabelContextApiModel(
     val contextSize: Int = 0,
     @SerializedName(CONTEXT_NUM_ATTACHMENTS)
     val contextNumAttachments: Int = 0
-)
+) {
+
+    companion object {
+
+        private const val LABEL_ID = "ID"
+        private const val CONTEXT_NUM_UNREAD = "ContextNumUnread"
+        private const val CONTEXT_NUM_MESSAGES = "ContextNumMessages"
+        private const val CONTEXT_TIME = "ContextTime"
+        private const val CONTEXT_SIZE = "ContextSize"
+        private const val CONTEXT_NUM_ATTACHMENTS = "ContextNumAttachments"
+    }
+}

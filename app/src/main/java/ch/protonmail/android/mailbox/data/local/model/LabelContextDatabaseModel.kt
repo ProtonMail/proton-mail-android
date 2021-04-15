@@ -44,11 +44,11 @@ data class LabelContextDatabaseModel(
 
     companion object {
 
-        const val COLUMN_ID = "ID"
-        const val COLUMN_CONTEXT_NUM_UNREAD = "ContextNumUnread"
-        const val COLUMN_CONTEXT_NUM_MESSAGES = "ContextNumMessages"
-        const val COLUMN_CONTEXT_TIME = "ContextTime"
-        const val COLUMN_CONTEXT_SIZE = "ContextSize"
-        const val COLUMN_CONTEXT_NUM_ATTACHMENTS = "ContextNumAttachments"
+        private const val COLUMN_ID = "ID"
+        private const val COLUMN_CONTEXT_NUM_UNREAD = "ContextNumUnread"
+        private const val COLUMN_CONTEXT_NUM_MESSAGES = "ContextNumMessages"
+        private const val COLUMN_CONTEXT_TIME = "ContextTime"
+        private const val COLUMN_CONTEXT_SIZE = "ContextSize"
+        private const val COLUMN_CONTEXT_NUM_ATTACHMENTS = "ContextNumAttachments"
     }
 }

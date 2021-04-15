@@ -21,8 +21,7 @@ package ch.protonmail.android.mailbox.data
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
-import ch.protonmail.android.mailbox.data.local.model.ConversationEntity
-import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
@@ -63,7 +62,7 @@ class ConversationsRepositoryImpl @Inject constructor(
     private fun geConversationsLocal(labelId: String, userId: Id): Flow<List<Conversation>> =
         conversationDao.getConversations(userId.s).map { list ->
             list.sortedWith(
-                compareByDescending<ConversationEntity> { conversation ->
+                compareByDescending<ConversationDatabaseModel> { conversation ->
                     conversation.labels.find { label -> label.id == labelId }?.contextTime
                 }.thenByDescending { it.order }
             ).toDomainModelList()
