@@ -49,8 +49,7 @@ class FetchContactsEmailsWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
-        val currentUserId = userManager.currentUserId
-            ?: return failure()
+        val currentUserId = userManager.currentUserId ?: return failure()
 
         return runCatching { contactEmailsManagerFactory.create(currentUserId).refresh() }
             .fold(

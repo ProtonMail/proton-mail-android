@@ -112,12 +112,12 @@ class ChangePinActivity : BaseActivity(),
         mUserManager.apply {
             savePin("")
             resetPinAttempts()
-            logoutBlocking(requireCurrentUserId())
         }
-        val intent = Intent()
-        intent.putExtra(EXTRA_LOGOUT, true)
-        setResult(Activity.RESULT_OK, intent)
-        finish()
+        accountViewModel.logout(mUserManager.requireCurrentUserId()).invokeOnCompletion {
+            val intent = Intent()
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
     }
 
     override fun onPinError() {

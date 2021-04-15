@@ -145,10 +145,6 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity
-            android:name=".activities.guest.FirstActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activities.settings.AttachmentStorageActivity"
             android:exported="false"
             android:label="@string/local_storage"

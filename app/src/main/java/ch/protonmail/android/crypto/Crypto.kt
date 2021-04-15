@@ -25,6 +25,7 @@ import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.AddressKeys
 import ch.protonmail.android.domain.entity.user.UserKey
 import ch.protonmail.android.domain.entity.user.UserKeys
+import ch.protonmail.android.feature.user.getMailboxPasswordBlocking
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.crypto.TextDecryptionResult
@@ -61,7 +62,7 @@ abstract class Crypto<K>(
 
     protected abstract val primaryKey: K?
 
-    protected val mailboxPassword get() = userManager.getMailboxPassword(userId)
+    protected val mailboxPassword get() = userManager.getMailboxPasswordBlocking(userId)
 
     /**
      * Return passphrase for decryption

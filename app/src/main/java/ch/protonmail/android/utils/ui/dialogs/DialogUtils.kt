@@ -18,20 +18,15 @@
  */
 package ch.protonmail.android.utils.ui.dialogs
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.graphics.Color
-import android.text.InputType
 import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.TextView
-import android.widget.ToggleButton
 import androidx.annotation.StringRes
 import ch.protonmail.android.R
 import ch.protonmail.android.views.CustomFontButton
@@ -157,10 +152,10 @@ class DialogUtils {
          *  [Dialog] itself
          *  default is `true`
          *
-         * @param onLeft will be executed when the left button is pressed
+         * @param onNegativeButtonClicked will be executed when the negative button is pressed
          *  default is an empty lambda
          *
-         * @param onRight will be executed when the right button is pressed
+         * @param onPositiveButtonClicked will be executed when the positive button is pressed
          *  default is an empty lambda
          */
         inline fun Context.showTwoButtonInfoDialog(
@@ -173,8 +168,8 @@ class DialogUtils {
             dismissOnButtonClick: Boolean = true,
             cancelable: Boolean = true,
             cancelOnTouchOutside: Boolean = true,
-            crossinline onLeft: () -> Unit = {},
-            crossinline onRight: () -> Unit = {}
+            crossinline onNegativeButtonClicked: () -> Unit = {},
+            crossinline onPositiveButtonClicked: () -> Unit = {}
         ): AlertDialog {
             requireNotNull(title) {
                 "One parameter of 'title' or 'titleStringId' is required"
@@ -183,11 +178,11 @@ class DialogUtils {
                 .setTitle(title)
                 .apply { message?.let(::setMessage) }
                 .setNegativeButton(leftStringId) { dialog, _ ->
-                    onLeft()
+                    onNegativeButtonClicked()
                     if (dismissOnButtonClick) dialog.dismiss()
                 }
                 .setPositiveButton(rightStringId) { dialog, _ ->
-                    onRight()
+                    onPositiveButtonClicked()
                     if (dismissOnButtonClick) dialog.dismiss()
                 }
                 .setCancelable(cancelable)

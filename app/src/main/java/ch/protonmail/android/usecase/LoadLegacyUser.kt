@@ -23,6 +23,7 @@ import android.content.Context
 import arrow.core.Either
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.withContext
+import me.proton.core.user.domain.UserManager
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 import ch.protonmail.android.api.models.User as LegacyUser
@@ -44,10 +45,11 @@ class LoadLegacyUser @Inject constructor(
 
 // Implemented for testing easiness purpose
 class LoadLegacyUserDelegate @Inject constructor(
-    private val context: Context
+    private val context: Context,
+    private val userManager: UserManager
 ) {
 
     operator fun invoke(userId: Id): LegacyUser =
         @Suppress("DEPRECATION")
-        LegacyUser.load(userId, context)
+        LegacyUser.load(userId, context, userManager)
 }

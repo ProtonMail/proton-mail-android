@@ -30,9 +30,7 @@ import com.birbit.android.jobqueue.JobManager;
 
 import javax.inject.Inject;
 
-import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.ProtonMailApiManager;
-import ch.protonmail.android.api.TokenManager;
 import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.MailSettingsResponse;
 import ch.protonmail.android.api.models.UserInfo;
@@ -43,15 +41,11 @@ import ch.protonmail.android.api.models.address.AddressesResponse;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.user.UserSettingsEvent;
-import ch.protonmail.android.usecase.FindUserIdForUsername;
-import ch.protonmail.android.usecase.LoadUser;
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.crypto.OpenPGP;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint

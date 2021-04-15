@@ -109,11 +109,9 @@ import butterknife.OnClick;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.AddAttachmentsActivity;
 import ch.protonmail.android.activities.BaseContactsActivity;
-import ch.protonmail.android.activities.guest.FirstActivity;
 import ch.protonmail.android.activities.mailbox.MailboxActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.MessageRecipientViewAdapter;
-import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.models.MessageRecipient;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
@@ -146,6 +144,7 @@ import ch.protonmail.android.events.PostLoadContactsEvent;
 import ch.protonmail.android.events.ResignContactEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.contacts.SendPreferencesEvent;
+import ch.protonmail.android.feature.account.AccountManagerKt;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
 import ch.protonmail.android.tasks.EmbeddedImagesThread;
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest;
@@ -177,6 +176,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
+import me.proton.core.accountmanager.domain.AccountManager;
 import timber.log.Timber;
 
 @AndroidEntryPoint
@@ -329,9 +329,6 @@ public class ComposeMessageActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!checkIfUserLoggedIn()) {
-            return;
-        }
         setUpActionBar();
         composeMessageViewModel = ViewModelProviders.of(this, composeMessageViewModelFactory).get(ComposeMessageViewModel.class);
         composeMessageViewModel.init(mHtmlProcessor);
@@ -637,16 +634,6 @@ public class ComposeMessageActivity
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("");
         }
-    }
-
-    private boolean checkIfUserLoggedIn() {
-        if (!mUserManager.isLoggedIn()) {
-            TextExtensions.showToast(this, R.string.need_to_be_logged_in);
-            startActivity(AppUtil.decorInAppIntent(new Intent(this, FirstActivity.class)));
-            finishActivity();
-            return false;
-        }
-        return true;
     }
 
     private void onFetchEmailKeysEvent(List<FetchPublicKeysResult> results) {
@@ -1791,7 +1778,7 @@ public class ComposeMessageActivity
             composeMessageViewModel.getMergedContactsLiveData().observe(this, messageRecipients -> {
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });
-            Set<Id> userIds = accountManager.allLoggedInBlocking();
+            Set<Id> userIds = AccountManagerKt.allLoggedInBlocking(accountManager);
             for(Id userId : userIds) {
                 composeMessageViewModel.fetchContactGroups(userId);
             }

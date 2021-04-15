@@ -23,6 +23,7 @@ import android.content.Context
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.util.requireNotBlank
+import kotlinx.coroutines.runBlocking
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.AccountDetails
 import me.proton.core.account.domain.entity.AccountState
@@ -38,6 +39,9 @@ class CoreAccountManagerMigration @Inject constructor(
     private val context: Context,
     private val accountManager: AccountManager
 ) {
+
+    fun migrateLoggedInAccountsBlocking(usernameIdMap: Map<String, Id>) =
+        runBlocking { migrateLoggedInAccounts(usernameIdMap) }
 
     suspend fun migrateLoggedInAccounts(usernameIdMap: Map<String, Id>) {
         usernameIdMap.forEach { entry ->

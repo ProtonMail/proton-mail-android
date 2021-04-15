@@ -88,7 +88,6 @@ public class AttachmentStorageActivity extends BaseActivity {
                 if (attachmentStorageChanged) {
                     user.setMaxAttachmentStorage(mAttachmentStorageCurrentValue);
                     user.save();
-                    mUserManager.setUser(user);
                 }
             }
 

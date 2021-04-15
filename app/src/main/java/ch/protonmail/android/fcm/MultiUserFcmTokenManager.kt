@@ -20,10 +20,12 @@
 package ch.protonmail.android.fcm
 
 import android.content.Context
-import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.fcm.model.FirebaseToken
+import ch.protonmail.android.feature.account.allLoggedIn
+import ch.protonmail.android.feature.account.allSaved
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import kotlinx.coroutines.runBlocking
+import me.proton.core.accountmanager.domain.AccountManager
 import javax.inject.Inject
 
 class MultiUserFcmTokenManager @Inject constructor(

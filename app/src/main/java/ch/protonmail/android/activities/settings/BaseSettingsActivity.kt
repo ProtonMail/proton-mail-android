@@ -80,6 +80,7 @@ import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.startMailboxActivity
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.google.gson.Gson
 import timber.log.Timber
@@ -233,11 +234,8 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 val language = resources.getStringArray(R.array.custom_language_values)[which]
                 CustomLocale.setLanguage(this@BaseSettingsActivity, language)
 
-                val recreatedMailboxIntent = Intent(this@BaseSettingsActivity, MailboxActivity::class.java)
-                recreatedMailboxIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-
                 dialog.dismiss()
-                startActivity(recreatedMailboxIntent)
+                startMailboxActivity()
             }
             .setNegativeButton(R.string.cancel, null)
             .create()

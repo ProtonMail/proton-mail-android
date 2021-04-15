@@ -61,10 +61,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
-import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
-import ch.protonmail.android.activities.EXTRA_LOGOUT
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
-import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER_ID
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.EngagementActivity
 import ch.protonmail.android.activities.FLOW_START_ACTIVITY
@@ -73,7 +70,6 @@ import ch.protonmail.android.activities.FLOW_USED_SPACE_CHANGED
 import ch.protonmail.android.activities.MailboxViewModel
 import ch.protonmail.android.activities.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.activities.NavigationActivity
-import ch.protonmail.android.activities.REQUEST_CODE_SWITCHED_USER
 import ch.protonmail.android.activities.SearchActivity
 import ch.protonmail.android.activities.SettingsActivity
 import ch.protonmail.android.activities.SettingsItem
@@ -125,8 +121,6 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.TotalLabelCounter
 import ch.protonmail.android.data.local.model.TotalLocationCounter
-import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.FetchUpdatesEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
@@ -135,11 +129,11 @@ import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.events.SwitchUserEvent
 import ch.protonmail.android.fcm.FcmTokenManager
 import ch.protonmail.android.fcm.MultiUserFcmTokenManager
 import ch.protonmail.android.fcm.PMRegistrationWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
+import ch.protonmail.android.feature.account.AccountViewModel
 import ch.protonmail.android.jobs.EmptyFolderJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchLabelsJob
@@ -153,7 +147,6 @@ import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
-import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
@@ -162,7 +155,6 @@ import ch.protonmail.android.utils.NetworkSnackBarUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnackbar
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
@@ -345,11 +337,6 @@ class MailboxActivity :
 
         checkUserAndFetchNews()
 
-        if (extras != null && EXTRA_SWITCHED_TO_USER_ID in extras) {
-            val plainId = checkNotNull(extras.getString(EXTRA_SWITCHED_TO_USER_ID))
-            switchAccount(Id(plainId))
-        }
-
         setUpDrawer()
         setTitle()
 
@@ -428,15 +415,6 @@ class MailboxActivity :
 
         ItemTouchHelper(SwipeController()).attachToRecyclerView(mailboxRecyclerView)
 
-        if (extras != null && extras.getBoolean(EXTRA_HAS_SWITCHED_USER, false)) {
-            if (EXTRA_SWITCHED_TO_USER_ID in extras) {
-                val plainId = checkNotNull(extras.getString(EXTRA_SWITCHED_TO_USER_ID))
-                switchAccount(Id(plainId))
-            } else {
-                onSwitchedAccounts()
-            }
-        }
-
         setUpMailboxActionsView()
     }
 
@@ -481,10 +459,10 @@ class MailboxActivity :
                     messageStringId = R.string.storage_limit_reached_text,
                     rightStringId = R.string.okay,
                     leftStringId = R.string.learn_more,
-                    onRight = {
+                    onPositiveButtonClicked = {
                         userManager.setShowStorageLimitReached(false)
                     },
-                    onLeft = {
+                    onNegativeButtonClicked = {
                         val browserIntent = Intent(
                             Intent.ACTION_VIEW,
                             Uri.parse(getString(R.string.limit_reached_learn_more))
@@ -508,8 +486,8 @@ class MailboxActivity :
             titleStringId = R.string.storage_limit_warning_title,
             messageStringId = R.string.storage_limit_approaching_text,
             leftStringId = R.string.dont_remind_again,
-            onRight = { storageLimitApproachingAlertDialog = null },
-            onLeft = {
+            onPositiveButtonClicked = { storageLimitApproachingAlertDialog = null },
+            onNegativeButtonClicked = {
                 userManager.setShowStorageLimitWarning(false)
                 storageLimitApproachingAlertDialog = null
             }
@@ -547,7 +525,7 @@ class MailboxActivity :
                 titleStringId = R.string.storage_limit_warning_title,
                 messageStringId = R.string.storage_limit_reached_text,
                 leftStringId = R.string.learn_more,
-                onLeft = {
+                onNegativeButtonClicked = {
                     val browserIntent = Intent(
                         Intent.ACTION_VIEW,
                         Uri.parse(getString(R.string.limit_reached_learn_more))
@@ -607,7 +585,9 @@ class MailboxActivity :
         }
     }
 
-    override fun onSwitchedAccounts() {
+    override fun onAccountSwitched(switch: AccountViewModel.AccountSwitch) {
+        super.onAccountSwitched(switch)
+
         val currentUserId = userManager.currentUserId
             ?: return
 
@@ -787,31 +767,10 @@ class MailboxActivity :
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        // force reload of MessageDetailsRepository's internal dependencies in case we just switched user
-        val extras = intent.extras
 
-        if (extras != null && EXTRA_SWITCHED_TO_USER_ID in extras) {
-            val plainId = checkNotNull(extras.getString(EXTRA_SWITCHED_TO_USER_ID))
-            switchAccount(Id(plainId))
-
-        } else if (intent.getBooleanExtra(EXTRA_HAS_SWITCHED_USER, false)) {
-            onSwitchedAccounts()
-
-        } else if (intent.getBooleanExtra(EXTRA_LOGOUT, false)) {
-            onLogout()
-
-        } else if (extras != null && EXTRA_USER_ID in extras) {
-            val plainId = checkNotNull(extras.getString(EXTRA_USER_ID))
-            val id = Id(plainId)
-            if (userManager.currentUserId != id) {
-                switchAccount(id)
-            }
-
-        } else {
-            checkRegistration()
-            checkUserAndFetchNews()
-            setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
-        }
+        checkRegistration()
+        checkUserAndFetchNews()
+        setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
     }
 
     private fun shouldShowSwipeGesturesChangedDialog(): Boolean {
@@ -829,7 +788,7 @@ class MailboxActivity :
             titleStringId = R.string.swipe_gestures_changed,
             messageStringId = R.string.swipe_gestures_changed_message,
             leftStringId = R.string.go_to_settings,
-            onLeft = {
+            onNegativeButtonClicked = {
                 val swipeGestureIntent = Intent(
                     this,
                     EditSettingsItemActivity::class.java
@@ -846,9 +805,7 @@ class MailboxActivity :
 
     override fun onResume() {
         super.onResume()
-        if (!userManager.isLoggedIn) {
-            return
-        }
+
         reloadMessageCounts()
         registerFcmReceiver()
         checkDelinquency()
@@ -980,16 +937,6 @@ class MailboxActivity :
         return previousValue
     }
 
-    @Subscribe
-    fun onSwitchedAccountEvent(event: SwitchUserEvent) {
-        val (fromUsername, toUsername) = event.from.second.s to event.to.second.s
-        showSignedInSnack(
-            mailboxRecyclerView,
-            getString(R.string.signed_in_with_logged_out_from, fromUsername, toUsername)
-        )
-        onSwitchedAccounts()
-    }
-
     override fun onLogout() {
         TODO("disable user")
         onLogoutEvent()
@@ -1064,7 +1011,6 @@ class MailboxActivity :
         }
     }
 
-    @Subscribe
     fun onLogoutEvent() {
         if (overlayDialog != null) {
             overlayDialog!!.dismiss()
@@ -1135,7 +1081,7 @@ class MailboxActivity :
     @Subscribe
     fun onUpdatesLoaded(event: FetchUpdatesEvent?) {
         lifecycleScope.launchWhenCreated {
-            refreshDrawerHeader(userManager.requireCurrentUser())
+            userManager.getCurrentUser()?.let { refreshDrawerHeader(it) }
         }
     }
 
@@ -1567,13 +1513,6 @@ class MailboxActivity :
                     }
                     super.onActivityResult(requestCode, resultCode, data)
                 }
-                REQUEST_CODE_SWITCHED_USER -> {
-                    requireNotNull(data) { "No data for request $requestCode" }
-                    if (EXTRA_HAS_SWITCHED_USER in data) {
-                        onSwitchedAccounts()
-                    }
-                    super.onActivityResult(requestCode, resultCode, data)
-                }
                 else -> super.onActivityResult(requestCode, resultCode, data)
             }
         } else {
@@ -1601,7 +1540,7 @@ class MailboxActivity :
                             titleStringId = R.string.push_notifications_alert_title,
                             messageStringId = R.string.push_notifications_alert_subtitle,
                             leftStringId = R.string.dont_remind_again,
-                            onLeft = { prefs[PREF_DONT_SHOW_PLAY_SERVICES] = true }
+                            onNegativeButtonClicked = { prefs[PREF_DONT_SHOW_PLAY_SERVICES] = true }
                         )
                     }
                 } else {

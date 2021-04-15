@@ -42,7 +42,6 @@ import java.util.concurrent.Executors
 
 // region constants
 const val EXTRA_PIN_VALID = "extra_pin_valid"
-const val EXTRA_LOGOUT = "extra_logout"
 const val EXTRA_FRAGMENT_TITLE = "extra_title"
 const val EXTRA_ATTACHMENT_IMPORT_EVENT = "extra_attachment_import_event"
 const val EXTRA_TOTAL_COUNT_EVENT = "extra_total_count_event"
@@ -199,12 +198,12 @@ class ValidatePinActivity : BaseActivity(),
         mUserManager.apply {
             savePin("")
             resetPinAttempts()
-            logoutBlocking(requireCurrentUserId())
         }
-        val intent = Intent()
-        intent.putExtra(EXTRA_LOGOUT, true)
-        setResult(Activity.RESULT_OK, intent)
-        finish()
+        accountViewModel.logout(mUserManager.requireCurrentUserId()).invokeOnCompletion {
+            val intent = Intent()
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
     }
 
     override fun onBackPressed() {

@@ -60,6 +60,7 @@ val DependencyHandler.`google-services` get() =             googleServices()
 val DependencyHandler.`hilt-androidx-view-model` get() =    dependency("androidx.hilt", module = "hilt-lifecycle-viewmodel") version `hilt-androidx-viewmodel version`
 val DependencyHandler.`room-rxJava` get() =                 androidxRoom("rxjava2")
 val DependencyHandler.`safetyNet` get() =                   playServices("safetynet")
+val DependencyHandler.`lifecycle-extensions` get() =        androidxLifecycle("extensions") version `lifecycle-extensions version`
 
 fun DependencyHandler.googleServices(moduleSuffix: String? = null, version: String = `googleServices version`) =
     google("gms", "google-services", moduleSuffix, version)

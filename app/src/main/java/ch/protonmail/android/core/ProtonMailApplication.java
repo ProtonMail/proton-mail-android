@@ -61,7 +61,6 @@ import javax.inject.Inject;
 import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.BaseActivity;
-import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.NetworkConfigurator;
 import ch.protonmail.android.api.NetworkSwitcher;
 import ch.protonmail.android.api.ProtonMailApiManager;
@@ -83,6 +82,8 @@ import ch.protonmail.android.events.StorageLimitEvent;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
 import ch.protonmail.android.fcm.MultiUserFcmTokenManager;
+import ch.protonmail.android.feature.account.AccountManagerKt;
+import ch.protonmail.android.feature.account.CoreAccountManagerMigration;
 import ch.protonmail.android.jobs.FetchLabelsJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.jobs.user.FetchUserSettingsJob;
@@ -98,6 +99,8 @@ import ch.protonmail.android.worker.FetchContactsEmailsWorker;
 import dagger.hilt.android.HiltAndroidApp;
 import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
+import me.proton.core.account.domain.entity.AccountState;
+import me.proton.core.accountmanager.domain.AccountManager;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
 
@@ -106,8 +109,6 @@ import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
 import static ch.protonmail.android.core.Constants.PrefsType.BACKUP_PREFS_NAME;
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
-import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
 import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
 import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
 
@@ -143,6 +144,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     @Inject
     AccountManager.UsernameToIdMigration accountManagerUserIdMigration;
+    @Inject
+    CoreAccountManagerMigration coreAccountManagerMigration;
 
     private Bus mBus;
     private boolean appInBackground;
@@ -401,10 +404,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
             prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, BuildConfig.VERSION_CODE).apply();
             mUpdateOccurred = true;
 
-            if (userManager.isLoggedIn()) {
-                userManager.setCurrentUserLoginState(LOGIN_STATE_TO_INBOX);
-            }
-
             Id currentUser = userManager.getCurrentUserId();
             if (BuildConfig.DEBUG && currentUser != null) {
                 messageDao = MessageDatabase.Companion
@@ -412,7 +411,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                         .getDao();
                 new RefreshMessagesAndAttachments(this, currentUser, messageDao).execute();
             }
-            if (BuildConfig.FETCH_FULL_CONTACTS && userManager.isLoggedIn()) {
+            if (BuildConfig.FETCH_FULL_CONTACTS) {
                 new FetchContactsEmailsWorker.Enqueuer(WorkManager.getInstance(this)).enqueue(0);
                 new FetchContactsDataWorker.Enqueuer(WorkManager.getInstance(this)).enqueue();
             }
@@ -431,8 +430,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     AlarmReceiver alarmReceiver = new AlarmReceiver();
                     alarmReceiver.cancelAlarm(this);
                     startJobManager();
-                    Set<Id> loggedInUsers = accountManager.allLoggedInBlocking();
-                    jobManager.addJobInBackground(new FetchUserSettingsJob(currentUserId));
+                    Set<Id> loggedInUsers = AccountManagerKt.allLoggedInBlocking(accountManager);
                     for (Id loggedInUser : loggedInUsers) {
                         if (!loggedInUser.equals(currentUserId)) {
                             jobManager.addJobInBackground(new FetchUserSettingsJob(loggedInUser));
@@ -465,25 +463,13 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     }
                 }
 
-                Set<Id> loggedInUsers = accountManager.allLoggedInBlocking();
+                Set<Id> loggedInUsers = AccountManagerKt.allLoggedInBlocking(accountManager);
                 Map<Id, SharedPreferences> allLoggedInUserPreferences = new HashMap();
                 for (Id user : loggedInUsers) {
                     allLoggedInUserPreferences.put(
                             user,
                             SecureSharedPreferences.Companion.getPrefsForUser(this, user)
                     );
-                }
-
-                if (defaultSharedPreferences.contains(PREF_LOGIN_STATE)) {
-                    for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
-                        Id id = entry.getKey();
-                        if (userManager.getMailboxPassword(id) == null) {
-                            userManager.logoutBlocking(id);
-                        } else {
-                            entry.getValue().edit().putInt(PREF_LOGIN_STATE, LOGIN_STATE_TO_INBOX).apply();
-                        }
-                    }
-                    defaultSharedPreferences.edit().remove(PREF_LOGIN_STATE).apply();
                 }
                 for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
                     SharedPreferences userPrefs = entry.getValue();
@@ -576,15 +562,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
     public void fetchOrganization() {
         GetOrganizationJob getOrganizationJob = new GetOrganizationJob();
         jobManager.addJobInBackground(getOrganizationJob);
-    }
-
-    public void notifyLoggedOut(Id userId) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(
-                Context.NOTIFICATION_SERVICE);
-        NotificationServer notificationServer = new NotificationServer(this, notificationManager);
-        if (userManager != null && userManager.isLoggedIn()) {
-            notificationServer.notifyUserLoggedOut(userManager.getUserBlocking(userId));
-        }
     }
 
     public String getCurrentLocale() {

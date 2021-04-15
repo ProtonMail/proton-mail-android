@@ -28,14 +28,15 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DEVICE_ENVIRONMENT_ANDROID
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.BuildInfo
+import me.proton.core.accountmanager.domain.AccountManager
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.util.kotlin.takeIfNotBlank

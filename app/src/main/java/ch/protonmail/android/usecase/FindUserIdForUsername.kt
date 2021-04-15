@@ -22,11 +22,12 @@ package ch.protonmail.android.usecase
 import arrow.core.Either
 import arrow.core.Left
 import arrow.core.Right
-import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.util.orThrow
+import ch.protonmail.android.feature.account.allSaved
 import kotlinx.coroutines.runBlocking
+import me.proton.core.accountmanager.domain.AccountManager
 import javax.inject.Inject
 
 /**

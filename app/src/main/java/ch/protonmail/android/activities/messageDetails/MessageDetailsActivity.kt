@@ -52,7 +52,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
-import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelCreationListener
@@ -63,7 +62,6 @@ import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
-import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
@@ -92,9 +90,8 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.utils.ui.MODE_ACCORDION
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.BottomActionsView
@@ -204,33 +201,26 @@ internal class MessageDetailsActivity :
         messageId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_ID))
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
         isTransientMessage = intent.getBooleanExtra(EXTRA_TRANSIENT_MESSAGE, false)
-        val user = mUserManager.requireCurrentUserBlocking()
-        AppUtil.clearNotifications(this, user.id)
-        if (!mUserManager.isLoggedIn) {
-            // startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
-            TODO("startLoginWorkflow()")
-        }
+        val currentUser = mUserManager.requireCurrentUserBlocking()
+        AppUtil.clearNotifications(this, currentUser.id)
         supportActionBar?.title = null
         initAdapters()
-        if (messageRecipientUsername != null && user.name.s != messageRecipientUsername) {
+        val recipientUsername = messageRecipientUsername
+        if (recipientUsername != null && currentUser.name.s != recipientUsername) {
             showTwoButtonInfoDialog(
                 title = getString(R.string.switch_accounts_question),
-                message = String.format(getString(R.string.switch_to_account), messageRecipientUsername),
+                message = String.format(getString(R.string.switch_to_account), recipientUsername),
                 rightStringId = R.string.okay,
                 leftStringId = R.string.cancel,
                 cancelable = false,
-                onRight = {
+                onPositiveButtonClicked = {
                     lifecycleScope.launchWhenCreated {
-                        mUserManager.switchTo(user.id)
+                        accountViewModel.switch(recipientUsername)
                         continueSetup()
                         invalidateOptionsMenu()
-                        showSignedInSnack(
-                            messageDetailsView,
-                            getString(R.string.signed_in_with, messageRecipientUsername)
-                        )
                     }
                 },
-                onLeft = { finish() }
+                onNegativeButtonClicked = { finish() }
             )
         } else {
             continueSetup()
@@ -514,12 +504,6 @@ internal class MessageDetailsActivity :
     override fun onBackPressed() {
         stopEmbeddedImagesTask()
         saveLastInteraction()
-        if (messageRecipientUsername != null) {
-            val mailboxIntent = AppUtil.decorInAppIntent(Intent(this, MailboxActivity::class.java))
-            mailboxIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            mailboxIntent.putExtra(EXTRA_HAS_SWITCHED_USER, true)
-            startActivity(mailboxIntent)
-        }
         finish()
     }
 
@@ -860,7 +844,7 @@ internal class MessageDetailsActivity :
                             message = getString(R.string.storage_limit_reached_text),
                             rightStringId = R.string.okay,
                             leftStringId = R.string.learn_more,
-                            onLeft = {
+                            onNegativeButtonClicked = {
                                 val browserIntent = Intent(
                                     Intent.ACTION_VIEW,
                                     Uri.parse(getString(R.string.limit_reached_learn_more))

@@ -33,6 +33,7 @@ import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.Addresses
 import ch.protonmail.android.domain.entity.user.UserKeys
+import ch.protonmail.android.feature.user.getMailboxPassword
 import ch.protonmail.android.mapper.bridge.AddressBridgeMapper
 import ch.protonmail.android.usecase.crypto.GenerateTokenAndSignature
 import ch.protonmail.android.utils.crypto.OpenPGP

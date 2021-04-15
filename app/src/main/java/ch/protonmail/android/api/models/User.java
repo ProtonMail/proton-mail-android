@@ -84,8 +84,10 @@ import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.domain.entity.Id;
+import ch.protonmail.android.feature.user.UserManagerKt;
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
+import me.proton.core.user.domain.UserManager;
 import timber.log.Timber;
 
 
@@ -115,12 +117,7 @@ public class User {
     @SerializedName(Fields.User.KEYS)
     private List<Keys> keys;
 
-    private String NotificationEmail; // used only for Memento, real settings are in UserSettings
-    private int SwipeLeft; // used only for Memento, real settings are in MailSettings
-    private int SwipeRight;
-
     private String Signature;
-
     private String MobileSignature;
     private boolean ShowMobileSignature = true;
     private boolean ShowSignature = false;
@@ -174,22 +171,26 @@ public class User {
     @NonNull
     @Deprecated
     @kotlin.Deprecated(message = "Use usecase/LoadLegacyUser")
-    public static User load(Id userId, Context context) {
+    public static User load(Id userId, Context context, UserManager userManager) {
         final SharedPreferences securePrefs =
                 SecureSharedPreferences.Companion.getPrefsForUser(context, userId);
 
-        final String userName = securePrefs.getString(PREF_USER_NAME, "");
-        if (TextUtils.isEmpty(userName)) {
-            throw new IllegalStateException("Cannot load user with empty name/username");
-        }
+        // Note: Core UserManager (UserRepository & UserAddressRepository) have a memory cache.
+        // Get User/Keys from Core.
+        me.proton.core.user.domain.entity.User coreUser = UserManagerKt.getUserBlocking(userManager, userId);
+        List<Keys> keys = UserManagerKt.getLegacyKeysBlocking(userManager, userId);
+
+        // Get Primary/Addresses from Core.
+        me.proton.core.user.domain.entity.UserAddress primaryAddress = UserManagerKt.getPrimaryAddressBlocking(userManager, userId);
+        List<Address> addresses = UserManagerKt.getLegacyAddressesBlocking(userManager, userId);
 
         final User user = new User();
-        user.name = securePrefs.getString(PREF_USER_NAME, "");
+        user.name = coreUser.getName();
         user.username = user.name;
-        user.usedSpace = securePrefs.getLong(PREF_USED_SPACE, 0L);
+        user.usedSpace = coreUser.getUsedSpace();
         user.Signature = securePrefs.getString(PREF_SIGNATURE, "");
-        user.role = securePrefs.getInt(PREF_ROLE, 0);
-        user.subscribed = securePrefs.getInt(PREF_SUBSCRIBED, 0);
+        user.role = coreUser.getRole().getValue();
+        user.subscribed = coreUser.getSubscribed();
         if (!user.isPaidUserSignatureEdit()) {
             user.MobileSignature = ProtonMailApplication.getApplication().getString(R.string.default_mobile_signature);
         } else {
@@ -201,19 +202,19 @@ public class User {
             user.setShowMobileSignature(true);
         }
         user.ShowSignature = securePrefs.getBoolean(PREF_DISPLAY_SIGNATURE, false);
-        user.DisplayName = securePrefs.getString(PREF_DISPLAY_NAME, "");
-        user.maxSpace = securePrefs.getLong(PREF_MAX_SPACE, 0L);
-        user.maxUpload = securePrefs.getInt(PREF_MAX_UPLOAD_FILE_SIZE, 0);
+        user.DisplayName = coreUser.getDisplayName();
+        user.maxSpace = coreUser.getMaxSpace();
+        user.maxUpload = Long.valueOf(coreUser.getMaxUpload()).intValue();
         user.NumMessagePerPage = securePrefs.getInt(PREF_NUM_MESSAGE_PER_PAGE, 0);
-        user.AddressId = securePrefs.getString(PREF_ADDRESS_ID, "");
-        user.DefaultAddress = securePrefs.getString(PREF_ADDRESS, "");
-        user.Addresses = deserializeAddresses(securePrefs.getString(PREF_ALIASES, ""));
-        user.keys = deserializeKeys(securePrefs.getString(PREF_KEYS, ""));
+        user.AddressId = primaryAddress.getAddressId().getId();
+        user.DefaultAddress = primaryAddress.getEmail();
+        user.Addresses = addresses;
+        user.keys = keys;
         user.NotificationSetting = user.loadNotificationSettingsFromBackup();
         user.BackgroundSync = securePrefs.getBoolean(PREF_BACKGROUND_SYNC, true);
         user.PreventTakingScreenshots = securePrefs.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
         user.GcmDownloadMessageDetails = securePrefs.getBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, false);
-        user.delinquent = securePrefs.getInt(PREF_DELINQUENT, 0);
+        user.delinquent = coreUser.getDelinquent().getValue();
         user.NotificationVisibilityLockScreen = user.loadNotificationVisibilityLockScreenSettingsFromBackup();
         int maxAttachmentStorage = securePrefs.getInt(PREF_MAX_ATTACHMENT_STORAGE, Constants.MIN_ATTACHMENT_STORAGE_IN_MB);
         if (maxAttachmentStorage <= 0) {
@@ -232,11 +233,11 @@ public class User {
         }
         user.ManuallyLocked = securePrefs.getBoolean(PREF_MANUALLY_LOCKED, false);
 
-        user.id = securePrefs.getString(PREF_USER_ID, userId.getS());
-        user.currency = securePrefs.getString(PREF_USER_CURRENCY, "eur");
-        user.credit = securePrefs.getInt(PREF_USER_CREDIT, 0);
-        user.isPrivate = securePrefs.getInt(PREF_USER_PRIVATE, 0);
-        user.services = securePrefs.getInt(PREF_USER_SERVICES, 0);
+        user.id = coreUser.getUserId().getId();
+        user.currency = coreUser.getCurrency();
+        user.credit = coreUser.getCredit();
+        user.isPrivate = coreUser.getPrivate() ? 1 : 0;
+        user.services = coreUser.getServices();
         user.isLegacyAccount = securePrefs.getBoolean(PREF_USER_LEGACY_ACCOUNT, true);
 
         return user;

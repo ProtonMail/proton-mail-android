@@ -19,7 +19,6 @@
 package ch.protonmail.android.activities;
 
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_LOGOUT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
 import static ch.protonmail.android.worker.FetchUserInfoWorkerKt.FETCH_USER_INFO_WORKER_NAME;
 import static ch.protonmail.android.worker.FetchUserInfoWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
@@ -39,11 +38,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.activity.ComponentActivity;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.work.WorkManager;
 
 import com.birbit.android.jobqueue.JobManager;
@@ -69,8 +70,7 @@ import ch.protonmail.android.core.NetworkResults;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
-import ch.protonmail.android.events.ForceSwitchedAccountNotifier;
-import ch.protonmail.android.events.Status;
+import ch.protonmail.android.feature.account.AccountViewModel;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.settings.pin.ValidatePinActivity;
 import ch.protonmail.android.utils.AppUtil;
@@ -86,6 +86,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
 
     public static final String EXTRA_IN_APP = "extra_in_app";
     public static final int REQUEST_CODE_VALIDATE_PIN = 998;
+
+    protected AccountViewModel accountViewModel;
 
     private ProtonMailApplication app;
 
@@ -166,6 +168,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             }
         }
         mCurrentLocale = app.getCurrentLocale();
+        setupViewModels(this);
         buildHtmlProcessor();
 
         setContentView(getLayoutId());
@@ -174,15 +177,12 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
         }
+    }
 
-        ForceSwitchedAccountNotifier.notifier.observe(this, event -> {
-            if (event != null) {
-                AppUtil.postEventOnUi(event);
-                if (!(this instanceof NavigationActivity)) {
-                    onBackPressed();
-                }
-            }
-        });
+    private void setupViewModels(ComponentActivity activity) {
+        ViewModelProvider viewModelProvider = new ViewModelProvider(this);
+        accountViewModel = viewModelProvider.get(AccountViewModel.class);
+        accountViewModel.register(activity);
     }
 
     @Override
@@ -325,13 +325,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             }
             boolean isValid = data.getBooleanExtra(EXTRA_PIN_VALID, false);
             if (!isValid) {
-                boolean logout = data.getBooleanExtra(EXTRA_LOGOUT, false);
-                if (logout) {
-                    mUserManager.logoutLastActiveAccountBlocking();
-                } else {
-                    validationCanceled = true;
-                    finish();
-                }
+                validationCanceled = true;
+                finish();
             } else {
                 if (this instanceof ValidatePinActivity) {
                     validationCanceled = false;
@@ -387,9 +382,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
 
     protected void saveLastInteraction() {
         User user = mUserManager.getCurrentLegacyUserBlocking();
-        if (user != null) {
-            user.setLastInteraction(SystemClock.elapsedRealtime());
-        }
+        if (user != null) user.setLastInteraction(SystemClock.elapsedRealtime());
     }
 
     protected void checkDelinquency() {
@@ -407,8 +400,10 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             Button btnLogout = dialogView.findViewById(R.id.logout);
 
             btnLogout.setOnClickListener(v -> {
-                mUserManager.logoutCurrentUserOfflineBlocking();
-                finish();
+                accountViewModel.logoutPrimary().invokeOnCompletion(throwable -> {
+                    finish();
+                    return null;
+                });
             });
             btnClose.setOnClickListener(v -> finish());
             btnCheckAgain.setOnClickListener(v -> {
@@ -503,4 +498,15 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     public void stopAutoRetry() {
         autoRetry = false;
     }
+
+    /*
+    private boolean checkIfUserLoggedIn() {
+        if (!mUserManager.isLoggedIn()) {
+            TextExtensions.showToast(this, R.string.need_to_be_logged_in);
+            startActivity(AppUtil.decorInAppIntent(new Intent(this, FirstActivity.class)));
+            finishActivity();
+            return false;
+        }
+        return true;
+    }*/
 }

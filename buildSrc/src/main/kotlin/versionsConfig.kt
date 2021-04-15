@@ -39,7 +39,7 @@ fun initVersions() {
     `hilt-android version` =                    "2.33-beta"     // Released: Feb 26, 2021
     `hilt-androidx version` =                   "1.0.0-beta01"  // Released: Mar 10, 2021
     `ktx version` =                             "1.5.0-rc01"    // Released: Mar 24, 2021
-    `lifecycle version` =                       "2.2.0-rc03"    // Released: Dec 05, 2019
+    `lifecycle version` =                       "2.4.0-alpha01" // Released: Mar 24, 2021
     `material version` =                        "1.3.0"         // Released: Feb 04, 2021
     `android-paging version` =                  "2.1.0"         // Released: Jan 26, 2019
     `android-room version` =                    "2.2.6"         // Released: Dec 16, 2020
@@ -78,8 +78,8 @@ const val `Proton-network version` =            "1.0.4"         // Released: Apr
 const val `Proton-crypto version` =             "1.0.2"         // Released: Mar 05, 2021
 
 const val `Proton-auth version` =               "1.0.4"         // Released: Apr 07, 2021
-const val `Proton-account version` =            "1.0.2"         // Released: Mar 22, 2021
-const val `Proton-account-manager version` =    "1.0.4"         // Released: Apr 07, 2021
+const val `Proton-account version` =            "1.0.3"         // Released: Apr 12, 2021
+const val `Proton-account-manager version` =    "1.0.6"         // Released: Apr 12, 2021
 const val `Proton-user version` =               "1.0.3"         // Released: Mar 22, 2021
 const val `Proton-key version` =                "1.0.4"         // Released: Mar 22, 2021
 const val `Proton-human-verification version` = "0.2.6"         // Released: Mar 14, 2021
@@ -106,6 +106,7 @@ const val `android-preference version` =        "1.1.1"         // Released: Apr
 const val `googleServices version` =            "4.3.3"         // Released: Nov 11, 2019
 const val `hilt-androidx-viewmodel version` =   "1.0.0-alpha03" // Released: Mar 10, 2021
 const val `playServices version` =              "17.0.0"        // Released: Jun 19, 2019
+const val `lifecycle-extensions version` =      "2.2.0"         // Released: Jan 00, 2020
 
 // Other
 const val `apache-commons-lang version` =       "3.4"           // Released: Apr 03, 2015

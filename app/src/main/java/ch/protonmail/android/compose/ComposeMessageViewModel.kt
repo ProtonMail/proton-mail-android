@@ -33,7 +33,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.composeMessage.UserAction
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.SendPreference
@@ -50,6 +49,7 @@ import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.compose.SaveDraft
@@ -73,6 +73,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
@@ -91,6 +92,7 @@ const val GREATER_THAN = "&gt;"
 class ComposeMessageViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository,
     private val userManager: UserManager,
+    private val accountManager: AccountManager,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val deleteMessage: DeleteMessage,
     private val fetchPublicKeys: FetchPublicKeys,
@@ -221,7 +223,7 @@ class ComposeMessageViewModel @Inject constructor(
     // endregion
 
     private val loggedInUserIds = if (userManager.user.combinedContacts) {
-        AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext).allLoggedInBlocking()
+        accountManager.allLoggedInBlocking()
     } else {
         listOf(userManager.currentUserId)
     }

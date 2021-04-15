@@ -33,6 +33,7 @@ import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.FetchUpdatesEvent;
 import ch.protonmail.android.events.Status;
+import ch.protonmail.android.feature.account.AccountManagerKt;
 import ch.protonmail.android.jobs.Priority;
 import ch.protonmail.android.jobs.ProtonMailBaseJob;
 import ch.protonmail.android.utils.AppUtil;
@@ -66,7 +67,7 @@ public class FetchUpdatesJob extends ProtonMailBaseJob {
         long currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
         messageDao.deleteExpiredMessages(currentTime);
         try {
-            Set<Id> loggedInUsers = getAccountManager().allLoggedInBlocking();
+            Set<Id> loggedInUsers = AccountManagerKt.allLoggedInBlocking(getAccountManager());
             eventManager.consumeEventsForBlocking(loggedInUsers);
             AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.SUCCESS));
         } catch (Exception e) {

@@ -20,6 +20,7 @@ package ch.protonmail.android.activities
 
 import android.app.Dialog
 import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -27,7 +28,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.BuildConfig
@@ -42,7 +45,6 @@ import ch.protonmail.android.adapters.AccountsAdapter
 import ch.protonmail.android.adapters.DrawerAdapter
 import ch.protonmail.android.adapters.mapLabelsToDrawerLabels
 import ch.protonmail.android.adapters.setUnreadLocations
-import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.local.SnoozeSettings
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.segments.event.AlarmReceiver
@@ -53,10 +55,11 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.User
-import ch.protonmail.android.events.ForceSwitchedAccountNotifier
+import ch.protonmail.android.feature.account.AccountViewModel
 import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
+import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.uiModel.DrawerItemUiModel
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
@@ -75,8 +78,14 @@ import ch.protonmail.android.views.DrawerHeaderView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
 import kotlinx.android.synthetic.main.drawer_header.*
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.proton.core.account.domain.entity.isReady
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.unsupported
 import java.util.ArrayList
 import java.util.Calendar
@@ -85,12 +94,8 @@ import ch.protonmail.android.api.models.User as OldUser
 
 // region constants
 const val EXTRA_FIRST_LOGIN = "extra.first.login"
-const val EXTRA_HAS_SWITCHED_USER = "extra.has.switched.user"
-const val EXTRA_SWITCHED_TO_USER_ID = "extra.switched.to.user.id"
-const val EXTRA_LOGOUT = "extra.logout"
 
 const val REQUEST_CODE_ACCOUNT_MANAGER = 997
-const val REQUEST_CODE_SWITCHED_USER = 999
 const val REQUEST_CODE_SNOOZED_NOTIFICATIONS = 555
 // endregion
 
@@ -144,9 +149,6 @@ abstract class NavigationActivity :
     }
 
     @Inject
-    lateinit var accountManager: AccountManager
-
-    @Inject
     lateinit var databaseProvider: DatabaseProvider
 
     @Inject
@@ -189,25 +191,29 @@ abstract class NavigationActivity :
 
         accountsAdapter.onItemClick = { account ->
             if (account is DrawerUserModel.BaseUser) {
-                val currentUser = userManager.currentUserId
-                if (account.id !in accountManager.allLoggedInBlocking()) {
-                    /*
-                    val intent = Intent(this, ConnectAccountActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    intent.putExtra(EXTRA_USERNAME, account.name)
-                    ContextCompat.startActivity(this, AppUtil.decorInAppIntent(intent), null)
-                    */
-                    TODO("startLoginWorkflow(username/userId)")
-                } else if (currentUser != account.id) {
-                    switchAccount(account.id)
-                }
+                accountViewModel.loginOrSwitch(UserId(account.id.s))
             }
         }
     }
 
-    protected abstract fun onLogout()
+    protected open fun onLogout() {}
 
-    protected abstract fun onSwitchedAccounts()
+    protected open fun onAccountSwitched(switch: AccountViewModel.AccountSwitch) {
+        val message = when {
+            switch.previous?.username == null && switch.current?.username != null -> {
+                String.format(getString(R.string.signed_in_with), switch.current.username)
+            }
+            switch.previous?.username != null && switch.current?.username != null -> {
+                getString(
+                    R.string.signed_in_with_logged_out_from,
+                    switch.previous.username,
+                    switch.current.username
+                )
+            }
+            else -> null
+        }
+        message?.let { DialogUtils.showSignedInSnack(drawerLayout, it) }
+    }
 
     protected abstract fun onInbox(type: Constants.DrawerOptionType)
 
@@ -220,18 +226,28 @@ abstract class NavigationActivity :
         isFolder: Boolean
     )
 
-    override fun onStart() {
-        super.onStart()
-        // events updates
-        mApp.bus.register(this)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        accountViewModel.onAccountSwitched()
+            .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+            .onEach { switch -> onAccountSwitched(switch) }
+            .launchIn(lifecycleScope)
     }
 
     override fun onResume() {
         super.onResume()
+        checkUserId()
         app.startJobManager()
         mJobManager.addJobInBackground(FetchUpdatesJob())
         val alarmReceiver = AlarmReceiver()
         alarmReceiver.setAlarm(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // events updates
+        mApp.bus.register(this)
     }
 
     override fun onStop() {
@@ -240,21 +256,22 @@ abstract class NavigationActivity :
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_ACCOUNT_MANAGER) {
-            onLogout()
-        } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_SNOOZED_NOTIFICATIONS) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_SNOOZED_NOTIFICATIONS) {
             refreshDrawerHeader(checkNotNull(userManager.getCurrentUserBlocking()))
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
-    protected fun switchAccount(userId: Id) {
-        lifecycleScope.launchWhenCreated {
-            val username = userManager.getUser(userId).name.s
-            userManager.switchTo(userId)
-            onSwitchedAccounts()
-            DialogUtils.showSignedInSnack(drawerLayout, String.format(getString(R.string.signed_in_with), username))
+    protected fun checkUserId() {
+        lifecycleScope.launchWhenResumed {
+            // Requested UserId match the current ?
+            intent.extras?.getString(EXTRA_USER_ID)?.let { extraUserId ->
+                val requestedUserId = UserId(extraUserId)
+                if (requestedUserId != accountViewModel.getPrimaryUserId().firstOrNull()) {
+                    accountViewModel.switch(requestedUserId)
+                }
+            }
         }
     }
 
@@ -323,34 +340,21 @@ abstract class NavigationActivity :
         }
 
         setupAccountsList()
-        ForceSwitchedAccountNotifier.notifier.postValue(null)
     }
 
     protected fun setupAccountsList() {
         navigationViewModel.reloadDependencies()
         navigationViewModel.notificationsCounts()
-        navigationViewModel.notificationsCounterLiveData.observe(
-            this,
-            { counters ->
-
-                val currentUser = userManager.currentUserId
-                lifecycleScope.launchWhenCreated {
-
-                    val allUsers = accountManager.allLoggedIn().map { it to true } +
-                        accountManager.allLoggedOut().map { it to false }
-
-                    val accounts = allUsers
-                        // Current user as first position, then logged in first
-                        .sortedByDescending { it.first == currentUser && it.second }
-                        .map { (id, loggedIn) ->
-                            val user = userManager.getUser(id)
-                            user.toDrawerUser(loggedIn, counters[id] ?: 0)
-                        }
-
-                    accountsAdapter.items = accounts + DrawerUserModel.Footer
+        navigationViewModel.notificationsCounterLiveData.observe(this) { counters ->
+            lifecycleScope.launchWhenCreated {
+                val accounts = accountViewModel.getSortedAccounts().first().map { account ->
+                    val id = Id(account.userId.id)
+                    val user = userManager.getUser(id)
+                    user.toDrawerUser(account.isReady(), counters[id] ?: 0)
                 }
+                accountsAdapter.items = accounts + DrawerUserModel.Footer
             }
-        )
+        }
     }
 
     private fun User.toDrawerUser(loggedIn: Boolean, notificationsCount: Int): DrawerUserModel.BaseUser.DrawerUser {
@@ -463,26 +467,12 @@ abstract class NavigationActivity :
 
         fun onSignOutSelected() {
 
-            fun onLogoutConfirmed(currentUserId: Id, hasNextLoggedInUser: Boolean) {
-                lifecycleScope.launch {
-                    if (hasNextLoggedInUser) {
-                        overlayDialog =
-                            Dialog(this@NavigationActivity, android.R.style.Theme_Panel).also {
-                                it.setCancelable(false)
-                                it.show()
-                            }
-                        userManager.logoutLastActiveAccount()
-                        onLogout()
-                    } else {
-                        userManager.logout(currentUserId)
-                        onSwitchedAccounts()
-                    }
-                }
-
+            fun onLogoutConfirmed(currentUserId: Id) {
+                accountViewModel.logout(currentUserId)
             }
 
             lifecycleScope.launch {
-                val nextLoggedInUserId = userManager.getNextLoggedInUser()
+                val nextLoggedInUserId = userManager.getPreviousPrimaryUserId()
 
                 val (title, message) = if (nextLoggedInUserId != null) {
                     val next = userManager.getUser(nextLoggedInUserId)
@@ -498,10 +488,7 @@ abstract class NavigationActivity :
                     rightStringId = R.string.yes,
                     leftStringId = R.string.no
                 ) {
-                    onLogoutConfirmed(
-                        currentUserId = checkNotNull(userManager.currentUserId),
-                        hasNextLoggedInUser = nextLoggedInUserId != null
-                    )
+                    onLogoutConfirmed(checkNotNull(userManager.currentUserId))
                 }
             }
         }
@@ -546,6 +533,7 @@ abstract class NavigationActivity :
     }
 
     private inner class CreateLabelsMenuObserver : Observer<List<LabelWithUnreadCounter>> {
+
         override fun onChanged(labels: List<LabelWithUnreadCounter>?) {
             if (labels == null)
                 return
@@ -560,6 +548,7 @@ abstract class NavigationActivity :
     }
 
     private inner class LocationsMenuObserver : Observer<Map<Int, Int>> {
+
         override fun onChanged(unreadLocations: Map<Int, Int>) {
             // Prepare drawer Items by injecting unreadLocations
             staticDrawerItems = staticDrawerItems.setUnreadLocations(unreadLocations)
