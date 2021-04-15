@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.mailbox.data
 
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.Correspondent
@@ -32,7 +33,10 @@ import javax.inject.Inject
 
 class FakeConversationsRepository @Inject constructor() : ConversationsRepository {
 
-    override fun getConversations(params: GetConversationsParameters): Flow<DataResult<List<Conversation>>> {
+    override fun getConversations(
+        params: GetConversationsParameters,
+        userId: Id
+    ): Flow<DataResult<List<Conversation>>> {
         val sender = Correspondent("senderName", "sender@protonmail.com")
         val recipients = listOf(
             Correspondent("recipient", "recipient@protonmail.com"),

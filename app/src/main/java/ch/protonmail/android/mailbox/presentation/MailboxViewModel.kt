@@ -273,7 +273,7 @@ class MailboxViewModel @Inject constructor(
     private fun getConversationsAsMailboxItems(
         location: Constants.MessageLocationType
     ): LiveData<List<MailboxUiItem>> {
-        return getConversations(location).map { result ->
+        return getConversations(userManager.requireCurrentUserId(), location).map { result ->
             if (result is GetConversationsResult.Success) {
                 return@map conversationsToMailboxItems(result.conversations)
             }
