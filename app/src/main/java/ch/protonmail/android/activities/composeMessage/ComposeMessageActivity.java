@@ -423,7 +423,6 @@ public class ComposeMessageActivity
 
         mAddressesSpinner.getViewTreeObserver().addOnGlobalLayoutListener(new AddressSpinnerGlobalLayoutListener());
         askForPermission = true;
-        composeMessageViewModel.startGetAvailableDomainsJob();
         composeMessageViewModel.setSignature(composeMessageViewModel.getSignatureByEmailAddress((String) mAddressesSpinner.getSelectedItem()));
     }
 
@@ -1194,7 +1193,7 @@ public class ComposeMessageActivity
                     Timber.tag("588").e(exc, "Exception on fill message with user inputs");
                 }
             } else {
-                message.setAddressID(user.getAddressId());
+                message.setAddressID(user.getDefaultAddressId());
                 message.setSenderName(user.getDisplayName());
             }
         }
@@ -1955,7 +1954,7 @@ public class ComposeMessageActivity
                     } else {
                         String previousSenderAddressId = composeMessageViewModel.getMessageDataResult().getAddressId();
                         if (TextUtils.isEmpty(previousSenderAddressId)) { // first switch from default address
-                            previousSenderAddressId = mUserManager.getUser().getDefaultAddress().getID();
+                            previousSenderAddressId = mUserManager.getUser().getDefaultAddressId();
                         }
 
                         if (TextUtils.isEmpty(composeMessageViewModel.getOldSenderAddressId()) && !localAttachmentsListEmpty) {
@@ -2106,10 +2105,11 @@ public class ComposeMessageActivity
                 } else {
                     Address nonAliasAddress;
                     try {
+                        User user = mUserManager.getUser();
                         if (localMessage.getAddressID() != null) {
-                            nonAliasAddress = mUserManager.getUser().getAddressById(localMessage.getAddressID());
+                            nonAliasAddress = user.getAddressById(localMessage.getAddressID());
                         } else { // fallback to default address if newly composed message has no addressId
-                            nonAliasAddress = mUserManager.getUser().getDefaultAddress();
+                            nonAliasAddress = user.getAddressById(user.getDefaultAddressId());
                         }
                         messageSender = new MessageSender(nonAliasAddress.getDisplayName(), nonAliasAddress.getEmail());
                     } catch (NullPointerException e) {

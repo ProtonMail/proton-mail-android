@@ -193,7 +193,6 @@ class ValidatePinActivity : BaseActivity(),
         mUserManager.requireCurrentLegacyUserBlocking().apply {
             isUsePin = false
             isUseFingerprint = false
-            save()
         }
         mUserManager.apply {
             savePin("")

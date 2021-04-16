@@ -86,7 +86,6 @@ import ch.protonmail.android.feature.account.AccountManagerKt;
 import ch.protonmail.android.feature.account.CoreAccountManagerMigration;
 import ch.protonmail.android.jobs.FetchLabelsJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
-import ch.protonmail.android.jobs.user.FetchUserSettingsJob;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.servers.notification.NotificationServer;
 import ch.protonmail.android.utils.CustomLocale;
@@ -99,7 +98,6 @@ import ch.protonmail.android.worker.FetchContactsEmailsWorker;
 import dagger.hilt.android.HiltAndroidApp;
 import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
-import me.proton.core.account.domain.entity.AccountState;
 import me.proton.core.accountmanager.domain.AccountManager;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
@@ -143,7 +141,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     MultiUserFcmTokenManager multiUserFcmTokenManager;
 
     @Inject
-    AccountManager.UsernameToIdMigration accountManagerUserIdMigration;
+    ch.protonmail.android.api.AccountManager.UsernameToIdMigration accountManagerUserIdMigration;
     @Inject
     CoreAccountManagerMigration coreAccountManagerMigration;
 
@@ -214,6 +212,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
         super.onCreate();
         accountManagerUserIdMigration.blocking();
+        coreAccountManagerMigration.migrateBlocking();
 
         WorkManager.initialize(this, getWorkManagerConfiguration());
 
@@ -426,19 +425,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 // or any specific previous version should be logged out
 
                 Id currentUserId = userManager.getCurrentUserId();
-                if (BuildConfig.DEBUG) {
-                    AlarmReceiver alarmReceiver = new AlarmReceiver();
-                    alarmReceiver.cancelAlarm(this);
-                    startJobManager();
-                    Set<Id> loggedInUsers = AccountManagerKt.allLoggedInBlocking(accountManager);
-                    for (Id loggedInUser : loggedInUsers) {
-                        if (!loggedInUser.equals(currentUserId)) {
-                            jobManager.addJobInBackground(new FetchUserSettingsJob(loggedInUser));
-                        }
-                    }
-                    eventManager.clearState();
-                    alarmReceiver.setAlarm(this);
-                }
                 SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
                 if (currentUserId != null) {
                     SharedPreferences secureSharedPreferences =

@@ -63,9 +63,11 @@ private const val VIEW_TYPE_ACC_FOOTER = 4 // for footer list item in accounts m
 internal class AccountsAdapter :
     BaseAdapter<DrawerUserModel, AccountsAdapter.ViewHolder<DrawerUserModel>>(ModelsComparator) {
 
+    var onLoginAccount: (Id?) -> Unit = { }
     var onLogoutAccount: (Id) -> Unit = { }
     var onRemoveAccount: (Id) -> Unit = { }
 
+    private val onLoginAccountInvoker: (Id?) -> Unit get() = { onLoginAccount(it) }
     private val onLogoutAccountInvoker: (Id) -> Unit get() = { onLogoutAccount(it) }
     private val onRemoveAccountInvoker: (Id) -> Unit get() = { onRemoveAccount(it) }
 
@@ -74,6 +76,7 @@ internal class AccountsAdapter :
 
     override fun onBindViewHolder(holder: ViewHolder<DrawerUserModel>, position: Int) {
         super.onBindViewHolder(holder, position)
+        holder.onLoginAccountInvoker = this.onLoginAccountInvoker
         holder.onLogoutAccountInvoker = this.onLogoutAccountInvoker
         holder.onRemoveAccountInvoker = this.onRemoveAccountInvoker
     }
@@ -82,6 +85,7 @@ internal class AccountsAdapter :
     override fun getItemViewType(position: Int) = items[position].viewType
 
     abstract class ViewHolder<DUM : DrawerUserModel>(itemView: View) : ClickableAdapter.ViewHolder<DUM>(itemView) {
+        internal var onLoginAccountInvoker: (Id?) -> Unit = { }
         internal var onLogoutAccountInvoker: (Id) -> Unit = { }
         internal var onRemoveAccountInvoker: (Id) -> Unit = { }
     }
@@ -138,20 +142,7 @@ internal class AccountsAdapter :
         override fun onBind(item: DrawerUserModel.AccFooter) = with(itemView) {
             super.onBind(item)
             addNewUserAccount.setOnClickListener {
-                /*
-                val activity = context as Activity
-                val intent = Intent(context, ConnectAccountActivity::class.java)
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    .putExtra(EXTRA_HAS_SWITCHED_USER, true)
-                startActivityForResult(
-                    activity,
-                    AppUtil.decorInAppIntent(intent),
-                    REQUEST_CODE_SWITCHED_USER,
-                    null
-                )
-                activity.finish()
-                */
-                TODO("startLoginWorkflow(username)")
+                onLoginAccountInvoker.invoke(null)
             }
         }
     }
@@ -207,13 +198,7 @@ internal class AccountsAdapter :
                             onLogoutAccountInvoker(item.id)
                         }
                         R.id.action_login -> {
-                            /*
-                            val intent = Intent(context, ConnectAccountActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            intent.putExtra(EXTRA_USERNAME, item.name)
-                            startActivity(context, AppUtil.decorInAppIntent(intent), null)
-                            */
-                            TODO("startLoginWorkflow(username)")
+                            onLoginAccountInvoker(item.id)
                         }
                     }
                     true
@@ -249,13 +234,7 @@ internal class AccountsAdapter :
                 userName.setStyle(R.style.DrawerNameText_Red)
                 userEmailAddress.setStyle(R.style.DrawerEmailAddressText_Red)
                 userSignIn.setOnClickListener {
-                    /*
-                    val intent = Intent(context, ConnectAccountActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    intent.putExtra(EXTRA_USERNAME, item.name)
-                    startActivity(context, AppUtil.decorInAppIntent(intent), null)
-                    */
-                    TODO("startLoginWorkflow(username)")
+                    onLoginAccountInvoker(null)
                 }
             }
         }

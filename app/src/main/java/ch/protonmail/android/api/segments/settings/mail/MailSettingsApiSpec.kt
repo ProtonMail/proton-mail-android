@@ -25,10 +25,7 @@ import java.io.IOException
 
 interface MailSettingsApiSpec {
 
-    @Throws(IOException::class)
-    fun fetchMailSettingsBlocking(): MailSettingsResponse
-
-    suspend fun fetchMailSettings(): MailSettingsResponse
+    suspend fun fetchMailSettings(userId: Id): MailSettingsResponse
 
     @Throws(IOException::class)
     fun fetchMailSettingsBlocking(userId: Id): MailSettingsResponse

@@ -41,7 +41,6 @@ import kotlinx.android.synthetic.main.toolbar_white.*
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import me.proton.core.account.domain.entity.isReady
 import javax.inject.Inject
 
@@ -64,6 +63,7 @@ class AccountManagerActivity : BaseActivity() {
         window?.setBarColors(getColor(R.color.new_purple_dark))
 
         accountsAdapter.apply {
+            onLoginAccount = { userId -> accountViewModel.login() }
             onLogoutAccount = { userId -> onLogoutClicked(userId) }
             onRemoveAccount = { userId -> onRemoveClicked(userId) }
         }
@@ -96,7 +96,7 @@ class AccountManagerActivity : BaseActivity() {
 
     private fun onLogoutClicked(userId: Id) {
         lifecycleScope.launchWhenCreated {
-            val nextLoggedInUserId = userManager.getPreviousPrimaryUserId()
+            val nextLoggedInUserId = userManager.getPreviousCurrentUserId()
             val (title, message) = if (nextLoggedInUserId != null) {
                 val next = userManager.getUser(nextLoggedInUserId)
                 getString(R.string.logout) to getString(R.string.logout_question_next_account, next.name.s)

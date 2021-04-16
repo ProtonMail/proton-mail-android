@@ -20,13 +20,20 @@ package ch.protonmail.android.feature.account
 
 import androidx.activity.ComponentActivity
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import ch.protonmail.android.api.segments.event.AlarmReceiver
+import ch.protonmail.android.api.segments.event.EventManager
+import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.usecase.delete.ClearUserData
+import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
+import ch.protonmail.android.utils.AppUtil
+import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
@@ -35,16 +42,17 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
 import me.proton.core.account.domain.entity.Account
-import me.proton.core.account.domain.entity.AccountState
 import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.account.domain.entity.isDisabled
 import me.proton.core.account.domain.entity.isReady
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.domain.getPrimaryAccount
+import me.proton.core.accountmanager.presentation.disableInitialNotReadyAccounts
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountCreateAddressFailed
 import me.proton.core.accountmanager.presentation.onAccountCreateAddressNeeded
 import me.proton.core.accountmanager.presentation.onAccountDisabled
+import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeFailed
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeNeeded
 import me.proton.core.accountmanager.presentation.onSessionHumanVerificationNeeded
@@ -52,29 +60,25 @@ import me.proton.core.accountmanager.presentation.onSessionSecondFactorNeeded
 import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.auth.presentation.onLoginResult
 import me.proton.core.domain.entity.UserId
-import me.proton.core.user.domain.UserManager
 
 class AccountViewModel @ViewModelInject constructor(
     private val accountManager: AccountManager,
     private var authOrchestrator: AuthOrchestrator,
-    private val userManager: UserManager
+    private val eventManager: EventManager,
+    private val jobManager: JobManager,
+    private val oldUserManager: ch.protonmail.android.core.UserManager,
+    private val launchInitialDataFetch: LaunchInitialDataFetch,
+    private val clearUserData: ClearUserData
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(State.Processing as State)
 
     private suspend fun UserId?.getAccount() = this?.let { getAccount(it).firstOrNull() }
 
-    private suspend fun prepareReadyAccounts(accounts: List<Account>) {
-        accounts.forEach { account ->
-            // Make sure we have Addresses before starting MailboxActivity.
-            userManager.getAddresses(account.userId, refresh = userManager.getAddresses(account.userId).isEmpty())
-        }
-    }
-
     sealed class State {
         object Processing : State()
-        object LoginNeeded : State()
         object LoginClosed : State()
+        object AccountNeeded : State()
         data class AccountList(val accounts: List<Account>) : State()
     }
 
@@ -86,36 +90,26 @@ class AccountViewModel @ViewModelInject constructor(
         // Handle Account states.
         with(authOrchestrator) {
             onLoginResult { result -> if (result == null) _state.tryEmit(State.LoginClosed) }
-            accountManager.observe(context.lifecycleScope)
+            accountManager.observe(context.lifecycle, minActiveState = Lifecycle.State.CREATED)
                 .onSessionSecondFactorNeeded { startSecondFactorWorkflow(it) }
                 .onAccountTwoPassModeNeeded { startTwoPassModeWorkflow(it) }
                 .onAccountCreateAddressNeeded { startChooseAddressWorkflow(it) }
                 .onSessionHumanVerificationNeeded { startHumanVerificationWorkflow(it) }
                 .onAccountTwoPassModeFailed { accountManager.disableAccount(it.userId) }
                 .onAccountCreateAddressFailed { accountManager.disableAccount(it.userId) }
-                .onAccountDisabled {
-
-                    /*
-                    notifyLoggedOut.blocking(userId)
-                    jobManager.stop()
-                    jobManager.clear()
-                    jobManager.cancelJobsInBackground(null, TagConstraint.ALL)
-                    userManager.logoutOfflineBlocking(userId)
-                    */
-
-
-                    accountManager.removeAccount(it.userId)
-                }
+                .onAccountDisabled { onAccountDisabled(it) }
+                .onAccountReady { onAccountReady(it) }
+                .disableInitialNotReadyAccounts()
         }
 
         // Raise LoginNeeded on empty account list.
         accountManager.getAccounts().onEach { accounts ->
             when {
-                accounts.isEmpty() -> {
-                    _state.tryEmit(State.LoginNeeded)
+                accounts.isEmpty() || accounts.all { it.isDisabled() } -> {
+                    onAccountNeeded()
+                    _state.tryEmit(State.AccountNeeded)
                 }
                 accounts.any { it.isReady() } -> {
-                    prepareReadyAccounts(accounts.filter { it.state == AccountState.Ready })
                     _state.tryEmit(State.AccountList(accounts))
                 }
             }
@@ -138,28 +132,24 @@ class AccountViewModel @ViewModelInject constructor(
             .sortedByDescending { it.isReady() }
     }
 
-    fun login() = authOrchestrator.startLoginWorkflow(AccountType.Internal)
-
-    fun loginOrSwitch(userId: UserId) = viewModelScope.launch {
-        val primaryUserId = getPrimaryUserId().firstOrNull()
-        val account = userId.getAccount()
-        when {
-            account == null -> Unit
-            account.isDisabled() -> authOrchestrator.startLoginWorkflow(AccountType.Internal) // TODO: Add userId.
-            account.userId != primaryUserId -> accountManager.setAsPrimary(account.userId)
-        }
-    }
-
-    fun switch(userId: UserId) = viewModelScope.launch {
-        accountManager.setAsPrimary(userId)
-    }
-
     fun logout(userId: UserId) = viewModelScope.launch {
         accountManager.disableAccount(userId)
     }
 
     fun logoutPrimary() = viewModelScope.launch {
         getPrimaryUserId().first()?.let { logout(it) }
+    }
+
+    fun login() {
+        authOrchestrator.startLoginWorkflow(AccountType.Internal)
+    }
+
+    fun switch(userId: UserId) = viewModelScope.launch {
+        val account = userId.getAccount() ?: return@launch
+        when {
+            account.isDisabled() -> authOrchestrator.startLoginWorkflow(AccountType.Internal) // TODO: Add userId.
+            account.isReady() -> accountManager.setAsPrimary(userId)
+        }
     }
 
     fun remove(userId: UserId) = viewModelScope.launch {
@@ -174,12 +164,12 @@ class AccountViewModel @ViewModelInject constructor(
 
     data class AccountSwitch(val previous: Account? = null, val current: Account? = null)
 
-    fun onAccountSwitched() = getPrimaryUserId().scan(AccountSwitch()) { previous: AccountSwitch, currentUserId ->
+    fun onAccountSwitched() = getPrimaryUserId().scan(AccountSwitch()) { previous, currentUserId ->
         AccountSwitch(
             previous = previous.current?.userId?.getAccount(),
             current = currentUserId.getAccount()
         )
-    }.drop(2) // Initial from scan + initial from getPrimaryAccount.
+    }.filter { it.previous != null && it.current != it.previous }
 
     // region Deprecated
 
@@ -187,7 +177,7 @@ class AccountViewModel @ViewModelInject constructor(
         message = "Use UserId version of the function",
         replaceWith = ReplaceWith("switch(UserId(userId.s))", "me.proton.core.domain.entity.UserId")
     )
-    fun switch(userId: Id) = switch(UserId(userId.s))
+    fun switch(userId: Id) = this.switch(UserId(userId.s))
 
     @Deprecated(
         message = "Use UserId version of the function",
@@ -195,7 +185,7 @@ class AccountViewModel @ViewModelInject constructor(
     )
     fun switch(username: String) = viewModelScope.launch {
         getAccounts().first().firstOrNull { it.username == username }?.let { account ->
-            switch(account.userId)
+            this@AccountViewModel.switch(account.userId)
         }
     }
 
@@ -210,6 +200,34 @@ class AccountViewModel @ViewModelInject constructor(
         replaceWith = ReplaceWith("remove(UserId(userId.s))", "me.proton.core.domain.entity.UserId")
     )
     fun remove(userId: Id) = remove(UserId(userId.s))
+
+    // endregion
+
+    // region Legacy User Management & Cleaning.
+
+    private suspend fun onAccountNeeded() {
+        AppUtil.clearTasks(jobManager)
+        AppUtil.deletePrefs()
+        AppUtil.deleteBackupPrefs()
+    }
+
+    private suspend fun onAccountReady(account: Account) {
+        // Update account data (TODO: add cache).
+        launchInitialDataFetch.invoke(
+            userId = Id(account.userId.id),
+            shouldRefreshDetails = true,
+            shouldRefreshContacts = true
+        )
+        AlarmReceiver().setAlarm(ProtonMailApplication.getApplication())
+        jobManager.start()
+    }
+
+    private suspend fun onAccountDisabled(account: Account) {
+        val userId = Id(account.userId.id)
+        clearUserData.invoke(userId)
+        eventManager.clearState(userId)
+        AppUtil.deleteSecurePrefs(oldUserManager.preferencesFor(userId), false)
+    }
 
     // endregion
 }

@@ -34,11 +34,8 @@ import java.io.IOException
 
 class MailSettingsApi(private val service: MailSettingsService) : BaseApi(), MailSettingsApiSpec {
 
-    @Throws(IOException::class)
-    override fun fetchMailSettingsBlocking(): MailSettingsResponse =
-        ParseUtils.parse(service.fetchMailSettingsCall().execute())
-
-    override suspend fun fetchMailSettings(): MailSettingsResponse = service.fetchMailSettings()
+    override suspend fun fetchMailSettings(userId: Id): MailSettingsResponse =
+        service.fetchMailSettings(UserIdTag(userId))
 
     @Throws(IOException::class)
     override fun fetchMailSettingsBlocking(userId: Id): MailSettingsResponse =

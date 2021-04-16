@@ -87,7 +87,6 @@ public class AttachmentStorageActivity extends BaseActivity {
                 boolean attachmentStorageChanged = mAttachmentStorageCurrentValue != user.getMaxAttachmentStorage();
                 if (attachmentStorageChanged) {
                     user.setMaxAttachmentStorage(mAttachmentStorageCurrentValue);
-                    user.save();
                 }
             }
 

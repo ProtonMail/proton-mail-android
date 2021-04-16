@@ -50,7 +50,6 @@ import ch.protonmail.android.activities.SwipeChooserActivity
 import ch.protonmail.android.activities.SwipeType
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
-import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.settings.SettingsEnum.*
 import ch.protonmail.android.adapters.SettingsAdapter
 import ch.protonmail.android.core.Constants

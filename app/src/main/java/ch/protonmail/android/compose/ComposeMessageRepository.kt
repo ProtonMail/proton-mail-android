@@ -39,7 +39,6 @@ import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.ResignContactJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
-import ch.protonmail.android.jobs.general.GetAvailableDomainsJob
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import com.birbit.android.jobqueue.JobManager
@@ -157,10 +156,6 @@ class ComposeMessageRepository @Inject constructor(
         withContext(dispatchers.Io) {
             messageDao.deleteMessageById(messageId)
         }
-
-    fun startGetAvailableDomains() {
-        jobManager.addJobInBackground(GetAvailableDomainsJob(true))
-    }
 
     fun startFetchDraftDetail(messageId: String) {
         jobManager.addJobInBackground(FetchDraftDetailJob(messageId))

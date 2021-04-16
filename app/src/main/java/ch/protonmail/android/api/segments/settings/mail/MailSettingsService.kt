@@ -45,7 +45,7 @@ interface MailSettingsService {
 
     @GET("mail/v4/settings")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun fetchMailSettings(): MailSettingsResponse
+    suspend fun fetchMailSettings(@Tag userIdTag: UserIdTag): MailSettingsResponse
 
     @GET("mail/v4/settings")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

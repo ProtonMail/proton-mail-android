@@ -84,7 +84,6 @@ internal class UserBridgeMapperTest {
             every { maxUpload } returns 12_345
             every { usedSpace } returns 15_000
             every { maxSpace } returns 30_000
-            every { legacyAccount } returns true
         }
 
         // WHEN
@@ -143,7 +142,6 @@ internal class UserBridgeMapperTest {
                 every { getInt(PREF_MAX_UPLOAD_FILE_SIZE, any()) } returns 12_345
                 every { getLong(PREF_USED_SPACE, any()) } returns 15_000
                 every { getLong(PREF_MAX_SPACE, any()) } returns 30_000
-                every { getBoolean(PREF_USER_LEGACY_ACCOUNT, any()) } returns true
 
                 every { edit() } returns mockk(relaxed = true)
             }

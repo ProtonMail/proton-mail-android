@@ -407,7 +407,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             });
             btnClose.setOnClickListener(v -> finish());
             btnCheckAgain.setOnClickListener(v -> {
-                fetchUserInfoWorkerEnqueuer.invoke();
+                fetchUserInfoWorkerEnqueuer.invoke(user.getId());
                 workManager.getWorkInfosForUniqueWorkLiveData(FETCH_USER_INFO_WORKER_NAME)
                         .observe(this, workInfo -> {
                             boolean isDelinquent = workInfo.get(0).getOutputData().getBoolean(FETCH_USER_INFO_WORKER_RESULT, true);
@@ -498,15 +498,4 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     public void stopAutoRetry() {
         autoRetry = false;
     }
-
-    /*
-    private boolean checkIfUserLoggedIn() {
-        if (!mUserManager.isLoggedIn()) {
-            TextExtensions.showToast(this, R.string.need_to_be_logged_in);
-            startActivity(AppUtil.decorInAppIntent(new Intent(this, FirstActivity.class)));
-            finishActivity();
-            return false;
-        }
-        return true;
-    }*/
 }

@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.api
 
-import ch.protonmail.android.api.segments.address.AddressService
 import ch.protonmail.android.api.segments.attachment.AttachmentService
 import ch.protonmail.android.api.segments.contact.ContactService
 import ch.protonmail.android.api.segments.device.DeviceService
@@ -30,13 +29,9 @@ import ch.protonmail.android.api.segments.organization.OrganizationService
 import ch.protonmail.android.api.segments.payment.PaymentService
 import ch.protonmail.android.api.segments.report.ReportService
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsService
-import ch.protonmail.android.api.segments.settings.user.UserSettingsService
-import ch.protonmail.android.api.segments.user.UserService
 import retrofit2.Retrofit
 
 class SecuredServices(private val retrofit: Retrofit) {
-
-    val address: AddressService by createService(AddressService::class.java)
 
     val contact: ContactService by createService(ContactService::class.java)
 
@@ -47,8 +42,6 @@ class SecuredServices(private val retrofit: Retrofit) {
     val report: ReportService by createService(ReportService::class.java)
 
     val event: EventService by createService(EventService::class.java)
-
-    val userSettings: UserSettingsService by createService(UserSettingsService::class.java)
 
     val mailSettings: MailSettingsService by createService(MailSettingsService::class.java)
 
@@ -62,11 +55,8 @@ class SecuredServices(private val retrofit: Retrofit) {
 
     val organization: OrganizationService by createService(OrganizationService::class.java)
 
-    val user: UserService by createService(UserService::class.java)
-
     // Every service gets the same Retrofit instance (lazy loaded)
     private fun <T> createService(serviceInterface: Class<T>): Lazy<T> {
         return lazy { retrofit.create(serviceInterface) }
     }
 }
-

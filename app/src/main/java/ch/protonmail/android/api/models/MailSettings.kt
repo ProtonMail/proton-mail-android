@@ -215,15 +215,6 @@ class MailSettings : Serializable {
         runBlocking { save(userPreferences) }
     }
 
-    @Deprecated(
-        "Save using Preferences directly",
-        ReplaceWith("save(preferences)"),
-        DeprecationLevel.ERROR
-    )
-    fun save() {
-        unsupported
-    }
-
     @Suppress("TooManyFunctions") // It would be nice to have them as extension functions, but sadly this code
     //                                          is  also used form Java, so it would make the code even uglier than the
     //                                          usual  Java code

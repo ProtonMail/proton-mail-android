@@ -176,9 +176,6 @@ internal class NotificationSettingsActivity : BaseActivity(), ViewStateActivity 
             val notificationSettingsChanged = currentAction != user.notificationSetting
             if (notificationSettingsChanged) {
                 user.notificationSetting = currentAction
-
-                user.save()
-                mUserManager.user = user
             }
         }
     }

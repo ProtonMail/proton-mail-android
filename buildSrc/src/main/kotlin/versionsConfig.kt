@@ -63,7 +63,7 @@ fun initVersions() {
 
 // Proton Core
 // Common
-const val `Proton-kotlin-util version` =        "0.2.4"         // Released: Nov 19, 2020
+const val `Proton-kotlin-util version` =        "0.2.5"         // Released: Apr 07, 2021
 const val `Proton-shared-preferences version` = "0.2.3"         // Released: Dec 18, 2020
 const val `Proton-work-manager version` =       "0.2.2"         // Released: Dec 18, 2020
 // Test
@@ -79,8 +79,8 @@ const val `Proton-crypto version` =             "1.0.2"         // Released: Mar
 
 const val `Proton-auth version` =               "1.0.4"         // Released: Apr 07, 2021
 const val `Proton-account version` =            "1.0.3"         // Released: Apr 12, 2021
-const val `Proton-account-manager version` =    "1.0.6"         // Released: Apr 12, 2021
-const val `Proton-user version` =               "1.0.3"         // Released: Mar 22, 2021
+const val `Proton-account-manager version` =    "1.0.8"         // Released: Apr 15, 2021
+const val `Proton-user version` =               "1.0.4"         // Released: Apr 15, 2021
 const val `Proton-key version` =                "1.0.4"         // Released: Mar 22, 2021
 const val `Proton-human-verification version` = "0.2.6"         // Released: Mar 14, 2021
 

@@ -28,6 +28,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.usecase.VerifyConnection
@@ -76,6 +77,8 @@ class MailboxViewModel @Inject constructor(
         MutableLiveData()
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
+
+    lateinit var userId: Id
 
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning

@@ -147,24 +147,16 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     if (containsBannedChars) {
                         showToast(R.string.display_name_banned_chars, Toast.LENGTH_SHORT, Gravity.CENTER)
                         val primaryAddress = checkNotNull(user.addresses.primary)
-                        newDisplayName = primaryAddress.displayName?.s
-                            ?: primaryAddress.email.s
+                        newDisplayName = primaryAddress.displayName?.s ?: primaryAddress.email.s
                     }
 
-
                     val displayChanged = newDisplayName != mDisplayName
-
                     if (displayChanged) {
-                        legacyUser.displayName = newDisplayName
-                        legacyUser.save()
-                        user = legacyUser.toNewUser()
-
                         mDisplayName = newDisplayName
 
                         val job = UpdateSettingsJob(
-                            displayChanged = displayChanged,
                             newDisplayName = newDisplayName,
-                            addressId = newAddressId?.s ?: EMPTY_STRING
+                            addressId = newAddressId
                         )
                         mJobManager.addJobInBackground(job)
                     }
@@ -195,14 +187,10 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 setEditTextListener(SettingsEnum.SIGNATURE) {
                     val newSignature = (it as CustomFontEditText).text.toString()
                     val isSignatureChanged = newSignature != currentSignature
-
-                    legacyUser.save()
-
                     if (isSignatureChanged) {
                         val job = UpdateSettingsJob(
-                            signatureChanged = isSignatureChanged,
                             newSignature = newSignature,
-                            addressId = newAddressId?.s ?: EMPTY_STRING
+                            addressId = newAddressId
                         )
                         mJobManager.addJobInBackground(job)
                     }
@@ -210,7 +198,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
                 setToggleListener(SettingsEnum.SIGNATURE) { _: View, isChecked: Boolean ->
                     legacyUser.isShowSignature = isChecked
-                    legacyUser.save()
                 }
 
                 setEditTextListener(SettingsEnum.MOBILE_SIGNATURE) {
@@ -219,19 +206,16 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
                     if (isMobileSignatureChanged) {
                         legacyUser.mobileSignature = newMobileSignature
-                        legacyUser.save()
                     }
                 }
 
                 setEditTextChangeListener(SettingsEnum.MOBILE_SIGNATURE) { newMobileSignature ->
                     Timber.v("text change save mobileSignature $newMobileSignature")
                     legacyUser.mobileSignature = newMobileSignature
-                    legacyUser.save()
                 }
 
                 setToggleListener(SettingsEnum.MOBILE_SIGNATURE) { _: View, isChecked: Boolean ->
                     legacyUser.isShowMobileSignature = isChecked
-                    legacyUser.save()
                 }
 
                 actionBarTitle = R.string.display_name_n_signature
@@ -267,7 +251,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                         val infoSnack =
                             UiUtil.showInfoSnack(mSnackLayout, this, R.string.changes_affected_after_closing)
                         infoSnack.show()
-                        legacyUser.save()
                     }
                 }
 
@@ -314,7 +297,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     val gcmDownloadDetailsChanged = legacyUser.isGcmDownloadMessageDetails != isChecked
                     if (view.isPressed && gcmDownloadDetailsChanged) {
                         legacyUser.isGcmDownloadMessageDetails = isChecked
-                        legacyUser.save()
                     }
                 }
                 descriptionParent.visibility = View.VISIBLE
@@ -335,7 +317,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                             alarmReceiver.setAlarm(ProtonMailApplication.getApplication())
 
                         }
-                        legacyUser.save()
                     }
                 }
 
@@ -365,7 +346,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 setToggleListener(SettingsEnum.EXTENDED_NOTIFICATION) { _: View, isChecked: Boolean ->
                     if (isChecked != legacyUser.isNotificationVisibilityLockScreen) {
                         legacyUser.isNotificationVisibilityLockScreen = isChecked
-                        legacyUser.save()
                     }
                 }
 
@@ -386,7 +366,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 setToggleListener(SettingsEnum.COMBINED_CONTACTS) { _: View, isChecked: Boolean ->
                     if (isChecked != legacyUser.combinedContacts) {
                         legacyUser.combinedContacts = isChecked
-                        legacyUser.save()
                     }
                 }
 

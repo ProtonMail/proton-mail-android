@@ -37,13 +37,11 @@ fun UserManager.getUserBlocking(userId: Id) = runBlocking {
 
 @Deprecated("Replaced by Core UserManager", ReplaceWith("Core UserManager"))
 fun UserManager.getAddressesBlocking(userId: Id) = runBlocking {
-    getAddresses(UserId(userId.s))
+    getAddresses(UserId(userId.s), refresh = getAddresses(UserId(userId.s)).isEmpty())
 }
 
 @Deprecated("Replaced by Core UserManager", ReplaceWith("Core UserManager"))
-fun UserManager.getPrimaryAddressBlocking(userId: Id) = runBlocking {
-    getAddresses(UserId(userId.s)).primary()
-}
+fun UserManager.getPrimaryAddressBlocking(userId: Id) = getAddressesBlocking(userId).primary()
 
 @Deprecated("Replaced by Core UserManager", ReplaceWith("Core UserManager"))
 fun ch.protonmail.android.core.UserManager.getMailboxPasswordBlocking(userId: Id): ByteArray? = runBlocking {

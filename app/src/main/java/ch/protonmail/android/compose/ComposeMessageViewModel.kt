@@ -521,7 +521,7 @@ class ComposeMessageViewModel @Inject constructor(
         val user = userManager.user
         val senderAddresses = user.senderEmailAddresses
         if (senderAddresses.isEmpty()) {
-            senderAddresses.add(user.defaultEmail)
+            senderAddresses.add(user.defaultAddressEmail)
         }
         userEmailAlias?.let {
             if (userEmailAlias.isNotEmpty()) {
@@ -553,10 +553,6 @@ class ComposeMessageViewModel @Inject constructor(
         return if (user.isShowSignature) {
             user.getSignatureForAddress(_messageDataResult.addressId)
         } else ""
-    }
-
-    fun startGetAvailableDomainsJob() {
-        composeMessageRepository.startGetAvailableDomains()
     }
 
     fun startFetchMessageDetailJob(draftId: String) {
@@ -784,7 +780,7 @@ class ComposeMessageViewModel @Inject constructor(
                 val selectedEmail = senderAddresses[0]
                 user.getSignatureForAddress(user.getSenderAddressIdByEmail(selectedEmail))
             } else {
-                val selectedEmail = user.defaultEmail
+                val selectedEmail = user.defaultAddressEmail
                 user.getSignatureForAddress(user.getSenderAddressIdByEmail(selectedEmail))
             }
         }

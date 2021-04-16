@@ -72,6 +72,7 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
+import ch.protonmail.android.utils.startSplashActivity
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.DrawerHeaderView
@@ -191,26 +192,14 @@ abstract class NavigationActivity :
 
         accountsAdapter.onItemClick = { account ->
             if (account is DrawerUserModel.BaseUser) {
-                accountViewModel.loginOrSwitch(UserId(account.id.s))
+                accountViewModel.switch(UserId(account.id.s))
             }
         }
     }
 
-    protected open fun onLogout() {}
-
     protected open fun onAccountSwitched(switch: AccountViewModel.AccountSwitch) {
-        val message = when {
-            switch.previous?.username == null && switch.current?.username != null -> {
-                String.format(getString(R.string.signed_in_with), switch.current.username)
-            }
-            switch.previous?.username != null && switch.current?.username != null -> {
-                getString(
-                    R.string.signed_in_with_logged_out_from,
-                    switch.previous.username,
-                    switch.current.username
-                )
-            }
-            else -> null
+        val message = switch.current?.username?.takeIf { switch.previous != null }?.let {
+            String.format(getString(R.string.signed_in_with), switch.current.username)
         }
         message?.let { DialogUtils.showSignedInSnack(drawerLayout, it) }
     }
@@ -228,6 +217,20 @@ abstract class NavigationActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        accountViewModel.state
+            .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+            .onEach {
+                when (it) {
+                    is AccountViewModel.State.Processing,
+                    is AccountViewModel.State.LoginClosed,
+                    is AccountViewModel.State.AccountList -> Unit
+                    is AccountViewModel.State.AccountNeeded -> {
+                        startSplashActivity()
+                        finish()
+                    }
+                }
+            }.launchIn(lifecycleScope)
 
         accountViewModel.onAccountSwitched()
             .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
@@ -472,7 +475,7 @@ abstract class NavigationActivity :
             }
 
             lifecycleScope.launch {
-                val nextLoggedInUserId = userManager.getPreviousPrimaryUserId()
+                val nextLoggedInUserId = userManager.getPreviousCurrentUserId()
 
                 val (title, message) = if (nextLoggedInUserId != null) {
                     val next = userManager.getUser(nextLoggedInUserId)
@@ -517,7 +520,6 @@ abstract class NavigationActivity :
                 val user = userManager.user
                 if (user.isUsePin && userManager.getMailboxPin() != null) {
                     user.setManuallyLocked(true)
-                    user.save()
                     val pinIntent = AppUtil.decorInAppIntent(Intent(this, ValidatePinActivity::class.java))
                     startActivityForResult(pinIntent, REQUEST_CODE_VALIDATE_PIN)
                 }

@@ -18,48 +18,6 @@
  */
 package ch.protonmail.android.api.models;
 
-import static ch.protonmail.android.core.Constants.LogTags.SENDING_FAILED_REASON_TAG;
-import static ch.protonmail.android.core.Constants.LogTags.SENDING_FAILED_TAG;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS_ID;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_ALIASES;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOCK_PIN_PERIOD;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOGOUT;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_BACKGROUND_SYNC;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_COMBINED_CONTACTS;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_DELINQUENT;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_MOBILE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_NAME;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_SIGNATURE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_GCM_DOWNLOAD_MESSAGE_DETAILS;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_KEYS;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_LAST_INTERACTION;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_MANUALLY_LOCKED;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_ATTACHMENT_STORAGE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_SPACE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_UPLOAD_FILE_SIZE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_MOBILE_SIGNATURE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_NOTIFICATION;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_NOTIFICATION_VISIBILITY_LOCK_SCREEN;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_NUM_MESSAGE_PER_PAGE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_PREVENT_TAKING_SCREENSHOTS;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_RINGTONE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_ROLE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_SIGNATURE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_SUBSCRIBED;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CREDIT;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CURRENCY;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_LEGACY_ACCOUNT;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_SERVICES;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_FINGERPRINT;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_PIN;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -69,18 +27,11 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import ch.protonmail.android.R;
 import ch.protonmail.android.api.models.address.Address;
-import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.domain.entity.Id;
@@ -90,58 +41,53 @@ import ch.protonmail.android.prefs.SecureSharedPreferences;
 import me.proton.core.user.domain.UserManager;
 import timber.log.Timber;
 
+import static ch.protonmail.android.core.Constants.Prefs.PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOCK_PIN_PERIOD;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_BACKGROUND_SYNC;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_COMBINED_CONTACTS;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_MOBILE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_SIGNATURE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_GCM_DOWNLOAD_MESSAGE_DETAILS;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_LAST_INTERACTION;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_MANUALLY_LOCKED;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_ATTACHMENT_STORAGE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_MOBILE_SIGNATURE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_NOTIFICATION;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_NOTIFICATION_VISIBILITY_LOCK_SCREEN;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_PREVENT_TAKING_SCREENSHOTS;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_RINGTONE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_FINGERPRINT;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_PIN;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
 
 public class User {
-
-    private final static String GENERIC_DEPRECATION_MESSAGE = "Use from new User entity " +
-            "'ch.protonmail.android.domain.entity.user.User'\n" +
-            "Replacements options are:\n" +
-            "-  'loadNew' instead of  'load'\n" +
-            "- manual mapping with help of  'UserBridgeMapper'.\n" +
-            "- function 'toNewUser' is available when proper DI is not possible";
-
-    @SerializedName(Fields.User.NAME)
+    private String id;
     private String name;
-    @SerializedName(Fields.User.USED_SPACE)
+    private String displayName;
     private long usedSpace;
-    @SerializedName(Fields.User.MAX_SPACE)
     private long maxSpace;
-    @SerializedName(Fields.User.MAX_UPLOAD)
     private int maxUpload;
-    @SerializedName(Fields.User.ROLE)
     private int role;
-    @SerializedName(Fields.User.SUBSCRIBED)
     private int subscribed;
-    @SerializedName(Fields.User.DELINQUENT)
     private int delinquent;
-    @SerializedName(Fields.User.KEYS)
-    private List<Keys> keys;
+    private String currency;
+    private int credit;
+    private int isPrivate;
+    private int services;
 
-    private String Signature;
+    private List<Keys> keys;
+    private List<Address> addresses;
+    private String defaultAddressId;
+    private String defaultAddressEmail;
+
     private String MobileSignature;
     private boolean ShowMobileSignature = true;
     private boolean ShowSignature = false;
-    private String DisplayName;
-    private int NumMessagePerPage;
-
-    private List<Address> Addresses;
-    private String AddressId;
-    private String DefaultAddress;
 
     // new
-    @SerializedName(Fields.User.ID)
-    private String id;
-    @SerializedName(Fields.User.CURRENCY)
-    private String currency;
-    @SerializedName(Fields.User.CREDIT)
-    private int credit;
-    @SerializedName(Fields.User.PRIVATE)
-    private int isPrivate;
-    @SerializedName(Fields.User.SERVICES)
-    private int services;
 
     // region these are local only - do not touch them
-    private boolean AutoLogout; // this can remain here, local only setting
     private int AutoLockPINPeriod = -1; // this can remain here, local only setting
     private long LastInteraction; // this can remain here, local only setting
 
@@ -165,15 +111,13 @@ public class User {
     private boolean ManuallyLocked; // this can remain here, local only setting
     private String username; // this can remain here, local only setting
     private boolean CombinedContacts; // this can remain here, local only setting
-    private boolean isLegacyAccount;
     // endregion
 
     @NonNull
     @Deprecated
     @kotlin.Deprecated(message = "Use usecase/LoadLegacyUser")
     public static User load(Id userId, Context context, UserManager userManager) {
-        final SharedPreferences securePrefs =
-                SecureSharedPreferences.Companion.getPrefsForUser(context, userId);
+        final SharedPreferences securePrefs = SecureSharedPreferences.Companion.getPrefsForUser(context, userId);
 
         // Note: Core UserManager (UserRepository & UserAddressRepository) have a memory cache.
         // Get User/Keys from Core.
@@ -185,12 +129,27 @@ public class User {
         List<Address> addresses = UserManagerKt.getLegacyAddressesBlocking(userManager, userId);
 
         final User user = new User();
+        user.id = coreUser.getUserId().getId();
         user.name = coreUser.getName();
+        user.displayName = coreUser.getDisplayName();
         user.username = user.name;
         user.usedSpace = coreUser.getUsedSpace();
-        user.Signature = securePrefs.getString(PREF_SIGNATURE, "");
         user.role = coreUser.getRole().getValue();
         user.subscribed = coreUser.getSubscribed();
+        user.currency = coreUser.getCurrency();
+        user.credit = coreUser.getCredit();
+        user.delinquent = coreUser.getDelinquent().getValue();
+        user.isPrivate = coreUser.getPrivate() ? 1 : 0;
+        user.services = coreUser.getServices();
+        user.maxSpace = coreUser.getMaxSpace();
+        user.maxUpload = Long.valueOf(coreUser.getMaxUpload()).intValue();
+
+        user.keys = keys;
+
+        user.defaultAddressId = primaryAddress.getAddressId().getId();
+        user.defaultAddressEmail = primaryAddress.getEmail();
+        user.addresses = addresses;
+
         if (!user.isPaidUserSignatureEdit()) {
             user.MobileSignature = ProtonMailApplication.getApplication().getString(R.string.default_mobile_signature);
         } else {
@@ -202,26 +161,18 @@ public class User {
             user.setShowMobileSignature(true);
         }
         user.ShowSignature = securePrefs.getBoolean(PREF_DISPLAY_SIGNATURE, false);
-        user.DisplayName = coreUser.getDisplayName();
-        user.maxSpace = coreUser.getMaxSpace();
-        user.maxUpload = Long.valueOf(coreUser.getMaxUpload()).intValue();
-        user.NumMessagePerPage = securePrefs.getInt(PREF_NUM_MESSAGE_PER_PAGE, 0);
-        user.AddressId = primaryAddress.getAddressId().getId();
-        user.DefaultAddress = primaryAddress.getEmail();
-        user.Addresses = addresses;
-        user.keys = keys;
         user.NotificationSetting = user.loadNotificationSettingsFromBackup();
         user.BackgroundSync = securePrefs.getBoolean(PREF_BACKGROUND_SYNC, true);
         user.PreventTakingScreenshots = securePrefs.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
         user.GcmDownloadMessageDetails = securePrefs.getBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, false);
-        user.delinquent = coreUser.getDelinquent().getValue();
-        user.NotificationVisibilityLockScreen = user.loadNotificationVisibilityLockScreenSettingsFromBackup();
         int maxAttachmentStorage = securePrefs.getInt(PREF_MAX_ATTACHMENT_STORAGE, Constants.MIN_ATTACHMENT_STORAGE_IN_MB);
         if (maxAttachmentStorage <= 0) {
             maxAttachmentStorage = Constants.MIN_ATTACHMENT_STORAGE_IN_MB; // defaulting to the min allowed att storage
         }
         user.MaxAttachmentStorage = maxAttachmentStorage;
-        user.AutoLogout = user.loadAutoLogoutFromBackup();
+        user.ManuallyLocked = securePrefs.getBoolean(PREF_MANUALLY_LOCKED, false);
+
+        user.NotificationVisibilityLockScreen = user.loadNotificationVisibilityLockScreenSettingsFromBackup();
         user.AutoLockPINPeriod = user.loadAutoLockPINPeriodFromBackup();
         user.UsePin = user.loadUsePinFromBackup();
         user.UseFingerprint = user.loadUseFingerprintFromBackup();
@@ -231,94 +182,15 @@ public class User {
         if (!TextUtils.isEmpty(notificationRingtone)) {
             user.ringtone = Uri.parse(notificationRingtone);
         }
-        user.ManuallyLocked = securePrefs.getBoolean(PREF_MANUALLY_LOCKED, false);
-
-        user.id = coreUser.getUserId().getId();
-        user.currency = coreUser.getCurrency();
-        user.credit = coreUser.getCredit();
-        user.isPrivate = coreUser.getPrivate() ? 1 : 0;
-        user.services = coreUser.getServices();
-        user.isLegacyAccount = securePrefs.getBoolean(PREF_USER_LEGACY_ACCOUNT, true);
 
         return user;
     }
 
-    public void save() {
-        final String finalUserName;
-        if (!TextUtils.isEmpty(name)) {
-            finalUserName = name;
-        } else if (!TextUtils.isEmpty(username)) {
-            finalUserName = username;
-        } else {
-            throw new IllegalStateException("Cannot save user with empty name and username");
-        }
-        Timber.v("Saving User for username: `" + finalUserName + "`");
-        final SharedPreferences pref = getPreferences();
+    // region SecureSharePref
 
-        if (NotificationSetting == -1) {
-            NotificationSetting = loadNotificationSettingsFromBackup();
-        } else {
-            saveNotificationSettingsBackup();
-        }
-
-
-        String uriRingtone = loadRingtoneBackup();
-        if (!TextUtils.isEmpty(uriRingtone)) {
-            ringtone = Uri.parse(uriRingtone);
-        }
-        AutoLogout = loadAutoLogoutFromBackup();
-        AutoLockPINPeriod = loadAutoLockPINPeriodFromBackup();
-        UsePin = loadUsePinFromBackup();
-        UseFingerprint = loadUseFingerprintFromBackup();
-        LastInteraction = loadLastInteractionFromBackup();
-        BackgroundSync = loadBackgroundSyncSetting();
-        GcmDownloadMessageDetails = loadGcmDownloadMessageDetailsSetting();
-        CombinedContacts = loadCombinedContactsFromBackup();
-        isLegacyAccount = loadUserAccountLegacy();
-
-        if (NotificationVisibilityLockScreen == -1) {
-            NotificationVisibilityLockScreen = loadNotificationVisibilityLockScreenSettingsFromBackup();
-        }
-
-        if (MobileSignature == null) {
-            MobileSignature = pref.getString(PREF_MOBILE_SIGNATURE, ProtonMailApplication.getApplication().getString(R.string.default_mobile_signature));
-        }
-
-        ShowSignature = loadShowSignatureSetting();
-        ShowMobileSignature = loadShowMobileSignatureSetting();
-
-        pref.edit()
-                .putString(PREF_USER_NAME, finalUserName)
-                .putLong(PREF_USED_SPACE, usedSpace)
-                .putString(PREF_SIGNATURE, Signature)
-                .putString(PREF_MOBILE_SIGNATURE, MobileSignature)
-                .putBoolean(PREF_DISPLAY_MOBILE, ShowMobileSignature)
-                .putBoolean(PREF_DISPLAY_SIGNATURE, ShowSignature)
-                .putString(PREF_DISPLAY_NAME, DisplayName)
-                .putLong(PREF_MAX_SPACE, maxSpace)
-                .putInt(PREF_MAX_UPLOAD_FILE_SIZE, maxUpload)
-                .putInt(PREF_NUM_MESSAGE_PER_PAGE, NumMessagePerPage)
-                .putString(PREF_ADDRESS_ID, AddressId)
-                .putString(PREF_ADDRESS, DefaultAddress)
-                .putString(PREF_ALIASES, serializeAddresses())
-                .putString(PREF_KEYS, serializeKeys())
-                .putBoolean(PREF_BACKGROUND_SYNC, BackgroundSync)
-                .putInt(PREF_PREVENT_TAKING_SCREENSHOTS, PreventTakingScreenshots)
-                .putBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, GcmDownloadMessageDetails)
-                .putInt(PREF_ROLE, role)
-                .putInt(PREF_DELINQUENT, delinquent)
-                .putInt(PREF_SUBSCRIBED, subscribed)
-                .putBoolean(PREF_AUTO_LOGOUT, AutoLogout)
-                .putBoolean(PREF_MANUALLY_LOCKED, ManuallyLocked)
-                .putInt(PREF_MAX_ATTACHMENT_STORAGE, MaxAttachmentStorage)
-                .putBoolean(PREF_COMBINED_CONTACTS, CombinedContacts)
-                .putString(PREF_USER_ID, id)
-                .putString(PREF_USER_CURRENCY, currency)
-                .putInt(PREF_USER_CREDIT, credit)
-                .putInt(PREF_USER_PRIVATE, isPrivate)
-                .putInt(PREF_USER_SERVICES, services)
-                .putBoolean(PREF_USER_LEGACY_ACCOUNT, isLegacyAccount)
-                .apply();
+    private SharedPreferences getPreferences() {
+        ProtonMailApplication application = ProtonMailApplication.getApplication();
+        return SecureSharedPreferences.Companion.getPrefsForUser(application, new Id(id));
     }
 
     private void saveShowSignatureSetting() {
@@ -357,21 +229,20 @@ public class User {
         getPreferences().edit().putInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0).apply();
     }
 
+    public void saveMaxAttachmentStorageSetting() {
+        getPreferences().edit().putInt(PREF_MAX_ATTACHMENT_STORAGE, MaxAttachmentStorage).apply();
+    }
+
+    public void saveManuallyLockedSetting() {
+        getPreferences().edit().putBoolean(PREF_MANUALLY_LOCKED, ManuallyLocked).apply();
+    }
+
     private int loadPreventTakingScreenshotsSetting() {
         return getPreferences().getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
     }
 
-    private SharedPreferences getPreferences() {
-        if (TextUtils.isEmpty(id)) {
-            throw new IllegalStateException("Cannot save for user without id");
-        }
-        ProtonMailApplication application = ProtonMailApplication.getApplication();
-        return SecureSharedPreferences.Companion.getPrefsForUser(application, new Id(id));
-    }
-
     public void setAllowSecureConnectionsViaThirdParties(boolean allowSecureConnectionsViaThirdParties) {
-        SharedPreferences secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences();
-        secureSharedPreferences.edit().putBoolean(PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES, allowSecureConnectionsViaThirdParties).apply();
+        getPreferences().edit().putBoolean(PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES, allowSecureConnectionsViaThirdParties).apply();
     }
 
     public boolean getAllowSecureConnectionsViaThirdParties() {
@@ -381,6 +252,7 @@ public class User {
 
     /**
      * Using default proton api (not proxy).
+     *
      * @param useDefaultApi boolean
      */
     public void setUsingDefaultApi(boolean useDefaultApi) {
@@ -408,15 +280,9 @@ public class User {
         pref.edit().putInt(PREF_NOTIFICATION_VISIBILITY_LOCK_SCREEN, NotificationVisibilityLockScreen).apply();
     }
 
-
     private int loadNotificationVisibilityLockScreenSettingsFromBackup() {
         final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
         return pref.getInt(PREF_NOTIFICATION_VISIBILITY_LOCK_SCREEN, -1);
-    }
-
-    public void saveAutoLogoutBackup() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
-        pref.edit().putBoolean(PREF_AUTO_LOGOUT, AutoLogout).apply();
     }
 
     public void saveAutoLockPINPeriodBackup() {
@@ -442,11 +308,6 @@ public class User {
     private long loadLastInteractionFromBackup() {
         final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
         return pref.getLong(PREF_LAST_INTERACTION, SystemClock.elapsedRealtime());
-    }
-
-    private boolean loadAutoLogoutFromBackup() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
-        return pref.getBoolean(PREF_AUTO_LOGOUT, false);
     }
 
     private int loadAutoLockPINPeriodFromBackup() {
@@ -484,14 +345,10 @@ public class User {
         return pref.getBoolean(PREF_COMBINED_CONTACTS, false);
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public long getUsedSpace() {
         return usedSpace;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public int getRole() {
         return role;
     }
@@ -501,57 +358,38 @@ public class User {
         return allowMobileSignatureEdit || role > 0;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public int getPrivate() {
         return isPrivate;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE + "\nnew name:  'plans'")
     public int getSubscribed() {
         return subscribed;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE + "\nnew name:  'plans'")
     public int getServices() {
         return services;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE + "\nnew name:  'plans'")
     public boolean isPaidUser() {
         return subscribed > 0;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public int getCredit() {
         return credit;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getCurrency() {
         return currency;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public int getDelinquentValue() {
         return delinquent;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'delinquent.mailRoutesAccessible'")
     public boolean getDelinquent() {
         return delinquent >= 3;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE + "\new name:  'totalUploadLimit'")
     public int getMaxUpload() {
         return maxUpload;
     }
@@ -574,19 +412,13 @@ public class User {
         saveNotificationSettingsBackup();
     }
 
-    public String getSignature() {
-        return Signature;
-    }
-
     public String getSignatureForAddress(String addressId) {
-        tryLoadAddresses();
-        for (Address address : Addresses) {
+        for (Address address : addresses) {
             if (address.getID().equals(addressId)) {
                 return address.getSignature();
             }
         }
-
-        return Signature == null ? "" : Signature;
+        return "";
     }
 
     public String getMobileSignature() {
@@ -597,103 +429,33 @@ public class User {
         MobileSignature = mobileSignature;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'addresses.primary?.id' for primary address id")
-    public String getAddressId() {
-        tryLoadAddresses();
-        if (Addresses != null && Addresses.size() > 0) {
-            AddressId = Addresses.get(0).getID();
-        }
-        return AddressId;
+    public String getDefaultAddressId() {
+        return defaultAddressId;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\n from:  'addresses.primary'")
-    public Address getDefaultAddress() {
-        tryLoadAddresses();
-        Address defaultAddress = Addresses.get(0);
-        for (Address address : Addresses) {
-            if (address.getOrder() == 1) {
-                defaultAddress = address;
-                break;
-            }
-        }
-        return defaultAddress;
+    public String getDefaultAddressEmail() {
+        return defaultAddressEmail;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'addresses.primary?.email'")
-    public String getDefaultEmail() {
-        if (TextUtils.isEmpty(DefaultAddress)) {
-            tryLoadAddresses();
-            Address alias = getDefaultAddress();
-            DefaultAddress = alias.getEmail();
-            save();
-        }
-        return DefaultAddress;
+    public List<Address> getAddresses() {
+        return addresses;
     }
 
-    private void tryLoadAddresses() {
-        if (Addresses == null || Addresses.size() == 0) {
-            Addresses = deserializeAddresses(getPreferences().getString(PREF_ALIASES, ""));
-
-            // TODO try to verify and decrypt private key here?
-        }
-        sortAddresses();
-    }
-
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
-    public CopyOnWriteArrayList<Address> getAddresses() {
-        if (Addresses == null || Addresses.size() == 0) {
-            tryLoadAddresses();
-        } else {
-            sortAddresses();
-        }
-        return new CopyOnWriteArrayList<>(Addresses);
-    }
-
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'newUser.findAddressById(addressId) }'")
     public Address getAddressById(String addressId) {
-        tryLoadAddresses();
-        String addrId = addressId;
-        if (TextUtils.isEmpty(addressId)) {
-            addrId = DefaultAddress;
-        }
-        if (Addresses == null || Addresses.size() == 0) {
-            Timber.e(SENDING_FAILED_REASON_TAG, "Addresses is null -> " + (Addresses == null) + "or empty");
-            return null;
-        }
-        if (TextUtils.isEmpty(addrId)) {
-            return Addresses.get(0);
-        }
-        for (Address address : Addresses) {
-            if (address.getID().equals(addrId)) {
+        for (Address address : addresses) {
+            if (address.getID().equals(addressId)) {
                 return address;
             }
         }
-
-        Timber.e(SENDING_FAILED_TAG, "addressID not found");
         return null;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public List<Keys> getKeys() {
         return (keys != null) ? keys : new ArrayList<>();
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'addresses.values.first { it.enabled && it.allowedToSend }?.id'")
     public int getAddressByIdFromOnlySendAddresses() {
         int result = 0;
-        tryLoadAddresses();
         List<Address> senderOnlyAddresses = getSenderOnlyAddresses();
         for (int i = 0; i < senderOnlyAddresses.size(); i++) {
             Address address = senderOnlyAddresses.get(i);
@@ -705,16 +467,9 @@ public class User {
         return result;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'addresses.values\n" +
-            "  .filter { it.enabled && it.allowedToReceive }\n" +
-            "  .map { it.email }'")
-    @NonNull
     public List<String> getSenderEmailAddresses() {
         List<String> result = new ArrayList<>();
-        tryLoadAddresses();
-        for (Address address : Addresses) {
+        for (Address address : addresses) {
             if (address.getStatus() == 1 && address.getReceive() == 1) {
                 result.add(address.getEmail());
             }
@@ -722,13 +477,9 @@ public class User {
         return result;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'addresses.values.filter { it.enabled && it.allowedToReceive }")
     private List<Address> getSenderAddresses() {
         List<Address> result = new ArrayList<>();
-        tryLoadAddresses();
-        for (Address address : Addresses) {
+        for (Address address : addresses) {
             if (address.getStatus() == 1 && address.getReceive() == 1) {
                 result.add(address);
             }
@@ -736,13 +487,9 @@ public class User {
         return result;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'addresses.values.filter { it.enabled }")
     private List<Address> getSenderOnlyAddresses() {
         List<Address> result = new ArrayList<>();
-        tryLoadAddresses();
-        for (Address address : Addresses) {
+        for (Address address : addresses) {
             if (address.getStatus() == 1) {
                 result.add(address);
             }
@@ -750,9 +497,6 @@ public class User {
         return result;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'addresses.find { (_, v) -> v.enabled }.key")
     public int getPositionByAddressId(String addressId) {
         int result = 0;
         List<Address> senderAddresses = getSenderAddresses();
@@ -766,13 +510,9 @@ public class User {
         return result;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'addresses.values.find { it.email == email }.email")
     public String getSenderAddressIdByEmail(String email) {
         String result = null;
-        tryLoadAddresses();
-        for (Address address : Addresses) {
+        for (Address address : addresses) {
             if (address.getEmail().equals(email)) {
                 result = address.getID();
                 break;
@@ -781,13 +521,9 @@ public class User {
         return result;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'addresses.values.find { it.email == email }.displayName")
     public String getSenderAddressNameByEmail(String email) {
         String result = null;
-        tryLoadAddresses();
-        for (Address address : Addresses) {
+        for (Address address : addresses) {
             if (address.getEmail().equals(email)) {
                 result = address.getDisplayName();
                 break;
@@ -796,120 +532,29 @@ public class User {
         return result;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'addresses.find { (_, v) -> v.email == email }.key")
-    public int getAddressOrderByAddress(Address address) {
-        int result = 0;
-        for (int i = 0; i < Addresses.size(); i++) {
-            Address otherAddress = Addresses.get(i);
-            if (address.getID().equals(otherAddress.getID())) {
-                result = i;
-                break;
-            }
-        }
-        return result;
-    }
-
-    public String setAddressesOrder(int newDefault) {
-        CopyOnWriteArrayList<Address> newAddresses = new CopyOnWriteArrayList<>();
-        Address newDefaultAddress = Addresses.get(newDefault);
-        Address currentDefaultAddress = getDefaultAddress();
-        int currentDefaultAliasNewOrder = newDefaultAddress.getOrder();
-        newDefaultAddress.setOrder(1);
-        currentDefaultAddress.setOrder(currentDefaultAliasNewOrder);
-        newAddresses.add(newDefaultAddress);
-
-        for (int i = 0; i < Addresses.size(); i++) {
-            if (i != newDefault) {
-                newAddresses.add(Addresses.get(i));
-            }
-        }
-        Addresses = newAddresses;
-        AddressId = Addresses.get(0).getID();
-        DefaultAddress = Addresses.get(0).getEmail();
-        DisplayName = Addresses.get(0).getDisplayName();
-        return AddressId;
-    }
-
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getId() {
         return id;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getName() {
         return name;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getDisplayName() {
-        return DisplayName;
+        return displayName;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'addresses.values.find { it.id == addressId }?.displayName'")
-    @Nullable
     public String getDisplayNameForAddress(String addressId) {
-        tryLoadAddresses();
-        for (Address address : Addresses) {
+        for (Address address : addresses) {
             if (address.getID().equals(addressId) && !TextUtils.isEmpty(address.getDisplayName())) {
                 return address.getDisplayName();
             }
         }
-        return DisplayName;
+        return displayName;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public long getMaxSpace() {
         return maxSpace;
-    }
-
-    public void setAddressIdEmail() {
-        if (Addresses != null && Addresses.size() > 0) {
-            AddressId = Addresses.get(0).getID();
-            DefaultAddress = Addresses.get(0).getEmail();
-        }
-    }
-
-    private String serializeAddresses() {
-        Gson gson = new Gson();
-        return gson.toJson(Addresses);
-    }
-
-    private static CopyOnWriteArrayList<Address> deserializeAddresses(String serialized) {
-        CopyOnWriteArrayList<Address> result = new CopyOnWriteArrayList<>();
-        if (serialized.isEmpty()) {
-            return result;
-        }
-        Gson gson = new Gson();
-        Address[] out = gson.fromJson(serialized, Address[].class);
-        if (out != null) {
-            result = new CopyOnWriteArrayList<>(Arrays.asList(out));
-        }
-        return result;
-    }
-
-    private String serializeKeys() {
-        Gson gson = new Gson();
-        return gson.toJson(keys);
-    }
-
-    private static List<Keys> deserializeKeys(String serialized) {
-        if (serialized.isEmpty())
-            return new ArrayList<>();
-        Gson gson = new Gson();
-        Keys[] out = gson.fromJson(serialized, Keys[].class);
-        return Arrays.asList(out);
-    }
-
-    public void setDisplayName(String displayName) {
-        DisplayName = displayName;
     }
 
     public boolean isShowMobileSignature() {
@@ -923,10 +568,6 @@ public class User {
 
     public boolean isShowSignature() {
         return ShowSignature;
-    }
-
-    public void setSignature(String signature) {
-        Signature = signature;
     }
 
     public void setShowSignature(boolean showSignature) {
@@ -978,6 +619,7 @@ public class User {
 
     public void setMaxAttachmentStorage(int maxAttachmentStorage) {
         MaxAttachmentStorage = maxAttachmentStorage;
+        saveMaxAttachmentStorageSetting();
     }
 
     public boolean shouldPINLockTheApp(long diff) {
@@ -1052,68 +694,20 @@ public class User {
 
     public void setManuallyLocked(boolean manuallyLocked) {
         ManuallyLocked = manuallyLocked;
+        saveManuallyLockedSetting();
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getUsername() {
         return username;
     }
 
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'addresses.sorted()'")
-    private void sortAddresses() {
-        List<Address> addresses = new ArrayList<>(Addresses);
-        Collections.sort(addresses, (o1, o2) -> Integer.compare(o1.getOrder(), o2.getOrder()));
-        Addresses = new CopyOnWriteArrayList<>(addresses);
-        if (Addresses.size() > 0) {
-            Address firstAddress = Addresses.get(0);
-            if (firstAddress != null) {
-                DisplayName = firstAddress.getDisplayName();
-            }
-        }
-    }
-
-    public void setAddresses(List<Address> addresses) {
-        this.Addresses = new CopyOnWriteArrayList<>(addresses);
-        sortAddresses();
-        save();
-    }
-
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public long getMaxAllowedAttachmentSpace() {
         return MaxAttachmentStorage; // return the value in bytes
     }
 
-    public void setUsername(@NonNull String username) {
-        if (!TextUtils.isEmpty(username)) {
-            this.username = username;
-        }
-    }
-
-    public void setLegacyAccount (boolean legacy) {
-        isLegacyAccount = legacy;
-        saveUserAccountLegacy(legacy);
-    }
-
-    public boolean getLegacyAccount() {
-        return loadUserAccountLegacy();
-    }
-
-    private void saveUserAccountLegacy(boolean isUserLegacy) {
-        SharedPreferences defaultSharedPreferences = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
-        defaultSharedPreferences.edit().putBoolean(PREF_USER_LEGACY_ACCOUNT, isUserLegacy).apply();
-    }
-
-    private boolean loadUserAccountLegacy() {
-        SharedPreferences defaultSharedPreferences = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
-        return defaultSharedPreferences.getBoolean(PREF_USER_LEGACY_ACCOUNT, true);
-    }
-
     /**
      * Convert this User to new User entity
+     *
      * @return {@link ch.protonmail.android.domain.entity.user.User}
      */
     public ch.protonmail.android.domain.entity.user.User toNewUser() {

@@ -133,7 +133,6 @@ object Constants {
         const val PREF_ALIASES = "ui_aliases"
         const val PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES = "allow_secure_connections_via_third_parties"
         const val PREF_AUTO_LOCK_PIN_PERIOD = "auto_lock_pin_period"
-        const val PREF_AUTO_LOGOUT = "auto_logout"
         const val PREF_BACKGROUND_SYNC = "background_sync"
         const val PREF_COMBINED_CONTACTS = "combined_contacts"
         const val PREF_DELINQUENT = "deliquent"
@@ -169,7 +168,6 @@ object Constants {
         const val PREF_USER_PRIVATE = "user_private"
         const val PREF_USER_SERVICES = "user_services"
         const val PREF_USING_REGULAR_API = "pref_doh_using_regular_api"
-        const val PREF_USER_LEGACY_ACCOUNT = "user_legacy_account"
 
         // permissions
         const val PREF_PERMISSION_READ_CONTACTS = "pref_permission_contacts"
@@ -179,16 +177,6 @@ object Constants {
         const val PREF_SENT_TOKEN_TO_SERVER = "token_sent_to_server"
 
         const val PREF_SWIPE_GESTURES_DIALOG_SHOWN = "swipe_gestures_dialog_shown"
-
-        object UserSettings {
-            const val PREF_PASSWORD_MODE = "user_settings_PasswordMode"
-            const val PREF_NEWS = "user_settings_News"
-            const val PREF_LOCALE = "user_settings_Locale"
-            const val PREF_LOG_AUTH = "user_settings_LogAuth"
-            const val PREF_INVOICE_TEXT = "user_settings_InvoiceText"
-            const val PREF_TWO_FACTOR = "user_settings_TwoFactor"
-            const val PREF_EMAIL = "user_settings_Email"
-        }
     }
 
     object LogTags {

@@ -68,22 +68,15 @@ class DefaultAddressActivity : BaseActivity() {
                 selectedAddressRadioButton.isChecked = true
                 defaultAddress.text = mSelectedAddress!!.email
 
-
                 val user = mUserManager.user
-                val aliasOrderChanged = mSelectedAddress != null && mSelectedAddress!!.id != user.addresses[0].id
-                val newAddressId: String
-                newAddressId = if (aliasOrderChanged) {
-                    val newDefaultAlias = user.getAddressOrderByAddress(mSelectedAddress)
-                    user.setAddressesOrder(newDefaultAlias)
-                } else {
-                    user.defaultAddress.id
-                }
-
-                user.save()
-                mUserManager.user = user
-
-                if(aliasOrderChanged) {
-                    val job = UpdateSettingsJob(sortAliasChanged = aliasOrderChanged, addressId = newAddressId)
+                val selectedAddress = mSelectedAddress
+                if (selectedAddress != null && user.defaultAddressId != selectedAddress.id) {
+                    // Add first the selected address.
+                    val addressIds = mutableSetOf(selectedAddress.id)
+                    // Add all other.
+                    user.addresses.forEach { addressIds.add(it.id) }
+                    //
+                    val job = UpdateSettingsJob(addressIds = addressIds.toList())
                     mJobManager.addJobInBackground(job)
                 }
 

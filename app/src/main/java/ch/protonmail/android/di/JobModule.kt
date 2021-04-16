@@ -97,5 +97,6 @@ interface JobEntryPoint {
     fun messageDetailsRepository(): MessageDetailsRepository
     fun queueNetworkUtil(): QueueNetworkUtil
     fun userManager(): UserManager
+    fun userAddressManager(): me.proton.core.user.domain.UserAddressManager
     fun fetchMailSettingsWorkerEnqueuer(): FetchMailSettingsWorker.Enqueuer
 }

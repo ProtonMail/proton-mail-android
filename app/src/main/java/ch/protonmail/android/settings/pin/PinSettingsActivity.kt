@@ -247,8 +247,6 @@ class PinSettingsActivity : BaseActivity() {
         if (pinChanged) {
             mUserManager.savePin(mNewPin)
         }
-        user.save()
-        mUserManager.user = user
     }
 
     private fun saveAndFinish() {

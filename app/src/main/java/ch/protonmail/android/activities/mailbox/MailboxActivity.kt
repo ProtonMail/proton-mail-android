@@ -121,6 +121,7 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.TotalLabelCounter
 import ch.protonmail.android.data.local.model.TotalLocationCounter
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.FetchUpdatesEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
@@ -256,11 +257,9 @@ class MailboxActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val userId = userManager.currentUserId
-        if (userId == null) {
-            finish()
-            return
-        }
+
+        val userId = userManager.currentUserId ?: return
+        mailboxViewModel.userId = userId
 
         messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
         counterDao = CounterDatabase.getInstance(this, userId).getDao()
@@ -588,8 +587,8 @@ class MailboxActivity :
     override fun onAccountSwitched(switch: AccountViewModel.AccountSwitch) {
         super.onAccountSwitched(switch)
 
-        val currentUserId = userManager.currentUserId
-            ?: return
+        val currentUserId = userManager.currentUserId ?: return
+        mailboxViewModel.userId = currentUserId
 
         mJobManager.start()
         counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()
@@ -806,6 +805,10 @@ class MailboxActivity :
     override fun onResume() {
         super.onResume()
 
+        if (mailboxViewModel.userId != userManager.currentUserId) {
+            onAccountSwitched(AccountViewModel.AccountSwitch())
+        }
+
         reloadMessageCounts()
         registerFcmReceiver()
         checkDelinquency()
@@ -937,11 +940,6 @@ class MailboxActivity :
         return previousValue
     }
 
-    override fun onLogout() {
-        TODO("disable user")
-        onLogoutEvent()
-    }
-
     override fun onInbox(type: DrawerOptionType) {
         AppUtil.clearNotifications(applicationContext, userManager.requireCurrentUserId())
         setupNewMessageLocation(type.drawerOptionTypeValue)
@@ -1009,23 +1007,6 @@ class MailboxActivity :
         } else {
             showToast(R.string.saving_failed_no_conn, Toast.LENGTH_LONG, Gravity.CENTER)
         }
-    }
-
-    fun onLogoutEvent() {
-        if (overlayDialog != null) {
-            overlayDialog!!.dismiss()
-            overlayDialog = null
-        }
-
-        // destroy loader as database will be deleted on logout
-        LoaderManager.getInstance(this).run {
-            destroyLoader(LOADER_ID)
-            destroyLoader(LOADER_ID_LABELS_OFFLINE)
-        }
-        messagesAdapter.clear()
-        // startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
-        TODO("startLoginWorkflow()")
-        finish()
     }
 
     @Subscribe

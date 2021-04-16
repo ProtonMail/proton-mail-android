@@ -29,6 +29,7 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.extensions.obfuscateUsername
 import ch.protonmail.android.utils.getStringList
+import ch.protonmail.libs.core.preferences.clearOnly
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.android.sharedpreferences.get
@@ -50,6 +51,16 @@ class AccountManager(
     private val sharedPreferences: SharedPreferences,
     private val dispatchers: DispatcherProvider
 ) {
+
+    @Deprecated("Replaced by Core AccountManager.")
+    suspend fun getLoggedIn(): List<String> = withContext(dispatchers.Io) {
+        sharedPreferences[PREF_ALL_LOGGED_IN] ?: emptyList()
+    }
+
+    @Deprecated("Replaced by Core AccountManager.")
+    suspend fun clear() = withContext(dispatchers.Io) {
+        sharedPreferences.clearOnly(PREF_ALL_LOGGED_IN, PREF_ALL_SAVED)
+    }
 
     @Deprecated("For Test only.")
     suspend fun allLoggedInForTest(): Set<Id> = withContext(dispatchers.Io) {

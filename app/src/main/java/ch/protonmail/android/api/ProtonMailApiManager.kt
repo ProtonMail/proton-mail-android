@@ -20,7 +20,6 @@ package ch.protonmail.android.api
 
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.AttachmentUploadResponse
-import ch.protonmail.android.api.models.AvailableDomainsResponse
 import ch.protonmail.android.api.models.AvailablePlansResponse
 import ch.protonmail.android.api.models.CheckSubscriptionBody
 import ch.protonmail.android.api.models.CheckSubscriptionResponse
@@ -31,11 +30,9 @@ import ch.protonmail.android.api.models.CreateContact
 import ch.protonmail.android.api.models.CreateContactV2BodyItem
 import ch.protonmail.android.api.models.CreateOrganizationBody
 import ch.protonmail.android.api.models.DeleteResponse
-import ch.protonmail.android.api.models.DirectEnabledResponse
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.GetSubscriptionResponse
 import ch.protonmail.android.api.models.IDList
-import ch.protonmail.android.api.models.KeySalts
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.MailSettingsResponse
@@ -47,11 +44,6 @@ import ch.protonmail.android.api.models.PublicKeyResponse
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
-import ch.protonmail.android.api.models.UserInfo
-import ch.protonmail.android.api.models.UserSettingsResponse
-import ch.protonmail.android.api.models.address.AddressSetupBody
-import ch.protonmail.android.api.models.address.AddressSetupResponse
-import ch.protonmail.android.api.models.address.AddressesResponse
 import ch.protonmail.android.api.models.address.KeyActivationBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
@@ -63,12 +55,10 @@ import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.segments.BaseApi
-import ch.protonmail.android.api.segments.address.AddressApiSpec
 import ch.protonmail.android.api.segments.attachment.AttachmentApiSpec
 import ch.protonmail.android.api.segments.connectivity.ConnectivityApiSpec
 import ch.protonmail.android.api.segments.contact.ContactApiSpec
 import ch.protonmail.android.api.segments.device.DeviceApiSpec
-import ch.protonmail.android.api.segments.domain.DomainApiSpec
 import ch.protonmail.android.api.segments.key.KeyApiSpec
 import ch.protonmail.android.api.segments.label.LabelApiSpec
 import ch.protonmail.android.api.segments.message.MessageApiSpec
@@ -76,8 +66,6 @@ import ch.protonmail.android.api.segments.organization.OrganizationApiSpec
 import ch.protonmail.android.api.segments.payment.PaymentApiSpec
 import ch.protonmail.android.api.segments.report.ReportApiSpec
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
-import ch.protonmail.android.api.segments.settings.mail.UserSettingsApiSpec
-import ch.protonmail.android.api.segments.user.UserApiSpec
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
@@ -96,7 +84,6 @@ import javax.inject.Singleton
 @Singleton
 class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     BaseApi(),
-    AddressApiSpec,
     AttachmentApiSpec,
     ConnectivityApiSpec,
     ContactApiSpec,
@@ -107,35 +94,13 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     OrganizationApiSpec,
     PaymentApiSpec,
     ReportApiSpec,
-    UserSettingsApiSpec,
-    MailSettingsApiSpec,
-    UserApiSpec,
-    DomainApiSpec {
+    MailSettingsApiSpec {
 
     fun reset(newApi: ProtonMailApi) {
         api = newApi
     }
 
     fun getSecuredServices(): SecuredServices = api.securedServices
-
-    // region routes and services
-    override fun fetchAddressesBlocking(): AddressesResponse = api.fetchAddressesBlocking()
-
-    override suspend fun fetchAddresses(): AddressesResponse = api.fetchAddresses()
-
-    override fun fetchAddressesBlocking(userId: Id): AddressesResponse = api.fetchAddressesBlocking(userId)
-
-    override fun updateAlias(addressIds: List<String>): ResponseBody = api.updateAlias(addressIds)
-
-    override fun setupAddress(
-        addressSetupBody: AddressSetupBody
-    ): AddressSetupResponse = api.setupAddress(addressSetupBody)
-
-    override fun editAddress(
-        addressId: String,
-        displayName: String,
-        signature: String
-    ): ResponseBody = api.editAddress(addressId, displayName, signature)
 
     override fun deleteAttachment(attachmentId: String): ResponseBody =
         api.deleteAttachment(attachmentId)
@@ -380,16 +345,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         mimeType: String
     ): ResponseBody? = api.postPhishingReport(messageId, messageBody, mimeType)
 
-    override fun fetchUserSettings(): UserSettingsResponse = api.fetchUserSettings()
-
-    override fun fetchUserSettings(userId: Id): UserSettingsResponse = api.fetchUserSettings(userId)
-
-    override fun updateNotify(updateNotify: Boolean): ResponseBody? = api.updateNotify(updateNotify)
-
-    @Deprecated(message = "Use non-blocking version of the function", replaceWith = ReplaceWith("fetchMailSettings()"))
-    override fun fetchMailSettingsBlocking(): MailSettingsResponse = api.fetchMailSettingsBlocking()
-
-    override suspend fun fetchMailSettings(): MailSettingsResponse = api.fetchMailSettings()
+    override suspend fun fetchMailSettings(userId: Id): MailSettingsResponse = api.fetchMailSettings(userId)
 
     override fun fetchMailSettingsBlocking(userId: Id): MailSettingsResponse =
         api.fetchMailSettingsBlocking(userId)
@@ -406,23 +362,5 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun updateViewMode(viewMode: Int): ResponseBody? = api.updateViewMode(viewMode)
 
-    override fun fetchUserInfoBlocking(userId: Id): UserInfo = api.fetchUserInfoBlocking(userId)
-
-    @Deprecated("Use with user Id", ReplaceWith("fetchUserInfoBlocking(userId)"))
-    override fun fetchUserInfoBlocking(): UserInfo = api.fetchUserInfoBlocking()
-
-    override suspend fun fetchUserInfo(): UserInfo = api.fetchUserInfo()
-
-
-    override fun fetchKeySalts(userId: Id): KeySalts = api.fetchKeySalts(userId)
-
-    @Deprecated("Use with user Id", ReplaceWith("fetchKeySalts(userId)"))
-    override fun fetchKeySalts(): KeySalts = api.fetchKeySalts()
-
-    override fun isUsernameAvailable(username: String): ResponseBody = api.isUsernameAvailable(username)
-
-    override fun fetchDirectEnabled(): DirectEnabledResponse = api.fetchDirectEnabled()
-
-    override fun fetchAvailableDomains(): AvailableDomainsResponse = api.fetchAvailableDomains()
     // endregion
 }

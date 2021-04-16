@@ -18,28 +18,23 @@
  */
 package ch.protonmail.android.jobs
 
-import android.text.TextUtils
 import ch.protonmail.android.api.models.MailSettings
-import ch.protonmail.android.events.AuthStatus
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.SettingsChangedEvent
+import ch.protonmail.android.feature.user.updateAddressBlocking
+import ch.protonmail.android.feature.user.updateOrderBlocking
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.ConstantTime
 import com.birbit.android.jobqueue.Params
-import me.proton.core.util.kotlin.EMPTY_STRING
-import timber.log.Timber
-import java.util.ArrayList
 
 class UpdateSettingsJob(
-    private val displayChanged: Boolean = false,
-    private val newDisplayName: String = "",
-    private val signatureChanged: Boolean = false,
-    private val newSignature: String = "",
-    private val sortAliasChanged: Boolean = false,
+    private val newDisplayName: String? = null,
+    private val newSignature: String? = null,
+    private val addressIds: List<String>? = null,
     private val actionLeftSwipeChanged: Boolean = false,
     private val actionRightSwipeChanged: Boolean = false,
     private val backPressed: Boolean = false,
-    private val addressId: String = "",
+    private val addressId: Id? = null,
     private val featureFlags: FeatureFlagsManager = FeatureFlagsManager()
 ) : ProtonMailBaseJob(Params(Priority.LOW).requireNetwork()) {
 
@@ -47,43 +42,12 @@ class UpdateSettingsJob(
     override fun onRun() {
         try {
             val user = getUserManager().requireCurrentLegacyUserBlocking()
-            if (sortAliasChanged) {
-                val addresses = getUserManager().user.addresses
-                val aliasSize = addresses.size
-                val newAliasesOrder = ArrayList<String>(aliasSize)
-                for (i in 0 until aliasSize) {
-                    newAliasesOrder.add(addresses[i].id)
-                }
-                getApi().updateAlias(newAliasesOrder)
+            val userId = Id(user.id)
+            if (addressIds != null) {
+                getUserAddressManager().updateOrderBlocking(userId, addressIds.map { Id(it) })
             }
-            if (displayChanged && addressId.isNotBlank()) {
-                val addresses = user.addresses
-                for (address in addresses) {
-                    if (address.id == addressId) {
-                        val responseBody = getApi().editAddress(address.id, newDisplayName, address.signature)
-                        Timber.d(
-                            "editAddress address: ${address.email} " +
-                                "new display name: $newDisplayName " +
-                                "response: ${responseBody.code}"
-                        )
-                        address.displayName = newDisplayName
-                        break
-                    }
-                }
-                user.setAddresses(addresses)
-                user.save()
-            }
-            if (signatureChanged && !TextUtils.isEmpty(addressId)) {
-                val addresses = user.addresses
-                for (address in user.addresses) {
-                    if (address.id == addressId) {
-                        getApi().editAddress(address.id, address.displayName, newSignature)
-                        address.signature = newSignature
-                        break
-                    }
-                }
-                user.setAddresses(addresses)
-                user.save()
+            if ((newDisplayName != null || newSignature != null) && addressId != null) {
+                getUserAddressManager().updateAddressBlocking(userId, addressId, newDisplayName, newSignature)
             }
             val mailSettings = getUserManager().getCurrentUserMailSettingsBlocking()!!
             if (actionLeftSwipeChanged) {

@@ -31,12 +31,6 @@ import kotlinx.coroutines.flow.onEach
 
 class SplashActivity : BaseActivity() {
 
-    private fun startMailbox() {
-        fetchMailSettingsWorkerEnqueuer.enqueue()
-        startMailboxActivity()
-        finish()
-    }
-
     override fun getLayoutId(): Int = R.layout.activity_splash
 
     override fun shouldCheckForAutoLogout(): Boolean = false
@@ -45,13 +39,16 @@ class SplashActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         accountViewModel.state
-            .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+            .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
             .onEach {
                 when (it) {
                     is AccountViewModel.State.Processing -> Unit
-                    is AccountViewModel.State.LoginNeeded -> accountViewModel.login()
                     is AccountViewModel.State.LoginClosed -> finish()
-                    is AccountViewModel.State.AccountList -> startMailbox()
+                    is AccountViewModel.State.AccountNeeded -> accountViewModel.login()
+                    is AccountViewModel.State.AccountList -> {
+                        startMailboxActivity()
+                        finish()
+                    }
                 }
             }.launchIn(lifecycleScope)
     }
