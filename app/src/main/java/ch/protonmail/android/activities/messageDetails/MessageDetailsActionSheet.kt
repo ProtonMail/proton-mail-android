@@ -24,11 +24,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
+import ch.protonmail.android.databinding.FragmentMessageDetailsActionSheetBinding
+import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
+import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetHeaderBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -44,24 +45,17 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
 
     private val viewModel: MessageDetailsViewModel by activityViewModels()
 
-    private lateinit var closeViewIcon: View
+    private var _binding: FragmentMessageDetailsActionSheetBinding? = null
+    private val binding get() = requireNotNull(_binding)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_message_details_action_sheet, container, false)
-        val title = arguments?.getString(EXTRA_ARG_TITLE)
-        if (!title.isNullOrEmpty()) {
-            rootView.findViewById<TextView>(R.id.detailsActionsTitleTextView).text = title
-        }
-        val subtitle = arguments?.getString(EXTRA_ARG_SUBTITLE)
-        if (!subtitle.isNullOrEmpty()) {
-            rootView.findViewById<TextView>(R.id.detailsActionsSubTitleTextView).text = subtitle
-        }
-        closeViewIcon = rootView.findViewById<TextView>(R.id.detailsActionsCloseView)
-        closeViewIcon.setOnClickListener {
-            viewModel.handleAction(MessageDetailsAction.CLOSE)
-            dismiss()
-        }
-        return rootView
+        _binding = FragmentMessageDetailsActionSheetBinding.inflate(inflater)
+
+        setupHeaderBindings(binding.includeLayoutActionSheetHeader, arguments)
+        setupMainButtonsBindings(binding.includeLayoutActionSheetButtons, viewModel)
+        setupOtherButtonsBindings(binding, viewModel)
+
+        return binding.root
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -76,9 +70,9 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
                         override fun onStateChanged(bottomSheet: View, newState: Int) {
                             Timber.v("State changed to $newState")
                             if (newState == STATE_EXPANDED) {
-                                showCloseIcon()
+                                setCloseIconVisibility(true)
                             } else {
-                                hideCloseIcon()
+                                setCloseIconVisibility(false)
                             }
                         }
 
@@ -86,19 +80,96 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
                             Timber.v("onSlide to offset $slideOffset")
                         }
                     }
-
                 )
             }
         }
         return bottomSheetDialog
     }
 
-    private fun hideCloseIcon() {
-        closeViewIcon.isVisible = false
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
-    private fun showCloseIcon() {
-        closeViewIcon.isVisible = true
+    private fun setupHeaderBindings(
+        binding: LayoutMessageDetailsActionsSheetHeaderBinding,
+        arguments: Bundle?
+    ) = with(binding) {
+        val title = arguments?.getString(EXTRA_ARG_TITLE)
+        if (!title.isNullOrEmpty()) {
+            detailsActionsTitleTextView.text = title
+        }
+        val subtitle = arguments?.getString(EXTRA_ARG_SUBTITLE)
+        if (!subtitle.isNullOrEmpty()) {
+            detailsActionsSubTitleTextView.text = subtitle
+        }
+        detailsActionsCloseView.setOnClickListener {
+            dismiss()
+        }
+    }
+
+    private fun setupMainButtonsBindings(
+        binding: LayoutMessageDetailsActionsSheetButtonsBinding,
+        detailsViewModel: MessageDetailsViewModel
+    ) = with(binding) {
+        detailsActionsReplyTextView.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.REPLY)
+            dismiss()
+        }
+        detailsActionsReplyAllTextView.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.REPLY_ALL)
+            dismiss()
+        }
+        detailsActionsForwardTextView.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.FORWARD)
+            dismiss()
+        }
+        detailsActionsMarkAsUnreadTextView.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.MARK_UNREAD)
+            dismiss()
+        }
+    }
+
+    private fun setupOtherButtonsBindings(
+        binding: FragmentMessageDetailsActionSheetBinding,
+        detailsViewModel: MessageDetailsViewModel
+    ) = with(binding) {
+        detailsActionsStarUnstarTextView.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
+            dismiss()
+        }
+        detailsActionsTrashTextView.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_TRASH)
+            dismiss()
+        }
+        detailsActionsMoveToArchiveTextView.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_ARCHIVE)
+            dismiss()
+        }
+        detailsActionsMoveToSpamTextView.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_SPAM)
+            dismiss()
+        }
+        detailsActionsLabelAsTextView.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.LABEL_AS)
+            dismiss()
+        }
+        detailsActionsMoveToTextView.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO)
+            dismiss()
+        }
+        detailsActionsReportPhishingTextView.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.REPORT_PHISHING)
+            dismiss()
+        }
+        detailsActionsPrintTextView.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.PRINT, activity)
+            dismiss()
+        }
+    }
+
+    private fun setCloseIconVisibility(shouldBeVisible: Boolean) {
+        binding.includeLayoutActionSheetHeader.detailsActionsCloseView.isVisible = shouldBeVisible
     }
 
     companion object {

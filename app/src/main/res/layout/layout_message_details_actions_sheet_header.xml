@@ -22,6 +22,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
     android:paddingStart="@dimen/space_l"
     android:paddingEnd="@dimen/space_l"
     tools:showIn="@layout/fragment_message_details_action_sheet">

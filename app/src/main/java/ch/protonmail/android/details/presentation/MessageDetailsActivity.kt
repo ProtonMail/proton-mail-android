@@ -84,7 +84,6 @@ import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostSpamJob
-import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.utils.AppUtil
@@ -808,8 +807,7 @@ internal class MessageDetailsActivity :
             )
             messageDetailsActionsView.bind(actionsUiModel)
             messageDetailsActionsView.setOnThirdActionClickListener {
-                val job = PostTrashJobV2(listOf(message.messageId), null)
-                mJobManager.addJobInBackground(job)
+                viewModel.handleAction(MessageDetailsAction.MOVE_TO_TRASH)
                 onBackPressed()
             }
             messageDetailsActionsView.setOnSecondActionClickListener {

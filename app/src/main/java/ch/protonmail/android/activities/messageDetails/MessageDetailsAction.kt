@@ -23,7 +23,7 @@ package ch.protonmail.android.activities.messageDetails
  * Contains types of actions executed from message details screen.
  */
 enum class MessageDetailsAction {
-    CLOSE,
+    DELETE_MESSAGE,
     FORWARD,
     LABEL_AS,
     MARK_UNREAD,

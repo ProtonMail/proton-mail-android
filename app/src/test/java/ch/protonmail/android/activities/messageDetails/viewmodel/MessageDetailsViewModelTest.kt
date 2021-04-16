@@ -33,6 +33,7 @@ import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.DownloadUtils
+import com.birbit.android.jobqueue.JobManager
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.channels.Channel
@@ -53,6 +54,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true)
 
     private val userManager: UserManager = mockk(relaxed = true)
+
+    private val jobManager: JobManager = mockk(relaxed = true)
 
     private val contactsRepository: ContactsRepository = mockk(relaxed = true)
 
@@ -88,6 +91,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         dispatchers,
         attachmentsHelper,
         downloadUtils,
+        jobManager,
         messageRendererFactory,
         verifyConnection,
         networkConfigurator
@@ -100,7 +104,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         val windowWidth = 500
         val defaultErrorMessage = "errorHappened"
         val cssContent = "css"
-        val expected = "<html>\n <head>\n  <style>$cssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessage  \n  </div>\n </body>\n</html>"
+        val expected =
+            "<html>\n <head>\n  <style>$cssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessage  \n  </div>\n </body>\n</html>"
 
         // when
         val parsedMessage = viewModel.getParsedMessage(decryptedMessage, windowWidth, cssContent, defaultErrorMessage)

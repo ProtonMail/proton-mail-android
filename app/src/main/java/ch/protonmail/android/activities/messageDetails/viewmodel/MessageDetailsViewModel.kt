@@ -19,6 +19,7 @@
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.annotation.TargetApi
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.os.Build
@@ -53,6 +54,7 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -67,6 +69,7 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import dagger.assisted.Assisted
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -99,6 +102,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val dispatchers: DispatcherProvider,
     private val attachmentsHelper: AttachmentsHelper,
     private val downloadUtils: DownloadUtils,
+    private val jobManager: JobManager,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
@@ -643,13 +647,16 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun deleteMessage(messageId: String) {
         viewModelScope.launch {
-            deleteMessageUseCase(listOf(messageId), Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString())
+            deleteMessageUseCase(
+                listOf(messageId), Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
+            )
         }
     }
 
-    fun printMessage(activityContext: Context) {
+    private fun printMessage(activityContext: Activity?) {
         val message = message.value
         message?.let {
+            requireNotNull(activityContext)
             MessagePrinter(
                 activityContext,
                 activityContext.resources,
@@ -678,7 +685,30 @@ internal class MessageDetailsViewModel @Inject constructor(
         return bodyString
     }
 
-    fun handleAction(action: MessageDetailsAction) {
+    fun handleAction(
+        action: MessageDetailsAction,
+        activity: Activity? = null
+    ) {
         Timber.v("Handle action: $action")
+        when (action) {
+            MessageDetailsAction.DELETE_MESSAGE -> deleteMessage(messageId)
+            MessageDetailsAction.FORWARD -> TODO()
+            MessageDetailsAction.LABEL_AS -> TODO()
+            MessageDetailsAction.MARK_UNREAD -> TODO()
+            MessageDetailsAction.MOVE_TO -> TODO()
+            MessageDetailsAction.MOVE_TO_ARCHIVE -> TODO()
+            MessageDetailsAction.MOVE_TO_SPAM -> TODO()
+            MessageDetailsAction.MOVE_TO_TRASH -> moveToTrash(messageId)
+            MessageDetailsAction.PRINT -> printMessage(activity)
+            MessageDetailsAction.REPLY -> TODO()
+            MessageDetailsAction.REPLY_ALL -> TODO()
+            MessageDetailsAction.REPORT_PHISHING -> TODO()
+            MessageDetailsAction.STAR_UNSTAR -> TODO()
+        }
+    }
+
+    private fun moveToTrash(messageId: String) {
+        val job = PostTrashJobV2(listOf(messageId), null)
+        jobManager.addJobInBackground(job)
     }
 }
