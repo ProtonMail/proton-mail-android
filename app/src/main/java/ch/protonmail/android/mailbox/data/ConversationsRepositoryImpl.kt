@@ -47,7 +47,7 @@ class ConversationsRepositoryImpl @Inject constructor(
     private data class StoreKey(val params: GetConversationsParameters, val userId: Id)
     private val store = StoreBuilder.from(
         fetcher = Fetcher.of { key: StoreKey ->
-            api.fetchConversations(key.params)
+            api.fetchConversations(key.params, key.userId)
         },
         sourceOfTruth = SourceOfTruth.Companion.of(
             reader = { key -> geConversationsLocal(key.params.labelId, key.userId) },

@@ -19,11 +19,13 @@
 
 package ch.protonmail.android.mailbox.data.remote
 
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.segments.RetrofitConstants
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
+import retrofit2.http.Tag
 
 interface ConversationService {
 
@@ -34,7 +36,8 @@ interface ConversationService {
         @Query("PageSize") pageSize: Int?,
         @Query("LabelID") labelId: String?,
         @Query("Sort") sort: String = "Time",
-        @Query("Desc") desc: Int = 1
+        @Query("Desc") desc: Int = 1,
+        @Tag userIdTag: UserIdTag? = null
     ): ConversationsResponse
 
 }
