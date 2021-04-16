@@ -80,7 +80,6 @@ import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 import kotlin.collections.set
-import kotlin.time.seconds
 
 const val NEW_LINE = "<br>"
 const val LESS_THAN = "&lt;"
@@ -1269,7 +1268,7 @@ class ComposeMessageViewModel @Inject constructor(
 
         autoSaveJob?.cancel()
         autoSaveJob = viewModelScope.launch(dispatchers.Io) {
-            delay(1.seconds)
+            delay(1000)
             Timber.d("Draft auto save triggered")
             setBeforeSaveDraft(false, messageBody)
         }

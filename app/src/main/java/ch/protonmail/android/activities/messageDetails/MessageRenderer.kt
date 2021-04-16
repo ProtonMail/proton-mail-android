@@ -43,7 +43,6 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.math.pow
 import kotlin.math.sqrt
-import kotlin.time.milliseconds
 
 /**
  * A class that will inline the images in the message's body.
@@ -82,7 +81,7 @@ internal class MessageRenderer(
             imageCompressor.send(embeddedImages)
             // Workaround that ignore values for the next half second, since ViewModel is emitting
             // too many times
-            delay(DebounceDelay)
+            delay(debounceDelayMillis)
         }
     }
 
@@ -227,7 +226,8 @@ internal class MessageRenderer(
     }
 
     companion object {
-        val DebounceDelay = 500.milliseconds
+
+        const val debounceDelayMillis = 500L
     }
 }
 

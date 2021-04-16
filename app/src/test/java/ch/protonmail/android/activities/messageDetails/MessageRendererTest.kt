@@ -114,7 +114,7 @@ internal class MessageRendererTest : CoroutinesTest {
                 }
                 repeat(count) {
                     images.offer(mockEmbeddedImages)
-                    advanceTimeBy(MessageRenderer.DebounceDelay.toLongMilliseconds())
+                    advanceTimeBy(MessageRenderer.debounceDelayMillis)
                 }
                 advanceUntilIdle()
                 renderedBody.close()
