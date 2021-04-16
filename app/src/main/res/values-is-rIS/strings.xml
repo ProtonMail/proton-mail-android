@@ -842,7 +842,7 @@
     <string name="turn_combined_contacts_on">Kveiktu á þessum eiginleika til að sjálfvirk klárun tölvupóstfanga noti tengiliði úr öllum þeim notendaaðgöngum sem þú ert skráður inn í.</string>
     <string name="local_cache_management">Stýring á staðværu skyndiminni</string>
     <string name="cache_cleared">Endurlas skyndiminni á tækinu</string>
-    <string name="empty_cache">Tæma skyndiminni</string>
+    <string name="empty_data">Tæma skyndiminni</string>
     <!-- endregion -->
     <string name="enabled">Virkt</string>
     <string name="disabled">Óvirkt</string>

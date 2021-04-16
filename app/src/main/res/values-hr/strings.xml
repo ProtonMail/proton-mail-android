@@ -861,7 +861,7 @@
     <string name="turn_combined_contacts_on">Uključite ovu značajku za automatsko dovršavanje adresa e-pošte pomoću kontakata sa svih vaših prijavljenih računa.</string>
     <string name="local_cache_management">Upravitelj predmemorijom</string>
     <string name="cache_cleared">Lokalna predmemorija je osvježena</string>
-    <string name="empty_cache">Očistite predmemoriju</string>
+    <string name="empty_data">Očistite predmemoriju</string>
     <!-- endregion -->
     <string name="enabled">Omogućeno</string>
     <string name="disabled">Onemogućeno</string>

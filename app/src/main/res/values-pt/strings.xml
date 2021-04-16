@@ -843,7 +843,7 @@
     <string name="turn_combined_contacts_on">Active esta funcionalidade para preencher automaticamente endereços de email utilizando contactos de todas as suas contas ligadas.</string>
     <string name="local_cache_management">Gestão da memória local</string>
     <string name="cache_cleared">A memória local foi actualizada</string>
-    <string name="empty_cache">Limpar memória</string>
+    <string name="empty_data">Limpar memória</string>
     <!-- endregion -->
     <string name="enabled">Activado</string>
     <string name="disabled">Desactivado</string>

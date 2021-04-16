@@ -878,7 +878,7 @@
     <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
     <string name="local_cache_management">Local Cache Management</string>
     <string name="cache_cleared">Mezipaměť byla obnovena</string>
-    <string name="empty_cache">Vyprázdnit cache</string>
+    <string name="empty_data">Vyprázdnit cache</string>
     <!-- endregion -->
     <string name="enabled">Povoleno</string>
     <string name="disabled">Zakázáno</string>

@@ -876,7 +876,7 @@
     <string name="turn_combined_contacts_on">Włączenie tej funkcji spowoduje uzupełnianie adresów e-mail przy użyciu wszystkich kontaktów na Twoich zalogowanych kontach.</string>
     <string name="local_cache_management">Zarządzanie pamięcią podręczną</string>
     <string name="cache_cleared">Lokalna pamięć podręczna została odświeżona</string>
-    <string name="empty_cache">Wyczyść pamięć podręczną</string>
+    <string name="empty_data">Wyczyść pamięć podręczną</string>
     <!-- endregion -->
     <string name="enabled">Włączone</string>
     <string name="disabled">Wyłączone</string>

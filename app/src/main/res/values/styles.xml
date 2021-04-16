@@ -60,6 +60,19 @@
         <item name="android:inputType">text|textNoSuggestions|textMultiLine</item>
     </style>
 
+    <style name="ProtonInput.Mail" parent="ProtonInput.TextInputLayout.Border">
+        <item name="android:textAppearance">@style/Proton.Text.Default</item>
+        <item name="android:paddingStart">@dimen/padding_m</item>
+        <item name="android:paddingEnd">@dimen/padding_m</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:background">@drawable/field</item>
+        <item name="android:textColorHint">@color/text_hint</item>
+        <item name="android:inputType">textMultiLine</item>
+        <item name="android:gravity">top|left</item>
+    </style>
+
     <style name="ProtonBadge">
         <item name="android:textAppearance">@style/Proton.Text.Default.Inverted</item>
         <item name="android:textColor">@color/text_inverted</item>
@@ -145,6 +158,13 @@
     <style name="Widget.App.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
         <item name="backgroundTint">@color/background_norm</item>
     </style>
+
+    <style name="ProtonSwitch.Mail" parent="ProtonTheme.Mail">
+        <item name="thumbTint">@drawable/switch_thumb_selector</item>
+        <item name="trackTint">@drawable/switch_track_selector</item>
+        <item name="useMaterialThemeColors">false</item>
+    </style>
+    <!-- V4 -->
 
     <!-- end region -->
     <!-- endregion -->
@@ -545,13 +565,6 @@
         <item name="android:textColor">@color/lead_gray</item>
         <item name="android:textColorHint">@color/chateau_gray</item>
         <item name="android:textSize">@dimen/h4</item>
-    </style>
-
-    <style name="SettingsItem">
-        <item name="android:background">@drawable/settings_item_selector</item>
-        <item name="android:clickable">true</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:padding">@dimen/message_spacing</item>
     </style>
 
     <style name="SettingsItemPadding">

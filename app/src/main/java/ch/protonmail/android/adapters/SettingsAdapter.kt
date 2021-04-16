@@ -21,12 +21,10 @@ package ch.protonmail.android.adapters
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.uiModel.SettingsItemUiModel
-import ch.protonmail.android.uiModel.SettingsItemUiModel.SettingsItemTypeEnum.EDIT_TEXT
-import ch.protonmail.android.uiModel.SettingsItemUiModel.SettingsItemTypeEnum.TOGGLE_N_EDIT
-import ch.protonmail.android.views.CustomFontTextView
 import ch.protonmail.android.views.SettingsDefaultItemView
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
@@ -34,8 +32,8 @@ import me.proton.core.presentation.utils.inflate
 import java.util.Locale
 
 // region constants
-private const val VIEW_TYPE_SECTION = 0
-private const val VIEW_TYPE_ITEM = 1
+const val VIEW_TYPE_SECTION = 0
+const val VIEW_TYPE_ITEM = 1
 // endregion
 
 internal class SettingsAdapter :
@@ -47,6 +45,7 @@ internal class SettingsAdapter :
     override fun getItemViewType(position: Int) = items[position].viewType
 
     private object ModelsComparator : BaseAdapter.ItemsComparator<SettingsItemUiModel>() {
+
         override fun areItemsTheSame(oldItem: SettingsItemUiModel, newItem: SettingsItemUiModel): Boolean = false
     }
 
@@ -54,22 +53,25 @@ internal class SettingsAdapter :
         ClickableAdapter.ViewHolder<Model>(itemView)
 
     companion object {
+
         fun getHeader(settingsId: String, context: Context): String =
             SettingsEnum.valueOf(settingsId).getHeader(context)
     }
 
     private class SectionViewHolder(itemView: View) : ViewHolder<SettingsItemUiModel>(itemView) {
-        override fun onBind(item: SettingsItemUiModel) = with(itemView as CustomFontTextView) {
+
+        override fun onBind(item: SettingsItemUiModel) = with(itemView as TextView) {
             super.onBind(item)
             //TODO after we receive translations for TURKISH remove excess toUpperCase methods
             text = if (item.settingHeader.isNullOrEmpty())
-                getHeader(item.settingId.toUpperCase(Locale.ENGLISH), context).toUpperCase(Locale.ENGLISH)
+                getHeader(item.settingId.toUpperCase(Locale.ENGLISH), context)
             else
-                item.settingHeader?.toUpperCase(Locale.ENGLISH)
+                item.settingHeader
         }
     }
 
     class ItemViewHolder(itemView: View) : ViewHolder<SettingsItemUiModel>(itemView) {
+
         lateinit var header: String
 
         override fun onBind(item: SettingsItemUiModel) = with(itemView as SettingsDefaultItemView) {
@@ -84,18 +86,12 @@ internal class SettingsAdapter :
             setSettingHeading(header)
             setHasValue(item.settingHasValue)
             setItemType(item.settingType!!.ordinal)
-            if (item.settingType == EDIT_TEXT || item.settingType == TOGGLE_N_EDIT) {
-                setEditableValue(item.settingValue)
-                setSettingHint(item.settingsHint)
-            } else {
-                setSettingValue(item.settingValue)
-            }
+            setSettingValue(item.settingValue)
+
             checkToggle(item.enabled)
             setSettingDisabled(item.settingDisabled, item.settingsDescription)
 
             setToggleChangedListener(item.toggleListener)
-            setEditTextOnFocusChangeListener(item.editTextListener)
-            setEditTextOnTextChangeListener(item.editTextChangeListener)
         }
     }
 

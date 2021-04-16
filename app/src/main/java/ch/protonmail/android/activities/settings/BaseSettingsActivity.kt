@@ -33,8 +33,8 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.AccountSettingsActivity
 import ch.protonmail.android.activities.AccountTypeActivity
@@ -65,7 +65,6 @@ import ch.protonmail.android.data.local.NotificationDao
 import ch.protonmail.android.data.local.NotificationDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
-import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.FetchLabelsEvent
@@ -73,6 +72,7 @@ import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
+import ch.protonmail.android.settings.presentation.CustomDividerItemDecoration
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
@@ -84,6 +84,9 @@ import ch.protonmail.android.utils.startMailboxActivity
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialog
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.activity_mailbox.*
+import kotlinx.android.synthetic.main.activity_settings.*
+import kotlinx.android.synthetic.main.settings_item_layout.view.*
 import timber.log.Timber
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
@@ -110,7 +113,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
-    private val settingsRecyclerView by lazy { findViewById<RecyclerView>(R.id.settingsRecyclerView) }
     // endregion
 
     private val settingsAdapter = SettingsAdapter()
@@ -471,6 +473,10 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         settingsAdapter.items = settingsUiList
         settingsRecyclerView.layoutManager = LinearLayoutManager(this@BaseSettingsActivity)
         settingsRecyclerView.adapter = settingsAdapter
+        // Set the list divider
+        val itemDecoration = CustomDividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        itemDecoration.setDrawable(getDrawable(R.drawable.list_divider)!!)
+        settingsRecyclerView.addItemDecoration(itemDecoration)
     }
 
 
@@ -479,6 +485,10 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         settingsAdapter.items = settingsUiList
         settingsRecyclerView.layoutManager = LinearLayoutManager(this@BaseSettingsActivity)
         settingsRecyclerView.adapter = settingsAdapter
+        // Set the list divider
+        val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        itemDecoration.setDrawable(getDrawable(R.drawable.list_divider)!!)
+        settingsRecyclerView.addItemDecoration(itemDecoration)
     }
 
     protected fun refreshSettings(settingsList: List<SettingsItemUiModel>) {

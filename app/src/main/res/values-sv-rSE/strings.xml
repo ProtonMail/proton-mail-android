@@ -839,7 +839,7 @@
     <string name="turn_combined_contacts_on">Aktivera denna funktion för att automatiskt slutföra e-postadresser med hjälp av kontakter från alla dina inloggade konton.</string>
     <string name="local_cache_management">Hantera lokal cache</string>
     <string name="cache_cleared">Den lokala cachen är uppdaterad</string>
-    <string name="empty_cache">Töm cachen</string>
+    <string name="empty_data">Töm cachen</string>
     <!-- endregion -->
     <string name="enabled">Aktiverad</string>
     <string name="disabled">Inaktiverad</string>

@@ -878,7 +878,7 @@
     <string name="turn_combined_contacts_on">Включите эту функцию для автозавершения адресов эл. почты путём использования контактов из всех учётных записей, в которые вы вошли.</string>
     <string name="local_cache_management">Управление локальным кэшем</string>
     <string name="cache_cleared">Локальный кэш обновлён</string>
-    <string name="empty_cache">Очистить кэш</string>
+    <string name="empty_data">Очистить кэш</string>
     <!-- endregion -->
     <string name="enabled">Включено</string>
     <string name="disabled">Отключено</string>

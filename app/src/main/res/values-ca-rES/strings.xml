@@ -844,7 +844,7 @@
     <string name="turn_combined_contacts_on">Activeu aquesta funció a les adreces de correu electrònic completades mitjançant contactes de tots els vostres comptes registrats.</string>
     <string name="local_cache_management">Administrador de memòria cau local</string>
     <string name="cache_cleared">La memòria cau local es restaura</string>
-    <string name="empty_cache">Buidar cache</string>
+    <string name="empty_data">Buidar cache</string>
     <!-- endregion -->
     <string name="enabled">Activat</string>
     <string name="disabled">Desactivat</string>

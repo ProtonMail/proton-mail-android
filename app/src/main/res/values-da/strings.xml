@@ -844,7 +844,7 @@
     <string name="turn_combined_contacts_on">Slå funktionen til for at autoudfylde e-mailadresser vha. kontakter fra alle dine indloggede konti.</string>
     <string name="local_cache_management">Lokal cachehåndtering</string>
     <string name="cache_cleared">Lokale Cache er opfrisket</string>
-    <string name="empty_cache">Tøm cache</string>
+    <string name="empty_data">Tøm cache</string>
     <!-- endregion -->
     <string name="enabled">Aktiv</string>
     <string name="disabled">Inaktiv</string>

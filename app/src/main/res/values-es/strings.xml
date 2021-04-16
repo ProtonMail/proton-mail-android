@@ -845,7 +845,7 @@ compre más
     <string name="turn_combined_contacts_on">Active esta función para completar automáticamente las direcciones usando los contactos de todas sus cuentas conectadas.</string>
     <string name="local_cache_management">Gestionar caché local</string>
     <string name="cache_cleared">La caché local está actualizada</string>
-    <string name="empty_cache">Vaciar caché</string>
+    <string name="empty_data">Vaciar caché</string>
     <!-- endregion -->
     <string name="enabled">Habilitado</string>
     <string name="disabled">Deshabilitado</string>

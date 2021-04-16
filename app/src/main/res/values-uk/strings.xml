@@ -878,7 +878,7 @@
     <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
     <string name="local_cache_management">Керування локальним кешем</string>
     <string name="cache_cleared">Локальний кеш оновлено</string>
-    <string name="empty_cache">Очистити кеш</string>
+    <string name="empty_data">Очистити кеш</string>
     <!-- endregion -->
     <string name="enabled">Увімкнено</string>
     <string name="disabled">Вимкнено</string>

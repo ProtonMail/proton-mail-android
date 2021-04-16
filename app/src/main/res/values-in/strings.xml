@@ -830,7 +830,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="turn_combined_contacts_on">Aktifkan fitur ini untuk otomatis melengkapi alamat email menggunakan kontak dari semua akun masuk anda.</string>
     <string name="local_cache_management">Pengelola Cache Lokal</string>
     <string name="cache_cleared">Cache Lokal Disegarkan</string>
-    <string name="empty_cache">Kosongkan Cache</string>
+    <string name="empty_data">Kosongkan Cache</string>
     <!-- endregion -->
     <string name="enabled">Diaktifkan</string>
     <string name="disabled">Dinonaktifkan</string>

@@ -844,7 +844,7 @@
     <string name="turn_combined_contacts_on">Attiva questa funzione per completare automaticamente gli indirizzi email utilizzando i contatti da tutti i tuoi account collegati.</string>
     <string name="local_cache_management">Gestione cache locale</string>
     <string name="cache_cleared">La cache locale è aggiornata</string>
-    <string name="empty_cache">Svuota Cache</string>
+    <string name="empty_data">Svuota Cache</string>
     <!-- endregion -->
     <string name="enabled">Abilitata</string>
     <string name="disabled">Disabilitata</string>

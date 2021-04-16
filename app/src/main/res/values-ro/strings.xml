@@ -860,7 +860,7 @@
     <string name="turn_combined_contacts_on">Activați funcția pentru autocompletarea adreselor de e-mail folosind contactele din toate conturile conectate.</string>
     <string name="local_cache_management">Gestionare buffer local</string>
     <string name="cache_cleared">Buffer local actualizat</string>
-    <string name="empty_cache">Golire buffer</string>
+    <string name="empty_data">Golire buffer</string>
     <!-- endregion -->
     <string name="enabled">Activat</string>
     <string name="disabled">Dezactivat</string>

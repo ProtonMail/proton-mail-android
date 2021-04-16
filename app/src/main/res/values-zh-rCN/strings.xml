@@ -819,7 +819,7 @@
     <string name="turn_combined_contacts_on">开启后您登录的所有账户通讯录中的邮箱都可自动补全。</string>
     <string name="local_cache_management">本机缓存管理</string>
     <string name="cache_cleared">本地缓存已清理</string>
-    <string name="empty_cache">清空缓存</string>
+    <string name="empty_data">清空缓存</string>
     <!-- endregion -->
     <string name="enabled">开启</string>
     <string name="disabled">关闭</string>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright (c) 2020 Proton Technologies AG
 
 This file is part of ProtonMail.
@@ -17,9 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
-<ch.protonmail.android.views.CustomFontTextView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/SettingsTextHeader"
-    android:layout_width="wrap_content"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Proton.Text.DefaultSmall.Interaction"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textAllCaps="true"
-    android:textColor="@color/switch_settings_item" />
+    android:paddingStart="@dimen/padding_l"
+    android:paddingTop="@dimen/padding_xl"
+    android:paddingEnd="@dimen/padding_l"
+    android:paddingBottom="@dimen/padding_m"/>

@@ -844,7 +844,7 @@
     <string name="turn_combined_contacts_on">Ative este recurso para preencher automaticamente endereços de e-mail usando os contatos de todas as suas contas conectadas.</string>
     <string name="local_cache_management">Gerenciador de cache local</string>
     <string name="cache_cleared">Cache local atualizado</string>
-    <string name="empty_cache">Limpar cache</string>
+    <string name="empty_data">Limpar cache</string>
     <!-- endregion -->
     <string name="enabled">Ativado</string>
     <string name="disabled">Desabilitado</string>

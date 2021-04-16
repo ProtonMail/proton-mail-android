@@ -825,7 +825,7 @@
     <string name="turn_combined_contacts_on">啟用此功能以使用您所有已登入的帳號中的聯絡人來自動完成電子郵件地址。</string>
     <string name="local_cache_management">本機快取管理</string>
     <string name="cache_cleared">本機快取已重新整理</string>
-    <string name="empty_cache">清空快取</string>
+    <string name="empty_data">清空快取</string>
     <!-- endregion -->
     <string name="enabled">已啟用</string>
     <string name="disabled">已停用</string>

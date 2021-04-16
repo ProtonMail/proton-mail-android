@@ -45,15 +45,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/settingsRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@null"/>
+            android:layout_height="wrap_content"/>
     </ScrollView>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/shadow_height"
-        android:layout_below="@id/toolbar"
-        android:background="@drawable/actionbar_shadow" />
 
     <View
         android:id="@+id/screenProtectorView"

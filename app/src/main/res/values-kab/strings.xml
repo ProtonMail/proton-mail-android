@@ -844,7 +844,7 @@
     <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
     <string name="local_cache_management">Local Cache Management</string>
     <string name="cache_cleared">Tuffirt tadigant tettwalqem</string>
-    <string name="empty_cache">Empty Cache</string>
+    <string name="empty_data">Empty Cache</string>
     <!-- endregion -->
     <string name="enabled">Urmid</string>
     <string name="disabled">Yensa</string>

@@ -966,7 +966,7 @@
 
     <string name="local_cache_management">Local Cache Management</string>
     <string name="cache_cleared">Local Cache is Refreshed</string>
-    <string name="empty_cache">Empty Cache</string>
+    <string name="empty_data">Empty Data</string>
     <!-- endregion -->
 
     <string name="enabled">Enabled</string>

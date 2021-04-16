@@ -844,7 +844,7 @@
     <string name="turn_combined_contacts_on">Activez cette fonctionnalité pour compléter automatiquement les adresses électroniques en utilisant les contacts de tous vos comptes connectés.</string>
     <string name="local_cache_management">Gestion du cache local</string>
     <string name="cache_cleared">Le cache local est actualisé</string>
-    <string name="empty_cache">Vider</string>
+    <string name="empty_data">Vider</string>
     <!-- endregion -->
     <string name="enabled">Activé</string>
     <string name="disabled">Désactivé</string>

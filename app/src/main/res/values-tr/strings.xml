@@ -839,7 +839,7 @@
     <string name="turn_combined_contacts_on">Oturum açtığınız tüm hesaplardaki kişileri kullanarak e-posta adreslerini otomatik olarak tamamlamak için bu özelliği açın.</string>
     <string name="local_cache_management">Yerel Önbellek Yönetimi</string>
     <string name="cache_cleared">Yerel önbellek yenilendi</string>
-    <string name="empty_cache">Önbelleği Boşalt</string>
+    <string name="empty_data">Önbelleği Boşalt</string>
     <!-- endregion -->
     <string name="enabled">Etkin</string>
     <string name="disabled">Devre dışı</string>

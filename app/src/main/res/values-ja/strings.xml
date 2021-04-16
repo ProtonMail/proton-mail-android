@@ -820,7 +820,7 @@
     <string name="turn_combined_contacts_on">この機能を有効化すると、ログイン済みのアカウントの連絡先を、メールアドレスの自動補完に利用可能になります。</string>
     <string name="local_cache_management">端末のキャッシュ管理</string>
     <string name="cache_cleared">端末のキャッシュが更新されました。</string>
-    <string name="empty_cache">キャッシュの削除</string>
+    <string name="empty_data">キャッシュの削除</string>
     <!-- endregion -->
     <string name="enabled">有効</string>
     <string name="disabled">無効</string>
