@@ -1046,6 +1046,10 @@ internal class MessageDetailsActivity :
         return
     }
 
+    fun printMessage() {
+        viewModel.printMessage(primaryBaseActivity)
+    }
+
     companion object {
 
         const val EXTRA_MESSAGE_ID = "messageId"

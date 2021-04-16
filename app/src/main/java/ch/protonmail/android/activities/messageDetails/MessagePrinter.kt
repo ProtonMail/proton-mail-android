@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.activities.messageDetails
 
-import android.app.Activity
+import android.content.Context
 import android.content.res.Resources
 import android.os.Build
 import android.print.PrintAttributes
@@ -36,7 +36,7 @@ import ch.protonmail.android.utils.extensions.showToast
 import timber.log.Timber
 
 internal class MessagePrinter(
-    private val activity: Activity,
+    private val context: Context,
     private val resources: Resources,
     private val printManager: PrintManager,
     private val loadRemoteImages: Boolean
@@ -56,7 +56,7 @@ internal class MessagePrinter(
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     fun printMessage(message: Message, bodyString: String) {
-        val webView = WebView(activity)
+        val webView = WebView(context)
         webView.webViewClient = PrinterWebViewClient(message)
         webView.settings.blockNetworkImage = !loadRemoteImages
         val messageString = StringBuilder("<p>")
@@ -70,7 +70,7 @@ internal class MessagePrinter(
         messageString.appendRecipientsList(message.toList, R.string.print_to_template)
         messageString.appendRecipientsList(message.ccList, R.string.print_cc_template)
         messageString.appendRecipientsList(message.bccList, R.string.print_bcc_template)
-        messageString.append(String.format(resources.getString(R.string.print_date_template), DateUtil.formatDetailedDateTime(activity, message.timeMs)))
+        messageString.append(String.format(resources.getString(R.string.print_date_template), DateUtil.formatDetailedDateTime(context, message.timeMs)))
         messageString.append("<br/>")
         val attachmentList = message.Attachments
         val attachmentsCount = attachmentList.size
@@ -107,7 +107,7 @@ internal class MessagePrinter(
                     printManager.print(jobName, printAdapter, PrintAttributes.Builder().build())
                 } catch (e: Exception) {
                     Timber.e(e)
-                    activity.showToast(R.string.print_error)
+                    context.showToast(R.string.print_error)
                 }
             }
         }

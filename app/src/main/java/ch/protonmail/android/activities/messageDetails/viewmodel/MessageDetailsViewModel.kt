@@ -19,7 +19,6 @@
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.annotation.TargetApi
-import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.os.Build
@@ -653,10 +652,9 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun printMessage(activityContext: Activity?) {
+    fun printMessage(activityContext: Context) {
         val message = message.value
         message?.let {
-            requireNotNull(activityContext)
             MessagePrinter(
                 activityContext,
                 activityContext.resources,
@@ -686,8 +684,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun handleAction(
-        action: MessageDetailsAction,
-        activity: Activity? = null
+        action: MessageDetailsAction
     ) {
         Timber.v("Handle action: $action")
         when (action) {
@@ -699,7 +696,6 @@ internal class MessageDetailsViewModel @Inject constructor(
             MessageDetailsAction.MOVE_TO_ARCHIVE -> TODO()
             MessageDetailsAction.MOVE_TO_SPAM -> TODO()
             MessageDetailsAction.MOVE_TO_TRASH -> moveToTrash(messageId)
-            MessageDetailsAction.PRINT -> printMessage(activity)
             MessageDetailsAction.REPLY -> TODO()
             MessageDetailsAction.REPLY_ALL -> TODO()
             MessageDetailsAction.REPORT_PHISHING -> TODO()

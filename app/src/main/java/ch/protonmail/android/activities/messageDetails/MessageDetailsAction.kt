@@ -31,7 +31,6 @@ enum class MessageDetailsAction {
     MOVE_TO_ARCHIVE,
     MOVE_TO_SPAM,
     MOVE_TO_TRASH,
-    PRINT,
     REPLY,
     REPLY_ALL,
     REPORT_PHISHING,

@@ -163,7 +163,8 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             dismiss()
         }
         detailsActionsPrintTextView.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.PRINT, activity)
+            // we call it this way as it requires "special" context from the Activity
+            (activity as MessageDetailsActivity).printMessage()
             dismiss()
         }
     }
