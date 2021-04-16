@@ -82,7 +82,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.BaseActivity;
-import ch.protonmail.android.activities.UpsellingActivity;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.activities.contactDetails.ExtractFullContactDetailsTask;
 import ch.protonmail.android.activities.guest.LoginActivity;
@@ -169,8 +168,6 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     LinearLayout mEncryptedDataContainer;
     @BindView(R.id.contactDetailsProgressBar)
     View progressBar;
-    @BindView(R.id.upgradeEncryptedStub)
-    ViewStub mUpgradeEncryptedStub;
     @BindView(R.id.emptyEncryptedStub)
     ViewStub mEmptyEncryptedStub;
     @BindView(R.id.errorEncryptedStub)
@@ -235,10 +232,6 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         mUser = mUserManager.getUser();
-        if (!mUser.isPaidUser()) {
-            View mUpgradeView = mUpgradeEncryptedStub.inflate();
-            mUpgradeView.findViewById(R.id.upgrade).setOnClickListener(mUpgradeClickListener);
-        }
 
         Bundle extras = getIntent().getExtras();
         inflater = LayoutInflater.from(this);
@@ -996,12 +989,6 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
         return isEmpty;
     }
-
-    private final View.OnClickListener mUpgradeClickListener = v -> {
-        Intent upgradeIntent = new Intent(ContactDetailsActivity.this, UpsellingActivity.class);
-        upgradeIntent.putExtra(UpsellingActivity.EXTRA_OPEN_UPGRADE_CONTAINER, true);
-        startActivityForResult(AppUtil.decorInAppIntent(upgradeIntent), REQUEST_CODE_UPGRADE);
-    };
 
     private void showSignatureErrorTopPart() {
         mTopPanel.setBackgroundDrawable(getResources().getDrawable(R.drawable.signature_error_border));

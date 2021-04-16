@@ -90,7 +90,6 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
     private val dispatchers: DispatcherProvider,
     downloadFile: DownloadFile,
     private val editContactDetailsRepository: EditContactDetailsRepository,
-    private val userManager: UserManager,
     private val verifyConnection: VerifyConnection,
     private val createContact: CreateContact,
     private val fileHelper: FileHelper,
@@ -103,7 +102,6 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
     private val _setupNewContactFlow: MutableLiveData<String> = MutableLiveData()
     private val _setupEditContactFlow: MutableLiveData<EditContactCardsHolder> = MutableLiveData()
     private val _setupConvertContactFlow: MutableLiveData<Unit> = MutableLiveData()
-    private val _freeUserEvent: MutableLiveData<Unit> = MutableLiveData()
     private val _verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
     val cleanUpComplete: LiveData<Event<Boolean>>
         get() = _cleanUpComplete
@@ -113,8 +111,6 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         get() = _setupEditContactFlow
     val setupConvertContactFlow: LiveData<Unit>
         get() = _setupConvertContactFlow
-    val freeUserEvent: LiveData<Unit>
-        get() = _freeUserEvent
     val hasConnectivity: LiveData<Constants.ConnectionState> =
         _verifyConnectionTrigger.switchMap { verifyConnection().asLiveData() }
     val createContactResult: MutableLiveData<Int> = MutableLiveData()
@@ -229,10 +225,6 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         _vCardAddressOptions = vCardAddressOptions
         _vCardOtherOptions = vCardOtherOptions
         setupVCards(vCardStringType0, vCardStringType2, vCardStringType3Path)
-        val isPaid = userManager.user?.isPaidUser ?: false
-        if (!isPaid) {
-            _freeUserEvent.postValue(null)
-        }
         postSetupFlowEvent()
         if (flowType == FLOW_EDIT_CONTACT) {
             fetchContactGroupsAndContactEmails(_contactId)
@@ -404,5 +396,5 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         }
     }
 
-    class EditContactCardsHolder(val vCardType0: VCard, val vCardType2: VCard, val vCardType3: VCard)
+    data class EditContactCardsHolder(val vCardType0: VCard, val vCardType2: VCard, val vCardType3: VCard)
 }
