@@ -26,17 +26,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import ch.protonmail.android.R
+import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
 /**
  * Fragment popping up with actions for message details screen.
  */
+@AndroidEntryPoint
 class MessageDetailsActionSheet : BottomSheetDialogFragment() {
+
+    private val viewModel: MessageDetailsViewModel by activityViewModels()
 
     private lateinit var closeViewIcon: View
 
@@ -52,6 +58,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         }
         closeViewIcon = rootView.findViewById<TextView>(R.id.detailsActionsCloseView)
         closeViewIcon.setOnClickListener {
+            viewModel.handleAction(MessageDetailsAction.CLOSE)
             dismiss()
         }
         return rootView

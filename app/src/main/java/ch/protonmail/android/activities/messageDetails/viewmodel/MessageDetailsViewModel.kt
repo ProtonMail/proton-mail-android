@@ -33,6 +33,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
+import ch.protonmail.android.activities.messageDetails.MessageDetailsAction
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.activities.messageDetails.MessagePrinter
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
@@ -109,7 +110,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         ?: false
 
     private val messageRenderer
-    by lazy { messageRendererFactory.create(viewModelScope, messageId) }
+        by lazy { messageRendererFactory.create(viewModelScope, messageId) }
 
     lateinit var message: LiveData<Message>
 
@@ -675,5 +676,9 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
 
         return bodyString
+    }
+
+    fun handleAction(action: MessageDetailsAction) {
+        Timber.v("Handle action: $action")
     }
 }
