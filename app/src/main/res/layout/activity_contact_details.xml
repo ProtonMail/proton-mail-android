@@ -203,13 +203,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     </LinearLayout>
 
                     <ViewStub
-                        android:id="@+id/upgradeEncryptedStub"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inflatedId="@+id/upgrade_encrypted"
-                        android:layout="@layout/layout_upgrade_encrypted" />
-
-                    <ViewStub
                         android:id="@+id/errorEncryptedStub"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
