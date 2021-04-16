@@ -19,13 +19,11 @@
 
 package ch.protonmail.android.mailbox.domain.model
 
-import me.proton.core.util.kotlin.EMPTY_STRING
-
 data class LabelContext(
-    val id: String = EMPTY_STRING,
-    val contextNumUnread: Int = 0,
-    val contextNumMessages: Int = 0,
-    val contextTime: Long = 0L,
-    val contextSize: Int = 0,
-    val contextNumAttachments: Int = 0
+    val id: String,
+    val contextNumUnread: Int,
+    val contextNumMessages: Int,
+    val contextTime: Long,
+    val contextSize: Int,
+    val contextNumAttachments: Int
 )

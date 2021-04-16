@@ -57,6 +57,13 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 id = "conversation5",
                 order = 0,
                 subject = "subject5",
+                listOf(),
+                listOf(),
+                0,
+                0,
+                0,
+                0L,
+                0,
                 labels = listOf(
                     LabelContextApiModel("0", 0, 1, 0, 0, 0),
                     LabelContextApiModel("7", 0, 1, 3, 0, 0)
@@ -66,6 +73,13 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 id = "conversation4",
                 order = 2,
                 subject = "subject4",
+                listOf(),
+                listOf(),
+                0,
+                0,
+                0,
+                0L,
+                0,
                 labels = listOf(
                     LabelContextApiModel("0", 0, 1, 1, 0, 0)
                 )
@@ -74,6 +88,13 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 id = "conversation3",
                 order = 3,
                 subject = "subject3",
+                listOf(),
+                listOf(),
+                0,
+                0,
+                0,
+                0L,
+                0,
                 labels = listOf(
                     LabelContextApiModel("0", 0, 1, 1, 0, 0),
                     LabelContextApiModel("7", 0, 1, 1, 0, 0)
@@ -83,6 +104,13 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 id = "conversation2",
                 order = 1,
                 subject = "subject2",
+                listOf(),
+                listOf(),
+                0,
+                0,
+                0,
+                0L,
+                0,
                 labels = listOf(
                     LabelContextApiModel("0", 0, 1, 1, 0, 0)
                 )
@@ -91,6 +119,13 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 id = "conversation1",
                 order = 4,
                 subject = "subject1",
+                listOf(),
+                listOf(),
+                0,
+                0,
+                0,
+                0L,
+                0,
                 labels = listOf(
                     LabelContextApiModel("0", 0, 1, 4, 0, 0)
                 )

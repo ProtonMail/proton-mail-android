@@ -23,7 +23,7 @@ import com.google.gson.annotations.SerializedName
 
 data class ConversationsResponse(
     @SerializedName(TOTAL)
-    val total: Int = 0,
+    val total: Int,
     @SerializedName(CONVERSATIONS)
     val conversationResponse: List<ConversationApiModel>
 ) {

@@ -38,37 +38,37 @@ data class ConversationDatabaseModel constructor(
     val id: String,
 
     @ColumnInfo(name = COLUMN_ORDER)
-    val order: Long = 0L,
+    val order: Long,
 
     @ColumnInfo(name = COLUMN_USER_ID)
     val userId: String,
 
     @ColumnInfo(name = COLUMN_SUBJECT)
-    val subject: String = "",
+    val subject: String,
 
     @ColumnInfo(name = COLUMN_SENDERS)
-    val senders: List<MessageSender> = mutableListOf(),
+    val senders: List<MessageSender>,
 
     @ColumnInfo(name = COLUMN_RECIPIENTS)
-    val recipients: List<MessageRecipient> = mutableListOf(),
+    val recipients: List<MessageRecipient>,
 
     @ColumnInfo(name = COLUMN_NUM_MESSAGES)
-    val numMessages: Int = 0,
+    val numMessages: Int,
 
     @ColumnInfo(name = COLUMN_NUM_UNREAD)
-    val numUnread: Int = 0,
+    val numUnread: Int,
 
     @ColumnInfo(name = COLUMN_NUM_ATTACHMENTS)
-    val numAttachments: Int = 0,
+    val numAttachments: Int,
 
     @ColumnInfo(name = COLUMN_EXPIRATION_TIME)
-    val expirationTime: Long = 0,
+    val expirationTime: Long,
 
     @ColumnInfo(name = COLUMN_SIZE)
-    val size: Long = 0L,
+    val size: Long,
 
     @ColumnInfo(name = COLUMN_LABELS)
-    val labels: List<LabelContextDatabaseModel> = mutableListOf()
+    val labels: List<LabelContextDatabaseModel>
 ) {
 
     companion object {

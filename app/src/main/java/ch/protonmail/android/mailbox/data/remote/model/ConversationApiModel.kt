@@ -27,34 +27,34 @@ data class ConversationApiModel(
     val id: String,
 
     @SerializedName(ORDER)
-    val order: Long = 0,
+    val order: Long,
 
     @SerializedName(SUBJECT)
     val subject: String = EMPTY_STRING,
 
     @SerializedName(SENDERS)
-    val senders: List<CorrespondentApiModel> = mutableListOf(),
+    val senders: List<CorrespondentApiModel>,
 
     @SerializedName(RECIPIENTS)
-    val recipients: List<CorrespondentApiModel> = mutableListOf(),
+    val recipients: List<CorrespondentApiModel>,
 
     @SerializedName(NUM_MESSAGES)
-    val numMessages: Int = 0,
+    val numMessages: Int,
 
     @SerializedName(NUM_UNREAD)
-    val numUnread: Int = 0,
+    val numUnread: Int,
 
     @SerializedName(NUM_ATTACHMENTS)
-    val numAttachments: Int = 0,
+    val numAttachments: Int,
 
     @SerializedName(EXPIRATION_TIME)
-    val expirationTime: Long = 0,
+    val expirationTime: Long,
 
     @SerializedName(SIZE)
-    val size: Long = 0L,
+    val size: Long,
 
     @SerializedName(LABELS)
-    val labels: List<LabelContextApiModel> = mutableListOf()
+    val labels: List<LabelContextApiModel>
 ) {
     companion object {
 
