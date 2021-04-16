@@ -522,6 +522,12 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
             ?.apply { settingValue = settingValueNew }
     }
 
+    protected fun setIconVisibility(settingType: SettingsEnum, visibility: Int) {
+        settingsAdapter.items
+            .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
+            ?.apply { iconVisibility = visibility }
+    }
+
     /**
      * Turns the value of setting with [settingType] ON or OFF.
      */
@@ -532,7 +538,8 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     }
 
     /**
-     * Sets the setting with [settingType] to locked, so the user can't change. Usually if the account is on a free plan.
+     * Sets the setting with [settingType] to locked, so the user can't change.
+     * Usually if the account is on a free plan.
      */
     protected fun setSettingDisabled(settingType: SettingsEnum, settingDisabledNew: Boolean, description: String) {
         settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }?.apply {

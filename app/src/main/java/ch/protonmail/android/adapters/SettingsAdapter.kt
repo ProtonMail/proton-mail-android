@@ -62,7 +62,7 @@ internal class SettingsAdapter :
 
         override fun onBind(item: SettingsItemUiModel) = with(itemView as TextView) {
             super.onBind(item)
-            //TODO after we receive translations for TURKISH remove excess toUpperCase methods
+            // TODO after we receive translations for TURKISH remove excess toUpperCase methods
             text = if (item.settingHeader.isNullOrEmpty())
                 getHeader(item.settingId.toUpperCase(Locale.ENGLISH), context)
             else
@@ -89,6 +89,7 @@ internal class SettingsAdapter :
             setSettingValue(item.settingValue)
 
             checkToggle(item.enabled)
+            setIconVisibility(item.iconVisibility)
             setSettingDisabled(item.settingDisabled, item.settingsDescription)
 
             setToggleChangedListener(item.toggleListener)

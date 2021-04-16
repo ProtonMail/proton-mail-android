@@ -20,21 +20,29 @@ package ch.protonmail.android.uiModel
 
 import android.view.View
 import com.google.gson.annotations.SerializedName
+import me.proton.core.util.kotlin.EMPTY_STRING
 
-class SettingsItemUiModel {
+data class SettingsItemUiModel constructor(
+
     @SerializedName("is_section")
-    var isSection: Boolean = false
+    val isSection: Boolean = false,
+
     @SerializedName("setting_id")
-    var settingId: String = ""
+    val settingId: String = EMPTY_STRING,
+
     @SerializedName("setting_hasValue")
-    var settingHasValue: Boolean = false
+    val settingHasValue: Boolean = false,
+
     @SerializedName("setting_type")
-    var settingType: SettingsItemTypeEnum? = SettingsItemTypeEnum.INFO
-    var settingsDescription: String? = ""
-    var settingHeader: String? = ""
-    var settingValue: String? = ""
-    var settingsHint: String? = ""
-    var enabled: Boolean = false
+    val settingType: SettingsItemTypeEnum? = SettingsItemTypeEnum.INFO,
+    var settingsDescription: String? = EMPTY_STRING,
+    var settingHeader: String? = EMPTY_STRING,
+    var settingValue: String? = EMPTY_STRING,
+    var settingsHint: String? = EMPTY_STRING,
+    var enabled: Boolean = false,
+    var iconVisibility: Int = View.GONE
+) {
+
     /**
      * [settingDisabled] is used if we don't wanna show the feature with [settingId] to user
      */
@@ -42,27 +50,6 @@ class SettingsItemUiModel {
     var toggleListener: ((View, Boolean) -> Unit)? = { _: View, _: Boolean -> }
     var editTextListener: (View) -> Unit = {}
     var editTextChangeListener: (String) -> Unit = {}
-
-    constructor(settingId: String,
-                settingHeader: String,
-                settingValue: String,
-                settingHasValue: Boolean = false,
-                isSection: Boolean = false,
-                settingType: SettingsItemTypeEnum?) {
-        this.isSection = isSection
-        this.settingId = settingId
-        this.settingHeader = settingHeader
-        this.settingValue = settingValue
-        this.settingHasValue = settingHasValue
-        this.settingType = settingType
-        this.settingsHint = ""
-        this.settingsDescription = ""
-        this.enabled = false
-        this.settingDisabled = false
-        this.toggleListener = { _: View, _: Boolean -> }
-        this.editTextListener = {}
-        this.editTextChangeListener = {}
-    }
 
     enum class SettingsItemTypeEnum {
         @SerializedName("info")

@@ -353,6 +353,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 val notificationOption =
                     resources.getStringArray(R.array.notification_options)[mNotificationOptionValue]
                 setValue(SettingsEnum.NOTIFICATION_SETTINGS, notificationOption)
+                setIconVisibility(SettingsEnum.NOTIFICATION_SETTINGS, View.VISIBLE)
 
                 actionBarTitle = R.string.push_notifications
             }

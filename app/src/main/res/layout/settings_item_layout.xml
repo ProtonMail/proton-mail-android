@@ -92,15 +92,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         app:layout_constraintStart_toStartOf="@+id/guideline_01"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/actionSwitch"
-            style="@style/ProtonSwitch.Mail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:duplicateParentState="true"
-            android:visibility="gone" />
-
         <Button
             android:id="@+id/clearCacheButton"
             style="@style/ProtonButton"
@@ -112,6 +103,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:text="@string/empty_data"
             android:visibility="gone" />
 
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end|center_vertical"
+            android:duplicateParentState="true"
+            android:src="@drawable/ic_external_link"
+            android:visibility="invisible" />
     </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline

@@ -25,13 +25,14 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.appcompat.widget.SwitchCompat
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.doAfterTextChanged
 import ch.protonmail.android.R
 import kotlinx.android.synthetic.main.settings_item_layout.view.*
+import me.proton.core.util.kotlin.EMPTY_STRING
 
 // region constants
 private const val TYPE_INFO = 0
@@ -45,16 +46,16 @@ class SettingsDefaultItemView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+) : LinearLayout(context, attrs, defStyleAttr) {
 
     private var mAttrs: AttributeSet? = attrs
-    private var mHeading: CharSequence? = ""
-    private var mValue: CharSequence? = ""
-    private var mHint: CharSequence? = ""
+    private var mHeading: CharSequence? = EMPTY_STRING
+    private var mValue: CharSequence? = EMPTY_STRING
+    private var mHint: CharSequence? = EMPTY_STRING
     private var mHasValue: Boolean = true
     private var mType: Int = 0
     private var mDisabled: Boolean = false
-    private var mDescription: String = ""
+    private var mDescription: String = EMPTY_STRING
 
     init {
         LayoutInflater.from(context).inflate(R.layout.settings_item_layout, this, true)
@@ -105,13 +106,13 @@ class SettingsDefaultItemView @JvmOverloads constructor(
         }
     }
 
-    fun getSpinner(): View {
-        return timeoutSpinner
+    fun setIconVisibility(visibility: Int) {
+        icon.visibility = visibility
     }
 
-    fun getToggle(): SwitchCompat {
-        return actionSwitch
-    }
+    fun getSpinner(): View = timeoutSpinner
+
+    fun getToggle(): SwitchCompat = actionSwitch
 
     fun checkToggle(value: Boolean) {
         actionSwitch.isChecked = value
@@ -154,7 +155,7 @@ class SettingsDefaultItemView @JvmOverloads constructor(
             }
             TYPE_DRILL_DOWN -> {
                 clearCacheButton.visibility = View.GONE
-                actionSwitch.visibility = View.INVISIBLE
+                actionSwitch.visibility = View.GONE
             }
             TYPE_BUTTON -> {
                 isEnabled = false
