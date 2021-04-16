@@ -19,14 +19,24 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- region V4 -->
-    <style name="ProtonTheme.Mail" parent="ProtonTheme"/>
+    <!-- V4 -->
+    <style name="ProtonTheme.Mail" parent="ProtonTheme">
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/ProtonMailActionMode</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_arrow_back</item>
+    </style>
 
     <style name="UnreadMessagesStatusChip" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="android:textAppearance">@style/Proton.Text.Caption.Strong</item>
         <item name="android:textColor">@drawable/selector_unread_messages_status_text_color</item>
         <item name="chipBackgroundColor">@drawable/selector_unread_messages_status_background</item>
         <item name="chipCornerRadius">25dp</item>
+    </style>
+
+    <style name="ProtonMailActionMode" parent="Widget.AppCompat.ActionMode">
+        <item name="height">?attr/actionBarSize</item>
+        <item name="background">@color/background_norm</item>
+        <item name="titleTextStyle">@style/Proton.Text.Headline.Small</item>
     </style>
 
     <style name="Proton.Text.DefaultSmall.Interaction">

@@ -22,10 +22,16 @@ import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.PendingSend
+import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.views.messagesList.MessagesListFooterView
 import ch.protonmail.android.views.messagesList.MessagesListItemView
+import kotlinx.android.synthetic.main.layout_sender_initial.view.*
+import kotlinx.android.synthetic.main.list_item_mailbox.view.*
 
 class MessagesRecyclerViewAdapter(
     private val context: Context,
@@ -44,6 +50,7 @@ class MessagesRecyclerViewAdapter(
     private var contactsList: List<ContactEmail>? = null
 
     private var onItemClick: ((Message) -> Unit)? = null
+    private var onItemSelectionChangedListener: (() -> Unit)? = null
 
     var includeFooter: Boolean = false
         set(value) {
@@ -81,6 +88,10 @@ class MessagesRecyclerViewAdapter(
         this.onItemClick = onItemClick
     }
 
+    fun setOnItemSelectionChangedListener(onItemSelectionChangedListener: () -> Unit) {
+        this.onItemSelectionChangedListener = onItemSelectionChangedListener
+    }
+
     private enum class ElementType {
         MESSAGE, FOOTER
     }
@@ -110,54 +121,75 @@ class MessagesRecyclerViewAdapter(
         }
     }
 
+    private fun selectMessage(messageId: String, position: Int) {
+        if (selectedMessageIds.isEmpty()) {
+            onSelectionModeChange?.invoke(SelectionModeEnum.STARTED)
+            notifyDataSetChanged()
+        }
+        selectedMessageIds.add(messageId)
+        onItemSelectionChangedListener?.invoke()
+        notifyItemChanged(position)
+    }
+
+    private fun deselectMessage(messageId: String, position: Int) {
+        selectedMessageIds.remove(messageId)
+        if (selectedMessageIds.isEmpty()) {
+            onSelectionModeChange?.invoke(SelectionModeEnum.ENDED)
+            notifyDataSetChanged()
+        } else {
+            onItemSelectionChangedListener?.invoke()
+            notifyItemChanged(position)
+        }
+    }
+
+    private fun selectOrDeselectMessage(messageId: String, position: Int): Boolean {
+        if (onSelectionModeChange == null || onItemSelectionChangedListener == null) {
+            return false
+        }
+
+        if (selectedMessageIds.contains(messageId)) {
+            deselectMessage(messageId, position)
+        } else {
+            selectMessage(messageId, position)
+        }
+        return true
+    }
+
     private fun MessagesListViewHolder.MessageViewHolder.bindMessage(position: Int) {
         val message = messages[position]
         val messageLabels = message.allLabelIDs.mapNotNull { labels[it] }
 
         message.senderDisplayName = contactsList?.find { message.senderEmail == it.email }?.name ?: message.senderName
 
-        this.view.bind(message, messageLabels, mMailboxLocation)
+        this.view.bind(message, messageLabels, selectedMessageIds.isNotEmpty(), mMailboxLocation)
 
         val isSelected = selectedMessageIds.contains(message.messageId)
-        this.view.isActivated = isSelected
+        this.view.checkImageView.isActivated = isSelected
+
         this.view.tag = message.messageId
+        this.view.senderInitialView.tag = message.messageId
+
+        this.view.senderInitialView.setOnClickListener {
+            val messageId = it.tag as String
+            selectOrDeselectMessage(messageId, position)
+        }
 
         this.view.setOnClickListener {
-            val messageId = it.tag as String
             if (selectedMessageIds.isNotEmpty()) {
-                if (selectedMessageIds.contains(messageId)) {
-                    selectedMessageIds.remove(messageId)
-                    if (selectedMessageIds.isEmpty()) {
-                        onSelectionModeChange?.invoke(SelectionModeEnum.ENDED)
-                        notifyDataSetChanged()
-                    }
-                } else {
-                    selectedMessageIds.add(messageId)
-                }
-
-                notifyItemChanged(position)
+                val messageId = it.tag as String
+                selectOrDeselectMessage(messageId, position)
             } else {
                 onItemClick?.invoke(message)
             }
-
         }
 
-        // TODO: This will be changed with MAILAND-1501.
-        //  I'm just disabling long click with commenting this code for now.
-//        this.view.setOnLongClickListener {
-//            val messageId = it.tag as String
-//            if (onSelectionModeChange == null) {
-//                return@setOnLongClickListener false
-//            }
-//
-//            if (selectedMessageIds.isEmpty()) {
-//                selectedMessageIds.add(messageId)
-//                onSelectionModeChange.invoke(SelectionModeEnum.STARTED)
-//                notifyDataSetChanged()
-//            }
-//
-//            return@setOnLongClickListener true
-//        }
+        this.view.setOnLongClickListener {
+            if (selectedMessageIds.isEmpty()) {
+                val messageId = it.tag as String
+                return@setOnLongClickListener selectOrDeselectMessage(messageId, position)
+            }
+            return@setOnLongClickListener true
+        }
     }
 
     fun endSelectionMode() {

@@ -35,6 +35,7 @@ import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
 import me.proton.core.presentation.utils.inflate
+import me.proton.core.util.kotlin.EMPTY_STRING
 
 private const val MAX_LABELS_WITH_TEXT = 1
 
@@ -113,6 +114,7 @@ class MessagesListItemView constructor(
     fun bind(
         message: Message,
         labels: List<Label>,
+        isMultiSelectionMode: Boolean,
         mailboxLocation: Constants.MessageLocationType
     ) {
         val readStatus = message.isRead
@@ -122,9 +124,10 @@ class MessagesListItemView constructor(
         setIconsTint(readStatus)
 
         val senderText = getSenderText(messageLocation, message)
-        senderTextView.text = senderText
-        senderInitialTextView.text =
-            if (senderText.isNullOrEmpty()) "D" else senderText.capitalize().subSequence(0, 1)
+        // Sender text can only be empty in drafts where we show recipients instead of senders
+        senderTextView.text =
+            if (senderText.isNullOrEmpty()) context.getString(R.string.empty_recipients) else senderText
+        senderInitialView.bind(senderText ?: EMPTY_STRING, isMultiSelectionMode)
 
         subjectTextView.text = message.subject
 

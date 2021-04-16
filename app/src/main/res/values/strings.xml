@@ -739,6 +739,7 @@
     <string name="recheck_delinquency">Check Again</string>
     <string name="close_app">Close App</string>
     <string name="empty_subject">(No Subject)</string>
+    <string name="empty_recipients">(No recipients)</string>
     <string name="contacts_unknown">Unknown</string>
 
     <string name="learn_more"><u>Learn More</u></string>

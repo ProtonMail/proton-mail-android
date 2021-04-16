@@ -27,28 +27,21 @@
     android:paddingHorizontal="@dimen/message_details_header_padding_horizontal"
     android:paddingVertical="@dimen/message_details_header_padding_vertical">
 
-    <!-- TODO: Consider replacing with MAILAND-1501 -->
-    <TextView
-        android:id="@+id/senderInitialTextView"
-        android:layout_width="@dimen/sender_initial_view_size"
-        android:layout_height="@dimen/sender_initial_view_size"
-        android:layout_marginStart="@dimen/sender_initial_view_margin_start"
+    <ch.protonmail.android.views.messagesList.SenderInitialView
+        android:id="@+id/senderInitialView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/sender_initial_view_margin_end"
-        android:layout_marginTop="@dimen/sender_initial_view_margin_top"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/senderInitialBarrier"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textAlignment="center"
-        android:gravity="center"
-        android:background="@drawable/background_sender_initial"
-        tools:text="S" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/senderInitialBarrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintLeft_toRightOf="@id/senderInitialTextView"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -153,8 +146,8 @@
         android:id="@+id/toExpandedTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@id/senderInitialTextView"
-        app:layout_constraintRight_toRightOf="@id/senderInitialTextView"
+        app:layout_constraintLeft_toLeftOf="@id/senderInitialView"
+        app:layout_constraintRight_toRightOf="@id/senderInitialView"
         app:layout_constraintTop_toTopOf="@id/toRecipientsExpandedView"
         android:text="@string/to"
         style="@style/Proton.Text.DefaultSmall.Weak" />
@@ -213,8 +206,8 @@
         android:id="@+id/labelsImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@id/senderInitialTextView"
-        app:layout_constraintRight_toRightOf="@id/senderInitialTextView"
+        app:layout_constraintLeft_toLeftOf="@id/senderInitialView"
+        app:layout_constraintRight_toRightOf="@id/senderInitialView"
         app:layout_constraintTop_toTopOf="@+id/labels"
         android:src="@drawable/ic_label"
         app:tint="@color/icon_weak" />
@@ -235,8 +228,8 @@
         android:id="@+id/calendarImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@id/senderInitialTextView"
-        app:layout_constraintRight_toRightOf="@id/senderInitialTextView"
+        app:layout_constraintLeft_toLeftOf="@id/senderInitialView"
+        app:layout_constraintRight_toRightOf="@id/senderInitialView"
         app:layout_constraintTop_toTopOf="@+id/timeDateExtendedTextView"
         app:layout_constraintBottom_toBottomOf="@id/timeDateExtendedTextView"
         android:src="@drawable/ic_calendar"
@@ -257,8 +250,8 @@
         android:id="@+id/locationExtendedImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@id/senderInitialTextView"
-        app:layout_constraintRight_toRightOf="@id/senderInitialTextView"
+        app:layout_constraintLeft_toLeftOf="@id/senderInitialView"
+        app:layout_constraintRight_toRightOf="@id/senderInitialView"
         app:layout_constraintTop_toTopOf="@+id/locationTextView"
         app:layout_constraintBottom_toBottomOf="@id/locationTextView"
         app:tint="@color/icon_weak"
@@ -279,8 +272,8 @@
         android:id="@+id/storageImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@id/senderInitialTextView"
-        app:layout_constraintRight_toRightOf="@id/senderInitialTextView"
+        app:layout_constraintLeft_toLeftOf="@id/senderInitialView"
+        app:layout_constraintRight_toRightOf="@id/senderInitialView"
         app:layout_constraintTop_toTopOf="@+id/storageTextView"
         app:layout_constraintBottom_toBottomOf="@id/storageTextView"
         android:src="@drawable/ic_user_storage"
@@ -303,8 +296,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        app:layout_constraintLeft_toLeftOf="@id/senderInitialTextView"
-        app:layout_constraintRight_toRightOf="@id/senderInitialTextView"
+        app:layout_constraintLeft_toLeftOf="@id/senderInitialView"
+        app:layout_constraintRight_toRightOf="@id/senderInitialView"
         app:layout_constraintTop_toTopOf="@+id/encryptionInfoTextView"
         android:textSize="22sp"
         tools:text="@string/lock_default" />

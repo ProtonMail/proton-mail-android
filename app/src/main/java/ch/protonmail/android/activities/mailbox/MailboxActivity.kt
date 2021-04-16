@@ -39,7 +39,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import android.widget.AbsListView.MultiChoiceModeListener
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -124,7 +123,10 @@ import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.TotalLabelCounter
+import ch.protonmail.android.data.local.model.TotalLocationCounter
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.FetchLabelsEvent
@@ -161,7 +163,6 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.NetworkSnackBarUtil
-import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
@@ -211,7 +212,7 @@ private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
 @AndroidEntryPoint
 class MailboxActivity :
     NavigationActivity(),
-    MultiChoiceModeListener,
+    ActionMode.Callback,
     OnRefreshListener,
     ILabelCreationListener,
     ILabelsChangeListener,
@@ -400,6 +401,11 @@ class MailboxActivity :
                     message
                 ).execute()
             }
+        }
+
+        messagesAdapter.setOnItemSelectionChangedListener {
+            val checkedItems = messagesAdapter.checkedMessages.size
+            actionMode?.title = "$checkedItems ${getString(R.string.selected)}"
         }
 
         checkRegistration()
@@ -1219,23 +1225,8 @@ class MailboxActivity :
         }
     }
 
-    /* AbsListView.MultiChoiceModeListener */
-    override fun onItemCheckedStateChanged(mode: ActionMode, position: Int, id: Long, checked: Boolean) {
-        val checkedItems = messagesAdapter.checkedMessages.size
-        // on many devices there is a strange UnknownFormatConversionException:
-        // "Conversion: D" if using string formatting, which is probably a memory corruption issue
-        mode.title = "$checkedItems ${getString(R.string.selected)}"
-        if (checkedItems == 1) {
-            mode.invalidate()
-        }
-    }
-
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         actionMode = mode
-        UiUtil.setStatusBarColor(
-            this,
-            UiUtil.scaleColor(ContextCompat.getColor(this, R.color.dark_purple_statusbar), 1f, true)
-        )
         mode.menuInflater.inflate(R.menu.message_selection_menu, menu)
         menu.findItem(R.id.move_to_trash).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         menu.findItem(R.id.delete_message).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
@@ -1430,7 +1421,6 @@ class MailboxActivity :
         actionMode = null
         mailboxSwipeRefreshLayout.isEnabled = true
         messagesAdapter.endSelectionMode()
-        UiUtil.setStatusBarColor(this, ContextCompat.getColor(this, R.color.dark_purple_statusbar))
     }
 
     private fun showFoldersManagerDialog(messageIds: List<String>) {
