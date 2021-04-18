@@ -26,6 +26,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.databinding.FragmentMessageDetailsActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
@@ -63,6 +64,9 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         bottomSheetDialog.setOnShowListener { dialogInterface ->
             val dialog = dialogInterface as BottomSheetDialog
             val bottomSheet: View? = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet)
+            val headerView = binding.includeLayoutActionSheetHeader.detailsActionsTitleTextView
+            val subHeaderView = binding.includeLayoutActionSheetHeader.detailsActionsSubTitleTextView
+            val targetOffsetSize = resources.getDimensionPixelSize(R.dimen.padding_xxl)
             if (bottomSheet != null) {
                 val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
                 bottomSheetBehavior.addBottomSheetCallback(
@@ -77,7 +81,17 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
                         }
 
                         override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                            if (slideOffset > HEADER_SLIDE_THRESHOLD) {
+                                val intermediateShift =
+                                    targetOffsetSize * ((slideOffset - HEADER_SLIDE_THRESHOLD) * 5f) // 5f= 1/(1-0.8)
+                                headerView.translationX = intermediateShift
+                                subHeaderView.translationX = intermediateShift
+                            } else {
+                                headerView.translationX = 0f
+                                subHeaderView.translationX = 0f
+                            }
                             Timber.v("onSlide to offset $slideOffset")
+                            headerView.invalidate()
                         }
                     }
                 )
@@ -177,5 +191,6 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
 
         const val EXTRA_ARG_TITLE = "arg_message_details_actions_title"
         const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
+        private const val HEADER_SLIDE_THRESHOLD = 0.8f
     }
 }

@@ -22,7 +22,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="true"
     android:paddingStart="@dimen/padding_l"
     android:paddingEnd="@dimen/padding_l"
     tools:showIn="@layout/fragment_message_details_action_sheet">
@@ -53,7 +52,7 @@
         android:singleLine="true"
         android:textAppearance="@style/Text.Headline"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/detailsActionsCloseView"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="RE: Possible project underway at very long line so long that it does not fit in one line on any device" />
 
@@ -65,7 +64,7 @@
         android:singleLine="true"
         android:textAppearance="@style/Text.Caption.Weak"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/detailsActionsCloseView"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/detailsActionsTitleTextView"
         tools:text="@tools:sample/lorem" />
 </androidx.constraintlayout.widget.ConstraintLayout>
