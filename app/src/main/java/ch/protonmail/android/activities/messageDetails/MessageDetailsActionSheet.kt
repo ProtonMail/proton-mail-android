@@ -28,6 +28,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentMessageDetailsActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetHeaderBinding
@@ -83,15 +84,15 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) {
                             if (slideOffset > HEADER_SLIDE_THRESHOLD) {
                                 val intermediateShift =
-                                    targetOffsetSize * ((slideOffset - HEADER_SLIDE_THRESHOLD) * 5f) // 5f= 1/(1-0.8)
+                                    targetOffsetSize *
+                                        ((slideOffset - HEADER_SLIDE_THRESHOLD) * (1 / (1 - HEADER_SLIDE_THRESHOLD)))
                                 headerView.translationX = intermediateShift
                                 subHeaderView.translationX = intermediateShift
-                            } else {
+                            } else if (headerView.translationX != 0f) {
                                 headerView.translationX = 0f
                                 subHeaderView.translationX = 0f
                             }
                             Timber.v("onSlide to offset $slideOffset")
-                            headerView.invalidate()
                         }
                     }
                 )
@@ -127,15 +128,15 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         detailsViewModel: MessageDetailsViewModel
     ) = with(binding) {
         detailsActionsReplyTextView.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.REPLY)
+            (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.REPLY)
             dismiss()
         }
         detailsActionsReplyAllTextView.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.REPLY_ALL)
+            (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.REPLY_ALL)
             dismiss()
         }
         detailsActionsForwardTextView.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.FORWARD)
+            (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.FORWARD)
             dismiss()
         }
         detailsActionsMarkAsUnreadTextView.setOnClickListener {

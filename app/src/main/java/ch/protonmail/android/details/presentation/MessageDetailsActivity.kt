@@ -826,150 +826,7 @@ internal class MessageDetailsActivity :
                 } else {
                     Constants.MessageActionType.REPLY
                 }
-                try {
-                    val newMessageTitle = MessageUtils.buildNewMessageTitle(
-                        this@MessageDetailsActivity,
-                        messageAction,
-                        message.subject
-                    )
-                    val user = mUserManager.requireCurrentLegacyUser()
-                    val userUsedSpace = user.usedSpace
-                    val userMaxSpace = if (user.maxSpace == 0L) {
-                        Long.MAX_VALUE
-                    } else {
-                        user.maxSpace
-                    }
-                    val percentageUsed = userUsedSpace * 100 / userMaxSpace
-                    if (percentageUsed >= 100) {
-                        this@MessageDetailsActivity.showTwoButtonInfoDialog(
-                            title = getString(R.string.storage_limit_warning_title),
-                            message = getString(R.string.storage_limit_reached_text),
-                            rightStringId = R.string.okay,
-                            leftStringId = R.string.learn_more,
-                            onNegativeButtonClicked = {
-                                val browserIntent = Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(getString(R.string.limit_reached_learn_more))
-                                )
-                                startActivity(browserIntent)
-                            }
-                        )
-                    } else {
-                        viewModel.prepareEditMessageIntent.observe(
-                            this@MessageDetailsActivity,
-                            Observer { editIntentExtrasEvent: Event<IntentExtrasData?> ->
-                                val editIntentExtras = editIntentExtrasEvent.getContentIfNotHandled()
-                                    ?: return@Observer
-                                val intent = AppUtil.decorInAppIntent(
-                                    Intent(
-                                        this@MessageDetailsActivity,
-                                        ComposeMessageActivity::class.java
-                                    )
-                                )
-                                MessageUtils.addRecipientsToIntent(
-                                    intent,
-                                    ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
-                                    editIntentExtras.toRecipientListString,
-                                    editIntentExtras.messageAction,
-                                    editIntentExtras.userAddresses
-                                )
-                                if (editIntentExtras.includeCCList) {
-                                    MessageUtils.addRecipientsToIntent(
-                                        intent,
-                                        ComposeMessageActivity.EXTRA_CC_RECIPIENTS,
-                                        editIntentExtras.messageCcList,
-                                        editIntentExtras.messageAction,
-                                        editIntentExtras.userAddresses
-                                    )
-                                }
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_LOAD_IMAGES,
-                                    editIntentExtras.imagesDisplayed
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_LOAD_REMOTE_CONTENT,
-                                    editIntentExtras.remoteContentDisplayed
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_SENDER_NAME,
-                                    editIntentExtras.messageSenderName
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_SENDER_ADDRESS,
-                                    editIntentExtras.senderEmailAddress
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_PGP_MIME,
-                                    editIntentExtras.isPGPMime
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_TITLE,
-                                    editIntentExtras.newMessageTitle
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_BODY_LARGE,
-                                    editIntentExtras.largeMessageBody
-                                )
-                                mBigContentHolder.content = editIntentExtras.mBigContentHolder.content
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_BODY,
-                                    editIntentExtras.body
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_TIMESTAMP,
-                                    editIntentExtras.timeMs
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_ENCRYPTED,
-                                    editIntentExtras.messageIsEncrypted
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_PARENT_ID,
-                                    editIntentExtras.messageId
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_ACTION_ID,
-                                    editIntentExtras.messageAction
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID,
-                                    editIntentExtras.addressID
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS,
-                                    editIntentExtras.addressEmailAlias
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_IS_TRANSIENT,
-                                    isTransientMessage
-                                )
-                                if (editIntentExtras.embeddedImagesAttachmentsExist) {
-                                    intent.putParcelableArrayListExtra(
-                                        ComposeMessageActivity.EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS,
-                                        editIntentExtras.attachments
-                                    )
-                                }
-                                val attachments = editIntentExtras.attachments
-                                if (attachments.size > 0) {
-                                    intent.putParcelableArrayListExtra(
-                                        ComposeMessageActivity.EXTRA_MESSAGE_ATTACHMENTS,
-                                        attachments
-                                    )
-                                }
-                                startActivityForResult(intent, 0)
-                            }
-                        )
-                        viewModel.prepareEditMessageIntent(
-                            messageAction,
-                            message,
-                            newMessageTitle,
-                            decryptedBody,
-                            mBigContentHolder
-                        )
-                    }
-                } catch (exc: Exception) {
-                    Timber.tag("588").e(exc, "Exception on reply panel press")
-                }
+                executeMessageAction(messageAction, message)
             }
             messageDetailsActionsView.setOnMoreActionClickListener {
                 val messageDetailsActionSheet = MessageDetailsActionSheet().apply {
@@ -983,6 +840,156 @@ internal class MessageDetailsActivity :
             progress.visibility = View.GONE
             invalidateOptionsMenu()
             viewModel.renderingPassed = true
+        }
+    }
+
+    fun executeMessageAction(
+        messageAction: Constants.MessageActionType,
+        message: Message = requireNotNull(viewModel.decryptedMessageData.value)
+    ) {
+        try {
+            val newMessageTitle = MessageUtils.buildNewMessageTitle(
+                this@MessageDetailsActivity,
+                messageAction,
+                message.subject
+            )
+            val user = mUserManager.requireCurrentLegacyUser()
+                val userUsedSpace = user.usedSpace
+            val userMaxSpace = if (user.maxSpace == 0L) {
+                Long.MAX_VALUE
+            } else {
+                user.maxSpace
+            }
+            val percentageUsed = userUsedSpace * 100 / userMaxSpace
+            if (percentageUsed >= 100) {
+                this@MessageDetailsActivity.showTwoButtonInfoDialog(
+                    title = getString(R.string.storage_limit_warning_title),
+                    message = getString(R.string.storage_limit_reached_text),
+                    rightStringId = R.string.okay,
+                    leftStringId = R.string.learn_more,
+                    onNegativeButtonClicked = {
+                        val browserIntent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(getString(R.string.limit_reached_learn_more))
+                        )
+                        startActivity(browserIntent)
+                    }
+                )
+            } else {
+                viewModel.prepareEditMessageIntent.observe(
+                    this@MessageDetailsActivity,
+                    Observer { editIntentExtrasEvent: Event<IntentExtrasData?> ->
+                        val editIntentExtras = editIntentExtrasEvent.getContentIfNotHandled()
+                            ?: return@Observer
+                        val intent = AppUtil.decorInAppIntent(
+                            Intent(
+                                this@MessageDetailsActivity,
+                                ComposeMessageActivity::class.java
+                            )
+                        )
+                        MessageUtils.addRecipientsToIntent(
+                            intent,
+                            ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
+                            editIntentExtras.toRecipientListString,
+                            editIntentExtras.messageAction,
+                            editIntentExtras.userAddresses
+                        )
+                        if (editIntentExtras.includeCCList) {
+                            MessageUtils.addRecipientsToIntent(
+                                intent,
+                                ComposeMessageActivity.EXTRA_CC_RECIPIENTS,
+                                editIntentExtras.messageCcList,
+                                editIntentExtras.messageAction,
+                                editIntentExtras.userAddresses
+                            )
+                        }
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_LOAD_IMAGES,
+                            editIntentExtras.imagesDisplayed
+                        )
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_LOAD_REMOTE_CONTENT,
+                            editIntentExtras.remoteContentDisplayed
+                        )
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_SENDER_NAME,
+                            editIntentExtras.messageSenderName
+                        )
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_SENDER_ADDRESS,
+                            editIntentExtras.senderEmailAddress
+                        )
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_PGP_MIME,
+                            editIntentExtras.isPGPMime
+                        )
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_MESSAGE_TITLE,
+                            editIntentExtras.newMessageTitle
+                        )
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_MESSAGE_BODY_LARGE,
+                            editIntentExtras.largeMessageBody
+                        )
+                        mBigContentHolder.content = editIntentExtras.mBigContentHolder.content
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_MESSAGE_BODY,
+                            editIntentExtras.body
+                        )
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_MESSAGE_TIMESTAMP,
+                            editIntentExtras.timeMs
+                        )
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_MESSAGE_ENCRYPTED,
+                            editIntentExtras.messageIsEncrypted
+                        )
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_PARENT_ID,
+                            editIntentExtras.messageId
+                        )
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_ACTION_ID,
+                            editIntentExtras.messageAction
+                        )
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID,
+                            editIntentExtras.addressID
+                        )
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS,
+                            editIntentExtras.addressEmailAlias
+                        )
+                        intent.putExtra(
+                            ComposeMessageActivity.EXTRA_MESSAGE_IS_TRANSIENT,
+                            isTransientMessage
+                        )
+                        if (editIntentExtras.embeddedImagesAttachmentsExist) {
+                            intent.putParcelableArrayListExtra(
+                                ComposeMessageActivity.EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS,
+                                editIntentExtras.attachments
+                            )
+                        }
+                        val attachments = editIntentExtras.attachments
+                        if (attachments.size > 0) {
+                            intent.putParcelableArrayListExtra(
+                                ComposeMessageActivity.EXTRA_MESSAGE_ATTACHMENTS,
+                                attachments
+                            )
+                        }
+                        startActivityForResult(intent, 0)
+                    }
+                )
+                viewModel.prepareEditMessageIntent(
+                    messageAction,
+                    message,
+                    newMessageTitle,
+                    getDecryptedBody(message.decryptedHTML),
+                    mBigContentHolder
+                )
+            }
+        } catch (exc: Exception) {
+            Timber.e(exc, "Exception in reply/forward actions")
         }
     }
 

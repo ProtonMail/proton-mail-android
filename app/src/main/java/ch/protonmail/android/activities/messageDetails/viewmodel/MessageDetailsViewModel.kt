@@ -694,13 +694,10 @@ internal class MessageDetailsViewModel @Inject constructor(
         Timber.v("Handle action: $action")
         when (action) {
             MessageDetailsAction.DELETE_MESSAGE -> deleteMessage(messageId)
-            MessageDetailsAction.FORWARD -> TODO()
             MessageDetailsAction.MARK_UNREAD -> markUnread()
             MessageDetailsAction.MOVE_TO_ARCHIVE -> moveToArchive()
             MessageDetailsAction.MOVE_TO_SPAM -> moveToSpam()
             MessageDetailsAction.MOVE_TO_TRASH -> moveToTrash(messageId)
-            MessageDetailsAction.REPLY -> TODO()
-            MessageDetailsAction.REPLY_ALL -> TODO()
             MessageDetailsAction.STAR_UNSTAR -> toggleStarUnstar(messageId)
         }
     }
