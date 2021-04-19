@@ -1,0 +1,35 @@
+<!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="16"
+    android:viewportHeight="16">
+  <path
+      android:pathData="M5,5H8V6H5V5Z"
+      android:fillColor="@color/icon_norm"/>
+  <path
+      android:pathData="M11,8V7H5V8H11Z"
+      android:fillColor="@color/icon_norm"/>
+  <path
+      android:pathData="M14,3V6.29L15,7.29V15H1V7.29L2,6.29V3H5.34L8,0.45L10.66,3H14ZM9.22,3L8,1.84L6.78,3H9.22ZM13,4V7.61L8,10.35L3,7.61V4H13ZM2,8.2V14H14V8.2L8,11.5L2,8.2Z"
+      android:fillColor="@color/icon_norm"
+      android:fillType="evenOdd"/>
+</vector>

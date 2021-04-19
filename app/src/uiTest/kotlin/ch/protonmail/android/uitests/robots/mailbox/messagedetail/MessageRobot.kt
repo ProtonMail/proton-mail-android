@@ -96,14 +96,14 @@ class MessageRobot : CoreRobot {
     }
 
     fun reply(): ComposerRobot {
-        view.withId(R.id.replyActionImageView).wait()
-        UIActions.wait.untilViewWithIdEnabled(R.id.replyActionImageView).click()
+        view.withId(R.id.firstActionImageButton).wait()
+        UIActions.wait.untilViewWithIdEnabled(R.id.firstActionImageButton).click()
         return ComposerRobot()
     }
 
     fun replyAll(): ComposerRobot {
-        view.withId(R.id.replyActionImageView).wait()
-        UIActions.wait.untilViewWithIdEnabled(R.id.replyActionImageView).click()
+        view.withId(R.id.firstActionImageButton).wait()
+        UIActions.wait.untilViewWithIdEnabled(R.id.firstActionImageButton).click()
         return ComposerRobot()
     }
 
@@ -126,13 +126,13 @@ class MessageRobot : CoreRobot {
     }
 
     fun navigateUpToSent(): SentRobot {
-        view.withId(R.id.replyActionImageView).wait()
+        view.withId(R.id.firstActionImageButton).wait()
         view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
         return SentRobot()
     }
 
     fun navigateUpToInbox(): InboxRobot {
-        view.withId(R.id.replyActionImageView).wait()
+        view.withId(R.id.firstActionImageButton).wait()
         view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
         return InboxRobot()
     }
