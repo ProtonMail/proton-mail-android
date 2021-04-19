@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Copyright (c) 2020 Proton Technologies AG
-
-This file is part of ProtonMail.
-
-ProtonMail is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ProtonMail is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ProtonMail. If not, see https://www.gnu.org/licenses/.
--->
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Disabled -->
@@ -27,15 +27,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         </shape>
     </item>
 
-    <!-- Pressed -->
-    <item android:state_pressed="true">
-        <shape android:shape="rectangle">
-            <corners android:radius="1dp" />
-            <solid android:color="@color/new_purple_dark" />
-        </shape>
-    </item>
-
     <!-- enabled -->
-    <item android:drawable="@drawable/login_button_shape_inverted" />
-
+    <item>
+        <ripple android:color="@color/new_purple">
+            <item android:drawable="@drawable/login_button_shape_inverted" />
+        </ripple>
+    </item>
 </selector>

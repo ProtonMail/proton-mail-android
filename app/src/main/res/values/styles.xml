@@ -22,7 +22,7 @@
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/dark_purple</item>
         <item name="colorPrimaryDark">@color/dark_purple</item>
-        <item name="colorAccent">@color/dark_purple</item>
+        <item name="android:colorAccent">@color/dark_purple</item>
         <item name="actionModeStyle">@style/ActionModeStyle</item>
         <item name="searchViewStyle">@style/SearchViewStyle</item>
         <item name="android:checkboxStyle">@style/CustomCheckBox</item>
