@@ -279,7 +279,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">部分邮件删除失败，可能正在发送当中</string>
     <string name="respond_inline">纯文本引用</string>
     <string name="no_connectivity_detected">网络未连接。</string>
-    <string name="server_not_reachable_troubleshoot">无法连接服务器… (<u>疑难解答</u>)</string>
+    <string name="server_not_reachable_troubleshoot">无法连接服务器…（<u>排查故障</u>）</string>
     <string name="connectivity_checking">正在连接...</string>
     <string name="sync_short">同步</string>
     <string name="draft_attachments_uploading">草稿仍在上传中...</string>
@@ -656,7 +656,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="close_app">关闭应用</string>
     <string name="empty_subject">(无主题)</string>
     <string name="contacts_unknown">无名</string>
-    <string name="learn_more"><u>详细了解</u></string>
+    <string name="learn_more"><u>了解详情</u></string>
     <string name="info">提示</string>
     <string name="error_can_not_send_from_this_address">若要使用 %s 地址发送邮件，请开通付费账户。</string>
     <string name="email_empty">邮箱地址缺失</string>

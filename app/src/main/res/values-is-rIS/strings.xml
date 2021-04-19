@@ -53,7 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Engin nettenging, skilaboð í biðröð</string>
     <string name="update_app_title">Uppfærsla nauðsynleg</string>
     <string name="update_app">Ekki er hægt að nota ProtonMail-forritið fyrr en það hefur verið uppfært</string>
-    <string name="you_are_offline">You are offline</string>
+    <string name="you_are_offline">Þú ert án nettengingar</string>
     <string name="api_offline_title">ProtonMail API-forritsviðmót er ótengt</string>
     <string name="api_offline">ProtonMail er í augnablikinu án nettengingar, skoðaðu síðustu stöðu mála á Twitter: https://twitter.com/protonmail</string>
     <string name="contact_saved">Tengiliður vistaður</string>
@@ -286,7 +286,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Villa kom upp við eyðingu á sumum skilaboðum. Gætu skilaboðin verið í sendingarferli?!</string>
     <string name="respond_inline">Svara innan-texta</string>
     <string name="no_connectivity_detected">Engin tenging fannst...</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Netþjónn ekki aðgengilegur… (<u>Leysa vandamál</u>)</string>
     <string name="connectivity_checking">Athuga með tengingu...</string>
     <string name="sync_short">samstilla</string>
     <string name="draft_attachments_uploading">Enn er verið að senda inn drögin...</string>
@@ -744,7 +744,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_name_ongoing_operations">Aðgerðir í gangi</string>
     <string name="channel_description_ongoing_operations">Sýnir allar aðgerðir í gangi eins og þegar
 		náð er í ný skilaboð í bakgrunni</string>
-    <string name="retrieving_notifications">Retrieving notifications</string>
+    <string name="retrieving_notifications">Næ í tilkynningar</string>
     <string name="report_phishing">Tilkynna um veiðipóst (phishing)</string>
     <string name="print">Prenta</string>
     <string name="phishing_dialog_title">Staðfesta skýrslu um veiðipóst</string>
@@ -1002,5 +1002,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_firebase_api_key_message">Ógildur API-kerfisviðmótslykill fyrir Firebase. Ýtitilkynningar munu ekki virka.</string>
     <string name="failed_saving_draft_online">Mistókst að vista netlægt drög að skilaboðum: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Get ekki opnað þessi skilaboð á meðan verið er að senda þau</string>
-    <string name="enable_conversation_mode">Enable conversation mode</string>
+    <string name="enable_conversation_mode">Virkja samtalsham</string>
 </resources>
