@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -33,7 +33,6 @@ import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.extensions.getColorCompat
 import ch.protonmail.android.utils.extensions.showToast
 import kotlinx.android.synthetic.main.contacts_v2_list_item.view.*
 import kotlinx.android.synthetic.main.contacts_v2_list_item_header.view.*
@@ -93,7 +92,7 @@ sealed class ContactListItemView(
             contactIcon.isVisible = isSelected
             contactIconLetter.isVisible = !isSelected
             rowWrapper.setBackgroundColor(
-                if (isSelected) context.getColorCompat(R.color.selectable_color)
+                if (isSelected) context.getColor(R.color.selectable_color)
                 else selectedColor
             )
         }

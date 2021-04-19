@@ -44,7 +44,6 @@ import ch.protonmail.android.events.LoginInfoEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
-import ch.protonmail.android.utils.extensions.getColorCompat
 import ch.protonmail.android.utils.extensions.removeWhitespaces
 import ch.protonmail.android.utils.extensions.setcolor
 import ch.protonmail.android.utils.extensions.showToast
@@ -97,7 +96,7 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         forgotPassword.setOnClickListener { onForgotPasswordClicked() }
         connect.setOnClickListener { onConnectClicked() }
 
-        progressCircular.setcolor(getColorCompat(R.color.new_purple_dark))
+        progressCircular.setcolor(getColor(R.color.new_purple_dark))
     }
 
     override fun onStart() {

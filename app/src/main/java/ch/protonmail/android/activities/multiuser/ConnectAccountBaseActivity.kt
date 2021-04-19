@@ -32,7 +32,6 @@ import ch.protonmail.android.events.ConnectAccountMailboxLoginEvent
 import ch.protonmail.android.fcm.FcmTokenManager
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.extensions.app
-import ch.protonmail.android.utils.extensions.getColorCompat
 import ch.protonmail.android.utils.extensions.setBarColors
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToMailbox
@@ -69,7 +68,7 @@ abstract class ConnectAccountBaseActivity : BaseConnectivityActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
-        window?.setBarColors(getColorCompat(R.color.new_purple_dark))
+        window?.setBarColors(getColor(R.color.new_purple_dark))
 
         togglePasswordView.setOnClickListener { onTogglePasswordClick(it as ToggleButton) }
     }
