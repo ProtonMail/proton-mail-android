@@ -40,6 +40,7 @@ import ch.protonmail.android.jobs.PostTrashJobV2
 import com.birbit.android.jobqueue.JobManager
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.equalsNoCase
+import timber.log.Timber
 import java.util.Locale
 import java.util.UUID
 
@@ -103,8 +104,8 @@ object MessageUtils {
         val normalizedMessageTitle = normalizeMessageTitle(context, messageTitle)
         val messagePrefix = when (messageAction) {
             MessageActionType.REPLY,
-            MessageActionType.REPLY_ALL -> context.getString(R.string.reply_prefix).toString() + " "
-            MessageActionType.FORWARD -> context.getString(R.string.forward_prefix).toString() + " "
+            MessageActionType.REPLY_ALL -> context.getString(R.string.reply_prefix) + " "
+            MessageActionType.FORWARD -> context.getString(R.string.forward_prefix) + " "
             else -> EMPTY_STRING
         }
         return messagePrefix + normalizedMessageTitle
@@ -113,11 +114,13 @@ object MessageUtils {
     // TODO: discard nullability of parameters once MessageDetailsActivity is converted to Kotlin (dependent on above)
     private fun normalizeMessageTitle(context: Context, messageTitle: String?): String? {
         val prefixes = arrayOf(
-                context.getString(R.string.reply_prefix),
-                context.getString(R.string.forward_prefix))
+            context.getString(R.string.reply_prefix),
+            context.getString(R.string.forward_prefix)
+        )
         for (prefix in prefixes) {
             if (messageTitle?.toLowerCase(Locale.getDefault())
-                            ?.startsWith(prefix.toLowerCase(Locale.getDefault())) == true) {
+                ?.startsWith(prefix.toLowerCase(Locale.getDefault())) == true
+            ) {
                 return messageTitle.substring(prefix.length).trim { it <= ' ' }
             }
         }
@@ -131,8 +134,8 @@ object MessageUtils {
     fun areAllUnRead(messages: List<SimpleMessage>): Boolean = messages.all { !it.isRead }
 
     fun containsRealContent(text: String): Boolean = text.replace("<div>", "")
-                    .replace("</div>", "")
-                    .replace("<br />", "").isNotEmpty()
+        .replace("</div>", "")
+        .replace("<br />", "").isNotEmpty()
 
     // TODO: discard nullability of parameters once MessageDetailsActivity and MailboxActivity are converted to Kotlin
     fun moveMessage(
@@ -231,8 +234,8 @@ object MessageUtils {
         try {
             UUID.fromString(messageId)
             valid = true
-        } catch (e: IllegalArgumentException) {
-            // noop
+        } catch (exception: IllegalArgumentException) {
+            Timber.i(exception)
         }
         return valid
     }
