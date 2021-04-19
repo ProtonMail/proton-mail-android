@@ -110,6 +110,8 @@ class MailboxViewModelTest : CoroutinesTest {
 
     private lateinit var viewModel: MailboxViewModel
 
+    private val currentUserId = Id("8237462347237428")
+
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
@@ -132,6 +134,7 @@ class MailboxViewModelTest : CoroutinesTest {
         every { EntryPoints.get(any(), JobEntryPoint::class.java) } returns jobEntryPoint
         every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
         coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
+        every { userManager.requireCurrentUserId() } returns currentUserId
     }
 
     @After
@@ -576,7 +579,7 @@ class MailboxViewModelTest : CoroutinesTest {
             123L
         )
 
-        coVerifySequence { getConversations(location) }
+        coVerifySequence { getConversations(currentUserId, location) }
         verify { messageServiceScheduler wasNot Called }
     }
 
@@ -603,7 +606,7 @@ class MailboxViewModelTest : CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(location) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, location) } returns flowOf(successResult)
 
             val actual = viewModel.getMailboxItems(
                 location,
@@ -662,7 +665,7 @@ class MailboxViewModelTest : CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(location) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, location) } returns flowOf(successResult)
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
             )
@@ -715,7 +718,7 @@ class MailboxViewModelTest : CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(location) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, location) } returns flowOf(successResult)
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
             )
@@ -768,7 +771,7 @@ class MailboxViewModelTest : CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(location) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, location) } returns flowOf(successResult)
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
             )
