@@ -30,6 +30,7 @@ import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot.Messa
 import ch.protonmail.android.uitests.robots.mailbox.drafts.DraftsRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
+import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.setValueInNumberPicker
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
@@ -215,6 +216,11 @@ class ComposerRobot : CoreRobot, DeviceRobot() {
         return DraftsRobot()
     }
 
+    fun confirmDraftSavingFromSent(): SentRobot {
+        UIActions.system.clickPositiveDialogButton()
+        return SentRobot()
+    }
+
     private fun composeMessage(to: String, subject: String, body: String): ComposerRobot =
         recipients(to)
             .subject(subject)
@@ -253,8 +259,8 @@ class ComposerRobot : CoreRobot, DeviceRobot() {
         return this
     }
 
-    private fun updateSubject(text: String): ComposerRobot {
-        view.withId(subjectId).click().clearText().typeText(text)
+    fun updateSubject(text: String): ComposerRobot {
+        view.withId(subjectId).clearText().typeText("Updated: $text")
         return this
     }
 

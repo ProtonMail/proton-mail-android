@@ -154,4 +154,6 @@ object TestData {
     fun fwSubject(subject: String): String = "Fw: $subject"
     // Replied subject
     fun reSubject(subject: String): String = "Re: $subject"
+    // Updated subject
+    fun updatedSubject(subject: String): String = "Updated: $subject"
 }

@@ -52,6 +52,12 @@ class SentRobot : MailboxRobotInterface {
         return SentRobot()
     }
 
+    fun navigateUpToSent(): SentRobot {
+        UIActions.wait.forViewWithId(R.id.reply_all)
+        UIActions.system.clickHamburgerOrUpButton()
+        return SentRobot()
+    }
+
     /**
      * Handles Mailbox selection state actions and verifications after user long click one of the messages.
      */
@@ -115,8 +121,7 @@ class SentRobot : MailboxRobotInterface {
      */
     class Verify : MailboxRobotInterface.verify() {
         fun messageStarred() {
-            UIActions.wait.forViewWithId(R.id.snackbar_text)
-            UIActions.check.viewWithIdAndTextIsDisplayed(R.id.snackbar_text, "Message star updated")
+            view.withId(R.id.snackbar_text).withText(R.string.swipe_action_star).checkDisplayed()
         }
     }
 

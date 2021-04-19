@@ -35,6 +35,7 @@ import ch.protonmail.android.uitests.tests.settings.AccountSettingsTests
 import ch.protonmail.android.uitests.tests.settings.PrivacyAccountSettingsTests
 import ch.protonmail.android.uitests.tests.settings.SettingsTests
 import ch.protonmail.android.uitests.tests.settings.SwipeGesturesTests
+import ch.protonmail.android.uitests.tests.spam.SpamTests
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
@@ -51,6 +52,7 @@ import org.junit.runners.Suite
     DraftsTests::class,
     // Inbox tests
     InboxTests::class,
+    SearchTests::class,
     // Labels and folders tests
     LabelsFoldersTests::class,
     // Login tests
@@ -61,12 +63,12 @@ import org.junit.runners.Suite
     MenuTests::class,
     // Message detail tests
     MessageDetailTests::class,
-    // Search tests
-    SearchTests::class,
     // Settings tests
     AccountSettingsTests::class,
     PrivacyAccountSettingsTests::class,
     SettingsTests::class,
-    SwipeGesturesTests::class
+    SwipeGesturesTests::class,
+    // Spam tests
+    SpamTests::class
 )
 class RegressionSuite

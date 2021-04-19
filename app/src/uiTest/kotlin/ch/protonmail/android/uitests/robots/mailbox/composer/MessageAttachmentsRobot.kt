@@ -18,18 +18,18 @@
  */
 package ch.protonmail.android.uitests.robots.mailbox.composer
 
+import android.widget.ListView
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.MockAddAttachmentIntent
-import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
-import ch.protonmail.android.uitests.testsHelper.uiactions.click
 import me.proton.core.test.android.instrumented.CoreRobot
+import org.hamcrest.CoreMatchers.anything
 
 /**
  * Class represents Message Attachments.
  */
-open class MessageAttachmentsRobot: CoreRobot {
+open class MessageAttachmentsRobot : CoreRobot {
 
     fun addImageCaptureAttachment(@IdRes drawable: Int): ComposerRobot =
         mockCameraImageCapture(drawable).navigateUpToComposerView()
@@ -45,13 +45,23 @@ open class MessageAttachmentsRobot: CoreRobot {
     fun addFileAttachment(@IdRes drawable: Int): ComposerRobot =
         mockFileAttachment(drawable).navigateUpToComposerView()
 
-    private fun navigateUpToComposerView(): ComposerRobot {
-        UIActions.allOf.clickViewWithParentIdAndClass(R.id.toolbar, AppCompatImageButton::class.java)
+    fun removeAttachment(): MessageAttachmentsRobot {
+        listView
+            .onListItem(anything())
+            .inAdapter(view.instanceOf(ListView::class.java))
+            .atPosition(0)
+            .onChild(view.withId(R.id.remove))
+            .click()
+        return MessageAttachmentsRobot()
+    }
+
+    fun navigateUpToComposerView(): ComposerRobot {
+        view.isDescendantOf(view.withId(R.id.toolbar)).instanceOf(AppCompatImageButton::class.java).click()
         return ComposerRobot()
     }
 
     private fun mockCameraImageCapture(@IdRes drawableId: Int): MessageAttachmentsRobot {
-        UIActions.wait.forViewWithId(takePhotoIconId)
+        view.withId(takePhotoIconId).wait()
         MockAddAttachmentIntent.mockCameraImageCapture(takePhotoIconId, drawableId)
         return this
     }

@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.uitests.robots.contacts
 
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import ch.protonmail.android.R
@@ -132,10 +133,10 @@ class ContactsRobot {
             UIActions.wait.forViewWithId(contactGroupsRecyclerView)
             UIActions.recyclerView
                 .common.waitForBeingPopulated(contactGroupsRecyclerView)
-                .common.clickOnRecyclerViewMatchedItemWithRetry(
+                .common.scrollToRecyclerViewMatchedItem(
                     contactGroupsRecyclerView,
-                    withContactGroupNameAndMembersCount(name, membersCount)
-                )
+                    withContactGroupNameAndMembersCount(name, membersCount))
+                .perform(click())
             return GroupDetailsRobot()
         }
 
