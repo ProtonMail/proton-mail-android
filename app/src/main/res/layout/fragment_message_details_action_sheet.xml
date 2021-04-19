@@ -16,105 +16,110 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
-
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <include
+        android:id="@+id/includeLayoutActionSheetHeader"
+        layout="@layout/layout_message_details_actions_sheet_header" />
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="@dimen/padding_m"
-        android:paddingBottom="@dimen/padding_l">
+        android:layout_height="wrap_content">
 
-        <include
-            android:id="@+id/includeLayoutActionSheetHeader"
-            layout="@layout/layout_message_details_actions_sheet_header" />
-
-        <include
-            android:id="@+id/includeLayoutActionSheetButtons"
-            layout="@layout/layout_message_details_actions_sheet_buttons" />
-
-        <TextView
-            android:id="@+id/detailsActionsStarUnstarTextView"
-            style="@style/ActionSheetStandardItem"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/star_unstar"
-            app:drawableStartCompat="@drawable/ic_star_24dp" />
+            android:orientation="vertical"
+            android:paddingTop="@dimen/padding_m"
+            android:paddingBottom="@dimen/padding_l">
 
-        <TextView
-            android:id="@+id/detailsActionsTrashTextView"
-            style="@style/ActionSheetStandardItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/trash"
-            app:drawableStartCompat="@drawable/ic_trash_24dp" />
+            <include
+                android:id="@+id/includeLayoutActionSheetButtons"
+                layout="@layout/layout_message_details_actions_sheet_buttons" />
 
-        <TextView
-            android:id="@+id/detailsActionsMoveToArchiveTextView"
-            style="@style/ActionSheetStandardItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/move_to_archive"
-            app:drawableStartCompat="@drawable/ic_archive_24dp" />
+            <TextView
+                android:id="@+id/detailsActionsStarUnstarTextView"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/star_unstar"
+                app:drawableStartCompat="@drawable/ic_star_24dp" />
 
-        <TextView
-            android:id="@+id/detailsActionsMoveToSpamTextView"
-            style="@style/ActionSheetStandardItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/move_to_spam"
-            app:drawableStartCompat="@drawable/ic_spam_24dp" />
+            <TextView
+                android:id="@+id/detailsActionsTrashTextView"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/trash"
+                app:drawableStartCompat="@drawable/ic_trash_24dp" />
 
-        <View style="@style/ViewSeparatorHorizontal" />
+            <TextView
+                android:id="@+id/detailsActionsMoveToArchiveTextView"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/move_to_archive"
+                app:drawableStartCompat="@drawable/ic_archive_24dp" />
 
-        <TextView
-            style="@style/ActionSheetSectionTitleItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/personalize" />
+            <TextView
+                android:id="@+id/detailsActionsMoveToSpamTextView"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/move_to_spam"
+                app:drawableStartCompat="@drawable/ic_spam_24dp" />
 
-        <TextView
-            android:id="@+id/detailsActionsLabelAsTextView"
-            style="@style/ActionSheetStandardItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/label_as"
-            app:drawableStartCompat="@drawable/ic_label_24dp" />
+            <View style="@style/ViewSeparatorHorizontal" />
 
-        <TextView
-            android:id="@+id/detailsActionsMoveToTextView"
-            style="@style/ActionSheetStandardItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/move_to"
-            app:drawableStartCompat="@drawable/ic_move_to" />
+            <TextView
+                style="@style/ActionSheetSectionTitleItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/personalize" />
 
-        <View style="@style/ViewSeparatorHorizontal" />
+            <TextView
+                android:id="@+id/detailsActionsLabelAsTextView"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_as"
+                app:drawableStartCompat="@drawable/ic_label_24dp" />
 
-        <TextView
-            style="@style/ActionSheetSectionTitleItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/others" />
+            <TextView
+                android:id="@+id/detailsActionsMoveToTextView"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/move_to"
+                app:drawableStartCompat="@drawable/ic_move_to" />
 
-        <TextView
-            android:id="@+id/detailsActionsReportPhishingTextView"
-            style="@style/ActionSheetStandardItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/report_phishing"
-            app:drawableStartCompat="@drawable/ic_phishing" />
+            <View style="@style/ViewSeparatorHorizontal" />
 
-        <TextView
-            android:id="@+id/detailsActionsPrintTextView"
-            style="@style/ActionSheetStandardItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/print"
-            app:drawableStartCompat="@drawable/ic_print" />
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+            <TextView
+                style="@style/ActionSheetSectionTitleItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/others" />
+
+            <TextView
+                android:id="@+id/detailsActionsReportPhishingTextView"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/report_phishing"
+                app:drawableStartCompat="@drawable/ic_phishing" />
+
+            <TextView
+                android:id="@+id/detailsActionsPrintTextView"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/print"
+                app:drawableStartCompat="@drawable/ic_print" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>
