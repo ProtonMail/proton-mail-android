@@ -42,12 +42,8 @@ class NetworkConnectivityManager @Inject constructor(
     private val connectivityManager: ConnectivityManager
 ) {
 
-    fun isInternetConnectionPossible(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            isActiveNetworkInternetCapable()
-        else
-            isCurrentlyConnected()
-    }
+    fun isInternetConnectionPossible(): Boolean =
+        isActiveNetworkInternetCapable()
 
     private fun isCurrentlyConnected(): Boolean =
         connectivityManager.activeNetworkInfo?.isConnectedOrConnecting == true

@@ -1,27 +1,25 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.tokenautocomplete;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Editable;
@@ -500,7 +498,6 @@ public abstract class TokenCompleteTextView<T> extends AppCompatAutoCompleteText
 
     boolean inInvalidate = false;
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void api16Invalidate() {
         if (initialized && !inInvalidate) {
             inInvalidate = true;
@@ -535,10 +532,7 @@ public abstract class TokenCompleteTextView<T> extends AppCompatAutoCompleteText
 
     @Override
     public void invalidate() {
-        //Need to force the TextView private mEditor variable to reset as well on API 16 and up
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            api16Invalidate();
-        }
+        api16Invalidate();
 
         super.invalidate();
     }

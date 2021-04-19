@@ -21,7 +21,6 @@ package ch.protonmail.android.settings.pin
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.MenuItem
@@ -33,7 +32,6 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.biometric.BiometricManager
-import androidx.core.content.ContextCompat
 import butterknife.OnClick
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
@@ -68,11 +66,7 @@ class PinSettingsActivity : BaseActivity() {
     private val user by lazy { mUserManager.user }
 
     private val mBiometricManager by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            BiometricManager.from(this@PinSettingsActivity)
-        } else {
-            null
-        }
+        BiometricManager.from(this@PinSettingsActivity)
     }
     private val useFingerprintCheckListener: (CompoundButton, Boolean) -> Unit = { _, _ -> saveCurrentSettings(null) }
     override fun getLayoutId(): Int = R.layout.activity_pin_settings
@@ -287,11 +281,9 @@ class PinSettingsActivity : BaseActivity() {
             useFingerprintToggle.isEnabled = true
         } else {
             autoLockTimerSpinner.visibility = View.GONE
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                changePinCode.foreground = ColorDrawable(ContextCompat.getColor(this, R.color.white_30))
-                autoLockTimer.foreground = ColorDrawable(ContextCompat.getColor(this, R.color.white_30))
-                useFingerprint.foreground = ColorDrawable(ContextCompat.getColor(this, R.color.white_30))
-            }
+            changePinCode.foreground = ColorDrawable(getColor(R.color.white_30))
+            autoLockTimer.foreground = ColorDrawable(getColor(R.color.white_30))
+            useFingerprint.foreground = ColorDrawable(getColor(R.color.white_30))
             changePinCode.isClickable = false
             autoLockTimer.isClickable = false
             useFingerprint.isClickable = false
@@ -304,7 +296,7 @@ class PinSettingsActivity : BaseActivity() {
         mBiometricManager?.let {
             if(it.canAuthenticate() == BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE || it.canAuthenticate() == BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE) {
                 useFingerprint.setHasValue(true)
-                useFingerprint.foreground = ColorDrawable(ContextCompat.getColor(this@PinSettingsActivity, R.color.white_30))
+                useFingerprint.foreground = ColorDrawable(getColor(R.color.white_30))
                 useFingerprint.isClickable = false
                 useFingerprintToggle.isChecked = false
                 useFingerprintToggle.isClickable = false

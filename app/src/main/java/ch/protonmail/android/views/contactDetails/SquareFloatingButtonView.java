@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -23,17 +23,15 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.RippleDrawable;
-import android.graphics.drawable.StateListDrawable;
-import android.os.Build;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.ViewGroup;
+
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 
 import ch.protonmail.android.R;
 
@@ -120,28 +118,14 @@ public class SquareFloatingButtonView extends androidx.appcompat.widget.AppCompa
         backgroundDrawable.mutate().setColorFilter(fabColor, PorterDuff.Mode.SRC_IN);
 
         Drawable selectableDrawable;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            selectableDrawable = new RippleDrawable(ColorStateList.valueOf(Color.argb(150, 255, 255, 255)),
-                    null, backgroundDrawable);
-        } else {
-            StateListDrawable stateListDrawable = new StateListDrawable();
-            stateListDrawable.setExitFadeDuration(400);
-            stateListDrawable.setAlpha(45);
-            stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable(Color.argb(150, 255, 255, 255)));
-            stateListDrawable.addState(new int[]{}, new ColorDrawable(Color.TRANSPARENT));
-
-            selectableDrawable = stateListDrawable;
-        }
+        selectableDrawable = new RippleDrawable(ColorStateList.valueOf(Color.argb(150, 255, 255, 255)),
+                null, backgroundDrawable);
 
         LayerDrawable backgroundLayers = new LayerDrawable(new Drawable[]{
                 backgroundDrawable,
                 selectableDrawable});
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            setBackground(backgroundLayers);
-        } else {
-            setBackgroundDrawable(backgroundLayers);
-        }
+        setBackground(backgroundLayers);
     }
 
     private void initFabIconColor() {
@@ -176,11 +160,7 @@ public class SquareFloatingButtonView extends androidx.appcompat.widget.AppCompa
                 : (fabSize == FAB_SIZE_MINI ? (miniSize - iconHeight) / 2 : (normalSize - iconHeight) / 2);
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            setPaddingRelative(horizontalPadding, verticalPadding, horizontalPadding * 2, verticalPadding);
-        } else {
-            setPadding(paddingSize, paddingSize, paddingSize, paddingSize);
-        }
+        setPaddingRelative(horizontalPadding, verticalPadding, horizontalPadding * 2, verticalPadding);
     }
 
     private void initFabShadow() {

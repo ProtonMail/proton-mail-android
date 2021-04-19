@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -22,7 +22,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Build;
+
 import androidx.core.app.ActivityCompat;
 
 import ch.protonmail.android.core.Constants;
@@ -62,29 +62,27 @@ public class PermissionHelper {
     }
 
     public void checkPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int permission = ActivityCompat.checkSelfPermission(mActivity, mManifestPermission);
-            boolean should = ActivityCompat.shouldShowRequestPermissionRationale(mActivity, mManifestPermission);
-            if (permission != PackageManager.PERMISSION_GRANTED) {
-                if (should) {
-                    // No explanation needed, we can request the permission.
+        int permission = ActivityCompat.checkSelfPermission(mActivity, mManifestPermission);
+        boolean should = ActivityCompat.shouldShowRequestPermissionRationale(mActivity, mManifestPermission);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            if (should) {
+                // No explanation needed, we can request the permission.
+                requestPermission();
+            } else {
+                //TWO CASE:
+                //1. first time - system up - //request window
+                SharedPreferences defaultSharedPrefs = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+                if (!defaultSharedPrefs.getBoolean(mPermissionRequestedPref, false)) {
+                    defaultSharedPrefs.edit().putBoolean(mPermissionRequestedPref, true).apply();
                     requestPermission();
                 } else {
-                    //TWO CASE:
-                    //1. first time - system up - //request window
-                    SharedPreferences defaultSharedPrefs = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
-                    if (!defaultSharedPrefs.getBoolean(mPermissionRequestedPref, false)) {
-                        defaultSharedPrefs.edit().putBoolean(mPermissionRequestedPref, true).apply();
-                        requestPermission();
-                    } else {
-                        //2. second time - user denied with never ask - go to settings
-                        // not needed as per product decision
-                        // todo show popup that the app needs permission
-                        mPermissionCallback.onPermissionDenied(_permissionType);
-                    }
+                    //2. second time - user denied with never ask - go to settings
+                    // not needed as per product decision
+                    // todo show popup that the app needs permission
+                    mPermissionCallback.onPermissionDenied(_permissionType);
                 }
-                return;
             }
+            return;
         }
 
         if (this.mPermissionCallback != null) {

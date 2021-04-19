@@ -18,6 +18,14 @@
  */
 package ch.protonmail.android.activities.fragments;
 
+import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EXTRA_RESULT_PAYMENT_TOKEN_STRING;
+import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EXTRA_RESULT_STATUS_STRING;
+import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.RESULT_CODE_ERROR;
+import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_TYPE_CARD;
+import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_TYPE_PAYPAL;
+import static ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponseKt.FIELD_HUMAN_VERIFICATION_TOKEN;
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -30,6 +38,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -93,17 +102,8 @@ import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.CollectionExtensions;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.viewmodel.BillingViewModel;
-import ch.protonmail.android.views.PMWebView;
 import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
-
-import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EXTRA_RESULT_PAYMENT_TOKEN_STRING;
-import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EXTRA_RESULT_STATUS_STRING;
-import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.RESULT_CODE_ERROR;
-import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_TYPE_CARD;
-import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_TYPE_PAYPAL;
-import static ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponseKt.FIELD_HUMAN_VERIFICATION_TOKEN;
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED;
 
 @AndroidEntryPoint
 public class BillingFragment extends CreateAccountBaseFragment {
@@ -137,7 +137,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
     @BindView(R.id.progress_container)
     View mProgressContainer;
     @BindView(R.id.fingerprint)
-    PMWebView mWebView;
+    WebView mWebView;
     @BindView(R.id.input_layout)
     View mInputFormLayout;
     @BindView(R.id.payment_methods_layout)

@@ -18,6 +18,10 @@
  */
 package ch.protonmail.android.contacts.details;
 
+import static ch.protonmail.android.usecase.create.CreateContactKt.VCARD_TEMP_FILE_NAME;
+import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_INITIALS;
+import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_PHOTO;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ClipData;
@@ -32,7 +36,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -137,10 +140,6 @@ import ezvcard.property.Url;
 import ezvcard.util.PartialDate;
 import kotlin.Unit;
 import timber.log.Timber;
-
-import static ch.protonmail.android.usecase.create.CreateContactKt.VCARD_TEMP_FILE_NAME;
-import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_INITIALS;
-import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_PHOTO;
 
 @AndroidEntryPoint
 public class ContactDetailsActivity extends BaseActivity implements AppBarLayout.OnOffsetChangedListener {
@@ -461,11 +460,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
                     // Handler used for Android 6 issue workaround
                     new Handler().postDelayed(() -> {
                         if (!isFinishing()) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                groupsDropDown.showAsDropDown(rowWrapper, 0, 0, Gravity.CENTER);
-                            } else {
-                                groupsDropDown.showAsDropDown(rowWrapper, 0, 0);
-                            }
+                            groupsDropDown.showAsDropDown(rowWrapper, 0, 0, Gravity.CENTER);
                             isDropDownShowing = true;
                         }
                     }, 100);
@@ -690,11 +685,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         boolean isEmpty = true;
         fillTopPart(vCardType0, vCardType2);
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
-            fabWeb.setBackgroundColor(getResources().getColor(R.color.new_purple));
-        } else {
-            ViewCompat.setBackgroundTintList(fabWeb, ColorStateList.valueOf(getResources().getColor(R.color.new_purple)));
-        }
+        ViewCompat.setBackgroundTintList(fabWeb, ColorStateList.valueOf(getColor(R.color.new_purple)));
 
         File vcfFile = new File(this.getExternalFilesDir(null), mDisplayName + ".vcf");
         try {
@@ -801,11 +792,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
                 }
             }
             View emailRowView = createEmailRow(emailType, email.getValue());
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
-                fabMail.setBackgroundColor(getResources().getColor(R.color.new_purple));
-            } else {
-                ViewCompat.setBackgroundTintList(fabMail, ColorStateList.valueOf(getResources().getColor(R.color.new_purple)));
-            }
+            ViewCompat.setBackgroundTintList(fabMail, ColorStateList.valueOf(getResources().getColor(R.color.new_purple)));
             fabMail.setOnClickListener(v -> {
                 final Intent intent = AppUtil.decorInAppIntent(new Intent(ContactDetailsActivity.this, ComposeMessageActivity.class));
                 intent.putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENTS, new String[]{vCardEmails.get(0).getValue()});
@@ -848,11 +835,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
                     }
                 }
                 mEncryptedDataContainer.addView(createNewEncryptedItemRow(phoneType, phone.getText(), false, 1));
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
-                    fabPhone.setBackgroundColor(getResources().getColor(R.color.new_purple));
-                } else {
-                    ViewCompat.setBackgroundTintList(fabPhone, ColorStateList.valueOf(getResources().getColor(R.color.new_purple)));
-                }
+                ViewCompat.setBackgroundTintList(fabPhone, ColorStateList.valueOf(getResources().getColor(R.color.new_purple)));
                 fabPhone.setOnClickListener(v -> {
                     String uri = "tel:" + vCardPhones.get(0).getText();
                     Intent callIntent = new Intent(Intent.ACTION_DIAL);
@@ -1086,10 +1069,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
                 null, false), pwWidth - 20, (pwHeight / 3) + 100, false);
         pw.setOutsideTouchable(true);
         pw.update();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            pw.setElevation(20);
-        }
+        pw.setElevation(20);
 
         View popupView = pw.getContentView();
         TextView noResults = popupView.findViewById(R.id.noResults);

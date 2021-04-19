@@ -21,7 +21,6 @@ package ch.protonmail.android.activities.dialogs;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -200,11 +199,7 @@ public class MoveToFolderDialogFragment extends AbstractDialogFragment implement
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if (Build.VERSION.SDK_INT > 15) {
-                    rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                } else {
-                    rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                }
+                rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 Rect r = new Rect();
                 rootView.getWindowVisibleDisplayFrame(r);
 

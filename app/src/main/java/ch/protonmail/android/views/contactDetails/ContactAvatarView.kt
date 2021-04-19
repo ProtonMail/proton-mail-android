@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -92,29 +92,16 @@ class ContactAvatarView : FrameLayout {
 
             contactInitials.text = UiUtil.extractInitials(mName.toString())
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                contactImage.setImageDrawable(
-                    resources.getDrawable(
-                        typedArray
-                            .getResourceId(
-                                R.styleable
-                                    .ContactAvatarView_contactPhoto,
-                                0
-                            ), null
-                    )
+            contactImage.setImageDrawable(
+                resources.getDrawable(
+                    typedArray
+                        .getResourceId(
+                            R.styleable
+                                .ContactAvatarView_contactPhoto,
+                            0
+                        ), null
                 )
-            } else {
-                contactImage.setImageDrawable(
-                    resources.getDrawable(
-                        typedArray
-                            .getResourceId(
-                                R.styleable
-                                    .ContactAvatarView_contactPhoto,
-                                0
-                            )
-                    )
-                )
-            }
+            )
 
             setAvatarType(
                 resources.getInteger(
@@ -127,19 +114,14 @@ class ContactAvatarView : FrameLayout {
                 )
             )
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val typedValue = TypedValue()
-                resources.getValue(
-                    typedArray.getResourceId(
-                        R.styleable.ContactAvatarView_contactPhotoCornerRadius,
-                        height / 2
-                    ), typedValue, true
-                )
-                photoCardViewWrapper.radius = typedValue.float
-            } else {
-                photoCardViewWrapper.preventCornerOverlap = false
-                photoCardViewWrapper.radius = 0.toFloat()
-            }
+            val typedValue = TypedValue()
+            resources.getValue(
+                typedArray.getResourceId(
+                    R.styleable.ContactAvatarView_contactPhotoCornerRadius,
+                    height / 2
+                ), typedValue, true
+            )
+            photoCardViewWrapper.radius = typedValue.float
 
             typedArray.recycle()
         }
@@ -151,11 +133,7 @@ class ContactAvatarView : FrameLayout {
         contactImageLP.height = h
         contactImage.layoutParams = contactImageLP
         contactImage.layoutParams = contactImageLP
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setPhotoCornerRadius((h / 2).toFloat())
-        } else {
-            setPhotoCornerRadius(0.toFloat())
-        }
+        setPhotoCornerRadius((h / 2).toFloat())
         val photoCardViewWrapperLP = photoCardViewWrapper.layoutParams as FrameLayout.LayoutParams
         photoCardViewWrapperLP.width = w
         photoCardViewWrapperLP.height = h

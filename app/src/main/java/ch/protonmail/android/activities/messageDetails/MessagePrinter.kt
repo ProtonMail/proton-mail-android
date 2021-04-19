@@ -98,11 +98,7 @@ internal class MessagePrinter(
             val printAdapter: PrintDocumentAdapter
             if (message != null) {
                 val jobName = resources.getString(R.string.app_name) + message.subject!!
-                printAdapter = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    view.createPrintDocumentAdapter(jobName)
-                } else {
-                    view.createPrintDocumentAdapter()
-                }
+                printAdapter = view.createPrintDocumentAdapter(jobName)
                 try {
                     printManager.print(jobName, printAdapter, PrintAttributes.Builder().build())
                 } catch (e: Exception) {

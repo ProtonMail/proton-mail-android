@@ -24,7 +24,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Typeface
-import android.os.Build
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
 import android.view.LayoutInflater
@@ -54,7 +53,6 @@ import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
-import ch.protonmail.android.views.PMWebView
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.AttachmentsView
 import ch.protonmail.android.views.messageDetails.LoadContentButton
@@ -268,7 +266,7 @@ class MessageDetailsAdapter(
             // Looks like some devices are not able to create a WebView in some conditions.
             // Show Toast and redirect to the proper page.
             val webView = try {
-                PMWebView(context)
+                WebView(context)
             } catch (ignored: Throwable) {
                 (context as FragmentActivity).redirectToChrome()
                 return
@@ -373,11 +371,7 @@ class MessageDetailsAdapter(
         webView.webViewClient = pmWebViewClient
         webView.tag = "messageWebView"
         val webSettings = webView.settings
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            webSettings.layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
-        } else {
-            webSettings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
-        }
+        webSettings.layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
         webSettings.useWideViewPort = true
         webSettings.loadWithOverviewMode = true
         webSettings.allowFileAccess = false
