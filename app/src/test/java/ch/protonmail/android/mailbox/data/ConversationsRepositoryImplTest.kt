@@ -53,159 +53,77 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     private val testUserId = Id("id")
 
     private val conversationsRemote = ConversationsResponse(
-
         total = 5,
         listOf(
-            ConversationApiModel(
-                id = "conversation5",
-                order = 0,
-                subject = "subject5",
-                listOf(),
-                listOf(),
-                0,
-                0,
-                0,
-                0L,
-                0,
-                labels = listOf(
+            getConversationApiModel(
+                "conversation5", 0, "subject5",
+                listOf(
                     LabelContextApiModel("0", 0, 1, 0, 0, 0),
                     LabelContextApiModel("7", 0, 1, 3, 0, 0)
                 )
             ),
-            ConversationApiModel(
-                id = "conversation4",
-                order = 2,
-                subject = "subject4",
-                listOf(),
-                listOf(),
-                0,
-                0,
-                0,
-                0L,
-                0,
-                labels = listOf(
+            getConversationApiModel(
+                "conversation4", 2, "subject4",
+                listOf(
                     LabelContextApiModel("0", 0, 1, 1, 0, 0)
                 )
             ),
-            ConversationApiModel(
-                id = "conversation3",
-                order = 3,
-                subject = "subject3",
-                listOf(),
-                listOf(),
-                0,
-                0,
-                0,
-                0L,
-                0,
-                labels = listOf(
+            getConversationApiModel(
+                "conversation3", 3, "subject3",
+                listOf(
                     LabelContextApiModel("0", 0, 1, 1, 0, 0),
                     LabelContextApiModel("7", 0, 1, 1, 0, 0)
                 )
             ),
-            ConversationApiModel(
-                id = "conversation2",
-                order = 1,
-                subject = "subject2",
-                listOf(),
-                listOf(),
-                0,
-                0,
-                0,
-                0L,
-                0,
-                labels = listOf(
+            getConversationApiModel(
+                "conversation2", 1, "subject2",
+                listOf(
                     LabelContextApiModel("0", 0, 1, 1, 0, 0)
                 )
             ),
-            ConversationApiModel(
-                id = "conversation1",
-                order = 4,
-                subject = "subject1",
-                listOf(),
-                listOf(),
-                0,
-                0,
-                0,
-                0L,
-                0,
-                labels = listOf(
+            getConversationApiModel(
+                "conversation1", 4, "subject1",
+                listOf(
                     LabelContextApiModel("0", 0, 1, 4, 0, 0)
                 )
             )
         )
     )
 
-    private val conversationsOrdered =
-        listOf(
-            Conversation(
-                id = "conversation1",
-                subject = "subject1",
-                listOf(),
-                listOf(),
-                0,
-                0,
-                0,
-                0,
-                labels = listOf(
-                    LabelContext("0", 0, 1, 4, 0, 0)
-                )
-            ),
-            Conversation(
-                id = "conversation3",
-                subject = "subject3",
-                listOf(),
-                listOf(),
-                0,
-                0,
-                0,
-                0,
-                labels = listOf(
-                    LabelContext("0", 0, 1, 1, 0, 0),
-                    LabelContext("7", 0, 1, 1, 0, 0)
-                )
-            ),
-            Conversation(
-                id = "conversation4",
-                subject = "subject4",
-                listOf(),
-                listOf(),
-                0,
-                0,
-                0,
-                0,
-                labels = listOf(
-                    LabelContext("0", 0, 1, 1, 0, 0)
-                )
-            ),
-            Conversation(
-                id = "conversation2",
-                subject = "subject2",
-                listOf(),
-                listOf(),
-                0,
-                0,
-                0,
-                0,
-                labels = listOf(
-                    LabelContext("0", 0, 1, 1, 0, 0)
-                )
-            ),
-            Conversation(
-                id = "conversation5",
-                subject = "subject5",
-                listOf(),
-                listOf(),
-                0,
-                0,
-                0,
-                0,
-                labels = listOf(
-                    LabelContext("0", 0, 1, 0, 0, 0),
-                    LabelContext("7", 0, 1, 3, 0, 0)
-                )
+    private val conversationsOrdered = listOf(
+        getConversation(
+            "conversation1", "subject1",
+            listOf(
+                LabelContext("0", 0, 1, 4, 0, 0)
+            )
+        ),
+        getConversation(
+            "conversation3", "subject3",
+            listOf(
+                LabelContext("0", 0, 1, 1, 0, 0),
+                LabelContext("7", 0, 1, 1, 0, 0)
+            )
+        ),
+        getConversation(
+            "conversation4", "subject4",
+            listOf(
+                LabelContext("0", 0, 1, 1, 0, 0)
+            )
+        ),
+        getConversation(
+            "conversation2", "subject2",
+            listOf(
+                LabelContext("0", 0, 1, 1, 0, 0)
+            )
+        ),
+        getConversation(
+            "conversation5", "subject5",
+            listOf(
+                LabelContext("0", 0, 1, 0, 0, 0),
+                LabelContext("7", 0, 1, 3, 0, 0)
             )
         )
+    )
 
     @MockK
     private lateinit var conversationDao: ConversationDao
@@ -297,5 +215,40 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coVerify { conversationDao.insertOrUpdate(*expectedConversations.toTypedArray()) }
         }
     }
+
+    private fun getConversation(
+        id: String,
+        subject: String,
+        labels: List<LabelContext>
+    ) = Conversation(
+        id = id,
+        subject = subject,
+        listOf(),
+        listOf(),
+        0,
+        0,
+        0,
+        0,
+        labels = labels
+    )
+
+    private fun getConversationApiModel(
+        id: String,
+        order: Long,
+        subject: String,
+        labels: List<LabelContextApiModel>
+    ) = ConversationApiModel(
+        id = id,
+        order = order,
+        subject = subject,
+        listOf(),
+        listOf(),
+        0,
+        0,
+        0,
+        0L,
+        0,
+        labels = labels
+    )
 
 }
