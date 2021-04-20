@@ -41,9 +41,11 @@ import ch.protonmail.android.uitests.testsHelper.TestData.pdfFile
 import ch.protonmail.android.uitests.testsHelper.TestData.pngFile
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.zipFile
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import me.proton.core.test.android.instrumented.intentutils.MimeTypes
 import org.hamcrest.CoreMatchers.not
+import org.junit.experimental.categories.Category
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -65,6 +67,7 @@ class AttachmentsTests : BaseTest() {
             .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, null))
     }
 
+    @TestId("53707")
     @Test
     fun loadInlinePngImage() {
         val messageSubject = "One inline image and one attachment"
@@ -77,6 +80,7 @@ class AttachmentsTests : BaseTest() {
             .verify { loadEmbeddedImagesButtonIsGone() }
     }
 
+    @TestId("1336")
     @Test
     fun sharePngFile() {
         val to = internalEmailTrustedKeys.email
@@ -99,6 +103,7 @@ class AttachmentsTests : BaseTest() {
             .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.png) }
     }
 
+    @TestId("1354")
     @Test
     fun shareJpegFile() {
         val to = internalEmailTrustedKeys.email
@@ -121,6 +126,7 @@ class AttachmentsTests : BaseTest() {
             .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.jpeg) }
     }
 
+    @TestId("1338")
     @Test
     fun shareDocxFile() {
         val to = internalEmailTrustedKeys.email
@@ -143,6 +149,7 @@ class AttachmentsTests : BaseTest() {
             .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.application.docx) }
     }
 
+    @TestId("1334")
     @Test
     fun shareZipFile() {
         val to = internalEmailTrustedKeys.email
@@ -165,6 +172,7 @@ class AttachmentsTests : BaseTest() {
             .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.application.zip) }
     }
 
+    @TestId("53709")
     @Test
     fun sharePdfFile() {
         val to = internalEmailTrustedKeys.email
@@ -187,6 +195,7 @@ class AttachmentsTests : BaseTest() {
             .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.application.pdf) }
     }
 
+    @TestId("1356")
     @Test
     fun sharePngFileWithPinUnlocked() {
         val to = internalEmailTrustedKeys.email
@@ -217,6 +226,7 @@ class AttachmentsTests : BaseTest() {
             .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.png) }
     }
 
+    @TestId("1355")
     @Test
     fun sharePngFileWithPinLocked() {
         val to = internalEmailTrustedKeys.email
@@ -248,6 +258,7 @@ class AttachmentsTests : BaseTest() {
             .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.png) }
     }
 
+    @TestId("29717")
     @Test
     fun sendMessageToInternalTrustedContactWithCameraCaptureAttachment() {
         val to = internalEmailTrustedKeys.email
@@ -260,6 +271,7 @@ class AttachmentsTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @TestId("29718")
     @Test
     fun sendMessageToInternalNotTrustedContactWithAttachment() {
         val to = internalEmailNotTrustedKeys.email
@@ -272,6 +284,7 @@ class AttachmentsTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @TestId("29719")
     @Test
     fun sendMessageToInternalContactWithTwoAttachments() {
         val to = internalEmailTrustedKeys.email
@@ -300,6 +313,7 @@ class AttachmentsTests : BaseTest() {
     }
 
     @TestId("21091")
+    @Test
     fun sendExternalMessageWithPasswordExpiryTimeAndAttachment() {
         val to = externalOutlookPGPSigned.email
         val password = editedPassword
@@ -315,6 +329,7 @@ class AttachmentsTests : BaseTest() {
     }
 
     @TestId("15539")
+    @Category(SmokeTest::class)
     @Test
     fun sendExternalMessageWithOneAttachment() {
         val to = externalOutlookPGPSigned.email
@@ -324,7 +339,9 @@ class AttachmentsTests : BaseTest() {
             .sendMessageCameraCaptureAttachment(to, subject, body)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(subject) }
+            .clickMessageBySubject(subject)
+            .expandAttachments()
+            .verify { messageContainsOneAttachment() }
     }
 
     @TestId("15540")

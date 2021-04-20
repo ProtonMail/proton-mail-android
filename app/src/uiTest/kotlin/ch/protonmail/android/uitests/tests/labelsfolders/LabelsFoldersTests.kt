@@ -27,20 +27,21 @@ import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.StringUtils
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
-import org.junit.Test
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
+import kotlin.test.Test
 import org.junit.experimental.categories.Category
 
 class LabelsFoldersTests : BaseTest() {
 
     private val loginRobot = LoginRobot()
 
+    @TestId("1458")
     @Test
     fun createRenameAndDeleteFolderFromInbox() {
         val folderName = StringUtils.getEmailString()
         val newFolderName = StringUtils.getEmailString()
         loginRobot
             .loginUser(onePassUser)
-            .refreshMessageList()
             .clickMessageByPosition(1)
             .openFoldersModal()
             .clickCreateFolder()
@@ -58,6 +59,7 @@ class LabelsFoldersTests : BaseTest() {
             .verify { folderWithNameDoesNotExist(newFolderName) }
     }
 
+    @TestId("1459")
     @Category(SmokeTest::class)
     @Test
     fun addMessageToCustomFolderFromSent() {
@@ -75,18 +77,16 @@ class LabelsFoldersTests : BaseTest() {
             .verify { messageWithSubjectExists(selectedMessageSubject) }
     }
 
+    @TestId("1441")
     @Test
     fun createRenameAndDeleteLabelFromInbox() {
         val labelName = StringUtils.getAlphaNumericStringWithSpecialCharacters()
         val newLabelName = StringUtils.getAlphaNumericStringWithSpecialCharacters()
         loginRobot
             .loginUser(onePassUser)
-            .refreshMessageList()
             .clickMessageByPosition(1)
             .openLabelsModal()
             .addLabel(labelName)
-            .closeLabelModal()
-            .openLabelsModal()
             .selectLabelByName(labelName)
             .apply()
             .navigateUpToInbox()
@@ -96,10 +96,11 @@ class LabelsFoldersTests : BaseTest() {
             .foldersAndLabels()
             .labelsManager()
             .editLabel(labelName, newLabelName, 2)
-            .deleteLabel(labelName)
-            .verify { labelWithNameDoesNotExist(labelName) }
+            .deleteLabel(newLabelName)
+            .verify { labelWithNameDoesNotExist(newLabelName) }
     }
 
+    @TestId("1438")
     @Category(SmokeTest::class)
     @Test
     fun applyLabelToMessageFromSent() {
@@ -120,7 +121,8 @@ class LabelsFoldersTests : BaseTest() {
             .verify { messageWithSubjectExists(selectedMessageSubject) }
     }
 
-    // Enable after MAILAND-1280 is fixed
+    @TestId("1440")
+    @Test
     fun applyLabelToMultipleMessagesFromSent() {
         val labelName = "Label 1"
         loginRobot
@@ -141,6 +143,7 @@ class LabelsFoldersTests : BaseTest() {
             }
     }
 
+    @TestId("38407")
     @Test
     fun applyLabelToMessageAndArchive() {
         val labelName = "Label 1"

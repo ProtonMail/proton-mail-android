@@ -24,6 +24,7 @@ import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import org.junit.experimental.categories.Category
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -43,6 +44,7 @@ class AccountSettingsTests : BaseTest() {
             .openUserAccountSettings(onePassUser)
     }
 
+    @TestId("30811")
     @Test
     fun navigateToSubscription() {
         accountSettingsRobot
@@ -50,6 +52,7 @@ class AccountSettingsTests : BaseTest() {
             .verify { subscriptionViewShown() }
     }
 
+    @TestId("1657")
     @Category(SmokeTest::class)
     @Test
     fun changeRecoveryEmail() {
@@ -59,6 +62,7 @@ class AccountSettingsTests : BaseTest() {
             .verify { recoveryEmailChangedTo(TestData.twoPassUser.email) }
     }
 
+    @TestId("30812")
     @Test
     fun navigateToDefaultEmailAddress() {
         accountSettingsRobot
@@ -67,14 +71,16 @@ class AccountSettingsTests : BaseTest() {
             .verify { defaultEmailAddressViewShown() }
     }
 
+    @TestId("1663")
     @Test
     fun changeDisplayName() {
-        val newDisplayName = TestData.onePassUser.name + System.currentTimeMillis()
+        val newDisplayName = onePassUser.name + System.currentTimeMillis()
         accountSettingsRobot
             .displayNameAndSignature()
             .setDisplayNameTextTo(newDisplayName)
     }
 
+    @TestId("1665")
     @Test
     fun switchSignatureToggleOn() {
         accountSettingsRobot
@@ -83,6 +89,7 @@ class AccountSettingsTests : BaseTest() {
             .verify { signatureToggleCheckedStateIs(true) }
     }
 
+    @TestId("1666")
     @Test
     fun switchSignatureToggleOff() {
         accountSettingsRobot
@@ -91,6 +98,7 @@ class AccountSettingsTests : BaseTest() {
             .verify { signatureToggleCheckedStateIs(false) }
     }
 
+    @TestId("1667")
     @Test
     fun switchMobileSignatureToggleOn() {
         accountSettingsRobot
@@ -99,23 +107,29 @@ class AccountSettingsTests : BaseTest() {
             .verify { mobileSignatureToggleCheckedStateIs(true) }
     }
 
+    @TestId("1668")
     @Test
-    fun switchMobileSignatureToggleOn3() {
+    fun switchMobileSignatureToggleOff() {
         accountSettingsRobot
-            .privacy()
-            .enableRequestLinkConfirmation()
+            .displayNameAndSignature()
+            .setMobileSignatureToggleTo(false)
+            .verify { signatureToggleCheckedStateIs(false) }
     }
 
+    @TestId("1478")
+    @Category(SmokeTest::class)
+    @Test
     fun changeLoginPassword() {
         accountSettingsRobot
             .passwordManagement()
-            .changePassword(TestData.twoPassUser)
+            .changePassword(onePassUser)
             .verify {
-                accountSettingsOpened()
                 passwordChanged()
+                accountSettingsOpened()
             }
     }
 
+//    @TestId("1480")
 //    //TODO enable when multiple user login per test class will be supported
 //    fun changeMailboxPassword() {
 //        accountSettingsRobot

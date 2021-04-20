@@ -18,18 +18,24 @@
  */
 package ch.protonmail.android.uitests.tests.suites
 
+import ch.protonmail.android.uitests.tests.composer.AttachmentsTests
 import ch.protonmail.android.uitests.tests.composer.ForwardMessageTests
 import ch.protonmail.android.uitests.tests.composer.ReplyToMessageTests
 import ch.protonmail.android.uitests.tests.composer.SendNewMessageTests
 import ch.protonmail.android.uitests.tests.contacts.ContactsTests
+import ch.protonmail.android.uitests.tests.drafts.DraftsTests
 import ch.protonmail.android.uitests.tests.inbox.InboxTests
 import ch.protonmail.android.uitests.tests.inbox.SearchTests
 import ch.protonmail.android.uitests.tests.labelsfolders.LabelsFoldersTests
 import ch.protonmail.android.uitests.tests.login.LoginTests
 import ch.protonmail.android.uitests.tests.manageaccounts.MultiuserManagementTests
 import ch.protonmail.android.uitests.tests.menu.MenuTests
+import ch.protonmail.android.uitests.tests.messagedetail.MessageDetailTests
 import ch.protonmail.android.uitests.tests.settings.AccountSettingsTests
+import ch.protonmail.android.uitests.tests.settings.PrivacyAccountSettingsTests
 import ch.protonmail.android.uitests.tests.settings.SettingsTests
+import ch.protonmail.android.uitests.tests.settings.SwipeGesturesTests
+import ch.protonmail.android.uitests.tests.spam.SpamTests
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.experimental.categories.Categories
 import org.junit.runner.RunWith
@@ -38,17 +44,23 @@ import org.junit.runners.Suite
 @RunWith(Categories::class)
 @Categories.IncludeCategory(SmokeTest::class)
 @Suite.SuiteClasses(
-    AccountSettingsTests::class,
-    ForwardMessageTests::class,
+    AttachmentsTests::class,
     SendNewMessageTests::class,
+    ForwardMessageTests::class,
     ReplyToMessageTests::class,
     ContactsTests::class,
+    DraftsTests::class,
     InboxTests::class,
+    SearchTests::class,
     LabelsFoldersTests::class,
     LoginTests::class,
     MultiuserManagementTests::class,
     MenuTests::class,
+    MessageDetailTests::class,
+    AccountSettingsTests::class,
+    PrivacyAccountSettingsTests::class,
     SettingsTests::class,
-    SearchTests::class
+    SwipeGesturesTests::class,
+    SpamTests::class
 )
 class SmokeSuite

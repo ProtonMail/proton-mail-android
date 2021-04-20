@@ -25,7 +25,9 @@ import ch.protonmail.android.uitests.testsHelper.TestData.fwSubject
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.updatedSubject
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
+import org.junit.experimental.categories.Category
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -64,6 +66,7 @@ class ForwardMessageTests : BaseTest() {
     }
 
     @TestId("1950")
+    @Category(SmokeTest::class)
     @Test
     fun forwardMessageWithAttachment() {
         val to = internalEmailTrustedKeys.email
@@ -78,7 +81,9 @@ class ForwardMessageTests : BaseTest() {
             .forwardMessage(to, body)
             .navigateUpToSent()
             .refreshMessageList()
-            .verify { messageWithSubjectExists(fwSubject(subject)) }
+            .clickMessageBySubject(fwSubject(subject))
+            .expandAttachments()
+            .verify { messageContainsOneAttachment() }
     }
 
     @TestId("1361")

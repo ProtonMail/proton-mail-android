@@ -35,7 +35,7 @@ import me.proton.core.test.android.instrumented.CoreRobot
 class SearchRobot : CoreRobot {
 
     fun searchMessageText(subject: String): SearchRobot {
-        view.withId(R.id.search_src_text).typeText(subject).pressImeActionBtn()
+        view.withId(R.id.search_src_text).typeText(subject).wait().pressImeActionBtn()
         return this
     }
 

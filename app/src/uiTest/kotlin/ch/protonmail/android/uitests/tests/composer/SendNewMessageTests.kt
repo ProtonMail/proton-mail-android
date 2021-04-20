@@ -102,6 +102,7 @@ class SendNewMessageTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @TestId("29720")
     @Test
     fun sendMessageTOandCC() {
         val to = internalEmailTrustedKeys.email
@@ -115,6 +116,7 @@ class SendNewMessageTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @TestId("29721")
     @Category(SmokeTest::class)
     @Test
     fun sendMessageTOandCCandBCC() {
@@ -175,7 +177,7 @@ class SendNewMessageTests : BaseTest() {
     }
 
     @TestId("1542")
-    //TODO - fix failing test
+    @Test
     fun sendMessageWithPasswordToExternalContact() {
         val to = externalOutlookPGPSigned.email
         val password = editedPassword
@@ -190,7 +192,7 @@ class SendNewMessageTests : BaseTest() {
     }
 
     @TestId("1548")
-    //TODO - enable back after MAILAND-789 is fixed
+    @Test
     fun sendExternalMessageWithExpiryTime() {
         val to = externalGmailPGPEncrypted.email
         loginRobot

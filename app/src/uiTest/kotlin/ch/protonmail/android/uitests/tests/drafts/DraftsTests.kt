@@ -147,7 +147,7 @@ class DraftsTests : BaseTest() {
     }
 
     @TestId("1382")
-    // Disabled
+    @Test
     fun openDraftFromSearch() {
         loginRobot
             .loginUser(onePassUser)

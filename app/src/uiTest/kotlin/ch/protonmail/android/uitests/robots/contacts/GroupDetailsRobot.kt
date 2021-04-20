@@ -20,15 +20,15 @@ package ch.protonmail.android.uitests.robots.contacts
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
-import ch.protonmail.android.uitests.testsHelper.uiactions.click
+import me.proton.core.test.android.instrumented.CoreRobot
 
 /**
  * [GroupDetailsRobot] class contains actions and verifications for Contacts functionality.
  */
-open class GroupDetailsRobot {
+open class GroupDetailsRobot : CoreRobot {
 
     fun edit(): AddContactGroupRobot {
-        UIActions.id.clickViewWithId(R.id.editFab)
+        view.withId(R.id.editFab).click()
         return AddContactGroupRobot()
     }
 
@@ -38,19 +38,18 @@ open class GroupDetailsRobot {
     }
 
     fun navigateUp(): ContactsRobot {
-        UIActions.wait.forViewWithId(R.id.editFab)
+        view.withId(R.id.editFab).wait().checkDisplayed()
         UIActions.system.clickHamburgerOrUpButtonInAnimatedToolbar()
         return ContactsRobot()
     }
 
     private fun delete(): GroupDetailsRobot {
-        UIActions.wait.forViewWithId(R.id.contactEmailsRecyclerView)
-        UIActions.wait.forViewWithId(R.id.action_delete).click()
+        view.withId(R.id.action_delete).wait().checkDisplayed().click()
         return this
     }
 
     private fun confirmDeletion(): ContactsRobot {
-        UIActions.wait.forViewWithId(android.R.id.button1).click()
+        view.withId(android.R.id.button1).wait().checkDisplayed().click()
         return ContactsRobot()
     }
 

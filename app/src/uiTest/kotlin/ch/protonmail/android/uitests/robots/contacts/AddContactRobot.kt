@@ -52,6 +52,7 @@ class AddContactRobot {
 
     private fun save(): ContactsRobot {
         UIActions.id.clickViewWithId(R.id.action_save)
+        UIActions.wait.forToastWithText(R.string.contact_saved)
         return ContactsRobot()
     }
 }
