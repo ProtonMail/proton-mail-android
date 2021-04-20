@@ -42,14 +42,12 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.getSystemService
 import androidx.core.os.bundleOf
-import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
-import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelCreationListener
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelsChangeListener
 import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment
@@ -590,12 +588,9 @@ internal class MessageDetailsActivity :
         message: Message? = viewModel.decryptedMessageData.value
     ) {
         requireNotNull(message)
-        val attachedLabels = HashSet(message.labelIDsNotIncludingLocations)
-        val manageLabelsDialogFragment = ManageLabelsDialogFragment.newInstance(attachedLabels, null, null)
-        supportFragmentManager.commit(allowStateLoss = true) {
-            add(manageLabelsDialogFragment, manageLabelsDialogFragment.fragmentKey)
-            addToBackStack(null)
-        }
+
+        ManageLabelsActionSheet.newInstance(message.labelIDsNotIncludingLocations)
+            .show(supportFragmentManager, ManageLabelsActionSheet::class.qualifiedName)
     }
 
     override fun onLabelsChecked(
@@ -813,14 +808,13 @@ internal class MessageDetailsActivity :
                 executeMessageAction(messageAction, message)
             }
             messageDetailsActionsView.setOnMoreActionClickListener {
-                val messageDetailsActionSheet = MessageDetailsActionSheet().apply {
-                    arguments = bundleOf(
-                        MessageDetailsActionSheet.EXTRA_ARG_TITLE to getCurrentSubject(),
-                        MessageDetailsActionSheet.EXTRA_ARG_SUBTITLE to getMessagesCount()
-                    )
-                }
-                messageDetailsActionSheet.show(supportFragmentManager, MessageDetailsActionSheet::class.qualifiedName)
+                MessageDetailsActionSheet.newInstance(
+                    getCurrentSubject(),
+                    getMessagesCount()
+                )
+                    .show(supportFragmentManager, MessageDetailsActionSheet::class.qualifiedName)
             }
+
             progress.visibility = View.GONE
             invalidateOptionsMenu()
             viewModel.renderingPassed = true

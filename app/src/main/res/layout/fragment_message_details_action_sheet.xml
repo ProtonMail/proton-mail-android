@@ -43,7 +43,7 @@
                 layout="@layout/layout_message_details_actions_sheet_buttons" />
 
             <TextView
-                android:id="@+id/detailsActionsStarUnstarTextView"
+                android:id="@+id/details_actions_star_unstar_text_view"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                 app:drawableStartCompat="@drawable/ic_star_24dp" />
 
             <TextView
-                android:id="@+id/detailsActionsTrashTextView"
+                android:id="@+id/details_actions_trash_text_view"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
                 app:drawableStartCompat="@drawable/ic_trash_24dp" />
 
             <TextView
-                android:id="@+id/detailsActionsMoveToArchiveTextView"
+                android:id="@+id/details_actions_move_to_archive_text_view"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                 app:drawableStartCompat="@drawable/ic_archive_24dp" />
 
             <TextView
-                android:id="@+id/detailsActionsMoveToSpamTextView"
+                android:id="@+id/details_actions_move_to_spam_text_view"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
                 android:text="@string/personalize" />
 
             <TextView
-                android:id="@+id/detailsActionsLabelAsTextView"
+                android:id="@+id/details_actions_label_as_text_view"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
                 app:drawableStartCompat="@drawable/ic_label_24dp" />
 
             <TextView
-                android:id="@+id/detailsActionsMoveToTextView"
+                android:id="@+id/details_actions_move_to_text_view"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -107,7 +107,7 @@
                 android:text="@string/others" />
 
             <TextView
-                android:id="@+id/detailsActionsReportPhishingTextView"
+                android:id="@+id/details_actions_report_phishing_text_view"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -115,7 +115,7 @@
                 app:drawableStartCompat="@drawable/ic_phishing" />
 
             <TextView
-                android:id="@+id/detailsActionsPrintTextView"
+                android:id="@+id/details_actions_print_text_view"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

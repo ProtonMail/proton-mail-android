@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import ch.protonmail.android.R
@@ -65,8 +66,8 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         bottomSheetDialog.setOnShowListener { dialogInterface ->
             val dialog = dialogInterface as BottomSheetDialog
             val bottomSheet: View? = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet)
-            val headerView = binding.includeLayoutActionSheetHeader.detailsActionsTitleTextView
-            val subHeaderView = binding.includeLayoutActionSheetHeader.detailsActionsSubTitleTextView
+            val headerView = binding.includeLayoutActionSheetHeader.actionsSheetTitleTextView
+            val subHeaderView = binding.includeLayoutActionSheetHeader.actionsSheetSubTitleTextView
             val targetOffsetSize = resources.getDimensionPixelSize(R.dimen.padding_xxl)
             if (bottomSheet != null) {
                 val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
@@ -112,13 +113,13 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
     ) = with(binding) {
         val title = arguments?.getString(EXTRA_ARG_TITLE)
         if (!title.isNullOrEmpty()) {
-            detailsActionsTitleTextView.text = title
+            actionsSheetTitleTextView.text = title
         }
         val subtitle = arguments?.getString(EXTRA_ARG_SUBTITLE)
         if (!subtitle.isNullOrEmpty()) {
-            detailsActionsSubTitleTextView.text = subtitle
+            actionsSheetSubTitleTextView.text = subtitle
         }
-        detailsActionsCloseView.setOnClickListener {
+        actionsSheetCloseView.setOnClickListener {
             dismiss()
         }
     }
@@ -156,7 +157,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         detailsActionsTrashTextView.setOnClickListener {
             detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_TRASH)
             dismiss()
-            // This is a bt crazy requirement but designers do not know what to do about it
+            // This is a bit crazy requirement but designers do not know what to do about it
             // so we have to dismiss 2 screens at the time and go to the main list here
             // this should be thought through and improved
             (activity as MessageDetailsActivity).onBackPressed()
@@ -164,7 +165,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         detailsActionsMoveToArchiveTextView.setOnClickListener {
             detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_ARCHIVE)
             dismiss()
-            // This is a bt crazy requirement but designers do not know what to do about it
+            // This is a bit crazy requirement but designers do not know what to do about it
             // so we have to dismiss 2 screens at the time and go to the main list here
             // this should be thought through and improved
             (activity as MessageDetailsActivity).onBackPressed()
@@ -172,7 +173,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         detailsActionsMoveToSpamTextView.setOnClickListener {
             detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_SPAM)
             dismiss()
-            // This is a bt crazy requirement but designers do not know what to do about it
+            // This is a bit crazy requirement but designers do not know what to do about it
             // so we have to dismiss 2 screens at the time and go to the main list here
             // this should be thought through and improved
             (activity as MessageDetailsActivity).onBackPressed()
@@ -197,13 +198,25 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun setCloseIconVisibility(shouldBeVisible: Boolean) {
-        binding.includeLayoutActionSheetHeader.detailsActionsCloseView.isVisible = shouldBeVisible
+        binding.includeLayoutActionSheetHeader.actionsSheetCloseView.isVisible = shouldBeVisible
     }
 
     companion object {
 
-        const val EXTRA_ARG_TITLE = "arg_message_details_actions_title"
-        const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
+        private const val EXTRA_ARG_TITLE = "arg_message_details_actions_title"
+        private const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
         private const val HEADER_SLIDE_THRESHOLD = 0.8f
+
+        fun newInstance(
+            title: CharSequence,
+            subTitle: String
+        ): MessageDetailsActionSheet {
+            return MessageDetailsActionSheet().apply {
+                arguments = bundleOf(
+                    EXTRA_ARG_TITLE to title,
+                    EXTRA_ARG_SUBTITLE to subTitle
+                )
+            }
+        }
     }
 }

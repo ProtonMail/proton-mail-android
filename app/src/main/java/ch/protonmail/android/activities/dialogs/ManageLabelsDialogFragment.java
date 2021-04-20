@@ -64,6 +64,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 import static ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState;
 
+@Deprecated //"Replaced with ManageLabelsActionSheet"
 @AndroidEntryPoint
 public class ManageLabelsDialogFragment extends AbstractDialogFragment implements AdapterView.OnItemClickListener {
 
