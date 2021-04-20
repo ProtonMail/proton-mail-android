@@ -265,7 +265,7 @@ class MailboxViewModel @Inject constructor(
             )
         }
 
-        return getLiveDataByLocation(location, labelId).switchMap {
+        return getMessagesByLocation(location, labelId).switchMap {
             liveData { emit(messagesToMailboxItems(it)) }
         }
     }
@@ -403,7 +403,7 @@ class MailboxViewModel @Inject constructor(
         return ApplyRemoveLabels(checkedLabelIds, labelsToRemove)
     }
 
-    private fun getLiveDataByLocation(
+    private fun getMessagesByLocation(
         mailboxLocation: Constants.MessageLocationType,
         labelId: String?
     ): LiveData<List<Message>> {

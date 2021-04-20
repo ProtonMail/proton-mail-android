@@ -419,7 +419,7 @@ class MailboxActivity :
     }
 
     private val setupUpLimitReachedObserver = Observer { limitReached: Event<Boolean> ->
-        if (limitReached.getContentIfNotHandled() == true ) {
+        if (limitReached.getContentIfNotHandled() == true) {
             if (storageLimitApproachingAlertDialog != null) {
                 storageLimitApproachingAlertDialog!!.dismiss()
                 storageLimitApproachingAlertDialog = null
@@ -1313,7 +1313,7 @@ class MailboxActivity :
 
     /* SwipeRefreshLayout.OnRefreshListener */
     override fun onRefresh() {
-      setRefreshing(true)
+        setRefreshing(true)
         syncUUID = UUID.randomUUID().toString()
         reloadMessageCounts()
         fetchMessages(
@@ -1322,7 +1322,7 @@ class MailboxActivity :
             true,
             syncUUID,
             true
-            )
+        )
     }
 
     private fun setupNewMessageLocation(newLocation: Int) {
