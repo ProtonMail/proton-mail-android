@@ -21,13 +21,18 @@ package ch.protonmail.android.mailbox.data
 
 import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
+import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.data.remote.model.LabelContextApiModel
 import ch.protonmail.android.mailbox.domain.Conversation
+import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import io.mockk.MockKAnnotations
@@ -45,6 +50,7 @@ import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Before
 import org.junit.Test
+import java.io.IOException
 import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
@@ -213,6 +219,70 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val expectedConversations = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
             coVerify { api.fetchConversations(parameters, testUserId) }
             coVerify { conversationDao.insertOrUpdate(*expectedConversations.toTypedArray()) }
+        }
+    }
+
+    @Test
+    fun verifyGetConversationsEmitsErrorAndReturnsLocalDataWhenFetchingFromApiFails() = runBlocking {
+        // given
+        val parameters = GetConversationsParameters(
+            page = 0,
+            pageSize = 5,
+            labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
+        )
+
+        val senders = listOf(
+            MessageSender("sender", "sender@pm.me")
+        )
+        val recipients = listOf(
+            MessageRecipient("recipient", "recipient@pm.ch")
+        )
+        coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(
+            listOf(
+                ConversationDatabaseModel(
+                    "conversationId234423",
+                    3,
+                    "userID",
+                    "subject28348",
+                    senders,
+                    recipients,
+                    3,
+                    1,
+                    4,
+                    0,
+                    0,
+                    listOf(LabelContextDatabaseModel("labelId123", 1, 0, 0, 0, 0))
+                )
+            )
+        )
+        coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
+        coEvery { api.fetchConversations(any(), testUserId) } throws IOException("Api call failed")
+
+        // when
+        conversationsRepository.getConversations(parameters, testUserId).test {
+            // Then
+            val actualLocalItems = expectItem() as DataResult.Success
+            assertEquals(ResponseSource.Local, actualLocalItems.source)
+            val expectedLocalConversations = listOf(
+                Conversation(
+                    "conversationId234423",
+                    "subject28348",
+                    listOf(Correspondent("sender", "sender@pm.me")),
+                    listOf(Correspondent("recipient", "recipient@pm.ch")),
+                    3,
+                    1,
+                    4,
+                    0,
+                    listOf(LabelContext("labelId123", 1, 0, 0, 0, 0))
+                )
+            )
+            assertEquals(expectedLocalConversations, actualLocalItems.value)
+
+            val actualProcessingResult = expectItem() as DataResult.Processing
+            assertEquals(ResponseSource.Remote, actualProcessingResult.source)
+
+            val actualRemoteItems = expectItem() as DataResult.Error
+            assertEquals(ResponseSource.Remote, actualRemoteItems.source)
         }
     }
 
