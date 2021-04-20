@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.mailbox.data
 
+import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.entity.Id
@@ -31,10 +32,12 @@ import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
@@ -242,7 +245,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         }
     }
 
-
     @Test
     fun verifyConversationsAreRetrievedInCorrectOrder() =
         runBlockingTest {
@@ -265,33 +267,35 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
         }
 
-//    @Test
-//    fun verifyGetConversationsTriesToFetchDataFromRemote() =
-//        runBlockingTest {
-//
-//            // given
-//            val parameters = Parameters.GetConversationsParameters(
-//                userId = testUserId,
-//                location = Constants.MessageLocationType.INBOX,
-//                page = 0,
-//                pageSize = 5
-//            )
-//
-//            coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(emptyList())
-//            coEvery { conversationDao.insertOrUpdate(any()) } returns Unit
-//            coEvery { api.fetchConversations(any()) } returns conversationsRemote
-//
-//            // when
-//            conversationsRepository.getConversations(parameters).test {
-//
-//                expectItem()
-//                expectItem()
-//                expectItem()
-//
-//                // then
-// //            coVerify(exactly = 1) { conversationDao.getConversations(testUserId.s)}
-// //            coVerify(exactly = 1) { conversationDao.insertOrUpdate(*emptyList<ConversationEntity>().toTypedArray()) }
-//            }
-//        }
+    @Test
+    fun verifyGetConversationsFetchesDataFromRemoteApiAndStoresResultInTheLocalDatabase() = runBlocking {
+        // given
+        val parameters = GetConversationsParameters(
+            page = 0,
+            pageSize = 5,
+            labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
+        )
+
+        coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(emptyList())
+        coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
+        coEvery { api.fetchConversations(any(), testUserId) } returns conversationsRemote
+
+        // when
+        conversationsRepository.getConversations(parameters, testUserId).test {
+            // Then
+            val actualLocalItems = expectItem() as DataResult.Success
+            assertEquals(ResponseSource.Local, actualLocalItems.source)
+
+            val actualProcessingResult = expectItem() as DataResult.Processing
+            assertEquals(ResponseSource.Remote, actualProcessingResult.source)
+
+            val actualRemoteItems = expectItem() as DataResult.Success
+            assertEquals(ResponseSource.Remote, actualRemoteItems.source)
+
+            val expectedConversations = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
+            coVerify { api.fetchConversations(parameters, testUserId) }
+            coVerify { conversationDao.insertOrUpdate(*expectedConversations.toTypedArray()) }
+        }
+    }
 
 }
