@@ -121,6 +121,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         by lazy { messageRendererFactory.create(viewModelScope, messageId) }
 
     lateinit var message: LiveData<Message>
+    lateinit var decryptedMessageData: MediatorLiveData<Message>
 
     // TODO: this value was a lateinit, but only initialized with an empty `ArrayList`
     val folderIds: MutableList<String> = mutableListOf()
@@ -185,7 +186,6 @@ internal class MessageDetailsViewModel @Inject constructor(
         get() = _prepareEditMessageIntentResult
 
     val publicKeys = MutableLiveData<List<KeyInformation>>()
-    lateinit var decryptedMessageData: MediatorLiveData<Message>
 
     val webViewContentWithoutImages = MutableLiveData<String>()
     val webViewContentWithImages = MutableLiveData<String>()

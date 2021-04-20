@@ -156,14 +156,26 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         detailsActionsTrashTextView.setOnClickListener {
             detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_TRASH)
             dismiss()
+            // This is a bt crazy requirement but designers do not know what to do about it
+            // so we have to dismiss 2 screens at the time and go to the main list here
+            // this should be thought through and improved
+            (activity as MessageDetailsActivity).onBackPressed()
         }
         detailsActionsMoveToArchiveTextView.setOnClickListener {
             detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_ARCHIVE)
             dismiss()
+            // This is a bt crazy requirement but designers do not know what to do about it
+            // so we have to dismiss 2 screens at the time and go to the main list here
+            // this should be thought through and improved
+            (activity as MessageDetailsActivity).onBackPressed()
         }
         detailsActionsMoveToSpamTextView.setOnClickListener {
             detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_SPAM)
             dismiss()
+            // This is a bt crazy requirement but designers do not know what to do about it
+            // so we have to dismiss 2 screens at the time and go to the main list here
+            // this should be thought through and improved
+            (activity as MessageDetailsActivity).onBackPressed()
         }
         detailsActionsLabelAsTextView.setOnClickListener {
             (activity as MessageDetailsActivity).showLabelsManagerDialog()
