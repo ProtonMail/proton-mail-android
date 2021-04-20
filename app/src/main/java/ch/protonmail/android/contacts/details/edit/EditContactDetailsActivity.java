@@ -40,7 +40,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -57,8 +56,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -118,7 +115,6 @@ import ezvcard.property.Title;
 import ezvcard.property.Url;
 import ezvcard.util.PartialDate;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 import timber.log.Timber;
 
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT;
@@ -156,8 +152,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     VCardLinearLayout mEncryptedDataOther;
     @BindView(R.id.encrypted_data_note)
     VCardLinearLayout mEncryptedDataNote;
-    @BindView(R.id.upgradeEncryptedStub)
-    ViewStub mUpgradeEncryptedDataStub;
     @BindView(R.id.scroll_parent)
     ScrollView mScrollParentView;
     @BindView(R.id.addPhotoBtn)
@@ -808,15 +802,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         }
     }
 
-    @NotNull
-    private Function0<Unit> onConnectivityCheckRetry() {
-        return () -> {
-            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
-            viewModel.checkConnectivityDelayed();
-            return null;
-        };
-    }
-
     @Subscribe
     public void onLogoutEvent(LogoutEvent event) {
         startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
@@ -935,12 +920,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         viewModel.getSetupNewContactFlow().observe(this, setupNewContactObserver);
         viewModel.getSetupEditContactFlow().observe(this, setupEditContactObserver);
         viewModel.getSetupConvertContactFlow().observe(this, setupConvertContactObserver);
-        viewModel.getFreeUserEvent().observe(this, unit -> {
-            View upgradeView = mUpgradeEncryptedDataStub.inflate();
-            upgradeView.findViewById(R.id.upgrade).setOnClickListener(mUpgradeClickListener);
-
-            new Handler().postDelayed(() -> enableControls(false, mEncryptedDataContainer), 10);
-        });
         viewModel.getProfilePicture().observe(this, observer -> {
             observer.doOnData(bitmap -> {
                 photoCardViewWrapper.setVisibility(View.VISIBLE);
@@ -1256,20 +1235,4 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     }
     // endregion
 
-    private void enableControls(boolean enable, View v) {
-
-        if (!(v instanceof ViewGroup)) {
-            ArrayList<View> viewArrayList = new ArrayList<View>();
-            viewArrayList.add(v);
-            v.setEnabled(enable);
-            v.setFocusable(enable);
-            return;
-        }
-
-        ViewGroup vg = (ViewGroup) v;
-        for (int i = 0; i < vg.getChildCount(); i++) {
-            View child = vg.getChildAt(i);
-            enableControls(enable, child);
-        }
-    }
 }
