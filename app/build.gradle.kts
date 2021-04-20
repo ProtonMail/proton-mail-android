@@ -342,6 +342,10 @@ dependencies {
         `store`
     )
 
+    debugImplementation(
+        `leakCanary`
+    )
+
     kapt(
 
         // Room
