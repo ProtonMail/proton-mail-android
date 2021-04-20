@@ -26,10 +26,11 @@
         android:id="@+id/includeLayoutActionSheetHeader"
         layout="@layout/layout_message_details_actions_sheet_header" />
 
+    <View style="@style/ViewSeparatorHorizontal" />
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background_norm">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"

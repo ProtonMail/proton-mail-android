@@ -39,7 +39,6 @@
     <dimen name="padding_xxxl">40dp</dimen>
     <dimen name="padding_xxxxl">48dp</dimen>
 
-    <dimen name="elevation_xs">1dp</dimen>
     <dimen name="elevation_s">2dp</dimen> // standard button low 2dp
     <dimen name="elevation_m">4dp</dimen> // standard app bar 4dp
     <dimen name="elevation_l">6dp</dimen> // standard FAB elevation 6dp

@@ -45,6 +45,7 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
         with(binding.includeLayoutActionSheetHeader) {
             actionsSheetSubTitleTextView.isVisible = false
             actionsSheetTitleTextView.text = getString(R.string.label_as)
+            textviewActionsSheetRightAction.isVisible = true
             actionsSheetCloseView.setOnClickListener {
                 dismiss()
             }
@@ -60,13 +61,13 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
 
     companion object {
 
-        private const val EXTRA_ARG_MESSAGE_LABELS = "extra_arg_message_labels"
+        private const val EXTRA_ARG_MESSAGE_CHECKED_LABELS = "extra_arg_message_checked_labels"
 
-        fun newInstance(messageLabels: List<String>): ManageLabelsActionSheet {
+        fun newInstance(checkedLabels: List<String>): ManageLabelsActionSheet {
 
             return ManageLabelsActionSheet().apply {
                 arguments = bundleOf(
-                    EXTRA_ARG_MESSAGE_LABELS to messageLabels,
+                    EXTRA_ARG_MESSAGE_CHECKED_LABELS to checkedLabels,
                 )
             }
         }

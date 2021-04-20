@@ -23,8 +23,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?attr/actionBarSize"
-    android:background="@color/background_norm"
-    android:elevation="@dimen/elevation_xs"
     android:paddingStart="@dimen/padding_l"
     android:paddingEnd="@dimen/padding_l"
     android:paddingBottom="@dimen/padding_xs"
@@ -56,12 +54,12 @@
         android:ellipsize="end"
         android:paddingTop="@dimen/padding_m"
         android:singleLine="true"
-        android:textAppearance="@style/Text.Headline"
+        android:textAppearance="@style/Text.Default.Bold"
         app:layout_constraintBottom_toTopOf="@+id/actionsSheetSubTitleTextView"
-        app:layout_constraintEnd_toStartOf="@+id/actionsSheetRightActionTextView"
+        app:layout_constraintEnd_toStartOf="@+id/textview_actions_sheet_right_action"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="RE: Possible project underway at very long line so long that it does not fit in one line on any device" />
+        tools:text="@tools:sample/lorem/random" />
 
     <TextView
         android:id="@+id/actionsSheetSubTitleTextView"
@@ -72,21 +70,21 @@
         android:singleLine="true"
         android:textAppearance="@style/Text.Caption.Weak"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/actionsSheetRightActionTextView"
+        app:layout_constraintEnd_toStartOf="@+id/textview_actions_sheet_right_action"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="@tools:sample/lorem/random"
         tools:visibility="visible" />
 
 
     <TextView
-        android:id="@+id/actionsSheetRightActionTextView"
+        android:id="@+id/textview_actions_sheet_right_action"
         style="@style/Text.DefaultSmall.Interaction"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:paddingStart="@dimen/padding_l"
         android:paddingTop="@dimen/padding_l"
-        android:paddingBottom="@dimen/padding_l"
+        android:paddingBottom="@dimen/padding_m"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
