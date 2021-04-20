@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.mailbox.data
 
-import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.core.Constants
@@ -42,6 +41,8 @@ import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
@@ -205,21 +206,21 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchConversations(any(), testUserId) } returns conversationsRemote
 
         // when
-        conversationsRepository.getConversations(parameters, testUserId).test {
-            // Then
-            val actualLocalItems = expectItem() as DataResult.Success
-            assertEquals(ResponseSource.Local, actualLocalItems.source)
+        val result = conversationsRepository.getConversations(parameters, testUserId).take(3).toList()
 
-            val actualProcessingResult = expectItem() as DataResult.Processing
-            assertEquals(ResponseSource.Remote, actualProcessingResult.source)
+        // Then
+        val actualLocalItems = result[0] as DataResult.Success
+        assertEquals(ResponseSource.Local, actualLocalItems.source)
 
-            val actualRemoteItems = expectItem() as DataResult.Success
-            assertEquals(ResponseSource.Remote, actualRemoteItems.source)
+        val actualProcessingResult = result[1] as DataResult.Processing
+        assertEquals(ResponseSource.Remote, actualProcessingResult.source)
 
-            val expectedConversations = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
-            coVerify { api.fetchConversations(parameters, testUserId) }
-            coVerify { conversationDao.insertOrUpdate(*expectedConversations.toTypedArray()) }
-        }
+        val actualRemoteItems = result[2] as DataResult.Success
+        assertEquals(ResponseSource.Remote, actualRemoteItems.source)
+
+        val expectedConversations = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
+        coVerify { api.fetchConversations(parameters, testUserId) }
+        coVerify { conversationDao.insertOrUpdate(*expectedConversations.toTypedArray()) }
     }
 
     @Test
@@ -259,31 +260,31 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchConversations(any(), testUserId) } throws IOException("Api call failed")
 
         // when
-        conversationsRepository.getConversations(parameters, testUserId).test {
-            // Then
-            val actualLocalItems = expectItem() as DataResult.Success
-            assertEquals(ResponseSource.Local, actualLocalItems.source)
-            val expectedLocalConversations = listOf(
-                Conversation(
-                    "conversationId234423",
-                    "subject28348",
-                    listOf(Correspondent("sender", "sender@pm.me")),
-                    listOf(Correspondent("recipient", "recipient@pm.ch")),
-                    3,
-                    1,
-                    4,
-                    0,
-                    listOf(LabelContext("labelId123", 1, 0, 0, 0, 0))
-                )
+        val result = conversationsRepository.getConversations(parameters, testUserId).take(3).toList()
+
+        // Then
+        val actualLocalItems = result[0] as DataResult.Success
+        assertEquals(ResponseSource.Local, actualLocalItems.source)
+        val expectedLocalConversations = listOf(
+            Conversation(
+                "conversationId234423",
+                "subject28348",
+                listOf(Correspondent("sender", "sender@pm.me")),
+                listOf(Correspondent("recipient", "recipient@pm.ch")),
+                3,
+                1,
+                4,
+                0,
+                listOf(LabelContext("labelId123", 1, 0, 0, 0, 0))
             )
-            assertEquals(expectedLocalConversations, actualLocalItems.value)
+        )
+        assertEquals(expectedLocalConversations, actualLocalItems.value)
 
-            val actualProcessingResult = expectItem() as DataResult.Processing
-            assertEquals(ResponseSource.Remote, actualProcessingResult.source)
+        val actualProcessingResult = result[1] as DataResult.Processing
+        assertEquals(ResponseSource.Remote, actualProcessingResult.source)
 
-            val actualRemoteItems = expectItem() as DataResult.Error
-            assertEquals(ResponseSource.Remote, actualRemoteItems.source)
-        }
+        val actualRemoteItems = result[2] as DataResult.Error
+        assertEquals(ResponseSource.Remote, actualRemoteItems.source)
     }
 
     private fun getConversation(
