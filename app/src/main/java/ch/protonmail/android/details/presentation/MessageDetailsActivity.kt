@@ -659,16 +659,16 @@ internal class MessageDetailsActivity :
     private inner class MessageObserver : Observer<Message?> {
 
         override fun onChanged(message: Message?) {
-            Timber.v("Message changed: ${message?.messageId}")
+            Timber.v("Message changed isDownloaded: ${message?.isDownloaded} rendered: ${viewModel.renderingPassed}")
             if (message != null) {
                 onMessageFound(message)
-                viewModel.message.removeObserver(this)
             } else {
                 onMessageNotFound()
             }
         }
 
         private fun onMessageFound(message: Message) {
+            starToggleButton.isChecked = message.isStarred ?: false
             viewModel.addressId = message.addressID!!
             if (message.isDownloaded) {
                 if (!viewModel.renderingPassed) {
@@ -824,7 +824,6 @@ internal class MessageDetailsActivity :
             progress.visibility = View.GONE
             invalidateOptionsMenu()
             viewModel.renderingPassed = true
-            starToggleButton.isChecked = message.isStarred ?: false
         }
     }
 
