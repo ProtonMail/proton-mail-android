@@ -56,7 +56,6 @@ import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_DELETE_MESSAGE
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.buildArchiveIntent
 import ch.protonmail.android.utils.buildTrashIntent
-import ch.protonmail.android.utils.extensions.getColorCompat
 import ch.protonmail.android.utils.extensions.showToast
 import timber.log.Timber
 import javax.inject.Inject
@@ -335,8 +334,8 @@ class NotificationServer @Inject constructor(
             PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         // Set Notification's colors
-        val mainColor = context.getColorCompat(R.color.ocean_blue)
-        val lightColor = context.getColorCompat(R.color.light_indicator)
+        val mainColor = context.getColor(R.color.ocean_blue)
+        val lightColor = context.getColor(R.color.light_indicator)
 
         // Create Notification's Builder with the prepared params
         val builder = NotificationCompat.Builder(context, channelId)
@@ -371,7 +370,7 @@ class NotificationServer @Inject constructor(
                             "com.android.systemui", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
                         )
                     }
-                }  ?: RingtoneManager.getDefaultUri(TYPE_NOTIFICATION)
+                } ?: RingtoneManager.getDefaultUri(TYPE_NOTIFICATION)
             } catch (e: Exception) {
                 Timber.i(e, "Unable to set notification ringtone")
                 RingtoneManager.getDefaultUri(TYPE_NOTIFICATION)
@@ -652,8 +651,8 @@ class NotificationServer @Inject constructor(
         )
 
         // Set Notification's colors
-        val mainColor = context.getColorCompat(R.color.ocean_blue)
-        val lightColor = context.getColorCompat(R.color.light_indicator)
+        val mainColor = context.getColor(R.color.ocean_blue)
+        val lightColor = context.getColor(R.color.light_indicator)
 
         // Create notification builder
         return NotificationCompat.Builder(context, channelId)

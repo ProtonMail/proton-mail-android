@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.api
 
-import android.os.Build
 import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.api.interceptors.ProtonMailAttachmentRequestInterceptor
 import ch.protonmail.android.api.interceptors.ProtonMailAuthenticator
@@ -165,19 +164,15 @@ sealed class ProtonRetrofit(
 ) {
     val defaultInterceptor =
         ProtonMailRequestInterceptor.getInstance(userManager, jobManager, networkUtil, userNotifier)
-    val spec: List<ConnectionSpec?> = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-        listOf(
-            ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                .tlsVersions(TlsVersion.TLS_1_2)
-                .cipherSuites(
-                    CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-                    CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                    CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
-                ).build()
-        )
-    } else {
-        listOf(ConnectionSpec.MODERN_TLS, ConnectionSpec.COMPATIBLE_TLS)
-    }
+    val spec: List<ConnectionSpec?> = listOf(
+        ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+            .tlsVersions(TlsVersion.TLS_1_2)
+            .cipherSuites(
+                CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+            ).build()
+    )
     val serverTimeInterceptor = ServerTimeInterceptor(userManager.openPgp, networkUtil)
 
     // region gson specs

@@ -22,7 +22,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
@@ -37,7 +36,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
-import ch.protonmail.android.views.PMWebView
 import com.squareup.otto.Subscribe
 import retrofit2.Call
 import retrofit2.Callback
@@ -63,7 +61,7 @@ private const val POLLING_TIMEOUT_IN_MS = 60_000L
 class PaymentTokenApprovalActivity : BaseActivity() {
 
     private val webView by lazy {
-        findViewById<PMWebView>(R.id.webView).apply {
+        findViewById<WebView>(R.id.webView).apply {
             settings.javaScriptEnabled = true // JavaScript support is needed for PayPal
 
             webViewClient = object : WebViewClient() {
@@ -72,12 +70,8 @@ class PaymentTokenApprovalActivity : BaseActivity() {
                     return false
                 }
 
-                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        request?.url?.let { return handleCancelRedirection(it) }
-                    }
-                    return false
-                }
+                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean =
+                    request?.url?.let { return handleCancelRedirection(it) } ?: false
             }
         }
     }

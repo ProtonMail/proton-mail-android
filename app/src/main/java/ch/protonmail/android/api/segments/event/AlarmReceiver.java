@@ -24,7 +24,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.SystemClock;
 
 import androidx.legacy.content.WakefulBroadcastReceiver;
@@ -62,13 +61,8 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         if (immediate) {
             secondsUntilNextCheck = 1;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmMgr.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
-                    secondsUntilNextCheck * 1000, alarmIntent);
-        } else {
-            alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
-                    secondsUntilNextCheck * 1000, alarmIntent);
-        }
+        alarmMgr.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +
+                secondsUntilNextCheck * 1000, alarmIntent);
 
         ComponentName receiver = new ComponentName(context, OnBootReceiver.class);
         PackageManager pm = context.getPackageManager();

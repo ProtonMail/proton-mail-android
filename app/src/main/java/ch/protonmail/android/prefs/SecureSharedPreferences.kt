@@ -25,7 +25,6 @@ import android.content.res.Configuration
 import android.os.Build
 import android.preference.PreferenceManager
 import android.provider.Settings
-import android.security.KeyPairGeneratorSpec
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.text.TextUtils
@@ -299,25 +298,15 @@ class SecureSharedPreferences(
 
         // The KeyPairGeneratorSpec object is how parameters for your key pair are passed
         // to the KeyPairGenerator.
-        val algorithmParameterSpec = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            @Suppress("DEPRECATION") // old SDK level
-            KeyPairGeneratorSpec.Builder(context)
-                .setAlias(alias)
-                .setSubject(X500Principal("CN=ProtonMail, O=Android Authority"))
-                .setSerialNumber(BigInteger.ONE)
-                .setStartDate(start.time)
-                .setEndDate(end.time)
-                .build()
-        } else {
-            KeyGenParameterSpec.Builder(alias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-                .setCertificateSubject(X500Principal("CN=ProtonMail, O=Android Authority"))
-                .setBlockModes(KeyProperties.BLOCK_MODE_ECB)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                .setCertificateSerialNumber(BigInteger.ONE)
-                .setCertificateNotBefore(start.time)
-                .setCertificateNotAfter(end.time)
-                .build()
-        }
+        val algorithmParameterSpec = KeyGenParameterSpec
+            .Builder(alias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+            .setCertificateSubject(X500Principal("CN=ProtonMail, O=Android Authority"))
+            .setBlockModes(KeyProperties.BLOCK_MODE_ECB)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+            .setCertificateSerialNumber(BigInteger.ONE)
+            .setCertificateNotBefore(start.time)
+            .setCertificateNotAfter(end.time)
+            .build()
 
         keyPairGenerator.initialize(algorithmParameterSpec)
         val keyPair = keyPairGenerator.generateKeyPair()

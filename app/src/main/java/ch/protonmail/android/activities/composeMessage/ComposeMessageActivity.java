@@ -18,6 +18,12 @@
  */
 package ch.protonmail.android.activities.composeMessage;
 
+import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
+import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_ATTACHMENT_IMPORT_EVENT;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,7 +32,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -174,19 +179,12 @@ import ch.protonmail.android.views.ComposeEditText;
 import ch.protonmail.android.views.MessageExpirationView;
 import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
-import ch.protonmail.android.views.PMWebView;
 import ch.protonmail.android.views.PMWebViewClient;
 import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import timber.log.Timber;
-
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_ATTACHMENT_IMPORT_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
 
 @AndroidEntryPoint
 public class ComposeMessageActivity
@@ -364,7 +362,7 @@ public class ComposeMessageActivity
         initRecipientsView(mBccRecipientsView, mMessageRecipientViewAdapter, Constants.RecipientLocationType.BCC);
         mMessageTitleEditText.setSelection(mMessageTitleEditText.getText().length(), mMessageTitleEditText.getText().length());
 
-        mMessageBody = new PMWebView(this);
+        mMessageBody = new WebView(this);
         pmWebViewClient = new PMWebViewClient(mUserManager, this, true);
         mMessageBody.setWebViewClient(pmWebViewClient);
         mMessageBody.requestDisallowInterceptTouchEvent(true);
@@ -1898,7 +1896,7 @@ public class ComposeMessageActivity
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });
             composeMessageViewModel.loadPMContacts();
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
                 getSupportLoaderManager().initLoader(LOADER_ID_ANDROID_CONTACTS, null, this);
             }
         }
