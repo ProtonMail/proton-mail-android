@@ -90,7 +90,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="compose">Skriv nytt</string>
     <string name="compose_message">Skriv meddelande</string>
     <string name="empty_folder">Töm mapp</string>
-    <string name="view_headers">Visa Headers</string>
+    <string name="view_headers">View Headers</string>
     <string name="message_headers">Meddelandehuvud</string>
     <string name="delete_message">Radera meddelande</string>
     <string name="delete_messages">Radera meddelanden</string>
@@ -309,7 +309,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="optional_display_name">När du skickar e-post, är det detta namn som
         syns i avsändarfältet.</string>
     <string name="error_captcha_not_valid">Ogiltigt</string>
-    <string name="close_engagement">avsluta rundturen</string>
+    <string name="close_engagement">Stäng rundturen</string>
     <string name="engagement_title_welcome">Välkommen till ProtonMail!</string>
     <string name="engagement_title_swipe">Snabba svepgester</string>
     <string name="engagement_title_labels">Hantera etiketter</string>
@@ -367,7 +367,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sync_attachments">Synkroniserar bilagor</string>
     <string name="processing_attachment">Bearbetar bilaga</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du är på väg att starta webbläsaren och gå till:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Vill du fortsätta?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Fråga inte igen</string>
     <string name="none">Ingen</string>
     <string name="changes_affected_after_closing">Ändringar kommer att träda i kraft efter att appen stängts</string>
     <plurals name="incorrect_pin_remaining_attempts">
@@ -575,9 +575,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string-array name="vcard_option_phone">
         <item>Telefon</item>
         <item>Mobil</item>
-        <item>Work</item>
+        <item>Arbete</item>
         <item>Fax</item>
-        <item>Other</item>
+        <item>Annat</item>
     </string-array>
     <string-array name="vcard_option_email">
         <item>E-post</item>
@@ -661,7 +661,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="decryption_error_desc">Dekryptering av innehållet misslyckades</string>
     <string name="address">Adress: </string>
     <string name="address_street">Gatuadress</string>
-    <string name="address_city">Stad</string>
+    <string name="address_city">Ort</string>
     <string name="address_region">Region (län)</string>
     <string name="address_postcode">Postnummer</string>
     <string name="address_country">Land</string>

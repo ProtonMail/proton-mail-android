@@ -19,76 +19,76 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="protonmail">ProtonMail</string>
-    <string name="encrypted_emails">Зашифрована пошта</string>
+    <string name="encrypted_emails">ЗАШИФРОВАНА ПОШТА</string>
     <string name="secure_email_swiss">Безпечна пошта,\n
 із Швейцарії</string>
-    <string name="decrypt_mailbox">Розшифрувати <b>пошту</b></string>
+    <string name="decrypt_mailbox">Розшифрувати <b>поштову скриньку</b></string>
     <string name="decrypt">Розшифрувати</string>
-    <string name="user_sign_in">Логін користувача</string>
-    <string name="two_factor_sign_in">Двофакторна аутентифікація</string>
+    <string name="user_sign_in">Ім\'я користувача</string>
+    <string name="two_factor_sign_in">Двоетапна перевірка</string>
     <string name="sign_in">Увійти</string>
     <string name="sign_out">Вийти</string>
-    <string name="sign_out_question">Ви справді бажаєте вийти?</string>
+    <string name="sign_out_question">Ви дійсно хочете вийти?</string>
     <string name="mailbox_password">Пароль поштової скриньки</string>
-    <string name="two_factor_code">Двухфакторний код</string>
-    <string name="processing_request">Ваш запит знаходиться на обробці</string>
+    <string name="two_factor_code">Код двоетапної перевірки</string>
+    <string name="processing_request">Ваш запит обробляється</string>
     <!-- should check for html tag -->
-    <string name="need_to_be_logged_in">Ви не авторизовані!</string>
+    <string name="need_to_be_logged_in">Ви не увійшли!</string>
     <string name="forgot_password">Забули пароль?</string>
     <string name="reset_mailbox_password">СКИНУТИ ПАРОЛЬ ПОШТОВОЇ СКРИНЬКИ</string>
-    <string name="forgot_mailbox_password">Щоб скинути пароль поштової скриньки, будь ласка, використовуйте веб-версію ProtonMail на protonmail.com</string>
+    <string name="forgot_mailbox_password">Щоб скинути пароль поштової скриньки, скористайтеся вебверсією ProtonMail за адресою protonmail.com</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Неможливо завантажити вміст. Будь ласка, увімкніть Chrome</string>
     <string name="error_chrome_not_found">Неможливо завантажити вміст. Будь ласка, встановіть Chrome</string>
     <string name="messages_load_failure">Не вдалося отримати повідомлення</string>
-    <string name="message_details_load_failure">Не вдалося отримати інформацію про повідомлення</string>
+    <string name="message_details_load_failure">Не вдалося отримати подробиці повідомлення</string>
     <string name="no_more_messages">Більше повідомлень немає</string>
     <string name="mailbox_login_failure">Не вдалося увійти до поштової скриньки</string>
     <string name="login_failure">Не вдалося увійти</string>
     <string name="invalid_server_proof">Неприпустиме підтвердження сервера</string>
-    <string name="invalid_credentials">Невірні облікові дані</string>
+    <string name="invalid_credentials">Недійсні облікові дані</string>
     <string name="incorrect_key_parameters">Неправильні параметри ключа</string>
-    <string name="invalid_mailbox_password">Неприпустимий пароль поштової скриньки</string>
+    <string name="invalid_mailbox_password">Недійсний пароль поштової скриньки</string>
     <string name="not_signed_up">Ви не зареєстровані в програмі ProtonMail Android Beta</string>
     <string name="no_network">Немає мережі</string>
-    <string name="no_network_queued">Немає мережі, повідомлення в черзі на відправку </string>
+    <string name="no_network_queued">Немає мережі, повідомлення в очікуванні</string>
     <string name="update_app_title">Необхідне оновлення</string>
-    <string name="update_app">Програму ProtonMail не можна використовувати, поки вона не буде оновлена</string>
-    <string name="you_are_offline">You are offline</string>
-    <string name="api_offline_title">ProtonMail API офлайн</string>
-    <string name="api_offline">На жаль, ProtonMail зараз не працює, перевірте поточний статус робіт в нашому твіттері: https://twitter.com/protonmail</string>
+    <string name="update_app">Програму ProtonMail не можна використовувати, доки її не оновити</string>
+    <string name="you_are_offline">Ви не в мережі</string>
+    <string name="api_offline_title">ProtonMail API не в мережі</string>
+    <string name="api_offline">Перепрошуємо, але ProtonMail зараз не в мережі. Перевірте наш Twitter, щоб дізнатися про поточний стан: https://twitter.com/protonmail</string>
     <string name="contact_saved">Контакт збережено</string>
-    <string name="contact_saved_offline">Контакт збережений і буде синхронізований, коли з\'єднання з інтернетом буде доступно</string>
-    <string name="contact_exist">Така адреса поштової скиньки вже існує</string>
-    <string name="invalid_email">Неприпустима адреса електронної пошти</string>
-    <string name="duplicate_email">Електронна адреса повторюється</string>
-    <string name="invalid_code">Код не дійсний</string>
-    <string name="message_drafted">Не вдалося відправити повідомлення. Ваші повідомлення збережені в папці Чернетки</string>
+    <string name="contact_saved_offline">Контакт збережений і синхронізується при відновленні з\'єднання з мережею</string>
+    <string name="contact_exist">Адреса е-пошти контакту вже існує</string>
+    <string name="invalid_email">Недійсна адреса е-пошти</string>
+    <string name="duplicate_email">Дублікат адреси е-пошти</string>
+    <string name="invalid_code">Код недійсний</string>
+    <string name="message_drafted">Не вдалося надіслати повідомлення. Ваші повідомлення збережені в теці Чернетки</string>
     <string name="open_drawer">Відкрити</string>
     <string name="close_drawer">Закрити</string>
     <string name="inbox_option">ВХІДНІ</string>
-    <string name="starred_option">ПОЗНАЧЕНІ</string>
+    <string name="starred_option">ІЗ ЗІРОЧКОЮ</string>
     <string name="drafts_option">ЧЕРНЕТКИ</string>
     <string name="sent_option">НАДІСЛАНІ</string>
     <string name="archive_option">АРХІВ</string>
-    <string name="trash_option">КОШИК</string>
-    <string name="spam_option">НЕБАЖАНІ</string>
+    <string name="trash_option">СМІТНИК</string>
+    <string name="spam_option">СПАМ</string>
     <string name="inbox">Вхідні</string>
-    <string name="starred">Вибрані</string>
+    <string name="starred">Із зірочкою</string>
     <string name="drafts">Чернетки</string>
     <string name="sent">Надіслані</string>
     <string name="archive">Архів</string>
-    <string name="trash">Кошик</string>
-    <string name="spam">Небажані</string>
+    <string name="trash">Смітник</string>
+    <string name="spam">Спам</string>
     <string name="contacts">Контакти</string>
     <string name="search_contacts">Пошук контактів</string>
-    <string name="fetching_contacts">Отримання контактів Protonmail-а...</string>
-    <string name="fetching_contacts_success">Контакти успішно завантажені</string>
-    <string name="fetching_contacts_failure">Не вдалося завантажити контакти</string>
+    <string name="fetching_contacts">Отримання контактів ProtonMail...</string>
+    <string name="fetching_contacts_success">Контакти успішно оновлено</string>
+    <string name="fetching_contacts_failure">Не вдається оновити контакти</string>
     <string name="search">Пошук</string>
     <string name="search_messages">Пошук повідомлень</string>
     <string name="no_search_results">Нічого не знайдено</string>
-    <string name="compose">Створити</string>
+    <string name="compose">Написати</string>
     <string name="compose_message">Написати повідомлення</string>
     <string name="empty_folder">Спорожнити теку</string>
     <string name="view_headers">Перегляд заголовків</string>
@@ -96,19 +96,19 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="delete_message">Видалити повідомлення</string>
     <string name="delete_messages">Видалити повідомлення</string>
     <string name="add_label">Додати мітку</string>
-    <string name="add_star">До обраного</string>
-    <string name="remove_star">Видалити з обраного</string>
+    <string name="add_star">Зірочка</string>
+    <string name="remove_star">Прибрати зірочку</string>
     <string name="mark_read">Позначити як прочитане</string>
     <string name="mark_unread">Позначити як непрочитане</string>
     <string name="move_to_archive">Перемістити до архіву</string>
-    <string name="move_to_trash">Перемістити у Кошик</string>
-    <string name="move_to_spam">Перемістити до небажаних</string>
-    <string name="move_to_inbox">Перемiстити до вхiдних</string>
-    <string name="are_you_sure_empty">Ви дійсно бажаєте видалити всі повідомлення з цієї теки?</string>
+    <string name="move_to_trash">Перемістити до смітника</string>
+    <string name="move_to_spam">Перемістити до спаму</string>
+    <string name="move_to_inbox">Перемістити до вхідних</string>
+    <string name="are_you_sure_empty">Ви дійсно хочете видалити всі повідомлення з цієї теки?</string>
     <string name="send">Надіслати</string>
-    <string name="selected">Вибрані</string>
-    <string name="no_messages">Повідомлень немає</string>
-    <string name="no_labels">Ярлики відсутні</string>
+    <string name="selected">Вибрано</string>
+    <string name="no_messages">Немає повідомлень</string>
+    <string name="no_labels">Немає міток</string>
     <string name="to">Кому</string>
     <string name="cc">Копія</string>
     <string name="bcc">Прихована копія</string>
@@ -127,16 +127,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="define_message_password">Пароль повідомлення</string>
     <string name="confirm_message_password">Підтвердити пароль</string>
     <string name="define_password_hint">Вкажіть підказку (необов\'язково)</string>
-    <string name="message_passwords_do_not_match">Паролі для входу не збігаються</string>
-    <string name="eo_passwords_do_not_match">Паролі не співпадають</string>
-    <string name="define_expiration_period">Визначте період терміну дії</string>
-    <string name="set_message_expiration">Встановити термін дії для повідомлення </string>
-    <string name="days">Дні</string>
-    <string name="hours">Години</string>
-    <string name="max_labels_exceeded">Повідомлення%1$s не може мати більш %2$d ярликів.</string>
-    <string name="max_labels_selected">%dДозволено мати максимум ярликів</string>
-    <string name="max_attachments_reached">Досягнуто максимальну кількість вкладень на одне повідомлення</string>
-    <string name="max_attachments_size_reached">Досягнуто максимальний розмір вкладення для повідомлення</string>
+    <string name="message_passwords_do_not_match">Паролі для входу відрізняються</string>
+    <string name="eo_passwords_do_not_match">Паролі відрізняються</string>
+    <string name="define_expiration_period">Вкажіть термін дії</string>
+    <string name="set_message_expiration">Встановити термін дії повідомлення</string>
+    <string name="days">Днів</string>
+    <string name="hours">Годин</string>
+    <string name="max_labels_exceeded">Повідомлення %1$s не може мати більше %2$d міток.</string>
+    <string name="max_labels_selected">Дозволено мати максимум %d міток</string>
+    <string name="max_attachments_reached">Досягнуто максимальну кількість вкладень для одного повідомлення</string>
+    <string name="max_attachments_size_reached">Досягнуто максимальний розмір вкладень для повідомлення</string>
     <plurals name="hours_string">
         <item quantity="one">%d година</item>
         <item quantity="few">%d години</item>
@@ -158,7 +158,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <plurals name="attachments">
         <item quantity="one">Одне вкладення</item>
         <item quantity="few">%d вкладення</item>
-        <item quantity="many">%d вкладення</item>
+        <item quantity="many">%d вкладень</item>
         <item quantity="other">%d вкладень</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
@@ -168,40 +168,40 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item quantity="other">\u0020 %d вкладень</item>
     </plurals>
     <string name="add_attachment">Додати вкладення</string>
-    <string name="select_file">Виберіть файл</string>
-    <string name="attach_file">Прикріпити файл</string>
+    <string name="select_file">Вибрати файл</string>
+    <string name="attach_file">Вкласти файл</string>
     <string name="take_photo">Зробити фото</string>
-    <string name="problem_taking_photo">Сталася помилка при збереженні зображення</string>
-    <string name="problem_selecting_file">Виникла проблема з додаванням файла.</string>
+    <string name="problem_taking_photo">Виникла проблема при зніманні фото</string>
+    <string name="problem_selecting_file">Виникла проблема при додаванні вибраного файлу</string>
     <string name="add_contact">Додати контакт</string>
-    <string name="delete_contact">Видалити %s з контактів?</string>
+    <string name="delete_contact">Вилучити %s з контактів?</string>
     <string name="confirm">Підтвердити</string>
-    <string name="confirm_destructive_action">Ви впевнені? Ця дія не може бути скасована.</string>
+    <string name="confirm_destructive_action">Ви впевнені? Це неможливо скасувати.</string>
     <string name="create">Створити</string>
     <string name="email">Електронна пошта</string>
-    <string name="email_address">Адрес електронної пошти</string>
+    <string name="email_address">Адреса електронної пошти</string>
     <string name="phone">Номер телефону</string>
     <string name="save">Зберегти</string>
     <string name="syncing_messages">Синхронізація...</string>
     <string name="sync">Синхронізувати контакти</string>
-    <string name="save_message_as_draft">Зберегти повідомлення як чернетку?</string>
+    <string name="save_message_as_draft">Зберегти чернетку повідомлення?</string>
     <string name="no_subject">Надіслати повідомлення без теми?</string>
     <string name="yes">Так</string>
     <string name="no">Ні</string>
-    <string name="okay">Ок</string>
-    <string name="report_bugs">Повідомити про вади</string>
+    <string name="okay">Гаразд</string>
+    <string name="report_bugs">Повідомити про помилку</string>
     <string name="send_report">Надіслати звіт</string>
     <string name="bug_title">Заголовок</string>
     <string name="bug_description">Опис помилки</string>
     <string name="sending_report">Надсилання звіту...</string>
     <string name="received_report">Звіт отримано</string>
     <string name="not_received_report">Звіт не отримано</string>
-    <string name="not_received_report_offline">Ви не в мережі! Звіт буде надіслано після під\'єднання до інтернету</string>
-    <string name="forward_prefix">Переслати:</string>
-    <string name="original_message_divider">---Вихідне повідомлення--</string>
-    <string name="invalid_email_address">Адреса \'%s\' введена невірно</string>
-    <string name="invalid_email_address_removed">Адреса \'%s\' недійсна і була вилучена</string>
-    <string name="no_recipients_specified">Будь ласка, вкажіть принаймні одного отримувача</string>
+    <string name="not_received_report_offline">Ви не в мережі! Звіт буде надіслано при відновленні з\'єднання</string>
+    <string name="forward_prefix">Fw:</string>
+    <string name="original_message_divider">-------- Оригінальне повідомлення --------</string>
+    <string name="invalid_email_address">Адреса %s недійсна</string>
+    <string name="invalid_email_address_removed">Адреса %s недійсна, тому була вилучена</string>
+    <string name="no_recipients_specified">Додайте принаймні одного отримувача</string>
     <string name="no_password_specified">Термін дії можна встановити тільки на повністю зашифровані повідомлення. Будь ласка, вкажіть пароль для одержувачів поза ProtonMail.</string>
     <string name="attachment_limit">Межа для вкладень - %1$s. Цілком може бути вкладено %2$s.</string>
     <string name="sending_message">Повідомлення надсилається...</string>
@@ -296,7 +296,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Помилка при видаленні деяких повідомлень. Деякі з вибраних повідомлень надсилають процес?!</string>
     <string name="respond_inline">Відповісти всередині тексту</string>
     <string name="no_connectivity_detected">Під\'\'днання не виявлено...</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Сервер не доступний… (<u>Усунення проблем</u>)</string>
     <string name="connectivity_checking">Перевірка під\'єднання...</string>
     <string name="sync_short">Синхр.</string>
     <string name="draft_attachments_uploading">Чернетку все ще вивантажувано...</string>
@@ -717,7 +717,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="recipient_popup_copy_address">Копіювати адресу</string>
     <string name="recipient_popup_see_details">Контактні дані</string>
     <string name="send_with_untrusted_key_title">Бажаєте надіслати з ненадійним ключем?</string>
-    <string name="send_with_untrusted_key_message">You have enabled Address Verification with Trusted Keys for %s, but no active encryption keys have been trusted.</string>
+    <string name="send_with_untrusted_key_message">Ви ввімкнули засвідчення адреси довіреними ключами для %s, але відсутні будь-які активні довірені ключі шифрування.</string>
     <string name="resign_contact_title">Хочете повторно підписати контакт?</string>
     <string name="resign_contact_message">Не вдалося виконати перевірку для %s: контакт не підписаний належним чином. Ви повинні повторно підписати контакт або змінити контакт, щоб надіслати повідомлення на цю адресу. Це може також статися, якщо ви відновили свій пароль і скинули ключі.</string>
     <!-- Sender locks -->
@@ -739,13 +739,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="composer_lock_internal_pinned">Наскрізно зашифровано для перевіреного отримувача</string>
     <string name="composer_lock_pgp_encrypted_pinned">PGP-зашифровано</string>
     <string name="composer_lock_pgp_signed">PGP-підписано</string>
-    <string name="recipient_not_found_and_removed">Recipient could not be found: %s and it has been removed</string>
-    <string name="recipient_error_and_removed">An error occurred while retrieving recipient information and the recipient has been removed: %s</string>
+    <string name="recipient_not_found_and_removed">Отримувач не знайдений: %s було видалено</string>
+    <string name="recipient_error_and_removed">Сталася помилка під час отримання відомостей про одержувача, його було вилучено: %s</string>
     <string name="send_anyway">Все одно надіслати</string>
-    <string name="expiration_error_title">You enabled message expiration, but not all recipients support this.</string>
-    <string name="expiration_error_add_msg_password">Please add a message password for the following recipients:</string>
-    <string name="expiration_error_disable_pgp_sending">Please disable PGP sending to enable expiration for the following recipients:</string>
-    <string name="expiration_error_proceed">Tap send anyway to send without expiration to these recipients.</string>
+    <string name="expiration_error_title">Ви увімкнули закінчення терміну дії повідомлень, але не всі одержувачі підтримують це.</string>
+    <string name="expiration_error_add_msg_password">Додайте пароль повідомлення для таких отримувачів:</string>
+    <string name="expiration_error_disable_pgp_sending">Вимкніть надсилання PGP, щоб увімкнути закінчення терміну дії повідомлень для таких отримувачів:</string>
+    <string name="expiration_error_proceed">Торкніться Надіслати для надсилання без терміну дії цим отримувачам.</string>
     <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">ДОКЛАДНІШЕ</a></string>
     <string name="channel_name_attachments">Вкладення</string>
     <string name="channel_description_attachments">Повідомляє про стан завантаження вкладення</string>
@@ -754,15 +754,15 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_name_account">Обліковий запис</string>
     <string name="channel_description_account">Стан облікового запису</string>
     <string name="channel_name_ongoing_operations">Поточні операції</string>
-    <string name="channel_description_ongoing_operations">Shows all ongoing operations like new
-		message download on background</string>
-    <string name="retrieving_notifications">Retrieving notifications</string>
+    <string name="channel_description_ongoing_operations">Показати всі поточні операції, такі як
+		завантаження повідомлення у фоновому режимі</string>
+    <string name="retrieving_notifications">Отримання сповіщень</string>
     <string name="report_phishing">Повідомити про шахрайство</string>
     <string name="print">Друк</string>
     <string name="phishing_dialog_title">Підтвердити звіт про шахрайство</string>
-    <string name="phishing_dialog_message">Reporting a message as a phishing attempt will send the
-		message to us, so we can analyze it and improve our filters. This means that we will be able
-		to see the contents of the message in full.</string>
+    <string name="phishing_dialog_message">Звітуючи про спробу шахрайства, ви надішлете це повідомлення нам,
+		щоб ми змогли його проаналізувати і вдосконалити наші фільтри. Це означає, що ми матимемо змогу
+		дивитися повний вміст цього повідомлення.</string>
     <string name="phishing_report_send_message_moved_to_spam">Скаргу надіслано. Повідомлення переміщено в небажані.</string>
     <string name="cannot_send_report_send">Не вдалося надіслати скаргу</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
@@ -784,7 +784,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="title_activity_connect_account">Під\'єднати обліковий запис</string>
     <string name="account_manager_add_account">Додати обліковий запис</string>
     <string name="account_manager_remove_all_accounts">Вилучення всіх облікових записів</string>
-    <string name="account_manager_note">You can be simultaneously logged into an unlimited number of paid ProtonMail accounts and one free account.</string>
+    <string name="account_manager_note">Ви можете одночасно увійти в необмежену кількість платних облікових записів ProtonMail і до одного безплатного.</string>
     <string name="account_manager_remove_all">Вилучити всі облікові записи</string>
     <string name="account_manager_logout">Вихiд</string>
     <string name="account_manager_login">Вхід</string>
@@ -840,18 +840,18 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contacts_add_photo_select_camera">Захопити з камери</string>
     <string name="save_group_validation_error">Вкажіть назву групи</string>
     <!-- region Storage Limit Reached -->
-    <string name="storage_limit_alert">Storage limit reached. Unable to send or receive emails.
-        Press to learn more.</string>
+    <string name="storage_limit_alert">Сховище переповнено. Не вдалося надіслати або отримати електронну пошту.
+        Натисніть щоб дізнатися більше.</string>
     <string name="storage_limit_warning_title">Засторога</string>
-    <string name="storage_limit_reached_text">You have reached 100% of your storage capacity. You
-        won’t be able to send or receive emails unless you permanently delete some emails or purchase more
-        storage.</string>
-    <string name="storage_limit_approaching_text">You have reached 90% of your storage capacity.
-        Consider freeing up some space or purchasing more storage before you run out of capacity.</string>
+    <string name="storage_limit_reached_text">Ваше сховище заповнене на 100%. Ви
+        не зможете надсилати чи отримувати пошту доки не видалите остаточно деякі свої листи, або не придбаєте
+        додатковий обсяг.</string>
+    <string name="storage_limit_approaching_text">Ваше сховище заповнено на 90%.
+        Спробуйте звільнити трохи місця або придбати більше пам\'яті, перш ніж сховище переповниться.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Права доступу</string>
-    <string name="need_storage_permissions_text">In order to add attachments you need to allow
-        access to storage.</string>
+    <string name="need_storage_permissions_text">Щоб додати вкладення, вам необхідно дозволити
+        доступ до сховища.</string>
     <string name="push_notifications_alert_title">Push-сповіщення</string>
     <string name="push_notifications_alert_subtitle">Push-сповіщення ProtonMail не працюють без оновлених сервісів Google Play.</string>
     <string name="app_locked">Програму заблоковано</string>
@@ -921,7 +921,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="mailbox">Поштова скринька</string>
     <string name="privacy">Приватність</string>
     <string name="auto_download_messages_title">Авто-звантажити листи</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, messaged bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or log out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Коли цей параметр увімкнено, зміст повідомлень автоматично завантажуватиметься щоразу, коли ви отримаєте нове повідомлення електронною поштою (споживатиметься більше даних). Якщо цей параметр вимкнено, зміст повідомлень завантажуватиметься лише якщо ви відкриєте лист. (Примітка: якщо очистите кеш або вийдете, то не зможете прочитати вміст в автономному режимі.)</string>
     <string name="settings_background_sync">Синхронізація у тлі</string>
     <string name="settings_auto_show_images">Автопоказ віддалених зображень</string>
     <string name="settings_auto_show_embedded_images">Автопоказ вбудованих зображень</string>
@@ -948,16 +948,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item quantity="other">Повідомлень переміщено до смітника</item>
     </plurals>
     <plurals name="action_move_to_spam">
-        <item quantity="one">Лист позначено як спам</item>
-        <item quantity="few">Messages marked as spam</item>
-        <item quantity="many">Messages marked as spam</item>
-        <item quantity="other">Messages marked as spam</item>
+        <item quantity="one">Повідомлення позначено як спам</item>
+        <item quantity="few">Повідомлення позначені як спам</item>
+        <item quantity="many">Повідомлення позначені як спам</item>
+        <item quantity="other">Повідомлення позначені як спам</item>
     </plurals>
     <plurals name="action_move_to_archive">
-        <item quantity="one">Лист кинуто у архів</item>
-        <item quantity="few">Messages archived</item>
-        <item quantity="many">Messages archived</item>
-        <item quantity="other">Messages archived</item>
+        <item quantity="one">Повідомлення заархівовано</item>
+        <item quantity="few">Повідомлення заархівовані</item>
+        <item quantity="many">Повідомлення заархівовані</item>
+        <item quantity="other">Повідомлення заархівовані</item>
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Обмеження локального сховища</string>
@@ -976,8 +976,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="auto_lock_timer">Таймер автоблокування</string>
     <string name="connections_via_third_parties">Альтернативна маршрутизація</string>
     <string name="allow_secure_connections_via_third_parties">Дозволити альтернативну маршрутизацію</string>
-    <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a></string>
+    <string name="allow_secure_connections_via_third_parties_settings_description">У випадку блокування сайтів Proton, цей параметр дозволяє програмі спробувати альтернативний мережевий маршрут для доступу до Proton, що може бути корисним для обходу мережевих екранів чи мережевих проблем. Рекомендовано увімкнути цей параметр для більшої надійності.</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">У випадку блокування сайтів Proton, цей параметр дозволяє програмі спробувати альтернативний мережевий маршрут для доступу до Proton, що може бути корисним для обходу мережевих екранів чи мережевих проблем. Рекомендовано увімкнути цей параметр для більшої надійності. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Докладніше</a></string>
     <string name="app_language">Мова програми</string>
     <string name="custom_language_dialog_title">Вибір мови застосунку</string>
     <string name="auto_detect">Автовизначення</string>
@@ -994,13 +994,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- endregion -->
     <!-- region Multi Account -->
     <string name="remove_account_question">Вилучити %s?</string>
-    <string name="signed_in_with">Signed in with %s</string>
-    <string name="signed_in_with_logged_out_from">Logged out from %1$s and signed in with %2$s</string>
+    <string name="signed_in_with">Ви ввійшли як %s</string>
+    <string name="signed_in_with_logged_out_from">Ви вийшли з %1$s і увійшли з %2$s</string>
     <string name="connect_account_limit_title">Досягнуто межі</string>
     <string name="connect_account_limit_subtitle">Ви не можете додати іншу безплатний обліковий запис ProtonMail. Можна додати лише один безплатний обліковий запис ProtonMail. Вийдіть з іншого безплатного облікового запису або переведіть один із безплатних облікових записів на платного облікового запису.</string>
     <string name="switch_accounts_question">Змінити обліковий запис?</string>
     <string name="switch_to_account">Змінено на %s</string>
-    <string name="login_failure_missing_keys">The account you are trying to add does not have generated keys. Please add this account as a first account on the app, or log in via the web version, to generate keys and then add it as a additional account in the app.</string>
+    <string name="login_failure_missing_keys">Обліковий запис, який ви намагаєтеся додати, не має згенерованих ключів. Додайте цей обліковий запис в якості першого облікового запису в застосунку, або увійдіть через вебверсію, щоб згенерувати ключі, а потім додайте їх як додатковий обліковий запис у застосунку.</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">Написати новий лист</string>
@@ -1008,13 +1008,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Поширені проблеми зв\'язку та розв\'язання</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Немає зв\'язку з інтернетом&lt;/i&gt; — Переконайтеся у справності з\'єднання.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблема з постачальником послуги доступу Інтернету (ISP)&lt;/i&gt; — Спробуйте під\'єднатися до Proton з іншої мережі (або скористайтеся &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; або &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Блокування урядом&lt;/i&gt; — Можливо, ваша країна блокує доступ до Proton. Спробуйте &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (або інший VPN) або &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; для доступу до Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Перешкоджання антивіруса&lt;/i&gt; — Тимчасово вимкніть або вилучіть антивірусне програмне забезпечення.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Перешкоджання проксі/брандмауера&lt;/i&gt; — Вимкніть будь-які проксі-сервери чи брандмауери або зверніться до адміністратора мережі.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton недоступний&lt;/i&gt; — Перегляньте &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt;, щоб дізнатися поточний стан служби.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблему досі не усунено&lt;/i&gt; — Зв\'яжіться з нами безпосередньо через нашу &lt;a href=\"https://protonmail.com/support-form\"&gt;форму підтримки&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;електронну пошту&lt;/a&gt; (support@protonmail.com), або &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->
@@ -1032,5 +1032,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_firebase_api_key_message">Недійсний ключ API Firebas. Push-сповіщення не працюватимуть.</string>
     <string name="failed_saving_draft_online">Не вдалося зберегти мережну чернетку повідомлення: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Це повідомлення не можна відкрити, доки воно надсилається</string>
-    <string name="enable_conversation_mode">Enable conversation mode</string>
+    <string name="enable_conversation_mode">Увімкнути режим розмов</string>
 </resources>
