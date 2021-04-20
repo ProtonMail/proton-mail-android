@@ -275,7 +275,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 1,
                 4,
                 0,
-                listOf(LabelContext("labelId123", 1, 0, 0, 0, 0))
+                listOf(LabelContext("labelId123", 1, 0, 0, 0, 0)),
+                null
             )
         )
         assertEquals(expectedLocalConversations, actualLocalItems.value)
@@ -294,13 +295,14 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     ) = Conversation(
         id = id,
         subject = subject,
-        listOf(),
-        listOf(),
-        0,
-        0,
-        0,
-        0,
-        labels = labels
+        senders = listOf(),
+        receivers = listOf(),
+        messagesCount = 0,
+        unreadCount = 0,
+        attachmentsCount = 0,
+        expirationTime = 0,
+        labels = labels,
+        messages = null
     )
 
     private fun getConversationApiModel(

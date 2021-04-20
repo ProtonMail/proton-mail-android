@@ -55,7 +55,8 @@ internal fun ConversationDatabaseModel.toDomainModel() = Conversation(
     unreadCount = numUnread,
     attachmentsCount = numAttachments,
     expirationTime = expirationTime,
-    labels = labels.toLabelContextDomainModel()
+    labels = labels.toLabelContextDomainModel(),
+    messages = null
 )
 
 /**

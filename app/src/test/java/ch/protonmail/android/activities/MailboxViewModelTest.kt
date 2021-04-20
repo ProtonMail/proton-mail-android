@@ -38,6 +38,7 @@ import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.Correspondent
+import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
@@ -599,10 +600,8 @@ class MailboxViewModelTest : CoroutinesTest {
                 0,
                 2,
                 823764623,
-                "senderAddressId",
                 listOf(),
-                null,
-                0
+                null
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
@@ -658,10 +657,8 @@ class MailboxViewModelTest : CoroutinesTest {
                 1,
                 2,
                 123423423,
-                "senderAddressId",
                 listOf(),
-                null,
-                0
+                null
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
@@ -699,7 +696,7 @@ class MailboxViewModelTest : CoroutinesTest {
         }
 
     @Test
-    fun getMailboxItemsMapsConversationAsStarredIfLabelIdsContainsStarredLabelId() =
+    fun getMailboxItemsMapsConversationAsStarredIfLabelsContainsStarredLabelId() =
         runBlockingTest {
             val location = Constants.MessageLocationType.INBOX
             val conversation = Conversation(
@@ -711,10 +708,11 @@ class MailboxViewModelTest : CoroutinesTest {
                 1,
                 0,
                 0,
-                "senderAddressId",
-                listOf(STARRED_LABEL_ID, "randomLabelId"),
-                null,
-                1617982191
+                listOf(
+                    LabelContext(STARRED_LABEL_ID, 0, 0, 0, 0, 0),
+                    LabelContext("randomLabelId", 0, 0, 0, 0, 0)
+                ),
+                null
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
@@ -736,7 +734,7 @@ class MailboxViewModelTest : CoroutinesTest {
                     "conversationId9238",
                     "",
                     "subject9237472",
-                    lastMessageTimeMs = 1617982191,
+                    lastMessageTimeMs = 0,
                     hasAttachments = false,
                     isStarred = true,
                     isRead = false,
@@ -764,10 +762,8 @@ class MailboxViewModelTest : CoroutinesTest {
                 1,
                 0,
                 0,
-                "senderAddressId",
-                listOf("randomLabelId"),
-                null,
-                1617982192
+                listOf(),
+                null
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
@@ -789,7 +785,7 @@ class MailboxViewModelTest : CoroutinesTest {
                     "conversationId9239",
                     "",
                     "subject9237473",
-                    lastMessageTimeMs = 1617982192,
+                    lastMessageTimeMs = 0,
                     hasAttachments = false,
                     isStarred = false,
                     isRead = false,
@@ -797,7 +793,63 @@ class MailboxViewModelTest : CoroutinesTest {
                     messagesCount = null,
                     messageData = null,
                     isDeleted = false,
-                    labelIds = listOf("randomLabelId"),
+                    labelIds = listOf(),
+                    recipients = ""
+                )
+            )
+            assertEquals(expected, actual.observedValues.first())
+        }
+
+    @Test
+    fun getMailboxItemsMapsLastMessageTimeMsToTheContextTimeOfTheLabelRepresentingTheCurrentLocation() =
+        runBlockingTest {
+            val location = Constants.MessageLocationType.INBOX
+            val inboxLocationId = "0"
+            val archiveLocationId = "6"
+            val conversation = Conversation(
+                "conversationId9240",
+                "subject9237474",
+                emptyList(),
+                emptyList(),
+                2,
+                1,
+                0,
+                0,
+                listOf(
+                    LabelContext(inboxLocationId, 0, 0, 1617982194, 0, 0),
+                    LabelContext(archiveLocationId, 0, 0, 0, 0, 0)
+                ),
+                null
+            )
+            val successResult = GetConversationsResult.Success(listOf(conversation))
+            every { conversationModeEnabled(location) } returns true
+            coEvery { getConversations(currentUserId, location) } returns flowOf(successResult)
+            coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
+                listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
+            )
+
+            val actual = viewModel.getMailboxItems(
+                location,
+                "labelId923844",
+                true,
+                "9238423bbe4h3423489wssdf1",
+                false,
+            ).testObserver()
+
+            val expected = listOf(
+                MailboxUiItem(
+                    "conversationId9240",
+                    "",
+                    "subject9237474",
+                    lastMessageTimeMs = 1617982194,
+                    hasAttachments = false,
+                    isStarred = false,
+                    isRead = false,
+                    expirationTime = 0,
+                    messagesCount = 2,
+                    messageData = null,
+                    isDeleted = false,
+                    labelIds = listOf("0", "6"),
                     recipients = ""
                 )
             )

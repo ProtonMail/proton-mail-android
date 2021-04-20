@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.mailbox.domain
 
+import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import kotlinx.coroutines.flow.Flow

@@ -275,28 +275,31 @@ class MailboxViewModel @Inject constructor(
     ): LiveData<List<MailboxUiItem>> {
         return getConversations(userManager.requireCurrentUserId(), location).map { result ->
             if (result is GetConversationsResult.Success) {
-                return@map conversationsToMailboxItems(result.conversations)
+                return@map conversationsToMailboxItems(result.conversations, location.messageLocationTypeValue)
             }
             return@map listOf()
         }.asLiveData()
     }
 
-    private suspend fun conversationsToMailboxItems(conversations: List<Conversation>): List<MailboxUiItem> {
+    private suspend fun conversationsToMailboxItems(
+        conversations: List<Conversation>,
+        locationId: Int
+    ): List<MailboxUiItem> {
         val contacts = contactsRepository.findAllContactEmails().first()
         return conversations.map { conversation ->
             MailboxUiItem(
                 conversation.id,
                 conversation.senders.joinToString { getCorrespondentDisplayName(it, contacts) },
                 conversation.subject,
-                conversation.contextTimeMs,
+                conversation.labels.find { it.id == locationId.toString() }?.contextTime ?: 0,
                 conversation.attachmentsCount > 0,
-                conversation.labelIds.contains(STARRED_LABEL_ID),
+                conversation.labels.any { it.id == STARRED_LABEL_ID },
                 conversation.unreadCount == 0,
                 conversation.expirationTime,
                 getDisplayMessageCount(conversation),
                 null,
                 false,
-                conversation.labelIds,
+                conversation.labels.map { it.id },
                 conversation.receivers.joinToString { it.name }
             )
         }
@@ -334,7 +337,7 @@ class MailboxViewModel @Inject constructor(
                 message.isStarred ?: false,
                 message.isRead,
                 message.expirationTime,
-                0,
+                null,
                 messageData,
                 message.deleted,
                 message.allLabelIDs,

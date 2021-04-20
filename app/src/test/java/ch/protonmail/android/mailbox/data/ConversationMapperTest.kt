@@ -30,8 +30,8 @@ import ch.protonmail.android.mailbox.data.remote.model.LabelContextApiModel
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
-import kotlin.test.assertEquals
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class ConversationMapperTest {
 
@@ -114,22 +114,23 @@ class ConversationMapperTest {
         Conversation(
             id = "conversation1",
             subject = "subject1",
-            listOf(Correspondent("sender1", "sender1@pm.com")),
-            listOf(Correspondent("recipient1", "recipient1@pm.com")),
+            senders = listOf(Correspondent("sender1", "sender1@pm.com")),
+            receivers = listOf(Correspondent("recipient1", "recipient1@pm.com")),
             messagesCount = 3,
             unreadCount = 1,
             attachmentsCount = 0,
             expirationTime = 0L,
-            listOf(
+            labels = listOf(
                 LabelContext("0", 1, 2, 2, 30, 0),
                 LabelContext("7", 0, 1, 0, 0, 0)
-            )
+            ),
+            messages = null
         ),
         Conversation(
             id = "conversation2",
             subject = "subject2",
-            listOf(Correspondent("sender1", "sender1@pm.com")),
-            listOf(
+            senders = listOf(Correspondent("sender1", "sender1@pm.com")),
+            receivers = listOf(
                 Correspondent("recipient1", "recipient1@pm.com"),
                 Correspondent("recipient2", "recipient2@pm.com")
             ),
@@ -137,7 +138,8 @@ class ConversationMapperTest {
             unreadCount = 0,
             attachmentsCount = 4,
             expirationTime = 12_345L,
-            listOf(LabelContext("0", 0, 1, 3, 0, 4))
+            labels = listOf(LabelContext("0", 0, 1, 3, 0, 4)),
+            messages = null
         )
     )
 

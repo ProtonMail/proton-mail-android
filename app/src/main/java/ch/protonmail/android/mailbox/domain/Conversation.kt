@@ -21,6 +21,7 @@ package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
+import ch.protonmail.android.mailbox.domain.model.MessageEntity
 
 data class Conversation(
     val id: String,
@@ -32,8 +33,5 @@ data class Conversation(
     val attachmentsCount: Int,
     val expirationTime: Long,
     val labels: List<LabelContext>,
-    val addressId: String,
-    val labelIds: List<String>,
-    val messages: List<MessageEntity>?,
-    val contextTimeMs: Long
+    val messages: List<MessageEntity>?
 )
