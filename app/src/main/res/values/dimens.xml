@@ -37,6 +37,15 @@
     <dimen name="padding_xl">24dp</dimen>
     <dimen name="padding_xxl">32dp</dimen>
     <dimen name="padding_xxxl">40dp</dimen>
+    <dimen name="padding_xxxxl">48dp</dimen>
+
+    <dimen name="elevation_xs">1dp</dimen>
+    <dimen name="elevation_s">2dp</dimen> // standard button low 2dp
+    <dimen name="elevation_m">4dp</dimen> // standard app bar 4dp
+    <dimen name="elevation_l">6dp</dimen> // standard FAB elevation 6dp
+    <dimen name="elevation_xl">8dp</dimen> // standard button high 8dp
+    <dimen name="elevation_xxl">16dp</dimen> // standard nav drawer 16dp
+
 
     <!-- Toolbars -->
     <dimen name="toolbar_padding_start">0dp</dimen>

@@ -22,8 +22,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/background_norm"
+    android:elevation="@dimen/elevation_xs"
     android:paddingStart="@dimen/padding_l"
     android:paddingEnd="@dimen/padding_l"
+    android:paddingBottom="@dimen/padding_xs"
     tools:showIn="@layout/fragment_message_details_action_sheet">
 
     <ImageView
@@ -41,6 +44,7 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:visibility="visible" />
 
     <TextView
@@ -61,6 +65,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
+        android:paddingBottom="@dimen/padding_m"
         android:singleLine="true"
         android:textAppearance="@style/Text.Caption.Weak"
         app:layout_constraintEnd_toEndOf="parent"

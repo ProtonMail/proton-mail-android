@@ -827,6 +827,7 @@ internal class MessageDetailsActivity :
         }
     }
 
+    // TODO: Move as much as possible of this method to ViewModel
     fun executeMessageAction(
         messageAction: Constants.MessageActionType,
         message: Message = requireNotNull(viewModel.decryptedMessageData.value)
