@@ -64,6 +64,7 @@ import ch.protonmail.android.activities.messageDetails.MessageViewHeadersActivit
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
+import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelsActionSheet
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
@@ -589,7 +590,7 @@ internal class MessageDetailsActivity :
     ) {
         requireNotNull(message)
 
-        ManageLabelsActionSheet.newInstance(message.labelIDsNotIncludingLocations)
+        ManageLabelsActionSheet.newInstance(message.labelIDsNotIncludingLocations, requireNotNull(message.messageId))
             .show(supportFragmentManager, ManageLabelsActionSheet::class.qualifiedName)
     }
 

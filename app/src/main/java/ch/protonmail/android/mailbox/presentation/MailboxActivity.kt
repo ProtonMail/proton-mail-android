@@ -305,7 +305,7 @@ class MailboxActivity :
 
         mailboxViewModel.pendingSendsLiveData.observe(this, mailboxAdapter::setPendingForSendingList)
         mailboxViewModel.pendingUploadsLiveData.observe(this, mailboxAdapter::setPendingUploadsList)
-        messageDetailsRepository.getAllLabels().observe(this, mailboxAdapter::setLabels)
+        messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
 
         mailboxViewModel.hasSuccessfullyDeletedMessages.observe(this) { isSuccess ->
             Timber.v("Delete message status is success $isSuccess")
@@ -569,7 +569,7 @@ class MailboxActivity :
             syncId = syncUUID
         )
 
-        messageDetailsRepository.getAllLabels().observe(this, mailboxAdapter::setLabels)
+        messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
         // Account has been switched, so used space changed as well
         mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED)
         // Observe used space for current account

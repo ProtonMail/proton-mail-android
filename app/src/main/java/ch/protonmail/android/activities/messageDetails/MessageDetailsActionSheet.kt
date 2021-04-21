@@ -67,8 +67,8 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         bottomSheetDialog.setOnShowListener { dialogInterface ->
             val dialog = dialogInterface as BottomSheetDialog
             val bottomSheet: View? = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet)
-            val headerView = binding.includeLayoutActionSheetHeader.actionsSheetTitleTextView
-            val subHeaderView = binding.includeLayoutActionSheetHeader.actionsSheetSubTitleTextView
+            val headerView = binding.includeLayoutActionSheetHeader.textviewActionsSheetTitle
+            val subHeaderView = binding.includeLayoutActionSheetHeader.textviewActionsSheetSubtitle
             val targetOffsetSize = resources.getDimensionPixelSize(R.dimen.padding_xxl)
             if (bottomSheet != null) {
                 val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
@@ -116,11 +116,11 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
     ) = with(binding) {
         val title = arguments?.getString(EXTRA_ARG_TITLE)
         if (!title.isNullOrEmpty()) {
-            actionsSheetTitleTextView.text = title
+            textviewActionsSheetTitle.text = title
         }
         val subtitle = arguments?.getString(EXTRA_ARG_SUBTITLE)
         if (!subtitle.isNullOrEmpty()) {
-            actionsSheetSubTitleTextView.text = subtitle
+            textviewActionsSheetSubtitle.text = subtitle
         }
         actionsSheetCloseView.setOnClickListener {
             dismiss()

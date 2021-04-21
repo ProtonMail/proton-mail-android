@@ -19,6 +19,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -54,7 +55,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.appcompat.widget.SwitchCompat
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switch_labels_sheet_archive"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -65,13 +66,20 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/text_view_labels_sheet_"
+                android:id="@+id/text_view_labels_sheet"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
-                android:textColor="@color/text_weak"
                 android:layout_height="wrap_content"
                 android:text="@string/save_new_label"
+                android:textColor="@color/text_weak"
                 app:drawableStartCompat="@drawable/ic_add_24dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview_labels_sheet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/item_manage_labels_action" />
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

@@ -195,7 +195,7 @@ public class MoveToFolderDialogFragment extends AbstractDialogFragment implement
         final MessageDao messageDao = MessageDatabase.Companion
                 .getInstance(requireContext().getApplicationContext(), userManager.requireCurrentUserId())
                 .getDao();
-        messageDao.getAllLabels().observe(this, new LabelsObserver());
+        messageDao.getAllLabelsLiveData().observe(this, new LabelsObserver());
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {

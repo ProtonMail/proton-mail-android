@@ -58,7 +58,7 @@ class NavigationViewModel @Inject constructor(
 
     private fun labelsLiveData(): LiveData<List<Label>> =
         databaseProvider.provideMessageDao(currentUserId)
-            .getAllLabels()
+            .getAllLabelsLiveData()
             .map { list -> list.sortedBy { it.order } }
 
     private var locationsListLiveData = databaseProvider.provideCounterDao(currentUserId).findAllUnreadLocations()

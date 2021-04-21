@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.activities.messageDetails
+package ch.protonmail.android.activities.messageDetails.labelactions
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,10 +26,14 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.FragmentManageLabelsActionSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class ManageLabelsActionSheet : BottomSheetDialogFragment() {
@@ -43,13 +47,28 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
         _binding = FragmentManageLabelsActionSheetBinding.inflate(inflater)
 
         with(binding.includeLayoutActionSheetHeader) {
-            actionsSheetSubTitleTextView.isVisible = false
-            actionsSheetTitleTextView.text = getString(R.string.label_as)
-            textviewActionsSheetRightAction.isVisible = true
+            textviewActionsSheetSubtitle.isVisible = false
+            textviewActionsSheetTitle.text = getString(R.string.label_as)
+            textviewActionsSheetRightAction.apply {
+                isVisible = true
+                setOnClickListener {
+                    viewModel.onDoneClicked()
+                    dismiss()
+                }
+            }
             actionsSheetCloseView.setOnClickListener {
                 dismiss()
             }
         }
+        val manageLabelsActionAdapter = ManageLabelsActionAdapter(::onLabelClicked)
+        with(binding.recyclerviewLabelsSheet) {
+            layoutManager = LinearLayoutManager(context)
+            adapter = manageLabelsActionAdapter
+        }
+
+        viewModel.labels
+            .onEach { manageLabelsActionAdapter.submitList(it) }
+            .launchIn(lifecycleScope)
 
         return binding.root
     }
@@ -59,15 +78,21 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
         _binding = null
     }
 
+    private fun onLabelClicked(model: ManageLabelItemUiModel) {
+        viewModel.onLabelClicked(model)
+    }
+
     companion object {
 
-        private const val EXTRA_ARG_MESSAGE_CHECKED_LABELS = "extra_arg_message_checked_labels"
+        const val EXTRA_ARG_MESSAGE_CHECKED_LABELS = "extra_arg_message_checked_labels"
+        const val EXTRA_ARG_MESSAGE_ID = "extra_arg_message_id"
 
-        fun newInstance(checkedLabels: List<String>): ManageLabelsActionSheet {
+        fun newInstance(checkedLabels: List<String>, messageId: String): ManageLabelsActionSheet {
 
             return ManageLabelsActionSheet().apply {
                 arguments = bundleOf(
                     EXTRA_ARG_MESSAGE_CHECKED_LABELS to checkedLabels,
+                    EXTRA_ARG_MESSAGE_ID to messageId
                 )
             }
         }

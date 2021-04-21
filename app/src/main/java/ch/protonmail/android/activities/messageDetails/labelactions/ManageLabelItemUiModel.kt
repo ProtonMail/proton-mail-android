@@ -17,10 +17,13 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.activities.messageDetails
+package ch.protonmail.android.activities.messageDetails.labelactions
 
-import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.ViewModel
+import androidx.annotation.ColorInt
 
-class ManageLabelsActionSheetViewModel @ViewModelInject constructor() : ViewModel() {
-}
+data class ManageLabelItemUiModel(
+    val labelId: String,
+    @ColorInt val colorInt: Int,
+    val title: String,
+    val isChecked: Boolean
+)

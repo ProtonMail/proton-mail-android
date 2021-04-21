@@ -120,6 +120,9 @@ class MessageDetailsRepository @Inject constructor(
     fun findMessageById(messageId: String): Flow<Message?> =
         messagesDao.findMessageById(messageId).map { readMessageBodyFromFileIfNeeded(it) }
 
+    suspend fun findMessageByIdOnce(messageId: String): Message =
+        messagesDao.findMessageByIdOnce(messageId).apply { readMessageBodyFromFileIfNeeded(this) }
+
     fun findSearchMessageByIdBlocking(messageId: String): Message? =
         searchDatabaseDao.findMessageByIdBlocking(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
@@ -386,7 +389,9 @@ class MessageDetailsRepository @Inject constructor(
 
     fun findAttachmentById(attachmentId: String) = messagesDao.findAttachmentById(attachmentId)
 
-    fun getAllLabels() = messagesDao.getAllLabels()
+    fun getAllLabelsLiveData() = messagesDao.getAllLabelsLiveData()
+
+    suspend fun getAllLabels(): List<Label> = messagesDao.getAllLabels()
 
     fun findAllLabelsWithIds(labelIds: List<String>): List<Label> = messagesDao.findAllLabelsWithIds(labelIds)
 
