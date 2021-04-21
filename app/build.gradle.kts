@@ -147,7 +147,7 @@ android(appIdSuffix = "android") {
             multiDexKeepProguard = File("multidex-proguard.pro")
         }
         getByName("debug") {
-            isMinifyEnabled = false
+            isMinifyEnabled = project.hasProperty("minify")
             isTestCoverageEnabled = true
         }
         getByName("release") {
