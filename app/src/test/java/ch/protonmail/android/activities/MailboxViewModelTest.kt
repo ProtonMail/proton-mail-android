@@ -182,7 +182,7 @@ class MailboxViewModelTest : CoroutinesTest {
             isStarred = false,
             isRead = true,
             expirationTime = 0,
-            messagesCount = 0,
+            messagesCount = null,
             isDeleted = false,
             labelIds = emptyList(),
             recipients = "",
@@ -239,7 +239,7 @@ class MailboxViewModelTest : CoroutinesTest {
             isStarred = false,
             isRead = true,
             expirationTime = 0,
-            messagesCount = 0,
+            messagesCount = null,
             isDeleted = false,
             labelIds = emptyList(),
             recipients = "",
@@ -292,7 +292,7 @@ class MailboxViewModelTest : CoroutinesTest {
             isStarred = false,
             isRead = true,
             expirationTime = 0,
-            messagesCount = 0,
+            messagesCount = null,
             isDeleted = false,
             labelIds = emptyList(),
             recipients = "",
@@ -344,7 +344,7 @@ class MailboxViewModelTest : CoroutinesTest {
             isStarred = false,
             isRead = true,
             expirationTime = 0,
-            messagesCount = 0,
+            messagesCount = null,
             isDeleted = false,
             labelIds = emptyList(),
             recipients = "",
@@ -409,7 +409,7 @@ class MailboxViewModelTest : CoroutinesTest {
             isStarred = true,
             isRead = false,
             expirationTime = 82334L,
-            messagesCount = 0,
+            messagesCount = null,
             isDeleted = false,
             labelIds = listOf("label1", "label2"),
             recipients = toContactsAndGroupsString(
@@ -801,7 +801,7 @@ class MailboxViewModelTest : CoroutinesTest {
         }
 
     @Test
-    fun getMailboxItemsMapsLastMessageTimeMsToTheContextTimeOfTheLabelRepresentingTheCurrentLocation() =
+    fun getMailboxItemsMapsLastMessageTimeMsToTheContextTimeOfTheLabelRepresentingTheCurrentLocationConvertedToMs() =
         runBlockingTest {
             val location = Constants.MessageLocationType.INBOX
             val inboxLocationId = "0"
@@ -841,7 +841,7 @@ class MailboxViewModelTest : CoroutinesTest {
                     "conversationId9240",
                     "",
                     "subject9237474",
-                    lastMessageTimeMs = 1617982194,
+                    lastMessageTimeMs = 1617982194000,
                     hasAttachments = false,
                     isStarred = false,
                     isRead = false,
@@ -869,7 +869,7 @@ class MailboxViewModelTest : CoroutinesTest {
         isStarred = false,
         isRead = true,
         expirationTime = 0,
-        messagesCount = 0,
+        messagesCount = null,
         messageData = MessageData(
             Constants.MessageLocationType.INVALID.messageLocationTypeValue,
             isReplied = false,

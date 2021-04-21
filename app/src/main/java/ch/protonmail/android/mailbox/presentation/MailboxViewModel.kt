@@ -287,11 +287,14 @@ class MailboxViewModel @Inject constructor(
     ): List<MailboxUiItem> {
         val contacts = contactsRepository.findAllContactEmails().first()
         return conversations.map { conversation ->
+            val lastMessageTimeMs = conversation.labels.find {
+                it.id == locationId.toString()
+            }?.contextTime?.let { it * 1000 } ?: 0
             MailboxUiItem(
                 conversation.id,
                 conversation.senders.joinToString { getCorrespondentDisplayName(it, contacts) },
                 conversation.subject,
-                conversation.labels.find { it.id == locationId.toString() }?.contextTime ?: 0,
+                lastMessageTimeMs,
                 conversation.attachmentsCount > 0,
                 conversation.labels.any { it.id == STARRED_LABEL_ID },
                 conversation.unreadCount == 0,
