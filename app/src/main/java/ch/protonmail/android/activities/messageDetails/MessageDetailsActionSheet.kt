@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -77,8 +78,10 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
                             Timber.v("State changed to $newState")
                             if (newState == STATE_EXPANDED) {
                                 setCloseIconVisibility(true)
+                                dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                             } else {
                                 setCloseIconVisibility(false)
+                                dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                             }
                         }
 

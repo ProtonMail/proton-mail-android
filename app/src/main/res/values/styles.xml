@@ -104,6 +104,7 @@
 
     <style name="Widget.App.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.BottomSheet</item>
+        <item name="backgroundTint">@color/background_norm</item>
     </style>
 
     <style name="ShapeAppearance.App.BottomSheet" parent="ShapeAppearance.MaterialComponents.LargeComponent">
