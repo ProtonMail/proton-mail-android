@@ -20,16 +20,15 @@ package ch.protonmail.android.mailbox.data.remote
 
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.segments.BaseApi
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 
 class ConversationApi(private val service: ConversationService) : BaseApi(), ConversationApiSpec {
 
-    override suspend fun fetchConversations(conversationsParameters: GetConversationsParameters, userId: Id) =
+    override suspend fun fetchConversations(params: GetConversationsParameters) =
         service.fetchConversations(
-            conversationsParameters.page,
-            conversationsParameters.pageSize,
-            conversationsParameters.labelId,
-            userIdTag = UserIdTag(userId)
+            params.page,
+            params.pageSize,
+            params.labelId,
+            userIdTag = UserIdTag(params.userId)
         )
 }

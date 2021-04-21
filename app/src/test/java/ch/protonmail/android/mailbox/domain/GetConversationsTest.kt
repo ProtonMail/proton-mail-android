@@ -58,19 +58,23 @@ class GetConversationsTest : CoroutinesTest {
     @Test
     fun getConversationsCallsRepositoryWithReceivedLocation() = runBlockingTest {
         val location = MessageLocationType.ARCHIVE
-        coEvery { conversationRepository.getConversations(any(), any()) } returns flowOf()
+        coEvery { conversationRepository.getConversations(any()) } returns flowOf()
 
         getConversations.invoke(userId, location)
 
-        val params = GetConversationsParameters(labelId = location.messageLocationTypeValue.toString())
-        coVerify { conversationRepository.getConversations(params, userId) }
+        val params = GetConversationsParameters(
+            0,
+            labelId = location.messageLocationTypeValue.toString(),
+            userId = userId
+        )
+        coVerify { conversationRepository.getConversations(params) }
     }
 
     @Test
     fun getConversationsReturnsConversationsFlowWhenRepositoryRequestSucceeds() = runBlockingTest {
         val conversations = listOf(buildRandomConversation())
         val dataResult = DataResult.Success(ResponseSource.Remote, conversations)
-        coEvery { conversationRepository.getConversations(any(), any()) } returns flowOf(dataResult)
+        coEvery { conversationRepository.getConversations(any()) } returns flowOf(dataResult)
 
         val actual = getConversations.invoke(userId, MessageLocationType.INBOX)
 
@@ -80,7 +84,7 @@ class GetConversationsTest : CoroutinesTest {
 
     @Test
     fun getConversationsReturnsErrorWhenRepositoryFailsGettingConversations() = runBlockingTest {
-        coEvery { conversationRepository.getConversations(any(), any()) } returns flowOf(DataResult.Error.Local(null))
+        coEvery { conversationRepository.getConversations(any()) } returns flowOf(DataResult.Error.Local(null))
 
         val actual = getConversations.invoke(userId, MessageLocationType.INBOX)
 

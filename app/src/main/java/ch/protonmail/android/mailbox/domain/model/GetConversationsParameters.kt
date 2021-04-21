@@ -19,8 +19,11 @@
 
 package ch.protonmail.android.mailbox.domain.model
 
+import ch.protonmail.android.domain.entity.Id
+
 data class GetConversationsParameters(
-    val page: Int? = 0,
-    val pageSize: Int? = 50,
-    val labelId: String
+    val page: Int,
+    val labelId: String,
+    val userId: Id,
+    val pageSize: Int = 50
 )

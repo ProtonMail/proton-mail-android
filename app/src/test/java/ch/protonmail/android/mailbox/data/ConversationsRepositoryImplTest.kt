@@ -157,13 +157,14 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             // given
             val parameters = GetConversationsParameters(
                 page = 0,
-                pageSize = 2,
-                labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
+                labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+                userId = testUserId,
+                pageSize = 2
             )
             coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(listOf())
 
             // when
-            val result = conversationsRepository.getConversations(parameters, testUserId).first()
+            val result = conversationsRepository.getConversations(parameters).first()
 
             // then
             assertEquals(DataResult.Success(ResponseSource.Local, listOf()), result)
@@ -177,15 +178,16 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             // given
             val parameters = GetConversationsParameters(
                 page = 0,
-                pageSize = 5,
                 labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+                userId = testUserId,
+                pageSize = 5,
             )
 
             val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
             coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(conversationsEntity)
 
             // when
-            val result = conversationsRepository.getConversations(parameters, testUserId).first()
+            val result = conversationsRepository.getConversations(parameters).first()
 
             // then
             assertEquals(DataResult.Success(ResponseSource.Local, conversationsOrdered), result)
@@ -197,16 +199,17 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         // given
         val parameters = GetConversationsParameters(
             page = 0,
-            pageSize = 5,
-            labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
+            labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+            userId = testUserId,
+            pageSize = 5
         )
 
         coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(emptyList())
         coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
-        coEvery { api.fetchConversations(any(), testUserId) } returns conversationsRemote
+        coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
         // when
-        val result = conversationsRepository.getConversations(parameters, testUserId).take(3).toList()
+        val result = conversationsRepository.getConversations(parameters).take(3).toList()
 
         // Then
         val actualLocalItems = result[0] as DataResult.Success
@@ -219,7 +222,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         assertEquals(ResponseSource.Remote, actualRemoteItems.source)
 
         val expectedConversations = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
-        coVerify { api.fetchConversations(parameters, testUserId) }
+        coVerify { api.fetchConversations(parameters) }
         coVerify { conversationDao.insertOrUpdate(*expectedConversations.toTypedArray()) }
     }
 
@@ -228,8 +231,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         // given
         val parameters = GetConversationsParameters(
             page = 0,
-            pageSize = 5,
-            labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
+            labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+            userId = testUserId,
+            pageSize = 5
         )
 
         val senders = listOf(
@@ -257,10 +261,10 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             )
         )
         coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
-        coEvery { api.fetchConversations(any(), testUserId) } throws IOException("Api call failed")
+        coEvery { api.fetchConversations(any()) } throws IOException("Api call failed")
 
         // when
-        val result = conversationsRepository.getConversations(parameters, testUserId).take(3).toList()
+        val result = conversationsRepository.getConversations(parameters).take(3).toList()
 
         // Then
         val actualLocalItems = result[0] as DataResult.Success

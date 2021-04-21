@@ -32,8 +32,13 @@ class GetConversations @Inject constructor(
 ) {
 
     operator fun invoke(userId: Id, location: MessageLocationType): Flow<GetConversationsResult> {
-        val params = GetConversationsParameters(labelId = location.messageLocationTypeValue.toString())
-        return conversationRepository.getConversations(params, userId)
+        val params = GetConversationsParameters(
+            page = 0,
+            labelId = location.messageLocationTypeValue.toString(),
+            userId = userId
+        )
+
+        return conversationRepository.getConversations(params)
             .map { result ->
                 if (result is DataResult.Success) {
                     return@map GetConversationsResult.Success(result.value)

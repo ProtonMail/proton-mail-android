@@ -19,7 +19,6 @@
 package ch.protonmail.android.mailbox.data
 
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
@@ -44,34 +43,36 @@ class ConversationsRepositoryImpl @Inject constructor(
     private val api: ProtonMailApiManager
 ) : ConversationsRepository {
 
-    private data class StoreKey(val params: GetConversationsParameters, val userId: Id)
+    private data class StoreKey(val params: GetConversationsParameters)
+
     private val store = StoreBuilder.from(
         fetcher = Fetcher.of { key: StoreKey ->
-            api.fetchConversations(key.params, key.userId)
+            api.fetchConversations(key.params)
         },
         sourceOfTruth = SourceOfTruth.Companion.of(
-            reader = { key -> geConversationsLocal(key.params.labelId, key.userId) },
+            reader = { key -> geConversationsLocal(key.params) },
             writer = { key: StoreKey, output: ConversationsResponse ->
-                val conversations = output.conversationResponse.toListLocal(key.userId.s)
+                val conversations = output.conversationResponse.toListLocal(key.params.userId.s)
                 conversationDao.insertOrUpdate(*conversations.toTypedArray())
             },
             deleteAll = { conversationDao.clear() }
         )
     ).build()
 
-    private fun geConversationsLocal(labelId: String, userId: Id): Flow<List<Conversation>> =
-        conversationDao.getConversations(userId.s).map { list ->
+    override fun getConversations(params: GetConversationsParameters):
+        Flow<DataResult<List<Conversation>>> =
+            store.stream(StoreRequest.cached(StoreKey(params), true)).map { it.toDataResult() }
+
+    @ExperimentalStoreApi
+    override suspend fun clearConversations() = store.clearAll()
+
+    private fun geConversationsLocal(params: GetConversationsParameters): Flow<List<Conversation>> =
+        conversationDao.getConversations(params.userId.s).map { list ->
             list.sortedWith(
                 compareByDescending<ConversationDatabaseModel> { conversation ->
-                    conversation.labels.find { label -> label.id == labelId }?.contextTime
+                    conversation.labels.find { label -> label.id == params.labelId }?.contextTime
                 }.thenByDescending { it.order }
             ).toDomainModelList()
         }
 
-    override fun getConversations(params: GetConversationsParameters, userId: Id):
-        Flow<DataResult<List<Conversation>>> =
-            store.stream(StoreRequest.cached(StoreKey(params, userId), true)).map { it.toDataResult() }
-
-    @ExperimentalStoreApi
-    override suspend fun clearConversations() = store.clearAll()
 }
