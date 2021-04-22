@@ -20,6 +20,7 @@ package ch.protonmail.android.views.messagesList
 
 import android.content.Context
 import android.graphics.Color
+import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup

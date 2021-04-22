@@ -44,6 +44,8 @@ import javax.inject.Inject
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+private const val DEBOUNCE_DELAY_MILLIS = 500L
+
 /**
  * A class that will inline the images in the message's body.
  * Implement [CoroutineScope] by the constructor scope
@@ -81,7 +83,7 @@ internal class MessageRenderer(
             imageCompressor.send(embeddedImages)
             // Workaround that ignore values for the next half second, since ViewModel is emitting
             // too many times
-            delay(debounceDelayMillis)
+            delay(DEBOUNCE_DELAY_MILLIS)
         }
     }
 
@@ -225,10 +227,6 @@ internal class MessageRenderer(
             MessageRenderer(dispatchers, messageDirectory(messageId), documentParser, imageDecoder, scope)
     }
 
-    companion object {
-
-        const val debounceDelayMillis = 500L
-    }
 }
 
 // region constants
