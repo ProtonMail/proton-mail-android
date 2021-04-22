@@ -46,9 +46,13 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
     private val messageId = savedStateHandle.get<String>(ManageLabelsActionSheet.EXTRA_ARG_MESSAGE_ID)
 
     private val labelsMutableFlow = MutableStateFlow(emptyList<ManageLabelItemUiModel>())
+    private val actionsResultMutableFlow = MutableStateFlow<ManageLabelActionResult>(ManageLabelActionResult.Default)
 
     val labels: StateFlow<List<ManageLabelItemUiModel>>
         get() = labelsMutableFlow
+
+    val actionsResult: StateFlow<ManageLabelActionResult>
+        get() = actionsResultMutableFlow
 
     init {
         viewModelScope.launch {
@@ -70,10 +74,11 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
         if (selectedLabelsCount.isNotEmpty() &&
             userManager.didReachLabelsThreshold(selectedLabelsCount.size)
         ) {
-            // TODO: Handle that somehow
-            Timber.i("Labels threshold reached!")
+            actionsResultMutableFlow.value =
+                ManageLabelActionResult.ErrorLabelsThresholdReached(userManager.getMaxLabelsAllowed())
         } else {
             labelsMutableFlow.value = updatedLabels
+            actionsResultMutableFlow.value = ManageLabelActionResult.Default
         }
     }
 
@@ -87,6 +92,7 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
                 requireNotNull(messageId),
                 selectedLabels
             )
+            actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved
         }
     }
 }

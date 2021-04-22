@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -34,6 +35,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 
 @AndroidEntryPoint
 class ManageLabelsActionSheet : BottomSheetDialogFragment() {
@@ -53,7 +55,6 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
                 isVisible = true
                 setOnClickListener {
                     viewModel.onDoneClicked()
-                    dismiss()
                 }
             }
             actionsSheetCloseView.setOnClickListener {
@@ -70,6 +71,10 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
             .onEach { manageLabelsActionAdapter.submitList(it) }
             .launchIn(lifecycleScope)
 
+        viewModel.actionsResult
+            .onEach { processActionResult(it) }
+            .launchIn(lifecycleScope)
+
         return binding.root
     }
 
@@ -78,8 +83,27 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
         _binding = null
     }
 
+    private fun processActionResult(result: ManageLabelActionResult) {
+        Timber.v("Result received $result")
+        when (result) {
+            is ManageLabelActionResult.LabelsSuccessfullySaved -> dismiss()
+            is ManageLabelActionResult.ErrorLabelsThresholdReached ->
+                showApplicableLabelsThresholdError(result.maxAllowedCount)
+            else -> {
+                Timber.v("Result $result")
+            }
+        }
+    }
+
     private fun onLabelClicked(model: ManageLabelItemUiModel) {
         viewModel.onLabelClicked(model)
+    }
+
+    private fun showApplicableLabelsThresholdError(maxLabelsAllowed: Int) {
+        Toast.makeText(
+            context, getString(R.string.max_labels_selected, maxLabelsAllowed),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     companion object {

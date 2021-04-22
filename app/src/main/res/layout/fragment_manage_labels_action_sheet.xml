@@ -71,7 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/save_new_label"
-                android:textColor="@color/text_weak"
+                android:clickable="false"
                 app:drawableStartCompat="@drawable/ic_add_24dp" />
 
             <androidx.recyclerview.widget.RecyclerView
