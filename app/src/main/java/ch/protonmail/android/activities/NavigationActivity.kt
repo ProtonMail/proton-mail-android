@@ -312,6 +312,7 @@ abstract class NavigationActivity :
                 super.onDrawerOpened(drawerView)
                 setDarkStatusBar()
             }
+
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
                 setLightStatusBar()
@@ -429,7 +430,7 @@ abstract class NavigationActivity :
             .filter { it.isLetterOrDigit() }
             // Valid only if we have 2 or more chars
             .takeIf { it.size >= 2 }?.let { it[0] to it[1] }
-            // Otherwise take only first 2 letters or digits of the name
+        // Otherwise take only first 2 letters or digits of the name
             ?: string
                 .filter { it.isLetterOrDigit() }
                 .let { it[0] to it[1] }

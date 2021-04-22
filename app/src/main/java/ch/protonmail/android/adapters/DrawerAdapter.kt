@@ -16,8 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-@file:JvmName("DrawerAdapterHelper") // Set name of the file use functions in this file from Java
-
 package ch.protonmail.android.adapters
 
 import android.view.View
@@ -52,7 +50,6 @@ private const val VIEW_TYPE_FOOTER = 3
 
 /**
  * Adapter for Drawer Items that support different View types
- * @see Companion
  *
  * Inherit from [BaseAdapter]
  *
@@ -60,36 +57,36 @@ private const val VIEW_TYPE_FOOTER = 3
  */
 
 internal class DrawerAdapter : BaseAdapter<
-        DrawerItemUiModel, DrawerAdapter.ViewHolder<DrawerItemUiModel>
->( ModelsComparator ) {
+    DrawerItemUiModel, DrawerAdapter.ViewHolder<DrawerItemUiModel>
+    >(ModelsComparator) {
 
     /** Select the given [item] and un-select all the others */
-    fun setSelected( item: Primary ) {
+    fun setSelected(item: Primary) {
         items = items.map {
-            if ( it is Primary )
-                // Select if this item is same as given item
-                it.copyWithSelected( it == item )
+            if (it is Primary)
+            // Select if this item is same as given item
+                it.copyWithSelected(it == item)
             else it
         }
     }
 
     /** @return a [ViewHolder] for the given [viewType] */
-    override fun onCreateViewHolder( parent: ViewGroup, viewType: Int ): ViewHolder<DrawerItemUiModel> =
-            parent.viewHolderForViewType( viewType )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<DrawerItemUiModel> =
+        parent.viewHolderForViewType(viewType)
 
     /** @return [Int] that identifies the View type for the Item at the given [position] */
-    override fun getItemViewType( position: Int ) = items[position].viewType
+    override fun getItemViewType(position: Int) = items[position].viewType
 
     /** A [BaseAdapter.ItemsComparator] for the Adapter */
     private object ModelsComparator : BaseAdapter.ItemsComparator<DrawerItemUiModel>() {
 
         /** Check if old [DrawerItemUiModel] and new [DrawerItemUiModel] are the same element */
-        override fun areItemsTheSame( oldItem: DrawerItemUiModel, newItem: DrawerItemUiModel ): Boolean {
+        override fun areItemsTheSame(oldItem: DrawerItemUiModel, newItem: DrawerItemUiModel): Boolean {
             val newItemAsStatic = newItem as? Primary.Static
             val newItemAsLabel = newItem as? Primary.Label
-            return when ( oldItem ) {
+            return when (oldItem) {
                 is SectionName -> oldItem == newItem
-                is Primary -> when( oldItem ){
+                is Primary -> when (oldItem) {
                     is Primary.Static -> oldItem.type == newItemAsStatic?.type
                     is Primary.Label -> oldItem.uiModel.labelId == newItemAsLabel?.uiModel?.labelId
                 }
@@ -99,13 +96,14 @@ internal class DrawerAdapter : BaseAdapter<
     }
 
     /** Abstract ViewHolder for the Adapter */
-    abstract class ViewHolder<Model: DrawerItemUiModel>( itemView: View ) :
-            ClickableAdapter.ViewHolder<Model>( itemView )
+    abstract class ViewHolder<Model : DrawerItemUiModel>(itemView: View) :
+        ClickableAdapter.ViewHolder<Model>(itemView)
 
     /** [ViewHolder] for [Primary] Item */
-    private abstract class PrimaryViewHolder<P : Primary>( itemView: View ) : ViewHolder<P>( itemView ) {
-        override fun onBind( item: P ) = with( itemView ) {
-            super.onBind( item )
+    private abstract class PrimaryViewHolder<P : Primary>(itemView: View) : ViewHolder<P>(itemView) {
+
+        override fun onBind(item: P) = with(itemView) {
+            super.onBind(item)
             selection.isVisible = item.selected
             notifications.isVisible = item.hasNotifications()
             notifications.text = item.notificationCount.toString()
@@ -117,11 +115,12 @@ internal class DrawerAdapter : BaseAdapter<
      * [ViewHolder] for [Primary.Static] Item
      * Inherit from [PrimaryViewHolder]
      */
-    private class StaticViewHolder( itemView: View ) : PrimaryViewHolder<Primary.Static>( itemView ) {
-        override fun onBind( item: Primary.Static ) = with( itemView ) {
-            super.onBind( item )
-            label.setText( item.labelRes )
-            icon.setImageResource( item.iconRes )
+    private class StaticViewHolder(itemView: View) : PrimaryViewHolder<Primary.Static>(itemView) {
+
+        override fun onBind(item: Primary.Static) = with(itemView) {
+            super.onBind(item)
+            label.setText(item.labelRes)
+            icon.setImageResource(item.iconRes)
             menuItem.tag = resources.getString(item.labelRes)
         }
     }
@@ -130,12 +129,13 @@ internal class DrawerAdapter : BaseAdapter<
      * [ViewHolder] for [Primary.Label] Item
      * Inherit from [PrimaryViewHolder]
      */
-    private class LabelViewHolder( itemView: View ) : PrimaryViewHolder<Primary.Label>( itemView ) {
-        override fun onBind( item: Primary.Label ) = with( itemView ) {
-            super.onBind( item )
+    private class LabelViewHolder(itemView: View) : PrimaryViewHolder<Primary.Label>(itemView) {
+
+        override fun onBind(item: Primary.Label) = with(itemView) {
+            super.onBind(item)
             label.text = item.uiModel.name
             icon.setColorFilterFor(item.uiModel)
-            icon.setImageResource( item.uiModel.image )
+            icon.setImageResource(item.uiModel.image)
             label.tag = item.uiModel.name
         }
 
@@ -159,7 +159,7 @@ internal class DrawerAdapter : BaseAdapter<
     }
 
     /** [ViewHolder] for [SectionName] */
-    private class SectionNameViewHolder(itemView: View): ViewHolder<SectionName>(itemView) {
+    private class SectionNameViewHolder(itemView: View) : ViewHolder<SectionName>(itemView) {
 
         override fun onBind(item: SectionName) {
             super.onBind(item)
@@ -168,30 +168,31 @@ internal class DrawerAdapter : BaseAdapter<
     }
 
     /** @return [Int] view type for the receiver [DrawerItemUiModel] */
-    private val DrawerItemUiModel.viewType: Int get() {
-        return when ( this ) {
-            is SectionName -> VIEW_TYPE_SECTION_NAME
-            is Primary -> when ( this ) {
-                is Primary.Static -> VIEW_TYPE_STATIC
-                is Primary.Label -> VIEW_TYPE_LABEL
+    private val DrawerItemUiModel.viewType: Int
+        get() {
+            return when (this) {
+                is SectionName -> VIEW_TYPE_SECTION_NAME
+                is Primary -> when (this) {
+                    is Primary.Static -> VIEW_TYPE_STATIC
+                    is Primary.Label -> VIEW_TYPE_LABEL
+                }
+                is Footer -> VIEW_TYPE_FOOTER
             }
-            is Footer -> VIEW_TYPE_FOOTER
         }
-    }
 
     /** @return [LayoutRes] for the given [viewType] */
-    private fun layoutForViewType( viewType: Int ) = when ( viewType ) {
+    private fun layoutForViewType(viewType: Int) = when (viewType) {
         VIEW_TYPE_SECTION_NAME -> R.layout.drawer_section_name_item
         VIEW_TYPE_STATIC, VIEW_TYPE_LABEL -> R.layout.drawer_list_item
         VIEW_TYPE_FOOTER -> R.layout.drawer_footer
-        else -> throw IllegalArgumentException( "View type not found: '$viewType'" )
+        else -> throw IllegalArgumentException("View type not found: '$viewType'")
     }
 
     /** @return a [ViewHolder] for the given [viewType] */
-    private fun <Model: DrawerItemUiModel> ViewGroup.viewHolderForViewType( viewType: Int ): ViewHolder<Model> {
-        val view = inflate( layoutForViewType( viewType ) )
+    private fun <Model : DrawerItemUiModel> ViewGroup.viewHolderForViewType(viewType: Int): ViewHolder<Model> {
+        val view = inflate(layoutForViewType(viewType))
         @Suppress("UNCHECKED_CAST") // Type cannot be checked since is in invariant position
-        return when ( viewType ) {
+        return when (viewType) {
             VIEW_TYPE_SECTION_NAME -> SectionNameViewHolder(view)
             VIEW_TYPE_STATIC -> StaticViewHolder(view)
             VIEW_TYPE_LABEL -> LabelViewHolder(view)
@@ -208,34 +209,10 @@ internal class DrawerAdapter : BaseAdapter<
  * This function is an helper for Java, since it would be annoying to implement it in Java.
  */
 internal fun mapLabelsToDrawerLabels(
-        mapper: LabelUiModelMapper,
-        labels: List<LabelWithUnreadCounter>
-) : List<Primary.Label> {
-    return labels.map { labelWithUnread ->
-        val uiModel = mapper { labelWithUnread.label.toUiModel() }
-        Primary.Label( uiModel, labelWithUnread.unreadCount )
-    }
+    mapper: LabelUiModelMapper,
+    labels: List<LabelWithUnreadCounter>
+): List<Primary.Label> = labels.map { labelWithUnread ->
+    val uiModel = mapper { labelWithUnread.label.toUiModel() }
+    Primary.Label(uiModel, labelWithUnread.unreadCount)
 }
 
-/**
- * @return [List] of [DrawerItemUiModel] injecting [unread] as
- * [DrawerItemUiModel.Primary.notificationCount]
- *
- * @receiver [List] of [DrawerItemUiModel] to edit
- *
- * @param unread [Map] associating type's id to the count of unread Messages
- * @see DrawerItemUiModel.Primary.Static.Type.itemId
- */
-internal fun List<DrawerItemUiModel>.setUnreadLocations(
-        unread: Map<Int, Int>
-) : List<DrawerItemUiModel> {
-    return map { item ->
-        if (item is Primary.Static) {
-            // Get unread count by id of item's type from unread
-            val unreadCount = unread.getOrElse(item.type.itemId) { 0 }
-            // Update the notificationCount for the item
-            item.copyWithNotificationCount(unreadCount)
-        }
-        else item
-    }
-}

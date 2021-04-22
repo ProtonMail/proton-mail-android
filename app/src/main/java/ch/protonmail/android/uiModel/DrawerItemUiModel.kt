@@ -53,22 +53,23 @@ internal sealed class DrawerItemUiModel {
         open val notificationCount: Int = 0
 
         /**
+         * Whether this element is currently selected
+         * Default is `false`
+         */
+        open val selected: Boolean = false
+
+        /**
          * @return a new instance of [Primary] by mutating [Primary.notificationCount] with the
          * given [count]
          */
-        abstract fun copyWithNotificationCount( count: Int ) : Primary
+        abstract fun copyWithNotificationCount(count: Int): Primary
 
         /**
          * @return a new instance of [Primary] by mutating [Primary.selected] with the given
          * [select]
          */
-        abstract fun copyWithSelected( select: Boolean ) : Primary
+        abstract fun copyWithSelected(select: Boolean): Primary
 
-        /**
-         * Whether this element is currently selected
-         * Default is `false`
-         */
-        open val selected: Boolean = false
         /** @return `true` if [notificationCount] greater than 0 */
         fun hasNotifications() = notificationCount > 0
 
@@ -81,7 +82,7 @@ internal sealed class DrawerItemUiModel {
          * @param notificationCount [Int] overridden in constructor for `copy` purpose
          * @param selected [Boolean] overridden in constructor for `copy` purpose
          */
-        data class Static @JvmOverloads constructor (
+        data class Static @JvmOverloads constructor(
             val type: Type,
             @StringRes val labelRes: Int,
             @DrawableRes val iconRes: Int,
@@ -100,6 +101,7 @@ internal sealed class DrawerItemUiModel {
                 val itemId: Int,
                 val drawerOptionType: DrawerOptionType
             ) {
+
                 INBOX(MessageLocationType.INBOX.messageLocationTypeValue, DrawerOptionType.INBOX),
                 STARRED(MessageLocationType.STARRED.messageLocationTypeValue, DrawerOptionType.STARRED),
                 DRAFTS(MessageLocationType.DRAFT.messageLocationTypeValue, DrawerOptionType.DRAFTS),
@@ -124,14 +126,14 @@ internal sealed class DrawerItemUiModel {
          * @param notificationCount [Int] overridden in constructor for `copy` purpose
          * @param selected [Boolean] overridden in constructor for `copy` purpose
          */
-        data class Label @JvmOverloads constructor (
+        data class Label @JvmOverloads constructor(
             val uiModel: LabelUiModel,
             override val notificationCount: Int = 0,
             override val selected: Boolean = false
         ) : Primary() {
 
             override fun copyWithNotificationCount(count: Int) = copy(notificationCount = count)
-            override fun copyWithSelected(select: Boolean) = copy( selected = select )
+            override fun copyWithSelected(select: Boolean) = copy(selected = select)
         }
     }
 
