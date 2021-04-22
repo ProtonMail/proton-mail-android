@@ -26,7 +26,7 @@ class ConversationApi(private val service: ConversationService) : BaseApi(), Con
 
     override suspend fun fetchConversations(params: GetConversationsParameters) =
         service.fetchConversations(
-            params.page,
+            params.oldestConversationTimestamp,
             params.pageSize,
             params.labelId,
             userIdTag = UserIdTag(params.userId)

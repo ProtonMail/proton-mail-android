@@ -97,7 +97,6 @@ import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.MessageCount
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.api.segments.event.AlarmReceiver
-import ch.protonmail.android.api.services.MessagesService.Companion.getLastMessageTime
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.DrawerOptionType
 import ch.protonmail.android.core.Constants.MessageLocationType
@@ -586,9 +585,10 @@ class MailboxActivity :
                 syncUUID,
                 true
             )
-        }.observe(this) {
+        }.observe(this) { items ->
+            setLoadingMore(false)
             mailboxAdapter.clear()
-            mailboxAdapter.addAll(it)
+            mailboxAdapter.addAll(items)
         }
     }
 
@@ -621,14 +621,13 @@ class MailboxActivity :
 
         private fun loadMoreMessages() {
             val mailboxLocation = mailboxLocationMain.value ?: MessageLocationType.INBOX
-            val earliestTime = getLastMessageTime(mailboxLocation, mailboxLabelId)
             mailboxViewModel.getMailboxItems(
                 mailboxLocation,
                 mailboxLabelId,
                 false,
                 syncUUID,
                 false,
-                earliestTime
+                mailboxAdapter.getOldestMessageTimestamp()
             )
         }
     }

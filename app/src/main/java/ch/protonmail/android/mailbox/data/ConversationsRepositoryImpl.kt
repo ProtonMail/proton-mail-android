@@ -25,7 +25,6 @@ import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
-import com.dropbox.android.external.store4.ExperimentalStoreApi
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
@@ -63,7 +62,6 @@ class ConversationsRepositoryImpl @Inject constructor(
         Flow<DataResult<List<Conversation>>> =
             store.stream(StoreRequest.cached(StoreKey(params), true)).map { it.toDataResult() }
 
-    @ExperimentalStoreApi
     override suspend fun clearConversations() = store.clearAll()
 
     private fun geConversationsLocal(params: GetConversationsParameters): Flow<List<Conversation>> =

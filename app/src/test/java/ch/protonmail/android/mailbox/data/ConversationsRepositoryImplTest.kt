@@ -147,7 +147,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         conversationsRepository =
             ConversationsRepositoryImpl(
                 conversationDao,
-                api
+                api,
+                dispatchers
             )
     }
 
@@ -156,9 +157,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         runBlockingTest {
             // given
             val parameters = GetConversationsParameters(
-                page = 0,
                 labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
                 userId = testUserId,
+                oldestConversationTimestamp = 1616496670,
                 pageSize = 2
             )
             coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(listOf())
@@ -177,9 +178,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
             // given
             val parameters = GetConversationsParameters(
-                page = 0,
                 labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
                 userId = testUserId,
+                oldestConversationTimestamp = 1616496670,
                 pageSize = 5,
             )
 
@@ -198,9 +199,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     fun verifyGetConversationsFetchesDataFromRemoteApiAndStoresResultInTheLocalDatabase() = runBlocking {
         // given
         val parameters = GetConversationsParameters(
-            page = 0,
             labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
             userId = testUserId,
+            oldestConversationTimestamp = 1616496670,
             pageSize = 5
         )
 
@@ -209,17 +210,11 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
         // when
-        val result = conversationsRepository.getConversations(parameters).take(3).toList()
+        val result = conversationsRepository.getConversations(parameters).take(4).toList()
 
         // Then
         val actualLocalItems = result[0] as DataResult.Success
         assertEquals(ResponseSource.Local, actualLocalItems.source)
-
-        val actualProcessingResult = result[1] as DataResult.Processing
-        assertEquals(ResponseSource.Remote, actualProcessingResult.source)
-
-        val actualRemoteItems = result[2] as DataResult.Success
-        assertEquals(ResponseSource.Remote, actualRemoteItems.source)
 
         val expectedConversations = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
         coVerify { api.fetchConversations(parameters) }
@@ -227,12 +222,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun verifyGetConversationsEmitsErrorAndReturnsLocalDataWhenFetchingFromApiFails() = runBlocking {
+    fun verifyGetConversationsReturnsLocalDataWhenFetchingFromApiFails() = runBlocking {
         // given
         val parameters = GetConversationsParameters(
-            page = 0,
             labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
             userId = testUserId,
+            oldestConversationTimestamp = 1616496670,
             pageSize = 5
         )
 
@@ -284,12 +279,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             )
         )
         assertEquals(expectedLocalConversations, actualLocalItems.value)
-
-        val actualProcessingResult = result[1] as DataResult.Processing
-        assertEquals(ResponseSource.Remote, actualProcessingResult.source)
-
-        val actualRemoteItems = result[2] as DataResult.Error
-        assertEquals(ResponseSource.Remote, actualRemoteItems.source)
     }
 
     private fun getConversation(

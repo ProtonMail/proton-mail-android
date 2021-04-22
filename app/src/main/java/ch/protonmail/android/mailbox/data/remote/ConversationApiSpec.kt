@@ -25,7 +25,7 @@ import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 interface ConversationApiSpec {
 
     suspend fun fetchConversations(
-        conversationsParameters: GetConversationsParameters
+        params: GetConversationsParameters
     ): ConversationsResponse
 
 }

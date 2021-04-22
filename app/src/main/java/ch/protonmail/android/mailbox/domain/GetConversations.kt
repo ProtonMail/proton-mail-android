@@ -31,11 +31,15 @@ class GetConversations @Inject constructor(
     private val conversationRepository: ConversationsRepository
 ) {
 
-    operator fun invoke(userId: Id, location: MessageLocationType): Flow<GetConversationsResult> {
+    operator fun invoke(
+        userId: Id,
+        location: MessageLocationType,
+        lastConversationTime: Long?
+    ): Flow<GetConversationsResult> {
         val params = GetConversationsParameters(
-            page = 0,
             labelId = location.messageLocationTypeValue.toString(),
-            userId = userId
+            userId = userId,
+            oldestConversationTimestamp = lastConversationTime
         )
 
         return conversationRepository.getConversations(params)

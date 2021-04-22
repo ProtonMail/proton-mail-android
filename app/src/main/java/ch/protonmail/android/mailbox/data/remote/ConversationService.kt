@@ -32,7 +32,7 @@ interface ConversationService {
     @GET("mail/v4/conversations")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
     suspend fun fetchConversations(
-        @Query("Page") page: Int?,
+        @Query("End") end: Long?,
         @Query("PageSize") pageSize: Int?,
         @Query("LabelID") labelId: String?,
         @Query("Sort") sort: String = "Time",

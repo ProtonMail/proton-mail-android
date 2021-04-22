@@ -218,4 +218,12 @@ class MessagesRecyclerViewAdapter(
     fun setNewLocation(mailboxLocation: Constants.MessageLocationType) {
         mMailboxLocation = mailboxLocation
     }
+
+    fun getOldestMessageTimestamp(): Long? {
+        return if (mailboxItems.isNotEmpty()) {
+            mailboxItems.minOf { it.lastMessageTimeMs } / 1000
+        } else {
+            null
+        }
+    }
 }

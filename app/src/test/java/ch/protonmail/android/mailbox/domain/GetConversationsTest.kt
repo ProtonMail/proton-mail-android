@@ -56,16 +56,16 @@ class GetConversationsTest : CoroutinesTest {
     }
 
     @Test
-    fun getConversationsCallsRepositoryWithReceivedLocation() = runBlockingTest {
+    fun getConversationsCallsRepositoryMappingInputToGetConversationParameters() = runBlockingTest {
         val location = MessageLocationType.ARCHIVE
         coEvery { conversationRepository.getConversations(any()) } returns flowOf()
 
-        getConversations.invoke(userId, location)
+        getConversations.invoke(userId, location, 1616496677)
 
         val params = GetConversationsParameters(
-            0,
             labelId = location.messageLocationTypeValue.toString(),
-            userId = userId
+            userId = userId,
+            oldestConversationTimestamp = 1616496677
         )
         coVerify { conversationRepository.getConversations(params) }
     }
@@ -76,7 +76,7 @@ class GetConversationsTest : CoroutinesTest {
         val dataResult = DataResult.Success(ResponseSource.Remote, conversations)
         coEvery { conversationRepository.getConversations(any()) } returns flowOf(dataResult)
 
-        val actual = getConversations.invoke(userId, MessageLocationType.INBOX)
+        val actual = getConversations.invoke(userId, MessageLocationType.INBOX, null)
 
         val expected = GetConversationsResult.Success(conversations)
         assertEquals(expected, actual.first())
@@ -86,11 +86,27 @@ class GetConversationsTest : CoroutinesTest {
     fun getConversationsReturnsErrorWhenRepositoryFailsGettingConversations() = runBlockingTest {
         coEvery { conversationRepository.getConversations(any()) } returns flowOf(DataResult.Error.Local(null, null))
 
-        val actual = getConversations.invoke(userId, MessageLocationType.INBOX)
+        val actual = getConversations.invoke(userId, MessageLocationType.INBOX, 1616496670)
 
         val error = GetConversationsResult.Error
         assertEquals(error, actual.first())
     }
+
+    @Test
+    fun getConversationsCallsRepositoryPassingNullAsLastMessageTimeWhenInputWasNull() = runBlockingTest {
+        val location = MessageLocationType.ARCHIVE
+        coEvery { conversationRepository.getConversations(any()) } returns flowOf()
+
+        getConversations.invoke(userId, location, null)
+
+        val params = GetConversationsParameters(
+            labelId = location.messageLocationTypeValue.toString(),
+            userId = userId,
+            oldestConversationTimestamp = null
+        )
+        coVerify { conversationRepository.getConversations(params) }
+    }
+
 
     private fun buildRandomConversation() = Conversation(
         UUID.randomUUID().toString(),
