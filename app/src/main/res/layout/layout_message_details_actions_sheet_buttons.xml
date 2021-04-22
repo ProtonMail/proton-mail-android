@@ -25,7 +25,7 @@
     android:layout_marginBottom="@dimen/padding_l">
 
     <TextView
-        android:id="@+id/detailsActionsReplyTextView"
+        android:id="@+id/text_view_details_actions_reply"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
@@ -39,12 +39,12 @@
         android:textColor="@color/cornflower_blue"
         app:drawableTint="@color/cornflower_blue"
         app:drawableTopCompat="@drawable/ic_reply_24dp"
-        app:layout_constraintEnd_toStartOf="@+id/detailsActionsReplyAllTextView"
+        app:layout_constraintEnd_toStartOf="@+id/text_view_details_actions_reply_all"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/detailsActionsReplyAllTextView"
+        android:id="@+id/text_view_details_actions_reply_all"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
@@ -59,31 +59,31 @@
         app:drawableTint="@color/cornflower_blue"
         app:drawableTopCompat="@drawable/ic_reply_all_24dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/detailsActionsReplyTextView"
+        app:layout_constraintStart_toEndOf="@+id/text_view_details_actions_reply"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
-        android:id="@+id/separatorHorizontalLeft"
+        android:id="@+id/separator_horizontal_left"
         style="@style/ViewSeparatorHorizontal"
         android:layout_width="0dp"
         android:layout_margin="@dimen/padding_l"
-        app:layout_constraintBottom_toTopOf="@+id/detailsActionsForwardTextView"
-        app:layout_constraintEnd_toStartOf="@+id/separatorHorizontalRight"
+        app:layout_constraintBottom_toTopOf="@+id/text_view_details_actions_forward"
+        app:layout_constraintEnd_toStartOf="@+id/separator_horizontal_right"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/detailsActionsReplyTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/text_view_details_actions_reply" />
 
     <View
-        android:id="@+id/separatorHorizontalRight"
+        android:id="@+id/separator_horizontal_right"
         style="@style/ViewSeparatorHorizontal"
         android:layout_width="0dp"
         android:layout_margin="@dimen/padding_l"
-        app:layout_constraintBottom_toTopOf="@+id/detailsActionsMarkAsUnreadTextView"
+        app:layout_constraintBottom_toTopOf="@+id/text_view_details_actions_mark_as_unread"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/separatorHorizontalLeft"
-        app:layout_constraintTop_toBottomOf="@+id/detailsActionsReplyAllTextView" />
+        app:layout_constraintStart_toEndOf="@id/separator_horizontal_left"
+        app:layout_constraintTop_toBottomOf="@+id/text_view_details_actions_reply_all" />
 
     <TextView
-        android:id="@+id/detailsActionsForwardTextView"
+        android:id="@+id/text_view_details_actions_forward"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
@@ -97,12 +97,12 @@
         android:textColor="@color/cornflower_blue"
         app:drawableTint="@color/cornflower_blue"
         app:drawableTopCompat="@drawable/ic_forward_24dp"
-        app:layout_constraintEnd_toStartOf="@+id/detailsActionsMarkAsUnreadTextView"
+        app:layout_constraintEnd_toStartOf="@+id/text_view_details_actions_mark_as_unread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/detailsActionsReplyTextView" />
+        app:layout_constraintTop_toBottomOf="@id/text_view_details_actions_reply" />
 
     <TextView
-        android:id="@+id/detailsActionsMarkAsUnreadTextView"
+        android:id="@+id/text_view_details_actions_mark_as_unread"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
@@ -117,27 +117,27 @@
         app:drawableTint="@color/cornflower_blue"
         app:drawableTopCompat="@drawable/ic_envelope_dot"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/detailsActionsForwardTextView"
-        app:layout_constraintTop_toBottomOf="@id/detailsActionsReplyAllTextView" />
+        app:layout_constraintStart_toEndOf="@+id/text_view_details_actions_forward"
+        app:layout_constraintTop_toBottomOf="@id/text_view_details_actions_reply_all" />
 
     <View
-        android:id="@+id/separatorVerticalTop"
+        android:id="@+id/separator_vertical_top"
         style="@style/ViewSeparatorVertical"
         android:layout_margin="@dimen/padding_l"
-        app:layout_constraintBottom_toTopOf="@+id/separatorVerticalBottom"
-        app:layout_constraintEnd_toStartOf="@+id/detailsActionsReplyAllTextView"
-        app:layout_constraintStart_toEndOf="@+id/detailsActionsReplyTextView"
+        app:layout_constraintBottom_toTopOf="@+id/separator_vertical_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/text_view_details_actions_reply_all"
+        app:layout_constraintStart_toEndOf="@+id/text_view_details_actions_reply"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
-        android:id="@+id/separatorVerticalBottom"
+        android:id="@+id/separator_vertical_bottom"
         style="@style/ViewSeparatorVertical"
         android:layout_margin="@dimen/padding_l"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/detailsActionsMarkAsUnreadTextView"
-        app:layout_constraintStart_toEndOf="@+id/detailsActionsForwardTextView"
-        app:layout_constraintTop_toBottomOf="@+id/separatorVerticalTop" />
+        app:layout_constraintEnd_toStartOf="@+id/text_view_details_actions_mark_as_unread"
+        app:layout_constraintStart_toEndOf="@+id/text_view_details_actions_forward"
+        app:layout_constraintTop_toBottomOf="@+id/separator_vertical_top" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

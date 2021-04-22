@@ -363,6 +363,19 @@ internal class MessageDetailsActivity :
             .setNegativeButton(R.string.cancel, null).show()
     }
 
+    fun showViewHeaders(message: Message? = viewModel.decryptedMessageData.value) {
+        if (message != null) {
+            startActivity(
+                AppUtil.decorInAppIntent(
+                    Intent(
+                        this,
+                        MessageViewHeadersActivity::class.java
+                    ).putExtra(EXTRA_VIEW_HEADERS, message.header)
+                )
+            )
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         buttonsVisibilityHandler.removeCallbacks(buttonsVisibilityRunnable)

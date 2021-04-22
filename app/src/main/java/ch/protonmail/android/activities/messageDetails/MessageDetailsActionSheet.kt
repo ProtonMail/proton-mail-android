@@ -131,19 +131,19 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         binding: LayoutMessageDetailsActionsSheetButtonsBinding,
         detailsViewModel: MessageDetailsViewModel
     ) = with(binding) {
-        detailsActionsReplyTextView.setOnClickListener {
+        textViewDetailsActionsReply.setOnClickListener {
             (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.REPLY)
             dismiss()
         }
-        detailsActionsReplyAllTextView.setOnClickListener {
+        textViewDetailsActionsReplyAll.setOnClickListener {
             (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.REPLY_ALL)
             dismiss()
         }
-        detailsActionsForwardTextView.setOnClickListener {
+        textViewDetailsActionsForward.setOnClickListener {
             (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.FORWARD)
             dismiss()
         }
-        detailsActionsMarkAsUnreadTextView.setOnClickListener {
+        textViewDetailsActionsMarkAsUnread.setOnClickListener {
             detailsViewModel.handleAction(MessageDetailsAction.MARK_UNREAD)
             dismiss()
         }
@@ -153,11 +153,11 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         binding: FragmentMessageDetailsActionSheetBinding,
         detailsViewModel: MessageDetailsViewModel
     ) = with(binding) {
-        detailsActionsStarUnstarTextView.setOnClickListener {
+        textViewDetailsActionsStarUnstar.setOnClickListener {
             detailsViewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
             dismiss()
         }
-        detailsActionsTrashTextView.setOnClickListener {
+        textViewDetailsActionsTrash.setOnClickListener {
             detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_TRASH)
             dismiss()
             // This is a bit crazy requirement but designers do not know what to do about it
@@ -165,7 +165,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             // this should be thought through and improved
             (activity as MessageDetailsActivity).onBackPressed()
         }
-        detailsActionsMoveToArchiveTextView.setOnClickListener {
+        textViewDetailsActionsMoveToArchive.setOnClickListener {
             detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_ARCHIVE)
             dismiss()
             // This is a bit crazy requirement but designers do not know what to do about it
@@ -173,7 +173,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             // this should be thought through and improved
             (activity as MessageDetailsActivity).onBackPressed()
         }
-        detailsActionsMoveToSpamTextView.setOnClickListener {
+        textViewDetailsActionsMoveToSpam.setOnClickListener {
             detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_SPAM)
             dismiss()
             // This is a bit crazy requirement but designers do not know what to do about it
@@ -181,19 +181,23 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             // this should be thought through and improved
             (activity as MessageDetailsActivity).onBackPressed()
         }
-        detailsActionsLabelAsTextView.setOnClickListener {
+        textViewDetailsActionsLabelAs.setOnClickListener {
             (activity as MessageDetailsActivity).showLabelsManagerDialog()
             dismiss()
         }
-        detailsActionsMoveToTextView.setOnClickListener {
+        textViewDetailsActionsMoveTo.setOnClickListener {
             (activity as MessageDetailsActivity).showFoldersManagerDialog()
             dismiss()
         }
-        detailsActionsReportPhishingTextView.setOnClickListener {
+        textViewDetailsActionsViewHeaders.setOnClickListener {
+            (activity as MessageDetailsActivity).showViewHeaders()
+            dismiss()
+        }
+        textViewDetailsActionsReportPhishing.setOnClickListener {
             (activity as MessageDetailsActivity).showReportPhishingDialog()
             dismiss()
         }
-        detailsActionsPrintTextView.setOnClickListener {
+        textViewDetailsActionsPrint.setOnClickListener {
             // we call it this way as it requires "special" context from the Activity
             (activity as MessageDetailsActivity).printMessage()
             dismiss()
