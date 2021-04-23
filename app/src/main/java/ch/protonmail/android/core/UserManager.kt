@@ -57,7 +57,7 @@ import ch.protonmail.android.domain.entity.user.User as NewUser
 
 // region constants
 const val PREF_PIN = "mailbox_pin"
-private const val PREF_CURRENT_USER_ID = "prefs.current.user.id"
+const val PREF_CURRENT_USER_ID = "prefs.current.user.id"
 const val PREF_USERNAME = "username"
 
 private const val PREF_KEY_SALT = "key_salt"

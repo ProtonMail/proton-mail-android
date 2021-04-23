@@ -27,13 +27,16 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import arrow.core.Either;
 import arrow.core.Either.Left;
 import arrow.core.Either.Right;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import ch.protonmail.android.R;
 import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.core.Constants;
@@ -43,25 +46,41 @@ import ch.protonmail.android.feature.user.UserManagerKt;
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.usecase.LoadUser;
+import me.proton.core.network.domain.ApiException;
 import me.proton.core.user.domain.UserManager;
 import timber.log.Timber;
 
+import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS_ID;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_ALIASES;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOCK_PIN_PERIOD;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_BACKGROUND_SYNC;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_COMBINED_CONTACTS;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_DELINQUENT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_MOBILE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_NAME;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_SIGNATURE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_GCM_DOWNLOAD_MESSAGE_DETAILS;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_KEYS;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_LAST_INTERACTION;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_MANUALLY_LOCKED;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_ATTACHMENT_STORAGE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_SPACE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_UPLOAD_FILE_SIZE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_MOBILE_SIGNATURE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_NOTIFICATION;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_NOTIFICATION_VISIBILITY_LOCK_SCREEN;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_PREVENT_TAKING_SCREENSHOTS;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_RINGTONE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_ROLE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_SUBSCRIBED;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CREDIT;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CURRENCY;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_SERVICES;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_FINGERPRINT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_PIN;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
@@ -124,11 +143,26 @@ public class User {
     public static Either<LoadUser.Error, User> load(Id userId, Context context, UserManager userManager) {
         final SharedPreferences securePrefs = SecureSharedPreferences.Companion.getPrefsForUser(context, userId);
 
-        if (securePrefs.getAll().isEmpty()) {
+        if (securePrefs.getString(PREF_USER_NAME, null) == null) {
             return new Left(LoadUser.Error.NoPreferencesStored.INSTANCE);
         }
 
-        // Note: Core UserManager (UserRepository & UserAddressRepository) have a memory cache.
+        User user;
+
+        try {
+            user = loadFromCore(userId, securePrefs, userManager);
+        } catch (ApiException exception) {
+            Timber.e(exception);
+            user = loadFromPrefs(userId, securePrefs);
+        }
+
+        return new Right(user);
+    }
+
+    private static User loadFromCore(Id userId, SharedPreferences securePrefs, UserManager userManager) throws ApiException {
+        // Core UserManager (UserRepository & UserAddressRepository) have a memory cache.
+        // Core UserManager will only do a network call if no data exist.
+
         // Get User/Keys from Core.
         me.proton.core.user.domain.entity.User coreUser = UserManagerKt.getUserBlocking(userManager, userId);
         List<Keys> keys = UserManagerKt.getLegacyKeysBlocking(userManager, userId);
@@ -159,6 +193,40 @@ public class User {
         user.defaultAddressEmail = primaryAddress.getEmail();
         user.addresses = addresses;
 
+        loadLocalSettings(user, securePrefs);
+
+        return user;
+    }
+
+    private static User loadFromPrefs(Id userId, SharedPreferences securePrefs) {
+        final User user = new User();
+        user.id = userId.getS();
+        user.name = securePrefs.getString(PREF_USER_NAME, "");
+        user.displayName = securePrefs.getString(PREF_DISPLAY_NAME, "");
+        user.username = user.name;
+        user.usedSpace = securePrefs.getLong(PREF_USED_SPACE, 0L);
+        user.role = securePrefs.getInt(PREF_ROLE, 0);
+        user.subscribed = securePrefs.getInt(PREF_SUBSCRIBED, 0);
+        user.currency = securePrefs.getString(PREF_USER_CURRENCY, "eur");
+        user.credit = securePrefs.getInt(PREF_USER_CREDIT, 0);
+        user.delinquent = securePrefs.getInt(PREF_DELINQUENT, 0);
+        user.isPrivate = securePrefs.getInt(PREF_USER_PRIVATE, 0);
+        user.services = securePrefs.getInt(PREF_USER_SERVICES, 0);
+        user.maxSpace = securePrefs.getLong(PREF_MAX_SPACE, 0L);
+        user.maxUpload = securePrefs.getInt(PREF_MAX_UPLOAD_FILE_SIZE, 0);
+
+        user.keys = deserializeKeys(securePrefs.getString(PREF_KEYS, ""));
+
+        user.defaultAddressId = securePrefs.getString(PREF_ADDRESS_ID, "");
+        user.defaultAddressEmail = securePrefs.getString(PREF_ADDRESS, "");
+        user.addresses = deserializeAddresses(securePrefs.getString(PREF_ALIASES, ""));
+
+        loadLocalSettings(user, securePrefs);
+
+        return user;
+    }
+
+    private static void loadLocalSettings(User user, SharedPreferences securePrefs) {
         if (!user.isPaidUserSignatureEdit()) {
             user.MobileSignature = ProtonMailApplication.getApplication().getString(R.string.default_mobile_signature);
         } else {
@@ -191,8 +259,6 @@ public class User {
         if (!TextUtils.isEmpty(notificationRingtone)) {
             user.ringtone = Uri.parse(notificationRingtone);
         }
-
-        return new Right(user);
     }
 
     // region SecureSharePref
@@ -564,6 +630,27 @@ public class User {
 
     public long getMaxSpace() {
         return maxSpace;
+    }
+
+    private static CopyOnWriteArrayList<Address> deserializeAddresses(String serialized) {
+        CopyOnWriteArrayList<Address> result = new CopyOnWriteArrayList<>();
+        if (serialized.isEmpty()) {
+            return result;
+        }
+        Gson gson = new Gson();
+        Address[] out = gson.fromJson(serialized, Address[].class);
+        if (out != null) {
+            result = new CopyOnWriteArrayList<>(Arrays.asList(out));
+        }
+        return result;
+    }
+
+    private static List<Keys> deserializeKeys(String serialized) {
+        if (serialized.isEmpty())
+            return new ArrayList<>();
+        Gson gson = new Gson();
+        Keys[] out = gson.fromJson(serialized, Keys[].class);
+        return Arrays.asList(out);
     }
 
     public boolean isShowMobileSignature() {
