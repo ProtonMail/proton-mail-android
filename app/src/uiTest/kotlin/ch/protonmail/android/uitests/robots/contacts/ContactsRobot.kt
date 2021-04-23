@@ -18,163 +18,152 @@
  */
 package ch.protonmail.android.uitests.robots.contacts
 
+import androidx.appcompat.widget.ActionMenuView
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import ch.protonmail.android.R
+import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactEmail
+import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactGroupName
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactGroupNameAndMembersCount
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactNameAndEmail
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
-import ch.protonmail.android.uitests.testsHelper.uiactions.click
 import com.github.clans.fab.FloatingActionButton
-import org.hamcrest.CoreMatchers.allOf
-import org.hamcrest.CoreMatchers.instanceOf
+import me.proton.core.test.android.instrumented.CoreRobot
+import me.proton.core.test.android.instrumented.utils.StringUtils.stringFromResource
+import org.hamcrest.CoreMatchers.containsString
 
 /**
  * [ContactsRobot] class contains actions and verifications for Contacts functionality.
  */
-class ContactsRobot {
+class ContactsRobot : CoreRobot {
 
     fun addContact(): AddContactRobot {
-        UIActions.allOf.clickMatchedView(
-            allOf(
-                instanceOf(FloatingActionButton::class.java),
-                withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)
-            )
-        )
-        UIActions.id.clickViewWithId(R.id.addContactItem)
+        view.instanceOf(FloatingActionButton::class.java)
+            .withVisibility(ViewMatchers.Visibility.VISIBLE)
+            .click()
+        view.withId(R.id.addContactItem).click()
         return AddContactRobot()
     }
 
     fun addGroup(): AddContactGroupRobot {
-        UIActions.allOf.clickMatchedView(
-            allOf(
-                instanceOf(FloatingActionButton::class.java),
-                withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)
-            )
-        )
-        UIActions.id.clickViewWithId(R.id.addContactGroupItem)
+        view.instanceOf(FloatingActionButton::class.java)
+            .withVisibility(ViewMatchers.Visibility.VISIBLE)
+            .click()
+        view.withId(R.id.addContactGroupItem).click()
         return AddContactGroupRobot()
     }
 
-
     fun openOptionsMenu(): ContactsMoreOptions {
-        UIActions.system.waitForMoreOptionsButton().click()
+        view.instanceOf(AppCompatImageView::class.java).withParent(view.instanceOf(ActionMenuView::class.java)).click()
         return ContactsMoreOptions()
     }
 
     fun groupsView(): ContactsGroupView {
-        UIActions.wait.forViewWithContentDescription(R.string.groups).click()
+        view.withContentDesc(containsString(stringFromResource(R.string.groups))).click()
         return ContactsGroupView()
     }
 
     fun contactsView(): ContactsView {
-        UIActions.wait.forViewWithContentDescription(R.string.contacts).click()
+        view.withContentDesc(containsString(stringFromResource(R.string.contacts))).click()
         return ContactsView()
     }
 
     fun navigateUpToInbox(): InboxRobot {
-        UIActions.wait.forViewWithId(contactsRecyclerView)
-        UIActions.system.clickHamburgerOrUpButton()
+        view.withId(contactsRecyclerView).wait().checkDisplayed()
+        view
+            .instanceOf(AppCompatImageButton::class.java)
+            .isDescendantOf(view.withId(R.id.toolbar))
+            .click()
         return InboxRobot()
     }
 
     fun clickContactByEmail(email: String): ContactDetailsRobot {
-        UIActions.wait.forViewWithId(contactsRecyclerView)
-        UIActions.recyclerView
-            .common.waitForBeingPopulated(contactsRecyclerView)
-            .contacts.clickContactItemWithRetry(contactsRecyclerView, email)
+        recyclerView
+            .withId(contactsRecyclerView)
+            .waitUntilPopulated()
+            .onHolderItem(withContactEmail(email))
+            .click()
         return ContactDetailsRobot()
     }
 
     inner class ContactsView {
 
-        fun clickContact(withEmail: String): ContactDetailsRobot {
-            UIActions.recyclerView.contacts.clickContactItem(contactsRecyclerView, withEmail)
-            return ContactDetailsRobot()
-        }
-
-        fun navigateUpToInbox(): InboxRobot {
-            UIActions.wait.forViewWithId(contactsRecyclerView)
-            UIActions.system.clickHamburgerOrUpButton()
-            return InboxRobot()
-        }
-
-        fun clickSendMessageToContact(contactName: String): ComposerRobot {
-            UIActions.recyclerView
-                .common.waitForBeingPopulated(contactsRecyclerView)
-                .contacts.clickContactItemView(
-                    contactsRecyclerView,
-                    contactName,
-                    R.id.writeButton
-                )
+        fun clickSendMessageToContact(contactEmail: String): ComposerRobot {
+            recyclerView
+                .withId(contactsRecyclerView)
+                .waitUntilPopulated()
+                .onHolderItem(withContactEmail(contactEmail))
+                .onItemChildView(view.withId(R.id.writeButton))
+                .click()
             return ComposerRobot()
         }
     }
 
-    class ContactsGroupView {
+    class ContactsGroupView : CoreRobot {
 
         fun navigateUpToInbox(): InboxRobot {
-            UIActions.wait.forViewWithId(contactGroupsRecyclerView)
-            UIActions.system.clickHamburgerOrUpButton()
+            view.withId(contactGroupsRecyclerView).wait().checkDisplayed()
+            view
+                .instanceOf(AppCompatImageButton::class.java)
+                .isDescendantOf(view.withId(R.id.toolbar))
+                .click()
             return InboxRobot()
         }
 
         fun clickGroup(withName: String): GroupDetailsRobot {
-            UIActions.recyclerView
-                .common.waitForBeingPopulated(R.id.contactGroupsRecyclerView)
-                .contacts.clickContactsGroupItem(R.id.contactGroupsRecyclerView, withName)
+            recyclerView
+                .withId(contactGroupsRecyclerView)
+                .waitUntilPopulated()
+                .onHolderItem(withContactGroupName(withName))
+                .click()
             return GroupDetailsRobot()
         }
 
         fun clickGroupWithMembersCount(name: String, membersCount: String): GroupDetailsRobot {
-            UIActions.wait.forViewWithId(contactGroupsRecyclerView)
-            UIActions.recyclerView
-                .common.waitForBeingPopulated(contactGroupsRecyclerView)
-                .common.clickOnRecyclerViewMatchedItemWithRetry(
-                    contactGroupsRecyclerView,
-                    withContactGroupNameAndMembersCount(name, membersCount)
-                )
+            recyclerView
+                .withId(contactGroupsRecyclerView)
+                .waitUntilPopulated()
+                .onHolderItem(withContactGroupNameAndMembersCount(name, membersCount))
+                .click()
             return GroupDetailsRobot()
         }
 
         fun clickSendMessageToGroup(groupName: String): ComposerRobot {
-            UIActions.recyclerView.contacts.clickContactsGroupItemView(
-                R.id.contactGroupsRecyclerView,
-                groupName,
-                R.id.writeButton
-            )
+            recyclerView
+                .withId(contactGroupsRecyclerView)
+                .waitUntilPopulated()
+                .onHolderItem(withContactGroupName(groupName))
+                .onItemChildView(view.withId(R.id.writeButton))
+                .click()
             return ComposerRobot()
         }
 
-        class Verify {
+        class Verify : CoreRobot {
+
             fun groupWithMembersCountExists(name: String, membersCount: String) {
-                UIActions.recyclerView
-                    .common.waitForBeingPopulated(contactGroupsRecyclerView)
-                    .common.scrollToRecyclerViewMatchedItem(
-                        contactGroupsRecyclerView,
-                        withContactGroupNameAndMembersCount(name, membersCount)
-                    )
+                recyclerView
+                    .withId(contactGroupsRecyclerView)
+                    .waitUntilPopulated()
+                    .scrollToHolder(withContactGroupNameAndMembersCount(name, membersCount))
             }
 
-            fun groupDoesNotExists(name: String, membersCount: String) {
+            fun groupDoesNotExists(groupName: String, groupMembersCount: String) {
+//                TODO Create "checkDoesNotExists" method in [recyclerView] and move to Core lib.
                 UIActions.recyclerView
                     .common.waitForBeingPopulated(contactGroupsRecyclerView)
-                    .common.scrollToRecyclerViewMatchedItem(
-                        contactGroupsRecyclerView,
-                        withContactGroupNameAndMembersCount(name, membersCount)
-                    )
+                    .contacts.checkDoesNotContainGroup(contactGroupsRecyclerView, groupName, groupMembersCount)
             }
         }
 
         inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
     }
 
-    class ContactsMoreOptions {
-
+    class ContactsMoreOptions : CoreRobot {
         fun refresh(): ContactsRobot {
-            UIActions.allOf.clickViewWithIdAndText(R.id.title, "Refresh")
+            view.withId(R.id.title).withText(R.string.refresh_contacts).click()
             UIActions.wait.forToastWithText(R.string.fetching_contacts_success)
             return ContactsRobot()
         }
@@ -183,25 +172,24 @@ class ContactsRobot {
     /**
      * Contains all the validations that can be performed by [ContactsRobot].
      */
-    class Verify {
+    class Verify : CoreRobot {
 
         fun contactsOpened() {
-            UIActions.check.viewWithIdIsDisplayed(contactsRecyclerView)
+            view.withId(contactsRecyclerView).wait().checkDisplayed()
         }
 
         fun contactExists(name: String, email: String) {
-            UIActions.recyclerView
-                .common.scrollToRecyclerViewMatchedItem(contactsRecyclerView, withContactNameAndEmail(name, email))
+            recyclerView
+                .withId(contactsRecyclerView)
+                .waitUntilPopulated()
+                .scrollToHolder(withContactNameAndEmail(name, email))
         }
 
         fun contactDoesNotExists(name: String, email: String) {
+//            TODO Create "checkDoesNotExists" method in [recyclerView] and move to Core lib.
             UIActions.wait.forViewWithId(contactsRecyclerView)
             UIActions.recyclerView
                 .contacts.checkDoesNotContainContact(contactsRecyclerView, name, email)
-        }
-
-        fun contactsRefreshed() {
-            UIActions.wait.untilViewWithIdDisabled(R.id.progress_bar)
         }
     }
 

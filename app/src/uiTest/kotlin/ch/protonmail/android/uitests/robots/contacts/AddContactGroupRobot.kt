@@ -21,12 +21,12 @@ package ch.protonmail.android.uitests.robots.contacts
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
-import ch.protonmail.android.uitests.testsHelper.uiactions.insert
+import me.proton.core.test.android.instrumented.CoreRobot
 
 /**
  * [AddContactGroupRobot] class contains actions and verifications for Add/Edit Contact Groups.
  */
-class AddContactGroupRobot {
+class AddContactGroupRobot : CoreRobot {
 
     fun editNameAndSave(name: String): GroupDetailsRobot {
         groupName(name)
@@ -35,17 +35,17 @@ class AddContactGroupRobot {
     }
 
     fun manageAddresses(): ManageAddressesRobot {
-        UIActions.id.clickViewWithId(R.id.manageAddresses)
+        view.withId(R.id.manageAddresses).click()
         return ManageAddressesRobot()
     }
 
     fun groupName(name: String): AddContactGroupRobot {
-        UIActions.wait.forViewWithId(R.id.contactGroupName).insert(name)
+        view.withId(R.id.contactGroupName).wait().replaceText(name)
         return this
     }
 
     fun done(): ContactsRobot {
-        UIActions.id.clickViewWithId(R.id.action_save)
+        view.withId(R.id.action_save).click()
         UIActions.wait.forToastWithText(R.string.contact_group_saved)
         return ContactsRobot()
     }

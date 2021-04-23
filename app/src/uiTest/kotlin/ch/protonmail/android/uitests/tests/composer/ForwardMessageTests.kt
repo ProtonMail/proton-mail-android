@@ -123,7 +123,7 @@ class ForwardMessageTests : BaseTest() {
             .clickMessageBySubject(subject)
             .forward()
             .attachments()
-            .removeAttachment()
+            .removeOneOfTwoAttachments()
             .navigateUpToComposerView()
             .forwardMessage(to, body)
             .navigateUpToSent()

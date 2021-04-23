@@ -26,13 +26,12 @@ object StringUtils {
 
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
-    fun stringFromResource(@IdRes id: Int): String {
-        return targetContext.getString(id)
-    }
+    fun stringFromResource(@IdRes id: Int): String = targetContext.getString(id)
 
-    fun stringFromResource(@IdRes id: Int, arg1: String): String {
-        return targetContext.getString(id, arg1)
-    }
+    fun stringFromResource(@IdRes id: Int, arg1: String): String = targetContext.getString(id, arg1)
+
+    fun quantityStringFromResource(@IdRes id: Int, item: Int): String =
+        targetContext.resources.getQuantityString(id, item)
 
     fun getAlphaNumericStringWithSpecialCharacters(length: Long = 10): String {
         val source = "abcdefghijklmnopqrstuuvwxyz1234567890!@+_)(*&^%$#@!"

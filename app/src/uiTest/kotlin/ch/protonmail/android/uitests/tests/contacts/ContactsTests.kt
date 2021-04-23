@@ -26,7 +26,6 @@ import ch.protonmail.android.uitests.testsHelper.StringUtils.getEmailString
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkGroupDoesNotExist
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import org.junit.experimental.categories.Category
@@ -48,7 +47,6 @@ class ContactsTests : BaseTest() {
     }
 
     @TestId("1419")
-    @Test
     fun createContact() {
         val name = TestData.newContactName
         val email = TestData.newEmailAddress
@@ -65,7 +63,7 @@ class ContactsTests : BaseTest() {
     @Category(SmokeTest::class)
     @TestId("1420")
     @Test
-    fun editContact() {
+    fun addEditDeleteContact() {
         val name = TestData.newContactName
         val email = TestData.newEmailAddress
         val editedName = TestData.editContactName
@@ -85,7 +83,6 @@ class ContactsTests : BaseTest() {
     }
 
     @TestId("21241")
-    @Test
     fun deleteContact() {
         val name = TestData.newContactName
         val email = TestData.newEmailAddress
@@ -100,7 +97,6 @@ class ContactsTests : BaseTest() {
     }
 
     @TestId("1421")
-    @Test
     fun createGroup() {
         val contactEmail = internalEmailTrustedKeys
         val groupName = getEmailString()
@@ -115,15 +111,15 @@ class ContactsTests : BaseTest() {
             .openOptionsMenu()
             .refresh()
             .groupsView()
-            .clickGroupWithMembersCount(groupName, groupMembersCount)
+            .clickGroup(groupName)
             .deleteGroup()
             .groupsView()
-            .verify { checkGroupDoesNotExist(groupName, groupMembersCount) }
+            .verify { groupDoesNotExists(groupName, groupMembersCount) }
     }
 
     @TestId("1422")
     @Test
-    fun editGroup() {
+    fun addEditDeleteGroup() {
         val contactEmail = internalEmailTrustedKeys
         val groupName = getEmailString()
         val groupMembersCount =
@@ -145,14 +141,13 @@ class ContactsTests : BaseTest() {
             .openOptionsMenu()
             .refresh()
             .groupsView()
-            .clickGroupWithMembersCount(newGroupName, groupMembersCount)
+            .clickGroup(newGroupName)
             .deleteGroup()
             .groupsView()
-            .verify { checkGroupDoesNotExist(newGroupName, groupMembersCount) }
+            .verify { groupDoesNotExists(newGroupName, groupMembersCount) }
     }
 
     @TestId("21240")
-    @Test
     fun deleteGroup() {
         val contactEmail = internalEmailTrustedKeys
         val groupName = getEmailString()
@@ -167,10 +162,10 @@ class ContactsTests : BaseTest() {
             .openOptionsMenu()
             .refresh()
             .groupsView()
-            .clickGroupWithMembersCount(groupName, groupMembersCount)
+            .clickGroup(groupName)
             .deleteGroup()
             .groupsView()
-            .verify { checkGroupDoesNotExist(groupName, groupMembersCount) }
+            .verify { groupDoesNotExists(groupName, groupMembersCount) }
     }
 
     @TestId("30833")
