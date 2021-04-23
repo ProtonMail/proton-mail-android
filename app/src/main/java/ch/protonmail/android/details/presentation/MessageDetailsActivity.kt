@@ -50,7 +50,6 @@ import ch.protonmail.android.activities.BaseStoragePermissionActivity
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelCreationListener
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelsChangeListener
-import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment
 import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment.IMoveMessagesListener
 import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
@@ -68,7 +67,6 @@ import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabels
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
@@ -587,23 +585,22 @@ internal class MessageDetailsActivity :
         // NOOP
     }
 
-    fun showFoldersManagerDialog(
-        message: Message? = viewModel.decryptedMessageData.value
+    fun showFoldersManagerDialog(message: Message? = viewModel.decryptedMessageData.value) =
+        showManageLabelsActionSheet(message, ManageLabelsActionSheet.Type.FOLDER)
+
+    fun showLabelsManagerDialog(message: Message? = viewModel.decryptedMessageData.value) =
+        showManageLabelsActionSheet(message, ManageLabelsActionSheet.Type.LABEL)
+
+    private fun showManageLabelsActionSheet(
+        message: Message?,
+        sheetType: ManageLabelsActionSheet.Type
     ) {
         requireNotNull(message)
-        val moveToFolderDialogFragment = MoveToFolderDialogFragment.newInstance(fromInt(message.location))
-        supportFragmentManager.beginTransaction().apply {
-            add(moveToFolderDialogFragment, moveToFolderDialogFragment.fragmentKey)
-            commit() // used to be commitAllowingStateLoss(), why?
-        }
-    }
-
-    fun showLabelsManagerDialog(
-        message: Message? = viewModel.decryptedMessageData.value
-    ) {
-        requireNotNull(message)
-
-        ManageLabelsActionSheet.newInstance(message.labelIDsNotIncludingLocations, listOf(requireNotNull(message.messageId)))
+        ManageLabelsActionSheet.newInstance(
+            message.labelIDsNotIncludingLocations,
+            listOf(requireNotNull(message.messageId)),
+            sheetType
+        )
             .show(supportFragmentManager, ManageLabelsActionSheet::class.qualifiedName)
     }
 

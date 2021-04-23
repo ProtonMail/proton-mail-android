@@ -25,7 +25,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.GetAllLabels
-import ch.protonmail.android.activities.messageDetails.labelactions.domain.MoveMessagesToArchive
+import ch.protonmail.android.activities.messageDetails.labelactions.domain.MoveMessagesToFolder
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.UpdateLabels
 import ch.protonmail.android.core.UserManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +38,7 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
     private val getAllLabels: GetAllLabels,
     private val userManager: UserManager,
     private val updateLabels: UpdateLabels,
-    private val moveMessagesToArchive: MoveMessagesToArchive
+    private val moveMessagesToFolder: MoveMessagesToFolder
 ) : ViewModel() {
 
     private val initialLabelsSelection = savedStateHandle.get<List<String>>(
@@ -50,6 +50,7 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
     ) ?: ManageLabelsActionSheet.Type.LABEL
 
     private val messageIds = savedStateHandle.get<List<String>>(ManageLabelsActionSheet.EXTRA_ARG_MESSAGES_IDS)
+        ?: emptyList()
 
     private val labelsMutableFlow = MutableStateFlow(emptyList<ManageLabelItemUiModel>())
     private val actionsResultMutableFlow = MutableStateFlow<ManageLabelActionResult>(ManageLabelActionResult.Default)
@@ -90,7 +91,15 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
 
     fun onDoneClicked(shallMoveToArchive: Boolean = false) {
 
-        if (messageIds != null && messageIds.isNotEmpty()) {
+        if (labelsSheetType == ManageLabelsActionSheet.Type.LABEL) {
+            onLabelDoneClicked(messageIds, shallMoveToArchive)
+        } else {
+            onFolderDoneClicked(messageIds)
+        }
+    }
+
+    private fun onLabelDoneClicked(messageIds: List<String>, shallMoveToArchive: Boolean) {
+        if (messageIds.isNotEmpty()) {
             viewModelScope.launch {
                 val selectedLabels = labels.value
                     .filter { it.isChecked }
@@ -104,7 +113,7 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
                 }
 
                 if (shallMoveToArchive) {
-                    moveMessagesToArchive(messageIds)
+                    moveMessagesToFolder(messageIds, MoveMessagesToFolder.NewFolderLocation.Archive)
                 }
 
                 actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved
@@ -112,5 +121,11 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
         } else {
             Timber.i("Cannot continue messages list is null or empty!")
         }
+    }
+
+    private fun onFolderDoneClicked(messageIds: List<String>) {
+        // TODO: Change this default location, to something selected by the user
+        moveMessagesToFolder(messageIds, MoveMessagesToFolder.NewFolderLocation.Archive)
+        actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved
     }
 }

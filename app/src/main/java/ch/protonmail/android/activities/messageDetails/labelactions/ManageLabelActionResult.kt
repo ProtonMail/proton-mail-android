@@ -22,5 +22,6 @@ package ch.protonmail.android.activities.messageDetails.labelactions
 sealed class ManageLabelActionResult {
     object Default : ManageLabelActionResult()
     object LabelsSuccessfullySaved : ManageLabelActionResult()
+    object MessageSuccessfullyMoved : ManageLabelActionResult()
     data class ErrorLabelsThresholdReached(val maxAllowedCount: Int) : ManageLabelActionResult()
 }

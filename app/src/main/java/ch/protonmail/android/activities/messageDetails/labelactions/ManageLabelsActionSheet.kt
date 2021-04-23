@@ -25,6 +25,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,6 +37,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 
+/**
+ * Actions sheet used to manage labels and folders (a folder is a type of label with id=1)
+ */
 @AndroidEntryPoint
 class ManageLabelsActionSheet : BottomSheetDialogFragment() {
 
@@ -69,23 +73,26 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
             adapter = manageLabelsActionAdapter
         }
 
-        binding.layoutLabelsSheetArchiveSwitch.setOnClickListener {
-            binding.switchLabelsSheetArchive.toggle()
+        with (binding.layoutLabelsSheetArchiveSwitch) {
+            isVisible = actionSheetType == Type.LABEL
+            setOnClickListener {
+                binding.switchLabelsSheetArchive.toggle()
+            }
+
+            binding.textViewLabelsSheetNewLabel.setOnClickListener {
+                // TODO: Link it to appropriate setting section for adding new Label
+            }
+
+            viewModel.labels
+                .onEach { manageLabelsActionAdapter.submitList(it) }
+                .launchIn(lifecycleScope)
+
+            viewModel.actionsResult
+                .onEach { processActionResult(it) }
+                .launchIn(lifecycleScope)
+
+            return binding.root
         }
-
-        binding.textViewLabelsSheetNewLabel.setOnClickListener {
-            // TODO: Link it to appropriate setting section for adding new Label
-        }
-
-        viewModel.labels
-            .onEach { manageLabelsActionAdapter.submitList(it) }
-            .launchIn(lifecycleScope)
-
-        viewModel.actionsResult
-            .onEach { processActionResult(it) }
-            .launchIn(lifecycleScope)
-
-        return binding.root
     }
 
     override fun onDestroyView() {
@@ -97,6 +104,7 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
         Timber.v("Result received $result")
         when (result) {
             is ManageLabelActionResult.LabelsSuccessfullySaved -> dismiss()
+            is ManageLabelActionResult.MessageSuccessfullyMoved -> dismiss()
             is ManageLabelActionResult.ErrorLabelsThresholdReached ->
                 showApplicableLabelsThresholdError(result.maxAllowedCount)
             else -> {

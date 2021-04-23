@@ -45,7 +45,6 @@ class ManageLabelsActionAdapter(
                 view.root
             )
         } else {
-
             val view = ItemManageFoldersActionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             ManageFoldersViewHolder(
                 view.textviewCheckboxManageFoldersTitle,
@@ -55,7 +54,11 @@ class ManageLabelsActionAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ManageLabelsViewHolder).bind(getItem(position), clickListener)
+        if (actionSheetType == ManageLabelsActionSheet.Type.LABEL) {
+            (holder as ManageLabelsViewHolder).bind(getItem(position), clickListener)
+        } else {
+            (holder as ManageFoldersViewHolder).bind(getItem(position), clickListener)
+        }
     }
 
     class ManageLabelsViewHolder(

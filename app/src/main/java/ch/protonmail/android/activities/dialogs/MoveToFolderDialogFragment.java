@@ -50,6 +50,7 @@ import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Label;
 import dagger.hilt.android.AndroidEntryPoint;
 
+@Deprecated // Moved to ManageLabelsActionSheet
 @AndroidEntryPoint
 public class MoveToFolderDialogFragment extends AbstractDialogFragment implements AdapterView.OnItemClickListener {
 
