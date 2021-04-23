@@ -26,7 +26,9 @@ import android.text.TextUtils
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.withStyledAttributes
+import androidx.recyclerview.widget.DiffUtil
 import ch.protonmail.android.R
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.RoundedCornerTreatment
@@ -60,7 +62,7 @@ class LabelChipView @JvmOverloads constructor(
         }
     }
 
-    fun setLabel(label: LabelChipViewUiModel) {
+    fun setLabel(label: LabelChipUiModel) {
         text = label.name.s
         setLabelColor(label.color)
     }
@@ -86,7 +88,23 @@ class LabelChipView @JvmOverloads constructor(
     }
 }
 
-data class LabelChipViewUiModel(
+data class LabelChipUiModel(
+    val id: Id,
     val name: Name,
     val color: Int
-)
+) {
+
+    companion object {
+
+        val DiffCallback = object : DiffUtil.ItemCallback<LabelChipUiModel>() {
+
+            override fun areItemsTheSame(oldItem: LabelChipUiModel, newItem: LabelChipUiModel) =
+                oldItem.id == newItem.id
+
+            override fun areContentsTheSame(oldItem: LabelChipUiModel, newItem: LabelChipUiModel) =
+                oldItem == newItem
+
+        }
+    }
+
+}

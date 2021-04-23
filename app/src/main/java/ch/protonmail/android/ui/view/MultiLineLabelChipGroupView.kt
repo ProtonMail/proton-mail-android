@@ -21,54 +21,41 @@ package ch.protonmail.android.ui.view
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.widget.FrameLayout
-import android.widget.TextView
 import androidx.annotation.StyleRes
-import ch.protonmail.android.databinding.LayoutSingleLineLabelChipGroupBinding
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexboxLayoutManager
+import me.proton.core.presentation.ui.adapter.ProtonAdapter
 
 /**
- * Displays, on a single line, the labels that can fit, plus "+N" for the missing labels.
- * The last labels, could be truncated in order to fill the line, but only if 3+ characters can be displayed.
+ * Displays, on a multiple lines, all the labels not truncated.
  *
  * This View is supposed to be "static", in a way that it won't change form, for cases where the View can be expanded,
  *  like for message details, an ExpandableLabelChipGroupView ( not implemented yet ) must be used instead.
- *
- * Due to time limitations, the current behaviour is to show only one label ( full or truncated ), plus the "+N" if
- *  there are more labels
  */
-class SingleLineLabelChipGroupView @JvmOverloads constructor (
+class MultiLineLabelChipGroupView @JvmOverloads constructor (
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     @StyleRes defStyleRes: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
-    private val labelView: LabelChipView
-    private val moreView: TextView
+    private val labelsAdapter = ProtonAdapter(
+        getView = { _, _ -> LabelChipView(context) },
+        onBind = { setLabel(it) },
+        diffCallback = LabelChipUiModel.DiffCallback
+    )
 
     init {
-        val binding = LayoutSingleLineLabelChipGroupBinding.inflate(
-            LayoutInflater.from(context),
-            this,
-            true
-        )
-        labelView = binding.singleLineLabelChipGroupLabel
-        moreView = binding.singleLineLabelChipGroupMore
+        val recyclerView = RecyclerView(context).apply {
+            layoutManager = FlexboxLayoutManager(context, FlexDirection.ROW)
+            adapter = labelsAdapter
+        }
+        addView(recyclerView)
     }
 
     fun setLabels(labels: List<LabelChipUiModel>) {
-        labelView.visibility =
-            if (labels.isNotEmpty()) VISIBLE
-            else GONE
-        moreView.visibility =
-            if (labels.size >= 2) VISIBLE
-            else GONE
-
-        labels.firstOrNull()?.let(labelView::setLabel)
-        moreView.text = getMoreLabelsText(labels.size)
+        labelsAdapter.submitList(labels)
     }
-
-    private fun getMoreLabelsText(labelsCount: Int): String =
-        "${labelsCount - 1}+"
 }
