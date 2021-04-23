@@ -253,7 +253,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     private fun onLabelNameChange(name: CharSequence) {
         save_new_label.isVisible = name.isNotBlank()
 
-        if(name.isNotEmpty() && state == UNDEFINED){
+        if (name.isNotEmpty() && state == UNDEFINED) {
             state = CREATE
         }
 
@@ -325,11 +325,14 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     }
 
     private fun saveCurrentLabel() {
-        viewModel.saveLabel().observe(this, {
-            if (it.state.isFinished) {
-                displayLabelCreationOutcome(it)
+        viewModel.saveLabel().observe(
+            this,
+            {
+                if (it.state.isFinished) {
+                    displayLabelCreationOutcome(it)
+                }
             }
-        })
+        )
 
         state = UNDEFINED
     }

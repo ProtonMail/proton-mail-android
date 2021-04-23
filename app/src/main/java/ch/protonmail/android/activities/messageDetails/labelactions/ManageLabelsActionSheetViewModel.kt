@@ -25,6 +25,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.GetAllLabels
+import ch.protonmail.android.activities.messageDetails.labelactions.domain.MoveMessagesToArchive
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.UpdateLabels
 import ch.protonmail.android.core.UserManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,14 +37,15 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
     private val getAllLabels: GetAllLabels,
     private val userManager: UserManager,
-    private val updateLabels: UpdateLabels
+    private val updateLabels: UpdateLabels,
+    private val moveMessagesToArchive: MoveMessagesToArchive
 ) : ViewModel() {
 
     private val initialLabelsSelection = savedStateHandle.get<List<String>>(
         ManageLabelsActionSheet.EXTRA_ARG_MESSAGE_CHECKED_LABELS
     ) ?: emptyList()
 
-    private val messageId = savedStateHandle.get<String>(ManageLabelsActionSheet.EXTRA_ARG_MESSAGE_ID)
+    private val messageIds = savedStateHandle.get<List<String>>(ManageLabelsActionSheet.EXTRA_ARG_MESSAGES_IDS)
 
     private val labelsMutableFlow = MutableStateFlow(emptyList<ManageLabelItemUiModel>())
     private val actionsResultMutableFlow = MutableStateFlow<ManageLabelActionResult>(ManageLabelActionResult.Default)
@@ -82,17 +84,29 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
         }
     }
 
-    fun onDoneClicked() {
-        viewModelScope.launch {
-            val selectedLabels = labels.value
-                .filter { it.isChecked }
-                .map { it.labelId }
-            Timber.v("Selected labels: $selectedLabels messageId: $messageId")
-            updateLabels(
-                requireNotNull(messageId),
-                selectedLabels
-            )
-            actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved
+    fun onDoneClicked(shallMoveToArchive: Boolean = false) {
+
+        if (messageIds != null && messageIds.isNotEmpty()) {
+            viewModelScope.launch {
+                val selectedLabels = labels.value
+                    .filter { it.isChecked }
+                    .map { it.labelId }
+                Timber.v("Selected labels: $selectedLabels messageId: $messageIds")
+                messageIds.forEach { messageId ->
+                    updateLabels(
+                        messageId,
+                        selectedLabels
+                    )
+                }
+
+                if (shallMoveToArchive) {
+                    moveMessagesToArchive(messageIds)
+                }
+
+                actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved
+            }
+        } else {
+            Timber.i("Cannot continue messages list is null or empty!")
         }
     }
 }

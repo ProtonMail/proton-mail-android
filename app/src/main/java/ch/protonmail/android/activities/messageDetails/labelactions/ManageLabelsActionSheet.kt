@@ -50,7 +50,7 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
         with(binding.actionSheetHeader) {
             setTitle(getString(R.string.label_as))
             setRightActionClickListener {
-                viewModel.onDoneClicked()
+                viewModel.onDoneClicked(binding.switchLabelsSheetArchive.isChecked)
             }
             setOnCloseClickListener {
                 dismiss()
@@ -60,6 +60,10 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
         with(binding.recyclerviewLabelsSheet) {
             layoutManager = LinearLayoutManager(context)
             adapter = manageLabelsActionAdapter
+        }
+
+        binding.layoutLabelsSheetArchiveSwitch.setOnClickListener {
+            binding.switchLabelsSheetArchive.toggle()
         }
 
         viewModel.labels
@@ -104,14 +108,14 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
     companion object {
 
         const val EXTRA_ARG_MESSAGE_CHECKED_LABELS = "extra_arg_message_checked_labels"
-        const val EXTRA_ARG_MESSAGE_ID = "extra_arg_message_id"
+        const val EXTRA_ARG_MESSAGES_IDS = "extra_arg_messages_ids"
 
-        fun newInstance(checkedLabels: List<String>, messageId: String): ManageLabelsActionSheet {
+        fun newInstance(checkedLabels: List<String>, messageIds: List<String>): ManageLabelsActionSheet {
 
             return ManageLabelsActionSheet().apply {
                 arguments = bundleOf(
                     EXTRA_ARG_MESSAGE_CHECKED_LABELS to checkedLabels,
-                    EXTRA_ARG_MESSAGE_ID to messageId
+                    EXTRA_ARG_MESSAGES_IDS to messageIds
                 )
             }
         }

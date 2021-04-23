@@ -29,8 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
-        android:paddingTop="@dimen/padding_s"
         android:paddingStart="@dimen/padding_l"
+        android:paddingTop="@dimen/padding_xs"
         android:paddingEnd="@dimen/padding_l"
         android:paddingBottom="@dimen/padding_s" />
 
@@ -46,8 +46,12 @@
             android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_labels_sheet_archive_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="horizontal"
                 android:paddingStart="@dimen/padding_l"
                 android:paddingEnd="@dimen/padding_l">
@@ -65,6 +69,8 @@
                     android:id="@+id/switch_labels_sheet_archive"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -76,7 +82,7 @@
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="false"
+                android:enabled="false"
                 android:text="@string/save_new_label"
                 app:drawableStartCompat="@drawable/ic_add_24dp" />
 

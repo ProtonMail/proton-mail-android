@@ -603,7 +603,7 @@ internal class MessageDetailsActivity :
     ) {
         requireNotNull(message)
 
-        ManageLabelsActionSheet.newInstance(message.labelIDsNotIncludingLocations, requireNotNull(message.messageId))
+        ManageLabelsActionSheet.newInstance(message.labelIDsNotIncludingLocations, listOf(requireNotNull(message.messageId)))
             .show(supportFragmentManager, ManageLabelsActionSheet::class.qualifiedName)
     }
 
