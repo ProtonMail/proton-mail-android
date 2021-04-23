@@ -19,17 +19,22 @@
 package ch.protonmail.android.feature.account
 
 import androidx.activity.ComponentActivity
+import androidx.core.content.edit
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.api.segments.event.EventManager
+import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.PREF_PIN
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.usecase.delete.ClearUserData
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.libs.core.preferences.clearAll
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -101,17 +106,20 @@ class AccountViewModel @ViewModelInject constructor(
         }
 
         // Raise LoginNeeded on empty account list.
-        accountManager.getAccounts().onEach { accounts ->
-            when {
-                accounts.isEmpty() || accounts.all { it.isDisabled() } -> {
-                    onAccountNeeded()
-                    _state.tryEmit(State.AccountNeeded)
+        accountManager.getAccounts()
+            .flowWithLifecycle(context.lifecycle, Lifecycle.State.CREATED)
+            .onEach { accounts ->
+                when {
+                    accounts.isEmpty() || accounts.all { it.isDisabled() } -> {
+                        onAccountNeeded()
+                        _state.tryEmit(State.AccountNeeded)
+                    }
+                    accounts.any { it.isReady() } -> {
+                        _state.tryEmit(State.AccountList(accounts))
+                    }
                 }
-                accounts.any { it.isReady() } -> {
-                    _state.tryEmit(State.AccountList(accounts))
-                }
-            }
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
+
     }
 
     fun getPrimaryUserId() = accountManager.getPrimaryUserId()
@@ -208,6 +216,10 @@ class AccountViewModel @ViewModelInject constructor(
     }
 
     private suspend fun onAccountReady(account: Account) {
+        // See DatabaseFactory.usernameForUserId.
+        oldUserManager.preferencesFor(Id(account.userId.id)).edit {
+            putString(Constants.Prefs.PREF_USER_NAME, account.username)
+        }
         // Update account data (TODO: add cache).
         launchInitialDataFetch.invoke(
             userId = Id(account.userId.id),
@@ -222,7 +234,9 @@ class AccountViewModel @ViewModelInject constructor(
         val userId = Id(account.userId.id)
         clearUserData.invoke(userId)
         eventManager.clearState(userId)
-        AppUtil.deleteSecurePrefs(oldUserManager.preferencesFor(userId), false)
+        oldUserManager.preferencesFor(Id(account.userId.id)).clearAll(
+            /*excludedKeys*/ PREF_PIN, Constants.Prefs.PREF_USER_NAME
+        )
     }
 
     // endregion
