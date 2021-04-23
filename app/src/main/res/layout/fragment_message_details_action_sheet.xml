@@ -22,9 +22,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/includeLayoutActionSheetHeader"
-        layout="@layout/layout_message_details_actions_sheet_header" />
+    <ch.protonmail.android.activities.messageDetails.ActionSheetHeader
+        android:id="@+id/action_sheet_header_details_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingStart="@dimen/padding_l"
+        android:paddingEnd="@dimen/padding_l"
+        android:paddingBottom="@dimen/padding_m" />
 
     <View style="@style/ViewSeparatorHorizontal" />
 

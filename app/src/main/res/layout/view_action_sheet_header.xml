@@ -17,19 +17,19 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?attr/actionBarSize"
-    android:paddingStart="@dimen/padding_l"
-    android:paddingEnd="@dimen/padding_l"
-    android:paddingBottom="@dimen/padding_xs"
-    tools:showIn="@layout/fragment_message_details_action_sheet">
+    tools:paddingStart="@dimen/padding_l"
+    tools:paddingEnd="@dimen/padding_l"
+    tools:paddingBottom="@dimen/padding_xs"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <ImageView
-        android:id="@+id/actionsSheetCloseView"
+        android:id="@+id/view_action_sheet_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
@@ -48,7 +48,7 @@
         tools:visibility="visible" />
 
     <TextView
-        android:id="@+id/textview_actions_sheet_title"
+        android:id="@+id/textview_action_sheet_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
@@ -56,7 +56,7 @@
         android:paddingEnd="@dimen/padding_m"
         android:singleLine="true"
         android:textAppearance="@style/Text.Default.Bold"
-        app:layout_constraintBottom_toTopOf="@+id/textview_actions_sheet_subtitle"
+        app:layout_constraintBottom_toTopOf="@+id/textview_action_sheet_subtitle"
         app:layout_constraintEnd_toStartOf="@+id/textview_actions_sheet_right_action"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -64,7 +64,7 @@
         tools:text="@tools:sample/lorem/random" />
 
     <TextView
-        android:id="@+id/textview_actions_sheet_subtitle"
+        android:id="@+id/textview_action_sheet_subtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
@@ -72,20 +72,19 @@
         android:paddingBottom="@dimen/padding_m"
         android:singleLine="true"
         android:textAppearance="@style/Text.Caption.Weak"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/textview_actions_sheet_right_action"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="RtlSymmetry"
         tools:text="@tools:sample/lorem/random"
-        tools:visibility="visible" />
-
+        tools:visibility="visible"/>
 
     <TextView
         android:id="@+id/textview_actions_sheet_right_action"
         style="@style/Text.DefaultSmall.Interaction"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
@@ -100,4 +99,5 @@
         app:layout_constraintVertical_bias="0.533"
         tools:ignore="RtlSymmetry"
         tools:visibility="visible" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</merge>

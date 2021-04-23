@@ -24,9 +24,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/includeLayoutActionSheetHeader"
-        layout="@layout/layout_message_details_actions_sheet_header" />
+    <ch.protonmail.android.activities.messageDetails.ActionSheetHeader
+        android:id="@+id/action_sheet_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingTop="@dimen/padding_s"
+        android:paddingStart="@dimen/padding_l"
+        android:paddingEnd="@dimen/padding_l"
+        android:paddingBottom="@dimen/padding_s" />
 
     <View style="@style/ViewSeparatorHorizontal" />
 
@@ -70,8 +76,8 @@
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/save_new_label"
                 android:clickable="false"
+                android:text="@string/save_new_label"
                 app:drawableStartCompat="@drawable/ic_add_24dp" />
 
             <androidx.recyclerview.widget.RecyclerView

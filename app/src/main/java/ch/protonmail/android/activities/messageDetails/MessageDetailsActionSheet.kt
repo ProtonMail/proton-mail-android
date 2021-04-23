@@ -26,14 +26,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentMessageDetailsActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
-import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetHeaderBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -55,7 +53,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentMessageDetailsActionSheetBinding.inflate(inflater)
 
-        setupHeaderBindings(binding.includeLayoutActionSheetHeader, arguments)
+        setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
         setupMainButtonsBindings(binding.includeLayoutActionSheetButtons, viewModel)
         setupOtherButtonsBindings(binding, viewModel)
 
@@ -67,8 +65,6 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         bottomSheetDialog.setOnShowListener { dialogInterface ->
             val dialog = dialogInterface as BottomSheetDialog
             val bottomSheet: View? = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet)
-            val headerView = binding.includeLayoutActionSheetHeader.textviewActionsSheetTitle
-            val subHeaderView = binding.includeLayoutActionSheetHeader.textviewActionsSheetSubtitle
             val targetOffsetSize = resources.getDimensionPixelSize(R.dimen.padding_xxl)
             if (bottomSheet != null) {
                 val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
@@ -90,11 +86,9 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
                                 val intermediateShift =
                                     targetOffsetSize *
                                         ((slideOffset - HEADER_SLIDE_THRESHOLD) * (1 / (1 - HEADER_SLIDE_THRESHOLD)))
-                                headerView.translationX = intermediateShift
-                                subHeaderView.translationX = intermediateShift
-                            } else if (headerView.translationX != 0f) {
-                                headerView.translationX = 0f
-                                subHeaderView.translationX = 0f
+                                binding.actionSheetHeaderDetailsActions.shiftTitleToRightBy(intermediateShift)
+                            } else {
+                                binding.actionSheetHeaderDetailsActions.shiftTitleToRightBy(0f)
                             }
                             Timber.v("onSlide to offset $slideOffset")
                         }
@@ -106,23 +100,23 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 
     private fun setupHeaderBindings(
-        binding: LayoutMessageDetailsActionsSheetHeaderBinding,
+        actionSheetHeader: ActionSheetHeader,
         arguments: Bundle?
-    ) = with(binding) {
+    ) = with(actionSheetHeader) {
         val title = arguments?.getString(EXTRA_ARG_TITLE)
         if (!title.isNullOrEmpty()) {
-            textviewActionsSheetTitle.text = title
+            setTitle(title)
         }
         val subtitle = arguments?.getString(EXTRA_ARG_SUBTITLE)
         if (!subtitle.isNullOrEmpty()) {
-            textviewActionsSheetSubtitle.text = subtitle
+            setSubTitle(subtitle)
         }
-        actionsSheetCloseView.setOnClickListener {
+        setOnCloseClickListener {
             dismiss()
         }
     }
@@ -205,7 +199,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun setCloseIconVisibility(shouldBeVisible: Boolean) {
-        binding.includeLayoutActionSheetHeader.actionsSheetCloseView.isVisible = shouldBeVisible
+        binding.actionSheetHeaderDetailsActions.setCloseIconVisibility(shouldBeVisible)
     }
 
     companion object {
