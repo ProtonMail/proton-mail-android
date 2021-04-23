@@ -86,7 +86,7 @@ import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.adapters.messages.MailboxItemViewHolder.MessageViewHolder
-import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter
+import ch.protonmail.android.adapters.messages.MailboxRecyclerViewAdapter
 import ch.protonmail.android.adapters.swipe.ArchiveSwipeHandler
 import ch.protonmail.android.adapters.swipe.MarkReadSwipeHandler
 import ch.protonmail.android.adapters.swipe.SpamSwipeHandler
@@ -212,7 +212,7 @@ class MailboxActivity :
     @Inject
     lateinit var multiUserFcmTokenManager: MultiUserFcmTokenManager
 
-    private lateinit var mailboxAdapter: MessagesRecyclerViewAdapter
+    private lateinit var mailboxAdapter: MailboxRecyclerViewAdapter
     private var swipeController: SwipeController = SwipeController()
     private val mailboxLocationMain = MutableLiveData<MessageLocationType>()
     private val isLoadingMore = AtomicBoolean(false)
@@ -284,7 +284,7 @@ class MailboxActivity :
         startObservingUsedSpace()
 
         var actionModeAux: ActionMode? = null
-        mailboxAdapter = MessagesRecyclerViewAdapter(this) { selectionModeEvent ->
+        mailboxAdapter = MailboxRecyclerViewAdapter(this) { selectionModeEvent ->
             when (selectionModeEvent) {
                 SelectionModeEnum.STARTED -> {
                     actionModeAux = startActionMode(this@MailboxActivity)
@@ -627,7 +627,7 @@ class MailboxActivity :
                 false,
                 syncUUID,
                 false,
-                mailboxAdapter.getOldestMessageTimestamp()
+                mailboxAdapter.getOldestMailboxItemTimestamp()
             )
         }
     }

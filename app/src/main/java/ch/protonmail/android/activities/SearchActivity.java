@@ -45,7 +45,7 @@ import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.activities.mailbox.InvalidateSearchDatabase;
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
-import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter;
+import ch.protonmail.android.adapters.messages.MailboxRecyclerViewAdapter;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.NoResultsEvent;
@@ -62,7 +62,7 @@ import static ch.protonmail.android.core.Constants.MessageLocationType;
 @AndroidEntryPoint
 public class SearchActivity extends BaseActivity {
 
-    private MessagesRecyclerViewAdapter mAdapter;
+    private MailboxRecyclerViewAdapter mAdapter;
     private TextView noMessagesView;
     private ProgressBar mProgressBar;
     private boolean mScrollStateChanged = false;
@@ -95,7 +95,7 @@ public class SearchActivity extends BaseActivity {
         mProgressBar = findViewById(R.id.progress_bar);
         noMessagesView = findViewById(R.id.no_messages);
 
-        mAdapter = new MessagesRecyclerViewAdapter(this,null);
+        mAdapter = new MailboxRecyclerViewAdapter(this, null);
 
         messagesListView.setAdapter(mAdapter);
         messagesListView.setLayoutManager(new LinearLayoutManager(this));

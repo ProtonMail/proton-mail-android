@@ -228,29 +228,29 @@ class MailboxViewModel @Inject constructor(
     }
 
     private fun getMessagesAsMailboxItems(
-        earliestTime: Long?,
+        oldestMessageTimestamp: Long?,
         location: Constants.MessageLocationType,
         labelId: String?,
         includeLabels: Boolean,
         uuid: String,
         refreshMessages: Boolean
     ): LiveData<List<MailboxUiItem>> {
-        // When earliest time is valid the request is about paginated messages (page > 1)
-        if (earliestTime != null) {
+        // When oldestMessageTimestamp is valid the request is about paginated messages (page > 1)
+        if (oldestMessageTimestamp != null) {
             val isCustomLocation = location == LABEL || location == LABEL_FOLDER
 
             if (isCustomLocation) {
                 messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(
                     location,
                     userManager.requireCurrentUserId(),
-                    earliestTime,
+                    oldestMessageTimestamp,
                     labelId ?: ""
                 )
             } else {
                 messageServiceScheduler.fetchMessagesOlderThanTime(
                     location,
                     userManager.requireCurrentUserId(),
-                    earliestTime
+                    oldestMessageTimestamp
                 )
             }
         } else {

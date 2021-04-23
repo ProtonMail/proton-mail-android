@@ -34,7 +34,7 @@ import kotlinx.android.synthetic.main.list_item_mailbox.view.*
 import ch.protonmail.android.views.messagesList.MailboxItemFooterView
 import ch.protonmail.android.views.messagesList.MailboxItemView
 
-class MessagesRecyclerViewAdapter(
+class MailboxRecyclerViewAdapter(
     private val context: Context,
     private val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?
 ) : RecyclerView.Adapter<MailboxItemViewHolder>() {
@@ -219,7 +219,7 @@ class MessagesRecyclerViewAdapter(
         mMailboxLocation = mailboxLocation
     }
 
-    fun getOldestMessageTimestamp(): Long? {
+    fun getOldestMailboxItemTimestamp(): Long? {
         return if (mailboxItems.isNotEmpty()) {
             mailboxItems.minOf { it.lastMessageTimeMs } / 1000
         } else {
