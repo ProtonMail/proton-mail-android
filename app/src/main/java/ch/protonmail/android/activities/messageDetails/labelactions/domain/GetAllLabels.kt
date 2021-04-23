@@ -20,6 +20,7 @@
 package ch.protonmail.android.activities.messageDetails.labelactions.domain
 
 import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelItemUiModel
+import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelsActionSheet
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import javax.inject.Inject
 
@@ -28,16 +29,16 @@ class GetAllLabels @Inject constructor(
     private val labelsMapper: LabelsMapper
 ) {
 
-    suspend operator fun invoke(currentLabelsSelection: List<String>): List<ManageLabelItemUiModel> {
+    suspend operator fun invoke(
+        currentLabelsSelection: List<String>,
+        labelsSheetType: ManageLabelsActionSheet.Type = ManageLabelsActionSheet.Type.LABEL
+    ): List<ManageLabelItemUiModel> {
         val dbLabels = messageDetailsRepository.getAllLabels()
 
         return dbLabels
-            .filter { it.type == TYPE_NORMAL_LABEL }
+            .filter { it.type == labelsSheetType.typeInt }
             .map { label ->
                 labelsMapper.mapLabelToUi(label, currentLabelsSelection)
             }
-    }
-    companion object {
-        private const val TYPE_NORMAL_LABEL = 0
     }
 }

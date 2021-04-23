@@ -265,7 +265,6 @@
     <string name="label_apply">Apply</string>
     <string name="label_delete">Delete</string>
     <string name="label_add">Add</string>
-    <string name="label_as">Label as…</string>
     <string name="no_browser_found">Please install a browser app in order to finish this action</string>
     <string name="no_application_found">No app found to handle this action</string>
     <string name="no_application_found_or_link_invalid">No app found to handle this action or invalid URL</string>
@@ -985,6 +984,10 @@
 
     <string name="personalize">Personalize</string>
     <string name="others">Others</string>
+    <string name="send_to_archive">Send to archive?</string>
+    <string name="new_label">New Label</string>
+    <string name="new_folder">New Folder</string>
+    <string name="label_as">Label as…</string>
 
     <plurals name="messages_count">
         <item quantity="one">%d message</item>

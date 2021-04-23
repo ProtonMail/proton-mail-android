@@ -59,7 +59,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/also_archive"
+                    android:text="@string/send_to_archive"
                     android:textAppearance="@style/Text.Default"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -78,12 +78,15 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/text_view_labels_sheet"
+                android:id="@+id/text_view_labels_sheet_new_label"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
                 android:enabled="false"
-                android:text="@string/save_new_label"
+                android:focusable="true"
+                android:text="@string/new_label"
                 app:drawableStartCompat="@drawable/ic_add_24dp" />
 
             <androidx.recyclerview.widget.RecyclerView

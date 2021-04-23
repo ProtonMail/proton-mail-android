@@ -20,26 +20,38 @@
 package ch.protonmail.android.activities.messageDetails.labelactions
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import ch.protonmail.android.databinding.ItemManageFoldersActionBinding
 import ch.protonmail.android.databinding.ItemManageLabelsActionBinding
 import timber.log.Timber
 
 class ManageLabelsActionAdapter(
-    private val clickListener: (ManageLabelItemUiModel) -> Unit
+    private val clickListener: (ManageLabelItemUiModel) -> Unit,
+    private val actionSheetType: ManageLabelsActionSheet.Type = ManageLabelsActionSheet.Type.LABEL
 ) : ListAdapter<ManageLabelItemUiModel, RecyclerView.ViewHolder>(ManageLabelItemDiffUtil()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val view = ItemManageLabelsActionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ManageLabelsViewHolder(
-            view.textviewCheckboxManageLabelsTitle,
-            view.checkboxManageLabelsActionIsChecked,
-            view.root
-        )
+        return if (actionSheetType == ManageLabelsActionSheet.Type.LABEL) {
+            val view = ItemManageLabelsActionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ManageLabelsViewHolder(
+                view.textviewCheckboxManageLabelsTitle,
+                view.checkboxManageLabelsActionIsChecked,
+                view.root
+            )
+        } else {
+
+            val view = ItemManageFoldersActionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ManageFoldersViewHolder(
+                view.textviewCheckboxManageFoldersTitle,
+                view.root
+            )
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -63,6 +75,24 @@ class ManageLabelsActionAdapter(
                 compoundDrawablesRelative[0].setTint(model.colorInt)
             }
             checkbox.isChecked = model.isChecked
+        }
+    }
+
+    class ManageFoldersViewHolder(
+        private val titleTextView: TextView,
+        root: View
+    ) : RecyclerView.ViewHolder(root) {
+
+        fun bind(
+            model: ManageLabelItemUiModel,
+            clickListener: (ManageLabelItemUiModel) -> Unit
+        ) {
+            Timber.v("Bind ManageFoldersViewHolder $model")
+            itemView.setOnClickListener { clickListener(model) }
+            titleTextView.apply {
+                text = model.title
+                compoundDrawablesRelative[0].setTint(model.colorInt)
+            }
         }
     }
 }

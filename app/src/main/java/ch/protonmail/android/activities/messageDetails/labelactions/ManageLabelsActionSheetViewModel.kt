@@ -45,6 +45,10 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
         ManageLabelsActionSheet.EXTRA_ARG_MESSAGE_CHECKED_LABELS
     ) ?: emptyList()
 
+    private val labelsSheetType = savedStateHandle.get<ManageLabelsActionSheet.Type>(
+        ManageLabelsActionSheet.EXTRA_ARG_ACTION_SHEET_TYPE
+    ) ?: ManageLabelsActionSheet.Type.LABEL
+
     private val messageIds = savedStateHandle.get<List<String>>(ManageLabelsActionSheet.EXTRA_ARG_MESSAGES_IDS)
 
     private val labelsMutableFlow = MutableStateFlow(emptyList<ManageLabelItemUiModel>())
@@ -58,7 +62,7 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
 
     init {
         viewModelScope.launch {
-            labelsMutableFlow.value = getAllLabels(initialLabelsSelection)
+            labelsMutableFlow.value = getAllLabels.invoke(initialLabelsSelection, labelsSheetType)
         }
     }
 

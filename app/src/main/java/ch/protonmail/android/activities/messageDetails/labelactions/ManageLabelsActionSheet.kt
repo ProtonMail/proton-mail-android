@@ -47,8 +47,15 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentManageLabelsActionSheetBinding.inflate(inflater)
 
+        val actionSheetType = arguments?.getSerializable(EXTRA_ARG_ACTION_SHEET_TYPE) as Type
+
         with(binding.actionSheetHeader) {
-            setTitle(getString(R.string.label_as))
+            val title = if (actionSheetType == Type.FOLDER) {
+                getString(R.string.move_to)
+            } else {
+                getString(R.string.label_as)
+            }
+            setTitle(title)
             setRightActionClickListener {
                 viewModel.onDoneClicked(binding.switchLabelsSheetArchive.isChecked)
             }
@@ -56,7 +63,7 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
                 dismiss()
             }
         }
-        val manageLabelsActionAdapter = ManageLabelsActionAdapter(::onLabelClicked)
+        val manageLabelsActionAdapter = ManageLabelsActionAdapter(::onLabelClicked, actionSheetType)
         with(binding.recyclerviewLabelsSheet) {
             layoutManager = LinearLayoutManager(context)
             adapter = manageLabelsActionAdapter
@@ -64,6 +71,10 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
 
         binding.layoutLabelsSheetArchiveSwitch.setOnClickListener {
             binding.switchLabelsSheetArchive.toggle()
+        }
+
+        binding.textViewLabelsSheetNewLabel.setOnClickListener {
+            // TODO: Link it to appropriate setting section for adding new Label
         }
 
         viewModel.labels
@@ -109,15 +120,26 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
 
         const val EXTRA_ARG_MESSAGE_CHECKED_LABELS = "extra_arg_message_checked_labels"
         const val EXTRA_ARG_MESSAGES_IDS = "extra_arg_messages_ids"
+        const val EXTRA_ARG_ACTION_SHEET_TYPE = "extra_arg_action_sheet_type"
 
-        fun newInstance(checkedLabels: List<String>, messageIds: List<String>): ManageLabelsActionSheet {
+        fun newInstance(
+            checkedLabels: List<String>,
+            messageIds: List<String>,
+            labelActionSheetType: Type = Type.LABEL
+        ): ManageLabelsActionSheet {
 
             return ManageLabelsActionSheet().apply {
                 arguments = bundleOf(
                     EXTRA_ARG_MESSAGE_CHECKED_LABELS to checkedLabels,
-                    EXTRA_ARG_MESSAGES_IDS to messageIds
+                    EXTRA_ARG_MESSAGES_IDS to messageIds,
+                    EXTRA_ARG_ACTION_SHEET_TYPE to labelActionSheetType
                 )
             }
         }
+    }
+
+    enum class Type(val typeInt: Int) {
+        LABEL(0), // default
+        FOLDER(1)
     }
 }
