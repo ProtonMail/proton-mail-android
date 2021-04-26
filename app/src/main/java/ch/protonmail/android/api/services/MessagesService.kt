@@ -56,14 +56,6 @@ private const val EXTRA_TIME = "time"
 private const val EXTRA_UUID = "uuid"
 private const val EXTRA_REFRESH_MESSAGES = "refreshMessages"
 
-private const val PREF_LAST_MESSAGE_TIME_INBOX = "lastMessageTimeInbox"
-private const val PREF_LAST_MESSAGE_TIME_SENT = "lastMessageTimeSent"
-private const val PREF_LAST_MESSAGE_TIME_DRAFTS = "lastMessageTimeDrafts"
-private const val PREF_LAST_MESSAGE_TIME_STARRED = "lastMessageTimeStarred"
-private const val PREF_LAST_MESSAGE_TIME_ARCHIVE = "lastMessageTimeArchive"
-private const val PREF_LAST_MESSAGE_TIME_SPAM = "lastMessageTimeSpam"
-private const val PREF_LAST_MESSAGE_TIME_TRASH = "lastMessageTimeTrash"
-private const val PREF_LAST_MESSAGE_TIME_ALL = "lastMessageTimeAll"
 
 @AndroidEntryPoint
 class MessagesService : JobIntentService() {
@@ -121,23 +113,20 @@ class MessagesService : JobIntentService() {
             ACTION_FETCH_MESSAGES_BY_TIME -> {
                 val location = intent.getIntExtra(EXTRA_MESSAGE_LOCATION, 0)
                 val extraTime = intent.getLongExtra(EXTRA_TIME, 0)
-                val savedTime = getLastMessageTime(Constants.MessageLocationType.fromInt(location), "")
-                val time = minOf(savedTime, extraTime)
                 if (Constants.MessageLocationType.fromInt(location) in listOf(
                         Constants.MessageLocationType.LABEL,
                         Constants.MessageLocationType.LABEL_FOLDER
                     )
                 ) {
                     val labelId = intent.getStringExtra(EXTRA_LABEL_ID)!!
-                    val labelTime = getLastMessageTime(Constants.MessageLocationType.fromInt(location), labelId)
                     handleFetchMessagesByLabel(
                         Constants.MessageLocationType.fromInt(location),
-                        labelTime,
+                        extraTime,
                         labelId,
                         userId
                     )
                 } else {
-                    handleFetchMessages(Constants.MessageLocationType.fromInt(location), time, userId)
+                    handleFetchMessages(Constants.MessageLocationType.fromInt(location), extraTime, userId)
                 }
             }
             ACTION_FETCH_MESSAGE_LABELS -> handleFetchLabels()
@@ -300,7 +289,6 @@ class MessagesService : JobIntentService() {
                 .let {
                     messageDetailsRepository.saveAllMessagesBlocking(it)
                 }
-            saveLastMessageTime(unixTime, location, "")
             val event = MailboxLoadedEvent(Status.SUCCESS, uuid)
             AppUtil.postEventOnUi(event)
             mNetworkResults.setMailboxLoaded(event)
@@ -372,7 +360,6 @@ class MessagesService : JobIntentService() {
                     messageDetailsRepository.saveAllMessagesBlocking(it)
                 }
 
-            saveLastMessageTime(unixTime, location, labelId)
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.SUCCESS, null))
         } catch (e: Exception) {
             Timber.e("Fetch messages error", e)
@@ -441,32 +428,6 @@ class MessagesService : JobIntentService() {
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
-        fun getLastMessageTime(location: Constants.MessageLocationType, labelId: String?): Long {
-            val pref = ProtonMailApplication.getApplication().defaultSharedPreferences
-            return getPrefsNameByLocation(location, labelId)?.let { pref.getLong(it, 0L) } ?: 0L
-        }
-
-        fun saveLastMessageTime(unixTime: Long, location: Constants.MessageLocationType, labelId: String) {
-            val pref = ProtonMailApplication.getApplication().defaultSharedPreferences
-            getPrefsNameByLocation(location, labelId)?.let {
-                pref.edit().putLong(it, unixTime).apply()
-            }
-        }
-
-        private fun getPrefsNameByLocation(location: Constants.MessageLocationType, labelId: String?): String? {
-            return when (location) {
-                Constants.MessageLocationType.INBOX -> PREF_LAST_MESSAGE_TIME_INBOX
-                Constants.MessageLocationType.SENT -> PREF_LAST_MESSAGE_TIME_SENT
-                Constants.MessageLocationType.DRAFT -> PREF_LAST_MESSAGE_TIME_DRAFTS
-                Constants.MessageLocationType.STARRED -> PREF_LAST_MESSAGE_TIME_STARRED
-                Constants.MessageLocationType.ARCHIVE -> PREF_LAST_MESSAGE_TIME_ARCHIVE
-                Constants.MessageLocationType.SPAM -> PREF_LAST_MESSAGE_TIME_SPAM
-                Constants.MessageLocationType.TRASH -> PREF_LAST_MESSAGE_TIME_TRASH
-                Constants.MessageLocationType.ALL_MAIL -> PREF_LAST_MESSAGE_TIME_ALL
-                Constants.MessageLocationType.LABEL, Constants.MessageLocationType.LABEL_FOLDER -> labelId
-                else -> null
-            }
-        }
     }
 
     class Scheduler @Inject constructor() {
@@ -481,7 +442,12 @@ class MessagesService : JobIntentService() {
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
-        fun fetchMessagesOlderThanTimeByLabel(location: Constants.MessageLocationType, userId: Id, time: Long, labelId: String) {
+        fun fetchMessagesOlderThanTimeByLabel(
+            location: Constants.MessageLocationType,
+            userId: Id,
+            time: Long,
+            labelId: String
+        ) {
             val context = ProtonMailApplication.getApplication()
             val intent = Intent(context, MessagesService::class.java)
             intent.action = ACTION_FETCH_MESSAGES_BY_TIME
