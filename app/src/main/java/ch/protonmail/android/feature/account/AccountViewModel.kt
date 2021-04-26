@@ -25,11 +25,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.viewModelScope
-import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.api.segments.event.EventManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.PREF_PIN
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.usecase.delete.ClearUserData
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
@@ -39,13 +37,14 @@ import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
-import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.AccountType
@@ -64,10 +63,15 @@ import me.proton.core.accountmanager.presentation.onSessionHumanVerificationNeed
 import me.proton.core.accountmanager.presentation.onSessionSecondFactorNeeded
 import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.auth.presentation.onLoginResult
+import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
+import me.proton.core.key.domain.extension.primary
+import me.proton.core.user.domain.UserManager
+import me.proton.core.user.domain.entity.User
 
 class AccountViewModel @ViewModelInject constructor(
     private val accountManager: AccountManager,
+    private val userManager: UserManager,
     private var authOrchestrator: AuthOrchestrator,
     private val eventManager: EventManager,
     private val jobManager: JobManager,
@@ -105,24 +109,15 @@ class AccountViewModel @ViewModelInject constructor(
                 .disableInitialNotReadyAccounts()
         }
 
-        // Raise LoginNeeded on empty account list.
+        // Raise AccountNeeded on empty/disabled account list.
         accountManager.getAccounts()
             .flowWithLifecycle(context.lifecycle, Lifecycle.State.CREATED)
-            .transformLatest { accounts ->
-                when {
-                    accounts.isEmpty() || accounts.all { it.isDisabled() } -> {
-                        onAccountNeeded()
-                        emit(State.AccountNeeded)
-                    }
-                    accounts.any { it.isReady() } -> {
-                        // Wait getPrimaryUserId != null.
-                        getPrimaryUserId().first { it != null }
-                        emit(State.PrimaryExist)
-                    }
+            .onEach { accounts ->
+                if (accounts.isEmpty() || accounts.all { it.isDisabled() }) {
+                    onAccountNeeded()
+                    _state.tryEmit(State.AccountNeeded)
                 }
-            }
-            .onEach { state -> _state.tryEmit(state) }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
     }
 
     fun getAccount(userId: UserId) = accountManager.getAccount(userId)
@@ -138,6 +133,7 @@ class AccountViewModel @ViewModelInject constructor(
     }
 
     fun logout(userId: UserId) = viewModelScope.launch {
+        userManager.lock(userId)
         accountManager.disableAccount(userId)
     }
 
@@ -216,33 +212,53 @@ class AccountViewModel @ViewModelInject constructor(
     // region Legacy User Management & Cleaning.
 
     private suspend fun onAccountNeeded() {
+        eventManager.clearState()
         AppUtil.clearTasks(jobManager)
         AppUtil.deletePrefs()
         AppUtil.deleteBackupPrefs()
     }
 
     private suspend fun onAccountReady(account: Account) {
-        // See DatabaseFactory.usernameForUserId.
-        oldUserManager.preferencesFor(Id(account.userId.id)).edit {
-            putString(Constants.Prefs.PREF_USER_NAME, account.username)
+        // Workaround: Wait getPrimaryUserId != null (see oldUserManager.primaryUserId).
+        getPrimaryUserId().first { it != null }
+        // Workaround: Wait the primary key is unlocked before proceeding.
+        userManager.getUserFlow(account.userId)
+            .filterIsInstance<DataResult.Success<User>>()
+            .filterNot { it.value.keys.primary()?.privateKey?.isLocked ?: true }
+            .first()
+        // Only initialize user once.
+        val userId = Id(account.userId.id)
+        val prefs = oldUserManager.preferencesFor(userId)
+        val initialized = prefs.getBoolean(Constants.Prefs.PREF_USER_INITIALIZED, false)
+        if (!initialized) {
+            oldUserManager.preferencesFor(userId).edit {
+                putBoolean(Constants.Prefs.PREF_USER_INITIALIZED, true)
+                // See DatabaseFactory.usernameForUserId.
+                putString(Constants.Prefs.PREF_USER_NAME, account.username)
+            }
+            // Launch Initial Data Fetch.
+            launchInitialDataFetch.invoke(
+                userId = userId,
+                shouldRefreshDetails = true,
+                shouldRefreshContacts = true
+            )
         }
-        // Update account data (TODO: add cache).
-        launchInitialDataFetch.invoke(
-            userId = Id(account.userId.id),
-            shouldRefreshDetails = true,
-            shouldRefreshContacts = true
-        )
-        AlarmReceiver().setAlarm(ProtonMailApplication.getApplication())
-        jobManager.start()
+        // We have a primary account.
+        _state.tryEmit(State.PrimaryExist)
     }
 
     private suspend fun onAccountDisabled(account: Account) {
+        // Only clear user once.
         val userId = Id(account.userId.id)
-        clearUserData.invoke(userId)
-        eventManager.clearState(userId)
-        oldUserManager.preferencesFor(Id(account.userId.id)).clearAll(
-            /*excludedKeys*/ PREF_PIN, Constants.Prefs.PREF_USER_NAME
-        )
+        val prefs = oldUserManager.preferencesFor(userId)
+        val initialized = prefs.getBoolean(Constants.Prefs.PREF_USER_INITIALIZED, false)
+        if (initialized) {
+            clearUserData.invoke(userId)
+            eventManager.clearState(userId)
+            oldUserManager.preferencesFor(Id(account.userId.id)).clearAll(
+                /*excludedKeys*/ PREF_PIN, Constants.Prefs.PREF_USER_NAME
+            )
+        }
     }
 
     // endregion

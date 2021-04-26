@@ -167,6 +167,7 @@ object Constants {
         const val PREF_USER_NAME = "user_name"
         const val PREF_USER_PRIVATE = "user_private"
         const val PREF_USER_SERVICES = "user_services"
+        const val PREF_USER_INITIALIZED = "user_initialized"
         const val PREF_USING_REGULAR_API = "pref_doh_using_regular_api"
 
         // permissions
