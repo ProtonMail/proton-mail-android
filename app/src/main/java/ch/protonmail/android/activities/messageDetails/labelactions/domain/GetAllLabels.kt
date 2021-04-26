@@ -35,10 +35,39 @@ class GetAllLabels @Inject constructor(
     ): List<ManageLabelItemUiModel> {
         val dbLabels = messageDetailsRepository.getAllLabels()
 
-        return dbLabels
+        val uiLabelsFromDb = dbLabels
             .filter { it.type == labelsSheetType.typeInt }
             .map { label ->
-                labelsMapper.mapLabelToUi(label, currentLabelsSelection)
+                labelsMapper.mapLabelToUi(label, currentLabelsSelection, labelsSheetType)
             }
+        return if (labelsSheetType == ManageLabelsActionSheet.Type.FOLDER)
+            uiLabelsFromDb + getStandardFolders()
+        else
+            uiLabelsFromDb
+    }
+
+    private fun getStandardFolders(): List<ManageLabelItemUiModel> {
+        return listOf(
+            ManageLabelItemUiModel(
+                labelId = NewFolderLocation.Inbox.id,
+                titleRes = NewFolderLocation.Inbox.title,
+                iconRes = NewFolderLocation.Inbox.iconRes,
+            ),
+            ManageLabelItemUiModel(
+                labelId = NewFolderLocation.Archive.id,
+                titleRes = NewFolderLocation.Archive.title,
+                iconRes = NewFolderLocation.Archive.iconRes,
+            ),
+            ManageLabelItemUiModel(
+                labelId = NewFolderLocation.Spam.id,
+                titleRes = NewFolderLocation.Spam.title,
+                iconRes = NewFolderLocation.Spam.iconRes,
+            ),
+            ManageLabelItemUiModel(
+                labelId = NewFolderLocation.Trash.id,
+                titleRes = NewFolderLocation.Trash.title,
+                iconRes = NewFolderLocation.Trash.iconRes,
+            )
+        )
     }
 }

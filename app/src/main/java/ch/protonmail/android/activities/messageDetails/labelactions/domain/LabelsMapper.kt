@@ -19,8 +19,11 @@
 
 package ch.protonmail.android.activities.messageDetails.labelactions.domain
 
+import android.graphics.Color
 import androidx.core.graphics.toColorInt
+import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelItemUiModel
+import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelsActionSheet
 import ch.protonmail.android.data.local.model.Label
 import javax.inject.Inject
 
@@ -28,11 +31,34 @@ class LabelsMapper @Inject constructor() {
 
     fun mapLabelToUi(
         label: Label,
-        currentLabelsSelection: List<String>
-    ) = ManageLabelItemUiModel(
-        labelId = label.id,
-        colorInt = label.color.toColorInt(),
-        title = label.name,
-        isChecked = currentLabelsSelection.contains(label.id)
-    )
+        currentLabelsSelection: List<String>,
+        labelsSheetType: ManageLabelsActionSheet.Type
+    ): ManageLabelItemUiModel {
+        val iconRes = if (labelsSheetType == ManageLabelsActionSheet.Type.LABEL) {
+            R.drawable.circle_labels_selection
+        } else {
+            R.drawable.ic_folder_24dp
+        }
+
+        val colorInt = if (labelsSheetType == ManageLabelsActionSheet.Type.LABEL) {
+            label.color.toColorInt()
+        } else {
+            Color.BLACK
+        }
+
+        val isChecked = if (labelsSheetType == ManageLabelsActionSheet.Type.LABEL) {
+            currentLabelsSelection.contains(label.id)
+        } else {
+            null
+        }
+
+        return ManageLabelItemUiModel(
+            labelId = label.id,
+            iconRes = iconRes,
+            title = label.name,
+            titleRes = null,
+            colorInt = colorInt,
+            isChecked = isChecked
+        )
+    }
 }

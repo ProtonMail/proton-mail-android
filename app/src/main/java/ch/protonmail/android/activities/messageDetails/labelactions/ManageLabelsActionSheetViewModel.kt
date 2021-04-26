@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.GetAllLabels
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.MoveMessagesToFolder
+import ch.protonmail.android.activities.messageDetails.labelactions.domain.NewFolderLocation
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.UpdateLabels
 import ch.protonmail.android.core.UserManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -71,13 +72,13 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
         val updatedLabels = labels.value.map { label ->
             if (label.labelId == model.labelId) {
                 Timber.v("Label: ${label.labelId} was clicked")
-                label.copy(isChecked = model.isChecked.not())
+                label.copy(isChecked = model.isChecked?.not())
             } else {
                 label
             }
         }
 
-        val selectedLabelsCount = updatedLabels.filter { it.isChecked }
+        val selectedLabelsCount = updatedLabels.filter { it.isChecked == true }
         if (selectedLabelsCount.isNotEmpty() &&
             userManager.didReachLabelsThreshold(selectedLabelsCount.size)
         ) {
@@ -102,7 +103,7 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
         if (messageIds.isNotEmpty()) {
             viewModelScope.launch {
                 val selectedLabels = labels.value
-                    .filter { it.isChecked }
+                    .filter { it.isChecked == true }
                     .map { it.labelId }
                 Timber.v("Selected labels: $selectedLabels messageId: $messageIds")
                 messageIds.forEach { messageId ->
@@ -113,7 +114,7 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
                 }
 
                 if (shallMoveToArchive) {
-                    moveMessagesToFolder(messageIds, MoveMessagesToFolder.NewFolderLocation.Archive)
+                    moveMessagesToFolder(messageIds, NewFolderLocation.Archive)
                 }
 
                 actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved
@@ -125,7 +126,7 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
 
     private fun onFolderDoneClicked(messageIds: List<String>) {
         // TODO: Change this default location, to something selected by the user
-        moveMessagesToFolder(messageIds, MoveMessagesToFolder.NewFolderLocation.Archive)
+        moveMessagesToFolder(messageIds, NewFolderLocation.Archive)
         actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved
     }
 }

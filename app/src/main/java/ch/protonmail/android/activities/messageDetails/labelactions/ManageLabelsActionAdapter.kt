@@ -20,14 +20,14 @@
 package ch.protonmail.android.activities.messageDetails.labelactions
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import ch.protonmail.android.databinding.ItemManageFoldersActionBinding
 import ch.protonmail.android.databinding.ItemManageLabelsActionBinding
 import timber.log.Timber
 
@@ -37,28 +37,17 @@ class ManageLabelsActionAdapter(
 ) : ListAdapter<ManageLabelItemUiModel, RecyclerView.ViewHolder>(ManageLabelItemDiffUtil()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (actionSheetType == ManageLabelsActionSheet.Type.LABEL) {
-            val view = ItemManageLabelsActionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            ManageLabelsViewHolder(
-                view.textviewCheckboxManageLabelsTitle,
-                view.checkboxManageLabelsActionIsChecked,
-                view.root
-            )
-        } else {
-            val view = ItemManageFoldersActionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            ManageFoldersViewHolder(
-                view.textviewCheckboxManageFoldersTitle,
-                view.root
-            )
-        }
+        val view = ItemManageLabelsActionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ManageLabelsViewHolder(
+            view.textviewCheckboxManageLabelsTitle,
+            view.checkboxManageLabelsActionIsChecked,
+            view.root
+        )
+
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (actionSheetType == ManageLabelsActionSheet.Type.LABEL) {
-            (holder as ManageLabelsViewHolder).bind(getItem(position), clickListener)
-        } else {
-            (holder as ManageFoldersViewHolder).bind(getItem(position), clickListener)
-        }
+        (holder as ManageLabelsViewHolder).bind(getItem(position), clickListener)
     }
 
     class ManageLabelsViewHolder(
@@ -74,27 +63,27 @@ class ManageLabelsActionAdapter(
             Timber.v("Bind ManageLabelsViewHolder $model")
             itemView.setOnClickListener { clickListener(model) }
             titleTextView.apply {
-                text = model.title
-                compoundDrawablesRelative[0].setTint(model.colorInt)
+                text = if (model.titleRes != null)
+                    resources.getString(model.titleRes)
+                else
+                    model.title
+
+                val iconDrawable = ResourcesCompat.getDrawable(resources, model.iconRes, null)
+                iconDrawable?.setTint(model.colorInt)
+                setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    iconDrawable,
+                    null,
+                    null,
+                    null
+                )
             }
-            checkbox.isChecked = model.isChecked
-        }
-    }
-
-    class ManageFoldersViewHolder(
-        private val titleTextView: TextView,
-        root: View
-    ) : RecyclerView.ViewHolder(root) {
-
-        fun bind(
-            model: ManageLabelItemUiModel,
-            clickListener: (ManageLabelItemUiModel) -> Unit
-        ) {
-            Timber.v("Bind ManageFoldersViewHolder $model")
-            itemView.setOnClickListener { clickListener(model) }
-            titleTextView.apply {
-                text = model.title
-                compoundDrawablesRelative[0].setTint(model.colorInt)
+            with(checkbox) {
+                if (model.isChecked == null) {
+                    isVisible = false
+                } else {
+                    isChecked = model.isChecked
+                    isVisible = true
+                }
             }
         }
     }

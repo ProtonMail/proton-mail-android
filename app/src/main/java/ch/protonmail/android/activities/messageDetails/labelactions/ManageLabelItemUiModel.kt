@@ -19,11 +19,16 @@
 
 package ch.protonmail.android.activities.messageDetails.labelactions
 
+import android.graphics.Color
 import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 
 data class ManageLabelItemUiModel(
     val labelId: String,
-    @ColorInt val colorInt: Int,
-    val title: String,
-    val isChecked: Boolean
+    @DrawableRes val iconRes: Int,
+    val title: String? = null, // for item custom titles e.g. "Lablel123"
+    @StringRes val titleRes: Int? = null,  // for standard titles e.g. "Inbox"
+    @ColorInt val colorInt: Int = Color.BLACK,
+    val isChecked: Boolean? = null
 )

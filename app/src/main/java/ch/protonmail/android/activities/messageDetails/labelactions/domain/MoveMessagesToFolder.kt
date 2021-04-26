@@ -42,7 +42,7 @@ class MoveMessagesToFolder @Inject constructor(
                 PostTrashJobV2(
                     messageIds,
                     listOf(currentFolderLabelId),
-                    currentFolderLabelId // TODO: Think why is that all needed here?
+                    currentFolderLabelId // TODO: Think why is this parameter needed here?
                 )
             }
             is NewFolderLocation.Archive -> {
@@ -61,13 +61,4 @@ class MoveMessagesToFolder @Inject constructor(
         jobManager.addJobInBackground(job)
     }
 
-    // based on Constants.MessageLocationType
-    sealed class NewFolderLocation {
-
-        object Archive : NewFolderLocation()
-        object Inbox : NewFolderLocation()
-        object Spam : NewFolderLocation()
-        object Trash : NewFolderLocation()
-        data class CustomFolder(val folderId: String) : NewFolderLocation()
-    }
 }
