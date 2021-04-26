@@ -683,6 +683,8 @@ internal class MessageDetailsActivity :
             } else {
                 viewModel.fetchMessageDetails(false)
             }
+            // we need to update the details, when e.g. message has been moved to another folder
+            messageExpandableAdapter.setMessageData(message)
         }
 
         private fun onMessageNotFound() {

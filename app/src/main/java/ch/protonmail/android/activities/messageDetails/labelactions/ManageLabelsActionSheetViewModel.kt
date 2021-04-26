@@ -130,7 +130,6 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
     }
 
     private fun onFolderClicked(selectedFolderId: String) {
-        // TODO: Change this default location, to something selected by the user
         moveMessagesToFolder(messageIds, selectedFolderId)
         actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved
     }
