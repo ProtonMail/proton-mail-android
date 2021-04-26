@@ -230,7 +230,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        mUser = mUserManager.getUser();
+        mUser = mUserManager.requireCurrentLegacyUser();
 
         Bundle extras = getIntent().getExtras();
         inflater = LayoutInflater.from(this);

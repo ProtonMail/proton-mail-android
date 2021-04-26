@@ -106,7 +106,7 @@ class FetchUserInfoWorkerTest {
             coEvery { protonMailApiManager.fetchUserInfo() } returns mockUserInfoResponse
             coEvery { protonMailApiManager.fetchAddresses() } returns mockAddressesResponse
 
-            every { userManager.user } returns mockUser
+            every { userManager.currentLegacyUser } returns mockUser
 
             val expectedResult = ListenableWorker.Result.success(workDataOf(FETCH_USER_INFO_WORKER_RESULT to false))
 
@@ -134,7 +134,7 @@ class FetchUserInfoWorkerTest {
             coEvery { protonMailApiManager.fetchUserInfo() } returns mockUserInfoResponse
             coEvery { protonMailApiManager.fetchAddresses() } returns mockAddressesResponse
 
-            every { userManager.user } returns mockUser
+            every { userManager.currentLegacyUser } returns mockUser
 
             val expectedResult = ListenableWorker.Result.success(workDataOf(FETCH_USER_INFO_WORKER_RESULT to true))
 

@@ -788,7 +788,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         if (connectivity != Constants.ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                     mSnackLayout,
-                    mUserManager.getUser(),
+                    mUserManager.getCurrentLegacyUser(),
                     this,
                     null,
                     null,

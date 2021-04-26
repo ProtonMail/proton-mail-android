@@ -102,7 +102,7 @@ class MailboxViewModel @Inject constructor(
     fun usedSpaceActionEvent(limitReachedFlow: Int) {
         viewModelScope.launch {
             userManager.setShowStorageLimitReached(true)
-            val user = userManager.getCurrentUser()
+            val user = userManager.currentUser
                 ?: return@launch
             val (usedSpace, totalSpace) = with(user.dedicatedSpace) { used.l.toLong() to total.l.toLong() }
             val userMaxSpace = if (totalSpace == 0L) Long.MAX_VALUE else totalSpace

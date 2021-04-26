@@ -616,7 +616,7 @@ class MailboxActivity :
         startObservingUsedSpace()
 
         // manually update the flags for preventing screenshots
-        if (isPreventingScreenshots || userManager.user.isPreventTakingScreenshots) {
+        if (isPreventingScreenshots || userManager.currentLegacyUser?.isPreventTakingScreenshots == true) {
             window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
@@ -1001,7 +1001,7 @@ class MailboxActivity :
 
     @Subscribe
     fun onSettingsChangedEvent(event: SettingsChangedEvent) {
-        val user = userManager.requireCurrentUserBlocking()
+        val user = userManager.requireCurrentUser()
         if (event.success) {
             refreshDrawerHeader(user)
         } else {
@@ -1062,7 +1062,7 @@ class MailboxActivity :
     @Subscribe
     fun onUpdatesLoaded(event: FetchUpdatesEvent?) {
         lifecycleScope.launchWhenCreated {
-            userManager.getCurrentUser()?.let { refreshDrawerHeader(it) }
+            userManager.currentUser?.let { refreshDrawerHeader(it) }
         }
     }
 

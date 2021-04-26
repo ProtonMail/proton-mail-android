@@ -83,7 +83,6 @@ import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
-import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event
@@ -204,7 +203,7 @@ internal class MessageDetailsActivity :
         messageRecipientUserId = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USER_ID)?.let(::Id)
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
         isTransientMessage = intent.getBooleanExtra(EXTRA_TRANSIENT_MESSAGE, false)
-        val currentUser = mUserManager.requireCurrentUserBlocking()
+        val currentUser = mUserManager.requireCurrentUser()
         AppUtil.clearNotifications(this, currentUser.id)
         supportActionBar?.title = null
         initAdapters()
@@ -402,7 +401,7 @@ internal class MessageDetailsActivity :
         networkSnackBarUtil.hideAllSnackBars()
         networkSnackBarUtil.getNoConnectionSnackBar(
             mSnackLayout,
-            mUserManager.user,
+            mUserManager.requireCurrentLegacyUser(),
             this,
             { onConnectivityCheckRetry() },
             anchorViewId = R.id.messageDetailsActionsView,
@@ -833,13 +832,12 @@ internal class MessageDetailsActivity :
                         messageAction,
                         message.subject
                     )
-                    val userUsedSpace = SecureSharedPreferences
-                        .getPrefsForUser(this@MessageDetailsActivity, mUserManager.requireCurrentUserId())
-                        .getLong(Constants.Prefs.PREF_USED_SPACE, 0)
-                    val userMaxSpace = if (mUserManager.user.maxSpace == 0L) {
+                    val user = mUserManager.requireCurrentLegacyUser()
+                    val userUsedSpace = user.usedSpace
+                    val userMaxSpace = if (user.maxSpace == 0L) {
                         Long.MAX_VALUE
                     } else {
-                        mUserManager.user.maxSpace
+                        user.maxSpace
                     }
                     val percentageUsed = userUsedSpace * 100 / userMaxSpace
                     if (percentageUsed >= 100) {

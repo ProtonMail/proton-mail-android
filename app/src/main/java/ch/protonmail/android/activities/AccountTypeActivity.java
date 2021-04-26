@@ -52,7 +52,6 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.usecase.model.FetchPaymentMethodsResult;
-import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.viewmodel.AccountTypeViewModel;
 import timber.log.Timber;
 
@@ -91,7 +90,7 @@ public class AccountTypeActivity extends BaseActivity {
         }
         viewModel = new ViewModelProvider(this).get(AccountTypeViewModel.class);
 
-        final User user = mUserManager.getUser();
+        final User user = mUserManager.getCurrentLegacyUser();
         if (user != null) {
             if (!user.isPaidUser()) {
                 setAccountType(0);
@@ -250,7 +249,7 @@ public class AccountTypeActivity extends BaseActivity {
                 boolean success = false; // TODO: extras.getBoolean(BillingActivity.EXTRA_SUCCESS);
                 if (success) {
                     accountTypeProgress.setVisibility(View.VISIBLE);
-                    final User user = mUserManager.getUser();
+                    final User user = mUserManager.getCurrentLegacyUser();
                     if (!user.isPaidUser()) {
                         setAccountType(0);
                     } else {

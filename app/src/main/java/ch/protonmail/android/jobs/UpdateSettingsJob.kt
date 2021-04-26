@@ -41,7 +41,7 @@ class UpdateSettingsJob(
     @Throws(Throwable::class)
     override fun onRun() {
         try {
-            val user = getUserManager().requireCurrentLegacyUserBlocking()
+            val user = getUserManager().requireCurrentLegacyUser()
             val userId = Id(user.id)
             if (addressIds != null) {
                 getUserAddressManager().updateOrderBlocking(userId, addressIds.map { Id(it) })

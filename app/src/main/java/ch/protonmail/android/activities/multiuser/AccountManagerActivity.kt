@@ -78,7 +78,7 @@ class AccountManagerActivity : BaseActivity() {
             .onEach { (sortedAccounts, primaryUserId) ->
                 val accounts = sortedAccounts.map { account ->
                     val id = Id(account.userId.id)
-                    val user = userManager.getLegacyUserOrNull(id)
+                    val user = userManager.getUserOrNull(id)
                     account.toUiModel(account.isReady(), account.userId == primaryUserId, user)
                 }
                 accountsAdapter.items = accounts + DrawerUserModel.AccFooter
@@ -105,7 +105,7 @@ class AccountManagerActivity : BaseActivity() {
                 val next = userManager.getUser(nextLoggedInUserId)
                 getString(R.string.logout) to getString(R.string.logout_question_next_account, next.name.s)
             } else {
-                val current = checkNotNull(userManager.getCurrentUser())
+                val current = checkNotNull(userManager.currentUser)
                 getString(R.string.log_out, current.name.s) to getString(R.string.logout_question)
             }
 

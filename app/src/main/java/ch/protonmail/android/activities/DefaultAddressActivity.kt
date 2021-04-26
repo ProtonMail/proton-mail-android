@@ -68,13 +68,13 @@ class DefaultAddressActivity : BaseActivity() {
                 selectedAddressRadioButton.isChecked = true
                 defaultAddress.text = mSelectedAddress!!.email
 
-                val user = mUserManager.user
+                val user = mUserManager.currentLegacyUser
                 val selectedAddress = mSelectedAddress
-                if (selectedAddress != null && user.defaultAddressId != selectedAddress.id) {
+                if (selectedAddress != null && user?.defaultAddressId != selectedAddress.id) {
                     // Add first the selected address.
                     val addressIds = mutableSetOf(selectedAddress.id)
                     // Add all other.
-                    user.addresses.forEach { addressIds.add(it.id) }
+                    user?.addresses?.forEach { addressIds.add(it.id) }
                     //
                     val job = UpdateSettingsJob(addressIds = addressIds.toList())
                     mJobManager.addJobInBackground(job)
@@ -91,7 +91,7 @@ class DefaultAddressActivity : BaseActivity() {
         actionBar?.setDisplayHomeAsUpEnabled(true)
         mAvailableAddressesMap = HashMap()
         mAllRadioButtons = ArrayList()
-        mUser = mUserManager.user
+        mUser = mUserManager.currentLegacyUser
         addresses = ArrayList(mUser!!.addresses)
         mInflater = LayoutInflater.from(this)
         renderAddresses()

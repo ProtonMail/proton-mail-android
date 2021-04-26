@@ -63,7 +63,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
     private val composeMessageRepository: ComposeMessageRepository = mockk(relaxed = true)
 
     private val userManager: UserManager = mockk(relaxed = true) {
-        every { user.senderEmailAddresses } returns mutableListOf()
+        every { requireCurrentLegacyUser().senderEmailAddresses } returns mutableListOf()
     }
 
     private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true) {

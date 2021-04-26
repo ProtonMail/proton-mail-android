@@ -118,5 +118,5 @@ class ContactGroupsViewModel @Inject constructor(
         }
     }
 
-    fun isPaidUser(): Boolean = userManager.user.isPaidUser
+    fun isPaidUser(): Boolean = userManager.requireCurrentLegacyUser().isPaidUser
 }

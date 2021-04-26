@@ -133,7 +133,7 @@ public class ReportBugsActivity extends BaseActivity {
                 String appVersionName = String.format(getString(R.string.full_version_name_report_bugs), AppUtil.getAppVersionName(this), AppUtil.getAppVersionCode(this));
                 String title = mBugDescriptionTitle.getText().toString();
                 String description = mBugDescription.getText().toString();
-                User user = mUserManager.requireCurrentUserBlocking();
+                User user = mUserManager.requireCurrentUser();
                 String username = user.getName().getS();
                 String email = user.getAddresses().getPrimary().getEmail().getS();
                 mJobManager.addJobInBackground(new ReportBugsJob(OSName, OSVersion, client, appVersionName, title, description, username, email));

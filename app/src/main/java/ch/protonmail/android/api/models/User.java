@@ -143,10 +143,6 @@ public class User {
     public static Either<LoadUser.Error, User> load(Id userId, Context context, UserManager userManager) {
         final SharedPreferences securePrefs = SecureSharedPreferences.Companion.getPrefsForUser(context, userId);
 
-        if (securePrefs.getString(PREF_USER_NAME, null) == null) {
-            return new Left(LoadUser.Error.NoPreferencesStored.INSTANCE);
-        }
-
         User user;
 
         try {

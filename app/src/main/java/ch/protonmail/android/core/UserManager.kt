@@ -24,24 +24,28 @@ import ch.protonmail.android.R
 import ch.protonmail.android.api.local.SnoozeSettings
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.User
+import ch.protonmail.android.di.AppCoroutineScope
 import ch.protonmail.android.di.BackupSharedPreferences
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.domain.util.orThrow
-import ch.protonmail.android.domain.util.suspendRunCatching
-import ch.protonmail.android.feature.account.allLoggedIn
+import ch.protonmail.android.feature.account.primaryId
+import ch.protonmail.android.feature.account.primaryLegacyUser
+import ch.protonmail.android.feature.account.primaryUser
+import ch.protonmail.android.feature.account.primaryUserId
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.LoadLegacyUser
 import ch.protonmail.android.usecase.LoadUser
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.obfuscateUsername
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
+import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.UserManager
 import me.proton.core.util.android.sharedpreferences.clearAll
 import me.proton.core.util.android.sharedpreferences.get
@@ -60,7 +64,6 @@ const val PREF_PIN = "mailbox_pin"
 const val PREF_CURRENT_USER_ID = "prefs.current.user.id"
 const val PREF_USERNAME = "username"
 
-private const val PREF_KEY_SALT = "key_salt"
 private const val PREF_PIN_INCORRECT_ATTEMPTS = "mailbox_pin_incorrect_attempts"
 private const val PREF_IS_FIRST_MAILBOX_LOAD_AFTER_LOGIN = "is_first_mailbox_load_after_login"
 const val PREF_SHOW_STORAGE_LIMIT_WARNING = "show_storage_limit_warning"
@@ -73,6 +76,7 @@ private const val PREF_ENGAGEMENT_SHOWN = "engagement_shown"
 /**
  * UserManager handles behavior of the current primary account, as well as some multi-account behaviors
  */
+@Deprecated("Now replaced by Core UserManager/AccountManager.")
 @Singleton
 class UserManager @Inject constructor(
     private val context: Context,
@@ -89,9 +93,70 @@ class UserManager @Inject constructor(
     )
     val openPgp: OpenPGP,
     private val secureSharedPreferencesFactory: SecureSharedPreferences.Factory,
-    private val dispatchers: DispatcherProvider
+    private val dispatchers: DispatcherProvider,
+    @AppCoroutineScope private val scope: CoroutineScope
 ) {
     private val app: ProtonMailApplication = context.app
+
+    var primaryUserId: StateFlow<UserId?>
+    var primaryId: StateFlow<Id?>
+    var primaryLegacyUser: StateFlow<User?>
+    var primaryUser: StateFlow<NewUser?>
+
+    init {
+        // Workaround to make sure we have fresh value and get them from main thread without impacting performances.
+        runBlocking {
+            primaryUserId = coreAccountManager.primaryUserId(scope)
+            primaryId = coreAccountManager.primaryId(scope)
+            primaryLegacyUser = coreAccountManager.primaryLegacyUser(scope) { getLegacyUser(it) }
+            primaryUser = coreAccountManager.primaryUser(scope) { getUser(it) }
+        }
+    }
+
+    // region Current User/NewUser.
+
+    val currentUserId: Id?
+        get() = primaryId.value
+
+    val currentLegacyUser: User?
+        get() = primaryLegacyUser.value
+
+    val currentUser: NewUser?
+        get() = primaryUser.value
+
+    fun requireCurrentUserId(): Id = checkNotNull(currentUserId)
+
+    fun requireCurrentLegacyUser(): User = checkNotNull(currentLegacyUser)
+
+    fun requireCurrentUser(): NewUser = checkNotNull(currentUser)
+
+    suspend fun getPreviousCurrentUserId(): Id? = coreAccountManager.getPreviousPrimaryUserId()?.let { Id(it.id) }
+
+    // endregion
+
+    // region User/NewUser by Id
+
+    suspend fun getUserOrNull(userId: Id): User? = withContext(dispatchers.Io) {
+        runCatching { getLegacyUser(userId) }.getOrNull()
+    }
+
+    suspend fun getLegacyUser(userId: Id): User = withContext(dispatchers.Io) {
+        loadLegacyUser(userId).orThrow()
+    }
+
+    suspend fun getUser(userId: Id): NewUser = withContext(dispatchers.Io) {
+        loadUser(userId).orThrow()
+    }
+
+    fun getLegacyUserBlocking(userId: Id) = runBlocking {
+        getLegacyUser(userId)
+    }
+
+    fun getUserBlocking(userId: Id): NewUser = runBlocking {
+        getUser(userId)
+    }
+
+    // endregion
 
     suspend fun getCurrentUserMailSettings(): MailSettings? =
         currentUserId?.let { getMailSettings(it) }
@@ -123,9 +188,6 @@ class UserManager @Inject constructor(
     val isEngagementShown: Boolean
         get() = backupPrefs.getBoolean(PREF_ENGAGEMENT_SHOWN, false)
 
-    val currentUserId: Id?
-        get() =  runBlocking { coreAccountManager.getPrimaryUserId().firstOrNull()?.let { Id(it.id) } }
-
     private val currentUserPreferences
         get() = currentUserId?.let(::preferencesFor)
 
@@ -140,76 +202,9 @@ class UserManager @Inject constructor(
             return secureSharedPreferences.getInt(PREF_PIN_INCORRECT_ATTEMPTS, 0)
         }
 
-    suspend fun getPreviousCurrentUserId(): Id? = coreAccountManager.getPreviousPrimaryUserId()?.let { Id(it.id) }
-
-    @Deprecated("Use suspend function", ReplaceWith("getPreviousCurrentUserId()"))
-    fun getPreviousCurrentUserIdBlocking(): Id? = runBlocking { getPreviousCurrentUserId() }
-
-    fun requireCurrentUserId(): Id =
-        checkNotNull(currentUserId)
-
-    suspend fun getCurrentUser(): NewUser? =
-        currentUserId?.let {
-            runCatching { getUser(it) }
-                .getOrElse {
-                    Timber.d("Cannot load user", it)
-                    null
-                }
-        }
-
-    suspend fun requireCurrentUser(): NewUser =
-        getUser(requireCurrentUserId())
-
-    @Deprecated(
-        "Should not be used, necessary only for old and Java classes",
-        ReplaceWith("getCurrentUser()")
-    )
-    fun getCurrentUserBlocking(): NewUser? =
-        runBlocking { getCurrentUser() }
-
-    @Deprecated(
-        "Should not be used, necessary only for old and Java classes",
-        ReplaceWith("requireCurrentUser()")
-    )
-    fun requireCurrentUserBlocking(): NewUser =
-        runBlocking { getUser(requireCurrentUserId()) }
-
-    suspend fun getCurrentLegacyUser(): User? =
-        currentUserId?.let {
-            runCatching { getLegacyUser(it) }
-                .getOrElse {
-                    Timber.d("Cannot load user", it)
-                    null
-                }
-        }
-
-    suspend fun requireCurrentLegacyUser(): User =
-        getLegacyUser(requireCurrentUserId())
-
-    @Deprecated(
-        "Should not be used, necessary only for old and Java classes",
-        ReplaceWith("getCurrentLegacyUser()")
-    )
-    fun getCurrentLegacyUserBlocking(): User? =
-        runBlocking { getCurrentLegacyUser() }
-
-    @Deprecated(
-        "Should not be used, necessary only for old and Java classes",
-        ReplaceWith("requireCurrentOldUser()")
-    )
-    fun requireCurrentLegacyUserBlocking(): User =
-        runBlocking { getLegacyUser(requireCurrentUserId()) }
-
-    /**
-     * Use this method to get settings for currently active User.
-     */
-    @get:Deprecated("Use ''getCurrentLegacyUser'", ReplaceWith("getCurrentLegacyUser()"))
-    val user: User
-         get() = requireNotNull(getCurrentLegacyUserBlocking())
-
     @Deprecated("Use 'currentUser' variant", ReplaceWith("isCurrentUserBackgroundSyncEnabled()"))
     val isBackgroundSyncEnabled: Boolean
-        get() = user.isBackgroundSync
+        get() = currentLegacyUser?.isBackgroundSync ?: false
 
     fun isCurrentUserSnoozeScheduledEnabled(): Boolean {
         val userId = requireNotNull(currentUserId)
@@ -265,85 +260,6 @@ class UserManager @Inject constructor(
 
     fun getMailboxPin(): String? =
         app.secureSharedPreferences.getString(PREF_PIN, "")
-
-    suspend fun saveKeySalt(userId: Id, keysSalt: String?) {
-        withContext(dispatchers.Io) {
-            val secureSharedPreferences = preferencesFor(userId)
-            secureSharedPreferences[PREF_KEY_SALT] = keysSalt
-        }
-    }
-
-    @Deprecated(
-        "Should not be used, necessary only for old and Java classes",
-        ReplaceWith("saveKeySalt(userId, keySalt)")
-    )
-    fun saveKeySaltBlocking(userId: Id, keysSalt: String?) {
-        runBlocking {
-            saveKeySalt(userId, keysSalt)
-        }
-    }
-
-    suspend fun saveTempKeySalt(keysSalt: String?) {
-        saveKeySalt(TEMP_USER_ID, keysSalt)
-    }
-
-    @Deprecated(
-        "Should not be used, necessary only for old and Java classes",
-        ReplaceWith("saveTempKeySalt(keySalt)")
-    )
-    @JvmOverloads
-    fun saveTempKeySaltBlocking(keysSalt: String?) {
-        runBlocking {
-            saveKeySalt(TEMP_USER_ID, keysSalt)
-        }
-    }
-
-    @Synchronized
-    suspend fun getUser(userId: Id): NewUser =
-        loadUser(userId).orThrow()
-
-    @Deprecated("Suspended function should be used instead", ReplaceWith("getUser(userId)"))
-    fun getUserBlocking(userId: Id): NewUser =
-        runBlocking { getUser(userId) }
-
-    /**
-     * Note, returned [User] might have empty values if user was not saved before
-     */
-    @Synchronized
-    suspend fun getLegacyUser(userId: Id): User =
-        loadLegacyUser(userId).orThrow()
-
-    @Synchronized
-    suspend fun getLegacyUserOrNull(userId: Id): User? =
-        loadLegacyUser(userId).orNull()
-
-    @Deprecated(
-        "Should not be used, necessary only for old and Java classes",
-        ReplaceWith("getLegacyUser(userId)")
-    )
-    fun getLegacyUserBlocking(userId: Id) = runBlocking {
-        getLegacyUser(userId)
-    }
-
-    /**
-     * @return `true` if another account can be connected
-     *   `false` if there are logged in more than one Free account
-     *   @see NewUser.plans
-     *   @see Plan.Mail.Free
-     */
-    suspend fun canConnectAnotherAccount(): Boolean {
-        val freeLoggedInUserCount = coreAccountManager.allLoggedIn().count {
-            val user = suspendRunCatching { getUser(it) }
-                .getOrNull()
-                ?: return@count false
-            Plan.Mail.Free in user.plans
-        }
-        return freeLoggedInUserCount <= 1
-    }
-
-    @Deprecated("Use suspend function", ReplaceWith("canConnectAnotherAccount"))
-    fun canConnectAnotherAccountBlocking(): Boolean =
-        runBlocking { canConnectAnotherAccount() }
 
     fun canShowStorageLimitWarning(): Boolean =
         withCurrentUserPreferences { it[PREF_SHOW_STORAGE_LIMIT_WARNING] } ?: true
@@ -449,7 +365,7 @@ class UserManager @Inject constructor(
 
         if (organization != null) {
             planName = organization.planName
-            paidUser = user.isPaidUser && organization.planName.isNullOrEmpty().not()
+            paidUser = currentLegacyUser?.isPaidUser == true && organization.planName.isNullOrEmpty().not()
         }
         if (!paidUser) {
             return maxLabelsAllowed
@@ -489,10 +405,5 @@ class UserManager @Inject constructor(
                 prefs[PREF_CURRENT_USER_ID] = currentUserId.s
             }
         }
-    }
-
-    private companion object {
-
-        val TEMP_USER_ID = Id("temp")
     }
 }

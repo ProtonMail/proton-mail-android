@@ -46,7 +46,7 @@ public class UserUtils {
         String planName = accountTypes.get(0); // free
         int maxLabelsAllowed = maxLabelsPerPlanArray.get(0); // free
 
-        User user = userManager.getUser();
+        User user = userManager.getCurrentLegacyUser();
         if (user != null && organization != null) {
             planName = organization.getPlanName();
             paidUser = user.isPaidUser() && !TextUtils.isEmpty(organization.getPlanName());

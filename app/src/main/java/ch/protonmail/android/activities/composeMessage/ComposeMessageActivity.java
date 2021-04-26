@@ -724,7 +724,7 @@ public class ComposeMessageActivity
             if (connectivity != Constants.ConnectionState.CONNECTED) {
                 networkSnackBarUtil.getNoConnectionSnackBar(
                         mSnackLayout,
-                        mUserManager.getUser(),
+                        mUserManager.requireCurrentLegacyUser(),
                         this,
                         null,
                         null,
@@ -1179,7 +1179,7 @@ public class ComposeMessageActivity
             subject = subject.replaceAll("\n", " ");
         }
         message.setSubject(subject);
-        User user = mUserManager.getUser();
+        User user = mUserManager.getCurrentLegacyUser();
         if (!TextUtils.isEmpty(composeMessageViewModel.getMessageDataResult().getAddressId())) {
             message.setAddressID(composeMessageViewModel.getMessageDataResult().getAddressId());
         } else if (user != null) {
@@ -1773,7 +1773,7 @@ public class ComposeMessageActivity
     private boolean mSendingInProgress;
 
     private void loadPMContacts() {
-        if (mUserManager.getUser().getCombinedContacts()) {
+        if (mUserManager.getCurrentLegacyUser().getCombinedContacts()) {
             composeMessageViewModel.getMergedContactsLiveData().observe(this, messageRecipients -> {
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });
@@ -1787,7 +1787,7 @@ public class ComposeMessageActivity
             composeMessageViewModel.getContactGroupsResult().observe(this, messageRecipients -> {
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });
-            composeMessageViewModel.fetchContactGroups(mUserManager.getCurrentUserId());
+            composeMessageViewModel.fetchContactGroups(mUserManager.requireCurrentUserId());
             composeMessageViewModel.getPmMessageRecipientsResult().observe(this, messageRecipients -> {
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });
@@ -1954,7 +1954,7 @@ public class ComposeMessageActivity
                     } else {
                         String previousSenderAddressId = composeMessageViewModel.getMessageDataResult().getAddressId();
                         if (TextUtils.isEmpty(previousSenderAddressId)) { // first switch from default address
-                            previousSenderAddressId = mUserManager.getUser().getDefaultAddressId();
+                            previousSenderAddressId = mUserManager.requireCurrentLegacyUser().getDefaultAddressId();
                         }
 
                         if (TextUtils.isEmpty(composeMessageViewModel.getOldSenderAddressId()) && !localAttachmentsListEmpty) {
@@ -2097,15 +2097,14 @@ public class ComposeMessageActivity
 
             Message localMessage = messageEvent.getContentIfNotHandled();
             if (localMessage != null) {
-
+                User user = mUserManager.requireCurrentLegacyUser();
                 String aliasAddress = composeMessageViewModel.getMessageDataResult().getAddressEmailAlias();
                 MessageSender messageSender;
                 if (aliasAddress != null && aliasAddress.equals(mAddressesSpinner.getSelectedItem())) { // it's being sent by alias
-                    messageSender = new MessageSender(mUserManager.getUser().getDisplayNameForAddress(composeMessageViewModel.getMessageDataResult().getAddressId()), composeMessageViewModel.getMessageDataResult().getAddressEmailAlias());
+                    messageSender = new MessageSender(user.getDisplayNameForAddress(composeMessageViewModel.getMessageDataResult().getAddressId()), composeMessageViewModel.getMessageDataResult().getAddressEmailAlias());
                 } else {
                     Address nonAliasAddress;
                     try {
-                        User user = mUserManager.getUser();
                         if (localMessage.getAddressID() != null) {
                             nonAliasAddress = user.getAddressById(localMessage.getAddressID());
                         } else { // fallback to default address if newly composed message has no addressId

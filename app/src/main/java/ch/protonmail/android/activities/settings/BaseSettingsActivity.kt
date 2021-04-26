@@ -153,7 +153,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        legacyUser = userManager.requireCurrentLegacyUserBlocking()
+        legacyUser = userManager.requireCurrentLegacyUser()
         user = legacyUser.toNewUser()
         val userId = user.id
 
@@ -186,7 +186,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     override fun onResume() {
         super.onResume()
-        legacyUser = userManager.requireCurrentLegacyUserBlocking()
+        legacyUser = userManager.requireCurrentLegacyUser()
         user = legacyUser.toNewUser()
         settingsAdapter.notifyDataSetChanged()
         viewModel.checkConnectivity()
@@ -248,7 +248,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     }
 
     private fun selectItem(settingsId: String) {
-        legacyUser = userManager.requireCurrentLegacyUserBlocking()
+        legacyUser = userManager.requireCurrentLegacyUser()
         user = legacyUser.toNewUser()
         when (valueOf(settingsId.toUpperCase(Locale.ENGLISH))) {
             ACCOUNT -> {
@@ -530,7 +530,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         if (connectivity != Constants.ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                 mSnackLayout,
-                mUserManager.user,
+                mUserManager.requireCurrentLegacyUser(),
                 this,
                 { onConnectivityCheckRetry() },
                 isOffline = connectivity == Constants.ConnectionState.NO_INTERNET

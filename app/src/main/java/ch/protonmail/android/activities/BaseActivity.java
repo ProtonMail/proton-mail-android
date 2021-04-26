@@ -224,7 +224,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected void onResume() {
         super.onResume();
 
-        User user = mUserManager.getCurrentLegacyUserBlocking();
+        User user = mUserManager.getCurrentLegacyUser();
 
         // Enable secure mode if screenshots are disabled, else disable it
         if (isPreventingScreenshots() || user != null && user.isPreventTakingScreenshots()) {
@@ -268,7 +268,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     private void shouldLock() {
-        User user = mUserManager.getCurrentLegacyUserBlocking();
+        User user = mUserManager.getCurrentLegacyUser();
         if (user == null)
             return;
 
@@ -351,7 +351,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         super.onStop();
         // Enable secure mode for hide content from recent if pin is enabled, else disable it so
         // content will be visible in recent
-        User currentUser = mUserManager.getCurrentLegacyUserBlocking();
+        User currentUser = mUserManager.getCurrentLegacyUser();
         if (currentUser != null && currentUser.isUsePin())
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
@@ -372,7 +372,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     private void activateScreenProtector() {
-        User currentUser = mUserManager.getCurrentLegacyUserBlocking();
+        User currentUser = mUserManager.getCurrentLegacyUser();
         if (currentUser != null && currentUser.isUsePin()) {
             if (mScreenProtectorLayout != null) {
                 mScreenProtectorLayout.setVisibility(View.VISIBLE);
@@ -381,13 +381,13 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     protected void saveLastInteraction() {
-        User user = mUserManager.getCurrentLegacyUserBlocking();
+        User user = mUserManager.getCurrentLegacyUser();
         if (user != null) user.setLastInteraction(SystemClock.elapsedRealtime());
     }
 
     protected void checkDelinquency() {
-        ch.protonmail.android.domain.entity.user.User user =
-                mUserManager.requireCurrentUserBlocking();
+        ch.protonmail.android.domain.entity.user.User user = mUserManager.getCurrentUser();
+        if (user == null) return;
         boolean areMailRoutesAccessible = user.getDelinquent().getMailRoutesAccessible();
         if (!areMailRoutesAccessible && (alertDelinquency == null || !alertDelinquency.isShowing())) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -435,9 +435,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     protected void fetchOrganizationData() {
-        ch.protonmail.android.domain.entity.user.User user =
-                mUserManager.requireCurrentUserBlocking();
-        if (user.isPaidMailUser()) {
+        User user = mUserManager.getCurrentLegacyUser();
+        if (user != null && user.isPaidUser()) {
             GetOrganizationJob getOrganizationJob = new GetOrganizationJob();
             mJobManager.addJobInBackground(getOrganizationJob);
         } else {

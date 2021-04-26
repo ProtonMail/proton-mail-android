@@ -23,7 +23,6 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.UserKey
-import ch.protonmail.android.mapper.bridge.UserBridgeMapper
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.crypto.TextDecryptionResult
@@ -33,9 +32,8 @@ import java.util.Arrays
 class UserCrypto(
     userManager: UserManager,
     openPgp: OpenPGP,
-    userId: Id,
-    userMapper: UserBridgeMapper = UserBridgeMapper.buildDefault()
-) : Crypto<UserKey>(userManager, openPgp, userId, userMapper) {
+    userId: Id
+) : Crypto<UserKey>(userManager, openPgp, userId) {
 
     override val currentKeys: Collection<UserKey>
         get() = userKeys.keys

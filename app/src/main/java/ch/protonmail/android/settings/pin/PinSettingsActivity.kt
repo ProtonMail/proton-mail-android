@@ -60,7 +60,7 @@ class PinSettingsActivity : BaseActivity() {
     private val useFingerprintToggle by lazy { useFingerprint.getToggle() }
     private val autoLockOtherSettingsContainer by lazy { findViewById<LinearLayout>(R.id.autoLockOtherSettingsContainer) }
     private var mPinTimeoutValue: Int = 0
-    private val user by lazy { mUserManager.user }
+    private val user by lazy { mUserManager.requireCurrentLegacyUser() }
 
     private val mBiometricManager by lazy {
         BiometricManager.from(this@PinSettingsActivity)

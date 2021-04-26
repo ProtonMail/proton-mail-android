@@ -77,13 +77,15 @@ class ValidatePinActivity : BaseActivity(),
         if (savedInstanceState != null) {
             return
         }
+        val user = mUserManager.requireCurrentLegacyUser()
         val titleRes = intent.getIntExtra(EXTRA_FRAGMENT_TITLE, 0)
-        val validatePinFragment = PinFragment.newInstance(titleRes, PinAction.VALIDATE,
-            null, useFingerprint = mUserManager.user.isUseFingerprint)
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainer, validatePinFragment, validatePinFragment.fragmentKey).commitAllowingStateLoss()
+        val validatePinFragment = PinFragment.newInstance(titleRes, PinAction.VALIDATE, null, useFingerprint = user.isUseFingerprint)
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.fragmentContainer, validatePinFragment, validatePinFragment.fragmentKey)
+            .commitAllowingStateLoss()
 
-        if (mUserManager.user.isUseFingerprint) {
+        if (user.isUseFingerprint) {
             initBiometricPrompt()
         }
     }
@@ -146,7 +148,7 @@ class ValidatePinActivity : BaseActivity(),
     }
 
     override fun onPinSuccess() {
-        mUserManager.user.setManuallyLocked(false)
+        mUserManager.requireCurrentLegacyUser().setManuallyLocked(false)
         mPinValid = true
         setResult(Activity.RESULT_OK, buildIntent())
         saveLastInteraction()
@@ -190,7 +192,7 @@ class ValidatePinActivity : BaseActivity(),
     }
 
     private fun logout() {
-        mUserManager.requireCurrentLegacyUserBlocking().apply {
+        mUserManager.requireCurrentLegacyUser().apply {
             isUsePin = false
             isUseFingerprint = false
         }

@@ -83,7 +83,7 @@ public class AttachmentStorageActivity extends BaseActivity {
                 mStorageTextValue.setText(String.format(getString(R.string.attachment_storage_value_current), value));
 
 
-                User user = mUserManager.getUser();
+                User user = mUserManager.getCurrentLegacyUser();
                 boolean attachmentStorageChanged = mAttachmentStorageCurrentValue != user.getMaxAttachmentStorage();
                 if (attachmentStorageChanged) {
                     user.setMaxAttachmentStorage(mAttachmentStorageCurrentValue);

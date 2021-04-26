@@ -79,7 +79,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
 import kotlinx.android.synthetic.main.drawer_header.*
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -219,12 +218,12 @@ abstract class NavigationActivity :
         super.onCreate(savedInstanceState)
 
         accountViewModel.state
-            .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+            .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
             .onEach {
                 when (it) {
                     is AccountViewModel.State.Processing,
                     is AccountViewModel.State.LoginClosed,
-                    is AccountViewModel.State.AccountList -> Unit
+                    is AccountViewModel.State.PrimaryExist -> Unit
                     is AccountViewModel.State.AccountNeeded -> {
                         startSplashActivity()
                         finish()
@@ -233,7 +232,7 @@ abstract class NavigationActivity :
             }.launchIn(lifecycleScope)
 
         accountViewModel.onAccountSwitched()
-            .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+            .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
             .onEach { switch -> onAccountSwitched(switch) }
             .launchIn(lifecycleScope)
     }
@@ -260,7 +259,7 @@ abstract class NavigationActivity :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_SNOOZED_NOTIFICATIONS) {
-            refreshDrawerHeader(checkNotNull(userManager.getCurrentUserBlocking()))
+            refreshDrawerHeader(checkNotNull(userManager.currentUser))
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
@@ -271,7 +270,7 @@ abstract class NavigationActivity :
             // Requested UserId match the current ?
             intent.extras?.getString(EXTRA_USER_ID)?.let { extraUserId ->
                 val requestedUserId = UserId(extraUserId)
-                if (requestedUserId != accountViewModel.getPrimaryUserId().firstOrNull()) {
+                if (requestedUserId != accountViewModel.getPrimaryUserIdValue()) {
                     accountViewModel.switch(requestedUserId)
                 }
             }
@@ -314,7 +313,7 @@ abstract class NavigationActivity :
             )
         )
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
-        setUpInitialDrawerItems(checkNotNull(userManager.getCurrentLegacyUserBlocking()).isUsePin)
+        setUpInitialDrawerItems(userManager.currentLegacyUser?.isUsePin ?: false)
         refreshDrawer()
 
         // LayoutManager set from xml
@@ -339,7 +338,7 @@ abstract class NavigationActivity :
         navigationViewModel.locationsUnreadLiveData().observe(this, LocationsMenuObserver())
 
         lifecycleScope.launchWhenCreated {
-            refreshDrawerHeader(checkNotNull(userManager.getCurrentUser()))
+            userManager.currentUser?.let { refreshDrawerHeader(it) }
         }
 
         setupAccountsList()
@@ -352,7 +351,7 @@ abstract class NavigationActivity :
             lifecycleScope.launchWhenCreated {
                 val accounts = accountViewModel.getSortedAccounts().first().map { account ->
                     val id = Id(account.userId.id)
-                    val user = userManager.getLegacyUserOrNull(id)
+                    val user = userManager.getUserOrNull(id)
                     account.toDrawerUser(account.isReady(), counters[id] ?: 0, user)
                 }
                 accountsAdapter.items = accounts + DrawerUserModel.Footer
@@ -456,7 +455,7 @@ abstract class NavigationActivity :
         lifecycleScope.launchWhenCreated {
             drawerHeader = drawerHeader?.copy(snoozeEnabled = enabled)
             refreshDrawer()
-            refreshDrawerHeader(checkNotNull(userManager.getCurrentUser()))
+            refreshDrawerHeader(checkNotNull(userManager.currentUser))
             setupAccountsList()
         }
     }
@@ -480,7 +479,7 @@ abstract class NavigationActivity :
                     val next = userManager.getUser(nextLoggedInUserId)
                     getString(R.string.logout) to getString(R.string.logout_question_next_account, next.name.s)
                 } else {
-                    val current = checkNotNull(userManager.getCurrentUser())
+                    val current = checkNotNull(userManager.currentUser)
                     getString(R.string.log_out, current.name.s) to getString(R.string.logout_question)
                 }
 
@@ -516,8 +515,8 @@ abstract class NavigationActivity :
             Type.ARCHIVE, Type.STARRED, Type.DRAFTS, Type.SENT, Type.TRASH, Type.SPAM, Type.ALLMAIL ->
                 onOtherMailBox(type.drawerOptionType)
             Type.LOCK -> {
-                val user = userManager.user
-                if (user.isUsePin && userManager.getMailboxPin() != null) {
+                val user = userManager.currentLegacyUser
+                if (user != null && user.isUsePin && userManager.getMailboxPin() != null) {
                     user.setManuallyLocked(true)
                     val pinIntent = AppUtil.decorInAppIntent(Intent(this, ValidatePinActivity::class.java))
                     startActivityForResult(pinIntent, REQUEST_CODE_VALIDATE_PIN)

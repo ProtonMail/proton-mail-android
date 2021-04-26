@@ -51,7 +51,7 @@ class AndroidUserNotifierTest : CoroutinesTest {
     private val userManager: UserManager = mockk {
         every { currentUserId } returns testUserId
         every { requireCurrentUserId() } returns testUserId
-        every { requireCurrentUserBlocking() } returns mockk {
+        every { this@mockk.requireCurrentUser() } returns mockk {
             every { id } returns testUserId
             every { name } returns testUserName
         }

@@ -45,13 +45,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.account.domain.entity.isDisabled
 import me.proton.core.account.domain.entity.isReady
 import me.proton.core.accountmanager.domain.AccountManager
-import me.proton.core.accountmanager.domain.getPrimaryAccount
 import me.proton.core.accountmanager.presentation.disableInitialNotReadyAccounts
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountCreateAddressFailed
@@ -82,7 +82,7 @@ class AccountViewModel @ViewModelInject constructor(
         object Processing : State()
         object LoginClosed : State()
         object AccountNeeded : State()
-        data class AccountList(val accounts: List<Account>) : State()
+        object PrimaryExist : State()
     }
 
     val state = _state.asStateFlow()
@@ -94,10 +94,10 @@ class AccountViewModel @ViewModelInject constructor(
         with(authOrchestrator) {
             onLoginResult { result -> if (result == null) _state.tryEmit(State.LoginClosed) }
             accountManager.observe(context.lifecycle, minActiveState = Lifecycle.State.CREATED)
+                .onSessionHumanVerificationNeeded { startHumanVerificationWorkflow(it) }
                 .onSessionSecondFactorNeeded { startSecondFactorWorkflow(it) }
                 .onAccountTwoPassModeNeeded { startTwoPassModeWorkflow(it) }
                 .onAccountCreateAddressNeeded { startChooseAddressWorkflow(it) }
-                .onSessionHumanVerificationNeeded { startHumanVerificationWorkflow(it) }
                 .onAccountTwoPassModeFailed { accountManager.disableAccount(it.userId) }
                 .onAccountCreateAddressFailed { accountManager.disableAccount(it.userId) }
                 .onAccountDisabled { onAccountDisabled(it) }
@@ -108,29 +108,26 @@ class AccountViewModel @ViewModelInject constructor(
         // Raise LoginNeeded on empty account list.
         accountManager.getAccounts()
             .flowWithLifecycle(context.lifecycle, Lifecycle.State.CREATED)
-            .onEach { accounts ->
+            .transformLatest { accounts ->
                 when {
                     accounts.isEmpty() || accounts.all { it.isDisabled() } -> {
                         onAccountNeeded()
-                        _state.tryEmit(State.AccountNeeded)
+                        emit(State.AccountNeeded)
                     }
                     accounts.any { it.isReady() } -> {
-                        _state.tryEmit(State.AccountList(accounts))
+                        // Wait getPrimaryUserId != null.
+                        getPrimaryUserId().first { it != null }
+                        emit(State.PrimaryExist)
                     }
                 }
-            }.launchIn(viewModelScope)
-
+            }
+            .onEach { state -> _state.tryEmit(state) }
+            .launchIn(viewModelScope)
     }
-
-    fun getPrimaryUserId() = accountManager.getPrimaryUserId()
-
-    fun getPrimaryAccount() = accountManager.getPrimaryAccount()
 
     fun getAccount(userId: UserId) = accountManager.getAccount(userId)
 
     suspend fun getAccountOrNull(userId: UserId) = getAccount(userId).firstOrNull()
-
-    fun getAccounts() = accountManager.getAccounts()
 
     /* Order: Primary account, ready account(s), other account(s). */
     fun getSortedAccounts() = accountManager.getAccounts().mapLatest { accounts ->
@@ -178,6 +175,15 @@ class AccountViewModel @ViewModelInject constructor(
             current = currentUserId?.let { getAccountOrNull(it) }
         )
     }.filter { it.previous != null && it.current != it.previous }
+
+    // region Primary User Id
+
+    // Currently, Old UserManager is the source of truth for current primary user id.
+    fun getPrimaryUserId() = oldUserManager.primaryUserId
+
+    fun getPrimaryUserIdValue() = oldUserManager.primaryUserId.value
+
+    // endregion
 
     // region Deprecated
 

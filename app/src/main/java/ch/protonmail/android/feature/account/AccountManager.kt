@@ -19,12 +19,19 @@
 
 package ch.protonmail.android.feature.account
 
+import ch.protonmail.android.api.models.User
 import ch.protonmail.android.domain.entity.Id
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
 import me.proton.core.account.domain.entity.AccountState
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.domain.getAccounts
+import me.proton.core.domain.entity.UserId
+import ch.protonmail.android.domain.entity.user.User as NewUser
 
 @Deprecated("Replaced by Core AccountManager", ReplaceWith("Core AccountManager"))
 fun AccountManager.allLoggedInBlocking() = runBlocking { allLoggedIn() }
@@ -36,3 +43,15 @@ suspend fun AccountManager.allLoggedIn() =
 @Deprecated("Replaced by Core AccountManager", ReplaceWith("Core AccountManager"))
 suspend fun AccountManager.allSaved() =
     getAccounts(AccountState.Disabled).firstOrNull()?.map { Id(it.userId.id) }.orEmpty().toSet()
+
+suspend fun AccountManager.primaryUserId(scope: CoroutineScope): StateFlow<UserId?> =
+    getPrimaryUserId().stateIn(scope)
+
+suspend fun AccountManager.primaryId(scope: CoroutineScope): StateFlow<Id?> =
+    primaryUserId(scope).mapLatest { it?.let { Id(it.id) } }.stateIn(scope)
+
+suspend fun AccountManager.primaryLegacyUser(scope: CoroutineScope, getUser: suspend (Id) -> User): StateFlow<User?> =
+    primaryId(scope).mapLatest { it?.let { getUser(it) } }.stateIn(scope)
+
+suspend fun AccountManager.primaryUser(scope: CoroutineScope, getNewUser: suspend (Id) -> NewUser): StateFlow<NewUser?> =
+    primaryId(scope).mapLatest { it?.let { getNewUser(it) } }.stateIn(scope)

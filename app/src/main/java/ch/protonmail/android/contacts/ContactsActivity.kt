@@ -185,7 +185,7 @@ class ContactsActivity :
         if (connectivity != ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                 mSnackLayout,
-                mUserManager.user,
+                mUserManager.requireCurrentLegacyUser(),
                 this,
                 { onConnectivityCheckRetry() },
                 isOffline = connectivity == ConnectionState.NO_INTERNET

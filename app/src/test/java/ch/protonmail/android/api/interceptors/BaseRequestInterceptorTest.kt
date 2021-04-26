@@ -29,7 +29,6 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.notifier.UserNotifier
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -64,9 +63,7 @@ class BaseRequestInterceptorTest {
 
     private val userManagerMock = mockk<UserManager> {
         every { currentUserId } returns testUserId
-        every { getMailboxPassword(testUserId) } returns "mailbox password".toByteArray()
-        coEvery { getCurrentLegacyUser() } returns userMock
-        every { getCurrentLegacyUserBlocking() } returns userMock
+        every { this@mockk.currentLegacyUser } returns userMock
     }
 
     private val sessionManagerMock = mockk<SessionManager>()

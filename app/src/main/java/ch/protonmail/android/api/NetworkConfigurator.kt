@@ -65,7 +65,7 @@ class NetworkConfigurator @Inject constructor(
 
     fun tryRetryWithDoh() {
         if (connectivityManager.isInternetConnectionPossible()) {
-            val isThirdPartyConnectionsEnabled = userManager.getCurrentLegacyUserBlocking()?.allowSecureConnectionsViaThirdParties
+            val isThirdPartyConnectionsEnabled = userManager.currentLegacyUser?.allowSecureConnectionsViaThirdParties
             if (isThirdPartyConnectionsEnabled == true) {
                 Timber.i("Third party connections enabled, attempting DoH...")
                 refreshDomainsAsync()
@@ -75,7 +75,7 @@ class NetworkConfigurator @Inject constructor(
 
     private suspend fun queryDomains() {
         val freshAlternativeUrls = mutableListOf<String>()
-        val user = userManager.user
+        val user = userManager.requireCurrentLegacyUser()
         if (!user.allowSecureConnectionsViaThirdParties) {
             networkSwitcher.reconfigureProxy(null) // force switch to old proxy
             user.usingDefaultApi = true
@@ -132,9 +132,9 @@ class NetworkConfigurator @Inject constructor(
     private fun findWorkingDomain(proxies: Proxies, timestamp: Long) {
         val proxyListReference = proxies.proxyList.proxies
         scope.launch {
-
+            val user = userManager.requireCurrentLegacyUser()
             // double-check if normal API call works before resorting to use alternative routing url
-            if (userManager.user.usingDefaultApi) {
+            if (user.usingDefaultApi) {
                 val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
                     val result = try {
                         networkSwitcher.tryRequest { service ->
@@ -174,7 +174,7 @@ class NetworkConfigurator @Inject constructor(
                     proxies.saveCurrentWorkingProxyDomain(proxies.getCurrentActiveProxy().baseUrl)
                     proxies.save()
                     isRunning = false
-                    userManager.user.usingDefaultApi = false
+                    user.usingDefaultApi = false
                     callback?.startAutoRetry()
                     callback?.stopDohSignal()
                     return@launch
@@ -184,7 +184,7 @@ class NetworkConfigurator @Inject constructor(
             }
             callback?.stopAutoRetry()
             networkSwitcher.reconfigureProxy(null)
-            userManager.user.usingDefaultApi = true
+            user.usingDefaultApi = true
             isRunning = false
             callback?.stopDohSignal()
         }

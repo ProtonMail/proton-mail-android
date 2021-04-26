@@ -51,7 +51,7 @@ class MailboxViewModelTest {
         every { isPaidUser } returns false
     }
     private val mockUserManager = mockk<UserManager>(relaxed = true) {
-        every { user } returns mockUser
+        every { currentLegacyUser } returns mockUser
     }
     //private val mockResources = mockk<Resources>(relaxed = true) {
     //    val accountTypeNames = arrayOf("Free", "Plus", "Visionary", "Professional")

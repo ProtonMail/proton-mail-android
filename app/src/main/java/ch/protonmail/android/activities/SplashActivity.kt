@@ -39,13 +39,13 @@ class SplashActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         accountViewModel.state
-            .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+            .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
             .onEach {
                 when (it) {
                     is AccountViewModel.State.Processing -> Unit
                     is AccountViewModel.State.LoginClosed -> finish()
                     is AccountViewModel.State.AccountNeeded -> accountViewModel.login()
-                    is AccountViewModel.State.AccountList -> {
+                    is AccountViewModel.State.PrimaryExist -> {
                         startMailboxActivity()
                         finish()
                     }

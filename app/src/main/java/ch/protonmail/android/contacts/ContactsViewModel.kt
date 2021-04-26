@@ -43,7 +43,7 @@ class ContactsViewModel @Inject constructor(
     val fetchContactsResult: LiveData<Boolean> =
         fetchContactsTrigger.switchMap { fetchContactsData() }
 
-    fun isPaidUser(): Boolean = userManager.user.isPaidUser
+    fun isPaidUser(): Boolean = userManager.requireCurrentLegacyUser().isPaidUser
 
     fun fetchContacts() {
         Timber.v("fetchContacts")

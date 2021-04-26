@@ -59,7 +59,7 @@ public class EventUpdaterService extends ProtonJobIntentService {
     protected void onHandleWork(@NonNull Intent intent) {
         User user;
         try {
-            user = mUserManager.getCurrentLegacyUserBlocking();
+            user = mUserManager.getCurrentLegacyUser();
         } catch (IllegalStateException e) {
             user = null;
         }

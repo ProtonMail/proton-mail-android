@@ -22,6 +22,7 @@ package ch.protonmail.android.usecase.fetch
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.PublicKeyBody
 import ch.protonmail.android.api.models.PublicKeyResponse
+import ch.protonmail.android.api.models.User
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
@@ -29,7 +30,6 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.utils.crypto.KeyInformation
 import io.mockk.coEvery
 import io.mockk.every
@@ -44,14 +44,14 @@ class FetchVerificationKeysTest : CoroutinesTest {
 
     private val testUserId = Id("id")
     private val testUser = mockk<User> {
-        every { id } returns testUserId
+        every { id } returns testUserId.s
         every { addresses } returns mockk(relaxed = true)
     }
 
     private val api: ProtonMailApiManager = mockk()
 
     private val userManager: UserManager = mockk {
-        coEvery { requireCurrentUser() } returns testUser
+        coEvery { this@mockk.requireCurrentLegacyUser() } returns testUser
         every { currentUserId } returns testUserId
         every { requireCurrentUserId() } returns testUserId
         every { openPgp } returns mockk()

@@ -199,7 +199,7 @@ object ApplicationModule {
     ): ProtonRetrofitBuilder {
 
         // userManager.user.allowSecureConnectionsViaThirdParties)
-        val user = userManager.getCurrentLegacyUserBlocking()
+        val user = userManager.currentLegacyUser
         val dnsOverHttpsHost =
             if (user != null && !user.usingDefaultApi)
                 Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()

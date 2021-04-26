@@ -31,7 +31,7 @@ class GenerateTokenAndSignature @Inject constructor (
     private val openPgp: OpenPGP
 ) {
     suspend operator fun invoke(orgKeys: UserKey?): TokenAndSignature {
-        val user = userManager.getCurrentUserBlocking()
+        val user = userManager.currentUser
         val secret = openPgp.randomToken()
         val tokenString = secret.joinToString("") { String.format("%02x", (it.toInt() and 0xff)) }
         val binMessage = Crypto.newPlainMessageFromString(tokenString)

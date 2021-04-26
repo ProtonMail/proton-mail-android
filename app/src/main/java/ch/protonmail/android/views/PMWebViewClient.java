@@ -123,7 +123,7 @@ public class PMWebViewClient extends WebViewClient {
         );
         MailTo mt = MailTo.parse(url);
 
-        User user = mUserManager.getUser();
+        User user = mUserManager.getCurrentLegacyUser();
         MessageUtils.INSTANCE.addRecipientsToIntent(
                 intent,
                 ComposeMessageActivity.EXTRA_TO_RECIPIENTS,

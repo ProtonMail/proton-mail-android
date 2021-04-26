@@ -75,7 +75,7 @@ internal class NotificationSettingsViewModel(
     val ringtoneSettings = ViewStateStore<RingtoneSettingsUiModel>().lock
 
     /** Lazy instance of [User] from [UserManager] */
-    private val user by lazy { userManager.user }
+    private val user by lazy { userManager.requireCurrentLegacyUser() }
 
     init {
         sendRingtoneSettings()

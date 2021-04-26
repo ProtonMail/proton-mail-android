@@ -172,7 +172,7 @@ internal class NotificationSettingsActivity : BaseActivity(), ViewStateActivity 
             currentAction = notificationOptions.indexOf(idOptionsMap[checkedId])
             toggleRingtoneContainerVisibility()
 
-            val user = mUserManager.user
+            val user = mUserManager.requireCurrentLegacyUser()
             val notificationSettingsChanged = currentAction != user.notificationSetting
             if (notificationSettingsChanged) {
                 user.notificationSetting = currentAction

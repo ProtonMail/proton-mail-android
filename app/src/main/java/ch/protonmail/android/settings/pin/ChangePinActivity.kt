@@ -104,7 +104,7 @@ class ChangePinActivity : BaseActivity(),
     }
 
     private fun logout() {
-        mUserManager.requireCurrentLegacyUserBlocking().apply {
+        mUserManager.requireCurrentLegacyUser().apply {
             isUsePin = false
             isUseFingerprint = false
         }
