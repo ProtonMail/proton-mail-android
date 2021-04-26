@@ -1008,6 +1008,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="swiping_gesture">Swiping gesture</string>
     <string name="swipe_action_right">Swipe right</string>
     <string name="swipe_action_left">Swipe left</string>
+    <string name="block_swiping_gestures">Block swiping gestures</string>
+    <string name="extended_block_swiping_gestures_description">Turn this feature on to enable or disable\nthe swiping gestures in the mailbox.</string>
 
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Choose swipe action</string>

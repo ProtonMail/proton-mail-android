@@ -396,6 +396,23 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     SettingsEnum.SWIPE_RIGHT,
                     getString(SwipeAction.values()[mUserManager.mailSettings!!.rightSwipeAction].actionDescription)
                 )
+                setValue(
+                    SettingsEnum.BLOCK_SWIPING_GESTURES,
+                    getString(R.string.extended_block_swiping_gestures_description)
+                )
+                setEnabled(
+                    SettingsEnum.BLOCK_SWIPING_GESTURES,
+                    user.isBlockSwipingGestures
+                )
+                setToggleListener(SettingsEnum.BLOCK_SWIPING_GESTURES) { _: View, isChecked: Boolean ->
+                    if (isChecked != user.isBlockSwipingGestures){
+                        user.isBlockSwipingGestures = isChecked
+
+                        user.save()
+                        mUserManager.user = user
+                    }
+                }
+
                 actionBarTitle = R.string.swiping_gesture
             }
             SettingsItem.LABELS_AND_FOLDERS -> {

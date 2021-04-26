@@ -135,6 +135,7 @@ object Constants {
         const val PREF_AUTO_LOCK_PIN_PERIOD = "auto_lock_pin_period"
         const val PREF_AUTO_LOGOUT = "auto_logout"
         const val PREF_BACKGROUND_SYNC = "background_sync"
+        const val PREF_BLOCK_SWIPING_GESTURES = "block_swiping_gestures"
         const val PREF_COMBINED_CONTACTS = "combined_contacts"
         const val PREF_DELINQUENT = "deliquent"
         const val PREF_DISPLAY_MOBILE = "ui_display_mobile"
