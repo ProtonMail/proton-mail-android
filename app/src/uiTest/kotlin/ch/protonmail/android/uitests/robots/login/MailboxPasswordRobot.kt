@@ -21,10 +21,9 @@ package ch.protonmail.android.uitests.robots.login
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
-import ch.protonmail.android.uitests.testsHelper.uiactions.insert
+import me.proton.core.test.android.instrumented.CoreRobot
 
-class MailboxPasswordRobot {
+class MailboxPasswordRobot : CoreRobot {
 
     fun decryptMailbox(password: String): InboxRobot {
         return mailboxPassword(password)
@@ -32,12 +31,12 @@ class MailboxPasswordRobot {
     }
 
     private fun mailboxPassword(password: String): MailboxPasswordRobot {
-        UIActions.wait.forViewWithId(R.id.mailbox_password).insert(password)
+        view.withId(R.id.mailbox_password).replaceText(password)
         return this
     }
 
     private fun decrypt(): InboxRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.sign_in, R.string.decrypt)
+        view.withId(R.id.sign_in).withText(R.string.decrypt).click()
         return InboxRobot()
     }
 }
