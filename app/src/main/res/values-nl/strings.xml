@@ -53,7 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Netwerk niet beschikbaar, bericht in wachtrij geplaatst</string>
     <string name="update_app_title">Update vereist</string>
     <string name="update_app">Uw Protonmail-app kan niet worden gebruikt totdat deze is geüpdatet</string>
-    <string name="you_are_offline">U ben offline</string>
+    <string name="you_are_offline">U bent offline</string>
     <string name="api_offline_title">ProtonMail API is offline</string>
     <string name="api_offline">ProtonMail is momenteel offline. Kijk op https://protonstatus.com of https://twitter.com/protonmail voor de huidige status</string>
     <string name="contact_saved">Contact opgeslagen</string>
@@ -998,5 +998,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_firebase_api_key_message">Ongeldige Firebase API-sleutel. Push-meldingen werken niet.</string>
     <string name="failed_saving_draft_online">Onlin concept opslaan voor bericht mislukt: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Kan dit bericht niet openen terwijl het verzonden wordt</string>
-    <string name="enable_conversation_mode">Gesprek modus inschakelen</string>
+    <string name="enable_conversation_mode">Gespreksmodus inschakelen</string>
 </resources>
