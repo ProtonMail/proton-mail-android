@@ -34,28 +34,28 @@ class MoveMessagesToFolder @Inject constructor(
 
     operator fun invoke(
         messageIds: List<String>,
-        newFolderLocation: NewFolderLocation,
+        newFolderLocationId: String,
         currentFolderLabelId: String = EMPTY_STRING,
     ) {
-        val job = when (newFolderLocation) {
-            is NewFolderLocation.Trash -> {
+        val job = when (newFolderLocationId) {
+            StandardFolderLocation.Trash.id -> {
                 PostTrashJobV2(
                     messageIds,
                     listOf(currentFolderLabelId),
                     currentFolderLabelId // TODO: Think why is this parameter needed here?
                 )
             }
-            is NewFolderLocation.Archive -> {
+            StandardFolderLocation.Archive.id -> {
                 PostArchiveJob(messageIds, listOf(currentFolderLabelId))
             }
-            is NewFolderLocation.Inbox -> {
+            StandardFolderLocation.Inbox.id -> {
                 PostInboxJob(messageIds, listOf(currentFolderLabelId))
             }
-            is NewFolderLocation.Spam -> {
+            StandardFolderLocation.Spam.id -> {
                 PostSpamJob(messageIds)
             }
-            is NewFolderLocation.CustomFolder -> {
-                MoveToFolderJob(messageIds, newFolderLocation.folderId)
+            else -> {
+                MoveToFolderJob(messageIds, newFolderLocationId)
             }
         }
         jobManager.addJobInBackground(job)

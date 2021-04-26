@@ -24,17 +24,17 @@ import androidx.annotation.StringRes
 import ch.protonmail.android.R
 
 // based on Constants.MessageLocationType
-sealed class NewFolderLocation(
+sealed class StandardFolderLocation(
     val id: String,
     @DrawableRes val iconRes: Int,
     @StringRes val title: Int? = null
 ) {
 
-    object Archive : NewFolderLocation(ID_ARCHIVE_FOLDER, R.drawable.ic_archive_24dp, R.string.archive)
-    object Inbox : NewFolderLocation(ID_INBOX_FOLDER, R.drawable.ic_inbox_24dp, R.string.inbox)
-    object Spam : NewFolderLocation(ID_SPAM_FOLDER, R.drawable.ic_spam_24dp, R.string.spam)
-    object Trash : NewFolderLocation(ID_TRASH_FOLDER, R.drawable.ic_trash_24dp, R.string.trash)
-    data class CustomFolder(val folderId: String) : NewFolderLocation(ID_CUSTOM_FOLDER, R.drawable.ic_folder_24dp)
+    object Archive : StandardFolderLocation(ID_ARCHIVE_FOLDER, R.drawable.ic_archive_24dp, R.string.archive)
+    object Inbox : StandardFolderLocation(ID_INBOX_FOLDER, R.drawable.ic_inbox_24dp, R.string.inbox)
+    object Spam : StandardFolderLocation(ID_SPAM_FOLDER, R.drawable.ic_spam_24dp, R.string.spam)
+    object Trash : StandardFolderLocation(ID_TRASH_FOLDER, R.drawable.ic_trash_24dp, R.string.trash)
+    data class CustomFolder(val folderId: String) : StandardFolderLocation(folderId, R.drawable.ic_folder_24dp)
 
     companion object {
 
@@ -42,6 +42,5 @@ sealed class NewFolderLocation(
         const val ID_INBOX_FOLDER = "id_inbox_folder"
         const val ID_SPAM_FOLDER = "id_spam_folder"
         const val ID_TRASH_FOLDER = "id_trash_folder"
-        const val ID_CUSTOM_FOLDER = "id_custom_folder"
     }
 }

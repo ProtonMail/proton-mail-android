@@ -28,7 +28,8 @@ data class ManageLabelItemUiModel(
     val labelId: String,
     @DrawableRes val iconRes: Int,
     val title: String? = null, // for item custom titles e.g. "Lablel123"
-    @StringRes val titleRes: Int? = null,  // for standard titles e.g. "Inbox"
+    @StringRes val titleRes: Int? = null, // for standard titles e.g. "Inbox"
     @ColorInt val colorInt: Int = Color.BLACK,
-    val isChecked: Boolean? = null
+    val isChecked: Boolean? = null,
+    val labelType: Int = ManageLabelsActionSheet.Type.LABEL.typeInt
 )

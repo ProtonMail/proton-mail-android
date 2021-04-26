@@ -49,24 +49,28 @@ class GetAllLabels @Inject constructor(
     private fun getStandardFolders(): List<ManageLabelItemUiModel> {
         return listOf(
             ManageLabelItemUiModel(
-                labelId = NewFolderLocation.Inbox.id,
-                titleRes = NewFolderLocation.Inbox.title,
-                iconRes = NewFolderLocation.Inbox.iconRes,
+                labelId = StandardFolderLocation.Inbox.id,
+                iconRes = StandardFolderLocation.Inbox.iconRes,
+                titleRes = StandardFolderLocation.Inbox.title,
+                labelType = ManageLabelsActionSheet.Type.FOLDER.typeInt
             ),
             ManageLabelItemUiModel(
-                labelId = NewFolderLocation.Archive.id,
-                titleRes = NewFolderLocation.Archive.title,
-                iconRes = NewFolderLocation.Archive.iconRes,
+                labelId = StandardFolderLocation.Archive.id,
+                iconRes = StandardFolderLocation.Archive.iconRes,
+                titleRes = StandardFolderLocation.Archive.title,
+                labelType = ManageLabelsActionSheet.Type.FOLDER.typeInt
             ),
             ManageLabelItemUiModel(
-                labelId = NewFolderLocation.Spam.id,
-                titleRes = NewFolderLocation.Spam.title,
-                iconRes = NewFolderLocation.Spam.iconRes,
+                labelId = StandardFolderLocation.Spam.id,
+                iconRes = StandardFolderLocation.Spam.iconRes,
+                titleRes = StandardFolderLocation.Spam.title,
+                labelType = ManageLabelsActionSheet.Type.FOLDER.typeInt
             ),
             ManageLabelItemUiModel(
-                labelId = NewFolderLocation.Trash.id,
-                titleRes = NewFolderLocation.Trash.title,
-                iconRes = NewFolderLocation.Trash.iconRes,
+                labelId = StandardFolderLocation.Trash.id,
+                iconRes = StandardFolderLocation.Trash.iconRes,
+                titleRes = StandardFolderLocation.Trash.title,
+                labelType = ManageLabelsActionSheet.Type.FOLDER.typeInt
             )
         )
     }

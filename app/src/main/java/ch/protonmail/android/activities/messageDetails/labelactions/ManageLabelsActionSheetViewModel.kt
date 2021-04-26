@@ -26,7 +26,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.GetAllLabels
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.MoveMessagesToFolder
-import ch.protonmail.android.activities.messageDetails.labelactions.domain.NewFolderLocation
+import ch.protonmail.android.activities.messageDetails.labelactions.domain.StandardFolderLocation
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.UpdateLabels
 import ch.protonmail.android.core.UserManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -69,33 +69,38 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
     }
 
     fun onLabelClicked(model: ManageLabelItemUiModel) {
-        val updatedLabels = labels.value.map { label ->
-            if (label.labelId == model.labelId) {
-                Timber.v("Label: ${label.labelId} was clicked")
-                label.copy(isChecked = model.isChecked?.not())
-            } else {
-                label
-            }
-        }
 
-        val selectedLabelsCount = updatedLabels.filter { it.isChecked == true }
-        if (selectedLabelsCount.isNotEmpty() &&
-            userManager.didReachLabelsThreshold(selectedLabelsCount.size)
-        ) {
-            actionsResultMutableFlow.value =
-                ManageLabelActionResult.ErrorLabelsThresholdReached(userManager.getMaxLabelsAllowed())
+        if (model.labelType == ManageLabelsActionSheet.Type.FOLDER.typeInt) {
+            onFolderClicked(model.labelId)
         } else {
-            labelsMutableFlow.value = updatedLabels
-            actionsResultMutableFlow.value = ManageLabelActionResult.Default
+            // label type clicked
+            val updatedLabels = labels.value.map { label ->
+                if (label.labelId == model.labelId) {
+                    Timber.v("Label: ${label.labelId} was clicked")
+                    label.copy(isChecked = model.isChecked?.not())
+                } else {
+                    label
+                }
+            }
+
+            val selectedLabelsCount = updatedLabels.filter { it.isChecked == true }
+            if (selectedLabelsCount.isNotEmpty() &&
+                userManager.didReachLabelsThreshold(selectedLabelsCount.size)
+            ) {
+                actionsResultMutableFlow.value =
+                    ManageLabelActionResult.ErrorLabelsThresholdReached(userManager.getMaxLabelsAllowed())
+            } else {
+                labelsMutableFlow.value = updatedLabels
+                actionsResultMutableFlow.value = ManageLabelActionResult.Default
+            }
         }
     }
 
     fun onDoneClicked(shallMoveToArchive: Boolean = false) {
-
         if (labelsSheetType == ManageLabelsActionSheet.Type.LABEL) {
             onLabelDoneClicked(messageIds, shallMoveToArchive)
         } else {
-            onFolderDoneClicked(messageIds)
+            throw IllegalStateException("This action is unsupported for type $labelsSheetType")
         }
     }
 
@@ -114,7 +119,7 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
                 }
 
                 if (shallMoveToArchive) {
-                    moveMessagesToFolder(messageIds, NewFolderLocation.Archive)
+                    moveMessagesToFolder(messageIds, StandardFolderLocation.Archive.id)
                 }
 
                 actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved
@@ -124,9 +129,9 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun onFolderDoneClicked(messageIds: List<String>) {
+    private fun onFolderClicked(selectedFolderId: String) {
         // TODO: Change this default location, to something selected by the user
-        moveMessagesToFolder(messageIds, NewFolderLocation.Archive)
+        moveMessagesToFolder(messageIds, selectedFolderId)
         actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved
     }
 }

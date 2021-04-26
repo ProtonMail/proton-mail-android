@@ -32,8 +32,7 @@ import ch.protonmail.android.databinding.ItemManageLabelsActionBinding
 import timber.log.Timber
 
 class ManageLabelsActionAdapter(
-    private val clickListener: (ManageLabelItemUiModel) -> Unit,
-    private val actionSheetType: ManageLabelsActionSheet.Type = ManageLabelsActionSheet.Type.LABEL
+    private val clickListener: (ManageLabelItemUiModel) -> Unit
 ) : ListAdapter<ManageLabelItemUiModel, RecyclerView.ViewHolder>(ManageLabelItemDiffUtil()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -43,7 +42,6 @@ class ManageLabelsActionAdapter(
             view.checkboxManageLabelsActionIsChecked,
             view.root
         )
-
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

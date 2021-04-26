@@ -60,14 +60,18 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
                 getString(R.string.label_as)
             }
             setTitle(title)
-            setRightActionClickListener {
-                viewModel.onDoneClicked(binding.switchLabelsSheetArchive.isChecked)
-            }
+
             setOnCloseClickListener {
                 dismiss()
             }
+
+            if (actionSheetType == Type.LABEL) {
+                setRightActionClickListener {
+                    viewModel.onDoneClicked(binding.switchLabelsSheetArchive.isChecked)
+                }
+            }
         }
-        val manageLabelsActionAdapter = ManageLabelsActionAdapter(::onLabelClicked, actionSheetType)
+        val manageLabelsActionAdapter = ManageLabelsActionAdapter(::onLabelClicked)
         with(binding.recyclerviewLabelsSheet) {
             layoutManager = LinearLayoutManager(context)
             adapter = manageLabelsActionAdapter

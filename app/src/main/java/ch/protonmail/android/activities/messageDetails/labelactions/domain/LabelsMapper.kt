@@ -58,7 +58,8 @@ class LabelsMapper @Inject constructor() {
             title = label.name,
             titleRes = null,
             colorInt = colorInt,
-            isChecked = isChecked
+            isChecked = isChecked,
+            labelType = labelsSheetType.typeInt
         )
     }
 }
