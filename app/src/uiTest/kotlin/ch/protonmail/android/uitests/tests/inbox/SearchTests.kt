@@ -23,6 +23,7 @@ import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import org.junit.experimental.categories.Category
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -40,6 +41,7 @@ class SearchTests : BaseTest() {
             .searchBar()
     }
 
+    @TestId("53856")
     @Category(SmokeTest::class)
     @Test
     fun searchFindMessage() {
@@ -48,6 +50,7 @@ class SearchTests : BaseTest() {
             .verify { searchedMessageFound() }
     }
 
+    @TestId("53857")
     @Test
     fun searchDontFindMessage() {
         searchRobot

@@ -22,6 +22,7 @@ import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -38,12 +39,14 @@ class MenuTests : BaseTest() {
             .menuDrawer()
     }
 
+    @TestId("30803")
     @Test
     fun openNavigationDrawer() {
         menuRobot
             .verify { menuOpened() }
     }
 
+    @TestId("30804")
     @Test
     fun closeNavigationDrawerWithSwipe() {
         menuRobot
@@ -51,6 +54,7 @@ class MenuTests : BaseTest() {
             .verify { menuClosed() }
     }
 
+    @TestId("30805")
     @Test
     fun navigateToAccountList() {
         menuRobot
@@ -58,6 +62,7 @@ class MenuTests : BaseTest() {
             .verify { accountsListOpened() }
     }
 
+    @TestId("30806")
     @Test
     fun navigateToManageAccounts() {
         menuRobot
@@ -66,6 +71,7 @@ class MenuTests : BaseTest() {
             .verify { manageAccountsOpened() }
     }
 
+    @TestId("30807")
     @Test
     fun navigateToContacts() {
         menuRobot
@@ -73,6 +79,7 @@ class MenuTests : BaseTest() {
             .verify { contactsOpened() }
     }
 
+    @TestId("30808")
     @Test
     fun navigateToSettings() {
         menuRobot
@@ -80,6 +87,7 @@ class MenuTests : BaseTest() {
             .verify { settingsOpened() }
     }
 
+    @TestId("30809")
     @Test
     fun navigateToReportBugs() {
         menuRobot
@@ -87,6 +95,7 @@ class MenuTests : BaseTest() {
             .verify { reportBugsOpened() }
     }
 
+    @TestId("30810")
     @Test
     fun navigateToUpgradeDonate() {
         menuRobot

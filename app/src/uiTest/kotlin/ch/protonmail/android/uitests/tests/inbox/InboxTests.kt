@@ -181,18 +181,6 @@ class InboxTests : BaseTest() {
             .verify { messageWithSubjectExists(longClickedMessageSubject) }
     }
 
-    @Test
-    fun messageDetailsViewHeaders() {
-        inboxRobot
-            .menuDrawer()
-            .sent()
-            .refreshMessageList()
-            .clickMessageByPosition(0)
-            .moreOptions()
-            .viewHeaders()
-            .verify { messageHeadersDisplayed() }
-    }
-
     @TestId("29722")
     @Test
     fun deleteMessageLongClick() {

@@ -31,6 +31,7 @@ import ch.protonmail.android.uitests.robots.settings.account.privacy.PrivacySett
 import ch.protonmail.android.uitests.robots.settings.account.swipinggestures.SwipingGesturesSettingsRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import me.proton.core.test.android.instrumented.CoreRobot
 
 /**
  * [AccountSettingsRobot] class contains actions and verifications for
@@ -92,18 +93,18 @@ class AccountSettingsRobot {
     /**
      * Contains all the validations that can be performed by [AccountSettingsRobot].
      */
-    class Verify {
+    class Verify : CoreRobot {
 
         fun accountSettingsOpened() {
-            UIActions.wait.forViewWithTextAndParentId(R.string.account_settings, R.id.toolbar)
+            view.withText(R.string.account_settings).isDescendantOf(view.withId(R.id.toolbar)).wait().checkDisplayed()
         }
 
         fun passwordChanged() {
-            //UIActions.check.toastMessageIsDisplayed(R.string.new_login_password_saved)
+            UIActions.wait.forToastWithText(R.string.new_login_password_saved)
         }
 
         fun mailboxPasswordChanged() {
-            //UIActions.check.toastMessageIsDisplayed(R.string.new_mailbox_password_saved)
+            UIActions.wait.forToastWithText(R.string.new_mailbox_password_saved)
         }
     }
 

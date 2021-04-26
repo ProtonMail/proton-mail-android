@@ -36,6 +36,12 @@ open class AccountManagerRobot {
             .confirm()
     }
 
+    fun removeLastAccount(email: String): LoginRobot {
+        return accountMoreMenu(email)
+            .remove()
+            .confirmLastAccountLogout()
+    }
+
     fun removeAllAccounts(): LoginRobot {
         return moreOptions()
             .removeAll()

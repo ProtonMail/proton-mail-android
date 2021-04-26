@@ -24,6 +24,7 @@ import me.proton.core.test.android.instrumented.CoreTest.Companion.testTag
 import org.json.simple.JSONObject
 import java.io.IOException
 import java.util.HashMap
+import kotlin.jvm.Throws
 
 object TestRailService {
 
@@ -36,7 +37,7 @@ object TestRailService {
         client.user = BuildConfig.TESTRAIL_USERNAME
         client.password = BuildConfig.TESTRAIL_PASSWORD
         val data = HashMap<Any?, Any?>()
-        data["name"] = "Test Run"
+        data["name"] = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
         data["suite_id"] = androidSuiteId
         var newRun: JSONObject? = null
         try {

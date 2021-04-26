@@ -44,7 +44,14 @@ class TestExecutionWatcher : TestWatcher() {
         if (BaseTest.shouldReportToTestRail) {
             description!!.annotations.forEach {
                 if (it is TestId) {
-                    TestRailService.addResultForTestCase(it.id, 5, "Failed", getRunId())
+                    if (e != null) {
+                        TestRailService.addResultForTestCase(
+                            it.id,
+                            5,
+                            e.message ?: e::class.simpleName!!,
+                            getRunId()
+                        )
+                    }
                 }
             }
         }

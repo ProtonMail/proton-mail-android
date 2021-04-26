@@ -301,12 +301,14 @@ class ComposerRobot : CoreRobot, DeviceRobot() {
     }
 
     private fun sendWithNotSupportedExpiryConfirmation(): NotSupportedExpirationRobot {
-        waitForConditionAndSend()
+        view.withId(R.id.text1).waitUntilGone()
+        UIActions.wait.untilViewWithIdEnabled(sendMessageId)
+        view.withId(sendMessageId).click()
         return NotSupportedExpirationRobot()
     }
 
     private fun sendToContact(): ContactsRobot {
-        waitForConditionAndSendToContact()
+        waitForConditionAndSend()
         return ContactsRobot()
     }
 
@@ -325,12 +327,6 @@ class ComposerRobot : CoreRobot, DeviceRobot() {
         UIActions.wait.untilViewWithIdEnabled(sendMessageId)
         view.withId(sendMessageId).click()
         UIActions.wait.forToastWithText(R.string.message_sent)
-    }
-
-    private fun waitForConditionAndSendToContact() {
-        view.withId(R.id.text1).waitUntilGone()
-        UIActions.wait.untilViewWithIdEnabled(sendMessageId)
-        view.withId(sendMessageId).click()
     }
 
     /**
@@ -394,6 +390,7 @@ class ComposerRobot : CoreRobot, DeviceRobot() {
 
         fun sendAnyway(): InboxRobot {
             view.withId(ok).click()
+            UIActions.wait.forToastWithText(R.string.message_sent)
             return InboxRobot()
         }
     }

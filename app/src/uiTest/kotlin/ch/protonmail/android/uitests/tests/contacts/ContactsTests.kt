@@ -47,6 +47,7 @@ class ContactsTests : BaseTest() {
             .contacts()
     }
 
+    @TestId("1419")
     @Test
     fun createContact() {
         val name = TestData.newContactName
@@ -67,8 +68,8 @@ class ContactsTests : BaseTest() {
     fun editContact() {
         val name = TestData.newContactName
         val email = TestData.newEmailAddress
-        val editedName = TestData.newContactName
-        val editedEmail = TestData.newEmailAddress
+        val editedName = TestData.editContactName
+        val editedEmail = TestData.editEmailAddress
         contactsRobot
             .addContact()
             .setNameEmailAndSave(name, email)

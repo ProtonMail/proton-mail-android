@@ -59,9 +59,9 @@ object TestData {
 
     // CONTACT DATA
     val newContactName = getAlphaNumericStringWithSpecialCharacters()
-    val editContactName = "Edited on ${System.currentTimeMillis()}"
-    const val editEmailAddress = "test@pm.test"
+    val editContactName = getAlphaNumericStringWithSpecialCharacters()
     val newEmailAddress = "${getEmailString()}@pm.me"
+    val editEmailAddress = "${getEmailString()}@pm.me"
 
     // GROUP DATA
     val newGroupName = "A New group #${System.currentTimeMillis()}"

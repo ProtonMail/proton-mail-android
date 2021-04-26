@@ -27,8 +27,9 @@ import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.settings.account.AccountSettingsRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import org.hamcrest.CoreMatchers
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.BeforeTest
 
 class PrivacyAccountSettingsTests : BaseTest() {
@@ -51,6 +52,7 @@ class PrivacyAccountSettingsTests : BaseTest() {
             .openUserAccountSettings(TestData.twoPassUser)
     }
 
+    @TestId("1672")
     @Test
     fun enableAutoDownloadMessages() {
         accountSettingsRobot
@@ -61,6 +63,7 @@ class PrivacyAccountSettingsTests : BaseTest() {
             .verify { autoDownloadImagesIsEnabled() }
     }
 
+    @TestId("1673")
     @Test
     fun enableBackgroundSync() {
         accountSettingsRobot
@@ -71,6 +74,7 @@ class PrivacyAccountSettingsTests : BaseTest() {
             .verify { backgroundSyncIsEnabled() }
     }
 
+    @TestId("1674")
     @Test
     fun enableAutoShowRemoteImages() {
         val messageSubject = "Fw: Plan your travel risk-free with Agoda. We've got you!"
@@ -87,6 +91,7 @@ class PrivacyAccountSettingsTests : BaseTest() {
             .verify { showRemoteContentButtonIsGone() }
     }
 
+    @TestId("1675")
     @Test
     fun enableAutoShowEmbeddedImages() {
         val messageSubject = "2020 Lifetime account auction and raffle, and new feature announcements"
@@ -103,6 +108,7 @@ class PrivacyAccountSettingsTests : BaseTest() {
             .verify { loadEmbeddedImagesButtonIsGone() }
     }
 
+    @TestId("1676")
     @Test
     fun enableAndDisablePreventTakingScreenshots() {
         accountSettingsRobot
@@ -112,6 +118,7 @@ class PrivacyAccountSettingsTests : BaseTest() {
             .verify { takingScreenshotIsDisabled() }
     }
 
+    @TestId("1677")
     @Test
     fun enableRequestLinkConfirmation() {
         val folder = "Link confirmation"

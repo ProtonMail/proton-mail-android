@@ -22,6 +22,7 @@ import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.settings.SettingsRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -39,6 +40,7 @@ class SettingsTests : BaseTest() {
             .settings()
     }
 
+    @TestId("1721")
     @Test
     fun clearCache() {
         settingsRobot

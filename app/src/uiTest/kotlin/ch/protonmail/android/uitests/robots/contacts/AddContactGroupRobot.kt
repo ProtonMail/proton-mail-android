@@ -46,6 +46,7 @@ class AddContactGroupRobot {
 
     fun done(): ContactsRobot {
         UIActions.id.clickViewWithId(R.id.action_save)
+        UIActions.wait.forToastWithText(R.string.contact_group_saved)
         return ContactsRobot()
     }
 }

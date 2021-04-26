@@ -24,15 +24,14 @@ import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUserWith2FA
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUserWith2FA
-import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import kotlin.test.Test
-import org.junit.experimental.categories.Category
 
 class LoginTests : BaseTest() {
 
     private val loginRobot = LoginRobot()
 
-    @Category(SmokeTest::class)
+    @TestId("21095")
     @Test
     fun loginWithOnePass() {
         loginRobot
@@ -40,7 +39,7 @@ class LoginTests : BaseTest() {
             .verify { mailboxLayoutShown() }
     }
 
-    @Category(SmokeTest::class)
+    @TestId("21096")
     @Test
     fun loginWithTwoPass() {
         loginRobot
@@ -49,7 +48,7 @@ class LoginTests : BaseTest() {
             .verify { mailboxLayoutShown() }
     }
 
-    @Category(SmokeTest::class)
+    @TestId("1840")
     @Test
     fun loginWithOnePassAnd2Fa() {
         loginRobot
@@ -58,6 +57,8 @@ class LoginTests : BaseTest() {
             .verify { mailboxLayoutShown() }
     }
 
+    @TestId("1841")
+    @Test
     fun loginWithTwoPassAnd2Fa() {
         loginRobot
             .loginUserWithTwoFa(twoPassUserWith2FA)

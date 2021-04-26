@@ -23,6 +23,7 @@ import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -41,12 +42,10 @@ class MessageDetailTests : BaseTest() {
         inboxRobot = loginRobot.loginUser(TestData.onePassUser)
     }
 
+    @TestId("1314")
     @Test
-    fun viewMessageHeaders() {
+    fun messageDetailsViewHeaders() {
         inboxRobot
-            .menuDrawer()
-            .sent()
-            .refreshMessageList()
             .clickMessageByPosition(0)
             .moreOptions()
             .viewHeaders()
