@@ -26,6 +26,7 @@ import ch.protonmail.android.api.models.User
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.feature.user.getMailboxPasswordBlocking
 import ch.protonmail.android.mapper.bridge.AddressKeyBridgeMapper
 import ch.protonmail.android.mapper.bridge.AddressKeysBridgeMapper
 import ch.protonmail.android.mapper.bridge.UserKeyBridgeMapper
@@ -36,10 +37,10 @@ import com.proton.gopenpgp.crypto.Crypto.newKeyFromArmored
 import com.proton.gopenpgp.crypto.Crypto.newKeyRing
 import com.proton.gopenpgp.crypto.Crypto.newPGPMessageFromArmored
 import com.proton.gopenpgp.crypto.Crypto.newPGPSignatureFromArmored
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.arch.map
 import me.proton.core.util.kotlin.invoke
 import org.junit.Assert.assertEquals
@@ -55,7 +56,6 @@ internal class CryptoTest {
     private val userManagerMock: UserManager = mockk()
     private val openPgp = OpenPGP()
 
-    private val tokenManagerMock: TokenManager = mockk()
     private val openPgpMock: OpenPGP = mockk()
 
     //region One Address Key Setup
@@ -739,7 +739,7 @@ internal class CryptoTest {
             every { keys } returns oneAddressKeyAddressKeys
         }
         every { userManagerMock.getLegacyUserBlocking(oneAddressKeyUserId) } returns oneKeyUserMock
-        every { userManagerMock.getMailboxPassword(oneAddressKeyUserId) } returns oneAddressKeyMailboxPassword.toByteArray()
+        every { userManagerMock.getMailboxPasswordBlocking(oneAddressKeyUserId) } returns oneAddressKeyMailboxPassword.toByteArray()
 
         // many address keys
         every { manyAddressKeysUserMock.keys } returns manyAddressKeysUserKeys
@@ -747,13 +747,12 @@ internal class CryptoTest {
             every { keys } returns manyAddressKeysAddressKeys
         }
         every { userManagerMock.getLegacyUserBlocking(manyAddressKeysUserId) } returns manyAddressKeysUserMock
-        every { userManagerMock.getMailboxPassword(manyAddressKeysUserId) } returns manyAddressKeysMailboxPassword.toByteArray()
+        every { userManagerMock.getMailboxPasswordBlocking(manyAddressKeysUserId) } returns manyAddressKeysMailboxPassword.toByteArray()
 
         // token and signature generation
         every { userManagerMock.currentUserId } returns tokenAndSignatureUserId
         every { userManagerMock.requireCurrentUserId() } returns tokenAndSignatureUserId
-        coEvery { userManagerMock.getTokenManager(tokenAndSignatureUserId) } returns tokenManagerMock
-        every { userManagerMock.getMailboxPassword(tokenAndSignatureUserId) } returns passphrase
+        every { userManagerMock.getMailboxPasswordBlocking(tokenAndSignatureUserId) } returns passphrase
         every { openPgpMock.randomToken() } returns randomToken
     }
 
@@ -1701,18 +1700,20 @@ internal class CryptoTest {
 
     @Test
     fun generate_token_and_signature_private_user() {
-        val (token, signature) =
-            GenerateTokenAndSignature(userManagerMock, openPgpMock).invoke(null)
-        val testMessage = newPGPMessageFromArmored(token)
-        val testKey = newKeyFromArmored(armoredPrivateKey)
-        val unlocked = testKey.unlock(passphrase)
-        val verificationKeyRing = newKeyRing(unlocked)
-        val decryptedTokenPlainMessage = verificationKeyRing.decrypt(testMessage, null, 0)
-        val decryptedTokenString = decryptedTokenPlainMessage.string
-        assertEquals(randomTokenString, decryptedTokenString)
-        val armoredSignature = newPGPSignatureFromArmored(signature)
+        runBlocking {
+            val (token, signature) =
+                GenerateTokenAndSignature(userManagerMock, openPgpMock).invoke(null)
+            val testMessage = newPGPMessageFromArmored(token)
+            val testKey = newKeyFromArmored(armoredPrivateKey)
+            val unlocked = testKey.unlock(passphrase)
+            val verificationKeyRing = newKeyRing(unlocked)
+            val decryptedTokenPlainMessage = verificationKeyRing.decrypt(testMessage, null, 0)
+            val decryptedTokenString = decryptedTokenPlainMessage.string
+            assertEquals(randomTokenString, decryptedTokenString)
+            val armoredSignature = newPGPSignatureFromArmored(signature)
 
-        verificationKeyRing.verifyDetached(decryptedTokenPlainMessage, armoredSignature, com.proton.gopenpgp.crypto.Crypto.getUnixTime())
+            verificationKeyRing.verifyDetached(decryptedTokenPlainMessage, armoredSignature, com.proton.gopenpgp.crypto.Crypto.getUnixTime())
+        }
     }
 
     @Test
