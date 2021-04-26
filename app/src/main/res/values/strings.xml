@@ -927,7 +927,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- region Snooze Settings -->
     <string name="snooze_header">Snooze</string>
     <string name="notifications_snooze">Notifications Snooze</string>
-    <array name="quick_snooze_values">
+    <string-array name="quick_snooze_values">
         <item>30 minutes</item>
         <item>1 hour</item>
         <item>2 hours</item>
@@ -936,7 +936,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>12 hours</item>
         <item>Custom</item>
         <item>Scheduled</item>
-    </array>
+    </string-array>
     <string name="notifications_snoozed">Notifications snoozed</string>
     <string name="notifications_snooze_scheduled">Scheduled</string>
     <string name="notifications_snooze_scheduled_settings">Scheduled Snooze Settings</string>
@@ -957,7 +957,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="work_days">Work days</string>
     <string name="weekends">Weekend</string>
     <string name="every_day">Every day</string>
-    <array name="snooze_repeat_values">
+    <string-array name="snooze_repeat_values">
         <item>Mo</item>
         <item>Tu</item>
         <item>We</item>
@@ -965,7 +965,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>Fr</item>
         <item>Sa</item>
         <item>Su</item>
-    </array>
+    </string-array>
     <string name="quick_and_scheduled_enabled">Quick Snooze and Scheduled Snooze active</string>
     <string name="quick_only_enabled">Quick Snooze active</string>
     <string name="scheduled_only_enabled">Scheduled Snooze active</string>
