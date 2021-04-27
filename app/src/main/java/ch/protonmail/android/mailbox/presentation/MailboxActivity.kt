@@ -628,7 +628,9 @@ class MailboxActivity :
                 syncUUID,
                 false,
                 mailboxAdapter.getOldestMailboxItemTimestamp()
-            )
+            ).observe(this@MailboxActivity) {
+                Timber.d("Observing to allow flow being triggered")
+            }
         }
     }
 
@@ -1600,7 +1602,9 @@ class MailboxActivity :
             includeLabels,
             uuid,
             refreshMessages
-        )
+        ).observe(this) {
+            Timber.d("Observing to trigger the flow for conversations")
+        }
     }
 
     private inner class FcmBroadcastReceiver : BroadcastReceiver() {
