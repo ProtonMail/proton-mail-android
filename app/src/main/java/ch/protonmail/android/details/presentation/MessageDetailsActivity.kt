@@ -99,6 +99,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.android.synthetic.main.layout_message_details_activity_toolbar.*
 import me.proton.core.util.android.workmanager.activity.getWorkManager
+import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
@@ -689,7 +690,7 @@ internal class MessageDetailsActivity :
             messageDetailsActionsView.setOnMoreActionClickListener {
                 MessageDetailsActionSheet.newInstance(
                     getCurrentSubject(),
-                    getMessagesCount(),
+                    getMessagesFrom(message.sender?.name),
                     message.isStarred ?: false,
                     message.location
                 )
@@ -994,8 +995,8 @@ internal class MessageDetailsActivity :
 
     private fun getCurrentSubject() = expandedToolbarTitleTextView.text ?: getString(R.string.empty_subject)
 
-    private fun getMessagesCount(messagesCount: Int = 1) =
-        resources.getQuantityString(R.plurals.messages_count, messagesCount, messagesCount)
+    private fun getMessagesFrom(messageOriginator: String?): String =
+        messageOriginator?.let{ resources.getString(R.string.message_from, messageOriginator) } ?: EMPTY_STRING
 
     private inner class MessageDetailsErrorObserver : Observer<Event<String>> {
 

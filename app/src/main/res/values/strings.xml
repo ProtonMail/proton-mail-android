@@ -994,9 +994,6 @@
     <string name="mark_as_read">Mark as read</string>
     <string name="move_message">Move message</string>
     <string name="manage">Manage</string>
+    <string name="message_from">Message from %s</string>
 
-    <plurals name="messages_count">
-        <item quantity="one">%d message</item>
-        <item quantity="other">%d messages</item>
-    </plurals>
 </resources>
