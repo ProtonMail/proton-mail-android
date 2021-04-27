@@ -57,9 +57,6 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         }
 
         mSnackLayout = findViewById(R.id.layout_no_connectivity_info)
-
-        setUpSettingsItems(getSettingsItems())
-        renderViews()
     }
 
     override fun onResume() {
@@ -98,7 +95,7 @@ class AccountSettingsActivity : BaseSettingsActivity() {
             else getString(R.string.scheduled_snooze_off)
         setValue(SettingsEnum.NOTIFICATION_SNOOZE, snoozeValue)
 
-        mAttachmentStorageValue = user.totalUploadLimit.toMegabytes().toInt()
+        mAttachmentStorageValue = legacyUser.maxAttachmentStorage
 
         lifecycleScope.launch {
             val attachmentSizeUsedBytes = attachmentMetadataDao.getAllAttachmentsSizeUsed().first() ?: 0
@@ -107,6 +104,7 @@ class AccountSettingsActivity : BaseSettingsActivity() {
                 SettingsEnum.LOCAL_STORAGE_LIMIT,
                 String.format(getString(R.string.storage_value), mAttachmentStorageValue, attachmentSizeUsed)
             )
+            notifySettingsChanged()
         }
 
         mPinValue = legacyUser.isUsePin && userManager.getMailboxPin().isNullOrEmpty().not()
