@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.activities
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -37,12 +36,14 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.ArrayList
 import java.util.HashMap
+import javax.inject.Inject
 import kotlin.collections.set
 
 // region constants
@@ -51,7 +52,8 @@ const val FLOW_USED_SPACE_CHANGED = 2
 const val FLOW_TRY_COMPOSE = 3
 // endregion
 
-class MailboxViewModel @ViewModelInject constructor(
+@HiltViewModel
+class MailboxViewModel @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     val userManager: UserManager,
     private val jobManager: JobManager,

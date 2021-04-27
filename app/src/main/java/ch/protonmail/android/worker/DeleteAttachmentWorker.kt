@@ -20,8 +20,7 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -35,6 +34,8 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_ID
 import ch.protonmail.android.attachments.KEY_INPUT_DATA_ATTACHMENT_ID_STRING
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.*
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -50,7 +51,8 @@ internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
  *
  * @see androidx.work.WorkManager
  */
-class DeleteAttachmentWorker @WorkerInject constructor(
+@HiltWorker
+class DeleteAttachmentWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,

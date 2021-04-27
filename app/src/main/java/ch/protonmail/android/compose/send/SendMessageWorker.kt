@@ -20,8 +20,7 @@
 package ch.protonmail.android.compose.send
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.asFlow
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
@@ -65,6 +64,8 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -92,7 +93,8 @@ private const val NO_CONTACTS_AUTO_SAVE = 0
 private const val SEND_MESSAGE_WORK_NAME_PREFIX = "sendMessageUniqueWorkName"
 private const val NO_SUBJECT = EMPTY_STRING
 
-class SendMessageWorker @WorkerInject constructor(
+@HiltWorker
+class SendMessageWorker @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted params: WorkerParameters,
     private val messageDetailsRepository: MessageDetailsRepository,

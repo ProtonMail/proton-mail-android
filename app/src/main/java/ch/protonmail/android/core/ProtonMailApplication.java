@@ -18,16 +18,6 @@
  */
 package ch.protonmail.android.core;
 
-import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
-import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
-import static ch.protonmail.android.core.Constants.PrefsType.BACKUP_PREFS_NAME;
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
-import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
-import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
-import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -61,8 +51,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -127,6 +115,16 @@ import io.sentry.android.AndroidSentryClientFactory;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
 
+import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
+import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
+import static ch.protonmail.android.core.Constants.PrefsType.BACKUP_PREFS_NAME;
+import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
+import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
+import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
+import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
+
 @HiltAndroidApp
 public class ProtonMailApplication extends Application implements androidx.work.Configuration.Provider {
 
@@ -186,7 +184,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     @Inject
     HiltWorkerFactory workerFactory;
 
-    @NotNull
+    @NonNull
     @Override
     public androidx.work.Configuration getWorkManagerConfiguration() {
         return new androidx.work.Configuration.Builder()

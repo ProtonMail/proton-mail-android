@@ -20,8 +20,7 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.LiveData
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -34,6 +33,8 @@ import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -45,7 +46,8 @@ import javax.inject.Inject
  *
  * @see androidx.work.WorkManager
  */
-class PingWorker @WorkerInject constructor(
+@HiltWorker
+class PingWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,

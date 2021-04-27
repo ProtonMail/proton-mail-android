@@ -22,7 +22,6 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.core.util.PatternsCompat
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -47,6 +46,7 @@ import ch.protonmail.android.usecase.model.FetchContactDetailsResult
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.BaseViewModel
 import ch.protonmail.android.worker.DeleteContactWorker
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Completable
 import io.reactivex.Observable
 import kotlinx.coroutines.TimeoutCancellationException
@@ -55,6 +55,7 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import studio.forface.viewstatestore.ViewStateStore
 import timber.log.Timber
 import java.io.FileNotFoundException
+import javax.inject.Inject
 
 /**
  * A [ViewModel] for display a contact
@@ -70,7 +71,8 @@ import java.io.FileNotFoundException
  *   [ x] Inject dispatchers in the constructor
  *   [ ] Replace [ContactDetailsRepository] with a `ContactsRepository`
  */
-open class ContactDetailsViewModel @ViewModelInject constructor(
+@HiltViewModel
+open class ContactDetailsViewModel @Inject constructor(
     dispatchers: DispatcherProvider,
     private val downloadFile: DownloadFile,
     private val contactDetailsRepository: ContactDetailsRepository,

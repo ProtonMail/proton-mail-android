@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.viewmodel
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -29,10 +28,13 @@ import ch.protonmail.android.usecase.create.CreateSubscription
 import ch.protonmail.android.usecase.fetch.CheckSubscription
 import ch.protonmail.android.usecase.model.CheckSubscriptionResult
 import ch.protonmail.android.usecase.model.CreateSubscriptionResult
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class UpsellingViewModel @ViewModelInject constructor(
+@HiltViewModel
+class UpsellingViewModel @Inject constructor(
     private val createSubscriptionUseCase: CreateSubscription,
     private val checkSubscriptionUseCase: CheckSubscription
 ) : ViewModel() {

@@ -65,8 +65,8 @@ class NetworkConfigurator @Inject constructor(
 
     fun tryRetryWithDoh() {
         if (connectivityManager.isInternetConnectionPossible()) {
-            val isThirdPartyConnectionsEnabled = userManager.user.allowSecureConnectionsViaThirdParties
-            if (isThirdPartyConnectionsEnabled) {
+            val isThirdPartyConnectionsEnabled = userManager.getCurrentLegacyUserBlocking()?.allowSecureConnectionsViaThirdParties
+            if (isThirdPartyConnectionsEnabled == true) {
                 Timber.i("Third party connections enabled, attempting DoH...")
                 refreshDomainsAsync()
             }

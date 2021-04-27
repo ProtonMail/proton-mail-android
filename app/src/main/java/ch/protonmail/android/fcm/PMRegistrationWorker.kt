@@ -20,8 +20,7 @@
 package ch.protonmail.android.fcm
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -37,6 +36,8 @@ import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.BuildInfo
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
 
@@ -48,8 +49,8 @@ const val KEY_PM_REGISTRATION_WORKER_ERROR = "PMRegistrationWorker.error"
 /**
  * A CoroutineWorker that handles device registration on PM servers
  */
-
-class PMRegistrationWorker @WorkerInject constructor(
+@HiltWorker
+class PMRegistrationWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParameters: WorkerParameters,
     private val buildInfo: BuildInfo,

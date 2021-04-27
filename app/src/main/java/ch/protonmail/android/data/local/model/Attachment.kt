@@ -65,7 +65,7 @@ const val FIELD_ATTACHMENT_HEADERS = "Headers"
     tableName = TABLE_ATTACHMENTS,
     indices = [Index(COLUMN_ATTACHMENT_ID, unique = true)]
 )
-data class Attachment @JvmOverloads constructor(
+data class Attachment constructor(
 
     @ColumnInfo(name = COLUMN_ATTACHMENT_ID)
     var attachmentId: String? = null,

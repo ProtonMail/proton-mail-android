@@ -38,8 +38,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -587,7 +585,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
         }
     }
 
-    @NotNull
+    @NonNull
     private Function0<Unit> onConnectivityCheckRetry() {
         return () -> {
             networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();

@@ -19,16 +19,18 @@
 
 package ch.protonmail.android.viewmodel
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.usecase.fetch.FetchPaymentMethods
 import ch.protonmail.android.usecase.model.FetchPaymentMethodsResult
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AccountTypeViewModel @ViewModelInject constructor(
+@HiltViewModel
+class AccountTypeViewModel @Inject constructor(
     val fetchPaymentMethodsUseCase: FetchPaymentMethods
 ) : ViewModel() {
 

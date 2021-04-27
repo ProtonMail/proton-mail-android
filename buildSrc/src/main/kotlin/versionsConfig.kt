@@ -36,8 +36,8 @@ fun initVersions() {
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
     `constraint-layout version` =               "2.0.0-rc1"     // Released: Jul 30, 2020
     `espresso version` =                        "3.4.0-alpha02" // Released: Oct 20, 2020
-    `hilt-android version` =                    "2.29.1-alpha"  // Released: Sep 10, 2020
-    `hilt-androidx version` =                   "1.0.0-alpha02" // Released: Jul 26, 2020
+    `hilt-android version` =                    "2.33-beta"     // Released: Feb 26, 2021
+    `hilt-androidx version` =                   "1.0.0-beta01"  // Released: Mar 10, 2021
     `ktx version` =                             "1.5.0-rc01"    // Released: Mar 24, 2021
     `lifecycle version` =                       "2.2.0-rc03"    // Released: Dec 05, 2019
     `material version` =                        "1.3.0"         // Released: Feb 04, 2021
@@ -94,6 +94,7 @@ const val `android-biometric version` =         "1.0.1"         // Released: Jan
 const val `android-fragment version` =          "1.2.0-rc01"    // Released: Oct 24, 2019
 const val `android-media version` =             "1.1.0"         // Released: Sep 06, 2019
 const val `googleServices version` =            "4.3.3"         // Released: Nov 11, 2019
+const val `hilt-androidx-viewmodel version` =   "1.0.0-alpha03" // Released: Mar 10, 2021
 const val `playServices version` =              "17.0.0"        // Released: Jun 19, 2019
 
 // Other

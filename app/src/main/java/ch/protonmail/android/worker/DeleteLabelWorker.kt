@@ -20,8 +20,7 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.LiveData
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -34,6 +33,8 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -50,7 +51,8 @@ private const val WORKER_TAG = "DeleteLabelWorkerTag"
  *
  * @see androidx.work.WorkManager
  */
-class DeleteLabelWorker @WorkerInject constructor(
+@HiltWorker
+class DeleteLabelWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,

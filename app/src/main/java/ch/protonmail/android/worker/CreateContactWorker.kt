@@ -20,8 +20,7 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.LiveData
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -49,6 +48,8 @@ import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.DuplicatedEmailError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.InvalidEmailError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.ServerError
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
@@ -61,7 +62,8 @@ internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM = "keyCreate
 internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID = "keyCreateContactWorkerResultServerId"
 internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON = "keyCreateContactWorkerResultEmailsSerialised"
 
-class CreateContactWorker @WorkerInject constructor(
+@HiltWorker
+class CreateContactWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val apiManager: ProtonMailApiManager,

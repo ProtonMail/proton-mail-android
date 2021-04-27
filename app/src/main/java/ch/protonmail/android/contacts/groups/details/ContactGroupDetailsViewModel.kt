@@ -19,7 +19,6 @@
 package ch.protonmail.android.contacts.groups.details
 
 import android.database.SQLException
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -27,12 +26,12 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
-import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
@@ -43,9 +42,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 import kotlin.time.milliseconds
 
-class ContactGroupDetailsViewModel @ViewModelInject constructor(
+@HiltViewModel
+class ContactGroupDetailsViewModel @Inject constructor(
     private val contactGroupDetailsRepository: ContactGroupDetailsRepository,
     private val deleteLabel: DeleteLabel
 ) : ViewModel() {

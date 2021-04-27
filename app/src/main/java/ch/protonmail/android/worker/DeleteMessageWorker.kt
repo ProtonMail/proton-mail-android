@@ -20,8 +20,7 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -33,6 +32,8 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.messages.delete.MessageDeleteRequest
 import ch.protonmail.android.core.Constants
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -49,7 +50,8 @@ internal const val KEY_INPUT_CURRENT_LABEL_ID = "KeyInputCurrentLabelId"
  *
  * @see androidx.work.WorkManager
  */
-class DeleteMessageWorker @WorkerInject constructor(
+@HiltWorker
+class DeleteMessageWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val dispatcher: DispatcherProvider,

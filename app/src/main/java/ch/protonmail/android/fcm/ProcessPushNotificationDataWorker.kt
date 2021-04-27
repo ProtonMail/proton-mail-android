@@ -20,8 +20,7 @@
 package ch.protonmail.android.fcm
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.Data
@@ -44,6 +43,8 @@ import ch.protonmail.android.fcm.model.PushNotificationData
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.AppUtil
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.deserialize
 import timber.log.Timber
@@ -57,8 +58,8 @@ const val KEY_PROCESS_PUSH_NOTIFICATION_DATA_ERROR = "ProcessPushNotificationDat
 /**
  * A worker that is responsible for processing the data payload of the received FCM push notifications.
  */
-
-class ProcessPushNotificationDataWorker @WorkerInject constructor(
+@HiltWorker
+class ProcessPushNotificationDataWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParameters: WorkerParameters,
     private val notificationServer: NotificationServer,

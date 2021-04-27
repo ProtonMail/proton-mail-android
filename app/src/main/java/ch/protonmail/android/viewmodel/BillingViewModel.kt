@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.viewmodel
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -38,13 +37,16 @@ import ch.protonmail.android.usecase.model.CreateSubscriptionResult
 import ch.protonmail.android.usecase.model.FetchPaymentMethodsResult
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
+import javax.inject.Inject
 
-class BillingViewModel @ViewModelInject constructor(
+@HiltViewModel
+class BillingViewModel @Inject constructor(
     private val protonMailApiManager: ProtonMailApiManager,
     private val createSubscription: CreateSubscription,
     private val fetchPaymentMethods: FetchPaymentMethods

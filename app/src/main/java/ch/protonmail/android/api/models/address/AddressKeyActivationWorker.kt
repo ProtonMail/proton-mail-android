@@ -19,8 +19,7 @@
 package ch.protonmail.android.api.models.address
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -39,6 +38,8 @@ import ch.protonmail.android.usecase.crypto.GenerateTokenAndSignature
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import com.proton.gopenpgp.helper.Helper
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.arch.map
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -51,7 +52,8 @@ private const val MAX_RETRY_COUNT = 3
 /**
  * This worker handles AddressKey activation by decrypting Activation Token and updating Private Key on server.
  */
-class AddressKeyActivationWorker @WorkerInject constructor(
+@HiltWorker
+class AddressKeyActivationWorker @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted params: WorkerParameters,
     private val userManager: UserManager,

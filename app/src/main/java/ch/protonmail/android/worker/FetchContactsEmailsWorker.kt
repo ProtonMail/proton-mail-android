@@ -20,8 +20,7 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.LiveData
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -34,12 +33,15 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.UserManager
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import timber.log.Timber
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class FetchContactsEmailsWorker @WorkerInject constructor(
+@HiltWorker
+class FetchContactsEmailsWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
     private val userManager: UserManager,

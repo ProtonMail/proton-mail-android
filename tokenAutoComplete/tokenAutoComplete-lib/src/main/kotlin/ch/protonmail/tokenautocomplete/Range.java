@@ -18,7 +18,8 @@
  */
 package ch.protonmail.tokenautocomplete;
 
-import org.jetbrains.annotations.NotNull;
+
+import androidx.annotation.NonNull;
 
 import java.util.Locale;
 
@@ -49,7 +50,7 @@ class Range {
         return other.start == start && other.end == end;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.US, "[%d..%d]", start, end);

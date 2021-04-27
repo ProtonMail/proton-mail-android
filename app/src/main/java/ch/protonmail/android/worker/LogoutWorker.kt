@@ -20,8 +20,7 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.LiveData
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -41,6 +40,8 @@ import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.AppUtil
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import me.proton.core.util.android.sharedpreferences.clearAll
 import timber.log.Timber
 import javax.inject.Inject
@@ -53,7 +54,8 @@ internal const val KEY_INPUT_FCM_REGISTRATION_ID = "KeyInputRegistrationId"
  *
  * @see androidx.work.WorkManager
  */
-class LogoutWorker @WorkerInject constructor(
+@HiltWorker
+class LogoutWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,

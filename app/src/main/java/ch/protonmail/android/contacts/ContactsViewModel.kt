@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.contacts
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
@@ -27,9 +26,12 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.FetchContactsData
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import timber.log.Timber
+import javax.inject.Inject
 
-class ContactsViewModel @ViewModelInject constructor(
+@HiltViewModel
+class ContactsViewModel @Inject constructor(
     private val userManager: UserManager,
     private val fetchContactsData: FetchContactsData,
     verifyConnection: VerifyConnection,

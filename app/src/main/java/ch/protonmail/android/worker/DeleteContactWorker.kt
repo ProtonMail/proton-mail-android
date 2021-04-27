@@ -20,8 +20,7 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -35,6 +34,8 @@ import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.ContactDatabase
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -49,7 +50,8 @@ internal const val KEY_INPUT_DATA_CONTACT_IDS = "KeyInputDataContactDds"
  *
  * @see androidx.work.WorkManager
  */
-class DeleteContactWorker @WorkerInject constructor(
+@HiltWorker
+class DeleteContactWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,

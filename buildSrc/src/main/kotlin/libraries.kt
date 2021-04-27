@@ -48,6 +48,7 @@ val DependencyHandler.`android-biometric` get() =           androidx("biometric"
 val DependencyHandler.`android-fragment` get() =            androidx("fragment", moduleSuffix = "ktx") version `android-fragment version`
 val DependencyHandler.`android-media` get() =               androidx("media") version `android-media version`
 val DependencyHandler.`google-services` get() =             googleServices()
+val DependencyHandler.`hilt-androidx-view-model` get() =    dependency("androidx.hilt", module = "hilt-lifecycle-viewmodel") version `hilt-androidx-viewmodel version`
 val DependencyHandler.`room-rxJava` get() =                 androidxRoom("rxjava2")
 val DependencyHandler.`safetyNet` get() =                   playServices("safetynet")
 

@@ -18,29 +18,32 @@
  */
 package ch.protonmail.android.activities.multiuser.viewModel
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.multiuser.EXTRA_CURRENT_PRIMARY_USER_ID
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ConnectAccountMailboxLoginViewModel @ViewModelInject constructor(
+@HiltViewModel
+class ConnectAccountMailboxLoginViewModel @Inject constructor(
     private val userManager: UserManager,
-    @Assisted private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val currentPrimary = savedStateHandle.get<String>(EXTRA_CURRENT_PRIMARY_USER_ID)?.let(::Id)
 
     fun mailboxLogin(mailboxPassword: String, keySalt: String) {
         viewModelScope.launch {
-            userManager.connectAccountMailboxLogin(userManager.requireCurrentUserId(),
+            userManager.connectAccountMailboxLogin(
+                userManager.requireCurrentUserId(),
                 currentPrimary,
                 mailboxPassword,
-                keySalt)
+                keySalt
+            )
         }
     }
 

@@ -18,17 +18,19 @@
  */
 package ch.protonmail.android.activities.multiuser.viewModel
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.core.UserManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AccountManagerViewModel @ViewModelInject constructor(
+@HiltViewModel
+class AccountManagerViewModel @Inject constructor(
     private val userManager: UserManager,
     private val accountManager: AccountManager
 ) : ViewModel() {

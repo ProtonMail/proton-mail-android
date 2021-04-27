@@ -86,7 +86,6 @@ import com.squareup.otto.Subscribe;
 import com.tokenautocomplete.TokenCompleteTextView;
 
 import org.apache.http.protocol.HTTP;
-import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -804,7 +803,7 @@ public class ComposeMessageActivity
         addRecipientsToView(recipients, recipient);
     }
 
-    @NotNull
+    @NonNull
     private Function0<Unit> onConnectivityCheckRetry() {
         return () -> {
             networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
