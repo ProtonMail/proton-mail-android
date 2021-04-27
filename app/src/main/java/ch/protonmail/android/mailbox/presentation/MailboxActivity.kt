@@ -48,6 +48,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.postDelayed
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.switchMap
 import androidx.loader.app.LoaderManager
@@ -384,9 +385,8 @@ class MailboxActivity :
         fetchOrganizationData()
 
         observeMailboxItemsByLocation(
-            mailboxLabelId,
-            syncId = syncUUID,
-            refreshMessages = true
+            refreshMessages = true,
+            syncId = syncUUID
         )
 
         mailboxLocationMain.observe(this, mailboxAdapter::setNewLocation)
@@ -564,9 +564,8 @@ class MailboxActivity :
         }
 
         observeMailboxItemsByLocation(
-            mailboxLabelId,
-            syncId = syncUUID,
-            refreshMessages = true
+            refreshMessages = true,
+            syncId = syncUUID
         )
 
         messageDetailsRepository.getAllLabels().observe(this, mailboxAdapter::setLabels)
@@ -587,7 +586,6 @@ class MailboxActivity :
     }
 
     private fun observeMailboxItemsByLocation(
-        labelId: String?,
         includeLabels: Boolean = false,
         refreshMessages: Boolean = false,
         syncId: String
@@ -595,16 +593,18 @@ class MailboxActivity :
         mailboxLocationMain.switchMap { location ->
             mailboxViewModel.getMailboxItems(
                 location,
-                labelId,
+                mailboxLabelId,
                 includeLabels,
                 syncId,
                 refreshMessages
             )
-        }.observe(this) { items ->
-            setLoadingMore(false)
-            mailboxAdapter.clear()
-            mailboxAdapter.addAll(items)
         }
+            .distinctUntilChanged()
+            .observe(this) { items ->
+                setLoadingMore(false)
+                mailboxAdapter.clear()
+                mailboxAdapter.addAll(items)
+            }
     }
 
     private val listScrollListener: RecyclerView.OnScrollListener = object : RecyclerView.OnScrollListener() {
@@ -673,7 +673,6 @@ class MailboxActivity :
         lifecycleScope.launch {
             delay(3.seconds.toLongMilliseconds())
             observeMailboxItemsByLocation(
-                labelId = mailboxLabelId,
                 includeLabels = true,
                 syncId = syncUUID
             )
@@ -722,7 +721,6 @@ class MailboxActivity :
             refreshMailboxJobRunning = true
             app.updateDone()
             observeMailboxItemsByLocation(
-                labelId = mailboxLabelId,
                 syncId = syncUUID
             )
             true
@@ -1337,7 +1335,6 @@ class MailboxActivity :
         syncUUID = UUID.randomUUID().toString()
         reloadMessageCounts()
         observeMailboxItemsByLocation(
-            labelId = mailboxLabelId,
             includeLabels = true,
             refreshMessages = true,
             syncId = syncUUID
