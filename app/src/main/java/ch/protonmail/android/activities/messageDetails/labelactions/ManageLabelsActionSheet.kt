@@ -83,8 +83,18 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
                 binding.switchLabelsSheetArchive.toggle()
             }
 
-            binding.textViewLabelsSheetNewLabel.setOnClickListener {
-                // TODO: Link it to appropriate setting section for adding new Label
+            binding.textViewLabelsSheetNewLabel.apply {
+                isVisible = actionSheetType == Type.LABEL
+                setOnClickListener {
+                    // TODO: Link it to appropriate setting section for adding new Label
+                }
+            }
+
+            binding.textViewLabelsSheetNewFolder.apply {
+                isVisible = actionSheetType == Type.FOLDER
+                setOnClickListener {
+                    // TODO: Link it to appropriate setting section for adding new Folder
+                }
             }
 
             viewModel.labels

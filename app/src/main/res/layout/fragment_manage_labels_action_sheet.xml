@@ -89,6 +89,20 @@
                 android:text="@string/new_label"
                 app:drawableStartCompat="@drawable/ic_add_24dp" />
 
+            <TextView
+                android:id="@+id/text_view_labels_sheet_new_folder"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:enabled="false"
+                android:focusable="true"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:text="@string/new_folder"
+                app:drawableStartCompat="@drawable/ic_add_24dp" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview_labels_sheet"
                 android:layout_width="match_parent"
