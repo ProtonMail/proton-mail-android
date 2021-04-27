@@ -79,8 +79,4 @@ class ActionSheetHeader @JvmOverloads constructor(
             setOnClickListener(listener)
         }
 
-    override fun onDetachedFromWindow() {
-        _binding = null
-        super.onDetachedFromWindow()
-    }
 }

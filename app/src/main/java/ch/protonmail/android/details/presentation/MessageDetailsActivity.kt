@@ -686,6 +686,15 @@ internal class MessageDetailsActivity :
             }
             // we need to update the details, when e.g. message has been moved to another folder
             messageExpandableAdapter.setMessageData(message)
+            messageDetailsActionsView.setOnMoreActionClickListener {
+                MessageDetailsActionSheet.newInstance(
+                    getCurrentSubject(),
+                    getMessagesCount(),
+                    message.isStarred ?: false,
+                    message.location
+                )
+                    .show(supportFragmentManager, MessageDetailsActionSheet::class.qualifiedName)
+            }
         }
 
         private fun onMessageNotFound() {
@@ -821,13 +830,7 @@ internal class MessageDetailsActivity :
                 }
                 executeMessageAction(messageAction, message)
             }
-            messageDetailsActionsView.setOnMoreActionClickListener {
-                MessageDetailsActionSheet.newInstance(
-                    getCurrentSubject(),
-                    getMessagesCount()
-                )
-                    .show(supportFragmentManager, MessageDetailsActionSheet::class.qualifiedName)
-            }
+
 
             progress.visibility = View.GONE
             invalidateOptionsMenu()

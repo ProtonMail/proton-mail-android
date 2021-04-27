@@ -26,6 +26,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
@@ -147,23 +148,31 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         binding: FragmentMessageDetailsActionSheetBinding,
         detailsViewModel: MessageDetailsViewModel
     ) = with(binding) {
-        textViewDetailsActionsStarUnstar.apply {
-            setOnClickListener {
-                detailsViewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
-                dismiss()
-            }
-            // message aware states
-            val message = viewModel.message.value
-            if (message != null) {
-                if (message.isStarred == true) {
-                    setText(R.string.unstar)
-                    setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_star_remove, 0, 0, 0)
-                } else {
-                    setText(R.string.star)
-                    setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_star_24dp, 0, 0, 0)
+        val messageLocation =
+            Constants.MessageLocationType.fromInt(
+                arguments?.getInt(EXTRA_ARG_CURRENT_LOCATION_ID) ?: 0
+            )
+        val isStarred = arguments?.getBoolean(EXTRA_ARG_IS_STARED) ?: false
+        if (isStarred) {
+            textViewDetailsActionsUnstar.apply {
+                isVisible = true
+                setOnClickListener {
+                    detailsViewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
+                    dismiss()
                 }
             }
+            textViewDetailsActionsStar.isVisible = false
+        } else {
+            textViewDetailsActionsStar.apply {
+                isVisible = true
+                setOnClickListener {
+                    detailsViewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
+                    dismiss()
+                }
+            }
+            textViewDetailsActionsUnstar.isVisible = false
         }
+
         textViewDetailsActionsTrash.setOnClickListener {
             detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_TRASH)
             dismiss()
@@ -219,16 +228,22 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
 
         private const val EXTRA_ARG_TITLE = "arg_message_details_actions_title"
         private const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
+        private const val EXTRA_ARG_IS_STARED = "arg_extra_is_stared"
+        private const val EXTRA_ARG_CURRENT_LOCATION_ID = "extra_arg_current_location_id"
         private const val HEADER_SLIDE_THRESHOLD = 0.8f
 
         fun newInstance(
             title: CharSequence,
-            subTitle: String
+            subTitle: String,
+            isStarred: Boolean,
+            currentLocationId: Int
         ): MessageDetailsActionSheet {
             return MessageDetailsActionSheet().apply {
                 arguments = bundleOf(
                     EXTRA_ARG_TITLE to title,
-                    EXTRA_ARG_SUBTITLE to subTitle
+                    EXTRA_ARG_SUBTITLE to subTitle,
+                    EXTRA_ARG_IS_STARED to isStarred,
+                    EXTRA_ARG_CURRENT_LOCATION_ID to currentLocationId
                 )
             }
         }
