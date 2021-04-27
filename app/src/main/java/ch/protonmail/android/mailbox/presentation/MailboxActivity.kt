@@ -383,7 +383,11 @@ class MailboxActivity :
 
         fetchOrganizationData()
 
-        observeMailboxItemsByLocation()
+        observeMailboxItemsByLocation(
+            mailboxLabelId,
+            syncId = syncUUID,
+            refreshMessages = true
+        )
 
         mailboxLocationMain.observe(this, mailboxAdapter::setNewLocation)
         ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
@@ -559,7 +563,11 @@ class MailboxActivity :
             setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
         }
 
-        observeMailboxItemsByLocation()
+        observeMailboxItemsByLocation(
+            mailboxLabelId,
+            syncId = syncUUID,
+            refreshMessages = true
+        )
 
         messageDetailsRepository.getAllLabels().observe(this, mailboxAdapter::setLabels)
         // Account has been switched, so used space changed as well
@@ -578,14 +586,19 @@ class MailboxActivity :
         setElevationOnToolbarAndStatusView(false)
     }
 
-    private fun observeMailboxItemsByLocation() {
+    private fun observeMailboxItemsByLocation(
+        labelId: String?,
+        includeLabels: Boolean = false,
+        refreshMessages: Boolean = false,
+        syncId: String
+    ) {
         mailboxLocationMain.switchMap { location ->
             mailboxViewModel.getMailboxItems(
                 location,
-                mailboxLabelId,
-                false,
-                syncUUID,
-                true
+                labelId,
+                includeLabels,
+                syncId,
+                refreshMessages
             )
         }.observe(this) { items ->
             setLoadingMore(false)
@@ -659,7 +672,7 @@ class MailboxActivity :
         syncUUID = UUID.randomUUID().toString()
         lifecycleScope.launch {
             delay(3.seconds.toLongMilliseconds())
-            fetchMessages(
+            observeMailboxItemsByLocation(
                 labelId = mailboxLabelId,
                 includeLabels = true,
                 syncId = syncUUID
@@ -708,7 +721,10 @@ class MailboxActivity :
             firstLogin = false
             refreshMailboxJobRunning = true
             app.updateDone()
-            fetchMessages(labelId = mailboxLabelId, syncId = syncUUID)
+            observeMailboxItemsByLocation(
+                labelId = mailboxLabelId,
+                syncId = syncUUID
+            )
             true
         }
     }
@@ -1320,7 +1336,7 @@ class MailboxActivity :
         setRefreshing(true)
         syncUUID = UUID.randomUUID().toString()
         reloadMessageCounts()
-        fetchMessages(
+        observeMailboxItemsByLocation(
             labelId = mailboxLabelId,
             includeLabels = true,
             refreshMessages = true,
@@ -1340,14 +1356,13 @@ class MailboxActivity :
         }
         mailboxLabelId = null
         invalidateOptionsMenu()
+        syncUUID = UUID.randomUUID().toString()
         mailboxLocationMain.value = newMessageLocationType
         setTitle()
         closeDrawer()
         mailboxRecyclerView.clearFocus()
         mailboxRecyclerView.scrollToPosition(0)
         setUpMailboxActionsView()
-        syncUUID = UUID.randomUUID().toString()
-        fetchMessages(newMessageLocationType, mailboxLabelId, syncId = syncUUID)
         RefreshEmptyViewTask(
             WeakReference(this),
             counterDao,
@@ -1561,8 +1576,6 @@ class MailboxActivity :
             mailboxActivity.closeDrawer()
             mailboxActivity.mailboxRecyclerView.scrollToPosition(0)
 
-            mailboxActivity.fetchMessages(fromInt(newLocation), labelId, syncId = mailboxActivity.syncUUID)
-
             RefreshEmptyViewTask(
                 this.mailboxActivity,
                 mailboxActivity.counterDao,
@@ -1570,24 +1583,6 @@ class MailboxActivity :
                 locationToSet,
                 labelId
             ).execute()
-        }
-    }
-
-    private fun fetchMessages(
-        location: MessageLocationType = mailboxLocationMain.value ?: MessageLocationType.INVALID,
-        labelId: String?,
-        includeLabels: Boolean = false,
-        refreshMessages: Boolean = false,
-        syncId: String
-    ) {
-        mailboxViewModel.getMailboxItems(
-            location,
-            labelId,
-            includeLabels,
-            syncId,
-            refreshMessages
-        ).observe(this) {
-            Timber.d("Observing to trigger the flow for conversations")
         }
     }
 
