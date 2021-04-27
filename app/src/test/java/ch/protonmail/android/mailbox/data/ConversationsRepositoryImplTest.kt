@@ -147,8 +147,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         conversationsRepository =
             ConversationsRepositoryImpl(
                 conversationDao,
-                api,
-                dispatchers
+                api
             )
     }
 
@@ -210,11 +209,17 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
         // when
-        val result = conversationsRepository.getConversations(parameters).take(4).toList()
+        val result = conversationsRepository.getConversations(parameters).take(3).toList()
 
         // Then
         val actualLocalItems = result[0] as DataResult.Success
         assertEquals(ResponseSource.Local, actualLocalItems.source)
+
+        val actualProcessingResult = result[1] as DataResult.Processing
+        assertEquals(ResponseSource.Remote, actualProcessingResult.source)
+
+        val actualRemoteItems = result[2] as DataResult.Success
+        assertEquals(ResponseSource.Remote, actualRemoteItems.source)
 
         val expectedConversations = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
         coVerify { api.fetchConversations(parameters) }
