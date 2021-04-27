@@ -163,8 +163,10 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
@@ -655,7 +657,14 @@ class MailboxActivity :
             networkSnackBarUtil.getCheckingConnectionSnackBar(it).show()
         }
         syncUUID = UUID.randomUUID().toString()
-        handler.postDelayed(FetchMessagesRetryRunnable(this), 3.seconds.toLongMilliseconds())
+        lifecycleScope.launch {
+            delay(3.seconds.toLongMilliseconds())
+            fetchMessages(
+                labelId = mailboxLabelId,
+                includeLabels = true,
+                syncId = syncUUID
+            )
+        }
         mailboxViewModel.checkConnectivityDelayed()
     }
 
@@ -699,13 +708,7 @@ class MailboxActivity :
             firstLogin = false
             refreshMailboxJobRunning = true
             app.updateDone()
-            fetchMessages(
-                mailboxLocationMain.value ?: MessageLocationType.INVALID,
-                mailboxLabelId,
-                false,
-                syncUUID,
-                false
-            )
+            fetchMessages(labelId = mailboxLabelId, syncId = syncUUID)
             true
         }
     }
@@ -1318,11 +1321,10 @@ class MailboxActivity :
         syncUUID = UUID.randomUUID().toString()
         reloadMessageCounts()
         fetchMessages(
-            mailboxLocationMain.value ?: MessageLocationType.INVALID,
-            mailboxLabelId,
-            true,
-            syncUUID,
-            true
+            labelId = mailboxLabelId,
+            includeLabels = true,
+            refreshMessages = true,
+            syncId = syncUUID
         )
     }
 
@@ -1345,7 +1347,7 @@ class MailboxActivity :
         mailboxRecyclerView.scrollToPosition(0)
         setUpMailboxActionsView()
         syncUUID = UUID.randomUUID().toString()
-        fetchMessages(newMessageLocationType, mailboxLabelId, false, syncUUID, false)
+        fetchMessages(newMessageLocationType, mailboxLabelId, syncId = syncUUID)
         RefreshEmptyViewTask(
             WeakReference(this),
             counterDao,
@@ -1364,7 +1366,6 @@ class MailboxActivity :
     ) {
         SetUpNewMessageLocationTask(
             WeakReference(this),
-            userManager.requireCurrentUserId(),
             messageDetailsRepository,
             labelId,
             isFolder,
@@ -1453,20 +1454,6 @@ class MailboxActivity :
 
     private val fcmBroadcastReceiver: BroadcastReceiver = FcmBroadcastReceiver()
 
-    private class FetchMessagesRetryRunnable internal constructor(activity: MailboxActivity) : Runnable {
-        private val mailboxActivityWeakReference = WeakReference(activity)
-        override fun run() {
-            val mailboxActivity = mailboxActivityWeakReference.get()
-            mailboxActivity?.fetchMessages(
-                mailboxActivity.mailboxLocationMain.value ?: MessageLocationType.INVALID,
-                mailboxActivity.mailboxLabelId,
-                true,
-                mailboxActivity.syncUUID,
-                false
-            )
-        }
-    }
-
     private class OnMessageClickTask internal constructor(
         private val mailboxActivity: WeakReference<MailboxActivity>,
         private val messageDetailsRepository: MessageDetailsRepository,
@@ -1535,7 +1522,6 @@ class MailboxActivity :
 
     private class SetUpNewMessageLocationTask internal constructor(
         private val mailboxActivity: WeakReference<MailboxActivity>,
-        private val userId: Id,
         private val messageDetailsRepository: MessageDetailsRepository,
         private val labelId: String,
         private val isFolder: Boolean,
@@ -1575,9 +1561,7 @@ class MailboxActivity :
             mailboxActivity.closeDrawer()
             mailboxActivity.mailboxRecyclerView.scrollToPosition(0)
 
-            mailboxActivity.fetchMessages(
-                fromInt(newLocation), labelId, false, mailboxActivity.syncUUID, false
-            )
+            mailboxActivity.fetchMessages(fromInt(newLocation), labelId, syncId = mailboxActivity.syncUUID)
 
             RefreshEmptyViewTask(
                 this.mailboxActivity,
@@ -1590,17 +1574,17 @@ class MailboxActivity :
     }
 
     private fun fetchMessages(
-        location: MessageLocationType,
+        location: MessageLocationType = mailboxLocationMain.value ?: MessageLocationType.INVALID,
         labelId: String?,
-        includeLabels: Boolean,
-        uuid: String,
-        refreshMessages: Boolean
+        includeLabels: Boolean = false,
+        refreshMessages: Boolean = false,
+        syncId: String
     ) {
         mailboxViewModel.getMailboxItems(
             location,
             labelId,
             includeLabels,
-            uuid,
+            syncId,
             refreshMessages
         ).observe(this) {
             Timber.d("Observing to trigger the flow for conversations")
