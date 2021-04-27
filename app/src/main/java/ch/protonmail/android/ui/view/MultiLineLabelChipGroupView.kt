@@ -49,6 +49,7 @@ class MultiLineLabelChipGroupView @JvmOverloads constructor (
 
     init {
         val recyclerView = RecyclerView(context).apply {
+            id = RECYCLER_VIEW_ID
             layoutManager = FlexboxLayoutManager(context, FlexDirection.ROW)
             adapter = labelsAdapter
         }
@@ -57,5 +58,11 @@ class MultiLineLabelChipGroupView @JvmOverloads constructor (
 
     fun setLabels(labels: List<LabelChipUiModel>) {
         labelsAdapter.submitList(labels)
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    companion object {
+
+        const val RECYCLER_VIEW_ID = 26_894
     }
 }

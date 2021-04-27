@@ -362,7 +362,6 @@ dependencies {
         project(Module.testAndroidInstrumented),
         `aerogear`,
         `falcon`,
-        `espresso-contrib`,
         `espresso-intents`,
         `espresso-web`,
         `uiautomator`,

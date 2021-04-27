@@ -76,6 +76,7 @@ dependencies {
         `android-test-rules`,
         `android-work-testing`,
         `espresso`,
+        `espresso-contrib`,
         `hamcrest`,
         `json-simple`
     )
