@@ -244,6 +244,7 @@ internal class MessageDetailsActivity :
         viewModel.messageDetailsError.observe(this, MessageDetailsErrorObserver())
         viewModel.pendingSend.observe(this, PendingSendObserver())
         listenForConnectivityEvent()
+        observeEditMessageEvents()
     }
 
     private fun initAdapters() {
@@ -840,11 +841,6 @@ internal class MessageDetailsActivity :
         message: Message = requireNotNull(viewModel.decryptedMessageData.value)
     ) {
         try {
-            val newMessageTitle = MessageUtils.buildNewMessageTitle(
-                this@MessageDetailsActivity,
-                messageAction,
-                message.subject
-            )
             val user = mUserManager.requireCurrentLegacyUser()
                 val userUsedSpace = user.usedSpace
             val userMaxSpace = if (user.maxSpace == 0L) {
@@ -868,109 +864,10 @@ internal class MessageDetailsActivity :
                     }
                 )
             } else {
-                viewModel.prepareEditMessageIntent.observe(
+                val newMessageTitle = MessageUtils.buildNewMessageTitle(
                     this@MessageDetailsActivity,
-                    Observer { editIntentExtrasEvent: Event<IntentExtrasData?> ->
-                        val editIntentExtras = editIntentExtrasEvent.getContentIfNotHandled()
-                            ?: return@Observer
-                        val intent = AppUtil.decorInAppIntent(
-                            Intent(
-                                this@MessageDetailsActivity,
-                                ComposeMessageActivity::class.java
-                            )
-                        )
-                        MessageUtils.addRecipientsToIntent(
-                            intent,
-                            ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
-                            editIntentExtras.toRecipientListString,
-                            editIntentExtras.messageAction,
-                            editIntentExtras.userAddresses
-                        )
-                        if (editIntentExtras.includeCCList) {
-                            MessageUtils.addRecipientsToIntent(
-                                intent,
-                                ComposeMessageActivity.EXTRA_CC_RECIPIENTS,
-                                editIntentExtras.messageCcList,
-                                editIntentExtras.messageAction,
-                                editIntentExtras.userAddresses
-                            )
-                        }
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_LOAD_IMAGES,
-                            editIntentExtras.imagesDisplayed
-                        )
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_LOAD_REMOTE_CONTENT,
-                            editIntentExtras.remoteContentDisplayed
-                        )
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_SENDER_NAME,
-                            editIntentExtras.messageSenderName
-                        )
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_SENDER_ADDRESS,
-                            editIntentExtras.senderEmailAddress
-                        )
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_PGP_MIME,
-                            editIntentExtras.isPGPMime
-                        )
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_MESSAGE_TITLE,
-                            editIntentExtras.newMessageTitle
-                        )
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_MESSAGE_BODY_LARGE,
-                            editIntentExtras.largeMessageBody
-                        )
-                        mBigContentHolder.content = editIntentExtras.mBigContentHolder.content
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_MESSAGE_BODY,
-                            editIntentExtras.body
-                        )
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_MESSAGE_TIMESTAMP,
-                            editIntentExtras.timeMs
-                        )
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_MESSAGE_ENCRYPTED,
-                            editIntentExtras.messageIsEncrypted
-                        )
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_PARENT_ID,
-                            editIntentExtras.messageId
-                        )
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_ACTION_ID,
-                            editIntentExtras.messageAction
-                        )
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID,
-                            editIntentExtras.addressID
-                        )
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS,
-                            editIntentExtras.addressEmailAlias
-                        )
-                        intent.putExtra(
-                            ComposeMessageActivity.EXTRA_MESSAGE_IS_TRANSIENT,
-                            isTransientMessage
-                        )
-                        if (editIntentExtras.embeddedImagesAttachmentsExist) {
-                            intent.putParcelableArrayListExtra(
-                                ComposeMessageActivity.EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS,
-                                editIntentExtras.attachments
-                            )
-                        }
-                        val attachments = editIntentExtras.attachments
-                        if (attachments.size > 0) {
-                            intent.putParcelableArrayListExtra(
-                                ComposeMessageActivity.EXTRA_MESSAGE_ATTACHMENTS,
-                                attachments
-                            )
-                        }
-                        startActivityForResult(intent, 0)
-                    }
+                    messageAction,
+                    message.subject
                 )
                 viewModel.prepareEditMessageIntent(
                     messageAction,
@@ -983,6 +880,113 @@ internal class MessageDetailsActivity :
         } catch (exc: Exception) {
             Timber.e(exc, "Exception in reply/forward actions")
         }
+    }
+
+    private fun observeEditMessageEvents() {
+        viewModel.prepareEditMessageIntent.observe(
+            this@MessageDetailsActivity,
+            Observer { editIntentExtrasEvent: Event<IntentExtrasData?> ->
+                val editIntentExtras = editIntentExtrasEvent.getContentIfNotHandled()
+                    ?: return@Observer
+                val intent = AppUtil.decorInAppIntent(
+                    Intent(
+                        this@MessageDetailsActivity,
+                        ComposeMessageActivity::class.java
+                    )
+                )
+                MessageUtils.addRecipientsToIntent(
+                    intent,
+                    ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
+                    editIntentExtras.toRecipientListString,
+                    editIntentExtras.messageAction,
+                    editIntentExtras.userAddresses
+                )
+                if (editIntentExtras.includeCCList) {
+                    MessageUtils.addRecipientsToIntent(
+                        intent,
+                        ComposeMessageActivity.EXTRA_CC_RECIPIENTS,
+                        editIntentExtras.messageCcList,
+                        editIntentExtras.messageAction,
+                        editIntentExtras.userAddresses
+                    )
+                }
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_LOAD_IMAGES,
+                    editIntentExtras.imagesDisplayed
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_LOAD_REMOTE_CONTENT,
+                    editIntentExtras.remoteContentDisplayed
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_SENDER_NAME,
+                    editIntentExtras.messageSenderName
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_SENDER_ADDRESS,
+                    editIntentExtras.senderEmailAddress
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_PGP_MIME,
+                    editIntentExtras.isPGPMime
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_TITLE,
+                    editIntentExtras.newMessageTitle
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_BODY_LARGE,
+                    editIntentExtras.largeMessageBody
+                )
+                mBigContentHolder.content = editIntentExtras.mBigContentHolder.content
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_BODY,
+                    editIntentExtras.body
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_TIMESTAMP,
+                    editIntentExtras.timeMs
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_ENCRYPTED,
+                    editIntentExtras.messageIsEncrypted
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_PARENT_ID,
+                    editIntentExtras.messageId
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_ACTION_ID,
+                    editIntentExtras.messageAction
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID,
+                    editIntentExtras.addressID
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS,
+                    editIntentExtras.addressEmailAlias
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_IS_TRANSIENT,
+                    isTransientMessage
+                )
+                if (editIntentExtras.embeddedImagesAttachmentsExist) {
+                    intent.putParcelableArrayListExtra(
+                        ComposeMessageActivity.EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS,
+                        editIntentExtras.attachments
+                    )
+                }
+                val attachments = editIntentExtras.attachments
+                if (attachments.size > 0) {
+                    intent.putParcelableArrayListExtra(
+                        ComposeMessageActivity.EXTRA_MESSAGE_ATTACHMENTS,
+                        attachments
+                    )
+                }
+                startActivityForResult(intent, 0)
+            }
+        )
     }
 
     private fun getCurrentSubject() = expandedToolbarTitleTextView.text ?: getString(R.string.empty_subject)
