@@ -23,8 +23,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.annotation.StyleRes
+import androidx.annotation.VisibleForTesting
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import ch.protonmail.android.R
 import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexboxItemDecoration
 import com.google.android.flexbox.FlexboxLayoutManager
 import me.proton.core.presentation.ui.adapter.ProtonAdapter
 
@@ -34,7 +38,7 @@ import me.proton.core.presentation.ui.adapter.ProtonAdapter
  * This View is supposed to be "static", in a way that it won't change form, for cases where the View can be expanded,
  *  like for message details, an ExpandableLabelChipGroupView ( not implemented yet ) must be used instead.
  */
-class MultiLineLabelChipGroupView @JvmOverloads constructor (
+class MultiLineLabelChipGroupView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -47,10 +51,17 @@ class MultiLineLabelChipGroupView @JvmOverloads constructor (
         diffCallback = LabelChipUiModel.DiffCallback
     )
 
+    private val dividerItemDecoration = FlexboxItemDecoration(context)
+        .apply {
+            val drawable = checkNotNull(ContextCompat.getDrawable(context, R.drawable.spacer_s_m))
+            setDrawable(drawable)
+        }
+
     init {
         val recyclerView = RecyclerView(context).apply {
             id = RECYCLER_VIEW_ID
             layoutManager = FlexboxLayoutManager(context, FlexDirection.ROW)
+            addItemDecoration(dividerItemDecoration)
             adapter = labelsAdapter
         }
         addView(recyclerView)
