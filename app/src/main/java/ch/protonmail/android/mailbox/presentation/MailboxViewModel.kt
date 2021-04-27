@@ -38,6 +38,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchByLocationJob
+import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.GetConversations
@@ -437,6 +438,14 @@ class MailboxViewModel @Inject constructor(
             val deleteMessagesResult = deleteMessage(messageIds, currentLabelId)
             _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
         }
+
+    fun refreshMailboxCount(location: Constants.MessageLocationType) {
+        if (conversationModeEnabled(location)) {
+            return
+        }
+
+        jobManager.addJobInBackground(FetchMessageCountsJob(null))
+    }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)
 }

@@ -233,7 +233,6 @@ class MailboxActivity :
     private val handler = Handler(Looper.getMainLooper())
 
     override val currentLabelId get() = mailboxLabelId
-    val currentLocation get() = mailboxLocationMain
 
     override fun getLayoutId(): Int = R.layout.activity_mailbox
 
@@ -602,6 +601,7 @@ class MailboxActivity :
             .distinctUntilChanged()
             .observe(this) { items ->
                 setLoadingMore(false)
+                setRefreshing(false)
                 mailboxAdapter.clear()
                 mailboxAdapter.addAll(items)
             }
@@ -772,7 +772,7 @@ class MailboxActivity :
             onAccountSwitched(AccountStateManager.AccountSwitch())
         }
 
-        reloadMessageCounts()
+        mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
         registerFcmReceiver()
         checkDelinquency()
         noMessagesSwipeRefreshLayout.visibility = View.GONE
@@ -1142,7 +1142,7 @@ class MailboxActivity :
                 ) {
                     mailboxViewModel.deleteMessages(
                         messageIds,
-                        currentLocation.value?.messageLocationTypeValue.toString()
+                        currentMailboxLocation.messageLocationTypeValue.toString()
                     )
                     mode.finish()
                 }
@@ -1333,7 +1333,7 @@ class MailboxActivity :
     override fun onRefresh() {
         setRefreshing(true)
         syncUUID = UUID.randomUUID().toString()
-        reloadMessageCounts()
+        mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
         observeMailboxItemsByLocation(
             includeLabels = true,
             refreshMessages = true,

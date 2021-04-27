@@ -31,7 +31,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.dialogs.QuickSnoozeDialogFragment
 import ch.protonmail.android.activities.multiuser.AccountManagerActivity
@@ -55,7 +54,6 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.feature.account.AccountStateManager
-import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
@@ -445,10 +443,6 @@ abstract class NavigationActivity :
         lifecycleScope.launchWhenCreated {
             setupAccountsList()
         }
-    }
-
-    protected fun reloadMessageCounts() {
-        mJobManager.addJobInBackground(FetchMessageCountsJob(null))
     }
 
     private fun onDrawerStaticItemSelected(type: Type) {

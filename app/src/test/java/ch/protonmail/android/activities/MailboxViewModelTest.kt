@@ -34,6 +34,7 @@ import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.di.JobEntryPoint
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.FetchByLocationJob
+import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetConversationsResult
@@ -71,6 +72,7 @@ import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 private const val STARRED_LABEL_ID = "10"
 
@@ -855,6 +857,26 @@ class MailboxViewModelTest : CoroutinesTest {
             )
             assertEquals(expected, actual.observedValues.first())
         }
+
+    @Test
+    fun refreshMailboxCountTriggersFetchMessagesCountJobWhenConversationsModeIsNotEnabled() {
+        every { conversationModeEnabled(any()) } returns false
+
+        viewModel.refreshMailboxCount(Constants.MessageLocationType.INBOX)
+
+        val actual = slot<FetchMessageCountsJob>()
+        verify { jobManager.addJobInBackground(capture(actual)) }
+        assertNotNull(actual.captured)
+    }
+
+    @Test
+    fun refreshMailboxCountDoesNotTriggerFetchMessagesCountJobWhenConversationsModeIsEnabled() {
+        every { conversationModeEnabled(any()) } returns true
+
+        viewModel.refreshMailboxCount(Constants.MessageLocationType.INBOX)
+
+        verify { jobManager wasNot Called }
+    }
 
     private fun fakeMailboxUiData(
         itemId: String,
