@@ -140,25 +140,22 @@ class DefaultAddressActivity : BaseActivity() {
     }
 
     private fun renderAddresses() {
-        mSelectedAddress = addresses!![0]
+        val sortedAddresses = addresses.orEmpty()
+            .sortedBy { it.order }
+            .sortedBy { it.status == 1 && it.receive == 1 }
+        mSelectedAddress = sortedAddresses[0]
         defaultAddress.text = mSelectedAddress!!.email
-        Collections.sort(addresses) { lhs, rhs ->
-            val lhsEnabled = lhs.status == 1 && lhs.receive == 1
-            val rhsEnabled = rhs.status == 1 && rhs.receive == 1
-            rhsEnabled.compareTo(lhsEnabled)
-        }
         var mNoAvailableAddresses = true
         var mNoInactiveAddresses = true
-        for (i in addresses!!.indices) {
-            val address = addresses!![i]
+        sortedAddresses.forEachIndexed { index, address ->
             val aliasAvailable = address.status == 1 && address.receive == 1
             var addressRadio: RadioButton? = null
             var inactiveAddress: TextView? = null
             if (aliasAvailable) {
                 addressRadio = mInflater!!.inflate(R.layout.alias_list_item, availableAddresses, false) as RadioButton
                 addressRadio.text = address.email
-                addressRadio.isChecked = i == 0
-                if (i == 0) {
+                addressRadio.isChecked = index == 0
+                if (index == 0) {
                     mCurrentSelectedRadioButton = addressRadio
                 }
                 mAllRadioButtons.add(addressRadio)

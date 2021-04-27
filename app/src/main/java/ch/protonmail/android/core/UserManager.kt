@@ -40,6 +40,9 @@ import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.obfuscateUsername
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -98,6 +101,8 @@ class UserManager @Inject constructor(
 ) {
     private val app: ProtonMailApplication = context.app
 
+    private var refreshPrimary = MutableSharedFlow<Unit>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+
     var primaryUserId: StateFlow<UserId?>
     var primaryId: StateFlow<Id?>
     var primaryLegacyUser: StateFlow<User?>
@@ -106,10 +111,11 @@ class UserManager @Inject constructor(
     init {
         // Workaround to make sure we have fresh value and get them from main thread without impacting performances.
         runBlocking {
+            refreshPrimary.emit(Unit)
             primaryUserId = coreAccountManager.primaryUserId(scope)
             primaryId = coreAccountManager.primaryId(scope)
-            primaryLegacyUser = coreAccountManager.primaryLegacyUser(scope) { getLegacyUser(it) }
-            primaryUser = coreAccountManager.primaryUser(scope) { getUser(it) }
+            primaryLegacyUser = coreAccountManager.primaryLegacyUser(scope, refreshPrimary) { getLegacyUser(it) }
+            primaryUser = coreAccountManager.primaryUser(scope, refreshPrimary) { getUser(it) }
         }
     }
 
@@ -123,6 +129,13 @@ class UserManager @Inject constructor(
 
     val currentUser: NewUser?
         get() = primaryUser.value
+
+    /**
+     * Force Refresh for [currentUserId], [currentLegacyUser] and [currentUser].
+     *
+     * Note: This is a workaround to use when User/Address/Key are updated.
+     */
+    fun refreshCurrent() = refreshPrimary.tryEmit(Unit)
 
     fun requireCurrentUserId(): Id = checkNotNull(currentUserId)
 

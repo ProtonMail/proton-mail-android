@@ -22,7 +22,9 @@ package ch.protonmail.android.feature.account
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -44,14 +46,24 @@ suspend fun AccountManager.allLoggedIn() =
 suspend fun AccountManager.allSaved() =
     getAccounts(AccountState.Disabled).firstOrNull()?.map { Id(it.userId.id) }.orEmpty().toSet()
 
-suspend fun AccountManager.primaryUserId(scope: CoroutineScope): StateFlow<UserId?> =
-    getPrimaryUserId().stateIn(scope)
+suspend fun AccountManager.primaryUserId(
+    scope: CoroutineScope
+): StateFlow<UserId?> = getPrimaryUserId().stateIn(scope)
 
-suspend fun AccountManager.primaryId(scope: CoroutineScope): StateFlow<Id?> =
-    primaryUserId(scope).mapLatest { it?.let { Id(it.id) } }.stateIn(scope)
+suspend fun AccountManager.primaryId(
+    scope: CoroutineScope
+): StateFlow<Id?> = primaryUserId(scope).mapLatest { it?.let { Id(it.id) } }.stateIn(scope)
 
-suspend fun AccountManager.primaryLegacyUser(scope: CoroutineScope, getUser: suspend (Id) -> User): StateFlow<User?> =
-    primaryId(scope).mapLatest { it?.let { getUser(it) } }.stateIn(scope)
+suspend fun AccountManager.primaryLegacyUser(
+    scope: CoroutineScope,
+    refresh: Flow<Unit>,
+    getUser: suspend (Id) -> User
+): StateFlow<User?> = primaryId(scope).combine(refresh) { id: Id?, _ -> id }
+    .mapLatest { it?.let { getUser(it) } }.stateIn(scope)
 
-suspend fun AccountManager.primaryUser(scope: CoroutineScope, getNewUser: suspend (Id) -> NewUser): StateFlow<NewUser?> =
-    primaryId(scope).mapLatest { it?.let { getNewUser(it) } }.stateIn(scope)
+suspend fun AccountManager.primaryUser(
+    scope: CoroutineScope,
+    refresh: Flow<Unit>,
+    getNewUser: suspend (Id) -> NewUser
+): StateFlow<NewUser?> = primaryId(scope).combine(refresh) { id: Id?, _ -> id }
+    .mapLatest { it?.let { getNewUser(it) } }.stateIn(scope)

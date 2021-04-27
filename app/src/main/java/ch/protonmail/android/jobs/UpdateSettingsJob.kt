@@ -45,9 +45,11 @@ class UpdateSettingsJob(
             val userId = Id(user.id)
             if (addressIds != null) {
                 getUserAddressManager().updateOrderBlocking(userId, addressIds.map { Id(it) })
+                getUserManager().refreshCurrent()
             }
             if ((newDisplayName != null || newSignature != null) && addressId != null) {
                 getUserAddressManager().updateAddressBlocking(userId, addressId, newDisplayName, newSignature)
+                getUserManager().refreshCurrent()
             }
             val mailSettings = getUserManager().getCurrentUserMailSettingsBlocking()!!
             if (actionLeftSwipeChanged) {
