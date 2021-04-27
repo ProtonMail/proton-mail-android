@@ -147,9 +147,22 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         binding: FragmentMessageDetailsActionSheetBinding,
         detailsViewModel: MessageDetailsViewModel
     ) = with(binding) {
-        textViewDetailsActionsStarUnstar.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
-            dismiss()
+        textViewDetailsActionsStarUnstar.apply {
+            setOnClickListener {
+                detailsViewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
+                dismiss()
+            }
+            // message aware states
+            val message = viewModel.message.value
+            if (message != null) {
+                if (message.isStarred == true) {
+                    setText(R.string.unstar)
+                    setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_star_remove, 0, 0, 0)
+                } else {
+                    setText(R.string.star)
+                    setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_star_24dp, 0, 0, 0)
+                }
+            }
         }
         textViewDetailsActionsTrash.setOnClickListener {
             detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_TRASH)

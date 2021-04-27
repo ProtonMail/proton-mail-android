@@ -107,7 +107,6 @@
     <string name="add_label">Add Label</string>
     <string name="add_star">Add star</string>
     <string name="remove_star">Remove star</string>
-    <string name="star_unstar">Star/Unstar</string>
     <string name="mark_read">Mark read</string>
     <string name="mark_unread">Mark unread</string>
     <string name="move_to_archive">Move to Archive</string>
@@ -982,6 +981,9 @@
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
     <string name="error_loading_conversations">Error loading conversations, please try again</string>
 
+    <string name="star_unstar">Star/Unstar</string>
+    <string name="star">Star</string>
+    <string name="unstar">Unstar</string>
     <string name="personalize">Personalize</string>
     <string name="others">Others</string>
     <string name="send_to_archive">Send to archive?</string>
