@@ -50,6 +50,32 @@
                 layout="@layout/layout_message_details_actions_sheet_buttons" />
 
             <TextView
+                style="@style/ActionSheetSectionTitleItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/manage" />
+
+            <TextView
+                android:id="@+id/text_view_details_actions_mark_unread"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/mark_as_unread"
+                app:drawableStartCompat="@drawable/ic_envelope_dot"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/text_view_details_actions_mark_read"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/mark_as_read"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_envelope_read"
+                tools:visibility="visible" />
+
+
+            <TextView
                 android:id="@+id/text_view_details_actions_star"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
@@ -70,33 +96,20 @@
                 tools:visibility="visible" />
 
             <TextView
-                android:id="@+id/text_view_details_actions_mark_unread"
+                android:id="@+id/text_view_details_actions_label_as"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/mark_as_unread"
-                android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_envelope_dot"
-                tools:visibility="visible" />
+                android:text="@string/label_as"
+                app:drawableStartCompat="@drawable/ic_label_24dp" />
+
+            <View style="@style/ViewSeparatorHorizontal" />
 
             <TextView
-                android:id="@+id/text_view_details_actions_mark_read"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ActionSheetSectionTitleItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/mark_as_read"
-                android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_envelope_read"
-                tools:visibility="visible" />
-
-
-            <TextView
-                android:id="@+id/text_view_details_actions_trash"
-                style="@style/ActionSheetStandardItem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/trash"
-                app:drawableStartCompat="@drawable/ic_trash_24dp" />
+                android:text="@string/move_message" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_move_to_inbox"
@@ -109,6 +122,14 @@
                 tools:visibility="visible" />
 
             <TextView
+                android:id="@+id/text_view_details_actions_trash"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/move_to_trash"
+                app:drawableStartCompat="@drawable/ic_trash_24dp" />
+
+            <TextView
                 android:id="@+id/text_view_details_actions_move_to_archive"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
@@ -117,28 +138,22 @@
                 app:drawableStartCompat="@drawable/ic_archive_24dp" />
 
             <TextView
+                android:id="@+id/text_view_details_actions_delete"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/delete"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_trash_empty"
+                tools:visibility="visible" />
+
+            <TextView
                 android:id="@+id/text_view_details_actions_move_to_spam"
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_spam"
                 app:drawableStartCompat="@drawable/ic_spam_24dp" />
-
-            <View style="@style/ViewSeparatorHorizontal" />
-
-            <TextView
-                style="@style/ActionSheetSectionTitleItem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/personalize" />
-
-            <TextView
-                android:id="@+id/text_view_details_actions_label_as"
-                style="@style/ActionSheetStandardItem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/label_as"
-                app:drawableStartCompat="@drawable/ic_label_24dp" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_move_to"
@@ -154,7 +169,15 @@
                 style="@style/ActionSheetSectionTitleItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/others" />
+                android:text="@string/more" />
+
+            <TextView
+                android:id="@+id/text_view_details_actions_print"
+                style="@style/ActionSheetStandardItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/print"
+                app:drawableStartCompat="@drawable/ic_print" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_view_headers"
@@ -169,16 +192,11 @@
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:drawableTint="@color/notification_error"
                 android:text="@string/report_phishing"
+                android:textColor="@color/notification_error"
                 app:drawableStartCompat="@drawable/ic_phishing" />
 
-            <TextView
-                android:id="@+id/text_view_details_actions_print"
-                style="@style/ActionSheetStandardItem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/print"
-                app:drawableStartCompat="@drawable/ic_print" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

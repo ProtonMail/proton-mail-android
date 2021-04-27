@@ -695,6 +695,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         when (action) {
             MessageDetailsAction.DELETE_MESSAGE -> deleteMessage(messageId)
             MessageDetailsAction.MARK_UNREAD -> markUnread()
+            MessageDetailsAction.MARK_READ -> markRead(true)
             MessageDetailsAction.MOVE_TO_ARCHIVE -> moveToArchive()
             MessageDetailsAction.MOVE_TO_SPAM -> moveToSpam()
             MessageDetailsAction.MOVE_TO_TRASH -> moveToTrash(messageId)

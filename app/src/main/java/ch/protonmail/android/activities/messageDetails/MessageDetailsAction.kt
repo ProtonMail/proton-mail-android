@@ -25,6 +25,7 @@ package ch.protonmail.android.activities.messageDetails
 enum class MessageDetailsAction {
     DELETE_MESSAGE,
     MARK_UNREAD,
+    MARK_READ,
     MOVE_TO_ARCHIVE,
     MOVE_TO_SPAM,
     MOVE_TO_TRASH,

@@ -138,10 +138,6 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.FORWARD)
             dismiss()
         }
-        textViewDetailsActionsMarkAsUnread.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.MARK_UNREAD)
-            dismiss()
-        }
     }
 
     private fun setupOtherButtonsBindings(
@@ -196,6 +192,14 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             // so we have to dismiss 2 screens at the time and go to the main list here
             // this should be thought through and improved
             (activity as MessageDetailsActivity).onBackPressed()
+        }
+        textViewDetailsActionsMarkUnread.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.MARK_UNREAD)
+            dismiss()
+        }
+        textViewDetailsActionsDelete.setOnClickListener {
+            detailsViewModel.handleAction(MessageDetailsAction.DELETE_MESSAGE)
+            dismiss()
         }
         textViewDetailsActionsLabelAs.setOnClickListener {
             (activity as MessageDetailsActivity).showLabelsManagerDialog()
