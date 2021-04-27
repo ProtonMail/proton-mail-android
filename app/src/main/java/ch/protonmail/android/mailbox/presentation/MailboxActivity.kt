@@ -724,7 +724,8 @@ class MailboxActivity :
             refreshMailboxJobRunning = true
             app.updateDone()
             observeMailboxItemsByLocation(
-                syncId = syncUUID
+                syncId = syncUUID,
+                refreshMessages = true
             )
             true
         }

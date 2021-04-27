@@ -52,13 +52,6 @@ class DnsOverHttpsProviderRFC8484(
             .connectTimeout(TIMEOUT_S, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_S, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT_S, TimeUnit.SECONDS)
-        if (BuildConfig.DEBUG) {
-            httpClientBuilder.addInterceptor(
-                HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.HEADERS
-                }
-            )
-        }
         if (cookieStore != null) {
             val cookieManager = CookieManager(
                 cookieStore,

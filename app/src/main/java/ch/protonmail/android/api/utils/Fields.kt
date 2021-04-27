@@ -138,6 +138,7 @@ object Fields {
         const val SENDER = "Sender"
         const val ID = "ID"
         const val UNREAD = "Unread"
+        const val CONVERSATION_ID = "ConversationID"
 
         object Send {
             const val EXPIRES_IN = "ExpiresIn"

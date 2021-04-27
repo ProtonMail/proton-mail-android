@@ -26,9 +26,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.RecipientType
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
@@ -41,6 +43,7 @@ import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
@@ -57,6 +60,7 @@ import javax.mail.internet.InternetHeaders
 
 const val TABLE_MESSAGES = "messagev3"
 const val COLUMN_MESSAGE_ID = "ID"
+const val COLUMN_CONVERSATION_ID = "ConversationID"
 const val COLUMN_MESSAGE_SUBJECT = "Subject"
 const val COLUMN_MESSAGE_TIME = "Time"
 const val COLUMN_MESSAGE_LOCATION = "Location"
@@ -90,15 +94,26 @@ const val COLUMN_MESSAGE_PREFIX_SENDER = "Sender_"
 const val COLUMN_MESSAGE_REPLY_TOS = "ReplyTos"
 const val COLUMN_MESSAGE_ACCESS_TIME = "AccessTime"
 const val COLUMN_MESSAGE_DELETED = "Deleted"
+const val CONVERSATION_TABLE_COLUMN_ID = "ID"
 
 @Entity(
     tableName = TABLE_MESSAGES,
-    indices = [Index(COLUMN_MESSAGE_ID, unique = true), Index(COLUMN_MESSAGE_LOCATION)]
+    indices = [Index(COLUMN_MESSAGE_ID, unique = true), Index(COLUMN_MESSAGE_LOCATION), Index(COLUMN_CONVERSATION_ID)],
+    foreignKeys = [ForeignKey(
+        entity = ConversationDatabaseModel::class,
+        parentColumns = arrayOf(CONVERSATION_TABLE_COLUMN_ID),
+        childColumns = arrayOf(COLUMN_CONVERSATION_ID),
+        onUpdate = ForeignKey.CASCADE,
+        onDelete = ForeignKey.CASCADE
+    )]
 )
 data class Message @JvmOverloads constructor(
 
     @ColumnInfo(name = COLUMN_MESSAGE_ID)
     var messageId: String? = null,
+
+    @ColumnInfo(name = COLUMN_CONVERSATION_ID)
+    var conversationId: String? = null,
 
     @ColumnInfo(name = COLUMN_MESSAGE_SUBJECT)
     var subject: String? = null,
@@ -262,17 +277,21 @@ data class Message @JvmOverloads constructor(
             .map { it.emailAddress }
             .toList()
 
-    val toListString get() =
-        MessageUtils.toContactString(toList)
+    val toListString
+        get() =
+            MessageUtils.toContactString(toList)
 
-    val toListStringGroupsAware get() =
-        MessageUtils.toContactsAndGroupsString(toList)
+    val toListStringGroupsAware
+        get() =
+            MessageUtils.toContactsAndGroupsString(toList)
 
-    val ccListString get() =
-        MessageUtils.toContactString(ccList)
+    val ccListString
+        get() =
+            MessageUtils.toContactString(ccList)
 
-    val bccListString: String get() =
-        MessageUtils.toContactString(bccList)
+    val bccListString: String
+        get() =
+            MessageUtils.toContactString(bccList)
 
     fun locationFromLabel(): Constants.MessageLocationType =
         allLabelIDs

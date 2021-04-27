@@ -31,6 +31,7 @@ private const val FIELD_PARSED_HEADERS = "ParsedHeaders"
 
 data class ServerMessage(
     var ID: String? = null,
+    var ConversationID: String? = null,
     var Subject: String? = null,
     var Order: Long? = null,
     var Unread: Int = -1,//todo new

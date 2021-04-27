@@ -19,6 +19,7 @@
 package ch.protonmail.android.data.local
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -39,7 +40,10 @@ import ch.protonmail.android.mailbox.data.local.model.ConversationTypesConverter
         Label::class,
         ConversationDatabaseModel::class
     ],
-    version = 9
+    version = 9,
+    autoMigrations = [
+        AutoMigration(from = 8, to = 9)
+    ]
 )
 @TypeConverters(
     value = [

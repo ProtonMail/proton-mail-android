@@ -40,6 +40,7 @@ class MessageFactory @Inject constructor(
         return message.let {
             val serverMessage = ServerMessage()
             serverMessage.ID = it.messageId
+            serverMessage.ConversationID = it.conversationId
             serverMessage.Subject = it.subject
             serverMessage.Unread = it.Unread.makeInt()
             serverMessage.Type = it.Type.ordinal
@@ -70,6 +71,7 @@ class MessageFactory @Inject constructor(
         return serverMessage.let {
             val message = Message()
             message.messageId = it.ID
+            message.conversationId = it.ConversationID!!
             message.subject = it.Subject
             message.Unread = it.Unread.parseBoolean("Unread")
 
