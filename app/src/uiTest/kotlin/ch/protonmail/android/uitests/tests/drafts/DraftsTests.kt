@@ -155,6 +155,7 @@ class DraftsTests : BaseTest() {
             .draftToSubjectBody(to, subject, body)
             .clickUpButton()
             .confirmDraftSaving()
+            .refreshMessageList()
             .searchBar()
             .searchMessageText(subject)
             .clickSearchedDraftBySubject(subject)

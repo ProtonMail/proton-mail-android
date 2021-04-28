@@ -19,9 +19,7 @@
 package ch.protonmail.android.uitests.robots.mailbox.composer
 
 import android.widget.NumberPicker
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.matcher.ViewMatchers.withClassName
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
 import ch.protonmail.android.uitests.robots.device.DeviceRobot
@@ -35,8 +33,6 @@ import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.setValueInNumberPicker
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import me.proton.core.test.android.instrumented.CoreRobot
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.allOf
 
 /**
  * [ComposerRobot] class contains actions and verifications for email composer functionality.
@@ -124,6 +120,23 @@ class ComposerRobot : CoreRobot, DeviceRobot() {
             .send()
     }
 
+    fun sendMessageEOAndExpiryTimeWithConfirmation(
+        to: String,
+        subject: String,
+        body: String,
+        days: Int,
+        password: String,
+        hint: String
+    ): InboxRobot {
+        return composeMessage(to, subject, body)
+            .setMessagePassword()
+            .definePasswordWithHint(password, hint)
+            .messageExpiration()
+            .setExpirationInDays(days)
+            .sendWithNotSupportedExpiryConfirmation()
+            .sendAnyway()
+    }
+
     fun sendMessageEOAndExpiryTimeWithAttachment(
         to: String,
         subject: String,
@@ -202,22 +215,22 @@ class ComposerRobot : CoreRobot, DeviceRobot() {
         body(newBody).reply()
 
     fun clickUpButton(): ComposerRobot {
-        UIActions.system.clickHamburgerOrUpButton()
+        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
         return this
     }
 
     fun confirmDraftSaving(): InboxRobot {
-        UIActions.system.clickPositiveDialogButton()
+        view.withId(android.R.id.button1).click()
         return InboxRobot()
     }
 
     fun confirmDraftSavingFromDrafts(): DraftsRobot {
-        UIActions.system.clickPositiveDialogButton()
+        view.withId(android.R.id.button1).click()
         return DraftsRobot()
     }
 
     fun confirmDraftSavingFromSent(): SentRobot {
-        UIActions.system.clickPositiveDialogButton()
+        view.withId(android.R.id.button1).click()
         return SentRobot()
     }
 
@@ -365,20 +378,22 @@ class ComposerRobot : CoreRobot, DeviceRobot() {
     /**
      * Class represents Message Expiration dialog.
      */
-    class MessageExpirationRobot {
+    class MessageExpirationRobot : CoreRobot {
 
         fun setExpirationInDays(days: Int): ComposerRobot =
             expirationDays(days)
-                .confirmsetMessageExpiration()
+                .confirmSetMessageExpiration()
 
         private fun expirationDays(days: Int): MessageExpirationRobot {
-            onView(allOf(withClassName(`is`(NumberPicker::class.java.canonicalName)), withId(R.id.days_picker)))
-                .perform(setValueInNumberPicker(days))
+            view
+                .instanceOf(NumberPicker::class.java)
+                .withId(R.id.days_picker)
+                .customAction(setValueInNumberPicker(days))
             return this
         }
 
-        private fun confirmsetMessageExpiration(): ComposerRobot {
-            UIActions.system.clickPositiveDialogButton()
+        private fun confirmSetMessageExpiration(): ComposerRobot {
+            view.withId(android.R.id.button1).click()
             return ComposerRobot()
         }
     }

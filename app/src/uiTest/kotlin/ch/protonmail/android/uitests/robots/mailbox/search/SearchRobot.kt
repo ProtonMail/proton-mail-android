@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.uitests.robots.mailbox.search
 
+import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFirstInstanceMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
@@ -26,7 +27,6 @@ import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
-import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import me.proton.core.test.android.instrumented.CoreRobot
 
 /**
@@ -49,39 +49,42 @@ class SearchRobot : CoreRobot {
     }
 
     fun clickSearchedDraftBySubject(subject: String): ComposerRobot {
-        UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
-        UIActions.recyclerView.common.clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
+        recyclerView
+            .withId(messagesRecyclerViewId)
+            .waitUntilPopulated()
+            .onHolderItem(withMessageSubject(subject))
+            .click()
         return ComposerRobot()
     }
 
     fun navigateUpToInbox(): InboxRobot {
-        UIActions.system.clickHamburgerOrUpButton()
+        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
         return InboxRobot()
     }
 
     fun clickSearchedMessageBySubjectPart(subject: String): MessageRobot {
-        UIActions.recyclerView
-            .common.waitForBeingPopulated(messagesRecyclerViewId)
-            .common.clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubjectContaining(subject))
+        recyclerView
+            .withId(messagesRecyclerViewId)
+            .waitUntilPopulated()
+            .onHolderItem(withMessageSubjectContaining(subject))
+            .click()
         return MessageRobot()
     }
 
     /**
      * Contains all the validations that can be performed by [InboxRobot].
      */
-    class Verify {
+    class Verify : CoreRobot {
 
         fun searchedMessageFound() {
-            UIActions.recyclerView
-                .common.waitForBeingPopulated(messagesRecyclerViewId)
-                .common.scrollToRecyclerViewMatchedItem(
-                    R.id.messages_list_view,
-                    withFirstInstanceMessageSubject(TestData.searchMessageSubject)
-                )
+            recyclerView
+                .withId(messagesRecyclerViewId)
+                .waitUntilPopulated()
+                .scrollToHolder(withFirstInstanceMessageSubject(TestData.searchMessageSubject))
         }
 
         fun noSearchResults() {
-            UIActions.wait.forViewWithIdAndText(R.id.no_messages, R.string.no_search_results)
+            view.withId(R.id.no_messages).withText(R.string.no_search_results).wait()
         }
     }
 
