@@ -37,6 +37,7 @@ import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContac
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactGroupName
 import ch.protonmail.android.uitests.robots.manageaccounts.ManageAccountsMatchers.withAccountEmailInAccountManager
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkContactDoesNotExist
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkGroupDoesNotExist
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkMessageDoesNotExist
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.clickOnChildWithId
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.saveMessageSubject
@@ -140,6 +141,9 @@ object Recycler {
 
         fun checkDoesNotContainContact(@IdRes recyclerViewId: Int, name: String, email: String):
             ViewInteraction = onView(withId(recyclerViewId)).perform(checkContactDoesNotExist(name, email))
+
+        fun checkDoesNotContainGroup(@IdRes recyclerViewId: Int, groupName: String, groupMembersCount: String):
+            ViewInteraction = onView(withId(recyclerViewId)).perform(checkGroupDoesNotExist(groupName, groupMembersCount))
 
         fun clickContactsGroupItem(@IdRes recyclerViewId: Int, withName: String): ViewInteraction =
             onView(withId(recyclerViewId)).perform(actionOnHolderItem(withContactGroupName(withName), click()))

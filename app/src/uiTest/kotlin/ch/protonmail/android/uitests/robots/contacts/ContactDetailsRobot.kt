@@ -20,7 +20,6 @@ package ch.protonmail.android.uitests.robots.contacts
 
 import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import me.proton.core.test.android.instrumented.CoreRobot
 
 /**
@@ -35,7 +34,7 @@ open class ContactDetailsRobot : CoreRobot {
     }
 
     fun editContact(): AddContactRobot {
-        view.withId(R.id.editContactDetails).wait().click()
+        view.withId(R.id.editContactDetails).click()
         return AddContactRobot()
     }
 
@@ -43,17 +42,17 @@ open class ContactDetailsRobot : CoreRobot {
         view
             .instanceOf(AppCompatImageButton::class.java)
             .isDescendantOf(view.withId(R.id.animToolbar))
-            .wait().click()
+            .click()
         return ContactsRobot()
     }
 
     private fun delete(): ContactDetailsRobot {
-        view.withId(R.id.action_delete).wait().checkDisplayed().click()
+        view.withId(R.id.action_delete).click()
         return this
     }
 
     private fun confirmDeletion() {
-        UIActions.system.clickPositiveDialogButton()
+        view.withId(android.R.id.button1).click()
     }
 
     /**

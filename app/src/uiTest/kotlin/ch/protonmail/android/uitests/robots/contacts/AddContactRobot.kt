@@ -19,13 +19,15 @@
 
 package ch.protonmail.android.uitests.robots.contacts
 
+import androidx.test.espresso.matcher.ViewMatchers
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import me.proton.core.test.android.instrumented.CoreRobot
 
 /**
  * [AddContactRobot] class contains actions and verifications for Add/Edit Contacts.
  */
-class AddContactRobot {
+class AddContactRobot : CoreRobot {
 
     fun setNameEmailAndSave(name: String, email: String): ContactsRobot {
         return displayName(name)
@@ -41,17 +43,21 @@ class AddContactRobot {
     }
 
     private fun displayName(name: String): AddContactRobot {
-        UIActions.id.insertTextIntoFieldWithId(R.id.contact_display_name, name)
+        view.withId(R.id.contact_display_name).replaceText(name)
         return this
     }
 
     private fun email(email: String): AddContactRobot {
-        UIActions.allOf.setTextIntoFieldByIdAndParent(R.id.option, R.id.emailAddressesContainer, email)
+        view
+            .withId(R.id.option)
+            .withVisibility(ViewMatchers.Visibility.VISIBLE)
+            .isDescendantOf(view.withId(R.id.emailAddressesContainer))
+            .replaceText(email)
         return this
     }
 
     private fun save(): ContactsRobot {
-        UIActions.id.clickViewWithId(R.id.action_save)
+        view.withId(R.id.action_save).click()
         UIActions.wait.forToastWithText(R.string.contact_saved)
         return ContactsRobot()
     }

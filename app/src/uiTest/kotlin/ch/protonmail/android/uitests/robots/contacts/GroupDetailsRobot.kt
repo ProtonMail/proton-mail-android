@@ -18,8 +18,8 @@
  */
 package ch.protonmail.android.uitests.robots.contacts
 
+import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import me.proton.core.test.android.instrumented.CoreRobot
 
 /**
@@ -38,18 +38,17 @@ open class GroupDetailsRobot : CoreRobot {
     }
 
     fun navigateUp(): ContactsRobot {
-        view.withId(R.id.editFab).wait().checkDisplayed()
-        UIActions.system.clickHamburgerOrUpButtonInAnimatedToolbar()
+        view.instanceOf(AppCompatImageButton::class.java).isDescendantOf(view.withId(R.id.animToolbar)).click()
         return ContactsRobot()
     }
 
     private fun delete(): GroupDetailsRobot {
-        view.withId(R.id.action_delete).wait().checkDisplayed().click()
+        view.withId(R.id.action_delete).click()
         return this
     }
 
     private fun confirmDeletion(): ContactsRobot {
-        view.withId(android.R.id.button1).wait().checkDisplayed().click()
+        view.withId(android.R.id.button1).click()
         return ContactsRobot()
     }
 

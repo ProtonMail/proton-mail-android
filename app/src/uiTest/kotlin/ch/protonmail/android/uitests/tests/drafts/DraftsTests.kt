@@ -300,7 +300,7 @@ class DraftsTests : BaseTest() {
             .drafts()
             .clickDraftBySubject(fwSubject(subject))
             .attachments()
-            .removeAttachment()
+            .removeLastAttachment()
             .navigateUpToComposerView()
             .clickUpButton()
             .confirmDraftSavingFromDrafts()

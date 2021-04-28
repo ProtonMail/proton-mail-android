@@ -370,6 +370,6 @@ class AttachmentsTests : BaseTest() {
             .sent()
             .clickMessageBySubject(subject)
             .expandAttachments()
-            .verify { publicKeyIsAttached(publicKey)}
+            .verify { publicKeyIsAttached(publicKey) }
     }
 }

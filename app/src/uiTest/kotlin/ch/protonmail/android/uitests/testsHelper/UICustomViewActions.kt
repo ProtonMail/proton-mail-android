@@ -199,7 +199,7 @@ object UICustomViewActions {
                 val item = recyclerView.getChildAt(i)
                 if (item != null) {
                     contactName = item.findViewById<TextView>(R.id.contact_name)?.text.toString()
-                    contactEmail = item.findViewById<TextView>(R.id.email)?.text.toString()
+                    contactEmail = item.findViewById<TextView>(R.id.contact_subtitle)?.text.toString()
                     isMatches = contactName == name && contactEmail == email
                     if (isMatches) {
                         break
@@ -210,39 +210,38 @@ object UICustomViewActions {
         }
     }
 
-
-    fun checkGroupDoesNotExist(name: String, email: String): PositionableRecyclerViewAction =
-        CheckGroupDoesNotExist(name, email)
+    fun checkGroupDoesNotExist(groupName: String, groupMembersCount: String): PositionableRecyclerViewAction =
+        CheckGroupDoesNotExist(groupName, groupMembersCount)
 
     class CheckGroupDoesNotExist(
-        private val name: String,
-        private val email: String
+        private val groupName: String,
+        private val groupMembersCount: String
     ) : PositionableRecyclerViewAction {
 
         override fun atPosition(position: Int): PositionableRecyclerViewAction =
-            checkGroupDoesNotExist(name, email)
+            checkGroupDoesNotExist(groupName, groupMembersCount)
 
-        override fun getDescription(): String = "Checking if contact with name and email exists in the list."
+        override fun getDescription(): String = "Checking if a Group with name and members count exists in the list."
 
         override fun getConstraints(): Matcher<View> = allOf(isAssignableFrom(RecyclerView::class.java), isDisplayed())
 
         override fun perform(uiController: UiController?, view: View?) {
             var isMatches = true
-            var contactName = ""
-            var contactEmail = ""
+            var name = ""
+            var membersCount = ""
             val recyclerView = view as RecyclerView
             for (i in 0..recyclerView.adapter!!.itemCount) {
                 val item = recyclerView.getChildAt(i)
                 if (item != null) {
-                    contactName = item.findViewById<TextView>(R.id.contact_name)?.text.toString()
-                    contactEmail = item.findViewById<TextView>(R.id.email)?.text.toString()
-                    isMatches = contactName == name && contactEmail == email
+                    name = item.findViewById<TextView>(R.id.contact_name)?.text.toString()
+                    membersCount = item.findViewById<TextView>(R.id.contact_subtitle)?.text.toString()
+                    isMatches = name == groupName && membersCount == groupMembersCount
                     if (isMatches) {
                         break
                     }
                 }
             }
-            assertFalse(isMatches, "RecyclerView should not contain contact with name: \"$name\"")
+            assertFalse(isMatches, "RecyclerView should not contain a group with name: \"$groupName\"")
         }
     }
 

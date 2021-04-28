@@ -23,6 +23,7 @@ import androidx.annotation.IdRes
 import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.MockAddAttachmentIntent
+import ch.protonmail.android.uitests.testsHelper.StringUtils.quantityStringFromResource
 import me.proton.core.test.android.instrumented.CoreRobot
 import org.hamcrest.CoreMatchers.anything
 
@@ -45,13 +46,26 @@ open class MessageAttachmentsRobot : CoreRobot {
     fun addFileAttachment(@IdRes drawable: Int): ComposerRobot =
         mockFileAttachment(drawable).navigateUpToComposerView()
 
-    fun removeAttachment(): MessageAttachmentsRobot {
+    fun removeLastAttachment(): MessageAttachmentsRobot {
         listView
             .onListItem(anything())
             .inAdapter(view.instanceOf(ListView::class.java))
             .atPosition(0)
             .onChild(view.withId(R.id.remove))
             .click()
+        view.withText(R.string.no_attachments).wait().checkDisplayed()
+        return MessageAttachmentsRobot()
+    }
+
+    fun removeOneOfTwoAttachments(): MessageAttachmentsRobot {
+        val oneAttachmentString = quantityStringFromResource(R.plurals.attachments, 1)
+        listView
+            .onListItem(anything())
+            .inAdapter(view.instanceOf(ListView::class.java))
+            .atPosition(0)
+            .onChild(view.withId(R.id.remove))
+            .click()
+        view.withText(oneAttachmentString).wait().checkDisplayed()
         return MessageAttachmentsRobot()
     }
 
