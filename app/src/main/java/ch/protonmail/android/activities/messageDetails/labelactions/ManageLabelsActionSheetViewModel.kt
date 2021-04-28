@@ -74,14 +74,16 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
             onFolderClicked(model.labelId)
         } else {
             // label type clicked
-            val updatedLabels = labels.value.map { label ->
-                if (label.labelId == model.labelId) {
-                    Timber.v("Label: ${label.labelId} was clicked")
-                    label.copy(isChecked = model.isChecked?.not())
-                } else {
-                    label
+            val updatedLabels = labels.value
+                .filter { it.labelType == ManageLabelsActionSheet.Type.LABEL.typeInt }
+                .map { label ->
+                    if (label.labelId == model.labelId) {
+                        Timber.v("Label: ${label.labelId} was clicked")
+                        label.copy(isChecked = model.isChecked?.not())
+                    } else {
+                        label
+                    }
                 }
-            }
 
             val selectedLabelsCount = updatedLabels.filter { it.isChecked == true }
             if (selectedLabelsCount.isNotEmpty() &&
