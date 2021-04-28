@@ -46,18 +46,19 @@ import timber.log.Timber
 @AndroidEntryPoint
 class MessageDetailsActionSheet : BottomSheetDialogFragment() {
 
+    private var actionSheetHeader: ActionSheetHeader? = null
     private val viewModel: MessageDetailsViewModel by activityViewModels()
 
-    private var _binding: FragmentMessageDetailsActionSheetBinding? = null
-    private val binding get() = requireNotNull(_binding)
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentMessageDetailsActionSheetBinding.inflate(inflater)
+        val binding = FragmentMessageDetailsActionSheetBinding.inflate(inflater)
 
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
-        setupMainButtonsBindings(binding.includeLayoutActionSheetButtons, viewModel)
-        setupOtherButtonsBindings(binding, viewModel)
+        setupMainMessageActionsBindings(binding.includeLayoutActionSheetButtons)
+        setupManageSectionBindings(binding, viewModel)
+        setupMoveSectionBindings(binding, viewModel)
+        setupMoreSectionBindings(binding)
 
+        actionSheetHeader = binding.actionSheetHeaderDetailsActions
         return binding.root
     }
 
@@ -87,9 +88,9 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
                                 val intermediateShift =
                                     targetOffsetSize *
                                         ((slideOffset - HEADER_SLIDE_THRESHOLD) * (1 / (1 - HEADER_SLIDE_THRESHOLD)))
-                                binding.actionSheetHeaderDetailsActions.shiftTitleToRightBy(intermediateShift)
+                                actionSheetHeader?.shiftTitleToRightBy(intermediateShift)
                             } else {
-                                binding.actionSheetHeaderDetailsActions.shiftTitleToRightBy(0f)
+                                actionSheetHeader?.shiftTitleToRightBy(0f)
                             }
                             Timber.v("onSlide to offset $slideOffset")
                         }
@@ -101,7 +102,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
     }
 
     override fun onDestroyView() {
-        _binding = null
+        actionSheetHeader = null
         super.onDestroyView()
     }
 
@@ -122,9 +123,8 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupMainButtonsBindings(
-        binding: LayoutMessageDetailsActionsSheetButtonsBinding,
-        detailsViewModel: MessageDetailsViewModel
+    private fun setupMainMessageActionsBindings(
+        binding: LayoutMessageDetailsActionsSheetButtonsBinding
     ) = with(binding) {
         textViewDetailsActionsReply.setOnClickListener {
             (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.REPLY)
@@ -138,22 +138,19 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.FORWARD)
             dismiss()
         }
+
     }
 
-    private fun setupOtherButtonsBindings(
+    private fun setupManageSectionBindings(
         binding: FragmentMessageDetailsActionSheetBinding,
-        detailsViewModel: MessageDetailsViewModel
+        viewModel: MessageDetailsViewModel
     ) = with(binding) {
-        val messageLocation =
-            Constants.MessageLocationType.fromInt(
-                arguments?.getInt(EXTRA_ARG_CURRENT_LOCATION_ID) ?: 0
-            )
         val isStarred = arguments?.getBoolean(EXTRA_ARG_IS_STARED) ?: false
         if (isStarred) {
             textViewDetailsActionsUnstar.apply {
                 isVisible = true
                 setOnClickListener {
-                    detailsViewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
+                    viewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
                     dismiss()
                 }
             }
@@ -162,51 +159,109 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             textViewDetailsActionsStar.apply {
                 isVisible = true
                 setOnClickListener {
-                    detailsViewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
+                    viewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
                     dismiss()
                 }
             }
             textViewDetailsActionsUnstar.isVisible = false
         }
 
-        textViewDetailsActionsTrash.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_TRASH)
+        textViewDetailsActionsMarkRead.setOnClickListener {
+            viewModel.handleAction(MessageDetailsAction.MARK_READ)
             dismiss()
-            // This is a bit crazy requirement but designers do not know what to do about it
-            // so we have to dismiss 2 screens at the time and go to the main list here
-            // this should be thought through and improved
-            (activity as MessageDetailsActivity).onBackPressed()
-        }
-        textViewDetailsActionsMoveToArchive.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_ARCHIVE)
-            dismiss()
-            // This is a bit crazy requirement but designers do not know what to do about it
-            // so we have to dismiss 2 screens at the time and go to the main list here
-            // this should be thought through and improved
-            (activity as MessageDetailsActivity).onBackPressed()
-        }
-        textViewDetailsActionsMoveToSpam.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_SPAM)
-            dismiss()
-            // This is a bit crazy requirement but designers do not know what to do about it
-            // so we have to dismiss 2 screens at the time and go to the main list here
-            // this should be thought through and improved
-            (activity as MessageDetailsActivity).onBackPressed()
         }
         textViewDetailsActionsMarkUnread.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.MARK_UNREAD)
-            dismiss()
-        }
-        textViewDetailsActionsDelete.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.DELETE_MESSAGE)
+            viewModel.handleAction(MessageDetailsAction.MARK_UNREAD)
             dismiss()
         }
         textViewDetailsActionsLabelAs.setOnClickListener {
             (activity as MessageDetailsActivity).showLabelsManagerDialog()
             dismiss()
         }
+    }
+
+    private fun setupMoveSectionBindings(
+        binding: FragmentMessageDetailsActionSheetBinding,
+        detailsViewModel: MessageDetailsViewModel
+    ) = with(binding) {
+        val messageLocation =
+            Constants.MessageLocationType.fromInt(
+                arguments?.getInt(EXTRA_ARG_CURRENT_LOCATION_ID) ?: 0
+            )
+
+        textViewDetailsActionsMoveToInbox.apply {
+            isVisible = messageLocation in Constants.MessageLocationType.values()
+                .filter { it != Constants.MessageLocationType.INBOX }
+            setOnClickListener {
+                detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_INBOX)
+                dismiss()
+                // This is a bit crazy requirement but designers do not know what to do about it
+                // so we have to dismiss 2 screens at the time and go to the main list here
+                // this should be thought through and improved
+                (activity as MessageDetailsActivity).onBackPressed()
+            }
+        }
+        textViewDetailsActionsTrash.apply {
+            isVisible = messageLocation in Constants.MessageLocationType.values()
+                .filter { it != Constants.MessageLocationType.TRASH }
+            setOnClickListener {
+                detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_TRASH)
+                dismiss()
+                // This is a bit crazy requirement but designers do not know what to do about it
+                // so we have to dismiss 2 screens at the time and go to the main list here
+                // this should be thought through and improved
+                (activity as MessageDetailsActivity).onBackPressed()
+            }
+        }
+        textViewDetailsActionsMoveToArchive.apply {
+            isVisible = messageLocation in Constants.MessageLocationType.values()
+                .filter { it != Constants.MessageLocationType.ARCHIVE }
+            setOnClickListener {
+                detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_ARCHIVE)
+                dismiss()
+                // This is a bit crazy requirement but designers do not know what to do about it
+                // so we have to dismiss 2 screens at the time and go to the main list here
+                // this should be thought through and improved
+                (activity as MessageDetailsActivity).onBackPressed()
+            }
+        }
+        textViewDetailsActionsMoveToSpam.apply {
+            isVisible = messageLocation in Constants.MessageLocationType.values()
+                .filter { it != Constants.MessageLocationType.SPAM }
+            setOnClickListener {
+                detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_SPAM)
+                dismiss()
+                // This is a bit crazy requirement but designers do not know what to do about it
+                // so we have to dismiss 2 screens at the time and go to the main list here
+                // this should be thought through and improved
+                (activity as MessageDetailsActivity).onBackPressed()
+            }
+        }
+        textViewDetailsActionsDelete.apply {
+            isVisible = messageLocation in Constants.MessageLocationType.values()
+                .filter { type ->
+                    type != Constants.MessageLocationType.INBOX &&
+                        type != Constants.MessageLocationType.ARCHIVE &&
+                        type != Constants.MessageLocationType.STARRED &&
+                        type != Constants.MessageLocationType.ALL_MAIL
+                }
+            setOnClickListener {
+                detailsViewModel.handleAction(MessageDetailsAction.DELETE_MESSAGE)
+                dismiss()
+            }
+        }
         textViewDetailsActionsMoveTo.setOnClickListener {
             (activity as MessageDetailsActivity).showFoldersManagerDialog()
+            dismiss()
+        }
+    }
+
+    private fun setupMoreSectionBindings(
+        binding: FragmentMessageDetailsActionSheetBinding
+    ) = with(binding) {
+        textViewDetailsActionsPrint.setOnClickListener {
+            // we call it this way as it requires "special" context from the Activity
+            (activity as MessageDetailsActivity).printMessage()
             dismiss()
         }
         textViewDetailsActionsViewHeaders.setOnClickListener {
@@ -217,16 +272,10 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             (activity as MessageDetailsActivity).showReportPhishingDialog()
             dismiss()
         }
-        textViewDetailsActionsPrint.setOnClickListener {
-            // we call it this way as it requires "special" context from the Activity
-            (activity as MessageDetailsActivity).printMessage()
-            dismiss()
-        }
     }
 
-    private fun setCloseIconVisibility(shouldBeVisible: Boolean) {
-        binding.actionSheetHeaderDetailsActions.setCloseIconVisibility(shouldBeVisible)
-    }
+    private fun setCloseIconVisibility(shouldBeVisible: Boolean) =
+        actionSheetHeader?.setCloseIconVisibility(shouldBeVisible)
 
     companion object {
 

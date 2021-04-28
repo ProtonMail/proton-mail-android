@@ -54,6 +54,7 @@ import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostArchiveJob
+import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
@@ -697,11 +698,14 @@ internal class MessageDetailsViewModel @Inject constructor(
             MessageDetailsAction.MARK_UNREAD -> markUnread()
             MessageDetailsAction.MARK_READ -> markRead(true)
             MessageDetailsAction.MOVE_TO_ARCHIVE -> moveToArchive()
+            MessageDetailsAction.MOVE_TO_INBOX -> moveToInbox()
             MessageDetailsAction.MOVE_TO_SPAM -> moveToSpam()
             MessageDetailsAction.MOVE_TO_TRASH -> moveToTrash(messageId)
             MessageDetailsAction.STAR_UNSTAR -> toggleStarUnstar(messageId)
         }
     }
+
+    private fun moveToInbox() = jobManager.addJobInBackground(PostInboxJob(listOf(messageId)))
 
     private fun moveToArchive() = jobManager.addJobInBackground(PostArchiveJob(listOf(messageId)))
 

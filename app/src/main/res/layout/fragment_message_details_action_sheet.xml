@@ -117,9 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_inbox"
-                android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_inbox_24dp"
-                tools:visibility="visible" />
+                app:drawableStartCompat="@drawable/ic_inbox_24dp" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_trash"
@@ -143,9 +141,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/delete"
-                android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_trash_empty"
-                tools:visibility="visible" />
+                app:drawableStartCompat="@drawable/ic_trash_empty" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_move_to_spam"

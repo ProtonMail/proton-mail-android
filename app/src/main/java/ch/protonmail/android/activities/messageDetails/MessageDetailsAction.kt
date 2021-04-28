@@ -27,6 +27,7 @@ enum class MessageDetailsAction {
     MARK_UNREAD,
     MARK_READ,
     MOVE_TO_ARCHIVE,
+    MOVE_TO_INBOX,
     MOVE_TO_SPAM,
     MOVE_TO_TRASH,
     STAR_UNSTAR,
