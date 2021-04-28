@@ -45,13 +45,13 @@ class ConversationsRepositoryImpl @Inject constructor(
     override fun getConversations(params: GetConversationsParameters): Flow<DataResult<List<Conversation>>> {
         loadMore(params)
 
-        return paramFlow.transformLatest { params ->
+        return paramFlow.transformLatest { parameters ->
 
             runCatching {
-                api.fetchConversations(params)
+                api.fetchConversations(parameters)
             }.fold(
                 onSuccess = {
-                    val conversations = it.conversationResponse.toListLocal(params.userId.s)
+                    val conversations = it.conversationResponse.toListLocal(parameters.userId.s)
                     conversationDao.insertOrUpdate(*conversations.toTypedArray())
                 },
                 onFailure = {
@@ -60,7 +60,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             )
 
             emitAll(
-                getConversationsLocal(params).map {
+                getConversationsLocal(parameters).map {
                     DataResult.Success(ResponseSource.Local, it)
                 }
             )

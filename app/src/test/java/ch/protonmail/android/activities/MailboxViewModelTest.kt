@@ -542,7 +542,6 @@ class MailboxViewModelTest : CoroutinesTest {
         val uuid = "9238h82388sdfa8sdf8asd3hh2283"
         val refreshMessages = false
         // Represents pagination. Only messages older than the given timestamp will be returned
-        val earliestTime = 1323L
         coEvery { messageDetailsRepository.getMessagesByLabelIdAsync(labelId) } returns liveData {
             emit(listOf(message))
         }
@@ -578,7 +577,7 @@ class MailboxViewModelTest : CoroutinesTest {
             refreshMessages
         )
 
-        coVerifySequence { getConversations(currentUserId, location, null) }
+        coVerifySequence { getConversations(currentUserId, location, labelId, null) }
         verify { messageServiceScheduler wasNot Called }
     }
 
@@ -601,13 +600,14 @@ class MailboxViewModelTest : CoroutinesTest {
                 listOf(),
                 null
             )
+            val labelId = "labelId923842"
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, null) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, location, labelId, null) } returns flowOf(successResult)
 
             val actual = viewModel.getMailboxItems(
                 location,
-                "labelId923842",
+                labelId,
                 true,
                 "9238423bbe2h3423489wssdf",
                 false,
@@ -659,15 +659,16 @@ class MailboxViewModelTest : CoroutinesTest {
                 null
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
+            val labelId = "labelId923842"
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, null) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, location, labelId, null) } returns flowOf(successResult)
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
             )
 
             val actual = viewModel.getMailboxItems(
                 location,
-                "labelId923842",
+                labelId,
                 true,
                 "9238423bbe2h3423489wssdf",
                 false,
@@ -713,15 +714,16 @@ class MailboxViewModelTest : CoroutinesTest {
                 null
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
+            val labelId = "labelId923842"
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, null) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, location, labelId, null) } returns flowOf(successResult)
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
             )
 
             val actual = viewModel.getMailboxItems(
                 location,
-                "labelId923842",
+                labelId,
                 true,
                 "9238423bbe2h3423489wssdf",
                 false,
@@ -764,15 +766,16 @@ class MailboxViewModelTest : CoroutinesTest {
                 null
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
+            val labelId = "labelId923843"
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, null) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, location, labelId, null) } returns flowOf(successResult)
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
             )
 
             val actual = viewModel.getMailboxItems(
                 location,
-                "labelId923843",
+                labelId,
                 true,
                 "9238423bbe4h3423489wssdf",
                 false,
@@ -804,6 +807,7 @@ class MailboxViewModelTest : CoroutinesTest {
             val location = Constants.MessageLocationType.INBOX
             val inboxLocationId = "0"
             val archiveLocationId = "6"
+            val labelId = "labelId923844"
             val conversation = Conversation(
                 "conversationId9240",
                 "subject9237474",
@@ -821,14 +825,14 @@ class MailboxViewModelTest : CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, null) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, location, labelId, null) } returns flowOf(successResult)
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
             )
 
             val actual = viewModel.getMailboxItems(
                 location,
-                "labelId923844",
+                labelId,
                 true,
                 "9238423bbe4h3423489wssdf1",
                 false,

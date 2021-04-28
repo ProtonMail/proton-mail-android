@@ -34,7 +34,8 @@ class GetConversations @Inject constructor(
     operator fun invoke(
         userId: Id,
         location: MessageLocationType,
-        lastConversationTime: Long?
+        customLabelId: String?,
+        lastConversationTime: Long? = null
     ): Flow<GetConversationsResult> {
         val params = GetConversationsParameters(
             labelId = location.messageLocationTypeValue.toString(),
@@ -45,7 +46,9 @@ class GetConversations @Inject constructor(
         return conversationRepository.getConversations(params)
             .map { result ->
                 if (result is DataResult.Success) {
-                    return@map GetConversationsResult.Success(result.value)
+                    return@map GetConversationsResult.Success(
+                        filterConversationsByLocation(result.value, customLabelId, params.labelId)
+                    )
                 } else {
                     return@map GetConversationsResult.Error
                 }
@@ -63,5 +66,18 @@ class GetConversations @Inject constructor(
             oldestConversationTimestamp = lastConversationTime
         )
         conversationRepository.loadMore(params)
+    }
+
+    private fun filterConversationsByLocation(
+        conversations: List<Conversation>,
+        customLabelId: String?,
+        locationId: String
+    ): List<Conversation> {
+        return conversations.filter { conversation ->
+            customLabelId?.let { labelId ->
+                return@filter conversation.labels.any { it.id == labelId }
+            }
+            conversation.labels.any { it.id == locationId }
+        }
     }
 }

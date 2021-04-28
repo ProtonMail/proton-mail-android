@@ -22,6 +22,7 @@ package ch.protonmail.android.mailbox.domain
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.LabelContext
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -38,7 +39,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class GetConversationsTest : CoroutinesTest {
-
 
     private var userId = Id("id")
 
@@ -60,7 +60,7 @@ class GetConversationsTest : CoroutinesTest {
         val location = MessageLocationType.ARCHIVE
         coEvery { conversationRepository.getConversations(any()) } returns flowOf()
 
-        getConversations.invoke(userId, location, 1616496677)
+        getConversations.invoke(userId, location, null, 1616496677)
 
         val params = GetConversationsParameters(
             labelId = location.messageLocationTypeValue.toString(),
@@ -76,7 +76,7 @@ class GetConversationsTest : CoroutinesTest {
         val dataResult = DataResult.Success(ResponseSource.Remote, conversations)
         coEvery { conversationRepository.getConversations(any()) } returns flowOf(dataResult)
 
-        val actual = getConversations.invoke(userId, MessageLocationType.INBOX, null)
+        val actual = getConversations.invoke(userId, MessageLocationType.INBOX, null, null)
 
         val expected = GetConversationsResult.Success(conversations)
         assertEquals(expected, actual.first())
@@ -86,7 +86,7 @@ class GetConversationsTest : CoroutinesTest {
     fun getConversationsReturnsErrorWhenRepositoryFailsGettingConversations() = runBlockingTest {
         coEvery { conversationRepository.getConversations(any()) } returns flowOf(DataResult.Error.Local(null, null))
 
-        val actual = getConversations.invoke(userId, MessageLocationType.INBOX, 1616496670)
+        val actual = getConversations.invoke(userId, MessageLocationType.INBOX, null, 1616496670)
 
         val error = GetConversationsResult.Error
         assertEquals(error, actual.first())
@@ -97,7 +97,7 @@ class GetConversationsTest : CoroutinesTest {
         val location = MessageLocationType.ARCHIVE
         coEvery { conversationRepository.getConversations(any()) } returns flowOf()
 
-        getConversations.invoke(userId, location, null)
+        getConversations.invoke(userId, location, null, null)
 
         val params = GetConversationsParameters(
             labelId = location.messageLocationTypeValue.toString(),
@@ -107,17 +107,72 @@ class GetConversationsTest : CoroutinesTest {
         coVerify { conversationRepository.getConversations(params) }
     }
 
+    @Test
+    fun getConversationsWithInputLocationArchiveReturnsOnlyConversationsThatAreArchived() = runBlockingTest {
+        val archivedConversation = buildRandomConversation().copy(
+            id = "archivedConversationID123423",
+            labels = listOf(inboxLabelContext(), archiveLabelContext())
+        )
+        val inboxConversation = buildRandomConversation().copy(
+            labels = listOf(inboxLabelContext())
+        )
+        val conversations = listOf(inboxConversation, archivedConversation)
+        val dataResult = DataResult.Success(ResponseSource.Local, conversations)
+        coEvery { conversationRepository.getConversations(any()) } returns flowOf(dataResult)
 
-    private fun buildRandomConversation() = Conversation(
-        UUID.randomUUID().toString(),
-        "Conversation subject",
-        listOf(),
-        listOf(),
-        5,
-        2,
-        1,
-        0,
-        listOf(),
-        listOf()
-    )
+        val result: GetConversationsResult = getConversations.invoke(
+            userId, MessageLocationType.ARCHIVE, null, null
+        ).first()
+
+        val actualConversations = (result as GetConversationsResult.Success).conversations
+        assertEquals(listOf(archivedConversation), actualConversations)
+    }
+
+    @Test
+    fun getConversationsWithInputLocationLabelReturnsOnlyConversationsWithTheCustomLabelApplied() = runBlockingTest {
+        val customLabelId = "82384828348"
+        val customLabelConversation = buildRandomConversation().copy(
+            id = "conversationWithCustomLabel283842",
+            labels = listOf(inboxLabelContext(), customLabelContext(customLabelId))
+        )
+        val inboxConversation = buildRandomConversation().copy(
+            labels = listOf(inboxLabelContext(), archiveLabelContext())
+        )
+        val conversations = listOf(inboxConversation, customLabelConversation)
+        val dataResult = DataResult.Success(ResponseSource.Local, conversations)
+        coEvery { conversationRepository.getConversations(any()) } returns flowOf(dataResult)
+
+        val result: GetConversationsResult = getConversations.invoke(
+            userId,
+            MessageLocationType.LABEL,
+            customLabelId,
+            null
+        ).first()
+
+        val actualConversations = (result as GetConversationsResult.Success).conversations
+        assertEquals(listOf(customLabelConversation), actualConversations)
+    }
+
+    private fun customLabelContext(labelId: String) = LabelContext(labelId, 0, 0, 0L, 0, 0)
+
+    private fun inboxLabelContext() =
+        LabelContext(MessageLocationType.INBOX.messageLocationTypeValue.toString(), 0, 0, 0L, 0, 0)
+
+    private fun archiveLabelContext() =
+        LabelContext(MessageLocationType.ARCHIVE.messageLocationTypeValue.toString(), 0, 0, 0L, 0, 0)
+
+    private fun buildRandomConversation(): Conversation {
+        return Conversation(
+            UUID.randomUUID().toString(),
+            "Conversation subject",
+            listOf(),
+            listOf(),
+            5,
+            2,
+            1,
+            0,
+            listOf(inboxLabelContext()),
+            listOf()
+        )
+    }
 }
