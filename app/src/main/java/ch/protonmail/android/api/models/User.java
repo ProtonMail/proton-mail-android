@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import arrow.core.Either;
-import arrow.core.Either.Left;
 import arrow.core.Either.Right;
 import ch.protonmail.android.R;
 import ch.protonmail.android.api.models.address.Address;
@@ -46,6 +45,7 @@ import ch.protonmail.android.feature.user.UserManagerKt;
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.usecase.LoadUser;
+import me.proton.core.crypto.common.keystore.KeyStoreCrypto;
 import me.proton.core.network.domain.ApiException;
 import me.proton.core.user.domain.UserManager;
 import timber.log.Timber;
@@ -99,6 +99,7 @@ public class User {
     private int credit;
     private int isPrivate;
     private int services;
+    private byte[] passphrase;
 
     private List<Keys> keys;
     private List<Address> addresses;
@@ -140,13 +141,13 @@ public class User {
     @NonNull
     @Deprecated
     @kotlin.Deprecated(message = "Use usecase/LoadLegacyUser")
-    public static Either<LoadUser.Error, User> load(Id userId, Context context, UserManager userManager) {
+    public static Either<LoadUser.Error, User> load(Id userId, Context context, UserManager userManager, KeyStoreCrypto keyStoreCrypto) {
         final SharedPreferences securePrefs = SecureSharedPreferences.Companion.getPrefsForUser(context, userId);
 
         User user;
 
         try {
-            user = loadFromCore(userId, securePrefs, userManager);
+            user = loadFromCore(userId, securePrefs, userManager, keyStoreCrypto);
         } catch (ApiException exception) {
             Timber.e(exception);
             user = loadFromPrefs(userId, securePrefs);
@@ -155,7 +156,7 @@ public class User {
         return new Right(user);
     }
 
-    private static User loadFromCore(Id userId, SharedPreferences securePrefs, UserManager userManager) throws ApiException {
+    private static User loadFromCore(Id userId, SharedPreferences securePrefs, UserManager userManager, KeyStoreCrypto keyStoreCrypto) throws ApiException {
         // Core UserManager (UserRepository & UserAddressRepository) have a memory cache.
         // Core UserManager will only do a network call if no data exist.
 
@@ -188,6 +189,8 @@ public class User {
         user.defaultAddressId = primaryAddress.getAddressId().getId();
         user.defaultAddressEmail = primaryAddress.getEmail();
         user.addresses = addresses;
+
+        user.passphrase = UserManagerKt.getMailboxPassword(coreUser, keyStoreCrypto);
 
         loadLocalSettings(user, securePrefs);
 
@@ -439,6 +442,10 @@ public class User {
 
     public int getServices() {
         return services;
+    }
+
+    public byte[] getPassphrase() {
+        return passphrase;
     }
 
     public boolean isPaidUser() {

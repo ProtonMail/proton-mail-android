@@ -59,6 +59,7 @@ class FetchUserInfoWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val userManager: UserManager,
+    private val oldUserManager: ch.protonmail.android.core.UserManager
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -66,7 +67,9 @@ class FetchUserInfoWorker @AssistedInject constructor(
             ?: return Result.failure(workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty user id"))
 
         return runCatching {
-            userManager.getUser(UserId(userIdString), refresh = true)
+            userManager.getUser(UserId(userIdString), refresh = true).also {
+                oldUserManager.clearCache()
+            }
         }.map { user ->
             workDataOf(FETCH_USER_INFO_WORKER_RESULT to (user.delinquent != Delinquent.None))
         }.fold(

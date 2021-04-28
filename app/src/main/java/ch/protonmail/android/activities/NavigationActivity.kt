@@ -351,7 +351,7 @@ abstract class NavigationActivity :
             lifecycleScope.launchWhenCreated {
                 val accounts = accountViewModel.getSortedAccounts().first().map { account ->
                     val id = Id(account.userId.id)
-                    val user = userManager.getUserOrNull(id)
+                    val user = userManager.getLegacyUserOrNull(id)
                     account.toDrawerUser(account.isReady(), counters[id] ?: 0, user)
                 }
                 accountsAdapter.items = accounts + DrawerUserModel.Footer

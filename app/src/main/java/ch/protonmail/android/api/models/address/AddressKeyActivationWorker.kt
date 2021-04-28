@@ -33,7 +33,6 @@ import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.Addresses
 import ch.protonmail.android.domain.entity.user.UserKeys
-import ch.protonmail.android.feature.user.getMailboxPassword
 import ch.protonmail.android.mapper.bridge.AddressBridgeMapper
 import ch.protonmail.android.usecase.crypto.GenerateTokenAndSignature
 import ch.protonmail.android.utils.crypto.OpenPGP
@@ -68,7 +67,7 @@ class AddressKeyActivationWorker @AssistedInject constructor(
 
         val userIdString = inputData.getString(KEY_INPUT_DATA_USER_ID) ?: return@withContext Result.failure()
         val userId = Id(userIdString)
-        val mailboxPassword = userManager.getMailboxPassword(userId) ?: return@withContext Result.failure()
+        val mailboxPassword = userManager.getUserPassphrase(userId)
 
         Timber.v("AddressKeyActivationWorker started with user: ${userId.s}")
 

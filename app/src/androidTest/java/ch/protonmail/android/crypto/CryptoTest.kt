@@ -20,13 +20,11 @@ package ch.protonmail.android.crypto
 
 import android.text.TextUtils
 import androidx.test.filters.LargeTest
-import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.feature.user.getMailboxPasswordBlocking
 import ch.protonmail.android.mapper.bridge.AddressKeyBridgeMapper
 import ch.protonmail.android.mapper.bridge.AddressKeysBridgeMapper
 import ch.protonmail.android.mapper.bridge.UserKeyBridgeMapper
@@ -739,7 +737,7 @@ internal class CryptoTest {
             every { keys } returns oneAddressKeyAddressKeys
         }
         every { userManagerMock.getLegacyUserBlocking(oneAddressKeyUserId) } returns oneKeyUserMock
-        every { userManagerMock.getMailboxPasswordBlocking(oneAddressKeyUserId) } returns oneAddressKeyMailboxPassword.toByteArray()
+        every { userManagerMock.getUserPassphraseBlocking(oneAddressKeyUserId) } returns oneAddressKeyMailboxPassword.toByteArray()
 
         // many address keys
         every { manyAddressKeysUserMock.keys } returns manyAddressKeysUserKeys
@@ -747,12 +745,12 @@ internal class CryptoTest {
             every { keys } returns manyAddressKeysAddressKeys
         }
         every { userManagerMock.getLegacyUserBlocking(manyAddressKeysUserId) } returns manyAddressKeysUserMock
-        every { userManagerMock.getMailboxPasswordBlocking(manyAddressKeysUserId) } returns manyAddressKeysMailboxPassword.toByteArray()
+        every { userManagerMock.getUserPassphraseBlocking(manyAddressKeysUserId) } returns manyAddressKeysMailboxPassword.toByteArray()
 
         // token and signature generation
         every { userManagerMock.currentUserId } returns tokenAndSignatureUserId
         every { userManagerMock.requireCurrentUserId() } returns tokenAndSignatureUserId
-        every { userManagerMock.getMailboxPasswordBlocking(tokenAndSignatureUserId) } returns passphrase
+        every { userManagerMock.getUserPassphraseBlocking(tokenAndSignatureUserId) } returns passphrase
         every { openPgpMock.randomToken() } returns randomToken
     }
 

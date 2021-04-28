@@ -78,7 +78,7 @@ class AccountManagerActivity : BaseActivity() {
             .onEach { (sortedAccounts, primaryUserId) ->
                 val accounts = sortedAccounts.map { account ->
                     val id = Id(account.userId.id)
-                    val user = userManager.getUserOrNull(id)
+                    val user = userManager.getLegacyUserOrNull(id)
                     account.toUiModel(account.isReady(), account.userId == primaryUserId, user)
                 }
                 accountsAdapter.items = accounts + DrawerUserModel.AccFooter

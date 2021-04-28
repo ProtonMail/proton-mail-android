@@ -42,14 +42,11 @@ import ch.protonmail.android.utils.extensions.obfuscateUsername
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
-import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.domain.entity.UserId
-import me.proton.core.user.domain.UserManager
 import me.proton.core.util.android.sharedpreferences.clearAll
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.minusAssign
@@ -72,7 +69,6 @@ private const val PREF_IS_FIRST_MAILBOX_LOAD_AFTER_LOGIN = "is_first_mailbox_loa
 const val PREF_SHOW_STORAGE_LIMIT_WARNING = "show_storage_limit_warning"
 const val PREF_SHOW_STORAGE_LIMIT_REACHED = "show_storage_limit_reached"
 private const val PREF_IS_FIRST_MESSAGE_DETAILS = "is_first_message_details"
-private const val PREF_APP_VERSION = "app_version"
 private const val PREF_ENGAGEMENT_SHOWN = "engagement_shown"
 // endregion
 
@@ -83,8 +79,6 @@ private const val PREF_ENGAGEMENT_SHOWN = "engagement_shown"
 @Singleton
 class UserManager @Inject constructor(
     private val context: Context,
-    internal val coreUserManager: UserManager,
-    internal val coreKeyStoreCrypto: KeyStoreCrypto,
     private val coreAccountManager: AccountManager,
     private val loadUser: LoadUser,
     private val loadLegacyUser: LoadLegacyUser,
@@ -100,6 +94,9 @@ class UserManager @Inject constructor(
     @AppCoroutineScope private val scope: CoroutineScope
 ) {
     private val app: ProtonMailApplication = context.app
+
+    private val cachedLegacyUsers = mutableMapOf<Id, User>()
+    private val cachedUsers = mutableMapOf<Id, NewUser>()
 
     private var refreshPrimary = MutableSharedFlow<Unit>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
@@ -131,11 +128,15 @@ class UserManager @Inject constructor(
         get() = primaryUser.value
 
     /**
-     * Force Refresh for [currentUserId], [currentLegacyUser] and [currentUser].
+     * Clear users cache and refresh [currentUserId], [currentLegacyUser] and [currentUser].
      *
      * Note: This is a workaround to use when User/Address/Key are updated.
      */
-    fun refreshCurrent() = refreshPrimary.tryEmit(Unit)
+    fun clearCache() {
+        cachedLegacyUsers.clear()
+        cachedUsers.clear()
+        refreshPrimary.tryEmit(Unit)
+    }
 
     fun requireCurrentUserId(): Id = checkNotNull(currentUserId)
 
@@ -149,17 +150,21 @@ class UserManager @Inject constructor(
 
     // region User/NewUser by Id
 
-    suspend fun getUserOrNull(userId: Id): User? = withContext(dispatchers.Io) {
-        runCatching { getLegacyUser(userId) }.getOrNull()
+    suspend fun getLegacyUser(userId: Id): User = cachedLegacyUsers.getOrPut(userId) {
+        withContext(dispatchers.Io) {
+            loadLegacyUser(userId).orThrow()
+        }
     }
 
-    suspend fun getLegacyUser(userId: Id): User = withContext(dispatchers.Io) {
-        loadLegacyUser(userId).orThrow()
+    suspend fun getUser(userId: Id): NewUser = cachedUsers.getOrPut(userId) {
+        withContext(dispatchers.Io) {
+            loadUser(userId).orThrow()
+        }
     }
 
-    suspend fun getUser(userId: Id): NewUser = withContext(dispatchers.Io) {
-        loadUser(userId).orThrow()
-    }
+    suspend fun getLegacyUserOrNull(userId: Id): User? = runCatching {
+        getLegacyUser(userId)
+    }.getOrNull()
 
     fun getLegacyUserBlocking(userId: Id) = runBlocking {
         getLegacyUser(userId)
@@ -168,6 +173,15 @@ class UserManager @Inject constructor(
     fun getUserBlocking(userId: Id): NewUser = runBlocking {
         getUser(userId)
     }
+
+    suspend fun getUserPassphrase(userId: Id): ByteArray =
+        getLegacyUser(userId).passphrase
+
+    fun getUserPassphraseBlocking(userId: Id): ByteArray =
+        getLegacyUserBlocking(userId).passphrase
+
+    fun getCurrentUserPassphrase(): ByteArray? =
+        currentLegacyUser?.passphrase
 
     // endregion
 

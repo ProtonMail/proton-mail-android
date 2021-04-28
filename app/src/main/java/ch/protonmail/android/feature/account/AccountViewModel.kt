@@ -29,6 +29,7 @@ import ch.protonmail.android.api.segments.event.EventManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.PREF_PIN
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.feature.user.waitPrimaryKeyPassphraseAvailable
 import ch.protonmail.android.usecase.delete.ClearUserData
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
@@ -37,8 +38,6 @@ import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
@@ -63,11 +62,8 @@ import me.proton.core.accountmanager.presentation.onSessionHumanVerificationNeed
 import me.proton.core.accountmanager.presentation.onSessionSecondFactorNeeded
 import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.auth.presentation.onLoginResult
-import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
-import me.proton.core.key.domain.extension.primary
 import me.proton.core.user.domain.UserManager
-import me.proton.core.user.domain.entity.User
 
 class AccountViewModel @ViewModelInject constructor(
     private val accountManager: AccountManager,
@@ -219,13 +215,6 @@ class AccountViewModel @ViewModelInject constructor(
     }
 
     private suspend fun onAccountReady(account: Account) {
-        // Workaround: Wait getPrimaryUserId != null (see oldUserManager.primaryUserId).
-        getPrimaryUserId().first { it != null }
-        // Workaround: Wait the primary key is unlocked before proceeding.
-        userManager.getUserFlow(account.userId)
-            .filterIsInstance<DataResult.Success<User>>()
-            .filterNot { it.value.keys.primary()?.privateKey?.isLocked ?: true }
-            .first()
         // Only initialize user once.
         val userId = Id(account.userId.id)
         val prefs = oldUserManager.preferencesFor(userId)
@@ -236,6 +225,12 @@ class AccountViewModel @ViewModelInject constructor(
                 // See DatabaseFactory.usernameForUserId.
                 putString(Constants.Prefs.PREF_USER_NAME, account.username)
             }
+            // Workaround: Wait getPrimaryUserId != null (see oldUserManager.primaryUserId).
+            getPrimaryUserId().first { it != null }
+            // Workaround: Wait the primary key passphrase before proceeding.
+            userManager.waitPrimaryKeyPassphraseAvailable(account.userId)
+            // Workaround: Make sure this uninitialized User is fresh.
+            oldUserManager.clearCache()
             // Launch Initial Data Fetch.
             launchInitialDataFetch.invoke(
                 userId = userId,

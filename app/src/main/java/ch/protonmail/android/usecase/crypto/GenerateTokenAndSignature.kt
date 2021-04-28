@@ -21,7 +21,6 @@ package ch.protonmail.android.usecase.crypto
 
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.user.UserKey
-import ch.protonmail.android.feature.user.getCurrentUserMailboxPassword
 import ch.protonmail.android.utils.crypto.OpenPGP
 import com.proton.gopenpgp.crypto.Crypto
 import javax.inject.Inject
@@ -36,7 +35,7 @@ class GenerateTokenAndSignature @Inject constructor (
         val tokenString = secret.joinToString("") { String.format("%02x", (it.toInt() and 0xff)) }
         val binMessage = Crypto.newPlainMessageFromString(tokenString)
         val armoredPrivateKey: String? = user?.keys?.primaryKey?.privateKey?.string
-        val mailboxPassword = userManager.getCurrentUserMailboxPassword()
+        val mailboxPassword = userManager.getCurrentUserPassphrase()
         val unlockedUserKey = Crypto.newKeyFromArmored(armoredPrivateKey).unlock(mailboxPassword)
         val tokenKeyRing = Crypto.newKeyRing(unlockedUserKey)
 
