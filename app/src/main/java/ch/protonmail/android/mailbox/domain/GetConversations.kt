@@ -36,20 +36,23 @@ class GetConversations @Inject constructor(
         location: MessageLocationType,
         customLabelId: String?
     ): Flow<GetConversationsResult> {
+        val locationId = customLabelId ?: location.messageLocationTypeValue.toString()
         val params = GetConversationsParameters(
-            labelId = location.messageLocationTypeValue.toString(),
+            locationId = locationId,
             userId = userId,
             oldestConversationTimestamp = null
         )
 
         return conversationRepository.getConversations(params)
             .map { result ->
-                if (result is DataResult.Success) {
-                    return@map GetConversationsResult.Success(
-                        filterConversationsByLocation(result.value, customLabelId, params.labelId)
+                return@map if (result is DataResult.Success) {
+                    GetConversationsResult.Success(
+                        result.value.filter { conversation ->
+                            conversation.labels.any { it.id == params.locationId }
+                        }
                     )
                 } else {
-                    return@map GetConversationsResult.Error
+                    GetConversationsResult.Error
                 }
             }
     }
@@ -60,23 +63,11 @@ class GetConversations @Inject constructor(
         lastConversationTime: Long
     ) {
         val params = GetConversationsParameters(
-            labelId = location.messageLocationTypeValue.toString(),
+            locationId = location.messageLocationTypeValue.toString(),
             userId = userId,
             oldestConversationTimestamp = lastConversationTime
         )
         conversationRepository.loadMore(params)
     }
 
-    private fun filterConversationsByLocation(
-        conversations: List<Conversation>,
-        customLabelId: String?,
-        locationId: String
-    ): List<Conversation> {
-        return conversations.filter { conversation ->
-            customLabelId?.let { labelId ->
-                return@filter conversation.labels.any { it.id == labelId }
-            }
-            conversation.labels.any { it.id == locationId }
-        }
-    }
 }

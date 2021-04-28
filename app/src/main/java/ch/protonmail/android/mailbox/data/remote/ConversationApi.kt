@@ -28,7 +28,7 @@ class ConversationApi(private val service: ConversationService) : BaseApi(), Con
         service.fetchConversations(
             params.oldestConversationTimestamp,
             params.pageSize,
-            params.labelId,
+            params.locationId,
             userIdTag = UserIdTag(params.userId)
         )
 }

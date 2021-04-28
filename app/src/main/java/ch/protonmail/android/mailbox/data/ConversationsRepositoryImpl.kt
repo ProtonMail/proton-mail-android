@@ -77,7 +77,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationDao.getConversations(params.userId.s).map { list ->
             list.sortedWith(
                 compareByDescending<ConversationDatabaseModel> { conversation ->
-                    conversation.labels.find { label -> label.id == params.labelId }?.contextTime
+                    conversation.labels.find { label -> label.id == params.locationId }?.contextTime
                 }.thenByDescending { it.order }
             ).toDomainModelList()
         }

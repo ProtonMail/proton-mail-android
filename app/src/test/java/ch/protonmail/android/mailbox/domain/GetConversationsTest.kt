@@ -63,9 +63,9 @@ class GetConversationsTest : CoroutinesTest {
         getConversations.invoke(userId, location, null)
 
         val params = GetConversationsParameters(
-            labelId = location.messageLocationTypeValue.toString(),
+            locationId = location.messageLocationTypeValue.toString(),
             userId = userId,
-            oldestConversationTimestamp = 1616496677
+            oldestConversationTimestamp = null
         )
         coVerify { conversationRepository.getConversations(params) }
     }
@@ -100,7 +100,7 @@ class GetConversationsTest : CoroutinesTest {
         getConversations.invoke(userId, location, null)
 
         val params = GetConversationsParameters(
-            labelId = location.messageLocationTypeValue.toString(),
+            locationId = location.messageLocationTypeValue.toString(),
             userId = userId,
             oldestConversationTimestamp = null
         )

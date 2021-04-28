@@ -158,7 +158,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         runBlockingTest {
             // given
             val parameters = GetConversationsParameters(
-                labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+                locationId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
                 userId = testUserId,
                 oldestConversationTimestamp = 1616496670,
                 pageSize = 2
@@ -180,7 +180,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
             // given
             val parameters = GetConversationsParameters(
-                labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+                locationId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
                 userId = testUserId,
                 oldestConversationTimestamp = 1616496670,
                 pageSize = 5,
@@ -203,7 +203,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         runBlocking {
             // given
             val parameters = GetConversationsParameters(
-                labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+                locationId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
                 userId = testUserId,
                 oldestConversationTimestamp = 1616496670,
                 pageSize = 5
@@ -229,7 +229,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     fun verifyGetConversationsEmitErrorWhenFetchingDataFromApiWasNotSuccessful() = runBlocking {
         // given
         val parameters = GetConversationsParameters(
-            labelId = "8234",
+            locationId = "8234",
             userId = testUserId,
             oldestConversationTimestamp = 823848238
         )
@@ -253,7 +253,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     fun verifyGetConversationsReturnsLocalDataWhenFetchingFromApiFails() = runBlocking {
         // given
         val parameters = GetConversationsParameters(
-            labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+            locationId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
             userId = testUserId,
             oldestConversationTimestamp = 1616496670,
             pageSize = 5
