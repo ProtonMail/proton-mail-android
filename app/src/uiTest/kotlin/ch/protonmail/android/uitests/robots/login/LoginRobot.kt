@@ -20,15 +20,13 @@ package ch.protonmail.android.uitests.robots.login
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import ch.protonmail.android.uitests.testsHelper.User
-import ch.protonmail.android.uitests.testsHelper.uiactions.click
-import ch.protonmail.android.uitests.testsHelper.uiactions.insert
+import me.proton.core.test.android.instrumented.CoreRobot
 
 /**
  * [LoginRobot] class contains actions and verifications for login functionality.
  */
-class LoginRobot {
+class LoginRobot : CoreRobot {
 
     fun loginUser(user: User): InboxRobot {
         return username(user.name)
@@ -50,7 +48,7 @@ class LoginRobot {
     }
 
     private fun signIn(): InboxRobot {
-        UIActions.allOf.clickViewWithIdAndText(signInButtonId, R.string.sign_in)
+        view.withId(signInButtonId).withText(R.string.sign_in).click()
         return InboxRobot()
     }
 
@@ -65,12 +63,12 @@ class LoginRobot {
     }
 
     private fun username(name: String): LoginRobot {
-        UIActions.id.insertTextIntoFieldWithId(R.id.username, name)
+        view.withId(R.id.username).replaceText(name)
         return this
     }
 
     private fun password(password: String): LoginRobot {
-        UIActions.id.insertTextIntoFieldWithId(R.id.password, password)
+        view.withId(R.id.password).replaceText(password)
         return this
     }
 
@@ -90,17 +88,17 @@ class LoginRobot {
         }
 
         private fun confirm2Fa(): InboxRobot {
-            UIActions.wait.forViewWithId(android.R.id.button1).click()
+            view.withId(android.R.id.button1).click()
             return InboxRobot()
         }
 
         private fun confirm2FaMailbox(): MailboxPasswordRobot {
-            UIActions.wait.untilViewWithIdEnabled(android.R.id.button1).click()
+            view.withId(android.R.id.button1).click()
             return MailboxPasswordRobot()
         }
 
         private fun twoFaCode(twoFaCode: String): TwoFaRobot {
-            UIActions.wait.forViewWithId(twoFactorEditTextId).insert(twoFaCode)
+            view.withId(twoFactorEditTextId).replaceText(twoFaCode)
             return this
         }
     }
@@ -108,10 +106,10 @@ class LoginRobot {
     /**
      * Contains all the validations that can be performed by [LoginRobot].
      */
-    class Verify {
+    class Verify : CoreRobot {
 
         fun loginScreenDisplayed(): LoginRobot {
-            UIActions.wait.forViewWithId(signInButtonId)
+            view.withId(signInButtonId).wait().checkDisplayed()
             return LoginRobot()
         }
     }

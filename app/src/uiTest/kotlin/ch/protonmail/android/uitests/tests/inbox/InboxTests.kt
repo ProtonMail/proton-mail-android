@@ -92,8 +92,7 @@ class InboxTests : BaseTest() {
     @TestId("1487")
     @Test
     fun receiveMessageWithAttachmentOnPmMe() {
-        loginRobot
-            .loginUser(onePassUser)
+        inboxRobot
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -135,8 +134,7 @@ class InboxTests : BaseTest() {
     @TestId("1307")
     @Test
     fun receiveMessageFromPMUser() {
-        loginRobot
-            .loginUser(onePassUser)
+        inboxRobot
             .menuDrawer()
             .accountsList()
             .manageAccounts()

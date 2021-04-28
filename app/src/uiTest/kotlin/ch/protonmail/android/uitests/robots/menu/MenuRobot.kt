@@ -36,16 +36,15 @@ import ch.protonmail.android.uitests.robots.reportbugs.ReportBugsRobot
 import ch.protonmail.android.uitests.robots.settings.SettingsRobot
 import ch.protonmail.android.uitests.robots.upgradedonate.UpgradeDonateRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
-import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
-import ch.protonmail.android.uitests.testsHelper.uiactions.click
+import me.proton.core.test.android.instrumented.CoreRobot
 
 /**
  * [MenuRobot] class contains actions and verifications for menu functionality.
  */
-class MenuRobot {
+class MenuRobot : CoreRobot {
 
     fun archive(): ArchiveRobot {
-        UIActions.wait.forViewWithId(R.id.left_drawer_navigation)
+        view.withId(R.id.left_drawer_navigation).wait()
         selectMenuItem(archiveText)
         return ArchiveRobot()
     }
@@ -61,7 +60,7 @@ class MenuRobot {
     }
 
     fun inbox(): InboxRobot {
-        UIActions.wait.forViewWithId(R.id.left_drawer_navigation)
+        view.withId(R.id.left_drawer_navigation).wait()
         selectMenuItem(inboxText)
         return InboxRobot()
     }
@@ -97,7 +96,7 @@ class MenuRobot {
     }
 
     fun closeMenuWithSwipe(): MenuRobot {
-        UIActions.id.swipeLeftViewWithId(R.id.activeUserDetails)
+        view.withId(R.id.activeUserDetails).swipeLeft()
         return this
     }
 
@@ -108,28 +107,40 @@ class MenuRobot {
 
 
     fun accountsList(): MenuAccountListRobot {
-        UIActions.wait.forViewWithId(R.id.drawerHeaderView).click()
+        view.withId(R.id.drawerHeaderView).click()
         return MenuAccountListRobot()
     }
 
     fun closeAccountsList(): MenuRobot {
-        UIActions.id.clickViewWithId(R.id.drawerHeaderView)
+        view.withId(R.id.drawerHeaderView).click()
         return MenuRobot()
     }
 
-    private fun selectMenuItem(@IdRes menuItemName: String) = UIActions.recyclerView
-        .common.clickOnRecyclerViewMatchedItem(leftDrawerNavigationId, withMenuItemTag(menuItemName))
+    private fun selectMenuItem(@IdRes menuItemName: String) {
+        recyclerView
+            .withId(leftDrawerNavigationId)
+            .waitUntilPopulated()
+            .onHolderItem(withMenuItemTag(menuItemName))
+            .click()
+    }
 
-    private fun selectMenuLabelOrFolder(@IdRes labelOrFolderName: String) = UIActions.recyclerView
-        .common.clickOnRecyclerViewMatchedItem(leftDrawerNavigationId, withLabelOrFolderName(labelOrFolderName))
+    private fun selectMenuLabelOrFolder(@IdRes labelOrFolderName: String) {
+        recyclerView
+            .withId(leftDrawerNavigationId)
+            .waitUntilPopulated()
+            .onHolderItem(withLabelOrFolderName(labelOrFolderName))
+            .click()
+    }
+
 
     /**
      * Contains all the validations that can be performed by [MenuRobot].
      */
-    class Verify {
-        fun menuOpened() = UIActions.check.viewWithIdIsDisplayed(leftDrawerNavigationId)
+    class Verify : CoreRobot {
 
-        fun menuClosed() = UIActions.check.viewWithIdIsNotDisplayed(leftDrawerNavigationId)
+        fun menuOpened() = view.withId(leftDrawerNavigationId).wait()
+
+        fun menuClosed() = view.withId(leftDrawerNavigationId).checkNotDisplayed()
     }
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
@@ -140,17 +151,25 @@ class MenuRobot {
     open inner class MenuAccountListRobot {
 
         fun manageAccounts(): AccountManagerRobot {
-            UIActions.wait.forViewWithId(R.id.manageAccounts).click()
+            view.withId(R.id.manageAccounts).click()
             return AccountManagerRobot()
         }
 
         fun switchToAccount(accountPosition: Int): MenuRobot {
-            UIActions.recyclerView.common.clickOnRecyclerViewItemByPosition(menuDrawerUserList, accountPosition)
+            recyclerView
+                .withId(menuDrawerUserList)
+                .waitUntilPopulated()
+                .onItemAtPosition(accountPosition)
+                .click()
             return MenuRobot()
         }
 
         fun switchToAccount(email: String): MenuRobot {
-            UIActions.recyclerView.common.clickOnRecyclerViewMatchedItem(menuDrawerUserList, withAccountEmailInDrawer(email))
+            recyclerView
+                .withId(menuDrawerUserList)
+                .waitUntilPopulated()
+                .onHolderItem(withAccountEmailInDrawer(email))
+                .click()
             return MenuRobot()
         }
 
@@ -158,16 +177,26 @@ class MenuRobot {
          * Contains all the validations that can be performed by [MenuAccountListRobot].
          */
         inner class Verify {
-            fun accountsListOpened() = UIActions.check.viewWithIdIsDisplayed(menuDrawerUserList)
 
-            fun accountAdded(email: String) = UIActions.recyclerView
-                .common.scrollToRecyclerViewMatchedItem(menuDrawerUserList, withAccountEmailInDrawer(email))
+            fun accountsListOpened() = view.withId(menuDrawerUserList).wait()
 
-            fun accountLoggedOut(email: String) = UIActions.recyclerView
-                .common.scrollToRecyclerViewMatchedItem(menuDrawerUserList, withLoggedOutAccountNameInDrawer(email))
+            fun accountAdded(email: String) {
+                recyclerView
+                    .withId(menuDrawerUserList)
+                    .waitUntilPopulated()
+                    .scrollToHolder(withAccountEmailInDrawer(email))
+            }
 
-            fun accountRemoved(username: String) = UIActions.check
-                .viewWithIdAndTextDoesNotExist(menuDrawerUsernameId, username)
+            fun accountLoggedOut(email: String) {
+                recyclerView
+                    .withId(menuDrawerUsernameId)
+                    .waitUntilPopulated()
+                    .scrollToHolder(withLoggedOutAccountNameInDrawer(email))
+            }
+
+            fun accountRemoved(username: String) {
+                view.withId(menuDrawerUsernameId).withText(username).checkDoesNotExist()
+            }
         }
 
         inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
