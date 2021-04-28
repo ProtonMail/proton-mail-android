@@ -27,6 +27,7 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.MessageBodyFileManager
+import com.birbit.android.jobqueue.JobManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -60,13 +61,16 @@ class MessageRepositoryTest {
     private val protonMailApiManager: ProtonMailApiManager = mockk()
 
     private val userManager: UserManager = mockk()
+    
+    private val jobManager: JobManager = mockk()
 
     private val messageRepository = MessageRepository(
         TestDispatcherProvider,
         databaseProvider,
         protonMailApiManager,
         messageBodyFileManager,
-        userManager
+        userManager,
+        jobManager
     )
 
     @Test

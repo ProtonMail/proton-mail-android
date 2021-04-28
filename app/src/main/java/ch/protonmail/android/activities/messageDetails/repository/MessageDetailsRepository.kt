@@ -397,30 +397,31 @@ class MessageDetailsRepository @Inject constructor(
 
     suspend fun findAllLabelsWithIds(
         message: Message,
-        checkedLabelIds: MutableList<String>,
+        checkedLabelIds: List<String>,
         labels: List<Label>,
         isTransient: Boolean
     ) {
         val labelsToRemove = ArrayList<String>()
         val jobList = ArrayList<Job>()
         val messageId = message.messageId
+        val mutableLabelIds = checkedLabelIds.toMutableList()
         for (label in labels) {
             val labelId = label.id
             val exclusive = label.exclusive
-            if (!checkedLabelIds.contains(labelId) && !exclusive) {
+            if (!mutableLabelIds.contains(labelId) && !exclusive) {
                 // this label should be removed
                 labelsToRemove.add(labelId)
                 jobList.add(RemoveLabelJob(listOf(messageId), labelId))
-            } else if (checkedLabelIds.contains(labelId)) {
+            } else if (mutableLabelIds.contains(labelId)) {
                 // the label remains
-                checkedLabelIds.remove(labelId)
+                mutableLabelIds.remove(labelId)
             }
         }
         // what remains are the new labels
-        val applyLabelsJobs = checkedLabelIds.map { ApplyLabelJob(listOf(messageId), it) }
+        val applyLabelsJobs = mutableLabelIds.map { ApplyLabelJob(listOf(messageId), it) }
         jobList.addAll(applyLabelsJobs)
         // update the message with the new labels
-        message.addLabels(checkedLabelIds)
+        message.addLabels(mutableLabelIds)
         message.removeLabels(labelsToRemove)
 
         jobList.forEach(jobManager::addJobInBackground)

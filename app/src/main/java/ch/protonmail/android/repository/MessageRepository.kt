@@ -25,7 +25,13 @@ import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.jobs.MoveToFolderJob
+import ch.protonmail.android.jobs.PostArchiveJob
+import ch.protonmail.android.jobs.PostInboxJob
+import ch.protonmail.android.jobs.PostSpamJob
+import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.utils.MessageBodyFileManager
+import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -42,7 +48,8 @@ class MessageRepository @Inject constructor(
     private val databaseProvider: DatabaseProvider,
     private val protonMailApiManager: ProtonMailApiManager,
     private val messageBodyFileManager: MessageBodyFileManager,
-    private val userManager: UserManager
+    private val userManager: UserManager,
+    private val jobManager: JobManager
 ) {
 
     private suspend fun findMessage(userId: Id, messageId: String): Message? =
@@ -125,4 +132,38 @@ class MessageRepository @Inject constructor(
                 getMessageMetadata(userId, messageId)
             }
         }
+
+    fun moveToTrash(messageIds: List<String>, currentFolderLabelId: String) {
+        jobManager.addJobInBackground(
+            PostTrashJobV2(
+                messageIds,
+                listOf(currentFolderLabelId),
+                currentFolderLabelId // TODO: Think why is this parameter needed here?
+            )
+        )
+    }
+
+    fun moveToArchive(messageIds: List<String>, currentFolderLabelId: String) {
+        jobManager.addJobInBackground(
+            PostArchiveJob(messageIds, listOf(currentFolderLabelId))
+        )
+    }
+
+    fun moveToInbox(messageIds: List<String>, currentFolderLabelId: String) {
+        jobManager.addJobInBackground(
+            PostInboxJob(messageIds, listOf(currentFolderLabelId))
+        )
+    }
+
+    fun moveToSpam(messageIds: List<String>) {
+        jobManager.addJobInBackground(
+            PostSpamJob(messageIds)
+        )
+    }
+
+    fun moveToCustomFolderLocation(messageIds: List<String>, newFolderLocationId: String) {
+        jobManager.addJobInBackground(
+            MoveToFolderJob(messageIds, newFolderLocationId)
+        )
+    }
 }

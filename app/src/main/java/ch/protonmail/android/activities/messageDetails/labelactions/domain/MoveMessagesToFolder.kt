@@ -19,17 +19,12 @@
 
 package ch.protonmail.android.activities.messageDetails.labelactions.domain
 
-import ch.protonmail.android.jobs.MoveToFolderJob
-import ch.protonmail.android.jobs.PostArchiveJob
-import ch.protonmail.android.jobs.PostInboxJob
-import ch.protonmail.android.jobs.PostSpamJob
-import ch.protonmail.android.jobs.PostTrashJobV2
-import com.birbit.android.jobqueue.JobManager
+import ch.protonmail.android.repository.MessageRepository
 import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject
 
 class MoveMessagesToFolder @Inject constructor(
-    private val jobManager: JobManager
+    private val messagesRepository: MessageRepository
 ) {
 
     operator fun invoke(
@@ -37,28 +32,18 @@ class MoveMessagesToFolder @Inject constructor(
         newFolderLocationId: String,
         currentFolderLabelId: String = EMPTY_STRING,
     ) {
-        val job = when (newFolderLocationId) {
-            StandardFolderLocation.Trash.id -> {
-                PostTrashJobV2(
-                    messageIds,
-                    listOf(currentFolderLabelId),
-                    currentFolderLabelId // TODO: Think why is this parameter needed here?
-                )
-            }
-            StandardFolderLocation.Archive.id -> {
-                PostArchiveJob(messageIds, listOf(currentFolderLabelId))
-            }
-            StandardFolderLocation.Inbox.id -> {
-                PostInboxJob(messageIds, listOf(currentFolderLabelId))
-            }
-            StandardFolderLocation.Spam.id -> {
-                PostSpamJob(messageIds)
-            }
-            else -> {
-                MoveToFolderJob(messageIds, newFolderLocationId)
-            }
+        when (newFolderLocationId) {
+            StandardFolderLocation.Trash.id ->
+                messagesRepository.moveToTrash(messageIds, currentFolderLabelId)
+            StandardFolderLocation.Archive.id ->
+                messagesRepository.moveToArchive(messageIds, currentFolderLabelId)
+            StandardFolderLocation.Inbox.id ->
+                messagesRepository.moveToInbox(messageIds, currentFolderLabelId)
+            StandardFolderLocation.Spam.id ->
+                messagesRepository.moveToSpam(messageIds)
+            else ->
+                messagesRepository.moveToCustomFolderLocation(messageIds, newFolderLocationId)
         }
-        jobManager.addJobInBackground(job)
     }
 
 }

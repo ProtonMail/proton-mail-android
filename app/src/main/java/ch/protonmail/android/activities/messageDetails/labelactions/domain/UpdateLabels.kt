@@ -38,7 +38,7 @@ class UpdateLabels @Inject constructor(
         Timber.v("UpdateLabels checkedLabelIds: $checkedLabelIds")
         messageDetailsRepository.findAllLabelsWithIds(
             message,
-            checkedLabelIds.toMutableList(),
+            checkedLabelIds,
             existingLabels,
             isTransient
         )
