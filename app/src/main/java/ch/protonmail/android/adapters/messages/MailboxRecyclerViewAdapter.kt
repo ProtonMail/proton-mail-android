@@ -219,11 +219,12 @@ class MailboxRecyclerViewAdapter(
         mMailboxLocation = mailboxLocation
     }
 
-    fun getOldestMailboxItemTimestamp(): Long? {
-        return if (mailboxItems.isNotEmpty()) {
-            mailboxItems.minOf { it.lastMessageTimeMs } / 1000
+    fun getOldestMailboxItemTimestamp(): Long {
+        val lastItemTimeMs = if (mailboxItems.isNotEmpty()) {
+            mailboxItems.minOf { it.lastMessageTimeMs }
         } else {
-            null
+            System.currentTimeMillis()
         }
+        return lastItemTimeMs / 1000
     }
 }

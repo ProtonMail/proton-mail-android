@@ -214,7 +214,7 @@ class MailboxViewModel @Inject constructor(
         refreshMessages: Boolean
     ): LiveData<List<MailboxUiItem>> {
         if (conversationModeEnabled(location)) {
-            return conversationsAsMailboxItems(location, null, labelId)
+            return conversationsAsMailboxItems(location, labelId)
         }
 
         fetchMessages(
@@ -237,14 +237,14 @@ class MailboxViewModel @Inject constructor(
         includeLabels: Boolean,
         uuid: String,
         refreshMessages: Boolean,
-        oldestMessageTimestamp: Long? = null
+        oldestItemTimestamp: Long
     ) {
         if (conversationModeEnabled(location)) {
-            return getConversations.loadMore(userManager.requireCurrentUserId(), location, oldestMessageTimestamp)
+            return getConversations.loadMore(userManager.requireCurrentUserId(), location, oldestItemTimestamp)
         }
 
         fetchMessages(
-            oldestMessageTimestamp,
+            oldestItemTimestamp,
             location,
             labelId,
             includeLabels,
@@ -294,11 +294,10 @@ class MailboxViewModel @Inject constructor(
 
     private fun conversationsAsMailboxItems(
         location: Constants.MessageLocationType,
-        lastMessageTimestamp: Long?,
         labelId: String?
     ): LiveData<List<MailboxUiItem>> {
         return getConversations(
-            userManager.requireCurrentUserId(), location, labelId, lastMessageTimestamp
+            userManager.requireCurrentUserId(), location, labelId
         ).map { result ->
             if (result is GetConversationsResult.Success) {
                 return@map conversationsToMailboxItems(result.conversations, location.messageLocationTypeValue)

@@ -34,13 +34,12 @@ class GetConversations @Inject constructor(
     operator fun invoke(
         userId: Id,
         location: MessageLocationType,
-        customLabelId: String?,
-        lastConversationTime: Long? = null
+        customLabelId: String?
     ): Flow<GetConversationsResult> {
         val params = GetConversationsParameters(
             labelId = location.messageLocationTypeValue.toString(),
             userId = userId,
-            oldestConversationTimestamp = lastConversationTime
+            oldestConversationTimestamp = null
         )
 
         return conversationRepository.getConversations(params)
@@ -58,7 +57,7 @@ class GetConversations @Inject constructor(
     fun loadMore(
         userId: Id,
         location: MessageLocationType,
-        lastConversationTime: Long?
+        lastConversationTime: Long
     ) {
         val params = GetConversationsParameters(
             labelId = location.messageLocationTypeValue.toString(),
