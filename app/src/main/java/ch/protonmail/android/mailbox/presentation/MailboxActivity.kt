@@ -383,6 +383,11 @@ class MailboxActivity :
 
         fetchOrganizationData()
 
+        mailboxViewModel.getConversationsError.observe(this) {
+            Toast.makeText(this, getString(R.string.error_loading_conversations), Toast.LENGTH_SHORT).show()
+            setRefreshing(false)
+            setLoadingMore(false)
+        }
         observeMailboxItemsByLocation(
             refreshMessages = true,
             syncId = syncUUID

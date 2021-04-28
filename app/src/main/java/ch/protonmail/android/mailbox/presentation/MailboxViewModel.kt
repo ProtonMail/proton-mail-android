@@ -93,6 +93,7 @@ class MailboxViewModel @Inject constructor(
     private val _manageLimitReachedWarningOnTryCompose = MutableLiveData<Event<Boolean>>()
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
+    private val _getConversationsError = MutableLiveData<Boolean>()
 
     lateinit var userId: Id
 
@@ -109,6 +110,8 @@ class MailboxViewModel @Inject constructor(
 
     val hasSuccessfullyDeletedMessages: LiveData<Boolean>
         get() = _hasSuccessfullyDeletedMessages
+    val getConversationsError: LiveData<Boolean>
+        get() = _getConversationsError
 
     fun reloadDependenciesForUser() {
         pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -302,6 +305,7 @@ class MailboxViewModel @Inject constructor(
             if (result is GetConversationsResult.Success) {
                 return@map conversationsToMailboxItems(result.conversations, location.messageLocationTypeValue)
             }
+            _getConversationsError.value = true
             return@map listOf<MailboxUiItem>()
         }.asLiveData()
     }

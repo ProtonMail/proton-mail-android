@@ -861,6 +861,27 @@ class MailboxViewModelTest : CoroutinesTest {
         }
 
     @Test
+    fun getMailboxItemsPostErrorOnLiveDataWhenGetConversationsUseCaseReturnsError() =
+        runBlockingTest {
+            val location = Constants.MessageLocationType.INBOX
+            val labelId = "labelId923844"
+            val errorLiveData = viewModel.getConversationsError.testObserver()
+            every { conversationModeEnabled(location) } returns true
+            coEvery { getConversations(currentUserId, location, labelId) } returns flowOf(GetConversationsResult.Error)
+
+            val actual = viewModel.getMailboxItems(
+                location,
+                labelId,
+                true,
+                "9238423bbe4h3423489wssdf1",
+                false,
+            ).testObserver()
+
+            assertEquals(emptyList(), actual.observedValues[0])
+            assertEquals(true, errorLiveData.observedValues[0])
+        }
+
+    @Test
     fun refreshMailboxCountTriggersFetchMessagesCountJobWhenConversationsModeIsNotEnabled() {
         every { conversationModeEnabled(any()) } returns false
 
