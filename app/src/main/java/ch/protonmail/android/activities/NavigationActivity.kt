@@ -30,6 +30,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.dialogs.QuickSnoozeDialogFragment
 import ch.protonmail.android.activities.multiuser.AccountManagerActivity
@@ -74,6 +75,7 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.DrawerHeaderView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_mailbox.*
 import kotlinx.android.synthetic.main.drawer_header.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -319,7 +321,6 @@ abstract class NavigationActivity :
                     onUserClicked(false)
                     drawerHeaderView.switchState()
                 }
-                drawerToggle.syncState()
                 navigationDrawerRecyclerView!!.smoothScrollToPosition(0)
                 onDrawerClose()
                 onDrawerClose = {}
@@ -489,8 +490,6 @@ abstract class NavigationActivity :
         fun onSignOutSelected() {
 
             fun onLogoutConfirmed(currentUserId: Id, hasNextLoggedInUser: Boolean) {
-                findViewById<View>(R.id.spinner_layout)?.visibility = View.VISIBLE
-
                 lifecycleScope.launch {
                     if (hasNextLoggedInUser) {
                         overlayDialog =

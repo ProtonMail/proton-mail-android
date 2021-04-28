@@ -77,7 +77,6 @@ import ch.protonmail.android.settings.pin.ValidatePinActivity;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.INetworkConfiguratorCallback;
-import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.worker.FetchMailSettingsWorker;
 import ch.protonmail.android.worker.FetchUserInfoWorker;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -129,7 +128,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @BindView(R.id.layout_no_connectivity_info)
     protected View mConnectivitySnackLayout;
     @Nullable
-    @BindView(R.id.screenProtector)
+    @BindView(R.id.screenProtectorView)
     protected View mScreenProtectorLayout;
 
     private BroadcastReceiver mLangReceiver = null;
@@ -176,8 +175,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
         }
-
-        UiUtil.setStatusBarColor(this, ContextCompat.getColor(this, R.color.dark_purple_statusbar));
 
         ForceSwitchedAccountNotifier.notifier.observe(this, event -> {
             if (event != null) {

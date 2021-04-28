@@ -28,6 +28,7 @@ import ch.protonmail.android.uitests.testsHelper.StringUtils
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
+import kotlin.test.Ignore
 import kotlin.test.Test
 import org.junit.experimental.categories.Category
 
@@ -145,6 +146,7 @@ class LabelsFoldersTests : BaseTest() {
 
     @TestId("38407")
     @Test
+    @Ignore("Test needs to be reviewed, because now we have location icons instead of location text")
     fun applyLabelToMessageAndArchive() {
         val labelName = "Label 1"
         loginRobot

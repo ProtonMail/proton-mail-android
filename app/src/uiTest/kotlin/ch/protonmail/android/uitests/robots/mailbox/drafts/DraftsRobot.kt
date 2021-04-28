@@ -92,7 +92,7 @@ class DraftsRobot : MailboxRobotInterface, CoreRobot {
         }
 
         fun draftMessageSaved(draftSubject: String): DraftsRobot {
-            view.withId(R.id.messageTitleTextView).withText(draftSubject).click()
+            view.withId(R.id.subjectTextView).withText(draftSubject).click()
             return DraftsRobot()
         }
     }

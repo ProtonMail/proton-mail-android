@@ -45,7 +45,7 @@ interface SelectionStateRobotInterface {
     }
 
     fun selectMessage(position: Int): Any {
-        UIActions.recyclerView.common.clickOnRecyclerViewItemByPosition(R.id.messages_list_view, position)
+        UIActions.recyclerView.common.clickOnRecyclerViewItemByPosition(R.id.mailboxRecyclerView, position)
         return Any()
     }
 }

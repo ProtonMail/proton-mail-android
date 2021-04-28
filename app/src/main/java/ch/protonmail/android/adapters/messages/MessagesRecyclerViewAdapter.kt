@@ -19,9 +19,8 @@
 package ch.protonmail.android.adapters.messages
 
 import android.content.Context
-import android.graphics.Typeface
-import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import android.view.ViewGroup
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
@@ -35,7 +34,6 @@ class MessagesRecyclerViewAdapter(
 
 
     private var mMailboxLocation = Constants.MessageLocationType.INVALID
-    private val typeface: Typeface = Typeface.createFromAsset(context.assets, "protonmail-mobile-icons.ttf")
 
     private var labels = mapOf<String, Label>()
     private val messages = mutableListOf<Message>()
@@ -61,14 +59,16 @@ class MessagesRecyclerViewAdapter(
 
         }
 
-    fun getItem(position: Int) = messages[position]
-
     val checkedMessages get() = selectedMessageIds.mapNotNull { messages.find { message -> message.messageId == it } }
 
+    fun getItem(position: Int) = messages[position]
+
     fun addAll(messages: List<Message>) {
-        this.messages.addAll(messages.filter {
-            !it.deleted
-        })
+        this.messages.addAll(
+            messages.filter {
+                !it.deleted
+            }
+        )
         notifyDataSetChanged()
     }
 
@@ -97,13 +97,13 @@ class MessagesRecyclerViewAdapter(
         }
     }
 
-    override fun getItemCount(): Int {
-        return messages.size + if (includeFooter) 1 else 0
-    }
+    override fun getItemCount(): Int = messages.size + if (includeFooter) 1 else 0
 
     override fun onBindViewHolder(holder: MessagesListViewHolder, position: Int) {
         when (ElementType.values()[getItemViewType(position)]) {
-            ElementType.MESSAGE -> (holder as MessagesListViewHolder.MessageViewHolder).bindMessage(position)
+            ElementType.MESSAGE -> {
+                (holder as MessagesListViewHolder.MessageViewHolder).bindMessage(position)
+            }
             ElementType.FOOTER -> {
                 // NOOP
             }
@@ -114,13 +114,9 @@ class MessagesRecyclerViewAdapter(
         val message = messages[position]
         val messageLabels = message.allLabelIDs.mapNotNull { labels[it] }
 
-        val pendingSend = pendingSendList?.find { it.messageId == message.messageId }
-        message.isBeingSent = pendingSend != null && pendingSend.sent == null // under these conditions the message is in sending process
-        message.isAttachmentsBeingUploaded = pendingUploadList?.find { it.messageId == message.messageId } != null
-        message.senderDisplayName = contactsList?.find { message.senderEmail == it.email }?.name
-                ?: message.senderName
+        message.senderDisplayName = contactsList?.find { message.senderEmail == it.email }?.name ?: message.senderName
 
-        this.view.bind(message, messageLabels, selectedMessageIds.isNotEmpty(), mMailboxLocation, typeface)
+        this.view.bind(message, messageLabels, mMailboxLocation)
 
         val isSelected = selectedMessageIds.contains(message.messageId)
         this.view.isActivated = isSelected
@@ -145,20 +141,23 @@ class MessagesRecyclerViewAdapter(
             }
 
         }
-        this.view.setOnLongClickListener {
-            val messageId = it.tag as String
-            if (onSelectionModeChange == null) {
-                return@setOnLongClickListener false
-            }
 
-            if (selectedMessageIds.isEmpty()) {
-                selectedMessageIds.add(messageId)
-                onSelectionModeChange.invoke(SelectionModeEnum.STARTED)
-                notifyDataSetChanged()
-            }
-
-            return@setOnLongClickListener true
-        }
+        // TODO: This will be changed with MAILAND-1501.
+        //  I'm just disabling long click with commenting this code for now.
+//        this.view.setOnLongClickListener {
+//            val messageId = it.tag as String
+//            if (onSelectionModeChange == null) {
+//                return@setOnLongClickListener false
+//            }
+//
+//            if (selectedMessageIds.isEmpty()) {
+//                selectedMessageIds.add(messageId)
+//                onSelectionModeChange.invoke(SelectionModeEnum.STARTED)
+//                notifyDataSetChanged()
+//            }
+//
+//            return@setOnLongClickListener true
+//        }
     }
 
     fun endSelectionMode() {

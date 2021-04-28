@@ -17,7 +17,20 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
-<ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/dark_glacier_blue">
-    <item android:drawable="@color/glacier_blue" />
-</ripple>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/toolbar_action_layout_size"
+    android:layout_height="@dimen/toolbar_action_layout_size">
+
+    <ImageButton
+        android:id="@+id/composeImageButton"
+        android:layout_width="@dimen/button_nav_size"
+        android:layout_height="@dimen/button_nav_size"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/ic_compose"
+        android:tint="@color/icon_inverted"
+        android:background="@drawable/selector_circle_background_interaction_strong"
+        android:contentDescription="@string/compose" />
+
+</FrameLayout>
