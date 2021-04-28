@@ -211,14 +211,39 @@ class MailboxViewModel @Inject constructor(
         labelId: String?,
         includeLabels: Boolean,
         uuid: String,
-        refreshMessages: Boolean,
-        oldestMessageTimestamp: Long? = null
+        refreshMessages: Boolean
     ): LiveData<List<MailboxUiItem>> {
         if (conversationModeEnabled(location)) {
-            return getConversationsAsMailboxItems(location, oldestMessageTimestamp)
+            return conversationsAsMailboxItems(location, null)
         }
 
-        return getMessagesAsMailboxItems(
+        fetchMessages(
+            null,
+            location,
+            labelId,
+            includeLabels,
+            uuid,
+            refreshMessages
+        )
+
+        return getMessagesByLocation(location, labelId).switchMap {
+            liveData { emit(messagesToMailboxItems(it)) }
+        }
+    }
+
+    fun loadMore(
+        location: Constants.MessageLocationType,
+        labelId: String?,
+        includeLabels: Boolean,
+        uuid: String,
+        refreshMessages: Boolean,
+        oldestMessageTimestamp: Long? = null
+    ) {
+        if (conversationModeEnabled(location)) {
+            return getConversations.loadMore(userManager.requireCurrentUserId(), location, oldestMessageTimestamp)
+        }
+
+        fetchMessages(
             oldestMessageTimestamp,
             location,
             labelId,
@@ -228,14 +253,14 @@ class MailboxViewModel @Inject constructor(
         )
     }
 
-    private fun getMessagesAsMailboxItems(
+    private fun fetchMessages(
         oldestMessageTimestamp: Long?,
         location: Constants.MessageLocationType,
         labelId: String?,
         includeLabels: Boolean,
         uuid: String,
         refreshMessages: Boolean
-    ): LiveData<List<MailboxUiItem>> {
+    ) {
         // When oldestMessageTimestamp is valid the request is about paginated messages (page > 1)
         if (oldestMessageTimestamp != null) {
             val isCustomLocation = location == LABEL || location == LABEL_FOLDER
@@ -265,13 +290,9 @@ class MailboxViewModel @Inject constructor(
                 )
             )
         }
-
-        return getMessagesByLocation(location, labelId).switchMap {
-            liveData { emit(messagesToMailboxItems(it)) }
-        }
     }
 
-    private fun getConversationsAsMailboxItems(
+    private fun conversationsAsMailboxItems(
         location: Constants.MessageLocationType,
         lastMessageTimestamp: Long?
     ): LiveData<List<MailboxUiItem>> {

@@ -495,8 +495,7 @@ class MailboxViewModelTest : CoroutinesTest {
             labelId,
             includeLabels,
             uuid,
-            refreshMessages,
-            timestamp
+            refreshMessages
         )
 
         verifySequence { messageServiceScheduler.fetchMessagesOlderThanTime(location, userId, timestamp) }
@@ -520,8 +519,7 @@ class MailboxViewModelTest : CoroutinesTest {
             labelId,
             includeLabels,
             uuid,
-            refreshMessages,
-            earliestTime
+            refreshMessages
         )
 
         verifySequence {
@@ -554,8 +552,7 @@ class MailboxViewModelTest : CoroutinesTest {
             labelId,
             includeLabels,
             uuid,
-            refreshMessages,
-            earliestTime
+            refreshMessages
         ).testObserver()
 
         val expected = listOf(
@@ -578,8 +575,7 @@ class MailboxViewModelTest : CoroutinesTest {
             labelId,
             includeLabels,
             uuid,
-            refreshMessages,
-            null
+            refreshMessages
         )
 
         coVerifySequence { getConversations(currentUserId, location, null) }

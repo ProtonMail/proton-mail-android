@@ -636,16 +636,14 @@ class MailboxActivity :
 
         private fun loadMoreMessages() {
             val mailboxLocation = mailboxLocationMain.value ?: MessageLocationType.INBOX
-            mailboxViewModel.getMailboxItems(
+            mailboxViewModel.loadMore(
                 mailboxLocation,
                 mailboxLabelId,
                 false,
                 syncUUID,
                 false,
                 mailboxAdapter.getOldestMailboxItemTimestamp()
-            ).observe(this@MailboxActivity) {
-                Timber.d("Observing to allow flow being triggered")
-            }
+            )
         }
     }
 

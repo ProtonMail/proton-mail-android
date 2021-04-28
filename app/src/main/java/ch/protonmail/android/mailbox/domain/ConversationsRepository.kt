@@ -47,5 +47,7 @@ interface ConversationsRepository {
     /**
      * Deletes all the conversations from the [TABLE_CONVERSATIONS] inside the local storage
      */
-    suspend fun clearConversations()
+    fun clearConversations()
+
+    fun loadMore(params: GetConversationsParameters)
 }

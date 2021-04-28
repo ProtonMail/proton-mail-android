@@ -38,6 +38,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.RelaxedMockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -53,6 +54,7 @@ import org.junit.Before
 import org.junit.Test
 import java.io.IOException
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 @ExperimentalCoroutinesApi
 class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
@@ -132,7 +134,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         )
     )
 
-    @MockK
+    @RelaxedMockK
     private lateinit var conversationDao: ConversationDao
 
     @MockK
@@ -162,6 +164,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 pageSize = 2
             )
             coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(listOf())
+            coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
             // when
             val result = conversationsRepository.getConversations(parameters).first()
@@ -185,6 +188,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
             val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
             coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(conversationsEntity)
+            coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
             // when
             val result = conversationsRepository.getConversations(parameters).first()
@@ -195,35 +199,54 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         }
 
     @Test
-    fun verifyGetConversationsFetchesDataFromRemoteApiAndStoresResultInTheLocalDatabase() = runBlocking {
+    fun verifyGetConversationsFetchesDataFromRemoteApiAndStoresResultInTheLocalDatabaseWhenResponseIsSuccessful() =
+        runBlocking {
+            // given
+            val parameters = GetConversationsParameters(
+                labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+                userId = testUserId,
+                oldestConversationTimestamp = 1616496670,
+                pageSize = 5
+            )
+
+            coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(emptyList())
+            coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
+            coEvery { api.fetchConversations(any()) } returns conversationsRemote
+
+            // when
+            val result = conversationsRepository.getConversations(parameters).take(1).toList()
+
+            // Then
+            val actualLocalItems = result[0] as DataResult.Success
+            assertEquals(ResponseSource.Local, actualLocalItems.source)
+
+            val expectedConversations = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
+            coVerify { api.fetchConversations(parameters) }
+            coVerify { conversationDao.insertOrUpdate(*expectedConversations.toTypedArray()) }
+        }
+
+    @Test
+    fun verifyGetConversationsEmitErrorWhenFetchingDataFromApiWasNotSuccessful() = runBlocking {
         // given
         val parameters = GetConversationsParameters(
-            labelId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+            labelId = "8234",
             userId = testUserId,
-            oldestConversationTimestamp = 1616496670,
-            pageSize = 5
+            oldestConversationTimestamp = 823848238
         )
 
         coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(emptyList())
         coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
-        coEvery { api.fetchConversations(any()) } returns conversationsRemote
+        coEvery { api.fetchConversations(any()) } throws IOException("Test - Bad Request")
 
         // when
-        val result = conversationsRepository.getConversations(parameters).take(3).toList()
+        val result = conversationsRepository.getConversations(parameters).take(2).toList()
 
         // Then
-        val actualLocalItems = result[0] as DataResult.Success
+        val actualApiError = result[0] as DataResult.Error
+        assertEquals("Test - Bad Request", actualApiError.message)
+
+        val actualLocalItems = result[1] as DataResult.Success
         assertEquals(ResponseSource.Local, actualLocalItems.source)
-
-        val actualProcessingResult = result[1] as DataResult.Processing
-        assertEquals(ResponseSource.Remote, actualProcessingResult.source)
-
-        val actualRemoteItems = result[2] as DataResult.Success
-        assertEquals(ResponseSource.Remote, actualRemoteItems.source)
-
-        val expectedConversations = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
-        coVerify { api.fetchConversations(parameters) }
-        coVerify { conversationDao.insertOrUpdate(*expectedConversations.toTypedArray()) }
     }
 
     @Test
@@ -264,10 +287,13 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchConversations(any()) } throws IOException("Api call failed")
 
         // when
-        val result = conversationsRepository.getConversations(parameters).take(3).toList()
+        val result = conversationsRepository.getConversations(parameters).take(2).toList()
 
         // Then
-        val actualLocalItems = result[0] as DataResult.Success
+        val actualError = result[0] as DataResult.Error.Remote
+        assertNotNull(actualError)
+
+        val actualLocalItems = result[1] as DataResult.Success
         assertEquals(ResponseSource.Local, actualLocalItems.source)
         val expectedLocalConversations = listOf(
             Conversation(

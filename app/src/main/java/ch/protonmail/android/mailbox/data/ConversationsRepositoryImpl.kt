@@ -21,19 +21,17 @@ package ch.protonmail.android.mailbox.data
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
-import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
-import com.dropbox.android.external.store4.Fetcher
-import com.dropbox.android.external.store4.SourceOfTruth
-import com.dropbox.android.external.store4.StoreBuilder
-import com.dropbox.android.external.store4.StoreRequest
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
-import me.proton.core.data.arch.toDataResult
+import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.ResponseSource
 import javax.inject.Inject
 
 @FlowPreview
@@ -42,29 +40,40 @@ class ConversationsRepositoryImpl @Inject constructor(
     private val api: ProtonMailApiManager
 ) : ConversationsRepository {
 
-    private data class StoreKey(val params: GetConversationsParameters)
+    private val paramFlow = MutableSharedFlow<GetConversationsParameters>(replay = 1)
 
-    private val store = StoreBuilder.from(
-        fetcher = Fetcher.of { key: StoreKey ->
-            api.fetchConversations(key.params)
-        },
-        sourceOfTruth = SourceOfTruth.Companion.of(
-            reader = { key -> geConversationsLocal(key.params) },
-            writer = { key: StoreKey, output: ConversationsResponse ->
-                val conversations = output.conversationResponse.toListLocal(key.params.userId.s)
-                conversationDao.insertOrUpdate(*conversations.toTypedArray())
-            },
-            deleteAll = { conversationDao.clear() }
-        )
-    ).build()
+    override fun getConversations(params: GetConversationsParameters): Flow<DataResult<List<Conversation>>> {
+        loadMore(params)
 
-    override fun getConversations(params: GetConversationsParameters):
-        Flow<DataResult<List<Conversation>>> =
-            store.stream(StoreRequest.cached(StoreKey(params), true)).map { it.toDataResult() }
+        return paramFlow.transformLatest { params ->
 
-    override suspend fun clearConversations() = store.clearAll()
+            runCatching {
+                api.fetchConversations(params)
+            }.fold(
+                onSuccess = {
+                    val conversations = it.conversationResponse.toListLocal(params.userId.s)
+                    conversationDao.insertOrUpdate(*conversations.toTypedArray())
+                },
+                onFailure = {
+                    emit(DataResult.Error.Remote<List<Conversation>>(it.message))
+                }
+            )
 
-    private fun geConversationsLocal(params: GetConversationsParameters): Flow<List<Conversation>> =
+            emitAll(
+                getConversationsLocal(params).map {
+                    DataResult.Success(ResponseSource.Local, it)
+                }
+            )
+        }
+    }
+
+    override fun loadMore(params: GetConversationsParameters) {
+        paramFlow.tryEmit(params)
+    }
+
+    override fun clearConversations() = conversationDao.clear()
+
+    private fun getConversationsLocal(params: GetConversationsParameters): Flow<List<Conversation>> =
         conversationDao.getConversations(params.userId.s).map { list ->
             list.sortedWith(
                 compareByDescending<ConversationDatabaseModel> { conversation ->

@@ -142,8 +142,7 @@ public class SearchActivity extends BaseActivity {
                 "",
                 false,
                 UUID.randomUUID().toString(),
-                false,
-                null
+                false
         ).observe(this, mailboxUiItems -> {
             mAdapter.clear();
             mAdapter.addAll(mailboxUiItems);

@@ -51,4 +51,17 @@ class GetConversations @Inject constructor(
                 }
             }
     }
+
+    fun loadMore(
+        userId: Id,
+        location: MessageLocationType,
+        lastConversationTime: Long?
+    ) {
+        val params = GetConversationsParameters(
+            labelId = location.messageLocationTypeValue.toString(),
+            userId = userId,
+            oldestConversationTimestamp = lastConversationTime
+        )
+        conversationRepository.loadMore(params)
+    }
 }
