@@ -20,6 +20,7 @@
 package ch.protonmail.android.ui.view
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.annotation.StyleRes
@@ -27,6 +28,8 @@ import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxItemDecoration
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -65,6 +68,9 @@ class MultiLineLabelChipGroupView @JvmOverloads constructor(
             adapter = labelsAdapter
         }
         addView(recyclerView)
+
+        if (isInEditMode)
+            setLabels(buildPreviewItems())
     }
 
     fun setLabels(labels: List<LabelChipUiModel>) {
@@ -75,5 +81,18 @@ class MultiLineLabelChipGroupView @JvmOverloads constructor(
     companion object {
 
         const val RECYCLER_VIEW_ID = 26_894
+
+        /**
+         * @return List of Labels for build a Preview
+         */
+        private fun buildPreviewItems(): List<LabelChipUiModel> = listOf(
+            LabelChipUiModel(Id("a"), Name("long name for first label"), Color.RED),
+            LabelChipUiModel(Id("b"), Name("second label"), Color.GREEN),
+            LabelChipUiModel(Id("c"), Name("third"), Color.BLUE),
+            LabelChipUiModel(Id("d"), Name("long name for forth label"), Color.CYAN),
+            LabelChipUiModel(Id("e"), Name("fifth label"), Color.MAGENTA),
+            LabelChipUiModel(Id("f"), Name("sixth"), Color.GRAY),
+            LabelChipUiModel(Id("g"), Name("long name for seventh label"), Color.BLACK),
+        )
     }
 }
