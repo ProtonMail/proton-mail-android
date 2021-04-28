@@ -19,6 +19,8 @@
 package ch.protonmail.android.uitests.robots.mailbox.messagedetail
 
 import android.content.Intent
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasType
 import androidx.test.espresso.matcher.ViewMatchers.withTagValue
@@ -64,7 +66,7 @@ class MessageRobot : CoreRobot {
     }
 
     fun clickLink(linkText: String): LinkNavigationDialogRobot {
-        UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
+        view.withId(R.id.messageWebViewContainer).wait()
         onWebView(withTagValue(`is`(messageWebViewTag)))
             .forceJavascriptEnabled()
             .withElement(DriverAtoms.findElement(Locator.LINK_TEXT, linkText))
@@ -93,43 +95,43 @@ class MessageRobot : CoreRobot {
     }
 
     fun reply(): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.reply)
+        view.withId(R.id.reply).wait()
         UIActions.wait.untilViewWithIdEnabled(R.id.reply).click()
         return ComposerRobot()
     }
 
     fun replyAll(): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.reply_all)
+        view.withId(R.id.reply_all).wait()
         UIActions.wait.untilViewWithIdEnabled(R.id.reply_all).click()
         return ComposerRobot()
     }
 
     fun forward(): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.forward)
+        view.withId(R.id.forward).wait()
         UIActions.wait.untilViewWithIdEnabled(R.id.forward).click()
         return ComposerRobot()
     }
 
     fun moreOptions(): MessageMoreOptions {
-        UIActions.system.clickMoreOptionsButton()
+        view.instanceOf(AppCompatImageView::class.java).isDescendantOf(view.withId(R.id.toolbar)).click()
         return MessageMoreOptions()
     }
 
     fun navigateUpToSearch(): SearchRobot {
-        UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
-        UIActions.system.clickHamburgerOrUpButton()
+        view.withId(R.id.messageWebViewContainer).wait()
+        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
         return SearchRobot()
     }
 
     fun navigateUpToSent(): SentRobot {
-        UIActions.wait.forViewWithId(R.id.reply_all)
-        UIActions.system.clickHamburgerOrUpButton()
+        view.withId(R.id.reply_all).wait()
+        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
         return SentRobot()
     }
 
     fun navigateUpToInbox(): InboxRobot {
-        UIActions.wait.forViewWithId(R.id.reply_all)
-        UIActions.system.clickHamburgerOrUpButton()
+        view.withId(R.id.reply_all).wait()
+        view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
         return InboxRobot()
     }
 
@@ -183,7 +185,7 @@ class MessageRobot : CoreRobot {
     class FoldersDialogRobot : CoreRobot {
 
         fun clickCreateFolder(): AddFolderRobot {
-            UIActions.wait.forViewWithId(R.id.folders_list_view)
+            view.withId(R.id.folders_list_view).wait()
             UIActions.listView
                 .clickListItemByText(
                     withFolderName(stringFromResource(R.string.create_new_folder)),
@@ -213,7 +215,7 @@ class MessageRobot : CoreRobot {
         }
 
         private fun selectFolder(folderName: String) {
-            UIActions.wait.forViewWithId(R.id.folders_list_view)
+            view.withId(R.id.folders_list_view).wait()
             UIActions.listView
                 .clickListItemByText(
                     withFolderName(folderName),
@@ -221,10 +223,10 @@ class MessageRobot : CoreRobot {
                 )
         }
 
-        class Verify {
+        class Verify : CoreRobot {
 
             fun folderExistsInFoldersList(folderName: String) {
-                UIActions.wait.forViewWithId(R.id.folders_list_view)
+                view.withId(R.id.folders_list_view).wait()
                 UIActions.listView.checkItemWithTextExists(R.id.folders_list_view, folderName)
             }
         }
@@ -260,7 +262,7 @@ class MessageRobot : CoreRobot {
         class Verify : CoreRobot {
 
             fun linkIsPresentInDialogMessage(link: String) {
-                UIActions.check.alertDialogWithPartialTextIsDisplayed(link)
+                view.withId(android.R.id.message).inRoot(rootView.isDialog()).checkContains(link)
             }
         }
 

@@ -114,7 +114,6 @@ class InboxTests : BaseTest() {
         val to = onePassUser
         Mail.gmail.from(from).to(to).withSubject(subject).withBody(pgpEncryptedBody).send()
         inboxRobot
-            .refreshMessageList()
             .clickMessageBySubject(subject)
             .verify { pgpEncryptedMessageDecrypted() }
     }
@@ -126,7 +125,6 @@ class InboxTests : BaseTest() {
         val to = onePassUser
         Mail.outlook.from(from).to(to).withSubject(subject).withBody(pgpSignedBody).send()
         inboxRobot
-            .refreshMessageList()
             .clickMessageBySubject(subject)
             .verify { pgpSignedMessageDecrypted() }
     }

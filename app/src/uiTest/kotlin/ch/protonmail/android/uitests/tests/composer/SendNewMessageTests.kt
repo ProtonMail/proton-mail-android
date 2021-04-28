@@ -240,10 +240,9 @@ class SendNewMessageTests : BaseTest() {
         val password = editedPassword
         val hint = editedPasswordHint
         loginRobot
-            .loginTwoPasswordUser(twoPassUser)
-            .decryptMailbox(password)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageEOAndExpiryTime(to, subject, body, 1, password, hint)
+            .sendMessageEOAndExpiryTimeWithConfirmation(to, subject, body, 1, password, hint)
             .menuDrawer()
             .sent()
             .verify { messageWithSubjectExists(subject) }
