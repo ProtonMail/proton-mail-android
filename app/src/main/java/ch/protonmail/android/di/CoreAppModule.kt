@@ -18,6 +18,8 @@
 
 package ch.protonmail.android.di
 
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,4 +34,9 @@ object CoreAppModule {
     @Provides
     @Singleton
     fun provideProduct(): Product = Product.Mail
+
+    @Provides
+    @Singleton
+    @AppProcessLifecycleOwner
+    fun provideAppProcessLifecycleOwner(): LifecycleOwner = ProcessLifecycleOwner.get()
 }

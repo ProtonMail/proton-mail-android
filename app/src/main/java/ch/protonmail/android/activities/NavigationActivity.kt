@@ -54,7 +54,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.User
-import ch.protonmail.android.feature.account.AccountViewModel
+import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -191,12 +191,12 @@ abstract class NavigationActivity :
 
         accountsAdapter.onItemClick = { account ->
             if (account is DrawerUserModel.BaseUser) {
-                accountViewModel.switch(account.id)
+                accountStateManager.switch(account.id)
             }
         }
     }
 
-    protected open fun onAccountSwitched(switch: AccountViewModel.AccountSwitch) {
+    protected open fun onAccountSwitched(switch: AccountStateManager.AccountSwitch) {
         val message = switch.current?.username?.takeIf { switch.previous != null }?.let {
             String.format(getString(R.string.signed_in_with), switch.current.username)
         }
@@ -217,21 +217,20 @@ abstract class NavigationActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        accountViewModel.state
+        accountStateManager.state
             .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
             .onEach {
                 when (it) {
-                    is AccountViewModel.State.Processing,
-                    is AccountViewModel.State.LoginClosed,
-                    is AccountViewModel.State.PrimaryExist -> Unit
-                    is AccountViewModel.State.AccountNeeded -> {
+                    is AccountStateManager.State.Processing,
+                    is AccountStateManager.State.PrimaryExist -> Unit
+                    is AccountStateManager.State.AccountNeeded -> {
                         startSplashActivity()
                         finish()
                     }
                 }
             }.launchIn(lifecycleScope)
 
-        accountViewModel.onAccountSwitched()
+        accountStateManager.onAccountSwitched()
             .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
             .onEach { switch -> onAccountSwitched(switch) }
             .launchIn(lifecycleScope)
@@ -270,8 +269,8 @@ abstract class NavigationActivity :
             // Requested UserId match the current ?
             intent.extras?.getString(EXTRA_USER_ID)?.let { extraUserId ->
                 val requestedUserId = UserId(extraUserId)
-                if (requestedUserId != accountViewModel.getPrimaryUserIdValue()) {
-                    accountViewModel.switch(requestedUserId)
+                if (requestedUserId != accountStateManager.getPrimaryUserIdValue()) {
+                    accountStateManager.switch(requestedUserId)
                 }
             }
         }
@@ -349,7 +348,7 @@ abstract class NavigationActivity :
         navigationViewModel.notificationsCounts()
         navigationViewModel.notificationsCounterLiveData.observe(this) { counters ->
             lifecycleScope.launchWhenCreated {
-                val accounts = accountViewModel.getSortedAccounts().first().map { account ->
+                val accounts = accountStateManager.getSortedAccounts().first().map { account ->
                     val id = Id(account.userId.id)
                     val user = userManager.getLegacyUserOrNull(id)
                     account.toDrawerUser(account.isReady(), counters[id] ?: 0, user)
@@ -469,7 +468,7 @@ abstract class NavigationActivity :
         fun onSignOutSelected() {
 
             fun onLogoutConfirmed(currentUserId: Id) {
-                accountViewModel.logout(currentUserId)
+                accountStateManager.logout(currentUserId)
             }
 
             lifecycleScope.launch {

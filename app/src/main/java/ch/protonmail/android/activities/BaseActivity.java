@@ -70,7 +70,7 @@ import ch.protonmail.android.core.NetworkResults;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
-import ch.protonmail.android.feature.account.AccountViewModel;
+import ch.protonmail.android.feature.account.AccountStateManager;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.settings.pin.ValidatePinActivity;
 import ch.protonmail.android.utils.AppUtil;
@@ -87,8 +87,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     public static final String EXTRA_IN_APP = "extra_in_app";
     public static final int REQUEST_CODE_VALIDATE_PIN = 998;
 
-    protected AccountViewModel accountViewModel;
-
     private ProtonMailApplication app;
 
     @Deprecated // Doesn't make sense for this to be injected nor be used to sub-classes, as it can
@@ -103,6 +101,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @Deprecated // TODO this should not be used by sub-classes, they should get it injected
     //              directly, as are aiming to remove this base class
     protected UserManager mUserManager;
+    @Inject
+    protected AccountStateManager accountStateManager;
     @Inject
     protected JobManager mJobManager;
     @Inject
@@ -168,7 +168,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             }
         }
         mCurrentLocale = app.getCurrentLocale();
-        setupViewModels(this);
+        accountStateManager.register(this);
         buildHtmlProcessor();
 
         setContentView(getLayoutId());
@@ -177,12 +177,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
         }
-    }
-
-    private void setupViewModels(ComponentActivity activity) {
-        ViewModelProvider viewModelProvider = new ViewModelProvider(this);
-        accountViewModel = viewModelProvider.get(AccountViewModel.class);
-        accountViewModel.register(activity);
     }
 
     @Override
@@ -400,7 +394,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             Button btnLogout = dialogView.findViewById(R.id.logout);
 
             btnLogout.setOnClickListener(v -> {
-                accountViewModel.logoutPrimary().invokeOnCompletion(throwable -> {
+                accountStateManager.logoutPrimary().invokeOnCompletion(throwable -> {
                     finish();
                     return null;
                 });

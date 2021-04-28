@@ -24,7 +24,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
-import ch.protonmail.android.feature.account.AccountViewModel
+import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.utils.startMailboxActivity
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -38,18 +38,21 @@ class SplashActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        accountViewModel.state
+        // Start Login or MailboxActivity.
+        accountStateManager.state
             .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
             .onEach {
                 when (it) {
-                    is AccountViewModel.State.Processing -> Unit
-                    is AccountViewModel.State.LoginClosed -> finish()
-                    is AccountViewModel.State.AccountNeeded -> accountViewModel.login()
-                    is AccountViewModel.State.PrimaryExist -> {
+                    is AccountStateManager.State.Processing -> Unit
+                    is AccountStateManager.State.AccountNeeded -> accountStateManager.login()
+                    is AccountStateManager.State.PrimaryExist -> {
                         startMailboxActivity()
                         finish()
                     }
                 }
             }.launchIn(lifecycleScope)
+
+        // Finish if Login closed.
+        accountStateManager.onLoginClosed { finish() }
     }
 }

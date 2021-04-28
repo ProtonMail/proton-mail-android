@@ -200,7 +200,7 @@ class ValidatePinActivity : BaseActivity(),
             savePin("")
             resetPinAttempts()
         }
-        accountViewModel.logout(mUserManager.requireCurrentUserId()).invokeOnCompletion {
+        accountStateManager.logout(mUserManager.requireCurrentUserId()).invokeOnCompletion {
             val intent = Intent()
             setResult(Activity.RESULT_OK, intent)
             finish()

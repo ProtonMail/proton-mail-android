@@ -65,15 +65,15 @@ class AccountManagerActivity : BaseActivity() {
         window?.setBarColors(getColor(R.color.new_purple_dark))
 
         accountsAdapter.apply {
-            onLoginAccount = { userId -> accountViewModel.login() }
+            onLoginAccount = { userId -> accountStateManager.login() }
             onLogoutAccount = { userId -> onLogoutClicked(userId) }
             onRemoveAccount = { userId -> onRemoveClicked(userId) }
         }
         accountsRecyclerView.layoutManager = LinearLayoutManager(this)
         accountsRecyclerView.adapter = accountsAdapter
 
-        accountViewModel.getSortedAccounts()
-            .combine(accountViewModel.getPrimaryUserId()) { accounts, primaryUserId -> accounts to primaryUserId }
+        accountStateManager.getSortedAccounts()
+            .combine(accountStateManager.getPrimaryUserId()) { accounts, primaryUserId -> accounts to primaryUserId }
             .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
             .onEach { (sortedAccounts, primaryUserId) ->
                 val accounts = sortedAccounts.map { account ->
@@ -87,13 +87,13 @@ class AccountManagerActivity : BaseActivity() {
 
     private fun onRemoveClicked(userId: UserId) {
         lifecycleScope.launchWhenCreated {
-            val account = checkNotNull(accountViewModel.getAccountOrNull(userId))
+            val account = checkNotNull(accountStateManager.getAccountOrNull(userId))
             val username = account.username
             showTwoButtonInfoDialog(
                 titleStringId = R.string.logout,
                 message = getString(R.string.remove_account_question, username)
             ) {
-                accountViewModel.remove(userId)
+                accountStateManager.remove(userId)
             }
         }
     }
@@ -110,7 +110,7 @@ class AccountManagerActivity : BaseActivity() {
             }
 
             showTwoButtonInfoDialog(title = title, message = message) {
-                accountViewModel.logout(userId)
+                accountStateManager.logout(userId)
             }
         }
     }
@@ -129,7 +129,7 @@ class AccountManagerActivity : BaseActivity() {
             }
             R.id.action_remove_all -> {
                 showToast(R.string.account_manager_remove_all_accounts)
-                accountViewModel.removeAll()
+                accountStateManager.removeAll()
                 true
             }
             else -> {

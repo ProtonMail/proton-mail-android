@@ -218,7 +218,7 @@ internal class MessageDetailsActivity :
                 onPositiveButtonClicked = {
                     lifecycleScope.launchWhenCreated {
                         val userId = checkNotNull(messageRecipientUserId) { "Username found in extras, but user id" }
-                        accountViewModel.switch(userId)
+                        accountStateManager.switch(userId)
                         continueSetup()
                         invalidateOptionsMenu()
                     }

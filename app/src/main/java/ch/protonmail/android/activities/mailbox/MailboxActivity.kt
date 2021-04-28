@@ -134,7 +134,7 @@ import ch.protonmail.android.fcm.FcmTokenManager
 import ch.protonmail.android.fcm.MultiUserFcmTokenManager
 import ch.protonmail.android.fcm.PMRegistrationWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
-import ch.protonmail.android.feature.account.AccountViewModel
+import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchLabelsJob
@@ -584,7 +584,7 @@ class MailboxActivity :
         }
     }
 
-    override fun onAccountSwitched(switch: AccountViewModel.AccountSwitch) {
+    override fun onAccountSwitched(switch: AccountStateManager.AccountSwitch) {
         super.onAccountSwitched(switch)
 
         val currentUserId = userManager.currentUserId ?: return
@@ -806,7 +806,7 @@ class MailboxActivity :
         super.onResume()
 
         if (mailboxViewModel.userId != userManager.currentUserId) {
-            onAccountSwitched(AccountViewModel.AccountSwitch())
+            onAccountSwitched(AccountStateManager.AccountSwitch())
         }
 
         reloadMessageCounts()

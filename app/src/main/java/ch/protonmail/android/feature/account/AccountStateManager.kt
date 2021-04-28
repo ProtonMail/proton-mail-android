@@ -20,14 +20,14 @@ package ch.protonmail.android.feature.account
 
 import androidx.activity.ComponentActivity
 import androidx.core.content.edit
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.api.segments.event.EventManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.PREF_PIN
+import ch.protonmail.android.di.AppProcessLifecycleOwner
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.feature.user.waitPrimaryKeyPassphraseAvailable
 import ch.protonmail.android.usecase.delete.ClearUserData
@@ -35,6 +35,7 @@ import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.libs.core.preferences.clearAll
 import com.birbit.android.jobqueue.JobManager
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
@@ -45,6 +46,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.account.domain.entity.isDisabled
@@ -56,6 +58,7 @@ import me.proton.core.accountmanager.presentation.onAccountCreateAddressFailed
 import me.proton.core.accountmanager.presentation.onAccountCreateAddressNeeded
 import me.proton.core.accountmanager.presentation.onAccountDisabled
 import me.proton.core.accountmanager.presentation.onAccountReady
+import me.proton.core.accountmanager.presentation.onAccountRemoved
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeFailed
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeNeeded
 import me.proton.core.accountmanager.presentation.onSessionHumanVerificationNeeded
@@ -64,8 +67,12 @@ import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.auth.presentation.onLoginResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.UserManager
+import me.proton.core.util.kotlin.DispatcherProvider
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AccountViewModel @ViewModelInject constructor(
+@Singleton
+class AccountStateManager @Inject constructor(
     private val accountManager: AccountManager,
     private val userManager: UserManager,
     private var authOrchestrator: AuthOrchestrator,
@@ -73,33 +80,36 @@ class AccountViewModel @ViewModelInject constructor(
     private val jobManager: JobManager,
     private val oldUserManager: ch.protonmail.android.core.UserManager,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
-    private val clearUserData: ClearUserData
-) : ViewModel() {
+    private val clearUserData: ClearUserData,
+    @AppProcessLifecycleOwner
+    private val lifecycleOwner: LifecycleOwner,
+    private val dispatchers: DispatcherProvider
+) {
+
+    private val scope = lifecycleOwner.lifecycleScope
+    private val lifecycle = lifecycleOwner.lifecycle
 
     private val _state = MutableStateFlow(State.Processing as State)
 
     sealed class State {
         object Processing : State()
-        object LoginClosed : State()
         object AccountNeeded : State()
         object PrimaryExist : State()
     }
 
     val state = _state.asStateFlow()
 
-    fun register(context: ComponentActivity) {
-        authOrchestrator.register(context)
-
-        // Handle Account states.
+    init {
         with(authOrchestrator) {
-            onLoginResult { result -> if (result == null) _state.tryEmit(State.LoginClosed) }
-            accountManager.observe(context.lifecycle, minActiveState = Lifecycle.State.CREATED)
+            // Observe all Accounts States (need a registered authOrchestrator, see register).
+            accountManager.observe(lifecycle, minActiveState = Lifecycle.State.CREATED)
                 .onSessionHumanVerificationNeeded { startHumanVerificationWorkflow(it) }
                 .onSessionSecondFactorNeeded { startSecondFactorWorkflow(it) }
                 .onAccountTwoPassModeNeeded { startTwoPassModeWorkflow(it) }
                 .onAccountCreateAddressNeeded { startChooseAddressWorkflow(it) }
                 .onAccountTwoPassModeFailed { accountManager.disableAccount(it.userId) }
                 .onAccountCreateAddressFailed { accountManager.disableAccount(it.userId) }
+                .onAccountRemoved { onAccountDisabled(it) }
                 .onAccountDisabled { onAccountDisabled(it) }
                 .onAccountReady { onAccountReady(it) }
                 .disableInitialNotReadyAccounts()
@@ -107,13 +117,21 @@ class AccountViewModel @ViewModelInject constructor(
 
         // Raise AccountNeeded on empty/disabled account list.
         accountManager.getAccounts()
-            .flowWithLifecycle(context.lifecycle, Lifecycle.State.CREATED)
+            .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
             .onEach { accounts ->
                 if (accounts.isEmpty() || accounts.all { it.isDisabled() }) {
                     onAccountNeeded()
                     _state.tryEmit(State.AccountNeeded)
                 }
-            }.launchIn(viewModelScope)
+            }.launchIn(scope)
+    }
+
+    fun register(context: ComponentActivity) {
+        authOrchestrator.register(context)
+    }
+
+    fun onLoginClosed(block: () -> Unit) {
+        authOrchestrator.onLoginResult { result -> if (result == null) block() }
     }
 
     fun getAccount(userId: UserId) = accountManager.getAccount(userId)
@@ -128,12 +146,12 @@ class AccountViewModel @ViewModelInject constructor(
             .sortedByDescending { it.isReady() }
     }
 
-    fun logout(userId: UserId) = viewModelScope.launch {
+    fun logout(userId: UserId) = scope.launch {
         userManager.lock(userId)
         accountManager.disableAccount(userId)
     }
 
-    fun logoutPrimary() = viewModelScope.launch {
+    fun logoutPrimary() = scope.launch {
         getPrimaryUserId().first()?.let { logout(it) }
     }
 
@@ -141,7 +159,7 @@ class AccountViewModel @ViewModelInject constructor(
         authOrchestrator.startLoginWorkflow(AccountType.Internal)
     }
 
-    fun switch(userId: UserId) = viewModelScope.launch {
+    fun switch(userId: UserId) = scope.launch {
         val account = getAccountOrNull(userId) ?: return@launch
         when {
             account.isDisabled() -> authOrchestrator.startLoginWorkflow(AccountType.Internal) // TODO: Add userId.
@@ -149,11 +167,11 @@ class AccountViewModel @ViewModelInject constructor(
         }
     }
 
-    fun remove(userId: UserId) = viewModelScope.launch {
+    fun remove(userId: UserId) = scope.launch {
         accountManager.removeAccount(userId)
     }
 
-    fun removeAll() = viewModelScope.launch {
+    fun removeAll() = scope.launch {
         accountManager.getAccounts().first().forEach {
             accountManager.removeAccount(it.userId)
         }
@@ -207,14 +225,14 @@ class AccountViewModel @ViewModelInject constructor(
 
     // region Legacy User Management & Cleaning.
 
-    private suspend fun onAccountNeeded() {
+    private suspend fun onAccountNeeded() = withContext(NonCancellable + dispatchers.Io) {
         eventManager.clearState()
         AppUtil.clearTasks(jobManager)
         AppUtil.deletePrefs()
         AppUtil.deleteBackupPrefs()
     }
 
-    private suspend fun onAccountReady(account: Account) {
+    private suspend fun onAccountReady(account: Account) = withContext(NonCancellable + dispatchers.Io) {
         // Only initialize user once.
         val userId = Id(account.userId.id)
         val prefs = oldUserManager.preferencesFor(userId)
@@ -225,8 +243,6 @@ class AccountViewModel @ViewModelInject constructor(
                 // See DatabaseFactory.usernameForUserId.
                 putString(Constants.Prefs.PREF_USER_NAME, account.username)
             }
-            // Workaround: Wait getPrimaryUserId != null (see oldUserManager.primaryUserId).
-            getPrimaryUserId().first { it != null }
             // Workaround: Wait the primary key passphrase before proceeding.
             userManager.waitPrimaryKeyPassphraseAvailable(account.userId)
             // Workaround: Make sure this uninitialized User is fresh.
@@ -242,7 +258,7 @@ class AccountViewModel @ViewModelInject constructor(
         _state.tryEmit(State.PrimaryExist)
     }
 
-    private suspend fun onAccountDisabled(account: Account) {
+    private suspend fun onAccountDisabled(account: Account) = withContext(NonCancellable + dispatchers.Io) {
         // Only clear user once.
         val userId = Id(account.userId.id)
         val prefs = oldUserManager.preferencesFor(userId)
