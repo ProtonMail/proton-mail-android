@@ -28,13 +28,13 @@
         android:id="@+id/action_sheet_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/background_norm"
+        android:elevation="@dimen/elevation_s"
         android:minHeight="?attr/actionBarSize"
         android:paddingStart="@dimen/padding_l"
         android:paddingTop="@dimen/padding_xs"
         android:paddingEnd="@dimen/padding_l"
         android:paddingBottom="@dimen/padding_s" />
-
-    <View style="@style/ViewSeparatorHorizontal" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -98,10 +98,10 @@
                 android:clickable="true"
                 android:enabled="false"
                 android:focusable="true"
-                android:visibility="gone"
-                tools:visibility="visible"
                 android:text="@string/new_folder"
-                app:drawableStartCompat="@drawable/ic_add_24dp" />
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_add_24dp"
+                tools:visibility="visible" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview_labels_sheet"

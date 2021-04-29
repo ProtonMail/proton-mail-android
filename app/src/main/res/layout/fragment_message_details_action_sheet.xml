@@ -27,12 +27,12 @@
         android:id="@+id/action_sheet_header_details_actions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:elevation="@dimen/elevation_s"
+        android:background="@color/background_norm"
         android:minHeight="?attr/actionBarSize"
         android:paddingStart="@dimen/padding_l"
         android:paddingEnd="@dimen/padding_l"
         android:paddingBottom="@dimen/padding_m" />
-
-    <View style="@style/ViewSeparatorHorizontal" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

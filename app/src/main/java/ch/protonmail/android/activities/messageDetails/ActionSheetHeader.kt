@@ -22,6 +22,7 @@ package ch.protonmail.android.activities.messageDetails
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import androidx.annotation.StyleRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import ch.protonmail.android.databinding.ViewActionSheetHeaderBinding
@@ -32,8 +33,9 @@ import ch.protonmail.android.databinding.ViewActionSheetHeaderBinding
 class ActionSheetHeader @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+    defStyleAttr: Int = 0,
+    @StyleRes defStyleRes: Int = 0
+) : ConstraintLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private var _binding: ViewActionSheetHeaderBinding? = null
     private val binding get() = requireNotNull(_binding)
