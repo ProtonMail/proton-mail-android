@@ -96,20 +96,21 @@ class MessageRobot : CoreRobot {
     }
 
     fun reply(): ComposerRobot {
-        view.withId(R.id.reply).wait()
-        UIActions.wait.untilViewWithIdEnabled(R.id.reply).click()
+        view.withId(R.id.replyActionImageView).wait()
+        UIActions.wait.untilViewWithIdEnabled(R.id.replyActionImageView).click()
         return ComposerRobot()
     }
 
     fun replyAll(): ComposerRobot {
-        view.withId(R.id.reply_all).wait()
-        UIActions.wait.untilViewWithIdEnabled(R.id.reply_all).click()
+        view.withId(R.id.replyActionImageView).wait()
+        UIActions.wait.untilViewWithIdEnabled(R.id.replyActionImageView).click()
         return ComposerRobot()
     }
 
+    // TODO: Rewrite when action sheet is finished
     fun forward(): ComposerRobot {
-        view.withId(R.id.forward).wait()
-        UIActions.wait.untilViewWithIdEnabled(R.id.forward).click()
+//        view.withId(R.id.forward).wait()
+//        UIActions.wait.untilViewWithIdEnabled(R.id.forward).click()
         return ComposerRobot()
     }
 
@@ -125,13 +126,13 @@ class MessageRobot : CoreRobot {
     }
 
     fun navigateUpToSent(): SentRobot {
-        view.withId(R.id.reply_all).wait()
+        view.withId(R.id.replyActionImageView).wait()
         view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
         return SentRobot()
     }
 
     fun navigateUpToInbox(): InboxRobot {
-        view.withId(R.id.reply_all).wait()
+        view.withId(R.id.replyActionImageView).wait()
         view.instanceOf(AppCompatImageButton::class.java).withParent(view.withId(R.id.toolbar)).click()
         return InboxRobot()
     }

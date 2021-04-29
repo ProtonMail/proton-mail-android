@@ -121,16 +121,14 @@
             android:id="@+id/layout_no_connectivity_info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/action_buttons"
+            app:layout_constraintBottom_toTopOf="@id/messageDetailsActionsView"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
-        <!-- TODO: Should be removed with MAILAND-1533 -->
-        <ch.protonmail.android.views.messageDetails.ReplyButtonsPanelView
-            android:id="@+id/action_buttons"
+        <ch.protonmail.android.views.messageDetails.MessageDetailsActionsView
+            android:id="@+id/messageDetailsActionsView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_behavior="ch.protonmail.android.views.behavior.MoveUpwardBehavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
