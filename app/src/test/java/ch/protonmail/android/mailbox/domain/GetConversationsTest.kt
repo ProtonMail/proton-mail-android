@@ -38,6 +38,8 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
+
 class GetConversationsTest : CoroutinesTest {
 
     private var userId = Id("id")
@@ -150,6 +152,18 @@ class GetConversationsTest : CoroutinesTest {
 
         val actualConversations = (result as GetConversationsResult.Success).conversations
         assertEquals(listOf(customLabelConversation), actualConversations)
+    }
+
+    @Test
+    fun getConversationsReturnsNoConversationsFoundWhenRepositoryReturnsNoConversations() = runBlockingTest {
+        coEvery { conversationRepository.getConversations(any()) } returns flowOf(
+            DataResult.Error.Remote("any", NO_MORE_CONVERSATIONS_ERROR_CODE)
+        )
+
+        val actual = getConversations.invoke(userId, MessageLocationType.INBOX, null)
+
+        val error = GetConversationsResult.NoConversationsFound
+        assertEquals(error, actual.first())
     }
 
     private fun customLabelContext(labelId: String) = LabelContext(labelId, 0, 0, 0L, 0, 0)

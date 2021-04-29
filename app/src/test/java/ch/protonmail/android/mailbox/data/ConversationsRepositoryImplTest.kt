@@ -56,6 +56,8 @@ import java.io.IOException
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
+private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
+
 @ExperimentalCoroutinesApi
 class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
@@ -310,6 +312,32 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             )
         )
         assertEquals(expectedLocalConversations, actualLocalItems.value)
+    }
+
+    @Test
+    fun verifyGetConversationsEmitNoMoreConversationsErrorWhenRemoteReturnsEmptyList() = runBlocking {
+        // given
+        val parameters = GetConversationsParameters(
+            locationId = "8234",
+            userId = testUserId,
+            oldestConversationTimestamp = 823848238
+        )
+        val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
+        val emptyConversationsResponse = ConversationsResponse(0, emptyList())
+        coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(conversationsEntity)
+        coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
+        coEvery { api.fetchConversations(any()) } returns emptyConversationsResponse
+
+        // when
+        val result = conversationsRepository.getConversations(parameters).take(2).toList()
+
+        // Then
+        val actualApiError = result[0] as DataResult.Error.Remote
+        assertEquals("No conversations", actualApiError.message)
+        assertEquals(NO_MORE_CONVERSATIONS_ERROR_CODE, actualApiError.protonCode)
+
+        val actualLocalItems = result[1] as DataResult.Success
+        assertEquals(ResponseSource.Local, actualLocalItems.source)
     }
 
     private fun getConversation(

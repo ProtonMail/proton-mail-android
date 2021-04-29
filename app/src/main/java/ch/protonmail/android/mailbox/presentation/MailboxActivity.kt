@@ -388,6 +388,10 @@ class MailboxActivity :
             setRefreshing(false)
             setLoadingMore(false)
         }
+        mailboxViewModel.noMoreResults.observe(this) {
+            setRefreshing(false)
+            setLoadingMore(false)
+        }
         observeMailboxItemsByLocation(
             refreshMessages = true,
             syncId = syncUUID

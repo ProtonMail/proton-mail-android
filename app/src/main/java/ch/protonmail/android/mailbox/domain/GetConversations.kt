@@ -21,6 +21,7 @@ package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mailbox.data.NO_MORE_CONVERSATIONS_ERROR_CODE
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -45,14 +46,23 @@ class GetConversations @Inject constructor(
 
         return conversationRepository.getConversations(params)
             .map { result ->
-                return@map if (result is DataResult.Success) {
-                    GetConversationsResult.Success(
-                        result.value.filter { conversation ->
-                            conversation.labels.any { it.id == params.locationId }
+                return@map when (result) {
+                    is DataResult.Success -> {
+                        GetConversationsResult.Success(
+                            result.value.filter { conversation ->
+                                conversation.labels.any { it.id == params.locationId }
+                            }
+                        )
+                    }
+                    is DataResult.Error.Remote -> {
+                        if (result.protonCode == NO_MORE_CONVERSATIONS_ERROR_CODE) {
+                            return@map GetConversationsResult.NoConversationsFound
                         }
-                    )
-                } else {
-                    GetConversationsResult.Error
+                        return@map GetConversationsResult.Error
+                    }
+                    else -> {
+                        GetConversationsResult.Error
+                    }
                 }
             }
     }

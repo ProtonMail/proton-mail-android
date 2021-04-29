@@ -24,17 +24,19 @@ import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.DataResult.Error
+import me.proton.core.domain.arch.DataResult.Success
 import me.proton.core.domain.arch.ResponseSource
 import javax.inject.Inject
 
-@FlowPreview
+const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
+
 class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
     private val api: ProtonMailApiManager
@@ -53,15 +55,18 @@ class ConversationsRepositoryImpl @Inject constructor(
                 onSuccess = {
                     val conversations = it.conversationResponse.toListLocal(parameters.userId.s)
                     conversationDao.insertOrUpdate(*conversations.toTypedArray())
+                    if (conversations.isEmpty()) {
+                        emit(Error.Remote<List<Conversation>>("No conversations", NO_MORE_CONVERSATIONS_ERROR_CODE))
+                    }
                 },
                 onFailure = {
-                    emit(DataResult.Error.Remote<List<Conversation>>(it.message))
+                    emit(Error.Remote<List<Conversation>>(it.message))
                 }
             )
 
             emitAll(
                 getConversationsLocal(parameters).map {
-                    DataResult.Success(ResponseSource.Local, it)
+                    Success(ResponseSource.Local, it)
                 }
             )
         }

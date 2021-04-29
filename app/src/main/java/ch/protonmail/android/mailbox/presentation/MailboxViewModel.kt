@@ -94,6 +94,7 @@ class MailboxViewModel @Inject constructor(
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
     private val _getConversationsError = MutableLiveData<Boolean>()
+    private val _noMoreResults = MutableLiveData<Boolean>()
 
     lateinit var userId: Id
 
@@ -112,6 +113,8 @@ class MailboxViewModel @Inject constructor(
         get() = _hasSuccessfullyDeletedMessages
     val getConversationsError: LiveData<Boolean>
         get() = _getConversationsError
+    val noMoreResults: LiveData<Boolean>
+        get() = _noMoreResults
 
     fun reloadDependenciesForUser() {
         pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -302,11 +305,19 @@ class MailboxViewModel @Inject constructor(
         return getConversations(
             userManager.requireCurrentUserId(), location, labelId
         ).map { result ->
-            if (result is GetConversationsResult.Success) {
-                return@map conversationsToMailboxItems(result.conversations, location.messageLocationTypeValue)
+            when (result) {
+                is GetConversationsResult.Success -> {
+                    return@map conversationsToMailboxItems(result.conversations, location.messageLocationTypeValue)
+                }
+                is GetConversationsResult.NoConversationsFound -> {
+                    _noMoreResults.value = true
+                    return@map listOf<MailboxUiItem>()
+                }
+                else -> {
+                    _getConversationsError.value = true
+                    return@map listOf<MailboxUiItem>()
+                }
             }
-            _getConversationsError.value = true
-            return@map listOf<MailboxUiItem>()
         }.asLiveData()
     }
 
