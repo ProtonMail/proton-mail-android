@@ -22,25 +22,26 @@ package ch.protonmail.android.activities.messageDetails.labelactions.domain
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import ch.protonmail.android.R
+import ch.protonmail.android.core.Constants
 
 // based on Constants.MessageLocationType
-sealed class StandardFolderLocation(
+enum class StandardFolderLocation(
     val id: String,
     @DrawableRes val iconRes: Int,
     @StringRes val title: Int? = null
 ) {
 
-    object Archive : StandardFolderLocation(ID_ARCHIVE_FOLDER, R.drawable.ic_archive_24dp, R.string.archive)
-    object Inbox : StandardFolderLocation(ID_INBOX_FOLDER, R.drawable.ic_inbox_24dp, R.string.inbox)
-    object Spam : StandardFolderLocation(ID_SPAM_FOLDER, R.drawable.ic_spam_24dp, R.string.spam)
-    object Trash : StandardFolderLocation(ID_TRASH_FOLDER, R.drawable.ic_trash_24dp, R.string.trash)
-    data class CustomFolder(val folderId: String) : StandardFolderLocation(folderId, R.drawable.ic_folder_24dp)
+    ARCHIVE(
+        Constants.MessageLocationType.ARCHIVE.toString(), R.drawable.ic_archive_24dp, R.string.archive
+    ),
+    INBOX(
+        Constants.MessageLocationType.INBOX.toString(), R.drawable.ic_inbox_24dp, R.string.inbox
+    ),
+    SPAM(
+        Constants.MessageLocationType.SPAM.toString(), R.drawable.ic_spam_24dp, R.string.spam
+    ),
+    TRASH(
+        Constants.MessageLocationType.TRASH.toString(), R.drawable.ic_trash_24dp, R.string.trash
+    )
 
-    companion object {
-
-        const val ID_ARCHIVE_FOLDER = "id_archive_folder"
-        const val ID_INBOX_FOLDER = "id_inbox_folder"
-        const val ID_SPAM_FOLDER = "id_spam_folder"
-        const val ID_TRASH_FOLDER = "id_trash_folder"
-    }
 }

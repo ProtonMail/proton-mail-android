@@ -26,8 +26,8 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.verify
-import kotlin.test.Test
 import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class MoveMessagesToFolderTest {
 
@@ -47,7 +47,7 @@ class MoveMessagesToFolderTest {
 
         // given
         val messageIds = listOf("id1", "id2")
-        val newFolderLocation = StandardFolderLocation.Trash.id
+        val newFolderLocation = StandardFolderLocation.TRASH.id
         val currentFolderLabelId = "currentFolderId"
         every { repository.moveToTrash(messageIds, currentFolderLabelId) } just Runs
 
@@ -64,7 +64,7 @@ class MoveMessagesToFolderTest {
 
         // given
         val messageIds = listOf("id1", "id2")
-        val newFolderLocation = StandardFolderLocation.Archive.id
+        val newFolderLocation = StandardFolderLocation.ARCHIVE.id
         val currentFolderLabelId = "currentFolderId"
         every { repository.moveToArchive(messageIds, currentFolderLabelId) } just Runs
 
@@ -81,7 +81,7 @@ class MoveMessagesToFolderTest {
 
         // given
         val messageIds = listOf("id1", "id2")
-        val newFolderLocation = StandardFolderLocation.Inbox.id
+        val newFolderLocation = StandardFolderLocation.INBOX.id
         val currentFolderLabelId = "currentFolderId"
         every { repository.moveToInbox(messageIds, currentFolderLabelId) } just Runs
 
@@ -98,7 +98,7 @@ class MoveMessagesToFolderTest {
 
         // given
         val messageIds = listOf("id1", "id2")
-        val newFolderLocation = StandardFolderLocation.Spam.id
+        val newFolderLocation = StandardFolderLocation.SPAM.id
         val currentFolderLabelId = "currentFolderId"
         every { repository.moveToSpam(messageIds) } just Runs
 

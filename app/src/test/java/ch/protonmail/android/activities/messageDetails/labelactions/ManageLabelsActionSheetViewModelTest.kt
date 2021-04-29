@@ -104,7 +104,7 @@ class ManageLabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         } returns ManageLabelsActionSheet.Type.LABEL
 
 
-        coEvery { getAllLabels.invoke(any(), any()) } returns listOf(model1label, model2folder)
+        coEvery { getAllLabels.invoke(any(), any(), any()) } returns listOf(model1label, model2folder)
 
         viewModel = ManageLabelsActionSheetViewModel(
             savedStateHandle,
@@ -121,14 +121,14 @@ class ManageLabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // given
         val shallMoveToArchive = true
         coEvery { updateLabels.invoke(any(), any()) } just Runs
-        coEvery { moveMessagesToFolder(listOf(messageId1), StandardFolderLocation.Archive.id) } just Runs
+        coEvery { moveMessagesToFolder(listOf(messageId1), StandardFolderLocation.ARCHIVE.id) } just Runs
 
         // when
         viewModel.onDoneClicked(shallMoveToArchive)
 
         // then
         coVerify { updateLabels.invoke(any(), any()) }
-        coVerify { moveMessagesToFolder(listOf(messageId1), StandardFolderLocation.Archive.id) }
+        coVerify { moveMessagesToFolder(listOf(messageId1), StandardFolderLocation.ARCHIVE.id) }
         assertEquals(ManageLabelActionResult.LabelsSuccessfullySaved, viewModel.actionsResult.value)
     }
 

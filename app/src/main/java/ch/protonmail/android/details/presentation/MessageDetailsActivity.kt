@@ -601,7 +601,8 @@ internal class MessageDetailsActivity :
         ManageLabelsActionSheet.newInstance(
             message.labelIDsNotIncludingLocations,
             listOf(requireNotNull(message.messageId)),
-            sheetType
+            sheetType,
+            message.location
         )
             .show(supportFragmentManager, ManageLabelsActionSheet::class.qualifiedName)
     }

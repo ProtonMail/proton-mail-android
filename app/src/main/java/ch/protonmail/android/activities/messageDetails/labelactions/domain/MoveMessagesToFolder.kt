@@ -33,13 +33,13 @@ class MoveMessagesToFolder @Inject constructor(
         currentFolderLabelId: String = EMPTY_STRING,
     ) {
         when (newFolderLocationId) {
-            StandardFolderLocation.Trash.id ->
+            StandardFolderLocation.TRASH.id ->
                 messagesRepository.moveToTrash(messageIds, currentFolderLabelId)
-            StandardFolderLocation.Archive.id ->
+            StandardFolderLocation.ARCHIVE.id ->
                 messagesRepository.moveToArchive(messageIds, currentFolderLabelId)
-            StandardFolderLocation.Inbox.id ->
+            StandardFolderLocation.INBOX.id ->
                 messagesRepository.moveToInbox(messageIds, currentFolderLabelId)
-            StandardFolderLocation.Spam.id ->
+            StandardFolderLocation.SPAM.id ->
                 messagesRepository.moveToSpam(messageIds)
             else ->
                 messagesRepository.moveToCustomFolderLocation(messageIds, newFolderLocationId)

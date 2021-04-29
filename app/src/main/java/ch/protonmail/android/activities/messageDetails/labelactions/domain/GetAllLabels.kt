@@ -22,6 +22,7 @@ package ch.protonmail.android.activities.messageDetails.labelactions.domain
 import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelItemUiModel
 import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelsActionSheet
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.core.Constants
 import me.proton.core.util.kotlin.toBooleanOrFalse
 import javax.inject.Inject
 
@@ -32,7 +33,8 @@ class GetAllLabels @Inject constructor(
 
     suspend operator fun invoke(
         currentLabelsSelection: List<String>,
-        labelsSheetType: ManageLabelsActionSheet.Type = ManageLabelsActionSheet.Type.LABEL
+        labelsSheetType: ManageLabelsActionSheet.Type = ManageLabelsActionSheet.Type.LABEL,
+        currentMessageFolder: Constants.MessageLocationType? = null // only required for Type.FOLDER
     ): List<ManageLabelItemUiModel> {
         val dbLabels = messageDetailsRepository.getAllLabels()
 
@@ -41,38 +43,33 @@ class GetAllLabels @Inject constructor(
             .map { label ->
                 labelsMapper.mapLabelToUi(label, currentLabelsSelection, labelsSheetType)
             }
-        return if (labelsSheetType == ManageLabelsActionSheet.Type.FOLDER)
-            uiLabelsFromDb + getStandardFolders()
-        else
+        return if (labelsSheetType == ManageLabelsActionSheet.Type.FOLDER) {
+            requireNotNull(currentMessageFolder)
+            uiLabelsFromDb + getStandardFolders(currentMessageFolder)
+        } else
             uiLabelsFromDb
     }
 
-    private fun getStandardFolders(): List<ManageLabelItemUiModel> {
-        return listOf(
+    private fun getStandardFolders(currentMessageFolder: Constants.MessageLocationType): List<ManageLabelItemUiModel> {
+        return when (currentMessageFolder) {
+            Constants.MessageLocationType.INBOX,
+            Constants.MessageLocationType.ARCHIVE,
+            Constants.MessageLocationType.SPAM,
+            Constants.MessageLocationType.TRASH -> getListWithoutType(currentMessageFolder)
+            else -> getListWithoutType()
+        }
+    }
+
+    private fun getListWithoutType(
+        currentMessageFolder: Constants.MessageLocationType = Constants.MessageLocationType.INVALID
+    ) = StandardFolderLocation.values()
+        .filter { it.id != currentMessageFolder.name }
+        .map { location ->
             ManageLabelItemUiModel(
-                labelId = StandardFolderLocation.Inbox.id,
-                iconRes = StandardFolderLocation.Inbox.iconRes,
-                titleRes = StandardFolderLocation.Inbox.title,
-                labelType = ManageLabelsActionSheet.Type.FOLDER.typeInt
-            ),
-            ManageLabelItemUiModel(
-                labelId = StandardFolderLocation.Archive.id,
-                iconRes = StandardFolderLocation.Archive.iconRes,
-                titleRes = StandardFolderLocation.Archive.title,
-                labelType = ManageLabelsActionSheet.Type.FOLDER.typeInt
-            ),
-            ManageLabelItemUiModel(
-                labelId = StandardFolderLocation.Spam.id,
-                iconRes = StandardFolderLocation.Spam.iconRes,
-                titleRes = StandardFolderLocation.Spam.title,
-                labelType = ManageLabelsActionSheet.Type.FOLDER.typeInt
-            ),
-            ManageLabelItemUiModel(
-                labelId = StandardFolderLocation.Trash.id,
-                iconRes = StandardFolderLocation.Trash.iconRes,
-                titleRes = StandardFolderLocation.Trash.title,
+                labelId = location.id,
+                iconRes = location.iconRes,
+                titleRes = location.title,
                 labelType = ManageLabelsActionSheet.Type.FOLDER.typeInt
             )
-        )
-    }
+        }
 }

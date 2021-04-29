@@ -28,6 +28,7 @@ import ch.protonmail.android.activities.messageDetails.labelactions.domain.GetAl
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.MoveMessagesToFolder
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.StandardFolderLocation
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.UpdateLabels
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -50,6 +51,11 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
         ManageLabelsActionSheet.EXTRA_ARG_ACTION_SHEET_TYPE
     ) ?: ManageLabelsActionSheet.Type.LABEL
 
+    private val currentMessageFolder =
+        Constants.MessageLocationType.fromInt(
+            savedStateHandle.get<Int>(ManageLabelsActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID) ?: 0
+        )
+
     private val messageIds = savedStateHandle.get<List<String>>(ManageLabelsActionSheet.EXTRA_ARG_MESSAGES_IDS)
         ?: emptyList()
 
@@ -64,7 +70,7 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
 
     init {
         viewModelScope.launch {
-            labelsMutableFlow.value = getAllLabels.invoke(initialLabelsSelection, labelsSheetType)
+            labelsMutableFlow.value = getAllLabels.invoke(initialLabelsSelection, labelsSheetType, currentMessageFolder)
         }
     }
 
@@ -121,7 +127,7 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
                 }
 
                 if (shallMoveToArchive) {
-                    moveMessagesToFolder(messageIds, StandardFolderLocation.Archive.id)
+                    moveMessagesToFolder(messageIds, StandardFolderLocation.ARCHIVE.id)
                 }
 
                 actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved
