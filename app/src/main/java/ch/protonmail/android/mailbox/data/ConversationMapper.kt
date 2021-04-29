@@ -29,6 +29,7 @@ import ch.protonmail.android.mailbox.data.remote.model.LabelContextApiModel
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
+import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
 
 
 internal fun ConversationApiModel.toLocal(userId: String) = ConversationDatabaseModel(
@@ -57,6 +58,21 @@ internal fun ConversationDatabaseModel.toDomainModel() = Conversation(
     expirationTime = expirationTime,
     labels = labels.toLabelContextDomainModel(),
     messages = null
+)
+
+
+
+internal fun ConversationDatabaseModel.toDomainModel(messages: List<MessageDomainModel>) = Conversation(
+    id = id,
+    subject = subject,
+    senders = senders.senderToCorespondent(),
+    receivers = recipients.recipientToCorespondent(),
+    messagesCount = numMessages,
+    unreadCount = numUnread,
+    attachmentsCount = numAttachments,
+    expirationTime = expirationTime,
+    labels = labels.toLabelContextDomainModel(),
+    messages = messages
 )
 
 /**

@@ -19,7 +19,9 @@
 
 package ch.protonmail.android.mailbox.domain
 
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
 
@@ -36,13 +38,12 @@ interface ConversationsRepository {
 
     /**
      * @param conversationId the encrypted id of the conversation to get
-     * @param messageId the id of the message to be returned fully (not only metadata)
      *
-     * @return a Conversation object when the repository could successfully get it from some data source.
+     * @return a Conversation object containing list of messages when the repository could successfully get it from some data source.
      * @return an empty optional when the repository encounters a handled failure getting the given conversation
      * @throws exception when the repository fails getting this conversation for any unhandled reasons
      */
-    // suspend fun getConversation(conversationId: String, messageId: String): Conversation?
+    fun getConversation(conversationId: String, userId: Id, scope: CoroutineScope): Flow<DataResult<Conversation>>
 
     /**
      * Deletes all the conversations from the [TABLE_CONVERSATIONS] inside the local storage

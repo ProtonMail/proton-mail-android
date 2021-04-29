@@ -21,9 +21,11 @@ package ch.protonmail.android.mailbox.data.remote
 
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.segments.RetrofitConstants
+import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import retrofit2.http.GET
 import retrofit2.http.Headers
+import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.Tag
 
@@ -39,5 +41,12 @@ interface ConversationService {
         @Query("Desc") desc: Int = 1,
         @Tag userIdTag: UserIdTag? = null
     ): ConversationsResponse
+
+    @GET("mail/v4/conversations/{conversationId}")
+    @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
+    suspend fun fetchConversation(
+        @Path("conversationId") conversationId: String,
+        @Tag userIdTag: UserIdTag? = null
+    ): ConversationResponse
 
 }

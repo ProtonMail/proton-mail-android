@@ -31,6 +31,7 @@ import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_FILE_NAME
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_FILE_PATH
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_ID
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_MESSAGE_ID
+import ch.protonmail.android.data.local.model.COLUMN_CONVERSATION_ID
 import ch.protonmail.android.data.local.model.COLUMN_LABEL_ID
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ACCESS_TIME
 import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_EXPIRATION_TIME
@@ -59,54 +60,64 @@ import kotlinx.coroutines.flow.onEach
 abstract class MessageDao {
 
     //region Messages
-    @Query("""
+    @Query(
+        """
         SELECT *
 		FROM $TABLE_MESSAGES
 		WHERE $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
 		  OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_NAME} LIKE '%'||:senderName||'%'
 		  OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_EMAIL} LIKE '%'||:senderEmail||'%'
 	    ORDER BY $COLUMN_MESSAGE_TIME DESC
-    """)
+    """
+    )
     abstract fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_IS_STARRED = 1")
     abstract fun getStarredMessagesAsync(): LiveData<List<Message>>
 
-    @Query("""
+    @Query(
+        """
         SELECT * 
         FROM $TABLE_MESSAGES 
         WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'
         ORDER BY $COLUMN_MESSAGE_TIME DESC
-    """)
+    """
+    )
     abstract fun getMessagesByLabelIdAsync(label: String): LiveData<List<Message>>
 
-    @Query("""
+    @Query(
+        """
         SELECT *
         FROM $TABLE_MESSAGES
         WHERE $COLUMN_MESSAGE_LOCATION = :location
         ORDER BY $COLUMN_MESSAGE_TIME DESC
-    """)
+    """
+    )
     abstract fun getMessagesByLocationAsync(location: Int): LiveData<List<Message>>
 
     @Query("SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location ")
     abstract fun getMessagesCountByLocation(location: Int): Int
 
-    @Query("""
+    @Query(
+        """
         SELECT COUNT($COLUMN_MESSAGE_ID)
         FROM $TABLE_MESSAGES 
 		WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :labelId || '%'  
-    """)
+    """
+    )
     abstract fun getMessagesCountByByLabelId(labelId: String): Int
 
     @Query("SELECT * FROM $TABLE_MESSAGES ORDER BY $COLUMN_MESSAGE_TIME DESC")
     abstract fun getAllMessages(): LiveData<List<Message>>
 
-    @Query("""
+    @Query(
+        """
         SELECT *
         FROM $TABLE_MESSAGES
         WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'  
         ORDER BY $COLUMN_MESSAGE_TIME DESC
-    """)
+    """
+    )
     abstract fun getMessagesByLabelId(label: String): List<Message>
 
     fun findMessageById(messageId: String): Flow<Message?> = findMessageInfoById(messageId)
@@ -142,13 +153,21 @@ abstract class MessageDao {
         findMessageInfoByDbId(dbId).map { message ->
             return@map message?.let {
                 it.Attachments = it.attachmentsBlocking(this)
-        it
+                it
             }
         }
 
     @JvmOverloads
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =
         findAllMessageInfoByLastMessageAccessTime(laterThan)
+            .map { messages ->
+                messages.onEach { message ->
+                    message.Attachments = message.attachments(this)
+                }
+            }
+
+    fun findAllMessageFromAConversation(conversationId: String): Flow<List<Message>> =
+        findAllMessageInfoFromAConversation(conversationId)
             .map { messages ->
                 messages.onEach { message ->
                     message.Attachments = message.attachments(this)
@@ -177,13 +196,24 @@ abstract class MessageDao {
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
     protected abstract fun findMessageInfoByDbId(messageDbId: Long): Flow<Message?>
 
-    @Query("""
+    @Query(
+        """
         SELECT *
         FROM $TABLE_MESSAGES
         WHERE $COLUMN_MESSAGE_ACCESS_TIME > :laterThan
         ORDER BY $COLUMN_MESSAGE_ACCESS_TIME
-    """)
+    """
+    )
     protected abstract fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>>
+
+    @Query(
+        """
+        SELECT *
+        FROM $TABLE_MESSAGES
+        WHERE $COLUMN_CONVERSATION_ID = :conversationId
+    """
+    )
+    abstract fun findAllMessageInfoFromAConversation(conversationId: String): Flow<List<Message>>
 
     open suspend fun saveMessage(message: Message): Long {
         processMessageAttachments(message)
@@ -274,12 +304,14 @@ abstract class MessageDao {
     @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%'||:labelId||'%'")
     abstract fun deleteMessagesByLabel(labelId: String)
 
-    @Query("""
+    @Query(
+        """
         DELETE 
         FROM $TABLE_MESSAGES
         WHERE $COLUMN_MESSAGE_EXPIRATION_TIME <> 0 
           AND $COLUMN_MESSAGE_EXPIRATION_TIME < :currentTime
-    """)
+    """
+    )
     abstract fun deleteExpiredMessages(currentTime: Long)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -306,11 +338,13 @@ abstract class MessageDao {
     @Delete
     abstract fun deleteMessages(message: List<Message>)
 
-    @Query("""
+    @Query(
+        """
         UPDATE $TABLE_MESSAGES 
         SET $COLUMN_MESSAGE_IS_STARRED = :starred
         WHERE $COLUMN_MESSAGE_ID = :messageId
-    """)
+    """
+    )
     abstract fun updateStarred(messageId: String, starred: Boolean)
     //endregion Messages
 
@@ -322,13 +356,15 @@ abstract class MessageDao {
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
     abstract fun findAttachmentsByMessageId(messageId: String): Flow<List<Attachment>>
 
-    @Query("""
+    @Query(
+        """
         SELECT * 
         FROM $TABLE_ATTACHMENTS
         WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId
           AND $COLUMN_ATTACHMENT_FILE_NAME = :fileName
           AND $COLUMN_ATTACHMENT_FILE_PATH = :filePath
-    """)
+    """
+    )
     abstract fun findAttachmentsByMessageIdFileNameAndPath(
         messageId: String,
         fileName: String,

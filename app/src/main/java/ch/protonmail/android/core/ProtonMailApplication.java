@@ -25,7 +25,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.SpannableString;
@@ -69,9 +68,7 @@ import ch.protonmail.android.api.models.Organization;
 import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
-import ch.protonmail.android.api.services.MessagesService;
 import ch.protonmail.android.data.local.MessageDao;
-import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
@@ -354,38 +351,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
         mUpdateOccurred = false;
     }
 
-    private static class RefreshMessagesAndAttachments extends AsyncTask<Void, Void, Void> {
-
-        private final Context context;
-        private final Id userId;
-        private final MessageDao messageDao;
-
-        private RefreshMessagesAndAttachments(Context context, Id userId, MessageDao messageDao) {
-            this.context = context;
-            this.userId = userId;
-            this.messageDao = messageDao;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            messageDao.clearAttachmentsCache();
-            messageDao.clearMessagesCache();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            MessagesService.Companion.startFetchFirstPage(
-                    context,
-                    userId,
-                    Constants.MessageLocationType.INBOX,
-                    false,
-                    null,
-                    false
-            );
-        }
-    }
-
     private void setupNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -407,14 +372,11 @@ public class ProtonMailApplication extends Application implements androidx.work.
             prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, BuildConfig.VERSION_CODE).apply();
             mUpdateOccurred = true;
 
-            Id currentUser = userManager.getCurrentUserId();
-            if (BuildConfig.DEBUG && currentUser != null) {
-                messageDao = MessageDatabase.Companion
-                        .getInstance(this, currentUser)
-                        .getDao();
-                new RefreshMessagesAndAttachments(this, currentUser, messageDao).execute();
+            if (userManager.isLoggedIn()) {
+                userManager.setCurrentUserLoginState(LOGIN_STATE_TO_INBOX);
             }
-            if (BuildConfig.FETCH_FULL_CONTACTS) {
+
+            if (BuildConfig.FETCH_FULL_CONTACTS && userManager.isLoggedIn()) {
                 new FetchContactsEmailsWorker.Enqueuer(WorkManager.getInstance(this)).enqueue(0);
                 new FetchContactsDataWorker.Enqueuer(WorkManager.getInstance(this)).enqueue();
             }

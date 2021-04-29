@@ -20,7 +20,7 @@
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator

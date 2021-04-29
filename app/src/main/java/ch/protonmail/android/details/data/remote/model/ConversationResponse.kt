@@ -17,22 +17,24 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain.model
+package ch.protonmail.android.details.data.remote.model
 
-data class MessageEntity(
-    val id: String,
-    val conversationId: String,
-    val subject: String,
-    val isUnread: Boolean,
-    val sender: Correspondent,
-    val receivers: List<Correspondent>,
-    val timeMs: Long,
-    val attachmentsCount: Int,
-    val expirationTime: Int,
-    val isReplied: Boolean,
-    val isRepliedAll: Boolean,
-    val isForwarded: Boolean,
-    val ccReceivers: List<Correspondent>,
-    val bccReceivers: List<Correspondent>,
-    val labelsIds: String
-)
+import ch.protonmail.android.api.models.messages.receive.ServerMessage
+import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
+import com.google.gson.annotations.SerializedName
+
+data class ConversationResponse(
+    @SerializedName(TOTAL)
+    val total: Int,
+    @SerializedName(CONVERSATION)
+    val conversation: ConversationApiModel,
+    @SerializedName(MESSAGES)
+    val messages: List<ServerMessage>
+) {
+    companion object {
+
+        private const val TOTAL = "Total"
+        private const val CONVERSATION = "Conversation"
+        private const val MESSAGES = "Messages"
+    }
+}

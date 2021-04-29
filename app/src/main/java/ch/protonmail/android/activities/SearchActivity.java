@@ -43,7 +43,7 @@ import javax.inject.Provider;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.activities.mailbox.InvalidateSearchDatabase;
-import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
+import ch.protonmail.android.details.presentation.MessageDetailsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.messages.MailboxRecyclerViewAdapter;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;

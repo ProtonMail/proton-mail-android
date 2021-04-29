@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities.messageDetails
+package ch.protonmail.android.details.presentation
 
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
@@ -61,6 +61,11 @@ import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
+import ch.protonmail.android.activities.messageDetails.EXTRA_VIEW_HEADERS
+import ch.protonmail.android.activities.messageDetails.IntentExtrasData
+import ch.protonmail.android.activities.messageDetails.LabelsObserver
+import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
+import ch.protonmail.android.activities.messageDetails.MessageViewHeadersActivity
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener

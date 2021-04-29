@@ -22,6 +22,7 @@ package ch.protonmail.android.mailbox.data
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
@@ -139,6 +140,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     @RelaxedMockK
     private lateinit var conversationDao: ConversationDao
 
+    @RelaxedMockK
+    private lateinit var messageDao: MessageDao
+
     @MockK
     private lateinit var api: ProtonMailApiManager
 
@@ -151,6 +155,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         conversationsRepository =
             ConversationsRepositoryImpl(
                 conversationDao,
+                messageDao,
                 api
             )
     }

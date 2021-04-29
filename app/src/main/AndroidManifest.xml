@@ -156,7 +156,7 @@
             android:launchMode="singleTask"
             android:maxRecents="1" />
         <activity
-            android:name=".activities.messageDetails.MessageDetailsActivity"
+            android:name=".details.presentation.MessageDetailsActivity"
             android:exported="false"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".mailbox.presentation.MailboxActivity">
@@ -168,10 +168,10 @@
             android:name=".activities.messageDetails.MessageViewHeadersActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false"
-            android:parentActivityName=".activities.messageDetails.MessageDetailsActivity">
+            android:parentActivityName=".details.presentation.MessageDetailsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.messageDetails.MessageDetailsActivity" />
+                android:value=".details.presentation.MessageDetailsActivity" />
         </activity>
         <activity
             android:name=".activities.composeMessage.ComposeMessageActivity"
