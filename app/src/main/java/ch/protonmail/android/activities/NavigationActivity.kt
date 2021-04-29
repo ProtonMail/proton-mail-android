@@ -435,7 +435,6 @@ abstract class NavigationActivity :
                 .let { it[0] to it[1] }
     }
 
-    // TODO
     fun onUserClicked(open: Boolean) {
         sideDrawer.visibility = if (open) View.GONE else View.VISIBLE
         navigationDrawerUsersRecyclerView.visibility = if (open) View.VISIBLE else View.GONE
@@ -531,17 +530,15 @@ abstract class NavigationActivity :
             // Prepare new Labels for the Adapter
             val (labelsItems, foldersItems) = mapLabelsToDrawerLabels(mapper, labels)
                 .partition { it.uiModel.type == LabelUiModel.Type.LABELS }
-            sideDrawer.setFolderItems(R.string.folders, foldersItems) // TODO
-            sideDrawer.setLabelItems(R.string.labels, labelsItems) // TODO
+            sideDrawer.setFolderItems(R.string.folders, foldersItems)
+            sideDrawer.setLabelItems(R.string.labels, labelsItems)
         }
     }
 
     private inner class LocationsMenuObserver : Observer<Map<Int, Int>> {
 
         override fun onChanged(unreadLocations: Map<Int, Int>) {
-            // Prepare drawer Items by injecting unreadLocations
-// TODO:            staticDrawerItems = staticDrawerItems.setUnreadLocations(unreadLocations)
-//                .toMutableList()
+            sideDrawer.setUnreadCounters(unreadLocations)
         }
     }
 }

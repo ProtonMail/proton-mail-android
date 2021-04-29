@@ -41,11 +41,11 @@ internal class ProtonSideDrawer @JvmOverloads constructor (
     @StyleRes defStyleRes: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
+    private val bodyRecyclerView: RecyclerView
     private val headerView = ProtonDrawerHeader(context)
     private val bodyAdapter = DrawerAdapter()
 
     // lists
-    private var isSnoozeEnabled: Boolean = false
     private var locationItems = listOf<DrawerItemUiModel.Primary.Static>()
     private var foldersSectionItem: DrawerItemUiModel.SectionName? = null
     private var folderItems = listOf<DrawerItemUiModel.Primary.Label>()
@@ -58,7 +58,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor (
     init {
         setBackgroundResource(R.color.nav_view_background)
 
-        val body = RecyclerView(context).apply {
+        bodyRecyclerView = RecyclerView(context).apply {
             layoutManager = LinearLayoutManager(context)
             adapter = bodyAdapter
         }
@@ -67,7 +67,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor (
             orientation = LinearLayout.VERTICAL
 
             addView(headerView)
-            addView(body)
+            addView(bodyRecyclerView)
         }
 
         addView(linearLayout)
@@ -94,6 +94,24 @@ internal class ProtonSideDrawer @JvmOverloads constructor (
         update()
     }
 
+    /**
+     * Set unread counters to "Location items"
+     * @see setLocationItems
+     *
+     * @param locationsToUnreadsMap [Map] associating type's id to the count of unread Messages
+     * @see DrawerItemUiModel.Primary.Static.Type.itemId
+     */
+    internal fun setUnreadCounters(locationsToUnreadsMap: Map<Int, Int>) {
+        locationItems = locationItems.map { item ->
+            // Get unread count by id of item's type from unread
+            val unreadCount = locationsToUnreadsMap.getOrElse(item.type.itemId) { 0 }
+            // Update the notificationCount for the item
+            item.copyWithNotificationCount(unreadCount)
+        }
+        update()
+    }
+
+
     fun setFolderItems(@StringRes sectionNameRes: Int, items: List<DrawerItemUiModel.Primary.Label>) {
         foldersSectionItem = DrawerItemUiModel.SectionName(context.getText(sectionNameRes))
         folderItems = items
@@ -115,6 +133,10 @@ internal class ProtonSideDrawer @JvmOverloads constructor (
     fun setFooterText(text: CharSequence) {
         footerItem = DrawerItemUiModel.Footer(text)
         update()
+    }
+
+    fun scrollToInitialPosition() {
+        bodyRecyclerView.smoothScrollToPosition(0)
     }
 
     @OptIn(ExperimentalStdlibApi::class)
