@@ -53,7 +53,7 @@ class SentRobot : MailboxRobotInterface {
     }
 
     fun navigateUpToSent(): SentRobot {
-        UIActions.wait.forViewWithId(R.id.reply_all)
+        UIActions.wait.forViewWithId(R.id.replyActionImageView)
         UIActions.system.clickHamburgerOrUpButton()
         return SentRobot()
     }

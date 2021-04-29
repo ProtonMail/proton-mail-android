@@ -45,6 +45,7 @@ class ForwardMessageTests : BaseTest() {
         body = TestData.messageBody
     }
 
+    @Ignore("Enable when forward action is available through the action sheet")
     @TestId("21092")
     @Test
     fun forwardMessage() {
