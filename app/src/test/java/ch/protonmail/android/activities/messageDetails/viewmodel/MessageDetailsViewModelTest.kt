@@ -22,6 +22,7 @@ package ch.protonmail.android.activities.messageDetails.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
+import ch.protonmail.android.activities.messageDetails.labelactions.domain.MoveMessagesToFolder
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.attachments.AttachmentsHelper
@@ -30,7 +31,6 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.usecase.VerifyConnection
-import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.DownloadUtils
 import com.birbit.android.jobqueue.JobManager
@@ -69,7 +69,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         }
     }
 
-    private val deleteMessageUseCase: DeleteMessage = mockk(relaxed = true)
+    private val moveMessagesToFolder: MoveMessagesToFolder = mockk(relaxed = true)
 
     private val fetchVerificationKeys: FetchVerificationKeys = mockk(relaxed = true)
 
@@ -85,16 +85,15 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         userManager,
         contactsRepository,
         attachmentMetadataDao,
-        deleteMessageUseCase,
         fetchVerificationKeys,
         attachmentsWorker,
         dispatchers,
         attachmentsHelper,
         downloadUtils,
-        jobManager,
+        moveMessagesToFolder,
         messageRendererFactory,
         verifyConnection,
-        networkConfigurator
+        networkConfigurator,
     )
 
     @Test

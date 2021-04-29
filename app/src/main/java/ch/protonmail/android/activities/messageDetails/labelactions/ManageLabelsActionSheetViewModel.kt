@@ -127,7 +127,11 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
                 }
 
                 if (shallMoveToArchive) {
-                    moveMessagesToFolder(messageIds, StandardFolderLocation.ARCHIVE.id)
+                    moveMessagesToFolder(
+                        messageIds,
+                        StandardFolderLocation.ARCHIVE.id,
+                        currentMessageFolder.messageLocationTypeValue.toString()
+                    )
                 }
 
                 actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved
@@ -138,7 +142,7 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
     }
 
     private fun onFolderClicked(selectedFolderId: String) {
-        moveMessagesToFolder(messageIds, selectedFolderId)
+        moveMessagesToFolder(messageIds, selectedFolderId, currentMessageFolder.messageLocationTypeValue.toString())
         actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved
     }
 }

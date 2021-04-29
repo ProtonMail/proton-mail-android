@@ -33,11 +33,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
-import ch.protonmail.android.activities.messageDetails.MessageDetailsAction
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.activities.messageDetails.MessagePrinter
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.RegisterReloadTask
+import ch.protonmail.android.activities.messageDetails.labelactions.domain.MoveMessagesToFolder
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.User
@@ -53,16 +53,8 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.jobs.PostArchiveJob
-import ch.protonmail.android.jobs.PostInboxJob
-import ch.protonmail.android.jobs.PostSpamJob
-import ch.protonmail.android.jobs.PostStarJob
-import ch.protonmail.android.jobs.PostTrashJobV2
-import ch.protonmail.android.jobs.PostUnreadJob
-import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.usecase.VerifyConnection
-import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
@@ -79,6 +71,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.EMPTY_STRING
 import okio.buffer
 import okio.sink
 import okio.source
@@ -101,13 +94,12 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val userManager: UserManager,
     private val contactsRepository: ContactsRepository,
     private val attachmentMetadataDao: AttachmentMetadataDao,
-    private val deleteMessageUseCase: DeleteMessage,
     private val fetchVerificationKeys: FetchVerificationKeys,
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
     private val dispatchers: DispatcherProvider,
     private val attachmentsHelper: AttachmentsHelper,
     private val downloadUtils: DownloadUtils,
-    private val jobManager: JobManager,
+    private val moveMessagesToFolder: MoveMessagesToFolder,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
@@ -253,7 +245,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             message.setIsRead(read)
             saveMessage()
             if (read) {
-                messageDetailsRepository.markRead(messageId)
+                messageDetailsRepository.markRead(listOf(messageId))
                 saveMessage()
             }
         }
@@ -650,14 +642,6 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun isPgpEncrypted(): Boolean = message.value?.messageEncryption?.isPGPEncrypted ?: false
 
-    fun deleteMessage(messageId: String) {
-        viewModelScope.launch {
-            deleteMessageUseCase(
-                listOf(messageId), Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
-            )
-        }
-    }
-
     fun printMessage(activityContext: Context) {
         val message = message.value
         message?.let {
@@ -689,47 +673,16 @@ internal class MessageDetailsViewModel @Inject constructor(
         return bodyString
     }
 
-    fun handleAction(
-        action: MessageDetailsAction
-    ) {
-        Timber.v("Handle action: $action")
-        when (action) {
-            MessageDetailsAction.DELETE_MESSAGE -> deleteMessage(messageId)
-            MessageDetailsAction.MARK_UNREAD -> markUnread()
-            MessageDetailsAction.MARK_READ -> markRead(true)
-            MessageDetailsAction.MOVE_TO_ARCHIVE -> moveToArchive()
-            MessageDetailsAction.MOVE_TO_INBOX -> moveToInbox()
-            MessageDetailsAction.MOVE_TO_SPAM -> moveToSpam()
-            MessageDetailsAction.MOVE_TO_TRASH -> moveToTrash(messageId)
-            MessageDetailsAction.STAR_UNSTAR -> toggleStarUnstar(messageId)
-        }
+    fun moveToTrash() {
+        moveMessagesToFolder(
+            listOf(messageId),
+            Constants.MessageLocationType.TRASH.toString(),
+            message.value?.folderLocation ?: EMPTY_STRING
+        )
     }
 
-    private fun moveToInbox() = jobManager.addJobInBackground(PostInboxJob(listOf(messageId)))
-
-    private fun moveToArchive() = jobManager.addJobInBackground(PostArchiveJob(listOf(messageId)))
-
-    private fun moveToSpam() = jobManager.addJobInBackground(PostSpamJob(listOf(messageId)))
-
-    private fun moveToTrash(messageId: String) = jobManager.addJobInBackground(PostTrashJobV2(listOf(messageId), null))
-
-    private fun toggleStarUnstar(messageId: String) {
-        val messageList = listOf(messageId)
-        val message = message.value
-        if (message != null) {
-            val job = if (message.isStarred == true) {
-                PostUnstarJob(messageList)
-            } else {
-                PostStarJob(messageList)
-            }
-            jobManager.addJobInBackground(job)
-        } else {
-            Timber.i("Cannot find a message to star/unstar")
-        }
+    fun markUnread() {
+        messageDetailsRepository.markUnRead(listOf(messageId))
     }
 
-    private fun markUnread() {
-        markRead(false)
-        jobManager.addJobInBackground(PostUnreadJob(listOf(messageId)))
-    }
 }

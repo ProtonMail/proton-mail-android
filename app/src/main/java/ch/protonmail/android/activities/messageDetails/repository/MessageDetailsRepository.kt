@@ -45,6 +45,9 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.PostReadJob
+import ch.protonmail.android.jobs.PostStarJob
+import ch.protonmail.android.jobs.PostUnreadJob
+import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.extensions.asyncMap
@@ -548,8 +551,20 @@ class MessageDetailsRepository @Inject constructor(
         attachmentsWorker.enqueue(messageId, userId, "")
     }
 
-    fun markRead(messageId: String) {
-        jobManager.addJobInBackground(PostReadJob(listOf(messageId)))
+    fun markRead(messageIds: List<String>) {
+        jobManager.addJobInBackground(PostReadJob(messageIds))
+    }
+
+    fun markUnRead(messageIds: List<String>) {
+        jobManager.addJobInBackground(PostUnreadJob(messageIds))
+    }
+
+    fun starMessages(messageIds: List<String>) {
+        jobManager.addJobInBackground(PostStarJob(messageIds))
+    }
+
+    fun unStarMessages(messageIds: List<String>) {
+        jobManager.addJobInBackground(PostUnstarJob(messageIds))
     }
 
     fun findAllPendingSendsAsync(): LiveData<List<PendingSend>> =

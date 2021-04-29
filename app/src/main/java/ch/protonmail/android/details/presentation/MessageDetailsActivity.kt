@@ -683,19 +683,20 @@ internal class MessageDetailsActivity :
                 if (!viewModel.renderingPassed) {
                     viewModel.fetchMessageDetails(true)
                 }
+                // we need to update the details, when e.g. message has been moved to another folder
+                messageExpandableAdapter.setMessageData(message)
+                messageDetailsActionsView.setOnMoreActionClickListener {
+                    MessageActionSheet.newInstance(
+                        listOf(message.messageId ?: messageId),
+                        getCurrentSubject(),
+                        getMessagesFrom(message.sender?.name),
+                        message.isStarred ?: false,
+                        message.location
+                    )
+                        .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
+                }
             } else {
                 viewModel.fetchMessageDetails(false)
-            }
-            // we need to update the details, when e.g. message has been moved to another folder
-            messageExpandableAdapter.setMessageData(message)
-            messageDetailsActionsView.setOnMoreActionClickListener {
-                MessageDetailsActionSheet.newInstance(
-                    getCurrentSubject(),
-                    getMessagesFrom(message.sender?.name),
-                    message.isStarred ?: false,
-                    message.location
-                )
-                    .show(supportFragmentManager, MessageDetailsActionSheet::class.qualifiedName)
             }
         }
 
@@ -816,12 +817,12 @@ internal class MessageDetailsActivity :
             )
             messageDetailsActionsView.bind(actionsUiModel)
             messageDetailsActionsView.setOnThirdActionClickListener {
-                viewModel.handleAction(MessageDetailsAction.MOVE_TO_TRASH)
+                viewModel.moveToTrash()
                 onBackPressed()
             }
             messageDetailsActionsView.setOnSecondActionClickListener {
                 markAsRead = false
-                viewModel.handleAction(MessageDetailsAction.MARK_UNREAD)
+                viewModel.markUnread()
                 onBackPressed()
             }
             messageDetailsActionsView.setOnFirstActionClickListener {

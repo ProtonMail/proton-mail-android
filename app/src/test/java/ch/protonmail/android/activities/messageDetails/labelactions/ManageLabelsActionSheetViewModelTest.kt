@@ -25,6 +25,7 @@ import ch.protonmail.android.activities.messageDetails.labelactions.domain.GetAl
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.MoveMessagesToFolder
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.StandardFolderLocation
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.UpdateLabels
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -103,6 +104,9 @@ class ManageLabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             )
         } returns ManageLabelsActionSheet.Type.LABEL
 
+        every {
+            savedStateHandle.get<Int>(ManageLabelsActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID)
+        } returns 0
 
         coEvery { getAllLabels.invoke(any(), any(), any()) } returns listOf(model1label, model2folder)
 
@@ -121,14 +125,24 @@ class ManageLabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // given
         val shallMoveToArchive = true
         coEvery { updateLabels.invoke(any(), any()) } just Runs
-        coEvery { moveMessagesToFolder(listOf(messageId1), StandardFolderLocation.ARCHIVE.id) } just Runs
+        coEvery {
+            moveMessagesToFolder(
+                listOf(messageId1), StandardFolderLocation.ARCHIVE.id,
+                Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
+            )
+        } just Runs
 
         // when
         viewModel.onDoneClicked(shallMoveToArchive)
 
         // then
         coVerify { updateLabels.invoke(any(), any()) }
-        coVerify { moveMessagesToFolder(listOf(messageId1), StandardFolderLocation.ARCHIVE.id) }
+        coVerify {
+            moveMessagesToFolder(
+                listOf(messageId1), StandardFolderLocation.ARCHIVE.id,
+                Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
+            )
+        }
         assertEquals(ManageLabelActionResult.LabelsSuccessfullySaved, viewModel.actionsResult.value)
     }
 
@@ -151,14 +165,13 @@ class ManageLabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // given
         coEvery { userManager.didReachLabelsThreshold(any()) } returns false
-        coEvery { moveMessagesToFolder.invoke(any(), any()) } just Runs
+        coEvery { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
 
         // when
         viewModel.onLabelClicked(model2folder)
 
         // then
-        coVerify { moveMessagesToFolder.invoke(any(), any()) }
-        assertEquals(listOf(model2folder), viewModel.labels.value)
+        coVerify { moveMessagesToFolder.invoke(any(), any(), any()) }
         assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved, viewModel.actionsResult.value)
     }
 }

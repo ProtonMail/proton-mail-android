@@ -22,7 +22,7 @@ package ch.protonmail.android.activities.messageDetails
 /**
  * Contains types of actions executed from message details screen.
  */
-enum class MessageDetailsAction {
+enum class MessageActionSheetActions {
     DELETE_MESSAGE,
     MARK_UNREAD,
     MARK_READ,
@@ -30,5 +30,6 @@ enum class MessageDetailsAction {
     MOVE_TO_INBOX,
     MOVE_TO_SPAM,
     MOVE_TO_TRASH,
-    STAR_UNSTAR,
+    STAR_MESSAGE,
+    UNSTAR_MESSAGE
 }
