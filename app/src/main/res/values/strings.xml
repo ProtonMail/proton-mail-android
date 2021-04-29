@@ -782,6 +782,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sender_lock_internal">End-to-end encrypted message</string>
     <string name="sender_lock_internal_verified">End-to-end encrypted message from verified address</string>
     <string name="sender_lock_unknown_scheme" translatable="false">Unknown encryption scheme</string>
+    <string name="sender_lock_learn_more"><a href="">Learn more</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-end encrypted</string>
     <string name="composer_lock_internal_pinned">End-to-end encrypted to verified address</string>
@@ -1128,4 +1129,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="failed_saving_draft_online">Failed saving online draft for message: "%s"</string>
     <string name="cannot_open_message_while_being_sent">Can\'t open this message while it\'s being sent</string>
     <string name="enable_conversation_mode">Enable conversation mode</string>
+
+    <string name="recipient_email_format">&lt;%s&gt;</string>
+    <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
 </resources>

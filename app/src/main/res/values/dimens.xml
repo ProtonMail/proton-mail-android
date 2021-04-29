@@ -52,8 +52,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <dimen name="message_details_header_padding_horizontal">16dp</dimen>
     <dimen name="message_details_header_padding_vertical">12dp</dimen>
-    <dimen name="message_details_header_views_margin_normal">8dp</dimen>
-    <dimen name="message_details_header_views_margin_small">4dp</dimen>
+    <dimen name="message_details_header_margin_big">16dp</dimen>
+    <dimen name="message_details_header_margin_normal">8dp</dimen>
+    <dimen name="message_details_header_margin_small">4dp</dimen>
     <dimen name="message_details_header_small_icon_size">16dp</dimen>
 
     <dimen name="message_details_banner_height">48dp</dimen>

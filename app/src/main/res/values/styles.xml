@@ -112,6 +112,10 @@
     <style name="Text.Caption.Hint">
         <item name="android:textColor">@color/text_hint</item>
     </style>
+
+    <style name="Text.DefaultSmall.Interaction">
+        <item name="android:textColor">@color/cornflower_blue</item>
+    </style>
     <!-- V4 -->
 
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">

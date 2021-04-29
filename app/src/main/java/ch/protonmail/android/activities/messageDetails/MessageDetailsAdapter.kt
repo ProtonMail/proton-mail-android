@@ -38,8 +38,8 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyScaleListener
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyTouchListener
-import ch.protonmail.android.activities.messageDetails.details.RecipientContextMenuFactory
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
@@ -47,7 +47,7 @@ import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.LoadContentButton
 import ch.protonmail.android.views.messageDetails.MessageDetailsExpirationInfoView
-import ch.protonmail.android.views.messageDetails.MessageDetailsRecipientsLayout
+import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import com.google.android.material.chip.ChipGroup
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_header.view.*
@@ -61,12 +61,11 @@ private const val TYPE_ITEM = 1001
 private const val TYPE_HEADER = 1000
 // endregion
 
-// TODO: The adapter needs to be changed in order to work properly with conversation view - MAILAND-1535
 class MessageDetailsAdapter(
     private val context: Context,
     private var message: Message,
     private var content: String,
-    private val wvScrollView: RecyclerView,
+    private val messageDetailsRecyclerView: RecyclerView,
     private var pmWebViewClient: PMWebViewClient,
     private val onLoadEmbeddedImagesCLick: (() -> Unit)?,
     private val onDisplayImagesCLick: (() -> Unit)?
@@ -80,7 +79,9 @@ class MessageDetailsAdapter(
     var expirationInfoView = MessageDetailsExpirationInfoView(context)
     var labelsView = ChipGroup(context)
     var messageDetailsView = View(context)
-    var recipientsLayout = MessageDetailsRecipientsLayout(context)
+    var messageDetailsHeaderView = MessageDetailsHeaderView(context)
+
+    var labelsList: List<Label>? = listOf()
 
     init {
         val items = ArrayList<MessageDetailsListItem>()
@@ -153,6 +154,7 @@ class MessageDetailsAdapter(
             onDisplayImagesCLick: (() -> Unit)?
         ) {
             messageDetailsView = itemView.messageDetailsView
+            messageDetailsHeaderView = itemView.headerView
             labelsView = itemView.labels
             attachmentsView = itemView.attachmentsView
             attachmentsViewDivider = itemView.attachmentsDividerView
@@ -160,13 +162,13 @@ class MessageDetailsAdapter(
             containerDisplayImages = itemView.containerDisplayImages
             loadEmbeddedImagesContainer = itemView.containerLoadEmbeddedImagesContainer
 
-            itemView.headerView.bind(message)
-            itemView.expirationInfoView.bind(message.expirationTime)
+            messageDetailsHeaderView.bind(message, labelsList ?: listOf())
+            expirationInfoView.bind(message.expirationTime)
 
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
 
-            itemView.containerLoadEmbeddedImagesContainer.setOnClickListener {
-                itemView.containerLoadEmbeddedImagesContainer.visibility = View.GONE
+            loadEmbeddedImagesContainer.setOnClickListener {
+                it.visibility = View.GONE
                 onLoadEmbeddedImagesCLick?.invoke()
             }
 
@@ -273,7 +275,7 @@ class MessageDetailsAdapter(
         val mScaleDetector = ScaleGestureDetector(
             context,
             MessageBodyScaleListener(
-                wvScrollView,
+                messageDetailsRecyclerView,
                 messageInfoView,
                 webView,
                 directParent
@@ -281,8 +283,8 @@ class MessageDetailsAdapter(
         )
 
         val scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
-        val touchListener = MessageBodyTouchListener(wvScrollView, mScaleDetector, scaledTouchSlop)
-        wvScrollView.setOnTouchListener(touchListener)
+        val touchListener = MessageBodyTouchListener(messageDetailsRecyclerView, mScaleDetector, scaledTouchSlop)
+        messageDetailsRecyclerView.setOnTouchListener(touchListener)
         webView.setOnTouchListener(touchListener)
     }
 
@@ -304,7 +306,7 @@ class MessageDetailsAdapter(
     }
 
     fun refreshRecipientsLayout() {
-        recipientsLayout.bind(message, RecipientContextMenuFactory(context as MessageDetailsActivity))
+        messageDetailsHeaderView.loadRecipients(message)
     }
 
     private fun configureWebView(webView: WebView, pmWebViewClient: PMWebViewClient) {
