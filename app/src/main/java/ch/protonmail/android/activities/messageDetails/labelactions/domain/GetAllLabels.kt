@@ -22,6 +22,7 @@ package ch.protonmail.android.activities.messageDetails.labelactions.domain
 import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelItemUiModel
 import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelsActionSheet
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import me.proton.core.util.kotlin.toBooleanOrFalse
 import javax.inject.Inject
 
 class GetAllLabels @Inject constructor(
@@ -36,7 +37,7 @@ class GetAllLabels @Inject constructor(
         val dbLabels = messageDetailsRepository.getAllLabels()
 
         val uiLabelsFromDb = dbLabels
-            .filter { it.type == labelsSheetType.typeInt }
+            .filter { it.exclusive == labelsSheetType.typeInt.toBooleanOrFalse() }
             .map { label ->
                 labelsMapper.mapLabelToUi(label, currentLabelsSelection, labelsSheetType)
             }
