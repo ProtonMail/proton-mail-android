@@ -51,12 +51,12 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = FragmentMessageDetailsActionSheetBinding.inflate(inflater)
-
+        val originatorId = arguments?.getInt(EXTRA_ARG_ORIGINATOR_SCREEN_ID) ?: ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
-        setupMainMessageActionsBindings(binding.includeLayoutActionSheetButtons)
-        setupManageSectionBindings(binding, viewModel)
+        setupMessageReplyActionsBindings(binding.includeLayoutActionSheetButtons, originatorId)
+        setupManageSectionBindings(binding, viewModel, originatorId)
         setupMoveSectionBindings(binding, viewModel)
-        setupMoreSectionBindings(binding)
+        setupMoreSectionBindings(binding, originatorId)
 
         actionSheetHeader = binding.actionSheetHeaderDetailsActions
         return binding.root
@@ -123,9 +123,12 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupMainMessageActionsBindings(
-        binding: LayoutMessageDetailsActionsSheetButtonsBinding
+    private fun setupMessageReplyActionsBindings(
+        binding: LayoutMessageDetailsActionsSheetButtonsBinding,
+        originatorId: Int
     ) = with(binding) {
+        layoutDetailsActions.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+
         textViewDetailsActionsReply.setOnClickListener {
             (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.REPLY)
             dismiss()
@@ -138,37 +141,37 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.FORWARD)
             dismiss()
         }
-
     }
 
     private fun setupManageSectionBindings(
         binding: FragmentMessageDetailsActionSheetBinding,
-        viewModel: MessageDetailsViewModel
+        viewModel: MessageDetailsViewModel,
+        originatorId: Int
     ) = with(binding) {
         val isStarred = arguments?.getBoolean(EXTRA_ARG_IS_STARED) ?: false
-        if (isStarred) {
-            textViewDetailsActionsUnstar.apply {
-                isVisible = true
-                setOnClickListener {
-                    viewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
-                    dismiss()
-                }
+
+        textViewDetailsActionsUnstar.apply {
+            isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID || isStarred
+            setOnClickListener {
+                viewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
+                dismiss()
             }
-            textViewDetailsActionsStar.isVisible = false
-        } else {
-            textViewDetailsActionsStar.apply {
-                isVisible = true
-                setOnClickListener {
-                    viewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
-                    dismiss()
-                }
-            }
-            textViewDetailsActionsUnstar.isVisible = false
         }
 
-        textViewDetailsActionsMarkRead.setOnClickListener {
-            viewModel.handleAction(MessageDetailsAction.MARK_READ)
-            dismiss()
+        textViewDetailsActionsStar.apply {
+            isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID || !isStarred
+            setOnClickListener {
+                viewModel.handleAction(MessageDetailsAction.STAR_UNSTAR)
+                dismiss()
+            }
+        }
+
+        textViewDetailsActionsMarkRead.apply {
+            isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+            setOnClickListener {
+                viewModel.handleAction(MessageDetailsAction.MARK_READ)
+                dismiss()
+            }
         }
         textViewDetailsActionsMarkUnread.setOnClickListener {
             viewModel.handleAction(MessageDetailsAction.MARK_UNREAD)
@@ -186,7 +189,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
     ) = with(binding) {
         val messageLocation =
             Constants.MessageLocationType.fromInt(
-                arguments?.getInt(EXTRA_ARG_CURRENT_LOCATION_ID) ?: 0
+                arguments?.getInt(EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID) ?: 0
             )
 
         textViewDetailsActionsMoveToInbox.apply {
@@ -195,10 +198,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             setOnClickListener {
                 detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_INBOX)
                 dismiss()
-                // This is a bit crazy requirement but designers do not know what to do about it
-                // so we have to dismiss 2 screens at the time and go to the main list here
-                // this should be thought through and improved
-                (activity as MessageDetailsActivity).onBackPressed()
+                popBackIfNeeded()
             }
         }
         textViewDetailsActionsTrash.apply {
@@ -207,10 +207,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             setOnClickListener {
                 detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_TRASH)
                 dismiss()
-                // This is a bit crazy requirement but designers do not know what to do about it
-                // so we have to dismiss 2 screens at the time and go to the main list here
-                // this should be thought through and improved
-                (activity as MessageDetailsActivity).onBackPressed()
+                popBackIfNeeded()
             }
         }
         textViewDetailsActionsMoveToArchive.apply {
@@ -219,10 +216,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             setOnClickListener {
                 detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_ARCHIVE)
                 dismiss()
-                // This is a bit crazy requirement but designers do not know what to do about it
-                // so we have to dismiss 2 screens at the time and go to the main list here
-                // this should be thought through and improved
-                (activity as MessageDetailsActivity).onBackPressed()
+                popBackIfNeeded()
             }
         }
         textViewDetailsActionsMoveToSpam.apply {
@@ -231,10 +225,7 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             setOnClickListener {
                 detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO_SPAM)
                 dismiss()
-                // This is a bit crazy requirement but designers do not know what to do about it
-                // so we have to dismiss 2 screens at the time and go to the main list here
-                // this should be thought through and improved
-                (activity as MessageDetailsActivity).onBackPressed()
+                popBackIfNeeded()
             }
         }
         textViewDetailsActionsDelete.apply {
@@ -257,21 +248,44 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun setupMoreSectionBindings(
-        binding: FragmentMessageDetailsActionSheetBinding
+        binding: FragmentMessageDetailsActionSheetBinding,
+        originatorId: Int
     ) = with(binding) {
-        textViewDetailsActionsPrint.setOnClickListener {
-            // we call it this way as it requires "special" context from the Activity
-            (activity as MessageDetailsActivity).printMessage()
-            dismiss()
+
+        viewActionSheetSeparator.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+        textViewActionSheetMoreTitle.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+
+        textViewDetailsActionsPrint.apply {
+            isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+            setOnClickListener {
+                // we call it this way as it requires "special" context from the Activity
+                (activity as MessageDetailsActivity).printMessage()
+                dismiss()
+            }
         }
-        textViewDetailsActionsViewHeaders.setOnClickListener {
-            (activity as MessageDetailsActivity).showViewHeaders()
-            dismiss()
+        textViewDetailsActionsViewHeaders.apply {
+            isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+            setOnClickListener {
+                (activity as MessageDetailsActivity).showViewHeaders()
+                dismiss()
+            }
         }
-        textViewDetailsActionsReportPhishing.setOnClickListener {
-            (activity as MessageDetailsActivity).showReportPhishingDialog()
-            dismiss()
+        textViewDetailsActionsReportPhishing.apply {
+            isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+            setOnClickListener {
+                (activity as MessageDetailsActivity).showReportPhishingDialog()
+                dismiss()
+            }
         }
+    }
+
+    /**
+     * This is a bit crazy requirement but designers currently do not know what to do about it,
+     * so we have to dismiss the action sheet and the Details activity at the time and go to the main list.
+     * This should be improved.
+     */
+    private fun popBackIfNeeded() {
+        (activity as? MessageDetailsActivity)?.onBackPressed()
     }
 
     private fun setCloseIconVisibility(shouldBeVisible: Boolean) =
@@ -282,21 +296,38 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
         private const val EXTRA_ARG_TITLE = "arg_message_details_actions_title"
         private const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
         private const val EXTRA_ARG_IS_STARED = "arg_extra_is_stared"
-        private const val EXTRA_ARG_CURRENT_LOCATION_ID = "extra_arg_current_location_id"
+        private const val EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID = "extra_arg_current_folder_location_id"
+        private const val EXTRA_ARG_ORIGINATOR_SCREEN_ID = "extra_arg_originator_screen_id"
+        private const val ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID = 0 // e.g. [MessageDetailsActivity]
+        private const val ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID = 1 // e.g [MailboxActivity]
         private const val HEADER_SLIDE_THRESHOLD = 0.8f
 
+        /**
+         * Creates new action sheet instance.
+         *
+         * @param title title part that will be displayed in the top header
+         * @param subTitle small sub title part that will be displayed in the top header, null/empty if not needed
+         * @param isStarred defines if message is currently marked as starred
+         * @param currentFolderLocationId defines current message folder location based on values from
+         * [Constants.MessageLocationType] e.g. 3 = trash
+         * @param originatorLocationId defines starting activity/location
+         *  0 = [ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID]
+         *  1 = [ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID]
+         */
         fun newInstance(
             title: CharSequence,
-            subTitle: String,
+            subTitle: String?,
             isStarred: Boolean,
-            currentLocationId: Int
+            currentFolderLocationId: Int,
+            originatorLocationId: Int = ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
         ): MessageDetailsActionSheet {
             return MessageDetailsActionSheet().apply {
                 arguments = bundleOf(
                     EXTRA_ARG_TITLE to title,
                     EXTRA_ARG_SUBTITLE to subTitle,
                     EXTRA_ARG_IS_STARED to isStarred,
-                    EXTRA_ARG_CURRENT_LOCATION_ID to currentLocationId
+                    EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID to currentFolderLocationId,
+                    EXTRA_ARG_ORIGINATOR_SCREEN_ID to originatorLocationId
                 )
             }
         }
