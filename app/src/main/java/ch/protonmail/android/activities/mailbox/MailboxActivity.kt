@@ -130,9 +130,8 @@ import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.fcm.FcmTokenManager
 import ch.protonmail.android.fcm.MultiUserFcmTokenManager
-import ch.protonmail.android.fcm.PMRegistrationWorker
+import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
@@ -222,14 +221,7 @@ class MailboxActivity :
     lateinit var networkSnackBarUtil: NetworkSnackBarUtil
 
     @Inject
-    lateinit var pmRegistrationWorkerEnqueuer: PMRegistrationWorker.Enqueuer
-
-    @Inject
-    lateinit var fcmTokenManagerFactory: FcmTokenManager.Factory
-    private val currentUserTokenManager: FcmTokenManager by lazy {
-        val prefs = SecureSharedPreferences.getPrefsForUser(this, userManager.requireCurrentUserId())
-        fcmTokenManagerFactory.create(prefs)
-    }
+    lateinit var registerDeviceWorkerEnqueuer: RegisterDeviceWorker.Enqueuer
 
     @Inject
     lateinit var multiUserFcmTokenManager: MultiUserFcmTokenManager
@@ -715,20 +707,18 @@ class MailboxActivity :
             if (checkPlayServices()) {
                 val tokenSent = multiUserFcmTokenManager.isTokenSentForAllLoggedUsers()
                 if (!tokenSent) {
-                    try {
+                    runCatching {
                         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                task.result?.let { result ->
-                                    multiUserFcmTokenManager.saveTokenBlocking(FirebaseToken(result.token))
-                                    pmRegistrationWorkerEnqueuer()
-                                }
+                            if (task.isSuccessful && task.result != null) {
+                                multiUserFcmTokenManager.saveTokenBlocking(FirebaseToken(task.result!!.token))
+                                registerDeviceWorkerEnqueuer()
                             } else {
                                 Timber.e(task.exception, "Could not retrieve FirebaseInstanceId")
                             }
                         }
-                    } catch (exc: IllegalArgumentException) {
+                    }.onFailure {
                         showToast(R.string.invalid_firebase_api_key_message)
-                        Timber.e(exc, getString(R.string.invalid_firebase_api_key_message))
+                        Timber.e(it, getString(R.string.invalid_firebase_api_key_message))
                     }
                 }
             }

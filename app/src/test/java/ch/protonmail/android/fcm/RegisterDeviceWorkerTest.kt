@@ -27,12 +27,13 @@ import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.fcm.model.FirebaseToken
+import ch.protonmail.android.feature.account.allLoggedIn
+import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.BuildInfo
 import io.mockk.MockKAnnotations
@@ -47,6 +48,7 @@ import io.mockk.slot
 import io.mockk.unmockkObject
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.test.android.mocks.mockSharedPreferences
 import me.proton.core.test.android.mocks.newMockSharedPreferences
 import java.io.IOException
@@ -56,10 +58,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Tests the functionality of [PMRegistrationWorker].
+ * Tests the functionality of [RegisterDeviceWorker].
  */
 
-class PMRegistrationWorkerTest {
+class RegisterDeviceWorkerTest {
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -87,9 +89,9 @@ class PMRegistrationWorkerTest {
         every { create(any()) } returns fcmTokenManager
     }
 
-    private lateinit var pmRegistrationWorker: PMRegistrationWorker
+    private lateinit var registerDeviceWorker: RegisterDeviceWorker
 
-    private lateinit var pmRegistrationWorkerEnqueuer: PMRegistrationWorker.Enqueuer
+    private lateinit var registerDeviceWorkerEnqueuer: RegisterDeviceWorker.Enqueuer
 
     @BeforeTest
     fun setUp() {
@@ -98,14 +100,14 @@ class PMRegistrationWorkerTest {
         mockkObject(SecureSharedPreferences.Companion)
         every { SecureSharedPreferences.getPrefsForUser(any(), any()) } returns mockSharedPreferences
 
-        pmRegistrationWorker = PMRegistrationWorker(
+        registerDeviceWorker = RegisterDeviceWorker(
             context,
             workerParameters,
             buildInfo,
             protonMailApiManager,
             fcmTokenManagerFactory = fcmTokenManagerFactory
         )
-        pmRegistrationWorkerEnqueuer = PMRegistrationWorker.Enqueuer(
+        registerDeviceWorkerEnqueuer = RegisterDeviceWorker.Enqueuer(
             context,
             workManager,
             accountManager,
@@ -127,7 +129,7 @@ class PMRegistrationWorkerTest {
             )
 
             // when
-            val workerResult = pmRegistrationWorker.doWork()
+            val workerResult = registerDeviceWorker.doWork()
 
             // then
             assertEquals(expectedResult, workerResult)
@@ -147,7 +149,7 @@ class PMRegistrationWorkerTest {
             val expectedResult = ListenableWorker.Result.retry()
 
             // when
-            val workerResult = pmRegistrationWorker.doWork()
+            val workerResult = registerDeviceWorker.doWork()
 
             // then
             assertEquals(expectedResult, workerResult)
@@ -169,7 +171,7 @@ class PMRegistrationWorkerTest {
             val expectedResult = ListenableWorker.Result.success()
 
             // when
-            val workerResult = pmRegistrationWorker.doWork()
+            val workerResult = registerDeviceWorker.doWork()
 
             // then
             assertEquals(expectedResult, workerResult)
@@ -189,7 +191,7 @@ class PMRegistrationWorkerTest {
             coEvery { protonMailApiManager.registerDevice(any(), any()) } returns mockRegisterDeviceResponse
 
             // when
-            pmRegistrationWorker.doWork()
+            registerDeviceWorker.doWork()
 
             // then
             coVerify { fcmTokenManager.setTokenSent(true) }
@@ -214,7 +216,7 @@ class PMRegistrationWorkerTest {
             every { fcmTokenManagerFactory.create(userPrefs[2]).isTokenSentBlocking() } returns false
 
             // when
-            pmRegistrationWorkerEnqueuer()
+            registerDeviceWorkerEnqueuer()
 
             // then
             verify(exactly = 2) { workManager.enqueue(any<WorkRequest>()) }
@@ -244,7 +246,7 @@ class PMRegistrationWorkerTest {
                 .build()
 
             // when
-            pmRegistrationWorkerEnqueuer()
+            registerDeviceWorkerEnqueuer()
 
             // then
             val workRequestSlot = slot<WorkRequest>()

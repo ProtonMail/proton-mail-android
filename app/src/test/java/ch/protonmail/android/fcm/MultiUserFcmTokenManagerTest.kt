@@ -20,14 +20,16 @@
 package ch.protonmail.android.fcm
 
 import android.content.SharedPreferences
-import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.fcm.model.FirebaseToken
+import ch.protonmail.android.feature.account.allLoggedIn
+import ch.protonmail.android.feature.account.allSaved
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.test.android.mocks.newMockSharedPreferences
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test

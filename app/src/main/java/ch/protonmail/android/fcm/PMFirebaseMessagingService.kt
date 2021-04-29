@@ -43,7 +43,7 @@ public class PMFirebaseMessagingService : FirebaseMessagingService() {
     lateinit var multiUserFcmTokenManager: MultiUserFcmTokenManager
 
     @Inject
-    lateinit var pmRegistrationWorkerEnqueuer: PMRegistrationWorker.Enqueuer
+    lateinit var registerDeviceWorkerEnqueuer: RegisterDeviceWorker.Enqueuer
     @Inject
     lateinit var processPushNotificationData: ProcessPushNotificationDataWorker.Enqueuer
 
@@ -54,7 +54,7 @@ public class PMFirebaseMessagingService : FirebaseMessagingService() {
             setTokenUnsentForAllSavedUsersBlocking()
             saveTokenBlocking(FirebaseToken(token))
         }
-        pmRegistrationWorkerEnqueuer()
+        registerDeviceWorkerEnqueuer()
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

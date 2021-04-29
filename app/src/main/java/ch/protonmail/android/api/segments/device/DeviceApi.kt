@@ -20,14 +20,15 @@ package ch.protonmail.android.api.segments.device
 
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
+import ch.protonmail.android.api.models.UnregisterDeviceRequestBody
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.domain.entity.Id
 
 class DeviceApi(private val service: DeviceService) : BaseApi(), DeviceApiSpec {
 
-    override suspend fun registerDevice(registerDeviceRequestBody: RegisterDeviceRequestBody, userId: Id) =
-        service.registerDevice(registerDeviceRequestBody, UserIdTag(userId))
+    override suspend fun registerDevice(userId: Id, registerDeviceRequestBody: RegisterDeviceRequestBody) =
+        service.registerDevice(UserIdTag(userId), registerDeviceRequestBody)
 
-    override suspend fun unregisterDevice(deviceToken: String) =
-        service.unregisterDevice(deviceToken)
+    override suspend fun unregisterDevice(unregisterDeviceRequestBody: UnregisterDeviceRequestBody) =
+        service.unregisterDevice(unregisterDeviceRequestBody)
 }

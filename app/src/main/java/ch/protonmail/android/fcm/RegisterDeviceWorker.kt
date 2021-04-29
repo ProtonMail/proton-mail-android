@@ -44,14 +44,16 @@ import javax.inject.Inject
 
 // region constants
 const val KEY_PM_REGISTRATION_WORKER_USER_ID = "PMRegistrationWorker.input.user.id"
+const val KEY_PM_REGISTRATION_WORKER_TOKEN = "PMRegistrationWorker.input.token"
+const val KEY_PM_REGISTRATION_WORKER_SESSION_ID = "PMRegistrationWorker.input.session.id"
 const val KEY_PM_REGISTRATION_WORKER_ERROR = "PMRegistrationWorker.error"
 // endregion
 
 /**
- * A CoroutineWorker that handles device registration on PM servers
+ * A CoroutineWorker that handles device registration on Proton servers.
  */
 @HiltWorker
-class PMRegistrationWorker @AssistedInject constructor(
+class RegisterDeviceWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParameters: WorkerParameters,
     private val buildInfo: BuildInfo,
@@ -77,14 +79,14 @@ class PMRegistrationWorker @AssistedInject constructor(
         )
 
         return runCatching {
-            protonMailApiManager.registerDevice(registerDeviceRequestBody, userId)
+            protonMailApiManager.registerDevice(userId, registerDeviceRequestBody)
         }.map { registerDeviceResponseBody ->
             if (registerDeviceResponseBody.code == RESPONSE_CODE_OK) {
                 fcmTokenManager.setTokenSent(true)
             }
         }.fold(
             onSuccess = { Result.success() },
-            onFailure = { Result.retry() }
+            onFailure = { if (runAttemptCount < 3) Result.retry() else Result.failure() }
         )
     }
 
@@ -104,7 +106,7 @@ class PMRegistrationWorker @AssistedInject constructor(
                 val userPrefs = SecureSharedPreferences.getPrefsForUser(context, userId)
                 val fcmTokenManager = fcmTokenManagerFactory.create(userPrefs)
                 if (fcmTokenManager.isTokenSentBlocking().not()) {
-                    val request = OneTimeWorkRequestBuilder<PMRegistrationWorker>()
+                    val request = OneTimeWorkRequestBuilder<RegisterDeviceWorker>()
                         .setConstraints(constraints)
                         .setInputData(workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.s))
                         .build()

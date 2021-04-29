@@ -44,7 +44,7 @@ suspend fun AccountManager.allLoggedIn() =
 
 @Deprecated("Replaced by Core AccountManager", ReplaceWith("Core AccountManager"))
 suspend fun AccountManager.allSaved() =
-    getAccounts(AccountState.Disabled).firstOrNull()?.map { Id(it.userId.id) }.orEmpty().toSet()
+    getAccounts().firstOrNull()?.map { Id(it.userId.id) }.orEmpty().toSet()
 
 suspend fun AccountManager.primaryUserId(
     scope: CoroutineScope

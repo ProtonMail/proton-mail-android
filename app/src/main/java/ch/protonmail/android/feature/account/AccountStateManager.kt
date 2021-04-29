@@ -29,6 +29,8 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.PREF_PIN
 import ch.protonmail.android.di.AppProcessLifecycleOwner
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.fcm.FcmTokenManager
+import ch.protonmail.android.fcm.UnregisterDeviceWorker
 import ch.protonmail.android.feature.user.waitPrimaryKeyPassphraseAvailable
 import ch.protonmail.android.usecase.delete.ClearUserData
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
@@ -81,6 +83,8 @@ class AccountStateManager @Inject constructor(
     private val oldUserManager: ch.protonmail.android.core.UserManager,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val clearUserData: ClearUserData,
+    private var fcmTokenManagerFactory: FcmTokenManager.Factory,
+    private val unregisterDeviceWorkerEnqueuer: UnregisterDeviceWorker.Enqueuer,
     @AppProcessLifecycleOwner
     private val lifecycleOwner: LifecycleOwner,
     private val dispatchers: DispatcherProvider
@@ -253,6 +257,8 @@ class AccountStateManager @Inject constructor(
                 shouldRefreshDetails = true,
                 shouldRefreshContacts = true
             )
+            // FCM Register (see MailboxActivity.checkRegistration).
+            fcmTokenManagerFactory.create(prefs).setTokenSent(false)
         }
         // We have a primary account.
         _state.tryEmit(State.PrimaryExist)
@@ -264,6 +270,9 @@ class AccountStateManager @Inject constructor(
         val prefs = oldUserManager.preferencesFor(userId)
         val initialized = prefs.getBoolean(Constants.Prefs.PREF_USER_INITIALIZED, false)
         if (initialized) {
+            // FCM Unregister.
+            unregisterDeviceWorkerEnqueuer(account.userId, account.sessionId)
+            // Clear Data/State.
             clearUserData.invoke(userId)
             eventManager.clearState(userId)
             oldUserManager.preferencesFor(Id(account.userId.id)).clearAll(

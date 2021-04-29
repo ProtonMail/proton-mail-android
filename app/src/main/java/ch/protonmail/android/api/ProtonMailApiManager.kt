@@ -44,6 +44,7 @@ import ch.protonmail.android.api.models.PublicKeyResponse
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
+import ch.protonmail.android.api.models.UnregisterDeviceRequestBody
 import ch.protonmail.android.api.models.address.KeyActivationBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
@@ -195,11 +196,13 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         api.unlabelContactEmails(labelContactsBody)
 
     override suspend fun registerDevice(
-        registerDeviceRequestBody: RegisterDeviceRequestBody,
-        userId: Id
-    ) = api.registerDevice(registerDeviceRequestBody, userId)
+        userId: Id,
+        registerDeviceRequestBody: RegisterDeviceRequestBody
+    ) = api.registerDevice(userId, registerDeviceRequestBody)
 
-    override suspend fun unregisterDevice(deviceToken: String) = api.unregisterDevice(deviceToken)
+    override suspend fun unregisterDevice(
+        unregisterDeviceRequestBody: UnregisterDeviceRequestBody,
+    ) = api.unregisterDevice(unregisterDeviceRequestBody)
 
     override fun getPublicKeysBlocking(email: String): PublicKeyResponse = api.getPublicKeysBlocking(email)
 
