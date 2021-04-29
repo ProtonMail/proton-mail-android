@@ -634,7 +634,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Chyba tisku</string>
     <string name="download_complete">Stahování dokončeno</string>
     <string name="download_in_progress">Probíhá stahování</string>
-    <string name="expires_in">\tVyprší v %s</string>
+    <string name="message_expires_in">\tVyprší v %s</string>
     <string name="unsaved_changes_title">Neuložené změny</string>
     <string name="unsaved_changes_subtitle">Existují neuložené údaje ve formuláři. Opravdu chcete veškeré změny zahodit?</string>
     <string name="request_timeout">Request timed out, please try again</string>

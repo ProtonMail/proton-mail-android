@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2020 Proton Technologies AG
   ~
@@ -17,13 +18,18 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="16"
-    android:viewportHeight="16">
-  <path
-      android:pathData="M15.07,6.2999L10.19,5.5899L8,1.1599L5.81,5.5899L0.93,6.2999L4.46,9.7499L3.63,14.6199L8,12.3199L12.37,14.6199L11.54,9.7499L15.07,6.2999Z"
-      android:fillColor="@color/notification_warning"
-      android:fillType="evenOdd"/>
-</vector>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/button_nav_size"
+    android:layout_height="@dimen/button_nav_size">
+
+    <ToggleButton
+        android:id="@+id/starToggleButton"
+        android:layout_width="@dimen/toolbar_action_layout_icon_size"
+        android:layout_height="@dimen/toolbar_action_layout_icon_size"
+        android:layout_gravity="center"
+        android:background="@drawable/selector_star_action_icon"
+        android:textOn=""
+        android:textOff="" />
+
+</FrameLayout>

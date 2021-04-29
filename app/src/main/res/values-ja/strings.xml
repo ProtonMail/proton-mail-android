@@ -606,7 +606,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">印刷エラー</string>
     <string name="download_complete">ダウンロード完了</string>
     <string name="download_in_progress">ダウンロードが進行中</string>
-    <string name="expires_in">%s で期限切れ</string>
+    <string name="message_expires_in">%s で期限切れ</string>
     <string name="unsaved_changes_title">変更が保存されていません</string>
     <string name="unsaved_changes_subtitle">フォーム内に保存されていない項目があります。本当に破棄してよろしいですか。</string>
     <string name="request_timeout">リクエストが時間切れになりました。もう一度やり直してください。</string>

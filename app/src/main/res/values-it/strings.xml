@@ -621,7 +621,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Errore di stampa</string>
     <string name="download_complete">Scaricamento completato</string>
     <string name="download_in_progress">Scaricamento in corso</string>
-    <string name="expires_in">\tScadrà tra %s</string>
+    <string name="message_expires_in">\tScadrà tra %s</string>
     <string name="unsaved_changes_title">Modifiche non salvate</string>
     <string name="unsaved_changes_subtitle">Ci sono delle voci non salvate nel modulo. È sicuro di volerle scartare?</string>
     <string name="request_timeout">Richiesta scaduta, per favore prova di nuovo</string>

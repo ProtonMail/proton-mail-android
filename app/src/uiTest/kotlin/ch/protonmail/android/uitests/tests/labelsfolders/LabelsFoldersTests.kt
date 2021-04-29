@@ -36,6 +36,7 @@ class LabelsFoldersTests : BaseTest() {
 
     private val loginRobot = LoginRobot()
 
+    @Ignore("Enable after move to folder action is added to message details v4 UI")
     @TestId("1458")
     @Test
     fun createRenameAndDeleteFolderFromInbox() {
@@ -60,6 +61,7 @@ class LabelsFoldersTests : BaseTest() {
             .verify { folderWithNameDoesNotExist(newFolderName) }
     }
 
+    @Ignore("Enable after move to folder action is added to message details v4 UI")
     @TestId("1459")
     @Category(SmokeTest::class)
     @Test
@@ -78,6 +80,7 @@ class LabelsFoldersTests : BaseTest() {
             .verify { messageWithSubjectExists(selectedMessageSubject) }
     }
 
+    @Ignore("Enable after add label action is added to message details v4 UI")
     @TestId("1441")
     @Test
     fun createRenameAndDeleteLabelFromInbox() {
@@ -101,6 +104,7 @@ class LabelsFoldersTests : BaseTest() {
             .verify { labelWithNameDoesNotExist(newLabelName) }
     }
 
+    @Ignore("Enable after add label action is added to message details v4 UI")
     @TestId("1438")
     @Category(SmokeTest::class)
     @Test
@@ -146,7 +150,7 @@ class LabelsFoldersTests : BaseTest() {
 
     @TestId("38407")
     @Test
-    @Ignore("Test needs to be reviewed, because now we have location icons instead of location text")
+    @Ignore("Enable after add label action is added to message details v4 UI and after the location verification is adapted to the new UI where there are location icon")
     fun applyLabelToMessageAndArchive() {
         val labelName = "Label 1"
         loginRobot

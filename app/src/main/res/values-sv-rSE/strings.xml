@@ -617,7 +617,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Utskriftsfel</string>
     <string name="download_complete">Nedladdning slutförd</string>
     <string name="download_in_progress">Nedladdning pågår</string>
-    <string name="expires_in">\tUpphör %s</string>
+    <string name="message_expires_in">\tUpphör %s</string>
     <string name="unsaved_changes_title">Osparade ändringar</string>
     <string name="unsaved_changes_subtitle">Det finns osparade ändringar i formuläret. Är du säker på att du vill kasta bort dem?</string>
     <string name="request_timeout">Begäran gjorde timeout, vänligen försök igen</string>

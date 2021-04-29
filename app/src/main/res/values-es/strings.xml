@@ -621,7 +621,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Error de impresión</string>
     <string name="download_complete">Descarga completada</string>
     <string name="download_in_progress">Descarga en proceso</string>
-    <string name="expires_in">\texpira en %s</string>
+    <string name="message_expires_in">\texpira en %s</string>
     <string name="unsaved_changes_title">Cambios sin guardar</string>
     <string name="unsaved_changes_subtitle">Hay entradas sin guardar en el formulario. ¿Está seguro de querer descartarlos?</string>
     <string name="request_timeout">Tiempo de espera agotado, intente otra vez</string>

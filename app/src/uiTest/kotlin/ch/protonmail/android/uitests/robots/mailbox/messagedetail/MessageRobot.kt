@@ -55,8 +55,9 @@ class MessageRobot : CoreRobot {
         return this
     }
 
+    // TODO: Rewrite this function when attachments UI on v4 is finalized - MAILAND-1545
     fun expandAttachments(): MessageRobot {
-        view.withId(R.id.attachments_toggle).click()
+//        view.withId(R.id.attachments_toggle).click()
         return this
     }
 
@@ -276,11 +277,11 @@ class MessageRobot : CoreRobot {
         }
 
         fun messageContainsAttachment() {
-            view.withId(R.id.attachment_title).checkDisplayed()
+            view.withId(R.id.attachmentsView).checkDisplayed()
         }
 
         fun messageContainsOneAttachment() {
-            view.withId(R.id.attachment_title).withSubstring("1 Attachment").checkDisplayed()
+            view.withId(R.id.attachmentsTextView).withSubstring("1 Attachment").checkDisplayed()
             view.withId(R.id.attachment_name).checkDisplayed()
         }
 

@@ -637,7 +637,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Ошибка печати</string>
     <string name="download_complete">Скачивание завершено</string>
     <string name="download_in_progress">Идёт скачивание</string>
-    <string name="expires_in">\tИсчезнет через %s</string>
+    <string name="message_expires_in">\tИсчезнет через %s</string>
     <string name="unsaved_changes_title">Несохранённые изменения</string>
     <string name="unsaved_changes_subtitle">В форме присутствуют несохранённые данные. Вы уверены, что хотите отказаться от них?</string>
     <string name="request_timeout">Истекло время ожидания запроса, пожалуйста, попробуйте ещё раз</string>

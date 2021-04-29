@@ -67,17 +67,17 @@ public class DateUtil {
         if (days == 0 && hours == 0 & minutes == 0) {
             return "";
         } else if (days == 0) {
-            String hoursString = context.getResources().getQuantityString(R.plurals.hours_string, hours, hours);
-            String minutesString = context.getResources().getQuantityString(R.plurals.minutes_string, minutes, minutes);
+            String hoursString = context.getResources().getString(R.string.expiration_hours, hours);
+            String minutesString = context.getResources().getString(R.string.expiration_minutes, minutes);
             return String.format("%s %s", hoursString, minutesString);
         } else if (hours == 0) {
-            String daysString = context.getResources().getQuantityString(R.plurals.days_string, days, days);
-            String minutesString = context.getResources().getQuantityString(R.plurals.minutes_string, minutes, minutes);
+            String daysString = context.getResources().getString(R.string.expiration_days, days);
+            String minutesString = context.getResources().getString(R.string.expiration_minutes, minutes);
             return String.format("%s %s", daysString, minutesString);
         } else {
-            String daysString = context.getResources().getQuantityString(R.plurals.days_string, days, days);
-            String hoursString = context.getResources().getQuantityString(R.plurals.hours_string, hours, hours);
-            String minutesString = context.getResources().getQuantityString(R.plurals.minutes_string, minutes, minutes);
+            String daysString = context.getResources().getString(R.string.expiration_days, days);
+            String hoursString = context.getResources().getString(R.string.expiration_hours, hours);
+            String minutesString = context.getResources().getString(R.string.expiration_minutes, minutes);
             return String.format("%s %s %s", daysString, hoursString, minutesString);
         }
     }

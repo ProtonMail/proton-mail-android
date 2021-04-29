@@ -627,7 +627,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Eroare la tipărire</string>
     <string name="download_complete">Descărcare finalizată</string>
     <string name="download_in_progress">Descărcare în curs</string>
-    <string name="expires_in">\tExpiră în %s</string>
+    <string name="message_expires_in">\tExpiră în %s</string>
     <string name="unsaved_changes_title">Modificări nesalvate</string>
     <string name="unsaved_changes_subtitle">Există date nesalvate în acest formular. Sigur doriți să renunțați la ele?</string>
     <string name="request_timeout">Solicitarea a expirat. Vă rugăm reîncercați.</string>

@@ -615,7 +615,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_error">Tuccḍa n tsiggezt</string>
     <string name="download_complete">A sider immed</string>
     <string name="download_in_progress">Asider iteddu</string>
-    <string name="expires_in">\tAd ifat di %s</string>
+    <string name="message_expires_in">\tAd ifat di %s</string>
     <string name="unsaved_changes_title">Abeddel ur yettwaskelsen ara</string>
     <string name="unsaved_changes_subtitle">Yella ubeddel ur yettwaskelsen ara. Tebɣiḍ ad ten-teǧǧeḍ?</string>
     <string name="request_timeout">Request timed out, please try again</string>

@@ -614,7 +614,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="print_error">Druckfehler</string>
     <string name="download_complete">Herunterladen abgeschlossen</string>
     <string name="download_in_progress">Herunterladen wird ausgeführt</string>
-    <string name="expires_in">\tVerfällt in %s</string>
+    <string name="message_expires_in">\tVerfällt in %s</string>
     <string name="unsaved_changes_title">Noch nicht gesicherte Änderungen</string>
     <string name="unsaved_changes_subtitle">Ungesicherte Elemente im Formular vorhanden. Möchten Sie sie wirklich verwerfen?</string>
     <string name="request_timeout">Zeitüberschreitung bei der Anfrage. Bitte versuchen Sie es erneut</string>

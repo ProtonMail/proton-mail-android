@@ -619,7 +619,7 @@ Svájci székhellyel</string>
     <string name="print_error">Nyomtatási hiba</string>
     <string name="download_complete">A letöltés befejeződött</string>
     <string name="download_in_progress">Letöltés folyamatban</string>
-    <string name="expires_in">\tLejár: %s</string>
+    <string name="message_expires_in">\tLejár: %s</string>
     <string name="unsaved_changes_title">Nem mentett módosítások</string>
     <string name="unsaved_changes_subtitle">Az űrlapon nem mentett módosítások vannak. Biztos, hogy elveti?</string>
     <string name="request_timeout">Kapcsolat-időtúllépés, próbálja meg újra</string>

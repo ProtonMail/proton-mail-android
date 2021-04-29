@@ -47,6 +47,7 @@ import me.proton.core.test.android.instrumented.intentutils.MimeTypes
 import org.hamcrest.CoreMatchers.not
 import org.junit.experimental.categories.Category
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class AttachmentsTests : BaseTest() {
@@ -80,6 +81,7 @@ class AttachmentsTests : BaseTest() {
             .verify { loadEmbeddedImagesButtonIsGone() }
     }
 
+    @Ignore("Enable when attachments UI on v4 is finalized - MAILAND-1545")
     @TestId("1336")
     @Test
     fun sharePngFile() {
@@ -103,6 +105,7 @@ class AttachmentsTests : BaseTest() {
             .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.png) }
     }
 
+    @Ignore("Enable when attachments UI on v4 is finalized - MAILAND-1545")
     @TestId("1354")
     @Test
     fun shareJpegFile() {
@@ -126,6 +129,7 @@ class AttachmentsTests : BaseTest() {
             .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.jpeg) }
     }
 
+    @Ignore("Enable when attachments UI on v4 is finalized - MAILAND-1545")
     @TestId("1338")
     @Test
     fun shareDocxFile() {
@@ -149,6 +153,7 @@ class AttachmentsTests : BaseTest() {
             .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.application.docx) }
     }
 
+    @Ignore("Enable when attachments UI on v4 is finalized - MAILAND-1545")
     @TestId("1334")
     @Test
     fun shareZipFile() {
@@ -172,6 +177,7 @@ class AttachmentsTests : BaseTest() {
             .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.application.zip) }
     }
 
+    @Ignore("Enable when attachments UI on v4 is finalized - MAILAND-1545")
     @TestId("53709")
     @Test
     fun sharePdfFile() {
@@ -195,6 +201,7 @@ class AttachmentsTests : BaseTest() {
             .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.application.pdf) }
     }
 
+    @Ignore("Enable when attachments UI on v4 is finalized - MAILAND-1545")
     @TestId("1356")
     @Test
     fun sharePngFileWithPinUnlocked() {
@@ -226,6 +233,7 @@ class AttachmentsTests : BaseTest() {
             .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.png) }
     }
 
+    @Ignore("Enable when attachments UI on v4 is finalized - MAILAND-1545")
     @TestId("1355")
     @Test
     fun sharePngFileWithPinLocked() {
@@ -328,6 +336,7 @@ class AttachmentsTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @Ignore("Enable when attachments UI on v4 is finalized - MAILAND-1545")
     @TestId("15539")
     @Category(SmokeTest::class)
     @Test
@@ -357,6 +366,7 @@ class AttachmentsTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @Ignore("Enable when attachments UI on v4 is finalized - MAILAND-1545")
     @TestId("1558")
     @Test
     fun automaticallyAttachPublicKey() {
