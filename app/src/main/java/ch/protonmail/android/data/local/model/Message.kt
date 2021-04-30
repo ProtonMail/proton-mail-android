@@ -26,11 +26,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import androidx.room.Relation
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.RecipientType
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
@@ -43,7 +41,6 @@ import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
@@ -94,18 +91,10 @@ const val COLUMN_MESSAGE_PREFIX_SENDER = "Sender_"
 const val COLUMN_MESSAGE_REPLY_TOS = "ReplyTos"
 const val COLUMN_MESSAGE_ACCESS_TIME = "AccessTime"
 const val COLUMN_MESSAGE_DELETED = "Deleted"
-const val CONVERSATION_TABLE_COLUMN_ID = "ID"
 
 @Entity(
     tableName = TABLE_MESSAGES,
-    indices = [Index(COLUMN_MESSAGE_ID, unique = true), Index(COLUMN_MESSAGE_LOCATION), Index(COLUMN_CONVERSATION_ID)],
-    foreignKeys = [ForeignKey(
-        entity = ConversationDatabaseModel::class,
-        parentColumns = arrayOf(CONVERSATION_TABLE_COLUMN_ID),
-        childColumns = arrayOf(COLUMN_CONVERSATION_ID),
-        onUpdate = ForeignKey.CASCADE,
-        onDelete = ForeignKey.CASCADE
-    )]
+    indices = [Index(COLUMN_MESSAGE_ID, unique = true), Index(COLUMN_MESSAGE_LOCATION), Index(COLUMN_CONVERSATION_ID)]
 )
 data class Message @JvmOverloads constructor(
 
