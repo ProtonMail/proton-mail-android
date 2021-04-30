@@ -37,6 +37,7 @@ import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
 import com.dropbox.android.external.store4.StoreRequest
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emitAll
@@ -61,6 +62,7 @@ class ConversationsRepositoryImpl @Inject constructor(
 
     private val paramFlow = MutableSharedFlow<GetConversationsParameters>(replay = 1)
 
+    @FlowPreview
     private val store = StoreBuilder.from(
         fetcher = Fetcher.of { key: ConversationStoreKey ->
             api.fetchConversation(key.conversationId, key.userId)
@@ -116,6 +118,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         paramFlow.tryEmit(params)
     }
 
+    @FlowPreview
     override fun getConversation(
         conversationId: String,
         userId: Id,
