@@ -214,6 +214,9 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         textViewDetailsActionsMoveToInbox.apply {
             isVisible = messageLocation in Constants.MessageLocationType.values()
                 .filter { it != Constants.MessageLocationType.INBOX }
+            if (messageLocation == Constants.MessageLocationType.SPAM) {
+                setText(R.string.not_spam_move_to_inbox)
+            }
             setOnClickListener {
                 viewModel.moveToInbox(messageIds, messageLocation)
                 dismiss()

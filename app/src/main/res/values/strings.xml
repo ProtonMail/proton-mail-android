@@ -993,5 +993,6 @@
     <string name="move_message">Move message</string>
     <string name="manage">Manage</string>
     <string name="message_from">Message from %s</string>
+    <string name="not_spam_move_to_inbox">Not spam (Move to Inbox)</string>
 
 </resources>
