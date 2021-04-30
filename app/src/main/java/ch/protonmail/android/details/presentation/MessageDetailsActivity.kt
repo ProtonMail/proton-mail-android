@@ -60,6 +60,8 @@ import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.LabelsObserver
 import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
 import ch.protonmail.android.activities.messageDetails.MessageViewHeadersActivity
+import ch.protonmail.android.activities.mailbox.MailboxActivity
+import ch.protonmail.android.activities.messageDetails.actionsheet.MessageActionSheet
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener

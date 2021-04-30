@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.activities.messageDetails
+package ch.protonmail.android.activities.messageDetails.actionsheet
 
 import android.content.Context
 import android.util.AttributeSet

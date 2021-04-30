@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.activities.messageDetails
+package ch.protonmail.android.activities.messageDetails.actionsheet
 
 /**
  * Contains types of actions executed from message details screen.

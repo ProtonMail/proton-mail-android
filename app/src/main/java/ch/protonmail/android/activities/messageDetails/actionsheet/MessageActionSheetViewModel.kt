@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.activities.messageDetails
+package ch.protonmail.android.activities.messageDetails.actionsheet
 
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
@@ -38,18 +38,16 @@ class MessageActionSheetViewModel @ViewModelInject constructor(
     private val messageDetailsRepository: MessageDetailsRepository
 ) : ViewModel() {
 
-    private val messageIds: List<String> by lazy {
+    private val messageIds: List<String> =
         savedStateHandle.get<List<String>>(MessageActionSheet.EXTRA_ARG_MESSAGE_IDS)
             ?: throw IllegalStateException("messageIds in MessageActionSheetViewModel are Empty!")
-    }
 
-    private val currentFolder by lazy {
+    private val currentFolder =
         Constants.MessageLocationType.fromInt(
             savedStateHandle.get<Int>(
                 MessageActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID
             ) ?: 0
         )
-    }
 
     fun handleAction(
         action: MessageActionSheetActions

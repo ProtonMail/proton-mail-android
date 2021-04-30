@@ -23,7 +23,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ch.protonmail.android.activities.messageDetails.ActionSheetHeader
+    <ch.protonmail.android.activities.messageDetails.actionsheet.ActionSheetHeader
         android:id="@+id/action_sheet_header_details_actions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

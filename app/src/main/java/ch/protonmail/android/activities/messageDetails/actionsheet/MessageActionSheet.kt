@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.activities.messageDetails
+package ch.protonmail.android.activities.messageDetails.actionsheet
 
 import android.app.Dialog
 import android.os.Bundle
@@ -29,6 +29,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import ch.protonmail.android.R
+import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentMessageDetailsActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
