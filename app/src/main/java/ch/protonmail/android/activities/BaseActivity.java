@@ -20,8 +20,8 @@ package ch.protonmail.android.activities;
 
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
-import static ch.protonmail.android.worker.FetchUserInfoWorkerKt.FETCH_USER_INFO_WORKER_NAME;
-import static ch.protonmail.android.worker.FetchUserInfoWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
+import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_NAME;
+import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -38,13 +38,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.activity.ComponentActivity;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.work.WorkManager;
 
 import com.birbit.android.jobqueue.JobManager;
@@ -77,7 +74,7 @@ import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.INetworkConfiguratorCallback;
 import ch.protonmail.android.worker.FetchMailSettingsWorker;
-import ch.protonmail.android.worker.FetchUserInfoWorker;
+import ch.protonmail.android.worker.FetchUserWorker;
 import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
 
@@ -118,7 +115,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @Inject
     protected WorkManager workManager;
     @Inject
-    protected FetchUserInfoWorker.Enqueuer fetchUserInfoWorkerEnqueuer;
+    protected FetchUserWorker.Enqueuer fetchUserInfoWorkerEnqueuer;
     @Inject
     protected FetchMailSettingsWorker.Enqueuer fetchMailSettingsWorkerEnqueuer;
 
@@ -401,6 +398,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             });
             btnClose.setOnClickListener(v -> finish());
             btnCheckAgain.setOnClickListener(v -> {
+                // TODO: Remove fetchUserInfoWorkerEnqueuer, not adapted for this usage.
                 fetchUserInfoWorkerEnqueuer.invoke(user.getId());
                 workManager.getWorkInfosForUniqueWorkLiveData(FETCH_USER_INFO_WORKER_NAME)
                         .observe(this, workInfo -> {

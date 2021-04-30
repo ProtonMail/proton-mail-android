@@ -59,6 +59,8 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.worker.FetchContactsDataWorker
 import ch.protonmail.android.worker.FetchContactsEmailsWorker
+import ch.protonmail.android.worker.FetchUserAddressesWorker
+import ch.protonmail.android.worker.FetchUserWorker
 import com.google.gson.JsonSyntaxException
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
@@ -72,6 +74,8 @@ class EventHandler @AssistedInject constructor(
     private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
     private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
+    private val fetchUserWorkerEnqueuer: FetchUserWorker.Enqueuer,
+    private val fetchUserAddressesWorkerEnqueuer: FetchUserAddressesWorker.Enqueuer,
     private val databaseProvider: DatabaseProvider,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     @Assisted val userId: Id
@@ -240,12 +244,12 @@ class EventHandler @AssistedInject constructor(
             writeMailSettings(context, mailSettings)
         }
         if (user != null) {
-            // TODO: Refresh User.
-            AppUtil.postEventOnUi(RefreshDrawerEvent())
+            // Core is the source of truth. Workaround: Force refresh Core.
+            fetchUserWorkerEnqueuer(userId)
         }
         if (addresses != null) {
-            // TODO: Refresh Addresses.
-            AppUtil.postEventOnUi(RefreshDrawerEvent())
+            // Core is the source of truth. Workaround: Force refresh Core.
+            fetchUserAddressesWorkerEnqueuer(userId)
         }
         if (counts != null) {
             writeUnreadUpdates(counts)

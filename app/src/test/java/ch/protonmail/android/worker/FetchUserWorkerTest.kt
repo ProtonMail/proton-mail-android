@@ -24,37 +24,28 @@ import android.text.TextUtils
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.UserInfo
-import ch.protonmail.android.api.models.address.AddressesResponse
-import ch.protonmail.android.api.segments.RESPONSE_CODE_UNAUTHORIZED
-import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.UserManager
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.just
-import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.mockk.runs
 import io.mockk.spyk
 import kotlinx.coroutines.runBlocking
-import me.proton.core.test.kotlin.TestDispatcherProvider
-import java.io.IOException
+import me.proton.core.network.domain.ApiException
+import me.proton.core.user.domain.UserManager
+import me.proton.core.user.domain.entity.Delinquent
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Tests the functionality of [FetchUserInfoWorker].
+ * Tests the functionality of [FetchUserWorker].
  *
  * @author Stefanija Boshkovska
  */
 
-class FetchUserInfoWorkerTest {
+class FetchUserWorkerTest {
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -63,12 +54,12 @@ class FetchUserInfoWorkerTest {
     private lateinit var parameters: WorkerParameters
 
     @MockK
-    private lateinit var protonMailApiManager: ProtonMailApiManager
-
-    @MockK
     private lateinit var userManager: UserManager
 
-    private lateinit var worker: FetchUserInfoWorker
+    @MockK
+    private lateinit var oldUserManager: ch.protonmail.android.core.UserManager
+
+    private lateinit var worker: FetchUserWorker
 
     @BeforeTest
     fun setUp() {
@@ -77,36 +68,23 @@ class FetchUserInfoWorkerTest {
         mockkStatic(TextUtils::class)
         every { TextUtils.isEmpty(any()) } returns false
 
-        worker = FetchUserInfoWorker(
+        worker = FetchUserWorker(
             context,
             parameters,
-            protonMailApiManager,
             userManager,
-            TestDispatcherProvider
+            oldUserManager
         )
     }
 
     @Test
     fun `should return new user delinquency data when both API calls are successful`() {
         runBlocking {
-            val mockUser = spyk<User> {
-                every { delinquent } returns false
+            val mockUser = spyk<me.proton.core.user.domain.entity.User> {
+                every { delinquent } returns Delinquent.None
                 every { name } returns "name"
-                every { setAddresses(any()) } just runs
-            }
-            val mockUserInfoResponse = mockk<UserInfo> {
-                every { code } returns Constants.RESPONSE_CODE_OK
-                every { user } returns mockUser
-            }
-            val mockAddressesResponse = mockk<AddressesResponse> {
-                every { code } returns Constants.RESPONSE_CODE_OK
-                every { addresses } returns mockk()
             }
 
-            coEvery { protonMailApiManager.fetchUserInfo() } returns mockUserInfoResponse
-            coEvery { protonMailApiManager.fetchAddresses() } returns mockAddressesResponse
-
-            every { userManager.currentLegacyUser } returns mockUser
+            coEvery { userManager.getUser(any(), any()) } returns mockUser
 
             val expectedResult = ListenableWorker.Result.success(workDataOf(FETCH_USER_INFO_WORKER_RESULT to false))
 
@@ -121,20 +99,11 @@ class FetchUserInfoWorkerTest {
     @Test
     fun `should return old user delinquency data when at least one of the API calls responds with error code`() {
         runBlocking {
-            val mockUser = spyk<User> {
-                every { delinquent } returns true
-            }
-            val mockUserInfoResponse = mockk<UserInfo> {
-                every { code } returns Constants.RESPONSE_CODE_OK
-            }
-            val mockAddressesResponse = mockk<AddressesResponse> {
-                every { code } returns RESPONSE_CODE_UNAUTHORIZED
+            val mockUser = spyk<me.proton.core.user.domain.entity.User> {
+                every { delinquent } returns Delinquent.InvoiceDelinquent
             }
 
-            coEvery { protonMailApiManager.fetchUserInfo() } returns mockUserInfoResponse
-            coEvery { protonMailApiManager.fetchAddresses() } returns mockAddressesResponse
-
-            every { userManager.currentLegacyUser } returns mockUser
+            coEvery { userManager.getUser(any(), any()) } returns mockUser
 
             val expectedResult = ListenableWorker.Result.success(workDataOf(FETCH_USER_INFO_WORKER_RESULT to true))
 
@@ -149,17 +118,14 @@ class FetchUserInfoWorkerTest {
     @Test
     fun `should return failure result when at least one of the API calls throws an exception`() {
         runBlocking {
-            val mockUserInfoResponse = mockk<UserInfo> {
-                every { code } returns Constants.RESPONSE_CODE_OK
-            }
-            val mockException = spyk<IOException> {
+            val mockException = spyk<ApiException> {
                 every { message } returns "exception"
             }
 
-            coEvery { protonMailApiManager.fetchUserInfo() } returns mockUserInfoResponse
-            coEvery { protonMailApiManager.fetchAddresses() } throws mockException
+            coEvery { userManager.getUser(any(), any()) } throws mockException
 
-            val expectedResult = ListenableWorker.Result.failure(workDataOf(FETCH_USER_INFO_WORKER_EXCEPTION_MESSAGE to "exception"))
+            val expectedResult =
+                ListenableWorker.Result.failure(workDataOf(FETCH_USER_INFO_WORKER_EXCEPTION_MESSAGE to "exception"))
 
             // when
             val workerResult = worker.doWork()

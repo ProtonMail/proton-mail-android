@@ -33,19 +33,13 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.attachments.KEY_INPUT_DATA_USER_ID_STRING
 import ch.protonmail.android.domain.entity.Id
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.entity.Delinquent
 import me.proton.core.util.kotlin.takeIfNotBlank
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import javax.inject.Inject
-
-/**
- * A `Worker` that handles fetching user info.
- *
- * @author Stefanija Boshkovska
- */
 
 // region constants
 const val FETCH_USER_INFO_WORKER_NAME = "FetchUserInfoWorker"
@@ -53,9 +47,9 @@ const val FETCH_USER_INFO_WORKER_RESULT = "FetchUserInfoWorkerResult"
 const val FETCH_USER_INFO_WORKER_EXCEPTION_MESSAGE = "FetchUserInfoWorkerExceptionMessage"
 // endregion
 
-@Deprecated("Remove this worker, its not needed and not adapted for the current usage.")
+@Deprecated("Refactor resultData + BaseActivity.checkDelinquency")
 @HiltWorker
-class FetchUserInfoWorker @AssistedInject constructor(
+class FetchUserWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val userManager: UserManager,
@@ -71,12 +65,11 @@ class FetchUserInfoWorker @AssistedInject constructor(
                 oldUserManager.clearCache()
             }
         }.map { user ->
+            // TODO: Remove this result.
             workDataOf(FETCH_USER_INFO_WORKER_RESULT to (user.delinquent != Delinquent.None))
         }.fold(
             onSuccess = { resultData -> Result.success(resultData) },
-            onFailure = { exception ->
-                Result.failure(workDataOf(FETCH_USER_INFO_WORKER_EXCEPTION_MESSAGE to exception.message))
-            }
+            onFailure = { Result.failure() }
         )
     }
 
@@ -91,7 +84,7 @@ class FetchUserInfoWorker @AssistedInject constructor(
                 .putString(KEY_INPUT_DATA_USER_ID_STRING, userId.s)
                 .build()
 
-            val request = OneTimeWorkRequestBuilder<FetchUserInfoWorker>()
+            val request = OneTimeWorkRequestBuilder<FetchUserWorker>()
                 .setConstraints(constraints)
                 .setInputData(data)
                 .build()
