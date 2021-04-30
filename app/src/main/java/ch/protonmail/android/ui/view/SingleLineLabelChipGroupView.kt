@@ -25,6 +25,7 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.annotation.StyleRes
+import androidx.core.view.isVisible
 import ch.protonmail.android.databinding.LayoutSingleLineLabelChipGroupBinding
 
 /**
@@ -58,12 +59,8 @@ class SingleLineLabelChipGroupView @JvmOverloads constructor (
     }
 
     fun setLabels(labels: List<LabelChipUiModel>) {
-        labelView.visibility =
-            if (labels.isNotEmpty()) VISIBLE
-            else GONE
-        moreView.visibility =
-            if (labels.size >= 2) VISIBLE
-            else GONE
+        labelView.isVisible = labels.isNotEmpty()
+        moreView.isVisible = labels.size >= 2
 
         labels.firstOrNull()?.let(labelView::setLabel)
         moreView.text = getMoreLabelsText(labels.size)
