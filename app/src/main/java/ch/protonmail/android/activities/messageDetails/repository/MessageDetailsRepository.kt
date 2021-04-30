@@ -49,6 +49,7 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.extensions.asyncMap
 import com.birbit.android.jobqueue.Job
@@ -572,6 +573,11 @@ class MessageDetailsRepository @Inject constructor(
 
     fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>> =
         pendingActionDao.findAllPendingUploadsAsync()
+
+    suspend fun reportPhishing(messageId: String) {
+        val message = findMessageByIdOnce(messageId)
+        jobManager.addJobInBackground(ReportPhishingJob(message))
+    }
 
     @AssistedInject.Factory
     interface AssistedFactory {

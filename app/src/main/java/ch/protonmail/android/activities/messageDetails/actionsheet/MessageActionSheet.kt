@@ -149,15 +149,15 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         layoutDetailsActions.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
 
         textViewDetailsActionsReply.setOnClickListener {
-            (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.REPLY)
+            (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.REPLY)
             dismiss()
         }
         textViewDetailsActionsReplyAll.setOnClickListener {
-            (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.REPLY_ALL)
+            (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.REPLY_ALL)
             dismiss()
         }
         textViewDetailsActionsForward.setOnClickListener {
-            (activity as MessageDetailsActivity).executeMessageAction(Constants.MessageActionType.FORWARD)
+            (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.FORWARD)
             dismiss()
         }
     }
@@ -217,7 +217,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             setOnClickListener {
                 viewModel.moveToInbox(messageIds, messageLocation)
                 dismiss()
-                popBackIfNeeded()
+                popBackActivity()
             }
         }
         textViewDetailsActionsTrash.apply {
@@ -226,7 +226,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             setOnClickListener {
                 viewModel.moveToTrash(messageIds, messageLocation)
                 dismiss()
-                popBackIfNeeded()
+                popBackActivity()
             }
         }
         textViewDetailsActionsMoveToArchive.apply {
@@ -235,7 +235,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             setOnClickListener {
                 viewModel.moveToArchive(messageIds, messageLocation)
                 dismiss()
-                popBackIfNeeded()
+                popBackActivity()
             }
         }
         textViewDetailsActionsMoveToSpam.apply {
@@ -244,7 +244,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             setOnClickListener {
                 viewModel.moveToSpam(messageIds, messageLocation)
                 dismiss()
-                popBackIfNeeded()
+                popBackActivity()
             }
         }
         textViewDetailsActionsDelete.apply {
@@ -279,7 +279,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
             setOnClickListener {
                 // we call it this way as it requires "special" context from the Activity
-                (activity as MessageDetailsActivity).printMessage()
+                (activity as? MessageDetailsActivity)?.printMessage()
                 dismiss()
             }
         }
@@ -293,7 +293,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         textViewDetailsActionsReportPhishing.apply {
             isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
             setOnClickListener {
-                (activity as MessageDetailsActivity).showReportPhishingDialog()
+                (activity as? MessageDetailsActivity)?.showReportPhishingDialog()
                 dismiss()
             }
         }
@@ -304,9 +304,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
      * so we have to dismiss the action sheet and the Details activity at the time and go to the main list.
      * This should be improved.
      */
-    private fun popBackIfNeeded() {
-        (activity as? MessageDetailsActivity)?.onBackPressed()
-    }
+    private fun popBackActivity() = activity?.onBackPressed()
 
     private fun setCloseIconVisibility(shouldBeVisible: Boolean) =
         actionSheetHeader?.setCloseIconVisibility(shouldBeVisible)

@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.EMPTY_STRING
 
 class MessageActionSheetViewModel @ViewModelInject constructor(
-    private val deleteMessageUseCase: DeleteMessage,
+    private val deleteMessage: DeleteMessage,
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val messageDetailsRepository: MessageDetailsRepository
 ) : ViewModel() {
@@ -50,7 +50,7 @@ class MessageActionSheetViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             val showLabelsManager = MessageActionSheetAction.ShowLabelsManager(
                 messageIds,
-                getAllCheckedLabels(messageIds),
+                getCheckedLabelsForAllMessages(messageIds),
                 currentLocation.messageLocationTypeValue,
                 labelsSheetType
             )
@@ -58,9 +58,9 @@ class MessageActionSheetViewModel @ViewModelInject constructor(
         }
     }
 
-    private suspend fun getAllCheckedLabels(
+    private suspend fun getCheckedLabelsForAllMessages(
         messageIds: List<String>
-    ): MutableList<String> {
+    ): List<String> {
         val checkedLabels = mutableListOf<String>()
         messageIds.forEach { messageId ->
             val message = messageDetailsRepository.findMessageByIdOnce(messageId)
@@ -71,7 +71,7 @@ class MessageActionSheetViewModel @ViewModelInject constructor(
 
     fun deleteMessage(messageIds: List<String>) {
         viewModelScope.launch {
-            deleteMessageUseCase(
+            deleteMessage(
                 messageIds, Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
             )
         }
