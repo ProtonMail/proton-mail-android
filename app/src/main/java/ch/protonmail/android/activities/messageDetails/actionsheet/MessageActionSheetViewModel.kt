@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.activities.messageDetails.actionsheet
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelsActionSheet
@@ -27,12 +26,15 @@ import ch.protonmail.android.activities.messageDetails.labelactions.domain.MoveM
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.EMPTY_STRING
+import javax.inject.Inject
 
-class MessageActionSheetViewModel @ViewModelInject constructor(
+@HiltViewModel
+class MessageActionSheetViewModel @Inject constructor(
     private val deleteMessage: DeleteMessage,
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val messageDetailsRepository: MessageDetailsRepository
@@ -80,38 +82,34 @@ class MessageActionSheetViewModel @ViewModelInject constructor(
     fun moveToInbox(
         messageIds: List<String>,
         currentFolder: Constants.MessageLocationType
-    ) =
-        moveMessagesToFolder(
-            messageIds, Constants.MessageLocationType.INBOX.toString(),
-            currentFolder.messageLocationTypeValue.toString()
-        )
+    ) = moveMessagesToFolder(
+        messageIds, Constants.MessageLocationType.INBOX.toString(),
+        currentFolder.messageLocationTypeValue.toString()
+    )
 
     fun moveToArchive(
         messageIds: List<String>,
         currentFolder: Constants.MessageLocationType
-    ) =
-        moveMessagesToFolder(
-            messageIds, Constants.MessageLocationType.ARCHIVE.toString(),
-            currentFolder.messageLocationTypeValue.toString()
-        )
+    ) = moveMessagesToFolder(
+        messageIds, Constants.MessageLocationType.ARCHIVE.toString(),
+        currentFolder.messageLocationTypeValue.toString()
+    )
 
     fun moveToSpam(
         messageIds: List<String>,
         currentFolder: Constants.MessageLocationType
-    ) =
-        moveMessagesToFolder(
-            messageIds, Constants.MessageLocationType.SPAM.toString(),
-            currentFolder.messageLocationTypeValue.toString()
-        )
+    ) = moveMessagesToFolder(
+        messageIds, Constants.MessageLocationType.SPAM.toString(),
+        currentFolder.messageLocationTypeValue.toString()
+    )
 
     fun moveToTrash(
         messageIds: List<String>,
         currentFolder: Constants.MessageLocationType
-    ) =
-        moveMessagesToFolder(
-            messageIds, Constants.MessageLocationType.TRASH.toString(),
-            currentFolder.messageLocationTypeValue.toString()
-        )
+    ) = moveMessagesToFolder(
+        messageIds, Constants.MessageLocationType.TRASH.toString(),
+        currentFolder.messageLocationTypeValue.toString()
+    )
 
     fun starMessage(messageId: List<String>) =
         messageDetailsRepository.starMessages(messageId)

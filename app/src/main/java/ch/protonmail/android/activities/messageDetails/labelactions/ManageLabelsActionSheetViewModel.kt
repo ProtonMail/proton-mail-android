@@ -19,8 +19,6 @@
 
 package ch.protonmail.android.activities.messageDetails.labelactions
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,13 +28,16 @@ import ch.protonmail.android.activities.messageDetails.labelactions.domain.Stand
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.UpdateLabels
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
-    @Assisted private val savedStateHandle: SavedStateHandle,
+@HiltViewModel
+class ManageLabelsActionSheetViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val getAllLabels: GetAllLabels,
     private val userManager: UserManager,
     private val updateLabels: UpdateLabels,
@@ -70,7 +71,7 @@ class ManageLabelsActionSheetViewModel @ViewModelInject constructor(
 
     init {
         viewModelScope.launch {
-            labelsMutableFlow.value = getAllLabels.invoke(initialLabelsSelection, labelsSheetType, currentMessageFolder)
+            labelsMutableFlow.value = getAllLabels(initialLabelsSelection, labelsSheetType, currentMessageFolder)
         }
     }
 

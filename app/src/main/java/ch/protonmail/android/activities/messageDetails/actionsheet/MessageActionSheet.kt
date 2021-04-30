@@ -49,7 +49,7 @@ import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 
 /**
- * Fragment popping up with actions for message details screen.
+ * Fragment popping up with actions for messages.
  */
 @AndroidEntryPoint
 class MessageActionSheet : BottomSheetDialogFragment() {

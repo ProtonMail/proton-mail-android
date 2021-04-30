@@ -88,7 +88,7 @@ class LabelsMapperTest {
         val sheetType = ManageLabelsActionSheet.Type.FOLDER
         val expected = ManageLabelItemUiModel(
             labelId1,
-            R.drawable.ic_folder_24dp,
+            R.drawable.ic_folder,
             labelName1,
             null,
             Color.BLACK,

@@ -37,7 +37,7 @@ class LabelsMapper @Inject constructor() {
         val iconRes = if (labelsSheetType == ManageLabelsActionSheet.Type.LABEL) {
             R.drawable.circle_labels_selection
         } else {
-            R.drawable.ic_folder_24dp
+            R.drawable.ic_folder
         }
 
         val colorInt = if (labelsSheetType == ManageLabelsActionSheet.Type.LABEL) {

@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 
 /**
- * Actions sheet used to manage labels and folders (a folder is a type of label with id=1)
+ * Actions sheet used to manage labels and folders.
  */
 @AndroidEntryPoint
 class ManageLabelsActionSheet : BottomSheetDialogFragment() {

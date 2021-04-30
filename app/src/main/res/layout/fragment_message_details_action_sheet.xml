@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/star"
                 android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_star_24dp"
+                app:drawableStartCompat="@drawable/ic_star"
                 tools:visibility="visible" />
 
             <TextView
@@ -100,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_as"
-                app:drawableStartCompat="@drawable/ic_label_24dp" />
+                app:drawableStartCompat="@drawable/ic_label" />
 
             <View style="@style/ViewSeparatorHorizontal" />
 
@@ -116,7 +116,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_inbox"
-                app:drawableStartCompat="@drawable/ic_inbox_24dp" />
+                app:drawableStartCompat="@drawable/ic_inbox" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_trash"
@@ -124,7 +124,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_trash"
-                app:drawableStartCompat="@drawable/ic_trash_24dp" />
+                app:drawableStartCompat="@drawable/ic_trash" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_move_to_archive"
@@ -132,7 +132,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_archive"
-                app:drawableStartCompat="@drawable/ic_archive_24dp" />
+                app:drawableStartCompat="@drawable/ic_archive" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_delete"
@@ -148,7 +148,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_spam"
-                app:drawableStartCompat="@drawable/ic_spam_24dp" />
+                app:drawableStartCompat="@drawable/ic_spam" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_move_to"

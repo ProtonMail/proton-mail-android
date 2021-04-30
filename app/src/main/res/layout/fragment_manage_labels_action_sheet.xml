@@ -87,7 +87,7 @@
                 android:enabled="false"
                 android:focusable="true"
                 android:text="@string/new_label"
-                app:drawableStartCompat="@drawable/ic_add_24dp" />
+                app:drawableStartCompat="@drawable/ic_add" />
 
             <TextView
                 android:id="@+id/text_view_labels_sheet_new_folder"
@@ -100,7 +100,7 @@
                 android:focusable="true"
                 android:text="@string/new_folder"
                 android:visibility="gone"
-                app:drawableStartCompat="@drawable/ic_add_24dp"
+                app:drawableStartCompat="@drawable/ic_add"
                 tools:visibility="visible" />
 
             <androidx.recyclerview.widget.RecyclerView
