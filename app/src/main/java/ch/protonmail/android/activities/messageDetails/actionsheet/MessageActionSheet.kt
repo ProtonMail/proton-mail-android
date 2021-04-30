@@ -20,6 +20,7 @@
 package ch.protonmail.android.activities.messageDetails.actionsheet
 
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,16 +29,23 @@ import android.view.WindowManager
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
+import ch.protonmail.android.activities.messageDetails.EXTRA_VIEW_HEADERS
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
+import ch.protonmail.android.activities.messageDetails.MessageViewHeadersActivity
+import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelsActionSheet
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentMessageDetailsActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
+import ch.protonmail.android.utils.AppUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 
 /**
@@ -50,15 +58,27 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     private val viewModel: MessageActionSheetViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = FragmentMessageDetailsActionSheetBinding.inflate(inflater)
         val originatorId = arguments?.getInt(EXTRA_ARG_ORIGINATOR_SCREEN_ID) ?: ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+        val messageIds: List<String> = arguments?.getStringArray(EXTRA_ARG_MESSAGE_IDS)?.toList()
+            ?: throw IllegalStateException("messageIds in MessageActionSheet are Empty!")
+        val messageLocation =
+            Constants.MessageLocationType.fromInt(
+                arguments?.getInt(EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID) ?: 0
+            )
+
+        val binding = FragmentMessageDetailsActionSheetBinding.inflate(inflater)
+
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
         setupMessageReplyActionsBindings(binding.includeLayoutActionSheetButtons, originatorId)
-        setupManageSectionBindings(binding, viewModel, originatorId)
-        setupMoveSectionBindings(binding, viewModel)
-        setupMoreSectionBindings(binding, originatorId)
-
+        setupManageSectionBindings(binding, viewModel, originatorId, messageIds, messageLocation)
+        setupMoveSectionBindings(binding, viewModel, messageIds, messageLocation)
+        setupMoreSectionBindings(binding, originatorId, messageIds)
         actionSheetHeader = binding.actionSheetHeaderDetailsActions
+
+        viewModel.actionsFlow
+            .onEach { processAction(it) }
+            .launchIn(lifecycleScope)
+
         return binding.root
     }
 
@@ -92,7 +112,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                             } else {
                                 actionSheetHeader?.shiftTitleToRightBy(0f)
                             }
-                            Timber.v("onSlide to offset $slideOffset")
                         }
                     }
                 )
@@ -146,14 +165,16 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     private fun setupManageSectionBindings(
         binding: FragmentMessageDetailsActionSheetBinding,
         viewModel: MessageActionSheetViewModel,
-        originatorId: Int
+        originatorId: Int,
+        messageIds: List<String>,
+        messageLocation: Constants.MessageLocationType
     ) = with(binding) {
         val isStarred = arguments?.getBoolean(EXTRA_ARG_IS_STARED) ?: false
 
         textViewDetailsActionsUnstar.apply {
             isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID || isStarred
             setOnClickListener {
-                viewModel.handleAction(MessageActionSheetActions.UNSTAR_MESSAGE)
+                viewModel.unStarMessage(messageIds)
                 dismiss()
             }
         }
@@ -161,7 +182,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         textViewDetailsActionsStar.apply {
             isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID || !isStarred
             setOnClickListener {
-                viewModel.handleAction(MessageActionSheetActions.STAR_MESSAGE)
+                viewModel.starMessage(messageIds)
                 dismiss()
             }
         }
@@ -169,34 +190,32 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         textViewDetailsActionsMarkRead.apply {
             isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
             setOnClickListener {
-                viewModel.handleAction(MessageActionSheetActions.MARK_READ)
+                viewModel.markRead(messageIds)
                 dismiss()
             }
         }
         textViewDetailsActionsMarkUnread.setOnClickListener {
-            viewModel.handleAction(MessageActionSheetActions.MARK_UNREAD)
+            viewModel.markUnread(messageIds)
             dismiss()
         }
         textViewDetailsActionsLabelAs.setOnClickListener {
-            (activity as MessageDetailsActivity).showLabelsManagerDialog()
+            viewModel.showLabelsManager(messageIds, messageLocation)
             dismiss()
         }
     }
 
     private fun setupMoveSectionBindings(
         binding: FragmentMessageDetailsActionSheetBinding,
-        viewModel: MessageActionSheetViewModel
+        viewModel: MessageActionSheetViewModel,
+        messageIds: List<String>,
+        messageLocation: Constants.MessageLocationType
     ) = with(binding) {
-        val messageLocation =
-            Constants.MessageLocationType.fromInt(
-                arguments?.getInt(EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID) ?: 0
-            )
 
         textViewDetailsActionsMoveToInbox.apply {
             isVisible = messageLocation in Constants.MessageLocationType.values()
                 .filter { it != Constants.MessageLocationType.INBOX }
             setOnClickListener {
-                viewModel.handleAction(MessageActionSheetActions.MOVE_TO_INBOX)
+                viewModel.moveToInbox(messageIds, messageLocation)
                 dismiss()
                 popBackIfNeeded()
             }
@@ -205,7 +224,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             isVisible = messageLocation in Constants.MessageLocationType.values()
                 .filter { it != Constants.MessageLocationType.TRASH }
             setOnClickListener {
-                viewModel.handleAction(MessageActionSheetActions.MOVE_TO_TRASH)
+                viewModel.moveToTrash(messageIds, messageLocation)
                 dismiss()
                 popBackIfNeeded()
             }
@@ -214,7 +233,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             isVisible = messageLocation in Constants.MessageLocationType.values()
                 .filter { it != Constants.MessageLocationType.ARCHIVE }
             setOnClickListener {
-                viewModel.handleAction(MessageActionSheetActions.MOVE_TO_ARCHIVE)
+                viewModel.moveToArchive(messageIds, messageLocation)
                 dismiss()
                 popBackIfNeeded()
             }
@@ -223,7 +242,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             isVisible = messageLocation in Constants.MessageLocationType.values()
                 .filter { it != Constants.MessageLocationType.SPAM }
             setOnClickListener {
-                viewModel.handleAction(MessageActionSheetActions.MOVE_TO_SPAM)
+                viewModel.moveToSpam(messageIds, messageLocation)
                 dismiss()
                 popBackIfNeeded()
             }
@@ -237,19 +256,20 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                         type != Constants.MessageLocationType.ALL_MAIL
                 }
             setOnClickListener {
-                viewModel.handleAction(MessageActionSheetActions.DELETE_MESSAGE)
+                viewModel.deleteMessage(messageIds)
                 dismiss()
             }
         }
         textViewDetailsActionsMoveTo.setOnClickListener {
-            (activity as MessageDetailsActivity).showFoldersManagerDialog()
+            viewModel.showLabelsManager(messageIds, messageLocation, ManageLabelsActionSheet.Type.FOLDER)
             dismiss()
         }
     }
 
     private fun setupMoreSectionBindings(
         binding: FragmentMessageDetailsActionSheetBinding,
-        originatorId: Int
+        originatorId: Int,
+        messageIds: List<String>
     ) = with(binding) {
 
         viewActionSheetSeparator.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
@@ -266,7 +286,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         textViewDetailsActionsViewHeaders.apply {
             isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
             setOnClickListener {
-                (activity as MessageDetailsActivity).showViewHeaders()
+                viewModel.showMessageHeaders(messageIds.first())
                 dismiss()
             }
         }
@@ -291,10 +311,51 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     private fun setCloseIconVisibility(shouldBeVisible: Boolean) =
         actionSheetHeader?.setCloseIconVisibility(shouldBeVisible)
 
+
+    private fun processAction(sheetAction: MessageActionSheetAction) {
+        Timber.v("Action received $sheetAction")
+        when (sheetAction) {
+            is MessageActionSheetAction.ShowLabelsManager -> showManageLabelsActionSheet(
+                sheetAction.checkedLabels,
+                sheetAction.messageIds,
+                sheetAction.labelActionSheetType,
+                sheetAction.currentFolderLocationId
+            )
+            is MessageActionSheetAction.ShowMessageHeaders -> showMessageHeaders(sheetAction.messageHeaders)
+            else -> Timber.v("unhandled action $sheetAction")
+        }
+    }
+
+    private fun showManageLabelsActionSheet(
+        checkedLabels: List<String>,
+        messageIds: List<String>,
+        labelActionSheetType: ManageLabelsActionSheet.Type,
+        currentFolderLocationId: Int
+    ) {
+        ManageLabelsActionSheet.newInstance(
+            checkedLabels,
+            messageIds,
+            labelActionSheetType,
+            currentFolderLocationId
+        )
+            .show(parentFragmentManager, ManageLabelsActionSheet::class.qualifiedName)
+    }
+
+    private fun showMessageHeaders(messageHeader: String) {
+        startActivity(
+            AppUtil.decorInAppIntent(
+                Intent(
+                    context,
+                    MessageViewHeadersActivity::class.java
+                ).putExtra(EXTRA_VIEW_HEADERS, messageHeader)
+            )
+        )
+    }
+
     companion object {
 
-        const val EXTRA_ARG_MESSAGE_IDS = "arg_message_ids"
-        const val EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID = "extra_arg_current_folder_location_id"
+        private const val EXTRA_ARG_MESSAGE_IDS = "arg_message_ids"
+        private const val EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID = "extra_arg_current_folder_location_id"
         private const val EXTRA_ARG_TITLE = "arg_message_details_actions_title"
         private const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
         private const val EXTRA_ARG_IS_STARED = "arg_extra_is_stared"
@@ -326,7 +387,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         ): MessageActionSheet {
             return MessageActionSheet().apply {
                 arguments = bundleOf(
-                    EXTRA_ARG_MESSAGE_IDS to messagesIds,
+                    EXTRA_ARG_MESSAGE_IDS to messagesIds.toTypedArray(),
                     EXTRA_ARG_TITLE to title,
                     EXTRA_ARG_SUBTITLE to subTitle,
                     EXTRA_ARG_IS_STARED to isStarred,

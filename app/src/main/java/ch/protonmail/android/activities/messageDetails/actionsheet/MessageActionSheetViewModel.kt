@@ -19,51 +19,54 @@
 
 package ch.protonmail.android.activities.messageDetails.actionsheet
 
-import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelsActionSheet
 import ch.protonmail.android.activities.messageDetails.labelactions.domain.MoveMessagesToFolder
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import me.proton.core.util.kotlin.EMPTY_STRING
 
 class MessageActionSheetViewModel @ViewModelInject constructor(
-    @Assisted private val savedStateHandle: SavedStateHandle,
     private val deleteMessageUseCase: DeleteMessage,
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val messageDetailsRepository: MessageDetailsRepository
 ) : ViewModel() {
 
-    private val messageIds: List<String> =
-        savedStateHandle.get<List<String>>(MessageActionSheet.EXTRA_ARG_MESSAGE_IDS)
-            ?: throw IllegalStateException("messageIds in MessageActionSheetViewModel are Empty!")
+    private val actionsMutableFlow = MutableStateFlow<MessageActionSheetAction>(MessageActionSheetAction.Default)
+    val actionsFlow: StateFlow<MessageActionSheetAction>
+        get() = actionsMutableFlow
 
-    private val currentFolder =
-        Constants.MessageLocationType.fromInt(
-            savedStateHandle.get<Int>(
-                MessageActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID
-            ) ?: 0
-        )
-
-    fun handleAction(
-        action: MessageActionSheetActions
+    fun showLabelsManager(
+        messageIds: List<String>,
+        currentLocation: Constants.MessageLocationType,
+        labelsSheetType: ManageLabelsActionSheet.Type = ManageLabelsActionSheet.Type.LABEL
     ) {
-        Timber.v("Handle action: $action")
-        when (action) {
-            MessageActionSheetActions.DELETE_MESSAGE -> deleteMessage(messageIds)
-            MessageActionSheetActions.MARK_UNREAD -> markUnread(messageIds)
-            MessageActionSheetActions.MARK_READ -> markRead(messageIds)
-            MessageActionSheetActions.MOVE_TO_ARCHIVE -> moveToArchive(messageIds)
-            MessageActionSheetActions.MOVE_TO_INBOX -> moveToInbox(messageIds)
-            MessageActionSheetActions.MOVE_TO_SPAM -> moveToSpam(messageIds)
-            MessageActionSheetActions.MOVE_TO_TRASH -> moveToTrash(messageIds)
-            MessageActionSheetActions.STAR_MESSAGE -> starMessage(messageIds)
-            MessageActionSheetActions.UNSTAR_MESSAGE -> unStarMessage(messageIds)
+        viewModelScope.launch {
+            val showLabelsManager = MessageActionSheetAction.ShowLabelsManager(
+                messageIds,
+                getAllCheckedLabels(messageIds),
+                currentLocation.messageLocationTypeValue,
+                labelsSheetType
+            )
+            actionsMutableFlow.value = showLabelsManager
         }
+    }
+
+    private suspend fun getAllCheckedLabels(
+        messageIds: List<String>
+    ): MutableList<String> {
+        val checkedLabels = mutableListOf<String>()
+        messageIds.forEach { messageId ->
+            val message = messageDetailsRepository.findMessageByIdOnce(messageId)
+            checkedLabels.addAll(message.labelIDsNotIncludingLocations)
+        }
+        return checkedLabels
     }
 
     fun deleteMessage(messageIds: List<String>) {
@@ -74,37 +77,56 @@ class MessageActionSheetViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun moveToInbox(messageIds: List<String>) =
+    fun moveToInbox(
+        messageIds: List<String>,
+        currentFolder: Constants.MessageLocationType
+    ) =
         moveMessagesToFolder(
             messageIds, Constants.MessageLocationType.INBOX.toString(),
             currentFolder.messageLocationTypeValue.toString()
         )
 
-    private fun moveToArchive(messageIds: List<String>) =
+    fun moveToArchive(
+        messageIds: List<String>,
+        currentFolder: Constants.MessageLocationType
+    ) =
         moveMessagesToFolder(
             messageIds, Constants.MessageLocationType.ARCHIVE.toString(),
             currentFolder.messageLocationTypeValue.toString()
         )
 
-    private fun moveToSpam(messageIds: List<String>) =
+    fun moveToSpam(
+        messageIds: List<String>,
+        currentFolder: Constants.MessageLocationType
+    ) =
         moveMessagesToFolder(
             messageIds, Constants.MessageLocationType.SPAM.toString(),
             currentFolder.messageLocationTypeValue.toString()
         )
 
-    private fun moveToTrash(messageIds: List<String>) =
+    fun moveToTrash(
+        messageIds: List<String>,
+        currentFolder: Constants.MessageLocationType
+    ) =
         moveMessagesToFolder(
             messageIds, Constants.MessageLocationType.TRASH.toString(),
             currentFolder.messageLocationTypeValue.toString()
         )
 
-    private fun starMessage(messageId: List<String>) =
+    fun starMessage(messageId: List<String>) =
         messageDetailsRepository.starMessages(messageId)
 
-    private fun unStarMessage(messageId: List<String>) =
+    fun unStarMessage(messageId: List<String>) =
         messageDetailsRepository.unStarMessages(messageId)
 
-    private fun markUnread(messageIds: List<String>) = messageDetailsRepository.markUnRead(messageIds)
+    fun markUnread(messageIds: List<String>) = messageDetailsRepository.markUnRead(messageIds)
 
-    private fun markRead(messageIds: List<String>) = messageDetailsRepository.markRead(messageIds)
+    fun markRead(messageIds: List<String>) = messageDetailsRepository.markRead(messageIds)
+
+    fun showMessageHeaders(messageId: String) {
+        viewModelScope.launch {
+            val message = messageDetailsRepository.findMessageByIdOnce(messageId)
+            actionsMutableFlow.value = MessageActionSheetAction.ShowMessageHeaders(message.header ?: EMPTY_STRING)
+        }
+    }
 }

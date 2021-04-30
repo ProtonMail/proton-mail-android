@@ -77,7 +77,7 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
             adapter = manageLabelsActionAdapter
         }
 
-        with (binding.layoutLabelsSheetArchiveSwitch) {
+        with(binding.layoutLabelsSheetArchiveSwitch) {
             isVisible = actionSheetType == Type.LABEL
             setOnClickListener {
                 binding.switchLabelsSheetArchive.toggle()
@@ -96,17 +96,17 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
                     // TODO: Link it to appropriate setting section for adding new Folder
                 }
             }
-
-            viewModel.labels
-                .onEach { manageLabelsActionAdapter.submitList(it) }
-                .launchIn(lifecycleScope)
-
-            viewModel.actionsResult
-                .onEach { processActionResult(it) }
-                .launchIn(lifecycleScope)
-
-            return binding.root
         }
+
+        viewModel.labels
+            .onEach { manageLabelsActionAdapter.submitList(it) }
+            .launchIn(lifecycleScope)
+
+        viewModel.actionsResult
+            .onEach { processActionResult(it) }
+            .launchIn(lifecycleScope)
+
+        return binding.root
     }
 
     override fun onDestroyView() {

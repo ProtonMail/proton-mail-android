@@ -19,17 +19,20 @@
 
 package ch.protonmail.android.activities.messageDetails.actionsheet
 
+import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelsActionSheet
+
 /**
- * Contains types of actions executed from message details screen.
+ * Contains types of actions executed from message action sheet.
  */
-enum class MessageActionSheetActions {
-    DELETE_MESSAGE,
-    MARK_UNREAD,
-    MARK_READ,
-    MOVE_TO_ARCHIVE,
-    MOVE_TO_INBOX,
-    MOVE_TO_SPAM,
-    MOVE_TO_TRASH,
-    STAR_MESSAGE,
-    UNSTAR_MESSAGE
+sealed class MessageActionSheetAction {
+
+    object Default : MessageActionSheetAction()
+    data class ShowLabelsManager(
+        val messageIds: List<String>,
+        val checkedLabels: List<String>,
+        val currentFolderLocationId: Int,
+        val labelActionSheetType: ManageLabelsActionSheet.Type = ManageLabelsActionSheet.Type.LABEL
+    ) : MessageActionSheetAction()
+
+    data class ShowMessageHeaders(val messageHeaders: String) : MessageActionSheetAction()
 }

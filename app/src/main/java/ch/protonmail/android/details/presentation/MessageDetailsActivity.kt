@@ -65,7 +65,6 @@ import ch.protonmail.android.activities.messageDetails.actionsheet.MessageAction
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
-import ch.protonmail.android.activities.messageDetails.labelactions.ManageLabelsActionSheet
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
@@ -143,6 +142,7 @@ internal class MessageDetailsActivity :
     /** Lazy instance of [ClipboardManager] that will be used for copy content into the Clipboard */
     private val clipboardManager by lazy { getSystemService<ClipboardManager>() }
 
+    private var showActionButtons = false
     private var buttonsVisibilityRunnable = Runnable { messageDetailsActionsView.visibility = View.VISIBLE }
 
     private val onOffsetChangedListener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -365,19 +365,6 @@ internal class MessageDetailsActivity :
             .setNegativeButton(R.string.cancel, null).show()
     }
 
-    fun showViewHeaders(message: Message? = viewModel.decryptedMessageData.value) {
-        if (message != null) {
-            startActivity(
-                AppUtil.decorInAppIntent(
-                    Intent(
-                        this,
-                        MessageViewHeadersActivity::class.java
-                    ).putExtra(EXTRA_VIEW_HEADERS, message.header)
-                )
-            )
-        }
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         buttonsVisibilityHandler.removeCallbacks(buttonsVisibilityRunnable)
@@ -589,26 +576,6 @@ internal class MessageDetailsActivity :
         // NOOP
     }
 
-    fun showFoldersManagerDialog(message: Message? = viewModel.decryptedMessageData.value) =
-        showManageLabelsActionSheet(message, ManageLabelsActionSheet.Type.FOLDER)
-
-    fun showLabelsManagerDialog(message: Message? = viewModel.decryptedMessageData.value) =
-        showManageLabelsActionSheet(message, ManageLabelsActionSheet.Type.LABEL)
-
-    private fun showManageLabelsActionSheet(
-        message: Message?,
-        sheetType: ManageLabelsActionSheet.Type
-    ) {
-        requireNotNull(message)
-        ManageLabelsActionSheet.newInstance(
-            message.labelIDsNotIncludingLocations,
-            listOf(requireNotNull(message.messageId)),
-            sheetType,
-            message.location
-        )
-            .show(supportFragmentManager, ManageLabelsActionSheet::class.qualifiedName)
-    }
-
     override fun onLabelsChecked(
         checkedLabelIds: List<String>,
         unchangedLabelIds: List<String>?,
@@ -640,8 +607,6 @@ internal class MessageDetailsActivity :
         mJobManager.addJobInBackground(PostArchiveJob(listOf(message!!.messageId)))
         onBackPressed()
     }
-
-    private var showActionButtons = false
 
     private inner class Copy(private val text: CharSequence?) : MenuItem.OnMenuItemClickListener {
 
