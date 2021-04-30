@@ -27,6 +27,7 @@ import androidx.test.espresso.matcher.ViewMatchers.hasChildCount
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import ch.protonmail.android.R
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.testAndroidInstrumented.withBackgroundColor
@@ -95,5 +96,5 @@ class MultiLineLabelChipGroupViewTest : ViewTest<MultiLineLabelChipGroupView>(::
     }
 
     private fun onRecyclerView(): ViewInteraction =
-        onView(withId(MultiLineLabelChipGroupView.RECYCLER_VIEW_ID))
+        onView(withId(R.id.multi_line_label_recycler_view))
 }

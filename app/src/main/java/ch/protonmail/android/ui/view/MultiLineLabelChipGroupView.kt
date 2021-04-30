@@ -24,7 +24,6 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.annotation.StyleRes
-import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
@@ -63,7 +62,7 @@ class MultiLineLabelChipGroupView @JvmOverloads constructor(
 
     init {
         val recyclerView = RecyclerView(context).apply {
-            id = RECYCLER_VIEW_ID
+            id = R.id.multi_line_label_recycler_view
             layoutManager = FlexboxLayoutManager(context, FlexDirection.ROW)
             addItemDecoration(dividerItemDecoration)
             adapter = labelsAdapter
@@ -78,15 +77,12 @@ class MultiLineLabelChipGroupView @JvmOverloads constructor(
         labelsAdapter.submitList(labels)
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    companion object {
-
-        const val RECYCLER_VIEW_ID = 26_894
+    private companion object {
 
         /**
          * @return List of Labels for build a Preview
          */
-        private fun buildPreviewItems(): List<LabelChipUiModel> = listOf(
+        fun buildPreviewItems(): List<LabelChipUiModel> = listOf(
             LabelChipUiModel(Id("a"), Name("long name for first label"), Color.RED),
             LabelChipUiModel(Id("b"), Name("second label"), Color.GREEN),
             LabelChipUiModel(Id("c"), Name("third"), Color.BLUE),
