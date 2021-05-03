@@ -29,7 +29,6 @@ import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.CreateContact
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
-import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED
@@ -59,6 +58,7 @@ import ezvcard.property.Address
 import ezvcard.property.Email
 import ezvcard.property.Telephone
 import ezvcard.property.Uid
+import me.proton.core.util.kotlin.toInt
 import java.io.Serializable
 import java.util.ArrayList
 import java.util.UUID
@@ -270,7 +270,9 @@ class ConvertLocalContactsJob(
         var someGroupsAlreadyExist = false
 
         localGroups.forEach {
-            val response = getApi().createLabel(LabelBody(it.value, defaultColor, 1, false.makeInt(), Constants.LABEL_TYPE_CONTACT_GROUPS))
+            val response = getApi().createLabel(
+                LabelBody(it.value, defaultColor, 1, false.toInt(), Constants.LABEL_TYPE_CONTACT_GROUPS)
+            )
             if (response.code == RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST) {
                 someGroupsAlreadyExist = true
             } else {

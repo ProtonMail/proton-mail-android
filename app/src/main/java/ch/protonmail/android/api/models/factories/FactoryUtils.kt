@@ -33,15 +33,3 @@ internal fun Long.checkIfSet(variableName: String = ""): Long {
     }
 }
 
-@Deprecated(
-    "Use toInt",
-    ReplaceWith("this?.toInt() ?: -1", "me.proton.core.util.kotlin.toInt")
-)
-internal fun Boolean?.makeInt(): Int {
-    return when (this) {
-		true -> 1
-		false -> 0
-		null -> -1
-    }
-}
-

@@ -22,11 +22,9 @@ import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.messages.ParsedHeaders
 import com.google.gson.annotations.SerializedName
 
-// region constants
 private const val FIELD_LABEL_IDS_REMOVED = "LabelIDsRemoved"
 private const val FIELD_LABEL_IDS_ADDED = "LabelIDsAdded"
 private const val FIELD_PARSED_HEADERS = "ParsedHeaders"
-// endregion
 
 data class ServerMessage(
     var ID: String? = null,
