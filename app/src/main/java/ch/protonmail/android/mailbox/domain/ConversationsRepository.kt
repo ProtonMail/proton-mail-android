@@ -21,7 +21,6 @@ package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
 
@@ -43,7 +42,7 @@ interface ConversationsRepository {
      * @return an empty optional when the repository encounters a handled failure getting the given conversation
      * @throws exception when the repository fails getting this conversation for any unhandled reasons
      */
-    fun getConversation(conversationId: String, userId: Id, scope: CoroutineScope): Flow<DataResult<Conversation>>
+    fun getConversation(conversationId: String, userId: Id): Flow<DataResult<Conversation>>
 
     /**
      * Deletes all the conversations from the [TABLE_CONVERSATIONS] inside the local storage
