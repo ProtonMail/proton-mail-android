@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.api.models.messages.receive
 
-import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.AttachmentHeaders
 import ch.protonmail.android.utils.extensions.notNull
@@ -48,9 +47,6 @@ class AttachmentFactory : IAttachmentFactory {
             mimeType,
             fileSize,
             keyPackets,
-            messageId,
-            isUploaded.makeInt(),
-            isUploading.makeInt(),
             signature,
             headers
         )

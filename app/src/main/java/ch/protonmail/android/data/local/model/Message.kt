@@ -29,10 +29,12 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import ch.protonmail.android.api.models.MessagePayload
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.RecipientType
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
 import ch.protonmail.android.api.models.messages.ParsedHeaders
+import ch.protonmail.android.api.models.messages.receive.ServerMessageSender
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
@@ -47,6 +49,7 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import me.proton.core.util.kotlin.toInt
 import org.apache.commons.lang3.StringEscapeUtils
 import timber.log.Timber
 import java.io.Serializable
@@ -584,6 +587,17 @@ data class Message @JvmOverloads constructor(
     }
 
     fun isSenderEmailAlias() = senderEmail.contains("+")
+
+    fun toApiPayload() = MessagePayload(
+        messageId,
+        subject,
+        ServerMessageSender(sender?.name, sender?.emailAddress),
+        messageBody,
+        toList,
+        ccList,
+        bccList,
+        Unread.toInt()
+    )
 
     enum class MessageType {
         INBOX, DRAFT, SENT, INBOX_AND_SENT
