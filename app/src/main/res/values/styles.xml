@@ -20,6 +20,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- V4 -->
+    <style name="ProtonTheme.Splash.Mail" parent="ProtonTheme.Splash">
+        <item name="brand_splash_logo">@drawable/splash_logo</item>
+    </style>
+
     <style name="ProtonTheme.Mail" parent="ProtonTheme">
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/ProtonMailActionMode</item>
@@ -584,10 +588,10 @@
     </style>
 
     <style name="CustomTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorColor">@android:color/white</item>
         <item name="tabIndicatorHeight">3dp</item>
         <item name="tabBackground">?attr/selectableItemBackground</item>
-        <item name="tabSelectedTextColor">@android:color/white</item>
+        <item name="tabTextColor">?proton_text_weak</item>
+        <item name="tabSelectedTextColor">?proton_text_norm</item>
     </style>
 
     <style name="CustomSearchView" parent="@android:style/Widget.EditText">

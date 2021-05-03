@@ -32,7 +32,6 @@ import ch.protonmail.android.api.models.User
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.uiModel.DrawerUserModel
-import ch.protonmail.android.utils.extensions.setBarColors
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,7 +61,6 @@ class AccountManagerActivity : BaseActivity() {
         toolbar.setNavigationIcon(R.drawable.ic_close)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        window?.setBarColors(getColor(R.color.new_purple_dark))
 
         accountsAdapter.apply {
             onLoginAccount = { userId -> accountStateManager.login() }

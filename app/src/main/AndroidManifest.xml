@@ -134,7 +134,7 @@
             android:name=".activities.SplashActivity"
             android:clearTaskOnLaunch="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Immersive">
+            android:theme="@style/ProtonTheme.Splash.Mail">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -263,7 +263,6 @@
             android:name=".settings.pin.ValidatePinActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Immersive"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
         <activity
             android:name=".contacts.details.ContactDetailsActivity"
@@ -361,27 +360,21 @@
         <!-- Core -->
         <activity
             android:name="me.proton.core.auth.presentation.ui.AuthHelpActivity"
-            android:theme="@style/ProtonTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="me.proton.core.auth.presentation.ui.ChooseAddressActivity"
-            android:theme="@style/ProtonTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="me.proton.core.auth.presentation.ui.CreateAddressActivity"
-            android:theme="@style/ProtonTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="me.proton.core.auth.presentation.ui.LoginActivity"
-            android:theme="@style/ProtonTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="me.proton.core.auth.presentation.ui.TwoPassModeActivity"
-            android:theme="@style/ProtonTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="me.proton.core.auth.presentation.ui.SecondFactorActivity"
-            android:theme="@style/ProtonTheme"
             android:windowSoftInputMode="adjustResize" />
     </application>
 

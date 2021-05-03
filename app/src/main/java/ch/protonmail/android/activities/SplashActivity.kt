@@ -22,7 +22,6 @@ package ch.protonmail.android.activities
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import ch.protonmail.android.R
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.utils.startMailboxActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,7 +37,6 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
 
         accountStateManager.register(this)
 
