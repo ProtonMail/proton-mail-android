@@ -26,7 +26,7 @@ data class MessageDomainModel(
     val isUnread: Boolean,
     val sender: Correspondent,
     val receivers: List<Correspondent>,
-    val timeMs: Long,
+    val time: Long,
     val attachmentsCount: Int,
     val expirationTime: Long,
     val isReplied: Boolean,

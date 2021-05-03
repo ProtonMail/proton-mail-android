@@ -22,26 +22,31 @@ package ch.protonmail.android.mailbox.data
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
+import ch.protonmail.android.api.models.messages.receive.ServerMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
+import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
+import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
 import ch.protonmail.android.mailbox.data.remote.model.LabelContextApiModel
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.LabelContext
+import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
@@ -60,7 +65,6 @@ import kotlin.test.assertNotNull
 
 private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
 
-@ExperimentalCoroutinesApi
 class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
     private val testUserId = Id("id")
@@ -166,7 +170,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun verifyConversationsIsFetchedFromLocalInitially() {
+    fun verifyConversationsAreFetchedFromLocalInitially() {
         runBlockingTest {
             // given
             val parameters = GetConversationsParameters(
@@ -348,6 +352,159 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
         val actualLocalItems = result[1] as DataResult.Success
         assertEquals(ResponseSource.Local, actualLocalItems.source)
+    }
+
+    @Test
+    fun verifyLocalConversationWithMessagesIsReturnedWhenDataIsAvailableInTheLocalDB() {
+        runBlocking {
+            // given
+            val conversationId = "conversationId234823"
+            val userId = "userId82384e2"
+            val conversationDbModel = ConversationDatabaseModel(
+                conversationId,
+                0L,
+                userId,
+                "subject",
+                listOf(
+                    MessageSender("sender-name", "email@proton.com")
+                ),
+                listOf(
+                    MessageRecipient("receiver-name", "email-receiver@proton.com")
+                ),
+                1,
+                0,
+                0,
+                0,
+                1,
+                emptyList()
+            )
+            val message = Message(
+                messageId = "messageId9238482",
+                conversationId = conversationId,
+                subject = "subject1231",
+                Unread = false,
+                sender = MessageSender("senderName", "sender@protonmail.ch"),
+                toList = listOf(),
+                time = 82374723L,
+                numAttachments = 1,
+                expirationTime = 0L,
+                isReplied = false,
+                isRepliedAll = true,
+                isForwarded = false,
+                allLabelIDs = listOf("1", "2")
+            )
+            coEvery { messageDao.findAllMessageFromAConversation(conversationId) } returns flowOf(listOf(message))
+            coEvery { conversationDao.getConversation(conversationId, userId) } returns flowOf(
+                conversationDbModel
+            )
+
+            // when
+            val result = conversationsRepository.getConversation(conversationId, Id(userId)).take(1).toList()
+
+            // then
+            val expectedMessage = MessageDomainModel(
+                "messageId9238482",
+                conversationId,
+                "subject1231",
+                false,
+                Correspondent("senderName", "sender@protonmail.ch"),
+                listOf(),
+                82374723L,
+                1,
+                0L,
+                isReplied = false,
+                isRepliedAll = true,
+                isForwarded = false,
+                ccReceivers = emptyList(),
+                bccReceivers = emptyList(),
+                labelsIds = listOf("1", "2")
+            )
+            val expectedConversation = Conversation(
+                conversationId,
+                "subject",
+                listOf(
+                    Correspondent("sender-name", "email@proton.com")
+                ),
+                listOf(
+                    Correspondent("receiver-name", "email-receiver@proton.com")
+                ),
+                1,
+                0,
+                0,
+                0,
+                emptyList(),
+                listOf(
+                    expectedMessage
+                )
+            )
+            assertEquals(DataResult.Success(ResponseSource.Local, expectedConversation), result[0])
+        }
+    }
+
+    @Test
+    fun verifyConversationIsFetchedFromRemoteDataSourceAndStoredLocallyWhenNotAvailableInDb() {
+        runBlocking {
+            // given
+            val conversationId = "conversationId2347393"
+            val userId = "userId82sd8238"
+            val conversationApiModel = ConversationApiModel(
+                conversationId,
+                0L,
+                "subject",
+                listOf(
+                    CorrespondentApiModel("sender-name", "email@proton.com")
+                ),
+                listOf(
+                    CorrespondentApiModel("receiver-name", "email-receiver@proton.com")
+                ),
+                1,
+                0,
+                0,
+                0,
+                1L,
+                emptyList()
+            )
+            val apiMessage = ServerMessage(ID = "messageId23842737", conversationId)
+            val conversationResponse = ConversationResponse(
+                0,
+                conversationApiModel,
+                listOf(apiMessage)
+            )
+            val expectedMessage = Message(messageId = "messageId23842737", conversationId)
+            coEvery { api.fetchConversation(conversationId, Id(userId)) } returns conversationResponse
+            coEvery { messageDao.findAllMessageFromAConversation(conversationId) } returns flowOf(emptyList())
+            coEvery { conversationDao.getConversation(conversationId, userId) } throws Exception("no conversations")
+            every { messageFactory.createMessage(apiMessage) } returns expectedMessage
+
+            // when
+            val result = conversationsRepository.getConversation(conversationId, Id(userId)).take(3).toList()
+
+            // then
+            val expectedConversationDbModel = ConversationDatabaseModel(
+                conversationId,
+                0L,
+                userId,
+                "subject",
+                listOf(
+                    MessageSender("sender-name", "email@proton.com")
+                ),
+                listOf(
+                    MessageRecipient("receiver-name", "email-receiver@proton.com")
+                ),
+                1,
+                0,
+                0,
+                0,
+                1,
+                emptyList()
+            )
+            val errorMessage =
+                "Failed to read from Source of Truth. key: ConversationStoreKey(conversationId=conversationId2347393, userId=Id(s=userId82sd8238))"
+            assertEquals(DataResult.Error.Local(errorMessage), result[0])
+            assertEquals(DataResult.Processing(ResponseSource.Remote), result[1])
+            coVerify { messageDao.saveMessages(expectedMessage) }
+            coVerify { conversationDao.insertOrUpdate(expectedConversationDbModel) }
+        }
     }
 
     private fun getConversation(
