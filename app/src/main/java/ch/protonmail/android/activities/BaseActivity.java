@@ -184,9 +184,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
 
     @Override
     public void onBackPressed() {
-        if (!(this instanceof SplashActivity)) {
-            saveLastInteraction();
-        }
+        saveLastInteraction();
         finish();
     }
 

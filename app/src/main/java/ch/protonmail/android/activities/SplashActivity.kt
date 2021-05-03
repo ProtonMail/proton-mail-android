@@ -20,27 +20,30 @@
 package ch.protonmail.android.activities
 
 import android.os.Bundle
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.utils.startMailboxActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
-class SplashActivity : BaseActivity() {
+@AndroidEntryPoint
+class SplashActivity : AppCompatActivity() {
 
-    override fun getLayoutId(): Int = R.layout.activity_splash
-
-    override fun shouldCheckForAutoLogout(): Boolean = false
+    @Inject
+    lateinit var accountStateManager: AccountStateManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_splash)
+
+        accountStateManager.register(this)
 
         // Start Login or MailboxActivity.
         accountStateManager.state
-            .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
             .onEach {
                 when (it) {
                     is AccountStateManager.State.Processing -> Unit
