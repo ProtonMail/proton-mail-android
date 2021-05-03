@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Copyright (c) 2020 Proton Technologies AG
-
-This file is part of ProtonMail.
-
-ProtonMail is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ProtonMail is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ProtonMail. If not, see https://www.gnu.org/licenses/.
--->
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">暗号化されたメール</string>
@@ -84,7 +84,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="fetching_contacts">Protonmailの連絡先を取得しています...</string>
     <string name="fetching_contacts_success">連絡先が正常に更新されました。</string>
     <string name="fetching_contacts_failure">連絡先を更新できません。</string>
-    <string name="search">検索</string>
+    <string name="x_search">検索</string>
     <string name="search_messages">メッセージの検索</string>
     <string name="no_search_results">検索結果はありません。</string>
     <string name="compose">新規作成</string>

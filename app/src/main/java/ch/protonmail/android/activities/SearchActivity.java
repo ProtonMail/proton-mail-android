@@ -30,7 +30,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,10 +47,6 @@ import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.ContactsRepository;
-import ch.protonmail.android.data.local.MessageDao;
-import ch.protonmail.android.data.local.MessageDatabase;
-import ch.protonmail.android.data.local.PendingActionDao;
-import ch.protonmail.android.data.local.PendingActionDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.NoResultsEvent;
@@ -66,8 +61,6 @@ import static ch.protonmail.android.core.Constants.MessageLocationType;
 @AndroidEntryPoint
 public class SearchActivity extends BaseActivity {
 
-    private PendingActionDao pendingActionDao;
-
     private MessagesRecyclerViewAdapter mAdapter;
     private TextView noMessagesView;
     private ProgressBar mProgressBar;
@@ -75,7 +68,6 @@ public class SearchActivity extends BaseActivity {
     private String mQueryText = "";
     private int mCurrentPage;
     private SearchView searchView = null;
-    private MessageDao searchDao;
 
     @Inject
     MessageDetailsRepository messageDetailsRepository;
@@ -90,12 +82,6 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        searchDao = MessageDatabase.Companion
-                .getSearchDatabase(getApplicationContext(), mUserManager.requireCurrentUserId())
-                .getDao();
-        pendingActionDao = PendingActionDatabase.Companion
-                .getInstance(getApplicationContext(), mUserManager.requireCurrentUserId())
-                .getDao();
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -197,9 +183,9 @@ public class SearchActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.search_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.search);
 
-        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView = (SearchView) searchItem.getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
-        searchView.setQueryHint(getString(R.string.search_messages));
+        searchView.setQueryHint(getString(R.string.x_search));
         searchView.onActionViewExpanded();
         searchView.setImeOptions(
                 EditorInfo.IME_ACTION_SEARCH | EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
