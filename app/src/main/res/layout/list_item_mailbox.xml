@@ -113,7 +113,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textAppearance="@style/Text.Default"
+        android:textAppearance="@style/Proton.Text.Default"
         tools:text="@tools:sample/full_names" />
 
     <TextView
@@ -124,7 +124,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/senderTextView"
         app:layout_constraintBottom_toBottomOf="@id/senderTextView"
-        android:textAppearance="@style/Text.Caption.Weak"
+        android:textAppearance="@style/Proton.Text.Caption.Weak"
         tools:text="@tools:sample/date/ddmmyy" />
 
     <androidx.constraintlayout.widget.Barrier
@@ -190,7 +190,7 @@
         app:layout_constrainedWidth="true"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textAppearance="@style/Text.DefaultSmall.Weak"
+        android:textAppearance="@style/Proton.Text.DefaultSmall.Weak"
         tools:text="@tools:sample/lorem" />
 
     <TextView
@@ -205,7 +205,7 @@
         app:layout_constraintTop_toTopOf="@id/subjectTextView"
         app:layout_constraintBottom_toBottomOf="@id/subjectTextView"
         android:background="@drawable/background_messages_number"
-        android:textAppearance="@style/Text.Caption.Weak"
+        android:textAppearance="@style/Proton.Text.Caption.Weak"
         android:visibility="gone"
         tools:text="3"
         tools:visibility="visible" />

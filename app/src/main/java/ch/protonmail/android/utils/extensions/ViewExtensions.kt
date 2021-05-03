@@ -22,15 +22,11 @@ import android.graphics.PorterDuff
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.view.Window
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.ColorInt
-import androidx.annotation.LayoutRes
 import androidx.annotation.StyleRes
 import ch.protonmail.android.views.contactsList.ContactGroupEmailAvatarView
 
@@ -39,14 +35,6 @@ import ch.protonmail.android.views.contactsList.ContactGroupEmailAvatarView
  *
  * Author: Davide Farella
  */
-
-/**
- * Inflate a [LayoutRes] from the receiver [ViewGroup]
- * @param attachToRoot Default is `false`
- * @return [View]
- */
-fun ViewGroup.inflate( @LayoutRes layoutId: Int, attachToRoot: Boolean = false ): View =
-        LayoutInflater.from( context ).inflate( layoutId, this, attachToRoot )
 
 /** Execute the [listener] on [TextWatcher.onTextChanged] */
 inline fun EditText.onTextChange( crossinline listener: (CharSequence) -> Unit ): TextWatcher {

@@ -78,13 +78,13 @@ class MessagesListItemView constructor(
 
     private fun setTextViewStyles(isRead: Boolean) {
         if (isRead) {
-            senderTextView.setTextAppearance(R.style.Text_Default)
-            subjectTextView.setTextAppearance(R.style.Text_DefaultSmall_Weak)
-            timeDateTextView.setTextAppearance(R.style.Text_Caption_Weak)
+            senderTextView.setTextAppearance(R.style.Proton_Text_Default)
+            subjectTextView.setTextAppearance(R.style.Proton_Text_DefaultSmall_Weak)
+            timeDateTextView.setTextAppearance(R.style.Proton_Text_Caption_Weak)
         } else {
-            senderTextView.setTextAppearance(R.style.Text_Default_Bold)
-            subjectTextView.setTextAppearance(R.style.Text_DefaultSmall_Medium)
-            timeDateTextView.setTextAppearance(R.style.Text_Caption_Strong)
+            senderTextView.setTextAppearance(R.style.Proton_Text_Default_Bold)
+            subjectTextView.setTextAppearance(R.style.Proton_Text_DefaultSmall_Medium)
+            timeDateTextView.setTextAppearance(R.style.Proton_Text_Caption_Strong)
         }
     }
 

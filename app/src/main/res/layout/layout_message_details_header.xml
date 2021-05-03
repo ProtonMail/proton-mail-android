@@ -64,7 +64,7 @@
         app:layout_constrainedWidth="true"
         android:maxLines="1"
         android:ellipsize="end"
-        style="@style/Text.Default"
+        style="@style/Proton.Text.Default"
         tools:text="@tools:sample/full_names" />
 
     <!-- TODO: Should be replaced with a view with the v4 icons -->
@@ -98,7 +98,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/senderNameTextView"
         app:layout_constraintBottom_toBottomOf="@id/senderNameTextView"
-        style="@style/Text.Caption.Weak"
+        style="@style/Proton.Text.Caption.Weak"
         tools:text="@tools:sample/date/ddmmyy" />
 
     <TextView
@@ -110,7 +110,7 @@
         app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
         app:layout_constraintRight_toLeftOf="@id/expandCollapseChevronImageView"
         app:layout_constraintTop_toBottomOf="@id/senderNameTextView"
-        style="@style/Text.DefaultSmall.Interaction"
+        style="@style/Proton.Text.DefaultSmall.Interaction"
         tools:text="&lt;alice@pm.me&gt;" />
 
     <ImageView
@@ -133,7 +133,7 @@
         app:layout_constraintTop_toTopOf="@id/recipientsCollapsedTextView"
         app:layout_constraintBottom_toBottomOf="@id/recipientsCollapsedTextView"
         android:text="@string/to_prefix"
-        style="@style/Text.DefaultSmall" />
+        style="@style/Proton.Text.DefaultSmall" />
 
     <TextView
         android:id="@+id/recipientsCollapsedTextView"
@@ -146,7 +146,7 @@
         app:layout_constraintTop_toBottomOf="@+id/senderEmailTextView"
         android:maxLines="1"
         android:ellipsize="end"
-        style="@style/Text.DefaultSmall.Weak"
+        style="@style/Proton.Text.DefaultSmall.Weak"
         tools:text="@tools:sample/lorem" />
 
     <TextView
@@ -157,7 +157,7 @@
         app:layout_constraintRight_toRightOf="@id/senderInitialTextView"
         app:layout_constraintTop_toTopOf="@id/toRecipientsExpandedView"
         android:text="@string/to"
-        style="@style/Text.DefaultSmall.Weak" />
+        style="@style/Proton.Text.DefaultSmall.Weak" />
 
     <ch.protonmail.android.views.messageDetails.MessageDetailsRecipientsContainerView
         android:id="@+id/toRecipientsExpandedView"
@@ -177,7 +177,7 @@
         app:layout_constraintRight_toRightOf="@id/toExpandedTextView"
         app:layout_constraintTop_toTopOf="@id/ccRecipientsExpandedView"
         android:text="@string/cc"
-        style="@style/Text.DefaultSmall.Weak" />
+        style="@style/Proton.Text.DefaultSmall.Weak" />
 
     <ch.protonmail.android.views.messageDetails.MessageDetailsRecipientsContainerView
         android:id="@+id/ccRecipientsExpandedView"
@@ -197,7 +197,7 @@
         app:layout_constraintRight_toRightOf="@id/ccExpandedTextView"
         app:layout_constraintTop_toTopOf="@id/bccRecipientsExpandedView"
         android:text="@string/bcc"
-        style="@style/Text.DefaultSmall.Weak" />
+        style="@style/Proton.Text.DefaultSmall.Weak" />
 
     <ch.protonmail.android.views.messageDetails.MessageDetailsRecipientsContainerView
         android:id="@+id/bccRecipientsExpandedView"
@@ -250,7 +250,7 @@
         app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/labels"
-        style="@style/Text.DefaultSmall.Weak"
+        style="@style/Proton.Text.DefaultSmall.Weak"
         tools:text="2021-01-28 at 10:04 AM" />
 
     <ImageView
@@ -272,7 +272,7 @@
         app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/timeDateExtendedTextView"
-        style="@style/Text.DefaultSmall.Weak"
+        style="@style/Proton.Text.DefaultSmall.Weak"
         tools:text="Inbox" />
 
     <ImageView
@@ -294,7 +294,7 @@
         app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/locationTextView"
-        style="@style/Text.DefaultSmall.Weak"
+        style="@style/Proton.Text.DefaultSmall.Weak"
         tools:text="6.25 KB" />
 
     <!-- TODO: Should be replaced with a view with the v4 icons -->
@@ -317,7 +317,7 @@
         app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/storageTextView"
-        style="@style/Text.DefaultSmall.Weak"
+        style="@style/Proton.Text.DefaultSmall.Weak"
         tools:text="End-to-end encrypted and signed message" />
 
     <TextView
@@ -327,7 +327,7 @@
         app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
         app:layout_constraintTop_toBottomOf="@id/encryptionInfoTextView"
         android:text="@string/sender_lock_learn_more"
-        style="@style/Text.DefaultSmall.Interaction"
+        style="@style/Proton.Text.DefaultSmall.Interaction"
         android:textColorLink="@color/cornflower_blue" />
 
     <androidx.constraintlayout.widget.Group

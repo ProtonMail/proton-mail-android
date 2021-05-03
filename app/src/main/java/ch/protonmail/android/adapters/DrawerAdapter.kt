@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -31,12 +31,12 @@ import ch.protonmail.android.uiModel.DrawerItemUiModel
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Divider
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Header
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
-import ch.protonmail.android.utils.extensions.inflate
 import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
 import ch.protonmail.android.views.DrawerHeaderView
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
 import kotlinx.android.synthetic.main.drawer_list_item.view.*
+import me.proton.core.presentation.utils.inflate
 import me.proton.core.util.kotlin.invoke
 
 // region constants

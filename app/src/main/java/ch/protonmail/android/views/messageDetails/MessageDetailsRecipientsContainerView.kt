@@ -53,8 +53,8 @@ class MessageDetailsRecipientsContainerView @JvmOverloads constructor(
         val recipientTextView = TextView(
             context,
             null,
-            R.style.Text_DefaultSmall_Interaction,
-            R.style.Text_DefaultSmall_Interaction
+            R.style.Proton_Text_DefaultSmall_Interaction,
+            R.style.Proton_Text_DefaultSmall_Interaction
         )
         recipientTextView.layoutParams = LayoutParams(LayoutParams.MATCH_CONSTRAINT, LayoutParams.WRAP_CONTENT)
         recipientTextView.breakStrategy = LineBreaker.BREAK_STRATEGY_SIMPLE
