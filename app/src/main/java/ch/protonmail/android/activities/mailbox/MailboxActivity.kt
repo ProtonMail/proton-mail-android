@@ -909,7 +909,7 @@ class MailboxActivity :
         if (!drawerClosed && mailboxLocationMain.value != MessageLocationType.INBOX) {
             setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
         } else if (!drawerClosed) {
-            finish()
+            moveTaskToBack(true)
         }
     }
 
