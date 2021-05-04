@@ -83,7 +83,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer = mockk(relaxed = true)
 
     private val viewModel = MessageDetailsViewModel(
-        savedStateHandle,
         messageDetailsRepository,
         messageRepository,
         userManager,
@@ -96,6 +95,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         attachmentsHelper,
         downloadUtils,
         moveMessagesToFolder,
+        savedStateHandle,
         messageRendererFactory,
         verifyConnection,
         networkConfigurator,

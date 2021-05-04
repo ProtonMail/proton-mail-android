@@ -92,11 +92,6 @@ import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
-/**
- * [ViewModel] for `MessageDetailsActivity`
- *
- * TODO reduce [LiveData]s and keep only a single version of the message
- */
 @HiltViewModel
 internal class MessageDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -112,6 +107,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val attachmentsHelper: AttachmentsHelper,
     private val downloadUtils: DownloadUtils,
     private val moveMessagesToFolder: MoveMessagesToFolder,
+    savedStateHandle: SavedStateHandle,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
@@ -150,7 +146,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     private var _embeddedImagesToFetch: ArrayList<EmbeddedImage> = ArrayList()
     private var remoteContentDisplayed: Boolean = false
 
-    // region properties and data
     private val requestPending = AtomicBoolean(false)
     var renderedFromCache = AtomicBoolean(false)
 
@@ -245,7 +240,6 @@ internal class MessageDetailsViewModel @Inject constructor(
 
         viewModelScope.launch {
             for (body in messageRenderer.renderedBody) {
-                // TODO Sending twice the same value, perhaps we could improve this
                 _downloadEmbeddedImagesResult.postValue(body)
                 areImagesDisplayed = true
             }
@@ -437,21 +431,16 @@ internal class MessageDetailsViewModel @Inject constructor(
                                 with(messageDetailsRepository) {
 
                                     if (isTransientMessage) {
-                                        val savedMessage = findSearchMessageById(messageId).first()
-                                        if (savedMessage != null) {
+                                        findSearchMessageById(messageId).first()?.let { savedMessage ->
                                             messageResponse.message.writeTo(savedMessage)
                                             saveSearchMessage(savedMessage)
-                                        } else {
-                                            prepareMessage(messageResponse.message)
                                         }
-
                                     } else {
                                         val savedMessage = findMessageById(messageId).first()
                                         if (savedMessage != null) {
                                             messageResponse.message.writeTo(savedMessage)
                                             saveMessage(savedMessage)
                                         } else {
-                                            prepareMessage(messageResponse.message)
                                             setFolderLocation(messageResponse.message)
                                             saveMessage(messageResponse.message, isTransientMessage)
                                         }
@@ -464,29 +453,6 @@ internal class MessageDetailsViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun prepareMessage(message: Message) { // TODO: it's not clear why message is assigning values to itself
-        message.toList = message.toList
-        message.ccList = message.ccList
-        message.bccList = message.bccList
-        message.replyTos = message.replyTos
-        message.sender = message.sender
-        message.setLabelIDs(message.getEventLabelIDs())
-        message.header = message.header
-        message.parsedHeaders = message.parsedHeaders
-        var location = Constants.MessageLocationType.INBOX
-        for (labelId in message.allLabelIDs) {
-            if (labelId.length <= 2) {
-                location = Constants.MessageLocationType.fromInt(Integer.valueOf(labelId))
-                if (location != Constants.MessageLocationType.ALL_MAIL &&
-                    location != Constants.MessageLocationType.STARRED
-                ) {
-                    break
-                }
-            }
-        }
-        message.location = location.messageLocationTypeValue
     }
 
     fun viewOrDownloadAttachment(context: Context, attachmentToDownloadId: String, messageId: String) {
