@@ -32,7 +32,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.dialogs.QuickSnoozeDialogFragment
 import ch.protonmail.android.activities.multiuser.AccountManagerActivity
@@ -76,7 +75,6 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.DrawerHeaderView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_mailbox.*
 import kotlinx.android.synthetic.main.drawer_header.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -236,6 +234,11 @@ abstract class NavigationActivity :
             .launchIn(lifecycleScope)
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+    }
+
     override fun onResume() {
         super.onResume()
         checkUserId()
@@ -264,15 +267,14 @@ abstract class NavigationActivity :
         }
     }
 
-    protected fun checkUserId() {
-        lifecycleScope.launchWhenResumed {
-            // Requested UserId match the current ?
-            intent.extras?.getString(EXTRA_USER_ID)?.let { extraUserId ->
-                val requestedUserId = UserId(extraUserId)
-                if (requestedUserId != accountStateManager.getPrimaryUserIdValue()) {
-                    accountStateManager.switch(requestedUserId)
-                }
+    private fun checkUserId() {
+        // Requested UserId match the current ?
+        intent.extras?.getString(EXTRA_USER_ID)?.let { extraUserId ->
+            val requestedUserId = UserId(extraUserId)
+            if (requestedUserId != accountStateManager.getPrimaryUserIdValue()) {
+                accountStateManager.switch(requestedUserId)
             }
+            intent.extras?.remove(EXTRA_USER_ID)
         }
     }
 

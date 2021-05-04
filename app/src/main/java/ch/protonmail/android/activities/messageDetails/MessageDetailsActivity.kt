@@ -47,7 +47,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
@@ -91,7 +90,6 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.MODE_ACCORDION
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.BottomActionsView
@@ -209,22 +207,11 @@ internal class MessageDetailsActivity :
         initAdapters()
         val recipientUsername = messageRecipientUsername
         if (recipientUsername != null && currentUser.name.s != recipientUsername) {
-            showTwoButtonInfoDialog(
-                title = getString(R.string.switch_accounts_question),
-                message = String.format(getString(R.string.switch_to_account), recipientUsername),
-                rightStringId = R.string.okay,
-                leftStringId = R.string.cancel,
-                cancelable = false,
-                onPositiveButtonClicked = {
-                    lifecycleScope.launchWhenCreated {
-                        val userId = checkNotNull(messageRecipientUserId) { "Username found in extras, but user id" }
-                        accountStateManager.switch(userId)
-                        continueSetup()
-                        invalidateOptionsMenu()
-                    }
-                },
-                onNegativeButtonClicked = { finish() }
-            )
+            val userId = checkNotNull(messageRecipientUserId) { "Username found in extras, but user id" }
+            accountStateManager.switch(userId).invokeOnCompletion {
+                continueSetup()
+                invalidateOptionsMenu()
+            }
         } else {
             continueSetup()
         }
