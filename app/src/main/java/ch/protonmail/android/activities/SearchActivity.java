@@ -143,9 +143,9 @@ public class SearchActivity extends BaseActivity {
                 false,
                 UUID.randomUUID().toString(),
                 false
-        ).observe(this, mailboxUiItems -> {
+        ).observe(this, state -> {
             mAdapter.clear();
-            mAdapter.addAll(mailboxUiItems);
+            mAdapter.addAll(state.getItems());
             setLoadingMore(false);
             mProgressBar.setVisibility(View.GONE);
             mAdapter.setNewLocation(MessageLocationType.SEARCH);

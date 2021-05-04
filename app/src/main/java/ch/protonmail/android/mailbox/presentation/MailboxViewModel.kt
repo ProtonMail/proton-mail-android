@@ -93,8 +93,6 @@ class MailboxViewModel @Inject constructor(
     private val _manageLimitReachedWarningOnTryCompose = MutableLiveData<Event<Boolean>>()
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
-    private val _getConversationsError = MutableLiveData<Boolean>()
-    private val _noMoreResults = MutableLiveData<Boolean>()
 
     lateinit var userId: Id
 
@@ -111,10 +109,6 @@ class MailboxViewModel @Inject constructor(
 
     val hasSuccessfullyDeletedMessages: LiveData<Boolean>
         get() = _hasSuccessfullyDeletedMessages
-    val getConversationsError: LiveData<Boolean>
-        get() = _getConversationsError
-    val noMoreResults: LiveData<Boolean>
-        get() = _noMoreResults
 
     fun reloadDependenciesForUser() {
         pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -218,7 +212,7 @@ class MailboxViewModel @Inject constructor(
         includeLabels: Boolean,
         uuid: String,
         refreshMessages: Boolean
-    ): LiveData<List<MailboxUiItem>> {
+    ): LiveData<MailboxState> {
         if (conversationModeEnabled(location)) {
             return conversationsAsMailboxItems(location, labelId)
         }
@@ -233,7 +227,7 @@ class MailboxViewModel @Inject constructor(
         )
 
         return getMessagesByLocation(location, labelId).switchMap {
-            liveData { emit(messagesToMailboxItems(it)) }
+            liveData { emit(MailboxState(messagesToMailboxItems(it))) }
         }
     }
 
@@ -301,21 +295,21 @@ class MailboxViewModel @Inject constructor(
     private fun conversationsAsMailboxItems(
         location: Constants.MessageLocationType,
         labelId: String?
-    ): LiveData<List<MailboxUiItem>> {
+    ): LiveData<MailboxState> {
         return getConversations(
             userManager.requireCurrentUserId(), location, labelId
         ).map { result ->
             when (result) {
                 is GetConversationsResult.Success -> {
-                    return@map conversationsToMailboxItems(result.conversations, location.messageLocationTypeValue)
+                    return@map MailboxState(
+                        conversationsToMailboxItems(result.conversations, location.messageLocationTypeValue)
+                    )
                 }
                 is GetConversationsResult.NoConversationsFound -> {
-                    _noMoreResults.value = true
-                    return@map listOf<MailboxUiItem>()
+                    return@map MailboxState(noMoreItems = true)
                 }
                 else -> {
-                    _getConversationsError.value = true
-                    return@map listOf<MailboxUiItem>()
+                    return@map MailboxState(error = "Failed getting conversations")
                 }
             }
         }.asLiveData()

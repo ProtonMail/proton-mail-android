@@ -383,15 +383,6 @@ class MailboxActivity :
 
         fetchOrganizationData()
 
-        mailboxViewModel.getConversationsError.observe(this) {
-            Toast.makeText(this, getString(R.string.error_loading_conversations), Toast.LENGTH_SHORT).show()
-            setRefreshing(false)
-            setLoadingMore(false)
-        }
-        mailboxViewModel.noMoreResults.observe(this) {
-            setRefreshing(false)
-            setLoadingMore(false)
-        }
         observeMailboxItemsByLocation(
             refreshMessages = true,
             syncId = syncUUID
@@ -608,11 +599,16 @@ class MailboxActivity :
             )
         }
             .distinctUntilChanged()
-            .observe(this) { items ->
+            .observe(this) { state ->
                 setLoadingMore(false)
                 setRefreshing(false)
-                mailboxAdapter.clear()
-                mailboxAdapter.addAll(items)
+                if (state.error.isNotEmpty()) {
+                    Toast.makeText(this, getString(R.string.error_loading_conversations), Toast.LENGTH_SHORT).show()
+                }
+                if (state.items.isNotEmpty()) {
+                    mailboxAdapter.clear()
+                    mailboxAdapter.addAll(state.items)
+                }
             }
     }
 

@@ -41,6 +41,7 @@ import ch.protonmail.android.mailbox.domain.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
+import ch.protonmail.android.mailbox.presentation.MailboxState
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
@@ -196,8 +197,8 @@ class MailboxViewModelTest : CoroutinesTest {
                 isInline = false
             )
         )
-        val actualMailboxItems = actual.observedValues.first()
-        assertEquals(expected, actualMailboxItems?.first())
+        val actualMailboxItems = actual.observedValues.first()!!
+        assertEquals(expected, actualMailboxItems.items.first())
     }
 
     @Test
@@ -253,8 +254,8 @@ class MailboxViewModelTest : CoroutinesTest {
                 isInline = false
             )
         )
-        val actualMailboxItems = actual.observedValues.first()
-        assertEquals(expected, actualMailboxItems?.first())
+        val actualMailboxItems = actual.observedValues.first()!!
+        assertEquals(expected, actualMailboxItems.items.first())
         coVerify { contactsRepository.findAllContactEmails() }
     }
 
@@ -306,8 +307,8 @@ class MailboxViewModelTest : CoroutinesTest {
                 isInline = false
             )
         )
-        val actualMailboxItems = actual.observedValues.first()
-        assertEquals(expected, actualMailboxItems?.first())
+        val actualMailboxItems = actual.observedValues.first()!!
+        assertEquals(expected, actualMailboxItems.items.first())
     }
 
     @Test
@@ -358,8 +359,8 @@ class MailboxViewModelTest : CoroutinesTest {
                 isInline = false
             )
         )
-        val actualMailboxItems = actual.observedValues.first()
-        assertEquals(expected, actualMailboxItems?.first())
+        val actualMailboxItems = actual.observedValues.first()!!
+        assertEquals(expected, actualMailboxItems.items.first())
     }
 
     @Test
@@ -425,8 +426,8 @@ class MailboxViewModelTest : CoroutinesTest {
                 isInline = false
             )
         )
-        val actualMailboxItems = actual.observedValues.first()
-        assertEquals(expected, actualMailboxItems?.first())
+        val actualMailboxItems = actual.observedValues.first()!!
+        assertEquals(expected, actualMailboxItems.items.first())
     }
 
     @Test
@@ -456,7 +457,7 @@ class MailboxViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun getMailboxItemsReturnsMailboxItemsLiveDataMappedFromMessageDetailsRepositoryWhenFetchingFirstPage() {
+    fun getMailboxItemsReturnsStateWithMailboxItemsLiveDataMappedFromMessageDetailsRepositoryWhenFetchingFirstPage() {
         val message = Message(
             messageId = "messageId9238482",
             sender = MessageSender("senderName", "sender@pm.me"),
@@ -475,7 +476,8 @@ class MailboxViewModelTest : CoroutinesTest {
         val expected = listOf(
             fakeMailboxUiData("messageId9238482", "senderName", "subject1283")
         )
-        assertEquals(expected, actual.observedValues.first())
+        val expectedState = MailboxState(expected, "", false)
+        assertEquals(expectedState, actual.observedValues.first())
     }
 
     @Test
@@ -559,7 +561,7 @@ class MailboxViewModelTest : CoroutinesTest {
         val expected = listOf(
             fakeMailboxUiData("messageId92384823", "senderName1", "subject12834")
         )
-        assertEquals(expected, actual.observedValues.first())
+        assertEquals(expected, actual.observedValues.first()!!.items)
     }
 
     @Test
@@ -632,7 +634,8 @@ class MailboxViewModelTest : CoroutinesTest {
                     recipients = ""
                 )
             )
-            assertEquals(expected, actual.observedValues.first())
+            val expectedState = MailboxState(expected, "", false)
+            assertEquals(expectedState, actual.observedValues.first())
         }
 
     @Test
@@ -693,7 +696,7 @@ class MailboxViewModelTest : CoroutinesTest {
                     recipients = "recipient, recipient1"
                 )
             )
-            assertEquals(expected, actual.observedValues.first())
+            assertEquals(expected, actual.observedValues.first()!!.items)
         }
 
     @Test
@@ -748,7 +751,7 @@ class MailboxViewModelTest : CoroutinesTest {
                     recipients = ""
                 )
             )
-            assertEquals(expected, actual.observedValues.first())
+            assertEquals(expected, actual.observedValues.first()!!.items)
         }
 
     @Test
@@ -800,7 +803,7 @@ class MailboxViewModelTest : CoroutinesTest {
                     recipients = ""
                 )
             )
-            assertEquals(expected, actual.observedValues.first())
+            assertEquals(expected, actual.observedValues.first()!!.items)
         }
 
     @Test
@@ -857,15 +860,14 @@ class MailboxViewModelTest : CoroutinesTest {
                     recipients = ""
                 )
             )
-            assertEquals(expected, actual.observedValues.first())
+            assertEquals(expected, actual.observedValues.first()!!.items)
         }
 
     @Test
-    fun getMailboxItemsPostErrorOnLiveDataWhenGetConversationsUseCaseReturnsError() =
+    fun getMailboxItemsReturnsMailboxStateWithErrorWhenGetConversationsUseCaseReturnsError() =
         runBlockingTest {
             val location = Constants.MessageLocationType.INBOX
             val labelId = "labelId923844"
-            val errorLiveData = viewModel.getConversationsError.testObserver()
             every { conversationModeEnabled(location) } returns true
             coEvery { getConversations(currentUserId, location, labelId) } returns flowOf(GetConversationsResult.Error)
 
@@ -877,16 +879,17 @@ class MailboxViewModelTest : CoroutinesTest {
                 false,
             ).testObserver()
 
-            assertEquals(emptyList(), actual.observedValues[0])
-            assertEquals(true, errorLiveData.observedValues[0])
+            val actualItems = actual.observedValues.first()!!.items
+            val actualError = actual.observedValues.first()!!.error
+            assertEquals(emptyList(), actualItems)
+            assertEquals("Failed getting conversations", actualError)
         }
 
     @Test
-    fun getMailboxItemsPostNoMoreConversationsOnLiveDataWhenGetConversationsUseCaseReturnsNoConversationsFound() =
+    fun getMailboxItemsReturnsStateWithNoMoreItemsWhenGetConversationsUseCaseReturnsNoConversationsFound() =
         runBlockingTest {
             val location = Constants.MessageLocationType.INBOX
             val labelId = "labelId923844"
-            val noMoreResultsLiveData = viewModel.noMoreResults.testObserver()
             every { conversationModeEnabled(location) } returns true
             coEvery { getConversations(currentUserId, location, labelId) } returns flowOf(
                 GetConversationsResult.NoConversationsFound
@@ -900,8 +903,10 @@ class MailboxViewModelTest : CoroutinesTest {
                 false,
             ).testObserver()
 
-            assertEquals(emptyList(), actual.observedValues[0])
-            assertEquals(true, noMoreResultsLiveData.observedValues[0])
+            val actualItems = actual.observedValues.first()!!.items
+            val noMoreResults = actual.observedValues.first()!!.noMoreItems
+            assertEquals(emptyList(), actualItems)
+            assertEquals(true, noMoreResults)
         }
 
     @Test
