@@ -39,7 +39,7 @@ import ch.protonmail.android.mailbox.data.local.model.ConversationTypesConverter
         Label::class,
         ConversationDatabaseModel::class
     ],
-    version = 10
+    version = 9
 )
 @TypeConverters(
     value = [
