@@ -100,10 +100,11 @@ class UserManager @Inject constructor(
 
     private var refreshPrimary = MutableSharedFlow<Unit>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
+    private var primaryId: StateFlow<Id?>
+    private var primaryLegacyUser: StateFlow<User?>
+    private var primaryUser: StateFlow<NewUser?>
     var primaryUserId: StateFlow<UserId?>
-    var primaryId: StateFlow<Id?>
-    var primaryLegacyUser: StateFlow<User?>
-    var primaryUser: StateFlow<NewUser?>
+        private set
 
     init {
         // Workaround to make sure we have fresh value and get them from main thread without impacting performances.
