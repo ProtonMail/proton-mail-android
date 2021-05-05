@@ -103,17 +103,9 @@
     </style>
 
     <style name="Widget.App.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.BottomSheet</item>
         <item name="backgroundTint">@color/background_norm</item>
     </style>
 
-    <style name="ShapeAppearance.App.BottomSheet" parent="ShapeAppearance.MaterialComponents.LargeComponent">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopLeft">@dimen/padding_l</item>
-        <item name="cornerSizeTopRight">@dimen/padding_l</item>
-        <item name="cornerSizeBottomLeft">0dp</item>
-        <item name="cornerSizeBottomRight">0dp</item>
-    </style>
     <!-- end region -->
     <!-- endregion -->
 
