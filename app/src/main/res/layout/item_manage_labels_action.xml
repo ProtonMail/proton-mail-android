@@ -34,7 +34,7 @@
         android:ellipsize="end"
         android:padding="@dimen/padding_l"
         android:singleLine="true"
-        android:textAppearance="@style/Text.Default"
+        android:textAppearance="@style/Proton.Text.Default"
         app:drawableStartCompat="@drawable/circle_labels_selection"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/checkbox_manage_labels_action_is_checked"

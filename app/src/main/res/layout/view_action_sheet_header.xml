@@ -55,7 +55,7 @@
         android:paddingTop="@dimen/padding_m"
         android:paddingEnd="@dimen/padding_xl"
         android:singleLine="true"
-        android:textAppearance="@style/Text.Default.Bold"
+        android:textAppearance="@style/Proton.Text.Default.Bold"
         app:layout_constraintBottom_toTopOf="@+id/textview_action_sheet_subtitle"
         app:layout_constraintEnd_toStartOf="@+id/textview_actions_sheet_right_action"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,7 +65,7 @@
 
     <TextView
         android:id="@+id/textview_action_sheet_subtitle"
-        style="@style/Text.Caption.Weak"
+        style="@style/Proton.Text.Caption.Weak"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
@@ -82,7 +82,7 @@
 
     <TextView
         android:id="@+id/textview_actions_sheet_right_action"
-        style="@style/Text.DefaultSmall.Interaction"
+        style="@style/Proton.Text.DefaultSmall.Interaction"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
