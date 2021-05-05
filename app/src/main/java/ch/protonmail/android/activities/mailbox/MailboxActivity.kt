@@ -26,6 +26,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
+import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
@@ -95,6 +96,7 @@ import ch.protonmail.android.adapters.swipe.SpamSwipeHandler
 import ch.protonmail.android.adapters.swipe.StarSwipeHandler
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.adapters.swipe.TrashSwipeHandler
+import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.MessageCount
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.api.segments.event.AlarmReceiver
@@ -170,9 +172,6 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
-import kotlinx.android.synthetic.main.activity_mailbox.mailboxRecyclerView
-import kotlinx.android.synthetic.main.activity_mailbox.screenShotPreventerView
-import kotlinx.android.synthetic.main.activity_mailbox.storageLimitAlert
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.util.android.sharedpreferences.get
@@ -227,6 +226,7 @@ class MailboxActivity :
     lateinit var multiUserFcmTokenManager: MultiUserFcmTokenManager
 
     private lateinit var messagesAdapter: MessagesRecyclerViewAdapter
+    private var swipeController: SwipeController = SwipeController()
     private val mailboxLocationMain = MutableLiveData<MessageLocationType>()
     private val isLoadingMore = AtomicBoolean(false)
     private var scrollStateChanged = false
@@ -404,7 +404,7 @@ class MailboxActivity :
         mailboxLocationMain.observe(this, messagesAdapter::setNewLocation)
         messagesLiveData.observe(this, MessagesListObserver(messagesAdapter))
 
-        ItemTouchHelper(SwipeController()).attachToRecyclerView(mailboxRecyclerView)
+        ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
 
         setUpMailboxActionsView()
     }
@@ -586,6 +586,8 @@ class MailboxActivity :
         counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()
         pendingActionDao = PendingActionDatabase.getInstance(this, currentUserId).getDao()
         messageDetailsRepository.reloadDependenciesForUser(currentUserId)
+
+        swipeController.loadCurrentMailSetting()
 
         startObservingPendingActions()
         AppUtil.clearNotifications(this, currentUserId)
@@ -804,6 +806,7 @@ class MailboxActivity :
         checkDelinquency()
         noMessagesSwipeRefreshLayout.visibility = View.GONE
         mailboxViewModel.checkConnectivity()
+        swipeController.loadCurrentMailSetting()
         val mailboxLocation = mailboxLocationMain.value
         if (mailboxLocation == MessageLocationType.INBOX) {
             AppUtil.clearNotifications(this, userManager.requireCurrentUserId())
@@ -1704,6 +1707,20 @@ class MailboxActivity :
     }
 
     private inner class SwipeController : ItemTouchHelper.Callback() {
+
+        private var mailSettings: MailSettings? = null
+
+        init {
+            loadCurrentMailSetting()
+        }
+
+        @Deprecated("Subscribe for changes instead of reloading on current User/MailSettings changed.")
+        fun loadCurrentMailSetting() {
+            lifecycleScope.launchWhenResumed {
+                mailSettings = requireNotNull(userManager.getCurrentUserMailSettings())
+            }
+        }
+
         override fun getMovementFlags(
             recyclerView: RecyclerView,
             viewHolder: RecyclerView.ViewHolder
@@ -1750,10 +1767,10 @@ class MailboxActivity :
             val swipedItem = messagesAdapter.getItem(position)
             val messageSwiped = SimpleMessage(swipedItem)
             val mailboxLocation = mailboxLocationMain.value
-            val mailSettings = requireNotNull(userManager.getCurrentUserMailSettingsBlocking())
+            val settings = mailSettings ?: return
             val swipeActionOrdinal: Int = when (direction) {
-                ItemTouchHelper.RIGHT -> mailSettings.rightSwipeAction
-                ItemTouchHelper.LEFT -> mailSettings.leftSwipeAction
+                ItemTouchHelper.RIGHT -> settings.rightSwipeAction
+                ItemTouchHelper.LEFT -> settings.leftSwipeAction
                 else -> throw IllegalArgumentException("Unrecognised direction: $direction")
             }
             val swipeAction = normalise(SwipeAction.values()[swipeActionOrdinal], mailboxLocationMain.value)
@@ -1793,7 +1810,6 @@ class MailboxActivity :
             actionState: Int,
             isCurrentlyActive: Boolean
         ) {
-            val mailSettings = requireNotNull(userManager.getCurrentUserMailSettingsBlocking())
             if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                 val itemView = viewHolder.itemView
                 val height = itemView.bottom - itemView.top
@@ -1803,12 +1819,14 @@ class MailboxActivity :
                         SwipeAction.TRASH.getActionBackgroundResource(deltaX < 0)
                     }
                     deltaX < 0 -> {
-                        SwipeAction.values()[mailSettings.leftSwipeAction]
-                            .getActionBackgroundResource(false)
+                        mailSettings?.let {
+                            SwipeAction.values()[it.leftSwipeAction].getActionBackgroundResource(false)
+                        } ?: Resources.ID_NULL
                     }
                     else -> {
-                        SwipeAction.values()[mailSettings.rightSwipeAction]
-                            .getActionBackgroundResource(true)
+                        mailSettings?.let {
+                            SwipeAction.values()[it.rightSwipeAction].getActionBackgroundResource(true)
+                        } ?: Resources.ID_NULL
                     }
                 }
                 val view = layoutInflater.inflate(layoutId, null)
