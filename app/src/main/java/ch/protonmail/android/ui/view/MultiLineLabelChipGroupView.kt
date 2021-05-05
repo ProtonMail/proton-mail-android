@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.utils.extensions.isInPreviewMode
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxItemDecoration
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -69,7 +70,7 @@ class MultiLineLabelChipGroupView @JvmOverloads constructor(
         }
         addView(recyclerView)
 
-        if (isInEditMode)
+        if (isInPreviewMode())
             setLabels(buildPreviewItems())
     }
 
