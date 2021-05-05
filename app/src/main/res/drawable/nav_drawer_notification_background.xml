@@ -20,8 +20,8 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="?attr/brand_norm" />
     <corners
-        android:bottomLeftRadius="15dp"
-        android:bottomRightRadius="15dp"
-        android:topLeftRadius="15dp"
-        android:topRightRadius="15dp" />
+        android:bottomLeftRadius="16dp"
+        android:bottomRightRadius="16dp"
+        android:topLeftRadius="16dp"
+        android:topRightRadius="16dp" />
 </shape>
