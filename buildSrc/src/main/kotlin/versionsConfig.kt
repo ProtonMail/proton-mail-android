@@ -72,7 +72,7 @@ const val `Proton-android-instr-test version` = "0.3.3"         // Released: Jan
 const val `Proton-kotlin-test version` =        "0.2"           // Released: Oct 21, 2020
 
 const val `Proton-domain version` =             "1.0"           // Released: Feb 17, 2021
-const val `Proton-presentation version` =       "0.6.3"         // Released: Apr 13, 2021
+const val `Proton-presentation version` =       "0.7.1"         // Released: May 03, 2021
 const val `Proton-data version` =               "0.2.2"         // Released: Jan 20, 2021
 
 @Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
