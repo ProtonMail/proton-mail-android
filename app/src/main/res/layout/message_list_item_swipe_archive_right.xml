@@ -36,7 +36,7 @@
         android:textSize="@dimen/h2"/>
 
     <ImageView
-        android:id="@+id/drawer_item_icon"
+        android:id="@+id/drawer_item_icon_view"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:src="@drawable/archive"

@@ -62,13 +62,13 @@
 		android:textColor="@color/white"
 		android:textSize="@dimen/h4"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@+id/drawer_item_notifications"
+		app:layout_constraintEnd_toStartOf="@+id/drawer_item_notifications_text_view"
 		app:layout_constraintStart_toEndOf="@+id/label_icon"
 		app:layout_constraintTop_toTopOf="parent"
 		tools:text="Important stuff"
 		tools:textColor="#808080"/>
 	<TextView
-		android:id="@+id/drawer_item_notifications"
+		android:id="@+id/drawer_item_notifications_text_view"
 		style="@style/DrawerItemNotification"
 		android:layout_width="28dp"
 		android:layout_height="28dp"

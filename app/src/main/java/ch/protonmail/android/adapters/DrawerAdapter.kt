@@ -32,12 +32,12 @@ import ch.protonmail.android.uiModel.DrawerItemUiModel.Footer
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
 import ch.protonmail.android.uiModel.DrawerItemUiModel.SectionName
 import ch.protonmail.android.uiModel.LabelUiModel
-import me.proton.core.presentation.utils.inflate
 import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
 import kotlinx.android.synthetic.main.drawer_list_item.view.*
 import kotlinx.android.synthetic.main.drawer_section_name_item.view.*
+import me.proton.core.presentation.utils.inflate
 import me.proton.core.util.kotlin.invoke
 
 // region constants
@@ -104,10 +104,10 @@ internal class DrawerAdapter : BaseAdapter<
 
         override fun onBind(item: P) = with(itemView) {
             super.onBind(item)
-            drawer_item_selection.isVisible = item.selected
-            drawer_item_notifications.isVisible = item.hasNotifications()
-            drawer_item_notifications.text = item.notificationCount.toString()
-            drawer_item_notifications.setNotificationIndicatorSize(item.notificationCount)
+            drawer_item_selection_view.isVisible = item.selected
+            drawer_item_notifications_text_view.isVisible = item.hasNotifications()
+            drawer_item_notifications_text_view.text = item.notificationCount.toString()
+            drawer_item_notifications_text_view.setNotificationIndicatorSize(item.notificationCount)
         }
     }
 
@@ -119,8 +119,8 @@ internal class DrawerAdapter : BaseAdapter<
 
         override fun onBind(item: Primary.Static) = with(itemView) {
             super.onBind(item)
-            drawer_item_label.setText(item.labelRes)
-            drawer_item_icon.setImageResource(item.iconRes)
+            drawer_item_label_text_view.setText(item.labelRes)
+            drawer_item_icon_view.setImageResource(item.iconRes)
             menuItem.tag = resources.getString(item.labelRes)
         }
     }
@@ -133,10 +133,10 @@ internal class DrawerAdapter : BaseAdapter<
 
         override fun onBind(item: Primary.Label) = with(itemView) {
             super.onBind(item)
-            drawer_item_label.text = item.uiModel.name
-            drawer_item_icon.setColorFilterFor(item.uiModel)
-            drawer_item_icon.setImageResource(item.uiModel.image)
-            drawer_item_label.tag = item.uiModel.name
+            drawer_item_label_text_view.text = item.uiModel.name
+            drawer_item_icon_view.setColorFilterFor(item.uiModel)
+            drawer_item_icon_view.setImageResource(item.uiModel.image)
+            drawer_item_label_text_view.tag = item.uiModel.name
         }
 
         private fun ImageView.setColorFilterFor(label: LabelUiModel) {

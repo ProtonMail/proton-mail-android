@@ -51,8 +51,8 @@ class NavigationItemLabelView @JvmOverloads constructor(
 		label_icon.setImageDrawable(wrapDrawable)
 
 		if(notificationCount>0) {
-			drawer_item_notifications.visibility=View.VISIBLE
-			drawer_item_notifications.text=notificationCount.toString()
+			drawer_item_notifications_text_view.visibility=View.VISIBLE
+			drawer_item_notifications_text_view.text=notificationCount.toString()
 		}
 	}
 }
