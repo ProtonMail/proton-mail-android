@@ -30,7 +30,7 @@
     tools:layoutDirection="ltr">
 
     <TextView
-        android:id="@+id/drawer_header_initials"
+        android:id="@+id/drawer_header_initials_text_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="@dimen/margin_drawer_header_initials"
@@ -45,22 +45,22 @@
         tools:text="SU" />
 
     <TextView
-        android:id="@+id/drawer_header_name"
+        android:id="@+id/drawer_header_name_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/padding_l"
         android:textAppearance="@style/Proton.Text.DefaultSmall"
         android:textColor="@color/text_inverted"
-        app:layout_constraintBottom_toTopOf="@+id/drawer_header_email"
+        app:layout_constraintBottom_toTopOf="@+id/drawer_header_email_text_view"
         app:layout_constraintEnd_toStartOf="@id/drawer_header_chevron"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/drawer_header_initials"
+        app:layout_constraintStart_toEndOf="@id/drawer_header_initials_text_view"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Some User" />
 
     <TextView
-        android:id="@+id/drawer_header_email"
+        android:id="@+id/drawer_header_email_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/padding_l"
@@ -69,8 +69,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/drawer_header_chevron"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/drawer_header_initials"
-        app:layout_constraintTop_toBottomOf="@+id/drawer_header_name"
+        app:layout_constraintStart_toEndOf="@id/drawer_header_initials_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/drawer_header_name_text_view"
         tools:text="user@protonmail.com" />
 
     <ImageView

@@ -21,13 +21,13 @@ package ch.protonmail.android.ui.view
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.annotation.StyleRes
-import ch.protonmail.android.R
+import ch.protonmail.android.databinding.LayoutDrawerHeaderBinding
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.utils.extensions.inflate
-import kotlinx.android.synthetic.main.layout_drawer_header.view.*
 
 internal class ProtonDrawerHeader @JvmOverloads constructor (
     context: Context,
@@ -36,14 +36,25 @@ internal class ProtonDrawerHeader @JvmOverloads constructor (
     @StyleRes defStyleRes: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
+    private val initialsTextView: TextView
+    private val nameTextView: TextView
+    private val emailTextView: TextView
+
     init {
-        inflate(R.layout.layout_drawer_header, attachToRoot = true)
+        val binding = LayoutDrawerHeaderBinding.inflate(
+            LayoutInflater.from(context),
+            this,
+            true
+        )
+        initialsTextView = binding.drawerHeaderInitialsTextView
+        nameTextView = binding.drawerHeaderNameTextView
+        emailTextView = binding.drawerHeaderEmailTextView
     }
 
     fun setUser(initials: Pair<Char, Char>, name: Name, email: EmailAddress) {
         val stringInitials = "${initials.first}${initials.second}"
-        drawer_header_initials.text = stringInitials
-        drawer_header_name.text = name.s
-        drawer_header_email.text = email.s
+        initialsTextView.text = stringInitials
+        nameTextView.text = name.s
+        emailTextView.text = email.s
     }
 }
