@@ -56,11 +56,11 @@ class ConversationsRepositoryImpl @Inject constructor(
                     val conversations = it.conversationResponse.toListLocal(parameters.userId.s)
                     conversationDao.insertOrUpdate(*conversations.toTypedArray())
                     if (conversations.isEmpty()) {
-                        emit(Error.Remote<List<Conversation>>("No conversations", NO_MORE_CONVERSATIONS_ERROR_CODE))
+                        emit(Error.Remote("No conversations", null, NO_MORE_CONVERSATIONS_ERROR_CODE))
                     }
                 },
                 onFailure = {
-                    emit(Error.Remote<List<Conversation>>(it.message))
+                    emit(Error.Remote(it.message, it))
                 }
             )
 
