@@ -1,23 +1,33 @@
 <!--
-Copyright (c) 2020 Proton Technologies AG
-
-This file is part of ProtonMail.
-
-ProtonMail is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ProtonMail is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ProtonMail. If not, see https://www.gnu.org/licenses/.
--->
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
 
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+
+    <!-- region V4 -->
+
+    <!-- region common -->
+    <string name="x_search">Search</string>
+    <!-- endregion -->
+
+    <!-- endregion -->
+
+    <!-- region V3 -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">ENCRYPTED EMAIL</string>
     <string name="secure_email_swiss">Secure Email Based\nin Switzerland</string>
@@ -86,7 +96,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="fetching_contacts">Fetching ProtonMail contacts...</string>
     <string name="fetching_contacts_success">Contacts refreshed successfully</string>
     <string name="fetching_contacts_failure">Unable to refresh contacts</string>
-    <string name="search">Search</string>
     <string name="search_messages">Search messages</string>
     <string name="no_search_results">No search results</string>
     <string name="compose">Compose</string>
@@ -1129,6 +1138,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="failed_saving_draft_online">Failed saving online draft for message: "%s"</string>
     <string name="cannot_open_message_while_being_sent">Can\'t open this message while it\'s being sent</string>
     <string name="enable_conversation_mode">Enable conversation mode</string>
+    <!-- endregion -->
 
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>

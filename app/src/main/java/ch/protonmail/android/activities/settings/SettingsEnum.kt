@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -84,7 +84,7 @@ enum class SettingsEnum {
     },
     SEARCH {
         override fun getHint(context: Context): String = ""
-        override fun getHeader(context: Context): String = context.resources.getString(R.string.search)
+        override fun getHeader(context: Context): String = context.resources.getString(R.string.x_search)
     },
     LABELS_N_FOLDERS {
         override fun getHint(context: Context): String = ""

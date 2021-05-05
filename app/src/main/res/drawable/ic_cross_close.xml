@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2020 Proton Technologies AG
   ~
@@ -18,18 +17,13 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/toolbar_action_layout_size"
-    android:layout_height="@dimen/toolbar_action_layout_size">
-
-    <ImageButton
-        android:id="@+id/searchImageButton"
-        android:layout_width="@dimen/button_nav_size"
-        android:layout_height="@dimen/button_nav_size"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_search"
-        android:background="@drawable/selector_circle_background_interaction_weak"
-        android:contentDescription="@string/x_search" />
-
-</FrameLayout>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M20.7751,4.275L19.7251,3.225L12.0001,10.935L4.2751,3.225L3.2251,4.275L10.9351,12L3.2251,19.725L4.2751,20.775L12.0001,13.065L19.7251,20.775L20.7751,19.725L13.0651,12L20.7751,4.275Z"
+      android:fillColor="#17181C"
+      android:fillType="evenOdd"/>
+</vector>
