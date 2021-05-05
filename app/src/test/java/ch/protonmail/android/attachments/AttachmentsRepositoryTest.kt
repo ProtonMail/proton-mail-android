@@ -75,6 +75,10 @@ class AttachmentsRepositoryTest : CoroutinesTest {
     @InjectMockKs
     private lateinit var repository: AttachmentsRepository
 
+    private val attachment = mockk<Attachment>(relaxed = true) {
+        every { mimeType } returns "image/jpeg"
+    }
+
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
@@ -233,7 +237,6 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             val headers = AttachmentHeaders()
             val fileSize = 1234L
             val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
-            val attachment = mockk<Attachment>(relaxed = true)
             val successResponse = mockk<AttachmentUploadResponse>(relaxed = true) {
                 every { code } returns Constants.RESPONSE_CODE_OK
                 every { attachmentID } returns apiAttachmentId
@@ -270,7 +273,6 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 every { error } returns errorMessage
             }
             val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
-            val attachment = mockk<Attachment>(relaxed = true)
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
             coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } returns failureResponse
 
@@ -337,7 +339,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
         runBlockingTest {
             val errorMessage = "Upload attachment request failed"
             val unarmoredSignedFileContent = byteArrayOf()
-            val attachment = mockk<Attachment>(relaxed = true)
+
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
             coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } throws SocketTimeoutException("Call timed out")
 
@@ -354,7 +356,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
         runBlockingTest {
             val errorMessage = "Upload attachments work was cancelled"
             val unarmoredSignedFileContent = byteArrayOf()
-            val attachment = mockk<Attachment>(relaxed = true)
+
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
             coEvery {
                 apiManager.uploadAttachment(any(), any(), any(), any())

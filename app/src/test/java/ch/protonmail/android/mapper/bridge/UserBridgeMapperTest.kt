@@ -149,7 +149,7 @@ internal class UserBridgeMapperTest {
             every { SystemClock.elapsedRealtime() } returns 0
 
             // GIVEN
-            val oldUser = LegacyUser.load(Id("id"), mockk(), mockk()).orThrow()
+            val oldUser = LegacyUser.load(Id("id"), mockk(), mockk(), mockk()).orThrow()
 
             // WHEN
             val legacyUser = mapper { oldUser.toNewModel() }

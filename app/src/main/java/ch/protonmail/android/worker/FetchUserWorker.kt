@@ -69,7 +69,9 @@ class FetchUserWorker @AssistedInject constructor(
             workDataOf(FETCH_USER_INFO_WORKER_RESULT to (user.delinquent != Delinquent.None))
         }.fold(
             onSuccess = { resultData -> Result.success(resultData) },
-            onFailure = { Result.failure() }
+            onFailure = { exception ->
+                Result.failure(workDataOf(FETCH_USER_INFO_WORKER_EXCEPTION_MESSAGE to exception.message))
+            }
         )
     }
 

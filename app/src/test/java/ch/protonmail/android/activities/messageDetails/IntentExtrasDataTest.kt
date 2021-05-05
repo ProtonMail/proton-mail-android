@@ -32,9 +32,7 @@ class IntentExtrasDataTest {
     @Ignore("Ignoring as proper mocking needs to be put in place")
     fun `detect user's email alias when sent to alias`() {
 
-        val user = User().apply {
-            setAddresses(listOf(Address().apply { email = "user1@protonmail.com" }, Address().apply { email = "user1@pm.me" }))
-        }
+        val user = User()
 
         val message = Message().apply {
             toList = listOf(MessageRecipient("User1", "user1+alias@protonmail.com"), MessageRecipient("User2", "user2@pm.me"))
@@ -61,9 +59,7 @@ class IntentExtrasDataTest {
     @Ignore("Ignoring as proper mocking needs to be put in place")
     fun `detect user's email alias when sent to alias, preserve case`() {
 
-        val user = User().apply {
-            setAddresses(listOf(Address().apply { email = "USER1@protonmail.com" }, Address().apply { email = "user1@pm.me" }))
-        }
+        val user = User()
 
         val message = Message().apply {
             toList = listOf(MessageRecipient("User1", "uSeR1+alias@protonmail.com"), MessageRecipient("User2", "user2@pm.me"))
@@ -90,9 +86,7 @@ class IntentExtrasDataTest {
     @Ignore("Ignoring as proper mocking needs to be put in place")
     fun `don't detect user's email alias when sent to alias of other user`() {
 
-        val user = User().apply {
-            setAddresses(listOf(Address().apply { email = "user1@protonmail.com" }, Address().apply { email = "user1@pm.me" }))
-        }
+        val user = User()
 
         val message = Message().apply {
             toList = listOf(MessageRecipient("User1", "user1@protonmail.com"), MessageRecipient("User2", "user2+alias@pm.me"))

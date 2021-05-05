@@ -59,7 +59,10 @@ class FetchMailSettingsWorker @AssistedInject constructor(
             }
         }.fold(
             onSuccess = { Result.success() },
-            onFailure = { Result.retry() }
+            onFailure = {
+                Timber.d(it)
+                Result.retry()
+            }
         )
     }
 

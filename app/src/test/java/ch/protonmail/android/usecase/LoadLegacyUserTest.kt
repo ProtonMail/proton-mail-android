@@ -19,17 +19,9 @@
 
 package ch.protonmail.android.usecase
 
-import arrow.core.Either
-import arrow.core.Left
-import assert4k.`is`
 import assert4k.assert
-import assert4k.equals
 import assert4k.that
-import assert4k.times
-import assert4k.type
-import assert4k.unaryPlus
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.util.leftOrThrow
 import io.mockk.every
 import io.mockk.mockk
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -45,7 +37,9 @@ class LoadLegacyUserTest : CoroutinesTest {
         // given
         val loadLegacyUser = LoadLegacyUser(
             loadLegacyUserDelegate = mockk {
-                every { this@mockk.invoke(any()) } returns mockk()
+                every { this@mockk.invoke(any()) } returns mockk {
+                    every { isRight() } returns true
+                }
             },
             dispatchers
         )
@@ -55,25 +49,5 @@ class LoadLegacyUserTest : CoroutinesTest {
 
         // then
         assert that result.isRight()
-    }
-
-    @Test
-    fun returnsNoPreferencesStoredFromDelegate() = coroutinesTest {
-        // given
-        val loadLegacyUser = LoadLegacyUser(
-            loadLegacyUserDelegate = mockk {
-                every { this@mockk.invoke(any()) } returns Left(LoadUser.Error.NoPreferencesStored)
-            },
-            dispatchers
-        )
-
-        // when
-        val result = loadLegacyUser(Id("someId"))
-
-        // then
-        assert that result * {
-            it `is` type<Either.Left<LoadUser.Error.NoPreferencesStored>>()
-            +leftOrThrow() equals LoadUser.Error.NoPreferencesStored
-        }
     }
 }

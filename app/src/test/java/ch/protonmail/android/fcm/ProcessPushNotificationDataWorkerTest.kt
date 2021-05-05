@@ -81,7 +81,7 @@ class ProcessPushNotificationDataWorkerTest {
     }
 
     private val sessionManager: SessionManager = mockk(relaxed = true) {
-        coEvery { getUserId(any()) } returns mockk(relaxed = true)
+        coEvery { getUserId(any()) } returns UserId("id")
     }
 
     private val workerParameters: WorkerParameters = mockk(relaxed = true)

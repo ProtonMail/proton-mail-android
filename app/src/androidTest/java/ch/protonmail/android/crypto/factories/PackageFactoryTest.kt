@@ -20,7 +20,6 @@
 package ch.protonmail.android.crypto.factories
 
 import androidx.test.filters.SmallTest
-import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.enumerations.MIMEType
@@ -46,9 +45,6 @@ import kotlin.test.Test
 
 @SmallTest
 class PackageFactoryTest {
-
-    @RelaxedMockK
-    private lateinit var apiManager: ProtonMailApiManager
 
     @MockK
     private lateinit var addressCryptoFactory: AddressCrypto.Factory

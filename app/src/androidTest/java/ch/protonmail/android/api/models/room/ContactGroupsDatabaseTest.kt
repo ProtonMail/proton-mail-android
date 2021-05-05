@@ -43,7 +43,7 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
 
     //region tests
     @Test
-    fun testFindLabelById() {
+    fun testFindLabelById() = coroutinesTest {
         val label1 = ContactLabel("a", "aa")
         val label2 = ContactLabel("b", "bb")
         val label3 = ContactLabel("c", "cc")
@@ -51,7 +51,7 @@ class ContactGroupsDatabaseTest : CoroutinesTest {
         database.saveContactGroupLabel(label2)
         database.saveContactGroupLabel(label3)
 
-        val needed = database.findContactGroupById("b")
+        val needed = database.findContactGroupById("b").first()
         Assert.assertEquals(label2, needed)
     }
 

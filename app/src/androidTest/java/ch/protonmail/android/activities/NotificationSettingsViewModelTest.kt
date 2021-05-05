@@ -66,10 +66,10 @@ internal class NotificationSettingsViewModelTest {
 //    @Test
     fun mockUserManager_reliabilityTest() {
         val userManager = mockUserManager(contentUri)
-        assertEquals(contentUri, userManager.currentLegacyUser.ringtone)
+        assertEquals(contentUri, userManager.currentLegacyUser?.ringtone)
 
-        userManager.currentLegacyUser.ringtone = fileUri
-        assertEquals(fileUri, userManager.currentLegacyUser.ringtone)
+        userManager.currentLegacyUser?.ringtone = fileUri
+        assertEquals(fileUri, userManager.currentLegacyUser?.ringtone)
     }
 
     // FIXME: Davide check this, it is causing a lot of test failures

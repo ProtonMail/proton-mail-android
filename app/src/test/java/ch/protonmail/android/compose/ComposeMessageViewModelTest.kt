@@ -45,6 +45,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
@@ -64,6 +65,9 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     private val userManager: UserManager = mockk(relaxed = true) {
         every { requireCurrentLegacyUser().senderEmailAddresses } returns mutableListOf()
+    }
+
+    private val accountManager: AccountManager = mockk(relaxed = true) {
     }
 
     private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true) {
@@ -87,6 +91,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
     private val viewModel = ComposeMessageViewModel(
         composeMessageRepository,
         userManager,
+        accountManager,
         messageDetailsRepository,
         deleteMessage,
         fetchPublicKeys,

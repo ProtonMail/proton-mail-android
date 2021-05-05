@@ -24,17 +24,18 @@ import android.text.TextUtils
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import ch.protonmail.android.attachments.KEY_INPUT_DATA_USER_ID_STRING
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.mockk.spyk
 import kotlinx.coroutines.runBlocking
-import me.proton.core.network.domain.ApiException
 import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.entity.Delinquent
+import me.proton.core.user.domain.entity.User
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -74,12 +75,14 @@ class FetchUserWorkerTest {
             userManager,
             oldUserManager
         )
+
+        every { parameters.inputData.getString(KEY_INPUT_DATA_USER_ID_STRING) } returns "userId"
     }
 
     @Test
     fun `should return new user delinquency data when both API calls are successful`() {
         runBlocking {
-            val mockUser = spyk<me.proton.core.user.domain.entity.User> {
+            val mockUser = mockk<User> {
                 every { delinquent } returns Delinquent.None
                 every { name } returns "name"
             }
@@ -99,7 +102,7 @@ class FetchUserWorkerTest {
     @Test
     fun `should return old user delinquency data when at least one of the API calls responds with error code`() {
         runBlocking {
-            val mockUser = spyk<me.proton.core.user.domain.entity.User> {
+            val mockUser = mockk<User> {
                 every { delinquent } returns Delinquent.InvoiceDelinquent
             }
 
@@ -118,7 +121,7 @@ class FetchUserWorkerTest {
     @Test
     fun `should return failure result when at least one of the API calls throws an exception`() {
         runBlocking {
-            val mockException = spyk<ApiException> {
+            val mockException = mockk<Exception> {
                 every { message } returns "exception"
             }
 

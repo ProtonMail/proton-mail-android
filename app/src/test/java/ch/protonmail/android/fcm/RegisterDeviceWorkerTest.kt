@@ -47,8 +47,13 @@ import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.unmockkObject
 import io.mockk.verify
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import me.proton.core.account.domain.entity.Account
+import me.proton.core.account.domain.entity.AccountState
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.accountmanager.domain.getAccounts
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.mocks.mockSharedPreferences
 import me.proton.core.test.android.mocks.newMockSharedPreferences
 import java.io.IOException
@@ -208,8 +213,14 @@ class RegisterDeviceWorkerTest {
             every { SecureSharedPreferences.getPrefsForUser(any(), any()) } answers {
                 userPrefs[userIds.indexOf(secondArg())]
             }
-            coEvery { accountManager.allLoggedIn() } returns userIds
-            every { accountManager.allLoggedInBlocking() } returns userIds
+            val accounts = userIds.map { user ->
+                mockk<Account> {
+                    every { userId } returns UserId(user.s)
+                    every { state } returns AccountState.Ready
+                }
+            }
+            coEvery { accountManager.getAccounts(AccountState.Ready) } returns flowOf(accounts)
+            coEvery { accountManager.getAccounts() } returns flowOf(accounts)
 
             every { fcmTokenManagerFactory.create(userPrefs[0]).isTokenSentBlocking() } returns false
             every { fcmTokenManagerFactory.create(userPrefs[1]).isTokenSentBlocking() } returns true
@@ -233,8 +244,14 @@ class RegisterDeviceWorkerTest {
             every { SecureSharedPreferences.getPrefsForUser(any(), any()) } answers {
                 userPrefs[userIds.indexOf(secondArg())]
             }
-            coEvery { accountManager.allLoggedIn() } returns userIds
-            every { accountManager.allLoggedInBlocking() } returns userIds
+            val accounts = userIds.map { user ->
+                mockk<Account> {
+                    every { userId } returns UserId(user.s)
+                    every { state } returns AccountState.Ready
+                }
+            }
+            coEvery { accountManager.getAccounts(AccountState.Ready) } returns flowOf(accounts)
+            coEvery { accountManager.getAccounts() } returns flowOf(accounts)
 
             every { fcmTokenManagerFactory.create(userPrefs[0]).isTokenSentBlocking() } returns false
             every { fcmTokenManagerFactory.create(userPrefs[1]).isTokenSentBlocking() } returns true
