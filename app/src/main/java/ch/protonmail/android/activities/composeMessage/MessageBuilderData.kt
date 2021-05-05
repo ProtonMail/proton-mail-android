@@ -58,8 +58,7 @@ class MessageBuilderData(
     val decryptedMessage: String,
     val isMessageBodyVisible: Boolean,
     val quotedHeader: Spanned,
-    val uploadAttachments: Boolean,
-    val isTransient: Boolean
+    val uploadAttachments: Boolean
 ) {
     class Builder {
         private lateinit var message: Message
@@ -94,7 +93,6 @@ class MessageBuilderData(
         private var isMessageBodyVisible: Boolean = false
         private var quotedHeader: Spanned = SpannedString("")
         private var uploadAttachments: Boolean = false
-        private var isTransient: Boolean = false
 
         @Synchronized
         fun fromOld(oldObject: MessageBuilderData) = apply {
@@ -132,7 +130,6 @@ class MessageBuilderData(
             this.quotedHeader = oldObject.quotedHeader
 
             this.uploadAttachments = oldObject.uploadAttachments
-            this.isTransient = oldObject.isTransient
         }
 
         fun message(message: Message) = apply { this.message = message }
@@ -227,44 +224,40 @@ class MessageBuilderData(
         fun uploadAttachments(uploadAttachments: Boolean) =
             apply { this.uploadAttachments = uploadAttachments }
 
-        fun isTransient(isTransient: Boolean) =
-            apply { this.isTransient = isTransient }
-
         fun build() : MessageBuilderData {
             return MessageBuilderData(
-                    message,
-                    senderEmailAddress,
-                    senderName,
-                    messageTitle,
-                    content,
-                    body,
-                    largeMessageBody,
-                    isPGPMime,
-                    messageTimestamp,
-                    messageId,
-                    addressId,
-                    addressEmailAlias,
-                    mBigContentHolder,
-                    attachmentList,
-                    embeddedAttachmentsList,
-                    isDirty,
-                    signature,
-                    mobileSignature,
-                    messagePassword,
-                    passwordHint,
-                    isPasswordValid,
-                    expirationTime,
-                    sendPreferences,
-                    isRespondInlineButtonVisible,
-                    isRespondInlineChecked,
-                    showImages,
-                    showRemoteContent,
-                    initialMessageContent,
-                    decryptedMessage,
-                    isMessageBodyVisible,
-                    quotedHeader,
-                    uploadAttachments,
-                    isTransient
+                message,
+                senderEmailAddress,
+                senderName,
+                messageTitle,
+                content,
+                body,
+                largeMessageBody,
+                isPGPMime,
+                messageTimestamp,
+                messageId,
+                addressId,
+                addressEmailAlias,
+                mBigContentHolder,
+                attachmentList,
+                embeddedAttachmentsList,
+                isDirty,
+                signature,
+                mobileSignature,
+                messagePassword,
+                passwordHint,
+                isPasswordValid,
+                expirationTime,
+                sendPreferences,
+                isRespondInlineButtonVisible,
+                isRespondInlineChecked,
+                showImages,
+                showRemoteContent,
+                initialMessageContent,
+                decryptedMessage,
+                isMessageBodyVisible,
+                quotedHeader,
+                uploadAttachments
             )
         }
     }

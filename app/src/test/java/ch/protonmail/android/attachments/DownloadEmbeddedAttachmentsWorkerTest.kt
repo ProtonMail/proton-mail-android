@@ -149,7 +149,6 @@ class DownloadEmbeddedAttachmentsWorkerTest {
             every { parameters.inputData.getString(KEY_INPUT_DATA_MESSAGE_ID_STRING) } returns testMessageId
             every { parameters.inputData.getString(KEY_INPUT_DATA_USER_ID_STRING) } returns userId
             every { messageDetailsRepository.findMessageById(testMessageId) } returns flowOf(message)
-            every { messageDetailsRepository.findSearchMessageById(testMessageId) } returns flowOf(null)
             coEvery { messageDetailsRepository.findMessageByIdBlocking(testMessageId) } returns message
             coEvery { messageDetailsRepository.findAttachmentsByMessageId(testMessageId) } returns attachments
             coEvery { handleEmbeddedImages.invoke(embeddedImages, any(), testMessageId) } returns expected
@@ -191,7 +190,6 @@ class DownloadEmbeddedAttachmentsWorkerTest {
             every { parameters.inputData.getString(KEY_INPUT_DATA_USER_ID_STRING) } returns userId
             every { parameters.inputData.getString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING) } returns attachmentId1
             every { messageDetailsRepository.findMessageById(testMessageId) } returns flowOf(message)
-            every { messageDetailsRepository.findSearchMessageById(testMessageId) } returns flowOf(null)
             coEvery { messageDetailsRepository.findMessageByIdBlocking(testMessageId) } returns message
             coEvery { messageDetailsRepository.findAttachmentsByMessageId(testMessageId) } returns attachments
             coEvery { handleSingleAttachment.invoke(any(), any(), testMessageId) } returns expected

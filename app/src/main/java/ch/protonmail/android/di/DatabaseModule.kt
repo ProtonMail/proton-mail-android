@@ -95,12 +95,4 @@ object DatabaseModule {
     fun providePendingActionDao(
         pendingActionDatabase: PendingActionDatabase
     ): PendingActionDao = pendingActionDatabase.getDao()
-
-    @Provides
-    @SearchMessageDaoQualifier
-    fun provideSearchMessageDao(
-        context: Context,
-        @CurrentUserId userId: Id
-    ): MessageDao = MessageDatabase.getSearchDatabase(context, userId).getDao()
-
 }

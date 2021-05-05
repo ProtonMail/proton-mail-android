@@ -42,7 +42,6 @@ import javax.inject.Provider;
 
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
-import ch.protonmail.android.activities.mailbox.InvalidateSearchDatabase;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.messages.MailboxRecyclerViewAdapter;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
@@ -121,7 +120,7 @@ public class SearchActivity extends BaseActivity {
                     mScrollStateChanged = false;
                     setLoadingMore(true);
                     mCurrentPage++;
-                    doSearch(false);
+                    mJobManager.addJobInBackground(new SearchMessagesJob(mQueryText, mCurrentPage));
                 }
             }
 
@@ -136,7 +135,6 @@ public class SearchActivity extends BaseActivity {
             } else {
                 Intent intent = AppUtil.decorInAppIntent(new Intent(SearchActivity.this, MessageDetailsActivity.class));
                 intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, mailboxUiItem.getItemId());
-                intent.putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, true);
                 startActivity(intent);
             }
             return null;
@@ -182,12 +180,6 @@ public class SearchActivity extends BaseActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        new InvalidateSearchDatabase(messageDetailsRepository.getSearchDatabaseDao()).execute();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.search);
@@ -205,11 +197,10 @@ public class SearchActivity extends BaseActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 mCurrentPage = 0;
-                boolean newSearch = !mQueryText.equals(query);
                 mQueryText = query;
                 setLoadingMore(false);
                 mProgressBar.setVisibility(View.VISIBLE);
-                doSearch(newSearch);
+                mJobManager.addJobInBackground(new SearchMessagesJob(mQueryText, mCurrentPage));
                 searchView.clearFocus();
                 return true;
             }
@@ -233,10 +224,6 @@ public class SearchActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void doSearch(boolean newSearch) {
-        mJobManager.addJobInBackground(new SearchMessagesJob(mQueryText, mCurrentPage, newSearch));
     }
 
     private boolean isDraft(MailboxUiItem item) {

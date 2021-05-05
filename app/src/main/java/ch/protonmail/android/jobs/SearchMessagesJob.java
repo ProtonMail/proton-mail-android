@@ -36,13 +36,11 @@ public class SearchMessagesJob extends ProtonMailBaseJob {
 
     private final String queryString;
     private final int page;
-    private final boolean newSearch;
 
-    public SearchMessagesJob(@NonNull String queryString, int page, boolean newSearch) {
+    public SearchMessagesJob(@NonNull String queryString, int page) {
         super(new Params(Priority.MEDIUM));
         this.queryString = queryString;
         this.page = page;
-        this.newSearch = newSearch;
     }
 
     @Override
@@ -62,8 +60,6 @@ public class SearchMessagesJob extends ProtonMailBaseJob {
 
     private boolean doLocalSearch() {
         final List<Message> messages = getMessageDetailsRepository().searchMessages(queryString, queryString, queryString);
-        getMessageDetailsRepository().clearSearchMessagesCache();
-        getMessageDetailsRepository().saveAllSearchMessagesBlocking(messages);
         return messages.size() > 0;
     }
 
@@ -71,11 +67,6 @@ public class SearchMessagesJob extends ProtonMailBaseJob {
         try {
             MessagesResponse response = getApi().search(queryString, page);
             List<Message> resultsList = response.getMessages();
-            // Delete past search results if this is a new search
-            if (newSearch && page == 0) {
-                getMessageDetailsRepository().clearSearchMessagesCache();
-            }
-            getMessageDetailsRepository().saveAllSearchMessagesBlocking(resultsList);
             return resultsList.size() > 0;
         } catch (Exception error) {
             Logger.doLogException(TAG_SEARCH_MESSAGES_JOB, "Error searching messages", error);

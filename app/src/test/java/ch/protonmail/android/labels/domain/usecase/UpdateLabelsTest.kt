@@ -57,7 +57,6 @@ class UpdateLabelsTest {
         // given
         val testMessageId = "id123"
         val testLabelId1 = "testLabelId1"
-        val isTransient = false
         val message = mockk<Message> {
             every { messageId } returns testMessageId
             every { labelIDsNotIncludingLocations } returns listOf(testLabelId1)
@@ -73,21 +72,19 @@ class UpdateLabelsTest {
             repository.findAllLabelsWithIds(
                 message,
                 checkedLabelIds,
-                any(),
-                isTransient
+                any()
             )
         } just Runs
 
         // when
-        useCase.invoke(testMessageId, checkedLabelIds, isTransient)
+        useCase.invoke(testMessageId, checkedLabelIds)
 
         // then
         coVerify {
             repository.findAllLabelsWithIds(
                 message,
                 checkedLabelIds,
-                existingLabels,
-                isTransient
+                existingLabels
             )
         }
     }

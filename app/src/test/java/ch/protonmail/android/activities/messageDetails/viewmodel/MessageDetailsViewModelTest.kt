@@ -47,7 +47,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private var savedStateHandle = mockk<SavedStateHandle> {
         every { get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID) } returns "id1"
-        every { get<Boolean>(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE) } returns false
     }
 
     private val downloadUtils = DownloadUtils()

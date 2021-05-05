@@ -30,7 +30,7 @@ internal class SaveMassageTask(
 
     override fun doInBackground(vararg units: Unit) {
         runBlocking {
-            messageDetailsRepository.saveMessageInDB(savedMessage)
+            messageDetailsRepository.saveMessage(savedMessage)
         }
     }
 }

@@ -1421,11 +1421,8 @@ class MailboxActivity :
                         mailboxActivity, MessageDetailsActivity::class.java
                     )
                 )
-                if (!mailboxActivity!!.mailboxLabelId.isNullOrEmpty()) {
-                    intent.putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, false)
-                }
                 intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, messageId)
-                mailboxActivity.startActivityForResult(intent, REQUEST_CODE_TRASH_MESSAGE_DETAILS)
+                mailboxActivity?.startActivityForResult(intent, REQUEST_CODE_TRASH_MESSAGE_DETAILS)
             }
         }
     }

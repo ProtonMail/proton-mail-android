@@ -316,7 +316,6 @@ public class AppUtil {
                 userId,
                 contactDao,
                 messageDao,
-                searchDatabase,
                 conversationDao,
                 notificationDao,
                 counterDao,
@@ -333,7 +332,6 @@ public class AppUtil {
             final Id userId,
             final ContactDao contactDao,
             final MessageDao messageDao,
-            final MessageDao searchDatabase,
             final ConversationDao conversationDao,
             final NotificationDao notificationDao,
             final CounterDao counterDao,
@@ -360,9 +358,6 @@ public class AppUtil {
                 messageDao.clearAttachmentsCache();
                 messageDao.clearLabelsCache();
                 conversationDao.clear();
-                searchDatabase.clearMessagesCache();
-                searchDatabase.clearAttachmentsCache();
-                searchDatabase.clearLabelsCache();
                 notificationDao.clearNotificationCache();
                 counterDao.clearUnreadLocationsTable();
                 counterDao.clearUnreadLabelsTable();

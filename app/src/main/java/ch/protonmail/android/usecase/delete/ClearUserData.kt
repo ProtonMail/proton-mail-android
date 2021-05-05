@@ -54,7 +54,6 @@ class ClearUserData @Inject constructor(
         val contactDao = runCatching { databaseProvider.provideContactDao(userId) }.getOrNull()
         val counterDao = runCatching { databaseProvider.provideCounterDao(userId) }.getOrNull()
         val messageDao = runCatching { databaseProvider.provideMessageDao(userId) }.getOrNull()
-        val messageSearchDao = runCatching { databaseProvider.provideMessageSearchDao(userId) }.getOrNull()
         // TODO remove this dependency and use the ConversationRepository.clear()
         //  right now it creates a circular dependency,
         //  so this needs to happen when this use-case is refactored to use only repositories
@@ -82,11 +81,6 @@ class ClearUserData @Inject constructor(
                 clearTotalLabelsTable()
             }
             messageDao?.run {
-                clearMessagesCache()
-                clearAttachmentsCache()
-                clearLabelsCache()
-            }
-            messageSearchDao?.run {
                 clearMessagesCache()
                 clearAttachmentsCache()
                 clearLabelsCache()

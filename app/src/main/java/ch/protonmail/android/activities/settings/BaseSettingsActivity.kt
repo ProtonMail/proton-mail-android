@@ -167,7 +167,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         contactDao = ContactDatabase.getInstance(applicationContext, userId).getDao()
         messageDao = MessageDatabase.getInstance(applicationContext, userId).getDao()
         conversationDao = MessageDatabase.getInstance(applicationContext, userId).getConversationDao()
-        searchDatabase = MessageDatabase.getSearchDatabase(applicationContext, userId).getDao()
         notificationDao = NotificationDatabase.getInstance(applicationContext, userId).getDao()
         counterDao = CounterDatabase.getInstance(applicationContext, userId).getDao()
         pendingActionDao = PendingActionDatabase.getInstance(applicationContext, userId).getDao()

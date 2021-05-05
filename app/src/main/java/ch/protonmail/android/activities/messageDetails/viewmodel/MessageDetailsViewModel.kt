@@ -115,8 +115,6 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private val messageId: String = savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID)
         ?: throw IllegalStateException("messageId in MessageDetails is Empty!")
-    private val isTransientMessage = savedStateHandle.get<Boolean>(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE)
-        ?: false
 
     private val messageRenderer
         by lazy { messageRendererFactory.create(viewModelScope, messageId) }
@@ -183,11 +181,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
 
     val messageAttachments: LiveData<List<Attachment>> by lazy {
-        if (!isTransientMessage) {
-            messageDetailsRepository.findAttachments(decryptedMessageData).distinctUntilChanged()
-        } else {
-            messageDetailsRepository.findAttachmentsSearchMessage(decryptedMessageData).distinctUntilChanged()
-        }
+        messageDetailsRepository.findAttachments(decryptedMessageData).distinctUntilChanged()
     }
     val pendingSend: LiveData<PendingSend?> by lazy {
         messageDetailsRepository.findPendingSendByOfflineMessageIdAsync(messageId)
@@ -315,8 +309,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 areImagesDisplayed,
                 remoteContentDisplayed,
                 _embeddedImagesAttachments,
-                dispatchers.Io,
-                isTransientMessage
+                dispatchers.Io
             )
             _prepareEditMessageIntentResult.value = Event(intent)
         }
@@ -416,8 +409,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 withContext(dispatchers.Io) {
                     val messageDetailsResult = runCatching {
                         with(messageDetailsRepository) {
-                            if (isTransientMessage) fetchSearchMessageDetails(messageId)
-                            else fetchMessageDetails(messageId)
+                            fetchMessageDetails(messageId)
                         }
                     }
 
@@ -429,21 +421,13 @@ internal class MessageDetailsViewModel @Inject constructor(
                         .onSuccess { messageResponse ->
                             if (messageResponse.code == RESPONSE_CODE_OK) {
                                 with(messageDetailsRepository) {
-
-                                    if (isTransientMessage) {
-                                        findSearchMessageById(messageId).first()?.let { savedMessage ->
-                                            messageResponse.message.writeTo(savedMessage)
-                                            saveSearchMessage(savedMessage)
-                                        }
+                                    val savedMessage = findMessageById(messageId).first()
+                                    if (savedMessage != null) {
+                                        messageResponse.message.writeTo(savedMessage)
+                                        saveMessage(savedMessage)
                                     } else {
-                                        val savedMessage = findMessageById(messageId).first()
-                                        if (savedMessage != null) {
-                                            messageResponse.message.writeTo(savedMessage)
-                                            saveMessage(savedMessage)
-                                        } else {
-                                            setFolderLocation(messageResponse.message)
-                                            saveMessage(messageResponse.message, isTransientMessage)
-                                        }
+                                        setFolderLocation(messageResponse.message)
+                                        saveMessage(messageResponse.message)
                                     }
                                 }
                             } else {

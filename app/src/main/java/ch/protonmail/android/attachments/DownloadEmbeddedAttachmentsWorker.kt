@@ -90,14 +90,8 @@ class DownloadEmbeddedAttachmentsWorker @AssistedInject constructor(
 
         val singleAttachmentId = inputData.getString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING)
 
-        var message = messageDetailsRepository.findSearchMessageById(messageId).first()
-        var attachments = if (message != null) {
-            // use search or standard message database, if Message comes from search
-            messageDetailsRepository.findSearchAttachmentsByMessageId(messageId)
-        } else {
-            message = messageDetailsRepository.findMessageById(messageId).first()
-            messageDetailsRepository.findAttachmentsByMessageId(messageId)
-        }
+        val message = messageDetailsRepository.findMessageById(messageId).first()
+        var attachments = messageDetailsRepository.findAttachmentsByMessageId(messageId)
 
         requireNotNull(message)
         val addressId = requireNotNull(message.addressID)

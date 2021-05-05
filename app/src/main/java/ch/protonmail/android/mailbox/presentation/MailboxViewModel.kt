@@ -464,7 +464,7 @@ class MailboxViewModel @Inject constructor(
         message.addLabels(checkedLabelIds)
         message.removeLabels(labelsToRemove)
         viewModelScope.launch {
-            messageDetailsRepository.saveMessageInDB(message)
+            messageDetailsRepository.saveMessage(message)
         }
 
         return ApplyRemoveLabels(checkedLabelIds, labelsToRemove)
@@ -479,7 +479,7 @@ class MailboxViewModel @Inject constructor(
             LABEL,
             LABEL_OFFLINE,
             LABEL_FOLDER -> messageDetailsRepository.getMessagesByLabelIdAsync(labelId!!)
-            SEARCH -> messageDetailsRepository.getAllSearchMessages()
+            SEARCH -> messageDetailsRepository.getAllMessages()
             DRAFT,
             SENT,
             ARCHIVE,
