@@ -84,7 +84,7 @@ class GetConversationsTest : CoroutinesTest {
 
     @Test
     fun getConversationsReturnsErrorWhenRepositoryFailsGettingConversations() = runBlockingTest {
-        coEvery { conversationRepository.getConversations(any()) } returns flowOf(DataResult.Error.Local(null))
+        coEvery { conversationRepository.getConversations(any()) } returns flowOf(DataResult.Error.Local(null, null))
 
         val actual = getConversations.invoke(userId, MessageLocationType.INBOX)
 
