@@ -35,7 +35,7 @@ fun initVersions() {
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
     `constraint-layout version` =               "2.0.0-rc1"     // Released: Jul 30, 2020
-    `espresso version` =                        "3.4.0-alpha02" // Released: Oct 20, 2020
+    `espresso version` =                        "3.4.0-alpha05" // Released: Mar 15, 2021
     `hilt-android version` =                    "2.33-beta"     // Released: Feb 26, 2021
     `hilt-androidx version` =                   "1.0.0-beta01"  // Released: Mar 10, 2021
     `ktx version` =                             "1.5.0-rc01"    // Released: Mar 24, 2021
@@ -45,7 +45,7 @@ fun initVersions() {
     `android-room version` =                    "2.3.0"         // Released: Apr 21, 2021
     `android-work version` =                    "2.5.0"         // Released: Jan 27, 2021
 
-    `android-test version` =                    "1.3.1-alpha02" // Released: Oct 20, 2020
+    `android-test version` =                    "1.4.0-alpha05" // Released: Mar 15, 2021
     // endregion
 
     // region Others
@@ -90,6 +90,7 @@ const val `Proton-human-verification version` = "0.2.6"         // Released: Mar
 
 // Test
 const val `aerogear version` =                  "1.0.0"         // Released: Mar 23, 2013
+const val `android-test-ext version` =          "1.1.3-alpha05" // Released: Mar 15, 2021
 const val `assertJ version` =                   "3.13.2"        // Released: Aug 04, 2019
 const val `falcon version` =                    "2.1.1"         // Released: Sep 24, 2018
 const val `hamcrest version` =                  "1.3"           // Released:
