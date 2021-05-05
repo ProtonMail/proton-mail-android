@@ -55,6 +55,7 @@ import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDatabase
+import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.User
@@ -417,12 +418,16 @@ abstract class NavigationActivity :
         if (addresses.hasAddresses) {
             val address = checkNotNull(addresses.primary)
             val displayName = address.displayName ?: Name(address.email.s)
-            sideDrawer.setUser(getInitials(displayName), displayName, address.email)
+            sideDrawer.setUser(getInitials(displayName, address.email), displayName, address.email)
         }
     }
 
-    private fun getInitials(name: Name): Pair<Char, Char> {
-        val string = name.s.toUpperCase()
+    private fun getInitials(displayName: Name, emailAddress: EmailAddress): Pair<Char, Char> =
+        // TODO: definine initials of we can't extract them properly
+        getInitials(displayName.s) ?: getInitials(emailAddress.s) ?: '?' to '?'
+
+    private fun getInitials(displayNameOrEmailAddress: String): Pair<Char, Char>? {
+        val string = displayNameOrEmailAddress.toUpperCase()
         return string
             // split words
             .split(" ")
@@ -435,7 +440,8 @@ abstract class NavigationActivity :
         // Otherwise take only first 2 letters or digits of the name
             ?: string
                 .filter { it.isLetterOrDigit() }
-                .let { it[0] to it[1] }
+                .takeIf { it.length >= 2 }
+                ?.let { it[0] to it[1] }
     }
 
     fun onUserClicked(open: Boolean) {
