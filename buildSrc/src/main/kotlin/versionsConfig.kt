@@ -23,9 +23,9 @@ import studio.forface.easygradle.dsl.android.*
 fun initVersions() {
 
     // region Kotlin
-    `kotlin version` =                          "1.4.21"        // Released: Dec 07, 2020
-    `coroutines version` =                      "1.4.2"         // Released: Nov 26, 2020
-    `serialization version` =                   "1.0.1"         // Released: Oct 28, 2020
+    `kotlin version` =                          "1.4.32"        // Released: Mar 22, 2021
+    `coroutines version` =                      "1.4.3"         // Released: Mar 03, 2021
+    `serialization version` =                   "1.1.0"         // Released: Feb 20, 2021
     // endregion
 
     // region Android
