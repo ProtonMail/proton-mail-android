@@ -73,7 +73,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="trash_option">PAPPERSKORG</string>
     <string name="spam_option">SKRÄPPOST</string>
     <string name="inbox">Inkorg</string>
-    <string name="starred">Stjärnmärkta</string>
+    <string name="starred">Stjärnmärkt</string>
     <string name="drafts">Utkast</string>
     <string name="sent">Skickat</string>
     <string name="archive">Arkiv</string>
@@ -100,9 +100,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="mark_read">Markera som läst</string>
     <string name="mark_unread">Markera som oläst</string>
     <string name="move_to_archive">Flytta till arkiv</string>
-    <string name="move_to_trash">Flytta till papperskorgen</string>
+    <string name="move_to_trash">Flytta till Papperskorg</string>
     <string name="move_to_spam">Flytta till Skräppost</string>
-    <string name="move_to_inbox">Flytta till Inkorgen</string>
+    <string name="move_to_inbox">Flytta till Inkorg</string>
     <string name="are_you_sure_empty">Är du säker på att du vill radera alla meddelanden från denna mapp?</string>
     <string name="send">Skicka</string>
     <string name="selected">Valda</string>
@@ -247,7 +247,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="create_mailbox_password">Skapa lösenord</string>
     <string name="password_note"><b>Notera:</b> Detta används för att kryptera och avkryptera dina meddelanden.        Tappa inte bort detta lösenord, vi kan inte återställa det. Om du förlorar ditt lösenord, kommer du inte kunna läsa din epost.</string>
     <string name="username_note"><b>Notera:</b> Användarnamnet är också din ProtonMail-adress</string>
-    <string name="terms_and_conditions">Genom att använda ProtonMail, accepterar du våra\n        <a href="https://protonmail.com/terms-and-conditions">användarvillkor</a> och vår <a href="https://protonmail.com/privacy-policy">integritetspolicy</a></string>
+    <string name="terms_and_conditions">Genom att använda ProtonMail godkänner du våra\n        <a href="https://protonmail.com/terms-and-conditions">villkor</a> och vår <a href="https://protonmail.com/privacy-policy">integritetspolicy</a></string>
     <string name="human_verification">Robotfilter</string>
     <string name="human_verification_subtitle">För att förhindra missbruk av ProtonMail\nbehöver vi verifiera att du inte är en robot.</string>
     <string name="select_options">Välj ett av följande alternativ:</string>
@@ -317,7 +317,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="engagement_title_expire">Förfallande meddelanden</string>
     <string name="engagement_title_help">Hjälp &amp; support</string>
     <string name="engagement_title_support_protonmail">Stöd ProtonMail</string>
-    <string name="engagement_subtitle_welcome">Ditt nya krypterade e-postkonto har skapats och är redo att skicka och ta emot krypterade meddelanden.</string>
+    <string name="engagement_subtitle_welcome">Ditt nya krypterade e-postkonto har konfigurerats och är redo att skicka och ta emot krypterade meddelanden.</string>
     <string name="engagement_subtitle_swipe">Du kan anpassa svepgester i ProtonMail-appens inställningar.</string>
     <string name="engagement_subtitle_labels">Skapa och lägg till etiketter för att organisera din inkorg. Tryck och håll kvar på ett meddelande för alla val.</string>
     <string name="engagement_subtitle_encryption">Din inkorg skyddas nu av end-to-end-kryptering. För att automatiskt skicka säker e-post till dina kontakter, bjud in dem att använda ProtonMail! Du kan också manuellt kryptera meddelanden till dem om de inte använder ProtonMail.</string>
@@ -570,7 +570,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="convert_contact">Konvertera kontakt</string>
     <string name="upload_contacts">Ladda upp kontakter</string>
     <string name="upgrade_encrypted_contact">Uppgradera för att använda krypterad kontaktinformation.</string>
-    <string name="uploading_contacts">Laddar up kontakter…</string>
+    <string name="uploading_contacts">Laddar upp kontakter…</string>
     <string name="error_encrypted_data">Misslyckades hämta krypterad kontaktinformation.</string>
     <string-array name="vcard_option_phone">
         <item>Telefon</item>
@@ -911,8 +911,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="swipe_action_archive">Meddelandet arkiverat</string>
     <string name="swipe_action_mark_read">Meddelandet markerat som läst</string>
     <plurals name="action_move_to_trash">
-        <item quantity="one">Meddelandet flyttades till papperskorgen</item>
-        <item quantity="other">Meddelandena flyttades till papperskorgen</item>
+        <item quantity="one">Meddelandet flyttat till papperskorg</item>
+        <item quantity="other">Meddelanden flyttade till papperskorg</item>
     </plurals>
     <plurals name="action_move_to_spam">
         <item quantity="one">Meddelandet markerat som skräppost</item>
