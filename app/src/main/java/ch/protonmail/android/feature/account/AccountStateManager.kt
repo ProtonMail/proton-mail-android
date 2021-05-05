@@ -159,14 +159,21 @@ class AccountStateManager @Inject constructor(
         getPrimaryUserId().first()?.let { logout(it) }
     }
 
-    fun login() {
-        authOrchestrator.startLoginWorkflow(AccountType.Internal)
+    fun login(userId: UserId? = null) = scope.launch {
+        val account = userId?.let { getAccountOrNull(it) }
+        authOrchestrator.startLoginWorkflow(
+            requiredAccountType = AccountType.Internal,
+            username = account?.username
+        )
     }
 
     fun switch(userId: UserId) = scope.launch {
         val account = getAccountOrNull(userId) ?: return@launch
         when {
-            account.isDisabled() -> authOrchestrator.startLoginWorkflow(AccountType.Internal) // TODO: Add userId.
+            account.isDisabled() -> authOrchestrator.startLoginWorkflow(
+                requiredAccountType = AccountType.Internal,
+                username = account.username
+            )
             account.isReady() -> accountManager.setAsPrimary(userId)
         }
     }

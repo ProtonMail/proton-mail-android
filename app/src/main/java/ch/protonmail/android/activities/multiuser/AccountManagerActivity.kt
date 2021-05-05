@@ -37,7 +37,7 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButto
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_account_manager.*
 import kotlinx.android.synthetic.main.toolbar_white.*
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.account.domain.entity.Account
@@ -63,7 +63,7 @@ class AccountManagerActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         accountsAdapter.apply {
-            onLoginAccount = { userId -> accountStateManager.login() }
+            onLoginAccount = { userId -> accountStateManager.login(userId) }
             onLogoutAccount = { userId -> onLogoutClicked(userId) }
             onRemoveAccount = { userId -> onRemoveClicked(userId) }
         }
@@ -71,13 +71,13 @@ class AccountManagerActivity : BaseActivity() {
         accountsRecyclerView.adapter = accountsAdapter
 
         accountStateManager.getSortedAccounts()
-            .combine(accountStateManager.getPrimaryUserId()) { accounts, primaryUserId -> accounts to primaryUserId }
+            .distinctUntilChanged()
             .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
-            .onEach { (sortedAccounts, primaryUserId) ->
-                val accounts = sortedAccounts.map { account ->
+            .onEach { sortedAccounts ->
+                val accounts = sortedAccounts.mapIndexed { index, account ->
                     val id = Id(account.userId.id)
                     val user = userManager.getLegacyUserOrNull(id)
-                    account.toUiModel(account.isReady(), account.userId == primaryUserId, user)
+                    account.toUiModel(account.isReady(), index == 0, user)
                 }
                 accountsAdapter.items = accounts + DrawerUserModel.AccFooter
             }.launchIn(lifecycleScope)
@@ -128,6 +128,7 @@ class AccountManagerActivity : BaseActivity() {
             R.id.action_remove_all -> {
                 showToast(R.string.account_manager_remove_all_accounts)
                 accountStateManager.removeAll()
+                finish()
                 true
             }
             else -> {
