@@ -22,11 +22,6 @@
     <!-- region V4 -->
 
     <!-- generic size -->
-    <dimen name="space_s">4dp</dimen>
-    <dimen name="space_m">8dp</dimen>
-    <dimen name="space_l">16dp</dimen>
-    <dimen name="space_xl">24dp</dimen>
-    <dimen name="space_xxl">40dp</dimen>
     <dimen name="size_icon_m">24dp</dimen>
     <dimen name="divider_size">2px</dimen>
 
@@ -41,6 +36,7 @@
     <dimen name="padding_l">16dp</dimen>
     <dimen name="padding_xl">24dp</dimen>
     <dimen name="padding_xxl">32dp</dimen>
+    <dimen name="padding_xxxl">40dp</dimen>
 
     <!-- Toolbars -->
     <dimen name="toolbar_padding_start">0dp</dimen>

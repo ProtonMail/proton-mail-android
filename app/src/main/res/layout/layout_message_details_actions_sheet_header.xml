@@ -23,8 +23,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
-    android:paddingStart="@dimen/space_l"
-    android:paddingEnd="@dimen/space_l"
+    android:paddingStart="@dimen/padding_l"
+    android:paddingEnd="@dimen/padding_l"
     tools:showIn="@layout/fragment_message_details_action_sheet">
 
     <ImageView
@@ -35,9 +35,9 @@
         android:clickable="true"
         android:contentDescription="@string/close"
         android:focusable="true"
-        android:paddingTop="@dimen/space_l"
-        android:paddingEnd="@dimen/space_l"
-        android:paddingBottom="@dimen/space_l"
+        android:paddingTop="@dimen/padding_l"
+        android:paddingEnd="@dimen/padding_l"
+        android:paddingBottom="@dimen/padding_l"
         android:src="@drawable/ic_close"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +49,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:paddingTop="@dimen/space_m"
+        android:paddingTop="@dimen/padding_m"
         android:singleLine="true"
         android:textAppearance="@style/Text.Headline"
         app:layout_constraintEnd_toEndOf="parent"

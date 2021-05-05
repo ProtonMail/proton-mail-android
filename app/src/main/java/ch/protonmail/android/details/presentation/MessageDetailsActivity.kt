@@ -44,7 +44,6 @@ import android.widget.ToggleButton
 import androidx.activity.viewModels
 import androidx.core.content.getSystemService
 import androidx.core.os.bundleOf
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -84,7 +83,6 @@ import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostSpamJob
-import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
@@ -372,7 +370,7 @@ internal class MessageDetailsActivity :
         return true
     }
 
-    private fun showReportPhishingDialog(message: Message?) {
+    fun showReportPhishingDialog(message: Message? = viewModel.decryptedMessageData.value) {
         AlertDialog.Builder(this)
             .setTitle(R.string.phishing_dialog_title)
             .setMessage(R.string.phishing_dialog_message)
@@ -594,17 +592,24 @@ internal class MessageDetailsActivity :
         // NOOP
     }
 
-    private fun showFoldersManagerDialog(fragmentManager: FragmentManager, message: Message) {
+    fun showFoldersManagerDialog(
+        message: Message? = viewModel.decryptedMessageData.value
+    ) {
+        requireNotNull(message)
         val moveToFolderDialogFragment = MoveToFolderDialogFragment.newInstance(fromInt(message.location))
-        val transaction = fragmentManager.beginTransaction()
-        transaction.add(moveToFolderDialogFragment, moveToFolderDialogFragment.fragmentKey)
-        transaction.commitAllowingStateLoss()
+        supportFragmentManager.beginTransaction().apply {
+            add(moveToFolderDialogFragment, moveToFolderDialogFragment.fragmentKey)
+            commit() // used to be commitAllowingStateLoss(), why?
+        }
     }
 
-    private fun showLabelsManagerDialog(fragmentManager: FragmentManager, message: Message) {
+    fun showLabelsManagerDialog(
+        message: Message? = viewModel.decryptedMessageData.value
+    ) {
+        requireNotNull(message)
         val attachedLabels = HashSet(message.labelIDsNotIncludingLocations)
         val manageLabelsDialogFragment = ManageLabelsDialogFragment.newInstance(attachedLabels, null, null)
-        fragmentManager.commit(allowStateLoss = true) {
+        supportFragmentManager.commit(allowStateLoss = true) {
             add(manageLabelsDialogFragment, manageLabelsDialogFragment.fragmentKey)
             addToBackStack(null)
         }
@@ -812,9 +817,7 @@ internal class MessageDetailsActivity :
             }
             messageDetailsActionsView.setOnSecondActionClickListener {
                 markAsRead = false
-                viewModel.markRead(false)
-                val job = PostUnreadJob(listOf(messageId))
-                mJobManager.addJobInBackground(job)
+                viewModel.handleAction(MessageDetailsAction.MARK_UNREAD)
                 onBackPressed()
             }
             messageDetailsActionsView.setOnFirstActionClickListener {

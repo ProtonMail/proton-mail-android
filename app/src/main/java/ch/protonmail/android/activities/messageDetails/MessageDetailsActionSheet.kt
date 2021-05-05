@@ -151,15 +151,15 @@ class MessageDetailsActionSheet : BottomSheetDialogFragment() {
             dismiss()
         }
         detailsActionsLabelAsTextView.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.LABEL_AS)
+            (activity as MessageDetailsActivity).showLabelsManagerDialog()
             dismiss()
         }
         detailsActionsMoveToTextView.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.MOVE_TO)
+            (activity as MessageDetailsActivity).showFoldersManagerDialog()
             dismiss()
         }
         detailsActionsReportPhishingTextView.setOnClickListener {
-            detailsViewModel.handleAction(MessageDetailsAction.REPORT_PHISHING)
+            (activity as MessageDetailsActivity).showReportPhishingDialog()
             dismiss()
         }
         detailsActionsPrintTextView.setOnClickListener {

@@ -79,18 +79,18 @@
         <item name="android:background">?selectableItemBackground</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
-        <item name="android:padding">@dimen/space_l</item>
-        <item name="android:drawablePadding">@dimen/space_l</item>
+        <item name="android:padding">@dimen/padding_l</item>
+        <item name="android:drawablePadding">@dimen/padding_l</item>
         <item name="android:textAppearance">@style/Proton.Text.Default</item>
     </style>
 
     <style name="ActionSheetSectionTitleItem">
         <item name="android:clickable">false</item>
         <item name="android:focusable">false</item>
-        <item name="android:paddingStart">@dimen/space_l</item>
-        <item name="android:paddingTop">@dimen/space_xl</item>
-        <item name="android:paddingBottom">@dimen/space_m</item>
-        <item name="android:paddingEnd">@dimen/space_l</item>
+        <item name="android:paddingStart">@dimen/padding_l</item>
+        <item name="android:paddingTop">@dimen/padding_xl</item>
+        <item name="android:paddingBottom">@dimen/padding_m</item>
+        <item name="android:paddingEnd">@dimen/padding_l</item>
         <item name="android:textColor">@color/text_weak</item>
         <item name="android:textAppearance">@style/Proton.Text.DefaultSmall</item>
     </style>

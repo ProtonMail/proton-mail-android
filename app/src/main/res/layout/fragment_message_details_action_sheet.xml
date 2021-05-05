@@ -26,8 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="@dimen/space_m"
-        android:paddingBottom="@dimen/space_l">
+        android:paddingTop="@dimen/padding_m"
+        android:paddingBottom="@dimen/padding_l">
 
         <include
             android:id="@+id/includeLayoutActionSheetHeader"

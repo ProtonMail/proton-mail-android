@@ -25,14 +25,11 @@ package ch.protonmail.android.activities.messageDetails
 enum class MessageDetailsAction {
     DELETE_MESSAGE,
     FORWARD,
-    LABEL_AS,
     MARK_UNREAD,
-    MOVE_TO,
     MOVE_TO_ARCHIVE,
     MOVE_TO_SPAM,
     MOVE_TO_TRASH,
     REPLY,
     REPLY_ALL,
-    REPORT_PHISHING,
     STAR_UNSTAR,
 }

@@ -53,7 +53,12 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.jobs.PostArchiveJob
+import ch.protonmail.android.jobs.PostSpamJob
+import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
+import ch.protonmail.android.jobs.PostUnreadJob
+import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -690,21 +695,39 @@ internal class MessageDetailsViewModel @Inject constructor(
         when (action) {
             MessageDetailsAction.DELETE_MESSAGE -> deleteMessage(messageId)
             MessageDetailsAction.FORWARD -> TODO()
-            MessageDetailsAction.LABEL_AS -> TODO()
-            MessageDetailsAction.MARK_UNREAD -> TODO()
-            MessageDetailsAction.MOVE_TO -> TODO()
-            MessageDetailsAction.MOVE_TO_ARCHIVE -> TODO()
-            MessageDetailsAction.MOVE_TO_SPAM -> TODO()
+            MessageDetailsAction.MARK_UNREAD -> markUnread()
+            MessageDetailsAction.MOVE_TO_ARCHIVE -> moveToArchive()
+            MessageDetailsAction.MOVE_TO_SPAM -> moveToSpam()
             MessageDetailsAction.MOVE_TO_TRASH -> moveToTrash(messageId)
             MessageDetailsAction.REPLY -> TODO()
             MessageDetailsAction.REPLY_ALL -> TODO()
-            MessageDetailsAction.REPORT_PHISHING -> TODO()
-            MessageDetailsAction.STAR_UNSTAR -> TODO()
+            MessageDetailsAction.STAR_UNSTAR -> toggleStarUnstar(messageId)
         }
     }
 
-    private fun moveToTrash(messageId: String) {
-        val job = PostTrashJobV2(listOf(messageId), null)
-        jobManager.addJobInBackground(job)
+    private fun moveToArchive() = jobManager.addJobInBackground(PostArchiveJob(listOf(messageId)))
+
+    private fun moveToSpam() = jobManager.addJobInBackground(PostSpamJob(listOf(messageId)))
+
+    private fun moveToTrash(messageId: String) = jobManager.addJobInBackground(PostTrashJobV2(listOf(messageId), null))
+
+    private fun toggleStarUnstar(messageId: String) {
+        val messageList = listOf(messageId)
+        val message = message.value
+        if (message != null) {
+            val job = if (message.isStarred == true) {
+                PostUnstarJob(messageList)
+            } else {
+                PostStarJob(messageList)
+            }
+            jobManager.addJobInBackground(job)
+        } else {
+            Timber.i("Cannot find a message to star/unstar")
+        }
+    }
+
+    private fun markUnread() {
+        markRead(false)
+        jobManager.addJobInBackground(PostUnreadJob(listOf(messageId)))
     }
 }
