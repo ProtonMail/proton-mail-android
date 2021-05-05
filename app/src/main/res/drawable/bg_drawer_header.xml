@@ -23,7 +23,8 @@
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="8dp"/>
-            <solid android:color="@color/nav_view_divider" />
+            <!-- TODO color reference -->
+            <solid android:color="@color/abbey" />
         </shape>
     </item>
 </ripple>

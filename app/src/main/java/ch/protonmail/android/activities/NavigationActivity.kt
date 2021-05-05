@@ -64,6 +64,7 @@ import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.ValidatePinActivity
+import ch.protonmail.android.ui.view.ProtonSideDrawer
 import ch.protonmail.android.uiModel.DrawerItemUiModel.*
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary.Static.*
 import ch.protonmail.android.uiModel.DrawerUserModel
@@ -113,9 +114,10 @@ abstract class NavigationActivity :
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     private val drawerLayout: DrawerLayout by lazy { findViewById(R.id.drawer_layout) }
+    private val sideDrawer: ProtonSideDrawer by lazy { findViewById(R.id.sideDrawer) }
     private val navigationDrawerUsersRecyclerView by lazy { findViewById<RecyclerView>(R.id.left_drawer_users) }
     protected var overlayDialog: Dialog? = null
-    protected lateinit var drawerToggle: ActionBarDrawerToggle
+    private lateinit var drawerToggle: ActionBarDrawerToggle
     // endregion
 
     /**

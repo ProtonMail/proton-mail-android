@@ -21,7 +21,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/height_drawer_footer"
-    android:textAppearance="@style/App.TextAppearance.Caption"
+    android:textAppearance="@style/Text.Caption"
     android:textColor="@color/text_weak"
     android:gravity="center"
     tools:background="@color/background"
