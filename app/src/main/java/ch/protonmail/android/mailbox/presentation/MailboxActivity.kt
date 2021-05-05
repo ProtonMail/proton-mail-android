@@ -126,6 +126,7 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
+import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchLabelsJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
@@ -939,7 +940,7 @@ class MailboxActivity :
             MessageLocationType.ALL_MAIL -> R.string.allmail_option
             else -> R.string.app_name
         }
-        supportActionBar!!.setTitle(titleRes)
+        supportActionBar?.setTitle(titleRes)
     }
 
     private fun showNoConnSnackAndScheduleRetry(connectivity: Constants.ConnectionState) {

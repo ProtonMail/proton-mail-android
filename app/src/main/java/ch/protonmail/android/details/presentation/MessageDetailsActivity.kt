@@ -963,6 +963,9 @@ internal class MessageDetailsActivity :
                     Timber.tag("588").e(exc, "Exception on reply panel press")
                 }
             }
+            messageDetailsActionsView.setOnMoreActionClickListener{
+                MessageDetailsActionSheet().show(supportFragmentManager, null)
+            }
             progress.visibility = View.GONE
             invalidateOptionsMenu()
             viewModel.renderingPassed = true

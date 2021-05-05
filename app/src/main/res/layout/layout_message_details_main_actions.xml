@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/space_l"
+    android:layout_marginBottom="@dimen/space_l">
+
+    <TextView
+        android:id="@+id/detailsActionsReplyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="@dimen/space_l"
+        android:focusable="true"
+        android:gravity="center"
+        android:padding="@dimen/space_l"
+        android:text="@string/reply"
+        android:textAppearance="@style/Text.Default"
+        android:textColor="@color/cornflower_blue"
+        app:drawableTint="@color/cornflower_blue"
+        app:drawableTopCompat="@drawable/ic_reply_24dp"
+        app:layout_constraintEnd_toStartOf="@+id/detailsActionsReplyAllTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/detailsActionsReplyAllTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="@dimen/space_l"
+        android:focusable="true"
+        android:gravity="center"
+        android:padding="@dimen/space_l"
+        android:text="@string/reply_all"
+        android:textAppearance="@style/Text.Default"
+        android:textColor="@color/cornflower_blue"
+        app:drawableTint="@color/cornflower_blue"
+        app:drawableTopCompat="@drawable/ic_reply_all_24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/detailsActionsReplyTextView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/separatorHorizontalLeft"
+        style="@style/ViewSeparatorHorizontal"
+        android:layout_width="0dp"
+        android:layout_margin="@dimen/space_l"
+        app:layout_constraintBottom_toTopOf="@+id/detailsActionsForwardTextView"
+        app:layout_constraintEnd_toStartOf="@+id/separatorHorizontalRight"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detailsActionsReplyTextView" />
+
+    <View
+        android:id="@+id/separatorHorizontalRight"
+        style="@style/ViewSeparatorHorizontal"
+        android:layout_width="0dp"
+        android:layout_margin="@dimen/space_l"
+        app:layout_constraintBottom_toTopOf="@+id/detailsActionsMarkAsUnreadTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/separatorHorizontalLeft"
+        app:layout_constraintTop_toBottomOf="@+id/detailsActionsReplyAllTextView" />
+
+    <TextView
+        android:id="@+id/detailsActionsForwardTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="@dimen/space_l"
+        android:focusable="true"
+        android:gravity="center"
+        android:padding="@dimen/space_l"
+        android:text="@string/forward"
+        android:textAppearance="@style/Text.Default"
+        android:textColor="@color/cornflower_blue"
+        app:drawableTint="@color/cornflower_blue"
+        app:drawableTopCompat="@drawable/ic_forward_24dp"
+        app:layout_constraintEnd_toStartOf="@+id/detailsActionsMarkAsUnreadTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/detailsActionsReplyTextView" />
+
+    <TextView
+        android:id="@+id/detailsActionsMarkAsUnreadTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="@dimen/space_l"
+        android:focusable="true"
+        android:gravity="center"
+        android:padding="@dimen/space_l"
+        android:text="@string/mark_unread"
+        android:textAppearance="@style/Text.Default"
+        android:textColor="@color/cornflower_blue"
+        app:drawableTint="@color/cornflower_blue"
+        app:drawableTopCompat="@drawable/ic_envelope_dot"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/detailsActionsForwardTextView"
+        app:layout_constraintTop_toBottomOf="@id/detailsActionsReplyAllTextView" />
+
+    <View
+        android:id="@+id/separatorVerticalTop"
+        style="@style/ViewSeparatorVertical"
+        android:layout_margin="@dimen/space_l"
+        app:layout_constraintBottom_toTopOf="@+id/separatorVerticalBottom"
+        app:layout_constraintEnd_toStartOf="@+id/detailsActionsReplyAllTextView"
+        app:layout_constraintStart_toEndOf="@+id/detailsActionsReplyTextView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/separatorVerticalBottom"
+        style="@style/ViewSeparatorVertical"
+        android:layout_margin="@dimen/space_l"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/detailsActionsMarkAsUnreadTextView"
+        app:layout_constraintStart_toEndOf="@+id/detailsActionsForwardTextView"
+        app:layout_constraintTop_toBottomOf="@+id/separatorVerticalTop" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

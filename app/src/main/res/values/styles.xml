@@ -61,6 +61,40 @@
         <item name="chipCornerRadius">25dp</item>
     </style>
     <!-- endregion -->
+
+    <style name="ViewSeparatorHorizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/divider_size</item>
+        <item name="android:background">@color/separator_norm</item>
+    </style>
+
+    <style name="ViewSeparatorVertical">
+        <item name="android:layout_width">@dimen/divider_size</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:background">@color/separator_norm</item>
+    </style>
+
+    <!-- region Action Sheet -->
+    <style name="ActionSheetStandardItem">
+        <item name="android:background">?selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:padding">@dimen/space_l</item>
+        <item name="android:drawablePadding">@dimen/space_l</item>
+        <item name="android:textAppearance">@style/Proton.Text.Default</item>
+    </style>
+
+    <style name="ActionSheetSectionTitleItem">
+        <item name="android:clickable">false</item>
+        <item name="android:focusable">false</item>
+        <item name="android:paddingStart">@dimen/space_l</item>
+        <item name="android:paddingTop">@dimen/space_xl</item>
+        <item name="android:paddingBottom">@dimen/space_m</item>
+        <item name="android:paddingEnd">@dimen/space_l</item>
+        <item name="android:textColor">@color/text_weak</item>
+        <item name="android:textAppearance">@style/Proton.Text.DefaultSmall</item>
+    </style>
+    <!-- end region -->
     <!-- endregion -->
 
     <!-- region V3 -->
@@ -577,15 +611,18 @@
         <item name="android:background">@drawable/keyboard_button_arrow_selector</item>
         <item name="android:src">@drawable/ic_arrow_forward_white</item>
     </style>
+
     <style name="CustomKeyboardButton.Arrow.Left" parent="CustomKeyboardButton">
         <item name="android:background">@drawable/keyboard_button_arrow_selector</item>
         <item name="android:src">@drawable/ic_arrow_back_white</item>
     </style>
+
     <style name="SwitchSettings" parent="Theme.AppCompat.Light">
         <item name="colorControlActivated">@color/switch_settings_item</item>
         <item name="colorSwitchThumbNormal">#C3C3C3</item>
         <item name="android:colorForeground">@color/chateau_gray</item>
     </style>
+
     <style name="RepeatDay">
         <item name="android:textColor">@color/dark_purple_statusbar</item>
         <item name="android:textSize">@dimen/h4</item>
@@ -612,7 +649,7 @@
         <item name="android:background">@drawable/search_edittext_shape</item>
     </style>
 
-    <style name="CollapsedAppBar" >
+    <style name="CollapsedAppBar">
         <item name="android:textSize">@dimen/h1</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily" tools:ignore="NewApi">@fonts/Roboto-Thin.ttf</item>
@@ -632,6 +669,7 @@
         <item name="android:paddingLeft">8dp</item>
         <item name="android:background">@color/white</item>
     </style>
+
     <style name="Widget.Support.CoordinatorLayout" parent="android:Widget">
         <item name="statusBarBackground">@android:color/transparent</item>
     </style>

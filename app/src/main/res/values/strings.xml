@@ -107,12 +107,14 @@
     <string name="add_label">Add Label</string>
     <string name="add_star">Add star</string>
     <string name="remove_star">Remove star</string>
+    <string name="star_unstar">Star/unstar</string>
     <string name="mark_read">Mark read</string>
     <string name="mark_unread">Mark unread</string>
     <string name="move_to_archive">Move to Archive</string>
     <string name="move_to_trash">Move to Trash</string>
     <string name="move_to_spam">Move to Spam</string>
     <string name="move_to_inbox">Move to Inbox</string>
+    <string name="move_to">Move to…</string>
     <string name="are_you_sure_empty">Are you sure you want to delete all messages from this folder?</string>
     <string name="send">Send</string>
     <string name="selected">Selected</string>
@@ -263,6 +265,7 @@
     <string name="label_apply">Apply</string>
     <string name="label_delete">Delete</string>
     <string name="label_add">Add</string>
+    <string name="label_as">Label as…</string>
     <string name="no_browser_found">Please install a browser app in order to finish this action</string>
     <string name="no_application_found">No app found to handle this action</string>
     <string name="no_application_found_or_link_invalid">No app found to handle this action or invalid URL</string>
@@ -979,4 +982,6 @@
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
     <string name="error_loading_conversations">Error loading conversations, please try again</string>
+
+    <string name="personalise">Personalise</string>
 </resources>
