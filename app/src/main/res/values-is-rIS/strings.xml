@@ -21,20 +21,13 @@
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">DULRITAÐUR TÖLVUPÓSTUR</string>
     <string name="secure_email_swiss">Öruggur tölvupóstur\nhýstur í Sviss</string>
-    <string name="decrypt_mailbox_">Afkóða <b>pósthólf</b></string>
     <string name="decrypt">Afkóða</string>
-    <string name="user_sign_in_">Innskráning notanda</string>
-    <string name="two_factor_sign_in_">Tveggja-þátta auðkenning</string>
-    <string name="sign_in_">Skrá inn</string>
+    <string name="sign_in">Skrá inn</string>
     <string name="sign_out">Skrá út</string>
     <string name="sign_out_question">Ertu viss um að þú viljir skrá þig út?</string>
-    <string name="mailbox_password_">Lykilorð á pósthólfi</string>
-    <string name="two_factor_code_">Tveggja-þátta lykilkóði</string>
     <string name="processing_request">Beiðnin þín er þegar í vinnslu</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">Þú ert ekki innskráð(ur)!</string>
-    <string name="forgot_password_">Gleymt lykilorð?</string>
-    <string name="reset_mailbox_password_">ENDURSTILLA LYKILORÐ Á PÓSTHÓLFI</string>
     <string name="forgot_mailbox_password">Til að endurstilla lykilorðið á pósthólfinu, skaltu nota vefútgáfu ProtonMail á protonmail.com</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Mistókst að hlaða inn efni. Virkjaðu Chrome</string>
@@ -44,10 +37,7 @@
     <string name="no_more_messages">Engin fleiri skilaboð</string>
     <string name="mailbox_login_failure">Mistókst að skrá inn á pósthólf</string>
     <string name="login_failure">Mistókst að skrá inn</string>
-    <string name="invalid_server_proof">Ógild auðkenni vefþjóns</string>
-    <string name="invalid_credentials">Ógild auðkenni</string>
     <string name="incorrect_key_parameters">Röng viðföng lykils</string>
-    <string name="invalid_mailbox_password">Ógilt lykilorð á pósthólfi</string>
     <string name="not_signed_up">Þú ert ekki skráð(ur) fyrir notkun á ProtonMail Android Beta-þróunarútgáfu</string>
     <string name="no_network">Engin nettenging</string>
     <string name="no_network_queued">Engin nettenging, skilaboð í biðröð</string>
@@ -207,47 +197,18 @@
     <string name="enter">Setja inn</string>
     <string name="cancel">Hætta við</string>
     <string name="close">Loka</string>
-    <string name="change_password_">Breyta lykilorði</string>
-    <string name="change_mailbox_password_">Breyta lykilorði á pósthólfi</string>
     <string name="eo_password_title">Setja lykilorð</string>
     <string name="eo_password_subtitle">Settu lykilorð til að dulrita þessi skilaboð fyrir notendur sem ekki nota ProtonMail</string>
     <string name="eo_password_more_info">Fá ítarlegri upplýsingar</string>
-    <string name="old_login_password_">Núverandi innskráningarlykilorð</string>
-    <string name="new_login_password_">Nýtt lykilorð</string>
-    <string name="confirm_new_login_password_">Staðfesta nýtt lykilorð</string>
-    <string name="new_mailbox_password_">Nýtt lykilorð á pósthólfi</string>
-    <string name="confirm_new_mailbox_password_">Staðfesta nýtt lykilorð á pósthólfi</string>
     <string name="no_attachments">0 viðhengi</string>
-    <string name="new_passwords_not_valid">Ógilt inntak</string>
-    <string name="new_passwords_do_not_match">Nýju lykilorðin eru ekki eins</string>
-    <string name="new_login_password_saved">Vistaði nýtt lykilorð Innskráningar</string>
-    <string name="new_mailbox_password_saved">Vistaði nýtt lykilorð á pósthólfi</string>
     <string name="pin_lock_option_settings">Valkostir fyrir læsingu forrits</string>
     <string name="pin_lock_after">Læsa forritinu eftir</string>
     <string name="lock_the_app">Læsa forritinu</string>
     <string name="display_name_banned_chars">Ógilt birtingarnafn. \'&gt;\' og \'&lt;\' eru ekki leyfilegt</string>
     <string name="cont">Halda áfram</string>
     <string name="reply_prefix_on">Kveikt</string>
-    <string name="create_new_account_">Búa til nýjan notandaaðgang</string>
-    <string name="setup_new_account">Setja upp notandaaðganginn þinn</string>
-    <string name="create_account_">Búa til notandaaðgang</string>
-    <string name="create_passwords_">Setja lykilorð</string>
-    <string name="caps_username_">Notandanafn</string>
-    <string name="caps_login_password_">Lykilorð</string>
-    <string name="caps_confirm_password_">Staðfesta lykilorð</string>
-    <string name="caps_optional_">*VALFRJÁLST</string>
-    <string name="update_me_for_new_features_">Halda mér upplýstum um nýja eiginleika</string>
-    <string name="create_mailbox_password_">Útbúa lykilorð</string>
-    <string name="password_note_">&lt;bAthugaðu:&lt;/b&gt; Þetta er notað til að dulrita og afkóða skilaboðin þín.
-        Ekki týna þessu lykilorði - við getum ekki endurheimt það. Ef þú týnir lykilorðinu muntu ekki geta lesið póstinn þinn.</string>
-    <string name="username_note_">&lt;bAthugaðu:&lt;/b&gt; Notandanafnið er líka vistfang þitt hjá ProtonMail</string>
     <string name="terms_and_conditions">Með því að nota ProtonMail, samþykkir þú\n
         <a href="https://protonmail.com/terms-and-conditions">ákvæði okkar og skilyrði</a> auk <a href="https://protonmail.com/privacy-policy">stefnu okkar varðandi gagnaleynd</a></string>
-    <string name="encryption_setup_">Uppsetning dulritunar</string>
-    <string name="high_security_">Mikið öryggi (2048 bita)</string>
-    <string name="current_standard_">Núverandi staðall</string>
-    <string name="extreme_security_">Ofuröryggi (4096 bita)</string>
-    <string name="highest_security_">Hæsta stig dulritunar í boði.<b> Getur tekið nokkrar mínútur í uppsetningu.</b></string>
     <string name="labels_title_apply">Setja merkingar</string>
     <string name="labels_title_add">Bæta við merkingu</string>
     <string name="labels_title">Merkingar</string>
@@ -286,15 +247,6 @@
     <string name="display_images">Birta fjartengt efni</string>
     <string name="retry">Reyna aftur</string>
     <string name="saving_failed_no_conn">Villa við vistun, engin tenging</string>
-    <string name="username_is_available">Notandanafnið er tiltækt!</string>
-    <string name="username_is_not_available">Notandanafn er þegar í notkun!</string>
-    <string name="username_is_too_long">Hámarkslengd notandanafns er %d stafir!</string>
-    <string name="congratulation_">Til hamingju!</string>
-    <string name="new_account_ready_">Nýi öruggi tölvupóst\naðgangurinn þinn er tilbúinn.</string>
-    <string name="optional_email_note_">Valkvæða endurheimtupóstfangið gerir þér kleift að
-        endurstilla innskráningarlykilorðið ef þú gleymir því.</string>
-    <string name="optional_display_name_">Þegar þú sendir tölvupóst, þá er þetta nafnið
-        sem birtist í reitnum fyrir sendanda.</string>
     <string name="close_engagement">loka yfirferð</string>
     <string name="engagement_title_welcome">Velkomin í ProtonMail!</string>
     <string name="engagement_title_swipe">Flýtiaðgerðir við stroku</string>
@@ -312,7 +264,6 @@
     <string name="attachment_exists">Viðhengið er þegar hengt við</string>
     <string name="sending_email_success">Sannvottunarkóði sendur</string>
     <string name="sending_email_failed">Sending sannvottunarkóða mistókst</string>
-    <string name="password_not_valid_">Lykilorðið sem þú slóst inn er ógilt</string>
     <string name="send_code_wait">Bíddu í %d sekúndur áður en þú smellir aftur</string>
     <string name="eo_password_not_completed">Lykilorð skilaboða ekki klárað.</string>
     <string name="delinquency_subtitle">Þessi notandaaðgangur er óvirkur vegna ógreidds reiknings. Skráðu þig inn í protonmail.com til að greiða ófrágenginn reikning.</string>
@@ -369,113 +320,20 @@
     <string name="log_out">Skrá út %s?</string>
     <string name="logout_question">Ertu viss að þú viljir skrá þig út?</string>
     <string name="logout_question_next_account">Þér mun verða skipt yfir á %s.</string>
-    <string name="upselling_">Uppfæra/Styrkja</string>
-    <string name="upselling_title_">ProtonMail er frjálst, ókeypis og með opinn grunnkóða</string>
-    <string name="upselling_subtitle_">Við þurfum stuðning þinn til halda áfram að verja friðhelgi fólks og að bæta ProtonMail</string>
-    <string name="upselling_donate_title_">Styrkja</string>
-    <string name="upselling_upgrade_title_">Uppfæra í ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Styrkurinn frá þér mun hjálpa okkur að bæta við
-    nýjum eiginleikum og halda áfram þróun ProtonMail sem frjáls og opins hugbúnaðar.
-    Það er einungis með hjálp samfélagsins sem við getum haldið áfram að bjóða ProtonMail
-    til fólks um víða veröld.</string>
-    <string name="upgrade_donate">Uppfæra/Styrkja</string>
-    <string name="upselling_donate_pick_amount_">Veldu upphæð styrks eða settu inn einhverja upphæð</string>
-    <string name="amount_5_">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount_">Settu inn upphæð styrks</string>
-    <string name="donate_">Styrkja</string>
-    <string name="donate_paypal_bitcoin_">Styrkja með PayPal eða Bitcoin</string>
-    <string name="upgrade_line1_">Allt sem er innifalið í ókeypis áskriftarleiðinni</string>
-    <string name="upgrade_line2_">5 GB geymslurými</string>
-    <string name="upgrade_line3_">Notaðu þitt eigið lén</string>
-    <string name="upgrade_line4_">Allt að 5 samheiti</string>
-    <string name="upgrade_line5_">Forgangsstuðningur viðskiptavina</string>
     <string name="upgrade">Uppfæra</string>
-    <string name="payment_options_">Valkostir við greiðslu</string>
-    <string name="other_plans_">Fyrir áskriftarleiðir með meira geymslurými, ættirðu að
-    uppfæra í gegnum vefviðmót ProtonMail.</string>
-    <string name="upgrade_paid_user">Takk fyrir að gerast greiðandi notandi!</string>
-    <string name="select_account_type_">Veldu tegund notandaaðgangs</string>
-    <string name="select_account_type_subtitle_">ProtonMail er ókeypis þjónusta
-    í almannaþágu. Þú getur sýnt stuðning við gagnaleynd á netinu með því að velja greidda áskrift.</string>
-    <string name="plan_free_with_price_">FREE</string>
-    <string name="plan_plus_with_price_">PLUS %s /mánuði</string>
-    <string name="plan_visionary_with_price_">VISIONARY %s /mánuði</string>
-    <string name="plan_business_with_price_">BUSINESS %s /mánuði</string>
-    <string name="plan_free_title_">Einfaldur notandaaðgangur með takmarkaða eiginleika</string>
-    <string name="plan_plus_title_">Öruggur tölvupóstur með þróuðum eiginleikum</string>
-    <string name="plan_visionary_title_">Séraðgangar fyrir stuðningsaðila okkar</string>
-    <string name="plan_business_title_">Séraðgangar fyrir stuðningsaðila okkar</string>
-    <string name="plan_plus_line2_">Sendu allt að 1000 skilaboð á dag</string>
-    <string name="plan_plus_line3_">Merkingar og sérsniðnar síur</string>
-    <string name="plan_plus_line4_">Sendu dulrituð skilaboð til utanaðkomandi viðtakenda</string>
-    <string name="plan_plus_line7_">Forgangsstuðningur viðskiptavina</string>
-    <string name="plan_free_line1_">500 GB geymslurými</string>
-    <string name="plan_free_line2_">150 skilaboð á dag</string>
-    <string name="plan_free_line3_">20 merkingar</string>
-    <string name="plan_free_line4_">Sérsniðin lén: ekki stuðningur</string>
-    <string name="plan_free_line5_">1 póstfang</string>
-    <string name="plan_free_line6_">Stuðningur við viðskiptavini: takmarkaður</string>
-    <string name="plan_visio_line2_">Engin takmörk á sendingum</string>
-    <string name="plan_visio_line3_">Snemmbúinn aðgangur að nýjum eiginleikum</string>
-    <string name="plan_visio_line6_">Hjálpaðu við að velja nýja eiginleika í gegnum skoðanakannanir sem einungis
- eru í Visionary áskriftarleiðinni</string>
-    <string name="plan_business_line1_">það kemur fljótlega að því að félög, stofnanir og fyrirtæki nýti sér dulritaðan tölvupóst!</string>
-    <string name="currency_duration_">Gjaldmiðill &amp; tímalengd</string>
-    <string name="credit_card_name_">Nafn á greiðslukorti</string>
-    <string name="zip_code_">Póstnúmer</string>
-    <string name="card_number_">Númer greiðslukorts</string>
-    <string name="billing_information_">Upplýsingar um greiðanda</string>
     <string name="country">Land</string>
-    <string name="cvc_">CVC</string>
-    <string name="terms_and_conditions_billing_">Með því að smella á \'Senda inn\'
-    samþykkir þú\nskilmála og kvaðir <a href="https://protonmail.com/terms-and-conditions">ProtonMail</a></string>
-    <string name="submit_">Senda inn</string>
-    <string name="currency_">Gjaldmiðill</string>
-    <string name="plan_duration_">Greiðslutímabil</string>
-    <string name="duration_annual_line1_">Árs-áskrift <font color="#C3E129">Sparaðu 20%</font></string>
-    <string name="per_month_text_only_">á mánuði</string>
-    <string name="duration_annual_line3">Greiðist sem %s /ári</string>
-    <string name="duration_annual_line4">Greiðist sem %s /mánuði</string>
-    <string name="duration_monthly_line1_">Mánaðarleg áskriftarleið</string>
-    <string name="duration_monthly_line3">Vista 20%</string>
     <string name="set_cont">Stilla og halda áfram</string>
-    <string name="payment_error_">Villa við greiðslu</string>
     <string name="error">Villa</string>
-    <string name="try_another_card">Prófa annað kort</string>
-    <string name="try_another_paypal">Greiða með PayPal</string>
-    <string name="try_another_payment_method_">Prófa annað</string>
-    <string name="submit_paypal_">Greiða með PayPal</string>
-    <string name="picker_card_">Kredit-/debitkort</string>
-    <string name="picker_paypal_">PayPal</string>
-    <string name="paypal_disclaimer_">Þú þarft að skrá þig inn á PayPal-reikninginn þinn til að ljúka þessari millifærslu. Við munum opna nýjan vafraglugga fyrir PayPal.</string>
-    <string name="payment_picker_disclaimer_">Veldu gerð greiðslu</string>
-    <string name="payment_success_title_">Greiðsla tókst!</string>
-    <string name="payment_success_text_">Við erum að uppfæra aðganginn þinn, hinkraðu aðeins. Þakka þér fyrir stuðninginn!</string>
-    <string name="donation_success_title">Greiðsla styrks tókst!</string>
-    <string name="donation_success_text">Stuðningur þinn er undirstaða áframhaldandi þróunar ProtonMail. Þakka þér kærlega fyrir að styðja gagnaleynd á netinu!</string>
-    <string name="create_free_account_">Búa til ókeypis notandaaðgang</string>
     <string name="storage_gb">%d GB geymslurými</string>
     <string name="storage_mb">%d MB geymslurými</string>
     <string name="max_addresses">Allt að %d tölvupóstsamheiti</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d ívafnar myndir</string>
     <string name="select">Velja</string>
-    <string name="change_currency_">Skipta um gjaldmiðil</string>
-    <string name="switch_billing_monthly_">Skipta yfir í mánaðarlegar greiðslur</string>
-    <string name="switch_billing_yearly">Skipta yfir í árlegar greiðslur</string>
     <string name="warning">Aðvörun</string>
     <string name="empty_recovery_email_question">Aðvörun: Þú stilltir ekki póstfang fyrir endurheimtupóst, þannig að ekki er mögulegt að endurheimta notandaaðganginn þinn ef þú gleymir lykilorðinu. Á að halda áfram án endurheimtupóstfangs?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Rennur út %s</string>
-    <string name="payment_methods_">Greiðslumátar</string>
-    <string name="payment_approval_activity">Samþykkt á greiðslumáta</string>
-    <string name="payment_approval_success">Greiðslumáti hefur verið samþykktur</string>
-    <string name="payment_approval_unknown_error_description">Villa kom upp við sannvottun á greiðslumátanum þínum. Endilega reyndu aftur eða skiptu um greiðslukort.</string>
-    <string name="payment_approval_cancel_error_description">Hætt var við við sannvottun á greiðslumátanum þínum. Endilega reyndu aftur eða skiptu um greiðslukort.</string>
-    <string name="payment_approval_consumed_error_description">Greiðslumáti er þegar til staðar fyrir þessa færslu. Athugaðu stöðuna á áskriftinni þinni.</string>
     <string name="no_payment_methods">Þú ert ekki með neina vistaða greiðslumáta.</string>
     <string name="edit_payment_methods">Skráðu þig inn í gegnum protonmail.com til að breyta greiðsluupplýsingum.</string>
     <string name="message_not_loaded">Skilaboðum ekki hlaðið inn</string>
@@ -494,12 +352,7 @@
     <string name="delete_selected">Eyða völdu</string>
     <string name="pin_not_activated">PIN-númer ekki virkjað</string>
     <string name="available_options">Tiltækir valkostir</string>
-    <string name="current_recovery_email_">Núgildandi endurheimtu/tilkynningapóstfang</string>
     <string name="change_recovery_email">Breyta endurstillinga/tilkynningapóstfangi</string>
-    <string name="new_recovery_email_">Nýr endurstillinga/tilkynningapóstur</string>
-    <string name="confirm_new_recovery_email_">Staðfestu nýjan endurstillinga/tilkynningapóst</string>
-    <string name="recovery_emails_invalid_">Tölvupóstfang samsvarar ekki eða er ógilt</string>
-    <string name="authenticate_">Auðkenna</string>
     <string name="background_sync_subtitle">Ef þessi möguleiki er virkur, mun forritið samstillast við þjóninn í bakgrunni. Sé þessi eiginleiki óvirkur verða ýtitilkynningar líka óvirkar.</string>
     <string-array name="notification_options">
         <item>Hvorki hljóð né titringur</item>
@@ -749,7 +602,6 @@
     <string name="contact_add_addr_to_group">Bæta vistfangi við hópa</string>
     <string name="title_activity_address_chooser">Sýsla með vistföng</string>
     <string name="title_activity_account_manager">Sýsla með notandaaðganga</string>
-    <string name="title_activity_connect_account_">Tengja notandaaðgang</string>
     <string name="account_manager_add_account">Bæta við notandaaðgangi</string>
     <string name="account_manager_remove_all_accounts">Fjarlægi alla aðganga</string>
     <string name="account_manager_note">Þú getur verið skráð/ur inn í ótakmarkaðan fjölda greiddra ProtonMail-aðganga ásamt einum ókeypis notandaaðgangi.</string>
@@ -759,7 +611,6 @@
     <string name="manage_accounts_user_loggedout">%s (útskráður)</string>
     <string name="manage_accounts_user_primary">%s (aðal)</string>
     <string name="account_manager_remove">Fjarlægja</string>
-    <string name="connect_account_login_title_">Skrá inn á  ProtonMail-aðganginn þinn</string>
     <string name="default_error_message">Villa kom upp</string>
     <string name="no_contact_groups">Engir tengiliðahópar</string>
     <string name="search_contacts_inside_group">Leita að tengiliðum innan hóps</string>
@@ -950,7 +801,6 @@
     <string name="connect_account_limit_subtitle">Þú getur ekki bætt við öðrum ókeypis ProtonMail-aðgangi. Aðeins er hægt að bæta við einum keypis ProtonMail-aðgangi. Skrðu þig út úr öðrum ókeypis aðgöngum eða uppfærðu einn af ókeypis aðgöngunum þínum yfir í greidda áskrift.</string>
     <string name="switch_accounts_question">Skipta um notandaaðgang?</string>
     <string name="switch_to_account">Skipta yfir í %s</string>
-    <string name="login_failure_missing_keys">Notandaaðgangurinn sem þú ert að reyna að bæta við er ekki með útbúna dulritunarlykla. Bættu þessum aðgangi við sem fyrsta aðgangi í forritinu eða skráðu þig inn með vefviðmótinu til að útbúa dulritunarlykla og bættu honum síðan við sem aukaaðgangi í forritinu.</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">Semja póst</string>
