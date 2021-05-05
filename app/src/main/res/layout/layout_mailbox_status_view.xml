@@ -34,7 +34,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:text="Updated Just now"
-        style="@style/Text.Caption.Hint" />
+        style="@style/Proton.Text.Caption.Hint" />
 
     <!-- TODO: The component will likely have to be changed when the feature is implemented -->
     <com.google.android.material.chip.Chip

@@ -54,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:maxLines="1"
                     android:ellipsize="end"
-                    android:textAppearance="@style/Text.DefaultSmall.Medium"
+                    android:textAppearance="@style/Proton.Text.DefaultSmall.Medium"
                     tools:text="@tools:sample/lorem" />
 
             </androidx.appcompat.widget.Toolbar>
@@ -67,7 +67,7 @@
                 android:layout_marginBottom="@dimen/expanded_toolbar_title_margin_bottom"
                 android:paddingHorizontal="@dimen/expanded_toolbar_title_padding_horizontal"
                 android:textAlignment="center"
-                android:textAppearance="@style/Text.Headline"
+                android:textAppearance="@style/Proton.Text.Headline"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.3"
                 tools:text="@tools:sample/lorem" />

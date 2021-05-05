@@ -28,5 +28,5 @@
     android:paddingEnd="@dimen/toolbar_padding_end"
     app:contentInsetStartWithNavigation="0dp"
     app:navigationIcon="@drawable/ic_hamburger"
-    app:titleTextAppearance="@style/Text.Headline.Small"
+    app:titleTextAppearance="@style/Proton.Text.Headline.Small"
     android:background="@color/background_norm" />

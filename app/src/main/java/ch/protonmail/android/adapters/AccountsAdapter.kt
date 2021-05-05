@@ -37,7 +37,6 @@ import ch.protonmail.android.activities.multiuser.EXTRA_USERNAME
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.uiModel.DrawerUserModel
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.extensions.inflate
 import ch.protonmail.android.utils.extensions.setAccountLetters
 import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
 import ch.protonmail.android.utils.extensions.setStyle
@@ -48,6 +47,7 @@ import kotlinx.android.synthetic.main.drawer_user_list_item_footer.view.*
 import kotlinx.android.synthetic.main.user_list_item.view.*
 import kotlinx.android.synthetic.main.user_list_item_footer.view.*
 import me.proton.core.presentation.ui.adapter.ProtonAdapter
+import me.proton.core.presentation.utils.inflate
 
 // region constants
 private const val VIEW_TYPE_NAV_USER = 0 // for user list item in nav drawer list
