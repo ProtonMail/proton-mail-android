@@ -32,7 +32,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
@@ -40,7 +39,6 @@ import android.webkit.WebView
 import android.webkit.WebView.HitTestResult
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.ToggleButton
 import androidx.activity.viewModels
 import androidx.core.content.getSystemService
 import androidx.core.os.bundleOf
@@ -102,7 +100,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
-import kotlinx.android.synthetic.main.layout_star_action.*
+import kotlinx.android.synthetic.main.layout_message_details_activity_toolbar.*
 import me.proton.core.util.android.workmanager.activity.getWorkManager
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
@@ -231,6 +229,8 @@ internal class MessageDetailsActivity :
         }
 
         appBarLayout.addOnOffsetChangedListener(onOffsetChangedListener)
+
+        starToggleButton.setOnCheckedChangeListener(OnStarToggleListener(mJobManager, messageId))
     }
 
     private fun continueSetup() {
@@ -340,23 +340,6 @@ internal class MessageDetailsActivity :
 
     private fun stopEmbeddedImagesTask() {
         messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_message_details, menu)
-        return true
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        val message = viewModel.decryptedMessageData.value
-        if (message != null) {
-            (menu.findItem(R.id.star).actionView.findViewById(R.id.starToggleButton) as ToggleButton)
-                .apply {
-                    isChecked = message.isStarred ?: false
-                    setOnCheckedChangeListener(OnStarToggleListener(mJobManager, messageId))
-                }
-        }
-        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -676,6 +659,7 @@ internal class MessageDetailsActivity :
     private inner class MessageObserver : Observer<Message?> {
 
         override fun onChanged(message: Message?) {
+            Timber.v("Message changed: ${message?.messageId}")
             if (message != null) {
                 onMessageFound(message)
                 viewModel.message.removeObserver(this)
@@ -840,6 +824,7 @@ internal class MessageDetailsActivity :
             progress.visibility = View.GONE
             invalidateOptionsMenu()
             viewModel.renderingPassed = true
+            starToggleButton.isChecked = message.isStarred ?: false
         }
     }
 
