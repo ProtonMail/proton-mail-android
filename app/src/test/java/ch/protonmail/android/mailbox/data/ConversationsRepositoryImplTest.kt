@@ -500,7 +500,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             )
             val errorMessage =
                 "Failed to read from Source of Truth. key: ConversationStoreKey(conversationId=conversationId2347393, userId=Id(s=userId82sd8238))"
-            assertEquals(DataResult.Error.Local(errorMessage), result[0])
+            val actualLocalError = result[0] as DataResult.Error.Local
+            assertEquals(errorMessage, actualLocalError.message)
             assertEquals(DataResult.Processing(ResponseSource.Remote), result[1])
             coVerify { messageDao.saveMessages(expectedMessage) }
             coVerify { conversationDao.insertOrUpdate(expectedConversationDbModel) }
