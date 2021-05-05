@@ -28,6 +28,7 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/ProtonMailActionMode</item>
         <item name="actionModeCloseDrawable">@drawable/ic_arrow_back</item>
+        <item name="bottomSheetDialogTheme">@style/ProtonMail.BottomSheetDialogTheme</item>
     </style>
 
     <style name="ProtonMailActionMode" parent="Widget.AppCompat.ActionMode">
@@ -93,6 +94,24 @@
         <item name="android:paddingEnd">@dimen/padding_l</item>
         <item name="android:textColor">@color/text_weak</item>
         <item name="android:textAppearance">@style/Proton.Text.DefaultSmall</item>
+    </style>
+
+    <style
+        name="ProtonMail.BottomSheetDialogTheme"
+        parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.App.BottomSheet.Modal</item>
+    </style>
+
+    <style name="Widget.App.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.BottomSheet</item>
+    </style>
+
+    <style name="ShapeAppearance.App.BottomSheet" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">@dimen/padding_l</item>
+        <item name="cornerSizeTopRight">@dimen/padding_l</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
     </style>
     <!-- end region -->
     <!-- endregion -->
