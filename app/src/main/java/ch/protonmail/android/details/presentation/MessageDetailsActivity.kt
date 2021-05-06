@@ -55,13 +55,9 @@ import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
-import ch.protonmail.android.activities.messageDetails.EXTRA_VIEW_HEADERS
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.LabelsObserver
 import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
-import ch.protonmail.android.activities.messageDetails.MessageViewHeadersActivity
-import ch.protonmail.android.activities.mailbox.MailboxActivity
-import ch.protonmail.android.activities.messageDetails.actionsheet.MessageActionSheet
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
@@ -80,6 +76,7 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.ReportPhishingJob
+import ch.protonmail.android.ui.dialog.MessageActionSheet
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event
