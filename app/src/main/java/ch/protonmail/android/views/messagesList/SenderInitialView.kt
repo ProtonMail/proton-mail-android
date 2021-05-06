@@ -21,11 +21,12 @@ package ch.protonmail.android.views.messagesList
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import ch.protonmail.android.R
-import kotlinx.android.synthetic.main.layout_sender_initial.view.*
-import me.proton.core.presentation.utils.inflate
+import ch.protonmail.android.databinding.LayoutSenderInitialBinding
 import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.Locale
 
@@ -38,8 +39,18 @@ class SenderInitialView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
+    private val senderInitialTextView: TextView
+    private val checkImageView: ImageView
+
     init {
-        inflate(R.layout.layout_sender_initial, true)
+        val binding = LayoutSenderInitialBinding.inflate(
+            LayoutInflater.from(context),
+            this,
+            true
+        )
+
+        senderInitialTextView = binding.senderInitialTextView
+        checkImageView = binding.checkImageView
     }
 
     fun bind(senderText: String, isMultiSelectionMode: Boolean = false) {
