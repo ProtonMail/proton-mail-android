@@ -20,7 +20,6 @@ package ch.protonmail.android.adapters
 
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
@@ -31,7 +30,6 @@ import ch.protonmail.android.uiModel.DrawerItemUiModel
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Footer
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
 import ch.protonmail.android.uiModel.DrawerItemUiModel.SectionName
-import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
@@ -134,17 +132,9 @@ internal class DrawerAdapter : BaseAdapter<
         override fun onBind(item: Primary.Label) = with(itemView) {
             super.onBind(item)
             drawer_item_label_text_view.text = item.uiModel.name
-            drawer_item_icon_view.setColorFilterFor(item.uiModel)
+            drawer_item_icon_view.setColorFilter(item.uiModel.color)
             drawer_item_icon_view.setImageResource(item.uiModel.image)
             drawer_item_label_text_view.tag = item.uiModel.name
-        }
-
-        private fun ImageView.setColorFilterFor(label: LabelUiModel) {
-            if (label.type == LabelUiModel.Type.LABELS) {
-                setColorFilter(label.color)
-            } else {
-                clearColorFilter()
-            }
         }
     }
 
