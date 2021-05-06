@@ -311,14 +311,20 @@ abstract class NavigationActivity :
 
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
 
+            /**
+             * TODO [setDarkStatusBar]
+             *  disabled for now, as we're not drawing behind the status bar
+             */
             override fun onDrawerOpened(drawerView: View) {
                 super.onDrawerOpened(drawerView)
-                setDarkStatusBar()
             }
 
+            /**
+             * TODO [setLightStatusBar]
+             *  disabled for now, as we're not drawing behind the status bar
+             */
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
-                setLightStatusBar()
                 onUserClicked(false)
                 onDrawerClose()
                 onDrawerClose = {}
