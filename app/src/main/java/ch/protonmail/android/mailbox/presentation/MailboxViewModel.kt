@@ -30,7 +30,18 @@ import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.services.MessagesService
 import ch.protonmail.android.api.utils.ApplyRemoveLabels
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.Constants.MessageLocationType.*
+import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
+import ch.protonmail.android.core.Constants.MessageLocationType.ARCHIVE
+import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
+import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
+import ch.protonmail.android.core.Constants.MessageLocationType.INVALID
+import ch.protonmail.android.core.Constants.MessageLocationType.LABEL
+import ch.protonmail.android.core.Constants.MessageLocationType.LABEL_FOLDER
+import ch.protonmail.android.core.Constants.MessageLocationType.LABEL_OFFLINE
+import ch.protonmail.android.core.Constants.MessageLocationType.SENT
+import ch.protonmail.android.core.Constants.MessageLocationType.SPAM
+import ch.protonmail.android.core.Constants.MessageLocationType.STARRED
+import ch.protonmail.android.core.Constants.MessageLocationType.TRASH
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.LabelRepository
@@ -235,7 +246,10 @@ class MailboxViewModel @Inject constructor(
         )
 
         return getMessagesByLocation(location, labelId).switchMap {
-            liveData { emit(MailboxState(messagesToMailboxItems(it))) }
+            liveData {
+                val contacts = contactsRepository.findAllContactEmails().first()
+                emit(MailboxState(messagesToMailboxItems(it, contacts)))
+            }
         }
     }
 
@@ -260,6 +274,11 @@ class MailboxViewModel @Inject constructor(
             uuid,
             refreshMessages
         )
+    }
+
+    fun messagesToMailboxItemsBlocking(messages: List<Message>): List<MailboxUiItem> {
+        val contacts = contactsRepository.findAllContactEmailsBlocking()
+        return messagesToMailboxItems(messages, contacts)
     }
 
     private fun fetchMessages(
@@ -479,7 +498,6 @@ class MailboxViewModel @Inject constructor(
             LABEL,
             LABEL_OFFLINE,
             LABEL_FOLDER -> messageDetailsRepository.getMessagesByLabelIdAsync(labelId!!)
-            SEARCH -> messageDetailsRepository.getAllMessages()
             DRAFT,
             SENT,
             ARCHIVE,
