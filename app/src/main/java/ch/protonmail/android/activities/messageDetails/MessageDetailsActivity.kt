@@ -98,6 +98,7 @@ import ch.protonmail.android.utils.ui.MODE_ACCORDION
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.PMWebViewClient
+import ch.protonmail.android.views.messageDetails.BottomActionsView
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.worker.PostLabelWorker
 import com.google.android.material.appbar.AppBarLayout
@@ -821,21 +822,30 @@ internal class MessageDetailsActivity :
             }
             viewModel.triggerVerificationKeyLoading()
 
-            messageDetailsActionsView.bind(message)
-            messageDetailsActionsView.setOnTrashActionClickListener {
+            val actionsUiModel = BottomActionsView.UiModel(
+                if (message.toList.size + message.ccList.size > 1) R.drawable.ic_reply_all else R.drawable.ic_reply,
+                R.drawable.ic_envelope_dot,
+                R.drawable.ic_trash
+            )
+            messageDetailsActionsView.bind(actionsUiModel)
+            messageDetailsActionsView.setOnThirdActionClickListener {
                 val job = PostTrashJobV2(listOf(message.messageId), null)
                 mJobManager.addJobInBackground(job)
                 onBackPressed()
             }
-            messageDetailsActionsView.setOnMarkUnreadActionClickListener {
+            messageDetailsActionsView.setOnSecondActionClickListener {
                 markAsRead = false
                 viewModel.markRead(false)
                 val job = PostUnreadJob(listOf(messageId))
                 mJobManager.addJobInBackground(job)
                 onBackPressed()
             }
-            messageDetailsActionsView.setOnReplyActionClickListener(message) {
-                messageAction: Constants.MessageActionType ->
+            messageDetailsActionsView.setOnFirstActionClickListener {
+                val messageAction = if (message.toList.size + message.ccList.size > 1) {
+                    Constants.MessageActionType.REPLY_ALL
+                } else {
+                    Constants.MessageActionType.REPLY
+                }
                 try {
                     val newMessageTitle = MessageUtils.buildNewMessageTitle(
                         this@MessageDetailsActivity,

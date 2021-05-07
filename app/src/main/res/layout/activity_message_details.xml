@@ -125,7 +125,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
-        <ch.protonmail.android.views.messageDetails.MessageDetailsActionsView
+        <ch.protonmail.android.views.messageDetails.BottomActionsView
             android:id="@+id/messageDetailsActionsView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

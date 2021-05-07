@@ -64,6 +64,8 @@ fun org.gradle.api.Project.android(
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
 
+        buildFeatures.viewBinding = true
+
         javaCompileOptions {
             annotationProcessorOptions {
 

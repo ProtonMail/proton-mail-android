@@ -29,27 +29,21 @@
     android:orientation="vertical"
     android:background="@drawable/ripple_background_norm">
 
-    <TextView
-        android:id="@+id/senderInitialTextView"
-        android:layout_width="@dimen/sender_initial_view_size"
-        android:layout_height="@dimen/sender_initial_view_size"
-        android:layout_marginStart="@dimen/sender_initial_view_margin_start"
+    <ch.protonmail.android.views.messagesList.SenderInitialView
+        android:id="@+id/senderInitialView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/sender_initial_view_margin_end"
-        android:layout_marginTop="@dimen/sender_initial_view_margin_top"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/senderInitialBarrier"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textAlignment="center"
-        android:gravity="center"
-        android:background="@drawable/background_sender_initial"
-        tools:text="S" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/senderInitialBarrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintLeft_toRightOf="@id/senderInitialTextView"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 

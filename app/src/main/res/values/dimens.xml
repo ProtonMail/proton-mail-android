@@ -39,10 +39,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <dimen name="mailbox_list_item_icon_size">16dp</dimen>
     <dimen name="mailbox_list_item_expiration_icon_padding">2dp</dimen>
 
-    <dimen name="sender_initial_view_size">28dp</dimen>
-    <dimen name="sender_initial_view_margin_start">2dp</dimen>
+    <dimen name="sender_initial_view_size">32dp</dimen>
     <dimen name="sender_initial_view_margin_end">16dp</dimen>
-    <dimen name="sender_initial_view_margin_top">2dp</dimen>
+    <dimen name="sender_initial_view_check_icon_padding">4dp</dimen>
 
     <dimen name="message_number_view_padding_horizontal">8dp</dimen>
     <dimen name="message_number_view_padding_vertical">2dp</dimen>

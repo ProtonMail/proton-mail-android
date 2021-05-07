@@ -227,8 +227,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
 
     fun bind(message: Message, labelsList: List<Label>) {
         val senderText = getSenderText(message)
-        senderInitialTextView.text =
-            if (senderText.isEmpty()) "D" else senderText.capitalize().subSequence(0, 1)
+        senderInitialView.bind(senderText)
         senderNameTextView.text = senderText
         senderEmailTextView.text = context.getString(R.string.recipient_email_format, message.senderEmail)
         senderEmailTextView.setOnClickListener(getOnSenderClickListener(message.senderEmail))

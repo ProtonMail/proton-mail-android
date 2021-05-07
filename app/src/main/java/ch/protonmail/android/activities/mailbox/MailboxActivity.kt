@@ -39,7 +39,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import android.widget.AbsListView.MultiChoiceModeListener
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -124,7 +123,10 @@ import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.TotalLabelCounter
+import ch.protonmail.android.data.local.model.TotalLocationCounter
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.FetchLabelsEvent
@@ -161,7 +163,6 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.NetworkSnackBarUtil
-import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
@@ -169,6 +170,7 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedIn
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnackbar
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
+import ch.protonmail.android.views.messageDetails.BottomActionsView
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.worker.PostLabelWorker
 import ch.protonmail.libs.core.utils.contains
@@ -211,7 +213,7 @@ private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
 @AndroidEntryPoint
 class MailboxActivity :
     NavigationActivity(),
-    MultiChoiceModeListener,
+    ActionMode.Callback,
     OnRefreshListener,
     ILabelCreationListener,
     ILabelsChangeListener,
@@ -319,13 +321,17 @@ class MailboxActivity :
         var actionModeAux: ActionMode? = null
         messagesAdapter = MessagesRecyclerViewAdapter(this) { selectionModeEvent ->
             when (selectionModeEvent) {
-                SelectionModeEnum.STARTED -> actionModeAux = startActionMode(this@MailboxActivity)
+                SelectionModeEnum.STARTED -> {
+                    actionModeAux = startActionMode(this@MailboxActivity)
+                    mailboxActionsView.visibility = View.VISIBLE
+                }
                 SelectionModeEnum.ENDED -> {
                     val actionModeEnd = actionModeAux
                     if (actionModeEnd != null) {
                         actionModeEnd.finish()
                         actionModeAux = null
                     }
+                    mailboxActionsView.visibility = View.GONE
                 }
             }
         }
@@ -402,6 +408,17 @@ class MailboxActivity :
             }
         }
 
+        messagesAdapter.setOnItemSelectionChangedListener {
+            val checkedItems = messagesAdapter.checkedMessages.size
+            actionMode?.title = "$checkedItems ${getString(R.string.selected)}"
+
+            mailboxActionsView.setAction(
+                BottomActionsView.ActionPosition.ACTION_SECOND,
+                currentLocation.value != MessageLocationType.DRAFT,
+                if (MessageUtils.areAllUnRead(selectedMessages)) R.drawable.ic_envelope_open_text else R.drawable.ic_envelope_dot
+            )
+        }
+
         checkRegistration()
         closeDrawer()
 
@@ -428,6 +445,8 @@ class MailboxActivity :
                 onSwitchedAccounts()
             }
         }
+
+        setUpMailboxActionsView()
     }
 
     override fun secureContent(): Boolean = true
@@ -1219,101 +1238,13 @@ class MailboxActivity :
         }
     }
 
-    /* AbsListView.MultiChoiceModeListener */
-    override fun onItemCheckedStateChanged(mode: ActionMode, position: Int, id: Long, checked: Boolean) {
-        val checkedItems = messagesAdapter.checkedMessages.size
-        // on many devices there is a strange UnknownFormatConversionException:
-        // "Conversion: D" if using string formatting, which is probably a memory corruption issue
-        mode.title = "$checkedItems ${getString(R.string.selected)}"
-        if (checkedItems == 1) {
-            mode.invalidate()
-        }
-    }
-
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         actionMode = mode
-        UiUtil.setStatusBarColor(
-            this,
-            UiUtil.scaleColor(ContextCompat.getColor(this, R.color.dark_purple_statusbar), 1f, true)
-        )
-        mode.menuInflater.inflate(R.menu.message_selection_menu, menu)
-        menu.findItem(R.id.move_to_trash).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        menu.findItem(R.id.delete_message).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
-        menu.findItem(R.id.add_star).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
-        menu.findItem(R.id.remove_star).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
-        menu.findItem(R.id.mark_unread).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-        menu.findItem(R.id.mark_read).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-        menu.findItem(R.id.move_to_archive).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-        menu.findItem(R.id.add_label).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        menu.findItem(R.id.add_folder).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        val moveToInbox = menu.findItem(R.id.move_to_inbox)
-        val mailboxLocation = mailboxLocationMain.value
-
-        val listOfLocationTypes =
-            listOf(
-                MessageLocationType.TRASH,
-                MessageLocationType.SPAM,
-                MessageLocationType.ARCHIVE
-            )
-        if (mailboxLocation in listOfLocationTypes) {
-            moveToInbox.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-        } else {
-            menu.removeItem(moveToInbox.itemId)
-        }
-        menu.findItem(R.id.move_to_spam).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
         mailboxSwipeRefreshLayout.isEnabled = false
         return true
     }
 
     override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
-        val messages = selectedMessages
-        val mailboxLocation = mailboxLocationMain.value
-        if (messages.size == 1) {
-            val message = messages[0]
-            menu.findItem(R.id.move_to_trash).isVisible =
-                mailboxLocation != MessageLocationType.TRASH && mailboxLocation != MessageLocationType.DRAFT
-            menu.findItem(R.id.delete_message).isVisible =
-                mailboxLocation == MessageLocationType.TRASH || mailboxLocation == MessageLocationType.DRAFT
-            menu.findItem(R.id.add_star).isVisible = !message.isStarred
-            menu.findItem(R.id.remove_star).isVisible = message.isStarred
-            menu.findItem(R.id.mark_read).isVisible = !message.isRead && mailboxLocation != MessageLocationType.DRAFT
-            menu.findItem(R.id.mark_unread).isVisible = message.isRead && mailboxLocation != MessageLocationType.DRAFT
-            menu.findItem(R.id.move_to_archive).isVisible = mailboxLocation != MessageLocationType.ARCHIVE
-            val moveToInbox = menu.findItem(R.id.move_to_inbox)
-            if (moveToInbox != null) {
-                moveToInbox.isVisible = mailboxLocation != MessageLocationType.INBOX
-            }
-            menu.findItem(R.id.move_to_spam).isVisible = mailboxLocation != MessageLocationType.SPAM
-            menu.findItem(R.id.add_label).isVisible = true
-            menu.findItem(R.id.add_folder).isVisible = true
-        } else {
-            menu.findItem(R.id.move_to_trash).isVisible =
-                mailboxLocation != MessageLocationType.TRASH && mailboxLocation != MessageLocationType.DRAFT
-            menu.findItem(R.id.delete_message).isVisible =
-                mailboxLocation == MessageLocationType.TRASH || mailboxLocation == MessageLocationType.DRAFT
-            if (containsUnstar(messages)) menu.findItem(R.id.add_star).isVisible = true
-            if (containsStar(messages)) menu.findItem(R.id.remove_star).isVisible = true
-            val markReadItem = menu.findItem(R.id.mark_read)
-            if (MessageUtils.areAllRead(messages)) {
-                markReadItem.isVisible = false
-            } else {
-                markReadItem.isVisible = mailboxLocation != MessageLocationType.DRAFT
-            }
-            val markUnreadItem = menu.findItem(R.id.mark_unread)
-            if (MessageUtils.areAllUnRead(messages)) {
-                markUnreadItem.isVisible = false
-            } else {
-                markUnreadItem.isVisible = mailboxLocation != MessageLocationType.DRAFT
-            }
-            menu.findItem(R.id.move_to_archive).isVisible = mailboxLocation != MessageLocationType.ARCHIVE
-            val moveToInbox = menu.findItem(R.id.move_to_inbox)
-            if (moveToInbox != null) {
-                moveToInbox.isVisible = mailboxLocation != MessageLocationType.INBOX
-            }
-            menu.findItem(R.id.move_to_spam).isVisible = mailboxLocation != MessageLocationType.SPAM
-            menu.findItem(R.id.add_label).isVisible = true
-            menu.findItem(R.id.add_folder).isVisible = true
-        }
         return true
     }
 
@@ -1347,7 +1278,9 @@ class MailboxActivity :
     }
 
     private var actionModeRunnable: ActionModeInteractionRunnable? = null
+
     override fun onActionItemClicked(mode: ActionMode, menuItem: MenuItem): Boolean {
+        // TODO: These actions need to be extracted to the view model and then removed from here
         val messageIds = selectedMessages.map { message -> message.messageId }
         val menuItemId = menuItem.itemId
         var job: Job? = null
@@ -1426,11 +1359,75 @@ class MailboxActivity :
         return true
     }
 
+    private fun setUpMailboxActionsView() {
+        val actionsUiModel = BottomActionsView.UiModel(
+            if (currentLocation.value in arrayOf(
+                    MessageLocationType.TRASH,
+                    MessageLocationType.DRAFT
+                )
+            ) R.drawable.ic_trash_empty else R.drawable.ic_trash,
+            R.drawable.ic_envelope_dot,
+            R.drawable.ic_folder_move,
+            R.drawable.ic_label
+        )
+        mailboxActionsView.bind(actionsUiModel)
+        mailboxActionsView.setOnFirstActionClickListener {
+            val messageIds = selectedMessages.map { message -> message.messageId }
+            if (currentLocation.value in arrayOf(MessageLocationType.TRASH, MessageLocationType.DRAFT)) {
+                showDeleteConfirmationDialog(
+                    this,
+                    getString(R.string.delete_messages),
+                    getString(R.string.confirm_destructive_action)
+                ) {
+                    mailboxViewModel.deleteMessages(
+                        messageIds,
+                        currentLocation.value?.messageLocationTypeValue.toString()
+                    )
+                }
+            } else {
+                undoSnack = showUndoSnackbar(
+                    this@MailboxActivity,
+                    findViewById(R.id.drawer_layout),
+                    resources.getQuantityString(R.plurals.action_move_to_trash, messageIds.size),
+                    { },
+                    false
+                )
+                undoSnack!!.show()
+                // show progress bar for visual representation of work in background,
+                // if all the messages inside the folder are impacted by the action
+                if (messagesAdapter.itemCount == messageIds.size) {
+                    setRefreshing(true)
+                }
+                mJobManager.addJobInBackground(PostTrashJobV2(messageIds, mailboxLabelId))
+            }
+            actionMode?.finish()
+        }
+        mailboxActionsView.setOnSecondActionClickListener {
+            val messageIds = selectedMessages.map { message -> message.messageId }
+            if (MessageUtils.areAllUnRead(selectedMessages)) {
+                mJobManager.addJobInBackground(PostReadJob(messageIds))
+            } else {
+                mJobManager.addJobInBackground(PostUnreadJob(messageIds))
+            }
+            actionMode?.finish()
+        }
+        mailboxActionsView.setOnThirdActionClickListener {
+            val messageIds = selectedMessages.map { message -> message.messageId }
+            actionModeRunnable = ActionModeInteractionRunnable(actionMode)
+            showFoldersManagerDialog(messageIds)
+        }
+        mailboxActionsView.setOnFourthActionClickListener {
+            val messageIds = selectedMessages.map { message -> message.messageId }
+            actionModeRunnable = ActionModeInteractionRunnable(actionMode)
+            ShowLabelsManagerDialogTask(supportFragmentManager, messageDetailsRepository, messageIds).execute()
+        }
+    }
+
     override fun onDestroyActionMode(mode: ActionMode) {
         actionMode = null
+        mailboxActionsView.visibility = View.GONE
         mailboxSwipeRefreshLayout.isEnabled = true
         messagesAdapter.endSelectionMode()
-        UiUtil.setStatusBarColor(this, ContextCompat.getColor(this, R.color.dark_purple_statusbar))
     }
 
     private fun showFoldersManagerDialog(messageIds: List<String>) {
@@ -1541,6 +1538,7 @@ class MailboxActivity :
         closeDrawer()
         mailboxRecyclerView.clearFocus()
         mailboxRecyclerView.scrollToPosition(0)
+        setUpMailboxActionsView()
         if (newMessageLocationType == MessageLocationType.STARRED) {
             startFetchFirstPage(applicationContext, userManager.requireCurrentUserId(), newMessageLocationType)
         } else {
