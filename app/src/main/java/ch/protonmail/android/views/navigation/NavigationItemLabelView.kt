@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,13 +20,13 @@ package ch.protonmail.android.views.navigation
 
 import android.content.Context
 import android.graphics.PorterDuff
+import android.util.AttributeSet
+import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import android.util.AttributeSet
-import android.view.View
 import ch.protonmail.android.R
 import kotlinx.android.synthetic.main.nav_item_label.view.*
 
@@ -51,8 +51,8 @@ class NavigationItemLabelView @JvmOverloads constructor(
 		label_icon.setImageDrawable(wrapDrawable)
 
 		if(notificationCount>0) {
-			notifications.visibility=View.VISIBLE
-			notifications.text=notificationCount.toString()
+			drawer_item_notifications_text_view.visibility=View.VISIBLE
+			drawer_item_notifications_text_view.text=notificationCount.toString()
 		}
 	}
 }

@@ -43,28 +43,27 @@ internal class LabelUiModelMapper(private val isLabelEditable: Boolean) : UiMode
             LabelUiModel.Type.FOLDERS else LabelUiModel.Type.LABELS
 
         val image = when (type) {
-            LabelUiModel.Type.LABELS ->
-                if (isLabelEditable) R.drawable.label_edit_active else R.drawable.ic_menu_label
-            LabelUiModel.Type.FOLDERS ->
-                if (isLabelEditable) R.drawable.folder_edit_active else R.drawable.ic_menu_folder
+            LabelUiModel.Type.LABELS -> R.drawable.ic_drawer_label_ellipse
+            LabelUiModel.Type.FOLDERS -> R.drawable.ic_folder
         }
-
-        val normalizedColor =
-            try {
-                Color.parseColor(UiUtil.normalizeColor(color))
-            } catch (exception: Exception) {
-                Timber.w(exception, "Cannot parse color: $color")
-                Color.WHITE
-            }
 
         return LabelUiModel(
             labelId = id,
             name = name,
             image = image,
-            color = normalizedColor,
+            color = normalizeColor(color),
             isChecked = false,
             display = display,
             type = type
         )
+    }
+
+    private fun normalizeColor(color: String): Int {
+        return try {
+            Color.parseColor(UiUtil.normalizeColor(color))
+        } catch (exception: Exception) {
+            Timber.w(exception, "Cannot parse color: $color")
+            Color.WHITE
+        }
     }
 }

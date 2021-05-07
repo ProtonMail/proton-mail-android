@@ -129,7 +129,6 @@ import ch.protonmail.android.events.FetchUpdatesEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.MessageCountsEvent
-import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.fcm.MultiUserFcmTokenManager
@@ -1087,7 +1086,6 @@ class MailboxActivity :
     fun onMessageCountsEvent(event: MessageCountsEvent) {
         //region old total count
         if (event.status != Status.SUCCESS) {
-            refreshDrawer()
             return
         }
         val response = event.unreadMessagesResponse ?: return
@@ -1095,7 +1093,6 @@ class MailboxActivity :
         counterDao = CounterDatabase
             .getInstance(applicationContext, userManager.requireCurrentUserId()).getDao()
         OnMessageCountsListTask(WeakReference(this), counterDao, messageCountsList).execute()
-        refreshDrawer()
         //endregion
     }
 
@@ -1350,11 +1347,6 @@ class MailboxActivity :
             unchangedLabels = mutableListOf()
         }
         mailboxViewModel.processLabels(messageIds, checkedLabelIds, unchangedLabels)
-    }
-
-    @Subscribe
-    fun onRefreshDrawer(event: RefreshDrawerEvent?) {
-        refreshDrawer()
     }
 
     override fun onLabelsChecked(

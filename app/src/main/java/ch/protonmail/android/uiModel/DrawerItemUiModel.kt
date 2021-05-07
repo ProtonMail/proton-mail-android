@@ -32,20 +32,13 @@ import ch.protonmail.android.core.Constants.MessageLocationType
 internal sealed class DrawerItemUiModel {
 
     /**
-     * Header for the Drawer
+     * Title of a section for the Drawer
      *
-     * @param name [String] name of the current user
-     * @param email [String] email of the current user
-     * @param snoozeEnabled [Boolean] whether snooze is enabled for the current user
+     * @param text [CharSequence] text of the Section
      */
-    data class Header(
-        val name: String,
-        val email: String,
-        val snoozeEnabled: Boolean
+    data class SectionName(
+        val text: CharSequence
     ) : DrawerItemUiModel()
-
-    /** Divider for Drawer Items */
-    object Divider : DrawerItemUiModel()
 
     /**
      * Primary Item for the Drawer.
@@ -60,22 +53,23 @@ internal sealed class DrawerItemUiModel {
         open val notificationCount: Int = 0
 
         /**
+         * Whether this element is currently selected
+         * Default is `false`
+         */
+        open val selected: Boolean = false
+
+        /**
          * @return a new instance of [Primary] by mutating [Primary.notificationCount] with the
          * given [count]
          */
-        abstract fun copyWithNotificationCount( count: Int ) : Primary
+        abstract fun copyWithNotificationCount(count: Int): Primary
 
         /**
          * @return a new instance of [Primary] by mutating [Primary.selected] with the given
          * [select]
          */
-        abstract fun copyWithSelected( select: Boolean ) : Primary
+        abstract fun copyWithSelected(select: Boolean): Primary
 
-        /**
-         * Whether this element is currently selected
-         * Default is `false`
-         */
-        open val selected: Boolean = false
         /** @return `true` if [notificationCount] greater than 0 */
         fun hasNotifications() = notificationCount > 0
 
@@ -88,7 +82,7 @@ internal sealed class DrawerItemUiModel {
          * @param notificationCount [Int] overridden in constructor for `copy` purpose
          * @param selected [Boolean] overridden in constructor for `copy` purpose
          */
-        data class Static @JvmOverloads constructor (
+        data class Static @JvmOverloads constructor(
             val type: Type,
             @StringRes val labelRes: Int,
             @DrawableRes val iconRes: Int,
@@ -107,6 +101,7 @@ internal sealed class DrawerItemUiModel {
                 val itemId: Int,
                 val drawerOptionType: DrawerOptionType
             ) {
+
                 INBOX(MessageLocationType.INBOX.messageLocationTypeValue, DrawerOptionType.INBOX),
                 STARRED(MessageLocationType.STARRED.messageLocationTypeValue, DrawerOptionType.STARRED),
                 DRAFTS(MessageLocationType.DRAFT.messageLocationTypeValue, DrawerOptionType.DRAFTS),
@@ -131,50 +126,23 @@ internal sealed class DrawerItemUiModel {
          * @param notificationCount [Int] overridden in constructor for `copy` purpose
          * @param selected [Boolean] overridden in constructor for `copy` purpose
          */
-        data class Label @JvmOverloads constructor (
+        data class Label @JvmOverloads constructor(
             val uiModel: LabelUiModel,
             override val notificationCount: Int = 0,
             override val selected: Boolean = false
         ) : Primary() {
 
             override fun copyWithNotificationCount(count: Int) = copy(notificationCount = count)
-            override fun copyWithSelected(select: Boolean) = copy( selected = select )
+            override fun copyWithSelected(select: Boolean) = copy(selected = select)
         }
     }
-}
 
-/**
- * @return [List] of [DrawerItemUiModel] changing the first [DrawerItemUiModel.Header] item with
- * the given [header]
- */
-internal fun List<DrawerItemUiModel>.setHeader(
-    header: DrawerItemUiModel.Header?
-): List<DrawerItemUiModel> {
-    val withoutHeader = dropWhile { it is DrawerItemUiModel.Header }
-    val newHeaderToList = header?.let { listOf(it) } ?: listOf()
-    return newHeaderToList + withoutHeader
-}
-
-/**
- * Removes all the [DrawerItemUiModel.Primary.Label] from the receiver [List] of
- * [DrawerItemUiModel] and add the given [labels] to the end of the [List]
- * It will also add or remove a [DrawerItemUiModel.Divider] before [labels], if needed
- *
- * @return [List] of [DrawerItemUiModel]
- */
-internal fun List<DrawerItemUiModel>.setLabels(
-    labels: List<DrawerItemUiModel.Primary.Label>
-): List<DrawerItemUiModel> {
-
-    // Remove all the Labels
-    val withoutLabels = filterNot { it is DrawerItemUiModel.Primary.Label }.toMutableList()
-    val lastItem = withoutLabels.last()
-
-    // Add or remove Divider, if needed
-    if ( labels.isNotEmpty() && lastItem !is DrawerItemUiModel.Divider )
-        withoutLabels += DrawerItemUiModel.Divider
-    else if ( labels.isEmpty() && lastItem is DrawerItemUiModel.Divider )
-        withoutLabels -= lastItem
-
-    return withoutLabels + labels
+    /**
+     * Footer for the Drawer
+     *
+     * @param text [CharSequence] text of the Footer
+     */
+    data class Footer(
+        val text: CharSequence
+    ) : DrawerItemUiModel()
 }
