@@ -18,14 +18,12 @@
  */
 package ch.protonmail.android.activities
 
-import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
@@ -37,15 +35,12 @@ import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.dialogs.QuickSnoozeDialogFragment
 import ch.protonmail.android.activities.multiuser.AccountManagerActivity
-import ch.protonmail.android.activities.multiuser.ConnectAccountActivity
-import ch.protonmail.android.activities.multiuser.EXTRA_USERNAME
 import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
 import ch.protonmail.android.activities.navigation.NavigationViewModel
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
 import ch.protonmail.android.adapters.AccountsAdapter
 import ch.protonmail.android.adapters.mapLabelsToDrawerLabels
-import ch.protonmail.android.adapters.setUnreadLocations
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.local.SnoozeSettings
 import ch.protonmail.android.api.models.DatabaseProvider
@@ -81,20 +76,17 @@ import ch.protonmail.android.utils.startSplashActivity
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.drawer_header.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.isReady
 import me.proton.core.domain.entity.UserId
-import me.proton.core.util.kotlin.unsupported
-import java.util.ArrayList
 import java.util.Calendar
 import javax.inject.Inject
+import ch.protonmail.android.api.models.User as LegacyUser
 
 // region constants
 const val EXTRA_FIRST_LOGIN = "extra.first.login"
@@ -117,7 +109,6 @@ abstract class NavigationActivity :
     private val drawerLayout: DrawerLayout by lazy { findViewById(R.id.drawer_layout) }
     private val sideDrawer: ProtonSideDrawer by lazy { findViewById(R.id.sideDrawer) }
     private val navigationDrawerUsersRecyclerView by lazy { findViewById<RecyclerView>(R.id.left_drawer_users) }
-    protected var overlayDialog: Dialog? = null
     private lateinit var drawerToggle: ActionBarDrawerToggle
     // endregion
 
@@ -157,35 +148,6 @@ abstract class NavigationActivity :
      */
     private var onDrawerClose: () -> Unit = {}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        sideDrawer.setOnHeaderUserClick {
-            onUserClicked(true)
-        }
-
-        sideDrawer.setOnItemClick { drawerItem ->
-            // Header clicked
-            if (drawerItem is Primary) {
-                onDrawerClose = {
-
-                    // Static item clicked
-                    if (drawerItem is Primary.Static) onDrawerStaticItemSelected(drawerItem.type)
-
-                    // Label clicked
-                    else if (drawerItem is Primary.Label) onDrawerLabelSelected(drawerItem.uiModel)
-                }
-                drawerLayout.closeDrawer(GravityCompat.START)
-            }
-        }
-
-        accountsAdapter.onItemClick = { account ->
-            if (account is DrawerUserModel.BaseUser) {
-                accountStateManager.switch(account.id)
-            }
-        }
-    }
-
     protected open fun onAccountSwitched(switch: AccountStateManager.AccountSwitch) {
         val message = switch.current?.username?.takeIf { switch.previous != null }?.let {
             String.format(getString(R.string.signed_in_with), switch.current.username)
@@ -224,6 +186,31 @@ abstract class NavigationActivity :
             .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
             .onEach { switch -> onAccountSwitched(switch) }
             .launchIn(lifecycleScope)
+
+        sideDrawer.setOnHeaderUserClick {
+            onUserClicked(true)
+        }
+
+        sideDrawer.setOnItemClick { drawerItem ->
+            // Header clicked
+            if (drawerItem is Primary) {
+                onDrawerClose = {
+
+                    // Static item clicked
+                    if (drawerItem is Primary.Static) onDrawerStaticItemSelected(drawerItem.type)
+
+                    // Label clicked
+                    else if (drawerItem is Primary.Label) onDrawerLabelSelected(drawerItem.uiModel)
+                }
+                drawerLayout.closeDrawer(GravityCompat.START)
+            }
+        }
+
+        accountsAdapter.onItemClick = { account ->
+            if (account is DrawerUserModel.BaseUser) {
+                accountStateManager.switch(account.id)
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -359,7 +346,7 @@ abstract class NavigationActivity :
     private fun Account.toDrawerUser(
         loggedIn: Boolean,
         notificationsCount: Int,
-        user: OldUser?
+        user: LegacyUser?
     ) = DrawerUserModel.BaseUser.DrawerUser(
         id = userId,
         name = username,
@@ -403,7 +390,6 @@ abstract class NavigationActivity :
         sideDrawer.setMoreItems(
             R.string.x_more,
             listOfNotNull(
-                Primary.Static(Type.UPSELLING, R.string.drawer_subscription, R.drawable.ic_pencil),
                 Primary.Static(Type.SETTINGS, R.string.drawer_settings, R.drawable.ic_sliders_two),
                 Primary.Static(Type.CONTACTS, R.string.drawer_contacts, R.drawable.ic_book_contacts),
                 Primary.Static(Type.REPORT_BUGS, R.string.drawer_report_bug, R.drawable.ic_bug),
