@@ -263,6 +263,11 @@ class MailboxViewModel @Inject constructor(
         refreshMessages: Boolean
     ) {
         // When oldestMessageTimestamp is valid the request is about paginated messages (page > 1)
+
+        if (refreshMessages) {
+            messageDetailsRepository.reloadDependenciesForUser(userManager.requireCurrentUserId())
+        }
+
         if (oldestMessageTimestamp != null) {
             val isCustomLocation = location == LABEL || location == LABEL_FOLDER
 

@@ -537,6 +537,29 @@ class MailboxViewModelTest : CoroutinesTest {
                 location, userId, oldestMessageTimestamp, labelId
             )
         }
+        verify(exactly = 0) { messageDetailsRepository.reloadDependenciesForUser(userId) }
+    }
+
+    @Test
+    fun getMailboxItemsReloadsMessageDatabaseWhenRefreshMessagesIsTrue() {
+        // This is a piece of tech debt that we still have to tackle. As beforehand was being done in
+        // MailboxActivity.onSwitchedAccounts, we need to "reload" the database to avoid data from the previous
+        // account being shown when the user switches the account.
+        val refreshMessages = true
+        // Represents pagination. Only messages older than the given timestamp will be returned
+        val userId = Id("userId")
+        every { userManager.requireCurrentUserId() } returns userId
+
+        viewModel.loadMore(
+            ARCHIVE,
+            null,
+            false,
+            "9238423bbe2h3283742h3hh2bjsd",
+            refreshMessages,
+            123L
+        )
+
+        verify { messageDetailsRepository.reloadDependenciesForUser(userId) }
     }
 
     @Test
