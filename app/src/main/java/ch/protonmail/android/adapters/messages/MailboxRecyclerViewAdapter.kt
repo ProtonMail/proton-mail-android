@@ -70,6 +70,7 @@ class MailboxRecyclerViewAdapter(
     fun getItem(position: Int) = mailboxItems[position]
 
     fun addAll(items: List<MailboxUiItem>) {
+        mailboxItems.clear()
         this.mailboxItems.addAll(
             items.filter {
                 !it.isDeleted

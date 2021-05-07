@@ -43,11 +43,11 @@ import javax.inject.Provider;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.activities.mailbox.InvalidateSearchDatabase;
-import ch.protonmail.android.details.presentation.MessageDetailsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.messages.MailboxRecyclerViewAdapter;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.details.presentation.MessageDetailsActivity;
 import ch.protonmail.android.events.NoResultsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel;
@@ -144,7 +144,6 @@ public class SearchActivity extends BaseActivity {
                 UUID.randomUUID().toString(),
                 false
         ).observe(this, state -> {
-            mAdapter.clear();
             mAdapter.addAll(state.getItems());
             setLoadingMore(false);
             mProgressBar.setVisibility(View.GONE);

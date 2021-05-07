@@ -383,10 +383,7 @@ class MailboxActivity :
 
         fetchOrganizationData()
 
-        observeMailboxItemsByLocation(
-            refreshMessages = true,
-            syncId = syncUUID
-        )
+        observeMailboxItemsByLocation(syncId = syncUUID)
 
         mailboxLocationMain.observe(this, mailboxAdapter::setNewLocation)
         ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
@@ -584,6 +581,9 @@ class MailboxActivity :
         setElevationOnToolbarAndStatusView(false)
     }
 
+    /**
+     * @param refreshMessages whether the existing local messages should be deleted and re-fetched from network
+     */
     private fun observeMailboxItemsByLocation(
         includeLabels: Boolean = false,
         refreshMessages: Boolean = false,
@@ -606,7 +606,6 @@ class MailboxActivity :
                     Toast.makeText(this, getString(R.string.error_loading_conversations), Toast.LENGTH_SHORT).show()
                 }
                 if (state.items.isNotEmpty()) {
-                    mailboxAdapter.clear()
                     mailboxAdapter.addAll(state.items)
                 }
             }
@@ -724,8 +723,7 @@ class MailboxActivity :
             refreshMailboxJobRunning = true
             app.updateDone()
             observeMailboxItemsByLocation(
-                syncId = syncUUID,
-                refreshMessages = true
+                syncId = syncUUID
             )
             true
         }
