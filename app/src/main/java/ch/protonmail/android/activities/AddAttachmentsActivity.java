@@ -242,7 +242,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.attachments_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_attachments, menu);
         return true;
     }
 

@@ -631,6 +631,7 @@ public class ComposeMessageActivity
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_close);
             actionBar.setTitle("");
         }
     }
@@ -1022,10 +1023,19 @@ public class ComposeMessageActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.compose_message_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_compose_message, menu);
+        setMenuActionsListeners(menu);
         this.menu = menu;
         disableSendButton(true);
         return true;
+    }
+
+    private void setMenuActionsListeners(Menu menu) {
+        MenuItem item = menu.findItem(R.id.send_message);
+        item.getActionView().findViewById(R.id.send_button).setOnClickListener((View view) -> {
+            if (!mSendingPressed)
+                onOptionSendHandler();
+        });
     }
 
     @Override
@@ -1033,12 +1043,6 @@ public class ComposeMessageActivity
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                return true;
-            case R.id.send_message:
-                if (mSendingPressed) {
-                    return true;
-                }
-                onOptionSendHandler();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -2160,13 +2164,14 @@ public class ComposeMessageActivity
     private void disableSendButton(boolean disable) {
         // Find the menu item you want to style
         if (menu != null) {
-            MenuItem item = menu.getItem(0);
+            MenuItem item = menu.findItem(R.id.send_message);
+            ImageButton imageButton = item.getActionView().findViewById(R.id.send_button);
             if (disable) {
                 item.setEnabled(false);
-                item.getIcon().setColorFilter(getResources().getColor(R.color.white_30), PorterDuff.Mode.MULTIPLY);
+                imageButton.setBackgroundColor(R.color.white_30);
             } else {
                 item.setEnabled(true);
-                item.getIcon().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.MULTIPLY);
+                imageButton.setBackgroundResource(R.drawable.selector_circle_background_interaction_strong);
             }
         }
     }
