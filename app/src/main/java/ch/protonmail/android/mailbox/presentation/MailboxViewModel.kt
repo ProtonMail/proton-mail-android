@@ -301,8 +301,9 @@ class MailboxViewModel @Inject constructor(
         ).map { result ->
             when (result) {
                 is GetConversationsResult.Success -> {
+                    val locationId = labelId ?: location.messageLocationTypeValue.toString()
                     return@map MailboxState(
-                        conversationsToMailboxItems(result.conversations, location.messageLocationTypeValue)
+                        conversationsToMailboxItems(result.conversations, locationId)
                     )
                 }
                 is GetConversationsResult.NoConversationsFound -> {
@@ -317,12 +318,12 @@ class MailboxViewModel @Inject constructor(
 
     private suspend fun conversationsToMailboxItems(
         conversations: List<Conversation>,
-        locationId: Int
+        locationId: String
     ): List<MailboxUiItem> {
         val contacts = contactsRepository.findAllContactEmails().first()
         return conversations.map { conversation ->
             val lastMessageTimeMs = conversation.labels.find {
-                it.id == locationId.toString()
+                it.id == locationId
             }?.contextTime?.let { it * 1000 } ?: 0
             MailboxUiItem(
                 conversation.id,

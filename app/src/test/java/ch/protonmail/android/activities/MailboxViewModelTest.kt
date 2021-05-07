@@ -812,7 +812,6 @@ class MailboxViewModelTest : CoroutinesTest {
             val location = Constants.MessageLocationType.INBOX
             val inboxLocationId = "0"
             val archiveLocationId = "6"
-            val labelId = "labelId923844"
             val conversation = Conversation(
                 "conversationId9240",
                 "subject9237474",
@@ -830,14 +829,14 @@ class MailboxViewModelTest : CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, labelId) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, location, null) } returns flowOf(successResult)
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
             )
 
             val actual = viewModel.getMailboxItems(
                 location,
-                labelId,
+                null,
                 true,
                 "9238423bbe4h3423489wssdf1",
                 false,
@@ -857,6 +856,62 @@ class MailboxViewModelTest : CoroutinesTest {
                     messageData = null,
                     isDeleted = false,
                     labelIds = listOf("0", "6"),
+                    recipients = ""
+                )
+            )
+            assertEquals(expected, actual.observedValues.first()!!.items)
+        }
+
+    @Test
+    fun getMailboxItemsMapsLastMessageTimeMsToTheContextTimeOfTheLabelRepresentingTheCurrentCustomFolderConvertedToMs() =
+        runBlockingTest {
+            val location = Constants.MessageLocationType.LABEL
+            val customLabelId = "Aujas8df8asdf727388fsdjfsjdbnj12=="
+            val archiveLocationId = "6"
+            val conversation = Conversation(
+                "conversationId9241",
+                "subject9237475",
+                emptyList(),
+                emptyList(),
+                2,
+                1,
+                0,
+                0,
+                listOf(
+                    LabelContext(customLabelId, 0, 0, 1417982244, 0, 0),
+                    LabelContext(archiveLocationId, 0, 0, 0, 0, 0)
+                ),
+                null
+            )
+            val successResult = GetConversationsResult.Success(listOf(conversation))
+            every { conversationModeEnabled(location) } returns true
+            coEvery { getConversations(currentUserId, location, customLabelId) } returns flowOf(successResult)
+            coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
+                listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
+            )
+
+            val actual = viewModel.getMailboxItems(
+                location,
+                customLabelId,
+                true,
+                "9238423bbe4h3423489wssdf2",
+                false,
+            ).testObserver()
+
+            val expected = listOf(
+                MailboxUiItem(
+                    "conversationId9241",
+                    "",
+                    "subject9237475",
+                    lastMessageTimeMs = 1417982244000,
+                    hasAttachments = false,
+                    isStarred = false,
+                    isRead = false,
+                    expirationTime = 0,
+                    messagesCount = 2,
+                    messageData = null,
+                    isDeleted = false,
+                    labelIds = listOf("Aujas8df8asdf727388fsdjfsjdbnj12==", "6"),
                     recipients = ""
                 )
             )
