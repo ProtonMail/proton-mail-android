@@ -152,4 +152,5 @@ internal class ProtonSideDrawer @JvmOverloads constructor (
             footerItem?.let { add(it) }
         }
     }
+
 }

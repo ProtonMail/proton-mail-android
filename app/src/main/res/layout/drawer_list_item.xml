@@ -31,7 +31,7 @@
 
     <!-- Selection -->
     <View
-        android:id="@+id/selection"
+        android:id="@+id/drawer_item_selection"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
@@ -44,7 +44,7 @@
 
     <!-- Icon -->
     <ImageView
-        android:id="@+id/icon"
+        android:id="@+id/drawer_item_icon"
         android:layout_width="@dimen/size_icon_m"
         android:layout_height="@dimen/size_icon_m"
         android:scaleType="center"
@@ -56,7 +56,7 @@
 
     <!-- Badge -->
     <TextView
-        android:id="@+id/notifications"
+        android:id="@+id/drawer_item_notifications"
         style="@style/DrawerItemNotification"
         android:layout_width="wrap_content"
         android:minWidth="@dimen/height_drawer_badge"
@@ -74,7 +74,7 @@
 
     <!-- Label -->
     <TextView
-        android:id="@+id/label"
+        android:id="@+id/drawer_item_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/padding_l"
@@ -83,14 +83,14 @@
         android:textColor="@color/nav_view_item_text"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/icon"
-        app:layout_constraintEnd_toStartOf="@id/notifications"
+        app:layout_constraintStart_toEndOf="@id/drawer_item_icon"
+        app:layout_constraintEnd_toStartOf="@id/drawer_item_notifications"
         tools:text="@string/inbox" />
 
     <include layout="@layout/drawer_list_item_divider"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        app:layout_constraintStart_toStartOf="@id/label"
+        app:layout_constraintStart_toStartOf="@id/drawer_item_label"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="@dimen/padding_l"
         app:layout_constraintBottom_toBottomOf="parent"/>

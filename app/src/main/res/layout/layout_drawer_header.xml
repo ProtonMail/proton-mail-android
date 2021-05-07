@@ -20,6 +20,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_header"
     android:layout_width="match_parent"
     android:layout_height="@dimen/height_drawer_header"
     android:layout_marginHorizontal="@dimen/padding_m"

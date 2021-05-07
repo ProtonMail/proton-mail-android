@@ -104,10 +104,10 @@ internal class DrawerAdapter : BaseAdapter<
 
         override fun onBind(item: P) = with(itemView) {
             super.onBind(item)
-            selection.isVisible = item.selected
-            notifications.isVisible = item.hasNotifications()
-            notifications.text = item.notificationCount.toString()
-            notifications.setNotificationIndicatorSize(item.notificationCount)
+            drawer_item_selection.isVisible = item.selected
+            drawer_item_notifications.isVisible = item.hasNotifications()
+            drawer_item_notifications.text = item.notificationCount.toString()
+            drawer_item_notifications.setNotificationIndicatorSize(item.notificationCount)
         }
     }
 
@@ -119,8 +119,8 @@ internal class DrawerAdapter : BaseAdapter<
 
         override fun onBind(item: Primary.Static) = with(itemView) {
             super.onBind(item)
-            label.setText(item.labelRes)
-            icon.setImageResource(item.iconRes)
+            drawer_item_label.setText(item.labelRes)
+            drawer_item_icon.setImageResource(item.iconRes)
             menuItem.tag = resources.getString(item.labelRes)
         }
     }
@@ -133,10 +133,10 @@ internal class DrawerAdapter : BaseAdapter<
 
         override fun onBind(item: Primary.Label) = with(itemView) {
             super.onBind(item)
-            label.text = item.uiModel.name
-            icon.setColorFilterFor(item.uiModel)
-            icon.setImageResource(item.uiModel.image)
-            label.tag = item.uiModel.name
+            drawer_item_label.text = item.uiModel.name
+            drawer_item_icon.setColorFilterFor(item.uiModel)
+            drawer_item_icon.setImageResource(item.uiModel.image)
+            drawer_item_label.tag = item.uiModel.name
         }
 
         private fun ImageView.setColorFilterFor(label: LabelUiModel) {
