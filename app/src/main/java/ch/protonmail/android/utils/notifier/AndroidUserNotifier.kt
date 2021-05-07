@@ -24,7 +24,6 @@ import android.os.Handler
 import android.os.Looper
 import ch.protonmail.android.R
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.extensions.showToast
 import kotlinx.coroutines.withContext
@@ -39,7 +38,7 @@ class AndroidUserNotifier @Inject constructor(
 ) : UserNotifier {
 
     override fun showPersistentError(errorMessage: String, messageSubject: String?) {
-        val user = userManager.requireCurrentUserBlocking()
+        val user = userManager.requireCurrentUser()
         notificationServer.notifySaveDraftError(user.id, errorMessage, messageSubject, user.name)
     }
 
@@ -51,7 +50,7 @@ class AndroidUserNotifier @Inject constructor(
 
     override fun showSendMessageError(errorMessage: String, messageSubject: String?) {
         val error = "\"$messageSubject\" - $errorMessage"
-        val user = userManager.requireCurrentUserBlocking()
+        val user = userManager.requireCurrentUser()
         notificationServer.notifySingleErrorSendingMessage(user.id, user.name, error)
     }
 
@@ -60,17 +59,4 @@ class AndroidUserNotifier @Inject constructor(
             context.showToast(R.string.message_sent)
         }
     }
-
-    override fun showHumanVerificationNeeded(message: Message) {
-        val user = userManager.requireCurrentUserBlocking()
-        notificationServer.notifyVerificationNeeded(
-            user.id,
-            user.name,
-            checkNotNull(message.subject) { "'subject' cannot be null" },
-            checkNotNull(message.messageId) { "'messageId' cannot be null" },
-            message.isInline,
-            checkNotNull(message.addressID) { "'addressID' cannot be null" }
-        )
-    }
-
 }

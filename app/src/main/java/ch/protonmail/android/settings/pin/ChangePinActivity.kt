@@ -27,12 +27,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.views.SecureEditText
-import com.squareup.otto.Subscribe
 
 // region constants
 const val EXTRA_NEW_PIN_SET = "extra_new_pin_set"
@@ -107,20 +104,19 @@ class ChangePinActivity : BaseActivity(),
     }
 
     private fun logout() {
-        mUserManager.requireCurrentLegacyUserBlocking().apply {
+        mUserManager.requireCurrentLegacyUser().apply {
             isUsePin = false
             isUseFingerprint = false
-            save()
         }
         mUserManager.apply {
             savePin("")
             resetPinAttempts()
-            logoutBlocking(requireCurrentUserId())
         }
-        val intent = Intent()
-        intent.putExtra(EXTRA_LOGOUT, true)
-        setResult(Activity.RESULT_OK, intent)
-        finish()
+        accountStateManager.logout(mUserManager.requireCurrentUserId()).invokeOnCompletion {
+            val intent = Intent()
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
     }
 
     override fun onPinError() {
@@ -132,11 +128,5 @@ class ChangePinActivity : BaseActivity(),
 
     override fun onPinMaxDigitReached() {
         // noop
-    }
-
-    @Subscribe
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onLogoutEvent(event: LogoutEvent?) {
-        moveToLogin()
     }
 }

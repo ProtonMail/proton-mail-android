@@ -143,7 +143,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
                 <ch.protonmail.android.views.CustomFontEditText
                     android:id="@+id/address_full_combined"
-                    style="@style/LoginEditText.Inverted"
+                    style="@style/V3EditText.Inverted"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"

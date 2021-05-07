@@ -30,14 +30,11 @@ import ch.protonmail.android.R
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
-import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.activity_default_address.*
-import java.util.*
+import java.util.Collections
 
 /**
  * Created by dkadrikj on 10/23/16.
@@ -71,22 +68,15 @@ class DefaultAddressActivity : BaseActivity() {
                 selectedAddressRadioButton.isChecked = true
                 defaultAddress.text = mSelectedAddress!!.email
 
-
-                val user = mUserManager.user
-                val aliasOrderChanged = mSelectedAddress != null && mSelectedAddress!!.id != user.addresses[0].id
-                val newAddressId: String
-                newAddressId = if (aliasOrderChanged) {
-                    val newDefaultAlias = user.getAddressOrderByAddress(mSelectedAddress)
-                    user.setAddressesOrder(newDefaultAlias)
-                } else {
-                    user.defaultAddress.id
-                }
-
-                user.save()
-                mUserManager.user = user
-
-                if(aliasOrderChanged) {
-                    val job = UpdateSettingsJob(sortAliasChanged = aliasOrderChanged, addressId = newAddressId)
+                val user = mUserManager.currentLegacyUser
+                val selectedAddress = mSelectedAddress
+                if (selectedAddress != null && user?.defaultAddressId != selectedAddress.id) {
+                    // Add first the selected address.
+                    val addressIds = mutableSetOf(selectedAddress.id)
+                    // Add all other.
+                    user?.addresses?.forEach { addressIds.add(it.id) }
+                    //
+                    val job = UpdateSettingsJob(addressIds = addressIds.toList())
                     mJobManager.addJobInBackground(job)
                 }
 
@@ -101,7 +91,7 @@ class DefaultAddressActivity : BaseActivity() {
         actionBar?.setDisplayHomeAsUpEnabled(true)
         mAvailableAddressesMap = HashMap()
         mAllRadioButtons = ArrayList()
-        mUser = mUserManager.user
+        mUser = mUserManager.currentLegacyUser
         addresses = ArrayList(mUser!!.addresses)
         mInflater = LayoutInflater.from(this)
         renderAddresses()
@@ -150,25 +140,22 @@ class DefaultAddressActivity : BaseActivity() {
     }
 
     private fun renderAddresses() {
-        mSelectedAddress = addresses!![0]
+        val sortedAddresses = addresses.orEmpty()
+            .sortedBy { it.order }
+            .sortedBy { it.status == 1 && it.receive == 1 }
+        mSelectedAddress = sortedAddresses[0]
         defaultAddress.text = mSelectedAddress!!.email
-        Collections.sort(addresses) { lhs, rhs ->
-            val lhsEnabled = lhs.status == 1 && lhs.receive == 1
-            val rhsEnabled = rhs.status == 1 && rhs.receive == 1
-            rhsEnabled.compareTo(lhsEnabled)
-        }
         var mNoAvailableAddresses = true
         var mNoInactiveAddresses = true
-        for (i in addresses!!.indices) {
-            val address = addresses!![i]
+        sortedAddresses.forEachIndexed { index, address ->
             val aliasAvailable = address.status == 1 && address.receive == 1
             var addressRadio: RadioButton? = null
             var inactiveAddress: TextView? = null
             if (aliasAvailable) {
                 addressRadio = mInflater!!.inflate(R.layout.alias_list_item, availableAddresses, false) as RadioButton
                 addressRadio.text = address.email
-                addressRadio.isChecked = i == 0
-                if (i == 0) {
+                addressRadio.isChecked = index == 0
+                if (index == 0) {
                     mCurrentSelectedRadioButton = addressRadio
                 }
                 mAllRadioButtons.add(addressRadio)
@@ -205,10 +192,5 @@ class DefaultAddressActivity : BaseActivity() {
         setResult(Activity.RESULT_OK)
         saveLastInteraction()
         finish()
-    }
-
-    @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) {
-        moveToLogin()
     }
 }

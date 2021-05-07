@@ -18,8 +18,6 @@
  */
 package ch.protonmail.android.api.segments.attachment
 
-import ch.protonmail.android.api.ProgressListener
-import ch.protonmail.android.api.interceptors.ProtonMailAttachmentRequestInterceptor
 import ch.protonmail.android.api.models.AttachmentUploadResponse
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.doh.Proxies
@@ -33,7 +31,6 @@ import java.io.IOException
 class AttachmentApi(
     private val basicService: AttachmentService,
     private val downloadService: AttachmentDownloadService,
-    private val requestInterceptor: ProtonMailAttachmentRequestInterceptor,
     private val uploadService: AttachmentUploadService
 ) : BaseApi(), AttachmentApiSpec {
 
@@ -47,13 +44,6 @@ class AttachmentApi(
     @Throws(IOException::class)
     override fun downloadAttachmentBlocking(attachmentId: String): ByteArray =
         downloadService.downloadAttachmentBlocking(attachmentId).execute().body()!!.bytes()
-
-    @Throws(IOException::class)
-    override fun downloadAttachmentBlocking(attachmentId: String, progressListener: ProgressListener): ByteArray {
-        // This works concurrently: nextProgressListener will block if the last one hasn't been consumed yet
-        requestInterceptor.nextProgressListener(progressListener)
-        return downloadService.downloadAttachmentBlocking(attachmentId).execute().body()!!.bytes()
-    }
 
     @Throws(IOException::class)
     override fun uploadAttachmentInlineBlocking(

@@ -32,10 +32,7 @@ import androidx.lifecycle.ViewModelProviders
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
-import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_notification_settings.*
 import studio.forface.viewstatestore.ViewStateActivity
@@ -175,13 +172,10 @@ internal class NotificationSettingsActivity : BaseActivity(), ViewStateActivity 
             currentAction = notificationOptions.indexOf(idOptionsMap[checkedId])
             toggleRingtoneContainerVisibility()
 
-            val user = mUserManager.user
+            val user = mUserManager.requireCurrentLegacyUser()
             val notificationSettingsChanged = currentAction != user.notificationSetting
             if (notificationSettingsChanged) {
                 user.notificationSetting = currentAction
-
-                user.save()
-                mUserManager.user = user
             }
         }
     }
@@ -221,11 +215,4 @@ internal class NotificationSettingsActivity : BaseActivity(), ViewStateActivity 
     private fun toggleRingtoneContainerVisibility(someUnknownInt: Int = currentAction) {
         ringtone_container.isVisible = someUnknownInt == 1 || someUnknownInt == 3
     }
-
-    /** Subscribe to EventBut [LogoutEvent] */
-    @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) { // Could event param be removed?
-        moveToLogin()
-    }
-
 }

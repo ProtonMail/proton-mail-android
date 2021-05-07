@@ -311,7 +311,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         content: String,
         mBigContentHolder: BigContentHolder
     ) {
-        val user: User = userManager.user
+        val user: User = userManager.requireCurrentLegacyUser()
         viewModelScope.launch {
             val intent = messageDetailsRepository.prepareEditMessageIntent(
                 messageAction,

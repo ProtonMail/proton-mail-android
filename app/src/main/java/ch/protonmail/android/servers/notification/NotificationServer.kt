@@ -40,8 +40,6 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
 import androidx.core.text.toSpannable
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
-import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER_ID
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
@@ -57,6 +55,8 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.buildArchiveIntent
 import ch.protonmail.android.utils.buildTrashIntent
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.getMailboxActivityIntent
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 import ch.protonmail.android.api.models.User as LegacyUser
@@ -64,12 +64,6 @@ import ch.protonmail.android.data.local.model.Notification as RoomNotification
 
 const val CHANNEL_ID_EMAIL = "emails"
 const val EXTRA_MAILBOX_LOCATION = "mailbox_location"
-@Deprecated(
-    "Use user Id",
-    ReplaceWith("EXTRA_USER_ID", "ch.protonmail.android.servers.notification.EXTRA_USER_ID"),
-    DeprecationLevel.ERROR
-)
-const val EXTRA_USERNAME = "username"
 const val EXTRA_USER_ID = "user.id"
 const val NOTIFICATION_ID_SENDING_FAILED = 680
 private const val CHANNEL_ID_ONGOING_OPS = "ongoingOperations"
@@ -168,56 +162,6 @@ class NotificationServer @Inject constructor(
             notificationManager.createNotificationChannel(channel)
         }
         return CHANNEL_ID_ONGOING_OPS
-    }
-
-    fun notifyVerificationNeeded(
-        userId: Id,
-        username: Name,
-        messageTitle: String,
-        messageId: String,
-        messageInline: Boolean,
-        messageAddressId: String
-    ) {
-        val inboxStyle = NotificationCompat.BigTextStyle()
-        inboxStyle.setBigContentTitle(context.getString(R.string.verification_needed))
-        inboxStyle.bigText(
-            String.format(
-                context.getString(R.string.verification_needed_description_notification),
-                messageTitle
-            )
-        )
-
-        inboxStyle.setSummaryText(username.s)
-        val composeIntent = Intent(context, ComposeMessageActivity::class.java)
-        composeIntent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, messageId)
-        composeIntent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, messageInline)
-        composeIntent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID, messageAddressId)
-        composeIntent.putExtra(ComposeMessageActivity.EXTRA_VERIFY, true)
-
-        val stackBuilder = TaskStackBuilder.create(context)
-        stackBuilder.addParentStack(ComposeMessageActivity::class.java)
-        stackBuilder.addNextIntent(composeIntent)
-        val contentIntent = stackBuilder.getPendingIntent(
-            0,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        val channelId = createAccountChannel()
-
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.notification_icon)
-            .setContentTitle(context.getString(R.string.verification_needed))
-            .setContentText(
-                context.getString(R.string.verification_needed_description_notification, messageTitle)
-            )
-            .setContentIntent(contentIntent)
-            .setColor(ContextCompat.getColor(context, R.color.ocean_blue))
-            .setStyle(inboxStyle)
-            .setLights(lightIndicatorColor, 1500, 2000)
-            .setAutoCancel(true)
-
-        val notification = builder.build()
-        notificationManager.notify(NOTIFICATION_ID_VERIFICATION, notification)
     }
 
     fun createRetrievingNotificationsNotification(): Notification {
@@ -410,6 +354,7 @@ class NotificationServer @Inject constructor(
         val contentIntent = Intent(context, MessageDetailsActivity::class.java)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, messageId)
             .putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, false)
+            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USER_ID, user.id.s)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USERNAME, user.name.s)
 
         val stackBuilder = TaskStackBuilder.create(context)
@@ -531,7 +476,7 @@ class NotificationServer @Inject constructor(
         isNotificationVisibleInLockScreen: Boolean,
         unreadNotifications: List<RoomNotification>
     ) {
-        val contentPendingIntent = getMailboxActivityIntent(userManager.requireCurrentUserId(), loggedInUser.id)
+        val contentPendingIntent = getMailboxActivityIntent(loggedInUser.id)
 
         // Prepare Notification info
         val notificationTitle = context.getString(R.string.new_emails, unreadNotifications.size)
@@ -594,13 +539,9 @@ class NotificationServer @Inject constructor(
         )
     }
 
-    private fun getMailboxActivityIntent(currentUserId: Id, loggedInUserId: Id): PendingIntent {
+    private fun getMailboxActivityIntent(loggedInUserId: Id): PendingIntent {
         // Create content Intent for open MailboxActivity
-        val contentIntent = Intent(context, MailboxActivity::class.java)
-        if (currentUserId != loggedInUserId) {
-            contentIntent.putExtra(EXTRA_HAS_SWITCHED_USER, true)
-            contentIntent.putExtra(EXTRA_SWITCHED_TO_USER_ID, loggedInUserId.s)
-        }
+        val contentIntent = context.getMailboxActivityIntent(UserId(loggedInUserId.s))
         val requestCode = System.currentTimeMillis().toInt()
         return PendingIntent.getActivity(context, requestCode, contentIntent, 0)
     }
@@ -637,9 +578,7 @@ class NotificationServer @Inject constructor(
         val channelId = createAccountChannel()
 
         // Create content Intent to open Drafts
-        val contentIntent = Intent(context, MailboxActivity::class.java)
-        contentIntent.putExtra(EXTRA_MAILBOX_LOCATION, Constants.MessageLocationType.DRAFT.messageLocationTypeValue)
-        contentIntent.putExtra(EXTRA_USER_ID, userId.s)
+        val contentIntent = context.getMailboxActivityIntent(UserId(userId.s), Constants.MessageLocationType.DRAFT)
 
         val stackBuilder = TaskStackBuilder.create(context)
             .addParentStack(MailboxActivity::class.java)

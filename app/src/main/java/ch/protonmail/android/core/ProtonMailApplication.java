@@ -23,7 +23,6 @@ import android.app.AlertDialog;
 import android.app.Application;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
@@ -62,12 +61,9 @@ import javax.inject.Inject;
 import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.BaseActivity;
-import ch.protonmail.android.activities.guest.LoginActivity;
-import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.NetworkConfigurator;
 import ch.protonmail.android.api.NetworkSwitcher;
 import ch.protonmail.android.api.ProtonMailApiManager;
-import ch.protonmail.android.api.TokenManager;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.Organization;
 import ch.protonmail.android.api.models.doh.Proxies;
@@ -77,41 +73,32 @@ import ch.protonmail.android.api.services.MessagesService;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.domain.entity.Id;
-import ch.protonmail.android.domain.entity.user.User;
-import ch.protonmail.android.domain.entity.user.UserKey;
 import ch.protonmail.android.events.ApiOfflineEvent;
-import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
-import ch.protonmail.android.events.InvalidAccessTokenEvent;
-import ch.protonmail.android.events.Login2FAEvent;
-import ch.protonmail.android.events.LoginEvent;
-import ch.protonmail.android.events.LoginInfoEvent;
-import ch.protonmail.android.events.MailboxLoginEvent;
-import ch.protonmail.android.events.PasswordChangeEvent;
 import ch.protonmail.android.events.RequestTimeoutEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.StorageLimitEvent;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
 import ch.protonmail.android.fcm.MultiUserFcmTokenManager;
+import ch.protonmail.android.feature.account.AccountManagerKt;
+import ch.protonmail.android.feature.account.CoreAccountManagerMigration;
 import ch.protonmail.android.jobs.FetchLabelsJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
-import ch.protonmail.android.jobs.user.FetchUserSettingsJob;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.servers.notification.NotificationServer;
-import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.DownloadUtils;
 import ch.protonmail.android.utils.FileUtils;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.crypto.OpenPGP;
-import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.worker.FetchContactsDataWorker;
 import ch.protonmail.android.worker.FetchContactsEmailsWorker;
 import dagger.hilt.android.HiltAndroidApp;
 import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
+import me.proton.core.accountmanager.domain.AccountManager;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
 
@@ -120,8 +107,6 @@ import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
 import static ch.protonmail.android.core.Constants.PrefsType.BACKUP_PREFS_NAME;
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
-import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
 import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
 import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
 
@@ -143,6 +128,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
     @Inject
     ProtonMailApiManager mApi;
     @Inject
+    SecureSharedPreferences.Factory secureSharedPreferencesFactory;
+    @Inject
     OpenPGP mOpenPGP;
 
     @Inject
@@ -156,7 +143,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
     MultiUserFcmTokenManager multiUserFcmTokenManager;
 
     @Inject
-    AccountManager.UsernameToIdMigration accountManagerUserIdMigration;
+    ch.protonmail.android.api.AccountManager.UsernameToIdMigration accountManagerUserIdMigration;
+    @Inject
+    CoreAccountManagerMigration coreAccountManagerMigration;
 
     private Bus mBus;
     private boolean appInBackground;
@@ -225,6 +214,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
         super.onCreate();
         accountManagerUserIdMigration.blocking();
+        coreAccountManagerMigration.migrateBlocking();
 
         WorkManager.initialize(this, getWorkManagerConfiguration());
 
@@ -250,8 +240,10 @@ public class ProtonMailApplication extends Application implements androidx.work.
     }
 
     @NonNull
+    @Deprecated
+    @kotlin.Deprecated(message = "Use SecureSharedPreferences.Factory.appPreferences")
     public SharedPreferences getSecureSharedPreferences() {
-        return SecureSharedPreferences.Companion.getPrefs(this, "ProtonMailSSP", Context.MODE_PRIVATE);
+        return secureSharedPreferencesFactory.appPreferences();
     }
 
     @NonNull
@@ -280,25 +272,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
     public void onOrganizationEvent(OrganizationEvent event) {
         if (event.getStatus() == Status.SUCCESS) {
             mOrganization = event.getResponse().getOrganization();
-        }
-    }
-
-    @Subscribe
-    public void onInvalidAccessTokenEvent(InvalidAccessTokenEvent event) {
-        final Intent intent = AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class));
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Activity activity = mCurrentActivity != null ? mCurrentActivity.get() : null;
-        if (activity != null) {
-            activity.startActivity(intent);
-            activity.finish();
-        } else {
-            startActivity(intent);
-        }
-        Id currentUserId = userManager.getCurrentUserId();
-        if (currentUserId != null) {
-            userManager.logoutOfflineBlocking(currentUserId);
         }
     }
 
@@ -358,103 +331,12 @@ public class ProtonMailApplication extends Application implements androidx.work.
     }
 
     @Subscribe
-    public void onPasswordChangeEvent(PasswordChangeEvent event) {
-        if (mCurrentActivity != null) {
-            final Activity activity = mCurrentActivity.get();
-            if (event.getStatus() == AuthStatus.SUCCESS) {
-                if (event.getPasswordType() == Constants.PASSWORD_TYPE_LOGIN) {
-                    TextExtensions.showToast(activity.getApplicationContext(), R.string.new_login_password_saved);
-                } else if (event.getPasswordType() == Constants.PASSWORD_TYPE_MAILBOX) {
-                    TextExtensions.showToast(activity.getApplicationContext(), R.string.new_mailbox_password_saved);
-                }
-            } else {
-                String message = event.getStatusMessage();
-                if (!mNetworkUtil.isConnected()) {
-                    message = getString(R.string.no_connectivity_detected);
-                } else if (message == null || message.isEmpty()) {
-                    message = getString(R.string.default_error_message);
-                }
-                TextExtensions.showToast(activity.getApplicationContext(), message);
-            }
-        }
-    }
-
-    @Subscribe
     public void onDownloadAttachmentEvent(DownloadedAttachmentEvent event) {
         final Status status = event.getStatus();
         if (status != Status.FAILED) {
             downloadUtils.viewAttachmentNotification(this, event.getFilename(), event.getAttachmentUri(), !event.isOfflineLoaded());
         }
     }
-
-    private LoginInfoEvent loginInfoEvent;
-    private Login2FAEvent login2FAEvent;
-    private MailboxLoginEvent mailboxLoginEvent;
-    private LoginEvent loginEvent;
-
-    // region login info event
-    @Subscribe
-    public void onLoginInfoEvent(LoginInfoEvent loginInfoEvent) {
-        this.loginInfoEvent = loginInfoEvent;
-    }
-
-    @Produce
-    public LoginInfoEvent produceLoginInfoEvent() {
-        return loginInfoEvent;
-    }
-
-    public void resetLoginInfoEvent() {
-        loginInfoEvent = null;
-    }
-    // endregion
-
-    // region login 2fa event
-    @Subscribe
-    public void onLogin2FAEvent(Login2FAEvent login2FAEvent) {
-        this.login2FAEvent = login2FAEvent;
-    }
-
-    @Produce
-    public Login2FAEvent produceLogin2FAEvent() {
-        return login2FAEvent;
-    }
-
-    public void resetLogin2FAEvent() {
-        login2FAEvent = null;
-    }
-    // endregion
-
-    // region mailbox event
-    @Subscribe
-    public void onLoginEvent(MailboxLoginEvent event) {
-        mailboxLoginEvent = event;
-    }
-
-    @Produce
-    public MailboxLoginEvent produceMailboxLoginEvent() {
-        return mailboxLoginEvent;
-    }
-
-    public void resetMailboxLoginEvent() {
-        mailboxLoginEvent = null;
-    }
-    // endregion
-
-    // region login event
-    @Subscribe
-    public void onLoginEvent(LoginEvent event) {
-        loginEvent = event;
-    }
-
-    @Produce
-    public LoginEvent produceLoginEvent() {
-        return loginEvent;
-    }
-
-    public void resetLoginEvent() {
-        loginEvent = null;
-    }
-    // endregion
 
     public AllCurrencyPlans getAllCurrencyPlans() {
         return mAllCurrencyPlans;
@@ -525,10 +407,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
             prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, BuildConfig.VERSION_CODE).apply();
             mUpdateOccurred = true;
 
-            if (userManager.isLoggedIn()) {
-                userManager.setCurrentUserLoginState(LOGIN_STATE_TO_INBOX);
-            }
-
             Id currentUser = userManager.getCurrentUserId();
             if (BuildConfig.DEBUG && currentUser != null) {
                 messageDao = MessageDatabase.Companion
@@ -536,7 +414,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                         .getDao();
                 new RefreshMessagesAndAttachments(this, currentUser, messageDao).execute();
             }
-            if (BuildConfig.FETCH_FULL_CONTACTS && userManager.isLoggedIn()) {
+            if (BuildConfig.FETCH_FULL_CONTACTS) {
                 new FetchContactsEmailsWorker.Enqueuer(WorkManager.getInstance(this)).enqueue(0);
                 new FetchContactsDataWorker.Enqueuer(WorkManager.getInstance(this)).enqueue();
             }
@@ -551,38 +429,10 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 // or any specific previous version should be logged out
 
                 Id currentUserId = userManager.getCurrentUserId();
-                if (BuildConfig.DEBUG) {
-                    AlarmReceiver alarmReceiver = new AlarmReceiver();
-                    alarmReceiver.cancelAlarm(this);
-                    startJobManager();
-                    Set<Id> loggedInUsers = accountManager.allLoggedInBlocking();
-                    jobManager.addJobInBackground(new FetchUserSettingsJob(currentUserId));
-                    for (Id loggedInUser : loggedInUsers) {
-                        if (!loggedInUser.equals(currentUserId)) {
-                            jobManager.addJobInBackground(new FetchUserSettingsJob(loggedInUser));
-                        }
-                    }
-                    eventManager.clearState();
-                    alarmReceiver.setAlarm(this);
-                }
-                TokenManager tokenManager = userManager.getTokenManager();
-                if (tokenManager != null && TextUtils.isEmpty(tokenManager.getEncPrivateKey())) {
-                    User user = userManager.getCurrentUserBlocking();
-                    if (user != null) {
-                        UserKey primaryKey = user.getKeys().getPrimaryKey();
-                        if (primaryKey != null) {
-                            tokenManager.setEncPrivateKey(primaryKey.getPrivateKey().getString()); // it's needed for verification later
-                        }
-                    }
-                }
-
                 SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
                 if (currentUserId != null) {
                     SharedPreferences secureSharedPreferences =
-                            SecureSharedPreferences.Companion.getPrefsForUser(
-                                    getApplicationContext(),
-                                    currentUserId
-                            );
+                            secureSharedPreferencesFactory.userPreferences(currentUserId);
 
                     if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_WARNING)) {
                         secureSharedPreferences.edit().putBoolean(
@@ -600,25 +450,13 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     }
                 }
 
-                Set<Id> loggedInUsers = accountManager.allLoggedInBlocking();
+                Set<Id> loggedInUsers = AccountManagerKt.allLoggedInBlocking(accountManager);
                 Map<Id, SharedPreferences> allLoggedInUserPreferences = new HashMap();
                 for (Id user : loggedInUsers) {
                     allLoggedInUserPreferences.put(
                             user,
-                            SecureSharedPreferences.Companion.getPrefsForUser(this, user)
+                            secureSharedPreferencesFactory.userPreferences(user)
                     );
-                }
-
-                if (defaultSharedPreferences.contains(PREF_LOGIN_STATE)) {
-                    for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
-                        Id id = entry.getKey();
-                        if (userManager.getMailboxPassword(id) == null) {
-                            userManager.logoutBlocking(id);
-                        } else {
-                            entry.getValue().edit().putInt(PREF_LOGIN_STATE, LOGIN_STATE_TO_INBOX).apply();
-                        }
-                    }
-                    defaultSharedPreferences.edit().remove(PREF_LOGIN_STATE).apply();
                 }
                 for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
                     SharedPreferences userPrefs = entry.getValue();
@@ -711,15 +549,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
     public void fetchOrganization() {
         GetOrganizationJob getOrganizationJob = new GetOrganizationJob();
         jobManager.addJobInBackground(getOrganizationJob);
-    }
-
-    public void notifyLoggedOut(Id userId) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(
-                Context.NOTIFICATION_SERVICE);
-        NotificationServer notificationServer = new NotificationServer(this, notificationManager);
-        if (userManager != null && userManager.isLoggedIn()) {
-            notificationServer.notifyUserLoggedOut(userManager.getUserBlocking(userId));
-        }
     }
 
     public String getCurrentLocale() {

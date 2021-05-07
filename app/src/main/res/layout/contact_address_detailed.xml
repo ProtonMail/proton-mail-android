@@ -31,7 +31,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:orientation="vertical">
 
         <ch.protonmail.android.views.CustomFontTextView
-            style="@style/LoginEditText.NoBg"
+            style="@style/V3EditText.NoBg"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
@@ -47,7 +47,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
         <ch.protonmail.android.views.CustomFontEditText
             android:id="@+id/address_street"
-            style="@style/LoginEditText.Inverted"
+            style="@style/V3EditText.Inverted"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -67,7 +67,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:orientation="vertical">
 
         <ch.protonmail.android.views.CustomFontTextView
-            style="@style/LoginEditText.NoBg"
+            style="@style/V3EditText.NoBg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -83,7 +83,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
         <ch.protonmail.android.views.CustomFontEditText
             android:id="@+id/address_city"
-            style="@style/LoginEditText.Inverted"
+            style="@style/V3EditText.Inverted"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -110,7 +110,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:orientation="vertical">
 
             <ch.protonmail.android.views.CustomFontTextView
-                style="@style/LoginEditText.NoBg"
+                style="@style/V3EditText.NoBg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -125,7 +125,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
             <ch.protonmail.android.views.CustomFontEditText
                 android:id="@+id/address_region"
-                style="@style/LoginEditText.Inverted"
+                style="@style/V3EditText.Inverted"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -144,7 +144,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:orientation="vertical">
 
             <ch.protonmail.android.views.CustomFontTextView
-                style="@style/LoginEditText.NoBg"
+                style="@style/V3EditText.NoBg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -159,7 +159,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
             <ch.protonmail.android.views.CustomFontEditText
                 android:id="@+id/address_postcode"
-                style="@style/LoginEditText.Inverted"
+                style="@style/V3EditText.Inverted"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -177,7 +177,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:orientation="vertical">
 
         <ch.protonmail.android.views.CustomFontTextView
-            style="@style/LoginEditText.NoBg"
+            style="@style/V3EditText.NoBg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -193,7 +193,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
         <ch.protonmail.android.views.CustomFontEditText
             android:id="@+id/address_country"
-            style="@style/LoginEditText.Inverted"
+            style="@style/V3EditText.Inverted"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

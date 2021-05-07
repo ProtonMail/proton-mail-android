@@ -120,7 +120,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(private val userManage
     }
 
     fun save(name: String) {
-        val paidUser = userManager.user.isPaidUser
+        val paidUser = userManager.requireCurrentLegacyUser().isPaidUser
         if (!paidUser) {
             _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.UNAUTHORIZED)))
             return

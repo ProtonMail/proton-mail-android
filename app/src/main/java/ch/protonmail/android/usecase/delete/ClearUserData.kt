@@ -50,20 +50,20 @@ class ClearUserData @Inject constructor(
 
     suspend operator fun invoke(userId: Id, alsoClearContacts: Boolean = true) {
 
-        val attachmentMetadataDao = databaseProvider.provideAttachmentMetadataDao(userId)
-        val contactDao = databaseProvider.provideContactDao(userId)
-        val counterDao = databaseProvider.provideCounterDao(userId)
-        val messageDao = databaseProvider.provideMessageDao(userId)
-        val messageSearchDao = databaseProvider.provideMessageSearchDao(userId)
-        val notificationDao = databaseProvider.provideNotificationDao(userId)
-        val pendingActionDao = databaseProvider.providePendingActionDao(userId)
+        val attachmentMetadataDao = runCatching { databaseProvider.provideAttachmentMetadataDao(userId) }.getOrNull()
+        val contactDao = runCatching { databaseProvider.provideContactDao(userId) }.getOrNull()
+        val counterDao = runCatching { databaseProvider.provideCounterDao(userId) }.getOrNull()
+        val messageDao = runCatching { databaseProvider.provideMessageDao(userId) }.getOrNull()
+        val messageSearchDao = runCatching { databaseProvider.provideMessageSearchDao(userId) }.getOrNull()
+        val notificationDao = runCatching { databaseProvider.provideNotificationDao(userId) }.getOrNull()
+        val pendingActionDao = runCatching { databaseProvider.providePendingActionDao(userId) }.getOrNull()
 
         // Ensure that all the queries run on Io thread, as some are still blocking calls
         withContext(dispatchers.Io) {
 
-            attachmentMetadataDao.clearAttachmentMetadataCache()
+            attachmentMetadataDao?.clearAttachmentMetadataCache()
             if (alsoClearContacts) {
-                contactDao.run {
+                contactDao?.run {
                     clearContactEmailsLabelsJoin()
                     clearContactEmailsCache()
                     clearContactDataCache()
@@ -71,24 +71,24 @@ class ClearUserData @Inject constructor(
                     clearFullContactDetailsCache()
                 }
             }
-            counterDao.run {
+            counterDao?.run {
                 clearUnreadLocationsTable()
                 clearUnreadLabelsTable()
                 clearTotalLocationsTable()
                 clearTotalLabelsTable()
             }
-            messageDao.run {
+            messageDao?.run {
                 clearMessagesCache()
                 clearAttachmentsCache()
                 clearLabelsCache()
             }
-            messageSearchDao.run {
+            messageSearchDao?.run {
                 clearMessagesCache()
                 clearAttachmentsCache()
                 clearLabelsCache()
             }
-            notificationDao.clearNotificationCache()
-            pendingActionDao.run {
+            notificationDao?.clearNotificationCache()
+            pendingActionDao?.run {
                 clearPendingSendCache()
                 clearPendingUploadCache()
             }

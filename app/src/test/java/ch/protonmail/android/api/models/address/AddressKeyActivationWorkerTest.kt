@@ -60,7 +60,7 @@ class AddressKeyActivationWorkerTest {
     private lateinit var parameters: WorkerParameters
 
     private val userManager: UserManager = mockk {
-        every { getMailboxPassword(any()) } returns "haslo".toByteArray()
+        coEvery { getUserPassphrase(any()) } returns "haslo".toByteArray()
         every { openPgp } returns mockk(relaxed = true)
         coEvery { getUser(any()) } returns mockk(relaxed = true)
     }

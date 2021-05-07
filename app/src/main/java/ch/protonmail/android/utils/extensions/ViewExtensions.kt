@@ -18,15 +18,11 @@
  */
 package ch.protonmail.android.utils.extensions
 
-import android.graphics.PorterDuff
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.view.Window
 import android.widget.EditText
-import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.annotation.ColorInt
 import androidx.annotation.StyleRes
 import ch.protonmail.android.views.contactsList.ContactGroupEmailAvatarView
 
@@ -37,33 +33,26 @@ import ch.protonmail.android.views.contactsList.ContactGroupEmailAvatarView
  */
 
 /** Execute the [listener] on [TextWatcher.onTextChanged] */
-inline fun EditText.onTextChange( crossinline listener: (CharSequence) -> Unit ): TextWatcher {
+inline fun EditText.onTextChange(crossinline listener: (CharSequence) -> Unit): TextWatcher {
     val watcher = object : TextWatcher {
-        override fun afterTextChanged( editable: Editable ) {
+        override fun afterTextChanged(editable: Editable) {
             /* Do nothing */
         }
-        override fun beforeTextChanged( text: CharSequence, start: Int, count: Int, after: Int ) {
+
+        override fun beforeTextChanged(text: CharSequence, start: Int, count: Int, after: Int) {
             /* Do nothing */
         }
-        override fun onTextChanged( text: CharSequence, start: Int, before: Int, count: Int ) {
-            listener( text )
+
+        override fun onTextChanged(text: CharSequence, start: Int, before: Int, count: Int) {
+            listener(text)
         }
     }
-    addTextChangedListener( watcher )
+    addTextChangedListener(watcher)
     return watcher
 }
 
 fun TextView.setStyle(@StyleRes styleId: Int) {
     setTextAppearance(styleId)
-}
-
-fun Window.setBarColors(@ColorInt colorId: Int) {
-    statusBarColor = colorId
-    navigationBarColor = colorId
-}
-
-fun ProgressBar.setcolor(@ColorInt colorId: Int) {
-    indeterminateDrawable.setColorFilter(colorId, PorterDuff.Mode.SRC_IN)
 }
 
 fun ContactGroupEmailAvatarView.setAccountLetters(displayName: String) {

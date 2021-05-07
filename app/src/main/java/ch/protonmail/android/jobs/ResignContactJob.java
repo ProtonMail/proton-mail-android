@@ -62,7 +62,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
         ContactDao contactDao = ContactDatabase.Companion
                 .getInstance(getApplicationContext(), getUserId())
                 .getDao();
-        User user = getUserManager().getUser();
+        User user = getUserManager().getCurrentLegacyUser();
         String contactId = getContactId(contactDao, mContactEmail);
         if (contactId == null) {
             AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.ERROR, mDestination));

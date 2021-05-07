@@ -19,11 +19,8 @@
 package ch.protonmail.android.api.segments.key
 
 import androidx.annotation.WorkerThread
-import ch.protonmail.android.api.models.KeysSetupBody
 import ch.protonmail.android.api.models.PublicKeyResponse
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.SinglePasswordChange
-import ch.protonmail.android.api.models.UserInfo
 import ch.protonmail.android.api.models.address.KeyActivationBody
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
@@ -31,12 +28,11 @@ import java.io.IOException
 import java.util.ArrayList
 import java.util.Collections
 
-class KeyApi (private val service : KeyService) : BaseApi(), KeyApiSpec {
+class KeyApi(private val service: KeyService) : BaseApi(), KeyApiSpec {
 
     @Throws(IOException::class)
-    override fun getPublicKeysBlocking(email: String): PublicKeyResponse {
-        return ParseUtils.parse(service.getPublicKeysBlocking(email).execute())
-    }
+    override fun getPublicKeysBlocking(email: String): PublicKeyResponse =
+        ParseUtils.parse(service.getPublicKeysBlocking(email).execute())
 
     override suspend fun getPublicKeys(email: String): PublicKeyResponse =
         service.getPublicKeys(email)
@@ -50,13 +46,8 @@ class KeyApi (private val service : KeyService) : BaseApi(), KeyApiSpec {
         val service = service
         val list = ArrayList(emails)
         return executeAll(list.map { contactId -> service.getPublicKeysBlocking(contactId) })
-                .mapIndexed { i, resp -> list[i] to resp }.toMap()
+            .mapIndexed { i, resp -> list[i] to resp }.toMap()
     }
-
-    @Throws(Exception::class)
-    override fun updatePrivateKeys(
-        body: SinglePasswordChange
-    ): ResponseBody = ParseUtils.parse(service.updatePrivateKeys(body).execute())
 
     @Throws(Exception::class)
     override fun activateKey(
@@ -69,9 +60,4 @@ class KeyApi (private val service : KeyService) : BaseApi(), KeyApiSpec {
         keyActivationBody: KeyActivationBody,
         keyId: String
     ): ResponseBody = service.activateKeyLegacy(keyActivationBody, keyId)
-
-    @Throws(IOException::class)
-    override fun setupKeys(
-        keysSetupBody: KeysSetupBody
-    ): UserInfo = ParseUtils.parse(service.setupKeys(keysSetupBody).execute())
 }

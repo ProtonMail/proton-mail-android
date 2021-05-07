@@ -45,6 +45,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
@@ -63,7 +64,10 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
     private val composeMessageRepository: ComposeMessageRepository = mockk(relaxed = true)
 
     private val userManager: UserManager = mockk(relaxed = true) {
-        every { user.senderEmailAddresses } returns mutableListOf()
+        every { requireCurrentLegacyUser().senderEmailAddresses } returns mutableListOf()
+    }
+
+    private val accountManager: AccountManager = mockk(relaxed = true) {
     }
 
     private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true) {
@@ -87,6 +91,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
     private val viewModel = ComposeMessageViewModel(
         composeMessageRepository,
         userManager,
+        accountManager,
         messageDetailsRepository,
         deleteMessage,
         fetchPublicKeys,
@@ -397,7 +402,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
     private fun givenViewModelPropertiesAreInitialised() {
         // Needed to set class fields to the right value and allow code under test to get executed
         viewModel.prepareMessageData(false, "addressId", "mail-alias", false)
-        viewModel.setupComposingNewMessage(false, Constants.MessageActionType.FORWARD, "parentId823", "")
+        viewModel.setupComposingNewMessage(Constants.MessageActionType.FORWARD, "parentId823", "")
         viewModel.oldSenderAddressId = "previousSenderAddressId"
     }
 

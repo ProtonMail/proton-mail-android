@@ -18,9 +18,7 @@
  */
 package ch.protonmail.android.api
 
-import ch.protonmail.android.api.segments.address.AddressService
 import ch.protonmail.android.api.segments.attachment.AttachmentService
-import ch.protonmail.android.api.segments.authentication.AuthenticationService
 import ch.protonmail.android.api.segments.contact.ContactService
 import ch.protonmail.android.api.segments.device.DeviceService
 import ch.protonmail.android.api.segments.event.EventService
@@ -30,17 +28,10 @@ import ch.protonmail.android.api.segments.message.MessageService
 import ch.protonmail.android.api.segments.organization.OrganizationService
 import ch.protonmail.android.api.segments.payment.PaymentService
 import ch.protonmail.android.api.segments.report.ReportService
-import ch.protonmail.android.api.segments.reset.ResetService
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsService
-import ch.protonmail.android.api.segments.settings.user.UserSettingsService
-import ch.protonmail.android.api.segments.user.UserService
 import retrofit2.Retrofit
 
 class SecuredServices(private val retrofit: Retrofit) {
-
-    val address: AddressService by createService(AddressService::class.java)
-
-    val authentication: AuthenticationService by createService(AuthenticationService::class.java)
 
     val contact: ContactService by createService(ContactService::class.java)
 
@@ -52,8 +43,6 @@ class SecuredServices(private val retrofit: Retrofit) {
 
     val event: EventService by createService(EventService::class.java)
 
-    val userSettings: UserSettingsService by createService(UserSettingsService::class.java)
-
     val mailSettings: MailSettingsService by createService(MailSettingsService::class.java)
 
     val key: KeyService by createService(KeyService::class.java)
@@ -64,15 +53,10 @@ class SecuredServices(private val retrofit: Retrofit) {
 
     val attachment: AttachmentService by createService(AttachmentService::class.java)
 
-    val reset: ResetService by createService(ResetService::class.java)
-
     val organization: OrganizationService by createService(OrganizationService::class.java)
-
-    val user: UserService by createService(UserService::class.java)
 
     // Every service gets the same Retrofit instance (lazy loaded)
     private fun <T> createService(serviceInterface: Class<T>): Lazy<T> {
         return lazy { retrofit.create(serviceInterface) }
     }
 }
-

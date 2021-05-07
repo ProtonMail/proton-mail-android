@@ -28,6 +28,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.usecase.VerifyConnection
@@ -77,6 +78,8 @@ class MailboxViewModel @Inject constructor(
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
 
+    lateinit var userId: Id
+
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning
     val manageLimitApproachingWarning: LiveData<Event<Boolean>>
@@ -99,7 +102,7 @@ class MailboxViewModel @Inject constructor(
     fun usedSpaceActionEvent(limitReachedFlow: Int) {
         viewModelScope.launch {
             userManager.setShowStorageLimitReached(true)
-            val user = userManager.getCurrentUser()
+            val user = userManager.currentUser
                 ?: return@launch
             val (usedSpace, totalSpace) = with(user.dedicatedSpace) { used.l.toLong() to total.l.toLong() }
             val userMaxSpace = if (totalSpace == 0L) Long.MAX_VALUE else totalSpace

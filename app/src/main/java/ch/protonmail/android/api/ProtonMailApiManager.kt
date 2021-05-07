@@ -20,7 +20,6 @@ package ch.protonmail.android.api
 
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.AttachmentUploadResponse
-import ch.protonmail.android.api.models.AvailableDomainsResponse
 import ch.protonmail.android.api.models.AvailablePlansResponse
 import ch.protonmail.android.api.models.CheckSubscriptionBody
 import ch.protonmail.android.api.models.CheckSubscriptionResponse
@@ -30,53 +29,22 @@ import ch.protonmail.android.api.models.ContactsDataResponse
 import ch.protonmail.android.api.models.CreateContact
 import ch.protonmail.android.api.models.CreateContactV2BodyItem
 import ch.protonmail.android.api.models.CreateOrganizationBody
-import ch.protonmail.android.api.models.CreatePaymentTokenBody
-import ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponse
-import ch.protonmail.android.api.models.CreateSubscriptionBody
-import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
 import ch.protonmail.android.api.models.DeleteResponse
-import ch.protonmail.android.api.models.DirectEnabledResponse
-import ch.protonmail.android.api.models.DonateBody
 import ch.protonmail.android.api.models.DraftBody
-import ch.protonmail.android.api.models.GetPaymentTokenResponse
 import ch.protonmail.android.api.models.GetSubscriptionResponse
-import ch.protonmail.android.api.models.HumanVerifyOptionsResponse
 import ch.protonmail.android.api.models.IDList
-import ch.protonmail.android.api.models.KeySalts
 import ch.protonmail.android.api.models.Keys
-import ch.protonmail.android.api.models.KeysSetupBody
 import ch.protonmail.android.api.models.LabelBody
-import ch.protonmail.android.api.models.LoginInfoResponse
-import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.models.MailSettingsResponse
-import ch.protonmail.android.api.models.MailboxResetBody
-import ch.protonmail.android.api.models.ModulusResponse
 import ch.protonmail.android.api.models.MoveToFolderResponse
 import ch.protonmail.android.api.models.OrganizationResponse
-import ch.protonmail.android.api.models.PasswordVerifier
-import ch.protonmail.android.api.models.PaymentMethodResponse
 import ch.protonmail.android.api.models.PaymentMethodsResponse
 import ch.protonmail.android.api.models.PaymentsStatusResponse
 import ch.protonmail.android.api.models.PublicKeyResponse
-import ch.protonmail.android.api.models.RefreshBody
-import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.api.models.RegisterDeviceRequestBody
-import ch.protonmail.android.api.models.ResetTokenResponse
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.SinglePasswordChange
-import ch.protonmail.android.api.models.SrpResponseBody
-import ch.protonmail.android.api.models.TokenPaymentBody
-import ch.protonmail.android.api.models.TwoFABody
-import ch.protonmail.android.api.models.TwoFAResponse
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
-import ch.protonmail.android.api.models.UserInfo
-import ch.protonmail.android.api.models.UserSettingsResponse
-import ch.protonmail.android.api.models.VerificationCodeBody
-import ch.protonmail.android.api.models.VerifyBody
-import ch.protonmail.android.api.models.VerifyResponse
-import ch.protonmail.android.api.models.address.AddressSetupBody
-import ch.protonmail.android.api.models.address.AddressSetupResponse
-import ch.protonmail.android.api.models.address.AddressesResponse
+import ch.protonmail.android.api.models.UnregisterDeviceRequestBody
 import ch.protonmail.android.api.models.address.KeyActivationBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
@@ -87,27 +55,18 @@ import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
-import ch.protonmail.android.api.models.requests.PasswordChange
-import ch.protonmail.android.api.models.requests.PostHumanVerificationBody
-import ch.protonmail.android.api.models.requests.UpgradePasswordBody
 import ch.protonmail.android.api.segments.BaseApi
-import ch.protonmail.android.api.segments.address.AddressApiSpec
 import ch.protonmail.android.api.segments.attachment.AttachmentApiSpec
-import ch.protonmail.android.api.segments.authentication.AuthenticationApiSpec
 import ch.protonmail.android.api.segments.connectivity.ConnectivityApiSpec
 import ch.protonmail.android.api.segments.contact.ContactApiSpec
 import ch.protonmail.android.api.segments.device.DeviceApiSpec
-import ch.protonmail.android.api.segments.domain.DomainApiSpec
 import ch.protonmail.android.api.segments.key.KeyApiSpec
 import ch.protonmail.android.api.segments.label.LabelApiSpec
 import ch.protonmail.android.api.segments.message.MessageApiSpec
 import ch.protonmail.android.api.segments.organization.OrganizationApiSpec
 import ch.protonmail.android.api.segments.payment.PaymentApiSpec
 import ch.protonmail.android.api.segments.report.ReportApiSpec
-import ch.protonmail.android.api.segments.reset.ResetApiSpec
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
-import ch.protonmail.android.api.segments.settings.mail.UserSettingsApiSpec
-import ch.protonmail.android.api.segments.user.UserApiSpec
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
@@ -116,7 +75,6 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.RequestBody
-import retrofit2.Call
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -127,9 +85,7 @@ import javax.inject.Singleton
 @Singleton
 class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     BaseApi(),
-    AddressApiSpec,
     AttachmentApiSpec,
-    AuthenticationApiSpec,
     ConnectivityApiSpec,
     ContactApiSpec,
     DeviceApiSpec,
@@ -139,11 +95,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     OrganizationApiSpec,
     PaymentApiSpec,
     ReportApiSpec,
-    ResetApiSpec,
-    UserSettingsApiSpec,
-    MailSettingsApiSpec,
-    UserApiSpec,
-    DomainApiSpec {
+    MailSettingsApiSpec {
 
     fun reset(newApi: ProtonMailApi) {
         api = newApi
@@ -151,33 +103,11 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     fun getSecuredServices(): SecuredServices = api.securedServices
 
-    // region routes and services
-    override fun fetchAddressesBlocking(): AddressesResponse = api.fetchAddressesBlocking()
-
-    override suspend fun fetchAddresses(): AddressesResponse = api.fetchAddresses()
-
-    override fun fetchAddressesBlocking(userId: Id): AddressesResponse = api.fetchAddressesBlocking(userId)
-
-    override fun updateAlias(addressIds: List<String>): ResponseBody = api.updateAlias(addressIds)
-
-    override fun setupAddress(
-        addressSetupBody: AddressSetupBody
-    ): AddressSetupResponse = api.setupAddress(addressSetupBody)
-
-    override fun editAddress(
-        addressId: String,
-        displayName: String,
-        signature: String
-    ): ResponseBody = api.editAddress(addressId, displayName, signature)
-
-    override fun deleteAttachment(attachmentId: String): ResponseBody = api.deleteAttachment(attachmentId)
-
+    override fun deleteAttachment(attachmentId: String): ResponseBody =
+        api.deleteAttachment(attachmentId)
 
     override fun downloadAttachmentBlocking(attachmentId: String): ByteArray =
         api.downloadAttachmentBlocking(attachmentId)
-
-    override fun downloadAttachmentBlocking(attachmentId: String, progressListener: ProgressListener): ByteArray =
-        api.downloadAttachmentBlocking(attachmentId, progressListener)
 
     override suspend fun downloadAttachment(attachmentId: String): okhttp3.ResponseBody? =
         api.downloadAttachment(attachmentId)
@@ -217,40 +147,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     ): AttachmentUploadResponse = api.uploadAttachment(attachment, keyPackage, dataPackage, signature)
 
     override fun getAttachmentUrl(attachmentId: String): String = api.getAttachmentUrl(attachmentId)
-
-    override fun revokeAccessBlocking(userId: Id): ResponseBody = api.revokeAccessBlocking(userId)
-
-    override suspend fun revokeAccess(userId: Id): ResponseBody = api.revokeAccess(userId)
-
-    override fun loginInfo(username: String): LoginInfoResponse = api.loginInfo(username)
-
-    /**
-     * This call strips out all user-specific headers so we get clean SRP session.
-     */
-    override fun loginInfoForAuthentication(
-        username: String
-    ): LoginInfoResponse = api.loginInfoForAuthentication(username)
-
-    override fun login(
-        username: String,
-        srpSession: String,
-        clientEphemeral: ByteArray,
-        clientProof: ByteArray
-    ): LoginResponse = api.login(username, srpSession, clientEphemeral, clientProof)
-
-    override fun randomModulus(): ModulusResponse = api.randomModulus()
-
-    override suspend fun refreshAuth(
-        refreshBody: RefreshBody,
-        userIdTag: UserIdTag?
-    ): RefreshResponse = api.refreshAuth(refreshBody, userIdTag)
-
-    override fun refreshAuthBlocking(
-        refreshBody: RefreshBody,
-        userIdTag: UserIdTag
-    ): RefreshResponse = api.refreshAuthBlocking(refreshBody, userIdTag)
-
-    override fun twoFactor(twoFABody: TwoFABody): TwoFAResponse = api.twoFactor(twoFABody)
 
     override suspend fun pingAsync(): ResponseBody = api.pingAsync()
 
@@ -300,19 +196,19 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         api.unlabelContactEmails(labelContactsBody)
 
     override suspend fun registerDevice(
-        registerDeviceRequestBody: RegisterDeviceRequestBody,
-        userId: Id
-    ) = api.registerDevice(registerDeviceRequestBody, userId)
+        userId: Id,
+        registerDeviceRequestBody: RegisterDeviceRequestBody
+    ) = api.registerDevice(userId, registerDeviceRequestBody)
 
-    override suspend fun unregisterDevice(deviceToken: String) = api.unregisterDevice(deviceToken)
+    override suspend fun unregisterDevice(
+        unregisterDeviceRequestBody: UnregisterDeviceRequestBody,
+    ) = api.unregisterDevice(unregisterDeviceRequestBody)
 
     override fun getPublicKeysBlocking(email: String): PublicKeyResponse = api.getPublicKeysBlocking(email)
 
     override suspend fun getPublicKeys(email: String): PublicKeyResponse = api.getPublicKeys(email)
 
     override fun getPublicKeys(emails: Collection<String>): Map<String, PublicKeyResponse?> = api.getPublicKeys(emails)
-
-    override fun updatePrivateKeys(body: SinglePasswordChange): ResponseBody = api.updatePrivateKeys(body)
 
     override fun activateKey(
         keyActivationBody: KeyActivationBody,
@@ -323,8 +219,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         keyActivationBody: KeyActivationBody,
         keyId: String
     ): ResponseBody = api.activateKeyLegacy(keyActivationBody, keyId)
-
-    override fun setupKeys(keysSetupBody: KeysSetupBody): UserInfo = api.setupKeys(keysSetupBody)
 
     override fun fetchLabels(userIdTag: UserIdTag): LabelsResponse = api.fetchLabels(userIdTag)
 
@@ -432,28 +326,10 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override suspend fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse =
         api.checkSubscription(body)
 
-    override fun donate(body: DonateBody): ResponseBody? = api.donate(body)
-
-    override suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse =
-        api.createUpdateSubscription(body)
-
-    override suspend fun createUpdatePaymentMethod(body: TokenPaymentBody): PaymentMethodResponse =
-        api.createUpdatePaymentMethod(body)
-
     override fun fetchAvailablePlans(
         currency: String,
         cycle: Int
     ): AvailablePlansResponse = api.fetchAvailablePlans(currency, cycle)
-
-    override fun verifyPayment(body: VerifyBody): VerifyResponse = api.verifyPayment(body)
-
-    override fun createPaymentToken(
-        body: CreatePaymentTokenBody,
-        token: String?,
-        tokenType: String?
-    ): Call<CreatePaymentTokenSuccessResponse> = api.createPaymentToken(body, token, tokenType)
-
-    override fun getPaymentToken(token: String): Call<GetPaymentTokenResponse> = api.getPaymentToken(token)
 
     override fun reportBug(
         osName: String,
@@ -472,36 +348,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         mimeType: String
     ): ResponseBody? = api.postPhishingReport(messageId, messageBody, mimeType)
 
-    override fun resetMailboxToken(): ResetTokenResponse? = api.resetMailboxToken()
-
-    override fun resetMailbox(token: String, body: MailboxResetBody): ResponseBody? = api.resetMailbox(token, body)
-
-    override fun fetchUserSettings(): UserSettingsResponse = api.fetchUserSettings()
-
-    override fun fetchUserSettings(userId: Id): UserSettingsResponse = api.fetchUserSettings(userId)
-
-    override fun updateNotify(updateNotify: Boolean): ResponseBody? = api.updateNotify(updateNotify)
-
-    override fun updateNotificationEmail(
-        srpSession: String,
-        clientEpheremal: String,
-        clientProof: String,
-        twoFactorCode: String?,
-        email: String
-    ): SrpResponseBody? = api.updateNotificationEmail(srpSession, clientEpheremal, clientProof, twoFactorCode, email)
-
-    override fun updateLoginPassword(
-        passwordChangeBody: PasswordChange
-    ): SrpResponseBody? = api.updateLoginPassword(passwordChangeBody)
-
-    override fun upgradeLoginPassword(
-        upgradePasswordBody: UpgradePasswordBody
-    ): ResponseBody? = api.upgradeLoginPassword(upgradePasswordBody)
-
-    @Deprecated(message = "Use non-blocking version of the function", replaceWith = ReplaceWith("fetchMailSettings()"))
-    override fun fetchMailSettingsBlocking(): MailSettingsResponse = api.fetchMailSettingsBlocking()
-
-    override suspend fun fetchMailSettings(): MailSettingsResponse = api.fetchMailSettings()
+    override suspend fun fetchMailSettings(userId: Id): MailSettingsResponse = api.fetchMailSettings(userId)
 
     override fun fetchMailSettingsBlocking(userId: Id): MailSettingsResponse =
         api.fetchMailSettingsBlocking(userId)
@@ -518,41 +365,5 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun updateViewMode(viewMode: Int): ResponseBody? = api.updateViewMode(viewMode)
 
-    override fun fetchUserInfoBlocking(userId: Id): UserInfo = api.fetchUserInfoBlocking(userId)
-
-    @Deprecated("Use with user Id", ReplaceWith("fetchUserInfoBlocking(userId)"))
-    override fun fetchUserInfoBlocking(): UserInfo = api.fetchUserInfoBlocking()
-
-    override suspend fun fetchUserInfo(): UserInfo = api.fetchUserInfo()
-
-
-    override fun fetchKeySalts(userId: Id): KeySalts = api.fetchKeySalts(userId)
-
-    @Deprecated("Use with user Id", ReplaceWith("fetchKeySalts(userId)"))
-    override fun fetchKeySalts(): KeySalts = api.fetchKeySalts()
-
-    override fun fetchHumanVerificationOptions(): HumanVerifyOptionsResponse = api.fetchHumanVerificationOptions()
-
-    override fun postHumanVerification(body: PostHumanVerificationBody): ResponseBody? = api.postHumanVerification(body)
-
-    override fun createUser(
-        username: String,
-        password: PasswordVerifier,
-        updateMe: Boolean,
-        tokenType: String,
-        token: String,
-        timestamp: String,
-        payload: String
-    ): UserInfo = api.createUser(username, password, updateMe, tokenType, token, timestamp, payload)
-
-    override fun sendVerificationCode(
-        verificationCodeBody: VerificationCodeBody
-    ): ResponseBody = api.sendVerificationCode(verificationCodeBody)
-
-    override fun isUsernameAvailable(username: String): ResponseBody = api.isUsernameAvailable(username)
-
-    override fun fetchDirectEnabled(): DirectEnabledResponse = api.fetchDirectEnabled()
-
-    override fun fetchAvailableDomains(): AvailableDomainsResponse = api.fetchAvailableDomains()
     // endregion
 }

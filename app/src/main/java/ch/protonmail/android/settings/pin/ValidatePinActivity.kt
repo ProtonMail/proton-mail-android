@@ -30,13 +30,11 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.FetchDraftDetailEvent
 import ch.protonmail.android.events.FetchMessageDetailEvent
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.PostImportAttachmentEvent
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.views.SecureEditText
 import com.squareup.otto.Subscribe
@@ -44,7 +42,6 @@ import java.util.concurrent.Executors
 
 // region constants
 const val EXTRA_PIN_VALID = "extra_pin_valid"
-const val EXTRA_LOGOUT = "extra_logout"
 const val EXTRA_FRAGMENT_TITLE = "extra_title"
 const val EXTRA_ATTACHMENT_IMPORT_EVENT = "extra_attachment_import_event"
 const val EXTRA_TOTAL_COUNT_EVENT = "extra_total_count_event"
@@ -80,13 +77,15 @@ class ValidatePinActivity : BaseActivity(),
         if (savedInstanceState != null) {
             return
         }
+        val user = mUserManager.requireCurrentLegacyUser()
         val titleRes = intent.getIntExtra(EXTRA_FRAGMENT_TITLE, 0)
-        val validatePinFragment = PinFragment.newInstance(titleRes, PinAction.VALIDATE,
-            null, useFingerprint = mUserManager.user.isUseFingerprint)
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainer, validatePinFragment, validatePinFragment.fragmentKey).commitAllowingStateLoss()
+        val validatePinFragment = PinFragment.newInstance(titleRes, PinAction.VALIDATE, null, useFingerprint = user.isUseFingerprint)
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.fragmentContainer, validatePinFragment, validatePinFragment.fragmentKey)
+            .commitAllowingStateLoss()
 
-        if (mUserManager.user.isUseFingerprint) {
+        if (user.isUseFingerprint) {
             initBiometricPrompt()
         }
     }
@@ -149,7 +148,7 @@ class ValidatePinActivity : BaseActivity(),
     }
 
     override fun onPinSuccess() {
-        mUserManager.user.setManuallyLocked(false)
+        mUserManager.requireCurrentLegacyUser().setManuallyLocked(false)
         mPinValid = true
         setResult(Activity.RESULT_OK, buildIntent())
         saveLastInteraction()
@@ -165,11 +164,6 @@ class ValidatePinActivity : BaseActivity(),
 
     override fun onPinMaxDigitReached() {
         // noop
-    }
-
-    @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) {
-        moveToLogin()
     }
 
     private fun initBiometricPrompt() {
@@ -198,20 +192,19 @@ class ValidatePinActivity : BaseActivity(),
     }
 
     private fun logout() {
-        mUserManager.requireCurrentLegacyUserBlocking().apply {
+        mUserManager.requireCurrentLegacyUser().apply {
             isUsePin = false
             isUseFingerprint = false
-            save()
         }
         mUserManager.apply {
             savePin("")
             resetPinAttempts()
-            logoutBlocking(requireCurrentUserId())
         }
-        val intent = Intent()
-        intent.putExtra(EXTRA_LOGOUT, true)
-        setResult(Activity.RESULT_OK, intent)
-        finish()
+        accountStateManager.logout(mUserManager.requireCurrentUserId()).invokeOnCompletion {
+            val intent = Intent()
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
     }
 
     override fun onBackPressed() {

@@ -20,7 +20,6 @@ package ch.protonmail.android.crypto
 
 import android.text.TextUtils
 import androidx.test.filters.LargeTest
-import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.core.UserManager
@@ -36,10 +35,10 @@ import com.proton.gopenpgp.crypto.Crypto.newKeyFromArmored
 import com.proton.gopenpgp.crypto.Crypto.newKeyRing
 import com.proton.gopenpgp.crypto.Crypto.newPGPMessageFromArmored
 import com.proton.gopenpgp.crypto.Crypto.newPGPSignatureFromArmored
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.arch.map
 import me.proton.core.util.kotlin.invoke
 import org.junit.Assert.assertEquals
@@ -55,7 +54,6 @@ internal class CryptoTest {
     private val userManagerMock: UserManager = mockk()
     private val openPgp = OpenPGP()
 
-    private val tokenManagerMock: TokenManager = mockk()
     private val openPgpMock: OpenPGP = mockk()
 
     //region One Address Key Setup
@@ -691,42 +689,41 @@ internal class CryptoTest {
     private val addressKeysMapper = AddressKeysBridgeMapper(addressKeyMapper)
     private val userKeyMapper = UserKeyBridgeMapper()
 
-    private val oneKeyUserMock: User = mockk {
-        every { toNewUser() } returns mockk {
+    private val oneKeyUserMock: ch.protonmail.android.domain.entity.user.User = mockk {
             every { addresses } returns mockk {
                 every { findBy(Id(oneAddressKeyAddressId)) } answers { addresses[1] }
                 every { addresses } returns mapOf(
                     1 to mockk {
                         every { keys } returns mockk {
                             every { keys } returns oneAddressKeyAddressKeys.map(addressKeyMapper) { it.toNewModel() }
+                            every { primaryKey } returns keys.first()
                         }
                     }
                 )
             }
             every { keys } returns mockk {
                 every { keys } returns oneAddressKeyUserKeys.map(userKeyMapper) { it.toNewModel() }
+                every { primaryKey } returns keys.first()
             }
         }
-    }
 
-    private val manyAddressKeysUserMock: User = mockk {
-        every { toNewUser() } returns mockk {
+    private val manyAddressKeysUserMock: ch.protonmail.android.domain.entity.user.User = mockk {
             every { addresses } returns mockk {
                 every { findBy(Id(manyAddressKeysAddressId)) } answers { addresses[1] }
                 every { addresses } returns mapOf(
                     1 to mockk {
                         every { keys } returns mockk {
-                            every { primaryKey } returns addressKeysMapper { manyAddressKeysAddressKeys.toNewModel() }.primaryKey
                             every { keys } returns manyAddressKeysAddressKeys.map(addressKeyMapper) { it.toNewModel() }
+                            every { primaryKey } returns keys.first()
                         }
                     }
                 )
             }
             every { keys } returns mockk {
                 every { keys } returns manyAddressKeysUserKeys.map(userKeyMapper) { it.toNewModel() }
+                every { primaryKey } returns keys.first()
             }
         }
-    }
 
     init {
         mockkStatic(TextUtils::class)
@@ -734,27 +731,27 @@ internal class CryptoTest {
         every { userManagerMock.openPgp } returns openPgp
 
         // one address key
+        /*
         every { oneKeyUserMock.keys } returns oneAddressKeyUserKeys
         every { oneKeyUserMock.getAddressById(oneAddressKeyAddressId) } returns mockk {
             every { keys } returns oneAddressKeyAddressKeys
-        }
-        every { userManagerMock.getLegacyUserBlocking(oneAddressKeyUserId) } returns oneKeyUserMock
-        every { userManagerMock.getMailboxPassword(oneAddressKeyUserId) } returns oneAddressKeyMailboxPassword.toByteArray()
+        }*/
+        every { userManagerMock.getUserBlocking(oneAddressKeyUserId) } returns oneKeyUserMock
+        every { userManagerMock.getUserPassphraseBlocking(oneAddressKeyUserId) } returns oneAddressKeyMailboxPassword.toByteArray()
 
         // many address keys
+        /*
         every { manyAddressKeysUserMock.keys } returns manyAddressKeysUserKeys
         every { manyAddressKeysUserMock.getAddressById(manyAddressKeysAddressId) } returns mockk {
             every { keys } returns manyAddressKeysAddressKeys
-        }
-        every { userManagerMock.getLegacyUserBlocking(manyAddressKeysUserId) } returns manyAddressKeysUserMock
-        every { userManagerMock.getMailboxPassword(manyAddressKeysUserId) } returns manyAddressKeysMailboxPassword.toByteArray()
+        }*/
+        every { userManagerMock.getUserBlocking(manyAddressKeysUserId) } returns manyAddressKeysUserMock
+        every { userManagerMock.getUserPassphraseBlocking(manyAddressKeysUserId) } returns manyAddressKeysMailboxPassword.toByteArray()
 
         // token and signature generation
         every { userManagerMock.currentUserId } returns tokenAndSignatureUserId
         every { userManagerMock.requireCurrentUserId() } returns tokenAndSignatureUserId
-        coEvery { userManagerMock.getTokenManager(tokenAndSignatureUserId) } returns tokenManagerMock
-        every { userManagerMock.getMailboxPassword(tokenAndSignatureUserId) } returns passphrase
-        every { tokenManagerMock.encPrivateKey } returns armoredPrivateKey
+        every { userManagerMock.getUserPassphraseBlocking(tokenAndSignatureUserId) } returns passphrase
         every { openPgpMock.randomToken() } returns randomToken
     }
 
@@ -768,6 +765,7 @@ internal class CryptoTest {
 
     @Test
     fun decrypt_message_for_only_address_key() {
+        every { userManagerMock.currentUser } returns oneKeyUserMock
 
         val encryptedMessage = """
             -----BEGIN PGP MESSAGE-----
@@ -825,6 +823,7 @@ internal class CryptoTest {
 
     @Test
     fun decrypt_message_for_non_first_address_key() {
+        every { userManagerMock.currentUser } returns manyAddressKeysUserMock
 
         val encryptedMessage = """
             -----BEGIN PGP MESSAGE-----
@@ -1702,18 +1701,22 @@ internal class CryptoTest {
 
     @Test
     fun generate_token_and_signature_private_user() {
-        val (token, signature) =
-            GenerateTokenAndSignature(userManagerMock, openPgpMock).invoke(null)
-        val testMessage = newPGPMessageFromArmored(token)
-        val testKey = newKeyFromArmored(armoredPrivateKey)
-        val unlocked = testKey.unlock(passphrase)
-        val verificationKeyRing = newKeyRing(unlocked)
-        val decryptedTokenPlainMessage = verificationKeyRing.decrypt(testMessage, null, 0)
-        val decryptedTokenString = decryptedTokenPlainMessage.string
-        assertEquals(randomTokenString, decryptedTokenString)
-        val armoredSignature = newPGPSignatureFromArmored(signature)
+        every { userManagerMock.currentUser } returns oneKeyUserMock
+        every { userManagerMock.getCurrentUserPassphrase() } returns passphrase
+        runBlocking {
+            val (token, signature) =
+                GenerateTokenAndSignature(userManagerMock, openPgpMock).invoke(null)
+            val testMessage = newPGPMessageFromArmored(token)
+            val testKey = newKeyFromArmored(armoredPrivateKey)
+            val unlocked = testKey.unlock(passphrase)
+            val verificationKeyRing = newKeyRing(unlocked)
+            val decryptedTokenPlainMessage = verificationKeyRing.decrypt(testMessage, null, 0)
+            val decryptedTokenString = decryptedTokenPlainMessage.string
+            assertEquals(randomTokenString, decryptedTokenString)
+            val armoredSignature = newPGPSignatureFromArmored(signature)
 
-        verificationKeyRing.verifyDetached(decryptedTokenPlainMessage, armoredSignature, com.proton.gopenpgp.crypto.Crypto.getUnixTime())
+            verificationKeyRing.verifyDetached(decryptedTokenPlainMessage, armoredSignature, com.proton.gopenpgp.crypto.Crypto.getUnixTime())
+        }
     }
 
     @Test

@@ -101,7 +101,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
             <ch.protonmail.android.views.CustomFontTextView
                 android:id="@+id/address_full_combined"
-                style="@style/LoginEditText.NoBg"
+                style="@style/V3EditText.NoBg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"

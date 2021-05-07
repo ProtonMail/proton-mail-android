@@ -19,10 +19,7 @@
 
 package ch.protonmail.android.prefs
 
-import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
-import android.util.Base64
 import assert4k.assert
 import assert4k.equals
 import assert4k.that
@@ -32,16 +29,10 @@ import ch.protonmail.android.core.PREF_USERNAME
 import ch.protonmail.android.domain.entity.Id
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
-import io.mockk.mockkStatic
-import io.mockk.unmockkObject
-import io.mockk.unmockkStatic
 import me.proton.core.test.android.mocks.newMockSharedPreferences
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.android.sharedpreferences.isEmpty
 import me.proton.core.util.android.sharedpreferences.set
-import org.junit.After
-import org.junit.Before
 import kotlin.test.Test
 
 /**
@@ -66,47 +57,20 @@ class SecureSharedPreferencesTest {
             this[PREF_USER_NAME] = user2.first
         }
 
-        private val context = mockk<Context> {
-            val allPrefs = mutableMapOf<String, SharedPreferences>()
+        private val preferencesFactory: SecureSharedPreferences.Factory = mockk {
+            val appPreferences = newMockSharedPreferences
+            val usersPreferences = mutableMapOf<Id, SharedPreferences>()
 
-            every { applicationContext } returns this
-            // All preferences
-            every { getSharedPreferences(any(), any()) } answers {
-                allPrefs.getOrPut(firstArg()) { newMockSharedPreferences }
+            every { appPreferences() } returns appPreferences
+            every { userPreferences(any()) } answers {
+                usersPreferences.getOrPut(firstArg()) { newMockSharedPreferences }
             }
-            // Users' old preferences
-            every { getSharedPreferences(user1.first, any()) } returns user1Prefs
-            every { getSharedPreferences(user2.first, any()) } returns user2Prefs
+            every { _usernamePreferences(any()) } returns newMockSharedPreferences
+            every { _usernamePreferences(user1.first) } returns user1Prefs
+            every { _usernamePreferences(user2.first) } returns user2Prefs
         }
         private val migration =
-            SecureSharedPreferences.UsernameToIdMigration(dispatchers, context)
-
-        @Before
-        fun before() {
-
-            // Setup static methods
-            mockkStatic(Base64::class, PreferenceManager::class)
-            every { Base64.encodeToString(any(), any()) } answers { firstArg<ByteArray>().toString(Charsets.UTF_8) }
-            every { PreferenceManager.getDefaultSharedPreferences(any()) } returns
-                context.getSharedPreferences("default", 0)
-
-            // Setup SecureSharedPreferences accessors
-            mockkObject(SecureSharedPreferences.Companion)
-            every { SecureSharedPreferences.getPrefs(any(), any(), any()) } returns
-                PreferenceManager.getDefaultSharedPreferences(context)
-            every { SecureSharedPreferences.getPrefsForUser(any(), any<Id>()) } answers {
-                context.getSharedPreferences(secondArg<Id>().s, 0)
-            }
-            every { SecureSharedPreferences["_getPrefsForUser"](any<Context>(), any<String>()) } answers {
-                context.getSharedPreferences(secondArg(), 0)
-            }
-        }
-
-        @After
-        fun after() {
-            unmockkStatic(Base64::class, PreferenceManager::class)
-            unmockkObject(SecureSharedPreferences.Companion)
-        }
+            SecureSharedPreferences.UsernameToIdMigration(preferencesFactory, dispatchers)
 
         @Test
         fun `does remove old preferences`() = coroutinesTest {
@@ -122,12 +86,12 @@ class SecureSharedPreferencesTest {
 
             migration(listOf(user1, user2).map { it.first })
 
-            assert that SecureSharedPreferences.getPrefsForUser(context, user1.second).all equals mapOf(
+            assert that preferencesFactory.userPreferences(user1.second).all equals mapOf(
                 PREF_USER_ID to user1.second.s,
                 PREF_USERNAME to user1.first,
                 PREF_USER_NAME to user1.first
             )
-            assert that SecureSharedPreferences.getPrefsForUser(context, user2.second).all equals mapOf(
+            assert that preferencesFactory.userPreferences(user2.second).all equals mapOf(
                 PREF_USER_ID to user2.second.s,
                 PREF_USERNAME to user2.first,
                 PREF_USER_NAME to user2.first

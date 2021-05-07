@@ -96,10 +96,19 @@ public class AttachmentClearingService extends ProtonJobIntentService {
             return;
         }
 
-        messageDetailsRepository = messageDetailsRepositoryFactory.create(userId);
-        attachmentMetadataDao = AttachmentMetadataDatabase.Companion
-                .getInstance(getApplicationContext(), userId)
-                .getDao();
+        try {
+            messageDetailsRepository = messageDetailsRepositoryFactory.create(userId);
+            attachmentMetadataDao = AttachmentMetadataDatabase.Companion
+                    .getInstance(getApplicationContext(), userId)
+                    .getDao();
+        } catch (Exception error) {
+            Timber.e(
+                    error,
+                    "Cannot proceed because the user for the requested user id cannot" +
+                            " be loaded, probably not logged in anymore"
+            );
+            return;
+        }
 
         String action = intent.getAction();
         if (ACTION_REGULAR_CHECK.equals(action)) {

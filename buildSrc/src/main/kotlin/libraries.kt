@@ -33,6 +33,14 @@ val DependencyHandler.`Proton-kotlin-test` get() =                  protonTest("
 val DependencyHandler.`Proton-data` get() =                         proton("data") version `Proton-data version`
 val DependencyHandler.`Proton-domain` get() =                       proton("domain") version `Proton-domain version`
 val DependencyHandler.`Proton-presentation` get() =                 proton("presentation") version `Proton-presentation version`
+val DependencyHandler.`Proton-network` get() =                      proton("network") version `Proton-network version`
+val DependencyHandler.`Proton-crypto` get() =                       proton("crypto") version `Proton-crypto version`
+val DependencyHandler.`Proton-auth` get() =                         proton("auth") version `Proton-auth version`
+val DependencyHandler.`Proton-account` get() =                      proton("account") version `Proton-account version`
+val DependencyHandler.`Proton-account-manager` get() =              proton("account-manager") version `Proton-account-manager version`
+val DependencyHandler.`Proton-user` get() =                         proton("user") version `Proton-user version`
+val DependencyHandler.`Proton-key` get() =                          proton("key") version `Proton-key version`
+val DependencyHandler.`Proton-human-verification` get() =           proton("human-verification") version `Proton-human-verification version`
 
 fun DependencyHandler.protonTest(moduleSuffix: String, version: String? = null) =
     proton("test", moduleSuffix, version)
@@ -47,10 +55,12 @@ fun DependencyHandler.proton(module: String, moduleSuffix: String? = null, versi
 val DependencyHandler.`android-biometric` get() =           androidx("biometric") version `android-biometric version`
 val DependencyHandler.`android-fragment` get() =            androidx("fragment", moduleSuffix = "ktx") version `android-fragment version`
 val DependencyHandler.`android-media` get() =               androidx("media") version `android-media version`
+val DependencyHandler.`android-preference` get() =          androidx("preference", moduleSuffix = "ktx") version `android-preference version`
 val DependencyHandler.`google-services` get() =             googleServices()
 val DependencyHandler.`hilt-androidx-view-model` get() =    dependency("androidx.hilt", module = "hilt-lifecycle-viewmodel") version `hilt-androidx-viewmodel version`
 val DependencyHandler.`room-rxJava` get() =                 androidxRoom("rxjava2")
 val DependencyHandler.`safetyNet` get() =                   playServices("safetynet")
+val DependencyHandler.`lifecycle-extensions` get() =        androidxLifecycle("extensions") version `lifecycle-extensions version`
 
 fun DependencyHandler.googleServices(moduleSuffix: String? = null, version: String = `googleServices version`) =
     google("gms", "google-services", moduleSuffix, version)

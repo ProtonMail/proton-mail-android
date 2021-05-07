@@ -21,20 +21,13 @@
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">ЗАШИФРОВАННАЯ ПОЧТА</string>
     <string name="secure_email_swiss">Безопасная почта,\nрасположенная в Швейцарии</string>
-    <string name="decrypt_mailbox">Расшифровать <b>почтовый ящик</b></string>
     <string name="decrypt">Расшифровать</string>
-    <string name="user_sign_in">Имя пользователя</string>
-    <string name="two_factor_sign_in">Двухфакторная аутентификация</string>
     <string name="sign_in">Войти</string>
     <string name="sign_out">Выйти</string>
     <string name="sign_out_question">Вы действительно хотите выйти?</string>
-    <string name="mailbox_password">Пароль почтового ящика</string>
-    <string name="two_factor_code">Код двухфакторной аутентификации</string>
     <string name="processing_request">Ваш запрос обрабатывается</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">Вы не выполнили вход!</string>
-    <string name="forgot_password">Забыли пароль?</string>
-    <string name="reset_mailbox_password">СБРОСИТЬ ПАРОЛЬ ПОЧТОВОГО ЯЩИКА</string>
     <string name="forgot_mailbox_password">Для сброса пароля почтового ящика, пожалуйста, используйте веб-версию ProtonMail по адресу protonmail.com</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Невозможно загрузить содержимое. Пожалуйста, включите Chrome</string>
@@ -44,10 +37,7 @@
     <string name="no_more_messages">Больше сообщений нет</string>
     <string name="mailbox_login_failure">Не удалось войти в почтовый ящик</string>
     <string name="login_failure">Не удалось войти</string>
-    <string name="invalid_server_proof">Недопустимое подтверждение сервера</string>
-    <string name="invalid_credentials">Неверные учётные данные</string>
     <string name="incorrect_key_parameters">Неправильные параметры ключа</string>
-    <string name="invalid_mailbox_password">Неверный пароль почтового ящика</string>
     <string name="not_signed_up">Вы не зарегистрированы в программе ProtonMail Android Beta</string>
     <string name="no_network">Нет подключения к сети</string>
     <string name="no_network_queued">Нет подключения к сети. Сообщение поставлено в очередь</string>
@@ -178,7 +168,6 @@
     <string name="confirm_destructive_action">Вы уверены? Это действие не может быть отменено.</string>
     <string name="create">Создать</string>
     <string name="email">Эл. почта</string>
-    <string name="email_address">Адрес эл. почты</string>
     <string name="phone">Hомер телефона</string>
     <string name="save">Сохранить</string>
     <string name="syncing_messages">Синхронизация...</string>
@@ -218,61 +207,18 @@
     <string name="enter">Ввести</string>
     <string name="cancel">Отменить</string>
     <string name="close">Закрыть</string>
-    <string name="change_password">Изменить пароль</string>
-    <string name="change_mailbox_password">Изменить пароль почтового ящика</string>
     <string name="eo_password_title">Задать пароль</string>
     <string name="eo_password_subtitle">Задать пароль для шифрования этого сообщения для пользователей вне ProtonMail</string>
     <string name="eo_password_more_info">Получить больше информации</string>
-    <string name="old_login_password">Текущий пароль для входа</string>
-    <string name="new_login_password">Новый пароль</string>
-    <string name="confirm_new_login_password">Подтвердите новый пароль</string>
-    <string name="new_mailbox_password">Новый пароль почтового ящика</string>
-    <string name="confirm_new_mailbox_password">Подтвердите новый пароль к почтовому ящику</string>
     <string name="no_attachments">Нет вложений</string>
-    <string name="new_passwords_not_valid">Ошибка ввода данных</string>
-    <string name="new_passwords_do_not_match">Новый пароль и его подтверждение не совпали</string>
-    <string name="new_login_password_saved">Новый пароль учётной записи сохранён</string>
-    <string name="new_mailbox_password_saved">Новый пароль почтового ящика сохранён</string>
     <string name="pin_lock_option_settings">Настройка блокировки приложения</string>
     <string name="pin_lock_after">Блокировка приложения после</string>
     <string name="lock_the_app">Заблокировать приложение</string>
     <string name="display_name_banned_chars">Недопустимое отображаемое имя. Символы \'&gt;\' и \'&lt;\' запрещены</string>
     <string name="cont">Продолжить</string>
-    <string name="email_verification_code">Мы вышлем код подтверждения на адрес электронной почты, указанный выше.</string>
-    <string name="sms_verification_code">Мы отправим код подтверждения на указанный выше номер телефона.</string>
-    <string name="send_verification_code">Отправить код подтверждения</string>
-    <string name="resend_verification_code">Отправить заново</string>
-    <string name="enter_verification_code">Введите код подтверждения</string>
-    <string name="verify">Подтвердить</string>
     <string name="reply_prefix_on">В</string>
-    <string name="create_new_account">Создать новую учётную запись</string>
-    <string name="setup_new_account">Настройте свою учётную запись</string>
-    <string name="create_account">Создать учётную запись</string>
-    <string name="create_passwords">Задать пароль</string>
-    <string name="caps_username">Имя пользователя</string>
-    <string name="caps_login_password">Пароль</string>
-    <string name="caps_confirm_password">Подтвердите пароль</string>
-    <string name="caps_optional">*НЕОБЯЗАТЕЛЬНО</string>
-    <string name="update_me_for_new_features">Сообщайте мне о новых функциях</string>
-    <string name="create_mailbox_password">Создать пароль</string>
-    <string name="password_note"><b>Примечание:</b> Этот пароль используется для шифрования и расшифровки ваших сообщений.
-        Не забудьте этот пароль, мы не сможем его восстановить. Если вы забудете свой пароль, то не сможете прочитать свои письма.</string>
-    <string name="username_note"><b>Примечание:</b> Имя пользователя также является вашим адресом в ProtonMail</string>
     <string name="terms_and_conditions">Используя ProtonMail, вы соглашаетесь с нашими\n
         <a href="https://protonmail.com/terms-and-conditions">условиями и положениями</a> и <a href="https://protonmail.com/privacy-policy">политикой конфиденциальности</a></string>
-    <string name="human_verification">Проверка \"Я не робот\"</string>
-    <string name="human_verification_subtitle">Для предотвращения злоупотребления ProtonMail\nнам необходимо убедиться, что вы – человек.</string>
-    <string name="select_options">Пожалуйста, выберите один из вариантов:</string>
-    <string name="no_verification_methods_found">Методы подтверждения не обнаружены</string>
-    <string name="email_verification">Проверка адреса эл. почты</string>
-    <string name="phone_verification">Подтверждение номера телефона</string>
-    <string name="existing_email_address">Введите ваш действующий адрес эл. почты</string>
-    <string name="phone_number">Введите ваш номер телефона</string>
-    <string name="encryption_setup">Настройка шифрования</string>
-    <string name="high_security">Высокий уровень безопасности (2048 бит)</string>
-    <string name="current_standard">Текущий стандарт</string>
-    <string name="extreme_security">Максимальная безопасность (4096 бит)</string>
-    <string name="highest_security">Наивысший из доступных уровень шифрования.<b> Для настройки может потребоваться несколько минут.</b></string>
     <string name="labels_title_apply">Назначить ярлыки</string>
     <string name="labels_title_add">Добавить ярлык</string>
     <string name="labels_title">Ярлыки</string>
@@ -311,16 +257,6 @@
     <string name="display_images">Показывать внешнее содержимое</string>
     <string name="retry">Повторить</string>
     <string name="saving_failed_no_conn">Сбой сохранения. Нет подключения</string>
-    <string name="username_is_available">Имя пользователя доступно!</string>
-    <string name="username_is_not_available">Имя пользователя уже используется!</string>
-    <string name="username_is_too_long">Максимальная длина имени пользователя – %d символов!</string>
-    <string name="congratulation">Поздравляем!</string>
-    <string name="new_account_ready">Ваша новая учётная запись\nзащищённой эл. почты готова.</string>
-    <string name="optional_email_note">Резервный адрес эл. почты позволит вам
-        сбросить пароль для входа, если вы его забудете.</string>
-    <string name="optional_display_name">Когда вы отправляете письмо, указанное имя будет
-        отображено в графе отправителя.</string>
-    <string name="error_captcha_not_valid">Неправильно</string>
     <string name="close_engagement">закрыть тур</string>
     <string name="engagement_title_welcome">Добро пожаловать в ProtonMail!</string>
     <string name="engagement_title_swipe">Действия при быстрых смахиваниях</string>
@@ -338,7 +274,6 @@
     <string name="attachment_exists">Вложение уже прикреплено</string>
     <string name="sending_email_success">Код подтверждения отправлен</string>
     <string name="sending_email_failed">Сбой отправки кода подтверждения</string>
-    <string name="password_not_valid">Введён неверный пароль</string>
     <string name="send_code_wait">Пожалуйста, подождите %d сек. перед повторным нажатием</string>
     <string name="eo_password_not_completed">Пароль сообщения введён не полностью.</string>
     <string name="delinquency_subtitle">Доступ к этой учётной записи приостановлен из-за неуплаты. Пожалуйста, войдите в систему, используя protonmail.com, чтобы оплатить счёт.</string>
@@ -399,112 +334,20 @@
     <string name="log_out">Выйти из %s?</string>
     <string name="logout_question">Вы уверены, что хотите выйти?</string>
     <string name="logout_question_next_account">Вы будете переключены на %s.</string>
-    <string name="upselling">Повысить/Пожертвовать</string>
-    <string name="upselling_title">ProtonMail свободный и с открытым исходным кодом</string>
-    <string name="upselling_subtitle">Нам нужна ваша поддержка для продолжения защиты конфиденциальности и развития ProtonMail</string>
-    <string name="upselling_donate_title">Пожертвовать</string>
-    <string name="upselling_upgrade_title">Повысить до ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Ваше пожертвование поможет нам увеличить
-    вместимость и продолжать разработку ProtonMail как свободного ПО с открытым исходным кодом. Только благодаря
-    поддержке сообщества мы можем продолжать предоставлять доступ к ProtonMail людям со всего
-    мира.</string>
-    <string name="upgrade_donate">Повысить/Пожертвовать</string>
-    <string name="upselling_donate_pick_amount">Выберите размер пожертвования или введите любую сумму</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">Введите сумму пожертвования</string>
-    <string name="donate">Пожертвовать</string>
-    <string name="donate_paypal_bitcoin">Пожертвовать через PayPal или Bitcoin</string>
-    <string name="upgrade_line1">Всё, что включено в наш Бесплатный тариф</string>
-    <string name="upgrade_line2">5 ГБ хранилища</string>
-    <string name="upgrade_line3">Используйте свой домен</string>
-    <string name="upgrade_line4">До 5 псевдонимов</string>
-    <string name="upgrade_line5">Приоритет у службы поддержки</string>
     <string name="upgrade">Повысить</string>
-    <string name="payment_options">Вариант оплаты</string>
-    <string name="other_plans">Чтобы использовать тарифы с большим объёмом хранилища, переходите на них с помощью
-    веб-интерфейса ProtonMail.</string>
-    <string name="upgrade_paid_user">Благодарим за оформление платной учётной записи!</string>
-    <string name="select_account_type">Выберите тип учётной записи</string>
-    <string name="select_account_type_subtitle">ProtonMail представляет собой бесплатный сервис
-    ради общего блага. Вы можете поддержать конфиденциальность в Интернете, выбрав платную учётную запись.</string>
-    <string name="plan_free_with_price">БЕСПЛАТНЫЙ</string>
-    <string name="plan_plus_with_price">PLUS %s /месяц</string>
-    <string name="plan_visionary_with_price">VISIONARY %s /месяц</string>
-    <string name="plan_business_with_price">BUSINESS %s /месяц</string>
-    <string name="plan_free_title">Базовая учётная запись с ограниченными функциями</string>
-    <string name="plan_plus_title">Защищённая почта с расширенным функционалом</string>
-    <string name="plan_visionary_title">Специальные учётные записи для наших сторонников</string>
-    <string name="plan_business_title">Специальные учётные записи для наших сторонников</string>
-    <string name="plan_plus_line2">Отправка до 1000 сообщений в день</string>
-    <string name="plan_plus_line3">Ярлыки и настраиваемые фильтры</string>
-    <string name="plan_plus_line4">Отправка зашифрованных сообщений внешним получателям</string>
-    <string name="plan_plus_line7">Приоритет у службы поддержки</string>
-    <string name="plan_free_line1">500 МБ хранилища</string>
-    <string name="plan_free_line2">150 сообщений в день</string>
-    <string name="plan_free_line3">20 ярлыков</string>
-    <string name="plan_free_line4">Свои домены: не поддерживаются</string>
-    <string name="plan_free_line5">1 адрес</string>
-    <string name="plan_free_line6">Поддержка клиентов: ограничена</string>
-    <string name="plan_visio_line2">Нет ограничений на отправку сообщений</string>
-    <string name="plan_visio_line3">Ранний доступ к новым функциям</string>
-    <string name="plan_visio_line6">Помогите выбрать новые функции через опросы, доступные Visionary-пользователям</string>
-    <string name="plan_business_line1">скоро и организации смогут пользоваться шифрованной почтой!</string>
-    <string name="currency_duration">Валюта и продолжительность</string>
-    <string name="credit_card_name">Имя на банковской карте</string>
-    <string name="zip_code">Почтовый индекс</string>
-    <string name="card_number">Номер карты</string>
-    <string name="billing_information">Платёжная информация</string>
     <string name="country">Страна</string>
-    <string name="cvc">CVC-код</string>
-    <string name="terms_and_conditions_billing">Нажимая \"Отправить\", вы соглашаетесь
-    соблюдать\n<a href="https://protonmail.com/terms-and-conditions">условия и положения ProtonMail</a></string>
-    <string name="submit">Отправить</string>
-    <string name="currency">Валюта</string>
-    <string name="plan_duration">Платёжный цикл</string>
-    <string name="duration_annual_line1">Годовой тариф <font color="#C3E129">Экономия 20%</font></string>
-    <string name="per_month_text_only">в месяц</string>
-    <string name="duration_annual_line3">Оплачивается в сумме %s /год</string>
-    <string name="duration_annual_line4">Оплачивается в сумме %s /месяц</string>
-    <string name="duration_monthly_line1">Помесячный тариф</string>
-    <string name="duration_monthly_line3">Скидка 20%</string>
     <string name="set_cont">Задать и продолжить</string>
-    <string name="payment_error">Ошибка оплаты</string>
     <string name="error">Ошибка</string>
-    <string name="try_another_card">Попробовать другую карту</string>
-    <string name="try_another_paypal">Оплатить с помощью PayPal</string>
-    <string name="try_another_payment_method">Попробовать другой</string>
-    <string name="submit_paypal">Оплатить при помощи PayPal</string>
-    <string name="picker_card">Банковская/дебетовая карта</string>
-    <string name="picker_paypal">PayPal</string>
-    <string name="paypal_disclaimer">Для завершения этой транзакции вам понадобится войти в свои учётную запись/счёт PayPal. Для этого мы откроем вам PayPal в новом окне браузера.</string>
-    <string name="payment_picker_disclaimer">Пожалуйста, выберите тип оплаты</string>
-    <string name="payment_success_title">Платёж выполнен успешно!</string>
-    <string name="payment_success_text">Сейчас мы расширяем вашу учётную запись, подождите немного, пожалуйста. Благодарим вас за поддержку!</string>
-    <string name="donation_success_title">Пожертвование успешно!</string>
-    <string name="donation_success_text">Ваша поддержка крайне важна для продолжения работы ProtonMail. Благодарим за поддержку конфиденциальности в Интернете!</string>
-    <string name="create_free_account">Создать бесплатную учётную запись</string>
     <string name="storage_gb">%d ГБ хранилища</string>
     <string name="storage_mb">%d МБ хранилища</string>
     <string name="max_addresses">До %d псевдонимов эл. почты</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d встроенных изображений</string>
     <string name="select">Выбрать</string>
-    <string name="change_currency">Изменить валюту</string>
-    <string name="switch_billing_monthly">Перейти на помесячную оплату</string>
-    <string name="switch_billing_yearly">Перейти на годовую оплату</string>
     <string name="warning">Предупреждение</string>
     <string name="empty_recovery_email_question">Предупреждение: вы не задали адрес эл. почты для восстановления доступа, и поэтому он невозможен в случае, если вы забудете свой пароль. Продолжить без адреса для восстановления?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Срок действия %s</string>
-    <string name="payment_methods">Способы оплаты</string>
-    <string name="payment_approval_activity">Подтверждение способа оплаты</string>
-    <string name="payment_approval_success">Способ оплаты был подтверждён</string>
-    <string name="payment_approval_unknown_error_description">Произошла ошибка при попытке проверки вашего способа оплаты. Пожалуйста, повторите попытку позже или попробуйте другую карту.</string>
-    <string name="payment_approval_cancel_error_description">Проверка способа оплаты отменена. Пожалуйста, повторите попытку позже или попробуйте другую карту.</string>
-    <string name="payment_approval_consumed_error_description">Способ оплаты уже использован для этого платежа. Пожалуйста, проверьте состояние своей подписки.</string>
     <string name="no_payment_methods">У вас нет сохранённых способов оплаты.</string>
     <string name="edit_payment_methods">Пожалуйста, войдите через protonmail.com, чтобы изменить платёжную информацию.</string>
     <string name="message_not_loaded">Сообщение не загружено</string>
@@ -523,12 +366,7 @@
     <string name="delete_selected">Удалить выбранное</string>
     <string name="pin_not_activated">PIN-код не активирован</string>
     <string name="available_options">Доступные варианты</string>
-    <string name="current_recovery_email">Текущий адрес эл. почты для сброса/уведомлений</string>
     <string name="change_recovery_email">Изменить адрес эл. почты для сброса/уведомлений</string>
-    <string name="new_recovery_email">Новый адрес эл. почты для сброса/уведомлений</string>
-    <string name="confirm_new_recovery_email">Подтвердите новый адрес эл. почты для сброса/уведомлений</string>
-    <string name="recovery_emails_invalid">Адрес электронной почты не совпадает или некорректен</string>
-    <string name="authenticate">Аутентификация</string>
     <string name="background_sync_subtitle">Если эта опция включена, то приложение будет синхронизироваться с сервером в фоновом режиме. Отключение этой функции также отключит push-уведомления.</string>
     <string-array name="notification_options">
         <item>Без вибрации или звука</item>
@@ -623,10 +461,6 @@
     </string-array>
     <string name="logged_out">Вы вышли</string>
     <string name="logged_out_description">Вы вышли из системы. Пожалуйста, войдите заново.</string>
-    <string name="verification_needed">Требуется проверка данных</string>
-    <string name="verification_needed_description">Из соображений безопасности подтвердите, что вы не являетесь роботом.</string>
-    <string name="verification_needed_description_notification">Пожалуйста, подтвердите, что вы являетесь человеком, прежде чем отправить сообщение: %s</string>
-    <string name="message_drafted_verification_needed">Сообщение не отправлено – требуется проверка. Ваши сообщения сохранены в папке черновиков.</string>
     <string name="error_message_zip_code_invalid">Ошибка: неправильный почтовый индекс</string>
     <string name="error_message_cvc_invalid">Ошибка: неверный номер CVC</string>
     <string name="error_message_card_name_invalid">Ошибка: недопустимое имя на карте</string>
@@ -784,7 +618,6 @@
     <string name="contact_add_addr_to_group">Добавить адрес в группы</string>
     <string name="title_activity_address_chooser">Управление адресами</string>
     <string name="title_activity_account_manager">Управление учётными записями</string>
-    <string name="title_activity_connect_account">Подключить учётную запись</string>
     <string name="account_manager_add_account">Добавить учётную запись</string>
     <string name="account_manager_remove_all_accounts">Удаление всех учётных записей</string>
     <string name="account_manager_note">Вы можете одновременно использовать неограниченное количество платных учётных записей ProtonMail и одну бесплатную.</string>
@@ -794,7 +627,6 @@
     <string name="manage_accounts_user_loggedout">%s (вышел)</string>
     <string name="manage_accounts_user_primary">%s (основная)</string>
     <string name="account_manager_remove">Удалить</string>
-    <string name="connect_account_login_title">Вход в вашу учётную запись ProtonMail</string>
     <string name="default_error_message">Произошла ошибка</string>
     <string name="no_contact_groups">Нет групп контактов</string>
     <string name="search_contacts_inside_group">Поиск контактов внутри группы</string>
@@ -1003,7 +835,6 @@
     <string name="connect_account_limit_subtitle">Вы не можете добавить ещё одну бесплатную учётную запись ProtonMail. Может быть добавлена только одна бесплатная учётная запись ProtonMail. Пожалуйста, выйдите из другой своей бесплатной учётной записи или расширьте одну из своих бесплатных учётных записей до платной.</string>
     <string name="switch_accounts_question">Сменить учётную запись?</string>
     <string name="switch_to_account">Сменить на %s</string>
-    <string name="login_failure_missing_keys">У учетной записи, которую вы пытаетесь добавить, нет сгенерированных ключей. Пожалуйста, добавьте эту учетную запись в качестве первой учетной записи в приложении или войдите через веб-сайт для генерации ключей, после чего можно будет добавить её в качестве дополнительной учетной записи в приложении.</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">Новое письмо</string>

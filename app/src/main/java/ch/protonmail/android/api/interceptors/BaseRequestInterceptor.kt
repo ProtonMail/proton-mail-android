@@ -18,14 +18,12 @@
  */
 package ch.protonmail.android.api.interceptors
 
+import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.doh.ProxyItem
-import ch.protonmail.android.api.segments.AUTH_INFO_PATH
-import ch.protonmail.android.api.segments.AUTH_PATH
 import ch.protonmail.android.api.segments.HEADER_APP_VERSION
-import ch.protonmail.android.api.segments.HEADER_AUTH
 import ch.protonmail.android.api.segments.HEADER_LOCALE
 import ch.protonmail.android.api.segments.HEADER_UID
 import ch.protonmail.android.api.segments.HEADER_USER_AGENT
@@ -39,6 +37,7 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_NOT_ALLOWED
 import ch.protonmail.android.api.segments.RESPONSE_CODE_OLD_PASSWORD_INCORRECT
 import ch.protonmail.android.api.segments.RESPONSE_CODE_SERVICE_UNAVAILABLE
 import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
+import ch.protonmail.android.api.segments.RESPONSE_CODE_UNAUTHORIZED
 import ch.protonmail.android.api.segments.RESPONSE_CODE_UNPROCESSABLE_ENTITY
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
@@ -49,6 +48,10 @@ import ch.protonmail.android.utils.notifier.UserNotifier
 import com.birbit.android.jobqueue.JobManager
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
+import kotlinx.coroutines.runBlocking
+import me.proton.core.accountmanager.domain.SessionManager
+import me.proton.core.domain.entity.UserId
+import me.proton.core.network.domain.session.SessionId
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -63,11 +66,12 @@ abstract class BaseRequestInterceptor(
     protected val userManager: UserManager,
     protected val jobManager: JobManager,
     protected val networkUtils: QueueNetworkUtil,
-    protected val userNotifier: UserNotifier
+    protected val userNotifier: UserNotifier,
+    protected val sessionManager: SessionManager
 ) : Interceptor {
 
     private val appVersionName by lazy {
-        val name = "Android_" + AppUtil.getAppVersionName(ProtonMailApplication.getApplication())
+        val name = "Android_" + BuildConfig.VERSION_NAME
         if (name[name.length - 1] == '.') {
             name.substring(0, name.length - 1)
         } else {
@@ -76,7 +80,7 @@ abstract class BaseRequestInterceptor(
     }
 
     private fun check24hExpired(): Boolean {
-        val user = userManager.getCurrentLegacyUserBlocking()
+        val user = userManager.currentLegacyUser
         val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
         val proxies = Proxies.getInstance(null, prefs)
         if (user != null && user.allowSecureConnectionsViaThirdParties && !user.usingDefaultApi) {
@@ -128,32 +132,41 @@ abstract class BaseRequestInterceptor(
         return false
     }
 
-    /**
-     * @return if returned null, no need to re-authorize or HTTP 504/429 happened (there's nothing we can do)
-     */
-    fun checkResponse(response: Response?): Response? {
-        if (response == null) {
-            return null
-        }
-
+    fun checkResponse(response: Response, chain: Interceptor.Chain): Response {
         if (check24hExpired()) {
-            return null
+            return response
         }
 
-        when {
-            response.code() == RESPONSE_CODE_GATEWAY_TIMEOUT -> {
+        when (response.code) {
+            RESPONSE_CODE_UNAUTHORIZED -> {
+                Timber.d("'unauthorized' when processing request")
+                val uid = response.request.header(HEADER_UID)
+                val sessionId = uid?.let { SessionId(it) }
+                if (sessionId != null) {
+                    val refresh = runCatching {
+                        // Execute a request that is handled by Core Network (ApiProvider/SessionProvider).
+                        // This will start a refresh session tokens procedure (mutual exclusive).
+                        runBlocking { sessionManager.refreshScopes(sessionId) }
+                    }
+                    if (refresh.isSuccess) {
+                        val newRequest: Request = getRequestWithHeaders(response.request)
+                        return chain.proceed(newRequest)
+                    }
+                }
+            }
+            RESPONSE_CODE_GATEWAY_TIMEOUT -> {
                 Timber.d("'gateway timeout' when processing request")
                 AppUtil.postEventOnUi(RequestTimeoutEvent())
             }
-            response.code() == RESPONSE_CODE_TOO_MANY_REQUESTS -> {
+            RESPONSE_CODE_TOO_MANY_REQUESTS -> {
                 Timber.d("'too many requests' when processing request")
             }
-            response.code() == RESPONSE_CODE_SERVICE_UNAVAILABLE -> { // 503
+            RESPONSE_CODE_SERVICE_UNAVAILABLE -> { // 503
                 Timber.d("'service unavailable' when processing request")
             }
-            response.code() == RESPONSE_CODE_UNPROCESSABLE_ENTITY -> {
+            RESPONSE_CODE_UNPROCESSABLE_ENTITY -> {
                 Timber.d("'unprocessable entity' when processing request")
-                var responseBodyError = response.message()
+                var responseBodyError: String? = response.message
                 var responseBody: ResponseBody? = null
                 try {
                     responseBody = Gson().fromJson(
@@ -180,53 +193,36 @@ abstract class BaseRequestInterceptor(
                         RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DISABLED
                     )
                 ) {
-                    userNotifier.showError(responseBodyError)
+                    responseBodyError?.let { userNotifier.showError(it) }
                 }
             }
         }
-        return null
+        return response
     }
 
-    fun applyHeadersToRequest(request: Request): Request {
-
+    fun getRequestWithHeaders(request: Request): Request {
         val requestBuilder = request.newBuilder()
-        val tokenManager = userManager.getCurrentUserTokenManagerBlocking()
-        // by default, we authorize requests using default user from UserManager
-        if (tokenManager != null) {
-            requestBuilder.header(HEADER_UID, tokenManager.uid)
-            if (tokenManager.authAccessToken != null) {
-                requestBuilder.header(HEADER_AUTH, tokenManager.authAccessToken!!)
-            }
-        }
-        requestBuilder
-            .header(HEADER_APP_VERSION, appVersionName)
-            .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
-            .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
 
-        // we have to remove UID from those requests, because they mess up with server recognizing affected user
-        if (request.url().toString().endsWith(AUTH_PATH) || request.url().toString().contains(AUTH_INFO_PATH)) {
-            requestBuilder.removeHeader(HEADER_AUTH).removeHeader(HEADER_UID)
-        }
+        requestBuilder.setClientHeaders()
 
-        // we customize auth headers if different than default user has to be authorized
-        request.tag(UserIdTag::class.java)?.also {
-            // TODO: check ID is always non-null
-            if (it.id.s == null) { // clear out default auth and unique session headers
-                requestBuilder.removeHeader(HEADER_AUTH)
-                requestBuilder.removeHeader(HEADER_UID)
-            } else if (it.id != userManager.currentUserId) {
-                // if it's the default user, credentials are already there
-                val userTokenManager = userManager.getTokenManagerBlocking(it.id)
-                userTokenManager?.let { manager ->
-                    if (manager.authAccessToken != null) {
-                        Timber.d("setting non-default auth headers for ${it.id}")
-                        requestBuilder.header(HEADER_AUTH, manager.authAccessToken!!)
-                        requestBuilder.header(HEADER_UID, manager.uid)
-                    }
-                }
-            }
-        }
+        val tagUserId = request.tag(UserIdTag::class.java)?.let { UserId(it.id.s) }
+        val currentUserId = userManager.currentUserId?.let { UserId(it.s) }
 
+        when {
+            tagUserId != null -> requestBuilder.setSessionHeadersFor(tagUserId)
+            currentUserId != null -> requestBuilder.setSessionHeadersFor(currentUserId)
+        }
         return requestBuilder.build()
+    }
+
+    private fun Request.Builder.setClientHeaders() {
+        header(HEADER_APP_VERSION, appVersionName)
+        header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
+        header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
+    }
+
+    private fun Request.Builder.setSessionHeadersFor(userId: UserId) {
+        val session = runBlocking { sessionManager.getSessionId(userId)?.let { sessionManager.getSession(it) } }
+        if (session != null) setSessionHeaders(session)
     }
 }

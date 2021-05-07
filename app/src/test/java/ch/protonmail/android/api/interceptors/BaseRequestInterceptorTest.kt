@@ -19,8 +19,6 @@
 package ch.protonmail.android.api.interceptors
 
 import android.content.SharedPreferences
-import ch.protonmail.android.api.TokenManager
-import ch.protonmail.android.api.models.RefreshBody
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.doh.PREF_DNS_OVER_HTTPS_API_URL_LIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_GATEWAY_TIMEOUT
@@ -31,23 +29,27 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.notifier.UserNotifier
-import io.mockk.Runs
-import io.mockk.coEvery
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import junit.framework.Assert.assertNull
+import me.proton.core.accountmanager.domain.SessionManager
+import okhttp3.Interceptor
 import okhttp3.Response
 import org.junit.After
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class BaseRequestInterceptorTest {
 
     private val testUserId = Id("Test user")
+
+    private val chainMock = mockk<Interceptor.Chain> {
+        every { request() } returns mockk()
+        every { proceed(any()) } returns mockk()
+    }
 
     private val userMock = mockk<User> {
         every { id } returns testUserId.s
@@ -59,23 +61,15 @@ class BaseRequestInterceptorTest {
         every { getString(PREF_DNS_OVER_HTTPS_API_URL_LIST, null) } returns null
     }
 
-    private val tokenManagerMock = mockk<TokenManager> {
-        every { createRefreshBody() } returns RefreshBody("refresh_token")
-        every { handleRefresh(any()) } just Runs
-        every { authAccessToken } returns "auth_access_token"
-        every { uid } returns "uid"
-    }
-
     private val userManagerMock = mockk<UserManager> {
         every { currentUserId } returns testUserId
-        coEvery { getTokenManager(testUserId) } returns tokenManagerMock
-        every { getMailboxPassword(testUserId) } returns "mailbox password".toByteArray()
-        coEvery { getCurrentLegacyUser() } returns userMock
-        every { getCurrentLegacyUserBlocking() } returns userMock
+        every { this@mockk.currentLegacyUser } returns userMock
     }
 
+    private val sessionManagerMock = mockk<SessionManager>()
+
     private val interceptor =
-        ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk(), userNotifier)
+        ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk(), userNotifier, sessionManagerMock)
 
     @BeforeTest
     fun setup() {
@@ -98,49 +92,49 @@ class BaseRequestInterceptorTest {
     }
 
     @Test
-    fun verifyThatGatewayTimeoutResponseReturnsNullOutput() {
+    fun verifyThatGatewayTimeoutResponseReturns() {
         // given
         val responseMock = mockk<Response> {
-            every { code() } returns RESPONSE_CODE_GATEWAY_TIMEOUT
+            every { code } returns RESPONSE_CODE_GATEWAY_TIMEOUT
         }
 
         // when
-        val checkIfTokenExpiredResponse = interceptor.checkResponse(responseMock)
+        val checkResponse = interceptor.checkResponse(responseMock, chainMock)
 
         // then
-        assertNull(checkIfTokenExpiredResponse)
+        assertEquals(responseMock, checkResponse)
     }
 
     @Test
-    fun verifyThatTooManyRequestsResponseReturnsNullOutput() {
+    fun verifyThatTooManyRequestsResponseReturns() {
         // given
         val responseMock = mockk<Response> {
-            every { code() } returns RESPONSE_CODE_TOO_MANY_REQUESTS
+            every { code } returns RESPONSE_CODE_TOO_MANY_REQUESTS
         }
 
         // when
-        val checkIfTokenExpired = interceptor.checkResponse(responseMock)
+        val checkResponse = interceptor.checkResponse(responseMock, chainMock)
 
         // then
-        assertNull(checkIfTokenExpired)
+        assertEquals(responseMock, checkResponse)
     }
 
     @Test
-    fun verifyThatOkResponseReturnsNullOutput() {
+    fun verifyThatOkResponseReturns() {
         // given
         every {
             ProtonMailApplication.getApplication().defaultSharedPreferences
         } returns prefsMock
 
         val responseMock = mockk<Response> {
-            every { code() } returns 200
+            every { code } returns 200
         }
 
         // when
-        val checkIfTokenExpiredResponse = interceptor.checkResponse(responseMock)
+        val checkResponse = interceptor.checkResponse(responseMock, chainMock)
 
         // then
-        assertNull(checkIfTokenExpiredResponse)
+        assertEquals(responseMock, checkResponse)
     }
 
     // this case is currently covered only for specific error codes and not all 422 errors,
@@ -154,14 +148,14 @@ class BaseRequestInterceptorTest {
 
         val errorMessage = "Error - Reason for 422 response"
         val responseMock = mockk<Response> {
-            every { code() } returns 422
+            every { code } returns 422
             every { peekBody(any()).string() } returns
                 "{ Code: $RESPONSE_CODE_OLD_PASSWORD_INCORRECT, Error: \"$errorMessage\" }"
-            every { message() } returns "HTTP status message"
+            every { message } returns "HTTP status message"
         }
 
         // when
-        interceptor.checkResponse(responseMock)
+        interceptor.checkResponse(responseMock, chainMock)
 
         // then
         verify { userNotifier.showError(errorMessage) }
@@ -176,13 +170,13 @@ class BaseRequestInterceptorTest {
 
         val errorMessage = "Error - Reason for 422 response"
         val responseMock = mockk<Response> {
-            every { code() } returns 422
+            every { code } returns 422
             every { peekBody(any()).string() } returns "{ }"
-            every { message() } returns "HTTP status message"
+            every { message } returns "HTTP status message"
         }
 
         // when
-        interceptor.checkResponse(responseMock)
+        interceptor.checkResponse(responseMock, chainMock)
 
         // then
         verify(exactly = 0) { userNotifier.showError(errorMessage) }

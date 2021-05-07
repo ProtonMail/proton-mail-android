@@ -24,7 +24,6 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
 import com.datatheorem.android.trustkit.TrustKit
 import com.datatheorem.android.trustkit.config.PublicKeyPin
-import okhttp3.Authenticator
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
 import okhttp3.JavaNetCookieJar
@@ -53,10 +52,9 @@ const val TLS = "TLS"
  */
 sealed class ProtonOkHttpClient(
     timeout: Long,
-    defaultInterceptor: Interceptor?,
-    authenticator: Authenticator,
+    interceptor: Interceptor,
     loggingLevel: HttpLoggingInterceptor.Level,
-    connectionSpecs: List<ConnectionSpec?>,
+    connectionSpecs: List<ConnectionSpec>,
     serverTimeInterceptor: ServerTimeInterceptor?,
     endpointUri: String,
     cookieStore: ProtonCookieStore? = null
@@ -82,11 +80,8 @@ sealed class ProtonOkHttpClient(
         okClientBuilder.connectTimeout(timeout, TimeUnit.SECONDS)
         okClientBuilder.readTimeout(timeout, TimeUnit.SECONDS)
         okClientBuilder.writeTimeout(timeout, TimeUnit.SECONDS)
-        if (defaultInterceptor != null) {
-            okClientBuilder.addInterceptor(defaultInterceptor)
-        }
 
-        okClientBuilder.authenticator(authenticator)
+        okClientBuilder.addInterceptor(interceptor)
 
         if (AppUtil.isDebug()) {
             val httpLoggingInterceptor = HttpLoggingInterceptor()
@@ -105,16 +100,14 @@ sealed class ProtonOkHttpClient(
  */
 class DefaultOkHttpClient(
     timeout: Long,
-    interceptor: Interceptor?,
-    authenticator: Authenticator,
+    interceptor: Interceptor,
     loggingLevel: HttpLoggingInterceptor.Level,
-    connectionSpecs: List<ConnectionSpec?>,
+    connectionSpecs: List<ConnectionSpec>,
     serverTimeInterceptor: ServerTimeInterceptor?,
     cookieStore: ProtonCookieStore?
 ) : ProtonOkHttpClient(
     timeout,
     interceptor,
-    authenticator,
     loggingLevel,
     connectionSpecs,
     serverTimeInterceptor,
@@ -136,10 +129,9 @@ class DefaultOkHttpClient(
  */
 class ProxyOkHttpClient(
     timeout: Long,
-    interceptor: Interceptor?,
-    authenticator: Authenticator,
+    interceptor: Interceptor,
     loggingLevel: HttpLoggingInterceptor.Level,
-    connectionSpecs: List<ConnectionSpec?>,
+    connectionSpecs: List<ConnectionSpec>,
     serverTimeInterceptor: ServerTimeInterceptor?,
     endpointUri: String,
     pinnedKeyHashes: List<String>,
@@ -147,7 +139,6 @@ class ProxyOkHttpClient(
 ) : ProtonOkHttpClient(
     timeout,
     interceptor,
-    authenticator,
     loggingLevel,
     connectionSpecs,
     serverTimeInterceptor,

@@ -19,7 +19,6 @@
 package ch.protonmail.android.activities
 
 import android.os.Bundle
-import android.text.TextUtils
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
@@ -27,14 +26,11 @@ import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
-import ch.protonmail.android.utils.moveToLogin
-import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -61,9 +57,6 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         }
 
         mSnackLayout = findViewById(R.id.layout_no_connectivity_info)
-
-        setUpSettingsItems(getSettingsItems())
-        renderViews()
     }
 
     override fun onResume() {
@@ -86,12 +79,6 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         }
         setValue(SettingsEnum.SUBSCRIPTION, getString(R.string.protonmail) + " " + planName)
 
-        mRecoveryEmail = mUserManager.userSettings?.notificationEmail ?: ""
-        setValue(
-            SettingsEnum.RECOVERY_EMAIL,
-            if (!TextUtils.isEmpty(mRecoveryEmail)) mRecoveryEmail else getString(R.string.none)
-        )
-
         val (used, total) = with(user.dedicatedSpace) { used.l to total.l }
         val usedSpace = UiUtil.readableFileSize(used.toLong())
         val maxSpace = UiUtil.readableFileSize(total.toLong())
@@ -108,7 +95,7 @@ class AccountSettingsActivity : BaseSettingsActivity() {
             else getString(R.string.scheduled_snooze_off)
         setValue(SettingsEnum.NOTIFICATION_SNOOZE, snoozeValue)
 
-        mAttachmentStorageValue = user.totalUploadLimit.toMegabytes().toInt()
+        mAttachmentStorageValue = legacyUser.maxAttachmentStorage
 
         lifecycleScope.launch {
             val attachmentSizeUsedBytes = attachmentMetadataDao.getAllAttachmentsSizeUsed().first() ?: 0
@@ -117,6 +104,7 @@ class AccountSettingsActivity : BaseSettingsActivity() {
                 SettingsEnum.LOCAL_STORAGE_LIMIT,
                 String.format(getString(R.string.storage_value), mAttachmentStorageValue, attachmentSizeUsed)
             )
+            notifySettingsChanged()
         }
 
         mPinValue = legacyUser.isUsePin && userManager.getMailboxPin().isNullOrEmpty().not()
@@ -135,12 +123,6 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         val mailSettings = mUserManager.getCurrentUserMailSettingsBlocking()
         showCurrentViewModeSetting(mailSettings)
         setupViewModeChangedListener(mailSettings)
-    }
-
-    @Subscribe
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onLogoutEvent(event: LogoutEvent?) {
-        moveToLogin()
     }
 
     /**
@@ -170,5 +152,4 @@ class AccountSettingsActivity : BaseSettingsActivity() {
             R.raw.acc_settings_structure
         }
     }
-
 }

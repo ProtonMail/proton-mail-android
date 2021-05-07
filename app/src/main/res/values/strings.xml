@@ -31,20 +31,13 @@
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">ENCRYPTED EMAIL</string>
     <string name="secure_email_swiss">Secure Email Based\nin Switzerland</string>
-    <string name="decrypt_mailbox">Decrypt <b>Mailbox</b></string>
     <string name="decrypt">Decrypt</string>
-    <string name="user_sign_in">User Login</string>
-    <string name="two_factor_sign_in">Two Factor Authentication</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_out">Sign Out</string>
     <string name="sign_out_question">Are you sure you want to sign out?</string>
-    <string name="mailbox_password">Mailbox Password</string>
-    <string name="two_factor_code">Two Factor Code</string>
     <string name="processing_request">Your request is being processed</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">You are not logged in!</string>
-    <string name="forgot_password">Forgot Password?</string>
-    <string name="reset_mailbox_password">RESET MAILBOX PASSWORD</string>
     <string name="forgot_mailbox_password">To reset your mailbox password, please use the web version of ProtonMail at protonmail.com</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Impossible to load content. Please enable Chrome</string>
@@ -54,10 +47,7 @@
     <string name="no_more_messages">No more messages</string>
     <string name="mailbox_login_failure">Failed to login to mailbox</string>
     <string name="login_failure">Failed to login</string>
-    <string name="invalid_server_proof">Invalid server proof</string>
-    <string name="invalid_credentials">Invalid credentials</string>
     <string name="incorrect_key_parameters">Incorrect key parameters</string>
-    <string name="invalid_mailbox_password">Invalid mailbox password</string>
     <string name="not_signed_up">You are not signed up for the ProtonMail Android Beta</string>
     <string name="no_network">No network</string>
     <string name="no_network_queued">No network, message queued</string>
@@ -187,7 +177,6 @@
     <string name="confirm_destructive_action">Are you sure? This cannot be undone.</string>
     <string name="create">Create</string>
     <string name="email">Email</string>
-    <string name="email_address">Email address</string>
     <string name="phone">Phone number</string>
     <string name="save">Save</string>
     <string name="syncing_messages">Syncing...</string>
@@ -233,68 +222,22 @@
     <string name="enter">Enter</string>
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
-    <string name="change_password">Change Password</string>
-    <string name="change_mailbox_password">Change Mailbox Password</string>
     <string name="eo_password_title">Set Password</string>
     <string name="eo_password_subtitle">Set a password to encrypt this message for non-ProtonMail users</string>
     <string name="eo_password_more_info">Get more information</string>
 
-    <string name="old_login_password">Current Login Password</string>
-    <string name="new_login_password">New Password</string>
-    <string name="confirm_new_login_password">Confirm New Password</string>
-
-    <string name="new_mailbox_password">New Mailbox Password</string>
-    <string name="confirm_new_mailbox_password">Confirm New Mailbox Password</string>
     <string name="no_attachments">0 Attachments</string>
-
-    <string name="new_passwords_not_valid">Invalid input</string>
-    <string name="new_passwords_do_not_match">New passwords did not match</string>
-    <string name="new_login_password_saved">New login password saved</string>
-    <string name="new_mailbox_password_saved">New mailbox password saved</string>
 
     <string name="pin_lock_option_settings">Lock App Options</string>
     <string name="pin_lock_after">Lock app after</string>
     <string name="lock_the_app">Lock the App</string>
     <string name="display_name_banned_chars">Invalid Display Name. \'&gt;\' and \'&lt;\' are not allowed</string>
     <string name="cont">Continue</string>
-    <string name="email_verification_code">We will send a verification code to the email address above.</string>
-    <string name="sms_verification_code">We will send a verification code to the phone number above.</string>
-    <string name="send_verification_code">Send Verification Code</string>
-    <string name="resend_verification_code">Resend</string>
-    <string name="enter_verification_code">Enter verification code</string>
-    <string name="verify">Verify</string>
 
     <string name="reply_prefix_on">On</string>
-    <string name="create_new_account">Create a new account</string>
-    <string name="setup_new_account">Set up your account</string>
-    <string name="create_account">Create Account</string>
-    <string name="create_passwords">Set Password</string>
     <string name="at_pmail" translatable="false">\@protonmail.com</string>
-    <string name="caps_username">Username</string>
-    <string name="caps_login_password">Password</string>
-    <string name="caps_confirm_password">Confirm Password</string>
-    <string name="caps_optional">*OPTIONAL</string>
-    <string name="update_me_for_new_features">Keep me updated about new features</string>
-    <string name="create_mailbox_password">Create Password</string>
-    <string name="password_note"><b>Note:</b> This is used to encrypt and decrypt your messages.
-        Do not lose this password, we cannot recover it. If you lose your password, you will not be able to read your emails.</string>
-    <string name="username_note"><b>Note:</b> The Username is also your ProtonMail address</string>
     <string name="terms_and_conditions">By using ProtonMail, you agree to our\n
         <a href="https://protonmail.com/terms-and-conditions">terms and conditions</a> and <a href="https://protonmail.com/privacy-policy">privacy policy</a></string>
-    <string name="human_verification">Human Verification</string>
-    <string name="human_verification_subtitle">To prevent abuse of ProtonMail,\nwe need to verify that you are human.</string>
-    <string name="select_options">Please select one of the following options:</string>
-    <string name="no_verification_methods_found">No verification methods found</string>
-    <string name="captcha" translatable="false">CAPTCHA</string>
-    <string name="email_verification">Email Verification</string>
-    <string name="phone_verification">Phone Verification</string>
-    <string name="existing_email_address">Enter your existing email address</string>
-    <string name="phone_number">Enter your phone number</string>
-    <string name="encryption_setup">Encryption Setup</string>
-    <string name="high_security">High Security (2048 bit)</string>
-    <string name="current_standard">The current standard</string>
-    <string name="extreme_security">Extreme Security (4096 bit)</string>
-    <string name="highest_security">The highest level of encryption available.<b> Can take several minutes to setup.</b></string>
     <string name="labels_title_apply">Apply Labels</string>
     <string name="labels_title_add">Add Label</string>
     <string name="labels_title">Labels</string>
@@ -336,16 +279,6 @@
     <string name="display_images">Show remote content</string>
     <string name="retry">Retry</string>
     <string name="saving_failed_no_conn">Saving failed, no connection</string>
-    <string name="username_is_available">Username available!</string>
-    <string name="username_is_not_available">Username already used!</string>
-    <string name="username_is_too_long">Maximum length for a username is %d characters!</string>
-    <string name="congratulation">Congratulations!</string>
-    <string name="new_account_ready">Your new secure email\naccount is ready.</string>
-    <string name="optional_email_note">The optional recovery email address allows you to
-        reset your login password if you forget it.</string>
-    <string name="optional_display_name">When you send an email, this is the name that
-        appears in the sender field.</string>
-    <string name="error_captcha_not_valid">Not valid</string>
     <string name="close_engagement">close tour</string>
 
     <string name="engagement_title_welcome">Welcome to ProtonMail!</string>
@@ -365,7 +298,6 @@
     <string name="attachment_exists">Attachment already attached</string>
     <string name="sending_email_success">Verification code sent</string>
     <string name="sending_email_failed">Verification code sending failed</string>
-    <string name="password_not_valid">Entered password is not valid</string>
     <string name="send_code_wait">Please wait %d seconds to click again</string>
 
     <string name="eo_password_not_completed">Message Password not completed.</string>
@@ -426,120 +358,22 @@
     <string name="log_out">Log out %s?</string>
     <string name="logout_question">Are you sure you want to log out?</string>
     <string name="logout_question_next_account">You will be switched to %s.</string>
-    <string name="upselling">Upgrade/Donate</string>
-    <string name="upselling_title">ProtonMail is free and open source</string>
-    <string name="upselling_subtitle">We need your support to continue protecting privacy and improving ProtonMail</string>
-    <string name="upselling_donate_title">Donate</string>
-    <string name="upselling_upgrade_title">Upgrade to ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Your donation will help us add
-    capacity and continue to develop ProtonMail as free and open source software. It is only through the
-    support of the community that we are able to continue providing ProtonMail to people around
-    the world.</string>
-    <string name="upgrade_donate">Upgrade/Donate</string>
-    <string name="upselling_donate_pick_amount">Select a donation amount or enter any amount</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">Enter donation amount</string>
-    <string name="donate">Donate</string>
-    <string name="donate_paypal_bitcoin">Donate via PayPal or Bitcoin</string>
 
-    <string name="upgrade_line1">Everything included in our Free plan</string>
-    <string name="upgrade_line2">5 GB Storage</string>
-    <string name="upgrade_line3">Use your own domain</string>
-    <string name="upgrade_line4">Up to 5 aliases</string>
-    <string name="upgrade_line5">Priority customer support</string>
     <string name="upgrade">Upgrade</string>
-    <string name="payment_options">Payment Option</string>
-    <string name="other_plans">For plans with more storage, upgrade through
-    the ProtonMail webmail interface.</string>
-    <string name="upgrade_paid_user">Thank you for being a paid user!</string>
-    <string name="select_account_type">Select your account type</string>
-    <string name="select_account_type_subtitle">ProtonMail is a free service
-    for the public good. You can help support online privacy by selecting a paid account.</string>
-    <string name="plan_free_with_price">FREE</string>
-    <string name="plan_plus_with_price">PLUS %s /Month</string>
-    <string name="plan_visionary_with_price">VISIONARY %s /Month</string>
-    <string name="plan_business_with_price">BUSINESS %s /Month</string>
-    <string name="plan_free_title">Basic account with limited features</string>
-    <string name="plan_plus_title">Secure email with advanced features</string>
-    <string name="plan_visionary_title">Special accounts for our supporters</string>
-    <string name="plan_business_title">Special accounts for our supporters</string>
-    <string name="plan_plus_line2">Send up to 1000 messages per day</string>
-    <string name="plan_plus_line3">Labels and Custom Filters</string>
-    <string name="plan_plus_line4">Send encrypted messages to external recipients</string>
-    <string name="plan_plus_line7">Priority Customer Support</string>
-    <string name="plan_free_line1">500 MB storage</string>
-    <string name="plan_free_line2">150 messages per day</string>
-    <string name="plan_free_line3">20 Labels</string>
-    <string name="plan_free_line4">Custom domains: not supported</string>
-    <string name="plan_free_line5">1 address</string>
-    <string name="plan_free_line6">Customer Support: limited</string>
-    <string name="plan_visio_line2">No sending limits</string>
-    <string name="plan_visio_line3">Early access to new features</string>
-    <string name="plan_visio_line6">Help pick new features through Visionary only polls</string>
-    <string name="plan_business_line1">coming soon for organizations to enjoy encrypted email!</string>
-    <string name="currency_duration">Currency &amp; Duration</string>
-    <string name="credit_card_name">Name on credit/debit card</string>
-    <string name="zip_code">Postal code</string>
-    <string name="card_number">Card number</string>
-    <string name="billing_information">Billing Information</string>
     <string name="country">Country</string>
-    <string name="cvc">CVC</string>
-    <string name="terms_and_conditions_billing">By clicking Submit, you agree
-    to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s terms and conditions</a></string>
-    <string name="submit">Submit</string>
-    <string name="currency">Currency</string>
-    <string name="plan_duration">Billing Cycle</string>
-    <string name="currency_euro" translatable="false">Euro</string>
-    <string name="currency_frank" translatable="false">Swiss Franc</string>
-    <string name="currency_dollar" translatable="false">US Dollar</string>
-    <string name="currency_euro_sign" translatable="false">EUR</string>
-    <string name="currency_frank_sign" translatable="false">CHF</string>
-    <string name="currency_dollar_sign" translatable="false">USD</string>
-    <string name="duration_annual_line1">Annual Plan <font color="#C3E129">Save 20%</font></string>
-    <string name="per_month_text_only">per month</string>
-    <string name="duration_annual_line3">Billed as %s /Year</string>
-    <string name="duration_annual_line4">Billed %s /Month</string>
-    <string name="duration_monthly_line1">Monthly Plan</string>
-    <string name="duration_monthly_line3">Save 20%</string>
     <string name="set_cont">Set &amp; Continue</string>
-    <string name="payment_error">Payment Error</string>
     <string name="error">Error</string>
-    <string name="try_another_card">Try another card</string>
-    <string name="try_another_paypal">Pay with PayPal</string>
-    <string name="try_another_payment_method">Try another</string>
-    <string name="submit_paypal">Check out with PayPal</string>
-    <string name="picker_card">Credit/debit card</string>
-    <string name="picker_paypal">PayPal</string>
-    <string name="paypal_disclaimer">You will need to login to your PayPal account to complete this transaction. We will open new browser window with PayPal for you.</string>
-    <string name="payment_picker_disclaimer">Please select payment type</string>
-    <string name="payment_success_title">Payment Success!</string>
-    <string name="payment_success_text">We are now upgrading your account, please wait a moment. Thank you for your support!</string>
-    <string name="donation_success_title">Donation Success!</string>
-    <string name="donation_success_text">Your support is essential to keeping ProtonMail running. Thank you for supporting internet privacy!</string>
-    <string name="create_free_account">Create free account</string>
 
     <string name="storage_gb">%d GB storage</string>
     <string name="storage_mb">%d MB storage</string>
     <string name="max_addresses">Up to %d email aliases</string><string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d Embedded Images</string>
     <string name="select">Select</string>
-    <string name="change_currency">Change currency</string>
-    <string name="switch_billing_monthly">Switch to Monthly</string>
-    <string name="switch_billing_yearly">Switch to Yearly</string>
     <string name="warning">Warning</string>
     <string name="empty_recovery_email_question">Warning: You did not set a recovery email so account recovery is impossible if you forget your password. Proceed without recovery email?</string>
 
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Expiration %s</string>
-    <string name="payment_methods">Payment Methods</string>
-    <string name="payment_approval_activity">Payment Method Approval</string>
-    <string name="payment_approval_success">Payment method has been approved</string>
-    <string name="payment_approval_unknown_error_description">An error occurred while trying to verify your payment method. Please try again or switch to another card.</string>
-    <string name="payment_approval_cancel_error_description">Payment method verification cancelled. Please try again or switch to another card.</string>
-    <string name="payment_approval_consumed_error_description">Payment method already used for this payment. Please check status of your subscription.</string>
     <string name="no_payment_methods">You have no saved payment methods.</string>
     <string name="edit_payment_methods">Please log in through protonmail.com to edit billing information.</string>
     <string name="message_not_loaded">Message not loaded</string>
@@ -561,12 +395,7 @@
     <string name="delete_selected">Delete Selected</string>
     <string name="pin_not_activated">PIN not activated</string>
     <string name="available_options">Available options</string>
-    <string name="current_recovery_email">Current Reset/Notification Email Address</string>
     <string name="change_recovery_email">Change Reset/Notification Email Address</string>
-    <string name="new_recovery_email">New Reset/Notification Email</string>
-    <string name="confirm_new_recovery_email">Confirm New Reset/Notification Email</string>
-    <string name="recovery_emails_invalid">Email address does not match or is invalid</string>
-    <string name="authenticate">Authenticate</string>
 
     <string name="background_sync_subtitle">If this option is enabled, the app will sync with the server in the background. Disabling this feature will disable push notifications.</string>
     <string-array name="notification_options">
@@ -670,10 +499,6 @@
 
     <string name="logged_out">Logged out</string>
     <string name="logged_out_description">You have been logged out. Please login again.</string>
-    <string name="verification_needed">Verification Required</string>
-    <string name="verification_needed_description">For security reasons, please verify that you are not a robot.</string>
-    <string name="verification_needed_description_notification">Please verify you are a human before sending this message: %s</string>
-    <string name="message_drafted_verification_needed">Message not sent - verification required. Your messages are saved in drafts folder.</string>
 
     <string name="error_message_zip_code_invalid">Error: Postal Code invalid</string>
     <string name="error_message_cvc_invalid">Error: CVC number invalid</string>
@@ -848,7 +673,6 @@
     <string name="contact_add_addr_to_group">Add address to groups</string>
     <string name="title_activity_address_chooser">Manage Addresses</string>
     <string name="title_activity_account_manager">Manage Accounts</string>
-    <string name="title_activity_connect_account">Connect Account</string>
     <string name="account_manager_add_account">Add Account</string>
     <string name="account_manager_remove_all_accounts">Removing all accounts</string>
     <string name="account_manager_note">You can be simultaneously logged into an unlimited number of paid ProtonMail accounts and one free account.</string>
@@ -858,7 +682,6 @@
     <string name="manage_accounts_user_loggedout">%s (logged out)</string>
     <string name="manage_accounts_user_primary">%s (primary)</string>
     <string name="account_manager_remove">Remove</string>
-    <string name="connect_account_login_title">Login to your ProtonMail account</string>
     <string name="default_error_message">Error occurred</string>
     <string name="no_contact_groups">No contact groups</string>
     <string name="search_contacts_inside_group">Search for contacts inside group</string>
@@ -1100,7 +923,6 @@
     <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
     <string name="switch_accounts_question">Switch account?</string>
     <string name="switch_to_account">Switch to %s</string>
-    <string name="login_failure_missing_keys">The account you are trying to add does not have generated keys. Please add this account as a first account on the app, or log in via the web version, to generate keys and then add it as a additional account in the app.</string>
     <!-- endregion -->
 
     <!-- region Compose shortcut -->

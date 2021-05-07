@@ -20,18 +20,11 @@ package ch.protonmail.android.api.segments.payment
 
 import ch.protonmail.android.api.models.CheckSubscriptionBody
 import ch.protonmail.android.api.models.CheckSubscriptionResponse
-import ch.protonmail.android.api.models.CreateSubscriptionBody
-import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
-import ch.protonmail.android.api.models.DonateBody
 import ch.protonmail.android.api.models.GetSubscriptionResponse
-import ch.protonmail.android.api.models.PaymentMethodResponse
 import ch.protonmail.android.api.models.PaymentMethodsResponse
 import ch.protonmail.android.api.models.PaymentsStatusResponse
-import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.TokenPaymentBody
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -50,18 +43,6 @@ interface PaymentService {
     @GET("payments/status")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun fetchPaymentsStatus(): PaymentsStatusResponse
-
-    @POST("payments/methods")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun createUpdatePaymentMethod(@Body body: TokenPaymentBody): PaymentMethodResponse
-
-    @POST("payments/subscription")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun createUpdateSubscription(@Body body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse
-
-    @POST("payments/donate")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun donate(@Body body: DonateBody): Call<ResponseBody>
 
     @POST("payments/subscription/check")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

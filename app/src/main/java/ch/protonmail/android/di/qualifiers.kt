@@ -34,6 +34,11 @@ annotation class AppCoroutineScope
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 @Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
+annotation class AppProcessLifecycleOwner
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
 annotation class AttachmentsDirectory
 
 @Qualifier

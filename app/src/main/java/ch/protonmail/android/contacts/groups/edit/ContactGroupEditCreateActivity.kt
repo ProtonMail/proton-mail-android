@@ -41,13 +41,10 @@ import ch.protonmail.android.contacts.groups.edit.chooser.ColorChooserFragment
 import ch.protonmail.android.contacts.groups.edit.chooser.EXTRA_CONTACT_EMAILS
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.model.*
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
-import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.content_edit_create_contact_group_header.*
 import java.util.ArrayList
@@ -282,11 +279,5 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         val currentSelection = random.nextInt(colorOptions.size)
         val colorId = colorOptions[currentSelection]
         return String.format("#%06X", 0xFFFFFF and colorId)
-    }
-
-    @Subscribe
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onLogoutEvent(event: LogoutEvent?) {
-        moveToLogin()
     }
 }

@@ -25,6 +25,9 @@ package ch.protonmail.android.utils
 
 data class BuildInfo(
     val model: String,
+    val brand: String,
+    val isDebugVersion: Boolean,
     val sdkVersion: Int,
-    val versionName: String
+    val versionName: String,
+    val releaseVersion: String
 )

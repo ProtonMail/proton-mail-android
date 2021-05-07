@@ -20,7 +20,6 @@
 package ch.protonmail.android.fcm
 
 import android.content.SharedPreferences
-import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -28,12 +27,14 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
-import io.mockk.unmockkObject
+import kotlinx.coroutines.flow.flowOf
+import me.proton.core.account.domain.entity.Account
+import me.proton.core.account.domain.entity.AccountState
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.accountmanager.domain.getAccounts
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.mocks.newMockSharedPreferences
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.After
-import org.junit.Before
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -62,16 +63,29 @@ class MultiUserFcmTokenManagerTest : CoroutinesTest {
     )
 
     private val allLoggedInUsers = setOf(user1, user2, user3)
-    private val allSavedUsers = setOf(user1, user2, user3)
 
-    private val accountManager: AccountManager = mockk {
-        coEvery { allLoggedIn() } returns allLoggedInUsers.map { it.userId }.toSet()
-        coEvery { allSaved() } returns allSavedUsers.map { it.userId }.toSet()
+    private val accounts = allLoggedInUsers.map { user ->
+        mockk<Account> {
+            every { userId } returns UserId(user.userId.s)
+            every { state } returns AccountState.Ready
+        }
+    }
+
+    private val accountManager: AccountManager = mockk(relaxed = true) {
+        coEvery { getAccounts(AccountState.Ready) } returns flowOf(accounts)
+        coEvery { getAccounts() } returns flowOf(accounts)
+    }
+
+    private val preferencesFactory: SecureSharedPreferences.Factory = mockk {
+        every { userPreferences(any()) } answers {
+            val userIdParam = firstArg<Id>()
+            allLoggedInUsers.first { it.userId == userIdParam }.sharedPreferences
+        }
     }
 
     private val multiUserTokenManager = MultiUserFcmTokenManager(
-        context = mockk(),
         accountManager,
+        preferencesFactory,
         userFcmTokenManagerFactory = mockk {
             every { create(any()) } answers {
                 val sharedPreferencesParam = firstArg<SharedPreferences>()
@@ -79,21 +93,6 @@ class MultiUserFcmTokenManagerTest : CoroutinesTest {
             }
         }
     )
-
-    @Before
-    fun setup() {
-        mockkObject(SecureSharedPreferences.Companion)
-        every { SecureSharedPreferences.getPrefsForUser(any(), any()) } answers {
-            val userIdParam = secondArg<Id>()
-            allLoggedInUsers.first { it.userId == userIdParam }.sharedPreferences
-        }
-    }
-
-    @After
-    fun tearDown() {
-        unmockkObject(SecureSharedPreferences.Companion)
-    }
-
 
     @Test
     fun storesFirebaseTokenForAllTheLoggedInUsers() = coroutinesTest {

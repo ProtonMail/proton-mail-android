@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.Auth;
 import ch.protonmail.android.api.models.MessageRecipient;
-import ch.protonmail.android.api.models.ModulusResponse;
 import ch.protonmail.android.api.models.PasswordVerifier;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.enumerations.MIMEType;
@@ -49,27 +48,33 @@ import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.data.local.model.Attachment;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.domain.entity.Id;
+import ch.protonmail.android.repository.AuthRepositoryKt;
 import ch.protonmail.android.utils.HTMLToMDConverter;
 import ch.protonmail.android.utils.MIME.MIMEBuilder;
 import ch.protonmail.android.utils.crypto.EOToken;
 import kotlin.text.Charsets;
+import me.proton.core.auth.domain.entity.Modulus;
+import me.proton.core.auth.domain.repository.AuthRepository;
 
 public class PackageFactory {
 
     private final ProtonMailApiManager apiManager;
     private final AddressCrypto.Factory addressCryptoFactory;
     private final HTMLToMDConverter htmlToMDConverter;
+    private final AuthRepository authRepository;
     private AddressCrypto crypto;
 
     @Inject
     public PackageFactory(
             @NonNull ProtonMailApiManager apiManager,
             @NonNull AddressCrypto.Factory addressCryptoFactory,
-            @NonNull HTMLToMDConverter htmlToMDConverter
-    ) {
+            @NonNull HTMLToMDConverter htmlToMDConverter,
+            @NonNull AuthRepository authRepository
+            ) {
         this.apiManager = apiManager;
         this.addressCryptoFactory = addressCryptoFactory;
         this.htmlToMDConverter = htmlToMDConverter;
+        this.authRepository = authRepository;
     }
 
     public List<MessageSendPackage> generatePackages(
@@ -225,7 +230,7 @@ public class PackageFactory {
     }
 
     private Auth generateAuth(MessageSecurityOptions securityOptions) {
-        final ModulusResponse modulus = apiManager.randomModulus();
+        final Modulus modulus = AuthRepositoryKt.randomModulusBlocking(authRepository);
         final PasswordVerifier verifier = PasswordVerifier.calculate(securityOptions.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, modulus);
         return new Auth(verifier.AuthVersion, verifier.ModulusID, verifier.Salt, verifier.SRPVerifier);
     }

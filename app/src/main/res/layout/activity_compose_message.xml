@@ -430,21 +430,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     </FrameLayout>
                 </FrameLayout>
             </ScrollView>
-
-            <FrameLayout
-                android:id="@+id/human_verification"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white_55"
-                android:visibility="gone">
-
-                <FrameLayout
-                    android:id="@+id/fragment_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-
-            </FrameLayout>
-
         </RelativeLayout>
     </LinearLayout>
 

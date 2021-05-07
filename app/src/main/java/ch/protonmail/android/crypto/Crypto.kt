@@ -25,12 +25,10 @@ import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.AddressKeys
 import ch.protonmail.android.domain.entity.user.UserKey
 import ch.protonmail.android.domain.entity.user.UserKeys
-import ch.protonmail.android.mapper.bridge.UserBridgeMapper
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.crypto.TextDecryptionResult
 import com.proton.gopenpgp.armor.Armor
 import me.proton.core.util.kotlin.EMPTY_STRING
-import me.proton.core.util.kotlin.invoke
 import timber.log.Timber
 import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 
@@ -46,12 +44,11 @@ import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 abstract class Crypto<K>(
     private val userManager: UserManager,
     protected val openPgp: OpenPGP,
-    private val userId: Id,
-    private val userMapper: UserBridgeMapper = UserBridgeMapper.buildDefault()
+    private val userId: Id
 ) {
 
     protected val user by lazy {
-        userMapper { userManager.getUserBlocking(userId) }
+        userManager.getUserBlocking(userId)
     }
 
     protected val userKeys
@@ -61,7 +58,7 @@ abstract class Crypto<K>(
 
     protected abstract val primaryKey: K?
 
-    protected val mailboxPassword get() = userManager.getMailboxPassword(userId)
+    protected val mailboxPassword get() = userManager.getUserPassphraseBlocking(userId)
 
     /**
      * Return passphrase for decryption

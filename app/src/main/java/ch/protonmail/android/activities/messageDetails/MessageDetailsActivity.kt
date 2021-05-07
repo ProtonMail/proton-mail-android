@@ -47,24 +47,20 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
-import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelCreationListener
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelsChangeListener
 import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment
 import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment.IMoveMessagesListener
-import ch.protonmail.android.activities.guest.LoginActivity
 import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
-import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
@@ -76,9 +72,9 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostArchiveJob
@@ -86,7 +82,6 @@ import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
-import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event
@@ -95,7 +90,6 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.MODE_ACCORDION
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.BottomActionsView
@@ -135,6 +129,7 @@ internal class MessageDetailsActivity :
      * Whether the current message needs to be store in database. If transient if won't be stored
      */
     private var isTransientMessage = false
+    private var messageRecipientUserId: Id? = null
     private var messageRecipientUsername: String? = null
     private val buttonsVisibilityHandler = Handler(Looper.getMainLooper())
     private val attachmentToDownloadId = AtomicReference<String?>(null)
@@ -203,35 +198,20 @@ internal class MessageDetailsActivity :
 
         markAsRead = true
         messageId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_ID))
+        messageRecipientUserId = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USER_ID)?.let(::Id)
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
         isTransientMessage = intent.getBooleanExtra(EXTRA_TRANSIENT_MESSAGE, false)
-        val user = mUserManager.requireCurrentUserBlocking()
-        AppUtil.clearNotifications(this, user.id)
-        if (!mUserManager.isLoggedIn) {
-            startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
-        }
+        val currentUser = mUserManager.requireCurrentUser()
+        AppUtil.clearNotifications(this, currentUser.id)
         supportActionBar?.title = null
         initAdapters()
-        if (messageRecipientUsername != null && user.name.s != messageRecipientUsername) {
-            showTwoButtonInfoDialog(
-                title = getString(R.string.switch_accounts_question),
-                message = String.format(getString(R.string.switch_to_account), messageRecipientUsername),
-                rightStringId = R.string.okay,
-                leftStringId = R.string.cancel,
-                cancelable = false,
-                onRight = {
-                    lifecycleScope.launchWhenCreated {
-                        mUserManager.switchTo(user.id)
-                        continueSetup()
-                        invalidateOptionsMenu()
-                        showSignedInSnack(
-                            messageDetailsView,
-                            getString(R.string.signed_in_with, messageRecipientUsername)
-                        )
-                    }
-                },
-                onLeft = { finish() }
-            )
+        val recipientUsername = messageRecipientUsername
+        if (recipientUsername != null && currentUser.name.s != recipientUsername) {
+            val userId = checkNotNull(messageRecipientUserId) { "Username found in extras, but user id" }
+            accountStateManager.switch(userId).invokeOnCompletion {
+                continueSetup()
+                invalidateOptionsMenu()
+            }
         } else {
             continueSetup()
         }
@@ -408,7 +388,7 @@ internal class MessageDetailsActivity :
         networkSnackBarUtil.hideAllSnackBars()
         networkSnackBarUtil.getNoConnectionSnackBar(
             mSnackLayout,
-            mUserManager.user,
+            mUserManager.requireCurrentLegacyUser(),
             this,
             { onConnectivityCheckRetry() },
             anchorViewId = R.id.messageDetailsActionsView,
@@ -483,13 +463,6 @@ internal class MessageDetailsActivity :
         showToast(toastMessageId, Toast.LENGTH_SHORT)
     }
 
-    @Subscribe
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onLogoutEvent(event: LogoutEvent?) {
-        startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
-        finish()
-    }
-
     private fun getDecryptedBody(decryptedHtml: String?): String {
         var decryptedBody = decryptedHtml
         if (decryptedBody.isNullOrEmpty()) {
@@ -521,12 +494,6 @@ internal class MessageDetailsActivity :
     override fun onBackPressed() {
         stopEmbeddedImagesTask()
         saveLastInteraction()
-        if (messageRecipientUsername != null) {
-            val mailboxIntent = AppUtil.decorInAppIntent(Intent(this, MailboxActivity::class.java))
-            mailboxIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            mailboxIntent.putExtra(EXTRA_HAS_SWITCHED_USER, true)
-            startActivity(mailboxIntent)
-        }
         finish()
     }
 
@@ -852,13 +819,12 @@ internal class MessageDetailsActivity :
                         messageAction,
                         message.subject
                     )
-                    val userUsedSpace = SecureSharedPreferences
-                        .getPrefsForUser(this@MessageDetailsActivity, mUserManager.requireCurrentUserId())
-                        .getLong(Constants.Prefs.PREF_USED_SPACE, 0)
-                    val userMaxSpace = if (mUserManager.user.maxSpace == 0L) {
+                    val user = mUserManager.requireCurrentLegacyUser()
+                    val userUsedSpace = user.usedSpace
+                    val userMaxSpace = if (user.maxSpace == 0L) {
                         Long.MAX_VALUE
                     } else {
-                        mUserManager.user.maxSpace
+                        user.maxSpace
                     }
                     val percentageUsed = userUsedSpace * 100 / userMaxSpace
                     if (percentageUsed >= 100) {
@@ -867,7 +833,7 @@ internal class MessageDetailsActivity :
                             message = getString(R.string.storage_limit_reached_text),
                             rightStringId = R.string.okay,
                             leftStringId = R.string.learn_more,
-                            onLeft = {
+                            onNegativeButtonClicked = {
                                 val browserIntent = Intent(
                                     Intent.ACTION_VIEW,
                                     Uri.parse(getString(R.string.limit_reached_learn_more))
@@ -1058,6 +1024,7 @@ internal class MessageDetailsActivity :
 
         // if transient is true it will not save Message object to db
         const val EXTRA_TRANSIENT_MESSAGE = "transient_message"
+        const val EXTRA_MESSAGE_RECIPIENT_USER_ID = "message_recipient_user_id"
         const val EXTRA_MESSAGE_RECIPIENT_USERNAME = "message_recipient_username"
     }
 }

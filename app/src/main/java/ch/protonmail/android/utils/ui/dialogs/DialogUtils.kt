@@ -18,20 +18,15 @@
  */
 package ch.protonmail.android.utils.ui.dialogs
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.graphics.Color
-import android.text.InputType
 import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.TextView
-import android.widget.ToggleButton
 import androidx.annotation.StringRes
 import ch.protonmail.android.R
 import ch.protonmail.android.views.CustomFontButton
@@ -157,10 +152,10 @@ class DialogUtils {
          *  [Dialog] itself
          *  default is `true`
          *
-         * @param onLeft will be executed when the left button is pressed
+         * @param onNegativeButtonClicked will be executed when the negative button is pressed
          *  default is an empty lambda
          *
-         * @param onRight will be executed when the right button is pressed
+         * @param onPositiveButtonClicked will be executed when the positive button is pressed
          *  default is an empty lambda
          */
         inline fun Context.showTwoButtonInfoDialog(
@@ -173,8 +168,8 @@ class DialogUtils {
             dismissOnButtonClick: Boolean = true,
             cancelable: Boolean = true,
             cancelOnTouchOutside: Boolean = true,
-            crossinline onLeft: () -> Unit = {},
-            crossinline onRight: () -> Unit = {}
+            crossinline onNegativeButtonClicked: () -> Unit = {},
+            crossinline onPositiveButtonClicked: () -> Unit = {}
         ): AlertDialog {
             requireNotNull(title) {
                 "One parameter of 'title' or 'titleStringId' is required"
@@ -183,11 +178,11 @@ class DialogUtils {
                 .setTitle(title)
                 .apply { message?.let(::setMessage) }
                 .setNegativeButton(leftStringId) { dialog, _ ->
-                    onLeft()
+                    onNegativeButtonClicked()
                     if (dismissOnButtonClick) dialog.dismiss()
                 }
                 .setPositiveButton(rightStringId) { dialog, _ ->
-                    onRight()
+                    onPositiveButtonClicked()
                     if (dismissOnButtonClick) dialog.dismiss()
                 }
                 .setCancelable(cancelable)
@@ -314,41 +309,6 @@ class DialogUtils {
                 }
             }
             return undoSnack
-        }
-
-        fun show2FADialog(context: Activity,
-                          okListener: (String) -> Unit,
-                          cancelListener: () -> Unit): AlertDialog {
-            val builder = AlertDialog.Builder(context)
-            val dialogView = context.layoutInflater.inflate(R.layout.layout_2fa, null)
-            val twoFactorCode = dialogView.findViewById(R.id.two_factor_code) as EditText
-            val toggleInputText = dialogView.findViewById(R.id.toggle_input_text) as ToggleButton
-            toggleInputText.setOnClickListener { v ->
-                if ((v as ToggleButton).isChecked) {
-                    twoFactorCode.inputType = InputType.TYPE_CLASS_TEXT
-                } else {
-                    twoFactorCode.inputType = InputType.TYPE_CLASS_NUMBER
-                }
-            }
-            builder.setView(dialogView)
-            builder.setPositiveButton(R.string.enter) { dialog, _ ->
-                okListener(twoFactorCode.text.toString())
-                dialog.cancel()
-            }
-            builder.setNegativeButton(R.string.cancel) { dialog, _ ->
-                cancelListener()
-                dialog.cancel()
-            }
-            val twoFADialog = builder.create()
-            twoFADialog.setOnShowListener {
-                twoFADialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.resources.getColor(R.color.iron_gray))
-                val positiveButton = twoFADialog.getButton(DialogInterface.BUTTON_POSITIVE)
-                positiveButton.setTextColor(context.resources.getColor(R.color.new_purple_dark))
-                positiveButton.text = context.getString(R.string.enter)
-            }
-            twoFADialog.setCanceledOnTouchOutside(false)
-            twoFADialog.show()
-            return twoFADialog
         }
 
         fun showSignedInSnack(view: View, message: String) {

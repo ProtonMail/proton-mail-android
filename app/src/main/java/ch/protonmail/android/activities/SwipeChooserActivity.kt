@@ -27,11 +27,8 @@ import android.widget.RadioButton
 import ch.protonmail.android.R
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
-import ch.protonmail.android.utils.moveToLogin
-import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.activity_swipe_chooser.*
 
 // region constants
@@ -152,10 +149,5 @@ class SwipeChooserActivity : BaseActivity() {
         setResult(Activity.RESULT_OK, intent)
         saveLastInteraction()
         finish()
-    }
-
-    @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) {
-        moveToLogin()
     }
 }

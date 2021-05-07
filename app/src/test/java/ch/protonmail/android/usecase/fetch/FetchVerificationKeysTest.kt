@@ -51,8 +51,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
     private val api: ProtonMailApiManager = mockk()
 
     private val userManager: UserManager = mockk {
-        coEvery { requireCurrentUser() } returns testUser
-        every { currentUserId } returns testUserId
+        every { requireCurrentUser() } returns testUser
         every { requireCurrentUserId() } returns testUserId
         every { openPgp } returns mockk()
     }

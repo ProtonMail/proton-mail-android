@@ -24,7 +24,6 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.AddressKeys
-import ch.protonmail.android.mapper.bridge.UserBridgeMapper
 import ch.protonmail.android.utils.crypto.BinaryDecryptionResult
 import ch.protonmail.android.utils.crypto.EOToken
 import ch.protonmail.android.utils.crypto.MimeDecryptor
@@ -38,7 +37,6 @@ import com.proton.gopenpgp.crypto.PlainMessage
 import com.proton.gopenpgp.crypto.SessionKey
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 
@@ -46,9 +44,8 @@ class AddressCrypto @AssistedInject constructor(
     val userManager: UserManager,
     openPgp: OpenPGP,
     @Assisted userId: Id,
-    @Assisted private val addressId: Id,
-    userMapper: UserBridgeMapper = UserBridgeMapper.buildDefault()
-) : Crypto<AddressKey>(userManager, openPgp, userId, userMapper) {
+    @Assisted private val addressId: Id
+) : Crypto<AddressKey>(userManager, openPgp, userId) {
 
     @AssistedInject.Factory
     interface Factory {
@@ -93,8 +90,7 @@ class AddressCrypto @AssistedInject constructor(
                 "primary = ${key.isPrimary}, " +
                 "has activation = ${key.activation != null}"
 
-            val tokenManager = runBlocking { userManager.getCurrentUserTokenManager() }
-            val armoredPrivateKey = tokenManager?.encPrivateKey
+            val armoredPrivateKey: String? = user.keys.primaryKey?.privateKey?.string
             armoredPrivateKey?.let {
                 val decryptedToken = openPgp.decryptMessage(token.string, armoredPrivateKey, mailboxPassword)
                 val validSignature = verifySignature(it, decryptedToken, signature.string, errorMessage)

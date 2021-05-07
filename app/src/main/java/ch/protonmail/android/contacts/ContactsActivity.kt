@@ -45,13 +45,10 @@ import ch.protonmail.android.contacts.list.search.SearchExpandListener
 import ch.protonmail.android.contacts.list.search.SearchViewQueryListener
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.ConnectionState
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
 import com.github.clans.fab.FloatingActionButton
-import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contacts_v2.*
 import timber.log.Timber
@@ -188,7 +185,7 @@ class ContactsActivity :
         if (connectivity != ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                 mSnackLayout,
-                mUserManager.user,
+                mUserManager.requireCurrentLegacyUser(),
                 this,
                 { onConnectivityCheckRetry() },
                 isOffline = connectivity == ConnectionState.NO_INTERNET
@@ -228,12 +225,6 @@ class ContactsActivity :
         searchView.setOnQueryTextListener(SearchViewQueryListener(searchView, searchListeners))
         val closeButton = searchView.findViewById<ImageView>(R.id.search_close_btn)
         closeButton.setOnClickListener(OnSearchClose(searchView, searchListeners))
-    }
-
-    @Subscribe
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onLogoutEvent(event: LogoutEvent) {
-        moveToLogin()
     }
 
     private fun onContactsFetchedEvent(isSuccessful: Boolean) {

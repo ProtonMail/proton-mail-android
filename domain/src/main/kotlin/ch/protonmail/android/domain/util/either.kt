@@ -42,8 +42,9 @@ import me.proton.core.util.kotlin.invoke
  * }
  * ```
  */
-fun <A, B> Either<A, B>.orThrow(): B =
-    getOrElse { throw NoValueError(leftOrThrow()) }
+@JvmOverloads
+fun <A, B> Either<A, B>.orThrow(message: String? = null): B =
+    getOrElse { throw NoValueError(leftOrThrow(), message) }
 
 /**
  * Returns the left value if it exists, otherwise null
@@ -87,7 +88,20 @@ fun <A, B> Either<A, B>.leftOrNull(): A? =
 fun <A, B> Either<A, B>.leftOrThrow(): A =
     fold({ it }, { throw NoValueError(orThrow()) })
 
-class NoValueError internal constructor (val other: Any?) : Exception(other!!::class.simpleName)
+class NoValueError internal constructor(
+    val other: Any?,
+    message: String? = null
+) : Exception(buildNoValueErrorMessage(other, message))
+
+private fun buildNoValueErrorMessage(error: Any?, message: String?) = buildString {
+    val errorName = error?.let { it::class.simpleName }
+        ?: "Unknown error"
+    append(errorName)
+
+    if (message != null) {
+        append(": $message")
+    }
+}
 
 /**
  * Shadow of [Either.map] using a custom [Mapper]

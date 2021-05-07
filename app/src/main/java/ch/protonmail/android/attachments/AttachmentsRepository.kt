@@ -28,7 +28,7 @@ import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okio.ByteString.Companion.decodeBase64
 import okio.buffer
@@ -93,8 +93,8 @@ class AttachmentsRepository @Inject constructor(
             val encryptedAttachment = crypto.encrypt(fileContent, filename)
             val signedFileContent = armorer.unarmor(crypto.sign(fileContent))
 
-            val attachmentMimeType = MediaType.parse(mimeType)
-            val octetStreamMimeType = MediaType.parse("application/octet-stream")
+            val attachmentMimeType = mimeType.toMediaType()
+            val octetStreamMimeType = "application/octet-stream".toMediaType()
             val keyPackage = RequestBody.create(attachmentMimeType, encryptedAttachment.keyPacket)
             val dataPackage = RequestBody.create(attachmentMimeType, encryptedAttachment.dataPacket)
             val signature = RequestBody.create(octetStreamMimeType, signedFileContent)

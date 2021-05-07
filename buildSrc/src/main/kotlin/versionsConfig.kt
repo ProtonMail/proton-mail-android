@@ -39,7 +39,7 @@ fun initVersions() {
     `hilt-android version` =                    "2.33-beta"     // Released: Feb 26, 2021
     `hilt-androidx version` =                   "1.0.0-beta01"  // Released: Mar 10, 2021
     `ktx version` =                             "1.5.0-rc01"    // Released: Mar 24, 2021
-    `lifecycle version` =                       "2.2.0-rc03"    // Released: Dec 05, 2019
+    `lifecycle version` =                       "2.4.0-alpha01" // Released: Mar 24, 2021
     `material version` =                        "1.3.0"         // Released: Feb 04, 2021
     `android-paging version` =                  "2.1.0"         // Released: Jan 26, 2019
     `android-room version` =                    "2.2.6"         // Released: Dec 16, 2020
@@ -63,17 +63,26 @@ fun initVersions() {
 
 // Proton Core
 // Common
-const val `Proton-kotlin-util version` =        "0.2.4"         // Released: Nov 19, 2020
+const val `Proton-kotlin-util version` =        "0.2.5"         // Released: Apr 07, 2021
 const val `Proton-shared-preferences version` = "0.2.3"         // Released: Dec 18, 2020
 const val `Proton-work-manager version` =       "0.2.2"         // Released: Dec 18, 2020
 // Test
-const val `Proton-android-test version` =       "0.3.3"         // Released: Dec 18, 2020
-const val `Proton-android-instr-test version` = "0.3.3"         // Released: Jan 08, 2020
+const val `Proton-android-test version` =       "0.4.3"         // Released: Mar 22, 2021
+const val `Proton-android-instr-test version` = "0.3.3"         // Released: Mar 22, 2021
 const val `Proton-kotlin-test version` =        "0.2"           // Released: Oct 21, 2020
 
 const val `Proton-domain version` =             "1.0"           // Released: Feb 17, 2021
-const val `Proton-presentation version` =       "0.7.2"         // Released: May 04, 2021
-const val `Proton-data version` =               "0.2.2"         // Released: Jan 20, 2021
+const val `Proton-presentation version` =       "0.7.4"         // Released: May 05, 2021
+const val `Proton-data version` =               "1.0.1"         // Released: Mar 22, 2021
+const val `Proton-network version` =            "1.0.4"         // Released: Apr 07, 2021
+const val `Proton-crypto version` =             "1.0.2"         // Released: Mar 05, 2021
+
+const val `Proton-auth version` =               "1.0.7"         // Released: May 05, 2021
+const val `Proton-account version` =            "1.0.3"         // Released: Apr 12, 2021
+const val `Proton-account-manager version` =    "1.0.9"         // Released: May 03, 2021
+const val `Proton-user version` =               "1.0.6"         // Released: May 03, 2021
+const val `Proton-key version` =                "1.0.4"         // Released: Mar 22, 2021
+const val `Proton-human-verification version` = "0.2.6"         // Released: Mar 14, 2021
 
 @Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
 
@@ -93,9 +102,11 @@ const val `sun-mail-android version` =          "1.5.5"         // Released: Mar
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020
 const val `android-fragment version` =          "1.2.0-rc01"    // Released: Oct 24, 2019
 const val `android-media version` =             "1.1.0"         // Released: Sep 06, 2019
+const val `android-preference version` =        "1.1.1"         // Released: Apr 15, 2020
 const val `googleServices version` =            "4.3.3"         // Released: Nov 11, 2019
 const val `hilt-androidx-viewmodel version` =   "1.0.0-alpha03" // Released: Mar 10, 2021
 const val `playServices version` =              "17.0.0"        // Released: Jun 19, 2019
+const val `lifecycle-extensions version` =      "2.2.0"         // Released: Jan 00, 2020
 
 // Other
 const val `apache-commons-lang version` =       "3.4"           // Released: Apr 03, 2015
@@ -107,8 +118,8 @@ const val `gson version` =                      "2.8.5"         // Released: May
 const val `jackson version` =                   "2.10.2"        // Released: Jan 05, 2020
 const val `jsoup version` =                     "1.13.1"        // Released: Mar 01, 2020
 const val `minidns version` =                   "0.3.3"         // Released: Oct 14, 2018
-const val `okHttp3 version` =                   "3.14.9"        // Released: May 17, 2020 TODO: 4.x requires some refactor
-const val `okHttp-url-connection version` =     "3.14.9"        // Released: Sep, 2020
+const val `okHttp3 version` =                   "4.9.1"         // Released: Jan 30, 2021
+const val `okHttp-url-connection version` =     "4.9.1"         // Released: Jan 30, 2021
 const val `okio version` =                      "2.10.0"        // Released: Jan 07, 2021
 const val `rf2 converter version` =             "2.9.0"         // Released: May 20, 2020
 const val `rxJava version` =                    "2.0.2"         // Released: Dec 02, 201

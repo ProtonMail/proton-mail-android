@@ -24,6 +24,7 @@ import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.di.JobEntryPoint
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.utils.AppUtil
 import dagger.hilt.EntryPoints
@@ -55,6 +56,8 @@ class UpdateSettingsJobTest {
 
     private lateinit var updateSettings: UpdateSettingsJob
 
+    private val mailSettings = MailSettings()
+
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
@@ -70,11 +73,13 @@ class UpdateSettingsJobTest {
 
         every { jobEntryPoint.apiManager() } returns mockApiManager
         every { jobEntryPoint.userManager() } returns mockUserManager
+
+        every { mockUserManager.requireCurrentUserId() } returns Id("id")
+        every { mockUserManager.getCurrentUserMailSettingsBlocking() } returns mailSettings
     }
 
     @Test
     fun jobCallsApiToUpdateAutoShowImagesSettingWhenMailSettingsAreValidAndNotificationEmailDidNotChange() {
-        val mailSettings = MailSettings()
         updateSettings = UpdateSettingsJob()
 
         updateSettings.onRun()
@@ -84,7 +89,6 @@ class UpdateSettingsJobTest {
 
     @Test
     fun jobCallsApiToUpdateViewModeToggleWhenMailSettingsAreValidAndNotificationEmailDidNotChange() {
-        val mailSettings = MailSettings()
         mailSettings.viewMode = VIEW_MODE_CONVERSATION
         updateSettings = UpdateSettingsJob(
             featureFlags = featureFlagsManager
@@ -98,7 +102,6 @@ class UpdateSettingsJobTest {
 
     @Test
     fun jobDoesNotCallApiToUpdateViewModeToggleWhenViewModeFeatureFlagIsFalse() {
-        val mailSettings = MailSettings()
         updateSettings = UpdateSettingsJob(
             featureFlags = featureFlagsManager
         )

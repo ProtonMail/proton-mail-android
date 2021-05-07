@@ -71,7 +71,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
@@ -110,13 +109,9 @@ import butterknife.OnClick;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.AddAttachmentsActivity;
 import ch.protonmail.android.activities.BaseContactsActivity;
-import ch.protonmail.android.activities.fragments.HumanVerificationCaptchaDialogFragment;
-import ch.protonmail.android.activities.guest.FirstActivity;
-import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.activities.mailbox.MailboxActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.MessageRecipientViewAdapter;
-import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.models.MessageRecipient;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
@@ -143,15 +138,13 @@ import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
-import ch.protonmail.android.events.HumanVerifyOptionsEvent;
-import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.MessageSavedEvent;
 import ch.protonmail.android.events.PostImportAttachmentEvent;
 import ch.protonmail.android.events.PostLoadContactsEvent;
 import ch.protonmail.android.events.ResignContactEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.contacts.SendPreferencesEvent;
-import ch.protonmail.android.events.verification.PostHumanVerificationEvent;
+import ch.protonmail.android.feature.account.AccountManagerKt;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
 import ch.protonmail.android.tasks.EmbeddedImagesThread;
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest;
@@ -183,6 +176,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
+import me.proton.core.accountmanager.domain.AccountManager;
 import timber.log.Timber;
 
 @AndroidEntryPoint
@@ -191,7 +185,6 @@ public class ComposeMessageActivity
         implements MessagePasswordButton.OnMessagePasswordChangedListener,
         MessageExpirationView.OnMessageExpirationChangedListener,
         LoaderManager.LoaderCallbacks<Cursor>,
-        HumanVerificationCaptchaDialogFragment.IHumanVerificationListener,
         GroupRecipientsDialogFragment.IGroupRecipientsListener {
     //region extras
     public static final String EXTRA_PARENT_ID = "parent_id";
@@ -217,7 +210,6 @@ public class ComposeMessageActivity
     public static final String EXTRA_REPLY_FROM_GCM = "reply_from_gcm";
     public static final String EXTRA_LOAD_IMAGES = "load_images";
     public static final String EXTRA_LOAD_REMOTE_CONTENT = "load_remote_content";
-    public static final String EXTRA_VERIFY = "verify";
     private static final int REQUEST_CODE_ADD_ATTACHMENTS = 1;
     private static final String STATE_ATTACHMENT_LIST = "attachment_list";
     private static final String STATE_ADDITIONAL_ROWS_VISIBLE = "additional_rows_visible";
@@ -260,8 +252,6 @@ public class ComposeMessageActivity
     EditText mMessageTitleEditText;
     @BindView(R.id.scroll_parent)
     View mScrollParentView;
-    @BindView(R.id.human_verification)
-    View mHumanVerificationView;
     @BindView(R.id.progress)
     View mProgressView;
     @BindView(R.id.progress_spinner)
@@ -285,14 +275,12 @@ public class ComposeMessageActivity
     //endregion
     private WebView mMessageBody;
     private PMWebViewClient pmWebViewClient;
-    private HumanVerificationCaptchaDialogFragment mHumanVerificationDialogFragment;
     final String newline = "<br>";
     private MessageRecipientViewAdapter mMessageRecipientViewAdapter;
     private boolean mAreAdditionalRowsVisible;
 
     private int mSelectedAddressPosition = 0;
     private boolean askForPermission;
-    private boolean mHumanVerifyInProgress;
 
     private String mAction;
     private boolean mUpdateDraftPmMeChanged;
@@ -341,9 +329,6 @@ public class ComposeMessageActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!checkIfUserLoggedIn()) {
-            return;
-        }
         setUpActionBar();
         composeMessageViewModel = ViewModelProviders.of(this, composeMessageViewModelFactory).get(ComposeMessageViewModel.class);
         composeMessageViewModel.init(mHtmlProcessor);
@@ -438,14 +423,6 @@ public class ComposeMessageActivity
 
         mAddressesSpinner.getViewTreeObserver().addOnGlobalLayoutListener(new AddressSpinnerGlobalLayoutListener());
         askForPermission = true;
-        composeMessageViewModel.startGetAvailableDomainsJob();
-
-        if (composeMessageViewModel.getVerify()) {
-            mHumanVerificationView.setVisibility(View.VISIBLE);
-            composeMessageViewModel.startFetchHumanVerificationOptionsJob();
-            mProgressView.setVisibility(View.VISIBLE);
-        }
-
         composeMessageViewModel.setSignature(composeMessageViewModel.getSignatureByEmailAddress((String) mAddressesSpinner.getSelectedItem()));
     }
 
@@ -515,7 +492,6 @@ public class ComposeMessageActivity
         composeMessageViewModel.getLoadingDraftResult().observe(ComposeMessageActivity.this, new LoadDraftObserver(extras, intent, type));
         if (extras != null) {
             composeMessageViewModel.prepareMessageData(extras.getBoolean(EXTRA_PGP_MIME, false), extras.getString(EXTRA_MESSAGE_ADDRESS_ID, ""), extras.getString(EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS), extras.getBoolean(EXTRA_MESSAGE_IS_TRANSIENT));
-            boolean verify = extras.getBoolean(EXTRA_VERIFY, false);
             composeMessageViewModel.setShowImages(extras.getBoolean(EXTRA_LOAD_IMAGES, false));
             composeMessageViewModel.setShowRemoteContent(extras.getBoolean(EXTRA_LOAD_REMOTE_CONTENT, false));
             boolean replyFromGcm = extras.getBoolean(EXTRA_REPLY_FROM_GCM, false);
@@ -533,7 +509,7 @@ public class ComposeMessageActivity
                 }
                 mAddressesSpinner.setSelection(mSelectedAddressPosition);
 
-                composeMessageViewModel.setupEditDraftMessage(verify, messageId, getString(R.string.composer_group_count_of));
+                composeMessageViewModel.setupEditDraftMessage(messageId, getString(R.string.composer_group_count_of));
                 composeMessageViewModel.findDraftMessageById();
             } else {
                 // composing new message here
@@ -572,7 +548,7 @@ public class ComposeMessageActivity
                 mMessageTitleEditText.setText(messageTitle);
 
                 Constants.MessageActionType messageActionType = (Constants.MessageActionType) extras.getSerializable(EXTRA_ACTION_ID);
-                composeMessageViewModel.setupComposingNewMessage(verify, messageActionType != null ? messageActionType : Constants.MessageActionType.NONE,
+                composeMessageViewModel.setupComposingNewMessage(messageActionType != null ? messageActionType : Constants.MessageActionType.NONE,
                         extras.getString(EXTRA_PARENT_ID, null), getString(R.string.composer_group_count_of));
 
                 composeMessageViewModel.prepareMessageData(messageTitle, new ArrayList(attachmentsList));
@@ -659,22 +635,6 @@ public class ComposeMessageActivity
         }
     }
 
-    private boolean checkIfUserLoggedIn() {
-        if (!mUserManager.isLoggedIn()) {
-            TextExtensions.showToast(this, R.string.need_to_be_logged_in);
-            Class activityToRun;
-            if (mUserManager != null && mUserManager.isEngagementShown()) {
-                activityToRun = LoginActivity.class;
-            } else {
-                activityToRun = FirstActivity.class;
-            }
-            startActivity(AppUtil.decorInAppIntent(new Intent(this, activityToRun)));
-            finishActivity();
-            return false;
-        }
-        return true;
-    }
-
     private void onFetchEmailKeysEvent(List<FetchPublicKeysResult> results) {
         mSendingPressed = false;
         mProgressView.setVisibility(View.GONE);
@@ -695,34 +655,6 @@ public class ComposeMessageActivity
         Timber.v("onFetchEmailKeysEvent size:%d isRetry:%s", results.size(), isRetry);
         if (isRetry) {
             sendMessage(false);
-        }
-    }
-
-    @Subscribe
-    public void onHumanVerifyOptionsEvent(HumanVerifyOptionsEvent event) {
-        UiUtil.hideKeyboard(this);
-        mHumanVerifyInProgress = true;
-        List<String> verificationMethods = event.getVerifyMethods();
-        if (verificationMethods.size() > 1) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, mHumanVerificationDialogFragment, "fragment_human_verification")
-                    .commitAllowingStateLoss();
-        } else {
-            Constants.TokenType method = Constants.TokenType.Companion.fromString(verificationMethods.get(0));
-            if (method == Constants.TokenType.CAPTCHA) {
-                verificationOptionChose(Constants.TokenType.CAPTCHA, event.getToken());
-            }
-        }
-    }
-
-    @Subscribe
-    public void onPostHumanVerificationEvent(PostHumanVerificationEvent event) {
-        if (mHumanVerificationDialogFragment != null && mHumanVerificationDialogFragment.isAdded()) {
-            mHumanVerificationDialogFragment.dismiss();
-        }
-        if (event.getStatus() == Status.SUCCESS) {
-            UiUtil.hideKeyboard(this);
-            composeMessageViewModel.finishBuildingMessage(mComposeBodyEditText.getText().toString());
         }
     }
 
@@ -767,32 +699,6 @@ public class ComposeMessageActivity
     };
 
     @Override
-    public boolean hasConnectivity() {
-        return true;
-    }
-
-    @Override
-    public void verify(Constants.TokenType tokenType, String token) {
-        mHumanVerifyInProgress = false;
-        composeMessageViewModel.startPostHumanVerification(tokenType, token);
-    }
-
-    @Override
-    public void viewLoaded() {
-        UiUtil.hideKeyboard(this);
-    }
-
-    @Override
-    public void verificationOptionChose(Constants.TokenType tokenType, String token) {
-        if (tokenType.equals(Constants.TokenType.CAPTCHA)) {
-            mHumanVerificationDialogFragment = HumanVerificationCaptchaDialogFragment.newInstance(token);
-        }
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, mHumanVerificationDialogFragment);
-        fragmentTransaction.commitAllowingStateLoss();
-    }
-
-    @Override
     public void recipientsSelected(@NonNull ArrayList<MessageRecipient> recipients, @Nonnull Constants.RecipientLocationType location) {
         MessageRecipientView recipient = mToRecipientsView;
         if (location == Constants.RecipientLocationType.CC) {
@@ -818,7 +724,7 @@ public class ComposeMessageActivity
             if (connectivity != Constants.ConnectionState.CONNECTED) {
                 networkSnackBarUtil.getNoConnectionSnackBar(
                         mSnackLayout,
-                        mUserManager.getUser(),
+                        mUserManager.requireCurrentLegacyUser(),
                         this,
                         null,
                         null,
@@ -969,12 +875,6 @@ public class ComposeMessageActivity
                 }
             });
         }
-    }
-
-    @Subscribe
-    public void onLogoutEvent(LogoutEvent event) {
-        startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
-        finishActivity();
     }
 
     @Subscribe
@@ -1135,9 +1035,6 @@ public class ComposeMessageActivity
                 onBackPressed();
                 return true;
             case R.id.send_message:
-                if (mHumanVerifyInProgress) {
-                    return true;
-                }
                 if (mSendingPressed) {
                     return true;
                 }
@@ -1282,7 +1179,7 @@ public class ComposeMessageActivity
             subject = subject.replaceAll("\n", " ");
         }
         message.setSubject(subject);
-        User user = mUserManager.getUser();
+        User user = mUserManager.getCurrentLegacyUser();
         if (!TextUtils.isEmpty(composeMessageViewModel.getMessageDataResult().getAddressId())) {
             message.setAddressID(composeMessageViewModel.getMessageDataResult().getAddressId());
         } else if (user != null) {
@@ -1296,7 +1193,7 @@ public class ComposeMessageActivity
                     Timber.tag("588").e(exc, "Exception on fill message with user inputs");
                 }
             } else {
-                message.setAddressID(user.getAddressId());
+                message.setAddressID(user.getDefaultAddressId());
                 message.setSenderName(user.getDisplayName());
             }
         }
@@ -1876,11 +1773,11 @@ public class ComposeMessageActivity
     private boolean mSendingInProgress;
 
     private void loadPMContacts() {
-        if (mUserManager.getUser().getCombinedContacts()) {
+        if (mUserManager.getCurrentLegacyUser().getCombinedContacts()) {
             composeMessageViewModel.getMergedContactsLiveData().observe(this, messageRecipients -> {
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });
-            Set<Id> userIds = accountManager.allLoggedInBlocking();
+            Set<Id> userIds = AccountManagerKt.allLoggedInBlocking(accountManager);
             for(Id userId : userIds) {
                 composeMessageViewModel.fetchContactGroups(userId);
             }
@@ -1890,7 +1787,7 @@ public class ComposeMessageActivity
             composeMessageViewModel.getContactGroupsResult().observe(this, messageRecipients -> {
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });
-            composeMessageViewModel.fetchContactGroups(mUserManager.getCurrentUserId());
+            composeMessageViewModel.fetchContactGroups(mUserManager.requireCurrentUserId());
             composeMessageViewModel.getPmMessageRecipientsResult().observe(this, messageRecipients -> {
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });
@@ -2057,7 +1954,7 @@ public class ComposeMessageActivity
                     } else {
                         String previousSenderAddressId = composeMessageViewModel.getMessageDataResult().getAddressId();
                         if (TextUtils.isEmpty(previousSenderAddressId)) { // first switch from default address
-                            previousSenderAddressId = mUserManager.getUser().getDefaultAddress().getID();
+                            previousSenderAddressId = mUserManager.requireCurrentLegacyUser().getDefaultAddressId();
                         }
 
                         if (TextUtils.isEmpty(composeMessageViewModel.getOldSenderAddressId()) && !localAttachmentsListEmpty) {
@@ -2200,18 +2097,18 @@ public class ComposeMessageActivity
 
             Message localMessage = messageEvent.getContentIfNotHandled();
             if (localMessage != null) {
-
+                User user = mUserManager.requireCurrentLegacyUser();
                 String aliasAddress = composeMessageViewModel.getMessageDataResult().getAddressEmailAlias();
                 MessageSender messageSender;
                 if (aliasAddress != null && aliasAddress.equals(mAddressesSpinner.getSelectedItem())) { // it's being sent by alias
-                    messageSender = new MessageSender(mUserManager.getUser().getDisplayNameForAddress(composeMessageViewModel.getMessageDataResult().getAddressId()), composeMessageViewModel.getMessageDataResult().getAddressEmailAlias());
+                    messageSender = new MessageSender(user.getDisplayNameForAddress(composeMessageViewModel.getMessageDataResult().getAddressId()), composeMessageViewModel.getMessageDataResult().getAddressEmailAlias());
                 } else {
                     Address nonAliasAddress;
                     try {
                         if (localMessage.getAddressID() != null) {
-                            nonAliasAddress = mUserManager.getUser().getAddressById(localMessage.getAddressID());
+                            nonAliasAddress = user.getAddressById(localMessage.getAddressID());
                         } else { // fallback to default address if newly composed message has no addressId
-                            nonAliasAddress = mUserManager.getUser().getDefaultAddress();
+                            nonAliasAddress = user.getAddressById(user.getDefaultAddressId());
                         }
                         messageSender = new MessageSender(nonAliasAddress.getDisplayName(), nonAliasAddress.getEmail());
                     } catch (NullPointerException e) {

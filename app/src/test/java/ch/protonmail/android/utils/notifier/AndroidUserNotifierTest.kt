@@ -22,7 +22,6 @@ package ch.protonmail.android.utils.notifier
 import android.content.Context
 import ch.protonmail.android.R
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.servers.notification.NotificationServer
@@ -52,7 +51,7 @@ class AndroidUserNotifierTest : CoroutinesTest {
     private val userManager: UserManager = mockk {
         every { currentUserId } returns testUserId
         every { requireCurrentUserId() } returns testUserId
-        every { requireCurrentUserBlocking() } returns mockk {
+        every { this@mockk.requireCurrentUser() } returns mockk {
             every { id } returns testUserId
             every { name } returns testUserName
         }
@@ -101,32 +100,4 @@ class AndroidUserNotifierTest : CoroutinesTest {
         verify { context.showToast(R.string.message_sent) }
         unmockkStatic("ch.protonmail.android.utils.extensions.TextExtensions")
     }
-
-    @Test
-    fun userNotifierCallsNotificationServerToDisplayHumanVerificationNeededNotification() {
-        val subject = "A message subject 123"
-        val messageId = "8234728348"
-        val isMessageInline = false
-        val messageAddressId = "addressId092384"
-        val message = Message().apply {
-            this.messageId = messageId
-            this.subject = subject
-            this.isInline = isMessageInline
-            this.addressID = messageAddressId
-        }
-
-        userNotifier.showHumanVerificationNeeded(message)
-
-        verify {
-            notificationServer.notifyVerificationNeeded(
-                testUserId,
-                testUserName,
-                subject,
-                messageId,
-                isMessageInline,
-                messageAddressId
-            )
-        }
-    }
-
 }

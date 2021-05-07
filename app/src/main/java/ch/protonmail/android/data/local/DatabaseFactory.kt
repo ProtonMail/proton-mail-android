@@ -24,8 +24,9 @@ import android.util.Base64
 import androidx.annotation.VisibleForTesting
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.utils.extensions.app
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import kotlin.reflect.KClass
 
 open class DatabaseFactory<T : RoomDatabase>(
@@ -82,8 +83,8 @@ open class DatabaseFactory<T : RoomDatabase>(
     }
 
     protected fun usernameForUserId(context: Context, userId: Id): String {
-        val user = context.app.userManager.getUserBlocking(userId)
-        return user.name.s
+        val prefs = SecureSharedPreferences.getPrefsForUser(context, userId)
+        return checkNotNull(prefs.getString(Constants.Prefs.PREF_USER_NAME, null))
     }
 
     protected fun databaseName(username: String) =

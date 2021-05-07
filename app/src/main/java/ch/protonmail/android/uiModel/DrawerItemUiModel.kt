@@ -121,7 +121,6 @@ internal sealed class DrawerItemUiModel {
                 REPORT_BUGS(101, DrawerOptionType.REPORT_BUGS),
                 SIGNOUT(111, DrawerOptionType.SIGN_OUT),
                 LOCK(112, DrawerOptionType.LOCK),
-                UPSELLING(113, DrawerOptionType.UPSELLING),
                 ACCOUNT_MANAGER(115, DrawerOptionType.ACCOUNT_MANAGER)
             }
         }

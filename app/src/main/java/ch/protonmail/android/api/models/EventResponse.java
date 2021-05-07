@@ -53,8 +53,6 @@ public class EventResponse extends ResponseBody {
     private User user;
     @SerializedName(Fields.Events.MAIL_SETTINGS)
     private MailSettings mailSettings;
-    @SerializedName(Fields.Events.USER_SETTINGS)
-    private UserSettings userSettings;
     @SerializedName(Fields.Events.MESSAGE_COUNTS)
     private List<MessageCount> messageCounts;
     @SerializedName(Fields.Events.USED_SPACE)
@@ -80,8 +78,6 @@ public class EventResponse extends ResponseBody {
     public User getUserUpdates(){ return user; }
 
     public MailSettings getMailSettingsUpdates(){ return mailSettings; }
-
-    public UserSettings getUserSettingsUpdates(){ return userSettings; }
 
     public String getEventID(){ return eventID;}
 

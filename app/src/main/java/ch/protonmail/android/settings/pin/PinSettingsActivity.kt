@@ -36,12 +36,9 @@ import butterknife.OnClick
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.views.SettingsDefaultItemView
-import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.activity_pin_settings.*
 
 // region constants
@@ -63,7 +60,7 @@ class PinSettingsActivity : BaseActivity() {
     private val useFingerprintToggle by lazy { useFingerprint.getToggle() }
     private val autoLockOtherSettingsContainer by lazy { findViewById<LinearLayout>(R.id.autoLockOtherSettingsContainer) }
     private var mPinTimeoutValue: Int = 0
-    private val user by lazy { mUserManager.user }
+    private val user by lazy { mUserManager.requireCurrentLegacyUser() }
 
     private val mBiometricManager by lazy {
         BiometricManager.from(this@PinSettingsActivity)
@@ -250,19 +247,12 @@ class PinSettingsActivity : BaseActivity() {
         if (pinChanged) {
             mUserManager.savePin(mNewPin)
         }
-        user.save()
-        mUserManager.user = user
     }
 
     private fun saveAndFinish() {
         setResult(RESULT_OK)
         saveLastInteraction()
         finish()
-    }
-
-    @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) {
-        moveToLogin()
     }
 
     @SuppressLint("NewApi")

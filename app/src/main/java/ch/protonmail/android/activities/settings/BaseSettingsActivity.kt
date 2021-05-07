@@ -39,11 +39,9 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.AccountSettingsActivity
 import ch.protonmail.android.activities.AccountTypeActivity
 import ch.protonmail.android.activities.BaseConnectivityActivity
-import ch.protonmail.android.activities.ChangePasswordActivity
 import ch.protonmail.android.activities.DefaultAddressActivity
 import ch.protonmail.android.activities.EXTRA_CURRENT_ACTION
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
-import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_VALUE
 import ch.protonmail.android.activities.EXTRA_SWIPE_ID
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.SettingsItem
@@ -52,7 +50,6 @@ import ch.protonmail.android.activities.SwipeChooserActivity
 import ch.protonmail.android.activities.SwipeType
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
-import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.settings.SettingsEnum.*
 import ch.protonmail.android.adapters.SettingsAdapter
 import ch.protonmail.android.core.Constants
@@ -82,6 +79,7 @@ import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.startMailboxActivity
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.google.gson.Gson
 import timber.log.Timber
@@ -131,7 +129,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     var mAttachmentStorageValue: Int = 0
     var mAutoDownloadGcmMessages: Boolean = false
     var mPinValue: Boolean = false
-    var mRecoveryEmail: String = ""
     var mNotificationOptionValue: Int = 0
     lateinit var selectedAddress: Address
     var mDisplayName: String = ""
@@ -156,7 +153,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        legacyUser = userManager.requireCurrentLegacyUserBlocking()
+        legacyUser = userManager.requireCurrentLegacyUser()
         user = legacyUser.toNewUser()
         val userId = user.id
 
@@ -189,7 +186,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     override fun onResume() {
         super.onResume()
-        legacyUser = userManager.requireCurrentLegacyUserBlocking()
+        legacyUser = userManager.requireCurrentLegacyUser()
         user = legacyUser.toNewUser()
         settingsAdapter.notifyDataSetChanged()
         viewModel.checkConnectivity()
@@ -236,11 +233,8 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 val language = resources.getStringArray(R.array.custom_language_values)[which]
                 CustomLocale.setLanguage(this@BaseSettingsActivity, language)
 
-                val recreatedMailboxIntent = Intent(this@BaseSettingsActivity, MailboxActivity::class.java)
-                recreatedMailboxIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-
                 dialog.dismiss()
-                startActivity(recreatedMailboxIntent)
+                startMailboxActivity()
             }
             .setNegativeButton(R.string.cancel, null)
             .create()
@@ -254,7 +248,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     }
 
     private fun selectItem(settingsId: String) {
-        legacyUser = userManager.requireCurrentLegacyUserBlocking()
+        legacyUser = userManager.requireCurrentLegacyUser()
         user = legacyUser.toNewUser()
         when (valueOf(settingsId.toUpperCase(Locale.ENGLISH))) {
             ACCOUNT -> {
@@ -268,16 +262,10 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 startActivity(accountTypeIntent)
             }
             PASSWORD_MANAGEMENT -> {
-                val passwordManagerIntent =
-                    AppUtil.decorInAppIntent(Intent(this, ChangePasswordActivity::class.java))
-                startActivityForResult(passwordManagerIntent, PASSWORD_MANAGEMENT.ordinal)
+                TODO("startChangePasswordWorkflow")
             }
             RECOVERY_EMAIL -> {
-                val recoveryEmailIntent =
-                    AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
-                recoveryEmailIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.RECOVERY_EMAIL)
-                recoveryEmailIntent.putExtra(EXTRA_SETTINGS_ITEM_VALUE, mRecoveryEmail)
-                startActivityForResult(recoveryEmailIntent, RECOVERY_EMAIL.ordinal)
+                TODO("startRecoverySetupWorkflow")
             }
             DEFAULT_EMAIL -> {
                 showSortAliasDialog()
@@ -484,6 +472,10 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         settingsAdapter.items = settingsList
     }
 
+    protected fun notifySettingsChanged() {
+        settingsAdapter.notifyDataSetChanged()
+    }
+
     protected fun setToggleListener(settingType: SettingsEnum, listener: ((View, Boolean) -> Unit)?) {
         settingsAdapter.items
             .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
@@ -542,7 +534,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         if (connectivity != Constants.ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                 mSnackLayout,
-                mUserManager.user,
+                mUserManager.requireCurrentLegacyUser(),
                 this,
                 { onConnectivityCheckRetry() },
                 isOffline = connectivity == Constants.ConnectionState.NO_INTERNET

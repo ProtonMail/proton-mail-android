@@ -22,17 +22,20 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
-import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.MailSettingsResponse
-import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.usecase.fetch.FetchMailSettings
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import me.proton.core.account.domain.entity.Account
+import me.proton.core.account.domain.entity.AccountState
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.accountmanager.domain.getAccounts
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import java.io.IOException
 import kotlin.test.BeforeTest
@@ -41,8 +44,6 @@ import kotlin.test.assertEquals
 
 /**
  * Tests the functionality of [FetchMailSettingsWorker].
- *
- * @author Stefanija Boshkovska
  */
 
 class FetchMailSettingsWorkerTest {
@@ -54,12 +55,23 @@ class FetchMailSettingsWorkerTest {
     private lateinit var parameters: WorkerParameters
 
     @MockK
-    private lateinit var protonMailApiManager: ProtonMailApiManager
+    private lateinit var accountManager: AccountManager
 
     @MockK
-    private lateinit var userManager: UserManager
+    private lateinit var fetchMailSettings: FetchMailSettings
 
     private lateinit var fetchMailSettingsWorker: FetchMailSettingsWorker
+
+    private var accounts = listOf(
+        mockk<Account> {
+            every { userId } returns UserId("user1")
+            every { state } returns AccountState.Ready
+        },
+        mockk<Account> {
+            every { userId } returns UserId("user2")
+            every { state } returns AccountState.Ready
+        }
+    )
 
     @BeforeTest
     fun setUp() {
@@ -68,7 +80,8 @@ class FetchMailSettingsWorkerTest {
         fetchMailSettingsWorker = FetchMailSettingsWorker(
             context,
             parameters,
-            protonMailApiManager,
+            fetchMailSettings,
+            accountManager,
             TestDispatcherProvider
         )
     }
@@ -77,12 +90,8 @@ class FetchMailSettingsWorkerTest {
     fun `should return success when API call is successful`() {
         runBlocking {
             // given
-            val mockMailSettingsResponse = mockk<MailSettingsResponse> {
-                every { code } returns Constants.RESPONSE_CODE_OK
-                every { mailSettings } returns mockk()
-            }
-
-            coEvery { protonMailApiManager.fetchMailSettings() } returns mockMailSettingsResponse
+            coEvery { accountManager.getAccounts(AccountState.Ready) } returns flowOf(accounts)
+            coEvery { fetchMailSettings.invoke(any()) } returns Unit
 
             val expectedResult = ListenableWorker.Result.success()
 
@@ -100,7 +109,7 @@ class FetchMailSettingsWorkerTest {
             // given
             val mockException = IOException("exception")
 
-            coEvery { protonMailApiManager.fetchMailSettings() } throws mockException
+            coEvery { fetchMailSettings.invoke(any()) } throws mockException
 
             val expectedResult = ListenableWorker.Result.retry()
 

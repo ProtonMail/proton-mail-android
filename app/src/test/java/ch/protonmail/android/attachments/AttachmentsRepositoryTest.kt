@@ -44,7 +44,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import java.net.SocketTimeoutException
 import kotlin.coroutines.cancellation.CancellationException
@@ -74,6 +74,10 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
     @InjectMockKs
     private lateinit var repository: AttachmentsRepository
+
+    private val attachment = mockk<Attachment>(relaxed = true) {
+        every { mimeType } returns "image/jpeg"
+    }
 
     @BeforeTest
     fun setUp() {
@@ -134,9 +138,9 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                     capture(signatureSlot)
                 )
             }
-            assertEquals(MediaType.parse("image/jpeg"), keyPackageSlot.captured.contentType())
-            assertEquals(MediaType.parse("image/jpeg"), dataPackageSlot.captured.contentType())
-            assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
+            assertEquals("image/jpeg".toMediaType(), keyPackageSlot.captured.contentType())
+            assertEquals("image/jpeg".toMediaType(), dataPackageSlot.captured.contentType())
+            assertEquals("application/octet-stream".toMediaType(), signatureSlot.captured.contentType())
         }
     }
 
@@ -218,9 +222,9 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                     capture(signatureSlot)
                 )
             }
-            assertEquals(MediaType.parse("image/jpeg"), keyPackageSlot.captured.contentType())
-            assertEquals(MediaType.parse("image/jpeg"), dataPackageSlot.captured.contentType())
-            assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
+            assertEquals("image/jpeg".toMediaType(), keyPackageSlot.captured.contentType())
+            assertEquals("image/jpeg".toMediaType(), dataPackageSlot.captured.contentType())
+            assertEquals("application/octet-stream".toMediaType(), signatureSlot.captured.contentType())
         }
     }
 
@@ -233,7 +237,6 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             val headers = AttachmentHeaders()
             val fileSize = 1234L
             val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
-            val attachment = mockk<Attachment>(relaxed = true)
             val successResponse = mockk<AttachmentUploadResponse>(relaxed = true) {
                 every { code } returns Constants.RESPONSE_CODE_OK
                 every { attachmentID } returns apiAttachmentId
@@ -270,7 +273,6 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 every { error } returns errorMessage
             }
             val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
-            val attachment = mockk<Attachment>(relaxed = true)
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
             coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } returns failureResponse
 
@@ -324,9 +326,9 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                     capture(signatureSlot)
                 )
             }
-            assertEquals(MediaType.parse("application/pgp-keys"), keyPackageSlot.captured.contentType())
-            assertEquals(MediaType.parse("application/pgp-keys"), dataPackageSlot.captured.contentType())
-            assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
+            assertEquals("application/pgp-keys".toMediaType(), keyPackageSlot.captured.contentType())
+            assertEquals("application/pgp-keys".toMediaType(), dataPackageSlot.captured.contentType())
+            assertEquals("application/octet-stream".toMediaType(), signatureSlot.captured.contentType())
             val expected = AttachmentsRepository.Result.Success("default success attachment ID")
             assertEquals(expected, result)
         }
@@ -337,7 +339,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
         runBlockingTest {
             val errorMessage = "Upload attachment request failed"
             val unarmoredSignedFileContent = byteArrayOf()
-            val attachment = mockk<Attachment>(relaxed = true)
+
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
             coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } throws SocketTimeoutException("Call timed out")
 
@@ -354,7 +356,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
         runBlockingTest {
             val errorMessage = "Upload attachments work was cancelled"
             val unarmoredSignedFileContent = byteArrayOf()
-            val attachment = mockk<Attachment>(relaxed = true)
+
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
             coEvery {
                 apiManager.uploadAttachment(any(), any(), any(), any())
@@ -398,7 +400,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             every { decryptedData } returns decryptedContent
         }
         every { crypto.decryptAttachment(any(), any()) } returns decryptedResult
-        val testResponseBody = okhttp3.ResponseBody.create(MediaType.parse("image/jpg"), content)
+        val testResponseBody = okhttp3.ResponseBody.create("image/jpg".toMediaType(), content)
         coEvery { apiManager.downloadAttachment(attachmentId) } returns testResponseBody
 
         // when

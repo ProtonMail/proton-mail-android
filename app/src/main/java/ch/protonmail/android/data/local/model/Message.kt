@@ -313,7 +313,7 @@ data class Message @JvmOverloads constructor(
             }
             val app = ProtonMailApplication.getApplication()
             val userManager = app.userManager
-            val user = userManager.user
+            val user = userManager.currentLegacyUser
             return user!!.addresses!!.any { it.email.equals(senderEmail, ignoreCase = true) }
         }
 

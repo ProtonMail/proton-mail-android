@@ -26,9 +26,11 @@ import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.factories.IConverterFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.every
@@ -48,6 +50,7 @@ class ContactGroupDetailsRepositoryTest {
     //region mocks
     private val protonMailApi = mockk<ProtonMailApiManager>(relaxed = true)
     private val database = mockk<ContactDao>(relaxed = true)
+    private val userManager = mockk<UserManager>(relaxed = true)
     private val jobManager = mockk<JobManager>(relaxed = true)
     private val workManager = mockk<WorkManager>(relaxed = true)
     private val contactLabelFactory = mockk<IConverterFactory<ServerLabel, ContactLabel>>(relaxed = true)
@@ -68,7 +71,9 @@ class ContactGroupDetailsRepositoryTest {
     @BeforeTest
     fun setUp() {
         contactGroupDetailsRepository =
-            ContactGroupDetailsRepository(protonMailApi, databaseProvider, workManager, mockk())
+            ContactGroupDetailsRepository(protonMailApi, databaseProvider, workManager, userManager)
+
+        every { userManager.requireCurrentUserId() } returns Id("id")
     }
 
     //region tests

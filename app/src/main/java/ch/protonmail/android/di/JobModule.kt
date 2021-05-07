@@ -20,7 +20,6 @@
 package ch.protonmail.android.di
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
@@ -37,6 +36,7 @@ import dagger.Provides
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.accountmanager.domain.AccountManager
 import timber.log.Timber
 import javax.inject.Singleton
 
@@ -97,5 +97,6 @@ interface JobEntryPoint {
     fun messageDetailsRepository(): MessageDetailsRepository
     fun queueNetworkUtil(): QueueNetworkUtil
     fun userManager(): UserManager
+    fun userAddressManager(): me.proton.core.user.domain.UserAddressManager
     fun fetchMailSettingsWorkerEnqueuer(): FetchMailSettingsWorker.Enqueuer
 }

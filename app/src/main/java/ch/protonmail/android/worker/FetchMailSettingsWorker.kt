@@ -27,36 +27,42 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.usecase.fetch.FetchMailSettings
+import kotlinx.coroutines.flow.first
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
+import me.proton.core.account.domain.entity.AccountState
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.accountmanager.domain.getAccounts
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 
 /**
- * A Worker that handles fetching mail settings.
+ * A Worker that handles fetching mail settings for all ready accounts.
  */
 @HiltWorker
 class FetchMailSettingsWorker @AssistedInject constructor(
-    @Assisted context: Context,
-    @Assisted workerParams: WorkerParameters,
-    private val protonMailApiManager: ProtonMailApiManager,
+    @Assisted val context: Context,
+    @Assisted private val workerParams: WorkerParameters,
+    private val fetchMailSettings: FetchMailSettings,
+    private val accountManager: AccountManager,
     private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-
         return runCatching {
-            withContext(dispatchers.Io) {
-                protonMailApiManager.fetchMailSettings()
+            accountManager.getAccounts(AccountState.Ready).first().forEach {
+                withContext(dispatchers.Io) { fetchMailSettings.invoke(Id(it.userId.id)) }
             }
-        }.map { mailSettingsResponse ->
-            mailSettingsResponse.mailSettings
         }.fold(
             onSuccess = { Result.success() },
-            onFailure = { Result.retry() }
+            onFailure = {
+                Timber.d(it)
+                Result.retry()
+            }
         )
     }
 

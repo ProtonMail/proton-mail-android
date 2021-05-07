@@ -33,7 +33,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.composeMessage.UserAction
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.SendPreference
@@ -44,12 +43,12 @@ import ch.protonmail.android.bl.HtmlProcessor
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.compose.SaveDraft
@@ -70,9 +69,9 @@ import io.reactivex.Single
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
@@ -91,6 +90,7 @@ const val GREATER_THAN = "&gt;"
 class ComposeMessageViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository,
     private val userManager: UserManager,
+    private val accountManager: AccountManager,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val deleteMessage: DeleteMessage,
     private val fetchPublicKeys: FetchPublicKeys,
@@ -139,7 +139,6 @@ class ComposeMessageViewModel @Inject constructor(
     private var _actionType = UserAction.NONE
     var _actionId = Constants.MessageActionType.NONE
     private var _parentId: String? = null
-    private var _verify: Boolean = false
     private val _draftId = AtomicReference<String>()
     private lateinit var _data: List<ContactLabel>
     private lateinit var _senderAddresses: List<String>
@@ -199,8 +198,6 @@ class ComposeMessageViewModel @Inject constructor(
 
     // endregion
     // region getters
-    val verify: Boolean
-        get() = _verify
     var draftId: String
         get() = _draftId.get() ?: ""
         set(value) { // this is temporary until all setters are moved from the activity into this class
@@ -223,8 +220,12 @@ class ComposeMessageViewModel @Inject constructor(
     internal var autoSaveJob: Job? = null
     // endregion
 
-    private val loggedInUserIds = if (userManager.user.combinedContacts) {
-        AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext).allLoggedInBlocking()
+    private val user by lazy { userManager.requireCurrentLegacyUser() }
+
+    private val userId by lazy { userManager.requireCurrentUserId() }
+
+    private val loggedInUserIds = if (user.combinedContacts) {
+        accountManager.allLoggedInBlocking()
     } else {
         listOf(userManager.currentUserId)
     }
@@ -233,10 +234,10 @@ class ComposeMessageViewModel @Inject constructor(
     fun init(processor: HtmlProcessor) {
         htmlProcessor = processor
         composeMessageRepository.lazyManager.reset()
-        composeMessageRepository.reloadDependenciesForUser(userManager.requireCurrentUserId())
+        composeMessageRepository.reloadDependenciesForUser(userId)
         getSenderEmailAddresses()
         // if the user is free user, then we do not fetch contact groups and announce the setup is complete
-        if (!userManager.user.isPaidUser) {
+        if (!user.isPaidUser) {
             _setupCompleteValue = true
             sendingInProcess = false
             _setupComplete.postValue(Event(true))
@@ -252,20 +253,17 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
-    fun setupEditDraftMessage(verify: Boolean, draftId: String, composerGroupCountOf: String) {
-        _verify = verify
+    fun setupEditDraftMessage(draftId: String, composerGroupCountOf: String) {
         _draftId.set(draftId)
         _composerGroupCountOf = composerGroupCountOf
         watchForMessageSent()
     }
 
     fun setupComposingNewMessage(
-        verify: Boolean,
         actionId: Constants.MessageActionType,
         parentId: String?,
         composerGroupCountOf: String
     ) {
-        _verify = verify
         _actionId = actionId
         _parentId = parentId
         _composerGroupCountOf = composerGroupCountOf
@@ -299,7 +297,7 @@ class ComposeMessageViewModel @Inject constructor(
             handleContactGroupsResult()
             return
         }
-        composeMessageRepository.getContactGroupsFromDB(userId, userManager.user.combinedContacts)
+        composeMessageRepository.getContactGroupsFromDB(userId, user.combinedContacts)
             .flatMap {
                 for (group in it) {
                     val emails = composeMessageRepository.getContactGroupEmailsSync(group.ID)
@@ -522,10 +520,9 @@ class ComposeMessageViewModel @Inject constructor(
         messageDetailsRepository.saveMessage(message)
 
     private fun getSenderEmailAddresses(userEmailAlias: String? = null) {
-        val user = userManager.user
         val senderAddresses = user.senderEmailAddresses
         if (senderAddresses.isEmpty()) {
-            senderAddresses.add(user.defaultEmail)
+            senderAddresses.add(user.defaultAddressEmail)
         }
         userEmailAlias?.let {
             if (userEmailAlias.isNotEmpty()) {
@@ -535,36 +532,27 @@ class ComposeMessageViewModel @Inject constructor(
         _senderAddresses = senderAddresses
     }
 
-    fun getPositionByAddressId(): Int = userManager.user.getPositionByAddressId(_messageDataResult.addressId)
+    fun getPositionByAddressId(): Int = user.getPositionByAddressId(_messageDataResult.addressId)
 
-    fun isPaidUser(): Boolean = userManager.user.isPaidUser
+    fun isPaidUser(): Boolean = user.isPaidUser
 
-    fun getUserAddressByIdFromOnlySendAddresses(): Int = userManager.user.addressByIdFromOnlySendAddresses
+    fun getUserAddressByIdFromOnlySendAddresses(): Int = user.addressByIdFromOnlySendAddresses
 
     fun setSenderAddressIdByEmail(email: String) {
         // sanitize alias address so it points to original address
         val nonAliasAddress = "${email.substringBefore("+", email.substringBefore("@"))}@${email.substringAfter("@")}"
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)
-            .addressId(userManager.user.getSenderAddressIdByEmail(nonAliasAddress))
+            .addressId(user.getSenderAddressIdByEmail(nonAliasAddress))
             .build()
     }
 
-    fun getAddressById(): Address = userManager.user.getAddressById(_messageDataResult.addressId)
+    fun getAddressById(): Address = user.getAddressById(_messageDataResult.addressId)
 
     fun getNewSignature(): String {
-        val user = userManager.user
         return if (user.isShowSignature) {
             user.getSignatureForAddress(_messageDataResult.addressId)
         } else ""
-    }
-
-    fun startGetAvailableDomainsJob() {
-        composeMessageRepository.startGetAvailableDomains()
-    }
-
-    fun startFetchHumanVerificationOptionsJob() {
-        composeMessageRepository.startFetchHumanVerificationOptions()
     }
 
     fun startFetchMessageDetailJob(draftId: String) {
@@ -709,10 +697,6 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
-    fun startPostHumanVerification(tokenType: Constants.TokenType, token: String) {
-        composeMessageRepository.startPostHumanVerification(tokenType, token)
-    }
-
     @Synchronized
     fun sendMessage(message: Message) {
         setIsDirty(false)
@@ -781,7 +765,6 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     fun initSignatures(): StringBuilder {
-        val user = userManager.user
         var signature = ""
         var mobileSignature = ""
         val signatureBuilder = StringBuilder()
@@ -796,7 +779,7 @@ class ComposeMessageViewModel @Inject constructor(
                 val selectedEmail = senderAddresses[0]
                 user.getSignatureForAddress(user.getSenderAddressIdByEmail(selectedEmail))
             } else {
-                val selectedEmail = user.defaultEmail
+                val selectedEmail = user.defaultAddressEmail
                 user.getSignatureForAddress(user.getSenderAddressIdByEmail(selectedEmail))
             }
         }
@@ -1015,7 +998,6 @@ class ComposeMessageViewModel @Inject constructor(
         formattedDateTimeString: String
     ): MessageBodySetup {
         val messageBodySetup = MessageBodySetup()
-        val user = userManager.user
         val builder = StringBuilder()
         if (setComposerContent) {
             var signatureBuilder = StringBuilder()
@@ -1240,7 +1222,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun getSignatureByEmailAddress(email: String): String {
         val nonAliasAddress = "${email.substringBefore("+", email.substringBefore("@"))}@${email.substringAfter("@")}"
-        return userManager.user.addresses.find { it.email == nonAliasAddress }?.signature ?: ""
+        return user.addresses.find { it.email == nonAliasAddress }?.signature ?: ""
     }
 
     @SuppressLint("CheckResult")

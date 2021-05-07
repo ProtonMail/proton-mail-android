@@ -22,7 +22,6 @@ import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.di.AlternativeApiPins
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
-import okhttp3.Authenticator
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
@@ -43,10 +42,9 @@ class OkHttpProvider @Inject constructor(
         endpointUri: String,
         id: String = endpointUri,
         timeout: Long,
-        interceptor: Interceptor?,
-        authenticator: Authenticator,
+        interceptor: Interceptor,
         loggingLevel: HttpLoggingInterceptor.Level,
-        connectionSpecs: List<ConnectionSpec?>,
+        connectionSpecs: List<ConnectionSpec>,
         serverTimeInterceptor: ServerTimeInterceptor?,
         cookieStore: ProtonCookieStore?
     ): ProtonOkHttpClient {
@@ -57,7 +55,6 @@ class OkHttpProvider @Inject constructor(
             DefaultOkHttpClient(
                 timeout,
                 interceptor,
-                authenticator,
                 loggingLevel,
                 connectionSpecs,
                 serverTimeInterceptor,
@@ -67,7 +64,6 @@ class OkHttpProvider @Inject constructor(
             ProxyOkHttpClient(
                 timeout,
                 interceptor,
-                authenticator,
                 loggingLevel,
                 connectionSpecs,
                 serverTimeInterceptor,

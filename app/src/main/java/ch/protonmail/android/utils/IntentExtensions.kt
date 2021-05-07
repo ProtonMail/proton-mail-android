@@ -18,29 +18,37 @@
  */
 package ch.protonmail.android.utils
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
-import ch.protonmail.android.activities.EXTRA_LOGOUT
-import ch.protonmail.android.activities.guest.LoginActivity
+import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
+import ch.protonmail.android.activities.SplashActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
+import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
+import ch.protonmail.android.servers.notification.EXTRA_USER_ID
+import me.proton.core.domain.entity.UserId
 
-fun Context.moveToMailbox() {
-    val mailboxIntent = AppUtil.decorInAppIntent(Intent(this, MailboxActivity::class.java))
-    mailboxIntent.putExtra(EXTRA_HAS_SWITCHED_USER, true)
-    mailboxIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-    startActivity(mailboxIntent)
-}
+fun Context.startSplashActivity() =
+    startActivity(getSplashActivityIntent())
 
-fun Activity.moveToMailboxLogout() {
-    val mailboxIntent = AppUtil.decorInAppIntent(Intent(this, MailboxActivity::class.java))
-    mailboxIntent.putExtra(EXTRA_LOGOUT, true)
-    startActivity(mailboxIntent)
-    finish()
-}
+fun Context.getSplashActivityIntent(): Intent =
+    Intent(this, SplashActivity::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+    }
 
-fun Activity.moveToLogin() {
-    startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
-    finish()
-}
+
+fun Context.startMailboxActivity(userId: UserId? = null, type: Constants.MessageLocationType? = null) =
+    startActivity(getMailboxActivityIntent(userId, type))
+
+fun Context.getMailboxActivityIntent(userId: UserId? = null, type: Constants.MessageLocationType? = null): Intent =
+    Intent(this, MailboxActivity::class.java).apply {
+        userId?.let { putExtra(EXTRA_USER_ID, it.id) }
+        type?.let { putExtra(EXTRA_MAILBOX_LOCATION, it.messageLocationTypeValue) }
+        putExtra(EXTRA_FIRST_LOGIN, ProtonMailApplication.getApplication().hasUpdateOccurred())
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+    }

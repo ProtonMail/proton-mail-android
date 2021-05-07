@@ -52,7 +52,7 @@ internal class NotificationSettingsViewModelTest {
             every { ringtone = any() } answers { ringtoneUri = firstArg(); Unit }
         }
         return mockk(relaxed = true) {
-            every { this@mockk.user } returns user
+            every { this@mockk.currentLegacyUser } returns user
         }
     }
 
@@ -66,10 +66,10 @@ internal class NotificationSettingsViewModelTest {
 //    @Test
     fun mockUserManager_reliabilityTest() {
         val userManager = mockUserManager(contentUri)
-        assertEquals(contentUri, userManager.user.ringtone)
+        assertEquals(contentUri, userManager.currentLegacyUser?.ringtone)
 
-        userManager.user.ringtone = fileUri
-        assertEquals(fileUri, userManager.user.ringtone)
+        userManager.currentLegacyUser?.ringtone = fileUri
+        assertEquals(fileUri, userManager.currentLegacyUser?.ringtone)
     }
 
     // FIXME: Davide check this, it is causing a lot of test failures

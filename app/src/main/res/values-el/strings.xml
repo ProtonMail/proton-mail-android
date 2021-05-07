@@ -21,20 +21,13 @@
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">ΚΡΥΠΤΟΓΡΑΦΗΜΕΝΟ E-MAIL</string>
     <string name="secure_email_swiss">Ασφαλές Email Με Έδρα\nτην Ελβετία</string>
-    <string name="decrypt_mailbox">Αποκρυπτογράφηση <b>Ταχυδρομείο</b></string>
     <string name="decrypt">Αποκρυπτογράφηση</string>
-    <string name="user_sign_in">Είσοδος Χρήστη</string>
-    <string name="two_factor_sign_in">Ελεγχος Ταυτότητας δυο παραγόντων</string>
     <string name="sign_in">Είσοδος</string>
     <string name="sign_out">Αποσύνδεση</string>
     <string name="sign_out_question">Είστε βέβαιοι ότι θέλετε να αποσυνδεθείτε;</string>
-    <string name="mailbox_password">Κωδικός Θυρίδας</string>
-    <string name="two_factor_code">Κωδικός Δύο Παραγόντων (2FA)</string>
     <string name="processing_request">Το αίτημα σας είναι σε επεξεργασία</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">Δεν είστε συνδεδεμένος/η!</string>
-    <string name="forgot_password">Ξεχάσατε το κωδικό;</string>
-    <string name="reset_mailbox_password">ΕΠΑΝΑΦΟΡΑ ΚΩΔΙΚΟΥ ΘΥΡΙΔΑΣ</string>
     <string name="forgot_mailbox_password">Για να επαναφέρετε τον κωδικό θυρίδας σας, παρακαλώ χρησιμοποιήστε την έκδοση web του ProtonMail στο protonmail.com</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Αδύνατη η φόρτωση περιεχομένου. Παρακαλώ ενεργοποιήστε το Chrome</string>
@@ -44,10 +37,7 @@
     <string name="no_more_messages">Όχι άλλα μηνύματα</string>
     <string name="mailbox_login_failure">Αποτυχία σύνδεσης στο ταχυδρομείο</string>
     <string name="login_failure">Η σύνδεση απέτυχε</string>
-    <string name="invalid_server_proof">Μη έγκυρη ταυτότητα διακομιστή</string>
-    <string name="invalid_credentials">Μη έγκυρα διαπιστευτήρια</string>
     <string name="incorrect_key_parameters">Εσφαλμένες παράμετροι κλειδιού</string>
-    <string name="invalid_mailbox_password">Μη έγκυρος κωδικός θυρίδας</string>
     <string name="not_signed_up">Δεν έχετε εγγραφεί για το ProtonMail Android Beta</string>
     <string name="no_network">Δεν υπάρχει δίκτυο</string>
     <string name="no_network_queued">Δεν υπάρχει δίκτυο, το μήνυμα τέθηκε σε σειρά</string>
@@ -168,7 +158,6 @@
     <string name="confirm_destructive_action">Είστε σίγουρος/η; Δεν υπάρχει τρόπος επαναφοράς.</string>
     <string name="create">Δημιουργία</string>
     <string name="email">Email</string>
-    <string name="email_address">Διεύθυνση email</string>
     <string name="phone">Αριθμός τηλεφώνου</string>
     <string name="save">Αποθήκευση</string>
     <string name="syncing_messages">Συγχρονισμός...</string>
@@ -208,61 +197,18 @@
     <string name="enter">Εισαγωγή</string>
     <string name="cancel">Ακύρωση</string>
     <string name="close">Κλείσιμο</string>
-    <string name="change_password">Αλλαγή Κωδικού Πρόσβασης</string>
-    <string name="change_mailbox_password">Αλλαγή Κωδικού Θυρίδας</string>
     <string name="eo_password_title">Ορισμός Κωδικού</string>
     <string name="eo_password_subtitle">Ορίστε έναν κωδικό πρόσβασης για την κρυπτογράφηση αυτού του μηνύματος, για χρήστες που δεν χρησιμοποιούν το ProtonMail</string>
     <string name="eo_password_more_info">Λάβετε περισσότερες πληροφορίες</string>
-    <string name="old_login_password">Τρέχων Κωδικός Σύνδεσης</string>
-    <string name="new_login_password">Νέος Κωδικός Πρόσβασης</string>
-    <string name="confirm_new_login_password">Επιβεβαίωση Νέου Κωδικού Πρόσβασης</string>
-    <string name="new_mailbox_password">Νέος Κωδικός Θυρίδας</string>
-    <string name="confirm_new_mailbox_password">Επιβεβαιώστε τον νέο κωδικό θυρίδας</string>
     <string name="no_attachments">0 Συνημμένα</string>
-    <string name="new_passwords_not_valid">Μη έγκυρη εισαγωγή</string>
-    <string name="new_passwords_do_not_match">Οι νέοι κωδικοί δεν ταιριάζουν</string>
-    <string name="new_login_password_saved">Ο νέος κωδικός σύνδεσης αποθηκεύτηκε</string>
-    <string name="new_mailbox_password_saved">Ο νέος κωδικός θυρίδας αποθηκεύτηκε</string>
     <string name="pin_lock_option_settings">Επιλογές Κλειδώματος Εφαρμογής</string>
     <string name="pin_lock_after">Κλείδωμα εφαρμογής μετά από</string>
     <string name="lock_the_app">Κλείδωμα εφαρμογής</string>
     <string name="display_name_banned_chars">Μή Έγκυρο Εμφανιζόμενο Όνομα. &gt; και &lt; δεν επιτρέπονται</string>
     <string name="cont">Συνέχεια</string>
-    <string name="email_verification_code">Θα στείλουμε έναν κωδικό επαλήθευσης στην παραπάνω διεύθυνση E-Mail.</string>
-    <string name="sms_verification_code">Θα στείλουμε έναν κωδικό επαλήθευσης στον παραπάνω αριθμό τηλεφώνου.</string>
-    <string name="send_verification_code">Αποστολή Κωδικού Επαλήθευσης</string>
-    <string name="resend_verification_code">Αποστολή ξανά</string>
-    <string name="enter_verification_code">Εισάγετε τον κωδικό επαλήθευσης</string>
-    <string name="verify">Επαλήθευση</string>
     <string name="reply_prefix_on">Ενεργό</string>
-    <string name="create_new_account">Δημιουργήστε ένα νέο λογαριασμό</string>
-    <string name="setup_new_account">Ρυθμίστε το λογαριασμό σας</string>
-    <string name="create_account">Δημιουργία Λογαριασμού</string>
-    <string name="create_passwords">Ορισμός Κωδικού</string>
-    <string name="caps_username">Όνομα χρήστη</string>
-    <string name="caps_login_password">Κωδικός πρόσβασης</string>
-    <string name="caps_confirm_password">Επιβεβαίωση Κωδικού Πρόσβασης</string>
-    <string name="caps_optional">*ΠΡΟΑΙΡΕΤΙΚΟ</string>
-    <string name="update_me_for_new_features">Κρατήστε με ενημερωμένο σχετικά με τις νέες λειτουργίες</string>
-    <string name="create_mailbox_password">Δημιουργία Κωδικού</string>
-    <string name="password_note"><b>Σημείωση:</b> Αυτό χρησιμοποιείται για την κρυπτογράφηση και αποκρυπτογράφηση των μηνυμάτων σας.
-        Μην χάσετε αυτό τον κωδικό, δεν μπορούμε να τον ανακτήσουμε. Εάν χάσετε τον κωδικό σας, δεν θα είστε σε θέση να διαβάσετε τα E-Mail σας.</string>
-    <string name="username_note"><b>Σημείωση:</b> Το όνομα χρήστη είναι επίσης και η διεύθυνση ProtonMail σας</string>
     <string name="terms_and_conditions">Χρησιμοποιώντας το ProtonMail, συμφωνείτε με τους\n
         &lt;a href="https://protonmail.com/terms-and-conditions"&gt;Όρους και προϋποθέσεις&lt;/a&gt; και &lt;a href="https://protonmail.com/privacy-policy"&gt;&lt;a href="https://protonmail.com/privacy-policy"&gt;Πολιτική Απορρήτου&lt;/a&gt;</string>
-    <string name="human_verification">Ανθρώπινη Επαλήθευση</string>
-    <string name="human_verification_subtitle">Για να αποτρέψουμε την κατάχρηση του ProtonMail,\nπρέπει να επαληθεύσουμε ότι είστε άνθρωπος.</string>
-    <string name="select_options">Παρακαλώ επιλέξτε μία από τις παρακάτω επιλογές:</string>
-    <string name="no_verification_methods_found">Δεν βρέθηκαν μέθοδοι επαλήθευσης</string>
-    <string name="email_verification">Επαλήθευση E-mail</string>
-    <string name="phone_verification">Επαλήθευση Τηλεφώνου</string>
-    <string name="existing_email_address">Εισάγετε την υπάρχουσα διεύθυνση E-mail σας</string>
-    <string name="phone_number">Εισάγετε τον αριθμό τηλεφώνου σας</string>
-    <string name="encryption_setup">Ρύθμιση Κρυπτογράφησης</string>
-    <string name="high_security">Υψηλή Ασφάλεια (2048 bit)</string>
-    <string name="current_standard">Το ισχύον πρότυπο</string>
-    <string name="extreme_security">Ύψιστη Ασφάλεια (4096 bit)</string>
-    <string name="highest_security">Το υψηλότερο επίπεδο κρυπτογράφησης που είναι διαθέσιμο.<b>Μπορεί να πάρει μερικά λεπτά προκειμένου να ολοκληρωθεί η ρύθμιση.</b></string>
     <string name="labels_title_apply">Εφαρμογή Eτικετών</string>
     <string name="labels_title_add">Προσθήκη Ετικέτας</string>
     <string name="labels_title">Ετικέτες</string>
@@ -301,16 +247,6 @@
     <string name="display_images">Εμφάνιση απομακρυσμένου περιεχομένου</string>
     <string name="retry">Δοκιμάστε ξανά</string>
     <string name="saving_failed_no_conn">Η αποθήκευση απέτυχε, δεν υπάρχει σύνδεση</string>
-    <string name="username_is_available">Το όνομα χρήστη είναι διαθέσιμο!</string>
-    <string name="username_is_not_available">Το όνομα χρήστη χρησιμοποιείται ήδη!</string>
-    <string name="username_is_too_long">Tο μέγιστο μήκος για ένα όνομα χρήστη είναι %d χαρακτήρες!</string>
-    <string name="congratulation">Συγχαρητήρια!</string>
-    <string name="new_account_ready">Ο νέος σας ασφαλής λογαριασμός E-mail\n είναι έτοιμος.</string>
-    <string name="optional_email_note">Το προαιρετικό E-mail ανάκτησης, σάς επιτρέπει να
-         επαναφέρετε τον κωδικό σύνδεσης σας εάν τον ξεχάσετε.</string>
-    <string name="optional_display_name">Όταν στέλνετε ένα μήνυμα ηλεκτρονικού ταχυδρομείου, αυτό είναι το όνομα
-         εμφανίζεται στο πεδίο αποστολέα.</string>
-    <string name="error_captcha_not_valid">Δεν είναι έγκυρο</string>
     <string name="close_engagement">κλείσιμο οδηγιών</string>
     <string name="engagement_title_welcome">Καλώς ήρθατε στο ProtonMail!</string>
     <string name="engagement_title_swipe">Γρήγορες ενέργειες ολίσθησης</string>
@@ -328,7 +264,6 @@
     <string name="attachment_exists">Το συνημμένο έχει ήδη επισυναφθεί</string>
     <string name="sending_email_success">Ο κωδικός επαλήθευσης στάλθηκε</string>
     <string name="sending_email_failed">Η αποστολή του κωδικού επαλήθευσης απέτυχε</string>
-    <string name="password_not_valid">Ο κωδικός πρόσβασης που έχει εισαχθεί δεν είναι έγκυρος</string>
     <string name="send_code_wait">Παρακαλώ περιμένετε %d δευτερόλεπτα για να κάνετε κλικ ξανά</string>
     <string name="eo_password_not_completed">Το κείμενο κωδικού δεν ολοκληρώθηκε.</string>
     <string name="delinquency_subtitle">Η πρόσβαση σε αυτόν τον λογαριασμό είναι απενεργοποιημένη λόγω μη πληρωμής. Συνδεθείτε μέσω του protonmail.com για να εξοφλήσετε το υπόλοιπο σας.</string>
@@ -385,112 +320,20 @@
     <string name="log_out">Αποσύνδεση %s;</string>
     <string name="logout_question">Είστε βέβαιοι ότι θέλετε να αποσυνδεθείτε;</string>
     <string name="logout_question_next_account">Θα μεταβείτε στο %s.</string>
-    <string name="upselling">Αναβάθμιση/Δωρεά</string>
-    <string name="upselling_title">Το ProtonMail είναι δωρεάν και ανοιχτού κώδικα (open source)</string>
-    <string name="upselling_subtitle">Χρειαζόμαστε την υποστήριξή σας για να συνεχίσουμε να προστατεύουμε το απόρρητο και να βελτιώσουμε το ProtonMail</string>
-    <string name="upselling_donate_title">Κάντε Δωρεά</string>
-    <string name="upselling_upgrade_title">Αναβαθμίστε σε ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Η δωρεά σας θα μας βοηθήσει να προσθέσουμε
-    και να συνεχίσουμε την ανάπτυξη του ProtonMail ως λογισμικό ελεύθερου και ανοικτού κώδικα. Είναι δυνατό μόνο μέσω της
-    υποστήριξης απο την κοινότητα για να είμαστε σε θέση να συνεχίσουμε να παρέχουμε ProtonMail σε ανθρώπους από όλο
-    τον κόσμο.</string>
-    <string name="upgrade_donate">Αναβάθμιση/Δωρεά</string>
-    <string name="upselling_donate_pick_amount">Επιλέξτε ένα ποσό δωρεάς ή εισάγετε ένα οποιοδήποτε ποσό</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">Εισάγετε ποσό δωρεάς</string>
-    <string name="donate">Δωρεά</string>
-    <string name="donate_paypal_bitcoin">Δωρεά μέσω PayPal ή Bitcoin</string>
-    <string name="upgrade_line1">Όλα περιλαμβάνονται στο δωρεάν πακέτο μας</string>
-    <string name="upgrade_line2">5 GB Αποθηκευτικός Χώρος</string>
-    <string name="upgrade_line3">Χρησιμοποιήστε το δικό σας Domain</string>
-    <string name="upgrade_line4">Έως και 5 ψευδώνυμα</string>
-    <string name="upgrade_line5">Προτεραιότητα στην υποστήριξη πελατών</string>
     <string name="upgrade">Αναβάθμιση</string>
-    <string name="payment_options">Επιλογή πληρωμής</string>
-    <string name="other_plans">Για πακέτα με περισσότερο χώρο αποθήκευσης, αναβαθμίστε μέσω
-    τη πλατφόρμα webmail του ProtonMail.</string>
-    <string name="upgrade_paid_user">Σας ευχαριστούμε που είστε ένας χρήστης επί πληρωμής!</string>
-    <string name="select_account_type">Επιλέξτε τον τύπο του λογαριασμού σας</string>
-    <string name="select_account_type_subtitle">Το ProtonMail είναι μια δωρεάν υπηρεσία
-    για το δημόσιο καλό. Μπορείτε να βοηθήσετε στην προστασία του απορρήτου στο διαδίκτυο επιλέγοντας έναν λογαριασμό επί πληρωμής.</string>
-    <string name="plan_free_with_price">ΔΩΡΕΑΝ</string>
-    <string name="plan_plus_with_price">PLUS %s /Μήνα</string>
-    <string name="plan_visionary_with_price">VISIONARY %s /Μήνα</string>
-    <string name="plan_business_with_price">BUSINESS %s /Μήνα</string>
-    <string name="plan_free_title">Βασικός λογαριασμός με περιορισμένα χαρακτηριστικά</string>
-    <string name="plan_plus_title">Ασφαλές email με προχωρημένα χαρακτηριστικά</string>
-    <string name="plan_visionary_title">Ειδικοί λογαριασμοί για τους υποστηρικτές μας</string>
-    <string name="plan_business_title">Ειδικοί λογαριασμοί για τους υποστηρικτές μας</string>
-    <string name="plan_plus_line2">Αποστολή έως 1000 μηνυμάτων την ημέρα</string>
-    <string name="plan_plus_line3">Ετικέτες και προσαρμοσμένα φίλτρα</string>
-    <string name="plan_plus_line4">Αποστολή κρυπτογραφημένων μηνυμάτων σε εξωτερικούς παραλήπτες</string>
-    <string name="plan_plus_line7">Προτεραιότητα στην υποστήριξη πελατών</string>
-    <string name="plan_free_line1">500 MB Αποθηκευτικός Χώρος</string>
-    <string name="plan_free_line2">150 μηνύματα την ημέρα</string>
-    <string name="plan_free_line3">20 Ετικέτες</string>
-    <string name="plan_free_line4">Προσαρμοσμένοι Domains: δεν υποστηρίζονται</string>
-    <string name="plan_free_line5">1 Διεύθυνση</string>
-    <string name="plan_free_line6">Υποστήριξη Πελατών: περιορισμένη</string>
-    <string name="plan_visio_line2">Χωρίς όριο αποστολής</string>
-    <string name="plan_visio_line3">Πρώιμη πρόσβαση σε νέα χαρακτηριστικά</string>
-    <string name="plan_visio_line6">Βοηθήστε να επιλέξουμε τις νέες λειτουργίες μέσω των δημοσκοπήσεων Visionary</string>
-    <string name="plan_business_line1">σύντομα οι οργανισμοί, θα απολαμβάνουν κρυπτογραφημένα μηνύματα ηλεκτρονικού ταχυδρομείου!</string>
-    <string name="currency_duration">Νόμισμα &amp; Διάρκεια</string>
-    <string name="credit_card_name">Όνομα στην πιστωτική/χρεωστική κάρτα</string>
-    <string name="zip_code">Ταχυδρομικός κώδικας</string>
-    <string name="card_number">Αριθμός κάρτας</string>
-    <string name="billing_information">Πληροφορίες Χρέωσης</string>
     <string name="country">Χώρα</string>
-    <string name="cvc">CVC</string>
-    <string name="terms_and_conditions_billing">Πατώντας Υποβολή, συμφωνείτε
-    να τηρείτε \n<a href="https://protonmail.com/terms-and-conditions">Οι όροι και οι προϋποθέσεις του ProtonMail</a></string>
-    <string name="submit">Υποβολή</string>
-    <string name="currency">Νόμισμα</string>
-    <string name="plan_duration">Κύκλος Χρέωσης</string>
-    <string name="duration_annual_line1">Ετήσιο πλάνο <font color="#C3E129">Εξοικονομήστε 20%</font></string>
-    <string name="per_month_text_only">κάθε μήνα</string>
-    <string name="duration_annual_line3">Χρεώνεται ως %s /Έτος</string>
-    <string name="duration_annual_line4">Χρεώνεται ως %s /Μήνα</string>
-    <string name="duration_monthly_line1">Μηνιαίο πλάνο</string>
-    <string name="duration_monthly_line3">Εξοικονομήστε 20%</string>
     <string name="set_cont">Καθορίστε &amp; Συνέχεια</string>
-    <string name="payment_error">Σφάλμα Πληρωμής</string>
     <string name="error">Σφάλμα</string>
-    <string name="try_another_card">Δοκιμάστε διαφορετική κάρτα</string>
-    <string name="try_another_paypal">Πληρωμή με PayPal</string>
-    <string name="try_another_payment_method">Δοκιμάστε άλλο</string>
-    <string name="submit_paypal">Ολοκλήρωση Αγοράς με PayPal</string>
-    <string name="picker_card">Πιστωτική/Χρεωστική κάρτα</string>
-    <string name="picker_paypal">PayPal</string>
-    <string name="paypal_disclaimer">Θα χρειαστεί να συνδεθείτε στον λογαριασμό σας στο PayPal για να ολοκληρώσετε αυτήν τη συναλλαγή. Θα ανοίξουμε νέο παράθυρο στο πρόγραμμα περιήγησης με το PayPal για εσάς.</string>
-    <string name="payment_picker_disclaimer">Παρακαλούμε επιλέξτε έναν τρόπο πληρωμής</string>
-    <string name="payment_success_title">Επιτυχής πληρωμή!</string>
-    <string name="payment_success_text">Αναβαθμίζουμε τον λογαριασμό σας, παρακαλώ περιμένετε λίγο. Σας ευχαριστούμε για την υποστήριξή!</string>
-    <string name="donation_success_title">Επιτυχία δωρεάς!</string>
-    <string name="donation_success_text">Η υποστήριξή σας είναι απαραίτητη για τη λειτουργία του ProtonMail. Σας ευχαριστούμε για την υποστήριξη της ιδιωτικότητας στο διαδίκτυο!</string>
-    <string name="create_free_account">Δημιουργία δωρεάν λογαριασμού</string>
     <string name="storage_gb">%d GB αποθηκευτικός χώρος</string>
     <string name="storage_mb">%d MB αποθηκευτικός χώρος</string>
     <string name="max_addresses">Έως %d ψευδώνυμα email</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d Ενσωματωμένες Εικόνες</string>
     <string name="select">Επιλέξτε</string>
-    <string name="change_currency">Αλλαγή νομίσματος</string>
-    <string name="switch_billing_monthly">Αλλαγή σε Μηνιαία</string>
-    <string name="switch_billing_yearly">Αλλαγή σε Ετήσια</string>
     <string name="warning">Προειδοποίηση</string>
     <string name="empty_recovery_email_question">Προειδοποίηση: Δεν έχετε ορίσει ένα E-mail ανάκτησης, με αποτέλεσμα η ανάκτηση λογαριασμού να είναι αδύνατη αν ξεχάσετε τον κωδικό πρόσβασής σας. Θέλετε να συνεχίσετε χωρίς E-mail ανάκτησης;</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Λήξη %s</string>
-    <string name="payment_methods">Τρόποι Πληρωμής</string>
-    <string name="payment_approval_activity">Έγκριση Τρόπου Πληρωμής</string>
-    <string name="payment_approval_success">Ο τρόπος πληρωμής έχει εγκριθεί</string>
-    <string name="payment_approval_unknown_error_description">Παρουσιάστηκε πρόβλημα κατά την προσπάθεια επαλήθευσης του τρόπου πληρωμής σας. Παρακαλώ δοκιμάστε ξανά ή αλλάξτε κάρτα.</string>
-    <string name="payment_approval_cancel_error_description">Η επαλήθευση του τρόπου πληρωμής ακυρώθηκε. Παρακαλώ δοκιμάστε ξανά ή αλλάξτε κάρτα.</string>
-    <string name="payment_approval_consumed_error_description">Ο τρόπος πληρωμής έχει χρησιμοποιηθεί ήδη για αυτήν την πληρωμή. Ελέγξτε την κατάσταση της συνδρομής σας.</string>
     <string name="no_payment_methods">Δεν έχετε αποθηκευμένους τρόπους πληρωμής.</string>
     <string name="edit_payment_methods">Παρακαλώ συνδεθείτε μέσω του protonmail.com για να επεξεργαστείτε τα στοιχεία χρέωσης.</string>
     <string name="message_not_loaded">Το μήνυμα δεν φορτώθηκε</string>
@@ -509,12 +352,7 @@
     <string name="delete_selected">Διαγραφή επιλεγμένων</string>
     <string name="pin_not_activated">Το PIN δεν ενεργοποιήθηκε</string>
     <string name="available_options">Διαθέσιμες επιλογές</string>
-    <string name="current_recovery_email">Τρέχουσα διεύθυνση E-mail επαναφοράς / ειδοποίησης</string>
     <string name="change_recovery_email">Αλλαγή διεύθυνσης E-mail επαναφοράς / ειδοποίησης</string>
-    <string name="new_recovery_email">Νέο E-mail επαναφοράς / ειδοποίησης</string>
-    <string name="confirm_new_recovery_email">Επιβεβαίωση Νέου E-mail επαναφοράς / ειδοποίησης</string>
-    <string name="recovery_emails_invalid">Η διεύθυνση E-mail δεν ταιριάζει ή δεν είναι έγκυρη</string>
-    <string name="authenticate">Ταυτοποίηση</string>
     <string name="background_sync_subtitle">Εάν αυτή η επιλογή είναι ενεργοποιημένη, η εφαρμογή θα συγχρονιστεί με το διακομιστή στο παρασκήνιο. Η απενεργοποίηση αυτής της λειτουργίας θα απενεργοποιήσει τις ειδοποιήσεις push.</string>
     <string-array name="notification_options">
         <item>Χωρίς δόνηση ή ήχο</item>
@@ -607,10 +445,6 @@
     </string-array>
     <string name="logged_out">Αποσυνδεδεμένος</string>
     <string name="logged_out_description">Έχετε αποσυνδεθεί. Παρακαλούμε συνδεθείτε ξανά.</string>
-    <string name="verification_needed">Απαιτείται επαλήθευση</string>
-    <string name="verification_needed_description">Για λόγους ασφαλείας, παρακαλώ επαληθεύστε ότι δεν είστε ρομπότ.</string>
-    <string name="verification_needed_description_notification">Παρακαλώ επιβεβαιώστε ότι είστε άνθρωπος πριν στείλετε αυτό το μήνυμα: %s</string>
-    <string name="message_drafted_verification_needed">Το μήνυμα δεν στάλθηκε - απαιτείται επαλήθευση. Τα μηνύματα σας αποθηκεύονται στο φάκελο προχείρου.</string>
     <string name="error_message_zip_code_invalid">Σφάλμα: Ο ταχυδρομικός κώδικας δεν είναι έγκυρος</string>
     <string name="error_message_cvc_invalid">Σφάλμα: Ο αριθμός CVC δεν είναι έγκυρος</string>
     <string name="error_message_card_name_invalid">Σφάλμα: Το όνομα κάρτας δεν είναι έγκυρο</string>
@@ -768,7 +602,6 @@
     <string name="contact_add_addr_to_group">Προσθήκη διεύθυνσης σε ομάδες</string>
     <string name="title_activity_address_chooser">Διαχείριση Διευθύνσεων</string>
     <string name="title_activity_account_manager">Διαχείριση λογαριασμών</string>
-    <string name="title_activity_connect_account">Σύνδεση Λογαριασμού</string>
     <string name="account_manager_add_account">Προσθήκη λογαριασμού</string>
     <string name="account_manager_remove_all_accounts">Κατάργηση όλων των λογαριασμών</string>
     <string name="account_manager_note">Μπορείτε να συνδεθείτε ταυτόχρονα με έναν απεριόριστο αριθμό λογαριασμών επι πληρωμής ProtonMail και με έναν δωρεάν λογαριασμό.</string>
@@ -778,7 +611,6 @@
     <string name="manage_accounts_user_loggedout">%s (αποσυνδεδεμένο)</string>
     <string name="manage_accounts_user_primary">%s (κύριο)</string>
     <string name="account_manager_remove">Αφαίρεση</string>
-    <string name="connect_account_login_title">Συνδεθείτε στον λογαριασμό σας ProtonMail</string>
     <string name="default_error_message">Παρουσιάστηκε σφάλμα</string>
     <string name="no_contact_groups">Δεν υπάρχουν ομάδες επαφών</string>
     <string name="search_contacts_inside_group">Αναζήτηση επαφών μέσα στην ομάδα</string>
@@ -971,7 +803,6 @@
     <string name="connect_account_limit_subtitle">Δεν μπορείτε να προσθέσετε κι άλλο δωρεάν λογαριασμό ProtonMail. Μόνο ένας δωρεάν λογαριασμός ProtonMail μπορεί να προστεθεί. Αποσυνδεθείτε από τον άλλο δωρεάν λογαριασμό σας ή αναβαθμίστε έναν από τους δωρεάν λογαριασμούς σας σε κάποιον λογαριασμό επι πληρωμής.</string>
     <string name="switch_accounts_question">Αλλαγή λογαριασμού;</string>
     <string name="switch_to_account">Αλλάξτε σε %s</string>
-    <string name="login_failure_missing_keys">Ο λογαριασμός που προσπαθείτε να προσθέσετε δεν έχει δημιουργήσει κλειδιά. Προσθέστε αυτόν τον λογαριασμό ως πρώτο λογαριασμό στην εφαρμογή ή συνδεθείτε μέσω της έκδοσης ιστού, για να δημιουργήσετε κλειδιά και, στη συνέχεια, να την προσθέσετε ως πρόσθετο λογαριασμό στην εφαρμογή.</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">Σύνθεση</string>

@@ -25,9 +25,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.events.FetchLabelsEvent
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
-import ch.protonmail.android.utils.moveToLogin
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -109,11 +107,5 @@ class SettingsActivity : BaseSettingsActivity() {
     @Subscribe
     override fun onLabelsLoadedEvent(event: FetchLabelsEvent) {
         super.onLabelsLoadedEvent(event)
-    }
-
-    @Subscribe
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onLogoutEvent(event: LogoutEvent?) {
-        moveToLogin()
     }
 }

@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.uiModel
 
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 
 /**
@@ -31,7 +31,7 @@ internal sealed class DrawerUserModel {
 
     sealed class BaseUser : DrawerUserModel() {
 
-        abstract val id: Id
+        abstract val id: UserId
 
         /**
          * User's user name. Default is empty
@@ -54,7 +54,7 @@ internal sealed class DrawerUserModel {
         open val notificationsSnoozed: Boolean = false
 
         data class AccountUser(
-            override val id: Id,
+            override val id: UserId,
             override val name: String,
             override val emailAddress: String,
             override val loggedIn: Boolean,
@@ -63,7 +63,7 @@ internal sealed class DrawerUserModel {
         ) : BaseUser()
 
         data class DrawerUser(
-            override val id: Id,
+            override val id: UserId,
             override val name: String,
             override val emailAddress: String,
             override val loggedIn: Boolean,

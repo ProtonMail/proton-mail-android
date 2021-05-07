@@ -18,14 +18,11 @@
  */
 package ch.protonmail.android.utils.crypto;
 
-import android.util.Base64;
-
 import androidx.annotation.NonNull;
 
 import com.proton.gopenpgp.armor.Armor;
 import com.proton.gopenpgp.constants.Constants;
 import com.proton.gopenpgp.crypto.Crypto;
-import com.proton.gopenpgp.crypto.Key;
 import com.proton.gopenpgp.crypto.KeyRing;
 import com.proton.gopenpgp.crypto.MIMECallbacks;
 import com.proton.gopenpgp.crypto.PGPMessage;
@@ -34,18 +31,12 @@ import com.proton.gopenpgp.crypto.PlainMessage;
 import com.proton.gopenpgp.crypto.SessionKey;
 import com.proton.gopenpgp.helper.ExplicitVerifyMessage;
 import com.proton.gopenpgp.helper.Helper;
-import com.proton.gopenpgp.srp.Srp;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import at.favre.lib.crypto.bcrypt.Radix64Encoder;
-import ch.protonmail.android.utils.Logger;
-import ch.protonmail.android.utils.crypto.Primes.PrimeGenerator;
 import timber.log.Timber;
 
 @Singleton
@@ -108,42 +99,6 @@ public class OpenPGP {
         return Crypto.encryptMessageWithPassword(new PlainMessage(plainText), password).getArmored();
     }
 
-    public String generateKey(String userName, String domain, byte[] passphrase, KeyType keyType, int bits) throws Exception {
-
-        if (passphrase == null || passphrase.length == 0) {
-            throw new IllegalArgumentException("passphrase for generating key can't be empty");
-        }
-
-        Crypto.setKeyGenerationOffset(-86400);
-
-        if (keyType == KeyType.RSA) {
-            // Generate some primes as the go library is quite slow. On android we can use SSL + multithreading
-            // This reduces the generation time from 3 minutes to 1 second.
-            PrimeGenerator generator = new PrimeGenerator();
-            BigInteger[] primes = generator.generatePrimes(bits / 2, 4);
-            String username = userName + "@" + domain;
-            return generateRSAKeyWithPrimes(username, username, passphrase, bits,
-                    primes[0].toByteArray(), primes[1].toByteArray(),
-                    primes[2].toByteArray(), primes[3].toByteArray());
-        }
-        return Helper.generateKey(userName, userName, passphrase, keyType.toString(), bits);
-    }
-
-    /**
-     * Crypto Helper doesn't have this method, so we have our own implementation
-     */
-    private String generateRSAKeyWithPrimes(String name, String email, byte[] passphrase, int bits,
-                                            byte[] prime1, byte[] prime2, byte[] prime3, byte[] prime4) throws Exception {
-
-        Key key = Crypto.generateRSAKeyWithPrimes(name, email, bits, prime1, prime2, prime3, prime4);
-        Key lockedKey = key.lock(passphrase);
-        if (lockedKey.isUnlocked()) {
-            throw new Exception("could not lock newly generated key");
-        }
-        key.clearPrivateParams();
-        return lockedKey.armor();
-    }
-
     public long getTime() {
         return com.proton.gopenpgp.crypto.Crypto.getUnixTime();
     }
@@ -164,19 +119,6 @@ public class OpenPGP {
 
     public String updatePrivateKeyPassphrase(String privateKey, byte[] oldPassphrase, byte[] newPassphrase) throws Exception {
         return Helper.updatePrivateKeyPassphrase(privateKey, oldPassphrase, newPassphrase);
-    }
-
-    public byte[] generateMailboxPassword(String encodedSalt, byte[] password) {
-
-        byte[] decodedKeySalt = Base64.decode(encodedSalt, Base64.DEFAULT);
-        try {
-            String generatedMailboxPassword = Srp.mailboxPassword(new String(password), decodedKeySalt);
-            return generatedMailboxPassword.replace("$2y$10$", "").replace(new String(new Radix64Encoder.Default().encode(decodedKeySalt)), "").getBytes();
-
-        } catch (Exception e) {
-            Timber.e(e, "Generating mailbox password failed");
-        }
-        return null;
     }
 
     public void updateTime(long newTime) {
@@ -223,17 +165,6 @@ public class OpenPGP {
 
     public byte[] randomToken() throws Exception {
         return com.proton.gopenpgp.crypto.Crypto.randomToken(32); // 32 bytes
-    }
-
-    /**
-     * @return 16-byte, base64-ed random salt as String, without newline character
-     */
-    public String createNewKeySalt() {
-        byte[] salt = new byte[16];
-        new SecureRandom().nextBytes(salt);
-        String keySalt = Base64.encodeToString(salt, Base64.DEFAULT);
-        keySalt = keySalt.substring(0, keySalt.length() - 1); // truncate newline character
-        return keySalt;
     }
 
     public void decryptMIMEMessage(String encryptedText, byte[] verifierKey,

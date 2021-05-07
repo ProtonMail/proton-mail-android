@@ -849,50 +849,6 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerNotifiesUserThatHumanVerificationIsNeededAndRemovesPendingForSendWhenResponseContainsVerificationNeededBodyCode() = runBlockingTest {
-        val messageDbId = 8_237_423L
-        val messageId = "812374"
-        val subject = "message subject 1"
-        val message = Message().apply {
-            dbId = messageDbId
-            this.messageId = messageId
-            this.subject = subject
-        }
-        val savedDraftMessageId = "82384"
-        val savedDraft = mockk<Message>(relaxed = true) {
-            every { this@mockk.dbId } returns messageDbId
-            every { this@mockk.messageId } returns savedDraftMessageId
-            every { this@mockk.subject } returns subject
-        }
-        givenFullValidInput(messageDbId, messageId)
-        coEvery { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns flowOf(message)
-        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns flowOf(savedDraft)
-        coEvery { saveDraft(any()) } returns SaveDraftResult.Success(savedDraftMessageId)
-        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
-        coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk {
-            every { code } returns 9_001
-            every { sent } returns null
-        }
-        every { context.getString(R.string.message_drafted_verification_needed) } returns "verification needed"
-        mockkStatic(Timber::class)
-
-        val result = worker.doWork()
-
-        assertEquals(
-            ListenableWorker.Result.failure(
-                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "UserVerificationNeeded")
-            ),
-            result
-        )
-        verify { userNotifier.showHumanVerificationNeeded(savedDraft) }
-        verify { pendingActionDao.deletePendingSendByMessageId(savedDraftMessageId) }
-        verify {
-            Timber.w("Send Message API call failed, human verification required for messageId $savedDraftMessageId")
-        }
-        unmockkStatic(Timber::class)
-    }
-
-    @Test
     fun workerNotifiesUserOfTheSendingFailureAndRemovesPendingForSendWhenAPICallsReturnsFailureBodyCode() = runBlockingTest {
         val messageDbId = 2_132_372L
         val messageId = "8232832"

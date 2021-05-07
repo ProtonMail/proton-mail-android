@@ -64,7 +64,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
             <ch.protonmail.android.views.CustomFontEditText
                 android:id="@+id/pin_input"
-                style="@style/LoginEditText"
+                style="@style/V3EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"

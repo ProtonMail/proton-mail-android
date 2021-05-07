@@ -20,11 +20,9 @@ package ch.protonmail.android.compose
 
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.SendPreference
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.MessageDao
@@ -35,14 +33,12 @@ import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.di.SearchMessageDaoQualifier
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.jobs.FetchDraftDetailJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.ResignContactJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
-import ch.protonmail.android.jobs.general.GetAvailableDomainsJob
-import ch.protonmail.android.jobs.verification.FetchHumanVerificationOptionsJob
-import ch.protonmail.android.jobs.verification.PostHumanVerificationJob
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import com.birbit.android.jobqueue.JobManager
@@ -55,6 +51,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
@@ -160,24 +157,12 @@ class ComposeMessageRepository @Inject constructor(
             messageDao.deleteMessageById(messageId)
         }
 
-    fun startGetAvailableDomains() {
-        jobManager.addJobInBackground(GetAvailableDomainsJob(true))
-    }
-
-    fun startFetchHumanVerificationOptions() {
-        jobManager.addJobInBackground(FetchHumanVerificationOptionsJob())
-    }
-
     fun startFetchDraftDetail(messageId: String) {
         jobManager.addJobInBackground(FetchDraftDetailJob(messageId))
     }
 
     fun startFetchMessageDetail(messageId: String) {
         jobManager.addJobInBackground(FetchMessageDetailJob(messageId))
-    }
-
-    fun startPostHumanVerification(tokenType: Constants.TokenType, token: String) {
-        jobManager.addJobInBackground(PostHumanVerificationJob(tokenType, token))
     }
 
     suspend fun createAttachmentList(attachmentList: List<LocalAttachment>, dispatcher: CoroutineDispatcher) =

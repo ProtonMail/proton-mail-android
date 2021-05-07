@@ -21,20 +21,13 @@
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">加密的電子郵件</string>
     <string name="secure_email_swiss">總部設於瑞士的\n安全電子郵件</string>
-    <string name="decrypt_mailbox">解密<b>電子郵箱</b></string>
     <string name="decrypt">解密</string>
-    <string name="user_sign_in">使用者登入</string>
-    <string name="two_factor_sign_in">兩步驟驗證</string>
     <string name="sign_in">登入</string>
     <string name="sign_out">登出</string>
     <string name="sign_out_question">您確定要登出嗎？</string>
-    <string name="mailbox_password">郵箱密碼</string>
-    <string name="two_factor_code">兩步驟驗證碼</string>
     <string name="processing_request">您的請求正在處理中</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">您尚未登入！</string>
-    <string name="forgot_password">忘記密碼了？</string>
-    <string name="reset_mailbox_password">重設電子郵件信箱密碼</string>
     <string name="forgot_mailbox_password">如要重設您的郵箱密碼，請前往 protonmail.com 使用 ProtonMail 網頁版</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">無法載入內容。請啟用 Chrome</string>
@@ -44,10 +37,7 @@
     <string name="no_more_messages">沒有其他郵件了</string>
     <string name="mailbox_login_failure">無法登入到信箱</string>
     <string name="login_failure">登入失敗</string>
-    <string name="invalid_server_proof">無效伺服器證明</string>
-    <string name="invalid_credentials">無效的登入憑證</string>
     <string name="incorrect_key_parameters">不正確的關鍵參數</string>
-    <string name="invalid_mailbox_password">無效的郵箱密碼</string>
     <string name="not_signed_up">您尚未註冊 ProtonMail Android 測試版</string>
     <string name="no_network">無網際網路</string>
     <string name="no_network_queued">無網際網路，郵件已排入佇列</string>
@@ -163,7 +153,6 @@
     <string name="confirm_destructive_action">您確定嗎？這個操作無法被復原！</string>
     <string name="create">建立</string>
     <string name="email">電子郵件</string>
-    <string name="email_address">電子郵件地址</string>
     <string name="phone">電話號碼</string>
     <string name="save">儲存</string>
     <string name="syncing_messages">正在同步……</string>
@@ -203,61 +192,18 @@
     <string name="enter">輸入</string>
     <string name="cancel">取消</string>
     <string name="close">關閉</string>
-    <string name="change_password">變更密碼</string>
-    <string name="change_mailbox_password">變更電子信箱密碼</string>
     <string name="eo_password_title">設定密碼</string>
     <string name="eo_password_subtitle">針對非 ProtonMail 使用者設定一個密碼以加密此郵件</string>
     <string name="eo_password_more_info">取得更多資訊</string>
-    <string name="old_login_password">目前登入密碼</string>
-    <string name="new_login_password">新密碼</string>
-    <string name="confirm_new_login_password">確認新密碼</string>
-    <string name="new_mailbox_password">新的信箱密碼</string>
-    <string name="confirm_new_mailbox_password">確認新的信箱密碼</string>
     <string name="no_attachments">無附件</string>
-    <string name="new_passwords_not_valid">無效輸入</string>
-    <string name="new_passwords_do_not_match">新密碼不一致</string>
-    <string name="new_login_password_saved">新登入密碼已儲存</string>
-    <string name="new_mailbox_password_saved">新的信箱密碼已儲存</string>
     <string name="pin_lock_option_settings">應用程式鎖定選項</string>
     <string name="pin_lock_after">在多久後鎖定</string>
     <string name="lock_the_app">鎖定應用程式</string>
     <string name="display_name_banned_chars">顯示名稱無效。不允許使用 \'&gt;\' 和 \'&lt;\'</string>
     <string name="cont">繼續</string>
-    <string name="email_verification_code">我們會傳送驗證碼至上述的電子郵件地址。</string>
-    <string name="sms_verification_code">我們會傳送驗證碼至上述的手機號碼。</string>
-    <string name="send_verification_code">傳送驗證碼</string>
-    <string name="resend_verification_code">重新傳送</string>
-    <string name="enter_verification_code">輸入驗證碼</string>
-    <string name="verify">驗證</string>
     <string name="reply_prefix_on">在</string>
-    <string name="create_new_account">建立新帳號</string>
-    <string name="setup_new_account">設定您的帳號</string>
-    <string name="create_account">建立帳號</string>
-    <string name="create_passwords">設定密碼</string>
-    <string name="caps_username">使用者名稱</string>
-    <string name="caps_login_password">密碼</string>
-    <string name="caps_confirm_password">確認密碼</string>
-    <string name="caps_optional">*選擇性</string>
-    <string name="update_me_for_new_features">讓我隨時了解新功能</string>
-    <string name="create_mailbox_password">建立密碼</string>
-    <string name="password_note"><b>注意：</b> 這用於加密和解密郵件。
-        請不要遺失此密碼，我們無法將其復原。如果您遺失了密碼，您就無法閱讀您的電子郵件。</string>
-    <string name="username_note"><b>注意：</b> 使用者名稱同時為您的 ProtonMail 郵箱地址</string>
     <string name="terms_and_conditions">使用 ProtonMail 即代表您同意我們的\n
         <a href="https://protonmail.com/terms-and-conditions">條款及細則</a>和<a href="https://protonmail.com/privacy-policy">隱私權政策</a></string>
-    <string name="human_verification">人類驗證</string>
-    <string name="human_verification_subtitle">為了避免 ProtonMail 的服務被濫用，\n我們必須驗證您是人類。</string>
-    <string name="select_options">請選取以下其中一個選項：</string>
-    <string name="no_verification_methods_found">找不到驗證方法</string>
-    <string name="email_verification">電子郵件驗證</string>
-    <string name="phone_verification">手機驗證</string>
-    <string name="existing_email_address">輸入您現有的電子郵件地址</string>
-    <string name="phone_number">輸入您的電話號碼</string>
-    <string name="encryption_setup">加密設定</string>
-    <string name="high_security">高安全性（2048 位元）</string>
-    <string name="current_standard">目前標準</string>
-    <string name="extreme_security">極高安全性（4096 位元）</string>
-    <string name="highest_security">最高級別的加密。<b>可能需要幾分鐘時間設定。</b></string>
     <string name="labels_title_apply">套用標籤</string>
     <string name="labels_title_add">新增標籤</string>
     <string name="labels_title">標籤</string>
@@ -296,16 +242,6 @@
     <string name="display_images">顯示遠端內容</string>
     <string name="retry">重試</string>
     <string name="saving_failed_no_conn">儲存失敗，無網際網路連線</string>
-    <string name="username_is_available">使用者名稱可用！</string>
-    <string name="username_is_not_available">使用者名稱已被使用！</string>
-    <string name="username_is_too_long">使用者名稱長度上限為 %d 個字元！</string>
-    <string name="congratulation">恭喜！</string>
-    <string name="new_account_ready">您的新安全電子郵件\n帳號已可以使用。</string>
-    <string name="optional_email_note">可選的救援電子郵件地址可以
-        在您忘記密碼時重設登入密碼。</string>
-    <string name="optional_display_name">當您寄出郵件時，此名稱
-        將會顯示在寄件人欄位。</string>
-    <string name="error_captcha_not_valid">無效</string>
     <string name="close_engagement">關閉教學</string>
     <string name="engagement_title_welcome">歡迎使用 ProtonMail！</string>
     <string name="engagement_title_swipe">快速滑動動作</string>
@@ -323,7 +259,6 @@
     <string name="attachment_exists">附件已附加</string>
     <string name="sending_email_success">已傳送驗證碼</string>
     <string name="sending_email_failed">驗證碼發送失敗</string>
-    <string name="password_not_valid">輸入的密碼無效</string>
     <string name="send_code_wait">請等待 %d 秒再按一下</string>
     <string name="eo_password_not_completed">未完成郵件密碼設置。</string>
     <string name="delinquency_subtitle">此帳號因未付款，存取已被停用。請登入 protonmail.com 支付未付帳單。</string>
@@ -378,112 +313,20 @@
     <string name="log_out">登出 %s？</string>
     <string name="logout_question">您確定要登出嗎？</string>
     <string name="logout_question_next_account">您將切換為 %s。</string>
-    <string name="upselling">升級／捐款</string>
-    <string name="upselling_title">ProtonMail 免費自由，並開放原始碼</string>
-    <string name="upselling_subtitle">我們需要您的支持，以繼續保護隱私並改進 ProtonMail</string>
-    <string name="upselling_donate_title">捐款</string>
-    <string name="upselling_upgrade_title">升級至 ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">您的捐款可以協助我們成長，
-    並繼續開發免費自由且開放原始碼的 ProtonMail。
-    感謝社群的支持，我們才得以持續向世界各地的人們
-    提供 ProtonMail 服務。</string>
-    <string name="upgrade_donate">升級／捐款</string>
-    <string name="upselling_donate_pick_amount">選取捐款金額或輸入任何金額</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">輸入捐款金額</string>
-    <string name="donate">捐款</string>
-    <string name="donate_paypal_bitcoin">透過 PayPal 或比特幣捐款</string>
-    <string name="upgrade_line1">我們的免費方案包含的所有功能</string>
-    <string name="upgrade_line2">5 GB 儲存空間</string>
-    <string name="upgrade_line3">使用自訂域名</string>
-    <string name="upgrade_line4">最多 5 個電子郵件別名</string>
-    <string name="upgrade_line5">優先客戶支援</string>
     <string name="upgrade">升級</string>
-    <string name="payment_options">付款選項</string>
-    <string name="other_plans">關於更多儲存空間的方案，請透過
-    webmail 介面升級 ProtonMail。</string>
-    <string name="upgrade_paid_user">感謝您成為付費使用者！</string>
-    <string name="select_account_type">選取您的帳號類型</string>
-    <string name="select_account_type_subtitle">ProtonMail 是一個為了公眾利益的
-    免費服務。您可以透過選擇付費的帳號來幫助支持網路隱私。</string>
-    <string name="plan_free_with_price">免費</string>
-    <string name="plan_plus_with_price">PLUS %s／月</string>
-    <string name="plan_visionary_with_price">VISIONARY %s／月</string>
-    <string name="plan_business_with_price">BUSINESS %s／月</string>
-    <string name="plan_free_title">有限功能的基本帳號</string>
-    <string name="plan_plus_title">有進階功能的安全電子郵件</string>
-    <string name="plan_visionary_title">我們支持者的特別帳號</string>
-    <string name="plan_business_title">我們支持者的特別帳號</string>
-    <string name="plan_plus_line2">每天寄送多達 1000 封郵件</string>
-    <string name="plan_plus_line3">標籤與自訂篩選器</string>
-    <string name="plan_plus_line4">向外部收件人寄送加密郵件</string>
-    <string name="plan_plus_line7">優先客戶支援</string>
-    <string name="plan_free_line1">500 MB 儲存空間</string>
-    <string name="plan_free_line2">每天 150 封郵件</string>
-    <string name="plan_free_line3">20 個標籤</string>
-    <string name="plan_free_line4">自訂網域：不支援</string>
-    <string name="plan_free_line5">1 個電子郵件地址</string>
-    <string name="plan_free_line6">客戶支援：有限</string>
-    <string name="plan_visio_line2">没有傳送量限制</string>
-    <string name="plan_visio_line3">提早試用新功能</string>
-    <string name="plan_visio_line6">透過 Visionary 方案的調查，協助提早挑選特定功能</string>
-    <string name="plan_business_line1">為組織而生，準備享受即將來臨的加密電子郵件！</string>
-    <string name="currency_duration">貨幣與持續時間</string>
-    <string name="credit_card_name">信用卡／簽帳金融卡上的名字</string>
-    <string name="zip_code">郵遞區號</string>
-    <string name="card_number">信用卡號</string>
-    <string name="billing_information">帳單資訊</string>
     <string name="country">國家</string>
-    <string name="cvc">CVC</string>
-    <string name="terms_and_conditions_billing">按一下「送出」即代表您同意
-    遵守\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 的條款及細則</a></string>
-    <string name="submit">送出</string>
-    <string name="currency">貨幣</string>
-    <string name="plan_duration">帳單週期</string>
-    <string name="duration_annual_line1">年度方案<font color="#C3E129">省下 20%</font></string>
-    <string name="per_month_text_only">每月</string>
-    <string name="duration_annual_line3">計費為 %s／年</string>
-    <string name="duration_annual_line4">計費為 %s／月</string>
-    <string name="duration_monthly_line1">每月方案</string>
-    <string name="duration_monthly_line3">省下 20%</string>
     <string name="set_cont">設定並繼續</string>
-    <string name="payment_error">付款錯誤</string>
     <string name="error">錯誤</string>
-    <string name="try_another_card">嘗試另一張卡</string>
-    <string name="try_another_paypal">使用 PayPal 付款</string>
-    <string name="try_another_payment_method">嘗試其他方法</string>
-    <string name="submit_paypal">使用 PayPal 結帳</string>
-    <string name="picker_card">信用卡／簽帳金融卡</string>
-    <string name="picker_paypal">PayPal</string>
-    <string name="paypal_disclaimer">您必須登入您的 PayPal 帳號以完成此交易。我們將會為您在新瀏覽器視窗中開啟 PayPal。</string>
-    <string name="payment_picker_disclaimer">請選擇付款類型</string>
-    <string name="payment_success_title">付款成功！</string>
-    <string name="payment_success_text">我們目前正在升級您的帳號，請稍候。感謝您的支持！</string>
-    <string name="donation_success_title">捐款成功！</string>
-    <string name="donation_success_text">您的支持是讓 ProtonMail 得以繼續運作的關鍵。感謝您對網路隱私的支持！</string>
-    <string name="create_free_account">建立免費帳號</string>
     <string name="storage_gb">%d GB 儲存空間</string>
     <string name="storage_mb">%d MB 儲存空間</string>
     <string name="max_addresses">最多 %d 個電子郵件別名</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d 嵌入圖片</string>
     <string name="select">選取</string>
-    <string name="change_currency">變更貨幣</string>
-    <string name="switch_billing_monthly">切換為月繳</string>
-    <string name="switch_billing_yearly">切換為年繳</string>
     <string name="warning">警告</string>
     <string name="empty_recovery_email_question">警告：您沒有設定備援電子郵件地址，因此如果您忘記密碼，將無法恢復帳號。在沒有備援電子郵件地址的情況下繼續？</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">有效期 %s</string>
-    <string name="payment_methods">付款方式</string>
-    <string name="payment_approval_activity">付款方式批准</string>
-    <string name="payment_approval_success">付款方式已批准</string>
-    <string name="payment_approval_unknown_error_description">嘗試驗證您的付款方式時發生錯誤。請再試一次或切換到其他卡片。</string>
-    <string name="payment_approval_cancel_error_description">付款方法驗證已取消。請再試一次或切換到其他卡片。</string>
-    <string name="payment_approval_consumed_error_description">付款方式已用於此付款。請檢查您的訂閱狀態。</string>
     <string name="no_payment_methods">沒有已儲存的付款方式。</string>
     <string name="edit_payment_methods">請透過登入 protonmail.com 來編輯付費資訊。</string>
     <string name="message_not_loaded">郵件未載入</string>
@@ -502,12 +345,7 @@
     <string name="delete_selected">刪除所選項目</string>
     <string name="pin_not_activated">PIN 碼未啟動</string>
     <string name="available_options">可用選項</string>
-    <string name="current_recovery_email">目前的備援電子郵件地址</string>
     <string name="change_recovery_email">變更備援的電子郵件地址</string>
-    <string name="new_recovery_email">新的備援電子郵件</string>
-    <string name="confirm_new_recovery_email">確認新的備援電子郵件</string>
-    <string name="recovery_emails_invalid">電子郵件地址不相符或無效</string>
-    <string name="authenticate">驗證</string>
     <string name="background_sync_subtitle">如果啟用這個選項，應用程式會在背景和伺服器同步。停止此項功能將會停用推送通知。</string>
     <string-array name="notification_options">
         <item>無震動或聲音</item>
@@ -599,10 +437,6 @@
     </string-array>
     <string name="logged_out">已登出</string>
     <string name="logged_out_description">您已登出。請再次登入。</string>
-    <string name="verification_needed">需要驗證</string>
-    <string name="verification_needed_description">為安全理由，請證明您不是機器人。</string>
-    <string name="verification_needed_description_notification">請在傳送此郵件前驗證您是否為人類：%s</string>
-    <string name="message_drafted_verification_needed">郵件未傳送 - 需要驗證。您的郵件已儲存在「草稿」資料夾中。</string>
     <string name="error_message_zip_code_invalid">錯誤：郵遞區碼無效</string>
     <string name="error_message_cvc_invalid">錯誤：CVC 號碼無效</string>
     <string name="error_message_card_name_invalid">錯誤：卡片持有人名稱無效</string>
@@ -758,7 +592,6 @@
     <string name="contact_add_addr_to_group">新增電子郵件地址到群組</string>
     <string name="title_activity_address_chooser">管理電子郵件地址</string>
     <string name="title_activity_account_manager">管理帳號</string>
-    <string name="title_activity_connect_account">連結帳號</string>
     <string name="account_manager_add_account">新增帳號</string>
     <string name="account_manager_remove_all_accounts">正在移除所有帳號</string>
     <string name="account_manager_note">您可以同時登入到無限數量的付費 ProtonMail 帳號與一個免費帳號。</string>
@@ -768,7 +601,6 @@
     <string name="manage_accounts_user_loggedout">%s（已登出）</string>
     <string name="manage_accounts_user_primary">%s（主要）</string>
     <string name="account_manager_remove">移除</string>
-    <string name="connect_account_login_title">登入您的 ProtonMail 帳號</string>
     <string name="default_error_message">發生錯誤</string>
     <string name="no_contact_groups">無聯絡人群組</string>
     <string name="search_contacts_inside_group">搜尋群組中的聯絡人</string>
@@ -953,7 +785,6 @@
     <string name="connect_account_limit_subtitle">您無法新增其他免費的 ProtonMail 帳號。僅能新增一個免費的 ProtonMail 帳號。請登出您其他的免費帳號或升級您的其中一個免費帳號為付費帳號。</string>
     <string name="switch_accounts_question">切換帳號？</string>
     <string name="switch_to_account">切換到 %s</string>
-    <string name="login_failure_missing_keys">您正在嘗試新增的帳號沒有已生成的金鑰。請在應用程式上新增此帳號為第一帳號，或透過網頁版本登入，以生成金鑰並在應用程式中新增其為額外的帳號。</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">撰寫郵件</string>

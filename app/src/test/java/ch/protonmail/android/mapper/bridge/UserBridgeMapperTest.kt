@@ -35,7 +35,6 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_CREDIT
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_CURRENCY
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
-import ch.protonmail.android.core.Constants.Prefs.PREF_USER_LEGACY_ACCOUNT
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE
 import ch.protonmail.android.core.ProtonMailApplication
@@ -45,6 +44,7 @@ import ch.protonmail.android.domain.entity.user.Delinquent
 import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.domain.entity.user.Role
 import ch.protonmail.android.domain.entity.user.UserKeys
+import ch.protonmail.android.domain.util.orThrow
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import io.mockk.every
 import io.mockk.mockk
@@ -84,7 +84,6 @@ internal class UserBridgeMapperTest {
             every { maxUpload } returns 12_345
             every { usedSpace } returns 15_000
             every { maxSpace } returns 30_000
-            every { legacyAccount } returns true
         }
 
         // WHEN
@@ -143,7 +142,6 @@ internal class UserBridgeMapperTest {
                 every { getInt(PREF_MAX_UPLOAD_FILE_SIZE, any()) } returns 12_345
                 every { getLong(PREF_USED_SPACE, any()) } returns 15_000
                 every { getLong(PREF_MAX_SPACE, any()) } returns 30_000
-                every { getBoolean(PREF_USER_LEGACY_ACCOUNT, any()) } returns true
 
                 every { edit() } returns mockk(relaxed = true)
             }
@@ -151,7 +149,7 @@ internal class UserBridgeMapperTest {
             every { SystemClock.elapsedRealtime() } returns 0
 
             // GIVEN
-            val oldUser = LegacyUser.load(Id("id"), mockk())
+            val oldUser = LegacyUser.load(Id("id"), mockk(), mockk(), mockk()).orThrow()
 
             // WHEN
             val legacyUser = mapper { oldUser.toNewModel() }

@@ -34,7 +34,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <!-- Email -->
     <TextView
-        android:id="@id/email_address"
+        android:id="@+id/email_address"
         style="@style/DrawerEmailAddressText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

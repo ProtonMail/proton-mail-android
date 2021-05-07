@@ -19,10 +19,9 @@
 package ch.protonmail.android.activities;
 
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_LOGOUT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
-import static ch.protonmail.android.worker.FetchUserInfoWorkerKt.FETCH_USER_INFO_WORKER_NAME;
-import static ch.protonmail.android.worker.FetchUserInfoWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
+import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_NAME;
+import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -43,7 +42,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.work.WorkManager;
 
 import com.birbit.android.jobqueue.JobManager;
@@ -69,16 +67,14 @@ import ch.protonmail.android.core.NetworkResults;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
-import ch.protonmail.android.events.ForceSwitchedAccountNotifier;
-import ch.protonmail.android.events.LogoutEvent;
-import ch.protonmail.android.events.Status;
+import ch.protonmail.android.feature.account.AccountStateManager;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.settings.pin.ValidatePinActivity;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.INetworkConfiguratorCallback;
 import ch.protonmail.android.worker.FetchMailSettingsWorker;
-import ch.protonmail.android.worker.FetchUserInfoWorker;
+import ch.protonmail.android.worker.FetchUserWorker;
 import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
 
@@ -103,6 +99,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     //              directly, as are aiming to remove this base class
     protected UserManager mUserManager;
     @Inject
+    protected AccountStateManager accountStateManager;
+    @Inject
     protected JobManager mJobManager;
     @Inject
     protected QueueNetworkUtil mNetworkUtil;
@@ -117,7 +115,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @Inject
     protected WorkManager workManager;
     @Inject
-    protected FetchUserInfoWorker.Enqueuer fetchUserInfoWorkerEnqueuer;
+    protected FetchUserWorker.Enqueuer fetchUserInfoWorkerEnqueuer;
     @Inject
     protected FetchMailSettingsWorker.Enqueuer fetchMailSettingsWorkerEnqueuer;
 
@@ -167,6 +165,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             }
         }
         mCurrentLocale = app.getCurrentLocale();
+        accountStateManager.register(this);
         buildHtmlProcessor();
 
         setContentView(getLayoutId());
@@ -175,15 +174,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
         }
-
-        ForceSwitchedAccountNotifier.notifier.observe(this, event -> {
-            if (event != null) {
-                AppUtil.postEventOnUi(event);
-                if (!(this instanceof NavigationActivity)) {
-                    onBackPressed();
-                }
-            }
-        });
     }
 
     @Override
@@ -194,9 +184,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
 
     @Override
     public void onBackPressed() {
-        if (!(this instanceof SplashActivity)) {
-            saveLastInteraction();
-        }
+        saveLastInteraction();
         finish();
     }
 
@@ -225,7 +213,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected void onResume() {
         super.onResume();
 
-        User user = mUserManager.getCurrentLegacyUserBlocking();
+        User user = mUserManager.getCurrentLegacyUser();
 
         // Enable secure mode if screenshots are disabled, else disable it
         if (isPreventingScreenshots() || user != null && user.isPreventTakingScreenshots()) {
@@ -269,7 +257,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     private void shouldLock() {
-        User user = mUserManager.getCurrentLegacyUserBlocking();
+        User user = mUserManager.getCurrentLegacyUser();
         if (user == null)
             return;
 
@@ -326,14 +314,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             }
             boolean isValid = data.getBooleanExtra(EXTRA_PIN_VALID, false);
             if (!isValid) {
-                boolean logout = data.getBooleanExtra(EXTRA_LOGOUT, false);
-                if (logout) {
-                    mUserManager.logoutLastActiveAccountBlocking();
-                    AppUtil.postEventOnUi(new LogoutEvent(Status.SUCCESS));
-                } else {
-                    validationCanceled = true;
-                    finish();
-                }
+                validationCanceled = true;
+                finish();
             } else {
                 if (this instanceof ValidatePinActivity) {
                     validationCanceled = false;
@@ -358,7 +340,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         super.onStop();
         // Enable secure mode for hide content from recent if pin is enabled, else disable it so
         // content will be visible in recent
-        User currentUser = mUserManager.getCurrentLegacyUserBlocking();
+        User currentUser = mUserManager.getCurrentLegacyUser();
         if (currentUser != null && currentUser.isUsePin())
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
@@ -379,7 +361,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     private void activateScreenProtector() {
-        User currentUser = mUserManager.getCurrentLegacyUserBlocking();
+        User currentUser = mUserManager.getCurrentLegacyUser();
         if (currentUser != null && currentUser.isUsePin()) {
             if (mScreenProtectorLayout != null) {
                 mScreenProtectorLayout.setVisibility(View.VISIBLE);
@@ -388,15 +370,13 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     protected void saveLastInteraction() {
-        User user = mUserManager.getCurrentLegacyUserBlocking();
-        if (user != null) {
-            user.setLastInteraction(SystemClock.elapsedRealtime());
-        }
+        User user = mUserManager.getCurrentLegacyUser();
+        if (user != null) user.setLastInteraction(SystemClock.elapsedRealtime());
     }
 
     protected void checkDelinquency() {
-        ch.protonmail.android.domain.entity.user.User user =
-                mUserManager.requireCurrentUserBlocking();
+        ch.protonmail.android.domain.entity.user.User user = mUserManager.getCurrentUser();
+        if (user == null) return;
         boolean areMailRoutesAccessible = user.getDelinquent().getMailRoutesAccessible();
         if (!areMailRoutesAccessible && (alertDelinquency == null || !alertDelinquency.isShowing())) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -409,12 +389,15 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             Button btnLogout = dialogView.findViewById(R.id.logout);
 
             btnLogout.setOnClickListener(v -> {
-                mUserManager.logoutCurrentUserOfflineBlocking();
-                finish();
+                accountStateManager.logoutPrimary().invokeOnCompletion(throwable -> {
+                    finish();
+                    return null;
+                });
             });
             btnClose.setOnClickListener(v -> finish());
             btnCheckAgain.setOnClickListener(v -> {
-                fetchUserInfoWorkerEnqueuer.invoke();
+                // TODO: Remove fetchUserInfoWorkerEnqueuer, not adapted for this usage.
+                fetchUserInfoWorkerEnqueuer.invoke(user.getId());
                 workManager.getWorkInfosForUniqueWorkLiveData(FETCH_USER_INFO_WORKER_NAME)
                         .observe(this, workInfo -> {
                             boolean isDelinquent = workInfo.get(0).getOutputData().getBoolean(FETCH_USER_INFO_WORKER_RESULT, true);
@@ -442,9 +425,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     protected void fetchOrganizationData() {
-        ch.protonmail.android.domain.entity.user.User user =
-                mUserManager.requireCurrentUserBlocking();
-        if (user.isPaidMailUser()) {
+        User user = mUserManager.getCurrentLegacyUser();
+        if (user != null && user.isPaidUser()) {
             GetOrganizationJob getOrganizationJob = new GetOrganizationJob();
             mJobManager.addJobInBackground(getOrganizationJob);
         } else {

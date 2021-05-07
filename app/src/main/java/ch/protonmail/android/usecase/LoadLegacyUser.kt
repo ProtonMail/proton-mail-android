@@ -23,6 +23,8 @@ import android.content.Context
 import arrow.core.Either
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.withContext
+import me.proton.core.crypto.common.keystore.KeyStoreCrypto
+import me.proton.core.user.domain.UserManager
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 import ch.protonmail.android.api.models.User as LegacyUser
@@ -35,19 +37,19 @@ class LoadLegacyUser @Inject constructor(
 
     suspend operator fun invoke(userId: Id): Either<LoadUser.Error, LegacyUser> =
         withContext(dispatchers.Io) {
-            Either.catch {
-                loadLegacyUserDelegate(userId)
-            }.mapLeft { LoadUser.Error }
+            loadLegacyUserDelegate(userId)
         }
 
 }
 
 // Implemented for testing easiness purpose
 class LoadLegacyUserDelegate @Inject constructor(
-    private val context: Context
+    private val context: Context,
+    private val userManager: UserManager,
+    private val keyStoreCrypto: KeyStoreCrypto
 ) {
 
-    operator fun invoke(userId: Id): LegacyUser =
+    operator fun invoke(userId: Id): Either<LoadUser.Error, LegacyUser> =
         @Suppress("DEPRECATION")
-        LegacyUser.load(userId, context)
+        LegacyUser.load(userId, context, userManager, keyStoreCrypto)
 }

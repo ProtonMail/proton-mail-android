@@ -134,7 +134,7 @@
             android:name=".activities.SplashActivity"
             android:clearTaskOnLaunch="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Immersive">
+            android:theme="@style/ProtonTheme.Splash.Mail">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -145,38 +145,10 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity
-            android:name=".activities.guest.FirstActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activities.settings.AttachmentStorageActivity"
             android:exported="false"
             android:label="@string/local_storage"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activities.guest.LoginActivity"
-            android:exported="false"
-            android:configChanges="orientation|screenSize"
-            android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity
-            android:name=".activities.guest.MailboxLoginActivity"
-            android:exported="false"
-            android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity
-            android:name=".activities.guest.CreateAccountActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name=".activities.guest.CreateAccountFeedbackActivity"
-            android:exported="false"
-            android:clearTaskOnLaunch="true"
-            android:launchMode="singleTop"
-            android:noHistory="true"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activities.mailbox.MailboxActivity"
             android:exported="false"
@@ -291,20 +263,7 @@
             android:name=".settings.pin.ValidatePinActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Immersive"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
-        <activity
-            android:name=".activities.UpsellingActivity"
-            android:exported="false"
-            android:label="@string/upgrade_donate"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
-            android:name=".activities.BillingActivity"
-            android:exported="false"
-            android:label="@string/upgrade"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".contacts.details.ContactDetailsActivity"
             android:exported="false"
@@ -316,12 +275,6 @@
             android:exported="false"
             android:label="@string/contact_details"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity
-            android:name=".activities.ChangePasswordActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:label="@string/password_manager"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activities.AccountTypeActivity"
@@ -359,11 +312,6 @@
             android:label="@string/notification_settings"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".activities.PaymentTokenApprovalActivity"
-            android:exported="false"
-            android:label="@string/payment_approval_activity"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity
             android:name=".activities.SnoozeNotificationsActivity"
             android:exported="false"
             android:screenOrientation="portrait"
@@ -391,28 +339,10 @@
             android:screenOrientation="portrait"
             android:exported="false"
             android:label="@string/title_activity_account_manager"/>
-        <activity
-            android:name=".activities.multiuser.ConnectAccountActivity"
-            android:screenOrientation="portrait"
-            android:exported="false"
-            android:label="@string/title_activity_connect_account" />
-        <activity android:name=".activities.multiuser.ConnectAccountMailboxLoginActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask"
-            android:exported="false"
-            android:label="@string/title_activity_connect_account"/>
         <service
             android:name=".api.services.MessagesService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".api.services.LoginService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-        <service
-            android:name=".api.services.LogoutService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false" />
         <service
             android:name=".api.segments.event.EventUpdaterService"
             android:exported="false"
@@ -427,6 +357,25 @@
             android:name=".api.services.ConnectivityService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+        <!-- Core -->
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.AuthHelpActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.ChooseAddressActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.CreateAddressActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.LoginActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.TwoPassModeActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.SecondFactorActivity"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

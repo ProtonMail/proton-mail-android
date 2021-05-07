@@ -39,7 +39,6 @@ import javax.inject.Inject;
 
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
-import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.activities.mailbox.InvalidateSearchDatabase;
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
@@ -48,7 +47,6 @@ import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.ContactsRepository;
 import ch.protonmail.android.data.local.model.Message;
-import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.NoResultsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
 import ch.protonmail.android.utils.AppUtil;
@@ -234,12 +232,6 @@ public class SearchActivity extends BaseActivity {
         MessageLocationType messageLocation = MessageLocationType.Companion.fromInt(message.getLocation());
         return messageLocation == MessageLocationType.ALL_DRAFT ||
                 messageLocation == MessageLocationType.DRAFT;
-    }
-
-    @Subscribe
-    public void onLogoutEvent(LogoutEvent event) {
-        startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
-        finish();
     }
 
     @Subscribe
