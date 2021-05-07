@@ -240,7 +240,8 @@ class MailboxViewModel @Inject constructor(
         oldestItemTimestamp: Long
     ) {
         if (conversationModeEnabled(location)) {
-            return getConversations.loadMore(userManager.requireCurrentUserId(), location, oldestItemTimestamp)
+            val locationId = labelId ?: location.messageLocationTypeValue.toString()
+            return getConversations.loadMore(userManager.requireCurrentUserId(), locationId, oldestItemTimestamp)
         }
 
         fetchMessages(
@@ -296,12 +297,12 @@ class MailboxViewModel @Inject constructor(
         location: Constants.MessageLocationType,
         labelId: String?
     ): LiveData<MailboxState> {
+        val locationId = labelId ?: location.messageLocationTypeValue.toString()
         return getConversations(
-            userManager.requireCurrentUserId(), location, labelId
+            userManager.requireCurrentUserId(), locationId
         ).map { result ->
             when (result) {
                 is GetConversationsResult.Success -> {
-                    val locationId = labelId ?: location.messageLocationTypeValue.toString()
                     return@map MailboxState(
                         conversationsToMailboxItems(result.conversations, locationId)
                     )

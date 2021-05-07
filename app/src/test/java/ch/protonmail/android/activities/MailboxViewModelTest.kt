@@ -25,7 +25,13 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.services.MessagesService
-import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
+import ch.protonmail.android.core.Constants.MessageLocationType.ARCHIVE
+import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
+import ch.protonmail.android.core.Constants.MessageLocationType.INVALID
+import ch.protonmail.android.core.Constants.MessageLocationType.LABEL
+import ch.protonmail.android.core.Constants.MessageLocationType.LABEL_FOLDER
+import ch.protonmail.android.core.Constants.MessageLocationType.SENT
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
@@ -168,7 +174,7 @@ class MailboxViewModelTest : CoroutinesTest {
 
         // When
         val actual = viewModel.getMailboxItems(
-            Constants.MessageLocationType.INBOX,
+            INBOX,
             "",
             false,
             "",
@@ -190,7 +196,7 @@ class MailboxViewModelTest : CoroutinesTest {
             labelIds = emptyList(),
             recipients = "",
             messageData = MessageData(
-                location = Constants.MessageLocationType.INVALID.messageLocationTypeValue,
+                location = INVALID.messageLocationTypeValue,
                 isReplied = false,
                 isRepliedAll = false,
                 isForwarded = false,
@@ -225,7 +231,7 @@ class MailboxViewModelTest : CoroutinesTest {
 
         // When
         val actual = viewModel.getMailboxItems(
-            Constants.MessageLocationType.INBOX,
+            INBOX,
             "",
             false,
             "",
@@ -247,7 +253,7 @@ class MailboxViewModelTest : CoroutinesTest {
             labelIds = emptyList(),
             recipients = "",
             messageData = MessageData(
-                location = Constants.MessageLocationType.INVALID.messageLocationTypeValue,
+                location = INVALID.messageLocationTypeValue,
                 isReplied = false,
                 isRepliedAll = false,
                 isForwarded = false,
@@ -278,7 +284,7 @@ class MailboxViewModelTest : CoroutinesTest {
 
         // When
         val actual = viewModel.getMailboxItems(
-            Constants.MessageLocationType.INBOX,
+            INBOX,
             "",
             false,
             "",
@@ -300,7 +306,7 @@ class MailboxViewModelTest : CoroutinesTest {
             labelIds = emptyList(),
             recipients = "",
             messageData = MessageData(
-                location = Constants.MessageLocationType.INVALID.messageLocationTypeValue,
+                location = INVALID.messageLocationTypeValue,
                 isReplied = false,
                 isRepliedAll = false,
                 isForwarded = false,
@@ -330,7 +336,7 @@ class MailboxViewModelTest : CoroutinesTest {
 
         // When
         val actual = viewModel.getMailboxItems(
-            Constants.MessageLocationType.INBOX,
+            INBOX,
             "",
             false,
             "",
@@ -352,7 +358,7 @@ class MailboxViewModelTest : CoroutinesTest {
             labelIds = emptyList(),
             recipients = "",
             messageData = MessageData(
-                location = Constants.MessageLocationType.INVALID.messageLocationTypeValue,
+                location = INVALID.messageLocationTypeValue,
                 isReplied = false,
                 isRepliedAll = false,
                 isForwarded = false,
@@ -380,7 +386,7 @@ class MailboxViewModelTest : CoroutinesTest {
                 deleted = false
                 allLabelIDs = listOf("label1", "label2")
                 toList = recipients
-                location = Constants.MessageLocationType.SENT.messageLocationTypeValue
+                location = SENT.messageLocationTypeValue
                 isReplied = true
                 isRepliedAll = false
                 isForwarded = false
@@ -395,7 +401,7 @@ class MailboxViewModelTest : CoroutinesTest {
 
         // When
         val actual = viewModel.getMailboxItems(
-            Constants.MessageLocationType.INBOX,
+            INBOX,
             "",
             false,
             "",
@@ -419,7 +425,7 @@ class MailboxViewModelTest : CoroutinesTest {
                 recipients
             ),
             messageData = MessageData(
-                location = Constants.MessageLocationType.SENT.messageLocationTypeValue,
+                location = SENT.messageLocationTypeValue,
                 isReplied = true,
                 isRepliedAll = false,
                 isForwarded = false,
@@ -432,7 +438,7 @@ class MailboxViewModelTest : CoroutinesTest {
 
     @Test
     fun getMailboxItemsCallsFetchByLocationForwardingTheGivenParameters() {
-        val location = Constants.MessageLocationType.SENT
+        val location = SENT
         val labelId = "labelId923842"
         val includeLabels = true
         val uuid = "9238423bbe2h3423489wssdf"
@@ -466,7 +472,7 @@ class MailboxViewModelTest : CoroutinesTest {
         coEvery { messageDetailsRepository.getAllMessages() } returns liveData { emit(listOf(message)) }
 
         val actual = viewModel.getMailboxItems(
-            Constants.MessageLocationType.ALL_MAIL,
+            ALL_MAIL,
             "labelId923842",
             true,
             "9238423bbe2h3423489wssdf",
@@ -482,7 +488,7 @@ class MailboxViewModelTest : CoroutinesTest {
 
     @Test
     fun getMailboxItemsCallsMessageServiceStartFetchMessagesWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsNotALabelOrFolder() {
-        val location = Constants.MessageLocationType.ARCHIVE
+        val location = ARCHIVE
         val labelId = "labelId92323"
         val includeLabels = false
         val uuid = "9238423bbe2h3283742h3hh2bjsd"
@@ -507,7 +513,7 @@ class MailboxViewModelTest : CoroutinesTest {
 
     @Test
     fun getMailboxItemsCallsMessageServiceStartFetchMessagesByLabelWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirstAndLocationIsALabelOrFolder() {
-        val location = Constants.MessageLocationType.LABEL_FOLDER
+        val location = LABEL_FOLDER
         val labelId = "folderIdi2384"
         val includeLabels = false
         val uuid = "9238h82388sdfa8sdf8asd3hh2bjsd"
@@ -534,13 +540,36 @@ class MailboxViewModelTest : CoroutinesTest {
     }
 
     @Test
+    fun getMailboxItemsCallsGetConversationsWithTheCorrectLocationIdWhenTheRequestIsAboutLoadingPagesGreaterThanTheFirst() {
+        val location = LABEL
+        val labelId = "customLabelIdi2386"
+        val uuid = "9238h82388sdfa8sdf8asd3234"
+        // Represents pagination. Only messages older than the given timestamp will be returned
+        val oldestMessageTimestamp = 1323L
+        val userId = Id("userId1")
+        every { userManager.requireCurrentUserId() } returns userId
+        every { conversationModeEnabled(location) } returns true
+
+        viewModel.loadMore(
+            location,
+            labelId,
+            false,
+            uuid,
+            false,
+            oldestMessageTimestamp
+        )
+
+        verify { getConversations.loadMore(userId, labelId, oldestMessageTimestamp) }
+    }
+
+    @Test
     fun getMailboxItemsReturnsMailboxItemsLiveDataMappedFromMessageDetailsRepositoryWhenFetchingSubsequentPages() {
         val message = Message(
             messageId = "messageId92384823",
             sender = MessageSender("senderName1", "sender@pm.me"),
             subject = "subject12834"
         )
-        val location = Constants.MessageLocationType.LABEL_FOLDER
+        val location = LABEL_FOLDER
         val labelId = "folderIdi2384"
         val includeLabels = false
         val uuid = "9238h82388sdfa8sdf8asd3hh2283"
@@ -566,7 +595,7 @@ class MailboxViewModelTest : CoroutinesTest {
 
     @Test
     fun getMailboxItemsCallsGetConversationsUseCaseWhenConversationModeIsEnabled() = runBlockingTest {
-        val location = Constants.MessageLocationType.INBOX
+        val location = LABEL
         val labelId = "labelId923842"
         val includeLabels = true
         val uuid = "9238423bbe2h3423489wssdf"
@@ -581,14 +610,15 @@ class MailboxViewModelTest : CoroutinesTest {
             refreshMessages
         )
 
-        coVerifySequence { getConversations(currentUserId, location, labelId) }
+        coVerifySequence { getConversations(currentUserId, labelId) }
         verify { messageServiceScheduler wasNot Called }
     }
 
     @Test
     fun getMailboxItemsReturnsMailboxItemsMappedFromConversationsWhenGetConversationsUseCaseSucceeds() =
         runBlockingTest {
-            val location = Constants.MessageLocationType.INBOX
+            val location = INBOX
+            val locationId = INBOX.messageLocationTypeValue.toString()
             val senders = listOf(
                 Correspondent("firstSender", "firstsender@protonmail.com")
             )
@@ -604,14 +634,13 @@ class MailboxViewModelTest : CoroutinesTest {
                 listOf(),
                 null
             )
-            val labelId = "labelId923842"
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, labelId) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, locationId) } returns flowOf(successResult)
 
             val actual = viewModel.getMailboxItems(
                 location,
-                labelId,
+                null,
                 true,
                 "9238423bbe2h3423489wssdf",
                 false,
@@ -641,7 +670,8 @@ class MailboxViewModelTest : CoroutinesTest {
     @Test
     fun getMailboxItemsMapsConversationsSendersUsingContactNameOrSenderNameOrEmailInThisPreferenceOrder() =
         runBlockingTest {
-            val location = Constants.MessageLocationType.INBOX
+            val location = INBOX
+            val locationId = INBOX.messageLocationTypeValue.toString()
             val senders = listOf(
                 Correspondent("firstSender", "firstsender@protonmail.com"),
                 Correspondent("secondSender", "anotherSender@protonmail.com"),
@@ -664,16 +694,15 @@ class MailboxViewModelTest : CoroutinesTest {
                 null
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
-            val labelId = "labelId923842"
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, labelId) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, locationId) } returns flowOf(successResult)
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
             )
 
             val actual = viewModel.getMailboxItems(
                 location,
-                labelId,
+                null,
                 true,
                 "9238423bbe2h3423489wssdf",
                 false,
@@ -702,7 +731,7 @@ class MailboxViewModelTest : CoroutinesTest {
     @Test
     fun getMailboxItemsMapsConversationAsStarredIfLabelsContainsStarredLabelId() =
         runBlockingTest {
-            val location = Constants.MessageLocationType.INBOX
+            val location = LABEL
             val conversation = Conversation(
                 "conversationId9238",
                 "subject9237472",
@@ -721,7 +750,7 @@ class MailboxViewModelTest : CoroutinesTest {
             val successResult = GetConversationsResult.Success(listOf(conversation))
             val labelId = "labelId923842"
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, labelId) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, labelId) } returns flowOf(successResult)
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
             )
@@ -757,7 +786,7 @@ class MailboxViewModelTest : CoroutinesTest {
     @Test
     fun getMailboxItemsMapsMessagesNumberToNullWhenItsLowerThanTwoSoThatItIsNotDisplayed() =
         runBlockingTest {
-            val location = Constants.MessageLocationType.INBOX
+            val location = LABEL
             val conversation = Conversation(
                 "conversationId9239",
                 "subject9237473",
@@ -773,7 +802,7 @@ class MailboxViewModelTest : CoroutinesTest {
             val successResult = GetConversationsResult.Success(listOf(conversation))
             val labelId = "labelId923843"
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, labelId) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, labelId) } returns flowOf(successResult)
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
             )
@@ -809,7 +838,8 @@ class MailboxViewModelTest : CoroutinesTest {
     @Test
     fun getMailboxItemsMapsLastMessageTimeMsToTheContextTimeOfTheLabelRepresentingTheCurrentLocationConvertedToMs() =
         runBlockingTest {
-            val location = Constants.MessageLocationType.INBOX
+            val location = INBOX
+            val locationId = INBOX.messageLocationTypeValue.toString()
             val inboxLocationId = "0"
             val archiveLocationId = "6"
             val conversation = Conversation(
@@ -829,7 +859,7 @@ class MailboxViewModelTest : CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, null) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, locationId) } returns flowOf(successResult)
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
             )
@@ -865,7 +895,7 @@ class MailboxViewModelTest : CoroutinesTest {
     @Test
     fun getMailboxItemsMapsLastMessageTimeMsToTheContextTimeOfTheLabelRepresentingTheCurrentCustomFolderConvertedToMs() =
         runBlockingTest {
-            val location = Constants.MessageLocationType.LABEL
+            val location = LABEL
             val customLabelId = "Aujas8df8asdf727388fsdjfsjdbnj12=="
             val archiveLocationId = "6"
             val conversation = Conversation(
@@ -885,7 +915,7 @@ class MailboxViewModelTest : CoroutinesTest {
             )
             val successResult = GetConversationsResult.Success(listOf(conversation))
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, customLabelId) } returns flowOf(successResult)
+            coEvery { getConversations(currentUserId, customLabelId) } returns flowOf(successResult)
             coEvery { contactsRepository.findAllContactEmails() } returns flowOf(
                 listOf(ContactEmail("firstContactId", "firstsender@protonmail.com", "firstContactName"))
             )
@@ -921,10 +951,10 @@ class MailboxViewModelTest : CoroutinesTest {
     @Test
     fun getMailboxItemsReturnsMailboxStateWithErrorWhenGetConversationsUseCaseReturnsError() =
         runBlockingTest {
-            val location = Constants.MessageLocationType.INBOX
+            val location = LABEL
             val labelId = "labelId923844"
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, labelId) } returns flowOf(GetConversationsResult.Error)
+            coEvery { getConversations(currentUserId, labelId) } returns flowOf(GetConversationsResult.Error)
 
             val actual = viewModel.getMailboxItems(
                 location,
@@ -943,10 +973,10 @@ class MailboxViewModelTest : CoroutinesTest {
     @Test
     fun getMailboxItemsReturnsStateWithNoMoreItemsWhenGetConversationsUseCaseReturnsNoConversationsFound() =
         runBlockingTest {
-            val location = Constants.MessageLocationType.INBOX
+            val location = LABEL_FOLDER
             val labelId = "labelId923844"
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, location, labelId) } returns flowOf(
+            coEvery { getConversations(currentUserId, labelId) } returns flowOf(
                 GetConversationsResult.NoConversationsFound
             )
 
@@ -968,7 +998,7 @@ class MailboxViewModelTest : CoroutinesTest {
     fun refreshMailboxCountTriggersFetchMessagesCountJobWhenConversationsModeIsNotEnabled() {
         every { conversationModeEnabled(any()) } returns false
 
-        viewModel.refreshMailboxCount(Constants.MessageLocationType.INBOX)
+        viewModel.refreshMailboxCount(INBOX)
 
         val actual = slot<FetchMessageCountsJob>()
         verify { jobManager.addJobInBackground(capture(actual)) }
@@ -979,7 +1009,7 @@ class MailboxViewModelTest : CoroutinesTest {
     fun refreshMailboxCountDoesNotTriggerFetchMessagesCountJobWhenConversationsModeIsEnabled() {
         every { conversationModeEnabled(any()) } returns true
 
-        viewModel.refreshMailboxCount(Constants.MessageLocationType.INBOX)
+        viewModel.refreshMailboxCount(INBOX)
 
         verify { jobManager wasNot Called }
     }
@@ -999,7 +1029,7 @@ class MailboxViewModelTest : CoroutinesTest {
         expirationTime = 0,
         messagesCount = null,
         messageData = MessageData(
-            Constants.MessageLocationType.INVALID.messageLocationTypeValue,
+            INVALID.messageLocationTypeValue,
             isReplied = false,
             isRepliedAll = false,
             isForwarded = false,
