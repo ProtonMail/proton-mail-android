@@ -71,6 +71,8 @@ import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
+import ch.protonmail.android.utils.extensions.setDarkStatusBar
+import ch.protonmail.android.utils.extensions.setLightStatusBar
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import ch.protonmail.android.utils.startSplashActivity
@@ -229,6 +231,7 @@ abstract class NavigationActivity :
     override fun onResume() {
         super.onResume()
         checkUserId()
+        setLightStatusBar()
         app.startJobManager()
         mJobManager.addJobInBackground(FetchUpdatesJob())
         val alarmReceiver = AlarmReceiver()
@@ -304,8 +307,14 @@ abstract class NavigationActivity :
         navigationDrawerUsersRecyclerView.adapter = accountsAdapter
 
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+
+            override fun onDrawerOpened(drawerView: View) {
+                super.onDrawerOpened(drawerView)
+                setDarkStatusBar()
+            }
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
+                setLightStatusBar()
                 onUserClicked(false)
                 onDrawerClose()
                 onDrawerClose = {}
