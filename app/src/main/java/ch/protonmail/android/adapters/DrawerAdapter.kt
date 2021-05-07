@@ -30,15 +30,12 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.uiModel.DrawerItemUiModel
-import ch.protonmail.android.uiModel.DrawerItemUiModel.Divider
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Footer
-import ch.protonmail.android.uiModel.DrawerItemUiModel.Header
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
 import ch.protonmail.android.uiModel.DrawerItemUiModel.SectionName
 import ch.protonmail.android.uiModel.LabelUiModel
 import me.proton.core.presentation.utils.inflate
 import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
-import ch.protonmail.android.views.DrawerHeaderView
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
 import kotlinx.android.synthetic.main.drawer_list_item.view.*
@@ -47,12 +44,10 @@ import me.proton.core.util.kotlin.invoke
 
 // region constants
 /** View types for Adapter */
-private const val VIEW_TYPE_HEADER = 0
-private const val VIEW_TYPE_DIVIDER = 1
-private const val VIEW_TYPE_SECTION_NAME = 2
-private const val VIEW_TYPE_STATIC = 3
-private const val VIEW_TYPE_LABEL = 4
-private const val VIEW_TYPE_FOOTER = 6
+private const val VIEW_TYPE_SECTION_NAME = 0
+private const val VIEW_TYPE_STATIC = 1
+private const val VIEW_TYPE_LABEL = 2
+private const val VIEW_TYPE_FOOTER = 3
 // endregion
 
 /**
@@ -93,8 +88,6 @@ internal class DrawerAdapter : BaseAdapter<
             val newItemAsStatic = newItem as? Primary.Static
             val newItemAsLabel = newItem as? Primary.Label
             return when ( oldItem ) {
-                is Header -> true // We only have one header
-                Divider -> true // Singleton, always animate the object when possible
                 is SectionName -> oldItem == newItem
                 is Primary -> when( oldItem ){
                     is Primary.Static -> oldItem.type == newItemAsStatic?.type
@@ -108,15 +101,6 @@ internal class DrawerAdapter : BaseAdapter<
     /** Abstract ViewHolder for the Adapter */
     abstract class ViewHolder<Model: DrawerItemUiModel>( itemView: View ) :
             ClickableAdapter.ViewHolder<Model>( itemView )
-
-    /** [ViewHolder] for [Header] */
-    private class HeaderViewHolder( itemView: View ) : ViewHolder<Header>( itemView ) {
-        override fun onBind( item: Header ) = with( itemView as DrawerHeaderView ) {
-            super.onBind( item )
-            setUser( item.name, item.email )
-            refresh( item.snoozeEnabled )
-        }
-    }
 
     /** [ViewHolder] for [Primary] Item */
     private abstract class PrimaryViewHolder<P : Primary>( itemView: View ) : ViewHolder<P>( itemView ) {
@@ -174,9 +158,6 @@ internal class DrawerAdapter : BaseAdapter<
         }
     }
 
-    /** [ViewHolder] for [Divider] */
-    private class DividerViewHolder( itemView: View ) : ViewHolder<Divider>( itemView )
-
     /** [ViewHolder] for [SectionName] */
     private class SectionNameViewHolder(itemView: View): ViewHolder<SectionName>(itemView) {
 
@@ -189,8 +170,6 @@ internal class DrawerAdapter : BaseAdapter<
     /** @return [Int] view type for the receiver [DrawerItemUiModel] */
     private val DrawerItemUiModel.viewType: Int get() {
         return when ( this ) {
-            is Header -> VIEW_TYPE_HEADER
-            Divider -> VIEW_TYPE_DIVIDER
             is SectionName -> VIEW_TYPE_SECTION_NAME
             is Primary -> when ( this ) {
                 is Primary.Static -> VIEW_TYPE_STATIC
@@ -202,8 +181,6 @@ internal class DrawerAdapter : BaseAdapter<
 
     /** @return [LayoutRes] for the given [viewType] */
     private fun layoutForViewType( viewType: Int ) = when ( viewType ) {
-        VIEW_TYPE_HEADER -> R.layout.drawer_header
-        VIEW_TYPE_DIVIDER -> R.layout.drawer_list_item_divider
         VIEW_TYPE_SECTION_NAME -> R.layout.drawer_section_name_item
         VIEW_TYPE_STATIC, VIEW_TYPE_LABEL -> R.layout.drawer_list_item
         VIEW_TYPE_FOOTER -> R.layout.drawer_footer
@@ -215,8 +192,6 @@ internal class DrawerAdapter : BaseAdapter<
         val view = inflate( layoutForViewType( viewType ) )
         @Suppress("UNCHECKED_CAST") // Type cannot be checked since is in invariant position
         return when ( viewType ) {
-            VIEW_TYPE_HEADER -> HeaderViewHolder(view)
-            VIEW_TYPE_DIVIDER -> DividerViewHolder(view)
             VIEW_TYPE_SECTION_NAME -> SectionNameViewHolder(view)
             VIEW_TYPE_STATIC -> StaticViewHolder(view)
             VIEW_TYPE_LABEL -> LabelViewHolder(view)

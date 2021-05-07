@@ -29,9 +29,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.adapters.DrawerAdapter
+import ch.protonmail.android.domain.entity.EmailAddress
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.uiModel.DrawerItemUiModel
-import ch.protonmail.android.utils.extensions.inflate
-import ch.protonmail.android.views.DrawerHeaderView
+import ch.protonmail.libs.core.utils.onClick
 
 internal class ProtonSideDrawer @JvmOverloads constructor (
     context: Context,
@@ -40,7 +41,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor (
     @StyleRes defStyleRes: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
-    private val headerView = inflate(R.layout.proton_nav_view_section_header) as DrawerHeaderView
+    private val headerView = ProtonDrawerHeader(context)
     private val bodyAdapter = DrawerAdapter()
 
     // lists
@@ -72,11 +73,8 @@ internal class ProtonSideDrawer @JvmOverloads constructor (
         addView(linearLayout)
     }
 
-    fun isHeaderOpen() =
-        headerView.state == DrawerHeaderView.State.OPENED
-
-    fun switchHeaderOpenState() {
-        headerView.switchState()
+    fun setOnHeaderUserClick(block: () -> Unit) {
+        headerView.onClick(block)
     }
 
     fun setOnItemClick(block: (DrawerItemUiModel) -> Unit) {
@@ -87,23 +85,12 @@ internal class ProtonSideDrawer @JvmOverloads constructor (
         }
     }
 
-    fun setUser(item: DrawerItemUiModel.Header) {
-        headerView.setUser(name = item.name, emailAddress = item.email)
-    }
-
-    fun setSnoozeEnabled(isEnabled: Boolean) {
-        isSnoozeEnabled = isEnabled
-        update()
+    fun setUser(initials: Pair<Char, Char>, name: Name, email: EmailAddress) {
+        headerView.setUser(initials, name, email)
     }
 
     fun setLocationItems(items: List<DrawerItemUiModel.Primary.Static>) {
         locationItems = items
-        update()
-    }
-
-    fun setFolderItems(sectionName: CharSequence, items: List<DrawerItemUiModel.Primary.Label>) {
-        foldersSectionItem = DrawerItemUiModel.SectionName(sectionName)
-        folderItems = items
         update()
     }
 

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/height_drawer_header"
+    android:layout_marginHorizontal="@dimen/padding_m"
+    android:layout_marginTop="@dimen/padding_xl"
+    android:layout_marginBottom="@dimen/padding_xxl"
+    android:background="@drawable/bg_drawer_header"
+    tools:layoutDirection="ltr">
+
+    <TextView
+        android:id="@+id/drawer_header_initials"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/margin_drawer_header_initials"
+        android:background="@drawable/bg_drawer_header_initials"
+        android:gravity="center"
+        android:textAppearance="@style/ProtonNavigationViewItemTextAppearance"
+        android:textColor="@color/text_inverted"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="SU" />
+
+    <TextView
+        android:id="@+id/drawer_header_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_l"
+        android:textAppearance="@style/ProtonNavigationViewItemTextAppearance"
+        android:textColor="@color/text_inverted"
+        app:layout_constraintBottom_toTopOf="@+id/drawer_header_email"
+        app:layout_constraintEnd_toStartOf="@id/drawer_header_chevron"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/drawer_header_initials"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Some User" />
+
+    <TextView
+        android:id="@+id/drawer_header_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_l"
+        android:textAppearance="@style/App.TextAppearance.Caption"
+        android:textColor="@color/text_weak"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/drawer_header_chevron"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/drawer_header_initials"
+        app:layout_constraintTop_toBottomOf="@+id/drawer_header_name"
+        tools:text="user@protonmail.com" />
+
+    <ImageView
+        android:id="@+id/drawer_header_chevron"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/padding_l"
+        android:src="@drawable/ic_chevron_down"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

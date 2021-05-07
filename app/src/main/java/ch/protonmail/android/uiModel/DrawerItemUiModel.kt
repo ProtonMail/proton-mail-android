@@ -32,23 +32,6 @@ import ch.protonmail.android.core.Constants.MessageLocationType
 internal sealed class DrawerItemUiModel {
 
     /**
-     * Header for the Drawer
-     *
-     * @param name [String] name of the current user
-     * @param email [String] email of the current user
-     * @param snoozeEnabled [Boolean] whether snooze is enabled for the current user
-     */
-    data class Header(
-        val name: String,
-        val email: String,
-        val snoozeEnabled: Boolean
-    ) : DrawerItemUiModel()
-
-    /** Divider for Drawer Items */
-    @Deprecated("To be removed, not needed anymore")
-    object Divider : DrawerItemUiModel()
-
-    /**
      * Title of a section for the Drawer
      *
      * @param text [CharSequence] text of the Section
@@ -160,40 +143,4 @@ internal sealed class DrawerItemUiModel {
     data class Footer(
         val text: CharSequence
     ) : DrawerItemUiModel()
-}
-
-/**
- * @return [List] of [DrawerItemUiModel] changing the first [DrawerItemUiModel.Header] item with
- * the given [header]
- */
-internal fun List<DrawerItemUiModel>.setHeader(
-    header: DrawerItemUiModel.Header?
-): List<DrawerItemUiModel> {
-    val withoutHeader = dropWhile { it is DrawerItemUiModel.Header }
-    val newHeaderToList = header?.let { listOf(it) } ?: listOf()
-    return newHeaderToList + withoutHeader
-}
-
-/**
- * Removes all the [DrawerItemUiModel.Primary.Label] from the receiver [List] of
- * [DrawerItemUiModel] and add the given [labels] to the end of the [List]
- * It will also add or remove a [DrawerItemUiModel.Divider] before [labels], if needed
- *
- * @return [List] of [DrawerItemUiModel]
- */
-internal fun List<DrawerItemUiModel>.setLabels(
-    labels: List<DrawerItemUiModel.Primary.Label>
-): List<DrawerItemUiModel> {
-
-    // Remove all the Labels
-    val withoutLabels = filterNot { it is DrawerItemUiModel.Primary.Label }.toMutableList()
-    val lastItem = withoutLabels.last()
-
-    // Add or remove Divider, if needed
-    if ( labels.isNotEmpty() && lastItem !is DrawerItemUiModel.Divider )
-        withoutLabels += DrawerItemUiModel.Divider
-    else if ( labels.isEmpty() && lastItem is DrawerItemUiModel.Divider )
-        withoutLabels -= lastItem
-
-    return withoutLabels + labels
 }

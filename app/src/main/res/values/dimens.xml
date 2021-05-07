@@ -19,7 +19,6 @@
 
 <resources>
 
-
     <!-- region V4 -->
 
     <!-- generic size -->
@@ -88,7 +87,6 @@
     <dimen name="message_details_actions_button_size">40dp</dimen>
 
     <!-- endregion -->
-
 
     <!-- region V3 -->
     <dimen name="activity_horizontal_margin">16dp</dimen>

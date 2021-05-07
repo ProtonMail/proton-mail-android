@@ -56,6 +56,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.FetchMessageCountsJob
@@ -63,7 +64,6 @@ import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.ValidatePinActivity
-import ch.protonmail.android.uiModel.DrawerItemUiModel
 import ch.protonmail.android.uiModel.DrawerItemUiModel.*
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary.Static.*
 import ch.protonmail.android.uiModel.DrawerUserModel
@@ -76,7 +76,6 @@ import ch.protonmail.android.utils.resettableManager
 import ch.protonmail.android.utils.startSplashActivity
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
-import ch.protonmail.android.views.DrawerHeaderView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.drawer_header.*
 import kotlinx.coroutines.flow.first
@@ -107,7 +106,6 @@ const val REQUEST_CODE_SNOOZED_NOTIFICATIONS = 555
 @AndroidEntryPoint
 abstract class NavigationActivity :
     BaseActivity(),
-    DrawerHeaderView.IDrawerHeaderListener,
     QuickSnoozeDialogFragment.QuickSnoozeListener {
 
     // region views
@@ -157,12 +155,13 @@ abstract class NavigationActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        sideDrawer.setOnHeaderUserClick {
+            onUserClicked(true)
+        }
+
         sideDrawer.setOnItemClick { drawerItem ->
             // Header clicked
-            if (drawerItem is DrawerItemUiModel.Header) {
-                onQuickSnoozeClicked()
-                // Primary item clicked
-            } else if (drawerItem is Primary) {
+            if (drawerItem is Primary) {
                 onDrawerClose = {
 
                     // Static item clicked
@@ -270,12 +269,9 @@ abstract class NavigationActivity :
     protected fun closeDrawer(ignoreIfPossible: Boolean = false): Boolean {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             var closeIt = true
-            if (sideDrawer.isHeaderOpen()) {
-                onUserClicked(false)
-                sideDrawer.switchHeaderOpenState()
-                if (!ignoreIfPossible) {
-                    closeIt = false
-                }
+            onUserClicked(false)
+            if (!ignoreIfPossible) {
+                closeIt = false
             }
             if (closeIt) {
                 drawerLayout.closeDrawers()
@@ -310,10 +306,7 @@ abstract class NavigationActivity :
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
-                if (sideDrawer.isHeaderOpen()) {
-                    onUserClicked(false)
-                    sideDrawer.switchHeaderOpenState()
-                }
+                onUserClicked(false)
                 onDrawerClose()
                 onDrawerClose = {}
             }
@@ -391,7 +384,7 @@ abstract class NavigationActivity :
         sideDrawer.setMoreItems(
             R.string.x_more,
             listOfNotNull(
-                Primary.Static(Primary.Static.Type.UPSELLING, R.string.drawer_subscription, R.drawable.ic_pencil),
+                Primary.Static(Type.UPSELLING, R.string.drawer_subscription, R.drawable.ic_pencil),
                 Primary.Static(Type.SETTINGS, R.string.drawer_settings, R.drawable.ic_sliders_two),
                 Primary.Static(Type.CONTACTS, R.string.drawer_contacts, R.drawable.ic_book_contacts),
                 Primary.Static(Type.REPORT_BUGS, R.string.drawer_report_bug, R.drawable.ic_bug),
@@ -411,30 +404,36 @@ abstract class NavigationActivity :
 
         if (addresses.hasAddresses) {
             val address = checkNotNull(addresses.primary)
-
-            val isSnoozeOn = areNotificationSnoozedBlocking(currentUser.id)
-            val name = address.displayName?.s ?: address.email.s
-
-            sideDrawer.setUser(DrawerItemUiModel.Header(name, address.email.s, isSnoozeOn))
+            val displayName = address.displayName ?: Name(address.email.s)
+            sideDrawer.setUser(getInitials(displayName), displayName, address.email)
         }
     }
 
-    override fun onQuickSnoozeClicked() {
-        val quickSnoozeDialogFragment = QuickSnoozeDialogFragment.newInstance()
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.add(quickSnoozeDialogFragment, quickSnoozeDialogFragment.fragmentKey)
-        transaction.commitAllowingStateLoss()
+    private fun getInitials(name: Name): Pair<Char, Char> {
+        val string = name.s.toUpperCase()
+        return string
+            // split words
+            .split(" ")
+            // take first char of each word
+            .map { it.first() }
+            // take only letters or digits
+            .filter { it.isLetterOrDigit() }
+            // Valid only if we have 2 or more chars
+            .takeIf { it.size >= 2 }?.let { it[0] to it[1] }
+            // Otherwise take only first 2 letters or digits of the name
+            ?: string
+                .filter { it.isLetterOrDigit() }
+                .let { it[0] to it[1] }
     }
 
-    override fun onUserClicked(open: Boolean) {
+    // TODO
+    fun onUserClicked(open: Boolean) {
         sideDrawer.visibility = if (open) View.GONE else View.VISIBLE
         navigationDrawerUsersRecyclerView.visibility = if (open) View.VISIBLE else View.GONE
     }
 
     override fun onQuickSnoozeSet(enabled: Boolean) {
         lifecycleScope.launchWhenCreated {
-            sideDrawer.setSnoozeEnabled(enabled)
-            refreshDrawerHeader(checkNotNull(userManager.currentUser))
             setupAccountsList()
         }
     }
