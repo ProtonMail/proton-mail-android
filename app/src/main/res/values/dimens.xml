@@ -44,7 +44,7 @@
     <dimen name="toolbar_action_layout_icon_size">24dp</dimen>
 
     <dimen name="expanded_toolbar_title_margin_bottom">8dp</dimen>
-    <dimen name="expanded_toolbar_title_padding_horizontal">24dp</dimen>
+    <dimen name="expanded_toolbar_title_padding_horizontal">16dp</dimen>
 
     <dimen name="action_bar_elevation">8dp</dimen>
     <dimen name="action_bar_no_elevation">0dp</dimen>
