@@ -41,12 +41,15 @@ import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
+import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.verify
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
@@ -505,6 +508,29 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             assertEquals(DataResult.Processing(ResponseSource.Remote), result[1])
             coVerify { messageDao.saveMessages(expectedMessage) }
             coVerify { conversationDao.insertOrUpdate(expectedConversationDbModel) }
+        }
+    }
+
+    @Test
+    @Throws(CancellationException::class)
+    fun verifyGetConversationsReThrowsCancellationExceptionWithoutEmittingError() {
+        runBlocking {
+            // given
+            val parameters = GetConversationsParameters(
+                locationId = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+                userId = testUserId,
+                oldestConversationTimestamp = null
+            )
+            coEvery { api.fetchConversations(parameters) } throws CancellationException("Cancelled")
+
+            // when
+            try {
+                conversationsRepository.getConversations(parameters).first()
+            } catch (exception: CancellationException) {
+                assertEquals("Cancelled", exception.message)
+            }
+
+            verify { conversationDao wasNot Called }
         }
     }
 

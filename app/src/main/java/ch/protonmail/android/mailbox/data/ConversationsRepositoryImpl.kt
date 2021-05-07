@@ -33,6 +33,7 @@ import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
 import com.dropbox.android.external.store4.StoreRequest
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -92,6 +93,9 @@ class ConversationsRepositoryImpl @Inject constructor(
                     }
                 },
                 onFailure = {
+                    if (it is CancellationException) {
+                        throw it
+                    }
                     emit(Error.Remote(it.message, it))
                 }
             )
