@@ -22,6 +22,8 @@ package ch.protonmail.android.adapters
 
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
 import ch.protonmail.android.R
@@ -29,22 +31,28 @@ import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.uiModel.DrawerItemUiModel
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Divider
+import ch.protonmail.android.uiModel.DrawerItemUiModel.Footer
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Header
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
+import ch.protonmail.android.uiModel.DrawerItemUiModel.SectionName
+import ch.protonmail.android.uiModel.LabelUiModel
+import me.proton.core.presentation.utils.inflate
 import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
 import ch.protonmail.android.views.DrawerHeaderView
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
 import kotlinx.android.synthetic.main.drawer_list_item.view.*
-import me.proton.core.presentation.utils.inflate
+import kotlinx.android.synthetic.main.drawer_section_name_item.view.*
 import me.proton.core.util.kotlin.invoke
 
 // region constants
 /** View types for Adapter */
 private const val VIEW_TYPE_HEADER = 0
 private const val VIEW_TYPE_DIVIDER = 1
-private const val VIEW_TYPE_STATIC = 2
-private const val VIEW_TYPE_LABEL = 3
+private const val VIEW_TYPE_SECTION_NAME = 2
+private const val VIEW_TYPE_STATIC = 3
+private const val VIEW_TYPE_LABEL = 4
+private const val VIEW_TYPE_FOOTER = 6
 // endregion
 
 /**
@@ -87,10 +95,12 @@ internal class DrawerAdapter : BaseAdapter<
             return when ( oldItem ) {
                 is Header -> true // We only have one header
                 Divider -> true // Singleton, always animate the object when possible
+                is SectionName -> oldItem == newItem
                 is Primary -> when( oldItem ){
                     is Primary.Static -> oldItem.type == newItemAsStatic?.type
                     is Primary.Label -> oldItem.uiModel.labelId == newItemAsLabel?.uiModel?.labelId
                 }
+                is Footer -> true // We only have one footer
             }
         }
     }
@@ -140,32 +150,63 @@ internal class DrawerAdapter : BaseAdapter<
         override fun onBind( item: Primary.Label ) = with( itemView ) {
             super.onBind( item )
             label.text = item.uiModel.name
-            icon.setColorFilter( item.uiModel.color )
+            icon.setColorFilterFor(item.uiModel)
             icon.setImageResource( item.uiModel.image )
             label.tag = item.uiModel.name
+        }
+
+        private fun ImageView.setColorFilterFor(label: LabelUiModel) {
+            if (label.type == LabelUiModel.Type.LABELS) {
+                setColorFilter(label.color)
+            } else {
+                clearColorFilter()
+            }
+        }
+    }
+
+    /** [ViewHolder] for [Footer] */
+    private class FooterViewHolder(itemView: View) : ViewHolder<Footer>(itemView) {
+
+        override fun onBind(item: Footer) {
+            super.onBind(item)
+            val textView = itemView as TextView
+            textView.text = item.text
         }
     }
 
     /** [ViewHolder] for [Divider] */
     private class DividerViewHolder( itemView: View ) : ViewHolder<Divider>( itemView )
 
+    /** [ViewHolder] for [SectionName] */
+    private class SectionNameViewHolder(itemView: View): ViewHolder<SectionName>(itemView) {
+
+        override fun onBind(item: SectionName) {
+            super.onBind(item)
+            itemView.text.text = item.text
+        }
+    }
+
     /** @return [Int] view type for the receiver [DrawerItemUiModel] */
     private val DrawerItemUiModel.viewType: Int get() {
         return when ( this ) {
             is Header -> VIEW_TYPE_HEADER
             Divider -> VIEW_TYPE_DIVIDER
+            is SectionName -> VIEW_TYPE_SECTION_NAME
             is Primary -> when ( this ) {
                 is Primary.Static -> VIEW_TYPE_STATIC
                 is Primary.Label -> VIEW_TYPE_LABEL
             }
+            is Footer -> VIEW_TYPE_FOOTER
         }
     }
 
     /** @return [LayoutRes] for the given [viewType] */
     private fun layoutForViewType( viewType: Int ) = when ( viewType ) {
-//        VIEW_TYPE_HEADER -> R.layout.drawer_header
+        VIEW_TYPE_HEADER -> R.layout.drawer_header
         VIEW_TYPE_DIVIDER -> R.layout.drawer_list_item_divider
+        VIEW_TYPE_SECTION_NAME -> R.layout.drawer_section_name_item
         VIEW_TYPE_STATIC, VIEW_TYPE_LABEL -> R.layout.drawer_list_item
+        VIEW_TYPE_FOOTER -> R.layout.drawer_footer
         else -> throw IllegalArgumentException( "View type not found: '$viewType'" )
     }
 
@@ -176,8 +217,10 @@ internal class DrawerAdapter : BaseAdapter<
         return when ( viewType ) {
             VIEW_TYPE_HEADER -> HeaderViewHolder(view)
             VIEW_TYPE_DIVIDER -> DividerViewHolder(view)
+            VIEW_TYPE_SECTION_NAME -> SectionNameViewHolder(view)
             VIEW_TYPE_STATIC -> StaticViewHolder(view)
             VIEW_TYPE_LABEL -> LabelViewHolder(view)
+            VIEW_TYPE_FOOTER -> FooterViewHolder(view)
             else -> throw IllegalArgumentException("View type not found: '$viewType'")
         } as ViewHolder<Model>
     }

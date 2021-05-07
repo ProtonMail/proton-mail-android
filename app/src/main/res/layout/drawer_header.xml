@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Copyright (c) 2020 Proton Technologies AG
-
-This file is part of ProtonMail.
-
-ProtonMail is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ProtonMail is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ProtonMail. If not, see https://www.gnu.org/licenses/.
--->
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
 <ch.protonmail.android.views.DrawerHeaderView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawerHeaderView"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:background="@color/dark_purple"
-    tools:layoutDirection="rtl">
+    android:layout_height="@dimen/height_drawer_header"
+    android:layout_marginTop="@dimen/padding_xl"
+    android:layout_marginBottom="@dimen/padding_xxl"
+    tools:background="@color/background"
+    tools:layoutDirection="ltr">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -82,8 +84,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:textAlignment="viewStart"
                 android:gravity="start|center_vertical"
+                android:textAlignment="viewStart"
                 tools:text="exampleemail@proton.com" />
 
         </RelativeLayout>

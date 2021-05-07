@@ -18,52 +18,25 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<ch.protonmail.android.views.ScrimInsetsFrameLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:pmInsetForeground="#4000"
     android:layout_width="@dimen/navdrawer_width"
     android:layout_height="match_parent"
-    android:layout_gravity="start"
-    android:background="@color/dark_purple">
+    android:layout_gravity="start">
 
-    <RelativeLayout
+    <ch.protonmail.android.ui.view.ProtonSideDrawer
+        android:id="@+id/sideDrawer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"/>
 
-        <FrameLayout
-            android:id="@+id/header"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_alignParentTop="true">
 
-            <include
-                layout="@layout/drawer_header"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/left_drawer_users"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:background="@color/white"
+        android:visibility="gone"/>
 
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/header">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/left_drawer_navigation"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/left_drawer_users"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white"
-                android:visibility="gone" />
-
-        </FrameLayout>
-    </RelativeLayout>
-
-</ch.protonmail.android.views.ScrimInsetsFrameLayout>
+</FrameLayout>

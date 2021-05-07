@@ -1,37 +1,66 @@
 <!--
-Copyright (c) 2020 Proton Technologies AG
-
-This file is part of ProtonMail.
-
-ProtonMail is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ProtonMail is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ProtonMail. If not, see https://www.gnu.org/licenses/.
--->
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
 
 <resources>
 
-    <!-- V4 -->
+
+    <!-- region V4 -->
+
+    <!-- generic size -->
+    <dimen name="size_icon_m">24dp</dimen>
+    <dimen name="divider_size">2px</dimen>
+
+    <dimen name="unread_messages_chip_size">20dp</dimen>
+    <dimen name="message_number_view_padding_horizontal">8dp</dimen>
+    <dimen name="message_number_view_padding_vertical">2dp</dimen>
+
+    <!-- generic padding -->
+    <dimen name="padding_xs">2dp</dimen>
+    <dimen name="padding_s">4dp</dimen>
+    <dimen name="padding_m">8dp</dimen>
+    <dimen name="padding_l">16dp</dimen>
+    <dimen name="padding_xl">24dp</dimen>
+    <dimen name="padding_xxl">32dp</dimen>
+
+    <!-- Toolbars -->
+    <dimen name="toolbar_padding_start">0dp</dimen>
+    <dimen name="toolbar_padding_end">8dp</dimen>
     <dimen name="toolbar_action_layout_size">48dp</dimen>
     <dimen name="toolbar_action_layout_icon_size">24dp</dimen>
 
-    <dimen name="toolbar_padding_start">0dp</dimen>
-    <dimen name="toolbar_padding_end">8dp</dimen>
+    <dimen name="expanded_toolbar_title_margin_bottom">8dp</dimen>
+    <dimen name="expanded_toolbar_title_padding_horizontal">24dp</dimen>
+
     <dimen name="action_bar_elevation">8dp</dimen>
     <dimen name="action_bar_no_elevation">0dp</dimen>
 
+    <!-- Side Drawer -->
+    <dimen name="width_drawer_body">312dp</dimen>
+    <dimen name="height_drawer_header">48dp</dimen>
+    <dimen name="height_drawer_primaryitem">48dp</dimen>
+    <dimen name="height_drawer_badge">24dp</dimen>
+    <dimen name="height_drawer_footer">96dp</dimen>
+    <dimen name="margin_drawer_header_initials">10dp</dimen>
+
+    <!-- Mailbox -->
     <dimen name="mailbox_status_view_height">48dp</dimen>
     <dimen name="mailbox_status_view_padding_horizontal">16dp</dimen>
-
-    <dimen name="unread_messages_chip_size">20dp</dimen>
 
     <dimen name="mailbox_list_item_padding_horizontal">16dp</dimen>
     <dimen name="mailbox_list_item_padding_vertical">12dp</dimen>
@@ -43,12 +72,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <dimen name="sender_initial_view_margin_end">16dp</dimen>
     <dimen name="sender_initial_view_check_icon_padding">4dp</dimen>
 
-    <dimen name="message_number_view_padding_horizontal">8dp</dimen>
-    <dimen name="message_number_view_padding_vertical">2dp</dimen>
-
-    <dimen name="expanded_toolbar_title_margin_bottom">8dp</dimen>
-    <dimen name="expanded_toolbar_title_padding_horizontal">24dp</dimen>
-
+    <!-- Message details -->
     <dimen name="message_details_header_padding_horizontal">16dp</dimen>
     <dimen name="message_details_header_padding_vertical">12dp</dimen>
     <dimen name="message_details_header_margin_big">16dp</dimen>
@@ -63,9 +87,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <dimen name="message_details_actions_button_size">40dp</dimen>
 
-    <dimen name="divider_size">2px</dimen>
-    <!-- V4 -->
+    <!-- endregion -->
 
+
+    <!-- region V3 -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="activity_horizontal_margin_large">32dp</dimen>
@@ -116,10 +141,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <dimen name="empty_label_size">15dp</dimen>
 
     <!-- nav drawer -->
-    <dimen name="navdrawer_width">260dp</dimen>
     <dimen name="labels_horizontal_padding">8dp</dimen>
     <dimen name="labels_separator_padding">16dp</dimen>
-    <dimen name="drawer_header_height">@dimen/abc_action_bar_default_height_material</dimen>
 
     <!-- composing -->
     <dimen name="right_sliding_offse">100dp</dimen>
@@ -185,5 +208,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <dimen name="spacing_normal">16dp</dimen>
 
     <dimen name="custom_check_box_size">24dp</dimen>
+
+    <!-- endregion -->
 
 </resources>

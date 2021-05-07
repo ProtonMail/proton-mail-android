@@ -19,15 +19,24 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
-    <!-- region V4 -->
-
-    <!-- region common -->
+    <!-- region All -->
+    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_folders">Folders</string>
+    <string name="x_labels">Labels</string>
+    <string name="x_more">More</string>
     <string name="x_search">Search</string>
     <!-- endregion -->
 
+    <!-- region Drawer -->
+    <string name="drawer_contacts">Contacts</string>
+    <string name="drawer_lock_the_app">Lock the app</string>
+    <string name="drawer_report_bug">Report bug</string>
+    <string name="drawer_settings">Settings</string>
+    <string name="drawer_subscription">Subscription</string>
+    <string name="drawer_sign_out">Sign out</string>
     <!-- endregion -->
 
-    <!-- region V3 -->
+    <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">ENCRYPTED EMAIL</string>
     <string name="secure_email_swiss">Secure Email Based\nin Switzerland</string>
@@ -843,6 +852,8 @@
     <string name="hyperlink_confirmation">Request link confirmation</string>
 
     <string name="labels_and_folders">Labels &amp; Folders </string>
+    <string name="folders">Folders</string>
+    <string name="labels">Labels</string>
     <string name="labels_manage">Labels manager</string>
     <string name="folders_manage">Folders manager</string>
 
@@ -950,6 +961,7 @@
 
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
+    <string name="more">More</string>
 
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Swipe gestures changed</string>
@@ -965,4 +977,6 @@
 
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
+    <!-- end region -->
+
 </resources>

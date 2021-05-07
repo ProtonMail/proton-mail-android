@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2020 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
@@ -18,8 +17,11 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<View
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:background="@color/nav_view_divider" />
+<resources>
+
+    <color name="background">#17181C</color>
+
+    <!-- Text -->
+    <color name="text_norm">#FFFFFF</color>
+
+</resources>

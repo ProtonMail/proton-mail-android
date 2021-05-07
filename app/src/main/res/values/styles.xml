@@ -19,7 +19,7 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- V4 -->
+    <!-- region V4 -->
     <style name="ProtonTheme.Splash.Mail" parent="ProtonTheme.Splash">
         <item name="brand_splash_logo">@drawable/splash_logo</item>
     </style>
@@ -28,13 +28,6 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/ProtonMailActionMode</item>
         <item name="actionModeCloseDrawable">@drawable/ic_arrow_back</item>
-    </style>
-
-    <style name="UnreadMessagesStatusChip" parent="Widget.MaterialComponents.Chip.Choice">
-        <item name="android:textAppearance">@style/Proton.Text.Caption.Strong</item>
-        <item name="android:textColor">@drawable/selector_unread_messages_status_text_color</item>
-        <item name="chipBackgroundColor">@drawable/selector_unread_messages_status_background</item>
-        <item name="chipCornerRadius">25dp</item>
     </style>
 
     <style name="ProtonMailActionMode" parent="Widget.AppCompat.ActionMode">
@@ -46,6 +39,25 @@
     <style name="Proton.Text.DefaultSmall.Interaction">
         <item name="android:textColor">@color/cornflower_blue</item>
     </style>
+
+    <!-- region Drawer -->
+    <style name="DrawerItemNotification">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/h4</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:background">@drawable/nav_drawer_notification_background</item>
+    </style>
+    <!-- endregion -->
+
+    <!-- region Mailbox -->
+    <style name="UnreadMessagesStatusChip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="android:textAppearance">@style/Proton.Text.Caption.Strong</item>
+        <item name="android:textColor">@drawable/selector_unread_messages_status_text_color</item>
+        <item name="chipBackgroundColor">@drawable/selector_unread_messages_status_background</item>
+        <item name="chipCornerRadius">25dp</item>
+    </style>
+    <!-- endregion -->
     <!-- endregion -->
 
     <!-- region V3 -->
@@ -230,14 +242,6 @@
 
     <style name="DrawerEmailAddressText.Red" parent="DrawerEmailAddressText">
         <item name="android:textColor">@color/red</item>
-    </style>
-
-    <style name="DrawerItemNotification">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/h4</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:background">@drawable/nav_drawer_notification_background</item>
     </style>
 
     <style name="MessagePrimaryText">

@@ -1,88 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-Copyright (c) 2020 Proton Technologies AG
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
 
-This file is part of ProtonMail.
-
-ProtonMail is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ProtonMail is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ProtonMail. If not, see https://www.gnu.org/licenses/.
--->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- TODO: hardcoded values -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menuItem"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:paddingBottom="@dimen/fields_default_space_small"
-    android:paddingTop="@dimen/fields_default_space_small"
-    android:background="@drawable/drawer_bg_selector">
+    android:layout_height="@dimen/height_drawer_primaryitem"
+    android:background="?attr/selectableItemBackground"
+    tools:background="@color/nav_view_background">
 
     <!-- Selection -->
     <View
         android:id="@+id/selection"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:alpha="0.1"
-        app:elevation="1dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="?attr/brand_darken_40"
         android:visibility="invisible"
         tools:visibility="visible"/>
 
-    <RelativeLayout
-        android:id="@+id/menuItem"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:paddingStart="@dimen/fields_default_space_large"
-        android:paddingEnd="@dimen/fields_default_space_medium">
+    <!-- Icon -->
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="@dimen/size_icon_m"
+        android:layout_height="@dimen/size_icon_m"
+        android:scaleType="center"
+        android:layout_marginHorizontal="@dimen/padding_l"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:src="@drawable/inbox" />
 
-        <!-- Icon -->
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            app:elevation="2dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            tools:src="@drawable/inbox"/>
+    <!-- Badge -->
+    <TextView
+        android:id="@+id/notifications"
+        style="@style/DrawerItemNotification"
+        android:layout_width="wrap_content"
+        android:minWidth="@dimen/height_drawer_badge"
+        android:layout_height="@dimen/height_drawer_badge"
+        android:paddingHorizontal="@dimen/padding_m"
+        android:gravity="center"
+        android:textSize="@dimen/h6"
+        android:visibility="invisible"
+        android:layout_marginEnd="@dimen/padding_l"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="1"
+        tools:visibility="visible" />
 
-        <!-- Badge -->
-        <TextView
-            android:id="@+id/notifications"
-            style="@style/DrawerItemNotification"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            app:elevation="2dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:gravity="center"
-            android:textSize="@dimen/h6"
-            android:visibility="invisible"
-            tools:visibility="visible"
-            tools:text="1"/>
+    <!-- Label -->
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_l"
+        android:textAlignment="viewStart"
+        android:textAppearance="@style/ProtonNavigationViewItemTextAppearance"
+        android:textColor="@color/nav_view_item_text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/icon"
+        app:layout_constraintEnd_toStartOf="@id/notifications"
+        tools:text="@string/inbox" />
 
-        <!-- Label -->
-        <TextView
-            android:id="@+id/label"
-            style="@style/DrawerItemText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:elevation="2dp"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/icon"
-            android:layout_toStartOf="@id/notifications"
-            android:textAlignment="viewStart"
-            tools:text="@string/inbox"/>
+    <include layout="@layout/drawer_list_item_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        app:layout_constraintStart_toStartOf="@id/label"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/padding_l"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-    </RelativeLayout>
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

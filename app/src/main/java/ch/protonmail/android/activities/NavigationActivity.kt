@@ -25,6 +25,7 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
@@ -32,17 +33,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.dialogs.QuickSnoozeDialogFragment
 import ch.protonmail.android.activities.multiuser.AccountManagerActivity
+import ch.protonmail.android.activities.multiuser.ConnectAccountActivity
+import ch.protonmail.android.activities.multiuser.EXTRA_USERNAME
 import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
 import ch.protonmail.android.activities.navigation.NavigationViewModel
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
 import ch.protonmail.android.adapters.AccountsAdapter
-import ch.protonmail.android.adapters.DrawerAdapter
 import ch.protonmail.android.adapters.mapLabelsToDrawerLabels
 import ch.protonmail.android.adapters.setUnreadLocations
+import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.local.SnoozeSettings
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.segments.event.AlarmReceiver
@@ -60,11 +64,10 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.uiModel.DrawerItemUiModel
-import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
-import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary.Static.Type
+import ch.protonmail.android.uiModel.DrawerItemUiModel.*
+import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary.Static.*
 import ch.protonmail.android.uiModel.DrawerUserModel
 import ch.protonmail.android.uiModel.LabelUiModel
-import ch.protonmail.android.uiModel.setLabels
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
@@ -79,6 +82,7 @@ import kotlinx.android.synthetic.main.drawer_header.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.proton.core.account.domain.entity.Account
@@ -88,7 +92,6 @@ import me.proton.core.util.kotlin.unsupported
 import java.util.ArrayList
 import java.util.Calendar
 import javax.inject.Inject
-import ch.protonmail.android.api.models.User as OldUser
 
 // region constants
 const val EXTRA_FIRST_LOGIN = "extra.first.login"
@@ -110,17 +113,10 @@ abstract class NavigationActivity :
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     private val drawerLayout: DrawerLayout by lazy { findViewById(R.id.drawer_layout) }
-    private val navigationDrawerRecyclerView by lazy { findViewById<RecyclerView>(R.id.left_drawer_navigation) }
     private val navigationDrawerUsersRecyclerView by lazy { findViewById<RecyclerView>(R.id.left_drawer_users) }
     protected var overlayDialog: Dialog? = null
     protected lateinit var drawerToggle: ActionBarDrawerToggle
     // endregion
-
-    /**
-     * [DrawerAdapter] for the Drawer. Now all the elements in the Drawer are handled by this
-     * Adapter
-     */
-    private val drawerAdapter = DrawerAdapter()
 
     /**
      * [AccountsAdapter] for the Drawer. It is used as a replacement to the default [navigationDrawerRecyclerView]
@@ -128,23 +124,14 @@ abstract class NavigationActivity :
      */
     private val accountsAdapter = AccountsAdapter()
 
-    /** [DrawerItemUiModel.Header] for the Drawer  */
-    private var drawerHeader: DrawerItemUiModel.Header? = null
-
-    /**
-     * List of [DrawerItemUiModel] that are static from the app, with relative
-     * [DrawerItemUiModel.Divider]s
-     */
-    private var staticDrawerItems: List<DrawerItemUiModel> = ArrayList()
-
-    /** List of [DrawerItemUiModel.Primary.Label] for the Drawer  */
-    private var drawerLabels: List<Primary.Label> = ArrayList()
-
     val lazyManager = resettableManager()
 
     val messagesDatabase by resettableLazy(lazyManager) {
         MessageDatabase.getInstance(applicationContext, userManager.requireCurrentUserId()).getDao()
     }
+
+    @Inject
+    lateinit var accountManager: AccountManager
 
     @Inject
     lateinit var databaseProvider: DatabaseProvider
@@ -167,8 +154,10 @@ abstract class NavigationActivity :
      */
     private var onDrawerClose: () -> Unit = {}
 
-    init {
-        drawerAdapter.onItemClick = { drawerItem ->
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        sideDrawer.setOnItemClick { drawerItem ->
             // Header clicked
             if (drawerItem is DrawerItemUiModel.Header) {
                 onQuickSnoozeClicked()
@@ -182,7 +171,6 @@ abstract class NavigationActivity :
                     // Label clicked
                     else if (drawerItem is Primary.Label) onDrawerLabelSelected(drawerItem.uiModel)
                 }
-                drawerAdapter.setSelected(drawerItem)
                 drawerLayout.closeDrawer(GravityCompat.START)
             }
         }
@@ -256,7 +244,7 @@ abstract class NavigationActivity :
 
     override fun onStop() {
         super.onStop()
-        mApp.bus.unregister(this)
+        app.bus.unregister(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -282,9 +270,9 @@ abstract class NavigationActivity :
     protected fun closeDrawer(ignoreIfPossible: Boolean = false): Boolean {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             var closeIt = true
-            if (drawerHeaderView.state == DrawerHeaderView.State.OPENED) {
+            if (sideDrawer.isHeaderOpen()) {
                 onUserClicked(false)
-                drawerHeaderView.switchState()
+                sideDrawer.switchHeaderOpenState()
                 if (!ignoreIfPossible) {
                     closeIt = false
                 }
@@ -315,21 +303,17 @@ abstract class NavigationActivity :
         )
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
         setUpInitialDrawerItems(userManager.currentLegacyUser?.isUsePin ?: false)
-        refreshDrawer()
 
         // LayoutManager set from xml
-        navigationDrawerRecyclerView.adapter = drawerAdapter
-
         navigationDrawerUsersRecyclerView.adapter = accountsAdapter
 
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
-                if (drawerHeaderView.state == DrawerHeaderView.State.OPENED) {
+                if (sideDrawer.isHeaderOpen()) {
                     onUserClicked(false)
-                    drawerHeaderView.switchState()
+                    sideDrawer.switchHeaderOpenState()
                 }
-                navigationDrawerRecyclerView!!.smoothScrollToPosition(0)
                 onDrawerClose()
                 onDrawerClose = {}
             }
@@ -391,22 +375,34 @@ abstract class NavigationActivity :
     private fun setUpInitialDrawerItems(isPinEnabled: Boolean) {
         val hasPin = isPinEnabled && userManager.getMailboxPin() != null
 
-        staticDrawerItems = listOfNotNull(
-            Primary.Static(Type.INBOX, R.string.inbox, R.drawable.inbox),
-            Primary.Static(Type.SENT, R.string.sent, R.drawable.sent),
-            Primary.Static(Type.DRAFTS, R.string.drafts, R.drawable.draft),
-            Primary.Static(Type.STARRED, R.string.starred, R.drawable.starred),
-            Primary.Static(Type.ARCHIVE, R.string.archive, R.drawable.archive),
-            Primary.Static(Type.SPAM, R.string.spam, R.drawable.spam),
-            Primary.Static(Type.TRASH, R.string.trash, R.drawable.trash),
-            Primary.Static(Type.ALLMAIL, R.string.all_mail, R.drawable.allmail),
-            DrawerItemUiModel.Divider,
-            Primary.Static(Type.CONTACTS, R.string.contacts, R.drawable.contact),
-            Primary.Static(Type.SETTINGS, R.string.settings, R.drawable.settings),
-            Primary.Static(Type.REPORT_BUGS, R.string.report_bugs, R.drawable.bug),
-            if (hasPin) Primary.Static(Type.LOCK, R.string.lock_the_app, R.drawable.notification_icon)
-            else null,
-            Primary.Static(Type.SIGNOUT, R.string.logout, R.drawable.signout)
+        sideDrawer.setLocationItems(
+            listOf(
+                Primary.Static(Type.INBOX, R.string.inbox, R.drawable.ic_inbox),
+                Primary.Static(Type.DRAFTS, R.string.drafts, R.drawable.ic_drafts),
+                Primary.Static(Type.SENT, R.string.sent, R.drawable.ic_paper_plane),
+                Primary.Static(Type.STARRED, R.string.starred, R.drawable.ic_star),
+                Primary.Static(Type.ARCHIVE, R.string.archive, R.drawable.ic_archive),
+                Primary.Static(Type.SPAM, R.string.spam, R.drawable.ic_fire),
+                Primary.Static(Type.TRASH, R.string.trash, R.drawable.ic_trash),
+                Primary.Static(Type.ALLMAIL, R.string.all_mail, R.drawable.ic_envelope_all_emails)
+            )
+        )
+
+        sideDrawer.setMoreItems(
+            R.string.x_more,
+            listOfNotNull(
+                Primary.Static(Primary.Static.Type.UPSELLING, R.string.drawer_subscription, R.drawable.ic_pencil),
+                Primary.Static(Type.SETTINGS, R.string.drawer_settings, R.drawable.ic_sliders_two),
+                Primary.Static(Type.CONTACTS, R.string.drawer_contacts, R.drawable.ic_book_contacts),
+                Primary.Static(Type.REPORT_BUGS, R.string.drawer_report_bug, R.drawable.ic_bug),
+                if (hasPin) Primary.Static(Type.LOCK, R.string.drawer_lock_the_app, R.drawable.ic_lock)
+                else null,
+                Primary.Static(Type.SIGNOUT, R.string.drawer_sign_out, R.drawable.ic_sign_out)
+            )
+        )
+
+        sideDrawer.setFooterText(
+            getString(R.string.x_app_version_name_code, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
         )
     }
 
@@ -419,25 +415,8 @@ abstract class NavigationActivity :
             val isSnoozeOn = areNotificationSnoozedBlocking(currentUser.id)
             val name = address.displayName?.s ?: address.email.s
 
-            drawerHeader = DrawerItemUiModel.Header(name, address.email.s, isSnoozeOn)
-            drawerHeaderView.setUser(name, address.email.s)
-            drawerHeaderView.refresh(isSnoozeOn)
-            refreshDrawer()
+            sideDrawer.setUser(DrawerItemUiModel.Header(name, address.email.s, isSnoozeOn))
         }
-    }
-
-    @Deprecated(
-        "Use with \"new\" User",
-        ReplaceWith("refreshDrawerHeader(currentUser)"),
-        DeprecationLevel.ERROR
-    )
-    protected fun refreshDrawerHeader(user: OldUser) {
-        unsupported
-    }
-
-    /** Creates a properly formatted List for the Drawer and deliver to the Adapter  */
-    fun refreshDrawer() {
-        drawerAdapter.items = staticDrawerItems.setLabels(drawerLabels)
     }
 
     override fun onQuickSnoozeClicked() {
@@ -448,14 +427,13 @@ abstract class NavigationActivity :
     }
 
     override fun onUserClicked(open: Boolean) {
-        navigationDrawerRecyclerView.visibility = if (open) View.GONE else View.VISIBLE
+        sideDrawer.visibility = if (open) View.GONE else View.VISIBLE
         navigationDrawerUsersRecyclerView.visibility = if (open) View.VISIBLE else View.GONE
     }
 
     override fun onQuickSnoozeSet(enabled: Boolean) {
         lifecycleScope.launchWhenCreated {
-            drawerHeader = drawerHeader?.copy(snoozeEnabled = enabled)
-            refreshDrawer()
+            sideDrawer.setSnoozeEnabled(enabled)
             refreshDrawerHeader(checkNotNull(userManager.currentUser))
             setupAccountsList()
         }
@@ -543,8 +521,10 @@ abstract class NavigationActivity :
             val mapper = LabelUiModelMapper( /* isLabelEditable */false)
 
             // Prepare new Labels for the Adapter
-            drawerLabels = mapLabelsToDrawerLabels(mapper, labels)
-            refreshDrawer()
+            val (labelsItems, foldersItems) = mapLabelsToDrawerLabels(mapper, labels)
+                .partition { it.uiModel.type == LabelUiModel.Type.LABELS }
+            sideDrawer.setFolderItems(R.string.folders, foldersItems) // TODO
+            sideDrawer.setLabelItems(R.string.labels, labelsItems) // TODO
         }
     }
 
@@ -552,9 +532,8 @@ abstract class NavigationActivity :
 
         override fun onChanged(unreadLocations: Map<Int, Int>) {
             // Prepare drawer Items by injecting unreadLocations
-            staticDrawerItems = staticDrawerItems.setUnreadLocations(unreadLocations)
-                .toMutableList()
-            refreshDrawer()
+// TODO:            staticDrawerItems = staticDrawerItems.setUnreadLocations(unreadLocations)
+//                .toMutableList()
         }
     }
 }

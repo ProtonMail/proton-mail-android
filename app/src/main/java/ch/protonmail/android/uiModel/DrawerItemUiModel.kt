@@ -45,7 +45,17 @@ internal sealed class DrawerItemUiModel {
     ) : DrawerItemUiModel()
 
     /** Divider for Drawer Items */
+    @Deprecated("To be removed, not needed anymore")
     object Divider : DrawerItemUiModel()
+
+    /**
+     * Title of a section for the Drawer
+     *
+     * @param text [CharSequence] text of the Section
+     */
+    data class SectionName(
+        val text: CharSequence
+    ) : DrawerItemUiModel()
 
     /**
      * Primary Item for the Drawer.
@@ -141,6 +151,15 @@ internal sealed class DrawerItemUiModel {
             override fun copyWithSelected(select: Boolean) = copy( selected = select )
         }
     }
+
+    /**
+     * Footer for the Drawer
+     *
+     * @param text [CharSequence] text of the Footer
+     */
+    data class Footer(
+        val text: CharSequence
+    ) : DrawerItemUiModel()
 }
 
 /**
