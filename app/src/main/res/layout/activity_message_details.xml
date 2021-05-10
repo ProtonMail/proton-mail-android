@@ -66,7 +66,6 @@
                 android:layout_marginTop="?attr/actionBarSize"
                 android:layout_marginBottom="@dimen/expanded_toolbar_title_margin_bottom"
                 android:paddingHorizontal="@dimen/expanded_toolbar_title_padding_horizontal"
-                android:textAlignment="center"
                 android:textAppearance="@style/Proton.Text.Headline"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.3"

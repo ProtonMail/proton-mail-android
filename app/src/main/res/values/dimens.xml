@@ -44,7 +44,7 @@
     <dimen name="toolbar_action_layout_icon_size">24dp</dimen>
 
     <dimen name="expanded_toolbar_title_margin_bottom">8dp</dimen>
-    <dimen name="expanded_toolbar_title_padding_horizontal">24dp</dimen>
+    <dimen name="expanded_toolbar_title_padding_horizontal">16dp</dimen>
 
     <dimen name="action_bar_elevation">8dp</dimen>
     <dimen name="action_bar_no_elevation">0dp</dimen>
@@ -78,6 +78,8 @@
     <dimen name="message_details_header_margin_normal">8dp</dimen>
     <dimen name="message_details_header_margin_small">4dp</dimen>
     <dimen name="message_details_header_small_icon_size">16dp</dimen>
+    <dimen name="message_details_header_chevron_icon_size">40dp</dimen>
+    <dimen name="message_details_header_chevron_icon_padding">12dp</dimen>
 
     <dimen name="message_details_banner_height">48dp</dimen>
     <dimen name="message_details_banner_margin_horizontal">16dp</dimen>
