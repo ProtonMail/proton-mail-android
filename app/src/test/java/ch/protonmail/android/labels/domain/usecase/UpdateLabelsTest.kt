@@ -22,6 +22,7 @@ package ch.protonmail.android.labels.domain.usecase
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.repository.MessageRepository
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -39,12 +40,15 @@ class UpdateLabelsTest {
     @MockK
     private lateinit var repository: MessageDetailsRepository
 
+    @MockK
+    private lateinit var newRepository: MessageRepository
+
     private lateinit var useCase: UpdateLabels
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        useCase = UpdateLabels(repository)
+        useCase = UpdateLabels(repository, newRepository)
     }
 
     @Test
@@ -61,7 +65,7 @@ class UpdateLabelsTest {
         val label = mockk<Label> {
             every { id } returns testLabelId1
         }
-        coEvery { repository.findMessageByIdOnce(testMessageId) } returns message
+        coEvery { newRepository.findMessageById(testMessageId) } returns message
         val existingLabels = listOf(label)
         coEvery { repository.getAllLabels() } returns existingLabels
         val checkedLabelIds = listOf(testLabelId1)

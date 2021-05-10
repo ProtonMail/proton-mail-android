@@ -19,11 +19,11 @@
 
 package ch.protonmail.android.ui.dialog
 
-import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -46,7 +46,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     private lateinit var moveMessagesToFolder: MoveMessagesToFolder
 
     @MockK
-    private lateinit var repository: MessageDetailsRepository
+    private lateinit var repository: MessageRepository
     private lateinit var viewModel: MessageActionSheetViewModel
 
     @BeforeTest
@@ -85,8 +85,8 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             every { messageId } returns messageId2
             every { labelIDsNotIncludingLocations } returns listOf(labelId2)
         }
-        coEvery { repository.findMessageByIdOnce(messageId1) } returns message1
-        coEvery { repository.findMessageByIdOnce(messageId2) } returns message2
+        coEvery { repository.findMessageById(messageId1) } returns message1
+        coEvery { repository.findMessageById(messageId2) } returns message2
 
         // when
         viewModel.showLabelsManager(messageIds, currentLocation)
@@ -121,8 +121,8 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             every { messageId } returns messageId2
             every { labelIDsNotIncludingLocations } returns listOf(labelId2)
         }
-        coEvery { repository.findMessageByIdOnce(messageId1) } returns message1
-        coEvery { repository.findMessageByIdOnce(messageId2) } returns message2
+        coEvery { repository.findMessageById(messageId1) } returns message1
+        coEvery { repository.findMessageById(messageId2) } returns message2
 
         // when
         viewModel.showLabelsManager(messageIds, currentLocation, ManageLabelsActionSheet.Type.FOLDER)
@@ -141,7 +141,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             every { messageId } returns messageId1
             every { header } returns messageHeader
         }
-        coEvery { repository.findMessageByIdOnce(messageId1) } returns message1
+        coEvery { repository.findMessageById(messageId1) } returns message1
         val expected = MessageActionSheetAction.ShowMessageHeaders(messageHeader)
 
         // when

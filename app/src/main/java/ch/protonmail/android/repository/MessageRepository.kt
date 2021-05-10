@@ -28,16 +28,23 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.MoveToFolderJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
+import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostSpamJob
+import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
+import ch.protonmail.android.jobs.PostUnreadJob
+import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import timber.log.Timber
 import javax.inject.Inject
 
 const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
+
+private const val FILE_PREFIX = "file://"
 
 /**
  * A repository for getting and saving messages.
@@ -57,11 +64,21 @@ class MessageRepository @Inject constructor(
             val messageDao = databaseProvider.provideMessageDao(userId)
             return@withContext messageDao.findMessageById(messageId).first()?.apply {
                 messageBody?.let {
-                    if (it.startsWith("file://"))
+                    if (it.startsWith(FILE_PREFIX))
                         messageBody = messageBodyFileManager.readMessageBodyFromFile(this)
                 }
             }
         }
+
+    suspend fun findMessageById(messageId: String): Message? {
+        val currentUser = userManager.currentUserId
+        return if (currentUser != null) {
+            findMessage(currentUser, messageId)
+        } else {
+            Timber.w("Cannot find message for null user id")
+            null
+        }
+    }
 
     private suspend fun saveMessage(userId: Id, message: Message): Long =
         withContext(dispatcherProvider.Io) {
@@ -166,4 +183,21 @@ class MessageRepository @Inject constructor(
             MoveToFolderJob(messageIds, newFolderLocationId)
         )
     }
+
+    fun starMessages(messageIds: List<String>) {
+        jobManager.addJobInBackground(PostStarJob(messageIds))
+    }
+
+    fun unStarMessages(messageIds: List<String>) {
+        jobManager.addJobInBackground(PostUnstarJob(messageIds))
+    }
+
+    fun markRead(messageIds: List<String>) {
+        jobManager.addJobInBackground(PostReadJob(messageIds))
+    }
+
+    fun markUnRead(messageIds: List<String>) {
+        jobManager.addJobInBackground(PostUnreadJob(messageIds))
+    }
+
 }

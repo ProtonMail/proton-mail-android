@@ -45,11 +45,8 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.PostReadJob
-import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostUnreadJob
-import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
-import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.extensions.asyncMap
 import com.birbit.android.jobqueue.Job
@@ -123,12 +120,6 @@ class MessageDetailsRepository @Inject constructor(
 
     fun findMessageById(messageId: String): Flow<Message?> =
         messagesDao.findMessageById(messageId).map { readMessageBodyFromFileIfNeeded(it) }
-
-    suspend fun findMessageByIdOnce(messageId: String): Message =
-        messagesDao.findMessageByIdOnce(messageId).apply { readMessageBodyFromFileIfNeeded(this) }
-
-    fun findSearchMessageByIdBlocking(messageId: String): Message? =
-        searchDatabaseDao.findMessageByIdBlocking(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
     fun findSearchMessageById(messageId: String): Flow<Message?> =
         searchDatabaseDao.findMessageById(messageId).map { readMessageBodyFromFileIfNeeded(it) }
@@ -552,20 +543,14 @@ class MessageDetailsRepository @Inject constructor(
         attachmentsWorker.enqueue(messageId, userId, "")
     }
 
+    @Deprecated("Use a method from [MessageRepository]")
     fun markRead(messageIds: List<String>) {
         jobManager.addJobInBackground(PostReadJob(messageIds))
     }
 
+    @Deprecated("Use a method from [MessageRepository]")
     fun markUnRead(messageIds: List<String>) {
         jobManager.addJobInBackground(PostUnreadJob(messageIds))
-    }
-
-    fun starMessages(messageIds: List<String>) {
-        jobManager.addJobInBackground(PostStarJob(messageIds))
-    }
-
-    fun unStarMessages(messageIds: List<String>) {
-        jobManager.addJobInBackground(PostUnstarJob(messageIds))
     }
 
     fun findAllPendingSendsAsync(): LiveData<List<PendingSend>> =
@@ -573,11 +558,6 @@ class MessageDetailsRepository @Inject constructor(
 
     fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>> =
         pendingActionDao.findAllPendingUploadsAsync()
-
-    suspend fun reportPhishing(messageId: String) {
-        val message = findMessageByIdOnce(messageId)
-        jobManager.addJobInBackground(ReportPhishingJob(message))
-    }
 
     @AssistedInject.Factory
     interface AssistedFactory {

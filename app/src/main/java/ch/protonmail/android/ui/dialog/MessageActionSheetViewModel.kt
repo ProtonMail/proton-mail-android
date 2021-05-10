@@ -21,23 +21,24 @@ package ch.protonmail.android.ui.dialog
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.EMPTY_STRING
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class MessageActionSheetViewModel @Inject constructor(
     private val deleteMessage: DeleteMessage,
     private val moveMessagesToFolder: MoveMessagesToFolder,
-    private val messageDetailsRepository: MessageDetailsRepository
+    private val messageRepository: MessageRepository
 ) : ViewModel() {
 
     private val actionsMutableFlow = MutableStateFlow<MessageActionSheetAction>(MessageActionSheetAction.Default)
@@ -65,8 +66,11 @@ class MessageActionSheetViewModel @Inject constructor(
     ): List<String> {
         val checkedLabels = mutableListOf<String>()
         messageIds.forEach { messageId ->
-            val message = messageDetailsRepository.findMessageByIdOnce(messageId)
-            checkedLabels.addAll(message.labelIDsNotIncludingLocations)
+            val message = messageRepository.findMessageById(messageId)
+            Timber.v("Checking message labels: ${message?.labelIDsNotIncludingLocations}")
+            message?.labelIDsNotIncludingLocations?.let {
+                checkedLabels.addAll(it)
+            }
         }
         return checkedLabels
     }
@@ -112,19 +116,19 @@ class MessageActionSheetViewModel @Inject constructor(
     )
 
     fun starMessage(messageId: List<String>) =
-        messageDetailsRepository.starMessages(messageId)
+        messageRepository.starMessages(messageId)
 
     fun unStarMessage(messageId: List<String>) =
-        messageDetailsRepository.unStarMessages(messageId)
+        messageRepository.unStarMessages(messageId)
 
-    fun markUnread(messageIds: List<String>) = messageDetailsRepository.markUnRead(messageIds)
+    fun markUnread(messageIds: List<String>) = messageRepository.markUnRead(messageIds)
 
-    fun markRead(messageIds: List<String>) = messageDetailsRepository.markRead(messageIds)
+    fun markRead(messageIds: List<String>) = messageRepository.markRead(messageIds)
 
     fun showMessageHeaders(messageId: String) {
         viewModelScope.launch {
-            val message = messageDetailsRepository.findMessageByIdOnce(messageId)
-            actionsMutableFlow.value = MessageActionSheetAction.ShowMessageHeaders(message.header ?: EMPTY_STRING)
+            val message = messageRepository.findMessageById(messageId)
+            actionsMutableFlow.value = MessageActionSheetAction.ShowMessageHeaders(message?.header ?: EMPTY_STRING)
         }
     }
 }

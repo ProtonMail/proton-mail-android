@@ -24,6 +24,7 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import okio.buffer
 import okio.sink
 import okio.source
+import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -48,7 +49,10 @@ class FileHelper @Inject constructor(
             FileInputStream(file)
                 .bufferedReader()
                 .use { it.readText() }
-        }.getOrNull()
+        }
+            .onFailure { Timber.i(it, "Unable to read file") }
+            .onSuccess { Timber.v("File ${file.path} read success") }
+            .getOrNull()
     }
 
     suspend fun writeToFile(file: File, text: String): Boolean = withContext(dispatcherProvider.Io) {

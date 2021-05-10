@@ -20,11 +20,13 @@
 package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.repository.MessageRepository
 import timber.log.Timber
 import javax.inject.Inject
 
 class UpdateLabels @Inject constructor(
-    private val messageDetailsRepository: MessageDetailsRepository
+    private val messageDetailsRepository: MessageDetailsRepository, // TODO: Replace it with future LabelsRepository
+    private val messageRepository: MessageRepository
 ) {
 
     suspend operator fun invoke(
@@ -32,7 +34,7 @@ class UpdateLabels @Inject constructor(
         checkedLabelIds: List<String>,
         isTransient: Boolean = false
     ) {
-        val message = messageDetailsRepository.findMessageByIdOnce(messageId)
+        val message = requireNotNull(messageRepository.findMessageById(messageId))
         val existingLabels = messageDetailsRepository.getAllLabels()
             .filter { it.id in message.labelIDsNotIncludingLocations }
         Timber.v("UpdateLabels checkedLabelIds: $checkedLabelIds")

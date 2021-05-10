@@ -69,7 +69,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         val binding = FragmentMessageDetailsActionSheetBinding.inflate(inflater)
 
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
-        setupMessageReplyActionsBindings(binding.includeLayoutActionSheetButtons, originatorId)
+        setupReplyActionsBindings(binding.includeLayoutActionSheetButtons, originatorId)
         setupManageSectionBindings(binding, viewModel, originatorId, messageIds, messageLocation)
         setupMoveSectionBindings(binding, viewModel, messageIds, messageLocation)
         setupMoreSectionBindings(binding, originatorId, messageIds)
@@ -142,7 +142,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupMessageReplyActionsBindings(
+    private fun setupReplyActionsBindings(
         binding: LayoutMessageDetailsActionsSheetButtonsBinding,
         originatorId: Int
     ) = with(binding) {
