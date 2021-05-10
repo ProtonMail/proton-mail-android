@@ -34,7 +34,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.EXTRA_VIEW_HEADERS
 import ch.protonmail.android.activities.messageDetails.MessageViewHeadersActivity
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.databinding.FragmentMessageDetailsActionSheetBinding
+import ch.protonmail.android.databinding.FragmentMessageActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
@@ -66,7 +66,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 arguments?.getInt(EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID) ?: 0
             )
 
-        val binding = FragmentMessageDetailsActionSheetBinding.inflate(inflater)
+        val binding = FragmentMessageActionSheetBinding.inflate(inflater)
 
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
         setupReplyActionsBindings(binding.includeLayoutActionSheetButtons, originatorId)
@@ -163,7 +163,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun setupManageSectionBindings(
-        binding: FragmentMessageDetailsActionSheetBinding,
+        binding: FragmentMessageActionSheetBinding,
         viewModel: MessageActionSheetViewModel,
         originatorId: Int,
         messageIds: List<String>,
@@ -205,7 +205,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun setupMoveSectionBindings(
-        binding: FragmentMessageDetailsActionSheetBinding,
+        binding: FragmentMessageActionSheetBinding,
         viewModel: MessageActionSheetViewModel,
         messageIds: List<String>,
         messageLocation: Constants.MessageLocationType
@@ -270,7 +270,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun setupMoreSectionBindings(
-        binding: FragmentMessageDetailsActionSheetBinding,
+        binding: FragmentMessageActionSheetBinding,
         originatorId: Int,
         messageIds: List<String>
     ) = with(binding) {
