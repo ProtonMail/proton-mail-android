@@ -559,15 +559,8 @@ class MailboxActivity :
         setUpDrawer()
         setupAccountsList()
         checkRegistration()
-        handler.postDelayed(500) {
-            mJobManager.addJobInBackground(FetchLabelsJob())
-            switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
-        }
-
-        observeMailboxItemsByLocation(
-            refreshMessages = true,
-            syncId = syncUUID
-        )
+        mJobManager.addJobInBackground(FetchLabelsJob())
+        switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
 
         messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
         // Account has been switched, so used space changed as well
@@ -1053,7 +1046,7 @@ class MailboxActivity :
 
     @Subscribe
     fun onLabelsLoadedEvent(event: FetchLabelsEvent) {
-        if (/* messagesAdapter != null && */ event.status == Status.SUCCESS) {
+        if (event.status == Status.SUCCESS) {
             mailboxAdapter.notifyDataSetChanged()
         }
     }
