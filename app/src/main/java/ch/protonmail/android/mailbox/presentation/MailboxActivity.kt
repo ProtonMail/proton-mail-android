@@ -126,8 +126,6 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
-import ch.protonmail.android.jobs.FetchByLocationJob
-import ch.protonmail.android.jobs.FetchLabelsJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostReadJob
@@ -388,7 +386,7 @@ class MailboxActivity :
 
         fetchOrganizationData()
 
-        observeMailboxItemsByLocation(syncId = syncUUID)
+        observeMailboxItemsByLocation(syncId = syncUUID, includeLabels = true)
 
         mailboxLocationMain.observe(this, mailboxAdapter::setNewLocation)
         ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
@@ -559,7 +557,6 @@ class MailboxActivity :
         setUpDrawer()
         setupAccountsList()
         checkRegistration()
-        mJobManager.addJobInBackground(FetchLabelsJob())
         switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
 
         messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
@@ -583,7 +580,7 @@ class MailboxActivity :
      * @param refreshMessages whether the existing local messages should be deleted and re-fetched from network
      */
     private fun observeMailboxItemsByLocation(
-        includeLabels: Boolean = false,
+        includeLabels: Boolean = true,
         refreshMessages: Boolean = false,
         syncId: String
     ) {
@@ -721,6 +718,7 @@ class MailboxActivity :
             refreshMailboxJobRunning = true
             app.updateDone()
             observeMailboxItemsByLocation(
+                includeLabels = false,
                 syncId = syncUUID
             )
             true
