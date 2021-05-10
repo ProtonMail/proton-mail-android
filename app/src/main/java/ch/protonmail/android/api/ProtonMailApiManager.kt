@@ -370,6 +370,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun updateViewMode(viewMode: Int): ResponseBody? = api.updateViewMode(viewMode)
 
+    override suspend fun fetchConversations(params: GetConversationsParameters): ConversationsResponse =
+        api.fetchConversations(params)
+
     override suspend fun fetchConversation(
         conversationId: String,
         userId: Id

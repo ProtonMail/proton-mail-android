@@ -115,7 +115,6 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.TotalLabelCounter
 import ch.protonmail.android.data.local.model.TotalLocationCounter
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.FetchUpdatesEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
@@ -233,6 +232,7 @@ class MailboxActivity :
     private val handler = Handler(Looper.getMainLooper())
 
     override val currentLabelId get() = mailboxLabelId
+    val currentLocation get() = mailboxLocationMain
 
     override fun getLayoutId(): Int = R.layout.activity_mailbox
 
@@ -365,14 +365,17 @@ class MailboxActivity :
             ).execute()
         }
 
-        messagesAdapter.setOnItemSelectionChangedListener {
-            val checkedItems = messagesAdapter.checkedMessages.size
+        mailboxAdapter.setOnItemSelectionChangedListener {
+            val checkedItems = mailboxAdapter.checkedMailboxItems.size
             actionMode?.title = "$checkedItems ${getString(R.string.selected)}"
 
             mailboxActionsView.setAction(
                 BottomActionsView.ActionPosition.ACTION_SECOND,
                 currentLocation.value != MessageLocationType.DRAFT,
-                if (MessageUtils.areAllUnRead(selectedMessages)) R.drawable.ic_envelope_open_text else R.drawable.ic_envelope_dot
+                if (MessageUtils.areAllUnRead(
+                        selectedMessages
+                    )
+                ) R.drawable.ic_envelope_open_text else R.drawable.ic_envelope_dot
             )
         }
 
@@ -1235,7 +1238,7 @@ class MailboxActivity :
                 undoSnack!!.show()
                 // show progress bar for visual representation of work in background,
                 // if all the messages inside the folder are impacted by the action
-                if (messagesAdapter.itemCount == messageIds.size) {
+                if (mailboxAdapter.itemCount == messageIds.size) {
                     setRefreshing(true)
                 }
                 mJobManager.addJobInBackground(PostTrashJobV2(messageIds, mailboxLabelId))

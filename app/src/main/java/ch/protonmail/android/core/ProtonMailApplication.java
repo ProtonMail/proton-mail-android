@@ -372,11 +372,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
             prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, BuildConfig.VERSION_CODE).apply();
             mUpdateOccurred = true;
 
-            if (userManager.isLoggedIn()) {
-                userManager.setCurrentUserLoginState(LOGIN_STATE_TO_INBOX);
-            }
-
-            if (BuildConfig.FETCH_FULL_CONTACTS && userManager.isLoggedIn()) {
+            if (BuildConfig.FETCH_FULL_CONTACTS) {
                 new FetchContactsEmailsWorker.Enqueuer(WorkManager.getInstance(this)).enqueue(0);
                 new FetchContactsDataWorker.Enqueuer(WorkManager.getInstance(this)).enqueue();
             }

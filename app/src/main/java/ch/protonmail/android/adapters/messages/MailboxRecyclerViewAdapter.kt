@@ -22,17 +22,15 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Label
-import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
-import kotlinx.android.synthetic.main.layout_sender_initial.view.*
-import kotlinx.android.synthetic.main.list_item_mailbox.view.*
 import ch.protonmail.android.views.messagesList.MailboxItemFooterView
 import ch.protonmail.android.views.messagesList.MailboxItemView
+import kotlinx.android.synthetic.main.layout_sender_initial.view.*
+import kotlinx.android.synthetic.main.list_item_mailbox.view.*
 
 class MailboxRecyclerViewAdapter(
     private val context: Context,
@@ -120,18 +118,18 @@ class MailboxRecyclerViewAdapter(
     }
 
     private fun selectMessage(messageId: String, position: Int) {
-        if (selectedMessageIds.isEmpty()) {
+        if (selectedMailboxItemsIds.isEmpty()) {
             onSelectionModeChange?.invoke(SelectionModeEnum.STARTED)
             notifyDataSetChanged()
         }
-        selectedMessageIds.add(messageId)
+        selectedMailboxItemsIds.add(messageId)
         onItemSelectionChangedListener?.invoke()
         notifyItemChanged(position)
     }
 
     private fun deselectMessage(messageId: String, position: Int) {
-        selectedMessageIds.remove(messageId)
-        if (selectedMessageIds.isEmpty()) {
+        selectedMailboxItemsIds.remove(messageId)
+        if (selectedMailboxItemsIds.isEmpty()) {
             onSelectionModeChange?.invoke(SelectionModeEnum.ENDED)
             notifyDataSetChanged()
         } else {
@@ -145,7 +143,7 @@ class MailboxRecyclerViewAdapter(
             return false
         }
 
-        if (selectedMessageIds.contains(messageId)) {
+        if (selectedMailboxItemsIds.contains(messageId)) {
             deselectMessage(messageId, position)
         } else {
             selectMessage(messageId, position)
@@ -164,6 +162,7 @@ class MailboxRecyclerViewAdapter(
         this.view.bind(
             mailboxItem,
             itemLabels,
+            selectedMailboxItemsIds.isNotEmpty(),
             mMailboxLocation,
             isBeingSent,
             isAttachmentsBeingUploaded
