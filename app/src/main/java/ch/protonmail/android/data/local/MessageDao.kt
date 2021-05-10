@@ -126,6 +126,10 @@ abstract class MessageDao {
             message.Attachments = message.attachments(this)
         }
 
+    suspend fun findMessageByIdOnce(messageId: String): Message? = findMessageInfoByIdOnce(messageId)?.also { message ->
+        message.Attachments = message.attachmentsBlocking(this)
+    }
+
     @Deprecated("Use Flow variant", ReplaceWith("findMessageById(messageId).first()"))
     fun findMessageByIdBlocking(messageId: String): Message? = findMessageInfoByIdBlocking(messageId)
         ?.also { message ->

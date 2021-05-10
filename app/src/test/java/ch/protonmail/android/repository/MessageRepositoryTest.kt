@@ -35,7 +35,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.spyk
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Test
@@ -85,7 +84,7 @@ class MessageRepositoryTest {
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
-            coEvery { messageDao.findMessageById(messageId) } returns flowOf(null)
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns null
             coEvery { messageDao.saveMessage(mockMessage) } returns 123
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, any()) } returns mockk {
                 every { message } returns mockMessage
@@ -116,7 +115,7 @@ class MessageRepositoryTest {
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
-            coEvery { messageDao.findMessageById(messageId) } returns flowOf(mockMessageInDb)
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns mockMessageInDb
             coEvery { messageDao.saveMessage(mockMessageFetched) } returns 123
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, any()) } returns mockk {
                 every { message } returns mockMessageFetched
@@ -143,7 +142,7 @@ class MessageRepositoryTest {
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns false
             }
-            coEvery { messageDao.findMessageById(messageId) } returns flowOf(null)
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns null
             coEvery { messageDao.saveMessage(mockMessage) } returns 123
             coEvery { protonMailApiManager.fetchMessageMetadata(messageId, any()) } returns mockk {
                 every { messages } returns listOf(mockMessage)
@@ -170,7 +169,7 @@ class MessageRepositoryTest {
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
-            coEvery { messageDao.findMessageById(messageId) } returns flowOf(mockMessage)
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns mockMessage
 
             // when
             val result = messageRepository.getMessage(testUserId, messageId)
@@ -192,7 +191,7 @@ class MessageRepositoryTest {
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns false
             }
-            coEvery { messageDao.findMessageById(messageId) } returns flowOf(mockMessage)
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns mockMessage
 
             // when
             val result = messageRepository.getMessage(testUserId, messageId)
@@ -211,8 +210,8 @@ class MessageRepositoryTest {
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
-            coEvery { messageDao.findMessageById(messageId) } returns flowOf(mockMessage)
-            coEvery { messageBodyFileManager.readMessageBodyFromFile(mockMessage) } returns "messageBody"
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns mockMessage
+            every { messageBodyFileManager.readMessageBodyFromFile(mockMessage) } returns "messageBody"
 
             // when
             val result = messageRepository.getMessage(testUserId, messageId)
@@ -231,7 +230,7 @@ class MessageRepositoryTest {
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
-            coEvery { messageDao.findMessageById(messageId) } returns flowOf(null)
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns null
             coEvery { messageDao.saveMessage(mockMessage) } returns 123
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, any()) } returns mockk {
                 every { message } returns mockMessage
@@ -255,7 +254,7 @@ class MessageRepositoryTest {
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
-            coEvery { messageDao.findMessageById(messageId) } returns flowOf(null)
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns null
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, UserIdTag(testUserId)) } throws Exception()
 
             // when
@@ -274,7 +273,7 @@ class MessageRepositoryTest {
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns false
             }
-            coEvery { messageDao.findMessageById(messageId) } returns flowOf(null)
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns null
             coEvery { protonMailApiManager.fetchMessageMetadata(messageId, UserIdTag(testUserId)) } throws Exception()
 
             // when
@@ -297,7 +296,7 @@ class MessageRepositoryTest {
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns false
             }
-            coEvery { messageDao.findMessageById(messageId) } returns flowOf(null)
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns null
             coEvery { messageDao.saveMessage(mockMessage) } returns 123
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, any()) } returns mockk {
                 every { message } returns mockMessage

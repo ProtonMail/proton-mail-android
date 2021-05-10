@@ -36,7 +36,6 @@ import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -59,16 +58,16 @@ class MessageRepository @Inject constructor(
     private val jobManager: JobManager
 ) {
 
-    private suspend fun findMessage(userId: Id, messageId: String): Message? =
-        withContext(dispatcherProvider.Io) {
-            val messageDao = databaseProvider.provideMessageDao(userId)
-            return@withContext messageDao.findMessageById(messageId).first()?.apply {
-                messageBody?.let {
-                    if (it.startsWith(FILE_PREFIX))
-                        messageBody = messageBodyFileManager.readMessageBodyFromFile(this)
+    private suspend fun findMessage(userId: Id, messageId: String): Message? {
+        val messageDao = databaseProvider.provideMessageDao(userId)
+        return messageDao.findMessageByIdOnce(messageId)?.apply {
+            messageBody?.let {
+                if (it.startsWith(FILE_PREFIX)) {
+                    messageBody = messageBodyFileManager.readMessageBodyFromFile(this)
                 }
             }
         }
+    }
 
     suspend fun findMessageById(messageId: String): Message? {
         val currentUser = userManager.currentUserId

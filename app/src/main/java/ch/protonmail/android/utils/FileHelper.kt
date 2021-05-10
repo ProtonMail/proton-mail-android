@@ -37,15 +37,15 @@ class FileHelper @Inject constructor(
     private val dispatcherProvider: DispatcherProvider
 ) {
 
-    suspend fun createFile(parent: String, child: String): File = withContext(dispatcherProvider.Io) {
+    fun createFile(parent: String, child: String): File {
         val parentFile = File(parent).also {
             it.mkdirs()
         }
-        return@withContext File(parentFile, child)
+        return File(parentFile, child)
     }
 
-    suspend fun readFromFile(file: File): String? = withContext(dispatcherProvider.Io) {
-        return@withContext runCatching {
+    fun readFromFile(file: File): String? =
+        runCatching {
             FileInputStream(file)
                 .bufferedReader()
                 .use { it.readText() }
@@ -53,7 +53,7 @@ class FileHelper @Inject constructor(
             .onFailure { Timber.i(it, "Unable to read file") }
             .onSuccess { Timber.v("File ${file.path} read success") }
             .getOrNull()
-    }
+
 
     suspend fun writeToFile(file: File, text: String): Boolean = withContext(dispatcherProvider.Io) {
         return@withContext runCatching {
