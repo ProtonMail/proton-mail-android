@@ -43,15 +43,14 @@
 
             <TextView
                 android:id="@+id/collapsedToolbarTitleTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:textAppearance="@style/Proton.Text.DefaultSmall.Medium"
-                android:layout_marginEnd="@dimen/padding_xxl"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/starToggleButton"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/starToggleButton"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="@tools:sample/lorem/random" />
 
@@ -77,7 +76,6 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:layout_marginBottom="@dimen/expanded_toolbar_title_margin_bottom"
         android:paddingHorizontal="@dimen/expanded_toolbar_title_padding_horizontal"
-        android:textAlignment="center"
         android:textAppearance="@style/Proton.Text.Headline"
         app:layout_collapseMode="parallax"
         app:layout_collapseParallaxMultiplier="0.3"

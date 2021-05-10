@@ -812,7 +812,7 @@ internal class MessageDetailsActivity :
     ) {
         try {
             val user = mUserManager.requireCurrentLegacyUser()
-                val userUsedSpace = user.usedSpace
+            val userUsedSpace = user.usedSpace
             val userMaxSpace = if (user.maxSpace == 0L) {
                 Long.MAX_VALUE
             } else {
@@ -962,7 +962,7 @@ internal class MessageDetailsActivity :
     private fun getCurrentSubject() = expandedToolbarTitleTextView.text ?: getString(R.string.empty_subject)
 
     private fun getMessagesFrom(messageOriginator: String?): String =
-        messageOriginator?.let{ resources.getString(R.string.message_from, messageOriginator) } ?: EMPTY_STRING
+        messageOriginator?.let { resources.getString(R.string.message_from, messageOriginator) } ?: EMPTY_STRING
 
     private inner class MessageDetailsErrorObserver : Observer<Event<String>> {
 
