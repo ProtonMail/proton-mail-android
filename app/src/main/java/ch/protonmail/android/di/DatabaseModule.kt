@@ -32,6 +32,7 @@ import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mailbox.data.local.ConversationDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -74,6 +75,12 @@ object DatabaseModule {
         context: Context,
         @CurrentUserId userId: Id
     ): MessageDao = MessageDatabase.getInstance(context, userId).getDao()
+
+    @Provides
+    fun provideConversationDatabase(
+        context: Context,
+        @CurrentUserId userId: Id
+    ): ConversationDao = MessageDatabase.getInstance(context, userId).getConversationDao()
 
 
     @Provides

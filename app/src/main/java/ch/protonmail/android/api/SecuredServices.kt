@@ -29,6 +29,7 @@ import ch.protonmail.android.api.segments.organization.OrganizationService
 import ch.protonmail.android.api.segments.payment.PaymentService
 import ch.protonmail.android.api.segments.report.ReportService
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsService
+import ch.protonmail.android.mailbox.data.remote.ConversationService
 import retrofit2.Retrofit
 
 class SecuredServices(private val retrofit: Retrofit) {
@@ -54,6 +55,8 @@ class SecuredServices(private val retrofit: Retrofit) {
     val attachment: AttachmentService by createService(AttachmentService::class.java)
 
     val organization: OrganizationService by createService(OrganizationService::class.java)
+
+    val conversation: ConversationService by createService(ConversationService::class.java)
 
     // Every service gets the same Retrofit instance (lazy loaded)
     private fun <T> createService(serviceInterface: Class<T>): Lazy<T> {

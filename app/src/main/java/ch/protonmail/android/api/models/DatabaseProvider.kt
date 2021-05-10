@@ -31,9 +31,8 @@ import ch.protonmail.android.data.local.NotificationDao
 import ch.protonmail.android.data.local.NotificationDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
-import ch.protonmail.android.data.local.SendingFailedNotificationDao
-import ch.protonmail.android.data.local.SendingFailedNotificationDatabase
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mailbox.data.local.ConversationDao
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -64,6 +63,11 @@ class DatabaseProvider @Inject constructor(
     fun provideMessageSearchDao(userId: Id): MessageDao =
         MessageDatabase.getSearchDatabase(context, userId).getDao()
 
+    // TODO remove once the usage in ClearUserData use-case is removed
+    //Conversation
+    fun provideConversationDao(userId: Id): ConversationDao =
+        MessageDatabase.getInstance(context, userId).getConversationDao()
+
     // Notification
     fun provideNotificationDao(userId: Id): NotificationDao =
         NotificationDatabase.getInstance(context, userId).getDao()
@@ -72,7 +76,4 @@ class DatabaseProvider @Inject constructor(
     fun providePendingActionDao(userId: Id): PendingActionDao =
         PendingActionDatabase.getInstance(context, userId).getDao()
 
-    // Sending failed notification
-    fun provideSendingFailedNotificationDao(userId: Id): SendingFailedNotificationDao =
-        SendingFailedNotificationDatabase.getInstance(context, userId).getDao()
 }

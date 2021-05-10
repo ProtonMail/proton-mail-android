@@ -29,10 +29,12 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import ch.protonmail.android.api.models.MessagePayload
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.RecipientType
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
 import ch.protonmail.android.api.models.messages.ParsedHeaders
+import ch.protonmail.android.api.models.messages.receive.ServerMessageSender
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
@@ -47,6 +49,7 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import me.proton.core.util.kotlin.toInt
 import org.apache.commons.lang3.StringEscapeUtils
 import timber.log.Timber
 import java.io.Serializable
@@ -57,6 +60,7 @@ import javax.mail.internet.InternetHeaders
 
 const val TABLE_MESSAGES = "messagev3"
 const val COLUMN_MESSAGE_ID = "ID"
+const val COLUMN_CONVERSATION_ID = "ConversationID"
 const val COLUMN_MESSAGE_SUBJECT = "Subject"
 const val COLUMN_MESSAGE_TIME = "Time"
 const val COLUMN_MESSAGE_LOCATION = "Location"
@@ -93,12 +97,15 @@ const val COLUMN_MESSAGE_DELETED = "Deleted"
 
 @Entity(
     tableName = TABLE_MESSAGES,
-    indices = [Index(COLUMN_MESSAGE_ID, unique = true), Index(COLUMN_MESSAGE_LOCATION)]
+    indices = [Index(COLUMN_MESSAGE_ID, unique = true), Index(COLUMN_MESSAGE_LOCATION), Index(COLUMN_CONVERSATION_ID)]
 )
 data class Message @JvmOverloads constructor(
 
     @ColumnInfo(name = COLUMN_MESSAGE_ID)
     var messageId: String? = null,
+
+    @ColumnInfo(name = COLUMN_CONVERSATION_ID)
+    var conversationId: String? = null,
 
     @ColumnInfo(name = COLUMN_MESSAGE_SUBJECT)
     var subject: String? = null,
@@ -127,7 +134,6 @@ data class Message @JvmOverloads constructor(
     @ColumnInfo(name = COLUMN_MESSAGE_NUM_ATTACHMENTS)
     var numAttachments: Int = 0,
 
-    // TODO merge methods
     @ColumnInfo(name = COLUMN_MESSAGE_IS_ENCRYPTED)
     var messageEncryption: MessageEncryption? = null,
 
@@ -263,17 +269,21 @@ data class Message @JvmOverloads constructor(
             .map { it.emailAddress }
             .toList()
 
-    val toListString get() =
-        MessageUtils.toContactString(toList)
+    val toListString
+        get() =
+            MessageUtils.toContactString(toList)
 
-    val toListStringGroupsAware get() =
-        MessageUtils.toContactsAndGroupsString(toList)
+    val toListStringGroupsAware
+        get() =
+            MessageUtils.toContactsAndGroupsString(toList)
 
-    val ccListString get() =
-        MessageUtils.toContactString(ccList)
+    val ccListString
+        get() =
+            MessageUtils.toContactString(ccList)
 
-    val bccListString: String get() =
-        MessageUtils.toContactString(bccList)
+    val bccListString: String
+        get() =
+            MessageUtils.toContactString(bccList)
 
     fun locationFromLabel(): Constants.MessageLocationType =
         allLabelIDs
@@ -286,25 +296,21 @@ data class Message @JvmOverloads constructor(
                         Constants.MessageLocationType.STARRED,
                         Constants.MessageLocationType.ALL_MAIL,
                         Constants.MessageLocationType.INVALID
-                    ) && newLocation.messageLocationTypeValue < location.messageLocationTypeValue) {
+                    ) && newLocation.messageLocationTypeValue < location.messageLocationTypeValue
+                ) {
                     newLocation
 
                 } else if (newLocation in listOf(
                         Constants.MessageLocationType.DRAFT,
                         Constants.MessageLocationType.SENT
-                    )) {
+                    )
+                ) {
                     newLocation
 
                 } else {
                     location
                 }
             }
-
-    @Ignore
-    var isBeingSent: Boolean = false
-
-    @Ignore
-    var isAttachmentsBeingUploaded: Boolean = false
 
     val isSent: Boolean
         get() {
@@ -365,10 +371,12 @@ data class Message @JvmOverloads constructor(
     fun isEncrypted(): Boolean = messageEncryption!!.isEndToEndEncrypted
 
     @WorkerThread
+    @Deprecated("We target removing all logic from Models. `MessageDao` can be used to get attachments instead")
     fun attachmentsBlocking(messageDao: MessageDao): List<Attachment> = runBlocking {
         attachments(messageDao)
     }
 
+    @Deprecated("We target removing all logic from Models. `MessageDao` can be used to get attachments instead")
     suspend fun attachments(messageDao: MessageDao): List<Attachment> {
         if (isPGPMime) {
             return this.Attachments
@@ -393,6 +401,7 @@ data class Message @JvmOverloads constructor(
     }
 
     @MainThread
+    @Deprecated("We target removing all logic from Models. `MessageDao` can be used to get attachments instead")
     fun getAttachmentsAsync(messageDao: MessageDao): LiveData<List<Attachment>> {
         if (isPGPMime) {
             val result = MutableLiveData<List<Attachment>>()
@@ -421,6 +430,7 @@ data class Message @JvmOverloads constructor(
      * @throws Exception
      */
     @JvmOverloads
+    @Deprecated("This logic should be extracted to a testable component for any new usages. Tracked in MAILAND-1566")
     fun decrypt(userManager: UserManager, userId: Id, verKeys: List<KeyInformation>? = null) {
         val addressId = Id(checkNotNull(addressID))
         val addressCrypto = Crypto.forAddress(userManager, userId, addressId)
@@ -481,6 +491,7 @@ data class Message @JvmOverloads constructor(
      * @throws Exception
      */
     @JvmOverloads
+    @Deprecated("This logic should be extracted to a testable component for any new usages. Tracked in MAILAND-1566")
     fun decrypt(addressCrypto: AddressCrypto, verKeys: List<KeyInformation>? = null) {
         var decryptedMessage: String
         val keys = ArrayList<ByteArray>()
@@ -529,12 +540,6 @@ data class Message @JvmOverloads constructor(
         decryptedHTML = decryptedMessage
     }
 
-    fun searchForLocation(location: Int) = allLabelIDs
-        .asSequence()
-        .filter { it.length <= 2 }
-        .map { Integer.valueOf(it) }
-        .contains(location)
-
     fun setAttachmentList(attachmentList: List<Attachment>) {
         Attachments = attachmentList
     }
@@ -582,6 +587,17 @@ data class Message @JvmOverloads constructor(
     }
 
     fun isSenderEmailAlias() = senderEmail.contains("+")
+
+    fun toApiPayload() = MessagePayload(
+        messageId,
+        subject,
+        ServerMessageSender(sender?.name, sender?.emailAddress),
+        messageBody,
+        toList,
+        ccList,
+        bccList,
+        Unread.toInt()
+    )
 
     enum class MessageType {
         INBOX, DRAFT, SENT, INBOX_AND_SENT

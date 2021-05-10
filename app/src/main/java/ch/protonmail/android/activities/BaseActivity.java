@@ -52,7 +52,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ch.protonmail.android.R;
-import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
+import ch.protonmail.android.details.presentation.MessageDetailsActivity;
 import ch.protonmail.android.adapters.swipe.SwipeProcessor;
 import ch.protonmail.android.api.NetworkConfigurator;
 import ch.protonmail.android.api.ProtonMailApiManager;

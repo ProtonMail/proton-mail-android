@@ -33,7 +33,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
-import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.activities.messageDetails.MessagePrinter
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.RegisterReloadTask

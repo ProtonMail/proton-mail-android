@@ -20,7 +20,6 @@ package ch.protonmail.android.utils
 
 import android.content.Context
 import android.content.Intent
-import android.text.TextUtils
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.api.models.MessageRecipient
@@ -192,7 +191,7 @@ object MessageUtils {
         val setOfEmailsIncludingGroups: MutableSet<String> = HashSet()
         for (messageRecipient in messageRecipients) {
             setOfEmailsIncludingGroups.add(
-                if (!TextUtils.isEmpty(messageRecipient.group)) {
+                if (!messageRecipient.group.isNullOrEmpty()) {
                     messageRecipient.group
                 } else {
                     messageRecipient.emailAddress

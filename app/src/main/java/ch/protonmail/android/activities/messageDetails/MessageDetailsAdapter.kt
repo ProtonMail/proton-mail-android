@@ -41,6 +41,10 @@ import ch.protonmail.android.activities.messageDetails.body.MessageBodyTouchList
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.utils.DateUtil
+import ch.protonmail.android.utils.ServerTime
+import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.views.PMWebViewClient

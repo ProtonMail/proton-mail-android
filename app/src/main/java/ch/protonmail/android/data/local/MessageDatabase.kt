@@ -28,24 +28,40 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessagesTypesConverter
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mailbox.data.local.ConversationDao
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
+import ch.protonmail.android.mailbox.data.local.model.ConversationTypesConverter
 
 @Database(
-	entities = [Attachment::class, Message::class, Label::class],
-	version = 8
+    entities = [
+        Attachment::class,
+        Message::class,
+        Label::class,
+        ConversationDatabaseModel::class
+    ],
+    version = 9
 )
-@TypeConverters(value = [MessagesTypesConverter::class, AttachmentTypesConverter::class])
+@TypeConverters(
+    value = [
+        MessagesTypesConverter::class,
+        AttachmentTypesConverter::class,
+        ConversationTypesConverter::class
+    ]
+)
 abstract class MessageDatabase : RoomDatabase() {
 
-	abstract fun getDao(): MessageDao
+    abstract fun getDao(): MessageDao
+    abstract fun getConversationDao(): ConversationDao
 
-	companion object : DatabaseFactory<MessageDatabase>(
-		MessageDatabase::class,
-		"MessagesDatabase.db"
-	) {
-		private val searchCache = mutableMapOf<Id, MessageDatabase>()
+    companion object : DatabaseFactory<MessageDatabase>(
+        MessageDatabase::class,
+        "MessagesDatabase.db"
+    ) {
 
-		@Synchronized
-		fun getSearchDatabase(context: Context, userId: Id): MessageDatabase =
-			searchCache.getOrPut(userId) { buildInMemoryDatabase(context) }
-	}
+        private val searchCache = mutableMapOf<Id, MessageDatabase>()
+
+        @Synchronized
+        fun getSearchDatabase(context: Context, userId: Id): MessageDatabase =
+            searchCache.getOrPut(userId) { buildInMemoryDatabase(context) }
+    }
 }

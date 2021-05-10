@@ -250,7 +250,6 @@ dependencies {
         rootProject.aar(Lib.protonCore, version = `old protonCore version`),
         // rootProject.aar(Lib.composer, version = `composer version`),
 
-        // Proton Core
         `Proton-data`,
         `Proton-domain`,
         `Proton-presentation`,
@@ -339,7 +338,8 @@ dependencies {
         `viewStateStore`,
         `viewStateStore-paging`,
         `remark`,
-        `okio`
+        `okio`,
+        `store`
     )
 
     kapt(

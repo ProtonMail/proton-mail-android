@@ -19,37 +19,34 @@
 package ch.protonmail.android.adapters.messages
 
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Label
-import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
+import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
-import ch.protonmail.android.views.messagesList.MessagesListFooterView
-import ch.protonmail.android.views.messagesList.MessagesListItemView
+import ch.protonmail.android.views.messagesList.MailboxItemFooterView
+import ch.protonmail.android.views.messagesList.MailboxItemView
 import kotlinx.android.synthetic.main.layout_sender_initial.view.*
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
 
-class MessagesRecyclerViewAdapter(
+class MailboxRecyclerViewAdapter(
     private val context: Context,
     private val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?
-) : RecyclerView.Adapter<MessagesListViewHolder>() {
-
+) : RecyclerView.Adapter<MailboxItemViewHolder>() {
 
     private var mMailboxLocation = Constants.MessageLocationType.INVALID
 
     private var labels = mapOf<String, Label>()
-    private val messages = mutableListOf<Message>()
-    private val selectedMessageIds: MutableSet<String> = mutableSetOf()
+    private val mailboxItems = mutableListOf<MailboxUiItem>()
+    private val selectedMailboxItemsIds: MutableSet<String> = mutableSetOf()
 
     private var pendingUploadList: List<PendingUpload>? = null
     private var pendingSendList: List<PendingSend>? = null
-    private var contactsList: List<ContactEmail>? = null
 
-    private var onItemClick: ((Message) -> Unit)? = null
+    private var onItemClick: ((MailboxUiItem) -> Unit)? = null
     private var onItemSelectionChangedListener: (() -> Unit)? = null
 
     var includeFooter: Boolean = false
@@ -59,32 +56,33 @@ class MessagesRecyclerViewAdapter(
             }
             field = value
             if (value) {
-                notifyItemInserted(messages.size)
+                notifyItemInserted(mailboxItems.size)
             } else {
-                notifyItemRemoved(messages.size)
+                notifyItemRemoved(mailboxItems.size)
             }
 
         }
 
-    val checkedMessages get() = selectedMessageIds.mapNotNull { messages.find { message -> message.messageId == it } }
+    val checkedMailboxItems get() = selectedMailboxItemsIds.mapNotNull { mailboxItems.find { message -> message.itemId == it } }
 
-    fun getItem(position: Int) = messages[position]
+    fun getItem(position: Int) = mailboxItems[position]
 
-    fun addAll(messages: List<Message>) {
-        this.messages.addAll(
-            messages.filter {
-                !it.deleted
+    fun addAll(items: List<MailboxUiItem>) {
+        mailboxItems.clear()
+        this.mailboxItems.addAll(
+            items.filter {
+                !it.isDeleted
             }
         )
         notifyDataSetChanged()
     }
 
     fun clear() {
-        messages.clear()
+        mailboxItems.clear()
         notifyDataSetChanged()
     }
 
-    fun setItemClick(onItemClick: ((Message) -> Unit)?) {
+    fun setItemClick(onItemClick: ((MailboxUiItem) -> Unit)?) {
         this.onItemClick = onItemClick
     }
 
@@ -97,24 +95,22 @@ class MessagesRecyclerViewAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        val itemViewType = if (position == messages.size) ElementType.FOOTER else ElementType.MESSAGE
+        val itemViewType = if (position == mailboxItems.size) ElementType.FOOTER else ElementType.MESSAGE
         return itemViewType.ordinal
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagesListViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MailboxItemViewHolder {
         return when (ElementType.values()[viewType]) {
-            ElementType.MESSAGE -> MessagesListViewHolder.MessageViewHolder(MessagesListItemView(context))
-            ElementType.FOOTER -> MessagesListViewHolder.FooterViewHolder(MessagesListFooterView(context))
+            ElementType.MESSAGE -> MailboxItemViewHolder.MessageViewHolder(MailboxItemView(context))
+            ElementType.FOOTER -> MailboxItemViewHolder.FooterViewHolder(MailboxItemFooterView(context))
         }
     }
 
-    override fun getItemCount(): Int = messages.size + if (includeFooter) 1 else 0
+    override fun getItemCount(): Int = mailboxItems.size + if (includeFooter) 1 else 0
 
-    override fun onBindViewHolder(holder: MessagesListViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MailboxItemViewHolder, position: Int) {
         when (ElementType.values()[getItemViewType(position)]) {
-            ElementType.MESSAGE -> {
-                (holder as MessagesListViewHolder.MessageViewHolder).bindMessage(position)
-            }
+            ElementType.MESSAGE -> (holder as MailboxItemViewHolder.MessageViewHolder).bindMailboxItem(position)
             ElementType.FOOTER -> {
                 // NOOP
             }
@@ -122,18 +118,18 @@ class MessagesRecyclerViewAdapter(
     }
 
     private fun selectMessage(messageId: String, position: Int) {
-        if (selectedMessageIds.isEmpty()) {
+        if (selectedMailboxItemsIds.isEmpty()) {
             onSelectionModeChange?.invoke(SelectionModeEnum.STARTED)
             notifyDataSetChanged()
         }
-        selectedMessageIds.add(messageId)
+        selectedMailboxItemsIds.add(messageId)
         onItemSelectionChangedListener?.invoke()
         notifyItemChanged(position)
     }
 
     private fun deselectMessage(messageId: String, position: Int) {
-        selectedMessageIds.remove(messageId)
-        if (selectedMessageIds.isEmpty()) {
+        selectedMailboxItemsIds.remove(messageId)
+        if (selectedMailboxItemsIds.isEmpty()) {
             onSelectionModeChange?.invoke(SelectionModeEnum.ENDED)
             notifyDataSetChanged()
         } else {
@@ -147,7 +143,7 @@ class MessagesRecyclerViewAdapter(
             return false
         }
 
-        if (selectedMessageIds.contains(messageId)) {
+        if (selectedMailboxItemsIds.contains(messageId)) {
             deselectMessage(messageId, position)
         } else {
             selectMessage(messageId, position)
@@ -155,19 +151,27 @@ class MessagesRecyclerViewAdapter(
         return true
     }
 
-    private fun MessagesListViewHolder.MessageViewHolder.bindMessage(position: Int) {
-        val message = messages[position]
-        val messageLabels = message.allLabelIDs.mapNotNull { labels[it] }
+    private fun MailboxItemViewHolder.MessageViewHolder.bindMailboxItem(position: Int) {
+        val mailboxItem = mailboxItems[position]
+        val itemLabels = mailboxItem.labelIds.mapNotNull { labels[it] }
 
-        message.senderDisplayName = contactsList?.find { message.senderEmail == it.email }?.name ?: message.senderName
+        val pendingSend = pendingSendList?.find { it.messageId == mailboxItem.itemId }
+        val isBeingSent = pendingSend != null && pendingSend.sent == null
+        val isAttachmentsBeingUploaded = pendingUploadList?.find { it.messageId == mailboxItem.itemId } != null
 
-        this.view.bind(message, messageLabels, selectedMessageIds.isNotEmpty(), mMailboxLocation)
+        this.view.bind(
+            mailboxItem,
+            itemLabels,
+            selectedMailboxItemsIds.isNotEmpty(),
+            mMailboxLocation,
+            isBeingSent,
+            isAttachmentsBeingUploaded
+        )
 
-        val isSelected = selectedMessageIds.contains(message.messageId)
-        this.view.checkImageView.isActivated = isSelected
-
-        this.view.tag = message.messageId
-        this.view.senderInitialView.tag = message.messageId
+        val isSelected = selectedMailboxItemsIds.contains(mailboxItem.itemId)
+        this.view.isActivated = isSelected
+        this.view.tag = mailboxItem.itemId
+        this.view.senderInitialView.tag = mailboxItem.itemId
 
         this.view.senderInitialView.setOnClickListener {
             val messageId = it.tag as String
@@ -175,16 +179,15 @@ class MessagesRecyclerViewAdapter(
         }
 
         this.view.setOnClickListener {
-            if (selectedMessageIds.isNotEmpty()) {
+            if (selectedMailboxItemsIds.isNotEmpty()) {
                 val messageId = it.tag as String
                 selectOrDeselectMessage(messageId, position)
             } else {
-                onItemClick?.invoke(message)
+                onItemClick?.invoke(mailboxItem)
             }
         }
-
         this.view.setOnLongClickListener {
-            if (selectedMessageIds.isEmpty()) {
+            if (selectedMailboxItemsIds.isEmpty()) {
                 val messageId = it.tag as String
                 return@setOnLongClickListener selectOrDeselectMessage(messageId, position)
             }
@@ -193,7 +196,7 @@ class MessagesRecyclerViewAdapter(
     }
 
     fun endSelectionMode() {
-        selectedMessageIds.clear()
+        selectedMailboxItemsIds.clear()
         notifyDataSetChanged()
     }
 
@@ -204,20 +207,24 @@ class MessagesRecyclerViewAdapter(
 
     fun setPendingUploadsList(pendingUploadList: List<PendingUpload>) {
         this.pendingUploadList = pendingUploadList
-        notifyDataSetChanged() // TODO
+        notifyDataSetChanged()
     }
 
     fun setPendingForSendingList(pendingSendList: List<PendingSend>) {
         this.pendingSendList = pendingSendList
-        notifyDataSetChanged() // TODO
-    }
-
-    fun setContactsList(contactsList: List<ContactEmail>?) {
-        this.contactsList = contactsList
-        notifyDataSetChanged() // TODO
+        notifyDataSetChanged()
     }
 
     fun setNewLocation(mailboxLocation: Constants.MessageLocationType) {
         mMailboxLocation = mailboxLocation
+    }
+
+    fun getOldestMailboxItemTimestamp(): Long {
+        val lastItemTimeMs = if (mailboxItems.isNotEmpty()) {
+            mailboxItems.minOf { it.lastMessageTimeMs }
+        } else {
+            System.currentTimeMillis()
+        }
+        return lastItemTimeMs / 1000
     }
 }

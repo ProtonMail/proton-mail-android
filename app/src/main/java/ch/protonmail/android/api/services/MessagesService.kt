@@ -43,7 +43,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
 
-// region constants
 private const val ACTION_FETCH_MESSAGE_LABELS = "ACTION_FETCH_MESSAGE_LABELS"
 private const val ACTION_FETCH_CONTACT_GROUPS_LABELS = "ACTION_FETCH_CONTACT_GROUPS_LABELS"
 private const val ACTION_FETCH_MESSAGES_BY_PAGE = "ACTION_FETCH_MESSAGES_BY_PAGE"
@@ -57,15 +56,6 @@ private const val EXTRA_TIME = "time"
 private const val EXTRA_UUID = "uuid"
 private const val EXTRA_REFRESH_MESSAGES = "refreshMessages"
 
-private const val PREF_LAST_MESSAGE_TIME_INBOX = "lastMessageTimeInbox"
-private const val PREF_LAST_MESSAGE_TIME_SENT = "lastMessageTimeSent"
-private const val PREF_LAST_MESSAGE_TIME_DRAFTS = "lastMessageTimeDrafts"
-private const val PREF_LAST_MESSAGE_TIME_STARRED = "lastMessageTimeStarred"
-private const val PREF_LAST_MESSAGE_TIME_ARCHIVE = "lastMessageTimeArchive"
-private const val PREF_LAST_MESSAGE_TIME_SPAM = "lastMessageTimeSpam"
-private const val PREF_LAST_MESSAGE_TIME_TRASH = "lastMessageTimeTrash"
-private const val PREF_LAST_MESSAGE_TIME_ALL = "lastMessageTimeAll"
-// endregion
 
 @AndroidEntryPoint
 class MessagesService : JobIntentService() {
@@ -123,23 +113,20 @@ class MessagesService : JobIntentService() {
             ACTION_FETCH_MESSAGES_BY_TIME -> {
                 val location = intent.getIntExtra(EXTRA_MESSAGE_LOCATION, 0)
                 val extraTime = intent.getLongExtra(EXTRA_TIME, 0)
-                val savedTime = getLastMessageTime(Constants.MessageLocationType.fromInt(location), "")
-                val time = minOf(savedTime, extraTime)
                 if (Constants.MessageLocationType.fromInt(location) in listOf(
                         Constants.MessageLocationType.LABEL,
                         Constants.MessageLocationType.LABEL_FOLDER
                     )
                 ) {
                     val labelId = intent.getStringExtra(EXTRA_LABEL_ID)!!
-                    val labelTime = getLastMessageTime(Constants.MessageLocationType.fromInt(location), labelId)
                     handleFetchMessagesByLabel(
                         Constants.MessageLocationType.fromInt(location),
-                        labelTime,
+                        extraTime,
                         labelId,
                         userId
                     )
                 } else {
-                    handleFetchMessages(Constants.MessageLocationType.fromInt(location), time, userId)
+                    handleFetchMessages(Constants.MessageLocationType.fromInt(location), extraTime, userId)
                 }
             }
             ACTION_FETCH_MESSAGE_LABELS -> handleFetchLabels()
@@ -302,7 +289,6 @@ class MessagesService : JobIntentService() {
                 .let {
                     messageDetailsRepository.saveAllMessagesBlocking(it)
                 }
-            saveLastMessageTime(unixTime, location, "")
             val event = MailboxLoadedEvent(Status.SUCCESS, uuid)
             AppUtil.postEventOnUi(event)
             mNetworkResults.setMailboxLoaded(event)
@@ -374,7 +360,6 @@ class MessagesService : JobIntentService() {
                     messageDetailsRepository.saveAllMessagesBlocking(it)
                 }
 
-            saveLastMessageTime(unixTime, location, labelId)
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.SUCCESS, null))
         } catch (e: Exception) {
             Timber.e("Fetch messages error", e)
@@ -409,21 +394,6 @@ class MessagesService : JobIntentService() {
         fun startFetchFirstPage(
             context: Context,
             userId: Id,
-            location: Constants.MessageLocationType
-        ) {
-            val intent = Intent(context, MessagesService::class.java)
-                .setAction(ACTION_FETCH_MESSAGES_BY_PAGE)
-                .putExtra(EXTRA_USER_ID, userId.s)
-                .putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
-            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
-        }
-
-        /**
-         * Load initial page and detail of every message it fetch
-         */
-        fun startFetchFirstPage(
-            context: Context,
-            userId: Id,
             location: Constants.MessageLocationType,
             refreshDetails: Boolean,
             uuid: String?,
@@ -436,20 +406,6 @@ class MessagesService : JobIntentService() {
                 .putExtra(EXTRA_REFRESH_DETAILS, refreshDetails)
                 .putExtra(EXTRA_UUID, uuid)
                 .putExtra(EXTRA_REFRESH_MESSAGES, refreshMessages)
-            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
-        }
-
-        fun startFetchMessages(
-            context: Context,
-            userId: Id,
-            location: Constants.MessageLocationType,
-            time: Long
-        ) {
-            val intent = Intent(context, MessagesService::class.java)
-                .setAction(ACTION_FETCH_MESSAGES_BY_TIME)
-                .putExtra(EXTRA_USER_ID, userId.s)
-                .putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
-                .putExtra(EXTRA_TIME, time)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
@@ -472,47 +428,35 @@ class MessagesService : JobIntentService() {
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
-        fun startFetchMessagesByLabel(
-            context: Context,
-            userId: Id,
-            location: Constants.MessageLocationType,
-            time: Long,
-            labelId: String
-        ) {
+    }
+
+    class Scheduler @Inject constructor() {
+
+        fun fetchMessagesOlderThanTime(location: Constants.MessageLocationType, userId: Id, time: Long) {
+            val context = ProtonMailApplication.getApplication()
             val intent = Intent(context, MessagesService::class.java)
-                .setAction(ACTION_FETCH_MESSAGES_BY_TIME)
-                .putExtra(EXTRA_USER_ID, userId.s)
-                .putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
-                .putExtra(EXTRA_TIME, time)
-                .putExtra(EXTRA_LABEL_ID, labelId)
+            intent.action = ACTION_FETCH_MESSAGES_BY_TIME
+            intent.putExtra(EXTRA_USER_ID, userId.s)
+            intent.putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
+            intent.putExtra(EXTRA_TIME, time)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
-        fun getLastMessageTime(location: Constants.MessageLocationType, labelId: String?): Long {
-            val pref = ProtonMailApplication.getApplication().defaultSharedPreferences
-            return getPrefsNameByLocation(location, labelId)?.let { pref.getLong(it, 0L) } ?: 0L
+        fun fetchMessagesOlderThanTimeByLabel(
+            location: Constants.MessageLocationType,
+            userId: Id,
+            time: Long,
+            labelId: String
+        ) {
+            val context = ProtonMailApplication.getApplication()
+            val intent = Intent(context, MessagesService::class.java)
+            intent.action = ACTION_FETCH_MESSAGES_BY_TIME
+            intent.putExtra(EXTRA_USER_ID, userId.s)
+            intent.putExtra(EXTRA_MESSAGE_LOCATION, location.messageLocationTypeValue)
+            intent.putExtra(EXTRA_TIME, time)
+            intent.putExtra(EXTRA_LABEL_ID, labelId)
+            enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
 
-        fun saveLastMessageTime(unixTime: Long, location: Constants.MessageLocationType, labelId: String) {
-            val pref = ProtonMailApplication.getApplication().defaultSharedPreferences
-            getPrefsNameByLocation(location, labelId)?.let {
-                pref.edit().putLong(it, unixTime).apply()
-            }
-        }
-
-        private fun getPrefsNameByLocation(location: Constants.MessageLocationType, labelId: String?): String? {
-            return when (location) {
-                Constants.MessageLocationType.INBOX -> PREF_LAST_MESSAGE_TIME_INBOX
-                Constants.MessageLocationType.SENT -> PREF_LAST_MESSAGE_TIME_SENT
-                Constants.MessageLocationType.DRAFT -> PREF_LAST_MESSAGE_TIME_DRAFTS
-                Constants.MessageLocationType.STARRED -> PREF_LAST_MESSAGE_TIME_STARRED
-                Constants.MessageLocationType.ARCHIVE -> PREF_LAST_MESSAGE_TIME_ARCHIVE
-                Constants.MessageLocationType.SPAM -> PREF_LAST_MESSAGE_TIME_SPAM
-                Constants.MessageLocationType.TRASH -> PREF_LAST_MESSAGE_TIME_TRASH
-                Constants.MessageLocationType.ALL_MAIL -> PREF_LAST_MESSAGE_TIME_ALL
-                Constants.MessageLocationType.LABEL, Constants.MessageLocationType.LABEL_FOLDER -> labelId
-                else -> null
-            }
-        }
     }
 }

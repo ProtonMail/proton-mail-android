@@ -20,6 +20,7 @@ package ch.protonmail.android.views.messagesList
 
 import android.content.Context
 import android.graphics.Color
+import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +31,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
-import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
@@ -39,12 +40,11 @@ import me.proton.core.util.kotlin.EMPTY_STRING
 
 private const val MAX_LABELS_WITH_TEXT = 1
 
-/**
- * A view that represents one item in the mailbox list when conversation mode is turned off.
- */
-class MessagesListItemView constructor(
-    context: Context
-) : ConstraintLayout(context) {
+class MailboxItemView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     init {
         inflate(R.layout.list_item_mailbox, true)
@@ -89,15 +89,20 @@ class MessagesListItemView constructor(
         }
     }
 
-    private fun getSenderText(messageLocation: Constants.MessageLocationType, message: Message) = when {
-        messageLocation in arrayOf(
+    private fun getSenderText(mailboxUiItem: MailboxUiItem) =
+        if (isDraft(mailboxUiItem)) {
+            mailboxUiItem.recipients
+        } else {
+            mailboxUiItem.senderName
+        }
+
+    private fun isDraft(mailboxUiItem: MailboxUiItem): Boolean {
+        val messageLocation = mailboxUiItem.messageData?.location
+            ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
+        return Constants.MessageLocationType.fromInt(messageLocation) in arrayOf(
             Constants.MessageLocationType.DRAFT,
             Constants.MessageLocationType.SENT
-        ) -> message.toListStringGroupsAware
-
-        !message.senderDisplayName.isNullOrEmpty() -> message.senderDisplayName
-
-        else -> message.senderEmail
+        )
     }
 
     private fun getIconForMessageLocation(messageLocation: Constants.MessageLocationType) = when (messageLocation) {
@@ -112,31 +117,35 @@ class MessagesListItemView constructor(
     }
 
     fun bind(
-        message: Message,
+        mailboxUiItem: MailboxUiItem,
         labels: List<Label>,
         isMultiSelectionMode: Boolean,
-        mailboxLocation: Constants.MessageLocationType
+        mailboxLocation: Constants.MessageLocationType,
+        isBeingSent: Boolean,
+        isAttachmentsBeingUploaded: Boolean
     ) {
-        val readStatus = message.isRead
-        val messageLocation = Constants.MessageLocationType.fromInt(message.location)
+        val readStatus = mailboxUiItem.isRead
+        val messageLocation = Constants.MessageLocationType.fromInt(
+            mailboxUiItem.messageData?.location
+                ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
+        )
 
         setTextViewStyles(readStatus)
         setIconsTint(readStatus)
 
-        val senderText = getSenderText(messageLocation, message)
+        val senderText = getSenderText(mailboxUiItem)
         // Sender text can only be empty in drafts where we show recipients instead of senders
         senderTextView.text =
             if (senderText.isNullOrEmpty()) context.getString(R.string.empty_recipients) else senderText
         senderInitialView.bind(senderText ?: EMPTY_STRING, isMultiSelectionMode)
 
-        subjectTextView.text = message.subject
+        subjectTextView.text = mailboxUiItem.subject
 
-        timeDateTextView.text = DateUtil.formatDateTime(context, message.timeMs)
+        timeDateTextView.text = DateUtil.formatDateTime(context, mailboxUiItem.lastMessageTimeMs)
 
-        replyImageView.visibility =
-            if (message.isReplied == true && message.isRepliedAll != true) View.VISIBLE else View.GONE
-        replyAllImageView.visibility = if (message.isRepliedAll == true) View.VISIBLE else View.GONE
-        forwardImageView.visibility = if (message.isForwarded == true) View.VISIBLE else View.GONE
+        replyImageView.visibility = if (mailboxUiItem.messageData?.isReplied == true && !mailboxUiItem.messageData.isRepliedAll) View.VISIBLE else View.GONE
+        replyAllImageView.visibility = if (mailboxUiItem.messageData?.isRepliedAll == true) View.VISIBLE else View.GONE
+        forwardImageView.visibility = if (mailboxUiItem.messageData?.isForwarded == true) View.VISIBLE else View.GONE
 
         draftImageView.visibility = if (mailboxLocation in arrayOf(
                 Constants.MessageLocationType.DRAFT,
@@ -160,17 +169,17 @@ class MessagesListItemView constructor(
             }
         }
 
-        val hasAttachments = message.Attachments.isNotEmpty() || message.numAttachments >= 1
-        attachmentImageView.visibility = if (hasAttachments) View.VISIBLE else View.GONE
-
-        starImageView.visibility = if (message.isStarred == true) View.VISIBLE else View.GONE
+        messagesNumberTextView.visibility = if (mailboxUiItem.messagesCount != null) View.VISIBLE else View.GONE
+        messagesNumberTextView.text = mailboxUiItem.messagesCount.toString()
+        attachmentImageView.visibility = if (mailboxUiItem.hasAttachments) View.VISIBLE else View.GONE
+        starImageView.visibility = if (mailboxUiItem.isStarred) View.VISIBLE else View.GONE
 
         emptySpaceView.visibility = if (
             attachmentImageView.visibility == View.VISIBLE ||
             starImageView.visibility == View.VISIBLE
         ) View.VISIBLE else View.GONE
 
-        expirationImageView.visibility = if (message.expirationTime > 0) View.VISIBLE else View.GONE
+        expirationImageView.visibility = if (mailboxUiItem.expirationTime > 0) View.VISIBLE else View.GONE
 
         showLabels(labels)
     }

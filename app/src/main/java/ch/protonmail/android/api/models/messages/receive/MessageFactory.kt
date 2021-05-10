@@ -21,7 +21,6 @@ package ch.protonmail.android.api.models.messages.receive
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.enumerations.MessageFlag
 import ch.protonmail.android.api.models.factories.checkIfSet
-import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.factories.parseBoolean
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
@@ -34,42 +33,13 @@ class MessageFactory @Inject constructor(
     private val messageSenderFactory: MessageSenderFactory
 ) {
 
-    fun createDraftApiRequest(message: Message): DraftBody = DraftBody(createServerMessage(message))
-
-    fun createServerMessage(message: Message): ServerMessage {
-        return message.let {
-            val serverMessage = ServerMessage()
-            serverMessage.ID = it.messageId
-            serverMessage.Subject = it.subject
-            serverMessage.Unread = it.Unread.makeInt()
-            serverMessage.Type = it.Type.ordinal
-            serverMessage.Sender = it.sender?.let(messageSenderFactory::createServerMessageSender)
-            serverMessage.Time = it.time
-            serverMessage.Size = it.totalSize
-            serverMessage.FolderLocation = it.folderLocation
-            serverMessage.Starred = it.isStarred.makeInt()
-            serverMessage.NumAttachments = it.numAttachments
-            serverMessage.ExpirationTime = it.expirationTime
-            serverMessage.SpamScore = it.spamScore
-            serverMessage.AddressID = it.addressID
-            serverMessage.Body = it.messageBody
-            serverMessage.MIMEType = it.mimeType
-            serverMessage.LabelIDs = it.allLabelIDs
-            serverMessage.ToList = it.toList
-            serverMessage.CCList = it.ccList
-            serverMessage.BCCList = it.bccList
-            serverMessage.ReplyTos = it.replyTos
-            serverMessage.Header = it.header
-            serverMessage.parsedHeaders = it.parsedHeaders
-            serverMessage.Attachments = it.Attachments.map(attachmentFactory::createServerAttachment)
-            serverMessage
-        }
-    }
+    fun createDraftApiRequest(message: Message): DraftBody = DraftBody(message.toApiPayload())
 
     fun createMessage(serverMessage: ServerMessage): Message {
         return serverMessage.let {
             val message = Message()
             message.messageId = it.ID
+            message.conversationId = it.ConversationID
             message.subject = it.Subject
             message.Unread = it.Unread.parseBoolean("Unread")
 
@@ -86,18 +56,18 @@ class MessageFactory @Inject constructor(
                 .fold(Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue) { location, newLocation ->
                     if (
                         newLocation !in listOf(
-                                Constants.MessageLocationType.STARRED.messageLocationTypeValue,
-                                Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
-                                Constants.MessageLocationType.INVALID.messageLocationTypeValue
-                            ) &&
+                            Constants.MessageLocationType.STARRED.messageLocationTypeValue,
+                            Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
+                            Constants.MessageLocationType.INVALID.messageLocationTypeValue
+                        ) &&
                         newLocation < location
                     ) {
                         newLocation
                     } else if (
                         newLocation in listOf(
-                                Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
-                                Constants.MessageLocationType.SENT.messageLocationTypeValue
-                            )
+                            Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
+                            Constants.MessageLocationType.SENT.messageLocationTypeValue
+                        )
                     ) {
                         newLocation
                     } else
@@ -127,8 +97,8 @@ class MessageFactory @Inject constructor(
             message.replyTos = it.ReplyTos?.toList() ?: listOf()
             message.header = it.Header
             message.parsedHeaders = it.parsedHeaders
-            message.Attachments = it.Attachments.map(attachmentFactory::createAttachment)
-            message.embeddedImageIds = it.embeddedImagesArray.toMutableList()
+            message.Attachments = it.Attachments?.map(attachmentFactory::createAttachment) ?: emptyList()
+            message.embeddedImageIds = it.embeddedImagesArray?.toList() ?: emptyList()
             val numOfAttachments = message.numAttachments
             val attachmentsListSize = message.Attachments.size
             if (attachmentsListSize != 0 && attachmentsListSize != numOfAttachments)

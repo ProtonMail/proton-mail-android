@@ -42,7 +42,7 @@ fun initVersions() {
     `lifecycle version` =                       "2.4.0-alpha01" // Released: Mar 24, 2021
     `material version` =                        "1.3.0"         // Released: Feb 04, 2021
     `android-paging version` =                  "2.1.0"         // Released: Jan 26, 2019
-    `android-room version` =                    "2.2.6"         // Released: Dec 16, 2020
+    `android-room version` =                    "2.3.0"         // Released: Apr 21, 2021
     `android-work version` =                    "2.5.0"         // Released: Jan 27, 2021
 
     `android-test version` =                    "1.3.1-alpha02" // Released: Oct 20, 2020
@@ -73,7 +73,7 @@ const val `Proton-kotlin-test version` =        "0.2"           // Released: Oct
 
 const val `Proton-domain version` =             "1.0"           // Released: Feb 17, 2021
 const val `Proton-presentation version` =       "0.7.4"         // Released: May 05, 2021
-const val `Proton-data version` =               "1.0.1"         // Released: Mar 22, 2021
+const val `Proton-data version` =               "1.0.3"         // Released: Mar 22, 2021
 const val `Proton-network version` =            "1.0.4"         // Released: Apr 07, 2021
 const val `Proton-crypto version` =             "1.0.2"         // Released: Mar 05, 2021
 
@@ -131,3 +131,4 @@ const val `stetho version` =                    "1.5.1"         // Released: Mar
 const val `timber version` =                    "4.7.1"         // Released:
 const val `trustKit version` =                  "1.1.2"         // Released: Jun 09, 2019
 const val `remark version` =                    "1.1.0"         // Released: Dec 08, 2016
+const val `store version` =                     "4.0.0"         // Released: Nov 30, 2020

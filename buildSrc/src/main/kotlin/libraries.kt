@@ -117,6 +117,7 @@ val DependencyHandler.`fasterxml-jackson-core` get() =      dependency("com.fast
 val DependencyHandler.`fasterxml-jackson-anno` get() =      dependency("com.fasterxml.jackson.core", module = "jackson-annotations") version `jackson version`
 val DependencyHandler.`fasterxml-jackson-databind` get() =  dependency("com.fasterxml.jackson.core", module = "jackson-databind") version `jackson version`
 val DependencyHandler.`remark` get() =                      dependency("com.overzealous", module = "remark") version `remark version`
+val DependencyHandler.`store` get() =                       dependency("com.dropbox.mobile.store", module = "store4") version `store version`
 // endregion
 
 // endregion

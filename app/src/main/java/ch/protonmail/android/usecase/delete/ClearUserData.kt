@@ -55,6 +55,10 @@ class ClearUserData @Inject constructor(
         val counterDao = runCatching { databaseProvider.provideCounterDao(userId) }.getOrNull()
         val messageDao = runCatching { databaseProvider.provideMessageDao(userId) }.getOrNull()
         val messageSearchDao = runCatching { databaseProvider.provideMessageSearchDao(userId) }.getOrNull()
+        // TODO remove this dependency and use the ConversationRepository.clear()
+        //  right now it creates a circular dependency,
+        //  so this needs to happen when this use-case is refactored to use only repositories
+        val conversationDao = runCatching { databaseProvider.provideConversationDao(userId) }.getOrNull()
         val notificationDao = runCatching { databaseProvider.provideNotificationDao(userId) }.getOrNull()
         val pendingActionDao = runCatching { databaseProvider.providePendingActionDao(userId) }.getOrNull()
 
@@ -87,19 +91,23 @@ class ClearUserData @Inject constructor(
                 clearAttachmentsCache()
                 clearLabelsCache()
             }
+            conversationDao?.run {
+                clear()
+            }
             notificationDao?.clearNotificationCache()
             pendingActionDao?.run {
                 clearPendingSendCache()
                 clearPendingUploadCache()
             }
         }
+
         startCleaningServices(userId)
     }
 
     // TODO replace services, options:
-    //  1) extract in this use case
-    //  2) extract in separate use case/s
-    //  3) extract in worker/s
+//  1) extract in this use case
+//  2) extract in separate use case/s
+//  3) extract in worker/s
     private fun startCleaningServices(userId: Id) {
         AttachmentClearingService.startClearUpImmediatelyService(context, userId)
         MessageBodyClearingService.startClearUpService()

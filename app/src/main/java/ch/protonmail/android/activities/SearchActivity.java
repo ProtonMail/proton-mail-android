@@ -35,20 +35,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.otto.Subscribe;
 
+import java.util.UUID;
+
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.activities.mailbox.InvalidateSearchDatabase;
-import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
-import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter;
+import ch.protonmail.android.adapters.messages.MailboxRecyclerViewAdapter;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.data.ContactsRepository;
-import ch.protonmail.android.data.local.model.Message;
+import ch.protonmail.android.details.presentation.MessageDetailsActivity;
 import ch.protonmail.android.events.NoResultsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
+import ch.protonmail.android.mailbox.presentation.MailboxViewModel;
+import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem;
 import ch.protonmail.android.utils.AppUtil;
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -59,7 +62,7 @@ import static ch.protonmail.android.core.Constants.MessageLocationType;
 @AndroidEntryPoint
 public class SearchActivity extends BaseActivity {
 
-    private MessagesRecyclerViewAdapter mAdapter;
+    private MailboxRecyclerViewAdapter mAdapter;
     private TextView noMessagesView;
     private ProgressBar mProgressBar;
     private boolean mScrollStateChanged = false;
@@ -70,7 +73,7 @@ public class SearchActivity extends BaseActivity {
     @Inject
     MessageDetailsRepository messageDetailsRepository;
     @Inject
-    ContactsRepository contactsRepository;
+    Provider<MailboxViewModel> mailboxViewModelProvider;
 
     @Override
     protected int getLayoutId() {
@@ -80,6 +83,7 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MailboxViewModel mailboxViewModel = mailboxViewModelProvider.get();
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -91,9 +95,7 @@ public class SearchActivity extends BaseActivity {
         mProgressBar = findViewById(R.id.progress_bar);
         noMessagesView = findViewById(R.id.no_messages);
 
-        mAdapter = new MessagesRecyclerViewAdapter(this,null);
-
-        contactsRepository.findAllContactsEmailsAsync().observe(this, contactEmails -> mAdapter.setContactsList(contactEmails));
+        mAdapter = new MailboxRecyclerViewAdapter(this, null);
 
         messagesListView.setAdapter(mAdapter);
         messagesListView.setLayoutManager(new LinearLayoutManager(this));
@@ -120,29 +122,32 @@ public class SearchActivity extends BaseActivity {
 
         });
 
-        mAdapter.setItemClick(message -> {
-            if (isDraftMessage(message)) {
+        mAdapter.setItemClick(mailboxUiItem -> {
+            if (isDraft(mailboxUiItem)) {
                 Intent intent = AppUtil.decorInAppIntent(new Intent(SearchActivity.this, ComposeMessageActivity.class));
-                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, message.getMessageId());
-                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, message.isInline());
+                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, mailboxUiItem.getItemId());
+                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, mailboxUiItem.getMessageData().isInline());
                 startActivity(intent);
             } else {
                 Intent intent = AppUtil.decorInAppIntent(new Intent(SearchActivity.this, MessageDetailsActivity.class));
-                intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, message.getMessageId());
+                intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, mailboxUiItem.getItemId());
                 intent.putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, true);
                 startActivity(intent);
             }
             return null;
         });
 
-        messageDetailsRepository.getAllSearchMessages().observe(this, messages -> {
-            if (messages != null) {
-                mAdapter.clear();
-                mAdapter.addAll(messages);
-                setLoadingMore(false);
-                mProgressBar.setVisibility(View.GONE);
-                mAdapter.setNewLocation(MessageLocationType.SEARCH);
-            }
+        mailboxViewModel.getMailboxItems(
+                MessageLocationType.SEARCH,
+                "",
+                false,
+                UUID.randomUUID().toString(),
+                false
+        ).observe(this, state -> {
+            mAdapter.addAll(state.getItems());
+            setLoadingMore(false);
+            mProgressBar.setVisibility(View.GONE);
+            mAdapter.setNewLocation(MessageLocationType.SEARCH);
         });
 
         messageDetailsRepository.getAllLabels().observe(this, labels -> {
@@ -228,8 +233,8 @@ public class SearchActivity extends BaseActivity {
         mJobManager.addJobInBackground(new SearchMessagesJob(mQueryText, mCurrentPage, newSearch));
     }
 
-    private boolean isDraftMessage(Message message) {
-        MessageLocationType messageLocation = MessageLocationType.Companion.fromInt(message.getLocation());
+    private boolean isDraft(MailboxUiItem item) {
+        MessageLocationType messageLocation = MessageLocationType.Companion.fromInt(item.getMessageData().getLocation());
         return messageLocation == MessageLocationType.ALL_DRAFT ||
                 messageLocation == MessageLocationType.DRAFT;
     }

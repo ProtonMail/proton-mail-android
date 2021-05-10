@@ -977,6 +977,5 @@
 
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <!-- end region -->
-
+    <string name="error_loading_conversations">Error loading conversations, please try again</string>
 </resources>

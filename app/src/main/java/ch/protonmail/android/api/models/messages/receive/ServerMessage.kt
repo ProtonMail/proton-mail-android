@@ -18,22 +18,20 @@
  */
 package ch.protonmail.android.api.models.messages.receive
 
-import ch.protonmail.android.api.models.MessagePayload
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.messages.ParsedHeaders
 import com.google.gson.annotations.SerializedName
 
-// region constants
 private const val FIELD_LABEL_IDS_REMOVED = "LabelIDsRemoved"
 private const val FIELD_LABEL_IDS_ADDED = "LabelIDsAdded"
 private const val FIELD_PARSED_HEADERS = "ParsedHeaders"
-// endregion
 
 data class ServerMessage(
     var ID: String? = null,
+    var ConversationID: String,
     var Subject: String? = null,
     var Order: Long? = null,
-    var Unread: Int = -1,//todo new
+    var Unread: Int = -1,
     var Type: Int = -1, // 0 = INBOX, 1 = DRAFT, 2 = SENT, 3 = INBOX_AND_SENT
     var Sender: ServerMessageSender? = null,
     var Flags: Long = 0,
@@ -59,21 +57,6 @@ data class ServerMessage(
     var Header: String? = null,
     @SerializedName(FIELD_PARSED_HEADERS)
     var parsedHeaders: ParsedHeaders? = null,
-    var Attachments: List<ServerAttachment> = listOf(),
-    var embeddedImagesArray: List<String> = listOf()
-) {
-    /**
-     * Converts the message to a more compact payload used
-     * for create and update draft.
-     */
-    fun toMessagePayload() = MessagePayload(
-        ID,
-        Subject,
-        Sender,
-        Body,
-        ToList,
-        CCList,
-        BCCList,
-        Unread
-    )
-}
+    var Attachments: List<ServerAttachment>? = listOf(),
+    var embeddedImagesArray: List<String>? = listOf()
+)

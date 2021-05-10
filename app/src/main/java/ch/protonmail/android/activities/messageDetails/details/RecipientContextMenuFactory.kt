@@ -19,7 +19,7 @@
 package ch.protonmail.android.activities.messageDetails.details
 
 import android.view.View
-import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.ui.RecipientDropDownClickListener

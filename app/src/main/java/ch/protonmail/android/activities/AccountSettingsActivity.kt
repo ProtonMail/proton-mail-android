@@ -120,19 +120,20 @@ class AccountSettingsActivity : BaseSettingsActivity() {
             )
         )
 
-        val mailSettings = mUserManager.getCurrentUserMailSettingsBlocking()
-        showCurrentViewModeSetting(mailSettings)
-        setupViewModeChangedListener(mailSettings)
+        setupViewMode()
     }
 
     /**
-     * Shows the current ViewMode setting.
+     * Shows the current ViewMode setting and listen for user-triggered changes
      * This will only have an effect when `FeatureFlags.isChangeViewModeFeatureEnabled()` is true.
      * When feature flag is false, no item will be shown in settings and this will have no effect.
      */
-    private fun showCurrentViewModeSetting(mailSettings: MailSettings?) {
+    private fun setupViewMode() {
+        val mailSettings = mUserManager.getCurrentUserMailSettingsBlocking()
         Timber.d("MailSettings ViewMode = ${mailSettings?.viewMode}")
+
         setEnabled(SettingsEnum.CONVERSATION_MODE, mailSettings?.viewMode == 0)
+        setupViewModeChangedListener(mailSettings)
     }
 
     private fun setupViewModeChangedListener(mailSettings: MailSettings?) {

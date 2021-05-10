@@ -70,7 +70,11 @@ import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
+import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
+import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
+import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -92,6 +96,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     KeyApiSpec,
     LabelApiSpec,
     MessageApiSpec,
+    ConversationApiSpec,
     OrganizationApiSpec,
     PaymentApiSpec,
     ReportApiSpec,
@@ -365,5 +370,11 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun updateViewMode(viewMode: Int): ResponseBody? = api.updateViewMode(viewMode)
 
-    // endregion
+    override suspend fun fetchConversations(params: GetConversationsParameters): ConversationsResponse =
+        api.fetchConversations(params)
+
+    override suspend fun fetchConversation(
+        conversationId: String,
+        userId: Id
+    ): ConversationResponse = api.fetchConversation(conversationId, userId)
 }

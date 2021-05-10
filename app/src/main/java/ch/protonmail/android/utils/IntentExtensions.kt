@@ -22,9 +22,9 @@ import android.content.Context
 import android.content.Intent
 import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.activities.SplashActivity
-import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.mailbox.presentation.MailboxActivity
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import me.proton.core.domain.entity.UserId

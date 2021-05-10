@@ -25,6 +25,8 @@ import ch.protonmail.android.activities.messageDetails.DocumentParser
 import ch.protonmail.android.activities.messageDetails.ImageDecoder
 import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.RoomLabelRepository
+import ch.protonmail.android.mailbox.data.ConversationsRepositoryImpl
+import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -42,5 +44,8 @@ internal interface ApplicationBindsModule {
 
     @Binds
     fun provideLabelRepository(repo: RoomLabelRepository): LabelRepository
+
+    @Binds
+    fun provideConversationRepository(repo: ConversationsRepositoryImpl): ConversationsRepository
 
 }

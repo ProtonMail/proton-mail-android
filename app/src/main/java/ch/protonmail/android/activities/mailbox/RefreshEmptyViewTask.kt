@@ -22,6 +22,7 @@ import android.os.AsyncTask
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.mailbox.presentation.MailboxActivity
 import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 

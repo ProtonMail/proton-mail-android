@@ -70,6 +70,8 @@ import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
+import ch.protonmail.android.mailbox.data.local.ConversationDao
+import ch.protonmail.android.mailbox.presentation.MailboxActivity
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.uiModel.SettingsItemUiModel
@@ -117,6 +119,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     var contactDao: ContactDao? = null
     var messageDao: MessageDao? = null
+    var conversationDao: ConversationDao? = null
     private var searchDatabase: MessageDao? = null
     private var notificationDao: NotificationDao? = null
     var counterDao: CounterDao? = null
@@ -159,6 +162,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
         contactDao = ContactDatabase.getInstance(applicationContext, userId).getDao()
         messageDao = MessageDatabase.getInstance(applicationContext, userId).getDao()
+        conversationDao = MessageDatabase.getInstance(applicationContext, userId).getConversationDao()
         searchDatabase = MessageDatabase.getSearchDatabase(applicationContext, userId).getDao()
         notificationDao = NotificationDatabase.getInstance(applicationContext, userId).getDao()
         counterDao = CounterDatabase.getInstance(applicationContext, userId).getDao()
@@ -410,6 +414,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                         contactDao,
                         messageDao,
                         searchDatabase,
+                        conversationDao,
                         notificationDao,
                         counterDao,
                         attachmentMetadataDao,

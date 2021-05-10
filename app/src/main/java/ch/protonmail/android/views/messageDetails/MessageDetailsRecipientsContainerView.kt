@@ -27,9 +27,9 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
 import ch.protonmail.android.activities.messageDetails.details.RecipientContextMenuFactory
 import ch.protonmail.android.api.models.MessageRecipient
+import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import me.proton.core.presentation.utils.inflate
 
 private const val MARGIN_TOP_RECIPIENT_TEXT_VIEW = 8

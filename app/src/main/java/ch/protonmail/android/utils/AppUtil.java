@@ -60,11 +60,10 @@ import ch.protonmail.android.data.local.NotificationDao;
 import ch.protonmail.android.data.local.NotificationDatabase;
 import ch.protonmail.android.data.local.PendingActionDao;
 import ch.protonmail.android.data.local.PendingActionDatabase;
-import ch.protonmail.android.data.local.SendingFailedNotificationDao;
-import ch.protonmail.android.data.local.SendingFailedNotificationDatabase;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
+import ch.protonmail.android.mailbox.data.local.ConversationDao;
 import ch.protonmail.android.storage.AttachmentClearingService;
 import ch.protonmail.android.storage.MessageBodyClearingService;
 import timber.log.Timber;
@@ -75,7 +74,6 @@ import static ch.protonmail.android.core.Constants.RESPONSE_CODE_API_OFFLINE;
 import static ch.protonmail.android.core.ProtonMailApplication.getApplication;
 import static ch.protonmail.android.core.UserManagerKt.PREF_PIN;
 import static ch.protonmail.android.prefs.SecureSharedPreferencesKt.PREF_SYMMETRIC_KEY;
-import static ch.protonmail.android.servers.notification.NotificationServerKt.NOTIFICATION_ID_SENDING_FAILED;
 
 public class AppUtil {
 
@@ -177,6 +175,7 @@ public class AppUtil {
                     ContactDatabase.Companion.getInstance(context, userId).getDao(),
                     MessageDatabase.Companion.getInstance(context, userId).getDao(),
                     MessageDatabase.Companion.getSearchDatabase(context, userId).getDao(),
+                    MessageDatabase.Companion.getInstance(context, userId).getConversationDao(),
                     NotificationDatabase.Companion.getInstance(context, userId).getDao(),
                     CounterDatabase.Companion.getInstance(context, userId).getDao(),
                     AttachmentMetadataDatabase.Companion.getInstance(context, userId).getDao(),
@@ -249,15 +248,6 @@ public class AppUtil {
         notificationManager.cancel(notificationId);
     }
 
-    public static void clearSendingFailedNotifications(Context context, Id userId) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED);
-        final SendingFailedNotificationDao sendingFailedNotificationDao = SendingFailedNotificationDatabase.Companion
-                .getInstance(context, userId)
-                .getDao();
-        new ClearSendingFailedNotificationsFromDatabaseTask(sendingFailedNotificationDao).execute();
-    }
-
     /// read string from raw
     public static String readTxt(Context content, int id) {
         InputStream inputStream = content.getResources().openRawResource(id);
@@ -314,6 +304,7 @@ public class AppUtil {
             final ContactDao contactDao,
             final MessageDao messageDao,
             final MessageDao searchDatabase,
+            final ConversationDao conversationDao,
             final NotificationDao notificationDao,
             final CounterDao counterDao,
             final AttachmentMetadataDao attachmentMetadataDao,
@@ -326,6 +317,7 @@ public class AppUtil {
                 contactDao,
                 messageDao,
                 searchDatabase,
+                conversationDao,
                 notificationDao,
                 counterDao,
                 attachmentMetadataDao,
@@ -342,6 +334,7 @@ public class AppUtil {
             final ContactDao contactDao,
             final MessageDao messageDao,
             final MessageDao searchDatabase,
+            final ConversationDao conversationDao,
             final NotificationDao notificationDao,
             final CounterDao counterDao,
             final AttachmentMetadataDao attachmentMetadataDao,
@@ -366,6 +359,7 @@ public class AppUtil {
                 messageDao.clearMessagesCache();
                 messageDao.clearAttachmentsCache();
                 messageDao.clearLabelsCache();
+                conversationDao.clear();
                 searchDatabase.clearMessagesCache();
                 searchDatabase.clearAttachmentsCache();
                 searchDatabase.clearLabelsCache();
@@ -439,22 +433,6 @@ public class AppUtil {
         protected Void doInBackground(Void... voids) {
             notificationDao.clearNotificationCache();
             return null;
-        }
-    }
-
-    // TODO: Rewrite with coroutines after the whole AppUtil file is converted to Kotlin
-    private static class ClearSendingFailedNotificationsFromDatabaseTask extends AsyncTask<Void, Void, Void> {
-        private final SendingFailedNotificationDao sendingFailedNotificationDao;
-
-        ClearSendingFailedNotificationsFromDatabaseTask(SendingFailedNotificationDao sendingFailedNotificationDao) {
-            this.sendingFailedNotificationDao = sendingFailedNotificationDao;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            sendingFailedNotificationDao.clearSendingFailedNotifications();
-            return null;
-
         }
     }
 

@@ -150,38 +150,38 @@
             android:label="@string/local_storage"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.mailbox.MailboxActivity"
+            android:name=".mailbox.presentation.MailboxActivity"
             android:exported="false"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask"
             android:maxRecents="1" />
         <activity
-            android:name=".activities.messageDetails.MessageDetailsActivity"
+            android:name=".details.presentation.MessageDetailsActivity"
             android:exported="false"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.mailbox.MailboxActivity">
+            android:parentActivityName=".mailbox.presentation.MailboxActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.mailbox.MailboxActivity" />
+                android:value=".mailbox.presentation.MailboxActivity" />
         </activity>
         <activity
             android:name=".activities.messageDetails.MessageViewHeadersActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false"
-            android:parentActivityName=".activities.messageDetails.MessageDetailsActivity">
+            android:parentActivityName=".details.presentation.MessageDetailsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.messageDetails.MessageDetailsActivity" />
+                android:value=".details.presentation.MessageDetailsActivity" />
         </activity>
         <activity
             android:name=".activities.composeMessage.ComposeMessageActivity"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.mailbox.MailboxActivity"
+            android:parentActivityName=".mailbox.presentation.MailboxActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.mailbox.MailboxActivity" />
+                android:value=".mailbox.presentation.MailboxActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
