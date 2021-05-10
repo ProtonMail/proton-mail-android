@@ -283,6 +283,7 @@ dependencies {
         `android-biometric`,
         `constraint-layout`,
         `android-fragment`,
+        `android-flexbox`,
         `android-ktx`,
         `android-media`,
         `material`,
