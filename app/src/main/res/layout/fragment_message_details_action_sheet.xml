@@ -27,8 +27,8 @@
         android:id="@+id/action_sheet_header_details_actions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="@dimen/elevation_s"
         android:background="@color/background_norm"
+        android:elevation="@dimen/elevation_s"
         android:minHeight="?attr/actionBarSize"
         android:paddingStart="@dimen/padding_l"
         android:paddingEnd="@dimen/padding_l"
@@ -82,6 +82,7 @@
                 android:text="@string/star"
                 android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_star"
+                app:drawableTint="@color/icon_norm"
                 tools:visibility="visible" />
 
             <TextView
@@ -116,7 +117,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_inbox"
-                app:drawableStartCompat="@drawable/ic_inbox" />
+                app:drawableStartCompat="@drawable/ic_inbox"
+                app:drawableTint="@color/icon_norm"/>
 
             <TextView
                 android:id="@+id/text_view_details_actions_trash"
@@ -124,7 +126,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_trash"
-                app:drawableStartCompat="@drawable/ic_trash" />
+                app:drawableStartCompat="@drawable/ic_trash"
+                app:drawableTint="@color/icon_norm"/>
 
             <TextView
                 android:id="@+id/text_view_details_actions_move_to_archive"
@@ -132,7 +135,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_archive"
-                app:drawableStartCompat="@drawable/ic_archive" />
+                app:drawableStartCompat="@drawable/ic_archive"
+                app:drawableTint="@color/icon_norm"/>
 
             <TextView
                 android:id="@+id/text_view_details_actions_delete"
@@ -190,10 +194,10 @@
                 style="@style/ActionSheetStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableTint="@color/notification_error"
                 android:text="@string/report_phishing"
                 android:textColor="@color/notification_error"
-                app:drawableStartCompat="@drawable/ic_phishing" />
+                app:drawableStartCompat="@drawable/ic_phishing"
+                app:drawableTint="@color/notification_error" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -983,7 +983,6 @@
 
     <string name="star">Star</string>
     <string name="unstar">Unstar</string>
-    <string name="more">More</string>
     <string name="send_to_archive">Send to archive?</string>
     <string name="new_label">New Label</string>
     <string name="new_folder">New Folder</string>

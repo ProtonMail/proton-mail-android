@@ -45,7 +45,6 @@
     <dimen name="elevation_xl">8dp</dimen> // standard button high 8dp
     <dimen name="elevation_xxl">16dp</dimen> // standard nav drawer 16dp
 
-
     <!-- Toolbars -->
     <dimen name="toolbar_padding_start">0dp</dimen>
     <dimen name="toolbar_padding_end">8dp</dimen>

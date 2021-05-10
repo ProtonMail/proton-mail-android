@@ -69,7 +69,7 @@
         app:layout_constraintRight_toLeftOf="@id/moreActionImageButton"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@drawable/ripple_message_details_actions"
+        android:background="?selectableItemBackgroundBorderless"
         app:tint="@color/icon_inverted"
         android:visibility="gone" />
 

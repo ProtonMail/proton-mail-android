@@ -32,11 +32,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.EXTRA_VIEW_HEADERS
-import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
 import ch.protonmail.android.activities.messageDetails.MessageViewHeadersActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentMessageDetailsActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
+import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
 import ch.protonmail.android.utils.AppUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -87,7 +87,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         bottomSheetDialog.setOnShowListener { dialogInterface ->
             val dialog = dialogInterface as BottomSheetDialog
             val bottomSheet: View? = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet)
-            val targetOffsetSize = resources.getDimensionPixelSize(R.dimen.padding_xxl)
+            val targetOffsetSize = resources.getDimensionPixelSize(R.dimen.padding_xxxl)
             if (bottomSheet != null) {
                 val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
                 bottomSheetBehavior.addBottomSheetCallback(
