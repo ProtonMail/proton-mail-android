@@ -266,7 +266,7 @@ class MailboxActivity :
             mailboxLocationMain.value = fromInt(locationInt)
         }
         if (extras != null && extras.containsKey(EXTRA_MAILBOX_LOCATION)) {
-            setupNewMessageLocation(extras.getInt(EXTRA_MAILBOX_LOCATION))
+            switchToMailboxLocation(extras.getInt(EXTRA_MAILBOX_LOCATION))
         }
         startObserving()
         mailboxViewModel.toastMessageMaxLabelsReached.observe(this) { event: Event<MaxLabelsReached?> ->
@@ -561,7 +561,7 @@ class MailboxActivity :
         checkRegistration()
         handler.postDelayed(500) {
             mJobManager.addJobInBackground(FetchLabelsJob())
-            setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
+            switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
         }
 
         observeMailboxItemsByLocation(
@@ -739,7 +739,7 @@ class MailboxActivity :
 
         checkRegistration()
         checkUserAndFetchNews()
-        setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
+        switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
     }
 
     private fun shouldShowSwipeGesturesChangedDialog(): Boolean {
@@ -885,7 +885,7 @@ class MailboxActivity :
         saveLastInteraction()
         val drawerClosed = closeDrawer()
         if (!drawerClosed && mailboxLocationMain.value != MessageLocationType.INBOX) {
-            setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
+            switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
         } else if (!drawerClosed) {
             moveTaskToBack(true)
         }
@@ -910,15 +910,15 @@ class MailboxActivity :
 
     override fun onInbox(type: DrawerOptionType) {
         AppUtil.clearNotifications(applicationContext, userManager.requireCurrentUserId())
-        setupNewMessageLocation(type.drawerOptionTypeValue)
+        switchToMailboxLocation(type.drawerOptionTypeValue)
     }
 
     override fun onOtherMailBox(type: DrawerOptionType) {
-        setupNewMessageLocation(type.drawerOptionTypeValue)
+        switchToMailboxLocation(type.drawerOptionTypeValue)
     }
 
     public override fun onLabelMailBox(type: DrawerOptionType, labelId: String, labelName: String, isFolder: Boolean) {
-        setupNewMessageLocation(type.drawerOptionTypeValue, labelId, labelName, isFolder)
+        switchToMailboxLocation(type.drawerOptionTypeValue, labelId, labelName, isFolder)
     }
 
     override val currentMailboxLocation: MessageLocationType
@@ -1348,7 +1348,7 @@ class MailboxActivity :
         )
     }
 
-    private fun setupNewMessageLocation(newLocation: Int) {
+    private fun switchToMailboxLocation(newLocation: Int) {
         val newMessageLocationType = fromInt(newLocation)
         mailboxSwipeRefreshLayout.visibility = View.VISIBLE
         mailboxSwipeRefreshLayout.isRefreshing = true
@@ -1377,7 +1377,7 @@ class MailboxActivity :
     }
 
     // version for label views
-    private fun setupNewMessageLocation(
+    private fun switchToMailboxLocation(
         newLocation: Int,
         labelId: String,
         labelName: String?,
