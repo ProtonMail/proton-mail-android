@@ -38,6 +38,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -52,7 +53,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ch.protonmail.android.R;
-import ch.protonmail.android.details.presentation.MessageDetailsActivity;
 import ch.protonmail.android.adapters.swipe.SwipeProcessor;
 import ch.protonmail.android.api.NetworkConfigurator;
 import ch.protonmail.android.api.ProtonMailApiManager;
@@ -67,6 +67,7 @@ import ch.protonmail.android.core.NetworkResults;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
+import ch.protonmail.android.details.presentation.MessageDetailsActivity;
 import ch.protonmail.android.feature.account.AccountStateManager;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.settings.pin.ValidatePinActivity;
@@ -83,6 +84,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
 
     public static final String EXTRA_IN_APP = "extra_in_app";
     public static final int REQUEST_CODE_VALIDATE_PIN = 998;
+    private static final int NO_LAYOUT_ID = -1;
 
     private ProtonMailApplication app;
 
@@ -139,7 +141,24 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected boolean mPinValid = false;
     private boolean shouldLock = false;
 
-    protected abstract int getLayoutId();
+    /**
+     * Optional id for the layout
+     * @return the id of the layout to inflate, or {@link #NO_LAYOUT_ID} if
+     *  {@link #getRootView()} is used
+     */
+    @LayoutRes
+    protected int getLayoutId() {
+        return NO_LAYOUT_ID;
+    }
+
+    /**
+     * Optional View to set as content
+     * @return the {@link View} to set as content or {@code null} if {@link #getLayoutId()} is used
+     */
+    @Nullable
+    protected View getRootView() {
+        return null;
+    }
 
     protected boolean shouldCheckForAutoLogout() {
         return true;
@@ -167,7 +186,14 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         mCurrentLocale = app.getCurrentLocale();
         buildHtmlProcessor();
 
-        setContentView(getLayoutId());
+        int layoutId = getLayoutId();
+        View rootView = getRootView();
+        if (layoutId != NO_LAYOUT_ID) {
+            setContentView(layoutId);
+        } else if (rootView != null) {
+            setContentView(rootView);
+        }
+
         handlePin();
         ButterKnife.bind(this);
         if (mToolbar != null) {
