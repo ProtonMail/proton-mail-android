@@ -290,7 +290,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
             setOnClickListener {
                 viewModel.showMessageHeaders(messageIds.first())
-                dismiss()
             }
         }
         textViewDetailsActionsReportPhishing.apply {
@@ -340,6 +339,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             currentFolderLocationId
         )
             .show(parentFragmentManager, ManageLabelsActionSheet::class.qualifiedName)
+        dismiss()
     }
 
     private fun showMessageHeaders(messageHeader: String) {
@@ -351,6 +351,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 ).putExtra(EXTRA_VIEW_HEADERS, messageHeader)
             )
         )
+        dismiss()
     }
 
     companion object {
