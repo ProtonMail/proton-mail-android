@@ -39,6 +39,9 @@
     <style name="Proton.Text.DefaultSmall.Interaction">
         <item name="android:textColor">@color/cornflower_blue</item>
     </style>
+    <style name="Proton.Text.Caption.Strong.Inverted">
+        <item name="android:textColor">@color/text_inverted</item>
+    </style>
 
     <!-- region Drawer -->
     <style name="DrawerItemNotification">

@@ -864,11 +864,12 @@
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Choose swipe action</string>
     <string name="swipe_action_trash">Message moved to trash</string>
-    <string name="swipe_action_trash_short">Moved to trash</string>
     <string name="swipe_action_star">Message star updated</string>
+    <string name="swipe_action_star_short">Update star</string>
     <string name="swipe_action_spam">Message marked as spam</string>
     <string name="swipe_action_archive">Message archived</string>
     <string name="swipe_action_mark_read">Message marked as read</string>
+    <string name="swipe_action_mark_read_short">Read</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Message moved to trash</item>
         <item quantity="other">Messages moved to trash</item>
