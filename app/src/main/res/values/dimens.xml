@@ -23,6 +23,7 @@
 
     <!-- generic size -->
     <dimen name="size_icon_m">24dp</dimen>
+    <dimen name="size_button_m">48dp</dimen>
     <dimen name="divider_size">2px</dimen>
 
     <dimen name="unread_messages_chip_size">20dp</dimen>
@@ -95,6 +96,10 @@
     <dimen name="message_details_banner_small_icon_size">16dp</dimen>
 
     <dimen name="message_details_actions_button_size">40dp</dimen>
+
+    <!-- Composer -->
+    <dimen name="height_composer_field">48dp</dimen>
+    <dimen name="padding_composer_body">20dp</dimen>
 
     <!-- endregion -->
 
