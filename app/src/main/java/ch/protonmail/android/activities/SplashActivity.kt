@@ -21,6 +21,8 @@ package ch.protonmail.android.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.utils.startMailboxActivity
@@ -38,22 +40,30 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        accountStateManager.register(this)
+        with(accountStateManager) {
+            register(this@SplashActivity)
 
-        // Start Login or MailboxActivity.
-        accountStateManager.state
-            .onEach {
-                when (it) {
-                    is AccountStateManager.State.Processing -> Unit
-                    is AccountStateManager.State.AccountNeeded -> accountStateManager.login()
-                    is AccountStateManager.State.PrimaryExist -> {
-                        startMailboxActivity()
-                        finish()
+            // Start Login or MailboxActivity.
+            state
+                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+                .onEach {
+                    when (it) {
+                        is AccountStateManager.State.Processing -> Unit
+                        is AccountStateManager.State.AccountNeeded ->
+                            login()
+                        is AccountStateManager.State.PrimaryExist -> {
+                            unregister()
+                            startMailboxActivity()
+                            finish()
+                        }
                     }
-                }
-            }.launchIn(lifecycleScope)
+                }.launchIn(lifecycleScope)
 
-        // Finish if Login closed.
-        accountStateManager.onLoginClosed { finish() }
+            // Finish if Login closed.
+            onLoginClosed {
+                unregister()
+                finish()
+            }
+        }
     }
 }

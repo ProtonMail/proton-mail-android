@@ -168,23 +168,27 @@ abstract class NavigationActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        accountStateManager.state
-            .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
-            .onEach {
-                when (it) {
-                    is AccountStateManager.State.Processing,
-                    is AccountStateManager.State.PrimaryExist -> Unit
-                    is AccountStateManager.State.AccountNeeded -> {
-                        startSplashActivity()
-                        finish()
+        with(accountStateManager) {
+            register(this@NavigationActivity)
+            state
+                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+                .onEach {
+                    when (it) {
+                        is AccountStateManager.State.Processing,
+                        is AccountStateManager.State.PrimaryExist -> Unit
+                        is AccountStateManager.State.AccountNeeded -> {
+                            unregister()
+                            startSplashActivity()
+                            finish()
+                        }
                     }
-                }
-            }.launchIn(lifecycleScope)
+                }.launchIn(lifecycleScope)
 
-        accountStateManager.onAccountSwitched()
-            .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
-            .onEach { switch -> onAccountSwitched(switch) }
-            .launchIn(lifecycleScope)
+            onAccountSwitched()
+                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+                .onEach { switch -> onAccountSwitched(switch) }
+                .launchIn(lifecycleScope)
+        }
 
         sideDrawer.setOnHeaderUserClick {
             onUserClicked(true)

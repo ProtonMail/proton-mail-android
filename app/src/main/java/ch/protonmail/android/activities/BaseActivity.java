@@ -165,7 +165,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             }
         }
         mCurrentLocale = app.getCurrentLocale();
-        accountStateManager.register(this);
         buildHtmlProcessor();
 
         setContentView(getLayoutId());
