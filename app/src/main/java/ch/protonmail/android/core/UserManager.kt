@@ -215,7 +215,8 @@ class UserManager @Inject constructor(
         get() = prefs.getBoolean(PREF_IS_FIRST_MESSAGE_DETAILS, true)
 
     val isEngagementShown: Boolean
-        get() = backupPrefs.getBoolean(PREF_ENGAGEMENT_SHOWN, false)
+        // Disable Engagement screen.
+        get() = true // backupPrefs.getBoolean(PREF_ENGAGEMENT_SHOWN, false)
 
     private val currentUserPreferences
         get() = currentUserId?.let(::preferencesFor)
