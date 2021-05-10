@@ -24,7 +24,6 @@ import androidx.lifecycle.SavedStateHandle
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
-import ch.protonmail.android.labels.domain.model.StandardFolderLocation
 import ch.protonmail.android.labels.domain.usecase.GetAllLabels
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
@@ -130,7 +129,7 @@ class ManageLabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         coEvery { updateLabels.invoke(any(), any()) } just Runs
         coEvery {
             moveMessagesToFolder(
-                listOf(messageId1), StandardFolderLocation.ARCHIVE.id,
+                listOf(messageId1), Constants.MessageLocationType.ARCHIVE.toString(),
                 Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
             )
         } just Runs
@@ -142,7 +141,7 @@ class ManageLabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         coVerify { updateLabels.invoke(any(), any()) }
         coVerify {
             moveMessagesToFolder(
-                listOf(messageId1), StandardFolderLocation.ARCHIVE.id,
+                listOf(messageId1), Constants.MessageLocationType.ARCHIVE.toString(),
                 Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
             )
         }

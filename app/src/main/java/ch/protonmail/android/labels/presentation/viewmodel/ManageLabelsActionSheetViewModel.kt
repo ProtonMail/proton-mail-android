@@ -25,7 +25,6 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
-import ch.protonmail.android.labels.domain.model.StandardFolderLocation
 import ch.protonmail.android.labels.domain.usecase.GetAllLabels
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
@@ -133,7 +132,7 @@ class ManageLabelsActionSheetViewModel @Inject constructor(
                 if (shallMoveToArchive) {
                     moveMessagesToFolder(
                         messageIds,
-                        StandardFolderLocation.ARCHIVE.id,
+                        Constants.MessageLocationType.ARCHIVE.toString(),
                         currentMessageFolder.messageLocationTypeValue.toString()
                     )
                 }

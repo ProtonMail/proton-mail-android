@@ -17,14 +17,16 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.domain.model
+package ch.protonmail.android.labels.presentation.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 
-// based on Constants.MessageLocationType
+/**
+ * Describes standard labels list UI items used in [ManageLabelsActionAdapter].
+ */
 enum class StandardFolderLocation(
     val id: String,
     @DrawableRes val iconRes: Int,

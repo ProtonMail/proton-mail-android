@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.labels.domain.model.StandardFolderLocation
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -48,7 +48,7 @@ class MoveMessagesToFolderTest {
 
         // given
         val messageIds = listOf("id1", "id2")
-        val newFolderLocation = StandardFolderLocation.TRASH.id
+        val newFolderLocation = Constants.MessageLocationType.TRASH.toString()
         val currentFolderLabelId = "currentFolderId"
         every { repository.moveToTrash(messageIds, currentFolderLabelId) } just Runs
 
@@ -65,7 +65,7 @@ class MoveMessagesToFolderTest {
 
         // given
         val messageIds = listOf("id1", "id2")
-        val newFolderLocation = StandardFolderLocation.ARCHIVE.id
+        val newFolderLocation = Constants.MessageLocationType.ARCHIVE.toString()
         val currentFolderLabelId = "currentFolderId"
         every { repository.moveToArchive(messageIds, currentFolderLabelId) } just Runs
 
@@ -82,7 +82,7 @@ class MoveMessagesToFolderTest {
 
         // given
         val messageIds = listOf("id1", "id2")
-        val newFolderLocation = StandardFolderLocation.INBOX.id
+        val newFolderLocation = Constants.MessageLocationType.INBOX.toString()
         val currentFolderLabelId = "currentFolderId"
         every { repository.moveToInbox(messageIds, currentFolderLabelId) } just Runs
 
@@ -99,7 +99,7 @@ class MoveMessagesToFolderTest {
 
         // given
         val messageIds = listOf("id1", "id2")
-        val newFolderLocation = StandardFolderLocation.SPAM.id
+        val newFolderLocation = Constants.MessageLocationType.SPAM.toString()
         val currentFolderLabelId = "currentFolderId"
         every { repository.moveToSpam(messageIds) } just Runs
 

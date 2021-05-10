@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.labels.domain.usecase
 
-import ch.protonmail.android.labels.domain.model.StandardFolderLocation
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.repository.MessageRepository
 import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject
@@ -34,13 +34,13 @@ class MoveMessagesToFolder @Inject constructor(
         currentFolderLabelId: String = EMPTY_STRING,
     ) {
         when (newFolderLocationId) {
-            StandardFolderLocation.TRASH.id ->
+            Constants.MessageLocationType.TRASH.toString() ->
                 messagesRepository.moveToTrash(messageIds, currentFolderLabelId)
-            StandardFolderLocation.ARCHIVE.id ->
+            Constants.MessageLocationType.ARCHIVE.toString() ->
                 messagesRepository.moveToArchive(messageIds, currentFolderLabelId)
-            StandardFolderLocation.INBOX.id ->
+            Constants.MessageLocationType.INBOX.toString() ->
                 messagesRepository.moveToInbox(messageIds, currentFolderLabelId)
-            StandardFolderLocation.SPAM.id ->
+            Constants.MessageLocationType.SPAM.toString() ->
                 messagesRepository.moveToSpam(messageIds)
             else ->
                 messagesRepository.moveToCustomFolderLocation(messageIds, newFolderLocationId)

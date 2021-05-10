@@ -21,9 +21,9 @@ package ch.protonmail.android.labels.domain.usecase
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.labels.domain.model.StandardFolderLocation
 import ch.protonmail.android.labels.presentation.mapper.LabelsMapper
 import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
+import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
 import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
 import me.proton.core.util.kotlin.toBooleanOrFalse
 import javax.inject.Inject
