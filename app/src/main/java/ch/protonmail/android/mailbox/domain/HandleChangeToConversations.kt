@@ -41,26 +41,26 @@ class HandleChangeToConversations @Inject constructor(
         userId: Id,
         conversations: List<ConversationsEventResponse>
     ) = withContext(dispatchers.Io) {
-        conversations.forEach {
+        conversations.forEach { response ->
 
-            when (ActionType.fromInt(it.action)) {
+            when (ActionType.fromInt(response.action)) {
                 ActionType.CREATE -> {
-                    val conversation = it.conversation.toLocal(userId = userId.s)
+                    val conversation = response.conversation.toLocal(userId = userId.s)
                     conversationRepository.saveConversations(listOf(conversation), userId)
                 }
                 ActionType.UPDATE,
                 ActionType.UPDATE_FLAGS -> {
-                    val conversationFromLocal = conversationRepository.findConversationOnce(it.id, userId)
+                    val conversationFromLocal = conversationRepository.findConversationOnce(response.id, userId)
                     if (conversationFromLocal != null) {
-                        val completeConversation = it.conversation.completeToLocal(conversationFromLocal)
+                        val completeConversation = response.conversation.completeToLocal(conversationFromLocal)
                         conversationRepository.saveConversations(listOf(completeConversation), userId)
                     } else {
-                        conversationRepository.getConversation(it.id, userId)
+                        conversationRepository.getConversation(response.id, userId)
                     }
                 }
 
                 ActionType.DELETE -> {
-                    conversationRepository.deleteConversations(listOf(it.id), userId)
+                    conversationRepository.deleteConversations(listOf(response.id), userId)
                 }
             }
         }
