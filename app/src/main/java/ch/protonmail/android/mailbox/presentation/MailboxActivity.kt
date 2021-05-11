@@ -67,10 +67,6 @@ import ch.protonmail.android.activities.SearchActivity
 import ch.protonmail.android.activities.SettingsActivity
 import ch.protonmail.android.activities.SettingsItem
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
-import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
-import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
-import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
-import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
 import ch.protonmail.android.activities.mailbox.RefreshEmptyViewTask
 import ch.protonmail.android.activities.mailbox.RefreshTotalCountersTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
@@ -119,7 +115,6 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
-import ch.protonmail.android.jobs.FetchLabelsJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostReadJob
@@ -1085,7 +1080,7 @@ class MailboxActivity :
 
     override fun onActionItemClicked(mode: ActionMode, menuItem: MenuItem): Boolean {
         // TODO: These actions need to be extracted to the view model and then removed from here
-        val messageIds = selectedMessages.map { message -> message.messageId }
+        val messageIds = getSelectedMessageIds()
         val menuItemId = menuItem.itemId
         var job: Job? = null
         when (menuItemId) {
@@ -1172,7 +1167,7 @@ class MailboxActivity :
         )
         mailboxActionsView.bind(actionsUiModel)
         mailboxActionsView.setOnFirstActionClickListener {
-            val messageIds = selectedMessages.map { message -> message.messageId }
+            val messageIds = getSelectedMessageIds()
             if (currentLocation.value in arrayOf(MessageLocationType.TRASH, MessageLocationType.DRAFT)) {
                 showDeleteConfirmationDialog(
                     this,
@@ -1203,7 +1198,7 @@ class MailboxActivity :
             actionMode?.finish()
         }
         mailboxActionsView.setOnSecondActionClickListener {
-            val messageIds = selectedMessages.map { message -> message.messageId }
+            val messageIds = getSelectedMessageIds()
             if (MessageUtils.areAllUnRead(selectedMessages)) {
                 mJobManager.addJobInBackground(PostReadJob(messageIds))
             } else {
@@ -1212,34 +1207,40 @@ class MailboxActivity :
             actionMode?.finish()
         }
         mailboxActionsView.setOnThirdActionClickListener {
-            val messageIds = selectedMessages.map { message -> message.messageId }
             actionModeRunnable = ActionModeInteractionRunnable(actionMode)
-            showFoldersManagerDialog(messageIds)
+            showFoldersManager(getSelectedMessageIds())
         }
         mailboxActionsView.setOnFourthActionClickListener {
-            val messageIds = selectedMessages.map { message -> message.messageId }
             actionModeRunnable = ActionModeInteractionRunnable(actionMode)
-
-            LabelsActionSheet.newInstance(
-                messageIds,
-                currentMailboxLocation.messageLocationTypeValue,
-            )
-                .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
+            showLabelsManager(getSelectedMessageIds())
         }
         mailboxActionsView.setOnMoreActionClickListener {
-            val messagesIds = selectedMessages.map { message -> message.messageId }
-            MessageActionSheet.newInstance(
-                messagesIds,
-                currentMailboxLocation.messageLocationTypeValue,
-                resources.getQuantityString(
-                    R.plurals.messages_count, // TODO: use R.plurals.conversations_count when conversations are on
-                    messagesIds.size,
-                    messagesIds.size
-                ),
-                originatorLocationId = MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID
-            )
-                .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
+            showActionSheet(getSelectedMessageIds(), userManager.getCurrentUserMailSettingsBlocking()?.viewMode == 0)
         }
+    }
+
+    private fun getSelectedMessageIds(): List<String> = selectedMessages.map { message -> message.messageId }
+
+    private fun showActionSheet(
+        messagesIds: List<String>,
+        isConversationsModeOn: Boolean
+    ) {
+        val messagesStringRes = if (isConversationsModeOn)
+            R.plurals.conversations_count
+        else
+            R.plurals.messages_count
+
+        MessageActionSheet.newInstance(
+            messagesIds,
+            currentMailboxLocation.messageLocationTypeValue,
+            resources.getQuantityString(
+                messagesStringRes,
+                messagesIds.size,
+                messagesIds.size
+            ),
+            originatorLocationId = MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID
+        )
+            .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
     }
 
     override fun onDestroyActionMode(mode: ActionMode) {
@@ -1249,7 +1250,7 @@ class MailboxActivity :
         mailboxAdapter.endSelectionMode()
     }
 
-    private fun showFoldersManagerDialog(messageIds: List<String>) {
+    private fun showFoldersManager(messageIds: List<String>) {
         // show progress bar for visual representation of work in background,
         // if all the messages inside the folder are impacted by the action
         if (mailboxAdapter.itemCount == messageIds.size) {
@@ -1260,6 +1261,14 @@ class MailboxActivity :
             messageIds,
             currentMailboxLocation.messageLocationTypeValue,
             LabelsActionSheet.Type.FOLDER
+        )
+            .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
+    }
+
+    private fun showLabelsManager(messageIds: List<String>) {
+        LabelsActionSheet.newInstance(
+            messageIds,
+            currentMailboxLocation.messageLocationTypeValue,
         )
             .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
     }
