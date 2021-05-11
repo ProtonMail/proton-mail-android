@@ -18,12 +18,13 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<LinearLayout
+<merge
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    tools:parentTag="android.widget.LinearLayout"
     tools:layout_width="100dp">
 
     <ch.protonmail.android.ui.view.LabelChipView
@@ -39,14 +40,13 @@
         tools:textSize="12sp"
         tools:visibility="visible" />
 
-    <!-- TODO ProtonText.Caption.Regular -->
     <TextView
         android:id="@+id/single_line_label_chip_group_more"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/App.Text.Caption"
+        android:textAppearance="@style/Proton.Text.Caption"
         tools:text="+9"
         android:visibility="gone"
         tools:visibility="visible"/>
 
-</LinearLayout>
+</merge>

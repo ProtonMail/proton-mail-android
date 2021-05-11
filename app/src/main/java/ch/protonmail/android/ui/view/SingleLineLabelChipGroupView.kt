@@ -22,7 +22,7 @@ package ch.protonmail.android.ui.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.StyleRes
 import androidx.core.view.isVisible
@@ -43,7 +43,7 @@ class SingleLineLabelChipGroupView @JvmOverloads constructor (
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     @StyleRes defStyleRes: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
+) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private val labelView: LabelChipView
     private val moreView: TextView
@@ -51,8 +51,7 @@ class SingleLineLabelChipGroupView @JvmOverloads constructor (
     init {
         val binding = LayoutSingleLineLabelChipGroupBinding.inflate(
             LayoutInflater.from(context),
-            this,
-            true
+            this
         )
         labelView = binding.singleLineLabelChipGroupLabel
         moreView = binding.singleLineLabelChipGroupMore

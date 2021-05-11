@@ -51,7 +51,7 @@ class LabelChipView @JvmOverloads constructor(
         setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
 
         // Text
-        // TODO setTextAppearance(TODO("TextAppearance from Core - Overline.Medium"))
+        setTextAppearance(R.style.Proton_Text_Caption_Strong)
         setTextColor(context.getColor(R.color.text_inverted))
         ellipsize = TextUtils.TruncateAt.END
         maxLines = 1
@@ -76,7 +76,7 @@ class LabelChipView @JvmOverloads constructor(
         setLabelColor(ColorStateList.valueOf(color))
     }
 
-    companion object {
+    private companion object {
 
         val BackgroundShape = ShapeAppearanceModel
             .builder()
