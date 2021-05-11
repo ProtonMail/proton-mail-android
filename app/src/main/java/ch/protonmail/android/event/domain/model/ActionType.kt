@@ -20,12 +20,13 @@
 package ch.protonmail.android.event.domain.model
 
 enum class ActionType(val eventType: Int) {
+    UNKNOWN(-1),
     DELETE(0),
     CREATE(1),
     UPDATE(2),
     UPDATE_FLAGS(3);
 
     companion object {
-        fun fromInt(eventType: Int) = values().find { eventType == it.eventType } ?: DELETE
+        fun fromInt(eventType: Int) = values().find { eventType == it.eventType } ?: UNKNOWN
     }
 }

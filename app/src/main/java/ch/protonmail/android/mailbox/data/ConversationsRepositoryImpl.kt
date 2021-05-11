@@ -138,7 +138,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             .map { it.toDataResult() }
 
 
-    override fun findConversationOnce(conversationId: String, userId: Id): ConversationDatabaseModel =
+    override suspend fun findConversationOnce(conversationId: String, userId: Id): ConversationDatabaseModel =
         conversationDao.findConversationOnce(conversationId, userId.s)
 
 
@@ -152,7 +152,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun clearConversations() = conversationDao.clear()
+    override suspend fun clearConversations() = conversationDao.clear()
 
     override suspend fun markRead(conversationIds: List<String>) {
         markConversationsReadWorker.enqueue(conversationIds)
