@@ -600,6 +600,7 @@ class MailboxActivity :
                 if (state.error.isNotEmpty()) {
                     Toast.makeText(this, getString(R.string.error_loading_conversations), Toast.LENGTH_SHORT).show()
                 }
+                mailboxAdapter.clear()
                 mailboxAdapter.addAll(state.items)
             }
     }
@@ -907,7 +908,7 @@ class MailboxActivity :
     }
 
     public override fun onLabelMailBox(type: DrawerOptionType, labelId: String, labelName: String, isFolder: Boolean) {
-        switchToMailboxLocation(type.drawerOptionTypeValue, labelId, labelName, isFolder)
+        switchToMailboxCustomLocation(type.drawerOptionTypeValue, labelId, labelName, isFolder)
     }
 
     override val currentMailboxLocation: MessageLocationType
@@ -1365,8 +1366,7 @@ class MailboxActivity :
         ).execute()
     }
 
-    // version for label views
-    private fun switchToMailboxLocation(
+    private fun switchToMailboxCustomLocation(
         newLocation: Int,
         labelId: String,
         labelName: String?,

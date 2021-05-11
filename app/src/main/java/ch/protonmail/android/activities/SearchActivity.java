@@ -144,6 +144,7 @@ public class SearchActivity extends BaseActivity {
                 UUID.randomUUID().toString(),
                 false
         ).observe(this, state -> {
+            mAdapter.clear();
             mAdapter.addAll(state.getItems());
             setLoadingMore(false);
             mProgressBar.setVisibility(View.GONE);
