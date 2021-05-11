@@ -28,6 +28,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -2131,10 +2132,10 @@ public class ComposeMessageActivity
             ImageButton imageButton = item.getActionView().findViewById(R.id.send_button);
             if (disable) {
                 item.setEnabled(false);
-                imageButton.setBackgroundColor(R.color.white_30);
+                imageButton.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.shade_40)));
             } else {
                 item.setEnabled(true);
-                imageButton.setBackgroundResource(R.drawable.selector_circle_background_interaction_strong);
+                imageButton.setBackgroundTintList(null);
             }
         }
     }
