@@ -19,20 +19,6 @@
   -->
 <resources>
 
-    <!-- region V4 -->
-
-    <color name="background">#E5E5E5</color>
-
-    <!-- Brand -->
-    <color name="brand">#657EE4</color>
-    <color name="brand_darken_40">#3C4B88</color>
-
-    <!-- Text -->
-    <color name="text_norm">#17181C</color>
-    <color name="text_weak">#9CA0AA</color>
-
-    <!-- endregion -->
-
     <!-- region V3 -->
     <color name="colorPrimary">#4F4F60</color>
     <color name="colorPrimaryDark">#333341</color>

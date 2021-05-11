@@ -24,5 +24,4 @@
     android:textAppearance="@style/Proton.Text.Caption"
     android:textColor="@color/text_weak"
     android:gravity="center"
-    tools:background="@color/background"
     tools:text="ProtonMail 1.2.3 (123)" />

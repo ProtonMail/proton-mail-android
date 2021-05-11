@@ -67,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/padding_l"
         android:textAppearance="@style/Proton.Text.Caption"
-        android:textColor="@color/text_weak"
+        android:textColor="@color/text_hint"
         android:maxLines="2"
         android:ellipsize="end"
         app:layout_constraintBottom_toBottomOf="parent"
