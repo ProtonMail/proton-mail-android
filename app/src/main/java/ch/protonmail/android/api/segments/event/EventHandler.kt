@@ -47,10 +47,12 @@ import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
+import ch.protonmail.android.di.AppCoroutineScope
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.event.domain.model.ActionType
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.mailbox.domain.HandleChangeToConversations
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
@@ -62,6 +64,8 @@ import ch.protonmail.android.worker.FetchUserWorker
 import com.google.gson.JsonSyntaxException
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
@@ -69,7 +73,8 @@ class EventHandler @AssistedInject constructor(
     private val context: Context,
     private val protonMailApiManager: ProtonMailApiManager,
     private val userManager: UserManager,
-    messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
+    private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
+    private val changeToConversations: HandleChangeToConversations,
     private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
     private val fetchUserWorkerEnqueuer: FetchUserWorker.Enqueuer,
@@ -77,7 +82,8 @@ class EventHandler @AssistedInject constructor(
     databaseProvider: DatabaseProvider,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val messageFactory: MessageFactory,
-    @Assisted val userId: Id
+    @Assisted val userId: Id,
+    @AppCoroutineScope private val scope: CoroutineScope
 ) {
 
     private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
@@ -211,6 +217,7 @@ class EventHandler @AssistedInject constructor(
         }
 
         val messages = response.messageUpdates
+        val conversations = response.conversationUpdates
         val contacts = response.contactUpdates
         val contactsEmails = response.contactEmailsUpdates
 
@@ -227,6 +234,11 @@ class EventHandler @AssistedInject constructor(
         if (messages != null) {
             messages.sortByDescending { eventMessageSortSelector(it) }
             writeMessagesUpdates(messageDao, pendingActionDao, messages)
+        }
+        if (conversations != null) {
+            scope.launch {
+                changeToConversations.invoke(userId, conversations)
+            }
         }
         if (contacts != null) {
             writeContactsUpdates(contactDao, contacts)
