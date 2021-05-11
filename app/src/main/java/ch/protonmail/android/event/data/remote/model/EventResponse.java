@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models;
+package ch.protonmail.android.event.data.remote.model;
 
 import androidx.annotation.Nullable;
 
@@ -24,6 +24,10 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import ch.protonmail.android.api.models.MailSettings;
+import ch.protonmail.android.api.models.MessageCount;
+import ch.protonmail.android.api.models.ResponseBody;
+import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.api.models.messages.receive.ServerLabel;
 import ch.protonmail.android.api.models.messages.receive.ServerMessage;
