@@ -103,6 +103,7 @@ val DependencyHandler.`firebase-messaging` get() =          google("firebase", m
 val DependencyHandler.`gotev-cookieStore` get() =           dependency("net.gotev", module = "cookie-store") version `gotev-cookieStore version`
 val DependencyHandler.`gson` get() =                        google("code.gson", "gson") version `gson version`
 val DependencyHandler.`jsoup` get() =                       dependency("org.jsoup", module = "jsoup") version `jsoup version`
+val DependencyHandler.`leakcanary` get() =                  dependency("com.squareup.leakcanary", module = "leakcanary-android") version `leakcanary version`
 val DependencyHandler.`okhttp-url-connection` get() =       squareup("okhttp3", "okhttp-urlconnection") version `okHttp-url-connection version`
 val DependencyHandler.`okio` get() =                        dependency("com.squareup.okio", module = "okio") version `okio version`
 val DependencyHandler.`sentry-android` get() =              dependency("io.sentry", module = "sentry-android") version `sentry version`
@@ -118,7 +119,6 @@ val DependencyHandler.`fasterxml-jackson-anno` get() =      dependency("com.fast
 val DependencyHandler.`fasterxml-jackson-databind` get() =  dependency("com.fasterxml.jackson.core", module = "jackson-databind") version `jackson version`
 val DependencyHandler.`remark` get() =                      dependency("com.overzealous", module = "remark") version `remark version`
 val DependencyHandler.`store` get() =                       dependency("com.dropbox.mobile.store", module = "store4") version `store version`
-val DependencyHandler.`leakCanary` get() =                  dependency("com.squareup.leakcanary", module = "leakcanary-android") version `leakCanary version`
 // endregion
 
 // endregion

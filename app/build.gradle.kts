@@ -343,7 +343,7 @@ dependencies {
     )
 
     debugImplementation(
-        `leakCanary`
+        `leakcanary`
     )
 
     kapt(

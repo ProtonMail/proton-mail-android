@@ -121,7 +121,7 @@ class AccountStateManager @Inject constructor(
 
         // Raise AccountNeeded on empty/disabled account list.
         accountManager.getAccounts()
-            .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+            .flowWithLifecycle(lifecycle, minActiveState = Lifecycle.State.CREATED)
             .onEach { accounts ->
                 if (accounts.isEmpty() || accounts.all { it.isDisabled() }) {
                     onAccountNeeded()
@@ -131,7 +131,13 @@ class AccountStateManager @Inject constructor(
     }
 
     fun register(context: ComponentActivity) {
+        // Make sure there is only 1 ComponentActivity registered at a time.
+        authOrchestrator.unregister()
         authOrchestrator.register(context)
+    }
+
+    fun unregister() {
+        authOrchestrator.unregister()
     }
 
     fun onLoginClosed(block: () -> Unit) {
