@@ -58,7 +58,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
-import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
@@ -69,8 +68,6 @@ import ch.protonmail.android.activities.SearchActivity
 import ch.protonmail.android.activities.SettingsActivity
 import ch.protonmail.android.activities.SettingsItem
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
-import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelCreationListener
-import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelsChangeListener
 import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment
 import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment.IMoveMessagesListener
 import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
@@ -79,7 +76,6 @@ import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
 import ch.protonmail.android.activities.mailbox.RefreshEmptyViewTask
 import ch.protonmail.android.activities.mailbox.RefreshTotalCountersTask
-import ch.protonmail.android.activities.mailbox.ShowLabelsManagerDialogTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
@@ -153,8 +149,6 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButto
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnackbar
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.views.messageDetails.BottomActionsView
-import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
-import ch.protonmail.android.worker.PostLabelWorker
 import ch.protonmail.libs.core.utils.contains
 import com.birbit.android.jobqueue.Job
 import com.google.android.gms.common.ConnectionResult
@@ -173,7 +167,6 @@ import kotlinx.coroutines.launch
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
-import me.proton.core.util.android.workmanager.activity.getWorkManager
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -196,8 +189,6 @@ class MailboxActivity :
     NavigationActivity(),
     ActionMode.Callback,
     OnRefreshListener,
-    ILabelCreationListener,
-    ILabelsChangeListener,
     IMoveMessagesListener,
     DialogInterface.OnDismissListener {
 
@@ -1154,8 +1145,6 @@ class MailboxActivity :
             R.id.mark_unread -> job = PostUnreadJob(messageIds)
             R.id.add_star -> job = PostStarJob(messageIds)
             R.id.add_label -> {
-                actionModeRunnable = ActionModeInteractionRunnable(mode)
-                ShowLabelsManagerDialogTask(supportFragmentManager, messageDetailsRepository, messageIds).execute()
             }
             R.id.add_folder -> {
                 actionModeRunnable = ActionModeInteractionRunnable(mode)
@@ -1261,7 +1250,6 @@ class MailboxActivity :
         mailboxActionsView.setOnFourthActionClickListener {
             val messageIds = selectedMessages.map { message -> message.messageId }
             actionModeRunnable = ActionModeInteractionRunnable(actionMode)
-            ShowLabelsManagerDialogTask(supportFragmentManager, messageDetailsRepository, messageIds).execute()
 
             LabelsActionSheet.newInstance(
                 messageIds,
@@ -1275,7 +1263,7 @@ class MailboxActivity :
                 messagesIds,
                 currentMailboxLocation.messageLocationTypeValue,
                 resources.getQuantityString(
-                    R.plurals.messages_count,
+                    R.plurals.messages_count, // TODO: use R.plurals.conversations_count when conversations are on
                     messagesIds.size,
                     messagesIds.size
                 ),
@@ -1304,53 +1292,6 @@ class MailboxActivity :
         val transaction = supportFragmentManager.beginTransaction()
         transaction.add(moveToFolderDialogFragment, moveToFolderDialogFragment.fragmentKey)
         transaction.commitAllowingStateLoss()
-    }
-
-    override fun onLabelCreated(labelName: String, color: String) {
-        val postLabelResult = PostLabelWorker.Enqueuer(getWorkManager()).enqueue(labelName, color)
-        postLabelResult.observe(this) {
-            val state: WorkInfo.State = it.state
-
-            if (state == WorkInfo.State.SUCCEEDED) {
-                showToast(getString(R.string.label_created), Toast.LENGTH_SHORT)
-                return@observe
-            }
-
-            if (state == WorkInfo.State.FAILED) {
-                val errorMessage = it.outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
-                    ?: getString(R.string.label_invalid)
-                showToast(errorMessage, Toast.LENGTH_SHORT)
-            }
-        }
-    }
-
-    override fun onLabelsDeleted(checkedLabelIds: List<String>) {
-        // NOOP
-    }
-
-    override fun onLabelsChecked(
-        checkedLabelIds: List<String>,
-        unchangedLabelss: List<String>,
-        messageIds: List<String>
-    ) {
-        var unchangedLabels: List<String>? = unchangedLabelss
-        if (actionModeRunnable != null) {
-            actionModeRunnable!!.run()
-        }
-        if (unchangedLabels == null) {
-            unchangedLabels = mutableListOf()
-        }
-        mailboxViewModel.processLabels(messageIds, checkedLabelIds, unchangedLabels)
-    }
-
-    override fun onLabelsChecked(
-        checkedLabelIds: List<String>,
-        unchangedLabels: List<String>,
-        messageIds: List<String>,
-        messagesToArchive: List<String>
-    ) {
-        mJobManager.addJobInBackground(PostArchiveJob(messagesToArchive))
-        onLabelsChecked(checkedLabelIds, unchangedLabels, messageIds)
     }
 
     /* SwipeRefreshLayout.OnRefreshListener */
