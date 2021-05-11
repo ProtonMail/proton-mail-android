@@ -835,7 +835,7 @@ class MailboxActivity :
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.mailbox_options_menu, menu)
+        menuInflater.inflate(R.menu.menu_mailbox_options, menu)
         setUpMenuItems(menu.findItem(R.id.compose), menu.findItem(R.id.search))
         val mailboxLocation = mailboxLocationMain.value
         menu.findItem(R.id.empty).isVisible =
@@ -845,7 +845,7 @@ class MailboxActivity :
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         menu.clear()
-        menuInflater.inflate(R.menu.mailbox_options_menu, menu)
+        menuInflater.inflate(R.menu.menu_mailbox_options, menu)
         setUpMenuItems(menu.findItem(R.id.compose), menu.findItem(R.id.search))
         val mailboxLocation = mailboxLocationMain.value
         menu.findItem(R.id.empty).isVisible =
