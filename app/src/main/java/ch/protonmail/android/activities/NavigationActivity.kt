@@ -151,7 +151,7 @@ abstract class NavigationActivity :
         val message = switch.current?.username?.takeIf { switch.previous != null }?.let {
             String.format(getString(R.string.signed_in_with), switch.current.username)
         }
-        message?.let { DialogUtils.showSignedInSnack(drawerLayout, it) }
+        message?.let { DialogUtils.showSignedInSnack(this@NavigationActivity, drawerLayout, it) }
     }
 
     protected abstract fun onInbox(type: Constants.DrawerOptionType)

@@ -44,7 +44,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
 import androidx.core.os.postDelayed
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -336,7 +335,8 @@ class MailboxActivity :
                 getString(R.string.customize_swipe_actions),
                 Snackbar.LENGTH_INDEFINITE
             ).apply {
-                view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)?.setTextColor(Color.WHITE)
+                view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+                    ?.setTextColor(getColor(R.color.text_inverted))
                 setAction(getString(R.string.settings)) {
                     val settingsIntent = AppUtil.decorInAppIntent(
                         Intent(
@@ -352,7 +352,8 @@ class MailboxActivity :
                     settingsIntent.putExtra(EXTRA_CURRENT_MAILBOX_LABEL_ID, mailboxLabelId)
                     startActivity(settingsIntent)
                 }
-                setActionTextColor(ContextCompat.getColor(this@MailboxActivity, R.color.icon_purple))
+                setActionTextColor(getColor(R.color.text_inverted))
+                setBackgroundTint(getColor(R.color.interaction_strong))
             }
             userManager.firstMailboxLoadDone()
         }

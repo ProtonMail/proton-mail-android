@@ -17,29 +17,22 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/water_blue"
-              android:gravity="center"
-              android:orientation="horizontal">
-
-    <ImageView
-        android:id="@+id/drawer_item_icon_view"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:src="@drawable/starred"
-        android:layout_gravity="center_vertical" />
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="@dimen/padding_xl"
+    android:background="@color/cornflower_blue">
 
     <TextView
+        android:id="@+id/swipe_action_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:text="@string/swipe_action_star"
-        android:textAllCaps="true"
-        android:layout_marginLeft="@dimen/fields_default_space"
-        android:gravity="center_vertical"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/h2"/>
+        android:layout_gravity="center_vertical|end"
+        android:text="@string/swipe_action_mark_read_short"
+        style="@style/Proton.Text.Caption.Strong.Inverted"
+        app:drawableTopCompat="@drawable/ic_envelope_open_text"
+        app:drawableTint="@color/icon_inverted" />
 
-</LinearLayout>
+</FrameLayout>
