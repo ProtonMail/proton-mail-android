@@ -23,12 +23,14 @@ import android.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetAllLabels
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
 import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
 import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.repository.MessageRepository
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -36,6 +38,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
+import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -60,18 +63,24 @@ class ManageLabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     @MockK
     private lateinit var savedStateHandle: SavedStateHandle
 
+    @MockK
+    private lateinit var messageRepository: MessageRepository
+
     private lateinit var viewModel: ManageLabelsActionSheetViewModel
 
-    private val checkedLabelId1 = "checkedLabelId1"
     private val messageId1 = "messageId1"
-    private val labelId = "labelId1"
+    private val labelId1 = "labelId1"
     private val labelId2 = "labelId2"
     private val iconRes = 123
     private val title = "title"
     private val titleRes = 321
     private val colorInt = Color.YELLOW
+    private val message1 = mockk<Message> {
+        every { messageId } returns messageId1
+        every { labelIDsNotIncludingLocations } returns listOf(labelId1)
+    }
     private val model1label = ManageLabelItemUiModel(
-        labelId,
+        labelId1,
         iconRes,
         title,
         titleRes,
@@ -96,11 +105,6 @@ class ManageLabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             messageId1
         )
         every {
-            savedStateHandle.get<List<String>>(
-                ManageLabelsActionSheet.EXTRA_ARG_MESSAGE_CHECKED_LABELS
-            )
-        } returns listOf(checkedLabelId1)
-        every {
             savedStateHandle.get<ManageLabelsActionSheet.Type>(
                 ManageLabelsActionSheet.EXTRA_ARG_ACTION_SHEET_TYPE
             )
@@ -111,13 +115,15 @@ class ManageLabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         } returns 0
 
         coEvery { getAllLabels.invoke(any(), any(), any()) } returns listOf(model1label, model2folder)
+        coEvery { messageRepository.findMessageById(messageId1) } returns message1
 
         viewModel = ManageLabelsActionSheetViewModel(
             savedStateHandle,
             getAllLabels,
             userManager,
             updateLabels,
-            moveMessagesToFolder
+            moveMessagesToFolder,
+            messageRepository
         )
     }
 

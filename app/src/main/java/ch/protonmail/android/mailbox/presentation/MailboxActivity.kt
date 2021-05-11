@@ -135,6 +135,7 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
+import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -1261,6 +1262,12 @@ class MailboxActivity :
             val messageIds = selectedMessages.map { message -> message.messageId }
             actionModeRunnable = ActionModeInteractionRunnable(actionMode)
             ShowLabelsManagerDialogTask(supportFragmentManager, messageDetailsRepository, messageIds).execute()
+
+            ManageLabelsActionSheet.newInstance(
+                messageIds,
+                currentMailboxLocation.messageLocationTypeValue,
+            )
+                .show(supportFragmentManager, ManageLabelsActionSheet::class.qualifiedName)
         }
         mailboxActionsView.setOnMoreActionClickListener {
             val messagesIds = selectedMessages.map { message -> message.messageId }

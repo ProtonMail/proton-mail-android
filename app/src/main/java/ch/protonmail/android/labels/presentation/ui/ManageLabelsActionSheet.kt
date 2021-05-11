@@ -144,21 +144,18 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
 
     companion object {
 
-        const val EXTRA_ARG_MESSAGE_CHECKED_LABELS = "extra_arg_message_checked_labels"
         const val EXTRA_ARG_MESSAGES_IDS = "extra_arg_messages_ids"
         const val EXTRA_ARG_ACTION_SHEET_TYPE = "extra_arg_action_sheet_type"
         const val EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID = "extra_arg_current_folder_location_id"
 
         fun newInstance(
-            checkedLabels: List<String>,
             messageIds: List<String>,
-            labelActionSheetType: Type = Type.LABEL,
-            currentFolderLocationId: Int
+            currentFolderLocationId: Int,
+            labelActionSheetType: Type = Type.LABEL
         ): ManageLabelsActionSheet {
 
             return ManageLabelsActionSheet().apply {
                 arguments = bundleOf(
-                    EXTRA_ARG_MESSAGE_CHECKED_LABELS to checkedLabels,
                     EXTRA_ARG_MESSAGES_IDS to messageIds,
                     EXTRA_ARG_ACTION_SHEET_TYPE to labelActionSheetType,
                     EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID to currentFolderLocationId

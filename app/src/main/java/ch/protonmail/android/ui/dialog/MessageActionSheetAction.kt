@@ -29,7 +29,6 @@ sealed class MessageActionSheetAction {
     object Default : MessageActionSheetAction()
     data class ShowLabelsManager(
         val messageIds: List<String>,
-        val checkedLabels: List<String>,
         val currentFolderLocationId: Int,
         val labelActionSheetType: ManageLabelsActionSheet.Type = ManageLabelsActionSheet.Type.LABEL
     ) : MessageActionSheetAction()

@@ -73,7 +73,6 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val labelsSheetType = ManageLabelsActionSheet.Type.LABEL
         val expected = MessageActionSheetAction.ShowLabelsManager(
             messageIds,
-            labelIds,
             currentLocation.messageLocationTypeValue,
             labelsSheetType
         )
@@ -109,7 +108,6 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val labelsSheetType = ManageLabelsActionSheet.Type.FOLDER
         val expected = MessageActionSheetAction.ShowLabelsManager(
             messageIds,
-            labelIds,
             currentLocation.messageLocationTypeValue,
             labelsSheetType
         )

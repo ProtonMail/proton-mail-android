@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.EMPTY_STRING
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -53,26 +52,11 @@ class MessageActionSheetViewModel @Inject constructor(
         viewModelScope.launch {
             val showLabelsManager = MessageActionSheetAction.ShowLabelsManager(
                 messageIds,
-                getCheckedLabelsForAllMessages(messageIds),
                 currentLocation.messageLocationTypeValue,
                 labelsSheetType
             )
             actionsMutableFlow.value = showLabelsManager
         }
-    }
-
-    private suspend fun getCheckedLabelsForAllMessages(
-        messageIds: List<String>
-    ): List<String> {
-        val checkedLabels = mutableListOf<String>()
-        messageIds.forEach { messageId ->
-            val message = messageRepository.findMessageById(messageId)
-            Timber.v("Checking message labels: ${message?.labelIDsNotIncludingLocations}")
-            message?.labelIDsNotIncludingLocations?.let {
-                checkedLabels.addAll(it)
-            }
-        }
-        return checkedLabels
     }
 
     fun deleteMessage(messageIds: List<String>) {
@@ -115,11 +99,9 @@ class MessageActionSheetViewModel @Inject constructor(
         currentFolder.messageLocationTypeValue.toString()
     )
 
-    fun starMessage(messageId: List<String>) =
-        messageRepository.starMessages(messageId)
+    fun starMessage(messageId: List<String>) = messageRepository.starMessages(messageId)
 
-    fun unStarMessage(messageId: List<String>) =
-        messageRepository.unStarMessages(messageId)
+    fun unStarMessage(messageId: List<String>) = messageRepository.unStarMessages(messageId)
 
     fun markUnread(messageIds: List<String>) = messageRepository.markUnRead(messageIds)
 

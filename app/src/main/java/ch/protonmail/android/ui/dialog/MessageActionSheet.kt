@@ -326,7 +326,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         Timber.v("Action received $sheetAction")
         when (sheetAction) {
             is MessageActionSheetAction.ShowLabelsManager -> showManageLabelsActionSheet(
-                sheetAction.checkedLabels,
                 sheetAction.messageIds,
                 sheetAction.labelActionSheetType,
                 sheetAction.currentFolderLocationId
@@ -337,16 +336,14 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun showManageLabelsActionSheet(
-        checkedLabels: List<String>,
         messageIds: List<String>,
         labelActionSheetType: ManageLabelsActionSheet.Type,
         currentFolderLocationId: Int
     ) {
         ManageLabelsActionSheet.newInstance(
-            checkedLabels,
             messageIds,
-            labelActionSheetType,
-            currentFolderLocationId
+            currentFolderLocationId,
+            labelActionSheetType
         )
             .show(parentFragmentManager, ManageLabelsActionSheet::class.qualifiedName)
         dismiss()
