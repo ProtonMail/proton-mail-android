@@ -150,7 +150,7 @@ public class SearchActivity extends BaseActivity {
             mAdapter.setNewLocation(MessageLocationType.SEARCH);
         });
 
-        messageDetailsRepository.getAllLabels().observe(this, labels -> {
+        messageDetailsRepository.getAllLabelsLiveData().observe(this, labels -> {
             if (labels != null) {
                 mAdapter.setLabels(labels);
             }

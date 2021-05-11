@@ -32,46 +32,7 @@
         android:layout_height="wrap_content"
         android:background="@color/background_norm">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:paddingStart="@dimen/toolbar_padding_start"
-                android:paddingEnd="@dimen/toolbar_padding_end"
-                app:contentInsetStartWithNavigation="0dp"
-                app:layout_collapseMode="pin"
-                app:navigationIcon="@drawable/ic_arrow_back">
-
-                <TextView
-                    android:id="@+id/collapsedToolbarTitleTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:textAppearance="@style/Proton.Text.DefaultSmall.Medium"
-                    tools:text="@tools:sample/lorem" />
-
-            </androidx.appcompat.widget.Toolbar>
-
-            <TextView
-                android:id="@+id/expandedToolbarTitleTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="?attr/actionBarSize"
-                android:layout_marginBottom="@dimen/expanded_toolbar_title_margin_bottom"
-                android:paddingHorizontal="@dimen/expanded_toolbar_title_padding_horizontal"
-                android:textAppearance="@style/Proton.Text.Headline"
-                app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="0.3"
-                tools:text="@tools:sample/lorem" />
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+        <include layout="@layout/layout_message_details_activity_toolbar" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

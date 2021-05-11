@@ -50,6 +50,7 @@ import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Label;
 import dagger.hilt.android.AndroidEntryPoint;
 
+@Deprecated // Moved to ManageLabelsActionSheet
 @AndroidEntryPoint
 public class MoveToFolderDialogFragment extends AbstractDialogFragment implements AdapterView.OnItemClickListener {
 
@@ -195,7 +196,7 @@ public class MoveToFolderDialogFragment extends AbstractDialogFragment implement
         final MessageDao messageDao = MessageDatabase.Companion
                 .getInstance(requireContext().getApplicationContext(), userManager.requireCurrentUserId())
                 .getDao();
-        messageDao.getAllLabels().observe(this, new LabelsObserver());
+        messageDao.getAllLabelsLiveData().observe(this, new LabelsObserver());
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {

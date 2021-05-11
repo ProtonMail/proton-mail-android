@@ -74,8 +74,12 @@ internal class MessagePrinter(
         messageString.append("<br/>")
         val attachmentList = message.Attachments
         val attachmentsCount = attachmentList.size
-        messageString.append(resources.getQuantityString(R.plurals.attachments_non_descriptive,
-                attachmentsCount, attachmentsCount))
+        messageString.append(
+            resources.getQuantityString(
+                R.plurals.attachments_non_descriptive,
+                attachmentsCount, attachmentsCount
+            )
+        )
         messageString.append("<br/>")
         attachmentList.forEach { attachment ->
             messageString.append(String.format(resources.getString(R.string.print_attachment_template), attachment.fileName))

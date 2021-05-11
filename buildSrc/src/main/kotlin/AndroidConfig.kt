@@ -111,6 +111,8 @@ fun org.gradle.api.Project.android(
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
+    buildFeatures.viewBinding = true
+
     packagingOptions {
         exclude("META-INF/*.kotlin_module")
         exclude("META-INF/AL2.0")

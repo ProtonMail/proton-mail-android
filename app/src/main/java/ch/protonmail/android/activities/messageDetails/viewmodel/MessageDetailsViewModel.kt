@@ -53,8 +53,8 @@ import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
+import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.usecase.VerifyConnection
-import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
@@ -64,12 +64,12 @@ import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
-import dagger.assisted.Assisted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.EMPTY_STRING
 import okio.buffer
 import okio.sink
 import okio.source
@@ -92,12 +92,12 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val userManager: UserManager,
     private val contactsRepository: ContactsRepository,
     private val attachmentMetadataDao: AttachmentMetadataDao,
-    private val deleteMessageUseCase: DeleteMessage,
     private val fetchVerificationKeys: FetchVerificationKeys,
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
     private val dispatchers: DispatcherProvider,
     private val attachmentsHelper: AttachmentsHelper,
     private val downloadUtils: DownloadUtils,
+    private val moveMessagesToFolder: MoveMessagesToFolder,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
@@ -109,9 +109,10 @@ internal class MessageDetailsViewModel @Inject constructor(
         ?: false
 
     private val messageRenderer
-    by lazy { messageRendererFactory.create(viewModelScope, messageId) }
+        by lazy { messageRendererFactory.create(viewModelScope, messageId) }
 
     lateinit var message: LiveData<Message>
+    lateinit var decryptedMessageData: MediatorLiveData<Message>
 
     // TODO: this value was a lateinit, but only initialized with an empty `ArrayList`
     val folderIds: MutableList<String> = mutableListOf()
@@ -176,7 +177,6 @@ internal class MessageDetailsViewModel @Inject constructor(
         get() = _prepareEditMessageIntentResult
 
     val publicKeys = MutableLiveData<List<KeyInformation>>()
-    lateinit var decryptedMessageData: MediatorLiveData<Message>
 
     val webViewContentWithoutImages = MutableLiveData<String>()
     val webViewContentWithImages = MutableLiveData<String>()
@@ -243,7 +243,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             message.setIsRead(read)
             saveMessage()
             if (read) {
-                messageDetailsRepository.markRead(messageId)
+                messageDetailsRepository.markRead(listOf(messageId))
                 saveMessage()
             }
         }
@@ -640,12 +640,6 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun isPgpEncrypted(): Boolean = message.value?.messageEncryption?.isPGPEncrypted ?: false
 
-    fun deleteMessage(messageId: String) {
-        viewModelScope.launch {
-            deleteMessageUseCase(listOf(messageId), Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString())
-        }
-    }
-
     fun printMessage(activityContext: Context) {
         val message = message.value
         message?.let {
@@ -676,4 +670,17 @@ internal class MessageDetailsViewModel @Inject constructor(
 
         return bodyString
     }
+
+    fun moveToTrash() {
+        moveMessagesToFolder(
+            listOf(messageId),
+            Constants.MessageLocationType.TRASH.toString(),
+            message.value?.folderLocation ?: EMPTY_STRING
+        )
+    }
+
+    fun markUnread() {
+        messageDetailsRepository.markUnRead(listOf(messageId))
+    }
+
 }

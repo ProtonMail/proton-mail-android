@@ -37,6 +37,7 @@ import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.Sho
 import ch.protonmail.android.views.ThreeStateButton
 import javax.inject.Inject
 
+@Deprecated("New implementation in [ManageLabelsActionSheetViewModel]")
 class ManageLabelsDialogViewModel @Inject constructor(
     private val userManager: UserManager
 ) : ViewModel() {

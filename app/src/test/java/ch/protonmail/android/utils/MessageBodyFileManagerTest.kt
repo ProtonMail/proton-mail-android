@@ -82,8 +82,8 @@ class MessageBodyFileManagerTest {
             val mockMessage = mockk<Message> {
                 every { messageId } returns "messageId"
             }
-            coEvery { fileHelper.readFromFile(any()) } returns null
-            coEvery { fileHelper.createFile(any(), any()) } returns mockk()
+            every { fileHelper.readFromFile(any()) } returns null
+            every { fileHelper.createFile(any(), any()) } returns mockk()
 
             // when
             val result = messageBodyFileManager.readMessageBodyFromFile(mockMessage)
@@ -101,8 +101,8 @@ class MessageBodyFileManagerTest {
                 every { messageId } returns "messageId"
             }
             val expectedResult = "messageBody"
-            coEvery { fileHelper.readFromFile(any()) } returns expectedResult
-            coEvery { fileHelper.createFile(any(), any()) } returns mockk()
+            every { fileHelper.readFromFile(any()) } returns expectedResult
+            every { fileHelper.createFile(any(), any()) } returns mockk()
 
             // when
             val result = messageBodyFileManager.readMessageBodyFromFile(mockMessage)
@@ -138,7 +138,7 @@ class MessageBodyFileManagerTest {
                 every { messageBody } returns "messageBody"
             }
             coEvery { fileHelper.writeToFile(any(), "messageBody") } returns false
-            coEvery { fileHelper.createFile(any(), any()) } returns mockk()
+            every { fileHelper.createFile(any(), any()) } returns mockk()
 
             // when
             val result = messageBodyFileManager.saveMessageBodyToFile(mockMessage)
@@ -158,7 +158,7 @@ class MessageBodyFileManagerTest {
             }
             val expectedResult = "file://filePath"
             coEvery { fileHelper.writeToFile(any(), "messageBody") } returns true
-            coEvery { fileHelper.createFile(any(), any()) } returns mockk {
+            every { fileHelper.createFile(any(), any()) } returns mockk {
                 every { absolutePath } returns "filePath"
             }
 

@@ -160,7 +160,7 @@ class DeleteMessageTest {
             every { db.findPendingUploadByMessageId(any()) } returns null
             every { db.findPendingSendByMessageId(any()) } returns pendingSend
             every { repository.findMessageByIdBlocking(messId) } returns null
-            every { repository.findSearchMessageByIdBlocking(messId) } returns message
+            every { repository.findSearchMessageById(messId) } returns flowOf(message)
             coEvery { repository.saveMessage(message) } returns 1L
             coEvery { repository.saveSearchMessage(message) } returns 0L
             coEvery { repository.saveMessagesInOneTransaction(any()) } returns Unit

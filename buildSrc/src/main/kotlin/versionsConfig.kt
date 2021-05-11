@@ -132,3 +132,4 @@ const val `timber version` =                    "4.7.1"         // Released:
 const val `trustKit version` =                  "1.1.2"         // Released: Jun 09, 2019
 const val `remark version` =                    "1.1.0"         // Released: Dec 08, 2016
 const val `store version` =                     "4.0.0"         // Released: Nov 30, 2020
+const val `leakCanary version` =                "2.7"           // Released: Mar 26, 2021

@@ -31,6 +31,7 @@ private const val TYPE_HEADER = 1000
 const val MODE_ACCORDION = 1
 // endregion
 
+// TODO: Investigate in MAILAND-1535 whether we can use this adapter for collapsing messages in conversation
 abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>(private var mContext: Context) : RecyclerView.Adapter<ExpandableRecyclerAdapter<T>.ViewHolder>() {
     protected var allItems: MutableList<T> = ArrayList()
     protected var visibleItems: MutableList<T>? = ArrayList()

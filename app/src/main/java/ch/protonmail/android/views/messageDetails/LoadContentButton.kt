@@ -19,31 +19,32 @@
 package ch.protonmail.android.views.messageDetails
 
 import android.content.Context
-import androidx.constraintlayout.widget.ConstraintLayout
 import android.util.AttributeSet
+import androidx.constraintlayout.widget.ConstraintLayout
 import ch.protonmail.android.R
 import kotlinx.android.synthetic.main.view_load_content_button.view.*
 
-/**
- * Created by Kamil Rajtar on 10.08.18.  */
 class LoadContentButton @JvmOverloads constructor(
-		context:Context,attrs:AttributeSet?=null,defStyleAttr:Int=0
-): ConstraintLayout(context,attrs,defStyleAttr) {
-	init {
-		inflate(context,R.layout.view_load_content_button,this)
-		context.theme.obtainStyledAttributes(
-				attrs,
-				R.styleable.LoadContentButton,
-				0,0).let {
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : ConstraintLayout(context, attrs, defStyleAttr) {
+    init {
+        inflate(context, R.layout.view_load_content_button, this)
+        context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.LoadContentButton,
+            0, 0
+        ).let {
 
-			try {
-				loadContentButton.text=it.getString(R.styleable.LoadContentButton_text)
-				loadContentButton.setOnClickListener{
-					this.callOnClick()
-				}
-			} finally {
-				it.recycle()
-			}
-		}
-	}
+            try {
+                loadContentButton.text = it.getString(R.styleable.LoadContentButton_text)
+                loadContentButton.setOnClickListener {
+                    this.callOnClick()
+                }
+            } finally {
+                it.recycle()
+            }
+        }
+    }
 }

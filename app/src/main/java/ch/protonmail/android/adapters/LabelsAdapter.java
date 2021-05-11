@@ -38,6 +38,7 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.views.ThreeStateButton;
 
+@Deprecated // replaced with ManageLabelsActionAdapter
 public class LabelsAdapter extends ArrayAdapter<LabelsAdapter.LabelItem> {
 
     private List<LabelItem> items;

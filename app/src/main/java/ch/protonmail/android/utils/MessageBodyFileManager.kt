@@ -36,18 +36,18 @@ class MessageBodyFileManager @Inject constructor(
     private val dispatcherProvider: DispatcherProvider
 ) {
 
-    suspend fun readMessageBodyFromFile(message: Message): String? =
-        withContext(dispatcherProvider.Io) {
-            val messageId = message.messageId
-            if (messageId != null) {
-                val messageBodyFile = fileHelper.createFile(
-                    applicationContext.filesDir.toString() + DIR_MESSAGE_BODY_DOWNLOADS,
-                    messageId.replace(" ", "_").replace("/", ":")
-                )
-                return@withContext fileHelper.readFromFile(messageBodyFile)
-            }
-            return@withContext null
+    fun readMessageBodyFromFile(message: Message): String? {
+        val messageId = message.messageId
+        if (messageId != null) {
+            val messageBodyFile = fileHelper.createFile(
+                applicationContext.filesDir.toString() + DIR_MESSAGE_BODY_DOWNLOADS,
+                messageId.replace(" ", "_").replace("/", ":")
+            )
+            return fileHelper.readFromFile(messageBodyFile)
         }
+        return null
+    }
+
 
     suspend fun saveMessageBodyToFile(message: Message, shouldOverwrite: Boolean = true): String? =
         withContext(dispatcherProvider.Io) {

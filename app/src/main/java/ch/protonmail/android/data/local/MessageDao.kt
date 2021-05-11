@@ -126,6 +126,10 @@ abstract class MessageDao {
             message.Attachments = message.attachments(this)
         }
 
+    suspend fun findMessageByIdOnce(messageId: String): Message? = findMessageInfoByIdOnce(messageId)?.also { message ->
+        message.Attachments = message.attachmentsBlocking(this)
+    }
+
     @Deprecated("Use Flow variant", ReplaceWith("findMessageById(messageId).first()"))
     fun findMessageByIdBlocking(messageId: String): Message? = findMessageInfoByIdBlocking(messageId)
         ?.also { message ->
@@ -176,6 +180,9 @@ abstract class MessageDao {
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
     protected abstract fun findMessageInfoById(messageId: String): Flow<Message?>
+
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
+    protected abstract suspend fun findMessageInfoByIdOnce(messageId: String): Message?
 
     @Deprecated("Use Flow variant", ReplaceWith("findMessageInfoById(messageId).first()"))
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
@@ -413,7 +420,10 @@ abstract class MessageDao {
 
     //region Labels
     @Query("SELECT * FROM $TABLE_LABELS")
-    abstract fun getAllLabels(): LiveData<List<Label>>
+    abstract fun getAllLabelsLiveData(): LiveData<List<Label>>
+
+    @Query("SELECT * FROM $TABLE_LABELS")
+    abstract suspend fun getAllLabels(): List<Label>
 
     // Folders
     @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 1 ORDER BY `LabelOrder`")

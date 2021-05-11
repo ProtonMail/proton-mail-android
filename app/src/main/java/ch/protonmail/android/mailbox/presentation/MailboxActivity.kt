@@ -126,6 +126,7 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
+import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchLabelsJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
@@ -304,7 +305,7 @@ class MailboxActivity :
 
         mailboxViewModel.pendingSendsLiveData.observe(this, mailboxAdapter::setPendingForSendingList)
         mailboxViewModel.pendingUploadsLiveData.observe(this, mailboxAdapter::setPendingUploadsList)
-        messageDetailsRepository.getAllLabels().observe(this, mailboxAdapter::setLabels)
+        messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
 
         mailboxViewModel.hasSuccessfullyDeletedMessages.observe(this) { isSuccess ->
             Timber.v("Delete message status is success $isSuccess")
@@ -568,7 +569,7 @@ class MailboxActivity :
             syncId = syncUUID
         )
 
-        messageDetailsRepository.getAllLabels().observe(this, mailboxAdapter::setLabels)
+        messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
         // Account has been switched, so used space changed as well
         mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED)
         // Observe used space for current account
@@ -939,7 +940,7 @@ class MailboxActivity :
             MessageLocationType.ALL_MAIL -> R.string.allmail_option
             else -> R.string.app_name
         }
-        supportActionBar!!.setTitle(titleRes)
+        supportActionBar?.setTitle(titleRes)
     }
 
     private fun showNoConnSnackAndScheduleRetry(connectivity: Constants.ConnectionState) {

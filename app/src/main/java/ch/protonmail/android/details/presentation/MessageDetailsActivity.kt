@@ -32,7 +32,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
@@ -40,39 +39,31 @@ import android.webkit.WebView
 import android.webkit.WebView.HitTestResult
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.ToggleButton
 import androidx.activity.viewModels
 import androidx.core.content.getSystemService
 import androidx.core.os.bundleOf
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
-import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelCreationListener
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelsChangeListener
-import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment
 import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment.IMoveMessagesListener
 import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
-import ch.protonmail.android.activities.messageDetails.EXTRA_VIEW_HEADERS
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.LabelsObserver
 import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
-import ch.protonmail.android.activities.messageDetails.MessageViewHeadersActivity
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
@@ -84,9 +75,8 @@ import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostSpamJob
-import ch.protonmail.android.jobs.PostTrashJobV2
-import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
+import ch.protonmail.android.ui.dialog.MessageActionSheet
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event
@@ -105,8 +95,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
-import kotlinx.android.synthetic.main.layout_star_action.*
+import kotlinx.android.synthetic.main.layout_message_details_activity_toolbar.*
 import me.proton.core.util.android.workmanager.activity.getWorkManager
+import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
@@ -126,6 +117,7 @@ internal class MessageDetailsActivity :
     private lateinit var messageId: String
     private lateinit var pmWebViewClient: PMWebViewClient
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
+
     // TODO: Remove attachments adapter from this activity with MAILAND-1545 since it isn't needed
     private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
     private lateinit var primaryBaseActivity: Context
@@ -147,6 +139,7 @@ internal class MessageDetailsActivity :
     /** Lazy instance of [ClipboardManager] that will be used for copy content into the Clipboard */
     private val clipboardManager by lazy { getSystemService<ClipboardManager>() }
 
+    private var showActionButtons = false
     private var buttonsVisibilityRunnable = Runnable { messageDetailsActionsView.visibility = View.VISIBLE }
 
     private val onOffsetChangedListener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -233,6 +226,8 @@ internal class MessageDetailsActivity :
         }
 
         appBarLayout.addOnOffsetChangedListener(onOffsetChangedListener)
+
+        starToggleButton.setOnCheckedChangeListener(OnStarToggleListener(mJobManager, messageId))
     }
 
     private fun continueSetup() {
@@ -249,6 +244,7 @@ internal class MessageDetailsActivity :
         viewModel.messageDetailsError.observe(this, MessageDetailsErrorObserver())
         viewModel.pendingSend.observe(this, PendingSendObserver())
         listenForConnectivityEvent()
+        observeEditMessageEvents()
     }
 
     private fun initAdapters() {
@@ -344,23 +340,6 @@ internal class MessageDetailsActivity :
         messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_message_details, menu)
-        return true
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        val message = viewModel.decryptedMessageData.value
-        if (message != null) {
-            (menu.findItem(R.id.star).actionView.findViewById(R.id.starToggleButton) as ToggleButton)
-                .apply {
-                    isChecked = message.isStarred ?: false
-                    setOnCheckedChangeListener(OnStarToggleListener(mJobManager, messageId))
-                }
-        }
-        return true
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
@@ -372,7 +351,7 @@ internal class MessageDetailsActivity :
         return true
     }
 
-    private fun showReportPhishingDialog(message: Message?) {
+    fun showReportPhishingDialog(message: Message? = viewModel.decryptedMessageData.value) {
         AlertDialog.Builder(this)
             .setTitle(R.string.phishing_dialog_title)
             .setMessage(R.string.phishing_dialog_message)
@@ -594,22 +573,6 @@ internal class MessageDetailsActivity :
         // NOOP
     }
 
-    private fun showFoldersManagerDialog(fragmentManager: FragmentManager, message: Message) {
-        val moveToFolderDialogFragment = MoveToFolderDialogFragment.newInstance(fromInt(message.location))
-        val transaction = fragmentManager.beginTransaction()
-        transaction.add(moveToFolderDialogFragment, moveToFolderDialogFragment.fragmentKey)
-        transaction.commitAllowingStateLoss()
-    }
-
-    private fun showLabelsManagerDialog(fragmentManager: FragmentManager, message: Message) {
-        val attachedLabels = HashSet(message.labelIDsNotIncludingLocations)
-        val manageLabelsDialogFragment = ManageLabelsDialogFragment.newInstance(attachedLabels, null, null)
-        fragmentManager.commit(allowStateLoss = true) {
-            add(manageLabelsDialogFragment, manageLabelsDialogFragment.fragmentKey)
-            addToBackStack(null)
-        }
-    }
-
     override fun onLabelsChecked(
         checkedLabelIds: List<String>,
         unchangedLabelIds: List<String>?,
@@ -642,9 +605,8 @@ internal class MessageDetailsActivity :
         onBackPressed()
     }
 
-    private var showActionButtons = false
-
     private inner class Copy(private val text: CharSequence?) : MenuItem.OnMenuItemClickListener {
+
         override fun onMenuItemClick(item: MenuItem): Boolean {
             UiUtil.copy(this@MessageDetailsActivity, text)
             return true
@@ -652,6 +614,7 @@ internal class MessageDetailsActivity :
     }
 
     private inner class Share(private val uri: String?) : MenuItem.OnMenuItemClickListener {
+
         override fun onMenuItemClick(item: MenuItem): Boolean {
             val send = Intent(Intent.ACTION_SEND)
             send.type = "text/plain"
@@ -667,20 +630,34 @@ internal class MessageDetailsActivity :
     }
 
     private inner class MessageObserver : Observer<Message?> {
+
         override fun onChanged(message: Message?) {
+            Timber.v("Message changed isDownloaded: ${message?.isDownloaded} rendered: ${viewModel.renderingPassed}")
             if (message != null) {
                 onMessageFound(message)
-                viewModel.message.removeObserver(this)
             } else {
                 onMessageNotFound()
             }
         }
 
         private fun onMessageFound(message: Message) {
+            starToggleButton.isChecked = message.isStarred ?: false
             viewModel.addressId = message.addressID!!
             if (message.isDownloaded) {
                 if (!viewModel.renderingPassed) {
                     viewModel.fetchMessageDetails(true)
+                }
+                // we need to update the details, when e.g. message has been moved to another folder
+                messageExpandableAdapter.setMessageData(message)
+                messageDetailsActionsView.setOnMoreActionClickListener {
+                    MessageActionSheet.newInstance(
+                        listOf(message.messageId ?: messageId),
+                        getCurrentSubject(),
+                        getMessagesFrom(message.sender?.name),
+                        message.isStarred ?: false,
+                        message.location
+                    )
+                        .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
                 }
             } else {
                 viewModel.fetchMessageDetails(false)
@@ -699,6 +676,7 @@ internal class MessageDetailsActivity :
         userManager: UserManager,
         activity: MessageDetailsActivity
     ) : PMWebViewClient(userManager, activity, false) {
+
         override fun onPageFinished(view: WebView, url: String) {
             if (amountOfRemoteResourcesBlocked() > 0) {
                 messageExpandableAdapter.displayContainerDisplayImages(View.VISIBLE)
@@ -715,6 +693,7 @@ internal class MessageDetailsActivity :
     private var prevAttachments: List<Attachment>? = null
 
     private inner class AttachmentsObserver : Observer<List<Attachment>?> {
+
         override fun onChanged(newAttachments: List<Attachment>?) {
             /* Workaround for don't let it loop. TODO: Find the cause of the infinite loop after
             Attachments are downloaded and screen has been locked / unlocked */
@@ -765,6 +744,7 @@ internal class MessageDetailsActivity :
     }
 
     private inner class DecryptedMessageObserver : Observer<Message?> {
+
         override fun onChanged(message: Message?) {
             if (message == null) {
                 return
@@ -801,15 +781,12 @@ internal class MessageDetailsActivity :
             )
             messageDetailsActionsView.bind(actionsUiModel)
             messageDetailsActionsView.setOnThirdActionClickListener {
-                val job = PostTrashJobV2(listOf(message.messageId), null)
-                mJobManager.addJobInBackground(job)
+                viewModel.moveToTrash()
                 onBackPressed()
             }
             messageDetailsActionsView.setOnSecondActionClickListener {
                 markAsRead = false
-                viewModel.markRead(false)
-                val job = PostUnreadJob(listOf(messageId))
-                mJobManager.addJobInBackground(job)
+                viewModel.markUnread()
                 onBackPressed()
             }
             messageDetailsActionsView.setOnFirstActionClickListener {
@@ -818,158 +795,177 @@ internal class MessageDetailsActivity :
                 } else {
                     Constants.MessageActionType.REPLY
                 }
-                try {
-                    val newMessageTitle = MessageUtils.buildNewMessageTitle(
-                        this@MessageDetailsActivity,
-                        messageAction,
-                        message.subject
-                    )
-                    val user = mUserManager.requireCurrentLegacyUser()
-                    val userUsedSpace = user.usedSpace
-                    val userMaxSpace = if (user.maxSpace == 0L) {
-                        Long.MAX_VALUE
-                    } else {
-                        user.maxSpace
-                    }
-                    val percentageUsed = userUsedSpace * 100 / userMaxSpace
-                    if (percentageUsed >= 100) {
-                        this@MessageDetailsActivity.showTwoButtonInfoDialog(
-                            title = getString(R.string.storage_limit_warning_title),
-                            message = getString(R.string.storage_limit_reached_text),
-                            rightStringId = R.string.okay,
-                            leftStringId = R.string.learn_more,
-                            onNegativeButtonClicked = {
-                                val browserIntent = Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(getString(R.string.limit_reached_learn_more))
-                                )
-                                startActivity(browserIntent)
-                            }
-                        )
-                    } else {
-                        viewModel.prepareEditMessageIntent.observe(
-                            this@MessageDetailsActivity,
-                            Observer { editIntentExtrasEvent: Event<IntentExtrasData?> ->
-                                val editIntentExtras = editIntentExtrasEvent.getContentIfNotHandled()
-                                    ?: return@Observer
-                                val intent = AppUtil.decorInAppIntent(
-                                    Intent(
-                                        this@MessageDetailsActivity,
-                                        ComposeMessageActivity::class.java
-                                    )
-                                )
-                                MessageUtils.addRecipientsToIntent(
-                                    intent,
-                                    ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
-                                    editIntentExtras.toRecipientListString,
-                                    editIntentExtras.messageAction,
-                                    editIntentExtras.userAddresses
-                                )
-                                if (editIntentExtras.includeCCList) {
-                                    MessageUtils.addRecipientsToIntent(
-                                        intent,
-                                        ComposeMessageActivity.EXTRA_CC_RECIPIENTS,
-                                        editIntentExtras.messageCcList,
-                                        editIntentExtras.messageAction,
-                                        editIntentExtras.userAddresses
-                                    )
-                                }
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_LOAD_IMAGES,
-                                    editIntentExtras.imagesDisplayed
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_LOAD_REMOTE_CONTENT,
-                                    editIntentExtras.remoteContentDisplayed
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_SENDER_NAME,
-                                    editIntentExtras.messageSenderName
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_SENDER_ADDRESS,
-                                    editIntentExtras.senderEmailAddress
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_PGP_MIME,
-                                    editIntentExtras.isPGPMime
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_TITLE,
-                                    editIntentExtras.newMessageTitle
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_BODY_LARGE,
-                                    editIntentExtras.largeMessageBody
-                                )
-                                mBigContentHolder.content = editIntentExtras.mBigContentHolder.content
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_BODY,
-                                    editIntentExtras.body
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_TIMESTAMP,
-                                    editIntentExtras.timeMs
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_ENCRYPTED,
-                                    editIntentExtras.messageIsEncrypted
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_PARENT_ID,
-                                    editIntentExtras.messageId
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_ACTION_ID,
-                                    editIntentExtras.messageAction
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID,
-                                    editIntentExtras.addressID
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS,
-                                    editIntentExtras.addressEmailAlias
-                                )
-                                intent.putExtra(
-                                    ComposeMessageActivity.EXTRA_MESSAGE_IS_TRANSIENT,
-                                    isTransientMessage
-                                )
-                                if (editIntentExtras.embeddedImagesAttachmentsExist) {
-                                    intent.putParcelableArrayListExtra(
-                                        ComposeMessageActivity.EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS,
-                                        editIntentExtras.attachments
-                                    )
-                                }
-                                val attachments = editIntentExtras.attachments
-                                if (attachments.size > 0) {
-                                    intent.putParcelableArrayListExtra(
-                                        ComposeMessageActivity.EXTRA_MESSAGE_ATTACHMENTS,
-                                        attachments
-                                    )
-                                }
-                                startActivityForResult(intent, 0)
-                            }
-                        )
-                        viewModel.prepareEditMessageIntent(
-                            messageAction,
-                            message,
-                            newMessageTitle,
-                            decryptedBody,
-                            mBigContentHolder
-                        )
-                    }
-                } catch (exc: Exception) {
-                    Timber.tag("588").e(exc, "Exception on reply panel press")
-                }
+                executeMessageAction(messageAction, message)
             }
+
+
             progress.visibility = View.GONE
             invalidateOptionsMenu()
             viewModel.renderingPassed = true
         }
     }
 
+    // TODO: Move as much as possible of this method to ViewModel
+    fun executeMessageAction(
+        messageAction: Constants.MessageActionType,
+        message: Message = requireNotNull(viewModel.decryptedMessageData.value)
+    ) {
+        try {
+            val user = mUserManager.requireCurrentLegacyUser()
+            val userUsedSpace = user.usedSpace
+            val userMaxSpace = if (user.maxSpace == 0L) {
+                Long.MAX_VALUE
+            } else {
+                user.maxSpace
+            }
+            val percentageUsed = userUsedSpace * 100 / userMaxSpace
+            if (percentageUsed >= 100) {
+                this@MessageDetailsActivity.showTwoButtonInfoDialog(
+                    title = getString(R.string.storage_limit_warning_title),
+                    message = getString(R.string.storage_limit_reached_text),
+                    rightStringId = R.string.okay,
+                    leftStringId = R.string.learn_more,
+                    onNegativeButtonClicked = {
+                        val browserIntent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(getString(R.string.limit_reached_learn_more))
+                        )
+                        startActivity(browserIntent)
+                    }
+                )
+            } else {
+                val newMessageTitle = MessageUtils.buildNewMessageTitle(
+                    this@MessageDetailsActivity,
+                    messageAction,
+                    message.subject
+                )
+                viewModel.prepareEditMessageIntent(
+                    messageAction,
+                    message,
+                    newMessageTitle,
+                    getDecryptedBody(message.decryptedHTML),
+                    mBigContentHolder
+                )
+            }
+        } catch (exc: Exception) {
+            Timber.e(exc, "Exception in reply/forward actions")
+        }
+    }
+
+    private fun observeEditMessageEvents() {
+        viewModel.prepareEditMessageIntent.observe(
+            this@MessageDetailsActivity,
+            Observer { editIntentExtrasEvent: Event<IntentExtrasData?> ->
+                val editIntentExtras = editIntentExtrasEvent.getContentIfNotHandled()
+                    ?: return@Observer
+                val intent = AppUtil.decorInAppIntent(
+                    Intent(
+                        this@MessageDetailsActivity,
+                        ComposeMessageActivity::class.java
+                    )
+                )
+                MessageUtils.addRecipientsToIntent(
+                    intent,
+                    ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
+                    editIntentExtras.toRecipientListString,
+                    editIntentExtras.messageAction,
+                    editIntentExtras.userAddresses
+                )
+                if (editIntentExtras.includeCCList) {
+                    MessageUtils.addRecipientsToIntent(
+                        intent,
+                        ComposeMessageActivity.EXTRA_CC_RECIPIENTS,
+                        editIntentExtras.messageCcList,
+                        editIntentExtras.messageAction,
+                        editIntentExtras.userAddresses
+                    )
+                }
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_LOAD_IMAGES,
+                    editIntentExtras.imagesDisplayed
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_LOAD_REMOTE_CONTENT,
+                    editIntentExtras.remoteContentDisplayed
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_SENDER_NAME,
+                    editIntentExtras.messageSenderName
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_SENDER_ADDRESS,
+                    editIntentExtras.senderEmailAddress
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_PGP_MIME,
+                    editIntentExtras.isPGPMime
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_TITLE,
+                    editIntentExtras.newMessageTitle
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_BODY_LARGE,
+                    editIntentExtras.largeMessageBody
+                )
+                mBigContentHolder.content = editIntentExtras.mBigContentHolder.content
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_BODY,
+                    editIntentExtras.body
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_TIMESTAMP,
+                    editIntentExtras.timeMs
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_ENCRYPTED,
+                    editIntentExtras.messageIsEncrypted
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_PARENT_ID,
+                    editIntentExtras.messageId
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_ACTION_ID,
+                    editIntentExtras.messageAction
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID,
+                    editIntentExtras.addressID
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS,
+                    editIntentExtras.addressEmailAlias
+                )
+                intent.putExtra(
+                    ComposeMessageActivity.EXTRA_MESSAGE_IS_TRANSIENT,
+                    isTransientMessage
+                )
+                if (editIntentExtras.embeddedImagesAttachmentsExist) {
+                    intent.putParcelableArrayListExtra(
+                        ComposeMessageActivity.EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS,
+                        editIntentExtras.attachments
+                    )
+                }
+                val attachments = editIntentExtras.attachments
+                if (attachments.size > 0) {
+                    intent.putParcelableArrayListExtra(
+                        ComposeMessageActivity.EXTRA_MESSAGE_ATTACHMENTS,
+                        attachments
+                    )
+                }
+                startActivityForResult(intent, 0)
+            }
+        )
+    }
+
+    private fun getCurrentSubject() = expandedToolbarTitleTextView.text ?: getString(R.string.empty_subject)
+
+    private fun getMessagesFrom(messageOriginator: String?): String =
+        messageOriginator?.let { resources.getString(R.string.message_from, messageOriginator) } ?: EMPTY_STRING
+
     private inner class MessageDetailsErrorObserver : Observer<Event<String>> {
+
         override fun onChanged(status: Event<String>?) {
             if (status != null) {
                 val content = status.getContentIfNotHandled()
@@ -984,12 +980,14 @@ internal class MessageDetailsActivity :
     }
 
     private inner class WebViewContentObserver : Observer<String?> {
+
         override fun onChanged(content: String?) {
             messageExpandableAdapter.loadDataFromUrlToMessageView(content!!)
         }
     }
 
     private inner class PendingSendObserver : Observer<PendingSend?> {
+
         override fun onChanged(pendingSend: PendingSend?) {
             if (pendingSend != null) {
                 val cannotEditSnack = Snackbar.make(
@@ -1024,7 +1022,12 @@ internal class MessageDetailsActivity :
         return
     }
 
+    fun printMessage() {
+        viewModel.printMessage(primaryBaseActivity)
+    }
+
     companion object {
+
         const val EXTRA_MESSAGE_ID = "messageId"
 
         // if transient is true it will not save Message object to db
