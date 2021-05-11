@@ -1266,15 +1266,13 @@ class MailboxActivity :
             val messagesIds = selectedMessages.map { message -> message.messageId }
             MessageActionSheet.newInstance(
                 messagesIds,
+                currentMailboxLocation.messageLocationTypeValue,
                 resources.getQuantityString(
                     R.plurals.messages_count,
                     messagesIds.size,
                     messagesIds.size
                 ),
-                null,
-                false,
-                currentMailboxLocation.messageLocationTypeValue,
-                MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID
+                originatorLocationId = MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID
             )
                 .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
         }

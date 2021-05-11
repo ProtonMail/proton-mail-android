@@ -227,7 +227,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 setOnClickListener {
                     viewModel.moveToInbox(messageIds, messageLocation)
                     dismiss()
-                    popBackActivity()
+                    popBackDetailsActivity()
                 }
             }
             textViewDetailsActionsTrash.apply {
@@ -236,7 +236,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 setOnClickListener {
                     viewModel.moveToTrash(messageIds, messageLocation)
                     dismiss()
-                    popBackActivity()
+                    popBackDetailsActivity()
                 }
             }
             textViewDetailsActionsMoveToArchive.apply {
@@ -245,7 +245,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 setOnClickListener {
                     viewModel.moveToArchive(messageIds, messageLocation)
                     dismiss()
-                    popBackActivity()
+                    popBackDetailsActivity()
                 }
             }
             textViewDetailsActionsMoveToSpam.apply {
@@ -254,7 +254,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 setOnClickListener {
                     viewModel.moveToSpam(messageIds, messageLocation)
                     dismiss()
-                    popBackActivity()
+                    popBackDetailsActivity()
                 }
             }
             textViewDetailsActionsDelete.apply {
@@ -316,7 +316,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
      * so we have to dismiss the action sheet and the Details activity at the time and go to the main list.
      * This should be improved.
      */
-    private fun popBackActivity() = activity?.onBackPressed()
+    private fun popBackDetailsActivity() = (activity as? MessageDetailsActivity)?.onBackPressed()
 
     private fun setCloseIconVisibility(shouldBeVisible: Boolean) =
         actionSheetHeader?.setCloseIconVisibility(shouldBeVisible)
@@ -380,21 +380,21 @@ class MessageActionSheet : BottomSheetDialogFragment() {
          * Creates new action sheet instance.
          *
          * @param messagesIds current message id/ or selected messages Ids
+         * @param currentFolderLocationId defines current message folder location based on values from
+         * [Constants.MessageLocationType] e.g. 3 = trash
          * @param title title part that will be displayed in the top header
          * @param subTitle small sub title part that will be displayed in the top header, null/empty if not needed
          * @param isStarred defines if message is currently marked as starred
-         * @param currentFolderLocationId defines current message folder location based on values from
-         * [Constants.MessageLocationType] e.g. 3 = trash
          * @param originatorLocationId defines starting activity/location
          *  0 = [ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID]
          *  1 = [ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID]
          */
         fun newInstance(
             messagesIds: List<String>,
-            title: CharSequence,
-            subTitle: String?,
-            isStarred: Boolean,
             currentFolderLocationId: Int,
+            title: CharSequence,
+            subTitle: String? = null,
+            isStarred: Boolean = false,
             originatorLocationId: Int = ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
         ): MessageActionSheet {
             return MessageActionSheet().apply {

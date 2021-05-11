@@ -652,10 +652,10 @@ internal class MessageDetailsActivity :
                 messageDetailsActionsView.setOnMoreActionClickListener {
                     MessageActionSheet.newInstance(
                         listOf(message.messageId ?: messageId),
+                        message.location,
                         getCurrentSubject(),
                         getMessagesFrom(message.sender?.name),
-                        message.isStarred ?: false,
-                        message.location
+                        message.isStarred ?: false
                     )
                         .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
                 }
