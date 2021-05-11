@@ -557,6 +557,10 @@ class MailboxActivity :
         setUpDrawer()
         setupAccountsList()
         checkRegistration()
+        // Loading mailbox items for the newly switched account.
+        // This method also "reloads dependencies" for the instance of `messageDetailsRepo` held by
+        // MailboxVM. This should be done before triggering an "update" of the Mailbox for the new user
+        loadMailboxItems(refreshMessages = true)
         switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
 
         messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
