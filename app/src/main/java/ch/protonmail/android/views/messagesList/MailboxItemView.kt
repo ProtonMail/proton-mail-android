@@ -27,6 +27,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
@@ -36,7 +37,6 @@ import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
 import me.proton.core.presentation.utils.inflate
-import me.proton.core.util.kotlin.EMPTY_STRING
 
 private const val MAX_LABELS_WITH_TEXT = 1
 
@@ -122,7 +122,7 @@ class MailboxItemView @JvmOverloads constructor(
         isMultiSelectionMode: Boolean,
         mailboxLocation: Constants.MessageLocationType,
         isBeingSent: Boolean,
-        isAttachmentsBeingUploaded: Boolean
+        areAttachmentsBeingUploaded: Boolean
     ) {
         val readStatus = mailboxUiItem.isRead
         val messageLocation = Constants.MessageLocationType.fromInt(
@@ -136,14 +136,23 @@ class MailboxItemView @JvmOverloads constructor(
         val senderText = getSenderText(mailboxUiItem)
         // Sender text can only be empty in drafts where we show recipients instead of senders
         senderTextView.text =
-            if (senderText.isNullOrEmpty()) context.getString(R.string.empty_recipients) else senderText
-        senderInitialView.bind(senderText ?: EMPTY_STRING, isMultiSelectionMode)
+            if (senderText.isEmpty()) context.getString(R.string.empty_recipients) else senderText
+        senderInitialView.bind(senderText, isMultiSelectionMode)
 
         subjectTextView.text = mailboxUiItem.subject
 
         timeDateTextView.text = DateUtil.formatDateTime(context, mailboxUiItem.lastMessageTimeMs)
+        if (areAttachmentsBeingUploaded) {
+            timeDateTextView.text = context.getString(R.string.draft_label_attachments_uploading)
+        }
+        if (isBeingSent) { // overwrite attachment text so there's no flickering between them
+            timeDateTextView.text = context.getString(R.string.draft_label_message_uploading)
+        }
 
-        replyImageView.visibility = if (mailboxUiItem.messageData?.isReplied == true && !mailboxUiItem.messageData.isRepliedAll) View.VISIBLE else View.GONE
+        replyImageView.visibility = if (
+            mailboxUiItem.messageData?.isReplied == true &&
+            !mailboxUiItem.messageData.isRepliedAll
+        ) View.VISIBLE else View.GONE
         replyAllImageView.visibility = if (mailboxUiItem.messageData?.isRepliedAll == true) View.VISIBLE else View.GONE
         forwardImageView.visibility = if (mailboxUiItem.messageData?.isForwarded == true) View.VISIBLE else View.GONE
 
@@ -165,12 +174,14 @@ class MailboxItemView @JvmOverloads constructor(
             val icon = getIconForMessageLocation(messageLocation)
             if (icon != null) {
                 firstLocationImageView.visibility = View.VISIBLE
-                firstLocationImageView.setImageDrawable(context.getDrawable(icon))
+                firstLocationImageView.setImageDrawable(ContextCompat.getDrawable(context, icon))
             }
         }
 
         messagesNumberTextView.visibility = if (mailboxUiItem.messagesCount != null) View.VISIBLE else View.GONE
         messagesNumberTextView.text = mailboxUiItem.messagesCount.toString()
+        sending_uploading_progress_bar.visibility =
+            if (isBeingSent || areAttachmentsBeingUploaded) View.VISIBLE else View.GONE
         attachmentImageView.visibility = if (mailboxUiItem.hasAttachments) View.VISIBLE else View.GONE
         starImageView.visibility = if (mailboxUiItem.isStarred) View.VISIBLE else View.GONE
 

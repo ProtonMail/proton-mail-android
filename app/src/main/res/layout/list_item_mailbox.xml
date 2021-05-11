@@ -26,7 +26,6 @@
     android:layout_height="wrap_content"
     android:paddingHorizontal="@dimen/mailbox_list_item_padding_horizontal"
     android:paddingVertical="@dimen/mailbox_list_item_padding_vertical"
-    android:orientation="vertical"
     android:background="@drawable/ripple_background_norm">
 
     <ch.protonmail.android.views.messagesList.SenderInitialView
@@ -209,9 +208,17 @@
         android:layout_width="@dimen/mailbox_list_item_views_margin"
         android:layout_height="1dp"
         app:layout_constraintLeft_toRightOf="@id/messagesNumberTextView"
-        app:layout_constraintRight_toLeftOf="@id/attachmentImageView"
+        app:layout_constraintRight_toLeftOf="@id/sending_uploading_progress_bar"
         app:layout_constraintTop_toTopOf="@id/messagesNumberTextView"
         app:layout_constraintBottom_toBottomOf="@id/messagesNumberTextView" />
+
+    <ProgressBar
+        android:id="@+id/sending_uploading_progress_bar"
+        android:layout_width="@dimen/mailbox_list_item_icon_size"
+        android:layout_height="@dimen/mailbox_list_item_icon_size"
+        app:layout_constraintRight_toLeftOf="@id/attachmentImageView"
+        app:layout_constraintTop_toTopOf="@id/attachmentImageView"
+        app:layout_constraintBottom_toBottomOf="@id/attachmentImageView" />
 
     <ImageView
         android:id="@+id/attachmentImageView"
