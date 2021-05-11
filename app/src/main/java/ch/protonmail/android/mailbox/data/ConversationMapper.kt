@@ -53,9 +53,9 @@ internal fun ConversationApiModel.toLocal(userId: String) = ConversationDatabase
  * which ends up being an incomplete object on our en. So we need to map it to the correct instance from our local
  * storage, accept the correct changes and create a new complete instance of the conversation.
  *
- * @receiver an instance of {@link ConversationApiModel} containing only the changes
+ * @receiver an instance of [ConversationApiModel] containing only the changes
  * @param existing representing the complete and existing instance of the same object inside local data source
- * @return ne instance of {@link ConversationDatabaseModel} containing the complete object with the changes
+ * @return ne instance of [ConversationDatabaseModel] containing the complete object with the changes
  *
  */
 internal fun ConversationApiModel.completeToLocal(existing: ConversationDatabaseModel) = ConversationDatabaseModel(
