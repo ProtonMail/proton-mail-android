@@ -135,13 +135,13 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
-import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
-import ch.protonmail.android.ui.dialog.MessageActionSheet
+import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
@@ -1263,11 +1263,11 @@ class MailboxActivity :
             actionModeRunnable = ActionModeInteractionRunnable(actionMode)
             ShowLabelsManagerDialogTask(supportFragmentManager, messageDetailsRepository, messageIds).execute()
 
-            ManageLabelsActionSheet.newInstance(
+            LabelsActionSheet.newInstance(
                 messageIds,
                 currentMailboxLocation.messageLocationTypeValue,
             )
-                .show(supportFragmentManager, ManageLabelsActionSheet::class.qualifiedName)
+                .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
         }
         mailboxActionsView.setOnMoreActionClickListener {
             val messagesIds = selectedMessages.map { message -> message.messageId }

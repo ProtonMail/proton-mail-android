@@ -24,7 +24,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.presentation.mapper.LabelsMapper
 import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
-import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import me.proton.core.util.kotlin.toBooleanOrFalse
 import javax.inject.Inject
 
@@ -35,7 +35,7 @@ class GetAllLabels @Inject constructor(
 
     suspend operator fun invoke(
         currentLabelsSelection: List<String>,
-        labelsSheetType: ManageLabelsActionSheet.Type = ManageLabelsActionSheet.Type.LABEL,
+        labelsSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL,
         currentMessageFolder: Constants.MessageLocationType? = null // only required for Type.FOLDER
     ): List<ManageLabelItemUiModel> {
         val dbLabels = messageDetailsRepository.getAllLabels()
@@ -45,7 +45,7 @@ class GetAllLabels @Inject constructor(
             .map { label ->
                 labelsMapper.mapLabelToUi(label, currentLabelsSelection, labelsSheetType)
             }
-        return if (labelsSheetType == ManageLabelsActionSheet.Type.FOLDER) {
+        return if (labelsSheetType == LabelsActionSheet.Type.FOLDER) {
             requireNotNull(currentMessageFolder)
             uiLabelsFromDb + getStandardFolders(currentMessageFolder)
         } else
@@ -71,7 +71,7 @@ class GetAllLabels @Inject constructor(
                 labelId = location.id,
                 iconRes = location.iconRes,
                 titleRes = location.title,
-                labelType = ManageLabelsActionSheet.Type.FOLDER.typeInt
+                labelType = LabelsActionSheet.Type.FOLDER.typeInt
             )
         }
 }

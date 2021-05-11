@@ -29,7 +29,7 @@ import ch.protonmail.android.labels.domain.usecase.GetAllLabels
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
 import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
-import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -46,7 +46,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ManageLabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
+class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
     @MockK
     private lateinit var moveMessagesToFolder: MoveMessagesToFolder
@@ -66,7 +66,7 @@ class ManageLabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
     @MockK
     private lateinit var messageRepository: MessageRepository
 
-    private lateinit var viewModel: ManageLabelsActionSheetViewModel
+    private lateinit var viewModel: LabelsActionSheetViewModel
 
     private val messageId1 = "messageId1"
     private val labelId1 = "labelId1"
@@ -94,30 +94,30 @@ class ManageLabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         titleRes,
         colorInt,
         false,
-        ManageLabelsActionSheet.Type.FOLDER.typeInt
+        LabelsActionSheet.Type.FOLDER.typeInt
     )
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
 
-        every { savedStateHandle.get<List<String>>(ManageLabelsActionSheet.EXTRA_ARG_MESSAGES_IDS) } returns listOf(
+        every { savedStateHandle.get<List<String>>(LabelsActionSheet.EXTRA_ARG_MESSAGES_IDS) } returns listOf(
             messageId1
         )
         every {
-            savedStateHandle.get<ManageLabelsActionSheet.Type>(
-                ManageLabelsActionSheet.EXTRA_ARG_ACTION_SHEET_TYPE
+            savedStateHandle.get<LabelsActionSheet.Type>(
+                LabelsActionSheet.EXTRA_ARG_ACTION_SHEET_TYPE
             )
-        } returns ManageLabelsActionSheet.Type.LABEL
+        } returns LabelsActionSheet.Type.LABEL
 
         every {
-            savedStateHandle.get<Int>(ManageLabelsActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID)
+            savedStateHandle.get<Int>(LabelsActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID)
         } returns 0
 
         coEvery { getAllLabels.invoke(any(), any(), any()) } returns listOf(model1label, model2folder)
         coEvery { messageRepository.findMessageById(messageId1) } returns message1
 
-        viewModel = ManageLabelsActionSheetViewModel(
+        viewModel = LabelsActionSheetViewModel(
             savedStateHandle,
             getAllLabels,
             userManager,

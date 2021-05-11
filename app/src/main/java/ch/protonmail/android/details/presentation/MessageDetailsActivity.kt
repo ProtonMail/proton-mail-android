@@ -76,7 +76,7 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.ReportPhishingJob
-import ch.protonmail.android.ui.dialog.MessageActionSheet
+import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event

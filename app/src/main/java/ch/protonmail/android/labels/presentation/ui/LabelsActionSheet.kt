@@ -30,11 +30,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
-import ch.protonmail.android.databinding.FragmentManageLabelsActionSheetBinding
+import ch.protonmail.android.databinding.FragmentLabelsActionSheetBinding
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
+import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionSheetViewModel
 import ch.protonmail.android.labels.presentation.viewmodel.ManageLabelsActionAdapter
-import ch.protonmail.android.labels.presentation.viewmodel.ManageLabelsActionSheetViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -45,15 +45,15 @@ import timber.log.Timber
  * Actions sheet used to manage labels and folders.
  */
 @AndroidEntryPoint
-class ManageLabelsActionSheet : BottomSheetDialogFragment() {
+class LabelsActionSheet : BottomSheetDialogFragment() {
 
-    private val viewModel: ManageLabelsActionSheetViewModel by viewModels()
+    private val viewModel: LabelsActionSheetViewModel by viewModels()
 
-    private var _binding: FragmentManageLabelsActionSheetBinding? = null
+    private var _binding: FragmentLabelsActionSheetBinding? = null
     private val binding get() = requireNotNull(_binding)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentManageLabelsActionSheetBinding.inflate(inflater)
+        _binding = FragmentLabelsActionSheetBinding.inflate(inflater)
 
         val actionSheetType = arguments?.getSerializable(EXTRA_ARG_ACTION_SHEET_TYPE) as Type
 
@@ -152,9 +152,9 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
             messageIds: List<String>,
             currentFolderLocationId: Int,
             labelActionSheetType: Type = Type.LABEL
-        ): ManageLabelsActionSheet {
+        ): LabelsActionSheet {
 
-            return ManageLabelsActionSheet().apply {
+            return LabelsActionSheet().apply {
                 arguments = bundleOf(
                     EXTRA_ARG_MESSAGES_IDS to messageIds,
                     EXTRA_ARG_ACTION_SHEET_TYPE to labelActionSheetType,

@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.ui.dialog
+package ch.protonmail.android.ui.actionsheet
 
 import android.app.Dialog
 import android.content.Intent
@@ -37,7 +37,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentMessageActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
-import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.utils.AppUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -271,7 +271,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 }
             }
             textViewDetailsActionsMoveTo.setOnClickListener {
-                viewModel.showLabelsManager(messageIds, messageLocation, ManageLabelsActionSheet.Type.FOLDER)
+                viewModel.showLabelsManager(messageIds, messageLocation, LabelsActionSheet.Type.FOLDER)
                 dismiss()
             }
         }
@@ -337,15 +337,15 @@ class MessageActionSheet : BottomSheetDialogFragment() {
 
     private fun showManageLabelsActionSheet(
         messageIds: List<String>,
-        labelActionSheetType: ManageLabelsActionSheet.Type,
+        labelActionSheetType: LabelsActionSheet.Type,
         currentFolderLocationId: Int
     ) {
-        ManageLabelsActionSheet.newInstance(
+        LabelsActionSheet.newInstance(
             messageIds,
             currentFolderLocationId,
             labelActionSheetType
         )
-            .show(parentFragmentManager, ManageLabelsActionSheet::class.qualifiedName)
+            .show(parentFragmentManager, LabelsActionSheet::class.qualifiedName)
         dismiss()
     }
 

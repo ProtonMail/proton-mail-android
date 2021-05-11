@@ -17,13 +17,13 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.ui.dialog
+package ch.protonmail.android.ui.actionsheet
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,7 +47,7 @@ class MessageActionSheetViewModel @Inject constructor(
     fun showLabelsManager(
         messageIds: List<String>,
         currentLocation: Constants.MessageLocationType,
-        labelsSheetType: ManageLabelsActionSheet.Type = ManageLabelsActionSheet.Type.LABEL
+        labelsSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL
     ) {
         viewModelScope.launch {
             val showLabelsManager = MessageActionSheetAction.ShowLabelsManager(

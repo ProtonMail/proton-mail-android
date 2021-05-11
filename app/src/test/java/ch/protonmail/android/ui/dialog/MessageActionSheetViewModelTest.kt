@@ -22,8 +22,10 @@ package ch.protonmail.android.ui.dialog
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.repository.MessageRepository
+import ch.protonmail.android.ui.actionsheet.MessageActionSheetAction
+import ch.protonmail.android.ui.actionsheet.MessageActionSheetViewModel
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -70,7 +72,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageIds = listOf(messageId1, messageId2)
         val labelIds = listOf(labelId1, labelId2)
         val currentLocation = Constants.MessageLocationType.INBOX
-        val labelsSheetType = ManageLabelsActionSheet.Type.LABEL
+        val labelsSheetType = LabelsActionSheet.Type.LABEL
         val expected = MessageActionSheetAction.ShowLabelsManager(
             messageIds,
             currentLocation.messageLocationTypeValue,
@@ -105,7 +107,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageIds = listOf(messageId1, messageId2)
         val labelIds = listOf(labelId1, labelId2)
         val currentLocation = Constants.MessageLocationType.INBOX
-        val labelsSheetType = ManageLabelsActionSheet.Type.FOLDER
+        val labelsSheetType = LabelsActionSheet.Type.FOLDER
         val expected = MessageActionSheetAction.ShowLabelsManager(
             messageIds,
             currentLocation.messageLocationTypeValue,
@@ -123,7 +125,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         coEvery { repository.findMessageById(messageId2) } returns message2
 
         // when
-        viewModel.showLabelsManager(messageIds, currentLocation, ManageLabelsActionSheet.Type.FOLDER)
+        viewModel.showLabelsManager(messageIds, currentLocation, LabelsActionSheet.Type.FOLDER)
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
