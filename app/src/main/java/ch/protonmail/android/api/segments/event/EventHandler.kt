@@ -47,7 +47,6 @@ import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
-import ch.protonmail.android.di.AppCoroutineScope
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.event.domain.model.ActionType
 import ch.protonmail.android.events.MessageCountsEvent
@@ -83,7 +82,7 @@ class EventHandler @AssistedInject constructor(
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val messageFactory: MessageFactory,
     @Assisted val userId: Id,
-    @AppCoroutineScope private val scope: CoroutineScope
+    private val externalScope: CoroutineScope
 ) {
 
     private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
@@ -236,7 +235,7 @@ class EventHandler @AssistedInject constructor(
             writeMessagesUpdates(messageDao, pendingActionDao, messages)
         }
         if (conversations != null) {
-            scope.launch {
+            externalScope.launch {
                 changeToConversations.invoke(userId, conversations)
             }
         }
