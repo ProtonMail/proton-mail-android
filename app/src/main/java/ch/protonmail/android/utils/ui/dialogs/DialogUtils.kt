@@ -21,7 +21,6 @@ package ch.protonmail.android.utils.ui.dialogs
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.graphics.Color
 import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
@@ -299,9 +298,10 @@ class DialogUtils {
 
         fun showUndoSnackbar(context: Context, parent: View, message: String, okListener: (Unit) -> Unit, showUndo: Boolean) : Snackbar {
             val undoSnack = Snackbar.make(parent, message, Snackbar.LENGTH_LONG)
-            undoSnack.setColorWhite()
+            undoSnack.setColorWhite(context)
             if(showUndo) {
-                undoSnack.setActionTextColor(context.resources.getColor(R.color.icon_purple))
+                undoSnack.setBackgroundTint(context.getColor(R.color.interaction_strong))
+                undoSnack.setActionTextColor(context.getColor(R.color.text_inverted))
                 undoSnack.setAction(context.getString(R.string.undo)) {
                     run {
                         okListener.invoke(Unit)
@@ -311,16 +311,16 @@ class DialogUtils {
             return undoSnack
         }
 
-        fun showSignedInSnack(view: View, message: String) {
+        fun showSignedInSnack(context: Context, view: View, message: String) {
             val snackBar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT)
-            snackBar.setColorWhite()
+            snackBar.setColorWhite(context)
             snackBar.show()
         }
     }
 }
 
-fun Snackbar.setColorWhite() {
+fun Snackbar.setColorWhite(context: Context) {
     val snackView = view
     val tv = snackView.findViewById(com.google.android.material.R.id.snackbar_text) as TextView
-    tv.setTextColor(Color.WHITE)
+    tv.setTextColor(context.getColor(R.color.text_inverted))
 }
