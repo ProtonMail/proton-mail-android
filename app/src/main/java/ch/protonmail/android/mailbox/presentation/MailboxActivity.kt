@@ -600,9 +600,7 @@ class MailboxActivity :
                 if (state.error.isNotEmpty()) {
                     Toast.makeText(this, getString(R.string.error_loading_conversations), Toast.LENGTH_SHORT).show()
                 }
-                if (state.items.isNotEmpty()) {
-                    mailboxAdapter.addAll(state.items)
-                }
+                mailboxAdapter.addAll(state.items)
             }
     }
 
