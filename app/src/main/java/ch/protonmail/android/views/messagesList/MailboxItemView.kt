@@ -68,24 +68,24 @@ class MailboxItemView @JvmOverloads constructor(
     private fun setIconsTint(isRead: Boolean) {
         val iconTint = if (isRead) context.getColor(R.color.icon_weak) else context.getColor(R.color.icon_norm)
 
-        replyImageView.setColorFilter(iconTint)
-        replyAllImageView.setColorFilter(iconTint)
-        forwardImageView.setColorFilter(iconTint)
+        reply_image_view.setColorFilter(iconTint)
+        reply_all_image_view.setColorFilter(iconTint)
+        forward_image_view.setColorFilter(iconTint)
 
-        firstLocationImageView.setColorFilter(iconTint)
-        secondLocationImageView.setColorFilter(iconTint)
-        thirdLocationImageView.setColorFilter(iconTint)
+        first_location_image_view.setColorFilter(iconTint)
+        second_location_image_view.setColorFilter(iconTint)
+        third_location_image_view.setColorFilter(iconTint)
     }
 
     private fun setTextViewStyles(isRead: Boolean) {
         if (isRead) {
-            senderTextView.setTextAppearance(R.style.Proton_Text_Default)
-            subjectTextView.setTextAppearance(R.style.Proton_Text_DefaultSmall_Weak)
-            timeDateTextView.setTextAppearance(R.style.Proton_Text_Caption_Weak)
+            sender_text_view.setTextAppearance(R.style.Proton_Text_Default)
+            subject_text_view.setTextAppearance(R.style.Proton_Text_DefaultSmall_Weak)
+            time_date_text_view.setTextAppearance(R.style.Proton_Text_Caption_Weak)
         } else {
-            senderTextView.setTextAppearance(R.style.Proton_Text_Default_Bold)
-            subjectTextView.setTextAppearance(R.style.Proton_Text_DefaultSmall_Medium)
-            timeDateTextView.setTextAppearance(R.style.Proton_Text_Caption_Strong)
+            sender_text_view.setTextAppearance(R.style.Proton_Text_Default_Bold)
+            subject_text_view.setTextAppearance(R.style.Proton_Text_DefaultSmall_Medium)
+            time_date_text_view.setTextAppearance(R.style.Proton_Text_Caption_Strong)
         }
     }
 
@@ -135,28 +135,28 @@ class MailboxItemView @JvmOverloads constructor(
 
         val senderText = getSenderText(mailboxUiItem)
         // Sender text can only be empty in drafts where we show recipients instead of senders
-        senderTextView.text =
+        sender_text_view.text =
             if (senderText.isEmpty()) context.getString(R.string.empty_recipients) else senderText
-        senderInitialView.bind(senderText, isMultiSelectionMode)
+        sender_initial_view.bind(senderText, isMultiSelectionMode)
 
-        subjectTextView.text = mailboxUiItem.subject
+        subject_text_view.text = mailboxUiItem.subject
 
-        timeDateTextView.text = DateUtil.formatDateTime(context, mailboxUiItem.lastMessageTimeMs)
+        time_date_text_view.text = DateUtil.formatDateTime(context, mailboxUiItem.lastMessageTimeMs)
         if (areAttachmentsBeingUploaded) {
-            timeDateTextView.text = context.getString(R.string.draft_label_attachments_uploading)
+            time_date_text_view.text = context.getString(R.string.draft_label_attachments_uploading)
         }
         if (isBeingSent) { // overwrite attachment text so there's no flickering between them
-            timeDateTextView.text = context.getString(R.string.draft_label_message_uploading)
+            time_date_text_view.text = context.getString(R.string.draft_label_message_uploading)
         }
 
-        replyImageView.visibility = if (
+        reply_image_view.visibility = if (
             mailboxUiItem.messageData?.isReplied == true &&
             !mailboxUiItem.messageData.isRepliedAll
         ) View.VISIBLE else View.GONE
-        replyAllImageView.visibility = if (mailboxUiItem.messageData?.isRepliedAll == true) View.VISIBLE else View.GONE
-        forwardImageView.visibility = if (mailboxUiItem.messageData?.isForwarded == true) View.VISIBLE else View.GONE
+        reply_all_image_view.visibility = if (mailboxUiItem.messageData?.isRepliedAll == true) View.VISIBLE else View.GONE
+        forward_image_view.visibility = if (mailboxUiItem.messageData?.isForwarded == true) View.VISIBLE else View.GONE
 
-        draftImageView.visibility = if (mailboxLocation in arrayOf(
+        draft_image_view.visibility = if (mailboxLocation in arrayOf(
                 Constants.MessageLocationType.DRAFT,
                 Constants.MessageLocationType.ALL_DRAFT
             )
@@ -173,24 +173,24 @@ class MailboxItemView @JvmOverloads constructor(
         ) {
             val icon = getIconForMessageLocation(messageLocation)
             if (icon != null) {
-                firstLocationImageView.visibility = View.VISIBLE
-                firstLocationImageView.setImageDrawable(ContextCompat.getDrawable(context, icon))
+                first_location_image_view.visibility = View.VISIBLE
+                first_location_image_view.setImageDrawable(ContextCompat.getDrawable(context, icon))
             }
         }
 
-        messagesNumberTextView.visibility = if (mailboxUiItem.messagesCount != null) View.VISIBLE else View.GONE
-        messagesNumberTextView.text = mailboxUiItem.messagesCount.toString()
+        messages_number_text_view.visibility = if (mailboxUiItem.messagesCount != null) View.VISIBLE else View.GONE
+        messages_number_text_view.text = mailboxUiItem.messagesCount.toString()
         sending_uploading_progress_bar.visibility =
             if (isBeingSent || areAttachmentsBeingUploaded) View.VISIBLE else View.GONE
-        attachmentImageView.visibility = if (mailboxUiItem.hasAttachments) View.VISIBLE else View.GONE
-        starImageView.visibility = if (mailboxUiItem.isStarred) View.VISIBLE else View.GONE
+        attachment_image_view.visibility = if (mailboxUiItem.hasAttachments) View.VISIBLE else View.GONE
+        star_image_view.visibility = if (mailboxUiItem.isStarred) View.VISIBLE else View.GONE
 
-        emptySpaceView.visibility = if (
-            attachmentImageView.visibility == View.VISIBLE ||
-            starImageView.visibility == View.VISIBLE
+        empty_space_view.visibility = if (
+            attachment_image_view.visibility == View.VISIBLE ||
+            star_image_view.visibility == View.VISIBLE
         ) View.VISIBLE else View.GONE
 
-        expirationImageView.visibility = if (mailboxUiItem.expirationTime > 0) View.VISIBLE else View.GONE
+        expiration_image_view.visibility = if (mailboxUiItem.expirationTime > 0) View.VISIBLE else View.GONE
 
         showLabels(labels)
     }
