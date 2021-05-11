@@ -63,7 +63,7 @@ interface ConversationsRepository {
     /**
      * @param conversations a list representing the conversations we want to save to the local data source
      *
-     * @throws exception when the repository fails getting conversations for any unhandled reasons
+     * @throws exception when the repository fails to insert conversations for any unhandled reasons into local storage
      */
     suspend fun saveConversations(conversations: List<ConversationDatabaseModel>, userId: Id)
 
