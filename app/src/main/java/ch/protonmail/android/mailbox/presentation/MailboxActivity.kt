@@ -126,6 +126,7 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
+import ch.protonmail.android.jobs.FetchLabelsJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostReadJob
@@ -139,6 +140,7 @@ import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
+import ch.protonmail.android.ui.dialog.MessageActionSheet
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
@@ -161,6 +163,8 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
+import kotlinx.android.synthetic.main.activity_mailbox.screenShotPreventerView
+import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -844,12 +848,12 @@ class MailboxActivity :
         val mailboxLocation = mailboxLocationMain.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
-            MessageLocationType.DRAFT,
-            MessageLocationType.SPAM,
-            MessageLocationType.TRASH,
-            MessageLocationType.LABEL,
-            MessageLocationType.LABEL_FOLDER
-        )
+                MessageLocationType.DRAFT,
+                MessageLocationType.SPAM,
+                MessageLocationType.TRASH,
+                MessageLocationType.LABEL,
+                MessageLocationType.LABEL_FOLDER
+            )
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -1257,6 +1261,22 @@ class MailboxActivity :
             val messageIds = selectedMessages.map { message -> message.messageId }
             actionModeRunnable = ActionModeInteractionRunnable(actionMode)
             ShowLabelsManagerDialogTask(supportFragmentManager, messageDetailsRepository, messageIds).execute()
+        }
+        mailboxActionsView.setOnMoreActionClickListener {
+            val messagesIds = selectedMessages.map { message -> message.messageId }
+            MessageActionSheet.newInstance(
+                messagesIds,
+                resources.getQuantityString(
+                    R.plurals.messages_count,
+                    messagesIds.size,
+                    messagesIds.size
+                ),
+                null,
+                false,
+                currentMailboxLocation.messageLocationTypeValue,
+                MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID
+            )
+                .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
         }
     }
 

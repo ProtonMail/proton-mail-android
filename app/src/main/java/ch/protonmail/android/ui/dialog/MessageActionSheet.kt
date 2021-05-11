@@ -372,9 +372,9 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         private const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
         private const val EXTRA_ARG_IS_STARED = "arg_extra_is_stared"
         private const val EXTRA_ARG_ORIGINATOR_SCREEN_ID = "extra_arg_originator_screen_id"
-        private const val ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID = 0 // e.g. [MessageDetailsActivity]
-        private const val ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID = 1 // e.g [MailboxActivity]
         private const val HEADER_SLIDE_THRESHOLD = 0.8f
+        const val ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID = 0 // e.g. [MessageDetailsActivity]
+        const val ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID = 1 // e.g [MailboxActivity]
 
         /**
          * Creates new action sheet instance.
