@@ -47,6 +47,8 @@ public class EventResponse extends ResponseBody {
     private int refresh;
     @SerializedName(Fields.Events.MESSAGES)
     private List<MessageEventBody> messages;
+    @SerializedName(Fields.Events.CONVERSATIONS)
+    private List<ConversationsEventResponse> conversations;
     @SerializedName(Fields.Events.CONTACTS)
     private List<ContactEventBody> contacts;
     @SerializedName(Fields.Events.CONTACT_EMAILS)
@@ -67,6 +69,10 @@ public class EventResponse extends ResponseBody {
     @Nullable
     public List<MessageEventBody> getMessageUpdates() {
         return messages;
+    }
+
+    public List<ConversationsEventResponse> getConversationUpdates() {
+        return conversations;
     }
 
     public List<ContactEventBody> getContactUpdates() { return contacts; }
