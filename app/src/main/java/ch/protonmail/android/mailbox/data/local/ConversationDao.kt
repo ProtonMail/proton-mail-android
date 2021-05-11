@@ -52,6 +52,14 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
 
     @Query(
         """
+        SELECT * FROM $TABLE_CONVERSATIONS
+        WHERE $COLUMN_ID = :conversationId AND $COLUMN_USER_ID = :userId
+        """
+    )
+    abstract fun findConversationOnce(conversationId: String, userId: String): ConversationDatabaseModel
+
+    @Query(
+        """
             DELETE FROM $TABLE_CONVERSATIONS
             WHERE $COLUMN_ID = :conversationId 
             AND $COLUMN_USER_ID = :userId

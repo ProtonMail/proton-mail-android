@@ -103,8 +103,8 @@ class ConversationsRepositoryImpl @Inject constructor(
             }.fold(
                 onSuccess = {
                     val conversations = it.conversationResponse.toListLocal(parameters.userId.s)
-                    conversationDao.insertOrUpdate(*conversations.toTypedArray())
-                    if (conversations.isEmpty()) {
+                    saveConversations(conversations, parameters.userId)
+                    if (it.conversationResponse.isEmpty()) {
                         emit(Error.Remote("No conversations", null, NO_MORE_CONVERSATIONS_ERROR_CODE))
                     }
                 },
@@ -136,6 +136,21 @@ class ConversationsRepositoryImpl @Inject constructor(
     ): Flow<DataResult<Conversation>> =
         store.stream(StoreRequest.cached(ConversationStoreKey(conversationId, userId), true))
             .map { it.toDataResult() }
+
+
+    override fun findConversationOnce(conversationId: String, userId: Id): ConversationDatabaseModel =
+        conversationDao.findConversationOnce(conversationId, userId.s)
+
+
+    override suspend fun saveConversations(conversations: List<ConversationDatabaseModel>, userId: Id) =
+        conversationDao.insertOrUpdate(*conversations.toTypedArray())
+
+
+    override suspend fun deleteConversations(conversationIds: List<String>, userId: Id) {
+        conversationIds.forEach {
+            store.clear(ConversationStoreKey(it, userId))
+        }
+    }
 
     override fun clearConversations() = conversationDao.clear()
 

@@ -21,6 +21,7 @@ package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
@@ -39,17 +40,42 @@ interface ConversationsRepository {
 
     /**
      * @param conversationId the encrypted id of the conversation to get
+     * @param userId the id of the user the conversation to get belongs to
      *
-     * @return a Conversation object containing list of messages when the repository could successfully get it from some data source.
+     * @return a Conversation object containing list of messages when the repository could successfully
+     * get it from some data source.
      * @return an empty optional when the repository encounters a handled failure getting the given conversation
      * @throws exception when the repository fails getting this conversation for any unhandled reasons
      */
     fun getConversation(conversationId: String, userId: Id): Flow<DataResult<Conversation>>
 
     /**
+     * @param conversationId the encrypted id of the conversation to find
+     * @param userId the id of the user the conversation to find belongs to
+     *
+     * @return a ConversationDatabaseModel object representing the needed conversation when the
+     * repository could successfully get it from some data source.
+     * @return an empty optional when the repository encounters a handled failure getting the given conversation
+     * @throws exception when the repository fails getting this conversation for any unhandled reasons
+     */
+    fun findConversationOnce(conversationId: String, userId: Id): ConversationDatabaseModel?
+
+    /**
+     * @param conversations a list representing the conversations we want to save to the local data source
+     *
+     * @throws exception when the repository fails getting conversations for any unhandled reasons
+     */
+    suspend fun saveConversations(conversations: List<ConversationDatabaseModel>, userId: Id)
+
+    /**
      * Deletes all the conversations from the [TABLE_CONVERSATIONS] inside the local storage
      */
     fun clearConversations()
+
+    /**
+     * Deletes a list of conversations from the [TABLE_CONVERSATIONS] inside the local storage
+     */
+    suspend fun deleteConversations(conversationIds: List<String>, userId: Id)
 
     fun loadMore(params: GetConversationsParameters)
 
