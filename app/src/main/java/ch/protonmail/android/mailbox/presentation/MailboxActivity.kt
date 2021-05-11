@@ -22,7 +22,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
@@ -68,8 +67,6 @@ import ch.protonmail.android.activities.SearchActivity
 import ch.protonmail.android.activities.SettingsActivity
 import ch.protonmail.android.activities.SettingsItem
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
-import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment
-import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment.IMoveMessagesListener
 import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
@@ -188,9 +185,7 @@ private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
 class MailboxActivity :
     NavigationActivity(),
     ActionMode.Callback,
-    OnRefreshListener,
-    IMoveMessagesListener,
-    DialogInterface.OnDismissListener {
+    OnRefreshListener{
 
     private lateinit var counterDao: CounterDao
     private lateinit var pendingActionDao: PendingActionDao
@@ -220,7 +215,6 @@ class MailboxActivity :
     private var refreshMailboxJobRunning = false
     private lateinit var syncUUID: String
     private var customizeSwipeSnackShown = false
-    private var catchLabelEvents = false
     private val mailboxViewModel: MailboxViewModel by viewModels()
     private var storageLimitApproachingAlertDialog: AlertDialog? = null
     private val handler = Handler(Looper.getMainLooper())
@@ -1080,29 +1074,6 @@ class MailboxActivity :
         return true
     }
 
-    private fun containsStar(messages: List<SimpleMessage>): Boolean = messages.any { it.isStarred }
-
-    private fun containsUnstar(messages: List<SimpleMessage>): Boolean = messages.any { !it.isStarred }
-
-    override fun move(folderId: String) {
-        MessageUtils.moveMessage(this, mJobManager, folderId, mutableListOf(mailboxLabelId), selectedMessages)
-        if (actionModeRunnable != null) {
-            actionModeRunnable!!.run()
-        }
-    }
-
-    override fun showFoldersManager() {
-        val foldersManagerIntent = Intent(this, LabelsManagerActivity::class.java)
-        foldersManagerIntent.putExtra(EXTRA_MANAGE_FOLDERS, true)
-        foldersManagerIntent.putExtra(EXTRA_POPUP_STYLE, true)
-        foldersManagerIntent.putExtra(EXTRA_CREATE_ONLY, true)
-        startActivity(AppUtil.decorInAppIntent(foldersManagerIntent))
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        catchLabelEvents = true
-    }
-
     internal inner class ActionModeInteractionRunnable(private val actionModeAux: ActionMode?) : Runnable {
 
         override fun run() {
@@ -1147,8 +1118,6 @@ class MailboxActivity :
             R.id.add_label -> {
             }
             R.id.add_folder -> {
-                actionModeRunnable = ActionModeInteractionRunnable(mode)
-                showFoldersManagerDialog(messageIds)
             }
             R.id.remove_star -> job = PostUnstarJob(messageIds)
             R.id.move_to_archive -> {
@@ -1287,11 +1256,12 @@ class MailboxActivity :
             setRefreshing(true)
         }
 
-        catchLabelEvents = false
-        val moveToFolderDialogFragment = MoveToFolderDialogFragment.newInstance(mailboxLocationMain.value)
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.add(moveToFolderDialogFragment, moveToFolderDialogFragment.fragmentKey)
-        transaction.commitAllowingStateLoss()
+        LabelsActionSheet.newInstance(
+            messageIds,
+            currentMailboxLocation.messageLocationTypeValue,
+            LabelsActionSheet.Type.FOLDER
+        )
+            .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
     }
 
     /* SwipeRefreshLayout.OnRefreshListener */

@@ -41,17 +41,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.getSystemService
-import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
-import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment.IMoveMessagesListener
-import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
-import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
-import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
-import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.LabelsObserver
 import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
@@ -59,7 +53,6 @@ import ch.protonmail.android.activities.messageDetails.attachments.MessageDetail
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
-import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
@@ -100,9 +93,7 @@ private const val TITLE_ANIMATION_DURATION = 200L
 private const val ONE_HUNDRED_PERCENT = 1.0
 
 @AndroidEntryPoint
-internal class MessageDetailsActivity :
-    BaseStoragePermissionActivity(),
-    IMoveMessagesListener {
+internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private lateinit var messageId: String
     private lateinit var pmWebViewClient: PMWebViewClient
@@ -265,37 +256,6 @@ internal class MessageDetailsActivity :
             menu?.add(getString(R.string.copy_link))?.setOnMenuItemClickListener(Copy(result.extra))
             menu?.add(getString(R.string.share_link))?.setOnMenuItemClickListener(Share(result.extra))
         }
-    }
-
-    override fun move(folderId: String) {
-        viewModel.removeMessageLabels()
-        viewModel.messageSavedInDBResult.observe(
-            this,
-            object : Observer<Boolean?> {
-                override fun onChanged(aBoolean: Boolean?) {
-                    viewModel.messageSavedInDBResult.removeObserver(this)
-                    val message = viewModel.decryptedMessageData.value
-                    MessageUtils.moveMessage(
-                        this@MessageDetailsActivity,
-                        mJobManager,
-                        folderId,
-                        viewModel.folderIds,
-                        listOf(SimpleMessage(message))
-                    )
-                    viewModel.markRead(true)
-                    onBackPressed()
-                }
-            }
-        )
-        viewModel.saveMessage()
-    }
-
-    override fun showFoldersManager() {
-        val foldersManagerIntent = Intent(this, LabelsManagerActivity::class.java)
-        foldersManagerIntent.putExtras(
-            bundleOf(EXTRA_MANAGE_FOLDERS to true, EXTRA_POPUP_STYLE to true, EXTRA_CREATE_ONLY to true)
-        )
-        startActivity(AppUtil.decorInAppIntent(foldersManagerIntent))
     }
 
     override fun onStart() {
