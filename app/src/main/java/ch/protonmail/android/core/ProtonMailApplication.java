@@ -81,7 +81,6 @@ import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
 import ch.protonmail.android.fcm.MultiUserFcmTokenManager;
 import ch.protonmail.android.feature.account.AccountManagerKt;
 import ch.protonmail.android.feature.account.CoreAccountManagerMigration;
-import ch.protonmail.android.jobs.FetchLabelsJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.servers.notification.NotificationServer;
@@ -379,7 +378,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
             if (BuildConfig.REREGISTER_FOR_PUSH) {
                 multiUserFcmTokenManager.setTokenUnsentForAllSavedUsersBlocking();
             }
-            jobManager.addJobInBackground(new FetchLabelsJob());
             //new version will get set in RegisterGcmJob
             if (userManager != null) {
                 // if this version requires the user to be logged out when updatingAttachmentMetadataDatabase

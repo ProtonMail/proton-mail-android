@@ -231,7 +231,7 @@ class MailboxViewModel @Inject constructor(
         }
     }
 
-    fun loadMore(
+    fun loadMailboxItems(
         location: Constants.MessageLocationType,
         labelId: String?,
         includeLabels: Boolean,

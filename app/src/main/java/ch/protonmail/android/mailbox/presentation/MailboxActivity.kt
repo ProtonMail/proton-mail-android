@@ -126,8 +126,6 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
-import ch.protonmail.android.jobs.FetchByLocationJob
-import ch.protonmail.android.jobs.FetchLabelsJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostReadJob
@@ -266,7 +264,7 @@ class MailboxActivity :
             mailboxLocationMain.value = fromInt(locationInt)
         }
         if (extras != null && extras.containsKey(EXTRA_MAILBOX_LOCATION)) {
-            setupNewMessageLocation(extras.getInt(EXTRA_MAILBOX_LOCATION))
+            switchToMailboxLocation(extras.getInt(EXTRA_MAILBOX_LOCATION))
         }
         startObserving()
         mailboxViewModel.toastMessageMaxLabelsReached.observe(this) { event: Event<MaxLabelsReached?> ->
@@ -388,7 +386,7 @@ class MailboxActivity :
 
         fetchOrganizationData()
 
-        observeMailboxItemsByLocation(syncId = syncUUID)
+        observeMailboxItemsByLocation(syncId = syncUUID, includeLabels = true)
 
         mailboxLocationMain.observe(this, mailboxAdapter::setNewLocation)
         ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
@@ -559,15 +557,11 @@ class MailboxActivity :
         setUpDrawer()
         setupAccountsList()
         checkRegistration()
-        handler.postDelayed(500) {
-            mJobManager.addJobInBackground(FetchLabelsJob())
-            setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
-        }
-
-        observeMailboxItemsByLocation(
-            refreshMessages = true,
-            syncId = syncUUID
-        )
+        // Loading mailbox items for the newly switched account.
+        // This method also "reloads dependencies" for the instance of `messageDetailsRepo` held by
+        // MailboxVM. This should be done before triggering an "update" of the Mailbox for the new user
+        loadMailboxItems(refreshMessages = true)
+        switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
 
         messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
         // Account has been switched, so used space changed as well
@@ -590,7 +584,7 @@ class MailboxActivity :
      * @param refreshMessages whether the existing local messages should be deleted and re-fetched from network
      */
     private fun observeMailboxItemsByLocation(
-        includeLabels: Boolean = false,
+        includeLabels: Boolean = true,
         refreshMessages: Boolean = false,
         syncId: String
     ) {
@@ -610,9 +604,8 @@ class MailboxActivity :
                 if (state.error.isNotEmpty()) {
                     Toast.makeText(this, getString(R.string.error_loading_conversations), Toast.LENGTH_SHORT).show()
                 }
-                if (state.items.isNotEmpty()) {
-                    mailboxAdapter.addAll(state.items)
-                }
+                mailboxAdapter.clear()
+                mailboxAdapter.addAll(state.items)
             }
     }
 
@@ -631,7 +624,7 @@ class MailboxActivity :
             val lastVisibleItem = layoutManager!!.findLastVisibleItemPosition()
             val lastPosition = adapter!!.itemCount - 1
             if (lastVisibleItem == lastPosition && dy > 0 && !setLoadingMore(true)) {
-                loadMoreMessages()
+                loadMailboxItems(oldestItemTimestamp = mailboxAdapter.getOldestMailboxItemTimestamp())
             }
 
             // Increase the elevation if the list is scrolled down and decrease if it is scrolled to the top
@@ -642,18 +635,22 @@ class MailboxActivity :
                 setElevationOnToolbarAndStatusView(true)
             }
         }
+    }
 
-        private fun loadMoreMessages() {
-            val mailboxLocation = mailboxLocationMain.value ?: MessageLocationType.INBOX
-            mailboxViewModel.loadMore(
-                mailboxLocation,
-                mailboxLabelId,
-                false,
-                syncUUID,
-                false,
-                mailboxAdapter.getOldestMailboxItemTimestamp()
-            )
-        }
+    private fun loadMailboxItems(
+        includeLabels: Boolean = false,
+        refreshMessages: Boolean = false,
+        oldestItemTimestamp: Long = now()
+    ) {
+        val mailboxLocation = mailboxLocationMain.value ?: MessageLocationType.INBOX
+        mailboxViewModel.loadMailboxItems(
+            mailboxLocation,
+            mailboxLabelId,
+            includeLabels,
+            syncUUID,
+            refreshMessages,
+            oldestItemTimestamp
+        )
     }
 
     private fun setElevationOnToolbarAndStatusView(shouldIncreaseElevation: Boolean) {
@@ -679,10 +676,7 @@ class MailboxActivity :
         syncUUID = UUID.randomUUID().toString()
         lifecycleScope.launch {
             delay(3.seconds.toLongMilliseconds())
-            observeMailboxItemsByLocation(
-                includeLabels = true,
-                syncId = syncUUID
-            )
+            loadMailboxItems(includeLabels = true)
         }
         mailboxViewModel.checkConnectivityDelayed()
     }
@@ -727,9 +721,7 @@ class MailboxActivity :
             firstLogin = false
             refreshMailboxJobRunning = true
             app.updateDone()
-            observeMailboxItemsByLocation(
-                syncId = syncUUID
-            )
+            loadMailboxItems()
             true
         }
     }
@@ -739,7 +731,7 @@ class MailboxActivity :
 
         checkRegistration()
         checkUserAndFetchNews()
-        setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
+        switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
     }
 
     private fun shouldShowSwipeGesturesChangedDialog(): Boolean {
@@ -885,7 +877,7 @@ class MailboxActivity :
         saveLastInteraction()
         val drawerClosed = closeDrawer()
         if (!drawerClosed && mailboxLocationMain.value != MessageLocationType.INBOX) {
-            setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
+            switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
         } else if (!drawerClosed) {
             moveTaskToBack(true)
         }
@@ -910,15 +902,15 @@ class MailboxActivity :
 
     override fun onInbox(type: DrawerOptionType) {
         AppUtil.clearNotifications(applicationContext, userManager.requireCurrentUserId())
-        setupNewMessageLocation(type.drawerOptionTypeValue)
+        switchToMailboxLocation(type.drawerOptionTypeValue)
     }
 
     override fun onOtherMailBox(type: DrawerOptionType) {
-        setupNewMessageLocation(type.drawerOptionTypeValue)
+        switchToMailboxLocation(type.drawerOptionTypeValue)
     }
 
     public override fun onLabelMailBox(type: DrawerOptionType, labelId: String, labelName: String, isFolder: Boolean) {
-        setupNewMessageLocation(type.drawerOptionTypeValue, labelId, labelName, isFolder)
+        switchToMailboxCustomLocation(type.drawerOptionTypeValue, labelId, labelName, isFolder)
     }
 
     override val currentMailboxLocation: MessageLocationType
@@ -1053,7 +1045,7 @@ class MailboxActivity :
 
     @Subscribe
     fun onLabelsLoadedEvent(event: FetchLabelsEvent) {
-        if (/* messagesAdapter != null && */ event.status == Status.SUCCESS) {
+        if (event.status == Status.SUCCESS) {
             mailboxAdapter.notifyDataSetChanged()
         }
     }
@@ -1341,14 +1333,15 @@ class MailboxActivity :
         setRefreshing(true)
         syncUUID = UUID.randomUUID().toString()
         mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
-        observeMailboxItemsByLocation(
+        loadMailboxItems(
             includeLabels = true,
-            refreshMessages = true,
-            syncId = syncUUID
+            refreshMessages = true
         )
     }
 
-    private fun setupNewMessageLocation(newLocation: Int) {
+    private fun now() = System.currentTimeMillis() / 1000
+
+    private fun switchToMailboxLocation(newLocation: Int) {
         val newMessageLocationType = fromInt(newLocation)
         mailboxSwipeRefreshLayout.visibility = View.VISIBLE
         mailboxSwipeRefreshLayout.isRefreshing = true
@@ -1376,8 +1369,7 @@ class MailboxActivity :
         ).execute()
     }
 
-    // version for label views
-    private fun setupNewMessageLocation(
+    private fun switchToMailboxCustomLocation(
         newLocation: Int,
         labelId: String,
         labelName: String?,

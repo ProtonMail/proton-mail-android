@@ -498,7 +498,7 @@ class MailboxViewModelTest : CoroutinesTest {
         val userId = Id("userId")
         every { userManager.requireCurrentUserId() } returns userId
 
-        viewModel.loadMore(
+        viewModel.loadMailboxItems(
             location,
             labelId,
             includeLabels,
@@ -523,7 +523,7 @@ class MailboxViewModelTest : CoroutinesTest {
         val userId = Id("userId1")
         every { userManager.requireCurrentUserId() } returns userId
 
-        viewModel.loadMore(
+        viewModel.loadMailboxItems(
             location,
             labelId,
             includeLabels,
@@ -550,7 +550,7 @@ class MailboxViewModelTest : CoroutinesTest {
         val userId = Id("userId")
         every { userManager.requireCurrentUserId() } returns userId
 
-        viewModel.loadMore(
+        viewModel.loadMailboxItems(
             ARCHIVE,
             null,
             false,
@@ -573,7 +573,7 @@ class MailboxViewModelTest : CoroutinesTest {
         every { userManager.requireCurrentUserId() } returns userId
         every { conversationModeEnabled(location) } returns true
 
-        viewModel.loadMore(
+        viewModel.loadMailboxItems(
             location,
             labelId,
             false,
