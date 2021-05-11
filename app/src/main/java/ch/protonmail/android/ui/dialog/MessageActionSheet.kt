@@ -128,37 +128,41 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     private fun setupHeaderBindings(
         actionSheetHeader: ActionSheetHeader,
         arguments: Bundle?
-    ) = with(actionSheetHeader) {
-        val title = arguments?.getString(EXTRA_ARG_TITLE)
-        if (!title.isNullOrEmpty()) {
-            setTitle(title)
-        }
-        val subtitle = arguments?.getString(EXTRA_ARG_SUBTITLE)
-        if (!subtitle.isNullOrEmpty()) {
-            setSubTitle(subtitle)
-        }
-        setOnCloseClickListener {
-            dismiss()
+    ) {
+        with(actionSheetHeader) {
+            val title = arguments?.getString(EXTRA_ARG_TITLE)
+            if (!title.isNullOrEmpty()) {
+                setTitle(title)
+            }
+            val subtitle = arguments?.getString(EXTRA_ARG_SUBTITLE)
+            if (!subtitle.isNullOrEmpty()) {
+                setSubTitle(subtitle)
+            }
+            setOnCloseClickListener {
+                dismiss()
+            }
         }
     }
 
     private fun setupReplyActionsBindings(
         binding: LayoutMessageDetailsActionsSheetButtonsBinding,
         originatorId: Int
-    ) = with(binding) {
-        layoutDetailsActions.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+    ) {
+        with(binding) {
+            layoutDetailsActions.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
 
-        textViewDetailsActionsReply.setOnClickListener {
-            (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.REPLY)
-            dismiss()
-        }
-        textViewDetailsActionsReplyAll.setOnClickListener {
-            (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.REPLY_ALL)
-            dismiss()
-        }
-        textViewDetailsActionsForward.setOnClickListener {
-            (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.FORWARD)
-            dismiss()
+            textViewDetailsActionsReply.setOnClickListener {
+                (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.REPLY)
+                dismiss()
+            }
+            textViewDetailsActionsReplyAll.setOnClickListener {
+                (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.REPLY_ALL)
+                dismiss()
+            }
+            textViewDetailsActionsForward.setOnClickListener {
+                (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.FORWARD)
+                dismiss()
+            }
         }
     }
 
@@ -168,39 +172,41 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         originatorId: Int,
         messageIds: List<String>,
         messageLocation: Constants.MessageLocationType
-    ) = with(binding) {
-        val isStarred = arguments?.getBoolean(EXTRA_ARG_IS_STARED) ?: false
+    ) {
+        with(binding) {
+            val isStarred = arguments?.getBoolean(EXTRA_ARG_IS_STARED) ?: false
 
-        textViewDetailsActionsUnstar.apply {
-            isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID || isStarred
-            setOnClickListener {
-                viewModel.unStarMessage(messageIds)
+            textViewDetailsActionsUnstar.apply {
+                isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID || isStarred
+                setOnClickListener {
+                    viewModel.unStarMessage(messageIds)
+                    dismiss()
+                }
+            }
+
+            textViewDetailsActionsStar.apply {
+                isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID || !isStarred
+                setOnClickListener {
+                    viewModel.starMessage(messageIds)
+                    dismiss()
+                }
+            }
+
+            textViewDetailsActionsMarkRead.apply {
+                isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+                setOnClickListener {
+                    viewModel.markRead(messageIds)
+                    dismiss()
+                }
+            }
+            textViewDetailsActionsMarkUnread.setOnClickListener {
+                viewModel.markUnread(messageIds)
                 dismiss()
             }
-        }
-
-        textViewDetailsActionsStar.apply {
-            isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID || !isStarred
-            setOnClickListener {
-                viewModel.starMessage(messageIds)
+            textViewDetailsActionsLabelAs.setOnClickListener {
+                viewModel.showLabelsManager(messageIds, messageLocation)
                 dismiss()
             }
-        }
-
-        textViewDetailsActionsMarkRead.apply {
-            isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
-            setOnClickListener {
-                viewModel.markRead(messageIds)
-                dismiss()
-            }
-        }
-        textViewDetailsActionsMarkUnread.setOnClickListener {
-            viewModel.markUnread(messageIds)
-            dismiss()
-        }
-        textViewDetailsActionsLabelAs.setOnClickListener {
-            viewModel.showLabelsManager(messageIds, messageLocation)
-            dismiss()
         }
     }
 
@@ -209,63 +215,65 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         viewModel: MessageActionSheetViewModel,
         messageIds: List<String>,
         messageLocation: Constants.MessageLocationType
-    ) = with(binding) {
+    ) {
+        with(binding) {
 
-        textViewDetailsActionsMoveToInbox.apply {
-            isVisible = messageLocation in Constants.MessageLocationType.values()
-                .filter { it != Constants.MessageLocationType.INBOX }
-            if (messageLocation == Constants.MessageLocationType.SPAM) {
-                setText(R.string.not_spam_move_to_inbox)
-            }
-            setOnClickListener {
-                viewModel.moveToInbox(messageIds, messageLocation)
-                dismiss()
-                popBackActivity()
-            }
-        }
-        textViewDetailsActionsTrash.apply {
-            isVisible = messageLocation in Constants.MessageLocationType.values()
-                .filter { it != Constants.MessageLocationType.TRASH }
-            setOnClickListener {
-                viewModel.moveToTrash(messageIds, messageLocation)
-                dismiss()
-                popBackActivity()
-            }
-        }
-        textViewDetailsActionsMoveToArchive.apply {
-            isVisible = messageLocation in Constants.MessageLocationType.values()
-                .filter { it != Constants.MessageLocationType.ARCHIVE }
-            setOnClickListener {
-                viewModel.moveToArchive(messageIds, messageLocation)
-                dismiss()
-                popBackActivity()
-            }
-        }
-        textViewDetailsActionsMoveToSpam.apply {
-            isVisible = messageLocation in Constants.MessageLocationType.values()
-                .filter { it != Constants.MessageLocationType.SPAM }
-            setOnClickListener {
-                viewModel.moveToSpam(messageIds, messageLocation)
-                dismiss()
-                popBackActivity()
-            }
-        }
-        textViewDetailsActionsDelete.apply {
-            isVisible = messageLocation in Constants.MessageLocationType.values()
-                .filter { type ->
-                    type != Constants.MessageLocationType.INBOX &&
-                        type != Constants.MessageLocationType.ARCHIVE &&
-                        type != Constants.MessageLocationType.STARRED &&
-                        type != Constants.MessageLocationType.ALL_MAIL
+            textViewDetailsActionsMoveToInbox.apply {
+                isVisible = messageLocation in Constants.MessageLocationType.values()
+                    .filter { it != Constants.MessageLocationType.INBOX }
+                if (messageLocation == Constants.MessageLocationType.SPAM) {
+                    setText(R.string.not_spam_move_to_inbox)
                 }
-            setOnClickListener {
-                viewModel.deleteMessage(messageIds)
+                setOnClickListener {
+                    viewModel.moveToInbox(messageIds, messageLocation)
+                    dismiss()
+                    popBackActivity()
+                }
+            }
+            textViewDetailsActionsTrash.apply {
+                isVisible = messageLocation in Constants.MessageLocationType.values()
+                    .filter { it != Constants.MessageLocationType.TRASH }
+                setOnClickListener {
+                    viewModel.moveToTrash(messageIds, messageLocation)
+                    dismiss()
+                    popBackActivity()
+                }
+            }
+            textViewDetailsActionsMoveToArchive.apply {
+                isVisible = messageLocation in Constants.MessageLocationType.values()
+                    .filter { it != Constants.MessageLocationType.ARCHIVE }
+                setOnClickListener {
+                    viewModel.moveToArchive(messageIds, messageLocation)
+                    dismiss()
+                    popBackActivity()
+                }
+            }
+            textViewDetailsActionsMoveToSpam.apply {
+                isVisible = messageLocation in Constants.MessageLocationType.values()
+                    .filter { it != Constants.MessageLocationType.SPAM }
+                setOnClickListener {
+                    viewModel.moveToSpam(messageIds, messageLocation)
+                    dismiss()
+                    popBackActivity()
+                }
+            }
+            textViewDetailsActionsDelete.apply {
+                isVisible = messageLocation in Constants.MessageLocationType.values()
+                    .filter { type ->
+                        type != Constants.MessageLocationType.INBOX &&
+                            type != Constants.MessageLocationType.ARCHIVE &&
+                            type != Constants.MessageLocationType.STARRED &&
+                            type != Constants.MessageLocationType.ALL_MAIL
+                    }
+                setOnClickListener {
+                    viewModel.deleteMessage(messageIds)
+                    dismiss()
+                }
+            }
+            textViewDetailsActionsMoveTo.setOnClickListener {
+                viewModel.showLabelsManager(messageIds, messageLocation, ManageLabelsActionSheet.Type.FOLDER)
                 dismiss()
             }
-        }
-        textViewDetailsActionsMoveTo.setOnClickListener {
-            viewModel.showLabelsManager(messageIds, messageLocation, ManageLabelsActionSheet.Type.FOLDER)
-            dismiss()
         }
     }
 
@@ -273,30 +281,32 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         binding: FragmentMessageActionSheetBinding,
         originatorId: Int,
         messageIds: List<String>
-    ) = with(binding) {
+    ) {
+        with(binding) {
 
-        viewActionSheetSeparator.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
-        textViewActionSheetMoreTitle.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+            viewActionSheetSeparator.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+            textViewActionSheetMoreTitle.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
 
-        textViewDetailsActionsPrint.apply {
-            isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
-            setOnClickListener {
-                // we call it this way as it requires "special" context from the Activity
-                (activity as? MessageDetailsActivity)?.printMessage()
-                dismiss()
+            textViewDetailsActionsPrint.apply {
+                isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+                setOnClickListener {
+                    // we call it this way as it requires "special" context from the Activity
+                    (activity as? MessageDetailsActivity)?.printMessage()
+                    dismiss()
+                }
             }
-        }
-        textViewDetailsActionsViewHeaders.apply {
-            isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
-            setOnClickListener {
-                viewModel.showMessageHeaders(messageIds.first())
+            textViewDetailsActionsViewHeaders.apply {
+                isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+                setOnClickListener {
+                    viewModel.showMessageHeaders(messageIds.first())
+                }
             }
-        }
-        textViewDetailsActionsReportPhishing.apply {
-            isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
-            setOnClickListener {
-                (activity as? MessageDetailsActivity)?.showReportPhishingDialog()
-                dismiss()
+            textViewDetailsActionsReportPhishing.apply {
+                isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+                setOnClickListener {
+                    (activity as? MessageDetailsActivity)?.showReportPhishingDialog()
+                    dismiss()
+                }
             }
         }
     }
