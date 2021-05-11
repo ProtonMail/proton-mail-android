@@ -620,7 +620,7 @@ class MailboxActivity :
             val lastVisibleItem = layoutManager!!.findLastVisibleItemPosition()
             val lastPosition = adapter!!.itemCount - 1
             if (lastVisibleItem == lastPosition && dy > 0 && !setLoadingMore(true)) {
-                loadMoreMessages()
+                loadMailboxItems(oldestItemTimestamp = mailboxAdapter.getOldestMailboxItemTimestamp())
             }
 
             // Increase the elevation if the list is scrolled down and decrease if it is scrolled to the top
@@ -631,18 +631,22 @@ class MailboxActivity :
                 setElevationOnToolbarAndStatusView(true)
             }
         }
+    }
 
-        private fun loadMoreMessages() {
-            val mailboxLocation = mailboxLocationMain.value ?: MessageLocationType.INBOX
-            mailboxViewModel.loadMore(
-                mailboxLocation,
-                mailboxLabelId,
-                false,
-                syncUUID,
-                false,
-                mailboxAdapter.getOldestMailboxItemTimestamp()
-            )
-        }
+    private fun loadMailboxItems(
+        includeLabels: Boolean = false,
+        refreshMessages: Boolean = false,
+        oldestItemTimestamp: Long = now()
+    ) {
+        val mailboxLocation = mailboxLocationMain.value ?: MessageLocationType.INBOX
+        mailboxViewModel.loadMailboxItems(
+            mailboxLocation,
+            mailboxLabelId,
+            includeLabels,
+            syncUUID,
+            refreshMessages,
+            oldestItemTimestamp
+        )
     }
 
     private fun setElevationOnToolbarAndStatusView(shouldIncreaseElevation: Boolean) {
@@ -668,10 +672,7 @@ class MailboxActivity :
         syncUUID = UUID.randomUUID().toString()
         lifecycleScope.launch {
             delay(3.seconds.toLongMilliseconds())
-            observeMailboxItemsByLocation(
-                includeLabels = true,
-                syncId = syncUUID
-            )
+            loadMailboxItems(includeLabels = true)
         }
         mailboxViewModel.checkConnectivityDelayed()
     }
@@ -716,10 +717,7 @@ class MailboxActivity :
             firstLogin = false
             refreshMailboxJobRunning = true
             app.updateDone()
-            observeMailboxItemsByLocation(
-                includeLabels = false,
-                syncId = syncUUID
-            )
+            loadMailboxItems()
             true
         }
     }
@@ -1331,12 +1329,13 @@ class MailboxActivity :
         setRefreshing(true)
         syncUUID = UUID.randomUUID().toString()
         mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
-        observeMailboxItemsByLocation(
+        loadMailboxItems(
             includeLabels = true,
-            refreshMessages = true,
-            syncId = syncUUID
+            refreshMessages = true
         )
     }
+
+    private fun now() = System.currentTimeMillis() / 1000
 
     private fun switchToMailboxLocation(newLocation: Int) {
         val newMessageLocationType = fromInt(newLocation)
