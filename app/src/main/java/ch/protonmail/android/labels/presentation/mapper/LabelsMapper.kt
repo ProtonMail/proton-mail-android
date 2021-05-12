@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.labels.presentation.mapper
 
-import android.graphics.Color
 import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
 import ch.protonmail.android.data.local.model.Label
@@ -40,11 +39,9 @@ class LabelsMapper @Inject constructor() {
             R.drawable.ic_folder
         }
 
-        val colorInt = if (labelsSheetType == LabelsActionSheet.Type.LABEL) {
-            label.color.toColorInt()
-        } else {
-            Color.BLACK
-        }
+        // TODO if (labelsSheetType == LabelsActionSheet.Type.FOLDER && setting from the net MailSettings.EnableFolderColor != true)
+        //  Color.BLACK else label.color
+        val colorInt =  label.color.toColorInt()
 
         val isChecked = if (labelsSheetType == LabelsActionSheet.Type.LABEL) {
             currentLabelsSelection.contains(label.id)

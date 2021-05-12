@@ -68,7 +68,7 @@ class ManageLabelsActionAdapter(
                 else
                     model.title
 
-                val iconDrawable = ResourcesCompat.getDrawable(resources, model.iconRes, null)
+                val iconDrawable = ResourcesCompat.getDrawable(resources, model.iconRes, null)?.mutate()
                 iconDrawable?.setTint(model.colorInt)
                 setCompoundDrawablesRelativeWithIntrinsicBounds(
                     iconDrawable,

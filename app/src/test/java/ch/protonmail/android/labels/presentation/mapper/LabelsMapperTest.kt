@@ -91,7 +91,7 @@ class LabelsMapperTest {
             R.drawable.ic_folder,
             labelName1,
             null,
-            Color.BLACK,
+            testColorInt,
             null,
             LabelsActionSheet.Type.FOLDER.typeInt
         )
