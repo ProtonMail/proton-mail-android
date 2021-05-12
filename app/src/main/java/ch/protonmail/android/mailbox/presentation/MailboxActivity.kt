@@ -198,6 +198,9 @@ class MailboxActivity :
     @Inject
     lateinit var multiUserFcmTokenManager: MultiUserFcmTokenManager
 
+    @Inject
+    lateinit var isConversationModeEnabled: ConversationModeEnabled
+
     private lateinit var mailboxAdapter: MailboxRecyclerViewAdapter
     private var swipeController: SwipeController = SwipeController()
     private val mailboxLocationMain = MutableLiveData<MessageLocationType>()
@@ -1215,11 +1218,11 @@ class MailboxActivity :
             showLabelsManager(getSelectedMessageIds())
         }
         mailboxActionsView.setOnMoreActionClickListener {
-            showActionSheet(getSelectedMessageIds(), userManager.getCurrentUserMailSettingsBlocking()?.viewMode == 0)
+            showActionSheet(getSelectedMessageIds(), isConversationModeEnabled(currentMailboxLocation))
         }
     }
 
-    private fun getSelectedMessageIds(): List<String> = selectedMessages.map { message -> message.messageId }
+    private fun getSelectedMessageIds(): List<String> = selectedMessages.map { it.messageId }
 
     private fun showActionSheet(
         messagesIds: List<String>,
