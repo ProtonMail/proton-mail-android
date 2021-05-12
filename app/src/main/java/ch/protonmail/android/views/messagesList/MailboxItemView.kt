@@ -28,6 +28,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
@@ -149,18 +150,15 @@ class MailboxItemView @JvmOverloads constructor(
             time_date_text_view.text = context.getString(R.string.draft_label_message_uploading)
         }
 
-        reply_image_view.visibility = if (
-            mailboxUiItem.messageData?.isReplied == true &&
+        reply_image_view.isVisible = mailboxUiItem.messageData?.isReplied == true &&
             !mailboxUiItem.messageData.isRepliedAll
-        ) View.VISIBLE else View.GONE
-        reply_all_image_view.visibility = if (mailboxUiItem.messageData?.isRepliedAll == true) View.VISIBLE else View.GONE
-        forward_image_view.visibility = if (mailboxUiItem.messageData?.isForwarded == true) View.VISIBLE else View.GONE
+        reply_all_image_view.isVisible = mailboxUiItem.messageData?.isRepliedAll == true
+        forward_image_view.isVisible = mailboxUiItem.messageData?.isForwarded == true
 
-        draft_image_view.visibility = if (mailboxLocation in arrayOf(
-                Constants.MessageLocationType.DRAFT,
-                Constants.MessageLocationType.ALL_DRAFT
-            )
-        ) View.VISIBLE else View.GONE
+        draft_image_view.isVisible = mailboxLocation in arrayOf(
+            Constants.MessageLocationType.DRAFT,
+            Constants.MessageLocationType.ALL_DRAFT
+        )
 
         // TODO: Currently there's a bug with showing the location on certain messages.
         //  Revisit the logic with MAILAND-1422
@@ -178,19 +176,15 @@ class MailboxItemView @JvmOverloads constructor(
             }
         }
 
-        messages_number_text_view.visibility = if (mailboxUiItem.messagesCount != null) View.VISIBLE else View.GONE
+        messages_number_text_view.isVisible = mailboxUiItem.messagesCount != null
         messages_number_text_view.text = mailboxUiItem.messagesCount.toString()
-        sending_uploading_progress_bar.visibility =
-            if (isBeingSent || areAttachmentsBeingUploaded) View.VISIBLE else View.GONE
-        attachment_image_view.visibility = if (mailboxUiItem.hasAttachments) View.VISIBLE else View.GONE
-        star_image_view.visibility = if (mailboxUiItem.isStarred) View.VISIBLE else View.GONE
+        sending_uploading_progress_bar.isVisible = isBeingSent || areAttachmentsBeingUploaded
+        attachment_image_view.isVisible = mailboxUiItem.hasAttachments
+        star_image_view.isVisible = mailboxUiItem.isStarred
 
-        empty_space_view.visibility = if (
-            attachment_image_view.visibility == View.VISIBLE ||
-            star_image_view.visibility == View.VISIBLE
-        ) View.VISIBLE else View.GONE
+        empty_space_view.isVisible = attachment_image_view.isVisible || star_image_view.isVisible
 
-        expiration_image_view.visibility = if (mailboxUiItem.expirationTime > 0) View.VISIBLE else View.GONE
+        expiration_image_view.isVisible = mailboxUiItem.expirationTime > 0
 
         showLabels(labels)
     }
