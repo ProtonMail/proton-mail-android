@@ -35,7 +35,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:textAppearance="@style/Proton.Text.DefaultSmall"
-        app:drawableStartCompat="@drawable/ic_attachment"
+        app:drawableStartCompat="@drawable/ic_paper_clip"
         android:drawablePadding="@dimen/message_details_banner_drawable_padding"
         android:gravity="center_vertical"
         tools:text="1 Attachment (1.2 MB)" />

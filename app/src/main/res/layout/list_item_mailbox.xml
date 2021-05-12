@@ -94,7 +94,7 @@
         app:layout_constraintRight_toLeftOf="@id/sender_text_view"
         app:layout_constraintTop_toTopOf="@id/sender_text_view"
         app:layout_constraintBottom_toBottomOf="@id/sender_text_view"
-        android:src="@drawable/ic_draft" />
+        android:src="@drawable/ic_pencil" />
 
     <TextView
         android:id="@+id/sender_text_view"
@@ -227,7 +227,7 @@
         app:layout_constraintRight_toLeftOf="@id/star_image_view"
         app:layout_constraintTop_toTopOf="@id/star_image_view"
         app:layout_constraintBottom_toBottomOf="@id/star_image_view"
-        android:src="@drawable/ic_attachment"
+        android:src="@drawable/ic_paper_clip"
         app:tint="@color/icon_weak" />
 
     <ImageView

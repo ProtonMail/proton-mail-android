@@ -24,7 +24,7 @@
         <shape android:shape="rectangle">
             <corners android:radius="8dp"/>
             <!-- TODO color reference -->
-            <solid android:color="@color/abbey" />
+            <solid android:color="@color/tuna" />
         </shape>
     </item>
 </ripple>

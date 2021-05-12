@@ -35,7 +35,7 @@
         android:paddingEnd="@dimen/toolbar_padding_end"
         app:contentInsetStartWithNavigation="0dp"
         app:layout_collapseMode="pin"
-        app:navigationIcon="@drawable/ic_arrow_back">
+        app:navigationIcon="@drawable/ic_arrow_left">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -58,13 +58,14 @@
                 android:id="@+id/starToggleButton"
                 android:layout_width="@dimen/toolbar_action_layout_icon_size"
                 android:layout_height="@dimen/toolbar_action_layout_icon_size"
+                android:layout_margin="@dimen/padding_m"
                 android:background="@drawable/selector_star_action_icon"
-                android:foreground="?attr/selectableItemBackgroundBorderless"
                 android:textOff=""
                 android:textOn=""
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.appcompat.widget.Toolbar>

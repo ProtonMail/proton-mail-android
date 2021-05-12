@@ -232,7 +232,7 @@
         app:layout_constraintRight_toRightOf="@id/senderInitialView"
         app:layout_constraintTop_toTopOf="@+id/timeDateExtendedTextView"
         app:layout_constraintBottom_toBottomOf="@id/timeDateExtendedTextView"
-        android:src="@drawable/ic_calendar"
+        android:src="@drawable/ic_calendar_today"
         app:tint="@color/icon_weak" />
 
     <TextView
