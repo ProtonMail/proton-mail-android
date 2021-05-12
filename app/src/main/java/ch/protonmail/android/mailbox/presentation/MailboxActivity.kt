@@ -543,7 +543,6 @@ class MailboxActivity :
         AppUtil.clearNotifications(this, currentUserId)
         lazyManager.reset()
         setUpDrawer()
-        setupAccountsList()
         checkRegistration()
         // Loading mailbox items for the newly switched account.
         // This method also "reloads dependencies" for the instance of `messageDetailsRepo` held by
@@ -949,10 +948,7 @@ class MailboxActivity :
 
     @Subscribe
     fun onSettingsChangedEvent(event: SettingsChangedEvent) {
-        val user = userManager.requireCurrentUser()
-        if (event.success) {
-            refreshDrawerHeader(user)
-        } else {
+        if (!event.success) {
             showToast(R.string.saving_failed_no_conn, Toast.LENGTH_LONG, Gravity.CENTER)
         }
     }
@@ -1008,11 +1004,7 @@ class MailboxActivity :
     }
 
     @Subscribe
-    fun onUpdatesLoaded(event: FetchUpdatesEvent?) {
-        lifecycleScope.launchWhenCreated {
-            userManager.currentUser?.let { refreshDrawerHeader(it) }
-        }
-    }
+    fun onUpdatesLoaded(event: FetchUpdatesEvent?) { }
 
     private fun showToast(status: Status) {
         when (status) {

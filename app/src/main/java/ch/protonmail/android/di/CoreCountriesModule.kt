@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Proton Technologies AG
+ * Copyright (c) 2021 Proton Technologies AG
  * This file is part of Proton Technologies AG and ProtonCore.
  *
  * ProtonCore is free software: you can redistribute it and/or modify
@@ -18,30 +18,20 @@
 
 package ch.protonmail.android.di
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ProcessLifecycleOwner
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import me.proton.core.account.domain.entity.AccountType
-import me.proton.core.domain.entity.Product
-import javax.inject.Singleton
+import me.proton.core.country.data.repository.CountriesRepositoryImpl
+import me.proton.core.country.domain.repository.CountriesRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
-object CoreAppModule {
+class CoreCountriesModule {
 
     @Provides
-    @Singleton
-    fun provideProduct(): Product = Product.Mail
-
-    @Provides
-    @Singleton
-    fun provideRequiredAccountType(): AccountType = AccountType.Internal
-
-    @Provides
-    @Singleton
-    @AppProcessLifecycleOwner
-    fun provideAppProcessLifecycleOwner(): LifecycleOwner = ProcessLifecycleOwner.get()
+    fun provideCountriesRepository(@ApplicationContext context: Context): CountriesRepository =
+        CountriesRepositoryImpl(context)
 }

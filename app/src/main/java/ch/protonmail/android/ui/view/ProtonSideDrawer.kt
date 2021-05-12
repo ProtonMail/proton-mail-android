@@ -27,14 +27,10 @@ import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ch.protonmail.android.R
 import ch.protonmail.android.adapters.DrawerAdapter
-import ch.protonmail.android.domain.entity.EmailAddress
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.uiModel.DrawerItemUiModel
-import ch.protonmail.libs.core.utils.onClick
 
-internal class ProtonSideDrawer @JvmOverloads constructor (
+internal class ProtonSideDrawer @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -42,7 +38,6 @@ internal class ProtonSideDrawer @JvmOverloads constructor (
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private val bodyRecyclerView: RecyclerView
-    private val headerView = ProtonDrawerHeader(context)
     private val bodyAdapter = DrawerAdapter()
 
     // lists
@@ -56,8 +51,6 @@ internal class ProtonSideDrawer @JvmOverloads constructor (
     private var footerItem: DrawerItemUiModel.Footer? = null
 
     init {
-        setBackgroundResource(R.color.nav_view_background)
-
         bodyRecyclerView = RecyclerView(context).apply {
             layoutManager = LinearLayoutManager(context)
             adapter = bodyAdapter
@@ -65,16 +58,10 @@ internal class ProtonSideDrawer @JvmOverloads constructor (
 
         val linearLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-
-            addView(headerView)
             addView(bodyRecyclerView)
         }
 
         addView(linearLayout)
-    }
-
-    fun setOnHeaderUserClick(block: () -> Unit) {
-        headerView.onClick(block)
     }
 
     fun setOnItemClick(block: (DrawerItemUiModel) -> Unit) {
@@ -83,10 +70,6 @@ internal class ProtonSideDrawer @JvmOverloads constructor (
             if (drawerItemUiModel is DrawerItemUiModel.Primary)
                 bodyAdapter.setSelected(drawerItemUiModel)
         }
-    }
-
-    fun setUser(initials: Pair<Char, Char>, name: Name, email: EmailAddress) {
-        headerView.setUser(initials, name, email)
     }
 
     fun setLocationItems(items: List<DrawerItemUiModel.Primary.Static>) {
