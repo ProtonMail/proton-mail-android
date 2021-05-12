@@ -43,7 +43,7 @@ class ContactsRepository @Inject constructor(
 
     fun findAllContactEmails(): Flow<List<ContactEmail>> = contactDao.findAllContactsEmails()
 
-    fun findAllContactEmailsBlocking() =
+    fun findAllContactEmailsBlocking(): List<ContactEmail> =
         runBlocking {
             findAllContactEmails().first()
         }

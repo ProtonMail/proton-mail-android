@@ -630,7 +630,7 @@ class ComposeMessageViewModel @Inject constructor(
                     composeMessageRepository.startFetchDraftDetail(_draftId.get())
                 } else {
                     it.isDownloaded = true
-                    val attachments = composeMessageRepository.getAttachments2(it)
+                    val attachments = composeMessageRepository.getAttachmentsBlocking(it)
                     it.setAttachmentList(attachments)
                     _messageDataResult = MessageBuilderData.Builder()
                         .fromOld(_messageDataResult)

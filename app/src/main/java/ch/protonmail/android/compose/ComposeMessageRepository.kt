@@ -122,7 +122,7 @@ class ComposeMessageRepository @Inject constructor(
             message.attachments(messageDao)
         }
 
-    fun getAttachments2(message: Message): List<Attachment> = message.attachmentsBlocking(messageDao)
+    fun getAttachmentsBlocking(message: Message): List<Attachment> = message.attachmentsBlocking(messageDao)
 
     fun findMessageByIdSingle(id: String): Single<Message> =
         messageDetailsRepository.findMessageByIdSingle(id)
