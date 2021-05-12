@@ -25,6 +25,7 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.event.data.remote.model.ConversationsEventResponse
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
@@ -143,13 +144,21 @@ class ConversationsRepositoryImpl @Inject constructor(
             .map { it.toDataResult() }
 
 
-    override suspend fun findConversationOnce(conversationId: String, userId: Id): ConversationDatabaseModel =
+    override suspend fun findConversationOnce(conversationId: String, userId: Id): ConversationDatabaseModel? =
         conversationDao.findConversationOnce(conversationId, userId.s)
 
 
     override suspend fun saveConversations(conversations: List<ConversationDatabaseModel>, userId: Id) =
         conversationDao.insertOrUpdate(*conversations.toTypedArray())
 
+    override suspend fun updateConversation(conversationResponse: ConversationsEventResponse, userId: Id): Boolean {
+        val conversationFromLocal = findConversationOnce(conversationResponse.id, userId)
+        return if (conversationFromLocal != null) {
+            val completeConversation = conversationResponse.conversation.completeToLocal(conversationFromLocal)
+            saveConversations(listOf(completeConversation), userId)
+            true
+        } else false
+    }
 
     override suspend fun deleteConversations(conversationIds: List<String>, userId: Id) {
         conversationDao.deleteConversations(*conversationIds.toTypedArray(), userId = userId.s)

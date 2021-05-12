@@ -21,6 +21,7 @@ package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.event.data.remote.model.ConversationsEventResponse
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import kotlinx.coroutines.flow.Flow
@@ -66,6 +67,8 @@ interface ConversationsRepository {
      * @throws exception when the repository fails to insert conversations for any unhandled reasons into local storage
      */
     suspend fun saveConversations(conversations: List<ConversationDatabaseModel>, userId: Id)
+
+    suspend fun updateConversation(conversationResponse: ConversationsEventResponse, userId: Id): Boolean
 
     /**
      * Deletes all the conversations from the [TABLE_CONVERSATIONS] inside the local storage
