@@ -17,9 +17,9 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.ui.dialog
+package ch.protonmail.android.ui.actionsheet
 
-import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 
 /**
  * Contains types of actions executed from message action sheet.
@@ -29,9 +29,8 @@ sealed class MessageActionSheetAction {
     object Default : MessageActionSheetAction()
     data class ShowLabelsManager(
         val messageIds: List<String>,
-        val checkedLabels: List<String>,
         val currentFolderLocationId: Int,
-        val labelActionSheetType: ManageLabelsActionSheet.Type = ManageLabelsActionSheet.Type.LABEL
+        val labelActionSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL
     ) : MessageActionSheetAction()
 
     data class ShowMessageHeaders(val messageHeaders: String) : MessageActionSheetAction()

@@ -27,17 +27,10 @@ import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
 import ch.protonmail.android.api.models.enumerations.MessageFlag
-import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.user.Addresses
-import ch.protonmail.android.jobs.MoveToFolderJob
-import ch.protonmail.android.jobs.PostArchiveJob
-import ch.protonmail.android.jobs.PostInboxJob
-import ch.protonmail.android.jobs.PostSpamJob
-import ch.protonmail.android.jobs.PostTrashJobV2
-import com.birbit.android.jobqueue.JobManager
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.equalsNoCase
 import timber.log.Timber
@@ -136,40 +129,6 @@ object MessageUtils {
     fun containsRealContent(text: String): Boolean = text.replace("<div>", "")
         .replace("</div>", "")
         .replace("<br />", "").isNotEmpty()
-
-    // TODO: discard nullability of parameters once MessageDetailsActivity and MailboxActivity are converted to Kotlin
-    fun moveMessage(
-        context: Context?,
-        jobManager: JobManager,
-        folderId: String,
-        folderIds: List<String?>?,
-        selectedMessages: List<SimpleMessage>
-    ) {
-        val messageIds: MutableList<String> = ArrayList()
-        for (message in selectedMessages) {
-            messageIds.add(message.messageId)
-        }
-        val job = when (folderId) {
-            Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString() -> {
-                PostTrashJobV2(messageIds, folderIds, folderId)
-            }
-            Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString() -> {
-                PostArchiveJob(messageIds, folderIds)
-            }
-            Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString() -> {
-                PostInboxJob(messageIds, folderIds)
-            }
-            Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString() -> {
-                PostSpamJob(messageIds)
-            }
-            else -> {
-                MoveToFolderJob(messageIds, folderId)
-            }
-        }
-        jobManager.addJobInBackground(job)
-        val alarmReceiver = AlarmReceiver()
-        alarmReceiver.setAlarm(context, true)
-    }
 
     // TODO: replace with expression once ComposeMessageActivity is converted to Kotlin
     fun isPmMeAddress(address: String): Boolean = address.endsWith(Constants.MAIL_DOMAIN_PM_ME)

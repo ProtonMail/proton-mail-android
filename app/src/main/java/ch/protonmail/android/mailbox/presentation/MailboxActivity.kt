@@ -22,7 +22,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
@@ -58,7 +57,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
-import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
@@ -69,17 +67,8 @@ import ch.protonmail.android.activities.SearchActivity
 import ch.protonmail.android.activities.SettingsActivity
 import ch.protonmail.android.activities.SettingsItem
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
-import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelCreationListener
-import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelsChangeListener
-import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment
-import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment.IMoveMessagesListener
-import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
-import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
-import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
-import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
 import ch.protonmail.android.activities.mailbox.RefreshEmptyViewTask
 import ch.protonmail.android.activities.mailbox.RefreshTotalCountersTask
-import ch.protonmail.android.activities.mailbox.ShowLabelsManagerDialogTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
@@ -134,11 +123,13 @@ import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
+import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
@@ -150,8 +141,6 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButto
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnackbar
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.views.messageDetails.BottomActionsView
-import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
-import ch.protonmail.android.worker.PostLabelWorker
 import ch.protonmail.libs.core.utils.contains
 import com.birbit.android.jobqueue.Job
 import com.google.android.gms.common.ConnectionResult
@@ -161,6 +150,8 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
+import kotlinx.android.synthetic.main.activity_mailbox.screenShotPreventerView
+import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -168,7 +159,6 @@ import kotlinx.coroutines.launch
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
-import me.proton.core.util.android.workmanager.activity.getWorkManager
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -190,11 +180,7 @@ private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
 class MailboxActivity :
     NavigationActivity(),
     ActionMode.Callback,
-    OnRefreshListener,
-    ILabelCreationListener,
-    ILabelsChangeListener,
-    IMoveMessagesListener,
-    DialogInterface.OnDismissListener {
+    OnRefreshListener{
 
     private lateinit var counterDao: CounterDao
     private lateinit var pendingActionDao: PendingActionDao
@@ -212,6 +198,9 @@ class MailboxActivity :
     @Inject
     lateinit var multiUserFcmTokenManager: MultiUserFcmTokenManager
 
+    @Inject
+    lateinit var isConversationModeEnabled: ConversationModeEnabled
+
     private lateinit var mailboxAdapter: MailboxRecyclerViewAdapter
     private var swipeController: SwipeController = SwipeController()
     private val mailboxLocationMain = MutableLiveData<MessageLocationType>()
@@ -224,7 +213,6 @@ class MailboxActivity :
     private var refreshMailboxJobRunning = false
     private lateinit var syncUUID: String
     private var customizeSwipeSnackShown = false
-    private var catchLabelEvents = false
     private val mailboxViewModel: MailboxViewModel by viewModels()
     private var storageLimitApproachingAlertDialog: AlertDialog? = null
     private val handler = Handler(Looper.getMainLooper())
@@ -844,12 +832,12 @@ class MailboxActivity :
         val mailboxLocation = mailboxLocationMain.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
-            MessageLocationType.DRAFT,
-            MessageLocationType.SPAM,
-            MessageLocationType.TRASH,
-            MessageLocationType.LABEL,
-            MessageLocationType.LABEL_FOLDER
-        )
+                MessageLocationType.DRAFT,
+                MessageLocationType.SPAM,
+                MessageLocationType.TRASH,
+                MessageLocationType.LABEL,
+                MessageLocationType.LABEL_FOLDER
+            )
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -1084,41 +1072,9 @@ class MailboxActivity :
         return true
     }
 
-    private fun containsStar(messages: List<SimpleMessage>): Boolean = messages.any { it.isStarred }
-
-    private fun containsUnstar(messages: List<SimpleMessage>): Boolean = messages.any { !it.isStarred }
-
-    override fun move(folderId: String) {
-        MessageUtils.moveMessage(this, mJobManager, folderId, mutableListOf(mailboxLabelId), selectedMessages)
-        if (actionModeRunnable != null) {
-            actionModeRunnable!!.run()
-        }
-    }
-
-    override fun showFoldersManager() {
-        val foldersManagerIntent = Intent(this, LabelsManagerActivity::class.java)
-        foldersManagerIntent.putExtra(EXTRA_MANAGE_FOLDERS, true)
-        foldersManagerIntent.putExtra(EXTRA_POPUP_STYLE, true)
-        foldersManagerIntent.putExtra(EXTRA_CREATE_ONLY, true)
-        startActivity(AppUtil.decorInAppIntent(foldersManagerIntent))
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        catchLabelEvents = true
-    }
-
-    internal inner class ActionModeInteractionRunnable(private val actionModeAux: ActionMode?) : Runnable {
-
-        override fun run() {
-            actionModeAux?.finish()
-        }
-    }
-
-    private var actionModeRunnable: ActionModeInteractionRunnable? = null
-
     override fun onActionItemClicked(mode: ActionMode, menuItem: MenuItem): Boolean {
         // TODO: These actions need to be extracted to the view model and then removed from here
-        val messageIds = selectedMessages.map { message -> message.messageId }
+        val messageIds = getSelectedMessageIds()
         val menuItemId = menuItem.itemId
         var job: Job? = null
         when (menuItemId) {
@@ -1149,12 +1105,8 @@ class MailboxActivity :
             R.id.mark_unread -> job = PostUnreadJob(messageIds)
             R.id.add_star -> job = PostStarJob(messageIds)
             R.id.add_label -> {
-                actionModeRunnable = ActionModeInteractionRunnable(mode)
-                ShowLabelsManagerDialogTask(supportFragmentManager, messageDetailsRepository, messageIds).execute()
             }
             R.id.add_folder -> {
-                actionModeRunnable = ActionModeInteractionRunnable(mode)
-                showFoldersManagerDialog(messageIds)
             }
             R.id.remove_star -> job = PostUnstarJob(messageIds)
             R.id.move_to_archive -> {
@@ -1209,7 +1161,7 @@ class MailboxActivity :
         )
         mailboxActionsView.bind(actionsUiModel)
         mailboxActionsView.setOnFirstActionClickListener {
-            val messageIds = selectedMessages.map { message -> message.messageId }
+            val messageIds = getSelectedMessageIds()
             if (currentLocation.value in arrayOf(MessageLocationType.TRASH, MessageLocationType.DRAFT)) {
                 showDeleteConfirmationDialog(
                     this,
@@ -1240,7 +1192,7 @@ class MailboxActivity :
             actionMode?.finish()
         }
         mailboxActionsView.setOnSecondActionClickListener {
-            val messageIds = selectedMessages.map { message -> message.messageId }
+            val messageIds = getSelectedMessageIds()
             if (MessageUtils.areAllUnRead(selectedMessages)) {
                 mJobManager.addJobInBackground(PostReadJob(messageIds))
             } else {
@@ -1249,15 +1201,41 @@ class MailboxActivity :
             actionMode?.finish()
         }
         mailboxActionsView.setOnThirdActionClickListener {
-            val messageIds = selectedMessages.map { message -> message.messageId }
-            actionModeRunnable = ActionModeInteractionRunnable(actionMode)
-            showFoldersManagerDialog(messageIds)
+            showFoldersManager(getSelectedMessageIds())
+            actionMode?.finish()
         }
         mailboxActionsView.setOnFourthActionClickListener {
-            val messageIds = selectedMessages.map { message -> message.messageId }
-            actionModeRunnable = ActionModeInteractionRunnable(actionMode)
-            ShowLabelsManagerDialogTask(supportFragmentManager, messageDetailsRepository, messageIds).execute()
+            showLabelsManager(getSelectedMessageIds())
+            actionMode?.finish()
         }
+        mailboxActionsView.setOnMoreActionClickListener {
+            showActionSheet(getSelectedMessageIds(), isConversationModeEnabled(currentMailboxLocation))
+            actionMode?.finish()
+        }
+    }
+
+    private fun getSelectedMessageIds(): List<String> = selectedMessages.map { it.messageId }
+
+    private fun showActionSheet(
+        messagesIds: List<String>,
+        isConversationsModeOn: Boolean
+    ) {
+        val messagesStringRes = if (isConversationsModeOn)
+            R.plurals.x_conversations_count
+        else
+            R.plurals.x_messages_count
+
+        MessageActionSheet.newInstance(
+            originatorLocationId = MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID,
+            messagesIds = messagesIds,
+            currentFolderLocationId = currentMailboxLocation.messageLocationTypeValue,
+            title = resources.getQuantityString(
+                messagesStringRes,
+                messagesIds.size,
+                messagesIds.size
+            )
+        )
+            .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
     }
 
     override fun onDestroyActionMode(mode: ActionMode) {
@@ -1267,65 +1245,27 @@ class MailboxActivity :
         mailboxAdapter.endSelectionMode()
     }
 
-    private fun showFoldersManagerDialog(messageIds: List<String>) {
+    private fun showFoldersManager(messageIds: List<String>) {
         // show progress bar for visual representation of work in background,
         // if all the messages inside the folder are impacted by the action
         if (mailboxAdapter.itemCount == messageIds.size) {
             setRefreshing(true)
         }
 
-        catchLabelEvents = false
-        val moveToFolderDialogFragment = MoveToFolderDialogFragment.newInstance(mailboxLocationMain.value)
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.add(moveToFolderDialogFragment, moveToFolderDialogFragment.fragmentKey)
-        transaction.commitAllowingStateLoss()
+        LabelsActionSheet.newInstance(
+            messageIds,
+            currentMailboxLocation.messageLocationTypeValue,
+            LabelsActionSheet.Type.FOLDER
+        )
+            .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
     }
 
-    override fun onLabelCreated(labelName: String, color: String) {
-        val postLabelResult = PostLabelWorker.Enqueuer(getWorkManager()).enqueue(labelName, color)
-        postLabelResult.observe(this) {
-            val state: WorkInfo.State = it.state
-
-            if (state == WorkInfo.State.SUCCEEDED) {
-                showToast(getString(R.string.label_created), Toast.LENGTH_SHORT)
-                return@observe
-            }
-
-            if (state == WorkInfo.State.FAILED) {
-                val errorMessage = it.outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
-                    ?: getString(R.string.label_invalid)
-                showToast(errorMessage, Toast.LENGTH_SHORT)
-            }
-        }
-    }
-
-    override fun onLabelsDeleted(checkedLabelIds: List<String>) {
-        // NOOP
-    }
-
-    override fun onLabelsChecked(
-        checkedLabelIds: List<String>,
-        unchangedLabelss: List<String>,
-        messageIds: List<String>
-    ) {
-        var unchangedLabels: List<String>? = unchangedLabelss
-        if (actionModeRunnable != null) {
-            actionModeRunnable!!.run()
-        }
-        if (unchangedLabels == null) {
-            unchangedLabels = mutableListOf()
-        }
-        mailboxViewModel.processLabels(messageIds, checkedLabelIds, unchangedLabels)
-    }
-
-    override fun onLabelsChecked(
-        checkedLabelIds: List<String>,
-        unchangedLabels: List<String>,
-        messageIds: List<String>,
-        messagesToArchive: List<String>
-    ) {
-        mJobManager.addJobInBackground(PostArchiveJob(messagesToArchive))
-        onLabelsChecked(checkedLabelIds, unchangedLabels, messageIds)
+    private fun showLabelsManager(messageIds: List<String>) {
+        LabelsActionSheet.newInstance(
+            messageIds,
+            currentMailboxLocation.messageLocationTypeValue,
+        )
+            .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
     }
 
     /* SwipeRefreshLayout.OnRefreshListener */

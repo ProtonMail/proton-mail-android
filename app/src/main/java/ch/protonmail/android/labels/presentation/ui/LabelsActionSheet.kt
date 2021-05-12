@@ -30,11 +30,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
-import ch.protonmail.android.databinding.FragmentManageLabelsActionSheetBinding
+import ch.protonmail.android.databinding.FragmentLabelsActionSheetBinding
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
+import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionSheetViewModel
 import ch.protonmail.android.labels.presentation.viewmodel.ManageLabelsActionAdapter
-import ch.protonmail.android.labels.presentation.viewmodel.ManageLabelsActionSheetViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -45,15 +45,15 @@ import timber.log.Timber
  * Actions sheet used to manage labels and folders.
  */
 @AndroidEntryPoint
-class ManageLabelsActionSheet : BottomSheetDialogFragment() {
+class LabelsActionSheet : BottomSheetDialogFragment() {
 
-    private val viewModel: ManageLabelsActionSheetViewModel by viewModels()
+    private val viewModel: LabelsActionSheetViewModel by viewModels()
 
-    private var _binding: FragmentManageLabelsActionSheetBinding? = null
+    private var _binding: FragmentLabelsActionSheetBinding? = null
     private val binding get() = requireNotNull(_binding)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentManageLabelsActionSheetBinding.inflate(inflater)
+        _binding = FragmentLabelsActionSheetBinding.inflate(inflater)
 
         val actionSheetType = arguments?.getSerializable(EXTRA_ARG_ACTION_SHEET_TYPE) as Type
 
@@ -144,21 +144,18 @@ class ManageLabelsActionSheet : BottomSheetDialogFragment() {
 
     companion object {
 
-        const val EXTRA_ARG_MESSAGE_CHECKED_LABELS = "extra_arg_message_checked_labels"
         const val EXTRA_ARG_MESSAGES_IDS = "extra_arg_messages_ids"
         const val EXTRA_ARG_ACTION_SHEET_TYPE = "extra_arg_action_sheet_type"
         const val EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID = "extra_arg_current_folder_location_id"
 
         fun newInstance(
-            checkedLabels: List<String>,
             messageIds: List<String>,
-            labelActionSheetType: Type = Type.LABEL,
-            currentFolderLocationId: Int
-        ): ManageLabelsActionSheet {
+            currentFolderLocationId: Int,
+            labelActionSheetType: Type = Type.LABEL
+        ): LabelsActionSheet {
 
-            return ManageLabelsActionSheet().apply {
+            return LabelsActionSheet().apply {
                 arguments = bundleOf(
-                    EXTRA_ARG_MESSAGE_CHECKED_LABELS to checkedLabels,
                     EXTRA_ARG_MESSAGES_IDS to messageIds,
                     EXTRA_ARG_ACTION_SHEET_TYPE to labelActionSheetType,
                     EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID to currentFolderLocationId

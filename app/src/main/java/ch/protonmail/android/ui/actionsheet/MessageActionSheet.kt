@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.ui.dialog
+package ch.protonmail.android.ui.actionsheet
 
 import android.app.Dialog
 import android.content.Intent
@@ -37,7 +37,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentMessageActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
-import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.utils.AppUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -227,7 +227,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 setOnClickListener {
                     viewModel.moveToInbox(messageIds, messageLocation)
                     dismiss()
-                    popBackActivity()
+                    popBackDetailsActivity()
                 }
             }
             textViewDetailsActionsTrash.apply {
@@ -236,7 +236,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 setOnClickListener {
                     viewModel.moveToTrash(messageIds, messageLocation)
                     dismiss()
-                    popBackActivity()
+                    popBackDetailsActivity()
                 }
             }
             textViewDetailsActionsMoveToArchive.apply {
@@ -245,7 +245,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 setOnClickListener {
                     viewModel.moveToArchive(messageIds, messageLocation)
                     dismiss()
-                    popBackActivity()
+                    popBackDetailsActivity()
                 }
             }
             textViewDetailsActionsMoveToSpam.apply {
@@ -254,7 +254,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 setOnClickListener {
                     viewModel.moveToSpam(messageIds, messageLocation)
                     dismiss()
-                    popBackActivity()
+                    popBackDetailsActivity()
                 }
             }
             textViewDetailsActionsDelete.apply {
@@ -271,7 +271,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 }
             }
             textViewDetailsActionsMoveTo.setOnClickListener {
-                viewModel.showLabelsManager(messageIds, messageLocation, ManageLabelsActionSheet.Type.FOLDER)
+                viewModel.showLabelsManager(messageIds, messageLocation, LabelsActionSheet.Type.FOLDER)
                 dismiss()
             }
         }
@@ -316,7 +316,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
      * so we have to dismiss the action sheet and the Details activity at the time and go to the main list.
      * This should be improved.
      */
-    private fun popBackActivity() = activity?.onBackPressed()
+    private fun popBackDetailsActivity() = (activity as? MessageDetailsActivity)?.onBackPressed()
 
     private fun setCloseIconVisibility(shouldBeVisible: Boolean) =
         actionSheetHeader?.setCloseIconVisibility(shouldBeVisible)
@@ -326,7 +326,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         Timber.v("Action received $sheetAction")
         when (sheetAction) {
             is MessageActionSheetAction.ShowLabelsManager -> showManageLabelsActionSheet(
-                sheetAction.checkedLabels,
                 sheetAction.messageIds,
                 sheetAction.labelActionSheetType,
                 sheetAction.currentFolderLocationId
@@ -337,18 +336,16 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun showManageLabelsActionSheet(
-        checkedLabels: List<String>,
         messageIds: List<String>,
-        labelActionSheetType: ManageLabelsActionSheet.Type,
+        labelActionSheetType: LabelsActionSheet.Type,
         currentFolderLocationId: Int
     ) {
-        ManageLabelsActionSheet.newInstance(
-            checkedLabels,
+        LabelsActionSheet.newInstance(
             messageIds,
-            labelActionSheetType,
-            currentFolderLocationId
+            currentFolderLocationId,
+            labelActionSheetType
         )
-            .show(parentFragmentManager, ManageLabelsActionSheet::class.qualifiedName)
+            .show(parentFragmentManager, LabelsActionSheet::class.qualifiedName)
         dismiss()
     }
 
@@ -372,30 +369,30 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         private const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
         private const val EXTRA_ARG_IS_STARED = "arg_extra_is_stared"
         private const val EXTRA_ARG_ORIGINATOR_SCREEN_ID = "extra_arg_originator_screen_id"
-        private const val ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID = 0 // e.g. [MessageDetailsActivity]
-        private const val ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID = 1 // e.g [MailboxActivity]
         private const val HEADER_SLIDE_THRESHOLD = 0.8f
+        const val ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID = 0 // e.g. [MessageDetailsActivity]
+        const val ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID = 1 // e.g [MailboxActivity]
 
         /**
          * Creates new action sheet instance.
          *
-         * @param messagesIds current message id/ or selected messages Ids
-         * @param title title part that will be displayed in the top header
-         * @param subTitle small sub title part that will be displayed in the top header, null/empty if not needed
-         * @param isStarred defines if message is currently marked as starred
-         * @param currentFolderLocationId defines current message folder location based on values from
-         * [Constants.MessageLocationType] e.g. 3 = trash
          * @param originatorLocationId defines starting activity/location
          *  0 = [ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID]
          *  1 = [ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID]
+         * @param messagesIds current message id/ or selected messages Ids
+         * @param currentFolderLocationId defines current message folder location based on values from
+         * [Constants.MessageLocationType] e.g. 3 = trash
+         * @param title title part that will be displayed in the top header
+         * @param subTitle small sub title part that will be displayed in the top header, null/empty if not needed
+         * @param isStarred defines if message is currently marked as starred
          */
         fun newInstance(
+            originatorLocationId: Int,
             messagesIds: List<String>,
-            title: CharSequence,
-            subTitle: String?,
-            isStarred: Boolean,
             currentFolderLocationId: Int,
-            originatorLocationId: Int = ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+            title: CharSequence,
+            subTitle: String? = null,
+            isStarred: Boolean = false
         ): MessageActionSheet {
             return MessageActionSheet().apply {
                 arguments = bundleOf(

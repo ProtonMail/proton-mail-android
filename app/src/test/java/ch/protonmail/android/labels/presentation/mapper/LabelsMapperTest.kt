@@ -23,7 +23,7 @@ import android.graphics.Color
 import ch.protonmail.android.R
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
-import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -58,7 +58,7 @@ class LabelsMapperTest {
         val labelColor1 = "olive"
         val label = Label(labelId1, labelName1, labelColor1)
         val currentLabelsIds = listOf(labelId1)
-        val sheetType = ManageLabelsActionSheet.Type.LABEL
+        val sheetType = LabelsActionSheet.Type.LABEL
         val expected = ManageLabelItemUiModel(
             labelId1,
             R.drawable.circle_labels_selection,
@@ -66,7 +66,7 @@ class LabelsMapperTest {
             null,
             testColorInt,
             true,
-            ManageLabelsActionSheet.Type.LABEL.typeInt
+            LabelsActionSheet.Type.LABEL.typeInt
         )
 
         // when
@@ -85,15 +85,15 @@ class LabelsMapperTest {
         val labelColor1 = "olive"
         val label = Label(labelId1, labelName1, labelColor1)
         val currentLabelsIds = listOf(labelId1)
-        val sheetType = ManageLabelsActionSheet.Type.FOLDER
+        val sheetType = LabelsActionSheet.Type.FOLDER
         val expected = ManageLabelItemUiModel(
             labelId1,
             R.drawable.ic_folder,
             labelName1,
             null,
-            Color.BLACK,
+            testColorInt,
             null,
-            ManageLabelsActionSheet.Type.FOLDER.typeInt
+            LabelsActionSheet.Type.FOLDER.typeInt
         )
 
         // when

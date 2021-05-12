@@ -23,7 +23,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ch.protonmail.android.ui.dialog.ActionSheetHeader
+    <ch.protonmail.android.ui.actionsheet.ActionSheetHeader
         android:id="@+id/action_sheet_header_details_actions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -198,6 +198,10 @@
                 android:textColor="@color/notification_error"
                 app:drawableStartCompat="@drawable/ic_phishing"
                 app:drawableTint="@color/notification_error" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/padding_xxxxl"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

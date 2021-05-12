@@ -41,20 +41,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.getSystemService
-import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
-import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelCreationListener
-import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelsChangeListener
-import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment.IMoveMessagesListener
-import ch.protonmail.android.activities.labelsManager.EXTRA_CREATE_ONLY
-import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
-import ch.protonmail.android.activities.labelsManager.EXTRA_POPUP_STYLE
-import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.LabelsObserver
 import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
@@ -62,7 +53,6 @@ import ch.protonmail.android.activities.messageDetails.attachments.MessageDetail
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
-import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
@@ -73,30 +63,25 @@ import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.ReportPhishingJob
-import ch.protonmail.android.ui.dialog.MessageActionSheet
+import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.MODE_ACCORDION
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.BottomActionsView
-import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
-import ch.protonmail.android.worker.PostLabelWorker
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.android.synthetic.main.layout_message_details_activity_toolbar.*
-import me.proton.core.util.android.workmanager.activity.getWorkManager
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
@@ -108,11 +93,7 @@ private const val TITLE_ANIMATION_DURATION = 200L
 private const val ONE_HUNDRED_PERCENT = 1.0
 
 @AndroidEntryPoint
-internal class MessageDetailsActivity :
-    BaseStoragePermissionActivity(),
-    ILabelCreationListener,
-    ILabelsChangeListener,
-    IMoveMessagesListener {
+internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private lateinit var messageId: String
     private lateinit var pmWebViewClient: PMWebViewClient
@@ -275,37 +256,6 @@ internal class MessageDetailsActivity :
             menu?.add(getString(R.string.copy_link))?.setOnMenuItemClickListener(Copy(result.extra))
             menu?.add(getString(R.string.share_link))?.setOnMenuItemClickListener(Share(result.extra))
         }
-    }
-
-    override fun move(folderId: String) {
-        viewModel.removeMessageLabels()
-        viewModel.messageSavedInDBResult.observe(
-            this,
-            object : Observer<Boolean?> {
-                override fun onChanged(aBoolean: Boolean?) {
-                    viewModel.messageSavedInDBResult.removeObserver(this)
-                    val message = viewModel.decryptedMessageData.value
-                    MessageUtils.moveMessage(
-                        this@MessageDetailsActivity,
-                        mJobManager,
-                        folderId,
-                        viewModel.folderIds,
-                        listOf(SimpleMessage(message))
-                    )
-                    viewModel.markRead(true)
-                    onBackPressed()
-                }
-            }
-        )
-        viewModel.saveMessage()
-    }
-
-    override fun showFoldersManager() {
-        val foldersManagerIntent = Intent(this, LabelsManagerActivity::class.java)
-        foldersManagerIntent.putExtras(
-            bundleOf(EXTRA_MANAGE_FOLDERS to true, EXTRA_POPUP_STYLE to true, EXTRA_CREATE_ONLY to true)
-        )
-        startActivity(AppUtil.decorInAppIntent(foldersManagerIntent))
     }
 
     override fun onStart() {
@@ -547,63 +497,6 @@ internal class MessageDetailsActivity :
         }
     }
 
-    override fun onLabelCreated(labelName: String, color: String) {
-        val postLabelResult = PostLabelWorker.Enqueuer(getWorkManager()).enqueue(labelName, color)
-        postLabelResult.observe(
-            this,
-            {
-                val state: WorkInfo.State = it.state
-
-                if (state == WorkInfo.State.SUCCEEDED) {
-                    showToast(getString(R.string.label_created), Toast.LENGTH_SHORT)
-                    return@observe
-                }
-
-                if (state == WorkInfo.State.FAILED) {
-                    val outputData = it.outputData
-                    val errorMessage = outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
-                        ?: getString(R.string.label_invalid)
-                    showToast(errorMessage, Toast.LENGTH_SHORT)
-                }
-            }
-        )
-    }
-
-    override fun onLabelsDeleted(checkedLabelIds: List<String>) {
-        // NOOP
-    }
-
-    override fun onLabelsChecked(
-        checkedLabelIds: List<String>,
-        unchangedLabelIds: List<String>?,
-        messageIds: List<String>?
-    ) {
-        val message = viewModel.decryptedMessageData.value
-        // handle the case where too many labels exist for this message
-        val maxLabelsAllowed = UserUtils.getMaxAllowedLabels(mUserManager)
-        if (checkedLabelIds.size > maxLabelsAllowed) {
-            val messageText = String.format(
-                getString(R.string.max_labels_in_message),
-                message!!.subject,
-                maxLabelsAllowed
-            )
-            showToast(messageText, Toast.LENGTH_SHORT)
-        } else {
-            viewModel.findAllLabelsWithIds(checkedLabelIds.toMutableList())
-        }
-    }
-
-    override fun onLabelsChecked(
-        checkedLabelIds: List<String>,
-        unchangedLabels: List<String>?,
-        messageIds: List<String>?,
-        messagesToArchive: List<String>?
-    ) {
-        val message = viewModel.decryptedMessageData.value
-        onLabelsChecked(checkedLabelIds.toMutableList(), unchangedLabels, messageIds)
-        mJobManager.addJobInBackground(PostArchiveJob(listOf(message!!.messageId)))
-        onBackPressed()
-    }
 
     private inner class Copy(private val text: CharSequence?) : MenuItem.OnMenuItemClickListener {
 
@@ -651,11 +544,12 @@ internal class MessageDetailsActivity :
                 messageExpandableAdapter.setMessageData(message)
                 messageDetailsActionsView.setOnMoreActionClickListener {
                     MessageActionSheet.newInstance(
-                        listOf(message.messageId ?: messageId),
-                        getCurrentSubject(),
-                        getMessagesFrom(message.sender?.name),
-                        message.isStarred ?: false,
-                        message.location
+                        originatorLocationId = MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
+                        messagesIds = listOf(message.messageId ?: messageId),
+                        currentFolderLocationId = message.location,
+                        title = getCurrentSubject(),
+                        subTitle = getMessagesFrom(message.sender?.name),
+                        isStarred = message.isStarred ?: false
                     )
                         .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
                 }

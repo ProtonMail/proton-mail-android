@@ -19,12 +19,11 @@
 
 package ch.protonmail.android.labels.presentation.mapper
 
-import android.graphics.Color
 import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
-import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import javax.inject.Inject
 
 class LabelsMapper @Inject constructor() {
@@ -32,21 +31,19 @@ class LabelsMapper @Inject constructor() {
     fun mapLabelToUi(
         label: Label,
         currentLabelsSelection: List<String>,
-        labelsSheetType: ManageLabelsActionSheet.Type
+        labelsSheetType: LabelsActionSheet.Type
     ): ManageLabelItemUiModel {
-        val iconRes = if (labelsSheetType == ManageLabelsActionSheet.Type.LABEL) {
+        val iconRes = if (labelsSheetType == LabelsActionSheet.Type.LABEL) {
             R.drawable.circle_labels_selection
         } else {
             R.drawable.ic_folder
         }
 
-        val colorInt = if (labelsSheetType == ManageLabelsActionSheet.Type.LABEL) {
-            label.color.toColorInt()
-        } else {
-            Color.BLACK
-        }
+        // TODO if (labelsSheetType == LabelsActionSheet.Type.FOLDER && setting from the net MailSettings.EnableFolderColor != true)
+        //  Color.BLACK else label.color
+        val colorInt =  label.color.toColorInt()
 
-        val isChecked = if (labelsSheetType == ManageLabelsActionSheet.Type.LABEL) {
+        val isChecked = if (labelsSheetType == LabelsActionSheet.Type.LABEL) {
             currentLabelsSelection.contains(label.id)
         } else {
             null

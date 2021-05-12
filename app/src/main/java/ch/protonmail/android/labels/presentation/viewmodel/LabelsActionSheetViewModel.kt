@@ -29,7 +29,8 @@ import ch.protonmail.android.labels.domain.usecase.GetAllLabels
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
 import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
-import ch.protonmail.android.labels.presentation.ui.ManageLabelsActionSheet
+import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.repository.MessageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,28 +39,25 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class ManageLabelsActionSheetViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+class LabelsActionSheetViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getAllLabels: GetAllLabels,
     private val userManager: UserManager,
     private val updateLabels: UpdateLabels,
-    private val moveMessagesToFolder: MoveMessagesToFolder
+    private val moveMessagesToFolder: MoveMessagesToFolder,
+    private val messageRepository: MessageRepository
 ) : ViewModel() {
 
-    private val initialLabelsSelection = savedStateHandle.get<List<String>>(
-        ManageLabelsActionSheet.EXTRA_ARG_MESSAGE_CHECKED_LABELS
-    ) ?: emptyList()
-
-    private val labelsSheetType = savedStateHandle.get<ManageLabelsActionSheet.Type>(
-        ManageLabelsActionSheet.EXTRA_ARG_ACTION_SHEET_TYPE
-    ) ?: ManageLabelsActionSheet.Type.LABEL
+    private val labelsSheetType = savedStateHandle.get<LabelsActionSheet.Type>(
+        LabelsActionSheet.EXTRA_ARG_ACTION_SHEET_TYPE
+    ) ?: LabelsActionSheet.Type.LABEL
 
     private val currentMessageFolder =
         Constants.MessageLocationType.fromInt(
-            savedStateHandle.get<Int>(ManageLabelsActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID) ?: 0
+            savedStateHandle.get<Int>(LabelsActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID) ?: 0
         )
 
-    private val messageIds = savedStateHandle.get<List<String>>(ManageLabelsActionSheet.EXTRA_ARG_MESSAGES_IDS)
+    private val messageIds = savedStateHandle.get<List<String>>(LabelsActionSheet.EXTRA_ARG_MESSAGES_IDS)
         ?: emptyList()
 
     private val labelsMutableFlow = MutableStateFlow(emptyList<ManageLabelItemUiModel>())
@@ -73,18 +71,22 @@ class ManageLabelsActionSheetViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            labelsMutableFlow.value = getAllLabels(initialLabelsSelection, labelsSheetType, currentMessageFolder)
+            labelsMutableFlow.value = getAllLabels(
+                getCheckedLabelsForAllMessages(messageIds),
+                labelsSheetType,
+                currentMessageFolder
+            )
         }
     }
 
     fun onLabelClicked(model: ManageLabelItemUiModel) {
 
-        if (model.labelType == ManageLabelsActionSheet.Type.FOLDER.typeInt) {
+        if (model.labelType == LabelsActionSheet.Type.FOLDER.typeInt) {
             onFolderClicked(model.labelId)
         } else {
             // label type clicked
             val updatedLabels = labels.value
-                .filter { it.labelType == ManageLabelsActionSheet.Type.LABEL.typeInt }
+                .filter { it.labelType == LabelsActionSheet.Type.LABEL.typeInt }
                 .map { label ->
                     if (label.labelId == model.labelId) {
                         Timber.v("Label: ${label.labelId} was clicked")
@@ -108,7 +110,7 @@ class ManageLabelsActionSheetViewModel @Inject constructor(
     }
 
     fun onDoneClicked(shallMoveToArchive: Boolean = false) {
-        if (labelsSheetType == ManageLabelsActionSheet.Type.LABEL) {
+        if (labelsSheetType == LabelsActionSheet.Type.LABEL) {
             onLabelDoneClicked(messageIds, shallMoveToArchive)
         } else {
             throw IllegalStateException("This action is unsupported for type $labelsSheetType")
@@ -147,5 +149,19 @@ class ManageLabelsActionSheetViewModel @Inject constructor(
     private fun onFolderClicked(selectedFolderId: String) {
         moveMessagesToFolder(messageIds, selectedFolderId, currentMessageFolder.messageLocationTypeValue.toString())
         actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved
+    }
+
+    private suspend fun getCheckedLabelsForAllMessages(
+        messageIds: List<String>
+    ): List<String> {
+        val checkedLabels = mutableListOf<String>()
+        messageIds.forEach { messageId ->
+            val message = messageRepository.findMessageById(messageId)
+            Timber.v("Checking message labels: ${message?.labelIDsNotIncludingLocations}")
+            message?.labelIDsNotIncludingLocations?.let {
+                checkedLabels.addAll(it)
+            }
+        }
+        return checkedLabels
     }
 }
