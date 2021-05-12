@@ -1072,15 +1072,6 @@ class MailboxActivity :
         return true
     }
 
-    internal inner class ActionModeInteractionRunnable(private val actionModeAux: ActionMode?) : Runnable {
-
-        override fun run() {
-            actionModeAux?.finish()
-        }
-    }
-
-    private var actionModeRunnable: ActionModeInteractionRunnable? = null
-
     override fun onActionItemClicked(mode: ActionMode, menuItem: MenuItem): Boolean {
         // TODO: These actions need to be extracted to the view model and then removed from here
         val messageIds = getSelectedMessageIds()
@@ -1210,15 +1201,16 @@ class MailboxActivity :
             actionMode?.finish()
         }
         mailboxActionsView.setOnThirdActionClickListener {
-            actionModeRunnable = ActionModeInteractionRunnable(actionMode)
             showFoldersManager(getSelectedMessageIds())
+            actionMode?.finish()
         }
         mailboxActionsView.setOnFourthActionClickListener {
-            actionModeRunnable = ActionModeInteractionRunnable(actionMode)
             showLabelsManager(getSelectedMessageIds())
+            actionMode?.finish()
         }
         mailboxActionsView.setOnMoreActionClickListener {
             showActionSheet(getSelectedMessageIds(), isConversationModeEnabled(currentMailboxLocation))
+            actionMode?.finish()
         }
     }
 

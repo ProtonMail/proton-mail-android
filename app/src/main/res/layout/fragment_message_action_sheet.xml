@@ -199,6 +199,10 @@
                 app:drawableStartCompat="@drawable/ic_phishing"
                 app:drawableTint="@color/notification_error" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/padding_xxxxl"/>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>
