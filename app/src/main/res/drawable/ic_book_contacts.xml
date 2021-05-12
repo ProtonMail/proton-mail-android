@@ -24,14 +24,14 @@
     android:viewportHeight="24">
   <path
       android:pathData="M16.5,10.965C16.5,12.6219 15.1569,13.965 13.5,13.965C11.8431,13.965 10.5,12.6219 10.5,10.965C10.5,9.3082 11.8431,7.965 13.5,7.965C15.1569,7.965 16.5,9.3082 16.5,10.965ZM15,10.965C15,10.1366 14.3284,9.465 13.5,9.465C12.6716,9.465 12,10.1366 12,10.965C12,11.7934 12.6716,12.465 13.5,12.465C14.3284,12.465 15,11.7934 15,10.965Z"
-      android:fillColor="#ffffff"
+      android:fillColor="@color/icon_norm"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M9,16.86L11.55,15H15.45L18,16.86V19.5H9V16.86ZM16.5,18V17.64L15,16.5H12L10.5,17.64V18H16.5Z"
-      android:fillColor="#ffffff"
+      android:fillColor="@color/icon_norm"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M3,3H18.75C19.9926,3 21,4.0074 21,5.25V20.25C21,21.4926 19.9926,22.5 18.75,22.5H3V3ZM4.5,21H6V4.5H4.5V21ZM19.5,20.25C19.5,20.6642 19.1642,21 18.75,21H7.5V4.5H18.75C19.1642,4.5 19.5,4.8358 19.5,5.25V20.25Z"
-      android:fillColor="#ffffff"
+      android:fillColor="@color/icon_norm"
       android:fillType="evenOdd"/>
 </vector>

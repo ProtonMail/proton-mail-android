@@ -52,7 +52,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:src="@drawable/inbox" />
+        app:tint="@color/icon_inverted"
+        tools:src="@drawable/ic_inbox" />
 
     <!-- Badge -->
     <TextView

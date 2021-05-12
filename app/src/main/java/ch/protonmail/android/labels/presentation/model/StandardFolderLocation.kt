@@ -40,7 +40,7 @@ enum class StandardFolderLocation(
         Constants.MessageLocationType.INBOX.toString(), R.drawable.ic_inbox, R.string.inbox
     ),
     SPAM(
-        Constants.MessageLocationType.SPAM.toString(), R.drawable.ic_spam, R.string.spam
+        Constants.MessageLocationType.SPAM.toString(), R.drawable.ic_fire, R.string.spam
     ),
     TRASH(
         Constants.MessageLocationType.TRASH.toString(), R.drawable.ic_trash, R.string.trash

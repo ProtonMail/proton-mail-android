@@ -28,7 +28,7 @@
         android:layout_width="@dimen/button_nav_size"
         android:layout_height="@dimen/button_nav_size"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_compose"
+        android:src="@drawable/ic_pen_in_box"
         android:tint="@color/icon_inverted"
         android:background="@drawable/selector_circle_background_interaction_strong"
         android:contentDescription="@string/compose" />

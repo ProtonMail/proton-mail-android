@@ -27,7 +27,7 @@
     <style name="ProtonTheme.Mail" parent="ProtonTheme">
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/ProtonMailActionMode</item>
-        <item name="actionModeCloseDrawable">@drawable/ic_arrow_back</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_arrow_left</item>
         <item name="bottomSheetDialogTheme">@style/ProtonMail.BottomSheetDialogTheme</item>
     </style>
 
