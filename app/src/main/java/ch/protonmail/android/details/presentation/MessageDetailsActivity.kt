@@ -98,8 +98,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private lateinit var messageId: String
     private lateinit var pmWebViewClient: PMWebViewClient
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
-
-    // TODO: Remove attachments adapter from this activity with MAILAND-1545 since it isn't needed
     private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
     private lateinit var primaryBaseActivity: Context
 
@@ -628,11 +626,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         val totalAttachmentSize = attachments.map { it.fileSize }.sum()
         val attachmentsVisibility: Int
 
-        messageExpandableAdapter.attachmentsView.bind(attachmentsCount, totalAttachmentSize)
+        messageExpandableAdapter.attachmentsView.setTitle(attachmentsCount, totalAttachmentSize)
         attachmentsListAdapter.setList(attachments)
-        // This line is commented because in the new designs we don't show
-        // a list of attachments in the message details view. To be removed with MAILAND-1545.
-//        messageExpandableAdapter.attachmentsContainer.attachmentsAdapter = attachmentsListAdapter
+        messageExpandableAdapter.attachmentsView.attachmentsAdapter = attachmentsListAdapter
         attachmentsVisibility = if (attachmentsCount > 0) View.VISIBLE else View.GONE
         messageExpandableAdapter.displayAttachmentsViews(attachmentsVisibility)
     }

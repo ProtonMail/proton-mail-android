@@ -42,13 +42,10 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
-import ch.protonmail.android.utils.DateUtil
-import ch.protonmail.android.utils.ServerTime
-import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.views.PMWebViewClient
-import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
+import ch.protonmail.android.views.messageDetails.AttachmentsView
 import ch.protonmail.android.views.messageDetails.LoadContentButton
 import ch.protonmail.android.views.messageDetails.MessageDetailsExpirationInfoView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
@@ -78,7 +75,7 @@ class MessageDetailsAdapter(
     var containerDisplayImages = LoadContentButton(context)
     var loadEmbeddedImagesContainer = LoadContentButton(context)
     var embeddedImagesDownloadProgress = ProgressBar(context)
-    var attachmentsView = MessageDetailsAttachmentsView(context)
+    var attachmentsView = AttachmentsView(context)
     var attachmentsViewDivider = View(context)
     var expirationInfoView = MessageDetailsExpirationInfoView(context)
     var labelsView = ChipGroup(context)
