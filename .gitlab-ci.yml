@@ -108,6 +108,23 @@ build debug release:
     - prerelease
     - tags
 
+build alpha:
+  stage: build
+  when: 'manual'
+  except:
+    - schedules
+  only:
+    - develop
+  tags:
+    - large
+  script:
+    - ./gradlew clean
+    - ./gradlew assembleProductionRelease
+  artifacts:
+    expire_in: 3 week
+    paths:
+      - app/build/outputs
+
 build prerelease:
   stage: build
   except:
@@ -175,6 +192,7 @@ unit tests release:
 
 .firebase-tests-common:
   stage: test
+  when: "manual"
   only:
     - merge_requests
   except:
