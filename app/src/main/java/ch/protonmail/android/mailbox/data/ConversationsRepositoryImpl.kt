@@ -60,7 +60,7 @@ import javax.inject.Inject
 import kotlin.math.max
 import kotlin.time.toDuration
 
-const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
+const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723_478
 private const val MAX_LOCATION_ID_LENGTH = 2 // For non-custom locations such as: Inbox, Sent, Archive etc.
 
 class ConversationsRepositoryImpl @Inject constructor(
@@ -89,7 +89,12 @@ class ConversationsRepositoryImpl @Inject constructor(
                 messageDao.saveMessages(messages)
                 conversationDao.insertOrUpdate(conversation)
             },
-            delete = { key -> conversationDao.deleteConversation(key.conversationId, key.userId.s) }
+            delete = { key ->
+                conversationDao.deleteConversations(
+                    *listOf(key.conversationId).toTypedArray(),
+                    userId = key.userId.s
+                )
+            }
         )
     ).build()
 
@@ -147,9 +152,7 @@ class ConversationsRepositoryImpl @Inject constructor(
 
 
     override suspend fun deleteConversations(conversationIds: List<String>, userId: Id) {
-        conversationIds.forEach {
-            store.clear(ConversationStoreKey(it, userId))
-        }
+        conversationDao.deleteConversations(*conversationIds.toTypedArray(), userId = userId.s)
     }
 
     override suspend fun clearConversations() = conversationDao.clear()
