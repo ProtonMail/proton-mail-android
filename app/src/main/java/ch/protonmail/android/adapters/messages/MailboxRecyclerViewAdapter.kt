@@ -170,9 +170,9 @@ class MailboxRecyclerViewAdapter(
         val isSelected = selectedMailboxItemsIds.contains(mailboxItem.itemId)
         this.view.isActivated = isSelected
         this.view.tag = mailboxItem.itemId
-        this.view.senderInitialView.tag = mailboxItem.itemId
+        this.view.sender_initial_view.tag = mailboxItem.itemId
 
-        this.view.senderInitialView.setOnClickListener {
+        this.view.sender_initial_view.setOnClickListener {
             val messageId = it.tag as String
             selectOrDeselectMessage(messageId, position)
         }
