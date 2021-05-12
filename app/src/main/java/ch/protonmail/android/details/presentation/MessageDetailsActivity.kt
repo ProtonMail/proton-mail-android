@@ -544,11 +544,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 messageExpandableAdapter.setMessageData(message)
                 messageDetailsActionsView.setOnMoreActionClickListener {
                     MessageActionSheet.newInstance(
-                        listOf(message.messageId ?: messageId),
-                        message.location,
-                        getCurrentSubject(),
-                        getMessagesFrom(message.sender?.name),
-                        message.isStarred ?: false
+                        originatorLocationId = MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
+                        messagesIds = listOf(message.messageId ?: messageId),
+                        currentFolderLocationId = message.location,
+                        title = getCurrentSubject(),
+                        subTitle = getMessagesFrom(message.sender?.name),
+                        isStarred = message.isStarred ?: false
                     )
                         .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
                 }

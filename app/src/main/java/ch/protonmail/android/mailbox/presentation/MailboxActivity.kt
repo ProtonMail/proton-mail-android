@@ -1221,19 +1221,19 @@ class MailboxActivity :
         isConversationsModeOn: Boolean
     ) {
         val messagesStringRes = if (isConversationsModeOn)
-            R.plurals.conversations_count
+            R.plurals.x_conversations_count
         else
-            R.plurals.messages_count
+            R.plurals.x_messages_count
 
         MessageActionSheet.newInstance(
-            messagesIds,
-            currentMailboxLocation.messageLocationTypeValue,
-            resources.getQuantityString(
+            originatorLocationId = MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID,
+            messagesIds = messagesIds,
+            currentFolderLocationId = currentMailboxLocation.messageLocationTypeValue,
+            title = resources.getQuantityString(
                 messagesStringRes,
                 messagesIds.size,
                 messagesIds.size
-            ),
-            originatorLocationId = MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID
+            )
         )
             .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
     }

@@ -376,23 +376,23 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         /**
          * Creates new action sheet instance.
          *
+         * @param originatorLocationId defines starting activity/location
+         *  0 = [ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID]
+         *  1 = [ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID]
          * @param messagesIds current message id/ or selected messages Ids
          * @param currentFolderLocationId defines current message folder location based on values from
          * [Constants.MessageLocationType] e.g. 3 = trash
          * @param title title part that will be displayed in the top header
          * @param subTitle small sub title part that will be displayed in the top header, null/empty if not needed
          * @param isStarred defines if message is currently marked as starred
-         * @param originatorLocationId defines starting activity/location
-         *  0 = [ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID]
-         *  1 = [ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID]
          */
         fun newInstance(
+            originatorLocationId: Int,
             messagesIds: List<String>,
             currentFolderLocationId: Int,
             title: CharSequence,
             subTitle: String? = null,
-            isStarred: Boolean = false,
-            originatorLocationId: Int = ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+            isStarred: Boolean = false
         ): MessageActionSheet {
             return MessageActionSheet().apply {
                 arguments = bundleOf(
