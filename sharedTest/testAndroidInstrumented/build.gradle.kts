@@ -40,6 +40,7 @@ dependencies {
         `coroutines-android`,
 
         // Android
+        `material`,
         `lifecycle-runtime`,
         `lifecycle-liveData`,
         `lifecycle-viewModel`,
@@ -69,11 +70,13 @@ dependencies {
 
         // Android
         `android-annotation`,
-        `android-test-core`,
+        `android-test-core-ktx`,
+        `android-test-junit`,
         `android-test-runner`,
         `android-test-rules`,
         `android-work-testing`,
         `espresso`,
+        `espresso-contrib`,
         `hamcrest`,
         `json-simple`
     )

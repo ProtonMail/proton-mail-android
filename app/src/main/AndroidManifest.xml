@@ -130,6 +130,8 @@
         </receiver>
 
 
+        <activity android:name=".ViewTestActivity"/>
+
         <activity
             android:name=".activities.SplashActivity"
             android:clearTaskOnLaunch="true"

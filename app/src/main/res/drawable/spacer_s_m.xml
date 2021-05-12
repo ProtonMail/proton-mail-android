@@ -17,15 +17,12 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
-<resources>
 
-    <item name="multi_line_label_recycler_view" type="id"/>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle" >
 
-    <item name="monday" type="id"/>
-    <item name="tuesday" type="id"/>
-    <item name="wednesday" type="id"/>
-    <item name="thursday" type="id"/>
-    <item name="friday" type="id"/>
-    <item name="saturday" type="id"/>
-    <item name="sunday" type="id"/>
-</resources>
+    <size
+        android:width="@dimen/padding_s"
+        android:height="@dimen/padding_m" />
+
+</shape>

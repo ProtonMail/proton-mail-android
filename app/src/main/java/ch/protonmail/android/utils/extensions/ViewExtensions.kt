@@ -21,9 +21,11 @@ package ch.protonmail.android.utils.extensions
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.StyleRes
+import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.views.contactsList.ContactGroupEmailAvatarView
 
 /*
@@ -54,6 +56,11 @@ inline fun EditText.onTextChange(crossinline listener: (CharSequence) -> Unit): 
 fun TextView.setStyle(@StyleRes styleId: Int) {
     setTextAppearance(styleId)
 }
+
+/**
+ * @return `true` if we're in Debug configuration and [View.isInEditMode]
+ */
+fun View.isInPreviewMode() = BuildConfig.DEBUG && isInEditMode
 
 fun ContactGroupEmailAvatarView.setAccountLetters(displayName: String) {
     when (displayName.length) {
