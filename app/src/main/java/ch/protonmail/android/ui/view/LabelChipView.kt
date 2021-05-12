@@ -68,7 +68,7 @@ class LabelChipView @JvmOverloads constructor(
     }
 
     fun setLabelColor(color: ColorStateList) {
-        background = MaterialShapeDrawable(BackgroundShape)
+        background = MaterialShapeDrawable(buildBackgroundShape())
             .apply { fillColor = color }
     }
 
@@ -76,15 +76,15 @@ class LabelChipView @JvmOverloads constructor(
         setLabelColor(ColorStateList.valueOf(color))
     }
 
+    private fun buildBackgroundShape() = ShapeAppearanceModel
+        .builder()
+        .setAllCorners(RoundedCornerTreatment())
+        .setAllCornerSizes(999f)
+        .build()
+
     private companion object {
 
-        val BackgroundShape = ShapeAppearanceModel
-            .builder()
-            .setAllCorners(RoundedCornerTreatment())
-            .setAllCornerSizes(999f)
-            .build()
-
-        private const val INITIAL_BACKGROUND_COLOR = Color.TRANSPARENT
+        const val INITIAL_BACKGROUND_COLOR = Color.TRANSPARENT
     }
 }
 
