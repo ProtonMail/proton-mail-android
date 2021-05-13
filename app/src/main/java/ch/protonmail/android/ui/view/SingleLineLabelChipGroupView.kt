@@ -66,5 +66,5 @@ class SingleLineLabelChipGroupView @JvmOverloads constructor (
     }
 
     private fun getMoreLabelsText(labelsCount: Int): String =
-        "${labelsCount - 1}+"
+        "+${labelsCount - 1}"
 }

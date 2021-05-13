@@ -51,7 +51,7 @@ class LabelChipView @JvmOverloads constructor(
         setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
 
         // Text
-        setTextAppearance(R.style.Proton_Text_Caption_Strong)
+        setTextAppearance(R.style.Proton_Text_Overline_Strong)
         setTextColor(context.getColor(R.color.text_inverted))
         ellipsize = TextUtils.TruncateAt.END
         maxLines = 1

@@ -19,27 +19,23 @@
 package ch.protonmail.android.views.messagesList
 
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
-import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.databinding.ListItemMailboxBinding
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import ch.protonmail.android.ui.view.LabelChipUiModel
+import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
-import ch.protonmail.android.utils.UiUtil
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
-import me.proton.core.presentation.utils.inflate
-
-private const val MAX_LABELS_WITH_TEXT = 1
 
 class MailboxItemView @JvmOverloads constructor(
     context: Context,
@@ -47,30 +43,31 @@ class MailboxItemView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
+    private val replyImageView: ImageView
+    private val replyAllImageView: ImageView
+    private val labelsLayout: SingleLineLabelChipGroupView
+
     init {
-        inflate(R.layout.list_item_mailbox, true)
+        val binding = ListItemMailboxBinding.inflate(
+            LayoutInflater.from(context),
+            this,
+            true
+        )
+        replyImageView = binding.replyImageView
+        replyAllImageView = binding.replyAllImageView
+        labelsLayout = binding.mailboxLabelChipGroup
+
         layoutParams = RecyclerView.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
 
-    private var allFolders = HashMap<String, Label>()
-
-    private val strokeWidth by lazy {
-        TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            1f,
-            context
-                .resources.displayMetrics
-        ).toInt()
-    }
-
     private fun setIconsTint(isRead: Boolean) {
         val iconTint = if (isRead) context.getColor(R.color.icon_weak) else context.getColor(R.color.icon_norm)
 
-        reply_image_view.setColorFilter(iconTint)
-        reply_all_image_view.setColorFilter(iconTint)
+        replyImageView.setColorFilter(iconTint)
+        replyAllImageView.setColorFilter(iconTint)
         forward_image_view.setColorFilter(iconTint)
 
         first_location_image_view.setColorFilter(iconTint)
@@ -119,7 +116,7 @@ class MailboxItemView @JvmOverloads constructor(
 
     fun bind(
         mailboxUiItem: MailboxUiItem,
-        labels: List<Label>,
+        labels: List<LabelChipUiModel>,
         isMultiSelectionMode: Boolean,
         mailboxLocation: Constants.MessageLocationType,
         isBeingSent: Boolean,
@@ -150,9 +147,9 @@ class MailboxItemView @JvmOverloads constructor(
             time_date_text_view.text = context.getString(R.string.draft_label_message_uploading)
         }
 
-        reply_image_view.isVisible = mailboxUiItem.messageData?.isReplied == true &&
+        replyImageView.isVisible = mailboxUiItem.messageData?.isReplied == true &&
             !mailboxUiItem.messageData.isRepliedAll
-        reply_all_image_view.isVisible = mailboxUiItem.messageData?.isRepliedAll == true
+        replyAllImageView.isVisible = mailboxUiItem.messageData?.isRepliedAll == true
         forward_image_view.isVisible = mailboxUiItem.messageData?.isForwarded == true
 
         draft_image_view.isVisible = mailboxLocation in arrayOf(
@@ -186,45 +183,7 @@ class MailboxItemView @JvmOverloads constructor(
 
         expiration_image_view.isVisible = mailboxUiItem.expirationTime > 0
 
-        showLabels(labels)
+        labelsLayout.setLabels(labels)
     }
 
-    private fun showLabels(labels: List<Label>) {
-        // TODO: This is the old labels logic and it should be changed with MAILAND-1502
-        labelsLayout.removeAllViews()
-        labelsLayout.visibility = View.GONE
-        labels.forEach { allFolders[it.id] = it }
-        val nonExclusiveLabels = labels.filter { !it.exclusive }
-
-        var commonHeight = 20
-        nonExclusiveLabels.forEachIndexed { i, (_, name, colorString) ->
-            val labelItemView = ItemLabelMarginlessSmallView(context)
-            val color = if (colorString.isNotEmpty()) {
-                val normalizedColor = UiUtil.normalizeColor(colorString)
-                Color.parseColor(normalizedColor)
-            } else 0
-
-            if (i < MAX_LABELS_WITH_TEXT) {
-                labelItemView.bind(name, color, strokeWidth)
-                labelsLayout.visibility = View.VISIBLE
-                labelsLayout.addView(labelItemView)
-                labelItemView.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
-                commonHeight = labelItemView.measuredHeight
-            } else {
-                val imageView = ImageView(context)
-                val lp = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-                lp.setMargins(0, 0, 0, 0)
-                imageView.layoutParams = lp
-                imageView.setImageResource(R.drawable.mail_label_collapsed)
-                imageView.setColorFilter(color)
-                imageView.layoutParams.height = commonHeight
-                labelsLayout.visibility = View.VISIBLE
-                labelsLayout.addView(imageView)
-            }
-            labelItemView.requestLayout()
-        }
-    }
 }
