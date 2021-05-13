@@ -18,6 +18,13 @@
  */
 package ch.protonmail.android.utils;
 
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
+import static ch.protonmail.android.core.Constants.RESPONSE_CODE_API_OFFLINE;
+import static ch.protonmail.android.core.ProtonMailApplication.getApplication;
+import static ch.protonmail.android.core.UserManagerKt.PREF_PIN;
+import static ch.protonmail.android.prefs.SecureSharedPreferencesKt.PREF_SYMMETRIC_KEY;
+
 import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -67,13 +74,6 @@ import ch.protonmail.android.mailbox.data.local.ConversationDao;
 import ch.protonmail.android.storage.AttachmentClearingService;
 import ch.protonmail.android.storage.MessageBodyClearingService;
 import timber.log.Timber;
-
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
-import static ch.protonmail.android.core.Constants.RESPONSE_CODE_API_OFFLINE;
-import static ch.protonmail.android.core.ProtonMailApplication.getApplication;
-import static ch.protonmail.android.core.UserManagerKt.PREF_PIN;
-import static ch.protonmail.android.prefs.SecureSharedPreferencesKt.PREF_SYMMETRIC_KEY;
 
 public class AppUtil {
 
@@ -173,9 +173,9 @@ public class AppUtil {
                     context,
                     userId,
                     ContactDatabase.Companion.getInstance(context, userId).getDao(),
-                    MessageDatabase.Companion.getInstance(context, userId).getDao(),
-                    MessageDatabase.Companion.getSearchDatabase(context, userId).getDao(),
-                    MessageDatabase.Companion.getInstance(context, userId).getConversationDao(),
+                    MessageDatabase.Factory.getInstance(context, userId).getDao(),
+                    MessageDatabase.Factory.getSearchDatabase(context, userId).getDao(),
+                    MessageDatabase.Factory.getInstance(context, userId).getConversationDao(),
                     NotificationDatabase.Companion.getInstance(context, userId).getDao(),
                     CounterDatabase.Companion.getInstance(context, userId).getDao(),
                     AttachmentMetadataDatabase.Companion.getInstance(context, userId).getDao(),

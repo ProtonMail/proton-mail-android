@@ -98,7 +98,7 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
         } else {
             message.setLocation(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue());
         }
-        MessageDao messageDao = MessageDatabase.Companion
+        MessageDao messageDao = MessageDatabase.Factory
                 .getInstance(getApplicationContext(), getUserId())
                 .getDao();
         message.setFolderLocation(messageDao);

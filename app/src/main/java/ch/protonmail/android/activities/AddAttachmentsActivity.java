@@ -195,7 +195,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        messageDao = MessageDatabase.Companion.getInstance(getApplicationContext(), mUserManager.requireCurrentUserId()).getDao();
+        messageDao = MessageDatabase.Factory.getInstance(getApplicationContext(), mUserManager.requireCurrentUserId()).getDao();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
