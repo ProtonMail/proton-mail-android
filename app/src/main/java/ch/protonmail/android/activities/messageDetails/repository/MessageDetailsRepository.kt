@@ -386,7 +386,7 @@ class MessageDetailsRepository @Inject constructor(
 
     fun getAllLabelsLiveData() = messagesDao.getAllLabelsLiveData()
 
-    suspend fun getAllLabels(): List<Label> = messagesDao.getAllLabels()
+    suspend fun getAllLabels(): List<Label> = messagesDao.getAllLabels().first()
 
     fun findAllLabelsWithIds(labelIds: List<String>): List<Label> = messagesDao.findAllLabelsWithIds(labelIds)
 

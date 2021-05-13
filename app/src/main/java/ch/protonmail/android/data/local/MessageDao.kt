@@ -420,10 +420,11 @@ abstract class MessageDao {
 
     //region Labels
     @Query("SELECT * FROM $TABLE_LABELS")
+    @Deprecated("Use with Flow", ReplaceWith("this.getAllLabels()"))
     abstract fun getAllLabelsLiveData(): LiveData<List<Label>>
 
     @Query("SELECT * FROM $TABLE_LABELS")
-    abstract suspend fun getAllLabels(): List<Label>
+    abstract fun getAllLabels(): Flow<List<Label>>
 
     // Folders
     @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 1 ORDER BY `LabelOrder`")
