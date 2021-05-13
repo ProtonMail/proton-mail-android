@@ -150,12 +150,12 @@ abstract class NavigationActivity : BaseActivity() {
         with(accountStateManager) {
             register(this@NavigationActivity)
             state
-                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+                .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
                 .onEach {
                     when (it) {
-                        is AccountStateManager.State.Processing,
-                        is AccountStateManager.State.PrimaryExist -> Unit
-                        is AccountStateManager.State.AccountNeeded -> {
+                        AccountStateManager.State.Processing,
+                        AccountStateManager.State.PrimaryExist -> Unit
+                        AccountStateManager.State.AccountNeeded -> {
                             unregister()
                             startSplashActivity()
                             finish()
