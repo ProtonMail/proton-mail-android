@@ -34,7 +34,10 @@ class RoomLabelRepository @Inject constructor(
     private val messageDao: MessageDao
 ) : LabelRepository {
 
-    override fun getAllLabels(userId: UserId): Flow<List<Label>> =
+    override fun findLabels(userId: UserId, labelsIds: List<Id>): Flow<List<Label>> =
+        getDao(userId).findLabelsById(labelsIds.map { it.s })
+
+    override fun findAllLabels(userId: UserId): Flow<List<Label>> =
         getDao(userId).getAllLabels()
 
     override suspend fun saveLabel(userId: UserId, label: Label) {

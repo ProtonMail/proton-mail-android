@@ -24,6 +24,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
     android:paddingHorizontal="@dimen/message_details_header_padding_horizontal"
     android:paddingVertical="@dimen/message_details_header_padding_vertical">
 
@@ -40,7 +41,7 @@
         android:id="@+id/senderInitialBarrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        app:barrierDirection="end"
         app:layout_constraintLeft_toRightOf="@id/senderInitialView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
@@ -208,21 +209,30 @@
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="@id/senderInitialView"
         app:layout_constraintRight_toRightOf="@id/senderInitialView"
-        app:layout_constraintTop_toTopOf="@+id/labels"
+        app:layout_constraintTop_toTopOf="@+id/labelsExpandedGroupView"
         android:src="@drawable/ic_label"
         app:tint="@color/icon_weak" />
 
-    <!-- TODO: Should be changed and replaced with MAILAND-1502 -->
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/labels"
+    <ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
+        android:id="@+id/labelsCollapsedGroupView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constrainedWidth="true"
         android:layout_marginTop="@dimen/message_details_header_margin_normal"
-        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
+        app:layout_constraintStart_toEndOf="@id/senderInitialBarrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recipientsCollapsedTextView"
+        app:layout_constraintHorizontal_bias="0"/>
+
+    <ch.protonmail.android.ui.view.MultiLineLabelChipGroupView
+        android:id="@+id/labelsExpandedGroupView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/message_details_header_margin_big"
+        app:layout_constraintStart_toEndOf="@id/senderInitialBarrier"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bccRecipientsExpandedView"
-        android:visibility="gone"
-        tools:layout_height="20dp"
-        tools:visibility="visible" />
+        tools:layout_height="20dp"/>
 
     <ImageView
         android:id="@+id/calendarImageView"
@@ -242,7 +252,7 @@
         android:layout_marginTop="@dimen/message_details_header_margin_big"
         app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/labels"
+        app:layout_constraintTop_toBottomOf="@+id/labelsExpandedGroupView"
         style="@style/Proton.Text.DefaultSmall.Weak"
         tools:text="2021-01-28 at 10:04 AM" />
 
@@ -328,7 +338,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="lockIconTextView, locationImageView,
-        toCollapsedTextView, recipientsCollapsedTextView" />
+        toCollapsedTextView, recipientsCollapsedTextView, labelsCollapsedGroupView"
+        android:visibility="gone"/>
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/expandedHeaderGroup"
@@ -337,6 +348,7 @@
         app:constraint_referenced_ids="senderEmailTextView, lockIconExtendedTextView,
         encryptionInfoTextView, locationExtendedImageView, locationTextView,
         calendarImageView, timeDateExtendedTextView, storageImageView,
-        storageTextView, learnMoreTextView" />
+        storageTextView, learnMoreTextView, labelsExpandedGroupView"
+        tools:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

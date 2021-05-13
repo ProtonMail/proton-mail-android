@@ -42,12 +42,12 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.getSystemService
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
-import ch.protonmail.android.activities.messageDetails.LabelsObserver
 import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
@@ -82,6 +82,8 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.android.synthetic.main.layout_message_details_activity_toolbar.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
@@ -210,14 +212,15 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun continueSetup() {
-        viewModel.tryFindMessage()
         viewModel.message.observe(this, MessageObserver())
         viewModel.decryptedMessageData.observe(this, DecryptedMessageObserver())
 
-        viewModel.labels.observe(
-            this,
-            LabelsObserver(messageExpandableAdapter, viewModel.folderIds)
-        )
+        viewModel.labels
+            .onEach(messageExpandableAdapter::setAllLabels)
+            .launchIn(lifecycleScope)
+        viewModel.nonExclusiveLabelsUiModels
+            .onEach(messageExpandableAdapter::setNonInclusiveLabels)
+            .launchIn(lifecycleScope)
 
         viewModel.webViewContent.observe(this, WebViewContentObserver())
         viewModel.messageDetailsError.observe(this, MessageDetailsErrorObserver())

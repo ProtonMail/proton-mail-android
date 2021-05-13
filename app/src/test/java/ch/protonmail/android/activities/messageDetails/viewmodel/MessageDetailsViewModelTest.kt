@@ -20,7 +20,6 @@
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
@@ -28,12 +27,14 @@ import ch.protonmail.android.attachments.AttachmentsHelper
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.AttachmentMetadataDao
+import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.DownloadUtils
-import com.birbit.android.jobqueue.JobManager
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.channels.Channel
@@ -53,9 +54,11 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true)
 
-    private val userManager: UserManager = mockk(relaxed = true)
+    private val messageRepository: MessageRepository = mockk(relaxed = true)
 
-    private val jobManager: JobManager = mockk(relaxed = true)
+    private val labelRepository: LabelRepository = mockk(relaxed = true)
+
+    private val userManager: UserManager = mockk(relaxed = true)
 
     private val contactsRepository: ContactsRepository = mockk(relaxed = true)
 
@@ -82,8 +85,10 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val viewModel = MessageDetailsViewModel(
         savedStateHandle,
         messageDetailsRepository,
+        messageRepository,
         userManager,
         contactsRepository,
+        labelRepository,
         attachmentMetadataDao,
         fetchVerificationKeys,
         attachmentsWorker,

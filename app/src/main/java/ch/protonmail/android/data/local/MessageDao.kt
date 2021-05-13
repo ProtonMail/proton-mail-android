@@ -423,7 +423,7 @@ abstract class MessageDao {
     @Deprecated("Use with Flow", ReplaceWith("this.getAllLabels()"))
     abstract fun getAllLabelsLiveData(): LiveData<List<Label>>
 
-    @Query("SELECT * FROM $TABLE_LABELS")
+    @Query("SELECT * FROM $TABLE_LABELS ORDER BY LabelOrder")
     abstract fun getAllLabels(): Flow<List<Label>>
 
     // Folders
@@ -434,8 +434,11 @@ abstract class MessageDao {
     @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 0 ORDER BY `LabelOrder`")
     abstract fun getAllLabelsNotExclusivePaged(): DataSource.Factory<Int, Label>
 
+    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds) ORDER BY LabelOrder")
+    abstract fun findLabelsById(labelIds: List<String>): Flow<List<Label>>
+
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
-    abstract fun findAllLabelsWithIds(labelIds: List<String>): List<Label>
+    abstract fun findLabelsByIdBlocking(labelIds: List<String>): List<Label>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
     abstract fun findAllLabelsWithIdsAsync(labelIds: List<String>): LiveData<List<Label>>
