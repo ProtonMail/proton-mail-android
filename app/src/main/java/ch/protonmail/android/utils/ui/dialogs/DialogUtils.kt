@@ -21,7 +21,10 @@ package ch.protonmail.android.utils.ui.dialogs
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.text.SpannableString
 import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.CheckBox
@@ -35,11 +38,33 @@ import com.google.android.material.snackbar.Snackbar
 /**
  * Created by kadrikj on 10/24/18. */
 class DialogUtils {
+
     companion object {
+
         fun showInfoDialog(context: Context, title: String, message: String, okListener: ((Unit) -> Unit)?) {
             val builder = AlertDialog.Builder(context)
+
+            val messageWithLinks = SpannableString(message)
+            Linkify.addLinks(messageWithLinks, Linkify.WEB_URLS)
+
             builder.setTitle(title)
-                .setMessage(message)
+                .setMessage(messageWithLinks)
+                .setNeutralButton(R.string.okay) { dialog, _ ->
+                    run {
+                        okListener?.invoke(Unit)
+                        dialog.dismiss()
+                    }
+                }
+                .create()
+
+            val dialog: AlertDialog = builder.show()
+            (dialog.findViewById(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
+        }
+
+        fun showInfoDialogWithCustomView(context: Context, title: String, view: View, okListener: ((Unit) -> Unit)?) {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle(title)
+                .setView(view)
                 .setNeutralButton(R.string.okay) { dialog, _ ->
                     run {
                         okListener?.invoke(Unit)
@@ -48,20 +73,6 @@ class DialogUtils {
                 }
                 .create()
                 .show()
-        }
-
-        fun showInfoDialogWithCustomView(context: Context, title: String, view: View, okListener: ((Unit) -> Unit)?) {
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle(title)
-                    .setView(view)
-                    .setNeutralButton(R.string.okay) { dialog, _ ->
-                        run {
-                            okListener?.invoke(Unit)
-                            dialog.dismiss()
-                        }
-                    }
-                    .create()
-                    .show()
         }
 
         fun showDeleteConfirmationDialog(context: Context, title: String, message: String, okListener: (Unit) -> Unit) {
@@ -88,10 +99,18 @@ class DialogUtils {
             )
         )
         @JvmOverloads
-        fun showInfoDialogWithTwoButtons(context: Context, title: String, message: String,
-                                         negativeBtnText: String, positiveBtnText: String,
-                                         dismissListener: ((Unit) -> Unit)?, okListener: ((Unit) -> Unit)?,
-                                         cancelable: Boolean, dismissible: Boolean = true, outsideClickCancellable: Boolean = true): AlertDialog {
+        fun showInfoDialogWithTwoButtons(
+            context: Context,
+            title: String,
+            message: String,
+            negativeBtnText: String,
+            positiveBtnText: String,
+            dismissListener: ((Unit) -> Unit)?,
+            okListener: ((Unit) -> Unit)?,
+            cancelable: Boolean,
+            dismissible: Boolean = true,
+            outsideClickCancellable: Boolean = true
+        ): AlertDialog {
             val builder = AlertDialog.Builder(context)
             val dialog = builder.setTitle(title)
                 .setMessage(message)
@@ -203,9 +222,15 @@ class DialogUtils {
                     ")"
             )
         )
-        fun showInfoDialogWithTwoButtons(context: Context, title: String, message: String,
-                                         negativeBtnText: String, positiveBtnText: String,
-                                         okListener: ((Unit) -> Unit)?, cancelable: Boolean) {
+        fun showInfoDialogWithTwoButtons(
+            context: Context,
+            title: String,
+            message: String,
+            negativeBtnText: String,
+            positiveBtnText: String,
+            okListener: ((Unit) -> Unit)?,
+            cancelable: Boolean
+        ) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle(title)
                 .setMessage(message)
@@ -221,9 +246,17 @@ class DialogUtils {
                 .show()
         }
 
-        fun showInfoDialogWithTwoButtonsAndCheckbox(context: Context, title: String, message: Spanned,
-                                                    negativeBtnText: String, positiveBtnText: String, checkBoxText: String,
-                                                    okListener: (Unit) -> Unit, checkedListener: (Boolean) -> Unit, cancelable: Boolean) {
+        fun showInfoDialogWithTwoButtonsAndCheckbox(
+            context: Context,
+            title: String,
+            message: Spanned,
+            negativeBtnText: String,
+            positiveBtnText: String,
+            checkBoxText: String,
+            okListener: (Unit) -> Unit,
+            checkedListener: (Boolean) -> Unit,
+            cancelable: Boolean
+        ) {
 
             val builder = AlertDialog.Builder(context)
 
@@ -234,24 +267,29 @@ class DialogUtils {
             }
 
             val dialog = builder
-                    .setTitle(title)
-                    .setView(checkBoxView)
-                    .setMessage(message)
-                    .setNegativeButton(negativeBtnText) { dialog, _ -> dialog.dismiss() }
-                    .setPositiveButton(positiveBtnText) { dialog, _ ->
-                        run {
-                            okListener.invoke(Unit)
-                            dialog.dismiss()
-                        }
+                .setTitle(title)
+                .setView(checkBoxView)
+                .setMessage(message)
+                .setNegativeButton(negativeBtnText) { dialog, _ -> dialog.dismiss() }
+                .setPositiveButton(positiveBtnText) { dialog, _ ->
+                    run {
+                        okListener.invoke(Unit)
+                        dialog.dismiss()
                     }
-                    .setCancelable(cancelable)
-                    .create()
+                }
+                .setCancelable(cancelable)
+                .create()
 
             dialog.show()
         }
 
-        fun warningDialog(context: Context, okButtonText: String, cancelButtonText: String,
-                          description: String, okListener: (Unit) -> Unit) {
+        fun warningDialog(
+            context: Context,
+            okButtonText: String,
+            cancelButtonText: String,
+            description: String,
+            okListener: (Unit) -> Unit
+        ) {
             val dialog = Dialog(context)
             dialog.setContentView(R.layout.layout_dialog_warning)
             dialog.setCancelable(false)
@@ -270,10 +308,17 @@ class DialogUtils {
             dialog.show()
         }
 
-        fun showInfoDialogWithThreeButtons(context: Context, title: String, message: String,
-                                           negativeBtnText: String, positiveBtnText: String, neultralBtnText: String,
-                                           dismissListener: (Unit) -> Unit, okListener: (Unit) -> Unit,
-                                           cancelable: Boolean) {
+        fun showInfoDialogWithThreeButtons(
+            context: Context,
+            title: String,
+            message: String,
+            negativeBtnText: String,
+            positiveBtnText: String,
+            neultralBtnText: String,
+            dismissListener: (Unit) -> Unit,
+            okListener: (Unit) -> Unit,
+            cancelable: Boolean
+        ) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle(title)
                 .setMessage(message)
@@ -289,17 +334,24 @@ class DialogUtils {
                         dialog.dismiss()
                     }
                 }
-                .setNeutralButton(neultralBtnText) { dialog, _ -> dialog.dismiss()
+                .setNeutralButton(neultralBtnText) { dialog, _ ->
+                    dialog.dismiss()
                 }
                 .setCancelable(cancelable)
                 .create()
                 .show()
         }
 
-        fun showUndoSnackbar(context: Context, parent: View, message: String, okListener: (Unit) -> Unit, showUndo: Boolean) : Snackbar {
+        fun showUndoSnackbar(
+            context: Context,
+            parent: View,
+            message: String,
+            okListener: (Unit) -> Unit,
+            showUndo: Boolean
+        ): Snackbar {
             val undoSnack = Snackbar.make(parent, message, Snackbar.LENGTH_LONG)
             undoSnack.setColorWhite(context)
-            if(showUndo) {
+            if (showUndo) {
                 undoSnack.setBackgroundTint(context.getColor(R.color.interaction_strong))
                 undoSnack.setActionTextColor(context.getColor(R.color.text_inverted))
                 undoSnack.setAction(context.getString(R.string.undo)) {
