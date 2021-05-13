@@ -68,6 +68,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifySequence
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -99,12 +100,8 @@ class MailboxViewModelTest : CoroutinesTest {
     @RelaxedMockK
     private lateinit var messageDetailsRepository: MessageDetailsRepository
 
-    private val labelRepository: LabelRepository = mockk {
-        val allLabels = (0..11).map {
-            Label(id = "$it", name = "label $it", color = EMPTY_STRING)
-        }
-        every { findAllLabels(any()) } returns flowOf(allLabels)
-    }
+    @MockK
+    private lateinit var labelRepository: LabelRepository
 
     @RelaxedMockK
     private lateinit var userManager: UserManager
@@ -156,9 +153,17 @@ class MailboxViewModelTest : CoroutinesTest {
 
         val jobEntryPoint = mockk<JobEntryPoint>()
         mockkStatic(EntryPoints::class)
+
         every { EntryPoints.get(any(), JobEntryPoint::class.java) } returns jobEntryPoint
         every { jobEntryPoint.userManager() } returns mockk(relaxed = true)
+
         coEvery { contactsRepository.findAllContactEmails() } returns flowOf(emptyList())
+
+        val allLabels = (0..11).map {
+            Label(id = "$it", name = "label $it", color = EMPTY_STRING)
+        }
+        every { labelRepository.findAllLabels(any()) } returns flowOf(allLabels)
+
         every { userManager.requireCurrentUserId() } returns currentUserId
     }
 
@@ -208,7 +213,6 @@ class MailboxViewModelTest : CoroutinesTest {
             expirationTime = 0,
             messagesCount = null,
             isDeleted = false,
-
             labels = emptyList(),
             recipients = "",
             messageData = MessageData(
@@ -266,7 +270,6 @@ class MailboxViewModelTest : CoroutinesTest {
             expirationTime = 0,
             messagesCount = null,
             isDeleted = false,
-
             labels = emptyList(),
             recipients = "",
             messageData = MessageData(
@@ -320,7 +323,6 @@ class MailboxViewModelTest : CoroutinesTest {
             expirationTime = 0,
             messagesCount = null,
             isDeleted = false,
-
             labels = emptyList(),
             recipients = "",
             messageData = MessageData(
@@ -373,7 +375,6 @@ class MailboxViewModelTest : CoroutinesTest {
             expirationTime = 0,
             messagesCount = null,
             isDeleted = false,
-
             labels = emptyList(),
             recipients = "",
             messageData = MessageData(
@@ -439,7 +440,6 @@ class MailboxViewModelTest : CoroutinesTest {
             expirationTime = 82334L,
             messagesCount = null,
             isDeleted = false,
-
             labels = listOf(
                 LabelChipUiModel(Id("1"), Name("label 1"), 0),
                 LabelChipUiModel(Id("2"), Name("label 2"), 0)
@@ -705,7 +705,6 @@ class MailboxViewModelTest : CoroutinesTest {
                     messagesCount = 4,
                     messageData = null,
                     isDeleted = false,
-
                     labels = emptyList(),
                     recipients = ""
                 )
@@ -768,7 +767,6 @@ class MailboxViewModelTest : CoroutinesTest {
                     messagesCount = 2,
                     messageData = null,
                     isDeleted = false,
-
                     labels = emptyList(),
                     recipients = "recipient, recipient1"
                 )
@@ -824,7 +822,6 @@ class MailboxViewModelTest : CoroutinesTest {
                     messagesCount = 2,
                     messageData = null,
                     isDeleted = false,
-
                     labels = listOf(LabelChipUiModel(Id("10"), Name("label 10"), 0)),
                     recipients = ""
                 )
@@ -877,7 +874,6 @@ class MailboxViewModelTest : CoroutinesTest {
                     messagesCount = null,
                     messageData = null,
                     isDeleted = false,
-
                     labels = emptyList(),
                     recipients = ""
                 )
@@ -935,7 +931,6 @@ class MailboxViewModelTest : CoroutinesTest {
                     messagesCount = 2,
                     messageData = null,
                     isDeleted = false,
-
                     labels = listOf(
                         LabelChipUiModel(Id("0"), Name("label 0"), 0),
                         LabelChipUiModel(Id("6"), Name("label 6"), 0)
@@ -995,7 +990,6 @@ class MailboxViewModelTest : CoroutinesTest {
                     messagesCount = 2,
                     messageData = null,
                     isDeleted = false,
-
                     labels = listOf(LabelChipUiModel(Id("6"), Name("label 6"), 0)),
                     recipients = ""
                 )
@@ -1091,7 +1085,6 @@ class MailboxViewModelTest : CoroutinesTest {
             isInline = false
         ),
         isDeleted = false,
-
         labels = emptyList(),
         recipients = ""
     )
