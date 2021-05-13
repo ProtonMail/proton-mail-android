@@ -36,7 +36,10 @@ import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
@@ -58,7 +61,18 @@ class MessageRepository @Inject constructor(
     private val jobManager: JobManager
 ) {
 
-    private suspend fun findMessage(userId: Id, messageId: String): Message? {
+    fun findMessage(userId: UserId, messageId: String): Flow<Message?> {
+        val messageDao = databaseProvider.provideMessageDao(Id(userId.id))
+        return messageDao.findMessageById(messageId).onEach { message ->
+            message?.messageBody?.let {
+                if (it.startsWith(FILE_PREFIX)) {
+                    message.messageBody = messageBodyFileManager.readMessageBodyFromFile(message)
+                }
+            }
+        }
+    }
+
+    suspend fun findMessageOnce(userId: Id, messageId: String): Message? {
         val messageDao = databaseProvider.provideMessageDao(userId)
         return messageDao.findMessageByIdOnce(messageId)?.apply {
             messageBody?.let {
@@ -69,10 +83,11 @@ class MessageRepository @Inject constructor(
         }
     }
 
+    @Deprecated("Use with user Id", ReplaceWith("findMessageOnce(userId, messageId)"))
     suspend fun findMessageById(messageId: String): Message? {
         val currentUser = userManager.currentUserId
         return if (currentUser != null) {
-            findMessage(currentUser, messageId)
+            findMessageOnce(currentUser, messageId)
         } else {
             Timber.w("Cannot find message for null user id")
             null
@@ -96,7 +111,7 @@ class MessageRepository @Inject constructor(
 
     private suspend fun getMessageDetails(userId: Id, messageId: String): Message? =
         withContext(dispatcherProvider.Io) {
-            val message = findMessage(userId, messageId)
+            val message = findMessageOnce(userId, messageId)
 
             if (message?.messageBody != null) {
                 return@withContext message
@@ -112,7 +127,7 @@ class MessageRepository @Inject constructor(
 
     private suspend fun getMessageMetadata(userId: Id, messageId: String): Message? =
         withContext(dispatcherProvider.Io) {
-            val message = findMessage(userId, messageId)
+            val message = findMessageOnce(userId, messageId)
 
             if (message != null) {
                 return@withContext message

@@ -31,7 +31,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
@@ -59,6 +59,7 @@ import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
@@ -73,6 +74,7 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -100,6 +102,7 @@ import javax.inject.Inject
 internal class MessageDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val messageDetailsRepository: MessageDetailsRepository,
+    private val messageRepository: MessageRepository,
     private val userManager: UserManager,
     private val contactsRepository: ContactsRepository,
     private val labelRepository: LabelRepository,
@@ -123,7 +126,20 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val messageRenderer
         by lazy { messageRendererFactory.create(viewModelScope, messageId) }
 
-    lateinit var message: LiveData<Message>
+    val messageFlow: Flow<Message?> =
+        userManager.primaryUserId
+            .flatMapLatest { userId ->
+                if (userId != null) {
+                    messageRepository.findMessage(userId, messageId)
+                } else {
+                    emptyFlow()
+                }
+            }
+
+    val message: LiveData<Message?> =
+        messageFlow.asLiveData(viewModelScope.coroutineContext)
+
+
     lateinit var decryptedMessageData: MediatorLiveData<Message>
 
     lateinit var addressId: String
@@ -155,10 +171,10 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
 
     val labels: Flow<List<Label>> =
-        message.asFlow()
+        messageFlow
             .flatMapLatest { message ->
                 val userId = UserId(userManager.requireCurrentUserId().s)
-                val labelsIds = message.labelIDsNotIncludingLocations.map(::Id)
+                val labelsIds = (message?.labelIDsNotIncludingLocations ?: emptyList()).map(::Id)
                 labelRepository.findLabels(userId, labelsIds)
             }
 
@@ -229,7 +245,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private var areImagesDisplayed: Boolean = false
 
     init {
-        tryFindMessage()
+        observeDecryption()
         messageDetailsRepository.reloadDependenciesForUser(userManager.requireCurrentUserId())
 
         viewModelScope.launch {
@@ -239,16 +255,6 @@ internal class MessageDetailsViewModel @Inject constructor(
                 areImagesDisplayed = true
             }
         }
-    }
-
-    fun tryFindMessage() {
-        messageDetailsRepository.reloadDependenciesForUser(userManager.requireCurrentUserId())
-        message = if (isTransientMessage) {
-            messageDetailsRepository.findSearchMessageByIdAsync(messageId)
-        } else {
-            messageDetailsRepository.findMessageByIdAsync(messageId)
-        }
-        observeDecryption()
     }
 
     fun saveMessage() {

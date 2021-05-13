@@ -212,7 +212,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun continueSetup() {
-        viewModel.tryFindMessage()
         viewModel.message.observe(this, MessageObserver())
         viewModel.decryptedMessageData.observe(this, DecryptedMessageObserver())
 
