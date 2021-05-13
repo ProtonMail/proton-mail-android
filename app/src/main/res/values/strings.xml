@@ -784,6 +784,7 @@
 
     <string name="password_manager">Password management</string>
     <string name="recovery_email">Recovery email</string>
+    <string name="info_for_missing_functionality">Please log in through <a href="https://www.protonmail.com/">protonmail.com</a> and access your settings to edit this information.</string>
     <string name="storage">Mailbox size</string>
     <string name="storage_used">%1$s / %2$s</string>
 

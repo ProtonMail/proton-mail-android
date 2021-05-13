@@ -71,7 +71,6 @@ import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.mailbox.data.local.ConversationDao
-import ch.protonmail.android.mailbox.presentation.MailboxActivity
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.uiModel.SettingsItemUiModel
@@ -82,6 +81,7 @@ import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.startMailboxActivity
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialog
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.google.gson.Gson
 import timber.log.Timber
@@ -136,6 +136,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     lateinit var selectedAddress: Address
     var mDisplayName: String = ""
     var mSignature: String = ""
+
     @Deprecated("Use new User model", ReplaceWith("user"))
     lateinit var legacyUser: LegacyUser
     lateinit var user: User
@@ -146,8 +147,11 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         settingsAdapter.onItemClick = { settingItem ->
 
             if (settingItem.isSection.not() &&
-                (settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.DRILL_DOWN ||
-                    settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.BUTTON)) {
+                (
+                    settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.DRILL_DOWN ||
+                        settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.BUTTON
+                    )
+            ) {
                 selectItem(settingItem.settingId)
             }
         }
@@ -265,11 +269,15 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                     AppUtil.decorInAppIntent(Intent(this, AccountTypeActivity::class.java))
                 startActivity(accountTypeIntent)
             }
-            PASSWORD_MANAGEMENT -> {
-                TODO("startChangePasswordWorkflow")
-            }
+            PASSWORD_MANAGEMENT,
             RECOVERY_EMAIL -> {
-                TODO("startRecoverySetupWorkflow")
+                showInfoDialog(
+                    this,
+                    "",
+                    getString(R.string.info_for_missing_functionality)
+                ) { unit: Unit -> unit }
+                // TODO("startChangePasswordWorkflow")
+                // TODO("startrecoverysetupworkflow")
             }
             DEFAULT_EMAIL -> {
                 showSortAliasDialog()
@@ -451,7 +459,8 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
             SHOW_EMBEDDED_IMAGES,
             SHOW_REMOTE_IMAGES,
             SIGNATURE,
-            SNOOZE -> { /* ignored */ }
+            SNOOZE -> { /* ignored */
+            }
         }
     }
 

@@ -52,6 +52,7 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.usecase.model.FetchPaymentMethodsResult;
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import ch.protonmail.android.viewmodel.AccountTypeViewModel;
 import timber.log.Timber;
 
@@ -233,6 +234,12 @@ public class AccountTypeActivity extends BaseActivity {
 
     @OnClick(R.id.upgrade)
     public void onUpgrade() {
+        DialogUtils.Companion.showInfoDialog(
+                this,
+                "",
+                getString(R.string.info_for_missing_functionality),
+                unit -> unit
+        );
         /*
         Intent upgradeIntent = new Intent(this, UpsellingActivity.class);
         upgradeIntent.putExtra(UpsellingActivity.EXTRA_OPEN_UPGRADE_CONTAINER, true);
