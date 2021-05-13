@@ -32,7 +32,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.ListItemMailboxBinding
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
-import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
@@ -116,7 +115,6 @@ class MailboxItemView @JvmOverloads constructor(
 
     fun bind(
         mailboxUiItem: MailboxUiItem,
-        labels: List<LabelChipUiModel>,
         isMultiSelectionMode: Boolean,
         mailboxLocation: Constants.MessageLocationType,
         isBeingSent: Boolean,
@@ -183,7 +181,7 @@ class MailboxItemView @JvmOverloads constructor(
 
         expiration_image_view.isVisible = mailboxUiItem.expirationTime > 0
 
-        labelsLayout.setLabels(labels)
+        labelsLayout.setLabels(mailboxUiItem.labels)
     }
 
 }

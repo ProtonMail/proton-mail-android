@@ -19,24 +19,18 @@
 package ch.protonmail.android.adapters.messages
 
 import android.content.Context
-import android.graphics.Color
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
-import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
-import ch.protonmail.android.ui.view.LabelChipUiModel
-import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.views.messagesList.MailboxItemFooterView
 import ch.protonmail.android.views.messagesList.MailboxItemView
 import kotlinx.android.synthetic.main.layout_sender_initial.view.*
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
-import me.proton.core.util.kotlin.takeIfNotBlank
 
 class MailboxRecyclerViewAdapter(
     private val context: Context,
@@ -159,7 +153,6 @@ class MailboxRecyclerViewAdapter(
 
     private fun MailboxItemViewHolder.MessageViewHolder.bindMailboxItem(position: Int) {
         val mailboxItem = mailboxItems[position]
-        val itemLabels = mailboxItem.labelIds.mapNotNull { labels[it] }
 
         val pendingSend = pendingSendList?.find { it.messageId == mailboxItem.itemId }
         val isBeingSent = pendingSend != null && pendingSend.sent == null
@@ -167,7 +160,6 @@ class MailboxRecyclerViewAdapter(
 
         this.view.bind(
             mailboxItem,
-            itemLabels.toLabelChipUiModels(),
             selectedMailboxItemsIds.isNotEmpty(),
             mMailboxLocation,
             isBeingSent,
@@ -234,12 +226,4 @@ class MailboxRecyclerViewAdapter(
         return lastItemTimeMs / 1000
     }
 
-    private fun List<Label>.toLabelChipUiModels(): List<LabelChipUiModel> =
-        filterNot { it.exclusive }.map { label ->
-            val labelColor = label.color.takeIfNotBlank()
-                ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
-                ?: 0
-
-            LabelChipUiModel(Id(label.id), Name(label.name), labelColor)
-        }
 }
