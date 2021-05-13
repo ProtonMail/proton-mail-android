@@ -53,7 +53,7 @@ abstract class MessageDatabase : RoomDatabase() {
     abstract fun getDao(): MessageDao
     abstract fun getConversationDao(): ConversationDao
 
-    companion object : DatabaseFactory<MessageDatabase>(
+    companion object Factory : DatabaseFactory<MessageDatabase>(
         MessageDatabase::class,
         "MessagesDatabase.db"
     ) {

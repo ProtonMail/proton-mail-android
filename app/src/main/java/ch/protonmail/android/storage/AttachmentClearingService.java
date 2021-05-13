@@ -139,7 +139,7 @@ public class AttachmentClearingService extends ProtonJobIntentService {
             clearStorage();
             Context context = this;
             ContactDatabase.Companion.deleteDatabase(context, userId);
-            MessageDatabase.Companion.deleteDatabase(context, userId);
+            MessageDatabase.Factory.deleteDatabase(context, userId);
             NotificationDatabase.Companion.deleteDatabase(context, userId);
             CounterDatabase.Companion.deleteDatabase(context, userId);
             AttachmentMetadataDatabase.Companion.deleteDatabase(context, userId);

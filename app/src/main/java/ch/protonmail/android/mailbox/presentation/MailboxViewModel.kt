@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.mailbox.presentation
 
+import android.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
@@ -32,10 +33,12 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.*
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchMessageCountsJob
@@ -46,9 +49,11 @@ import ch.protonmail.android.mailbox.domain.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
+import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.Event
+import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
@@ -57,7 +62,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.takeIfNotBlank
 import java.util.ArrayList
 import java.util.HashMap
 import javax.inject.Inject
@@ -77,6 +84,7 @@ class MailboxViewModel @Inject constructor(
     private val deleteMessage: DeleteMessage,
     private val dispatchers: DispatcherProvider,
     private val contactsRepository: ContactsRepository,
+    private val labelRepository: LabelRepository,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator,
     private val messageServiceScheduler: MessagesService.Scheduler,
@@ -327,10 +335,17 @@ class MailboxViewModel @Inject constructor(
         locationId: String
     ): List<MailboxUiItem> {
         val contacts = contactsRepository.findAllContactEmails().first()
+        val labels = labelRepository.getAllLabels(UserId(userId.s)).first()
+
         return conversations.map { conversation ->
             val lastMessageTimeMs = conversation.labels.find {
                 it.id == locationId
             }?.contextTime?.let { it * 1000 } ?: 0
+
+            val labelChipUiModels = conversation.labels
+                .mapNotNull { labelContext -> labels.find { it.id == labelContext.id } }
+                .toLabelChipUiModels()
+
             MailboxUiItem(
                 conversation.id,
                 conversation.senders.joinToString { getCorrespondentDisplayName(it, contacts) },
@@ -343,7 +358,7 @@ class MailboxViewModel @Inject constructor(
                 getDisplayMessageCount(conversation),
                 null,
                 false,
-                conversation.labels.map { it.id },
+                labelChipUiModels,
                 conversation.receivers.joinToString { it.name }
             )
         }
@@ -360,6 +375,7 @@ class MailboxViewModel @Inject constructor(
 
     private suspend fun messagesToMailboxItems(messages: List<Message>): List<MailboxUiItem> {
         val contacts = contactsRepository.findAllContactEmails().first()
+        val labels = labelRepository.getAllLabels(UserId(userId.s)).first()
 
         return messages.map { message ->
             val senderName = getSenderDisplayName(message, contacts)
@@ -371,6 +387,10 @@ class MailboxViewModel @Inject constructor(
                 message.isForwarded ?: false,
                 message.isInline,
             )
+
+            val labelChipUiModels = message.allLabelIDs
+                .mapNotNull { labelId -> labels.find { it.id == labelId } }
+                .toLabelChipUiModels()
 
             MailboxUiItem(
                 message.messageId!!,
@@ -384,7 +404,7 @@ class MailboxViewModel @Inject constructor(
                 null,
                 messageData,
                 message.deleted,
-                message.allLabelIDs,
+                labelChipUiModels,
                 message.toListStringGroupsAware
             )
         }
@@ -485,6 +505,15 @@ class MailboxViewModel @Inject constructor(
 
         jobManager.addJobInBackground(FetchMessageCountsJob(null))
     }
+
+    private fun List<Label>.toLabelChipUiModels(): List<LabelChipUiModel> =
+        filterNot { it.exclusive }.map { label ->
+            val labelColor = label.color.takeIfNotBlank()
+                ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
+                ?: 0
+
+            LabelChipUiModel(Id(label.id), Name(label.name), labelColor)
+        }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)
 }

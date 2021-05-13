@@ -20,8 +20,16 @@
 package ch.protonmail.android.data
 
 import ch.protonmail.android.data.local.model.Label
+import kotlinx.coroutines.flow.Flow
+import me.proton.core.domain.entity.UserId
 
 interface LabelRepository {
+
+    fun getAllLabels(userId: UserId): Flow<List<Label>>
+
+    suspend fun saveLabel(userId: UserId, label: Label)
+
+    @Deprecated("Save with userId", ReplaceWith("saveLabel(userId, label)"))
     suspend fun saveLabel(label: Label)
 
 }

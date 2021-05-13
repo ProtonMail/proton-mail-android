@@ -33,6 +33,7 @@ import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserViewMode
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
@@ -98,6 +99,7 @@ internal class ViewModelModule {
         deleteMessage: DeleteMessage,
         dispatchers: DispatcherProvider,
         contactsRepository: ContactsRepository,
+        labelRepository: LabelRepository,
         verifyConnection: VerifyConnection,
         networkConfigurator: NetworkConfigurator,
         messageServiceScheduler: MessagesService.Scheduler,
@@ -110,6 +112,7 @@ internal class ViewModelModule {
         deleteMessage,
         dispatchers,
         contactsRepository,
+        labelRepository,
         verifyConnection,
         networkConfigurator,
         messageServiceScheduler,

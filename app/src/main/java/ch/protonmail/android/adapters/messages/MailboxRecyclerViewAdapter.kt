@@ -63,7 +63,8 @@ class MailboxRecyclerViewAdapter(
 
         }
 
-    val checkedMailboxItems get() = selectedMailboxItemsIds.mapNotNull { mailboxItems.find { message -> message.itemId == it } }
+    val checkedMailboxItems get() =
+        selectedMailboxItemsIds.mapNotNull { mailboxItems.find { message -> message.itemId == it } }
 
     fun getItem(position: Int) = mailboxItems[position]
 
@@ -152,7 +153,6 @@ class MailboxRecyclerViewAdapter(
 
     private fun MailboxItemViewHolder.MessageViewHolder.bindMailboxItem(position: Int) {
         val mailboxItem = mailboxItems[position]
-        val itemLabels = mailboxItem.labelIds.mapNotNull { labels[it] }
 
         val pendingSend = pendingSendList?.find { it.messageId == mailboxItem.itemId }
         val isBeingSent = pendingSend != null && pendingSend.sent == null
@@ -160,7 +160,6 @@ class MailboxRecyclerViewAdapter(
 
         this.view.bind(
             mailboxItem,
-            itemLabels,
             selectedMailboxItemsIds.isNotEmpty(),
             mMailboxLocation,
             isBeingSent,
@@ -226,4 +225,5 @@ class MailboxRecyclerViewAdapter(
         }
         return lastItemTimeMs / 1000
     }
+
 }

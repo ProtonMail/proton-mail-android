@@ -19,6 +19,8 @@
 
 package ch.protonmail.android.mailbox.presentation.model
 
+import ch.protonmail.android.ui.view.LabelChipUiModel
+
 data class MailboxUiItem(
     val itemId: String,
     val senderName: String,
@@ -31,7 +33,7 @@ data class MailboxUiItem(
     val messagesCount: Int?,
     val messageData: MessageData?,
     val isDeleted: Boolean,
-    val labelIds: List<String>,
+    val labels: List<LabelChipUiModel>,
     val recipients: String
 )
 

@@ -56,7 +56,7 @@ public class FetchUpdatesJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        MessageDao messageDao = MessageDatabase.Companion.getInstance(getApplicationContext(), getUserId()).getDao();
+        MessageDao messageDao = MessageDatabase.Factory.getInstance(getApplicationContext(), getUserId()).getDao();
         if (!getQueueNetworkUtil().isConnected()) {
             Logger.doLog(TAG_FETCH_UPDATES_JOB, "no network cannot fetch updates");
             AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.NO_NETWORK));

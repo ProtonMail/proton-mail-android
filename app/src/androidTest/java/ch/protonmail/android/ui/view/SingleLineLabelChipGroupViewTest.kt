@@ -120,7 +120,7 @@ class SingleLineLabelChipGroupViewTest : ViewTest<SingleLineLabelChipGroupView>(
         chipGroupView.setLabels(labels)
 
         // then
-        onMoreView().check(matches(withText("${labels.size - 1}+")))
+        onMoreView().check(matches(withText("+${labels.size - 1}")))
     }
 
     private fun onLabelView(): ViewInteraction =

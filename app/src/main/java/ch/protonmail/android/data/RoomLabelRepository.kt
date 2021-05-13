@@ -19,16 +19,32 @@
 
 package ch.protonmail.android.data
 
+import android.content.Context
 import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.domain.entity.Id
+import kotlinx.coroutines.flow.Flow
+import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 class RoomLabelRepository @Inject constructor(
+    private val context: Context,
+    private val messageDatabaseFactory: MessageDatabase.Factory,
     private val messageDao: MessageDao
 ) : LabelRepository {
+
+    override fun getAllLabels(userId: UserId): Flow<List<Label>> =
+        getDao(userId).getAllLabels()
+
+    override suspend fun saveLabel(userId: UserId, label: Label) {
+        getDao(userId).saveLabel(label)
+    }
 
     override suspend fun saveLabel(label: Label) {
         messageDao.saveLabel(label)
     }
 
+    private fun getDao(userId: UserId): MessageDao =
+        messageDatabaseFactory.getInstance(context, Id(userId.id)).getDao()
 }

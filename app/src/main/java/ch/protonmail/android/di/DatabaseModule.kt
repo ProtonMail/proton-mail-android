@@ -71,6 +71,10 @@ object DatabaseModule {
         database.getDao()
 
     @Provides
+    fun provideMessageDatabaseFactory(): MessageDatabase.Factory =
+        MessageDatabase.Factory
+
+    @Provides
     fun provideMessageDatabase(
         context: Context,
         @CurrentUserId userId: Id
