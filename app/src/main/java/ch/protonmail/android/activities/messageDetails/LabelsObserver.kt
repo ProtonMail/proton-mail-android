@@ -19,13 +19,13 @@
 package ch.protonmail.android.activities.messageDetails
 
 import android.graphics.Color
-import android.util.TypedValue
 import android.view.View
 import androidx.lifecycle.Observer
 import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.views.messageDetails.FolderIconView
-import ch.protonmail.android.views.messagesList.ItemLabelMarginlessSmallView
 
 // TODO change to immutable list after changing all uses to kotlin
 
@@ -39,44 +39,22 @@ class LabelsObserver(
 
     override fun onChanged(labels: List<Label>?) {
         adapter.labelsList = labels
-        if (labels.isNullOrEmpty()) {
+        val nonExclusiveLabels = labels?.filterNot { it.exclusive }
+
+        if (nonExclusiveLabels.isNullOrEmpty()) {
             adapter.labelsView.visibility = View.GONE
             return
-        } else {
-            if (labels.any { it.exclusive.not() }) {
-                adapter.labelsView.visibility = View.VISIBLE
-            } else {
-                adapter.labelsView.visibility = View.GONE
-            }
         }
-
-        val labelView = adapter.labelsView
-        val context = labelView.context
-        labelView.removeAllViews()
-        val strokeWidth = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 1f,
-            labelView.resources.displayMetrics
-        ).toInt()
-        for (label in labels) {
-            if (label.exclusive) {
-                val colorString = label.color
-                val folderIcon = FolderIconView(context).apply {
-                    setColorFilter(Color.parseColor(UiUtil.normalizeColor(colorString)))
-                }
-                labelView.addView(folderIcon, 0)
-                folderIds.add(label.id)
-            } else {
-                val labelItemView = ItemLabelMarginlessSmallView(context)
-                labelView.addView(labelItemView)
-                val name = label.name
-                val colorString = label.color
-                val color = if (colorString.isNotEmpty()) {
-                    Color.parseColor(UiUtil.normalizeColor(colorString))
-                } else {
-                    0
-                }
-                labelItemView.bind(name, color, strokeWidth)
-            }
-        }
+        adapter.labelsView.visibility = View.VISIBLE
+        adapter.labelsView.setLabels(nonExclusiveLabels.toLabelChipUiModels())
     }
+
+    private fun List<Label>.toLabelChipUiModels(): List<LabelChipUiModel> =
+        map { label ->
+            val color =
+                if (label.color.isNotBlank()) Color.parseColor(UiUtil.normalizeColor(label.color))
+                else Color.BLACK
+
+            LabelChipUiModel(Id(label.id), Name(label.name), color)
+        }
 }

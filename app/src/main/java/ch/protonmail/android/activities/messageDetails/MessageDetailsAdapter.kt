@@ -42,6 +42,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.views.PMWebViewClient
@@ -49,7 +50,6 @@ import ch.protonmail.android.views.messageDetails.AttachmentsView
 import ch.protonmail.android.views.messageDetails.LoadContentButton
 import ch.protonmail.android.views.messageDetails.MessageDetailsExpirationInfoView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
-import com.google.android.material.chip.ChipGroup
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_header.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
@@ -78,7 +78,7 @@ class MessageDetailsAdapter(
     var attachmentsView = AttachmentsView(context)
     var attachmentsViewDivider = View(context)
     var expirationInfoView = MessageDetailsExpirationInfoView(context)
-    var labelsView = ChipGroup(context)
+    var labelsView = SingleLineLabelChipGroupView(context)
     var messageDetailsView = View(context)
     var messageDetailsHeaderView = MessageDetailsHeaderView(context)
 
@@ -156,7 +156,7 @@ class MessageDetailsAdapter(
         ) {
             messageDetailsView = itemView.messageDetailsView
             messageDetailsHeaderView = itemView.headerView
-            labelsView = itemView.labels
+            labelsView = itemView.labelsCollapsedGroupView
             attachmentsView = itemView.attachmentsView
             attachmentsViewDivider = itemView.attachmentsDividerView
             expirationInfoView = itemView.expirationInfoView
@@ -340,7 +340,16 @@ class MessageDetailsAdapter(
         webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
         webSettings.setAppCacheEnabled(false)
         webSettings.saveFormData = false
-        webView.setOnLongClickListener(MessageBodyOnLongClickListener())
+        webView.setOnLongClickListener {
+            val messageBodyWebView = it as WebView
+            val result = messageBodyWebView.hitTestResult
+            if (result.type == WebView.HitTestResult.SRC_ANCHOR_TYPE) {
+                (context as Activity).openContextMenu(messageBodyWebView)
+                true
+            } else {
+                false
+            }
+        }
     }
 
     private fun setUpSpamScoreView(spamScore: Int, spamScoreView: TextView) {
@@ -362,20 +371,8 @@ class MessageDetailsAdapter(
             100 -> R.string.spam_score_100
             101 -> R.string.spam_score_101
             102 -> R.string.spam_score_102
-            else -> throw RuntimeException("Unknown spam score.")
+            else -> throw IllegalArgumentException("Unknown spam score.")
         }
     }
 
-    private inner class MessageBodyOnLongClickListener : View.OnLongClickListener {
-
-        override fun onLongClick(v: View): Boolean {
-            val messageBodyWebView = v as WebView
-            val result = messageBodyWebView.hitTestResult
-            if (result.type == WebView.HitTestResult.SRC_ANCHOR_TYPE) {
-                (context as Activity).openContextMenu(messageBodyWebView)
-                return true
-            }
-            return false
-        }
-    }
 }

@@ -26,9 +26,13 @@ import android.text.format.Formatter
 import android.text.method.LinkMovementMethod
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.details.RecipientContextMenuFactory
@@ -37,12 +41,13 @@ import ch.protonmail.android.api.models.RecipientType
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.databinding.LayoutMessageDetailsHeaderBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.ui.locks.SenderLockIcon
-import kotlinx.android.synthetic.main.layout_message_details_header.view.*
-import me.proton.core.presentation.utils.inflate
+import ch.protonmail.android.views.messagesList.SenderInitialView
 
 private const val MARGIN_TOP_LABELS_VIEW_EXPANDED = 16F
 private const val MARGIN_TOP_LABELS_VIEW_COLLAPSED = 8F
@@ -56,8 +61,83 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
+    private val collapsedHeaderGroup: Group
+    private val expandedHeaderGroup: Group
+    private val expandCollapseChevronImageView: ImageView
+
+    private val senderInitialView: SenderInitialView
+    private val senderNameTextView: TextView
+    private val senderEmailTextView: TextView
+
+    private val recipientsCollapsedTextView: TextView
+    private val toExpandedTextView: TextView
+    private val toRecipientsExpandedView: MessageDetailsRecipientsContainerView
+
+    private val ccExpandedTextView: TextView
+    private val ccRecipientsExpandedView: MessageDetailsRecipientsContainerView
+
+    private val bccExpandedTextView: TextView
+    private val bccRecipientsExpandedView: MessageDetailsRecipientsContainerView
+
+    private val labelsImageView: ImageView
+    private val labelsCollapsedGroupView: SingleLineLabelChipGroupView
+
+    private val timeDateTextView: TextView
+    private val timeDateExtendedTextView: TextView
+
+    private val locationImageView: ImageView
+    private val locationExtendedImageView: ImageView
+    private val locationTextView: TextView
+
+    private val storageTextView: TextView
+
+    private val lockIconTextView: TextView
+    private val lockIconExtendedTextView: TextView
+    private val encryptionInfoTextView: TextView
+    private val learnMoreTextView: TextView
+
     init {
-        inflate(R.layout.layout_message_details_header, true)
+        val binding = LayoutMessageDetailsHeaderBinding.inflate(
+            LayoutInflater.from(context),
+            this,
+            true
+        )
+        // region init views' references
+        collapsedHeaderGroup = binding.collapsedHeaderGroup
+        expandedHeaderGroup = binding.expandedHeaderGroup
+        expandCollapseChevronImageView = binding.expandCollapseChevronImageView
+
+        senderInitialView = binding.senderInitialView
+        senderNameTextView = binding.senderNameTextView
+        senderEmailTextView = binding.senderEmailTextView
+
+        recipientsCollapsedTextView = binding.recipientsCollapsedTextView
+        toExpandedTextView = binding.toExpandedTextView
+        toRecipientsExpandedView = binding.toRecipientsExpandedView
+
+        ccExpandedTextView = binding.ccExpandedTextView
+        ccRecipientsExpandedView = binding.ccRecipientsExpandedView
+        bccExpandedTextView = binding.bccExpandedTextView
+        bccRecipientsExpandedView = binding.bccRecipientsExpandedView
+
+        labelsImageView = binding.labelsImageView
+        labelsCollapsedGroupView = binding.labelsCollapsedGroupView
+
+        timeDateTextView = binding.timeDateTextView
+        timeDateExtendedTextView = binding.timeDateExtendedTextView
+
+        locationImageView = binding.locationImageView
+        locationExtendedImageView = binding.locationExtendedImageView
+        locationTextView = binding.locationTextView
+
+        storageTextView = binding.storageTextView
+
+        lockIconTextView = binding.lockIconTextView
+        lockIconExtendedTextView = binding.lockIconExtendedTextView
+        encryptionInfoTextView = binding.encryptionInfoTextView
+        learnMoreTextView = binding.learnMoreTextView
+        // endregion
+
         val typefacePgp = Typeface.createFromAsset(context.assets, "pgp-icons-android.ttf")
         lockIconTextView.typeface = typefacePgp
         lockIconExtendedTextView.typeface = typefacePgp
@@ -86,7 +166,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     }
 
     private fun changeLabelsViewTopMargin(isExpanded: Boolean) {
-        val newLayoutParams = labels.layoutParams as LayoutParams
+        val newLayoutParams = labelsCollapsedGroupView.layoutParams as LayoutParams
         newLayoutParams.topMargin = if (isExpanded) {
             TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
@@ -100,7 +180,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
                 this.resources.displayMetrics
             ).toInt()
         }
-        labels.layoutParams = newLayoutParams
+        labelsCollapsedGroupView.layoutParams = newLayoutParams
     }
 
     private fun getSenderText(message: Message): String {
