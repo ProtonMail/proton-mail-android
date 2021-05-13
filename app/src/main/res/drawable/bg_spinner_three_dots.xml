@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2020 Proton Technologies AG
   ~
@@ -17,13 +18,15 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="20"
-    android:viewportHeight="20">
-  <path
-      android:pathData="M17.125,12.125L10,5L2.875,12.125L3.75,13L10,6.775L16.25,13L17.125,12.125Z"
-      android:fillColor="@color/icon_norm"
-      android:fillType="evenOdd"/>
-</vector>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <layer-list>
+            <item
+                android:drawable="@drawable/ic_three_dots_horizontal"
+                android:width="@dimen/size_icon_m"
+                android:height="@dimen/size_icon_m"
+                android:gravity="center_vertical|right"
+                android:end="12dp"/>
+        </layer-list>
+    </item>
+</selector>

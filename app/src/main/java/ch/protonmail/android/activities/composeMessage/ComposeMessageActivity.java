@@ -28,6 +28,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -60,8 +61,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,10 +68,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
-import androidx.appcompat.app.ActionBar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.work.Data;
@@ -132,6 +132,7 @@ import ch.protonmail.android.data.local.model.ContactLabel;
 import ch.protonmail.android.data.local.model.LocalAttachment;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.MessageSender;
+import ch.protonmail.android.databinding.ActivityComposeMessage2Binding;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
@@ -167,7 +168,6 @@ import ch.protonmail.android.utils.extensions.SerializationUtils;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import ch.protonmail.android.utils.ui.locks.ComposerLockIcon;
-import ch.protonmail.android.views.ComposeEditText;
 import ch.protonmail.android.views.MessageExpirationView;
 import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
@@ -219,19 +219,19 @@ public class ComposeMessageActivity
     private static final char[] RECIPIENT_SEPARATORS = {',', ';', ' '};
     public static final String EXTRA_MESSAGE_IS_TRANSIENT = "is_transient";
     //endregion
+
     //region views
-    @BindView(R.id.root_layout)
-    View mRootLayout;
-    @BindView(R.id.scroll_view)
-    ScrollView mScrollView;
-    @BindView(R.id.cc_row)
-    View mCcRowView;
-    @BindView(R.id.cc_row_divider)
-    View mCcRowDividerView;
-    @BindView(R.id.bcc_row)
-    View mBccRowView;
-    @BindView(R.id.bcc_row_divider)
-    View mBccRowDividerView;
+    private Spinner fromAddressSpinner;
+
+    private MessageRecipientView toRecipientView;
+    private MessageRecipientView ccRecipientView;
+    private MessageRecipientView bccRecipientView;
+    
+    private EditText subjectEditText;
+    
+    private EditText messageBodyEditText;
+    private Button respondInlineButton;
+
     @BindView(R.id.message_expiration_view)
     MessageExpirationView mMessageExpirationView;
     @BindView(R.id.set_message_password)
@@ -240,39 +240,8 @@ public class ComposeMessageActivity
     ImageButton mSetMessageExpirationImageButton;
     @BindView(R.id.attachment_count)
     TextView mAttachmentCountTextView;
-    @BindView(R.id.to_recipients)
-    MessageRecipientView mToRecipientsView;
-    @BindView(R.id.cc_recipients)
-    MessageRecipientView mCcRecipientsView;
-    @BindView(R.id.bcc_recipients)
-    MessageRecipientView mBccRecipientsView;
-    @BindView(R.id.show_additional_rows)
-    ImageButton mShowAdditionalRowsImageButton;
-    @BindView(R.id.message_title)
-    EditText mMessageTitleEditText;
-    @BindView(R.id.scroll_parent)
-    View mScrollParentView;
-    @BindView(R.id.progress)
-    View mProgressView;
-    @BindView(R.id.progress_spinner)
-    View mProgressSpinner;
-    @BindView(R.id.message_web_view_container)
-    LinearLayout mWebViewContainer;
-    @BindView(R.id.message_body)
-    ComposeEditText mComposeBodyEditText;
-    @BindView(R.id.button_respond_inline)
-    Button mRespondInlineButton;
-    @BindView(R.id.respond_inline_layout)
-    View mRespondInlineLayout;
-    @BindView(R.id.quoted_header)
-    TextView mQuotedHeaderTextView;
-    @BindView(R.id.dummy_keyboard)
-    View mDummyKeyboardView;
-    @BindView(R.id.addresses_spinner)
-    Spinner mAddressesSpinner;
-    @BindView(R.id.scroll_content)
-    View mScrollContentView;
     //endregion
+
     private WebView mMessageBody;
     private PMWebViewClient pmWebViewClient;
     final String newline = "<br>";
@@ -301,9 +270,12 @@ public class ComposeMessageActivity
 
     Menu menu;
 
+    private ActivityComposeMessage2Binding binding;
+
     @Override
-    protected int getLayoutId() {
-        return R.layout.activity_compose_message;
+    protected View getRootView() {
+        binding = ActivityComposeMessage2Binding.inflate(getLayoutInflater());
+        return binding.getRoot();
     }
 
     @Override
@@ -326,25 +298,59 @@ public class ComposeMessageActivity
         onStoragePermissionGranted();
     }
 
+    // TODO
+    @OnClick(R.id.set_message_expiration)
+    public void onSetMessageExpiration() {
+        mMessageExpirationView.show();
+    }
+
+    // TODO
+    @OnClick(R.id.add_attachments)
+    public void onAddAttachments() {
+        UiUtil.hideKeyboard(this);
+        composeMessageViewModel.openAttachmentsScreen();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setUpActionBar();
-        composeMessageViewModel = ViewModelProviders.of(this, composeMessageViewModelFactory).get(ComposeMessageViewModel.class);
+        setSupportActionBar(binding.composerToolbar);
+
+        // Setup view references
+        fromAddressSpinner = binding.composerFromSpinner;
+        toRecipientView = binding.composerToRecipientView;
+        ccRecipientView = binding.composerCcRecipientView;
+        bccRecipientView = binding.composerBccRecipientView;
+        subjectEditText = binding.composerSubjectEditText;
+        messageBodyEditText = binding.composerMessageBodyEditText;
+        respondInlineButton = binding.composerRespondInlineButton;
+
+        // region setup click listeners
+        binding.composerExpandRecipientsButton.setOnClickListener((View view) -> {
+            mAreAdditionalRowsVisible = !mAreAdditionalRowsVisible;
+            setAdditionalRowVisibility(mAreAdditionalRowsVisible);
+        });
+        toRecipientView.setOnClickListener((View view) -> {
+            toRecipientView.requestFocus();
+            UiUtil.toggleKeyboard(this, toRecipientView);
+        });
+        // endregion
+        
+        composeMessageViewModel = new ViewModelProvider(this, composeMessageViewModelFactory).get(ComposeMessageViewModel.class);
         composeMessageViewModel.init(mHtmlProcessor);
         observeSetup();
 
-        mToRecipientsView.performBestGuess(false);
-        mCcRecipientsView.performBestGuess(false);
-        mBccRecipientsView.performBestGuess(false);
+        toRecipientView.performBestGuess(false);
+        ccRecipientView.performBestGuess(false);
+        bccRecipientView.performBestGuess(false);
 
-        mRootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new KeyboardManager());
+        binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new KeyboardManager());
 
         mMessageRecipientViewAdapter = new MessageRecipientViewAdapter(this);
-        initRecipientsView(mToRecipientsView, mMessageRecipientViewAdapter, Constants.RecipientLocationType.TO);
-        initRecipientsView(mCcRecipientsView, mMessageRecipientViewAdapter, Constants.RecipientLocationType.CC);
-        initRecipientsView(mBccRecipientsView, mMessageRecipientViewAdapter, Constants.RecipientLocationType.BCC);
-        mMessageTitleEditText.setSelection(mMessageTitleEditText.getText().length(), mMessageTitleEditText.getText().length());
+        initRecipientsView(toRecipientView, mMessageRecipientViewAdapter, Constants.RecipientLocationType.TO);
+        initRecipientsView(ccRecipientView, mMessageRecipientViewAdapter, Constants.RecipientLocationType.CC);
+        initRecipientsView(bccRecipientView, mMessageRecipientViewAdapter, Constants.RecipientLocationType.BCC);
+        subjectEditText.setSelection(subjectEditText.getText().length(), subjectEditText.getText().length());
 
         mMessageBody = new WebView(this);
         pmWebViewClient = new PMWebViewClient(mUserManager, this, true);
@@ -361,12 +367,11 @@ public class ComposeMessageActivity
         webSettings.setBuiltInZoomControls(true);
         webSettings.setPluginState(WebSettings.PluginState.OFF);
 
-        mWebViewContainer.addView(mMessageBody);
+        binding.composerQuotedMessageContainer.addView(mMessageBody);
 
-        mComposeBodyEditText.setOnKeyListener(new ComposeBodyChangeListener());
-        mScrollParentView.setOnTouchListener(new ParentViewScrollListener());
-        mRespondInlineButton.setOnClickListener(new RespondInlineButtonClickListener());
-        mMessageTitleEditText.setOnEditorActionListener(new MessageTitleEditorActionListener());
+        messageBodyEditText.setOnKeyListener(new ComposeBodyChangeListener());
+        respondInlineButton.setOnClickListener(new RespondInlineButtonClickListener());
+        subjectEditText.setOnEditorActionListener(new MessageTitleEditorActionListener());
 
         Intent intent = getIntent();
         mAction = intent.getAction();
@@ -376,24 +381,24 @@ public class ComposeMessageActivity
             initialiseActivityOnFirstStart(intent, extras, type);
         } else {
             initialiseActivityOnFirstStart(intent, savedInstanceState, type);
-            setRespondInlineVisibility(!TextUtils.isEmpty(mComposeBodyEditText.getText()));
+            setRespondInlineVisibility(!TextUtils.isEmpty(messageBodyEditText.getText()));
         }
         try {
             if (Arrays.asList(Constants.MessageActionType.FORWARD, Constants.MessageActionType.REPLY, Constants.MessageActionType.REPLY_ALL)
                     .contains(composeMessageViewModel.get_actionId()) || extras.getBoolean(EXTRA_MAIL_TO)) {
                 // upload attachments if using pgp/mime
-                composeMessageViewModel.setBeforeSaveDraft(composeMessageViewModel.getMessageDataResult().isPGPMime(), mComposeBodyEditText.getText().toString());
+                composeMessageViewModel.setBeforeSaveDraft(composeMessageViewModel.getMessageDataResult().isPGPMime(), messageBodyEditText.getText().toString());
             }
         } catch (Exception exc) {
             Timber.tag("588").e(exc, "Exception on create (upload attachments)");
 
         }
 
-        mAddressesSpinner.getBackground().setColorFilter(getResources().getColor(R.color.new_purple), PorterDuff.Mode.SRC_ATOP);
+        fromAddressSpinner.getBackground().setColorFilter(getResources().getColor(R.color.new_purple), PorterDuff.Mode.SRC_ATOP);
         List<String> senderAddresses = composeMessageViewModel.getSenderAddresses();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item_black, senderAddresses);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mAddressesSpinner.setAdapter(adapter);
+        fromAddressSpinner.setAdapter(adapter);
 
         if (!TextUtils.isEmpty(composeMessageViewModel.getMessageDataResult().getAddressId())) {
             mSelectedAddressPosition = composeMessageViewModel.getPositionByAddressId();
@@ -410,7 +415,7 @@ public class ComposeMessageActivity
             if (!TextUtils.isEmpty(composeMessageViewModel.getMessageDataResult().getAddressEmailAlias())) {
                 mSelectedAddressPosition++; // if alias is on the list, index is actually 1 more than usual
             }
-            composeMessageViewModel.setSenderAddressIdByEmail(mAddressesSpinner.getAdapter().getItem(mSelectedAddressPosition).toString());
+            composeMessageViewModel.setSenderAddressIdByEmail(fromAddressSpinner.getAdapter().getItem(mSelectedAddressPosition).toString());
             final SharedPreferences prefs = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
             boolean dialogShowed = prefs.getBoolean(Constants.Prefs.PREF_PM_ADDRESS_CHANGED, false);
             if (!dialogShowed && !isFinishing()) {
@@ -419,11 +424,11 @@ public class ComposeMessageActivity
             mUpdateDraftPmMeChanged = true;
         }
 
-        mAddressesSpinner.setSelection(mSelectedAddressPosition);
+        fromAddressSpinner.setSelection(mSelectedAddressPosition);
 
-        mAddressesSpinner.getViewTreeObserver().addOnGlobalLayoutListener(new AddressSpinnerGlobalLayoutListener());
+        fromAddressSpinner.getViewTreeObserver().addOnGlobalLayoutListener(new AddressSpinnerGlobalLayoutListener());
         askForPermission = true;
-        composeMessageViewModel.setSignature(composeMessageViewModel.getSignatureByEmailAddress((String) mAddressesSpinner.getSelectedItem()));
+        composeMessageViewModel.setSignature(composeMessageViewModel.getSignatureByEmailAddress((String) fromAddressSpinner.getSelectedItem()));
     }
 
     private void observeSetup() {
@@ -445,7 +450,7 @@ public class ComposeMessageActivity
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show());
         composeMessageViewModel.getSavingDraftComplete().observe(this, event -> {
             if (mUpdateDraftPmMeChanged) {
-                composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
+                composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
                 mUpdateDraftPmMeChanged = false;
             }
             disableSendButton(false);
@@ -461,7 +466,7 @@ public class ComposeMessageActivity
 
         composeMessageViewModel.getFetchMessageDetailsEvent().observe(this, messageBuilderDataEvent -> {
             try {
-                mProgressView.setVisibility(View.GONE);
+                binding.composerProgressLayout.setVisibility(View.GONE);
                 MessageBuilderData messageBuilderData = messageBuilderDataEvent.getContentIfNotHandled();
                 if (messageBuilderData != null) {
                     String mimeType = messageBuilderData.getMessage().getMimeType();
@@ -472,7 +477,7 @@ public class ComposeMessageActivity
                                     getString(R.string.reply_prefix_on),
                                     DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
                 }
-                composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
+                composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
             } catch (Exception exc) {
                 Timber.tag("588").e(exc, "Exception on fetch message details event");
             }
@@ -502,12 +507,11 @@ public class ComposeMessageActivity
             if (!TextUtils.isEmpty(messageId) && !replyFromGcm) {
                 // already saved draft trying to edit here
                 composeMessageViewModel.setDraftId(messageId);
-                mProgressView.setVisibility(View.VISIBLE);
-                mProgressSpinner.setVisibility(View.VISIBLE);
+                binding.composerProgressLayout.setVisibility(View.VISIBLE);
                 if (!TextUtils.isEmpty(composeMessageViewModel.getMessageDataResult().getAddressId())) {
                     mSelectedAddressPosition = composeMessageViewModel.getPositionByAddressId();
                 }
-                mAddressesSpinner.setSelection(mSelectedAddressPosition);
+                fromAddressSpinner.setSelection(mSelectedAddressPosition);
 
                 composeMessageViewModel.setupEditDraftMessage(messageId, getString(R.string.composer_group_count_of));
                 composeMessageViewModel.findDraftMessageById();
@@ -516,19 +520,19 @@ public class ComposeMessageActivity
                 if (extras.containsKey(EXTRA_TO_RECIPIENTS) || extras.containsKey(EXTRA_TO_RECIPIENT_GROUPS)) {
                     List<MessageRecipient> recipientGroups = (List<MessageRecipient>) extras.getSerializable(EXTRA_TO_RECIPIENT_GROUPS);
                     if (recipientGroups != null && recipientGroups.size() > 0) {
-                        addRecipientsToView(recipientGroups, mToRecipientsView);
+                        addRecipientsToView(recipientGroups, toRecipientView);
                     }
                     String[] recipientEmails = extras.getStringArray(EXTRA_TO_RECIPIENTS);
                     if (recipientEmails != null && recipientEmails.length > 0) {
-                        addStringRecipientsToView(new ArrayList<>(Arrays.asList(recipientEmails)), mToRecipientsView);
+                        addStringRecipientsToView(new ArrayList<>(Arrays.asList(recipientEmails)), toRecipientView);
                     }
-                    mComposeBodyEditText.requestFocus();
+                    messageBodyEditText.requestFocus();
                 } else {
                     checkPermissionsAndKeyboardToggle();
                 }
                 if (extras.containsKey(EXTRA_CC_RECIPIENTS)) {
                     String[] recipientEmails = extras.getStringArray(EXTRA_CC_RECIPIENTS);
-                    addStringRecipientsToView(new ArrayList<>(Arrays.asList(recipientEmails)), mCcRecipientsView);
+                    addStringRecipientsToView(new ArrayList<>(Arrays.asList(recipientEmails)), ccRecipientView);
                     mAreAdditionalRowsVisible = true;
                     focusRespondInline();
                 }
@@ -545,7 +549,7 @@ public class ComposeMessageActivity
                     composeMessageViewModel.setEmbeddedAttachmentList(extras.getParcelableArrayList(EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS));
                 }
                 String messageTitle = extras.getString(EXTRA_MESSAGE_TITLE, "");
-                mMessageTitleEditText.setText(messageTitle);
+                subjectEditText.setText(messageTitle);
 
                 Constants.MessageActionType messageActionType = (Constants.MessageActionType) extras.getSerializable(EXTRA_ACTION_ID);
                 composeMessageViewModel.setupComposingNewMessage(messageActionType != null ? messageActionType : Constants.MessageActionType.NONE,
@@ -605,7 +609,7 @@ public class ComposeMessageActivity
             setMessageBody();
         } else if (extras == null || !extras.containsKey(EXTRA_MESSAGE_ID)) {
             // compose new message here
-            composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
+            composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
             setMessageBody();
         }
         if (Intent.ACTION_SEND.equals(mAction) && type != null) {
@@ -627,29 +631,20 @@ public class ComposeMessageActivity
                 DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
     }
 
-    private void setUpActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_close);
-            actionBar.setTitle("");
-        }
-    }
-
     private void onFetchEmailKeysEvent(List<FetchPublicKeysResult> results) {
         mSendingPressed = false;
-        mProgressView.setVisibility(View.GONE);
+        binding.composerProgressLayout.setVisibility(View.GONE);
         boolean isRetry = false;
         for (FetchPublicKeysResult result : results) {
             isRetry = isRetry || result.isSendRetryRequired();
             Map<String, String> keys = result.getKeysMap();
             Constants.RecipientLocationType location = result.getRecipientsType();
             if (location == Constants.RecipientLocationType.TO) {
-                mToRecipientsView.setEmailPublicKey(keys);
+                toRecipientView.setEmailPublicKey(keys);
             } else if (location == Constants.RecipientLocationType.CC) {
-                mCcRecipientsView.setEmailPublicKey(keys);
+                ccRecipientView.setEmailPublicKey(keys);
             } else if (location == Constants.RecipientLocationType.BCC) {
-                mBccRecipientsView.setEmailPublicKey(keys);
+                bccRecipientView.setEmailPublicKey(keys);
             }
         }
 
@@ -660,18 +655,19 @@ public class ComposeMessageActivity
     }
 
     private void focusRespondInline() {
-        new Handler().postDelayed(() -> mScrollView.scrollTo(0, mRespondInlineButton.getBottom()), 1000);
+        NestedScrollView scrollView = binding.composerScrollView;
+        scrollView.postDelayed(() -> scrollView.scrollTo(0, respondInlineButton.getBottom()), 1000);
     }
 
     private void setRespondInlineVisibility(boolean visible) {
         if (visible) {
-            mRespondInlineButton.setVisibility(View.VISIBLE);
+            respondInlineButton.setVisibility(View.VISIBLE);
             composeMessageViewModel.setIsRespondInlineButtonVisible(true);
-            mRespondInlineLayout.setVisibility(View.VISIBLE);
+            binding.composerRespondInlineButton.setVisibility(View.VISIBLE);
         } else {
-            mRespondInlineButton.setVisibility(View.GONE);
+            respondInlineButton.setVisibility(View.GONE);
             composeMessageViewModel.setIsRespondInlineButtonVisible(false);
-            mRespondInlineLayout.setVisibility(View.GONE);
+            binding.composerRespondInlineButton.setVisibility(View.GONE);
         }
     }
 
@@ -701,11 +697,11 @@ public class ComposeMessageActivity
 
     @Override
     public void recipientsSelected(@NonNull ArrayList<MessageRecipient> recipients, @Nonnull Constants.RecipientLocationType location) {
-        MessageRecipientView recipient = mToRecipientsView;
+        MessageRecipientView recipient = toRecipientView;
         if (location == Constants.RecipientLocationType.CC) {
-            recipient = mCcRecipientsView;
+            recipient = ccRecipientView;
         } else if (location == Constants.RecipientLocationType.BCC) {
-            recipient = mBccRecipientsView;
+            recipient = bccRecipientView;
         }
         addRecipientsToView(recipients, recipient);
     }
@@ -741,11 +737,11 @@ public class ComposeMessageActivity
         Uri mailtoUri = intent.getData();
         if (mailtoUri != null && MailToUtils.MAILTO_SCHEME.equals(mailtoUri.getScheme())) {
             MailToData mailToData = composeMessageViewModel.parseMailTo(intent.getDataString());
-            addStringRecipientsToView(mailToData.getAddresses(), mToRecipientsView);
+            addStringRecipientsToView(mailToData.getAddresses(), toRecipientView);
         } else {
             try {
                 ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
-                addStringRecipientsToView(emails, mToRecipientsView);
+                addStringRecipientsToView(emails, toRecipientView);
             } catch (Exception e) {
                 Timber.e(e, "Extract mail to getting extra email");
             }
@@ -762,26 +758,26 @@ public class ComposeMessageActivity
         if (stringUri.startsWith(MailToUtils.MAILTO_SCHEME)) {
             MailToData mailToData = composeMessageViewModel.parseMailTo(stringUri);
             // Set recipient
-            addStringRecipientsToView(mailToData.getAddresses(), mToRecipientsView);
+            addStringRecipientsToView(mailToData.getAddresses(), toRecipientView);
             // Set cc
             if (!mailToData.getCc().isEmpty() || !mailToData.getBcc().isEmpty()) {
                 setAdditionalRowVisibility(true);
                 mAreAdditionalRowsVisible = true;
             }
-            addStringRecipientsToView(mailToData.getCc(), mCcRecipientsView);
+            addStringRecipientsToView(mailToData.getCc(), ccRecipientView);
             // Set bcc
-            addStringRecipientsToView(mailToData.getBcc(), mBccRecipientsView);
+            addStringRecipientsToView(mailToData.getBcc(), bccRecipientView);
             // Set subject
-            mMessageTitleEditText.setText(mailToData.getSubject());
+            subjectEditText.setText(mailToData.getSubject());
             // Set body
-            Editable oldBody = mComposeBodyEditText.getText();
+            Editable oldBody = messageBodyEditText.getText();
             Editable newBody = Editable.Factory.getInstance().newEditable(mailToData.getBody());
-            mComposeBodyEditText.setText(newBody.append(oldBody));
+            messageBodyEditText.setText(newBody.append(oldBody));
 
         } else {
             try {
                 ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
-                addStringRecipientsToView(emails, mToRecipientsView);
+                addStringRecipientsToView(emails, toRecipientView);
             } catch (Exception e) {
                 Timber.w(e, "Extract mail to getting extra email");
             }
@@ -794,23 +790,23 @@ public class ComposeMessageActivity
 
         String sharedSubject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
         if (!TextUtils.isEmpty(sharedSubject)) {
-            mMessageTitleEditText.setText(sharedSubject);
+            subjectEditText.setText(sharedSubject);
         }
         String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (!TextUtils.isEmpty(sharedText)) {
-            String composerText = mComposeBodyEditText.getText().toString();
+            String composerText = messageBodyEditText.getText().toString();
             String builder = sharedText + System.getProperty("line.separator") + composerText;
-            mComposeBodyEditText.setText(builder);
+            messageBodyEditText.setText(builder);
         }
         String contentToShare = contentToShareBuilder.toString();
         if (!TextUtils.isEmpty(contentToShare)) {
-            String composerText = mComposeBodyEditText.getText().toString();
+            String composerText = messageBodyEditText.getText().toString();
             String contentString = contentToShare + System.getProperty("line.separator") + composerText;
             Spannable contentSpannable = new SpannableString(contentString);
             Linkify.addLinks(contentSpannable, Linkify.ALL);
-            mComposeBodyEditText.setText(contentSpannable);
+            messageBodyEditText.setText(contentSpannable);
             setRespondInlineVisibility(false);
-            composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
+            composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
         }
         try {
             extractMailTo(intent);
@@ -970,11 +966,11 @@ public class ComposeMessageActivity
         outState.putString(STATE_DRAFT_ID, composeMessageViewModel.getDraftId());
         if (largeBody) {
             outState.putBoolean(EXTRA_MESSAGE_BODY_LARGE, true);
-            mBigContentHolder.setContent(mComposeBodyEditText.getText().toString());
+            mBigContentHolder.setContent(messageBodyEditText.getText().toString());
         } else {
             outState.putString(EXTRA_MESSAGE_BODY, composeMessageViewModel.getMessageDataResult().getInitialMessageContent());
         }
-        outState.putString(STATE_ADDED_CONTENT, composeMessageViewModel.getContent(mComposeBodyEditText.getText().toString()));
+        outState.putString(STATE_ADDED_CONTENT, composeMessageViewModel.getContent(messageBodyEditText.getText().toString()));
         outState.putString(EXTRA_SENDER_NAME, composeMessageViewModel.getMessageDataResult().getSenderName());
         outState.putString(EXTRA_SENDER_ADDRESS, composeMessageViewModel.getMessageDataResult().getSenderEmailAddress());
         outState.putLong(EXTRA_MESSAGE_TIMESTAMP, composeMessageViewModel.getMessageDataResult().getMessageTimestamp());
@@ -989,7 +985,7 @@ public class ComposeMessageActivity
         composeMessageViewModel.setDraftId(!TextUtils.isEmpty(draftId) ? draftId : "");
         composeMessageViewModel.setInitialMessageContent(savedInstanceState.getString(EXTRA_MESSAGE_BODY));
         // Dirty flag should be reset only once message queue has completed the setting of saved tokens
-        mToRecipientsView.post(() -> composeMessageViewModel.setIsDirty(savedInstanceState.getBoolean(STATE_DIRTY)));
+        toRecipientView.post(() -> composeMessageViewModel.setIsDirty(savedInstanceState.getBoolean(STATE_DIRTY)));
     }
 
     @Override
@@ -1014,7 +1010,7 @@ public class ComposeMessageActivity
                     },
                     unit -> {
                         UiUtil.hideKeyboard(ComposeMessageActivity.this);
-                        composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString(), UserAction.SAVE_DRAFT_EXIT);
+                        composeMessageViewModel.setBeforeSaveDraft(true, messageBodyEditText.getText().toString(), UserAction.SAVE_DRAFT_EXIT);
                         return unit;
                     },
                     false);
@@ -1049,29 +1045,29 @@ public class ComposeMessageActivity
     }
 
     private void onOptionSendHandler() {
-        boolean containsNonPMAndNonPGPRecipients = mToRecipientsView.includesNonProtonMailAndNonPGPRecipient() || mCcRecipientsView.includesNonProtonMailAndNonPGPRecipient() || mBccRecipientsView.includesNonProtonMailAndNonPGPRecipient();
-        boolean containsPgpRecipients = mToRecipientsView.containsPGPRecipient() || mCcRecipientsView.containsPGPRecipient() || mBccRecipientsView.containsPGPRecipient();
+        boolean containsNonPMAndNonPGPRecipients = toRecipientView.includesNonProtonMailAndNonPGPRecipient() || ccRecipientView.includesNonProtonMailAndNonPGPRecipient() || bccRecipientView.includesNonProtonMailAndNonPGPRecipient();
+        boolean containsPgpRecipients = toRecipientView.containsPGPRecipient() || ccRecipientView.containsPGPRecipient() || bccRecipientView.containsPGPRecipient();
         boolean showSection1 = mMessageExpirationView.getExpirationTime() > 0 && !mSetMessagePasswordButton.isPasswordSet() && containsNonPMAndNonPGPRecipients;
         boolean showSection2 = mMessageExpirationView.getExpirationTime() > 0 && containsPgpRecipients;
         if (showSection1 && showSection2) {
-            List<String> nonProtonMailRecipients = mToRecipientsView.getNonProtonMailAndNonPGPRecipients();
-            nonProtonMailRecipients.addAll(mCcRecipientsView.getNonProtonMailAndNonPGPRecipients());
-            nonProtonMailRecipients.addAll(mBccRecipientsView.getNonProtonMailAndNonPGPRecipients());
-            List<String> pgpRecipients = mToRecipientsView.getPGPRecipients();
-            pgpRecipients.addAll(mCcRecipientsView.getPGPRecipients());
-            pgpRecipients.addAll(mBccRecipientsView.getPGPRecipients());
+            List<String> nonProtonMailRecipients = toRecipientView.getNonProtonMailAndNonPGPRecipients();
+            nonProtonMailRecipients.addAll(ccRecipientView.getNonProtonMailAndNonPGPRecipients());
+            nonProtonMailRecipients.addAll(bccRecipientView.getNonProtonMailAndNonPGPRecipients());
+            List<String> pgpRecipients = toRecipientView.getPGPRecipients();
+            pgpRecipients.addAll(ccRecipientView.getPGPRecipients());
+            pgpRecipients.addAll(bccRecipientView.getPGPRecipients());
             showExpirationTimeError(nonProtonMailRecipients, pgpRecipients);
         } else if (showSection1) {
             // if expiration time is set, without password and there are recipients which are not PM users, we show the popup
-            List<String> nonProtonMailRecipients = mToRecipientsView.getNonProtonMailAndNonPGPRecipients();
-            nonProtonMailRecipients.addAll(mCcRecipientsView.getNonProtonMailAndNonPGPRecipients());
-            nonProtonMailRecipients.addAll(mBccRecipientsView.getNonProtonMailAndNonPGPRecipients());
+            List<String> nonProtonMailRecipients = toRecipientView.getNonProtonMailAndNonPGPRecipients();
+            nonProtonMailRecipients.addAll(ccRecipientView.getNonProtonMailAndNonPGPRecipients());
+            nonProtonMailRecipients.addAll(bccRecipientView.getNonProtonMailAndNonPGPRecipients());
             showExpirationTimeError(nonProtonMailRecipients, null);
         } else if (showSection2) {
             // we should add condition if the message sent is pgp
-            List<String> pgpRecipients = mToRecipientsView.getPGPRecipients();
-            pgpRecipients.addAll(mCcRecipientsView.getPGPRecipients());
-            pgpRecipients.addAll(mBccRecipientsView.getPGPRecipients());
+            List<String> pgpRecipients = toRecipientView.getPGPRecipients();
+            pgpRecipients.addAll(ccRecipientView.getPGPRecipients());
+            pgpRecipients.addAll(bccRecipientView.getPGPRecipients());
             showExpirationTimeError(null, pgpRecipients);
         } else {
             sendMessage(false);
@@ -1080,7 +1076,7 @@ public class ComposeMessageActivity
 
     private void sendMessage(boolean sendAnyway) {
         if (isMessageValid(sendAnyway)) {
-            if (mMessageTitleEditText.getText().toString().equals("")) {
+            if (subjectEditText.getText().toString().equals("")) {
                 DialogUtils.Companion.showInfoDialogWithTwoButtons(ComposeMessageActivity.this,
                         getString(R.string.compose),
                         getString(R.string.no_subject),
@@ -1088,12 +1084,12 @@ public class ComposeMessageActivity
                         getString(R.string.yes),
                         unit -> {
                             UiUtil.hideKeyboard(this);
-                            composeMessageViewModel.finishBuildingMessage(mComposeBodyEditText.getText().toString());
+                            composeMessageViewModel.finishBuildingMessage(messageBodyEditText.getText().toString());
                             return unit;
                         }, true);
             } else {
                 UiUtil.hideKeyboard(this);
-                composeMessageViewModel.finishBuildingMessage(mComposeBodyEditText.getText().toString());
+                composeMessageViewModel.finishBuildingMessage(messageBodyEditText.getText().toString());
             }
         }
     }
@@ -1129,9 +1125,9 @@ public class ComposeMessageActivity
                 FetchPublicKeysRequest emailKeysRequest = new FetchPublicKeysRequest(emailList, location, false);
                 composeMessageViewModel.startFetchPublicKeys(Collections.singletonList(emailKeysRequest));
                 GetSendPreferenceJob.Destination destination = GetSendPreferenceJob.Destination.TO;
-                if (recipientsView.equals(mCcRecipientsView)) {
+                if (recipientsView.equals(ccRecipientView)) {
                     destination = GetSendPreferenceJob.Destination.CC;
-                } else if (recipientsView.equals(mBccRecipientsView)) {
+                } else if (recipientsView.equals(bccRecipientView)) {
                     destination = GetSendPreferenceJob.Destination.BCC;
                 }
                 composeMessageViewModel.setIsDirty(true);
@@ -1176,7 +1172,7 @@ public class ComposeMessageActivity
 
     private void fillMessageFromUserInputs(@NonNull Message message, boolean isDraft) {
         message.setMessageId(composeMessageViewModel.getDraftId());
-        String subject = mMessageTitleEditText.getText().toString();
+        String subject = subjectEditText.getText().toString();
         if (TextUtils.isEmpty(subject)) {
             subject = getString(R.string.empty_subject);
         } else {
@@ -1191,8 +1187,8 @@ public class ComposeMessageActivity
             Constants.MessageActionType messageActionType = Constants.MessageActionType.Companion.fromInt(actionType);
             if (messageActionType != Constants.MessageActionType.REPLY && messageActionType != Constants.MessageActionType.REPLY_ALL) {
                 try {
-                    message.setAddressID(user.getSenderAddressIdByEmail((String) mAddressesSpinner.getSelectedItem()));
-                    message.setSenderName(user.getSenderAddressNameByEmail((String) mAddressesSpinner.getSelectedItem()));
+                    message.setAddressID(user.getSenderAddressIdByEmail((String) fromAddressSpinner.getSelectedItem()));
+                    message.setSenderName(user.getSenderAddressNameByEmail((String) fromAddressSpinner.getSelectedItem()));
                 } catch (Exception exc) {
                     Timber.tag("588").e(exc, "Exception on fill message with user inputs");
                 }
@@ -1201,9 +1197,9 @@ public class ComposeMessageActivity
                 message.setSenderName(user.getDisplayName());
             }
         }
-        message.setToList(mToRecipientsView.getMessageRecipients());
-        message.setCcList(mCcRecipientsView.getMessageRecipients());
-        message.setBccList(mBccRecipientsView.getMessageRecipients());
+        message.setToList(toRecipientView.getMessageRecipients());
+        message.setCcList(ccRecipientView.getMessageRecipients());
+        message.setBccList(bccRecipientView.getMessageRecipients());
         message.setDecryptedBody(composeMessageViewModel.getMessageDataResult().getContent());
         message.setEmbeddedImagesArray(composeMessageViewModel.getMessageDataResult().getContent());
         message.setIsEncrypted(MessageEncryption.INTERNAL);
@@ -1238,13 +1234,13 @@ public class ComposeMessageActivity
 
     private boolean isMessageValid(boolean sendAnyway) {
 
-        mToRecipientsView.clearFocus();
-        mCcRecipientsView.clearFocus();
-        mBccRecipientsView.clearFocus();
-        if (isInvalidRecipientPresent(mToRecipientsView, mCcRecipientsView, mBccRecipientsView)) {
+        toRecipientView.clearFocus();
+        ccRecipientView.clearFocus();
+        bccRecipientView.clearFocus();
+        if (isInvalidRecipientPresent(toRecipientView, ccRecipientView, bccRecipientView)) {
             return false;
         }
-        int totalRecipients = mToRecipientsView.getRecipientCount() + mCcRecipientsView.getRecipientCount() + mBccRecipientsView
+        int totalRecipients = toRecipientView.getRecipientCount() + ccRecipientView.getRecipientCount() + bccRecipientView
                 .getRecipientCount();
         if (totalRecipients == 0) {
             TextExtensions.showToast(this, R.string.no_recipients_specified, Toast.LENGTH_LONG, Gravity.CENTER);
@@ -1257,9 +1253,9 @@ public class ComposeMessageActivity
             return false;
         }
         if (mSetMessagePasswordButton.isPasswordSet()) {
-            List<String> toMissingKeys = mToRecipientsView.addressesWithMissingKeys();
-            List<String> ccMissingKeys = mCcRecipientsView.addressesWithMissingKeys();
-            List<String> bccMissingKeys = mBccRecipientsView.addressesWithMissingKeys();
+            List<String> toMissingKeys = toRecipientView.addressesWithMissingKeys();
+            List<String> ccMissingKeys = ccRecipientView.addressesWithMissingKeys();
+            List<String> bccMissingKeys = bccRecipientView.addressesWithMissingKeys();
             boolean isValid = true;
             List<FetchPublicKeysRequest> keysRequests = new ArrayList<>();
             if (!toMissingKeys.isEmpty()) {
@@ -1283,8 +1279,7 @@ public class ComposeMessageActivity
             if (!isValid) {
                 if (mNetworkUtil.isConnected()) {
                     composeMessageViewModel.startFetchPublicKeys(keysRequests);
-                    mProgressView.setVisibility(View.VISIBLE);
-                    mProgressSpinner.setVisibility(View.VISIBLE);
+                    binding.composerProgressLayout.setVisibility(View.VISIBLE);
                     mSendingPressed = true;
                 } else {
                     // TODO: 3/10/17 update with message can not send
@@ -1303,46 +1298,16 @@ public class ComposeMessageActivity
 
     private boolean includesNonProtonMailRecipient() {
 
-        return mToRecipientsView.includesNonProtonMailRecipient()
-                || mCcRecipientsView.includesNonProtonMailRecipient()
-                || mBccRecipientsView.includesNonProtonMailRecipient();
-    }
-
-    @OnClick(R.id.show_additional_rows)
-    void toggleShowAdditionalRowsVisibility() {
-
-        mAreAdditionalRowsVisible = !mAreAdditionalRowsVisible;
-        setAdditionalRowVisibility(mAreAdditionalRowsVisible);
+        return toRecipientView.includesNonProtonMailRecipient()
+                || ccRecipientView.includesNonProtonMailRecipient()
+                || bccRecipientView.includesNonProtonMailRecipient();
     }
 
     private void setAdditionalRowVisibility(boolean show) {
-
-        mShowAdditionalRowsImageButton.setImageResource(show ? R.drawable.minus_compose : R.drawable.plus_compose);
+        final int icon = show ? R.drawable.ic_chevron_up : R.drawable.ic_chevron_down;
+        binding.composerExpandRecipientsButton.setImageResource(icon);
         final int visibility = show ? View.VISIBLE : View.GONE;
-        mCcRowView.setVisibility(visibility);
-        mCcRowDividerView.setVisibility(visibility);
-        mBccRowView.setVisibility(visibility);
-        mBccRowDividerView.setVisibility(visibility);
-    }
-
-    @OnClick(R.id.to)
-    public void onToClicked() {
-        mToRecipientsView.requestFocus();
-        UiUtil.toggleKeyboard(this, mToRecipientsView);
-    }
-
-    @OnClick(R.id.set_message_expiration)
-    public void onSetMessageExpiration() {
-        mMessageExpirationView.show();
-    }
-
-    private boolean addingMoreAttachments = false;
-
-    @OnClick(R.id.add_attachments)
-    public void onAddAttachments() {
-        addingMoreAttachments = true;
-        UiUtil.hideKeyboard(this);
-        composeMessageViewModel.openAttachmentsScreen();
+        binding.composerExpandedRecipientsGroup.setVisibility(visibility);
     }
 
     @Override
@@ -1350,7 +1315,6 @@ public class ComposeMessageActivity
         if (requestCode == REQUEST_CODE_ADD_ATTACHMENTS && resultCode == RESULT_OK) {
             Timber.d("ComposeMessageAct.onActivityResult Received add attachment response with result OK");
             askForPermission = false;
-            addingMoreAttachments = false;
             ArrayList<LocalAttachment> resultAttachmentList = data.getParcelableArrayListExtra(AddAttachmentsActivity.EXTRA_ATTACHMENT_LIST);
             ArrayList<LocalAttachment> listToSet = resultAttachmentList != null ? resultAttachmentList : new ArrayList<>();
             composeMessageViewModel.setAttachmentList(listToSet);
@@ -1365,7 +1329,7 @@ public class ComposeMessageActivity
                 if (attachmentExtra instanceof PostImportAttachmentEvent) {
                     onPostImportAttachmentEvent((PostImportAttachmentEvent) attachmentExtra);
                 }
-                composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
+                composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
             } else if (data.hasExtra(EXTRA_MESSAGE_DETAIL_EVENT) || data.hasExtra(EXTRA_DRAFT_DETAILS_EVENT)) {
                 FetchMessageDetailEvent messageDetailEvent = (FetchMessageDetailEvent) data.getSerializableExtra(EXTRA_MESSAGE_DETAIL_EVENT);
                 FetchDraftDetailEvent draftDetailEvent = (FetchDraftDetailEvent) data.getSerializableExtra(EXTRA_DRAFT_DETAILS_EVENT);
@@ -1376,8 +1340,8 @@ public class ComposeMessageActivity
                     onFetchDraftDetailEvent(draftDetailEvent);
                 }
             }
-            mToRecipientsView.requestFocus();
-            UiUtil.toggleKeyboard(this, mToRecipientsView);
+            toRecipientView.requestFocus();
+            UiUtil.toggleKeyboard(this, toRecipientView);
             super.onActivityResult(requestCode, resultCode, data);
             // endregion
         } else {
@@ -1387,7 +1351,7 @@ public class ComposeMessageActivity
     }
 
     private void afterAttachmentsAdded() {
-        composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
+        composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
         composeMessageViewModel.setIsDirty(true);
         renderViews();
     }
@@ -1434,9 +1398,9 @@ public class ComposeMessageActivity
                             },
                             unit -> {
                                 GetSendPreferenceJob.Destination destination = GetSendPreferenceJob.Destination.TO;
-                                if (recipientsView.equals(mCcRecipientsView)) {
+                                if (recipientsView.equals(ccRecipientView)) {
                                     destination = GetSendPreferenceJob.Destination.CC;
-                                } else if (recipientsView.equals(mBccRecipientsView)) {
+                                } else if (recipientsView.equals(bccRecipientView)) {
                                     destination = GetSendPreferenceJob.Destination.BCC;
                                 }
                                 composeMessageViewModel.startResignContactJobJob(entry.getKey(), entry.getValue(), destination);
@@ -1456,13 +1420,13 @@ public class ComposeMessageActivity
 
         switch (destination) {
             case TO:
-                return mToRecipientsView;
+                return toRecipientView;
             case CC:
-                return mCcRecipientsView;
+                return ccRecipientView;
             case BCC:
-                return mBccRecipientsView;
+                return bccRecipientView;
         }
-        return mToRecipientsView;
+        return toRecipientView;
     }
 
     @Subscribe
@@ -1513,7 +1477,7 @@ public class ComposeMessageActivity
 
     @Subscribe
     public void onFetchDraftDetailEvent(FetchDraftDetailEvent event) {
-        mProgressView.setVisibility(View.GONE);
+        binding.composerProgressLayout.setVisibility(View.GONE);
         if (event.success) {
             composeMessageViewModel.initSignatures();
             composeMessageViewModel.processSignature();
@@ -1540,8 +1504,7 @@ public class ComposeMessageActivity
         if (loadedMessage == null || !loadedMessage.isDownloaded()) {
             return;
         } else {
-            mScrollContentView.setVisibility(View.VISIBLE);
-            mProgressView.setVisibility(View.GONE);
+            binding.composerProgressLayout.setVisibility(View.GONE);
         }
         AddressCrypto crypto = Crypto.forAddress(mUserManager, mUserManager.requireCurrentUserId(), new Id(loadedMessage.getAddressID()));
         if (updateAttachments) {
@@ -1551,20 +1514,20 @@ public class ComposeMessageActivity
             return;
         }
         if (loadedMessage.getToList().size() != 0) {
-            mToRecipientsView.clear();
-            addRecipientsToView(loadedMessage.getToList(), mToRecipientsView);
+            toRecipientView.clear();
+            addRecipientsToView(loadedMessage.getToList(), toRecipientView);
         }
         if (loadedMessage.getCcList().size() != 0) {
-            mCcRecipientsView.clear();
-            addRecipientsToView(loadedMessage.getCcList(), mCcRecipientsView);
+            ccRecipientView.clear();
+            addRecipientsToView(loadedMessage.getCcList(), ccRecipientView);
             mAreAdditionalRowsVisible = true;
         }
         if (loadedMessage.getBccList().size() != 0) {
-            mBccRecipientsView.clear();
-            addRecipientsToView(loadedMessage.getBccList(), mBccRecipientsView);
+            bccRecipientView.clear();
+            addRecipientsToView(loadedMessage.getBccList(), bccRecipientView);
             mAreAdditionalRowsVisible = true;
         }
-        mMessageTitleEditText.setText(loadedMessage.getSubject());
+        subjectEditText.setText(loadedMessage.getSubject());
         String messageBody = loadedMessage.getMessageBody();
         try {
             TextDecryptionResult tct = crypto.decrypt(new CipherText(messageBody));
@@ -1577,7 +1540,7 @@ public class ComposeMessageActivity
             String mimeType = loadedMessage.getMimeType();
             setInlineContent(messageBody, false, mimeType != null && mimeType.equals(Constants.MIME_TYPE_PLAIN_TEXT));
         } else {
-            mWebViewContainer.setVisibility(View.VISIBLE);
+            binding.composerQuotedMessageContainer.setVisibility(View.VISIBLE);
             mMessageBody.setVisibility(View.VISIBLE);
             composeMessageViewModel.setIsMessageBodyVisible(true);
             mMessageBody.setFocusable(false);
@@ -1616,14 +1579,14 @@ public class ComposeMessageActivity
         final String originalMessageDividerString = getString(R.string.original_message_divider);
         if (clean && messageBody.contains(originalMessageDividerString)) {
             Spanned secondPart = UiUtil.fromHtml(messageBody.substring(messageBody.indexOf(originalMessageDividerString)));
-            mQuotedHeaderTextView.setText(secondPart);
+            binding.composerQuoteHeaderTextView.setText(secondPart);
             composeMessageViewModel.setQuotedHeader(secondPart);
             messageBody = messageBody.substring(0, messageBody.indexOf(originalMessageDividerString));
         }
         setRespondInlineVisibility(false);
         mMessageBody.setVisibility(View.GONE);
         composeMessageViewModel.setIsMessageBodyVisible(false);
-        mComposeBodyEditText.setVisibility(View.VISIBLE);
+        messageBodyEditText.setVisibility(View.VISIBLE);
         composeMessageViewModel.setContent(messageBody);
         setBodyContent(true, isPlainText);
     }
@@ -1745,14 +1708,14 @@ public class ComposeMessageActivity
             } else {
                 bodyText = UiUtil.fromHtml(content);
             }
-            mComposeBodyEditText.setText(bodyText);
+            messageBodyEditText.setText(bodyText);
         }
     }
 
     private void setMessageBodyInContainers(ComposeMessageViewModel.MessageBodySetup messageBodySetup) {
-        mComposeBodyEditText.setText(messageBodySetup.getComposeBody());
-        mWebViewContainer.setVisibility(messageBodySetup.getWebViewVisibility() ? View.VISIBLE : View.GONE);
-        mQuotedHeaderTextView.setText(composeMessageViewModel.getMessageDataResult().getQuotedHeader());
+        messageBodyEditText.setText(messageBodySetup.getComposeBody());
+        binding.composerQuotedMessageContainer.setVisibility(messageBodySetup.getWebViewVisibility() ? View.VISIBLE : View.GONE);
+        binding.composerQuoteHeaderTextView.setText(composeMessageViewModel.getMessageDataResult().getQuotedHeader());
         setRespondInlineVisibility(messageBodySetup.getRespondInlineVisibility());
         setBodyContent(messageBodySetup.getRespondInline(), messageBodySetup.isPlainText());
     }
@@ -1861,11 +1824,12 @@ public class ComposeMessageActivity
         @Override
         public void onGlobalLayout() {
 
-            int heightDiff = mRootLayout.getRootView().getHeight() - mRootLayout.getHeight();
+            ConstraintLayout rootLayout = binding.rootLayout;
+            int heightDiff = rootLayout.getRootView().getHeight() - rootLayout.getHeight();
             if (heightDiff > 150) {
-                mDummyKeyboardView.setVisibility(View.VISIBLE);
+                binding.dummyKeyboard.setVisibility(View.VISIBLE);
             } else {
-                mDummyKeyboardView.setVisibility(View.GONE);
+                binding.dummyKeyboard.setVisibility(View.GONE);
             }
         }
     }
@@ -1885,8 +1849,8 @@ public class ComposeMessageActivity
         @Override
         public boolean onTouch(View v, MotionEvent event) {
 
-            mComposeBodyEditText.setFocusableInTouchMode(true);
-            mComposeBodyEditText.requestFocus();
+            messageBodyEditText.setFocusableInTouchMode(true);
+            messageBodyEditText.requestFocus();
             return false;
         }
     }
@@ -1900,9 +1864,9 @@ public class ComposeMessageActivity
             mMessageBody.setVisibility(View.GONE);
             composeMessageViewModel.setIsMessageBodyVisible(false);
             mMessageBody.loadData("", "text/html; charset=utf-8", HTTP.UTF_8);
-            String composeContentBuilder = mComposeBodyEditText.getText().toString() + System.getProperty("line.separator") + mQuotedHeaderTextView.getText().toString() +
+            String composeContentBuilder = messageBodyEditText.getText().toString() + System.getProperty("line.separator") + binding.composerQuoteHeaderTextView.getText().toString() +
                     UiUtil.fromHtml((composeMessageViewModel.getMessageDataResult().getInitialMessageContent()));
-            mComposeBodyEditText.setText(composeContentBuilder);
+            messageBodyEditText.setText(composeContentBuilder);
         }
     }
 
@@ -1910,8 +1874,8 @@ public class ComposeMessageActivity
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
-            mMessageTitleEditText.clearFocus();
-            mComposeBodyEditText.requestFocus();
+            subjectEditText.clearFocus();
+            messageBodyEditText.requestFocus();
             return true;
         }
     }
@@ -1934,23 +1898,23 @@ public class ComposeMessageActivity
 
             // Here we are just handling the mAddressesSpinner
 
-            final ViewTreeObserver viewTreeObserver = mAddressesSpinner.getViewTreeObserver();
+            final ViewTreeObserver viewTreeObserver = fromAddressSpinner.getViewTreeObserver();
             viewTreeObserver.removeOnGlobalLayoutListener(this);
             skipInitial = 0;
-            mComposeBodyEditText.addTextChangedListener(typingListener);
-            mMessageTitleEditText.addTextChangedListener(typingListener);
-            mAddressesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            messageBodyEditText.addTextChangedListener(typingListener);
+            subjectEditText.addTextChangedListener(typingListener);
+            fromAddressSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if (!allowSpinnerListener) {
                         return;
                     }
                     composeMessageViewModel.setIsDirty(true);
-                    String email = (String) mAddressesSpinner.getItemAtPosition(position);
+                    String email = (String) fromAddressSpinner.getItemAtPosition(position);
                     boolean localAttachmentsListEmpty = composeMessageViewModel.getMessageDataResult().getAttachmentList().isEmpty();
                     if (!composeMessageViewModel.isPaidUser() && MessageUtils.INSTANCE.isPmMeAddress(email)) {
-                        mAddressesSpinner.setSelection(mSelectedAddressPosition);
-                        Snackbar snack = Snackbar.make(mRootLayout, String.format(getString(R.string.error_can_not_send_from_this_address), email), Snackbar.LENGTH_LONG);
+                        fromAddressSpinner.setSelection(mSelectedAddressPosition);
+                        Snackbar snack = Snackbar.make(binding.rootLayout, String.format(getString(R.string.error_can_not_send_from_this_address), email), Snackbar.LENGTH_LONG);
                         View snackView = snack.getView();
                         TextView tv = snackView.findViewById(com.google.android.material.R.id.snackbar_text);
                         tv.setTextColor(Color.WHITE);
@@ -1968,26 +1932,26 @@ public class ComposeMessageActivity
                         composeMessageViewModel.setSenderAddressIdByEmail(email);
                         Address address = composeMessageViewModel.getAddressById();
                         if (address.getSend() == 0) {
-                            mAddressesSpinner.setSelection(mSelectedAddressPosition);
+                            fromAddressSpinner.setSelection(mSelectedAddressPosition);
                             showCanNotSendDialog(address.getEmail());
                             return;
                         }
-                        String currentMail = mComposeBodyEditText.getText().toString();
+                        String currentMail = messageBodyEditText.getText().toString();
                         String newSignature = composeMessageViewModel.getNewSignature();
                         boolean newSignatureEmpty = TextUtils.isEmpty(newSignature) || TextUtils.isEmpty(UiUtil.fromHtml(newSignature).toString().trim());
                         boolean signatureEmpty = TextUtils.isEmpty(composeMessageViewModel.getMessageDataResult().getSignature()) || TextUtils.isEmpty(UiUtil.fromHtml(composeMessageViewModel.getMessageDataResult().getSignature()).toString().trim());
                         if (!newSignatureEmpty && !signatureEmpty) {
                             newSignature = composeMessageViewModel.calculateSignature(newSignature);
-                            mComposeBodyEditText.setText(currentMail.replace(UiUtil.fromHtml(composeMessageViewModel.getMessageDataResult().getSignature()), UiUtil.fromHtml(newSignature)));
+                            messageBodyEditText.setText(currentMail.replace(UiUtil.fromHtml(composeMessageViewModel.getMessageDataResult().getSignature()), UiUtil.fromHtml(newSignature)));
                             composeMessageViewModel.processSignature(newSignature);
                         } else if (newSignatureEmpty && !signatureEmpty) {
                             if (currentMail.contains(composeMessageViewModel.getMessageDataResult().getSignature())) {
-                                mComposeBodyEditText.setText(currentMail.replace("\n\n\n" + composeMessageViewModel.getMessageDataResult().getSignature(), ""));
+                                messageBodyEditText.setText(currentMail.replace("\n\n\n" + composeMessageViewModel.getMessageDataResult().getSignature(), ""));
                             } else {
                                 if (currentMail.contains(UiUtil.fromHtml(composeMessageViewModel.getMessageDataResult().getSignature().trim()))) {
-                                    mComposeBodyEditText.setText(currentMail.replace("\n\n\n" + UiUtil.fromHtml(composeMessageViewModel.getMessageDataResult().getSignature().trim()), ""));
+                                    messageBodyEditText.setText(currentMail.replace("\n\n\n" + UiUtil.fromHtml(composeMessageViewModel.getMessageDataResult().getSignature().trim()), ""));
                                 } else {
-                                    mComposeBodyEditText.setText(currentMail.replace(UiUtil.fromHtml(composeMessageViewModel.getMessageDataResult().getSignature()), ""));
+                                    messageBodyEditText.setText(currentMail.replace(UiUtil.fromHtml(composeMessageViewModel.getMessageDataResult().getSignature()), ""));
                                 }
                             }
                             composeMessageViewModel.setSignature("");
@@ -2000,11 +1964,11 @@ public class ComposeMessageActivity
                             } else {
                                 sb.append("\n\n\n" + newSignature);
                             }
-                            mComposeBodyEditText.setText(UiUtil.fromHtml(sb.toString().replace("\n", newline)));
+                            messageBodyEditText.setText(UiUtil.fromHtml(sb.toString().replace("\n", newline)));
                             composeMessageViewModel.processSignature(newSignature);
                         }
                         // Trigger Save Draft after changing sender to ensure attachments are encrypted with the right key
-                        composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
+                        composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
                     }
                 }
 
@@ -2087,7 +2051,7 @@ public class ComposeMessageActivity
                 result = postResultEvent.getContentIfNotHandled();
             }
             if (result != null && result.getStatus() == Status.SUCCESS) {
-                composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
+                composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
                 composeMessageViewModel.setIsDirty(true);
                 renderViews();
             }
@@ -2104,7 +2068,7 @@ public class ComposeMessageActivity
                 User user = mUserManager.requireCurrentLegacyUser();
                 String aliasAddress = composeMessageViewModel.getMessageDataResult().getAddressEmailAlias();
                 MessageSender messageSender;
-                if (aliasAddress != null && aliasAddress.equals(mAddressesSpinner.getSelectedItem())) { // it's being sent by alias
+                if (aliasAddress != null && aliasAddress.equals(fromAddressSpinner.getSelectedItem())) { // it's being sent by alias
                     messageSender = new MessageSender(user.getDisplayNameForAddress(composeMessageViewModel.getMessageDataResult().getAddressId()), composeMessageViewModel.getMessageDataResult().getAddressEmailAlias());
                 } else {
                     Address nonAliasAddress;
@@ -2138,7 +2102,7 @@ public class ComposeMessageActivity
             } else if (composeMessageViewModel.getActionType() == UserAction.FINISH_EDIT) {
                 mSendingInProgress = true;
                 //region prepare sending message
-                composeMessageViewModel.setMessagePassword(mSetMessagePasswordButton.getMessagePassword(), mSetMessagePasswordButton.getPasswordHint(), mSetMessagePasswordButton.isValid(), mMessageExpirationView.getExpirationTime(), mRespondInlineButton.getVisibility() == View.VISIBLE);
+                composeMessageViewModel.setMessagePassword(mSetMessagePasswordButton.getMessagePassword(), mSetMessagePasswordButton.getPasswordHint(), mSetMessagePasswordButton.isValid(), mMessageExpirationView.getExpirationTime(), respondInlineButton.getVisibility() == View.VISIBLE);
                 if (!composeMessageViewModel.getMessageDataResult().isPasswordValid()) {
                     TextExtensions.showToast(ComposeMessageActivity.this, R.string.eo_password_not_completed, Toast.LENGTH_LONG, Gravity.CENTER);
                     return;
@@ -2156,8 +2120,8 @@ public class ComposeMessageActivity
                 && !askForPermission) {
             UiUtil.hideKeyboard(this);
         } else {
-            mToRecipientsView.requestFocus();
-            UiUtil.toggleKeyboard(this, mToRecipientsView);
+            toRecipientView.requestFocus();
+            UiUtil.toggleKeyboard(this, toRecipientView);
         }
     }
 
@@ -2168,10 +2132,10 @@ public class ComposeMessageActivity
             ImageButton imageButton = item.getActionView().findViewById(R.id.send_button);
             if (disable) {
                 item.setEnabled(false);
-                imageButton.setBackgroundColor(R.color.white_30);
+                imageButton.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.shade_40)));
             } else {
                 item.setEnabled(true);
-                imageButton.setBackgroundResource(R.drawable.selector_circle_background_interaction_strong);
+                imageButton.setBackgroundTintList(null);
             }
         }
     }
