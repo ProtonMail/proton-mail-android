@@ -156,6 +156,7 @@
     <!-- nav drawer -->
     <dimen name="labels_horizontal_padding">8dp</dimen>
     <dimen name="labels_separator_padding">16dp</dimen>
+    <dimen name="navdrawer_width">300dp</dimen>
 
     <!-- composing -->
     <dimen name="right_sliding_offse">100dp</dimen>
