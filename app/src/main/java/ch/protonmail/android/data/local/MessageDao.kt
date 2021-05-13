@@ -435,7 +435,10 @@ abstract class MessageDao {
     abstract fun getAllLabelsNotExclusivePaged(): DataSource.Factory<Int, Label>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
-    abstract fun findAllLabelsWithIds(labelIds: List<String>): List<Label>
+    abstract fun findLabelsById(labelIds: List<String>): Flow<List<Label>>
+
+    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
+    abstract fun findLabelsByIdBlocking(labelIds: List<String>): List<Label>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
     abstract fun findAllLabelsWithIdsAsync(labelIds: List<String>): LiveData<List<Label>>

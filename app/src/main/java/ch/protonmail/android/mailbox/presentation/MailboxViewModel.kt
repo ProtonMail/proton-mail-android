@@ -335,7 +335,7 @@ class MailboxViewModel @Inject constructor(
         locationId: String
     ): List<MailboxUiItem> {
         val contacts = contactsRepository.findAllContactEmails().first()
-        val labels = labelRepository.getAllLabels(UserId(userId.s)).first()
+        val labels = labelRepository.findAllLabels(UserId(userId.s)).first()
 
         return conversations.map { conversation ->
             val lastMessageTimeMs = conversation.labels.find {
@@ -375,7 +375,7 @@ class MailboxViewModel @Inject constructor(
 
     private suspend fun messagesToMailboxItems(messages: List<Message>): List<MailboxUiItem> {
         val contacts = contactsRepository.findAllContactEmails().first()
-        val labels = labelRepository.getAllLabels(UserId(userId.s)).first()
+        val labels = labelRepository.findAllLabels(UserId(userId.s)).first()
 
         return messages.map { message ->
             val senderName = getSenderDisplayName(message, contacts)

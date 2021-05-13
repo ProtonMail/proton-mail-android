@@ -103,7 +103,7 @@ class MailboxViewModelTest : CoroutinesTest {
         val allLabels = (0..11).map {
             Label(id = "$it", name = "label $it", color = EMPTY_STRING)
         }
-        every { getAllLabels(any()) } returns flowOf(allLabels)
+        every { findAllLabels(any()) } returns flowOf(allLabels)
     }
 
     @RelaxedMockK

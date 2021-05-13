@@ -42,7 +42,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
-import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
+import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.views.PMWebViewClient
@@ -51,7 +51,6 @@ import ch.protonmail.android.views.messageDetails.LoadContentButton
 import ch.protonmail.android.views.messageDetails.MessageDetailsExpirationInfoView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
-import kotlinx.android.synthetic.main.layout_message_details_header.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
 import me.proton.core.util.kotlin.takeIfNotEmpty
 import org.apache.http.protocol.HTTP.UTF_8
@@ -78,11 +77,11 @@ class MessageDetailsAdapter(
     var attachmentsView = AttachmentsView(context)
     var attachmentsViewDivider = View(context)
     var expirationInfoView = MessageDetailsExpirationInfoView(context)
-    var labelsView = SingleLineLabelChipGroupView(context)
     var messageDetailsView = View(context)
     var messageDetailsHeaderView = MessageDetailsHeaderView(context)
 
-    var labelsList: List<Label>? = listOf()
+    private var allLabelsList: List<Label>? = listOf()
+    private var nonInclusiveLabelsList: List<LabelChipUiModel> = emptyList()
 
     init {
         val items = ArrayList<MessageDetailsListItem>()
@@ -156,14 +155,13 @@ class MessageDetailsAdapter(
         ) {
             messageDetailsView = itemView.messageDetailsView
             messageDetailsHeaderView = itemView.headerView
-            labelsView = itemView.labelsCollapsedGroupView
             attachmentsView = itemView.attachmentsView
             attachmentsViewDivider = itemView.attachmentsDividerView
             expirationInfoView = itemView.expirationInfoView
             containerDisplayImages = itemView.containerDisplayImages
             loadEmbeddedImagesContainer = itemView.containerLoadEmbeddedImagesContainer
 
-            messageDetailsHeaderView.bind(message, labelsList ?: listOf())
+            messageDetailsHeaderView.bind(message, allLabelsList ?: listOf(), nonInclusiveLabelsList)
             expirationInfoView.bind(message.expirationTime)
 
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
@@ -242,6 +240,16 @@ class MessageDetailsAdapter(
         items.add(MessageDetailsListItem(messageData))
         items.add(MessageDetailsListItem(content))
         setItems(items)
+    }
+
+    fun setAllLabels(labels: List<Label>) {
+        allLabelsList = labels
+        setMessageData(message)
+    }
+
+    fun setNonInclusiveLabels(labels: List<LabelChipUiModel>) {
+        nonInclusiveLabelsList = labels
+        setMessageData(message)
     }
 
     /**

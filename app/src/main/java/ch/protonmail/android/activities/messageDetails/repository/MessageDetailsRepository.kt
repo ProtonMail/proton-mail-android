@@ -195,12 +195,6 @@ class MessageDetailsRepository @Inject constructor(
 
     fun setFolderLocation(message: Message) = message.setFolderLocation(messagesDao)
 
-    fun findAllLabels(message: LiveData<Message>): LiveData<List<Label>> {
-        return Transformations.switchMap(message) {
-            it?.labelIDsNotIncludingLocations?.let(messagesDao::findAllLabelsWithIdsAsync)
-        }
-    }
-
     fun findAttachments(messageLiveData: LiveData<Message>): LiveData<List<Attachment>> {
         return Transformations.switchMap(messageLiveData) { message ->
             message?.let {
@@ -388,7 +382,7 @@ class MessageDetailsRepository @Inject constructor(
 
     suspend fun getAllLabels(): List<Label> = messagesDao.getAllLabels().first()
 
-    fun findAllLabelsWithIds(labelIds: List<String>): List<Label> = messagesDao.findAllLabelsWithIds(labelIds)
+    fun findAllLabelsWithIds(labelIds: List<String>): List<Label> = messagesDao.findLabelsByIdBlocking(labelIds)
 
     suspend fun findAllLabelsWithIds(
         message: Message,

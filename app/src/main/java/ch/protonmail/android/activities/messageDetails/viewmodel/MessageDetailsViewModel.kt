@@ -20,6 +20,7 @@ package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.annotation.TargetApi
 import android.content.Context
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -30,10 +31,10 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
-import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.activities.messageDetails.MessagePrinter
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.RegisterReloadTask
@@ -48,12 +49,17 @@ import ch.protonmail.android.core.Constants.DIR_EMB_ATTACHMENT_DOWNLOADS
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.AppUtil
@@ -62,12 +68,17 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer
 import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
 import ch.protonmail.android.utils.ServerTime
+import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import okio.buffer
@@ -87,10 +98,11 @@ import javax.inject.Inject
  */
 @HiltViewModel
 internal class MessageDetailsViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val userManager: UserManager,
     private val contactsRepository: ContactsRepository,
+    private val labelRepository: LabelRepository,
     private val attachmentMetadataDao: AttachmentMetadataDao,
     private val fetchVerificationKeys: FetchVerificationKeys,
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
@@ -114,8 +126,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     lateinit var message: LiveData<Message>
     lateinit var decryptedMessageData: MediatorLiveData<Message>
 
-    // TODO: this value was a lateinit, but only initialized with an empty `ArrayList`
-    val folderIds: MutableList<String> = mutableListOf()
     lateinit var addressId: String
 
     var renderingPassed = false
@@ -144,9 +154,25 @@ internal class MessageDetailsViewModel @Inject constructor(
             messageRenderer.messageBody = value
         }
 
-    val labels: LiveData<List<Label>> by lazy {
-        messageDetailsRepository.findAllLabels(message)
-    }
+    val labels: Flow<List<Label>> =
+        message.asFlow()
+            .flatMapLatest { message ->
+                val userId = UserId(userManager.requireCurrentUserId().s)
+                val labelsIds = message.labelIDsNotIncludingLocations.map(::Id)
+                labelRepository.findLabels(userId, labelsIds)
+            }
+
+    val nonExclusiveLabelsUiModels: Flow<List<LabelChipUiModel>> =
+        labels.map { labelsList ->
+            labelsList.map { label ->
+                val color =
+                    if (label.color.isNotBlank()) Color.parseColor(UiUtil.normalizeColor(label.color))
+                    else Color.BLACK
+
+                LabelChipUiModel(Id(label.id), Name(label.name), color)
+            }
+        }
+
     val messageAttachments: LiveData<List<Attachment>> by lazy {
         if (!isTransientMessage) {
             messageDetailsRepository.findAttachments(decryptedMessageData).distinctUntilChanged()
@@ -250,15 +276,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     //endregion
-    fun findAllLabelsWithIds(checkedLabelIds: MutableList<String>) {
-        viewModelScope.launch(dispatchers.Io) {
-            messageDetailsRepository.findAllLabelsWithIds(
-                decryptedMessageData.value ?: Message(), checkedLabelIds,
-                labels.value ?: ArrayList(), isTransientMessage
-            )
-        }
-        message.value!!.setLabelIDs(decryptedMessageData.value!!.allLabelIDs)
-    }
 
     fun startDownloadEmbeddedImagesJob() {
         hasEmbeddedImages = false
@@ -328,11 +345,6 @@ internal class MessageDetailsViewModel @Inject constructor(
             )
             _prepareEditMessageIntentResult.value = Event(intent)
         }
-    }
-
-    fun removeMessageLabels() {
-        val message = requireNotNull(message.value)
-        message.removeLabels(folderIds)
     }
 
     private fun observeDecryption() {

@@ -25,7 +25,6 @@ import android.graphics.Typeface
 import android.text.format.Formatter
 import android.text.method.LinkMovementMethod
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -43,14 +42,13 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.databinding.LayoutMessageDetailsHeaderBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.ui.locks.SenderLockIcon
 import ch.protonmail.android.views.messagesList.SenderInitialView
-
-private const val MARGIN_TOP_LABELS_VIEW_EXPANDED = 16F
-private const val MARGIN_TOP_LABELS_VIEW_COLLAPSED = 8F
+import kotlinx.android.synthetic.main.layout_message_details_header.view.*
 
 /**
  * A view for the collapsible header in message details
@@ -153,7 +151,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
             expandCollapseChevronImageView.setImageDrawable(
                 ContextCompat.getDrawable(context, R.drawable.ic_chevron_down)
             )
-            changeLabelsViewTopMargin(isExpanded)
         } else {
             isExpanded = true
             collapsedHeaderGroup.visibility = View.GONE
@@ -161,26 +158,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
             expandCollapseChevronImageView.setImageDrawable(
                 ContextCompat.getDrawable(context, R.drawable.ic_chevron_up)
             )
-            changeLabelsViewTopMargin(isExpanded)
         }
-    }
-
-    private fun changeLabelsViewTopMargin(isExpanded: Boolean) {
-        val newLayoutParams = labelsCollapsedGroupView.layoutParams as LayoutParams
-        newLayoutParams.topMargin = if (isExpanded) {
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                MARGIN_TOP_LABELS_VIEW_EXPANDED,
-                this.resources.displayMetrics
-            ).toInt()
-        } else {
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                MARGIN_TOP_LABELS_VIEW_COLLAPSED,
-                this.resources.displayMetrics
-            ).toInt()
-        }
-        labelsCollapsedGroupView.layoutParams = newLayoutParams
     }
 
     private fun getSenderText(message: Message): String {
@@ -305,12 +283,15 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         }
     }
 
-    fun bind(message: Message, labelsList: List<Label>) {
+    fun bind(message: Message, allLabels: List<Label>, nonInclusiveLabels: List<LabelChipUiModel>) {
         val senderText = getSenderText(message)
         senderInitialView.bind(senderText)
         senderNameTextView.text = senderText
         senderEmailTextView.text = context.getString(R.string.recipient_email_format, message.senderEmail)
         senderEmailTextView.setOnClickListener(getOnSenderClickListener(message.senderEmail))
+
+        labelsCollapsedGroupView.setLabels(nonInclusiveLabels)
+        labelsExpandedGroupView.setLabels(nonInclusiveLabels)
 
         val senderLockIcon = SenderLockIcon(message, message.hasValidSignature, message.hasInvalidSignature)
         lockIconTextView.text = context.getText(senderLockIcon.icon)
@@ -324,14 +305,14 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
             locationImageView.setImageDrawable(ContextCompat.getDrawable(context, icon))
             locationExtendedImageView.setImageDrawable(ContextCompat.getDrawable(context, icon))
             if (Constants.MessageLocationType.fromInt(message.location) == Constants.MessageLocationType.LABEL) {
-                getMessageFolder(labelsList)?.let { label ->
+                getMessageFolder(allLabels)?.let { label ->
                     val folderColor = Color.parseColor(UiUtil.normalizeColor(label.color))
                     locationImageView.setColorFilter(folderColor)
                     locationExtendedImageView.setColorFilter(folderColor)
                 }
             }
         }
-        getTextForMessageLocation(Constants.MessageLocationType.fromInt(message.location), labelsList)?.let {
+        getTextForMessageLocation(Constants.MessageLocationType.fromInt(message.location), allLabels)?.let {
             locationTextView.text = it
         }
 
@@ -340,7 +321,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
 
         loadRecipients(message)
 
-        if (checkIfMessageHasLabels(labelsList)) {
+        if (checkIfMessageHasLabels(allLabels)) {
             expandedHeaderGroup.addView(labelsImageView)
         } else {
             labelsImageView.visibility = View.GONE
