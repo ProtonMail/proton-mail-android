@@ -41,7 +41,7 @@
         android:id="@+id/senderInitialBarrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        app:barrierDirection="end"
         app:layout_constraintLeft_toRightOf="@id/senderInitialView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
@@ -217,9 +217,12 @@
         android:id="@+id/labelsCollapsedGroupView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constrainedWidth="true"
         android:layout_marginTop="@dimen/message_details_header_margin_normal"
-        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
-        app:layout_constraintTop_toBottomOf="@id/recipientsCollapsedTextView" />
+        app:layout_constraintStart_toEndOf="@id/senderInitialBarrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recipientsCollapsedTextView"
+        app:layout_constraintHorizontal_bias="0"/>
 
     <ch.protonmail.android.ui.view.MultiLineLabelChipGroupView
         android:id="@+id/labelsExpandedGroupView"

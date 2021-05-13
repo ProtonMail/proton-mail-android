@@ -63,6 +63,7 @@ class SingleLineLabelChipGroupView @JvmOverloads constructor (
 
         labels.firstOrNull()?.let(labelView::setLabel)
         moreView.text = getMoreLabelsText(labels.size)
+        labelView.requestLayout()
     }
 
     private fun getMoreLabelsText(labelsCount: Int): String =
