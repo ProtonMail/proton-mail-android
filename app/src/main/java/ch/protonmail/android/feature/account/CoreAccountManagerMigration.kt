@@ -97,7 +97,6 @@ class CoreAccountManagerMigration @Inject constructor(
                     sessionId = SessionId(requireNotBlank(tokenManager.sessionId)),
                     accessToken = requireNotBlank(tokenManager.accessToken),
                     refreshToken = requireNotBlank(tokenManager.refreshToken),
-                    headers = null,
                     scopes = tokenManager.scope.split(" ")
                 )
                 val account = Account(
@@ -109,7 +108,6 @@ class CoreAccountManagerMigration @Inject constructor(
                     sessionState = SessionState.Authenticated,
                     details = AccountDetails(
                         session = null,
-                        humanVerification = null
                     )
                 )
                 Migration(account, session, requireNotBlank(passphrase))

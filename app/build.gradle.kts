@@ -263,6 +263,8 @@ dependencies {
         `Proton-account-manager`,
         `Proton-user`,
         `Proton-key`,
+        `Proton-human-verification`,
+        `Proton-country`,
 
         // Modules
         project(Module.domain),
@@ -303,9 +305,6 @@ dependencies {
 
         // Hilt
         `hilt-android`,
-        `hilt-androidx-annotations`,
-//        `hilt-androidx-viewModel`,
-        `hilt-androidx-view-model`, // special case as this currently does not follow other hilt-androidx version
         `hilt-androidx-workManager`,
 
         // Retrofit

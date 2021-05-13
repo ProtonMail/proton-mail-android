@@ -62,7 +62,6 @@ public class QuickSnoozeDialogFragment
     @BindView(R.id.quick_snooze_turn_off)
     TextView mQuickSnoozeTurnOff;
 
-    private QuickSnoozeListener mQuickSnoozeListener;
     private List<String> mQuickSnoozeValues;
     private QuickSnoozeOptionAdapter mAdapter;
     private int mSelectedSnoozeMinutes = 0;
@@ -79,17 +78,6 @@ public class QuickSnoozeDialogFragment
      */
     public static QuickSnoozeDialogFragment newInstance() {
         return new QuickSnoozeDialogFragment();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mQuickSnoozeListener = (QuickSnoozeListener) context;
-        } catch (ClassCastException e) {
-            // not throwing error, since the mUser of this mCustomValueDialog is not obligated to listen for
-            // labels state change
-        }
     }
 
     @Override
@@ -154,7 +142,6 @@ public class QuickSnoozeDialogFragment
         }
         mSelectedSnoozeMinutes = getResources().getIntArray(R.array.quick_snooze_values_int)[position];
         userManager.setSnoozeQuickBlocking(true, mSelectedSnoozeMinutes);
-        mQuickSnoozeListener.onQuickSnoozeSet(true);
         dismissAllowingStateLoss();
     }
 
@@ -162,7 +149,6 @@ public class QuickSnoozeDialogFragment
     public void onQuickSnoozeTurnOffClicked() {
         mSelectedSnoozeMinutes = 0;
         userManager.setSnoozeQuickBlocking(false, 0);
-        mQuickSnoozeListener.onQuickSnoozeSet(false);
         dismissAllowingStateLoss();
     }
 
@@ -170,16 +156,11 @@ public class QuickSnoozeDialogFragment
     public void onCustomQuickSnoozeSet(int minutes) {
         mSelectedSnoozeMinutes = minutes;
         userManager.setSnoozeQuickBlocking(true, mSelectedSnoozeMinutes);
-        mQuickSnoozeListener.onQuickSnoozeSet(true);
         dismissAllowingStateLoss();
     }
 
     @Override
     public void onCancel() {
         mCustomValueDialog.dismissAllowingStateLoss();
-    }
-
-    public interface QuickSnoozeListener {
-        void onQuickSnoozeSet(boolean enabled);
     }
 }

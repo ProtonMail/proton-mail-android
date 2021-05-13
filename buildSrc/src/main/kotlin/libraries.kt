@@ -41,6 +41,7 @@ val DependencyHandler.`Proton-account-manager` get() =              proton("acco
 val DependencyHandler.`Proton-user` get() =                         proton("user") version `Proton-user version`
 val DependencyHandler.`Proton-key` get() =                          proton("key") version `Proton-key version`
 val DependencyHandler.`Proton-human-verification` get() =           proton("human-verification") version `Proton-human-verification version`
+val DependencyHandler.`Proton-country` get() =                      proton("country") version `Proton-country version`
 
 fun DependencyHandler.protonTest(moduleSuffix: String, version: String? = null) =
     proton("test", moduleSuffix, version)
@@ -58,7 +59,6 @@ val DependencyHandler.`android-media` get() =               androidx("media") ve
 val DependencyHandler.`android-flexbox` get() =             google("android", "flexbox") version `flexbox version`
 val DependencyHandler.`android-preference` get() =          androidx("preference", moduleSuffix = "ktx") version `android-preference version`
 val DependencyHandler.`google-services` get() =             googleServices()
-val DependencyHandler.`hilt-androidx-view-model` get() =    dependency("androidx.hilt", module = "hilt-lifecycle-viewmodel") version `hilt-androidx-viewmodel version`
 val DependencyHandler.`room-rxJava` get() =                 androidxRoom("rxjava2")
 val DependencyHandler.`safetyNet` get() =                   playServices("safetynet")
 val DependencyHandler.`lifecycle-extensions` get() =        androidxLifecycle("extensions") version `lifecycle-extensions version`

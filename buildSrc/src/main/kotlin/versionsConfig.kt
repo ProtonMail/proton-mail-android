@@ -36,8 +36,8 @@ fun initVersions() {
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
     `constraint-layout version` =               "2.0.0-rc1"     // Released: Jul 30, 2020
     `espresso version` =                        "3.4.0-alpha05" // Released: Mar 15, 2021
-    `hilt-android version` =                    "2.33-beta"     // Released: Feb 26, 2021
-    `hilt-androidx version` =                   "1.0.0-beta01"  // Released: Mar 10, 2021
+    `hilt-android version` =                    "2.35.1"        // Released: Apr 28, 2021
+    `hilt-androidx version` =                   "1.0.0"         // Released: May 05, 2021
     `ktx version` =                             "1.5.0-rc01"    // Released: Mar 24, 2021
     `lifecycle version` =                       "2.4.0-alpha01" // Released: Mar 24, 2021
     `material version` =                        "1.3.0"         // Released: Feb 04, 2021
@@ -51,7 +51,7 @@ fun initVersions() {
     // region Others
     `assert4k version` =                        "0.7.1"         // Released: May 04, 2021
     `assistedInject version` =                  "0.6.0"         // Released: Sep 14, 2020
-    `dagger version` =                          "2.28.3"        // Released: Jul 18, 2020
+    `dagger version` =                          "2.35.1"        // Released: Apr 28, 2021
 
     `mockK version` =                           "1.10.0"        // Released: Apr 19, 2020
     `retrofit version` =                        "2.6.1"         // Released: Jul 31, 2019
@@ -72,17 +72,17 @@ const val `Proton-android-instr-test version` = "0.3.3"         // Released: Mar
 const val `Proton-kotlin-test version` =        "0.2"           // Released: Oct 21, 2020
 
 const val `Proton-domain version` =             "1.0"           // Released: Feb 17, 2021
-const val `Proton-presentation version` =       "0.7.4"         // Released: May 05, 2021
+const val `Proton-presentation version` =       "0.7.8"         // Released: May 12, 2021
 const val `Proton-data version` =               "1.0.3"         // Released: Mar 22, 2021
-const val `Proton-network version` =            "1.0.4"         // Released: Apr 07, 2021
+const val `Proton-network version` =            "1.1"           // Released: May 12, 2021
+const val `Proton-human-verification version` = "1.1.1"         // Released: May 12, 2021
 const val `Proton-crypto version` =             "1.0.2"         // Released: Mar 05, 2021
-
-const val `Proton-auth version` =               "1.0.8"         // Released: May 10, 2021
-const val `Proton-account version` =            "1.0.3"         // Released: Apr 12, 2021
-const val `Proton-account-manager version` =    "1.0.9"         // Released: May 03, 2021
-const val `Proton-user version` =               "1.0.6"         // Released: May 03, 2021
+const val `Proton-country version` =            "0.1.4"         // Released: May 12, 2021
+const val `Proton-auth version` =               "1.1.1"         // Released: May 12, 2021
+const val `Proton-account version` =            "1.1"           // Released: May 12, 2021
+const val `Proton-account-manager version` =    "1.1.1"         // Released: May 12, 2021
+const val `Proton-user version` =               "1.1.1"         // Released: May 12, 2021
 const val `Proton-key version` =                "1.0.4"         // Released: Mar 22, 2021
-const val `Proton-human-verification version` = "0.2.6"         // Released: Mar 14, 2021
 
 @Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
 
@@ -106,7 +106,6 @@ const val `android-media version` =             "1.1.0"         // Released: Sep
 const val `flexbox version` =                   "2.0.1"         // Released: Jan 17, 2020
 const val `android-preference version` =        "1.1.1"         // Released: Apr 15, 2020
 const val `googleServices version` =            "4.3.3"         // Released: Nov 11, 2019
-const val `hilt-androidx-viewmodel version` =   "1.0.0-alpha03" // Released: Mar 10, 2021
 const val `playServices version` =              "17.0.0"        // Released: Jun 19, 2019
 const val `lifecycle-extensions version` =      "2.2.0"         // Released: Jan 00, 2020
 

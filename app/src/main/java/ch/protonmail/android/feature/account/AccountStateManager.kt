@@ -44,7 +44,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
@@ -63,7 +62,6 @@ import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.accountmanager.presentation.onAccountRemoved
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeFailed
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeNeeded
-import me.proton.core.accountmanager.presentation.onSessionHumanVerificationNeeded
 import me.proton.core.accountmanager.presentation.onSessionSecondFactorNeeded
 import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.auth.presentation.onLoginResult
@@ -75,6 +73,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AccountStateManager @Inject constructor(
+    private val requiredAccountType: AccountType,
     private val accountManager: AccountManager,
     private val userManager: UserManager,
     private var authOrchestrator: AuthOrchestrator,
@@ -107,7 +106,6 @@ class AccountStateManager @Inject constructor(
         with(authOrchestrator) {
             // Observe all Accounts States (need a registered authOrchestrator, see register).
             accountManager.observe(lifecycle, minActiveState = Lifecycle.State.CREATED)
-                .onSessionHumanVerificationNeeded { startHumanVerificationWorkflow(it) }
                 .onSessionSecondFactorNeeded { startSecondFactorWorkflow(it) }
                 .onAccountTwoPassModeNeeded { startTwoPassModeWorkflow(it) }
                 .onAccountCreateAddressNeeded { startChooseAddressWorkflow(it) }
@@ -148,14 +146,6 @@ class AccountStateManager @Inject constructor(
 
     suspend fun getAccountOrNull(userId: UserId) = getAccount(userId).firstOrNull()
 
-    /* Order: Primary account, ready account(s), other account(s). */
-    fun getSortedAccounts() = accountManager.getAccounts().mapLatest { accounts ->
-        val currentUser = getPrimaryUserId().firstOrNull()
-        accounts
-            .sortedByDescending { it.userId == currentUser }
-            .sortedByDescending { it.isReady() }
-    }
-
     fun logout(userId: UserId) = scope.launch {
         userManager.lock(userId)
         accountManager.disableAccount(userId)
@@ -168,7 +158,7 @@ class AccountStateManager @Inject constructor(
     fun login(userId: UserId? = null) = scope.launch {
         val account = userId?.let { getAccountOrNull(it) }
         authOrchestrator.startLoginWorkflow(
-            requiredAccountType = AccountType.Internal,
+            requiredAccountType = requiredAccountType,
             username = account?.username
         )
     }
@@ -181,16 +171,6 @@ class AccountStateManager @Inject constructor(
                 username = account.username
             )
             account.isReady() -> accountManager.setAsPrimary(userId)
-        }
-    }
-
-    fun remove(userId: UserId) = scope.launch {
-        accountManager.removeAccount(userId)
-    }
-
-    fun removeAll() = scope.launch {
-        accountManager.getAccounts().first().forEach {
-            accountManager.removeAccount(it.userId)
         }
     }
 
@@ -216,12 +196,6 @@ class AccountStateManager @Inject constructor(
 
     @Deprecated(
         message = "Use UserId version of the function",
-        replaceWith = ReplaceWith("getAccountOrNull(UserId(userId.s))", "me.proton.core.domain.entity.UserId")
-    )
-    suspend fun getAccountOrNull(userId: Id) = getAccountOrNull(UserId(userId.s))
-
-    @Deprecated(
-        message = "Use UserId version of the function",
         replaceWith = ReplaceWith("switch(UserId(userId.s))", "me.proton.core.domain.entity.UserId")
     )
     fun switch(userId: Id) = switch(UserId(userId.s))
@@ -231,12 +205,6 @@ class AccountStateManager @Inject constructor(
         replaceWith = ReplaceWith("logout(UserId(userId.s))", "me.proton.core.domain.entity.UserId")
     )
     fun logout(userId: Id) = logout(UserId(userId.s))
-
-    @Deprecated(
-        message = "Use UserId version of the function",
-        replaceWith = ReplaceWith("remove(UserId(userId.s))", "me.proton.core.domain.entity.UserId")
-    )
-    fun remove(userId: Id) = remove(UserId(userId.s))
 
     // endregion
 

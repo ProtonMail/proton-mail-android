@@ -30,16 +30,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.dialogs.QuickSnoozeDialogFragment
-import ch.protonmail.android.activities.multiuser.AccountManagerActivity
 import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
 import ch.protonmail.android.activities.navigation.NavigationViewModel
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
-import ch.protonmail.android.adapters.AccountsAdapter
 import ch.protonmail.android.adapters.mapLabelsToDrawerLabels
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.local.SnoozeSettings
@@ -50,10 +46,7 @@ import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDatabase
-import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -62,7 +55,6 @@ import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.ui.view.ProtonSideDrawer
 import ch.protonmail.android.uiModel.DrawerItemUiModel.*
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary.Static.*
-import ch.protonmail.android.uiModel.DrawerUserModel
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
@@ -75,17 +67,13 @@ import ch.protonmail.android.utils.startSplashActivity
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.proton.core.account.domain.entity.Account
-import me.proton.core.account.domain.entity.isReady
 import me.proton.core.domain.entity.UserId
 import java.util.Calendar
 import javax.inject.Inject
-import ch.protonmail.android.api.models.User as LegacyUser
 
 // region constants
 const val EXTRA_FIRST_LOGIN = "extra.first.login"
@@ -99,23 +87,14 @@ const val REQUEST_CODE_SNOOZED_NOTIFICATIONS = 555
  * needs support for the navigation drawer.
  */
 @AndroidEntryPoint
-abstract class NavigationActivity :
-    BaseActivity(),
-    QuickSnoozeDialogFragment.QuickSnoozeListener {
+abstract class NavigationActivity : BaseActivity() {
 
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     private val drawerLayout: DrawerLayout by lazy { findViewById(R.id.drawer_layout) }
     private val sideDrawer: ProtonSideDrawer by lazy { findViewById(R.id.sideDrawer) }
-    private val navigationDrawerUsersRecyclerView by lazy { findViewById<RecyclerView>(R.id.left_drawer_users) }
     private lateinit var drawerToggle: ActionBarDrawerToggle
     // endregion
-
-    /**
-     * [AccountsAdapter] for the Drawer. It is used as a replacement to the default [navigationDrawerRecyclerView]
-     * to display the users (logged in and recently logged out) of the application.
-     */
-    private val accountsAdapter = AccountsAdapter()
 
     val lazyManager = resettableManager()
 
@@ -190,10 +169,6 @@ abstract class NavigationActivity :
                 .launchIn(lifecycleScope)
         }
 
-        sideDrawer.setOnHeaderUserClick {
-            onUserClicked(true)
-        }
-
         sideDrawer.setOnItemClick { drawerItem ->
             // Header clicked
             if (drawerItem is Primary) {
@@ -206,12 +181,6 @@ abstract class NavigationActivity :
                     else if (drawerItem is Primary.Label) onDrawerLabelSelected(drawerItem.uiModel)
                 }
                 drawerLayout.closeDrawer(GravityCompat.START)
-            }
-        }
-
-        accountsAdapter.onItemClick = { account ->
-            if (account is DrawerUserModel.BaseUser) {
-                accountStateManager.switch(account.id)
             }
         }
     }
@@ -242,14 +211,6 @@ abstract class NavigationActivity :
         app.bus.unregister(this)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_SNOOZED_NOTIFICATIONS) {
-            refreshDrawerHeader(checkNotNull(userManager.currentUser))
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-
     private fun checkUserId() {
         // Requested UserId match the current ?
         intent.extras?.getString(EXTRA_USER_ID)?.let { extraUserId ->
@@ -265,7 +226,6 @@ abstract class NavigationActivity :
     protected fun closeDrawer(ignoreIfPossible: Boolean = false): Boolean {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             var closeIt = true
-            onUserClicked(false)
             if (!ignoreIfPossible) {
                 closeIt = false
             }
@@ -296,9 +256,6 @@ abstract class NavigationActivity :
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
         setUpInitialDrawerItems(userManager.currentLegacyUser?.isUsePin ?: false)
 
-        // LayoutManager set from xml
-        navigationDrawerUsersRecyclerView.adapter = accountsAdapter
-
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
 
             /**
@@ -315,7 +272,6 @@ abstract class NavigationActivity :
              */
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
-                onUserClicked(false)
                 onDrawerClose()
                 onDrawerClose = {}
             }
@@ -323,42 +279,7 @@ abstract class NavigationActivity :
 
         navigationViewModel.labelsWithUnreadCounterLiveData().observe(this, CreateLabelsMenuObserver())
         navigationViewModel.locationsUnreadLiveData().observe(this, LocationsMenuObserver())
-
-        lifecycleScope.launchWhenCreated {
-            userManager.currentUser?.let { refreshDrawerHeader(it) }
-        }
-
-        setupAccountsList()
     }
-
-    protected fun setupAccountsList() {
-        navigationViewModel.reloadDependencies()
-        navigationViewModel.notificationsCounts()
-        navigationViewModel.notificationsCounterLiveData.observe(this) { counters ->
-            lifecycleScope.launchWhenCreated {
-                val accounts = accountStateManager.getSortedAccounts().first().map { account ->
-                    val id = Id(account.userId.id)
-                    val user = userManager.getLegacyUserOrNull(id)
-                    account.toDrawerUser(account.isReady(), counters[id] ?: 0, user)
-                }
-                accountsAdapter.items = accounts + DrawerUserModel.Footer
-            }
-        }
-    }
-
-    private fun Account.toDrawerUser(
-        loggedIn: Boolean,
-        notificationsCount: Int,
-        user: LegacyUser?
-    ) = DrawerUserModel.BaseUser.DrawerUser(
-        id = userId,
-        name = username,
-        emailAddress = email ?: user?.defaultAddressEmail ?: username,
-        loggedIn = loggedIn,
-        notifications = notificationsCount,
-        notificationsSnoozed = areNotificationSnoozedBlocking(Id(userId.id)),
-        displayName = user?.displayName ?: username
-    )
 
     private suspend fun areNotificationsSnoozed(userId: Id): Boolean {
         val userPreferences = SecureSharedPreferences.getPrefsForUser(this, userId)
@@ -407,49 +328,6 @@ abstract class NavigationActivity :
         )
     }
 
-    protected fun refreshDrawerHeader(currentUser: User) {
-        val addresses = currentUser.addresses
-
-        if (addresses.hasAddresses) {
-            val address = checkNotNull(addresses.primary)
-            val displayName = address.displayName ?: Name(address.email.s)
-            sideDrawer.setUser(getInitials(displayName, address.email), displayName, address.email)
-        }
-    }
-
-    private fun getInitials(displayName: Name, emailAddress: EmailAddress): Pair<Char, Char> =
-        // TODO: definine initials of we can't extract them properly
-        getInitials(displayName.s) ?: getInitials(emailAddress.s) ?: '?' to '?'
-
-    private fun getInitials(displayNameOrEmailAddress: String): Pair<Char, Char>? {
-        val string = displayNameOrEmailAddress.toUpperCase()
-        return string
-            // split words
-            .split(" ")
-            // take first char of each word
-            .map { it.first() }
-            // take only letters or digits
-            .filter { it.isLetterOrDigit() }
-            // Valid only if we have 2 or more chars
-            .takeIf { it.size >= 2 }?.let { it[0] to it[1] }
-        // Otherwise take only first 2 letters or digits of the name
-            ?: string
-                .filter { it.isLetterOrDigit() }
-                .takeIf { it.length >= 2 }
-                ?.let { it[0] to it[1] }
-    }
-
-    fun onUserClicked(open: Boolean) {
-        sideDrawer.visibility = if (open) View.GONE else View.VISIBLE
-        navigationDrawerUsersRecyclerView.visibility = if (open) View.VISIBLE else View.GONE
-    }
-
-    override fun onQuickSnoozeSet(enabled: Boolean) {
-        lifecycleScope.launchWhenCreated {
-            setupAccountsList()
-        }
-    }
-
     private fun onDrawerStaticItemSelected(type: Type) {
 
         fun onSignOutSelected() {
@@ -493,10 +371,6 @@ abstract class NavigationActivity :
                 putExtra(EXTRA_CURRENT_MAILBOX_LABEL_ID, currentLabelId)
                 startActivity(this)
             }
-            Type.ACCOUNT_MANAGER -> startActivityForResult(
-                AppUtil.decorInAppIntent(Intent(this, AccountManagerActivity::class.java)),
-                REQUEST_CODE_ACCOUNT_MANAGER
-            )
             Type.INBOX -> onInbox(type.drawerOptionType)
             Type.ARCHIVE, Type.STARRED, Type.DRAFTS, Type.SENT, Type.TRASH, Type.SPAM, Type.ALLMAIL ->
                 onOtherMailBox(type.drawerOptionType)

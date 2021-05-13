@@ -163,10 +163,6 @@ class UserManager @Inject constructor(
         }
     }
 
-    suspend fun getLegacyUserOrNull(userId: Id): User? = runCatching {
-        getLegacyUser(userId)
-    }.getOrNull()
-
     fun getLegacyUserBlocking(userId: Id) = runBlocking {
         getLegacyUser(userId)
     }
