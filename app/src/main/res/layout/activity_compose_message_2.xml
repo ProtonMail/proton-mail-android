@@ -139,7 +139,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_size"
+                android:layout_height="@dimen/size_divider"
                 android:background="@color/message_divider_gray"
                 app:layout_constraintTop_toBottomOf="@id/composer_from_hint_text_view"
                 app:layout_constraintStart_toStartOf="parent"/>
@@ -167,6 +167,8 @@
                 app:layout_constraintStart_toEndOf="@id/composer_to_hint_text_view"
                 app:layout_constraintEnd_toStartOf="@id/composer_expand_recipients_button"
                 android:layout_marginStart="@dimen/padding_m"
+                android:paddingTop="@dimen/padding_m"
+                android:paddingBottom="@dimen/padding_m"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:textCursorDrawable="@null"/>
@@ -185,7 +187,7 @@
             <View
                 android:id="@+id/composer_cc_top_divider"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_size"
+                android:layout_height="@dimen/size_divider"
                 android:background="@color/message_divider_gray"
                 app:layout_constraintTop_toBottomOf="@id/composer_to_recipient_view"
                 app:layout_constraintStart_toStartOf="parent"/>
@@ -213,6 +215,8 @@
                 app:layout_constraintStart_toEndOf="@id/composer_cc_hint_text_view"
                 app:layout_constraintEnd_toEndOf="@id/composer_fields_end_guideline"
                 android:layout_marginStart="@dimen/padding_m"
+                android:paddingTop="@dimen/padding_m"
+                android:paddingBottom="@dimen/padding_m"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:textCursorDrawable="@null" />
@@ -220,7 +224,7 @@
             <View
                 android:id="@+id/composer_bcc_top_divider"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_size"
+                android:layout_height="@dimen/size_divider"
                 android:background="@color/message_divider_gray"
                 app:layout_constraintTop_toBottomOf="@id/composer_cc_recipient_view"
                 app:layout_constraintStart_toStartOf="parent"/>
@@ -248,6 +252,8 @@
                 app:layout_constraintStart_toEndOf="@id/composer_bcc_hint_text_view"
                 app:layout_constraintEnd_toEndOf="@id/composer_fields_end_guideline"
                 android:layout_marginStart="@dimen/padding_m"
+                android:paddingTop="@dimen/padding_m"
+                android:paddingBottom="@dimen/padding_m"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:textCursorDrawable="@null"/>
@@ -264,7 +270,7 @@
             <View
                 android:id="@+id/composer_subject_top_divider"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_size"
+                android:layout_height="@dimen/size_divider"
                 android:background="@color/message_divider_gray"
                 app:layout_constraintTop_toBottomOf="@id/composer_bcc_recipient_view"
                 app:layout_constraintStart_toStartOf="parent"/>
@@ -288,7 +294,7 @@
             <View
                 android:id="@+id/composer_body_top_divider"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_size"
+                android:layout_height="@dimen/size_divider"
                 android:background="@color/message_divider_gray"
                 app:layout_constraintTop_toBottomOf="@id/composer_subject_edit_text"
                 app:layout_constraintStart_toStartOf="parent"/>
@@ -377,7 +383,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_size"
+        android:layout_height="@dimen/size_divider"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/composer_buttons_layout"
         android:background="@color/message_divider_gray"/>

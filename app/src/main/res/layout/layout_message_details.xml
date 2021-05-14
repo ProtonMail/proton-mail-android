@@ -37,7 +37,7 @@
     <View
         android:id="@+id/headerDividerView"
         android:layout_width="0dp"
-        android:layout_height="@dimen/divider_size"
+        android:layout_height="@dimen/size_divider"
         android:background="@drawable/list_divider"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -57,7 +57,7 @@
     <View
         android:id="@+id/attachmentsDividerView"
         android:layout_width="0dp"
-        android:layout_height="@dimen/divider_size"
+        android:layout_height="@dimen/size_divider"
         android:background="@drawable/list_divider"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

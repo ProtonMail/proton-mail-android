@@ -70,14 +70,25 @@
     </style>
     <!-- endregion -->
 
+    <!-- region Composer -->
+    <style name="MessageRecipientChip">
+        <item name="android:background">@drawable/bg_recipient_chip</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:textAppearance">@style/Proton.Text.Caption</item>
+    </style>
+    <!-- endregion -->
+
     <style name="ViewSeparatorHorizontal">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/divider_size</item>
+        <item name="android:layout_height">@dimen/size_divider</item>
         <item name="android:background">@color/separator_norm</item>
     </style>
 
     <style name="ViewSeparatorVertical">
-        <item name="android:layout_width">@dimen/divider_size</item>
+        <item name="android:layout_width">@dimen/size_divider</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:background">@color/separator_norm</item>
     </style>
@@ -478,15 +489,6 @@
         <item name="android:background">@null</item>
         <item name="android:inputType">text|textNoSuggestions|textMultiLine</item>
         <item name="android:textColor">@color/lead_gray</item>
-    </style>
-
-    <style name="MessageRecipientToken" parent="MessageRecipientBase">
-        <item name="android:background">@drawable/message_recipient_token_bg_selector</item>
-        <item name="android:paddingBottom">4dp</item>
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:paddingRight">5dp</item>
-        <item name="android:paddingTop">2dp</item>
-        <item name="android:textColor">@color/message_recipient_token_text_color</item>
     </style>
 
     <style name="MessageRecipientListBaseText">
