@@ -47,6 +47,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.adapters.messages.MailboxRecyclerViewAdapter;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.details.presentation.MessageDetailsActivity;
 import ch.protonmail.android.events.NoResultsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
@@ -71,6 +72,8 @@ public class SearchActivity extends BaseActivity {
     private SearchView searchView = null;
 
     @Inject
+    UserManager userManager;
+    @Inject
     MessageDetailsRepository messageDetailsRepository;
     @Inject
     Provider<MailboxViewModel> mailboxViewModelProvider;
@@ -84,6 +87,8 @@ public class SearchActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MailboxViewModel mailboxViewModel = mailboxViewModelProvider.get();
+        mailboxViewModel.userId = userManager.requireCurrentUserId();
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
