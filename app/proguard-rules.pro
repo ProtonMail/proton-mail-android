@@ -148,6 +148,9 @@
     public *;
 }
 
+# PM core
+-keep class me.proton.core.** { *; }
+
 # PM openPGP
 -keep public class ch.protonmail.android.utils.crypto.** { *; }
 -keep public class ch.protonmail.android.views.behavior.** { *; }
