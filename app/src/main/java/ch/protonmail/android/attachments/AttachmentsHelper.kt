@@ -120,6 +120,7 @@ class AttachmentsHelper @Inject constructor() {
         }
 
         val newUri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+        Timber.v("saveAttachment attachmentMimeType: $attachmentMimeType, newUri: $newUri")
 
         newUri?.let {
             contentResolver.openOutputStream(newUri)?.use { outputStream ->
