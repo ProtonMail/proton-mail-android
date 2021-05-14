@@ -224,7 +224,6 @@ class MailboxActivity :
         super.onCreate(savedInstanceState)
 
         val userId = userManager.currentUserId ?: return
-        mailboxViewModel.userId = userId
 
         messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
         counterDao = CounterDatabase.getInstance(this, userId).getDao()
@@ -528,7 +527,6 @@ class MailboxActivity :
         super.onAccountSwitched(switch)
 
         val currentUserId = userManager.currentUserId ?: return
-        mailboxViewModel.userId = currentUserId
 
         mJobManager.start()
         counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()

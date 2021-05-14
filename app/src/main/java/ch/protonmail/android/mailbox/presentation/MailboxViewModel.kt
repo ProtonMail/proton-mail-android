@@ -72,6 +72,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -113,7 +114,8 @@ class MailboxViewModel @Inject constructor(
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
 
-    lateinit var userId: Id
+    val userId: Id
+        get() = userManager.requireCurrentUserId()
 
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning
@@ -246,10 +248,7 @@ class MailboxViewModel @Inject constructor(
         )
 
         return getMessagesByLocation(location, labelId).switchMap {
-            liveData {
-                val contacts = contactsRepository.findAllContactEmails().first()
-                emit(MailboxState(messagesToMailboxItems(it, contacts)))
-            }
+            liveData { emit(MailboxState(messagesToMailboxItems(it))) }
         }
     }
 
@@ -276,9 +275,8 @@ class MailboxViewModel @Inject constructor(
         )
     }
 
-    fun messagesToMailboxItemsBlocking(messages: List<Message>): List<MailboxUiItem> {
-        val contacts = contactsRepository.findAllContactEmailsBlocking()
-        return messagesToMailboxItems(messages, contacts)
+    fun messagesToMailboxItemsBlocking(messages: List<Message>) = runBlocking {
+        return@runBlocking messagesToMailboxItems(messages)
     }
 
     private fun fetchMessages(

@@ -30,7 +30,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
@@ -94,7 +93,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class MessageDetailsViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val messageRepository: MessageRepository,
     private val userManager: UserManager,

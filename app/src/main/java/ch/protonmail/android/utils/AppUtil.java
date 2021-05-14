@@ -174,7 +174,6 @@ public class AppUtil {
                     userId,
                     ContactDatabase.Companion.getInstance(context, userId).getDao(),
                     MessageDatabase.Factory.getInstance(context, userId).getDao(),
-                    MessageDatabase.Factory.getSearchDatabase(context, userId).getDao(),
                     MessageDatabase.Factory.getInstance(context, userId).getConversationDao(),
                     NotificationDatabase.Companion.getInstance(context, userId).getDao(),
                     CounterDatabase.Companion.getInstance(context, userId).getDao(),

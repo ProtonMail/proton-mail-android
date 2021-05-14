@@ -74,8 +74,6 @@ public class SearchActivity extends BaseActivity {
     private MailboxViewModel mailboxViewModel;
 
     @Inject
-    UserManager userManager;
-    @Inject
     MessageDetailsRepository messageDetailsRepository;
     @Inject
     Provider<MailboxViewModel> mailboxViewModelProvider;
