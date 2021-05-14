@@ -51,7 +51,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewPager"
+        android:id="@+id/viewpager_contacts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
@@ -62,37 +62,38 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar" />
 
-    <RelativeLayout
-        android:id="@+id/progressLayoutView"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_progress_contacts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
         android:background="@color/white"
         android:visibility="gone"
         tools:visibility="visible">
 
         <ProgressBar
-            android:id="@+id/progress_bar"
+            android:id="@+id/progress_bar_contacts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ch.protonmail.android.views.CustomFontTextView
             style="@style/App.Text.Subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/progress_bar"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/fields_default_space_small"
-            android:gravity="center"
-            android:text="@string/fetching_contacts" />
+            android:text="@string/fetching_contacts"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/progress_bar_contacts" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- TODO: library development has discontinued in 2016 -->
     <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/addFab"
+        android:id="@+id/fab_contacts_add_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
@@ -114,7 +115,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         app:menu_showShadow="true">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/addContactItem"
+            android:id="@+id/fab_contacts_add_contact"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/fab_ic_contact_add_user"
@@ -126,7 +127,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             tools:ignore="VectorDrawableCompat" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/addContactGroupItem"
+            android:id="@+id/fab_contacts_add_contact_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/fab_ic_contact_add_group"
