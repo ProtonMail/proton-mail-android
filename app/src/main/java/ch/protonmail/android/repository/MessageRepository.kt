@@ -94,19 +94,20 @@ class MessageRepository @Inject constructor(
         }
     }
 
-    private suspend fun saveMessage(userId: Id, message: Message): Long =
+    private suspend fun saveMessage(userId: Id, message: Message): Message =
         withContext(dispatcherProvider.Io) {
-            val messageToBeSaved = message.apply {
+            message.apply {
                 messageBody = messageBody?.let {
                     return@let if (it.toByteArray().size > MAX_BODY_SIZE_IN_DB) {
                         messageBodyFileManager.saveMessageBodyToFile(this)
                     } else {
-                        null
+                        it
                     }
                 }
             }
             val messageDao = databaseProvider.provideMessageDao(userId)
-            return@withContext messageDao.saveMessage(messageToBeSaved)
+            messageDao.saveMessage(message)
+            return@withContext message
         }
 
     private suspend fun getMessageDetails(userId: Id, messageId: String): Message? =
@@ -120,8 +121,7 @@ class MessageRepository @Inject constructor(
             return@withContext runCatching {
                 protonMailApiManager.fetchMessageDetails(messageId, UserIdTag(userId))
             }.map { messageResponse ->
-                saveMessage(userId, messageResponse.message)
-                return@map messageResponse.message
+                return@map saveMessage(userId, messageResponse.message)
             }.getOrNull()
         }
 
@@ -137,8 +137,7 @@ class MessageRepository @Inject constructor(
                 protonMailApiManager.fetchMessageMetadata(messageId, UserIdTag(userId))
             }.map { messageResponse ->
                 return@map messageResponse.messages.firstOrNull()?.let { message ->
-                    saveMessage(userId, message)
-                    return@let message
+                    return@let saveMessage(userId, message)
                 }
             }.getOrNull()
         }
