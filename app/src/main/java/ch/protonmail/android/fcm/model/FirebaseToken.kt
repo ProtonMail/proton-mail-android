@@ -21,7 +21,5 @@ package ch.protonmail.android.fcm.model
 
 import ch.protonmail.android.domain.entity.NotBlankStringValidator
 import ch.protonmail.android.domain.entity.Validable
-import kotlinx.serialization.Serializable
 
-@Serializable
 data class FirebaseToken(val value: String) : Validable by NotBlankStringValidator(value)

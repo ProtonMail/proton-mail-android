@@ -32,6 +32,7 @@ import kotlinx.coroutines.withContext
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 
 /**
@@ -49,11 +50,13 @@ class FcmTokenManager @AssistedInject constructor(
     }
 
     suspend fun getToken(): FirebaseToken? = withContext(dispatchers.Io) {
-        val registrationId: FirebaseToken? = userPreferences[PREF_REGISTRATION_ID]
-        if (registrationId == null) {
-            Timber.v("Token not found")
-            return@withContext null
-        }
+        val registrationIdString: String? = userPreferences[PREF_REGISTRATION_ID]
+        val registrationId: FirebaseToken = registrationIdString?.takeIfNotBlank()
+            ?.let(::FirebaseToken)
+            ?: run {
+                Timber.v("Token not found")
+                return@withContext null
+            }
 
         // Check if app was updated; if so, it must clear the registration ID since the existing registration ID is not
         //  guaranteed to work with the new app version.
@@ -75,7 +78,7 @@ class FcmTokenManager @AssistedInject constructor(
         withContext(dispatchers.Io) {
             val appVersion = BuildConfig.VERSION_CODE
             Timber.v("Saving version:%s registration ID: %s", appVersion, token)
-            userPreferences[PREF_REGISTRATION_ID] = token
+            userPreferences[PREF_REGISTRATION_ID] = token.value
             userPreferences[PREF_APP_VERSION] = appVersion
         }
     }
