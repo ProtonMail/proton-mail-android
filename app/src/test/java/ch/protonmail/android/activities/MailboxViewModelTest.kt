@@ -439,8 +439,8 @@ class MailboxViewModelTest : CoroutinesTest {
             messagesCount = null,
             isDeleted = false,
             labels = listOf(
-                LabelChipUiModel(Id("1"), Name("label 1"), 0),
-                LabelChipUiModel(Id("2"), Name("label 2"), 0)
+                LabelChipUiModel(Id("1"), Name("label 1"), null),
+                LabelChipUiModel(Id("2"), Name("label 2"), null)
             ),
             recipients = toContactsAndGroupsString(
                 recipients
@@ -820,7 +820,7 @@ class MailboxViewModelTest : CoroutinesTest {
                     messagesCount = 2,
                     messageData = null,
                     isDeleted = false,
-                    labels = listOf(LabelChipUiModel(Id("10"), Name("label 10"), 0)),
+                    labels = listOf(LabelChipUiModel(Id("10"), Name("label 10"), null)),
                     recipients = ""
                 )
             )
@@ -930,8 +930,8 @@ class MailboxViewModelTest : CoroutinesTest {
                     messageData = null,
                     isDeleted = false,
                     labels = listOf(
-                        LabelChipUiModel(Id("0"), Name("label 0"), 0),
-                        LabelChipUiModel(Id("6"), Name("label 6"), 0)
+                        LabelChipUiModel(Id("0"), Name("label 0"), null),
+                        LabelChipUiModel(Id("6"), Name("label 6"), null)
                     ),
                     recipients = ""
                 )
@@ -988,7 +988,7 @@ class MailboxViewModelTest : CoroutinesTest {
                     messagesCount = 2,
                     messageData = null,
                     isDeleted = false,
-                    labels = listOf(LabelChipUiModel(Id("6"), Name("label 6"), 0)),
+                    labels = listOf(LabelChipUiModel(Id("6"), Name("label 6"), null)),
                     recipients = ""
                 )
             )

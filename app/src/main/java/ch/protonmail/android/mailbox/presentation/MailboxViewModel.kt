@@ -526,7 +526,6 @@ class MailboxViewModel @Inject constructor(
         filterNot { it.exclusive }.map { label ->
             val labelColor = label.color.takeIfNotBlank()
                 ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
-                ?: 0
 
             LabelChipUiModel(Id(label.id), Name(label.name), labelColor)
         }
