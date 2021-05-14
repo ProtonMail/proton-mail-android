@@ -517,20 +517,16 @@ internal class MessageDetailsViewModel @Inject constructor(
             val metadata = attachmentMetadataDao
                 .getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
             Timber.v("viewOrDownloadAttachment Id: $attachmentToDownloadId metadataId: ${metadata?.id}")
-            if (metadata != null) {
-                val uri = metadata.uri
-                if (uri != null && attachmentsHelper.isFileAvailable(context, uri)) {
-                    if (uri.path?.contains(DIR_EMB_ATTACHMENT_DOWNLOADS) == true) {
-                        copyAttachmentToDownloadsAndDisplay(context, metadata.name, uri)
-                    } else {
-                        viewAttachment(context, metadata.name, uri)
-                    }
+            val uri = metadata?.uri
+            // extra check if user has not deleted the file
+            if (uri != null && attachmentsHelper.isFileAvailable(context, uri)) {
+                if (uri.path?.contains(DIR_EMB_ATTACHMENT_DOWNLOADS) == true) {
+                    copyAttachmentToDownloadsAndDisplay(context, metadata.name, uri)
                 } else {
-                    Timber.v("No file attachment id: $attachmentToDownloadId downloading again")
-                    attachmentsWorker.enqueue(messageId, userManager.requireCurrentUserId(), attachmentToDownloadId)
+                    viewAttachment(context, metadata.name, uri)
                 }
             } else {
-                Timber.v("No metadata found for attachment id: $attachmentToDownloadId")
+                Timber.d("Attachment id: $attachmentToDownloadId file not available, uri: $uri ")
                 attachmentsWorker.enqueue(messageId, userManager.requireCurrentUserId(), attachmentToDownloadId)
             }
         }

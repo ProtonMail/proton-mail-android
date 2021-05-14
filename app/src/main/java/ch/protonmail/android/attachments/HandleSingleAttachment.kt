@@ -25,6 +25,7 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.webkit.MimeTypeMap
 import androidx.work.ListenableWorker
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.AttachmentMetadataDao
@@ -106,10 +107,17 @@ class HandleSingleAttachment @Inject constructor(
 
     private suspend fun downloadAttachment(attachment: Attachment, filename: String, crypto: AddressCrypto): Uri? =
         try {
+            // Sometimes mime type in attachment.mimeType does not match the file extension type, therefore
+            // we determinate is again here, just before saving the file.
+            // This is to prevent problems with saving multiple times a file with same name, which was causing errors
+            // like saving "invite.ics (1)" instead of "invite (1).ics"
+            val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                filename.substringAfterLast(".", attachment.mimeType ?: "")
+            )
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                downloadAttachmentForAndroidQ(attachment, filename, crypto)
+                downloadAttachmentForAndroidQ(attachment, filename, crypto, mimeType)
             } else {
-                downloadAttachmentBeforeQ(attachment, filename, crypto)
+                downloadAttachmentBeforeQ(attachment, filename, crypto, mimeType)
             }
         } catch (exception: IOException) {
             Timber.w(exception, "Unable to download attachment file $filename")
@@ -120,7 +128,8 @@ class HandleSingleAttachment @Inject constructor(
     private suspend fun downloadAttachmentForAndroidQ(
         attachment: Attachment,
         filename: String,
-        crypto: AddressCrypto
+        crypto: AddressCrypto,
+        mimeType: String?
     ): Uri? {
         val decryptedByteArray = attachmentsRepository.getAttachmentDataOrNull(
             crypto,
@@ -130,7 +139,7 @@ class HandleSingleAttachment @Inject constructor(
 
         return decryptedByteArray?.inputStream()?.let {
             attachmentsHelper.saveAttachmentInMediaStore(
-                context.contentResolver, filename, attachment.mimeType, it
+                context.contentResolver, filename, mimeType, it
             )
         }
     }
@@ -138,7 +147,8 @@ class HandleSingleAttachment @Inject constructor(
     private suspend fun downloadAttachmentBeforeQ(
         attachment: Attachment,
         filename: String,
-        crypto: AddressCrypto
+        crypto: AddressCrypto,
+        mimeType: String?
     ): Uri? {
 
         val decryptedByteArray = attachmentsRepository.getAttachmentDataOrNull(
@@ -152,7 +162,7 @@ class HandleSingleAttachment @Inject constructor(
             val result = awaitUriFromMediaScanned(
                 context,
                 file,
-                attachment.mimeType
+                mimeType
             )
             val uri = result.second
             Timber.v("Stored file: $filename path: ${result.first} uri: $uri")
