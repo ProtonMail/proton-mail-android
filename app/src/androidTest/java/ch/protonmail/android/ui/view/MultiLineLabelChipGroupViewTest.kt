@@ -91,7 +91,8 @@ class MultiLineLabelChipGroupViewTest : ViewTest<MultiLineLabelChipGroupView>(::
 
         // then
         for (label in labels) {
-            onView(withText(label.name.s)).check(matches(withBackgroundColor(label.color)))
+            val labelColor = checkNotNull(label.color)
+            onView(withText(label.name.s)).check(matches(withBackgroundColor(labelColor)))
         }
     }
 

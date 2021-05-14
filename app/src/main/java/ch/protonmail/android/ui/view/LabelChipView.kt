@@ -24,6 +24,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.text.TextUtils
 import android.util.AttributeSet
+import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.withStyledAttributes
 import androidx.recyclerview.widget.DiffUtil
@@ -43,6 +44,10 @@ class LabelChipView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = android.R.attr.textViewStyle
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
+
+    @get:ColorInt
+    private val defaultBackgroundTint: Int get() =
+        context.getColor(R.color.shade_60)
 
     init {
         // Padding
@@ -72,8 +77,8 @@ class LabelChipView @JvmOverloads constructor(
             .apply { fillColor = color }
     }
 
-    fun setLabelColor(color: Int) {
-        setLabelColor(ColorStateList.valueOf(color))
+    fun setLabelColor(@ColorInt color: Int?) {
+        setLabelColor(ColorStateList.valueOf(color ?: defaultBackgroundTint))
     }
 
     private fun buildBackgroundShape() = ShapeAppearanceModel
@@ -88,10 +93,16 @@ class LabelChipView @JvmOverloads constructor(
     }
 }
 
+/**
+ * Ui Model for [LabelChipView]
+ * @property color is the [ColorInt] that will be applied as background.
+ *  if `null` a default background will be used, for ensure readability of the text
+ */
 data class LabelChipUiModel(
     val id: Id,
     val name: Name,
-    val color: Int
+    @ColorInt
+    val color: Int?
 ) {
 
     companion object {
