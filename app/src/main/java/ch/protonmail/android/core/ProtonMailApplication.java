@@ -36,6 +36,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.hilt.work.HiltWorkerFactory;
 import androidx.work.WorkManager;
 
@@ -209,6 +210,10 @@ public class ProtonMailApplication extends Application implements androidx.work.
         setupNotificationChannels();
 
         super.onCreate();
+
+        // Force Light mode (temporary workaround).
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
         accountManagerUserIdMigration.blocking();
         coreAccountManagerMigration.migrateBlocking();
 
