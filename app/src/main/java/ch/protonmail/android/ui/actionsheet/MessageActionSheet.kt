@@ -197,11 +197,13 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 setOnClickListener {
                     viewModel.markRead(messageIds)
                     dismiss()
+                    popBackDetailsActivity()
                 }
             }
             textViewDetailsActionsMarkUnread.setOnClickListener {
                 viewModel.markUnread(messageIds)
                 dismiss()
+                popBackDetailsActivity()
             }
             textViewDetailsActionsLabelAs.setOnClickListener {
                 viewModel.showLabelsManager(messageIds, messageLocation)
