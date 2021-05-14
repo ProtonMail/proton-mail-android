@@ -92,15 +92,11 @@ class AccountStateManager @Inject constructor(
     private val scope = lifecycleOwner.lifecycleScope
     private val lifecycle = lifecycleOwner.lifecycle
 
-    private val _state = MutableStateFlow(State.Processing as State)
+    private val mutableStateFlow = MutableStateFlow(State.Processing)
 
-    sealed class State {
-        object Processing : State()
-        object AccountNeeded : State()
-        object PrimaryExist : State()
-    }
+    enum class State { Processing, AccountNeeded, PrimaryExist }
 
-    val state = _state.asStateFlow()
+    val state = mutableStateFlow.asStateFlow()
 
     init {
         with(authOrchestrator) {
@@ -123,7 +119,11 @@ class AccountStateManager @Inject constructor(
             .onEach { accounts ->
                 if (accounts.isEmpty() || accounts.all { it.isDisabled() }) {
                     onAccountNeeded()
-                    _state.tryEmit(State.AccountNeeded)
+                    mutableStateFlow.tryEmit(State.AccountNeeded)
+                } else if (accounts.any { it.isReady() }) {
+                    mutableStateFlow.tryEmit(State.PrimaryExist)
+                } else {
+                    mutableStateFlow.tryEmit(State.Processing)
                 }
             }.launchIn(scope)
     }
@@ -242,7 +242,7 @@ class AccountStateManager @Inject constructor(
             fcmTokenManagerFactory.create(prefs).setTokenSent(false)
         }
         // We have a primary account.
-        _state.tryEmit(State.PrimaryExist)
+        mutableStateFlow.tryEmit(State.PrimaryExist)
     }
 
     private suspend fun onAccountDisabled(account: Account) = withContext(NonCancellable + dispatchers.Io) {

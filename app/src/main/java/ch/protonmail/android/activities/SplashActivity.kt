@@ -45,13 +45,13 @@ class SplashActivity : AppCompatActivity() {
 
             // Start Login or MailboxActivity.
             state
-                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+                .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
                 .onEach {
                     when (it) {
-                        is AccountStateManager.State.Processing -> Unit
-                        is AccountStateManager.State.AccountNeeded ->
+                        AccountStateManager.State.Processing -> Unit
+                        AccountStateManager.State.AccountNeeded ->
                             login()
-                        is AccountStateManager.State.PrimaryExist -> {
+                        AccountStateManager.State.PrimaryExist -> {
                             unregister()
                             startMailboxActivity()
                             finish()
