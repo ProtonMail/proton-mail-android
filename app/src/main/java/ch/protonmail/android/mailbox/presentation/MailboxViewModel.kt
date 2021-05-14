@@ -359,8 +359,9 @@ class MailboxViewModel @Inject constructor(
                 it.id == locationId
             }?.contextTime?.let { it * 1000 } ?: 0
 
-            val labelChipUiModels = conversation.labels
-                .mapNotNull { labelContext -> labels.find { it.id == labelContext.id } }
+            val conversationLabelsIds = conversation.labels.map { it.id }
+            val labelChipUiModels = labels
+                .filter { it.id in conversationLabelsIds }
                 .toLabelChipUiModels()
 
             MailboxUiItem(
@@ -405,8 +406,8 @@ class MailboxViewModel @Inject constructor(
                 message.isInline,
             )
 
-            val labelChipUiModels = message.allLabelIDs
-                .mapNotNull { labelId -> labels.find { it.id == labelId } }
+            val labelChipUiModels = labels
+                .filter { it.id in message.allLabelIDs }
                 .toLabelChipUiModels()
 
             MailboxUiItem(
