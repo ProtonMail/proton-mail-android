@@ -29,6 +29,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
@@ -50,7 +51,7 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import com.github.clans.fab.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_contacts_v2.*
+import kotlinx.android.synthetic.main.activity_contacts.*
 import timber.log.Timber
 
 // region constants
@@ -86,13 +87,14 @@ class ContactsActivity :
 
     override fun dataUpdated(position: Int, count: Int) {
         pagerAdapter.update(position, count)
-        tabLayout.setupWithViewPager(viewPager, true)
+        tablayout_contacts.setupWithViewPager(viewPager, true)
     }
 
-    override fun getLayoutId() = R.layout.activity_contacts_v2
+    override fun getLayoutId() = R.layout.activity_contacts
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(toolbar_contacts as Toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setTitle(R.string.contacts)
@@ -101,7 +103,7 @@ class ContactsActivity :
         pagerAdapter = ContactsFragmentsPagerAdapter(this, supportFragmentManager)
         viewPager.adapter = pagerAdapter
         viewPager?.addOnPageChangeListener(ViewPagerOnPageSelected(this@ContactsActivity::onPageSelected))
-        tabLayout.setupWithViewPager(viewPager)
+        tablayout_contacts.setupWithViewPager(viewPager)
 
         addContactItem.setOnClickListener {
             startActivityForResult(
