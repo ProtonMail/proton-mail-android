@@ -365,7 +365,7 @@ class MailboxActivity :
         }
 
         checkRegistration()
-        closeDrawer()
+        closeDrawer(animate = false)
 
         mailboxRecyclerView.addOnScrollListener(listScrollListener)
 
@@ -765,7 +765,7 @@ class MailboxActivity :
             AppUtil.clearNotifications(this, userManager.requireCurrentUserId())
         }
         setUpDrawer()
-        closeDrawer(true)
+        closeDrawer()
 
         if (shouldShowSwipeGesturesChangedDialog()) {
             showSwipeGesturesChangedDialog()
@@ -1284,7 +1284,7 @@ class MailboxActivity :
         syncUUID = UUID.randomUUID().toString()
         mailboxLocationMain.value = newMessageLocationType
         setTitle()
-        closeDrawer()
+        closeDrawer(animate = false)
         mailboxRecyclerView.clearFocus()
         mailboxRecyclerView.scrollToPosition(0)
         setUpMailboxActionsView()

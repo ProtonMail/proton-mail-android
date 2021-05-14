@@ -43,6 +43,7 @@ import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.domain.entity.Product
 import me.proton.core.network.domain.session.SessionListener
 import me.proton.core.network.domain.session.SessionProvider
+import me.proton.core.user.domain.UserManager
 import javax.inject.Singleton
 
 @Module
@@ -80,9 +81,10 @@ object AccountManagerModule {
     fun provideAccountManagerImpl(
         product: Product,
         accountRepository: AccountRepository,
-        authRepository: AuthRepository
+        authRepository: AuthRepository,
+        userManager: UserManager
     ): AccountManagerImpl =
-        AccountManagerImpl(product, accountRepository, authRepository)
+        AccountManagerImpl(product, accountRepository, authRepository, userManager)
 
     @Provides
     @Singleton

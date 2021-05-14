@@ -147,7 +147,6 @@ class AccountStateManager @Inject constructor(
     suspend fun getAccountOrNull(userId: UserId) = getAccount(userId).firstOrNull()
 
     fun logout(userId: UserId) = scope.launch {
-        userManager.lock(userId)
         accountManager.disableAccount(userId)
     }
 
