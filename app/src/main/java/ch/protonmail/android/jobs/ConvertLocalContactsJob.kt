@@ -73,7 +73,7 @@ class ConvertLocalContactsJob(
         mLocalContacts = localContacts
             .asSequence()
             .filter { it.contactId != null }
-            .map { LocalContactItem(it.contactId!!, it.getName(), it.getEmail()) }
+            .map { LocalContactItem(it.contactId!!, it.name) }
             .toList()
     }
 
@@ -354,5 +354,5 @@ class ConvertLocalContactsJob(
         }
     }
 
-    private inner class LocalContactItem(val id: String, val name: String, val email: String) : Serializable
+    private inner class LocalContactItem(val id: String, val name: String) : Serializable
 }

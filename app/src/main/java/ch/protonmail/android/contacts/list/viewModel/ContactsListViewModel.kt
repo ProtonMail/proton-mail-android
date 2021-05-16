@@ -71,12 +71,12 @@ class ContactsListViewModel(
             .combine(searchPhraseLiveData.asFlow()) { contacts, searchPhrase ->
                 contacts.filter { contactItem ->
                     searchPhrase?.isEmpty() ?: true ||
-                        contactItem.getName() containsNoCase (searchPhrase ?: EMPTY_STRING) ||
-                        contactItem.getEmail() containsNoCase (searchPhrase ?: EMPTY_STRING)
+                        contactItem.name containsNoCase (searchPhrase ?: EMPTY_STRING) ||
+                        contactItem.contactEmails?.contains(searchPhrase ?: EMPTY_STRING, ignoreCase = true) ?: false
                 }
             }
             .onEach {
-                // emit what we have until now, in case user did't agree to access android contacts in the next step
+                // emit what we have until now, in case user didn't agree to access android contacts in the next step
                 Timber.d("Display proton contacts size: ${it.size}")
                 contactItems.value = it
             }

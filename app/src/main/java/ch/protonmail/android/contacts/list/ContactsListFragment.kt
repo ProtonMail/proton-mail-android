@@ -232,7 +232,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
                 noResults.visibility = GONE
             }
             contactsAdapter.apply {
-                setData(contactItems)
+                submitList(contactItems)
                 val count = contactItems.size - contactItems
                     .count { contactItem -> contactItem.contactId == "-1" }
                 listener.dataUpdated(0, count)
@@ -354,24 +354,21 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     private fun initAdapter() {
         var actionMode: ActionMode? = null
         contactsAdapter = ContactsListAdapter(
-            requireContext(),
-            ArrayList(),
             this::onContactClick,
-            this::onContactSelect,
-            onSelectionModeChange = { selectionModeEvent ->
-                when (selectionModeEvent) {
-                    SelectionModeEnum.STARTED -> {
-                        actionMode = listener.doStartActionMode(this@ContactsListFragment)
-                    }
-                    SelectionModeEnum.ENDED -> {
-                        if (actionMode != null) {
-                            actionMode!!.finish()
-                            actionMode = null
-                        }
+            this::onContactSelect
+        ) { selectionModeEvent ->
+            when (selectionModeEvent) {
+                SelectionModeEnum.STARTED -> {
+                    actionMode = listener.doStartActionMode(this@ContactsListFragment)
+                }
+                SelectionModeEnum.ENDED -> {
+                    if (actionMode != null) {
+                        actionMode!!.finish()
+                        actionMode = null
                     }
                 }
             }
-        )
+        }
 
         contactsRecyclerView.layoutManager = LinearLayoutManager(context)
         contactsRecyclerView.adapter = contactsAdapter

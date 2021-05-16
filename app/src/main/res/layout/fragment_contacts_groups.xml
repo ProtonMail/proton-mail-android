@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        tools:listitem="@layout/contacts_v2_list_item"/>
+        tools:listitem="@layout/list_item_contacts"/>
 
     <TextView
         style="@style/App.Text.Title"

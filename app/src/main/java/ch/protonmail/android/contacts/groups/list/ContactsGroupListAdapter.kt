@@ -23,15 +23,13 @@ import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
-import kotlinx.android.synthetic.main.contacts_v2_list_item.view.*
+import kotlinx.android.synthetic.main.list_item_contacts.view.*
 
 class ContactsGroupsListAdapter(
     private var items: List<ContactLabel>,
@@ -71,25 +69,25 @@ class ContactsGroupsListAdapter(
         writeToGroupListener: (ContactLabel) -> Unit,
         onContactGroupSelect: (() -> Unit)?
     ) {
-        itemView.contactIcon.isVisible = true
-        itemView.contactIconLetter.isVisible = false
+//        itemView.contactIcon.isVisible = true
+//        itemView.contactIconLetter.isVisible = false
 
-        itemView.contact_name.text = contactLabel.name
+        itemView.text_view_contact_name.text = contactLabel.name
         val members = contactLabel.contactEmailsCount
-        itemView.contact_subtitle.text = itemView.context.resources.getQuantityString(
+        itemView.text_view_contact_subtitle.text = itemView.context.resources.getQuantityString(
             R.plurals.contact_group_members,
             members,
             members
         )
         var colorString = contactLabel.color
         colorString = UiUtil.normalizeColor(colorString)
-        itemView.contactIcon.background.setColorFilter(
+        itemView.initials_view_contacts_list.background.setColorFilter(
             Color.parseColor(colorString),
             PorterDuff.Mode.SRC_IN
         )
 
         updateSelectedUI(contactLabel, itemView)
-        itemView.contactIcon.setOnClickListener {
+        itemView.initials_view_contacts_list.setOnClickListener {
             val selectedItems = selectedItems
             if (selectedItems != null) {
                 if (selectedItems.contains(contactLabel)) {
@@ -154,42 +152,42 @@ class ContactsGroupsListAdapter(
             }
         }
 
-        itemView.writeButton.setOnClickListener {
+        itemView.image_view_edit_button.setOnClickListener {
             writeToGroupListener.invoke(contactLabel)
         }
     }
 
     private fun updateSelectedUI(contactLabel: ContactLabel, itemView: View) {
         if (contactLabel.isSelected == ContactEmailGroupSelectionState.SELECTED) {
-            itemView.contactIcon.setBackgroundResource(0)
-            itemView.contactIcon.setImageResource(R.drawable.ic_contacts_checkmark)
-            itemView.contactIcon.setBackgroundResource(R.drawable.bg_circle)
-            itemView.contactIcon.drawable.setColorFilter(
-                ContextCompat.getColor(itemView.context, R.color.contact_action),
-                PorterDuff.Mode.SRC_IN
-            )
-            itemView.rowWrapper.setBackgroundResource(R.color.selectable_color)
+//            itemView.initials_view_contacts_list.setBackgroundResource(0)
+//            itemView.initials_view_contacts_list.setImageResource(R.drawable.ic_contacts_checkmark)
+//            itemView.initials_view_contacts_list.setBackgroundResource(R.drawable.bg_circle)
+//            itemView.initials_view_contacts_list.drawable.setColorFilter(
+//                ContextCompat.getColor(itemView.context, R.color.contact_action),
+//                PorterDuff.Mode.SRC_IN
+//            )
+//            itemView.rowWrapper.setBackgroundResource(R.color.selectable_color)
         } else {
             updateNotSelectedUI(contactLabel, itemView)
         }
     }
 
     private fun updateNotSelectedUI(contactLabel: ContactLabel, itemView: View) {
-        itemView.contactIcon.setBackgroundResource(0)
-        itemView.contactIcon.setImageResource(R.drawable.ic_contact_groups)
-        itemView.contactIcon.setBackgroundResource(R.drawable.label_color_circle)
+//        itemView.initials_view_contacts_list.setBackgroundResource(0)
+//        itemView.initials_view_contacts_list.setImageResource(R.drawable.ic_contact_groups)
+//        itemView.initials_view_contacts_list.setBackgroundResource(R.drawable.label_color_circle)
         var colorString = contactLabel.color
         colorString = UiUtil.normalizeColor(colorString)
-        itemView.contactIcon.background.setColorFilter(
+        itemView.initials_view_contacts_list.background.setColorFilter(
             Color.parseColor(colorString),
             PorterDuff.Mode.SRC_IN
         )
-        itemView.rowWrapper.setBackgroundResource(R.color.white)
+//        itemView.rowWrapper.setBackgroundResource(R.color.white)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.contacts_v2_list_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.list_item_contacts, parent, false)
         )
     }
 

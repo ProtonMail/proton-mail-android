@@ -19,9 +19,11 @@
 
 package ch.protonmail.android.contacts.list.viewModel
 
+import ch.protonmail.android.R
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
+import me.proton.core.util.kotlin.EMPTY_STRING
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -36,21 +38,23 @@ class ContactsListMapperTest {
     private val email2 = "email2@abc.com"
     private val contactItem1 = ContactItem(
         isProtonMailContact = true,
-        contactId = contactId1,
         name = name1,
-        email = email1,
+        contactEmails = email1,
         additionalEmailsCount = 0,
-        labels = null,
-        isChecked = false
+        contactId = contactId1,
+        isChecked = false,
+        initials = "N",
+        headerStringRes = null
     )
     private val contactItem2 = ContactItem(
         isProtonMailContact = true,
-        contactId = contactId2,
         name = name2,
-        email = email2,
+        contactEmails = email2,
         additionalEmailsCount = 0,
-        labels = null,
-        isChecked = false
+        contactId = contactId2,
+        isChecked = false,
+        initials = "N",
+        headerStringRes = null
     )
 
     @Test
@@ -76,7 +80,7 @@ class ContactsListMapperTest {
         val contact2 = ContactData(contactId = contactId2, name = name2)
         val dataList = listOf(contact1, contact2)
         val contactEmail1 = ContactEmail(
-            contactEmailId = "contactEmailId1", email = email1, name = "emailName1", contactId = contactId1
+            contactEmailId = "contactEmailId1", email = email1, name = "emailName1", contactId = contactId1,
         )
         val contactEmail2 = ContactEmail(
             contactEmailId = "contactEmailId2", email = email2, name = "emailName1", contactId = contactId2
@@ -102,27 +106,36 @@ class ContactsListMapperTest {
         val email3 = "email3@abc.com"
         val contactItem3 = ContactItem(
             isProtonMailContact = true,
-            contactId = contactId3,
             name = name3,
-            email = email3,
+            contactEmails = email3,
             additionalEmailsCount = 0,
-            labels = null,
-            isChecked = false
+            contactId = contactId3,
+            isChecked = false,
+            initials = EMPTY_STRING,
+            headerStringRes = null
         )
-        val headerItem =
+        val protonHeaderItem =
             ContactItem(
                 isProtonMailContact = true,
-                contactId = "-1",
-                name = null,
-                email = null,
+                name = EMPTY_STRING,
+                contactEmails = null,
                 additionalEmailsCount = 0,
-                labels = null,
-                isChecked = false
+                contactId = "-1",
+                isChecked = false,
+                initials = EMPTY_STRING,
+                headerStringRes = R.string.protonmail_contacts
+            )
+        val otherHeaderItem =
+            ContactItem(
+                isProtonMailContact = false,
+                contactId = "-1",
+                name = EMPTY_STRING,
+                headerStringRes = R.string.device_contacts
             )
         val protonContacts = listOf(contactItem1, contactItem2)
         val androidContacts = listOf(contactItem3)
         val expected = listOf(
-            headerItem, contactItem1, contactItem2, headerItem.copy(isProtonMailContact = false), contactItem3
+            protonHeaderItem, contactItem1, contactItem2, otherHeaderItem, contactItem3
         )
 
         // when
@@ -139,22 +152,24 @@ class ContactsListMapperTest {
         val name3 = "name3"
         val contactItem3 = ContactItem(
             isProtonMailContact = true,
-            contactId = contactId3,
             name = name3,
-            email = email1,
+            contactEmails = email1,
             additionalEmailsCount = 0,
-            labels = null,
-            isChecked = false
+            contactId = contactId3,
+            isChecked = false,
+            initials = EMPTY_STRING,
+            headerStringRes = null
         )
         val headerItem =
             ContactItem(
                 isProtonMailContact = true,
-                contactId = "-1",
-                name = null,
-                email = null,
+                name = EMPTY_STRING,
+                contactEmails = null,
                 additionalEmailsCount = 0,
-                labels = null,
-                isChecked = false
+                contactId = "-1",
+                isChecked = false,
+                initials = EMPTY_STRING,
+                headerStringRes = R.string.protonmail_contacts
             )
         val protonContacts = listOf(contactItem1, contactItem2)
         val androidContacts = listOf(contactItem3)

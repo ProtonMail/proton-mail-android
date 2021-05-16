@@ -18,36 +18,16 @@
  */
 package ch.protonmail.android.contacts.list.listView
 
-data class ContactItem @JvmOverloads constructor(
+import androidx.annotation.StringRes
+import me.proton.core.util.kotlin.EMPTY_STRING
+
+data class ContactItem(
     val isProtonMailContact: Boolean,
-    var contactId: String? = null,
-    private var name: String? = null,
-    private var email: String? = null,
-    var additionalEmailsCount: Int = 0,
-    var labels: List<String>? = null,
-    var isChecked: Boolean = false
-) {
-    val firstChar: Char
-        get() {
-            val name = getName()
-            val email = getEmail()
-            return when {
-                !name.isEmpty() -> name[0]
-                !email.isEmpty() -> email[0]
-                else -> 'U'
-            }
-        }
-
-    fun getName(): String = this.name ?: ""
-
-    fun getEmail(): String = email ?: ""
-
-    fun setName(name: String) {
-        this.name = name
-    }
-
-    fun setEmail(email: String) {
-        this.email = email
-    }
-
-}
+    val name: String = EMPTY_STRING,
+    val contactEmails: String? = null,
+    var additionalEmailsCount: Int = 0,  // this looks unused
+    val contactId: String? = null, // this looks unused
+    var isChecked: Boolean = false,
+    val initials: String = EMPTY_STRING,
+    @StringRes val headerStringRes: Int? = null
+)

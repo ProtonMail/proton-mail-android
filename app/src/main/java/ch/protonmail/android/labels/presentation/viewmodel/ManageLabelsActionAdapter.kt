@@ -39,6 +39,7 @@ class ManageLabelsActionAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = ItemManageLabelsActionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        // TODO: Add lick listener here instead o in onBind and rename ManageLabelsActionAdapter as LabelsActionAdapter
         return ManageLabelsViewHolder(
             view.textviewCheckboxManageLabelsTitle,
             view.checkboxManageLabelsActionIsChecked,
@@ -50,7 +51,7 @@ class ManageLabelsActionAdapter(
         (holder as ManageLabelsViewHolder).bind(getItem(position), clickListener)
     }
 
-    class ManageLabelsViewHolder(
+    private class ManageLabelsViewHolder(
         private val titleTextView: TextView,
         private val checkbox: CompoundButton,
         root: ConstraintLayout

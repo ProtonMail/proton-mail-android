@@ -53,7 +53,10 @@ class SenderInitialView @JvmOverloads constructor(
         checkImageView = binding.checkImageView
     }
 
-    fun bind(senderText: String, isMultiSelectionMode: Boolean = false) {
+    fun bind(
+        senderText: String,
+        isMultiSelectionMode: Boolean = false
+    ) {
         senderInitialTextView.text = if (senderText.isNotEmpty()) {
             senderText.capitalize(Locale.getDefault()).subSequence(0, 1)
         } else EMPTY_STRING
