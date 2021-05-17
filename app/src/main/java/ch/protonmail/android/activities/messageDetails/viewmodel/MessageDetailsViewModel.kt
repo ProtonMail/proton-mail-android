@@ -49,7 +49,6 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.Attachment
-import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
@@ -132,8 +131,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     var renderedFromCache = AtomicBoolean(false)
 
     var refreshedKeys: Boolean = true
-    var contact: ContactEmail? = null
-    var isDecrypted = false
 
     private val _downloadEmbeddedImagesResult: MutableLiveData<String> = MutableLiveData()
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
@@ -242,36 +239,25 @@ internal class MessageDetailsViewModel @Inject constructor(
                 return@launch
             }
 
+            val contactEmail = contactsRepository.findContactEmailByEmail(message.senderEmail)
+            message.senderDisplayName = contactEmail?.name.orEmpty()
+
             this@MessageDetailsViewModel.message = message
-            decryptMessage(message)
+
+            refreshedKeys = true
+            decryptAndEmit(message)
         }
     }
 
-    private suspend fun decryptMessage(message: Message) {
-        val contactEmail = contactsRepository.findContactEmailByEmail(message.senderEmail)
-        contact = contactEmail ?: ContactEmail("", message.senderEmail, message.senderName)
-        if (!isDecrypted) {
-            refreshedKeys = true
-            emitMessage(message)
-        }
-
-        if (!isDecrypted) {
-            refreshedKeys = true
-            emitMessage(message)
-        }
-    }
-
-    private suspend fun emitMessage(message: Message) {
+    private suspend fun decryptAndEmit(message: Message) {
         if (!message.isDownloaded) {
             return
         }
-        if (contact?.name != message.sender?.emailAddress)
-            message.senderDisplayName = contact?.name
 
-        isDecrypted = withContext(dispatchers.Comp) {
+        withContext(dispatchers.Comp) {
             message.tryDecrypt(publicKeys) ?: false
         }
-        Timber.v("Message isDecrypted:$isDecrypted, keys size: ${publicKeys?.size}")
+        Timber.v("Emitting Message Detail = $message keys size: ${publicKeys?.size}")
         _decryptedMessageLiveData.postValue(message)
     }
 
@@ -517,7 +503,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
         publicKeys = pubKeys
         refreshedKeys = false
-        message?.let { emitMessage(it) }
+        message?.let { decryptAndEmit(it) }
 
         fetchingPubKeys = false
         renderedFromCache = AtomicBoolean(false)
