@@ -212,8 +212,9 @@
 #jobqueue
 -keep interface com.birbit.android.jobqueue.** { *; }
 
-#PM
--keep class ch.protonmail.android.api.** { *;}
+# Models
+-keep class ch.protonmail.android.data.local.model.** { *; }
+-keep class ch.protonmail.android.api.** { *; }
 -keep class ch.protonmail.android.uiModel.** { *; }
 
 #kotlin coroutines
