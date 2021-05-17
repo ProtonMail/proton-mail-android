@@ -515,5 +515,9 @@ class MailboxViewModel @Inject constructor(
             LabelChipUiModel(Id(label.id), Name(label.name), labelColor)
         }
 
+    fun markRead(messageIds: List<String>) = messageDetailsRepository.markRead(messageIds)
+
+    fun markUnRead(messageIds: List<String>) = messageDetailsRepository.markUnRead(messageIds)
+
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)
 }

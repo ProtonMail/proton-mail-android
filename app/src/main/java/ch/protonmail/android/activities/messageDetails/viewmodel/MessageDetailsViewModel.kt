@@ -68,7 +68,6 @@ import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer
 import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
-import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
@@ -157,7 +156,6 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     var refreshedKeys: Boolean = true
 
-    private val _messageSavedInDBResult: MutableLiveData<Boolean> = MutableLiveData()
     private val _downloadEmbeddedImagesResult: MutableLiveData<String> = MutableLiveData()
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
@@ -199,9 +197,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     val pendingSend: LiveData<PendingSend?> by lazy {
         messageDetailsRepository.findPendingSendByOfflineMessageIdAsync(messageId)
     }
-
-    val messageSavedInDBResult: LiveData<Boolean>
-        get() = _messageSavedInDBResult
 
     val checkStoragePermission: LiveData<Event<Boolean>>
         get() = _checkStoragePermission
@@ -257,28 +252,8 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    fun saveMessage() {
-        // Return if message is null
-        val message = message.value ?: return
-        viewModelScope.launch(dispatchers.Io) {
-            val result = runCatching {
-                messageDetailsRepository.saveMessageInDB(message, isTransientMessage)
-            }
-            _messageSavedInDBResult.postValue(result.isSuccess)
-        }
-    }
-
-    fun markRead(read: Boolean) {
-        val message = message.value
-        message?.let {
-            message.accessTime = ServerTime.currentTimeMillis()
-            message.setIsRead(read)
-            saveMessage()
-            if (read) {
-                messageDetailsRepository.markRead(listOf(messageId))
-                saveMessage()
-            }
-        }
+    fun markUnread() {
+        messageRepository.markUnRead(listOf(messageId))
     }
 
     //endregion
@@ -397,6 +372,9 @@ internal class MessageDetailsViewModel @Inject constructor(
                         message.tryDecrypt(keys) ?: false
                     }
                     Timber.v("Message isDecrypted:$isDecrypted, keys size: ${keys?.size}")
+                    if (isDecrypted) {
+                        messageRepository.markRead(listOf(messageId))
+                    }
                     value = message
                 }
             }
@@ -462,7 +440,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                                         val savedMessage = findSearchMessageById(messageId).first()
                                         if (savedMessage != null) {
                                             messageResponse.message.writeTo(savedMessage)
-                                            saveSearchMessageInDB(savedMessage)
+                                            saveSearchMessage(savedMessage)
                                         } else {
                                             prepareMessage(messageResponse.message)
                                         }
@@ -471,11 +449,11 @@ internal class MessageDetailsViewModel @Inject constructor(
                                         val savedMessage = findMessageById(messageId).first()
                                         if (savedMessage != null) {
                                             messageResponse.message.writeTo(savedMessage)
-                                            saveMessageInDB(savedMessage)
+                                            saveMessage(savedMessage)
                                         } else {
                                             prepareMessage(messageResponse.message)
                                             setFolderLocation(messageResponse.message)
-                                            saveMessageInDB(messageResponse.message, isTransientMessage)
+                                            saveMessage(messageResponse.message, isTransientMessage)
                                         }
                                     }
                                 }
@@ -691,10 +669,6 @@ internal class MessageDetailsViewModel @Inject constructor(
             Constants.MessageLocationType.TRASH.toString(),
             message.value?.folderLocation ?: EMPTY_STRING
         )
-    }
-
-    fun markUnread() {
-        messageDetailsRepository.markUnRead(listOf(messageId))
     }
 
 }

@@ -31,6 +31,7 @@ import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
 import ch.protonmail.android.events.RefreshDrawerEvent;
 import ch.protonmail.android.utils.AppUtil;
+import timber.log.Timber;
 
 public class PostUnreadJob extends ProtonMailEndlessJob {
 
@@ -43,6 +44,7 @@ public class PostUnreadJob extends ProtonMailEndlessJob {
 
     @Override
     public void onAdded() {
+        Timber.d("markUnRead %s", mMessageIds);
         final CounterDao counterDao = CounterDatabase.Companion
                 .getInstance(getApplicationContext(), getUserId())
                 .getDao();

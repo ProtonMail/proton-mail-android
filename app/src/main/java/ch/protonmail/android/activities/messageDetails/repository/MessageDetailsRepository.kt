@@ -245,7 +245,7 @@ class MessageDetailsRepository @Inject constructor(
 
     suspend fun saveMessage(message: Message, isSearchMessage: Boolean = false): Long {
         return if (isSearchMessage) {
-            saveSearchMessageInDB(message)
+            saveSearchMessage(message)
         } else {
             saveFile(message)
             messagesDao.saveMessage(message)
@@ -539,11 +539,13 @@ class MessageDetailsRepository @Inject constructor(
 
     @Deprecated("Use a method from [MessageRepository]")
     fun markRead(messageIds: List<String>) {
+        Timber.d("markRead $messageIds")
         jobManager.addJobInBackground(PostReadJob(messageIds))
     }
 
     @Deprecated("Use a method from [MessageRepository]")
     fun markUnRead(messageIds: List<String>) {
+        Timber.d("markUnRead $messageIds")
         jobManager.addJobInBackground(PostUnreadJob(messageIds))
     }
 

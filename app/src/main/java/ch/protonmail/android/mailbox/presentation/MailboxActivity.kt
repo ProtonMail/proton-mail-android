@@ -117,11 +117,9 @@ import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
-import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.PostTrashJobV2
-import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
@@ -1093,8 +1091,8 @@ class MailboxActivity :
                     )
                     mode.finish()
                 }
-            R.id.mark_read -> job = PostReadJob(messageIds)
-            R.id.mark_unread -> job = PostUnreadJob(messageIds)
+            R.id.mark_read -> mailboxViewModel.markRead(messageIds)
+            R.id.mark_unread -> mailboxViewModel.markUnRead(messageIds)
             R.id.add_star -> job = PostStarJob(messageIds)
             R.id.add_label -> {
             }
@@ -1186,9 +1184,9 @@ class MailboxActivity :
         mailboxActionsView.setOnSecondActionClickListener {
             val messageIds = getSelectedMessageIds()
             if (MessageUtils.areAllUnRead(selectedMessages)) {
-                mJobManager.addJobInBackground(PostReadJob(messageIds))
+                mailboxViewModel.markRead(messageIds)
             } else {
-                mJobManager.addJobInBackground(PostUnreadJob(messageIds))
+                mailboxViewModel.markUnRead(messageIds)
             }
             actionMode?.finish()
         }

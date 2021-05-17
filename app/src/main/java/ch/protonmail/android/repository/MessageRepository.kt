@@ -207,10 +207,12 @@ class MessageRepository @Inject constructor(
     }
 
     fun markRead(messageIds: List<String>) {
+        Timber.d("markRead $messageIds")
         jobManager.addJobInBackground(PostReadJob(messageIds))
     }
 
     fun markUnRead(messageIds: List<String>) {
+        Timber.d("markUnRead $messageIds")
         jobManager.addJobInBackground(PostUnreadJob(messageIds))
     }
 
