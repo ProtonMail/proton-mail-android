@@ -300,7 +300,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
 
     fun bind(message: Message, allLabels: List<Label>, nonInclusiveLabels: List<LabelChipUiModel>) {
         val senderText = getSenderText(message)
-        senderInitialView.bind(senderText)
+        senderInitialView.bind(senderText.substring(0,1))
         senderNameTextView.text = senderText
         senderEmailTextView.text = context.getString(R.string.recipient_email_format, message.senderEmail)
         senderEmailTextView.setOnClickListener(getOnSenderClickListener(message.senderEmail))

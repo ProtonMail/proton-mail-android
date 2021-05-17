@@ -58,7 +58,7 @@ class SenderInitialView @JvmOverloads constructor(
         isMultiSelectionMode: Boolean = false
     ) {
         senderInitialTextView.text = if (senderText.isNotEmpty()) {
-            senderText.capitalize(Locale.getDefault()).subSequence(0, 1)
+            senderText.capitalize(Locale.getDefault())
         } else EMPTY_STRING
 
         if (isMultiSelectionMode) {

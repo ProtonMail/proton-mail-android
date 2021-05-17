@@ -133,7 +133,7 @@ class MailboxItemView @JvmOverloads constructor(
         // Sender text can only be empty in drafts where we show recipients instead of senders
         sender_text_view.text =
             if (senderText.isEmpty()) context.getString(R.string.empty_recipients) else senderText
-        sender_initial_view.bind(senderText, isMultiSelectionMode)
+        sender_initial_view.bind(senderText.substring(0,1), isMultiSelectionMode)
 
         subject_text_view.text = mailboxUiItem.subject
 
