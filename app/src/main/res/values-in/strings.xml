@@ -18,6 +18,30 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- region All -->
+    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_folders">Folder</string>
+    <string name="x_labels">Label</string>
+    <string name="x_more">Lainnya</string>
+    <string name="x_search">Pencarian</string>
+    <!-- endregion -->
+    <!-- region Drawer -->
+    <string name="drawer_contacts">Kontak</string>
+    <string name="drawer_lock_the_app">Kunci aplikasi</string>
+    <string name="drawer_report_bug">Laporkan bug</string>
+    <string name="drawer_settings">Pengaturan</string>
+    <string name="drawer_subscription">Langganan</string>
+    <string name="drawer_sign_out">Keluar</string>
+    <!-- endregion -->
+    <!-- region Composer -->
+    <string name="composer_bcc">Bcc:</string>
+    <string name="composer_cc">Cc:</string>
+    <string name="composer_compose_email">Compose email</string>
+    <string name="composer_from">From:</string>
+    <string name="composer_subject">Subject:</string>
+    <string name="composer_to">To:</string>
+    <!-- end region -->
+    <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">EMAIL TERENKRIPSI</string>
     <string name="secure_email_swiss">Email Aman Berbasis\ndi Swiss</string>
@@ -32,8 +56,8 @@
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Tidak dapat memuat konten. Mohon aktifkan Chrome</string>
     <string name="error_chrome_not_found">Tidak dapat memuat konten. Harap install Chrome</string>
-    <string name="messages_load_failure">Tidak dapat memuat pesan</string>
-    <string name="message_details_load_failure">Tidak dapat memuat rincian pesan</string>
+    <string name="messages_load_failure">Tidak dapat mengambil pesan</string>
+    <string name="message_details_load_failure">Tidak dapat mengambil rincian pesan</string>
     <string name="no_more_messages">Tidak ada pesan lagi</string>
     <string name="mailbox_login_failure">Gagal masuk ke kotak surat</string>
     <string name="login_failure">Gagal masuk</string>
@@ -43,38 +67,39 @@
     <string name="no_network_queued">Tidak ada jaringan, pesan diantrekan</string>
     <string name="update_app_title">Butuh pembaruan</string>
     <string name="update_app">Aplikasi ProtonMail Anda tidak dapat digunakan karena perlu diperbarui</string>
-    <string name="you_are_offline">Anda luring</string>
+    <string name="you_are_offline">Anda sedang offline</string>
     <string name="api_offline_title">API ProtonMail sedang luring</string>
     <string name="api_offline">ProtonMail saat ini sedang luring. Silakan kunjungi Twitter kami untuk status saat ini: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontak telah tersimpan</string>
-    <string name="contact_saved_offline">Kontak tersimpan akan disinkronkan saat koneksi tersedia</string>
-    <string name="contact_exist">Kontak semail sudah ada</string>
+    <string name="contact_saved_offline">Kontak tersimpan, akan disinkronkan saat koneksi tersedia</string>
+    <string name="contact_exist">Kontak email sudah ada</string>
     <string name="invalid_email">Alamat email tidak valid</string>
     <string name="duplicate_email">Alamat email adalah duplikat</string>
     <string name="invalid_code">Kode tidak valid</string>
     <string name="message_drafted">Gagal mengirim pesan. Pesan Anda disimpan dalam folder draf</string>
     <string name="open_drawer">Buka</string>
     <string name="close_drawer">Tutup</string>
-    <string name="inbox_option">KOTAK MASUK</string>
-    <string name="starred_option">DIBINTANGI</string>
-    <string name="drafts_option">DRAF</string>
-    <string name="sent_option">TERKIRIM</string>
-    <string name="archive_option">ARSIP</string>
-    <string name="trash_option">SAMPAH</string>
-    <string name="spam_option">SPAM</string>
+    <string name="inbox_option">Kotak masuk</string>
+    <string name="starred_option">Dibintangi</string>
+    <string name="drafts_option">Konsep</string>
+    <string name="sent_option">Terkirim</string>
+    <string name="archive_option">Arsip</string>
+    <string name="trash_option">Sampah</string>
+    <string name="spam_option">Spam</string>
+    <string name="allmail_option">Semua Surat</string>
     <string name="inbox">Kotak masuk</string>
-    <string name="starred">Ditandai</string>
+    <string name="starred">Dibintangi</string>
     <string name="drafts">Draf</string>
     <string name="sent">Terkirim</string>
     <string name="archive">Arsip</string>
     <string name="trash">Sampah</string>
     <string name="spam">Spam</string>
+    <string name="all_mail">Semua Surat</string>
     <string name="contacts">Kontak</string>
     <string name="search_contacts">Cari kontak</string>
     <string name="fetching_contacts">Mengambil kontak ProtonMail...</string>
     <string name="fetching_contacts_success">Kontak berhasil disegarkan</string>
     <string name="fetching_contacts_failure">Tidak dapat menyegarkan kontak</string>
-    <string name="x_search">Pencarian</string>
     <string name="search_messages">Cari pesan</string>
     <string name="no_search_results">Tidak ada hasil pencarian</string>
     <string name="compose">Tulis</string>
@@ -93,6 +118,7 @@
     <string name="move_to_trash">Pindahkan ke Sampah</string>
     <string name="move_to_spam">Pindahkan ke spam</string>
     <string name="move_to_inbox">Pindahkan ke Kotak masuk</string>
+    <string name="move_to">Move to…</string>
     <string name="are_you_sure_empty">Yakin ingin menghapus semua pesan dari folder ini?</string>
     <string name="send">Kirim</string>
     <string name="selected">Dipilih</string>
@@ -135,11 +161,19 @@
     <plurals name="minutes_string">
         <item quantity="other">%d menit</item>
     </plurals>
+    <string name="expiration_days">%dH</string>
+    <string name="expiration_hours">%dJ</string>
+    <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
         <item quantity="other">%d Lampiran</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
         <item quantity="other">\u0020 %d Lampiran</item>
+    </plurals>
+    <plurals name="attachments_number">
+        <item quantity="other">1 Lampiran
+
+%d Lampiran</item>
     </plurals>
     <string name="add_attachment">Tambahkan lampiran</string>
     <string name="select_file">Pilih berkas</string>
@@ -162,7 +196,7 @@
     <string name="yes">Ya</string>
     <string name="no">Tidak</string>
     <string name="okay">Baik</string>
-    <string name="report_bugs">Laporkan bug</string>
+    <string name="report_bugs">Laporkan Bug</string>
     <string name="send_report">Kirim laporan</string>
     <string name="bug_title">Judul</string>
     <string name="bug_description">Deskripsi Bug</string>
@@ -448,7 +482,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="print_error">Mencetak Kesalahan</string>
     <string name="download_complete">Unduhan selesai</string>
     <string name="download_in_progress">Unduhan sedang berlangsung</string>
-    <string name="message_expires_in">\tKedaluwarsa dalam %s</string>
+    <string name="message_expires_in">Pesan ini akan kedaluwarsa dalam %s</string>
     <string name="unsaved_changes_title">Perubahan Belum Disimpan</string>
     <string name="unsaved_changes_subtitle">Ada entri yang belum disimpan dalam formulir. Apakah Anda yakin ingin membuangnya?</string>
     <string name="request_timeout">Waktu permintaan habis, silakan coba lagi</string>
@@ -466,8 +500,6 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="folder_deleted_error">Kesalahan saat menghapus folder</string>
     <string name="save_new_folder">Simpan Folder Baru</string>
     <string name="create_new_folder">Buat Folder</string>
-    <string name="all_mail">Semua Surat</string>
-    <string name="allmail_option">SEMUA SURAT</string>
     <string name="empty_emails">Tidak ada email</string>
     <string name="empty_email_list">Tidak ada alamat email</string>
     <string name="no_contacts">Tidak ada kontak</string>
@@ -499,11 +531,13 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="recheck_delinquency">Periksa Lagi</string>
     <string name="close_app">Tutup Aplikasi</string>
     <string name="empty_subject">(Tanpa judul)</string>
+    <string name="empty_recipients">(Tidak ada penerima)</string>
     <string name="contacts_unknown">Tidak diketahui</string>
     <string name="learn_more"><u>Pelajari Lebih Lanjut</u></string>
     <string name="info">Info</string>
     <string name="error_can_not_send_from_this_address">Tingkatkan ke paket berbayar untuk mengirim dari alamat %s Anda.</string>
     <string name="email_empty">Alamat email tidak ada</string>
+    <string name="add_contact_details">Add Contact Details</string>
     <string name="encrypted_contact_details">Rincian Kontak Terenkripsi</string>
     <string name="convert_question">Unggah kontak lokal</string>
     <string name="convert_question_subtitle">Ini akan mengunggah kontak lokal pada perangkat Anda ke direktori kontak ProtonMail Anda. Anda kemudian dapat mengakses kontak ini di perangkat Anda yang lain melalui ProtonMail.</string>
@@ -548,6 +582,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Pesan terenkripsi end-to-end</string>
     <string name="sender_lock_internal_verified">Pesan terenkripsi end-to-end dari alamat terverifikasi</string>
+    <string name="sender_lock_learn_more"><a href="">Pelajari lebih lanjut</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Dienkripsi end-to-end</string>
     <string name="composer_lock_internal_pinned">Terenkripsi end-to-end ke alamat terverifikasi</string>
@@ -674,6 +709,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="payment_method">Metode Pembayaran</string>
     <string name="password_manager">Pengelolaan kata sandi</string>
     <string name="recovery_email">Alamat email pemulihan</string>
+    <string name="info_for_missing_functionality">Please log in through <a href="https://www.protonmail.com/">protonmail.com</a> and access your settings to edit this information.</string>
     <string name="storage">Ukuran Kotak Surat</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Alamat</string>
@@ -690,6 +726,16 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- region Snooze Settings -->
     <string name="snooze_header">Tunda</string>
     <string name="notifications_snooze">Pemberitahuan Tunda</string>
+    <string-array name="quick_snooze_values">
+        <item>30 menit</item>
+        <item>1 jam</item>
+        <item>2 jam</item>
+        <item>4 jam</item>
+        <item>8 jam</item>
+        <item>12 jam</item>
+        <item>Sesuaikan</item>
+        <item>Dijadwalkan</item>
+    </string-array>
     <string name="notifications_snoozed">Pemberitahuan ditunda</string>
     <string name="notifications_snooze_scheduled">Dijadwalkan</string>
     <string name="notifications_snooze_scheduled_settings">Pengaturan Tunda Terjadwal</string>
@@ -708,6 +754,15 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="work_days">Hari kerja</string>
     <string name="weekends">Akhir pekan</string>
     <string name="every_day">Setiap hari</string>
+    <string-array name="snooze_repeat_values">
+        <item>Sen</item>
+        <item>Sel</item>
+        <item>Rab</item>
+        <item>Kam</item>
+        <item>Jum</item>
+        <item>Sab</item>
+        <item>Ming</item>
+    </string-array>
     <string name="quick_and_scheduled_enabled">Tunda Cepat dan Tunda Terjadwal aktif</string>
     <string name="quick_only_enabled">Tunda Cepat aktif</string>
     <string name="scheduled_only_enabled">Tunda Terjadwal aktif</string>
@@ -725,6 +780,8 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="settings_prevent_taking_screenshots">Cegah pengambilan Tangkapan layar</string>
     <string name="hyperlink_confirmation">Minta tautan konfirmasi</string>
     <string name="labels_and_folders">Label &amp; Folder </string>
+    <string name="folders">Folder</string>
+    <string name="labels">Label</string>
     <string name="labels_manage">Pengelola Label</string>
     <string name="folders_manage">Pengelola Folder</string>
     <string name="swiping_gesture">Gerakan usap</string>
@@ -733,11 +790,12 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Pilih tindakan usap</string>
     <string name="swipe_action_trash">Pesan dipindahkan ke sampah</string>
-    <string name="swipe_action_trash_short">Pindahkan ke sampah</string>
     <string name="swipe_action_star">Pesan berbintang diperbarui</string>
+    <string name="swipe_action_star_short">Update star</string>
     <string name="swipe_action_spam">Pesan ditandai sebagai spam</string>
     <string name="swipe_action_archive">Pesan diarsipkan</string>
     <string name="swipe_action_mark_read">Pesan ditandai telah dibaca</string>
+    <string name="swipe_action_mark_read_short">Read</string>
     <plurals name="action_move_to_trash">
         <item quantity="other">Pesan telah dipindahkan ke folder sampah</item>
     </plurals>
@@ -811,6 +869,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- endregion -->
     <string name="allowed">Diizinkan</string>
     <string name="denied">Ditolak</string>
+    <string name="more">Lainnya</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Gestur geser diubah</string>
     <string name="swipe_gestures_changed_message">Setelah pembaruan terakhir gestur geser telah dipindah. Jika berminat, Anda dapat mengatur ulang di bagian pengaturan.</string>
@@ -820,4 +879,26 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="failed_saving_draft_online">Gagal menyimpan draf daring pesan: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Tidak dapat membuka pesan ini saat sedang dikirim</string>
     <string name="enable_conversation_mode">Aktifkan mode percakapan</string>
+    <!-- endregion -->
+    <string name="recipient_email_format">&lt;%s&gt;</string>
+    <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
+    <string name="error_loading_conversations">Error loading conversations, please try again</string>
+    <string name="star">Star</string>
+    <string name="unstar">Unstar</string>
+    <string name="send_to_archive">Send to archive?</string>
+    <string name="new_label">New Label</string>
+    <string name="new_folder">New Folder</string>
+    <string name="label_as">Label as…</string>
+    <string name="mark_as_unread">Mark as unread</string>
+    <string name="mark_as_read">Mark as read</string>
+    <string name="move_message">Move message</string>
+    <string name="manage">Manage</string>
+    <string name="message_from">Message from %s</string>
+    <string name="not_spam_move_to_inbox">Not spam (Move to Inbox)</string>
+    <plurals name="x_messages_count">
+        <item quantity="other">%d messages</item>
+    </plurals>
+    <plurals name="x_conversations_count">
+        <item quantity="other">%d conversations</item>
+    </plurals>
 </resources>

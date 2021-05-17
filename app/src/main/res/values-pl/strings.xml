@@ -18,6 +18,30 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- region All -->
+    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_folders">Foldery</string>
+    <string name="x_labels">Etykiety</string>
+    <string name="x_more">Więcej</string>
+    <string name="x_search">Szukaj</string>
+    <!-- endregion -->
+    <!-- region Drawer -->
+    <string name="drawer_contacts">Kontakty</string>
+    <string name="drawer_lock_the_app">Zablokuj aplikację</string>
+    <string name="drawer_report_bug">Zgłoś błąd</string>
+    <string name="drawer_settings">Ustawienia</string>
+    <string name="drawer_subscription">Subskrypcja</string>
+    <string name="drawer_sign_out">Wyloguj</string>
+    <!-- endregion -->
+    <!-- region Composer -->
+    <string name="composer_bcc">Udw:</string>
+    <string name="composer_cc">Dw:</string>
+    <string name="composer_compose_email">Napisz wiadomość</string>
+    <string name="composer_from">Od:</string>
+    <string name="composer_subject">Temat:</string>
+    <string name="composer_to">Do:</string>
+    <!-- end region -->
+    <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">SZYFROWANA POCZTA E-MAIL</string>
     <string name="secure_email_swiss">Bezpieczna poczta e-mail ulokowana\nw Szwajcarii</string>
@@ -55,13 +79,14 @@
     <string name="message_drafted">Wysyłanie wiadomości nie powiodło się. Wiadomość została zapisana w folderze Szkice.</string>
     <string name="open_drawer">Otwórz</string>
     <string name="close_drawer">Zamknij</string>
-    <string name="inbox_option">ODEBRANE</string>
-    <string name="starred_option">WYRÓŻNIONE</string>
-    <string name="drafts_option">SZKICE</string>
-    <string name="sent_option">WYSŁANE</string>
-    <string name="archive_option">ARCHIWUM</string>
-    <string name="trash_option">KOSZ</string>
-    <string name="spam_option">SPAM</string>
+    <string name="inbox_option">Odebrane</string>
+    <string name="starred_option">Wyróżnione</string>
+    <string name="drafts_option">Szkice</string>
+    <string name="sent_option">Wysłane</string>
+    <string name="archive_option">Archiwum</string>
+    <string name="trash_option">Kosz</string>
+    <string name="spam_option">Spam</string>
+    <string name="allmail_option">Wszystkie wiadomości</string>
     <string name="inbox">Odebrane</string>
     <string name="starred">Wyróżnione</string>
     <string name="drafts">Szkice</string>
@@ -69,12 +94,12 @@
     <string name="archive">Archiwum</string>
     <string name="trash">Kosz</string>
     <string name="spam">Spam</string>
+    <string name="all_mail">Wszystkie wiadomości</string>
     <string name="contacts">Kontakty</string>
     <string name="search_contacts">Szukaj kontaktów</string>
     <string name="fetching_contacts">Trwa pobieranie kontaktów ProtonMail...</string>
     <string name="fetching_contacts_success">Kontakty zostały odświeżone</string>
     <string name="fetching_contacts_failure">Nie można odświeżyć kontaktów</string>
-    <string name="x_search">Szukaj</string>
     <string name="search_messages">Szukaj wiadomości</string>
     <string name="no_search_results">Brak wyników wyszukiwania</string>
     <string name="compose">Napisz</string>
@@ -93,6 +118,7 @@
     <string name="move_to_trash">Przenieś do Kosza</string>
     <string name="move_to_spam">Przenieś do Spamu</string>
     <string name="move_to_inbox">Przenieś do Odebranych</string>
+    <string name="move_to">Przenieś do…</string>
     <string name="are_you_sure_empty">Czy na pewno chcesz usunąć wszystkie wiadomości z tego folderu?</string>
     <string name="send">Wyślij</string>
     <string name="selected">Zaznaczone</string>
@@ -144,6 +170,9 @@
         <item quantity="many">%d minut</item>
         <item quantity="other">%d minut</item>
     </plurals>
+    <string name="expiration_days">%dd</string>
+    <string name="expiration_hours">%dg</string>
+    <string name="expiration_minutes">%dmin</string>
     <plurals name="attachments">
         <item quantity="one">1 załącznik</item>
         <item quantity="few">%d załączniki</item>
@@ -155,6 +184,12 @@
         <item quantity="few">\u0020 %d załączniki</item>
         <item quantity="many">\u0020 %d załączników</item>
         <item quantity="other">\u0020 %d załączników</item>
+    </plurals>
+    <plurals name="attachments_number">
+        <item quantity="one">1 załącznik</item>
+        <item quantity="few">%d załączniki</item>
+        <item quantity="many">%d załączników</item>
+        <item quantity="other">%d załączników</item>
     </plurals>
     <string name="add_attachment">Dodaj załącznik</string>
     <string name="select_file">Wybierz plik</string>
@@ -366,7 +401,7 @@
     <string name="delete_selected">Usuń zaznaczone</string>
     <string name="pin_not_activated">Kod PIN nie został aktywowany</string>
     <string name="available_options">Dostępne opcje</string>
-    <string name="change_recovery_email">Zmień adres odzyskiwania/powiadomień</string>
+    <string name="change_recovery_email">Zmień adres odzyskiwania / powiadomień</string>
     <string name="background_sync_subtitle">Jeśli włączysz tę opcję, aplikacja będzie synchronizować się w tle. W przeciwnym wypadku powiadomienia push zostaną wyłączone.</string>
     <string-array name="notification_options">
         <item>Brak wibracji lub dźwięku</item>
@@ -471,7 +506,7 @@
     <string name="print_error">Błąd wydruku</string>
     <string name="download_complete">Pobieranie zostało zakończone</string>
     <string name="download_in_progress">Pobieranie jest w toku</string>
-    <string name="message_expires_in">\tWygasa za %s</string>
+    <string name="message_expires_in">Ta wiadomość wygaśnie za %s</string>
     <string name="unsaved_changes_title">Niezapisane zmiany</string>
     <string name="unsaved_changes_subtitle">W formularzu są niezapisane dane. Czy na pewno chcesz je odrzucić?</string>
     <string name="request_timeout">Upłynął limit czasu żądania, spróbuj ponownie</string>
@@ -489,8 +524,6 @@
     <string name="folder_deleted_error">Wystąpił błąd podczas usuwania folderu</string>
     <string name="save_new_folder">Zapisz nowy folder</string>
     <string name="create_new_folder">Utwórz folder</string>
-    <string name="all_mail">Wszystkie wiadomości</string>
-    <string name="allmail_option">WSZYSTKIE WIADOMOŚCI</string>
     <string name="empty_emails">Brak wiadomości e-mail</string>
     <string name="empty_email_list">Brak adresu e-mail</string>
     <string name="no_contacts">Brak kontaktów</string>
@@ -522,11 +555,13 @@
     <string name="recheck_delinquency">Sprawdź ponownie</string>
     <string name="close_app">Zamknij aplikację</string>
     <string name="empty_subject">(Brak tematu)</string>
+    <string name="empty_recipients">(brak odbiorców)</string>
     <string name="contacts_unknown">Nieznany</string>
     <string name="learn_more"><u>Dowiedz się więcej</u></string>
     <string name="info">Info</string>
     <string name="error_can_not_send_from_this_address">Ulepsz do płatnego planu, aby wysyłać wiadomości z adresu %s.</string>
     <string name="email_empty">Brak adresu e-mail</string>
+    <string name="add_contact_details">Add Contact Details</string>
     <string name="encrypted_contact_details">Zaszyfrowane szczegóły kontaktu</string>
     <string name="convert_question">Prześlij lokalne kontakty</string>
     <string name="convert_question_subtitle">Spowoduje to przesłanie lokalnych kontaktów z Twojego urządzenia do kontaktów ProtonMaila. Dzięki temu będziesz mógł uzyskać dostęp do tych kontaktów na innych urządzeniach poprzez pocztę ProtonMail.</string>
@@ -571,6 +606,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Wiadomość zaszyfrowana end-to-end</string>
     <string name="sender_lock_internal_verified">Wiadomość zaszyfrowana end-to-end od zweryfikowanego adresu</string>
+    <string name="sender_lock_learn_more"><a href="">Dowiedz się więcej</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Zaszyfrowane end-to-end</string>
     <string name="composer_lock_internal_pinned">Zaszyfrowana end-to-end do zweryfikowanego adresu</string>
@@ -705,8 +741,9 @@
     <string name="subscription">Subskrypcja</string>
     <string name="plan_and_user">Plan</string>
     <string name="payment_method">Metoda płatności</string>
-    <string name="password_manager">Menedżer haseł</string>
+    <string name="password_manager">Zarządzaniem hasłem</string>
     <string name="recovery_email">Adres pomocniczy</string>
+    <string name="info_for_missing_functionality">Zaloguj się przez <a href="https://www.protonmail.com/">protonmail.com</a> i uzyskaj dostęp do swoich ustawień.</string>
     <string name="storage">Rozmiar skrzynki pocztowej</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Adresy</string>
@@ -723,6 +760,16 @@
     <!-- region Snooze Settings -->
     <string name="snooze_header">Usypianie powiadomień</string>
     <string name="notifications_snooze">Usypianie powiadomień</string>
+    <string-array name="quick_snooze_values">
+        <item>30 minut</item>
+        <item>1 godzina</item>
+        <item>2 godziny</item>
+        <item>4 godziny</item>
+        <item>8 godzin</item>
+        <item>12 godzin</item>
+        <item>Niestandardowe</item>
+        <item>Zaplanowane</item>
+    </string-array>
     <string name="notifications_snoozed">Powiadomienia zostały uśpione</string>
     <string name="notifications_snooze_scheduled">Zaplanowane</string>
     <string name="notifications_snooze_scheduled_settings">Ustawienia zaplanowanej drzemki</string>
@@ -744,6 +791,15 @@
     <string name="work_days">Dni robocze</string>
     <string name="weekends">Weekend</string>
     <string name="every_day">Codziennie</string>
+    <string-array name="snooze_repeat_values">
+        <item>Pn</item>
+        <item>Wt</item>
+        <item>Śr</item>
+        <item>Cz</item>
+        <item>Pt</item>
+        <item>So</item>
+        <item>Nd</item>
+    </string-array>
     <string name="quick_and_scheduled_enabled">Szybka drzemka i zaplanowana drzemka są aktywne</string>
     <string name="quick_only_enabled">Szybka drzemka jest aktywna</string>
     <string name="scheduled_only_enabled">Zaplanowana drzemka jest aktywna</string>
@@ -761,6 +817,8 @@
     <string name="settings_prevent_taking_screenshots">Zablokuj zrzuty ekranu</string>
     <string name="hyperlink_confirmation">Potwierdź otwieranie linków</string>
     <string name="labels_and_folders">Etykiety i foldery </string>
+    <string name="folders">Foldery</string>
+    <string name="labels">Etykiety</string>
     <string name="labels_manage">Menedżer etykiet</string>
     <string name="folders_manage">Menedżer folderów</string>
     <string name="swiping_gesture">Gesty przeciągania</string>
@@ -769,11 +827,12 @@
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Wybierz gest przesunięcia palcem</string>
     <string name="swipe_action_trash">Wiadomość została przeniesiona do Kosza</string>
-    <string name="swipe_action_trash_short">Przenieś do Kosza</string>
     <string name="swipe_action_star">Gwiazdka została zaktualizowana</string>
+    <string name="swipe_action_star_short">Oznacz gwiazdką</string>
     <string name="swipe_action_spam">Wiadomość została oznaczona jako spam</string>
     <string name="swipe_action_archive">Wiadomość została zarchiwizowana</string>
     <string name="swipe_action_mark_read">Wiadomość została oznaczona jako przeczytana</string>
+    <string name="swipe_action_mark_read_short">Przeczytane</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Wiadomość została przeniesiona do Kosza</item>
         <item quantity="few">Wiadomości zostały przeniesione do Kosza</item>
@@ -856,6 +915,7 @@
     <!-- endregion -->
     <string name="allowed">Dozwolone</string>
     <string name="denied">Niedozwolone</string>
+    <string name="more">Więcej</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Gesty przesunięcia palcem zostały zmienione</string>
     <string name="swipe_gestures_changed_message">Gesty przesunięcia palcem zostały zmienione po ostatniej aktualizacji aplikacji. Możesz je zresetować w ustawieniach aplikacji.</string>
@@ -865,4 +925,32 @@
     <string name="failed_saving_draft_online">Nie udało się zapisać szkicu: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Nie można otworzyć wiadomości podczas jej wysyłania</string>
     <string name="enable_conversation_mode">Włącz tryb wątku</string>
+    <!-- endregion -->
+    <string name="recipient_email_format">&lt;%s&gt;</string>
+    <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
+    <string name="error_loading_conversations">Wystąpił błąd podczas ładowania wątków. Spróbuj ponownie</string>
+    <string name="star">Oznacz gwiazdką</string>
+    <string name="unstar">Usuń gwiazdkę</string>
+    <string name="send_to_archive">Przenieś do Archiwum?</string>
+    <string name="new_label">Nowa etykieta</string>
+    <string name="new_folder">Nowy folder</string>
+    <string name="label_as">Oznacz jako…</string>
+    <string name="mark_as_unread">Oznacz jako nieprzeczytane</string>
+    <string name="mark_as_read">Oznacz jako przeczytane</string>
+    <string name="move_message">Przenieś wiadomość</string>
+    <string name="manage">Zarządzaj</string>
+    <string name="message_from">Wiadomość od %s</string>
+    <string name="not_spam_move_to_inbox">To nie jest spam (Przenieś do Odebranych)</string>
+    <plurals name="x_messages_count">
+        <item quantity="one">%d wiadomość</item>
+        <item quantity="few">%d wiadomości</item>
+        <item quantity="many">%d wiadomości</item>
+        <item quantity="other">%d wiadomości</item>
+    </plurals>
+    <plurals name="x_conversations_count">
+        <item quantity="one">%d wątek</item>
+        <item quantity="few">%d wątki</item>
+        <item quantity="many">%d wątków</item>
+        <item quantity="other">%d wątków</item>
+    </plurals>
 </resources>
