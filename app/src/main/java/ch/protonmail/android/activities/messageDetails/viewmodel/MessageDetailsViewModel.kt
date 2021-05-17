@@ -53,6 +53,7 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
@@ -133,7 +134,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private val _downloadEmbeddedImagesResult: MutableLiveData<String> = MutableLiveData()
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
-    private val _decryptedMessageLiveData: MutableLiveData<Message> = MutableLiveData()
+    private val _decryptedMessageLiveData: MutableLiveData<ConversationUiModel> = MutableLiveData()
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _reloadRecipientsEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
@@ -164,7 +165,8 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
 
     val messageAttachments: LiveData<List<Attachment>> by lazy {
-        messageDetailsRepository.findAttachments(decryptedMessageData).distinctUntilChanged()
+        val message = decryptedMessageData.value!!.message
+        messageDetailsRepository.findAttachments(message).distinctUntilChanged()
     }
     val pendingSend: LiveData<PendingSend?> by lazy {
         messageDetailsRepository.findPendingSendByOfflineMessageIdAsync(messageId)
@@ -185,7 +187,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     val prepareEditMessageIntent: LiveData<Event<IntentExtrasData>>
         get() = _prepareEditMessageIntentResult
 
-    val decryptedMessageData: LiveData<Message>
+    val decryptedMessageData: LiveData<ConversationUiModel>
         get() = _decryptedMessageLiveData
 
     val webViewContentWithoutImages = MutableLiveData<String>()
@@ -256,8 +258,10 @@ internal class MessageDetailsViewModel @Inject constructor(
             message.tryDecrypt(publicKeys) ?: false
         }
         Timber.v("Emitting Message Detail = $message keys size: ${publicKeys?.size}")
-        _decryptedMessageLiveData.postValue(message)
+        _decryptedMessageLiveData.postValue(conversationFrom(message))
     }
+
+    private fun conversationFrom(message: Message) = ConversationUiModel(message)
 
     private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
         return try {
@@ -312,7 +316,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(messageId)
             val embeddedImages = _embeddedImagesAttachments.mapNotNull {
                 attachmentsHelper.fromAttachmentToEmbeddedImage(
-                    it, decryptedMessageData.value!!.embeddedImageIds.toList()
+                    it, decryptedMessageData.value!!.message.embeddedImageIds.toList()
                 )
             }
             val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
@@ -460,7 +464,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun prepareEmbeddedImages(): Boolean {
-        val message = decryptedMessageData.value
+        val message = decryptedMessageData.value?.message
         message?.let {
             val attachments = message.attachments
             val embeddedImagesToFetch = ArrayList<EmbeddedImage>()
@@ -513,7 +517,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun setAttachmentsList(attachments: List<Attachment>) {
-        val message = decryptedMessageData.value
+        val message = decryptedMessageData.value?.message
         message!!.setAttachmentList(attachments)
     }
 

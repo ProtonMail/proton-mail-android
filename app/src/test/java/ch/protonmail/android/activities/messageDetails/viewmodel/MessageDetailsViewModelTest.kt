@@ -167,7 +167,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         // Then
         val expectedMessage = message.copy()
         expectedMessage.senderDisplayName = "senderContactName"
-        val emittedMessage = messageObserver.observedValues[0]
+        val emittedMessage = messageObserver.observedValues[0]?.message
         assertEquals(expectedMessage, emittedMessage)
         assertEquals(expectedMessage.senderDisplayName, emittedMessage!!.senderDisplayName)
     }

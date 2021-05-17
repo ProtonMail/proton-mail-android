@@ -22,7 +22,6 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import androidx.room.Transaction
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.api.ProtonMailApiManager
@@ -182,17 +181,7 @@ class MessageDetailsRepository @Inject constructor(
 
     fun setFolderLocation(message: Message) = message.setFolderLocation(messagesDao)
 
-    fun findAttachments(messageLiveData: LiveData<Message>): LiveData<List<Attachment>> {
-        return Transformations.switchMap(messageLiveData) { message ->
-            message?.let {
-                if (it.numAttachments == 0)
-                    null
-                else {
-                    it.getAttachmentsAsync(messagesDao)
-                }
-            }
-        }
-    }
+    fun findAttachments(message: Message): LiveData<List<Attachment>> = message.getAttachmentsAsync(messagesDao)
 
     suspend fun findAttachmentsByMessageId(messageId: String): List<Attachment> =
         messagesDao.findAttachmentsByMessageId(messageId).first()

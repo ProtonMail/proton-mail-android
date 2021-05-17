@@ -58,6 +58,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
+import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
@@ -282,7 +283,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         return true
     }
 
-    fun showReportPhishingDialog(message: Message? = viewModel.decryptedMessageData.value) {
+    fun showReportPhishingDialog(message: Message? = viewModel.decryptedMessageData.value?.message) {
         AlertDialog.Builder(this)
             .setTitle(R.string.phishing_dialog_title)
             .setMessage(R.string.phishing_dialog_message)
@@ -564,12 +565,10 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         messageExpandableAdapter.displayAttachmentsViews(attachmentsVisibility)
     }
 
-    private inner class DecryptedMessageObserver : Observer<Message?> {
+    private inner class DecryptedMessageObserver : Observer<ConversationUiModel?> {
 
-        override fun onChanged(message: Message?) {
-            if (message == null) {
-                return
-            }
+        override fun onChanged(conversationUiModel: ConversationUiModel?) {
+            val message = conversationUiModel?.message ?: return
 
             starToggleButton.isChecked = message.isStarred ?: false
 
@@ -645,7 +644,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     // TODO: Move as much as possible of this method to ViewModel
     fun executeMessageAction(
         messageAction: Constants.MessageActionType,
-        message: Message = requireNotNull(viewModel.decryptedMessageData.value)
+        message: Message = requireNotNull(viewModel.decryptedMessageData.value?.message)
     ) {
         try {
             val user = mUserManager.requireCurrentLegacyUser()
