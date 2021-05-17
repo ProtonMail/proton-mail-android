@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.data
 
-import androidx.lifecycle.LiveData
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
@@ -38,8 +37,8 @@ class ContactsRepository @Inject constructor(
         databaseProvider.provideContactDao(userManager.requireCurrentUserId())
     }
 
-    fun findContactEmailByEmailLiveData(email: String): LiveData<ContactEmail> =
-        contactDao.findContactEmailByEmailLiveData(email)
+    fun findContactEmailByEmail(email: String): ContactEmail? =
+        contactDao.findContactEmailByEmail(email)
 
     fun findAllContactEmails(): Flow<List<ContactEmail>> = contactDao.findAllContactsEmails()
 

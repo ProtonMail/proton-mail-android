@@ -29,24 +29,33 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.AttachmentMetadataDao
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.repository.MessageRepository
+import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.DownloadUtils
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import org.junit.Before
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
-    private var savedStateHandle = mockk<SavedStateHandle> {
-        every { get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID) } returns "id1"
+    private val savedStateHandle = mockk<SavedStateHandle> {
+        every { get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID) } returns "mockMessageId"
     }
 
     private val downloadUtils = DownloadUtils()
@@ -57,7 +66,9 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private val labelRepository: LabelRepository = mockk(relaxed = true)
 
-    private val userManager: UserManager = mockk(relaxed = true)
+    private val userManager: UserManager = mockk(relaxed = true) {
+        every { requireCurrentUserId() } returns Id("userId1")
+    }
 
     private val contactsRepository: ContactsRepository = mockk(relaxed = true)
 
@@ -81,24 +92,29 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer = mockk(relaxed = true)
 
-    private val viewModel = MessageDetailsViewModel(
-        messageDetailsRepository,
-        messageRepository,
-        userManager,
-        contactsRepository,
-        labelRepository,
-        attachmentMetadataDao,
-        fetchVerificationKeys,
-        attachmentsWorker,
-        dispatchers,
-        attachmentsHelper,
-        downloadUtils,
-        moveMessagesToFolder,
-        savedStateHandle,
-        messageRendererFactory,
-        verifyConnection,
-        networkConfigurator,
-    )
+    private lateinit var viewModel: MessageDetailsViewModel
+
+    @Before
+    fun setUp() {
+        viewModel = MessageDetailsViewModel(
+            messageDetailsRepository,
+            messageRepository,
+            userManager,
+            contactsRepository,
+            labelRepository,
+            attachmentMetadataDao,
+            fetchVerificationKeys,
+            attachmentsWorker,
+            dispatchers,
+            attachmentsHelper,
+            downloadUtils,
+            moveMessagesToFolder,
+            savedStateHandle,
+            messageRendererFactory,
+            verifyConnection,
+            networkConfigurator,
+        )
+    }
 
     @Test
     fun verifyThatMessageIsParsedProperly() {
@@ -116,4 +132,76 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         // then
         assertEquals(expected, parsedMessage)
     }
+
+    @Test
+    fun loadMessageDetailsInvokesMessageRepositoryWithMessageIdAndUserId() = runBlockingTest {
+        // Given
+        val userId = Id("userId2")
+        every { userManager.requireCurrentUserId() } returns userId
+        coEvery { messageRepository.getMessage(any(), any(), any()) } returns Message()
+
+        // When
+        viewModel.loadMessageDetails()
+
+        // Then
+        coVerify { messageRepository.getMessage(userId, "mockMessageId", true) }
+    }
+
+    @Test
+    fun loadMessageEmitsFoundMessageToLiveDataWithContactNameAsDisplayName() = runBlockingTest {
+        // Given
+        val senderEmail = "senderEmail2"
+        val message = Message(
+            messageId = "mockMessageId",
+            isDownloaded = true,
+            sender = MessageSender("senderName", senderEmail)
+        )
+        val senderContact = ContactEmail("ceId2", senderEmail, "senderContactName")
+        val messageObserver = viewModel.decryptedMessageData.testObserver()
+        coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
+        coEvery { contactsRepository.findContactEmailByEmail(senderEmail) } returns senderContact
+
+        // When
+        viewModel.loadMessageDetails()
+
+        // Then
+        val expectedMessage = message.copy()
+        expectedMessage.senderDisplayName = "senderContactName"
+        val emittedMessage = messageObserver.observedValues[0]
+        assertEquals(expectedMessage, emittedMessage)
+        assertEquals(expectedMessage.senderDisplayName, emittedMessage!!.senderDisplayName)
+    }
+
+    @Test
+    fun loadMessageDoesNotEmitTheFoundMessageToLiveDataWhenTheMessageIsNotDownloaded() = runBlockingTest {
+        // Given
+        val senderEmail = "senderEmail2"
+        val message = Message(
+            messageId = "mockMessageId",
+            isDownloaded = false,
+            sender = MessageSender("senderName", senderEmail)
+        )
+        val messageObserver = viewModel.decryptedMessageData.testObserver()
+        coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
+
+        // When
+        viewModel.loadMessageDetails()
+
+        // Then
+        assertEquals(emptyList(), messageObserver.observedValues)
+    }
+
+    @Test
+    fun loadMessageDoesNotEmitMessageToLiveDataWhenTheMessageWasNotFound() = runBlockingTest {
+        // Given
+        val messageErrorObserver = viewModel.messageDetailsError.testObserver()
+        coEvery { messageRepository.getMessage(any(), any(), any()) } returns null
+
+        // When
+        viewModel.loadMessageDetails()
+
+        // Then
+        assertEquals("Failed getting message details", messageErrorObserver.observedValues[0]?.getContentIfNotHandled())
+    }
+
 }

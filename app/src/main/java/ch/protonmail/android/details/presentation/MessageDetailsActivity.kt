@@ -201,7 +201,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun continueSetup() {
-        viewModel.message.observe(this, MessageObserver())
+        viewModel.loadMessageDetails()
         viewModel.decryptedMessageData.observe(this, DecryptedMessageObserver())
 
         viewModel.labels
@@ -312,7 +312,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun onConnectivityCheckRetry() {
-        viewModel.fetchMessageDetails(false)
+        viewModel.loadMessageDetails()
         networkSnackBarUtil.getCheckingConnectionSnackBar(
             mSnackLayout,
             R.id.messageDetailsActionsView
@@ -332,7 +332,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 Timber.v("isConnectionActive:${isConnectionActive.name}")
                 if (isConnectionActive == Constants.ConnectionState.CONNECTED) {
                     hideNoConnSnackExtended()
-                    viewModel.fetchMessageDetails(false)
+                    viewModel.loadMessageDetails()
                 } else {
                     showNoConnSnackExtended(isConnectionActive)
                 }
@@ -497,50 +497,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private inner class MessageObserver : Observer<Message?> {
-
-        override fun onChanged(message: Message?) {
-            Timber.v("Message changed isDownloaded: ${message?.isDownloaded} rendered: ${viewModel.renderingPassed}")
-            if (message != null) {
-                onMessageFound(message)
-            } else {
-                onMessageNotFound()
-            }
-        }
-
-        private fun onMessageFound(message: Message) {
-            starToggleButton.isChecked = message.isStarred ?: false
-            viewModel.addressId = message.addressID!!
-            if (message.isDownloaded) {
-                if (!viewModel.renderingPassed) {
-                    viewModel.fetchMessageDetails(true)
-                }
-                // we need to update the details, when e.g. message has been moved to another folder
-                messageExpandableAdapter.setMessageData(message)
-                messageDetailsActionsView.setOnMoreActionClickListener {
-                    MessageActionSheet.newInstance(
-                        originatorLocationId = MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
-                        messagesIds = listOf(message.messageId ?: messageId),
-                        currentFolderLocationId = message.location,
-                        title = getCurrentSubject(),
-                        subTitle = getMessagesFrom(message.sender?.name),
-                        isStarred = message.isStarred ?: false
-                    )
-                        .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
-                }
-            } else {
-                viewModel.fetchMessageDetails(false)
-            }
-        }
-
-        private fun onMessageNotFound() {
-            if (messageRecipientUsername != null && mNetworkUtil.isConnected()) {
-                // request to fetch message if didn't find in local database
-                viewModel.fetchMessageDetails(false)
-            }
-        }
-    }
-
     private inner class MessageDetailsPmWebViewClient(
         userManager: UserManager,
         activity: MessageDetailsActivity
@@ -614,6 +570,23 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             if (message == null) {
                 return
             }
+
+            starToggleButton.isChecked = message.isStarred ?: false
+
+            // we need to update the details, when e.g. message has been moved to another folder
+            messageExpandableAdapter.setMessageData(message)
+            messageDetailsActionsView.setOnMoreActionClickListener {
+                MessageActionSheet.newInstance(
+                    MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
+                    listOf(message.messageId ?: messageId),
+                    message.location,
+                    getCurrentSubject(),
+                    getMessagesFrom(message.sender?.name),
+                    message.isStarred ?: false
+                )
+                    .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
+            }
+
             Timber.v("New decrypted message ${message.messageId}")
             viewModel.messageAttachments.observe(this@MessageDetailsActivity, AttachmentsObserver())
             viewModel.renderedFromCache = AtomicBoolean(true)
