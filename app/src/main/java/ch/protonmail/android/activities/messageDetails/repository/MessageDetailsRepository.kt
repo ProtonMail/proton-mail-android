@@ -28,7 +28,6 @@ import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
@@ -42,7 +41,6 @@ import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
-import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.RemoveLabelJob
@@ -65,7 +63,6 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.io.IOException
 import java.util.Arrays
 import java.util.HashSet
 import javax.inject.Inject
@@ -73,6 +70,7 @@ import javax.inject.Inject
 private const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
 private const val DEPRECATION_MESSAGE = "We should strive towards moving methods out of this repository and stopping using it."
 
+@Deprecated("Scheduled to be removed, do not add new usages", ReplaceWith("MessageRepository"))
 class MessageDetailsRepository @Inject constructor(
     private val applicationContext: Context,
     private val jobManager: JobManager,
@@ -414,32 +412,6 @@ class MessageDetailsRepository @Inject constructor(
             .attachments(attachments, embeddedImagesAttachments)
             .build()
     }
-
-    suspend fun checkIfAttHeadersArePresent(message: Message, dispatcher: CoroutineDispatcher): Boolean =
-        withContext(dispatcher) {
-            message.checkIfAttHeadersArePresent(messagesDao)
-        }
-
-    @Deprecated(
-        message = DEPRECATION_MESSAGE,
-        replaceWith = ReplaceWith(
-            expression = "messageRepository.getMessage(messageId, username, true)",
-            imports = arrayOf("ch.protonmail.android.repositories.MessageRepository")
-        )
-    )
-    fun fetchMessageDetails(messageId: String): MessageResponse {
-        return try {
-            api.fetchMessageDetailsBlocking(messageId) // try to fetch the message details from the API
-        } catch (ioException: IOException) {
-            // if there is an IO exception, meaning the connection could not be established
-            // then schedule a background job for run in future
-            jobManager.addJobInBackground(FetchMessageDetailJob(messageId))
-            throw ioException
-        }
-    }
-
-    fun fetchSearchMessageDetails(messageId: String): MessageResponse =
-        api.fetchMessageDetailsBlocking(messageId) // try to fetch the message details from the API
 
     fun startDownloadEmbeddedImages(messageId: String, userId: Id) {
         attachmentsWorker.enqueue(messageId, userId, "")
