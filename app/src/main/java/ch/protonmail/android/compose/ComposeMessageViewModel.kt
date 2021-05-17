@@ -271,11 +271,10 @@ class ComposeMessageViewModel @Inject constructor(
     fun prepareMessageData(
         isPGPMime: Boolean,
         addressId: String,
-        addressEmailAlias: String? = null,
-        isTransient: Boolean
+        addressEmailAlias: String? = null
     ) {
         _messageDataResult =
-            composeMessageRepository.prepareMessageData(isPGPMime, addressId, addressEmailAlias, isTransient)
+            composeMessageRepository.prepareMessageData(isPGPMime, addressId, addressEmailAlias)
         getSenderEmailAddresses(addressEmailAlias)
     }
 
@@ -631,7 +630,7 @@ class ComposeMessageViewModel @Inject constructor(
                     composeMessageRepository.startFetchDraftDetail(_draftId.get())
                 } else {
                     it.isDownloaded = true
-                    val attachments = composeMessageRepository.getAttachments2(it, _messageDataResult.isTransient)
+                    val attachments = composeMessageRepository.getAttachmentsBlocking(it)
                     it.setAttachmentList(attachments)
                     _messageDataResult = MessageBuilderData.Builder()
                         .fromOld(_messageDataResult)
@@ -665,7 +664,7 @@ class ComposeMessageViewModel @Inject constructor(
 
                 if (message != null) {
                     val messageAttachments =
-                        composeMessageRepository.getAttachments(message, _messageDataResult.isTransient, dispatchers.Io)
+                        composeMessageRepository.getAttachments(message, dispatchers.Io)
                     if (oldList.size <= messageAttachments.size) {
                         val attachments = LocalAttachment.createLocalAttachmentList(messageAttachments)
                         _messageDataResult = MessageBuilderData.Builder()
@@ -754,7 +753,7 @@ class ComposeMessageViewModel @Inject constructor(
     fun createLocalAttachments(loadedMessage: Message) {
         viewModelScope.launch {
             val messageAttachments =
-                composeMessageRepository.getAttachments(loadedMessage, _messageDataResult.isTransient, dispatchers.Io)
+                composeMessageRepository.getAttachments(loadedMessage, dispatchers.Io)
             val localAttachments = LocalAttachment.createLocalAttachmentList(messageAttachments).toMutableList()
             _messageDataResult = MessageBuilderData.Builder()
                 .fromOld(_messageDataResult)

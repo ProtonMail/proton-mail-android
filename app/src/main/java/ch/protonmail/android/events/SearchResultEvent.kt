@@ -16,18 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities.mailbox
 
-import android.os.AsyncTask
-import ch.protonmail.android.data.local.MessageDao
+package ch.protonmail.android.events
 
-/**
- * Created by Kamil Rajtar on 25.07.18.
- */
-internal class InvalidateSearchDatabase(private val searchDatabase: MessageDao) : AsyncTask<Void, Void, Void>() {
+import ch.protonmail.android.data.local.model.Message
 
-    override fun doInBackground(vararg voids: Void): Void? {
-        searchDatabase.clearMessagesCache()
-        return null
-    }
-}
+data class SearchResultEvent(val results: List<Message>)

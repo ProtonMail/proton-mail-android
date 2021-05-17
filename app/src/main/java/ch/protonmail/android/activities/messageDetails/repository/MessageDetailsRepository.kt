@@ -40,7 +40,6 @@ import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
-import ch.protonmail.android.di.SearchMessageDaoQualifier
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
@@ -79,7 +78,6 @@ class MessageDetailsRepository @Inject constructor(
     private val jobManager: JobManager,
     private val api: ProtonMailApiManager,
     private var messagesDao: MessageDao,
-    @SearchMessageDaoQualifier var searchDatabaseDao: MessageDao,
     private var pendingActionDao: PendingActionDao,
     private val databaseProvider: DatabaseProvider,
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer
@@ -98,7 +96,6 @@ class MessageDetailsRepository @Inject constructor(
         jobManager = jobManager,
         api = api,
         messagesDao = databaseProvider.provideMessageDao(userId),
-        searchDatabaseDao = databaseProvider.provideMessageSearchDao(userId),
         pendingActionDao = databaseProvider.providePendingActionDao(userId),
         databaseProvider = databaseProvider,
         attachmentsWorker = attachmentsWorker
@@ -112,17 +109,11 @@ class MessageDetailsRepository @Inject constructor(
     fun findMessageByIdAsync(messageId: String): LiveData<Message> =
         messagesDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
 
-    fun findSearchMessageByIdAsync(messageId: String): LiveData<Message> =
-        searchDatabaseDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
-
     fun findMessageByIdBlocking(messageId: String): Message? =
         messagesDao.findMessageByIdBlocking(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
     fun findMessageById(messageId: String): Flow<Message?> =
         messagesDao.findMessageById(messageId).map { readMessageBodyFromFileIfNeeded(it) }
-
-    fun findSearchMessageById(messageId: String): Flow<Message?> =
-        searchDatabaseDao.findMessageById(messageId).map { readMessageBodyFromFileIfNeeded(it) }
 
     fun findMessageByIdSingle(messageId: String): Single<Message> =
         messagesDao.findMessageByIdSingle(messageId).map(readMessageBodyFromFileIfNeeded)
@@ -188,8 +179,6 @@ class MessageDetailsRepository @Inject constructor(
 
     fun getAllMessages(): LiveData<List<Message>> = messagesDao.getAllMessages()
 
-    fun getAllSearchMessages(): LiveData<List<Message>> = searchDatabaseDao.getAllMessages()
-
     fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message> =
         messagesDao.searchMessages(subject, senderName, senderEmail).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
 
@@ -207,23 +196,8 @@ class MessageDetailsRepository @Inject constructor(
         }
     }
 
-    fun findAttachmentsSearchMessage(messageLiveData: LiveData<Message>): LiveData<List<Attachment>> {
-        return Transformations.switchMap(messageLiveData) { message ->
-            message?.let {
-                if (it.numAttachments == 0)
-                    null
-                else {
-                    it.getAttachmentsAsync(searchDatabaseDao)
-                }
-            }
-        }
-    }
-
     suspend fun findAttachmentsByMessageId(messageId: String): List<Attachment> =
         messagesDao.findAttachmentsByMessageId(messageId).first()
-
-    suspend fun findSearchAttachmentsByMessageId(messageId: String): List<Attachment> =
-        searchDatabaseDao.findAttachmentsByMessageId(messageId).first()
 
     suspend fun saveAttachment(attachment: Attachment) = messagesDao.saveAttachment(attachment)
 
@@ -235,35 +209,14 @@ class MessageDetailsRepository @Inject constructor(
 
     fun findPendingSendByMessageId(messageId: String) = pendingActionDao.findPendingSendByMessageId(messageId)
 
-    @Deprecated(
-        "Use 'saveMessage'",
-        ReplaceWith("saveMessage(message, isSearchMessage = isTransient)")
-    )
-    suspend fun saveMessageInDB(message: Message, isTransient: Boolean) {
-        saveMessage(message, isSearchMessage = isTransient)
-    }
-
-    suspend fun saveMessage(message: Message, isSearchMessage: Boolean = false): Long {
-        return if (isSearchMessage) {
-            saveSearchMessage(message)
-        } else {
-            saveFile(message)
-            messagesDao.saveMessage(message)
-        }
+    suspend fun saveMessage(message: Message): Long {
+        saveFile(message)
+        return messagesDao.saveMessage(message)
     }
 
     @Deprecated("Use suspend function", ReplaceWith("saveMessage(message)"))
     fun saveMessageBlocking(message: Message): Long = runBlocking {
         saveMessage(message)
-    }
-
-    @Deprecated("Use 'saveMessage'", ReplaceWith("saveMessage(message)"))
-    suspend fun saveMessageInDB(message: Message): Long =
-        saveMessage(message)
-
-    @Transaction
-    suspend fun saveAllMessages(messages: List<Message>) {
-        messages.forEach { saveMessage(it) }
     }
 
     @Deprecated("Use suspend function", ReplaceWith("saveAllMessages(messages)"))
@@ -283,47 +236,12 @@ class MessageDetailsRepository @Inject constructor(
         messagesDao.saveMessages(*messages.toTypedArray())
     }
 
-    suspend fun saveSearchMessage(message: Message): Long {
-        saveFile(message)
-        return searchDatabaseDao.saveMessage(message)
-    }
-
-    @Deprecated("Use 'saveSearchMessage'", ReplaceWith("saveSearchMessage(message)"))
-    suspend fun saveSearchMessageInDB(message: Message): Long =
-        saveSearchMessage(message)
-
     private fun saveFile(message: Message) {
         val localFilePath = saveBodyToFileIfNeeded(message)
         localFilePath?.let {
             message.messageBody = it
         }
     }
-
-    suspend fun saveAllSearchMessages(messages: List<Message>) {
-        messages.forEach { saveSearchMessage(it) }
-    }
-
-    @Deprecated("Use suspend function", ReplaceWith("saveAllSearchMessages(messages)"))
-    fun saveAllSearchMessagesBlocking(messages: List<Message>) {
-        runBlocking { saveAllSearchMessages(messages) }
-    }
-
-    @Deprecated("Use 'saveAllSearchMessages'", ReplaceWith("saveAllSearchMessages(messages)"))
-    suspend fun saveAllSearchMessagesInDB(messages: List<Message>) {
-        saveAllSearchMessages(messages)
-    }
-
-    suspend fun saveSearchMessagesInOneTransaction(messages: List<Message>) {
-        if (messages.isEmpty()) {
-            return
-        }
-        messages.forEach { message ->
-            saveFile(message)
-        }
-        searchDatabaseDao.saveMessages(*messages.toTypedArray())
-    }
-
-    fun clearSearchMessagesCache() = searchDatabaseDao.clearMessagesCache()
 
     /**
      * This is a workaround for too large Message bodies saved into database. We offload them to file
@@ -387,8 +305,7 @@ class MessageDetailsRepository @Inject constructor(
     suspend fun findAllLabelsWithIds(
         message: Message,
         checkedLabelIds: List<String>,
-        labels: List<Label>,
-        isTransient: Boolean
+        labels: List<Label>
     ) {
         val labelsToRemove = ArrayList<String>()
         val jobList = ArrayList<Job>()
@@ -414,7 +331,7 @@ class MessageDetailsRepository @Inject constructor(
         message.removeLabels(labelsToRemove)
 
         jobList.forEach(jobManager::addJobInBackground)
-        return saveMessageInDB(message, isTransient)
+        saveMessage(message)
     }
 
     suspend fun prepareEditMessageIntent(
@@ -427,8 +344,7 @@ class MessageDetailsRepository @Inject constructor(
         mImagesDisplayed: Boolean,
         remoteContentDisplayed: Boolean,
         embeddedImagesAttachments: MutableList<Attachment>?,
-        dispatcher: CoroutineDispatcher,
-        isTransient: Boolean
+        dispatcher: CoroutineDispatcher
     ): IntentExtrasData = withContext(dispatcher) {
         var toRecipientListString = ""
         var includeCCList = false
@@ -470,15 +386,7 @@ class MessageDetailsRepository @Inject constructor(
         }
 
         val attachments = withContext(dispatcher) {
-            ArrayList(
-                LocalAttachment.createLocalAttachmentList(
-                    if (!isTransient) {
-                        message.attachments(messagesDao)
-                    } else {
-                        message.attachments(searchDatabaseDao)
-                    }
-                )
-            )
+            ArrayList(LocalAttachment.createLocalAttachmentList(message.attachments(messagesDao)))
         }
 
         IntentExtrasData.Builder()

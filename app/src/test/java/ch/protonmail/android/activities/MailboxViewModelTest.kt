@@ -149,8 +149,6 @@ class MailboxViewModelTest : CoroutinesTest {
             getConversations
         )
 
-        viewModel.userId = currentUserId
-
         val jobEntryPoint = mockk<JobEntryPoint>()
         mockkStatic(EntryPoints::class)
 

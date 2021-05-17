@@ -224,7 +224,6 @@ class MailboxActivity :
         super.onCreate(savedInstanceState)
 
         val userId = userManager.currentUserId ?: return
-        mailboxViewModel.userId = userId
 
         messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
         counterDao = CounterDatabase.getInstance(this, userId).getDao()
@@ -528,7 +527,6 @@ class MailboxActivity :
         super.onAccountSwitched(switch)
 
         val currentUserId = userManager.currentUserId ?: return
-        mailboxViewModel.userId = currentUserId
 
         mJobManager.start()
         counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()
@@ -1421,11 +1419,8 @@ class MailboxActivity :
                         mailboxActivity, MessageDetailsActivity::class.java
                     )
                 )
-                if (!mailboxActivity!!.mailboxLabelId.isNullOrEmpty()) {
-                    intent.putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, false)
-                }
                 intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, messageId)
-                mailboxActivity.startActivityForResult(intent, REQUEST_CODE_TRASH_MESSAGE_DETAILS)
+                mailboxActivity?.startActivityForResult(intent, REQUEST_CODE_TRASH_MESSAGE_DETAILS)
             }
         }
     }

@@ -75,8 +75,3 @@ annotation class DohProviders
 @Retention(AnnotationRetention.BINARY)
 @Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
 annotation class MessageDaoQualifier
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
-annotation class SearchMessageDaoQualifier

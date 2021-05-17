@@ -90,7 +90,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
     private val messageFactory: MessageFactory = mockk(relaxed = true)
 
     private val messageDetailsRepository: MessageDetailsRepository = mockk {
-        coEvery { saveMessage(any(), any()) } returns 0
+        coEvery { saveMessage(any()) } returns 0
     }
 
     private val workManager: WorkManager = mockk(relaxed = true)

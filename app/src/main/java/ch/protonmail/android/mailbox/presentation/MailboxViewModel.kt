@@ -30,7 +30,18 @@ import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.services.MessagesService
 import ch.protonmail.android.api.utils.ApplyRemoveLabels
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.Constants.MessageLocationType.*
+import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
+import ch.protonmail.android.core.Constants.MessageLocationType.ARCHIVE
+import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
+import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
+import ch.protonmail.android.core.Constants.MessageLocationType.INVALID
+import ch.protonmail.android.core.Constants.MessageLocationType.LABEL
+import ch.protonmail.android.core.Constants.MessageLocationType.LABEL_FOLDER
+import ch.protonmail.android.core.Constants.MessageLocationType.LABEL_OFFLINE
+import ch.protonmail.android.core.Constants.MessageLocationType.SENT
+import ch.protonmail.android.core.Constants.MessageLocationType.SPAM
+import ch.protonmail.android.core.Constants.MessageLocationType.STARRED
+import ch.protonmail.android.core.Constants.MessageLocationType.TRASH
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.LabelRepository
@@ -61,6 +72,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -102,7 +114,8 @@ class MailboxViewModel @Inject constructor(
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
 
-    lateinit var userId: Id
+    val userId: Id
+        get() = userManager.requireCurrentUserId()
 
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning
@@ -260,6 +273,10 @@ class MailboxViewModel @Inject constructor(
             uuid,
             refreshMessages
         )
+    }
+
+    fun messagesToMailboxItemsBlocking(messages: List<Message>) = runBlocking {
+        return@runBlocking messagesToMailboxItems(messages)
     }
 
     private fun fetchMessages(
@@ -464,7 +481,7 @@ class MailboxViewModel @Inject constructor(
         message.addLabels(checkedLabelIds)
         message.removeLabels(labelsToRemove)
         viewModelScope.launch {
-            messageDetailsRepository.saveMessageInDB(message)
+            messageDetailsRepository.saveMessage(message)
         }
 
         return ApplyRemoveLabels(checkedLabelIds, labelsToRemove)
@@ -479,7 +496,6 @@ class MailboxViewModel @Inject constructor(
             LABEL,
             LABEL_OFFLINE,
             LABEL_FOLDER -> messageDetailsRepository.getMessagesByLabelIdAsync(labelId!!)
-            SEARCH -> messageDetailsRepository.getAllSearchMessages()
             DRAFT,
             SENT,
             ARCHIVE,

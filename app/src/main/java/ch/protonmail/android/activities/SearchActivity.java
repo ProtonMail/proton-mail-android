@@ -20,6 +20,7 @@ package ch.protonmail.android.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,21 +36,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.otto.Subscribe;
 
-import java.util.UUID;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
-import ch.protonmail.android.activities.mailbox.InvalidateSearchDatabase;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.messages.MailboxRecyclerViewAdapter;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.core.UserManager;
+import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.details.presentation.MessageDetailsActivity;
 import ch.protonmail.android.events.NoResultsEvent;
+import ch.protonmail.android.events.SearchResultEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel;
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem;
@@ -70,9 +71,8 @@ public class SearchActivity extends BaseActivity {
     private String mQueryText = "";
     private int mCurrentPage;
     private SearchView searchView = null;
+    private MailboxViewModel mailboxViewModel;
 
-    @Inject
-    UserManager userManager;
     @Inject
     MessageDetailsRepository messageDetailsRepository;
     @Inject
@@ -86,8 +86,7 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MailboxViewModel mailboxViewModel = mailboxViewModelProvider.get();
-        mailboxViewModel.userId = userManager.requireCurrentUserId();
+        mailboxViewModel = mailboxViewModelProvider.get();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -119,9 +118,8 @@ public class SearchActivity extends BaseActivity {
                 int lastPosition = adapter.getItemCount() - 1;
                 if (mScrollStateChanged && lastVisibleItem == lastPosition && dy > 0) {
                     mScrollStateChanged = false;
-                    setLoadingMore(true);
                     mCurrentPage++;
-                    doSearch(false);
+                    performSearch(true);
                 }
             }
 
@@ -136,24 +134,9 @@ public class SearchActivity extends BaseActivity {
             } else {
                 Intent intent = AppUtil.decorInAppIntent(new Intent(SearchActivity.this, MessageDetailsActivity.class));
                 intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, mailboxUiItem.getItemId());
-                intent.putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, true);
                 startActivity(intent);
             }
             return null;
-        });
-
-        mailboxViewModel.getMailboxItems(
-                MessageLocationType.SEARCH,
-                "",
-                false,
-                UUID.randomUUID().toString(),
-                false
-        ).observe(this, state -> {
-            mAdapter.clear();
-            mAdapter.addAll(state.getItems());
-            setLoadingMore(false);
-            mProgressBar.setVisibility(View.GONE);
-            mAdapter.setNewLocation(MessageLocationType.SEARCH);
         });
 
         messageDetailsRepository.getAllLabelsLiveData().observe(this, labels -> {
@@ -161,6 +144,14 @@ public class SearchActivity extends BaseActivity {
                 mAdapter.setLabels(labels);
             }
         });
+    }
+
+    private void showSearchResults(List<MailboxUiItem> items) {
+        mAdapter.clear();
+        mAdapter.addAll(items);
+        setLoadingMore(false);
+        mProgressBar.setVisibility(View.GONE);
+        mAdapter.setNewLocation(MessageLocationType.SEARCH);
     }
 
     @Override
@@ -179,12 +170,11 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         mJobManager.addJobInBackground(new FetchUpdatesJob());
-    }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        new InvalidateSearchDatabase(messageDetailsRepository.getSearchDatabaseDao()).execute();
+        if (!mQueryText.isEmpty()) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            new Handler().postDelayed(() -> performSearch(false), 1000);
+        }
     }
 
     @Override
@@ -205,12 +195,8 @@ public class SearchActivity extends BaseActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 mCurrentPage = 0;
-                boolean newSearch = !mQueryText.equals(query);
                 mQueryText = query;
-                setLoadingMore(false);
-                mProgressBar.setVisibility(View.VISIBLE);
-                doSearch(newSearch);
-                searchView.clearFocus();
+                performSearch(false);
                 return true;
             }
 
@@ -225,6 +211,13 @@ public class SearchActivity extends BaseActivity {
         return true;
     }
 
+    private void performSearch(Boolean loadMore) {
+        setLoadingMore(loadMore);
+        mProgressBar.setVisibility(loadMore ? View.GONE : View.VISIBLE);
+        mJobManager.addJobInBackground(new SearchMessagesJob(mQueryText, mCurrentPage));
+        searchView.clearFocus();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -233,10 +226,6 @@ public class SearchActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void doSearch(boolean newSearch) {
-        mJobManager.addJobInBackground(new SearchMessagesJob(mQueryText, mCurrentPage, newSearch));
     }
 
     private boolean isDraft(MailboxUiItem item) {
@@ -253,6 +242,13 @@ public class SearchActivity extends BaseActivity {
             mAdapter.clear();
             noMessagesView.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Subscribe
+    public void onSearchResults(SearchResultEvent event) {
+        List<Message> messages = event.getResults();
+        List<MailboxUiItem> items = mailboxViewModel.messagesToMailboxItemsBlocking(messages);
+        showSearchResults(items);
     }
 
     private void setLoadingMore(boolean loadingMore) {

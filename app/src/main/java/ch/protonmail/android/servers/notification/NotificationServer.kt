@@ -39,11 +39,11 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
-import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.User
@@ -351,7 +351,6 @@ class NotificationServer @Inject constructor(
         // Create content Intent for open MessageDetailsActivity
         val contentIntent = Intent(context, MessageDetailsActivity::class.java)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, messageId)
-            .putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, false)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USER_ID, user.id.s)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USERNAME, user.name.s)
 

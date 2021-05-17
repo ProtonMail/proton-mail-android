@@ -31,7 +31,6 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.di.SearchMessageDaoQualifier
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.jobs.FetchDraftDetailJob
@@ -52,7 +51,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.accountmanager.domain.AccountManager
-import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
 
@@ -61,11 +59,9 @@ class ComposeMessageRepository @Inject constructor(
     val api: ProtonMailApiManager,
     val databaseProvider: DatabaseProvider,
     private var messageDao: MessageDao,
-    @SearchMessageDaoQualifier private val searchDatabase: MessageDao,
-    private val messageDetailsRepository: MessageDetailsRepository, // FIXME: this should be removed){}
+    private val messageDetailsRepository: MessageDetailsRepository,
     private val accountManager: AccountManager,
-    private val userManager: UserManager,
-    private val dispatchers: DispatcherProvider
+    private val userManager: UserManager
 ) {
 
     val lazyManager = resettableManager()
@@ -121,20 +117,12 @@ class ComposeMessageRepository @Inject constructor(
         return contactDao.findAllContactsEmailsByContactGroupBlocking(groupId)
     }
 
-    suspend fun getAttachments(message: Message, isTransient: Boolean, dispatcher: CoroutineDispatcher): List<Attachment> =
+    suspend fun getAttachments(message: Message, dispatcher: CoroutineDispatcher): List<Attachment> =
         withContext(dispatcher) {
-            if (!isTransient) {
-                message.attachments(messageDao)
-            } else {
-                message.attachments(searchDatabase)
-            }
+            message.attachments(messageDao)
         }
 
-    fun getAttachments2(message: Message, isTransient: Boolean): List<Attachment> = if (!isTransient) {
-        message.attachmentsBlocking(messageDao)
-    } else {
-        message.attachmentsBlocking(searchDatabase)
-    }
+    fun getAttachmentsBlocking(message: Message): List<Attachment> = message.attachmentsBlocking(messageDao)
 
     fun findMessageByIdSingle(id: String): Single<Message> =
         messageDetailsRepository.findMessageByIdSingle(id)
@@ -152,10 +140,6 @@ class ComposeMessageRepository @Inject constructor(
     }
 
 
-    suspend fun deleteMessageById(messageId: String) =
-        withContext(dispatchers.Io) {
-            messageDao.deleteMessageById(messageId)
-        }
 
     fun startFetchDraftDetail(messageId: String) {
         jobManager.addJobInBackground(FetchDraftDetailJob(messageId))
@@ -186,7 +170,9 @@ class ComposeMessageRepository @Inject constructor(
             .build()
     }
 
-    fun prepareMessageData(isPgpMime: Boolean, addressId: String, addressEmailAlias: String? = null, isTransient: Boolean = false): MessageBuilderData {
+    fun prepareMessageData(
+        isPgpMime: Boolean, addressId: String, addressEmailAlias: String? = null
+    ): MessageBuilderData {
         return MessageBuilderData.Builder()
             .message(Message())
             .messageTitle("")
@@ -195,7 +181,6 @@ class ComposeMessageRepository @Inject constructor(
             .addressId(addressId)
             .addressEmailAlias(addressEmailAlias)
             .isPGPMime(isPgpMime)
-            .isTransient(isTransient)
             .build()
     }
 

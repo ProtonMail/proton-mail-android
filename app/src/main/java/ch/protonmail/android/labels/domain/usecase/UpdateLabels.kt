@@ -31,8 +31,7 @@ class UpdateLabels @Inject constructor(
 
     suspend operator fun invoke(
         messageId: String,
-        checkedLabelIds: List<String>,
-        isTransient: Boolean = false
+        checkedLabelIds: List<String>
     ) {
         val message = requireNotNull(messageRepository.findMessageById(messageId))
         val existingLabels = messageDetailsRepository.getAllLabels()
@@ -41,8 +40,7 @@ class UpdateLabels @Inject constructor(
         messageDetailsRepository.findAllLabelsWithIds(
             message,
             checkedLabelIds,
-            existingLabels,
-            isTransient
+            existingLabels
         )
     }
 }

@@ -103,10 +103,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
     private lateinit var primaryBaseActivity: Context
 
-    /**
-     * Whether the current message needs to be store in database. If transient if won't be stored
-     */
-    private var isTransientMessage = false
     private var messageRecipientUserId: Id? = null
     private var messageRecipientUsername: String? = null
     private val buttonsVisibilityHandler = Handler(Looper.getMainLooper())
@@ -170,14 +166,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (mUserManager.isFirstMessageDetails) {
-            mUserManager.firstMessageDetailsDone()
-        }
-
         messageId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_ID))
         messageRecipientUserId = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USER_ID)?.let(::Id)
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
-        isTransientMessage = intent.getBooleanExtra(EXTRA_TRANSIENT_MESSAGE, false)
         val currentUser = mUserManager.requireCurrentUser()
         AppUtil.clearNotifications(this, currentUser.id)
         supportActionBar?.title = null
@@ -554,7 +545,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
 
         private fun onMessageNotFound() {
-            if ((isTransientMessage || messageRecipientUsername != null) && mNetworkUtil.isConnected()) {
+            if (messageRecipientUsername != null && mNetworkUtil.isConnected()) {
                 // request to fetch message if didn't find in local database
                 viewModel.fetchMessageDetails(false)
             }
@@ -823,10 +814,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS,
                     editIntentExtras.addressEmailAlias
                 )
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_MESSAGE_IS_TRANSIENT,
-                    isTransientMessage
-                )
                 if (editIntentExtras.embeddedImagesAttachmentsExist) {
                     intent.putParcelableArrayListExtra(
                         ComposeMessageActivity.EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS,
@@ -916,8 +903,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
         const val EXTRA_MESSAGE_ID = "messageId"
 
-        // if transient is true it will not save Message object to db
-        const val EXTRA_TRANSIENT_MESSAGE = "transient_message"
         const val EXTRA_MESSAGE_RECIPIENT_USER_ID = "message_recipient_user_id"
         const val EXTRA_MESSAGE_RECIPIENT_USERNAME = "message_recipient_username"
     }

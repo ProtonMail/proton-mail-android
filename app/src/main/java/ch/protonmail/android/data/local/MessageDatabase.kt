@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.data.local
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -27,7 +26,6 @@ import ch.protonmail.android.data.local.model.AttachmentTypesConverter
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessagesTypesConverter
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.ConversationTypesConverter
@@ -56,12 +54,5 @@ abstract class MessageDatabase : RoomDatabase() {
     companion object Factory : DatabaseFactory<MessageDatabase>(
         MessageDatabase::class,
         "MessagesDatabase.db"
-    ) {
-
-        private val searchCache = mutableMapOf<Id, MessageDatabase>()
-
-        @Synchronized
-        fun getSearchDatabase(context: Context, userId: Id): MessageDatabase =
-            searchCache.getOrPut(userId) { buildInMemoryDatabase(context) }
-    }
+    )
 }

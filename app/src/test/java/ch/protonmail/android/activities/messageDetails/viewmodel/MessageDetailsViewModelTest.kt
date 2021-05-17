@@ -47,7 +47,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private var savedStateHandle = mockk<SavedStateHandle> {
         every { get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID) } returns "id1"
-        every { get<Boolean>(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE) } returns false
     }
 
     private val downloadUtils = DownloadUtils()
@@ -83,7 +82,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer = mockk(relaxed = true)
 
     private val viewModel = MessageDetailsViewModel(
-        savedStateHandle,
         messageDetailsRepository,
         messageRepository,
         userManager,
@@ -96,6 +94,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         attachmentsHelper,
         downloadUtils,
         moveMessagesToFolder,
+        savedStateHandle,
         messageRendererFactory,
         verifyConnection,
         networkConfigurator,

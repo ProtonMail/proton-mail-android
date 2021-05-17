@@ -47,7 +47,6 @@ class DeleteMessage @Inject constructor(
             val (validMessageIdList, invalidMessageIdList) = getValidAndInvalidMessages(messageIds)
 
             val messagesToSave = mutableListOf<Message>()
-            val searchMessagesToSave = mutableListOf<Message>()
 
             for (id in validMessageIdList) {
                 ensureActive()
@@ -55,15 +54,10 @@ class DeleteMessage @Inject constructor(
                     message.deleted = true
                     messagesToSave.add(message)
                 }
-                messageDetailsRepository.findSearchMessageById(id).first()?.let { searchMessage ->
-                    searchMessage.deleted = true
-                    searchMessagesToSave.add(searchMessage)
-                }
             }
 
             ensureActive()
             messageDetailsRepository.saveMessagesInOneTransaction(messagesToSave)
-            messageDetailsRepository.saveSearchMessagesInOneTransaction(searchMessagesToSave)
 
             val scheduleWorkerResult = workerScheduler.enqueue(validMessageIdList, currentLabelId)
             return@withContext DeleteMessageResult(

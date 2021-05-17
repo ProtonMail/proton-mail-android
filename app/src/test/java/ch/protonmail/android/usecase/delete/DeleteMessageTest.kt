@@ -70,12 +70,8 @@ class DeleteMessageTest {
             val operation = mockk<Operation>(relaxed = true)
             every { db.findPendingUploadByMessageId(any()) } returns null
             every { db.findPendingSendByMessageId(any()) } returns null
-            coEvery { repository.findMessageByIdBlocking(messId) } returns message
-            every { repository.saveMessageBlocking(message) } returns 1L
             every { repository.findMessageById(messId) } returns flowOf(message)
-            every { repository.findSearchMessageById(messId) } returns flowOf(null)
             coEvery { repository.saveMessagesInOneTransaction(any()) } returns Unit
-            coEvery { repository.saveSearchMessagesInOneTransaction(any()) } returns Unit
             every { workScheduler.enqueue(any(), any()) } returns operation
 
             // when
@@ -83,35 +79,6 @@ class DeleteMessageTest {
 
             // then
             coVerify { repository.saveMessagesInOneTransaction(listOf(message)) }
-            coVerify { repository.saveSearchMessagesInOneTransaction(emptyList()) }
-            verify { workScheduler.enqueue(listOf(messId), currentLabelId) }
-            assertTrue(response.isSuccessfullyDeleted)
-        }
-    }
-
-    @Test
-    fun verifyThatSearchMessageIsSuccessfullyDeletedWithoutPendingMessagesInTheDb() {
-        runBlockingTest {
-            // given
-            val messId = "Id1"
-            val currentLabelId = "3"  //Constants.MessageLocationType.TRASH
-            val operation = mockk<Operation>(relaxed = true)
-            val searchMessage = mockk<Message>(relaxed = true)
-            every { db.findPendingUploadByMessageId(any()) } returns null
-            every { db.findPendingSendByMessageId(any()) } returns null
-            coEvery { repository.findMessageById(messId) } returns flowOf(null)
-            coEvery { repository.findSearchMessageById(messId) } returns flowOf(searchMessage)
-            coEvery { repository.saveMessage(searchMessage) } returns 0L
-            coEvery { repository.saveMessagesInOneTransaction(any()) } returns Unit
-            coEvery { repository.saveSearchMessagesInOneTransaction(any()) } returns Unit
-            every { workScheduler.enqueue(any(), any()) } returns operation
-
-            // when
-            val response = deleteMessage(listOf(messId), currentLabelId)
-
-            // then
-            coVerify { repository.saveMessagesInOneTransaction(emptyList()) }
-            coVerify { repository.saveSearchMessagesInOneTransaction(listOf(searchMessage)) }
             verify { workScheduler.enqueue(listOf(messId), currentLabelId) }
             assertTrue(response.isSuccessfullyDeleted)
         }
@@ -130,9 +97,7 @@ class DeleteMessageTest {
             every { db.findPendingSendByMessageId(any()) } returns null
             every { repository.findMessageByIdBlocking(messId) } returns message
             coEvery { repository.saveMessage(message) } returns 1L
-            every { repository.findSearchMessageById(messId) } returns flowOf(null)
             coEvery { repository.saveMessagesInOneTransaction(any()) } returns Unit
-            coEvery { repository.saveSearchMessagesInOneTransaction(any()) } returns Unit
             every { workScheduler.enqueue(any(), any()) } returns operation
 
             // when
@@ -140,7 +105,6 @@ class DeleteMessageTest {
 
             // then
             coVerify { repository.saveMessagesInOneTransaction(emptyList()) }
-            coVerify { repository.saveSearchMessagesInOneTransaction(emptyList()) }
             verify { workScheduler.enqueue(emptyList(), currentLabelId) }
             assertFalse(response.isSuccessfullyDeleted)
         }
@@ -160,11 +124,8 @@ class DeleteMessageTest {
             every { db.findPendingUploadByMessageId(any()) } returns null
             every { db.findPendingSendByMessageId(any()) } returns pendingSend
             every { repository.findMessageByIdBlocking(messId) } returns null
-            every { repository.findSearchMessageById(messId) } returns flowOf(message)
             coEvery { repository.saveMessage(message) } returns 1L
-            coEvery { repository.saveSearchMessage(message) } returns 0L
             coEvery { repository.saveMessagesInOneTransaction(any()) } returns Unit
-            coEvery { repository.saveSearchMessagesInOneTransaction(any()) } returns Unit
             every { workScheduler.enqueue(any(), any()) } returns operation
 
             // when
@@ -172,7 +133,6 @@ class DeleteMessageTest {
 
             // then
             coVerify { repository.saveMessagesInOneTransaction(emptyList()) }
-            coVerify { repository.saveSearchMessagesInOneTransaction(emptyList()) }
             verify { workScheduler.enqueue(emptyList(), currentLabelId) }
             assertFalse(response.isSuccessfullyDeleted)
         }
