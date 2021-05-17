@@ -372,8 +372,8 @@ internal class MessageDetailsViewModel @Inject constructor(
                         message.tryDecrypt(keys) ?: false
                     }
                     Timber.v("Message isDecrypted:$isDecrypted, keys size: ${keys?.size}")
-                    message.messageId?.let {
-                        messageRepository.markRead(listOf(it))
+                    if (isDecrypted) {
+                        messageRepository.markRead(listOf(messageId))
                     }
                     value = message
                 }
