@@ -55,6 +55,7 @@ app/src/beta/google-services.json
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries/**
+.idea/assetWizardSettings.xml
 # Do not exclude project Dictionary
 !.idea/**/dictionaries/project.xml
 .idea/**/shelf
