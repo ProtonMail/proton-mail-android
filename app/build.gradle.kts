@@ -142,6 +142,9 @@ android(
         register("beta") {
             applicationId = "ch.protonmail.android.beta"
         }
+        register("alpha") {
+            applicationId = "ch.protonmail.android.alpha"
+        }
     }
 
     buildTypes {
