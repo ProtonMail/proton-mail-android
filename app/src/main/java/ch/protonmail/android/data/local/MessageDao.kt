@@ -55,6 +55,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 
 @Dao
 abstract class MessageDao {
@@ -223,6 +224,7 @@ abstract class MessageDao {
     abstract fun findAllMessageInfoFromAConversation(conversationId: String): Flow<List<Message>>
 
     open suspend fun saveMessage(message: Message): Long {
+        Timber.d("saveMessage ${message.messageId}")
         processMessageAttachments(message)
         return saveMessageInfo(message)
     }
@@ -294,6 +296,7 @@ abstract class MessageDao {
     }
 
     open suspend fun saveMessages(vararg messages: Message) {
+        Timber.d("saveMessages ${messages.map { it.messageId }}")
         messages.forEach {
             processMessageAttachments(it)
         }
@@ -323,9 +326,6 @@ abstract class MessageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun saveMessageInfo(message: Message): Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveMessageInfoBlocking(message: Message): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun saveMessagesInfo(vararg messages: Message)

@@ -111,7 +111,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private var messageRecipientUsername: String? = null
     private val buttonsVisibilityHandler = Handler(Looper.getMainLooper())
     private val attachmentToDownloadId = AtomicReference<String?>(null)
-    private var markAsRead = false
     private var showPhishingReportButton = true
     private var shouldTitleFadeOut = false
     private var shouldTitleFadeIn = true
@@ -175,7 +174,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             mUserManager.firstMessageDetailsDone()
         }
 
-        markAsRead = true
         messageId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_ID))
         messageRecipientUserId = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USER_ID)?.let(::Id)
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
@@ -269,9 +267,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     override fun onStop() {
         super.onStop()
-        if (markAsRead) {
-            viewModel.markRead(true)
-        }
         mApp.bus.unregister(viewModel)
         stopEmbeddedImagesTask()
         mApp.bus.unregister(this)
@@ -294,7 +289,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                viewModel.markRead(true)
                 onBackPressed()
                 return true
             }
@@ -678,7 +672,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 onBackPressed()
             }
             messageDetailsActionsView.setOnSecondActionClickListener {
-                markAsRead = false
                 viewModel.markUnread()
                 onBackPressed()
             }
