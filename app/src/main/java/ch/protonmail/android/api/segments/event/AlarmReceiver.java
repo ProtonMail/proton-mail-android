@@ -53,7 +53,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         Intent intent = new Intent(context, AlarmReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        int secondsUntilNextCheck = 15; // default
+        int secondsUntilNextCheck = 30; // default
         if (AppUtil.isAppInBackground()) {
             // TODO: Test the battery with a 1min refresh, if very bad then switch back to 30min
             secondsUntilNextCheck = 1800; // if app in background sync on 30 min
