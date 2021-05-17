@@ -18,6 +18,30 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- region All -->
+    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_folders">Folders</string>
+    <string name="x_labels">Labels</string>
+    <string name="x_more">More</string>
+    <string name="x_search">Search</string>
+    <!-- endregion -->
+    <!-- region Drawer -->
+    <string name="drawer_contacts">Contacts</string>
+    <string name="drawer_lock_the_app">Lock the app</string>
+    <string name="drawer_report_bug">Report bug</string>
+    <string name="drawer_settings">Settings</string>
+    <string name="drawer_subscription">Subscription</string>
+    <string name="drawer_sign_out">Sign out</string>
+    <!-- endregion -->
+    <!-- region Composer -->
+    <string name="composer_bcc">Bcc:</string>
+    <string name="composer_cc">Cc:</string>
+    <string name="composer_compose_email">Compose email</string>
+    <string name="composer_from">From:</string>
+    <string name="composer_subject">Subject:</string>
+    <string name="composer_to">To:</string>
+    <!-- end region -->
+    <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">DULRITAÐUR TÖLVUPÓSTUR</string>
     <string name="secure_email_swiss">Öruggur tölvupóstur\nhýstur í Sviss</string>
@@ -55,13 +79,14 @@
     <string name="message_drafted">Sending skilaboða mistókst. Skilaboðin eru vistuð í Drög-möppunni</string>
     <string name="open_drawer">Opna</string>
     <string name="close_drawer">Loka</string>
-    <string name="inbox_option">INNHÓLF</string>
-    <string name="starred_option">STJÖRNUMERKT</string>
-    <string name="drafts_option">DRÖG</string>
-    <string name="sent_option">SENT</string>
-    <string name="archive_option">SAFN</string>
-    <string name="trash_option">RUSL</string>
-    <string name="spam_option">RUSLPÓSTUR</string>
+    <string name="inbox_option">Innhólf</string>
+    <string name="starred_option">Stjörnumerkt</string>
+    <string name="drafts_option">Drög</string>
+    <string name="sent_option">Sent</string>
+    <string name="archive_option">Safn</string>
+    <string name="trash_option">Rusl</string>
+    <string name="spam_option">Ruslpóstur</string>
+    <string name="allmail_option">Allur póstur</string>
     <string name="inbox">Innhólf</string>
     <string name="starred">Stjörnumerkt</string>
     <string name="drafts">Drög</string>
@@ -69,12 +94,12 @@
     <string name="archive">Safn</string>
     <string name="trash">Rusl</string>
     <string name="spam">Ruslpóstur</string>
+    <string name="all_mail">Allur póstur</string>
     <string name="contacts">Tengiliðir</string>
     <string name="search_contacts">Leita að tengiliðum</string>
     <string name="fetching_contacts">Sæki ProtonMail tengiliði...</string>
     <string name="fetching_contacts_success">Það tókst að endurlesa tengiliði</string>
     <string name="fetching_contacts_failure">Ekki tókst að endurlesa tengiliði</string>
-    <string name="x_search">Leita</string>
     <string name="search_messages">Leita í skilaboðum</string>
     <string name="no_search_results">Engar leitarniðurstöður</string>
     <string name="compose">Semja skilaboð</string>
@@ -93,6 +118,7 @@
     <string name="move_to_trash">Flytja í ruslið</string>
     <string name="move_to_spam">Flytja í ruslpóst</string>
     <string name="move_to_inbox">Flytja í innhólf</string>
+    <string name="move_to">Move to…</string>
     <string name="are_you_sure_empty">Ertu viss um að þú viljir eyða öllum skilaboðum úr þessari möppu?</string>
     <string name="send">Senda</string>
     <string name="selected">Valið</string>
@@ -138,6 +164,9 @@
         <item quantity="one">%d mínúta</item>
         <item quantity="other">%d mínútur</item>
     </plurals>
+    <string name="expiration_days">%dD</string>
+    <string name="expiration_hours">%dK</string>
+    <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
         <item quantity="one">Eitt viðhengi</item>
         <item quantity="other">%d viðhengi</item>
@@ -145,6 +174,10 @@
     <plurals name="attachments_non_descriptive">
         <item quantity="one">\u0020 1 viðhengi</item>
         <item quantity="other">\u0020 %d viðhengi</item>
+    </plurals>
+    <plurals name="attachments_number">
+        <item quantity="one">1 viðhengi</item>
+        <item quantity="other">%d viðhengi</item>
     </plurals>
     <string name="add_attachment">Bæta við viðhengi</string>
     <string name="select_file">Velja skrá</string>
@@ -455,7 +488,7 @@
     <string name="print_error">Villa við prentun</string>
     <string name="download_complete">Niðurhali lokið</string>
     <string name="download_in_progress">Niðurhal í gangi.</string>
-    <string name="message_expires_in">\tRennur út eftir %s</string>
+    <string name="message_expires_in">Þessi skilaboð renna út eftir %s</string>
     <string name="unsaved_changes_title">Óvistaðar breytingar</string>
     <string name="unsaved_changes_subtitle">Það eru óvistaðar færslur á síðunni. Ertu viss um að þú viljir henda þeim?</string>
     <string name="request_timeout">Beiðni féll á tíma, reyndu aftur</string>
@@ -473,8 +506,6 @@
     <string name="folder_deleted_error">Villa kom upp við að eyða möppu</string>
     <string name="save_new_folder">Vista nýja möppu</string>
     <string name="create_new_folder">Búa til möppu</string>
-    <string name="all_mail">Allur póstur</string>
-    <string name="allmail_option">ALLUR PÓSTUR</string>
     <string name="empty_emails">Enginn tölvupóstur</string>
     <string name="empty_email_list">Ekkert tölvupóstfang</string>
     <string name="no_contacts">Engir tengiliðir</string>
@@ -506,11 +537,13 @@
     <string name="recheck_delinquency">Athuga aftur</string>
     <string name="close_app">Loka forriti</string>
     <string name="empty_subject">(ekkert viðfangsefni)</string>
+    <string name="empty_recipients">(No recipients)</string>
     <string name="contacts_unknown">Óþekkt</string>
     <string name="learn_more"><u>Kanna nánar</u></string>
     <string name="info">Upplýsingar</string>
     <string name="error_can_not_send_from_this_address">Uppfærðu í greidda áskrift til að senda úr %s tölvupóstfanginu þínu.</string>
     <string name="email_empty">Tölvupóstfang vantar</string>
+    <string name="add_contact_details">Add Contact Details</string>
     <string name="encrypted_contact_details">Dulritaðar nánari upplýsingar um tengilið</string>
     <string name="convert_question">Senda inn tengiliði af tæki</string>
     <string name="convert_question_subtitle">Þetta mun senda staðværa tengiliði á tækinu inn í tengiliðamöppuna á ProtonMail. Þú munt þá hafa aðgang að þessum tengiliðum á öðrum tækjum þínum í gegnum ProtonMail.</string>
@@ -555,6 +588,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Enda-í-enda dulrituð skilaboð</string>
     <string name="sender_lock_internal_verified">Enda-í-enda dulrituð skilaboð frá sannvottuðu tölvupóstfangi</string>
+    <string name="sender_lock_learn_more"><a href="">Kanna nánar</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Enda-í-enda dulritað</string>
     <string name="composer_lock_internal_pinned">Enda-í-enda dulritað til sannvottaðs tölvupóstfangs</string>
@@ -683,6 +717,7 @@
     <string name="payment_method">Greiðslumáti</string>
     <string name="password_manager">Sýsl með lykilorð</string>
     <string name="recovery_email">Endurheimtupóstur</string>
+    <string name="info_for_missing_functionality">Please log in through <a href="https://www.protonmail.com/">protonmail.com</a> and access your settings to edit this information.</string>
     <string name="storage">Stærð pósthólfs</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Vistföng</string>
@@ -699,6 +734,16 @@
     <!-- region Snooze Settings -->
     <string name="snooze_header">Fresta</string>
     <string name="notifications_snooze">Frestun tilkynninga</string>
+    <string-array name="quick_snooze_values">
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>4 hours</item>
+        <item>8 hours</item>
+        <item>12 hours</item>
+        <item>Custom</item>
+        <item>Scheduled</item>
+    </string-array>
     <string name="notifications_snoozed">Tilkynningum frestað</string>
     <string name="notifications_snooze_scheduled">Áætlað</string>
     <string name="notifications_snooze_scheduled_settings">Stillingar áætlaðra frestana</string>
@@ -718,6 +763,15 @@
     <string name="work_days">Vinnudagar</string>
     <string name="weekends">Helgar</string>
     <string name="every_day">Daglega</string>
+    <string-array name="snooze_repeat_values">
+        <item>Mo</item>
+        <item>Tu</item>
+        <item>We</item>
+        <item>Th</item>
+        <item>Fr</item>
+        <item>Sa</item>
+        <item>Su</item>
+    </string-array>
     <string name="quick_and_scheduled_enabled">Flýtifrestun og áætluð frestun virkar</string>
     <string name="quick_only_enabled">Flýtifrestun virk</string>
     <string name="scheduled_only_enabled">Áætluð frestun virk</string>
@@ -735,6 +789,8 @@
     <string name="settings_prevent_taking_screenshots">Hindra skjámyndatöku</string>
     <string name="hyperlink_confirmation">Krefjast staðfestingar á tengli</string>
     <string name="labels_and_folders">Merkingar og möppur </string>
+    <string name="folders">Folders</string>
+    <string name="labels">Labels</string>
     <string name="labels_manage">Sýsla með merkingar</string>
     <string name="folders_manage">Sýsla með möppur</string>
     <string name="swiping_gesture">Strokubending</string>
@@ -743,11 +799,12 @@
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Veldu aðgerð við stroku</string>
     <string name="swipe_action_trash">Skilaboð voru færð í ruslið</string>
-    <string name="swipe_action_trash_short">Fært í ruslið</string>
     <string name="swipe_action_star">Stjörnumerking skilaboða uppfærð</string>
+    <string name="swipe_action_star_short">Update star</string>
     <string name="swipe_action_spam">Skilaboð merkt sem ruslpóstur</string>
     <string name="swipe_action_archive">Skilaboð sett í safn</string>
     <string name="swipe_action_mark_read">Skilaboðin voru merkt sem lesin</string>
+    <string name="swipe_action_mark_read_short">Read</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Skilaboð voru færð í ruslið</item>
         <item quantity="other">Skilaboð voru færð í ruslið</item>
@@ -824,6 +881,7 @@
     <!-- endregion -->
     <string name="allowed">Heimilað</string>
     <string name="denied">Hafnað</string>
+    <string name="more">More</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Strokuhreyfingar breyttust</string>
     <string name="swipe_gestures_changed_message">Eftir síðustu uppfærslu var strokuhreyfingum víxlað. Ef þú vilt geturðu endurstillt þetta í stillingunum.</string>
@@ -833,4 +891,28 @@
     <string name="failed_saving_draft_online">Mistókst að vista netlægt drög að skilaboðum: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Get ekki opnað þessi skilaboð á meðan verið er að senda þau</string>
     <string name="enable_conversation_mode">Virkja samtalsham</string>
+    <!-- endregion -->
+    <string name="recipient_email_format">&lt;%s&gt;</string>
+    <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
+    <string name="error_loading_conversations">Error loading conversations, please try again</string>
+    <string name="star">Star</string>
+    <string name="unstar">Unstar</string>
+    <string name="send_to_archive">Send to archive?</string>
+    <string name="new_label">New Label</string>
+    <string name="new_folder">New Folder</string>
+    <string name="label_as">Label as…</string>
+    <string name="mark_as_unread">Mark as unread</string>
+    <string name="mark_as_read">Mark as read</string>
+    <string name="move_message">Move message</string>
+    <string name="manage">Manage</string>
+    <string name="message_from">Message from %s</string>
+    <string name="not_spam_move_to_inbox">Not spam (Move to Inbox)</string>
+    <plurals name="x_messages_count">
+        <item quantity="one">%d message</item>
+        <item quantity="other">%d messages</item>
+    </plurals>
+    <plurals name="x_conversations_count">
+        <item quantity="one">%d conversation</item>
+        <item quantity="other">%d conversations</item>
+    </plurals>
 </resources>

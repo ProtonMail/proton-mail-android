@@ -18,6 +18,30 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- region All -->
+    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_folders">Foldere</string>
+    <string name="x_labels">Etichete</string>
+    <string name="x_more">Detalii</string>
+    <string name="x_search">Căutare</string>
+    <!-- endregion -->
+    <!-- region Drawer -->
+    <string name="drawer_contacts">Contacte</string>
+    <string name="drawer_lock_the_app">Blocare aplicație</string>
+    <string name="drawer_report_bug">Raportare eroare</string>
+    <string name="drawer_settings">Setări</string>
+    <string name="drawer_subscription">Abonament</string>
+    <string name="drawer_sign_out">Deconectare</string>
+    <!-- endregion -->
+    <!-- region Composer -->
+    <string name="composer_bcc">Ca:</string>
+    <string name="composer_cc">Ci:</string>
+    <string name="composer_compose_email">Compune e-mail</string>
+    <string name="composer_from">De la:</string>
+    <string name="composer_subject">Subiect:</string>
+    <string name="composer_to">Către:</string>
+    <!-- end region -->
+    <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">E-MAIL CRIPTAT</string>
     <string name="secure_email_swiss">E-mail securizat\ngăzduit în Elveția</string>
@@ -55,13 +79,14 @@
     <string name="message_drafted">Trimitere mesaj eșuată. Mesajele sunt salvate în folderul «Ciorne»</string>
     <string name="open_drawer">Deschidere</string>
     <string name="close_drawer">Închidere</string>
-    <string name="inbox_option">PRIMITE</string>
-    <string name="starred_option">CU STEA</string>
-    <string name="drafts_option">CIORNE</string>
-    <string name="sent_option">TRIMISE</string>
-    <string name="archive_option">ARHIVĂ</string>
-    <string name="trash_option">GUNOI</string>
-    <string name="spam_option">SPAM</string>
+    <string name="inbox_option">Primite</string>
+    <string name="starred_option">Cu stea</string>
+    <string name="drafts_option">Ciorne</string>
+    <string name="sent_option">Trimise</string>
+    <string name="archive_option">Arhivă</string>
+    <string name="trash_option">Gunoi</string>
+    <string name="spam_option">Nedorite</string>
+    <string name="allmail_option">Toate mesajele</string>
     <string name="inbox">Primite</string>
     <string name="starred">Cu stea</string>
     <string name="drafts">Ciorne</string>
@@ -69,12 +94,12 @@
     <string name="archive">Arhivă</string>
     <string name="trash">Gunoi</string>
     <string name="spam">Spam</string>
+    <string name="all_mail">Toate mesajele</string>
     <string name="contacts">Contacte</string>
     <string name="search_contacts">Căutare contacte</string>
     <string name="fetching_contacts">Se preiau contactele ProtonMail...</string>
     <string name="fetching_contacts_success">Contactele au fost preluate cu succes</string>
     <string name="fetching_contacts_failure">Nu s-au putut prelua contactele</string>
-    <string name="x_search">Căutare</string>
     <string name="search_messages">Căutare mesaje</string>
     <string name="no_search_results">Nu s-au găsit rezultate</string>
     <string name="compose">Compunere</string>
@@ -93,6 +118,7 @@
     <string name="move_to_trash">Mutare în «Gunoi»</string>
     <string name="move_to_spam">Mutare în «Spam»</string>
     <string name="move_to_inbox">Mutare în «Primite»</string>
+    <string name="move_to">Mutare în…</string>
     <string name="are_you_sure_empty">Sigur doriți să ștergeți toate mesajele din acest folder?</string>
     <string name="send">Trimite</string>
     <string name="selected">Selectat</string>
@@ -141,6 +167,9 @@
         <item quantity="few">%d minute</item>
         <item quantity="other">%d de minute</item>
     </plurals>
+    <string name="expiration_days">%dZ</string>
+    <string name="expiration_hours">%dH</string>
+    <string name="expiration_minutes">%dL</string>
     <plurals name="attachments">
         <item quantity="one">Un fișier atașat</item>
         <item quantity="few">%d fișiere atașate</item>
@@ -150,6 +179,11 @@
         <item quantity="one">\u0020 Un fișier atașat</item>
         <item quantity="few">\u0020 %d fișiere atașate</item>
         <item quantity="other">\u0020 %d de fișiere atașate</item>
+    </plurals>
+    <plurals name="attachments_number">
+        <item quantity="one">Un atașament</item>
+        <item quantity="few">%d atașamente</item>
+        <item quantity="other">%d de atașamente</item>
     </plurals>
     <string name="add_attachment">Adăugare atașament</string>
     <string name="select_file">Selectare fișier</string>
@@ -462,7 +496,7 @@
     <string name="print_error">Eroare la tipărire</string>
     <string name="download_complete">Descărcare finalizată</string>
     <string name="download_in_progress">Descărcare în curs</string>
-    <string name="message_expires_in">\tExpiră în %s</string>
+    <string name="message_expires_in">Acest mesaj va expira peste %s</string>
     <string name="unsaved_changes_title">Modificări nesalvate</string>
     <string name="unsaved_changes_subtitle">Există date nesalvate în acest formular. Sigur doriți să renunțați la ele?</string>
     <string name="request_timeout">Solicitarea a expirat. Vă rugăm reîncercați.</string>
@@ -480,8 +514,6 @@
     <string name="folder_deleted_error">Eroare la ștergerea folderului</string>
     <string name="save_new_folder">Salvare folder nou</string>
     <string name="create_new_folder">Creare folder</string>
-    <string name="all_mail">Toate mesajele</string>
-    <string name="allmail_option">TOATE MESAJELE</string>
     <string name="empty_emails">Nu sunt mesaje</string>
     <string name="empty_email_list">Lipsă adrese de e-mail</string>
     <string name="no_contacts">Nu sunt contacte</string>
@@ -513,11 +545,13 @@
     <string name="recheck_delinquency">Reverificați</string>
     <string name="close_app">Închide aplicația</string>
     <string name="empty_subject">(Fără subiect)</string>
+    <string name="empty_recipients">(Fără destinatar)</string>
     <string name="contacts_unknown">Necunoscut</string>
     <string name="learn_more"><u>Aflați mai multe</u></string>
     <string name="info">Informații</string>
     <string name="error_can_not_send_from_this_address">Actualizați la un plan cu plată pentru a trimite de la adresa %s.</string>
     <string name="email_empty">Adresa de e-mail lipsește</string>
+    <string name="add_contact_details">Add Contact Details</string>
     <string name="encrypted_contact_details">Detalii criptate contact</string>
     <string name="convert_question">Încărcare contacte din dispozitiv</string>
     <string name="convert_question_subtitle">Se vor transfera contactele din dispozitiv în folderul contactelor din ProtonMail. Veți putea apoi accesa contactele și pe alte dispozitive prin intermediul ProtonMail.</string>
@@ -562,6 +596,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Mesaj criptat în ambele părți</string>
     <string name="sender_lock_internal_verified">Mesaj criptat în ambele părți de la adresă verificată</string>
+    <string name="sender_lock_learn_more"><a href="">Detalii</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Criptat în ambele părți</string>
     <string name="composer_lock_internal_pinned">Criptat în ambele părți spre adresă verificată</string>
@@ -696,6 +731,7 @@
     <string name="payment_method">Metodă de plată</string>
     <string name="password_manager">Gestionare parole</string>
     <string name="recovery_email">E-mail de recuperare</string>
+    <string name="info_for_missing_functionality">Autentificați-vă prin <a href="https://www.protonmail.com/">protonmail.com</a> și accesați-vă setările pentru a edita aceste informații.</string>
     <string name="storage">Mărime folder mesaje</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Adrese</string>
@@ -712,6 +748,16 @@
     <!-- region Snooze Settings -->
     <string name="snooze_header">Amânare</string>
     <string name="notifications_snooze">Notificări amânate</string>
+    <string-array name="quick_snooze_values">
+        <item>30 de minute</item>
+        <item>o oră</item>
+        <item>2 ore</item>
+        <item>4 ore</item>
+        <item>8 ore</item>
+        <item>12 ore</item>
+        <item>Personal</item>
+        <item>Programat</item>
+    </string-array>
     <string name="notifications_snoozed">Notificări amânate</string>
     <string name="notifications_snooze_scheduled">Programat</string>
     <string name="notifications_snooze_scheduled_settings">Setări amânări programate</string>
@@ -732,6 +778,15 @@
     <string name="work_days">Zile de lucru</string>
     <string name="weekends">Weekend</string>
     <string name="every_day">Zilnic</string>
+    <string-array name="snooze_repeat_values">
+        <item>Lu</item>
+        <item>Ma</item>
+        <item>Mi</item>
+        <item>Jo</item>
+        <item>Vi</item>
+        <item>Sâ</item>
+        <item>Du</item>
+    </string-array>
     <string name="quick_and_scheduled_enabled">Amânarea rapidă &amp; Amânarea programată active</string>
     <string name="quick_only_enabled">Amânare rapidă activă</string>
     <string name="scheduled_only_enabled">Amânare programată activă</string>
@@ -749,6 +804,8 @@
     <string name="settings_prevent_taking_screenshots">Prevenire capturare ecran</string>
     <string name="hyperlink_confirmation">Solicitare de confirmare</string>
     <string name="labels_and_folders">Etichete și foldere </string>
+    <string name="folders">Foldere</string>
+    <string name="labels">Etichete</string>
     <string name="labels_manage">Gestionare etichete</string>
     <string name="folders_manage">Gestionare foldere</string>
     <string name="swiping_gesture">Gesturi glisare</string>
@@ -757,11 +814,12 @@
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Alegere acțiune de glisare</string>
     <string name="swipe_action_trash">Mutare mesaj în «Gunoi»</string>
-    <string name="swipe_action_trash_short">Mutat în «Gunoi»</string>
     <string name="swipe_action_star">Marcare cu stea modificată</string>
+    <string name="swipe_action_star_short">Actualizare stea</string>
     <string name="swipe_action_spam">Marcare mesaj ca spam</string>
     <string name="swipe_action_archive">Mesaj arhivat</string>
     <string name="swipe_action_mark_read">Mesaj marcat ca citit</string>
+    <string name="swipe_action_mark_read_short">Citit</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Mutare mesaj în «Gunoi»</item>
         <item quantity="few">Mesaje mutate în «Gunoi»</item>
@@ -841,6 +899,7 @@
     <!-- endregion -->
     <string name="allowed">Permis</string>
     <string name="denied">Respins</string>
+    <string name="more">Detalii</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Gesturi glisare schimbate</string>
     <string name="swipe_gestures_changed_message">După ultima actualizare gesturile de glisare au fost schimbate. Dacă doriți, le puteți reseta în setări.</string>
@@ -850,4 +909,30 @@
     <string name="failed_saving_draft_online">Nu s-a reușit salvarea ciornei pentru mesajul: „%s”</string>
     <string name="cannot_open_message_while_being_sent">Acest mesaj nu poate fi deschis în timp ce este trimis</string>
     <string name="enable_conversation_mode">Activare mod conversaţie</string>
+    <!-- endregion -->
+    <string name="recipient_email_format">&lt;%s&gt;</string>
+    <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
+    <string name="error_loading_conversations">Eroare la încărcarea conversațiilor, reîncercați.</string>
+    <string name="star">Aplicare stea</string>
+    <string name="unstar">Anulare stea</string>
+    <string name="send_to_archive">Trimitere în «Arhivă»?</string>
+    <string name="new_label">Etichetă nouă</string>
+    <string name="new_folder">Folder nou</string>
+    <string name="label_as">Etichetare ca…</string>
+    <string name="mark_as_unread">Marcare ca necitit</string>
+    <string name="mark_as_read">Marcare ca citit</string>
+    <string name="move_message">Mutare mesaj</string>
+    <string name="manage">Gestionare</string>
+    <string name="message_from">Mesaj de la %s</string>
+    <string name="not_spam_move_to_inbox">Nu este nedorit (mutare în «Primite»)</string>
+    <plurals name="x_messages_count">
+        <item quantity="one">Un mesaj</item>
+        <item quantity="few">%d mesaje</item>
+        <item quantity="other">%d de mesaje</item>
+    </plurals>
+    <plurals name="x_conversations_count">
+        <item quantity="one">O conversație</item>
+        <item quantity="few">%d conversații</item>
+        <item quantity="other">%d de conversații</item>
+    </plurals>
 </resources>

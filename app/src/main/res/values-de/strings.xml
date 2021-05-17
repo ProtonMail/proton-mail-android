@@ -18,6 +18,30 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- region All -->
+    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_folders">Ordner</string>
+    <string name="x_labels">Kategorien</string>
+    <string name="x_more">Mehr</string>
+    <string name="x_search">Suchen</string>
+    <!-- endregion -->
+    <!-- region Drawer -->
+    <string name="drawer_contacts">Kontakte</string>
+    <string name="drawer_lock_the_app">App sperren</string>
+    <string name="drawer_report_bug">Fehler melden</string>
+    <string name="drawer_settings">Einstellungen</string>
+    <string name="drawer_subscription">Abonnement</string>
+    <string name="drawer_sign_out">Abmelden</string>
+    <!-- endregion -->
+    <!-- region Composer -->
+    <string name="composer_bcc">Bcc:</string>
+    <string name="composer_cc">Cc:</string>
+    <string name="composer_compose_email">Compose email</string>
+    <string name="composer_from">From:</string>
+    <string name="composer_subject">Subject:</string>
+    <string name="composer_to">To:</string>
+    <!-- end region -->
+    <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">Verschlüsselte Nachrichten</string>
     <string name="secure_email_swiss">Sicherer E-Mail-Dienst\naus der Schweiz</string>
@@ -58,10 +82,11 @@
     <string name="inbox_option">Posteingang</string>
     <string name="starred_option">Gekennzeichnet</string>
     <string name="drafts_option">Entwürfe</string>
-    <string name="sent_option">GESENDET</string>
+    <string name="sent_option">Gesendet</string>
     <string name="archive_option">Archiv</string>
-    <string name="trash_option">PAPIERKORB</string>
+    <string name="trash_option">Papierkorb</string>
     <string name="spam_option">Spam</string>
+    <string name="allmail_option">Alle Nachrichten</string>
     <string name="inbox">Posteingang</string>
     <string name="starred">Gekennzeichnet</string>
     <string name="drafts">Entwürfe</string>
@@ -69,12 +94,12 @@
     <string name="archive">Archiv</string>
     <string name="trash">Papierkorb</string>
     <string name="spam">Spam</string>
+    <string name="all_mail">Alle Nachrichten</string>
     <string name="contacts">Kontakte</string>
     <string name="search_contacts">Kontakte durchsuchen</string>
     <string name="fetching_contacts">ProtonMail-Kontakte werden abgerufen …</string>
     <string name="fetching_contacts_success">Kontakte erfolgreich aktualisiert</string>
     <string name="fetching_contacts_failure">Kontakte konnten nicht aktualisiert werden</string>
-    <string name="x_search">Suchen</string>
     <string name="search_messages">Nachrichten durchsuchen</string>
     <string name="no_search_results">Keine Ergebnisse gefunden</string>
     <string name="compose">Verfassen</string>
@@ -93,6 +118,7 @@
     <string name="move_to_trash">In Papierkorb verschieben</string>
     <string name="move_to_spam">In Spam verschieben</string>
     <string name="move_to_inbox">In Posteingang verschieben</string>
+    <string name="move_to">Verschieben nach…</string>
     <string name="are_you_sure_empty">Möchten Sie wirklich alle Nachrichten aus diesem Ordner löschen?</string>
     <string name="send">Senden</string>
     <string name="selected">Ausgewählt</string>
@@ -138,6 +164,9 @@
         <item quantity="one">%d Minute</item>
         <item quantity="other">%d Minuten</item>
     </plurals>
+    <string name="expiration_days">%d Tag(en)</string>
+    <string name="expiration_hours">%d Std.</string>
+    <string name="expiration_minutes">%d Min.</string>
     <plurals name="attachments">
         <item quantity="one">Ein Anhang</item>
         <item quantity="other">%d Anhänge</item>
@@ -145,6 +174,10 @@
     <plurals name="attachments_non_descriptive">
         <item quantity="one">\u0020 1 Anhang</item>
         <item quantity="other">\u0020 %d Anhänge</item>
+    </plurals>
+    <plurals name="attachments_number">
+        <item quantity="one">1 Anhang</item>
+        <item quantity="other">%d Anhänge</item>
     </plurals>
     <string name="add_attachment">Anhang hinzufügen</string>
     <string name="select_file">Datei auswählen</string>
@@ -455,7 +488,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="print_error">Druckfehler</string>
     <string name="download_complete">Herunterladen abgeschlossen</string>
     <string name="download_in_progress">Herunterladen wird ausgeführt</string>
-    <string name="message_expires_in">\tVerfällt in %s</string>
+    <string name="message_expires_in">Diese Nachricht verfällt in %s</string>
     <string name="unsaved_changes_title">Noch nicht gesicherte Änderungen</string>
     <string name="unsaved_changes_subtitle">Ungesicherte Elemente im Formular vorhanden. Möchten Sie sie wirklich verwerfen?</string>
     <string name="request_timeout">Zeitüberschreitung bei der Anfrage. Bitte versuchen Sie es erneut</string>
@@ -473,8 +506,6 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="folder_deleted_error">Fehler beim Löschen des Ordners</string>
     <string name="save_new_folder">Neuen Ordner speichern</string>
     <string name="create_new_folder">Ordner erstellen</string>
-    <string name="all_mail">Alle Nachrichten</string>
-    <string name="allmail_option">Alle Nachrichten</string>
     <string name="empty_emails">Keine Nachrichten</string>
     <string name="empty_email_list">Keine E-Mail-Adresse</string>
     <string name="no_contacts">Keine Kontakte</string>
@@ -506,11 +537,13 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="recheck_delinquency">Erneut überprüfen</string>
     <string name="close_app">App schließen</string>
     <string name="empty_subject">(Kein Betreff)</string>
+    <string name="empty_recipients">(Keine Empfänger)</string>
     <string name="contacts_unknown">Unbekannt</string>
     <string name="learn_more"><u>Mehr erfahren</u></string>
     <string name="info">Information</string>
     <string name="error_can_not_send_from_this_address">Auf ein kostenpflichtiges Abonnement aktualisieren, um von Ihrer %s-Adresse Nachrichten senden zu können.</string>
     <string name="email_empty">E-Mail-Adresse eingeben</string>
+    <string name="add_contact_details">Add Contact Details</string>
     <string name="encrypted_contact_details">Verschlüsselte Kontaktinformationen</string>
     <string name="convert_question">Lokale Kontakte hochladen</string>
     <string name="convert_question_subtitle">Dadurch werden die lokalen Kontakte von Ihrem Gerät in Ihr ProtonMail-Kontaktverzeichnis hochgeladen. Ihnen wird dadurch ermöglicht, über ProtonMail auf diese Kontakte auf Ihren anderen Geräten zuzugreifen.</string>
@@ -555,6 +588,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Ende-zu-Ende verschlüsselte Nachricht</string>
     <string name="sender_lock_internal_verified">Ende-zu-Ende verschlüsselte Nachricht von bestätigter Adresse</string>
+    <string name="sender_lock_learn_more"><a href="">Mehr erfahren</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Ende-zu-Ende verschlüsselt</string>
     <string name="composer_lock_internal_pinned">Ende-zu-Ende verschlüsselt zum verifizierten Empfänger</string>
@@ -677,6 +711,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="payment_method">Zahlungsmethode</string>
     <string name="password_manager">Passwörter verwalten</string>
     <string name="recovery_email">Wiederherstellungs-E-Mail-Adresse</string>
+    <string name="info_for_missing_functionality">Please log in through <a href="https://www.protonmail.com/">protonmail.com</a> and access your settings to edit this information.</string>
     <string name="storage">Größe des Postfachs</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">E-Mail-Adressen</string>
@@ -693,6 +728,16 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- region Snooze Settings -->
     <string name="snooze_header">Zurückstellen</string>
     <string name="notifications_snooze">Benachrichtigungen später lesen</string>
+    <string-array name="quick_snooze_values">
+        <item>30 Minuten</item>
+        <item>1 Stunde</item>
+        <item>2 Stunden</item>
+        <item>4 Stunden</item>
+        <item>8 Stunden</item>
+        <item>12 Stunden</item>
+        <item>Benutzerdefiniert</item>
+        <item>Geplant</item>
+    </string-array>
     <string name="notifications_snoozed">Benachrichtigungen werden später gelesen</string>
     <string name="notifications_snooze_scheduled">Geplant</string>
     <string name="notifications_snooze_scheduled_settings">Geplante „Später lesen”-Erinnerung festlegen</string>
@@ -712,6 +757,15 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="work_days">Werktags</string>
     <string name="weekends">Wochenende</string>
     <string name="every_day">Täglich</string>
+    <string-array name="snooze_repeat_values">
+        <item>Mo</item>
+        <item>Di</item>
+        <item>Mi</item>
+        <item>Do</item>
+        <item>Fr</item>
+        <item>Sa</item>
+        <item>So</item>
+    </string-array>
     <string name="quick_and_scheduled_enabled">Schneller und geplanter „Später lesen”-Zeitpunkt sind aktiviert</string>
     <string name="quick_only_enabled">Schneller „Später lesen”-Zeitpunkt aktiv</string>
     <string name="scheduled_only_enabled">Geplante „Später lesen”-Erinnerung aktiv</string>
@@ -729,6 +783,8 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="settings_prevent_taking_screenshots">Das Erstellen von Bildschirmfotos verhindern</string>
     <string name="hyperlink_confirmation">Link-Bestätigung anfordern</string>
     <string name="labels_and_folders">Kategorien und Ordner </string>
+    <string name="folders">Ordner</string>
+    <string name="labels">Kategorien</string>
     <string name="labels_manage">Kategorien verwalten</string>
     <string name="folders_manage">Ordnerverwaltung</string>
     <string name="swiping_gesture">Wischgesten</string>
@@ -737,11 +793,12 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Wischgeste wählen</string>
     <string name="swipe_action_trash">Nachricht in den Papierkorb verschieben</string>
-    <string name="swipe_action_trash_short">In Papierkorb verschieben</string>
     <string name="swipe_action_star">Kennzeichnung der Nachricht aktualisiert</string>
+    <string name="swipe_action_star_short">Kennzeichnung aktualisieren</string>
     <string name="swipe_action_spam">Nachricht als Spam gekennzeichnet</string>
     <string name="swipe_action_archive">Archivieren</string>
     <string name="swipe_action_mark_read">Nachricht als gelesen gekennzeichnet</string>
+    <string name="swipe_action_mark_read_short">Gelesen</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Nachricht in den Papierkorb verschoben</item>
         <item quantity="other">Nachrichten in den Papierkorb verschoben</item>
@@ -817,6 +874,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- endregion -->
     <string name="allowed">Zugelassen</string>
     <string name="denied">Abgelehnt</string>
+    <string name="more">Mehr</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Wischgesten geändert</string>
     <string name="swipe_gestures_changed_message">Nach der letzten Aktualisierung wurden Wischgesten ausgetauscht. Wenn Sie möchten, können Sie diese in den Einstellungen zurücksetzen.</string>
@@ -826,4 +884,28 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="failed_saving_draft_online">Speichern des Online-Entwurfs für Nachricht „%s” fehlgeschlagen</string>
     <string name="cannot_open_message_while_being_sent">Nachricht kann während des Sendens nicht geöffnet werden</string>
     <string name="enable_conversation_mode">Themenbaum aktivieren</string>
+    <!-- endregion -->
+    <string name="recipient_email_format">&lt;%s&gt;</string>
+    <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
+    <string name="error_loading_conversations">Fehler beim Laden des Themas. Bitte versuchen Sie es erneut.</string>
+    <string name="star">Kennzeichnen</string>
+    <string name="unstar">Kennzeichnung entfernen</string>
+    <string name="send_to_archive">In Archiv verschieben?</string>
+    <string name="new_label">Neue Kategorie</string>
+    <string name="new_folder">Neuer Ordner</string>
+    <string name="label_as">Hinzufügen zur Kategorie …</string>
+    <string name="mark_as_unread">Als „Ungelesen” kennzeichnen</string>
+    <string name="mark_as_read">Als „Gelesen” kennzeichnen</string>
+    <string name="move_message">Nachricht verschieben</string>
+    <string name="manage">Verwalten</string>
+    <string name="message_from">Nachricht von %s</string>
+    <string name="not_spam_move_to_inbox">Kein Spam (In Posteingang verschieben)</string>
+    <plurals name="x_messages_count">
+        <item quantity="one">%d Nachricht</item>
+        <item quantity="other">%d Nachrichten</item>
+    </plurals>
+    <plurals name="x_conversations_count">
+        <item quantity="one">%d Thema</item>
+        <item quantity="other">%d Themen</item>
+    </plurals>
 </resources>

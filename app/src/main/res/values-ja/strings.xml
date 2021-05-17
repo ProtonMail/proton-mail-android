@@ -18,6 +18,30 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- region All -->
+    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_folders">フォルダー</string>
+    <string name="x_labels">ラベル</string>
+    <string name="x_more">その他</string>
+    <string name="x_search">検索</string>
+    <!-- endregion -->
+    <!-- region Drawer -->
+    <string name="drawer_contacts">連絡先</string>
+    <string name="drawer_lock_the_app">アプリをロック</string>
+    <string name="drawer_report_bug">バグを報告</string>
+    <string name="drawer_settings">設定</string>
+    <string name="drawer_subscription">サブスクリプション</string>
+    <string name="drawer_sign_out">サインアウト</string>
+    <!-- endregion -->
+    <!-- region Composer -->
+    <string name="composer_bcc">Bcc：</string>
+    <string name="composer_cc">Cc:</string>
+    <string name="composer_compose_email">Eメールの作成</string>
+    <string name="composer_from">差出人：</string>
+    <string name="composer_subject">件名：</string>
+    <string name="composer_to">宛先：</string>
+    <!-- end region -->
+    <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">暗号化されたメール</string>
     <string name="secure_email_swiss">スイスに拠点を置く<br/>セキュアな電子メール</string>
@@ -56,12 +80,13 @@
     <string name="open_drawer">開く</string>
     <string name="close_drawer">閉じる</string>
     <string name="inbox_option">受信箱</string>
-    <string name="starred_option">星付き</string>
+    <string name="starred_option">スター付</string>
     <string name="drafts_option">下書き</string>
-    <string name="sent_option">送信済み</string>
+    <string name="sent_option">送信済</string>
     <string name="archive_option">アーカイブ</string>
     <string name="trash_option">ごみ箱</string>
-    <string name="spam_option">迷惑メール</string>
+    <string name="spam_option">スパム</string>
+    <string name="allmail_option">全メール</string>
     <string name="inbox">受信箱</string>
     <string name="starred">星付き</string>
     <string name="drafts">下書き</string>
@@ -69,12 +94,12 @@
     <string name="archive">アーカイブ</string>
     <string name="trash">ごみ箱</string>
     <string name="spam">迷惑メール</string>
+    <string name="all_mail">全てのメール</string>
     <string name="contacts">連絡先</string>
     <string name="search_contacts">連絡先の検索</string>
     <string name="fetching_contacts">Protonmailの連絡先を取得しています...</string>
     <string name="fetching_contacts_success">連絡先が正常に更新されました。</string>
     <string name="fetching_contacts_failure">連絡先を更新できません。</string>
-    <string name="x_search">検索</string>
     <string name="search_messages">メッセージの検索</string>
     <string name="no_search_results">検索結果はありません。</string>
     <string name="compose">新規作成</string>
@@ -93,6 +118,7 @@
     <string name="move_to_trash">ごみ箱に移動</string>
     <string name="move_to_spam">迷惑メールに移動</string>
     <string name="move_to_inbox">受信箱に移動</string>
+    <string name="move_to">... へ移動</string>
     <string name="are_you_sure_empty">このフォルダー内の全てのメッセージを削除してよろしいですか？</string>
     <string name="send">送信</string>
     <string name="selected">選択済</string>
@@ -135,11 +161,17 @@
     <plurals name="minutes_string">
         <item quantity="other">%d 分</item>
     </plurals>
+    <string name="expiration_days">%dD</string>
+    <string name="expiration_hours">%dH</string>
+    <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
         <item quantity="other">%d 添付ファイル</item>
     </plurals>
     <plurals name="attachments_non_descriptive">
         <item quantity="other">\u0020 %d 添付ファイル</item>
+    </plurals>
+    <plurals name="attachments_number">
+        <item quantity="other">１ 件の添付ファイル</item>
     </plurals>
     <string name="add_attachment">添付ファイルの追加</string>
     <string name="select_file">ファイルを選択</string>
@@ -447,7 +479,7 @@
     <string name="print_error">印刷エラー</string>
     <string name="download_complete">ダウンロード完了</string>
     <string name="download_in_progress">ダウンロードが進行中</string>
-    <string name="message_expires_in">%s で期限切れ</string>
+    <string name="message_expires_in">このメッセージは %s後に失効します</string>
     <string name="unsaved_changes_title">変更が保存されていません</string>
     <string name="unsaved_changes_subtitle">フォーム内に保存されていない項目があります。本当に破棄してよろしいですか。</string>
     <string name="request_timeout">リクエストが時間切れになりました。もう一度やり直してください。</string>
@@ -465,11 +497,9 @@
     <string name="folder_deleted_error">フォルダー削除中にエラーが発生しました。</string>
     <string name="save_new_folder">新しいフォルダーを保存</string>
     <string name="create_new_folder">フォルダを作成</string>
-    <string name="all_mail">全てのメール</string>
-    <string name="allmail_option">全てのメール</string>
     <string name="empty_emails">メールがありません。</string>
     <string name="empty_email_list">メールアドレスがありません。</string>
-    <string name="no_contacts">連絡先がありません。</string>
+    <string name="no_contacts">連絡先がありません</string>
     <string name="sender_name_address">%1$sに&lt; %2$s &gt; が送信</string>
     <string name="update_label">ラベルを更新</string>
     <string name="max_labels_in_message">メッセージ %1$s は %2$d ラベル以上を持つことはできません。</string>
@@ -498,11 +528,13 @@
     <string name="recheck_delinquency">もう一度確認</string>
     <string name="close_app">アプリを終了</string>
     <string name="empty_subject">(件名なし)</string>
+    <string name="empty_recipients">(宛先がありません)</string>
     <string name="contacts_unknown">不明</string>
     <string name="learn_more"><u>更に詳しく</u></string>
     <string name="info">情報</string>
     <string name="error_can_not_send_from_this_address">あなたの %s アドレスから送信するには有料プランへのアップグレードが必要です。</string>
     <string name="email_empty">メールアドレスがありません。</string>
+    <string name="add_contact_details">Add Contact Details</string>
     <string name="encrypted_contact_details">暗号化された連絡先の詳細</string>
     <string name="convert_question">ローカルの連絡先をアップロード</string>
     <string name="convert_question_subtitle">これで、あなたのデバイスのローカル連絡先があなたのProtonMail連絡先ディレクトリにアップロードされます。 ProtonMailを使用して、他のデバイスの連絡先にアクセスできます。</string>
@@ -547,6 +579,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">端末相互間で暗号化されたメッセージ</string>
     <string name="sender_lock_internal_verified">検証済みアドレスからの端末相互間の暗号化によるメッセージ</string>
+    <string name="sender_lock_learn_more"><a href="">詳細</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">端末相互間の暗号化済み</string>
     <string name="composer_lock_internal_pinned">検証済みアドレスへの端末相互間の暗号化による送信</string>
@@ -601,7 +634,7 @@
     <string name="manage_accounts_user_primary">%s (現在ログイン中)</string>
     <string name="account_manager_remove">削除</string>
     <string name="default_error_message">エラーが発生しました</string>
-    <string name="no_contact_groups">連絡先グループはありません</string>
+    <string name="no_contact_groups">連絡先グループがありません</string>
     <string name="search_contacts_inside_group">グループ内の連絡先を検索する</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
@@ -666,6 +699,7 @@
     <string name="payment_method">支払い方法</string>
     <string name="password_manager">パスワード管理</string>
     <string name="recovery_email">回復用のメールアドレス</string>
+    <string name="info_for_missing_functionality"><a href="https://www.protonmail.com/">protonmail.com</a> からログインし、情報を編集するには設定にアクセスしてください。</string>
     <string name="storage">メールボックスの容量</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">アドレス</string>
@@ -682,6 +716,16 @@
     <!-- region Snooze Settings -->
     <string name="snooze_header">通知の停止</string>
     <string name="notifications_snooze">通知の停止計画</string>
+    <string-array name="quick_snooze_values">
+        <item>30分</item>
+        <item>1時間</item>
+        <item>2時間</item>
+        <item>4時間</item>
+        <item>8時間</item>
+        <item>12時間</item>
+        <item>カスタム設定</item>
+        <item>計画休止</item>
+    </string-array>
     <string name="notifications_snoozed">通知は停止中です</string>
     <string name="notifications_snooze_scheduled">計画休止</string>
     <string name="notifications_snooze_scheduled_settings">停止計画の設定</string>
@@ -700,6 +744,15 @@
     <string name="work_days">平日</string>
     <string name="weekends">週末</string>
     <string name="every_day">毎日</string>
+    <string-array name="snooze_repeat_values">
+        <item>月</item>
+        <item>火</item>
+        <item>水</item>
+        <item>木</item>
+        <item>金</item>
+        <item>土</item>
+        <item>日</item>
+    </string-array>
     <string name="quick_and_scheduled_enabled">通知の一時停止と計画停止が有効です。</string>
     <string name="quick_only_enabled">通知の一時停止が有効です。</string>
     <string name="scheduled_only_enabled">計画停止が有効です。</string>
@@ -717,6 +770,8 @@
     <string name="settings_prevent_taking_screenshots">画面撮影の防止</string>
     <string name="hyperlink_confirmation">リンク先を開くときに確認する</string>
     <string name="labels_and_folders">ラベルとフォルダー</string>
+    <string name="folders">フォルダー</string>
+    <string name="labels">ラベル</string>
     <string name="labels_manage">ラベルの管理</string>
     <string name="folders_manage">フォルダーの管理</string>
     <string name="swiping_gesture">スワイプ操作</string>
@@ -725,11 +780,12 @@
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">スワイプ操作時のアクション選択</string>
     <string name="swipe_action_trash">メッセージをごみ箱に移動する</string>
-    <string name="swipe_action_trash_short">ごみ箱に移動しました</string>
     <string name="swipe_action_star">メッセージへの星印の付け外し</string>
+    <string name="swipe_action_star_short">スターを更新</string>
     <string name="swipe_action_spam">メッセージを迷惑メールとする</string>
     <string name="swipe_action_archive">メッセージをアーカイブする</string>
     <string name="swipe_action_mark_read">メッセージを既読にする</string>
+    <string name="swipe_action_mark_read_short">既読</string>
     <plurals name="action_move_to_trash">
         <item quantity="other">メッセージをごみ箱に移動する</item>
     </plurals>
@@ -803,6 +859,7 @@
     <!-- endregion -->
     <string name="allowed">許可</string>
     <string name="denied">拒否</string>
+    <string name="more">その他</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">スワイプ操作が変更されました</string>
     <string name="swipe_gestures_changed_message">最新の更新で、スワイプ操作が変更されました。必要に応じて、設定からスワイプ操作の設定をリセットできます。</string>
@@ -812,4 +869,26 @@
     <string name="failed_saving_draft_online">ドラフトメッセージの保存に失敗しました:\"%s \"</string>
     <string name="cannot_open_message_while_being_sent">送信中にこのメッセージを開くことはできません</string>
     <string name="enable_conversation_mode">会話モードを有効化</string>
+    <!-- endregion -->
+    <string name="recipient_email_format">&lt;%s&gt;</string>
+    <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
+    <string name="error_loading_conversations">Error loading conversations, please try again</string>
+    <string name="star">Star</string>
+    <string name="unstar">Unstar</string>
+    <string name="send_to_archive">Send to archive?</string>
+    <string name="new_label">New Label</string>
+    <string name="new_folder">New Folder</string>
+    <string name="label_as">Label as…</string>
+    <string name="mark_as_unread">Mark as unread</string>
+    <string name="mark_as_read">Mark as read</string>
+    <string name="move_message">Move message</string>
+    <string name="manage">Manage</string>
+    <string name="message_from">Message from %s</string>
+    <string name="not_spam_move_to_inbox">Not spam (Move to Inbox)</string>
+    <plurals name="x_messages_count">
+        <item quantity="other">%d messages</item>
+    </plurals>
+    <plurals name="x_conversations_count">
+        <item quantity="other">%d conversations</item>
+    </plurals>
 </resources>

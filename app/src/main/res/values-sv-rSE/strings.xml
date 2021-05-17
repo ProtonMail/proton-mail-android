@@ -18,6 +18,30 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- region All -->
+    <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_folders">Mappar</string>
+    <string name="x_labels">Etiketter</string>
+    <string name="x_more">Mer</string>
+    <string name="x_search">Sök</string>
+    <!-- endregion -->
+    <!-- region Drawer -->
+    <string name="drawer_contacts">Kontakter</string>
+    <string name="drawer_lock_the_app">Lås appen</string>
+    <string name="drawer_report_bug">Rapportera bugg</string>
+    <string name="drawer_settings">Inställningar</string>
+    <string name="drawer_subscription">Prenumeration</string>
+    <string name="drawer_sign_out">Logga ut</string>
+    <!-- endregion -->
+    <!-- region Composer -->
+    <string name="composer_bcc">Bcc:</string>
+    <string name="composer_cc">Cc:</string>
+    <string name="composer_compose_email">Nytt meddelande</string>
+    <string name="composer_from">Från:</string>
+    <string name="composer_subject">Ämne:</string>
+    <string name="composer_to">Till:</string>
+    <!-- end region -->
+    <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">KRYPTERAD E-POST</string>
     <string name="secure_email_swiss">Säker e-post baserad <br/> i Schweiz</string>
@@ -55,13 +79,14 @@
     <string name="message_drafted">Det gick inte att skicka. Dina meddelanden finns sparade i Utkast.</string>
     <string name="open_drawer">Öppna</string>
     <string name="close_drawer">Stäng</string>
-    <string name="inbox_option">INKORG</string>
-    <string name="starred_option">STJÄRNMÄRKTA</string>
-    <string name="drafts_option">UTKAST</string>
-    <string name="sent_option">SKICKAT</string>
-    <string name="archive_option">ARKIV</string>
-    <string name="trash_option">PAPPERSKORG</string>
-    <string name="spam_option">SKRÄPPOST</string>
+    <string name="inbox_option">Inkorg</string>
+    <string name="starred_option">Stjärnmärkt</string>
+    <string name="drafts_option">Utkast</string>
+    <string name="sent_option">Skickat</string>
+    <string name="archive_option">Arkiv</string>
+    <string name="trash_option">Papperskorg</string>
+    <string name="spam_option">Skräppost</string>
+    <string name="allmail_option">All e-post</string>
     <string name="inbox">Inkorg</string>
     <string name="starred">Stjärnmärkt</string>
     <string name="drafts">Utkast</string>
@@ -69,18 +94,18 @@
     <string name="archive">Arkiv</string>
     <string name="trash">Papperskorg</string>
     <string name="spam">Skräppost</string>
+    <string name="all_mail">All e-post</string>
     <string name="contacts">Kontakter</string>
     <string name="search_contacts">Sök kontakter</string>
     <string name="fetching_contacts">Hämtar Protonmail kontakter...</string>
     <string name="fetching_contacts_success">Kontakterna har uppdaterats</string>
     <string name="fetching_contacts_failure">Det gick inte att uppdatera kontakterna</string>
-    <string name="x_search">Sök</string>
     <string name="search_messages">Sök meddelanden</string>
     <string name="no_search_results">Inga sökresultat</string>
     <string name="compose">Skriv nytt</string>
     <string name="compose_message">Skriv meddelande</string>
     <string name="empty_folder">Töm mapp</string>
-    <string name="view_headers">View Headers</string>
+    <string name="view_headers">Visa rubriker</string>
     <string name="message_headers">Meddelandehuvud</string>
     <string name="delete_message">Radera meddelande</string>
     <string name="delete_messages">Radera meddelanden</string>
@@ -93,6 +118,7 @@
     <string name="move_to_trash">Flytta till Papperskorg</string>
     <string name="move_to_spam">Flytta till Skräppost</string>
     <string name="move_to_inbox">Flytta till Inkorg</string>
+    <string name="move_to">Flytta till…</string>
     <string name="are_you_sure_empty">Är du säker på att du vill radera alla meddelanden från denna mapp?</string>
     <string name="send">Skicka</string>
     <string name="selected">Valda</string>
@@ -138,6 +164,9 @@
         <item quantity="one">%d minut</item>
         <item quantity="other">%d minuter</item>
     </plurals>
+    <string name="expiration_days">%dD</string>
+    <string name="expiration_hours">%dT</string>
+    <string name="expiration_minutes">%dM</string>
     <plurals name="attachments">
         <item quantity="one">En bilaga</item>
         <item quantity="other">%d bilagor</item>
@@ -145,6 +174,10 @@
     <plurals name="attachments_non_descriptive">
         <item quantity="one">\u0020 1 bilaga</item>
         <item quantity="other">\u0020 %d bilagor</item>
+    </plurals>
+    <plurals name="attachments_number">
+        <item quantity="one">1 bilaga</item>
+        <item quantity="other">%d bilagor</item>
     </plurals>
     <string name="add_attachment">Bifoga bilaga</string>
     <string name="select_file">Välj fil</string>
@@ -318,7 +351,7 @@
     <string name="logout">Logga ut</string>
     <string name="log_out">Log out %s?</string>
     <string name="logout_question">Är du säker på att du vill logga ut?</string>
-    <string name="logout_question_next_account">Är du säker på att du vill logga ut med nuvarande konto och fortsätta med %s?</string>
+    <string name="logout_question_next_account">Du kommer att växlas till %s.</string>
     <string name="upgrade">Uppgradera</string>
     <string name="country">Land</string>
     <string name="set_cont">Ange &amp; Forsätt</string>
@@ -386,7 +419,7 @@
     </string-array>
     <string name="contact_details_display_name">Namn</string>
     <string name="contact_details">Kontaktuppgifter</string>
-    <string name="email_type_home">Privat</string>
+    <string name="email_type_home">Hem</string>
     <string name="type_title">Välj typ</string>
     <string name="message_drafted_error_server">Meddelandet kunde inte skickas. %s</string>
     <string name="sync_local_contacts">Ladda upp till ProtonMail</string>
@@ -454,7 +487,7 @@
     <string name="print_error">Utskriftsfel</string>
     <string name="download_complete">Nedladdning slutförd</string>
     <string name="download_in_progress">Nedladdning pågår</string>
-    <string name="message_expires_in">\tUpphör %s</string>
+    <string name="message_expires_in">Detta meddelande upphör om %s</string>
     <string name="unsaved_changes_title">Osparade ändringar</string>
     <string name="unsaved_changes_subtitle">Det finns osparade ändringar i formuläret. Är du säker på att du vill kasta bort dem?</string>
     <string name="request_timeout">Begäran gjorde timeout, vänligen försök igen</string>
@@ -472,8 +505,6 @@
     <string name="folder_deleted_error">Fel vid borttag av mapp</string>
     <string name="save_new_folder">Spara ny mapp</string>
     <string name="create_new_folder">Skapa mapp</string>
-    <string name="all_mail">All e-post</string>
-    <string name="allmail_option">ALL E-POST</string>
     <string name="empty_emails">Ingen e-post</string>
     <string name="empty_email_list">Ingen epostadress</string>
     <string name="no_contacts">Inga kontakter</string>
@@ -505,11 +536,13 @@
     <string name="recheck_delinquency">Kontrollera Igen</string>
     <string name="close_app">Stäng App</string>
     <string name="empty_subject">(Inget Ämne)</string>
+    <string name="empty_recipients">(Inga mottagare)</string>
     <string name="contacts_unknown">Okänd</string>
     <string name="learn_more"><u>Läs Mer</u></string>
     <string name="info">Info</string>
     <string name="error_can_not_send_from_this_address">Uppgradera till betalabonnemang för att skicka från din %s-adress.</string>
     <string name="email_empty">E-postadressen saknas</string>
+    <string name="add_contact_details">Lägg till kontaktinformation</string>
     <string name="encrypted_contact_details">Krypterade kontaktuppgifter</string>
     <string name="convert_question">Ladda up lokala kontakter</string>
     <string name="convert_question_subtitle">Detta kommer att ladda upp lokala kontakter på din enhet till ProtonMails kontaktlista. Du kommer sedan kunna komma åt dessa kontakter på dina andra enheter via ProtonMail.</string>
@@ -554,6 +587,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">End-to-end-krypterat meddelande</string>
     <string name="sender_lock_internal_verified">End-to-end-krypterat meddelande från verifierad adress</string>
+    <string name="sender_lock_learn_more"><a href="">Läs mer</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-end-krypterat</string>
     <string name="composer_lock_internal_pinned">End-to-end krypterad till verifierad mottagare</string>
@@ -680,6 +714,7 @@
     <string name="payment_method">Betalningsmetod</string>
     <string name="password_manager">Lösenordshanterare</string>
     <string name="recovery_email">E-postadress för återställning</string>
+    <string name="info_for_missing_functionality">Vänligen logga in via <a href="https://www.protonmail.com/">protonmail.com</a> och kom åt dina inställningar för att redigera denna information.</string>
     <string name="storage">Brevlådestorlek</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Adresser</string>
@@ -696,6 +731,16 @@
     <!-- region Snooze Settings -->
     <string name="snooze_header">Snooza</string>
     <string name="notifications_snooze">Snooza notifieringar</string>
+    <string-array name="quick_snooze_values">
+        <item>30 minuter</item>
+        <item>1 timme</item>
+        <item>2 timmar</item>
+        <item>4 timmar</item>
+        <item>8 timmar</item>
+        <item>12 timmar</item>
+        <item>Anpassad</item>
+        <item>Schemalagd</item>
+    </string-array>
     <string name="notifications_snoozed">Notifieringar snoozade</string>
     <string name="notifications_snooze_scheduled">Schemalagd</string>
     <string name="notifications_snooze_scheduled_settings">Inställningar för schemalagda Snooze</string>
@@ -715,6 +760,15 @@
     <string name="work_days">Work days</string>
     <string name="weekends">Weekend</string>
     <string name="every_day">Varje dag</string>
+    <string-array name="snooze_repeat_values">
+        <item>Mån</item>
+        <item>Tis</item>
+        <item>Ons</item>
+        <item>Tor</item>
+        <item>Fre</item>
+        <item>Lör</item>
+        <item>Sön</item>
+    </string-array>
     <string name="quick_and_scheduled_enabled">Snabbsnooze och schemalagd snooze aktiverat</string>
     <string name="quick_only_enabled">Snabbsnooze aktiverat</string>
     <string name="scheduled_only_enabled">Schemalagd snooze aktiverad</string>
@@ -732,6 +786,8 @@
     <string name="settings_prevent_taking_screenshots">Förhindra skärmdumpar</string>
     <string name="hyperlink_confirmation">Begär länkbekräftelse</string>
     <string name="labels_and_folders">Etiketter &amp; Mappar </string>
+    <string name="folders">Mappar</string>
+    <string name="labels">Etiketter</string>
     <string name="labels_manage">Etiketthanterare</string>
     <string name="folders_manage">Mapphantering</string>
     <string name="swiping_gesture">Svepgester</string>
@@ -740,11 +796,12 @@
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Välj svep-åtgärd</string>
     <string name="swipe_action_trash">Meddelandet flyttades till Papperskorgen</string>
-    <string name="swipe_action_trash_short">Flyttad till Papperskorgen</string>
     <string name="swipe_action_star">Meddelandestjärnan uppdaterad</string>
+    <string name="swipe_action_star_short">Uppdatera stjärnmärkning</string>
     <string name="swipe_action_spam">Meddelandet markerat som skräppost</string>
     <string name="swipe_action_archive">Meddelandet arkiverat</string>
     <string name="swipe_action_mark_read">Meddelandet markerat som läst</string>
+    <string name="swipe_action_mark_read_short">Läst</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Meddelandet flyttat till papperskorg</item>
         <item quantity="other">Meddelanden flyttade till papperskorg</item>
@@ -821,6 +878,7 @@
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
+    <string name="more">Mer</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Svepgester har ändrats</string>
     <string name="swipe_gestures_changed_message">Efter senaste uppdateringen har svepgester ändrats. Om du vill kan du återställa dem i inställningarna.</string>
@@ -830,4 +888,28 @@
     <string name="failed_saving_draft_online">Det gick inte att spara utkast för meddelande: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Kan inte öppna detta meddelande när det skickas</string>
     <string name="enable_conversation_mode">Aktivera konversationsläge</string>
+    <!-- endregion -->
+    <string name="recipient_email_format">&lt;%s&gt;</string>
+    <string name="recipient_name_email_format">%s&lt;%s&gt;</string>
+    <string name="error_loading_conversations">Fel vid inläsning av konversationer, försök igen</string>
+    <string name="star">Stjärnmärk</string>
+    <string name="unstar">Ta bort stjärnmärkning</string>
+    <string name="send_to_archive">Skicka till arkivet?</string>
+    <string name="new_label">Ny etikett</string>
+    <string name="new_folder">Ny mapp</string>
+    <string name="label_as">Märk som…</string>
+    <string name="mark_as_unread">Markera som oläst</string>
+    <string name="mark_as_read">Markera som läst</string>
+    <string name="move_message">Flytta meddelande</string>
+    <string name="manage">Hantera</string>
+    <string name="message_from">Meddelande från %s</string>
+    <string name="not_spam_move_to_inbox">Not spam (Move to Inbox)</string>
+    <plurals name="x_messages_count">
+        <item quantity="one">%d meddelande</item>
+        <item quantity="other">%d meddelanden</item>
+    </plurals>
+    <plurals name="x_conversations_count">
+        <item quantity="one">%d konversation</item>
+        <item quantity="other">%d konversationer</item>
+    </plurals>
 </resources>
