@@ -127,7 +127,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     private var _embeddedImagesToFetch: ArrayList<EmbeddedImage> = ArrayList()
     private var remoteContentDisplayed: Boolean = false
 
-    private val requestPending = AtomicBoolean(false)
     var renderedFromCache = AtomicBoolean(false)
 
     var refreshedKeys: Boolean = true
@@ -234,7 +233,6 @@ internal class MessageDetailsViewModel @Inject constructor(
 
             if (message == null) {
                 Timber.d("Failed fetching Message Details for message $messageId")
-                requestPending.set(false)
                 _messageDetailsError.postValue(Event("Failed getting message details"))
                 return@launch
             }
@@ -510,7 +508,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         _reloadRecipientsEvent.value = Event(true)
         // render with the new verification keys
         if (renderingPassed && message != null) {
-            RegisterReloadTask(message, requestPending).execute()
+            RegisterReloadTask(message).execute()
         }
     }
 
