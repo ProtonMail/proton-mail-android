@@ -32,7 +32,7 @@
         android:layout_margin="@dimen/gap_medium"
         tools:email="superuser@protonmail.com"
         tools:initials="SU"
-        tools:isExpandable="true"
+        tools:isDialogEnabled="true"
         tools:name="Super User" />
 
     <ch.protonmail.android.ui.view.ProtonSideDrawer

@@ -71,6 +71,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.proton.core.accountmanager.presentation.view.AccountPrimaryView
+import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewModel
 import me.proton.core.domain.entity.UserId
 import java.util.Calendar
 import javax.inject.Inject
@@ -93,6 +95,7 @@ abstract class NavigationActivity : BaseActivity() {
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     private val drawerLayout: DrawerLayout by lazy { findViewById(R.id.drawer_layout) }
     private val sideDrawer: ProtonSideDrawer by lazy { findViewById(R.id.sideDrawer) }
+    private val accountPrimaryView: AccountPrimaryView by lazy { findViewById(R.id.accountPrimaryView) }
     private lateinit var drawerToggle: ActionBarDrawerToggle
     // endregion
 
@@ -112,6 +115,7 @@ abstract class NavigationActivity : BaseActivity() {
     lateinit var userManager: UserManager
 
     private val navigationViewModel by viewModels<NavigationViewModel>()
+    private val accountSwitcherViewModel by viewModels<AccountSwitcherViewModel>()
 
     protected abstract val currentMailboxLocation: Constants.MessageLocationType
 
@@ -169,6 +173,19 @@ abstract class NavigationActivity : BaseActivity() {
                 .launchIn(lifecycleScope)
         }
 
+        accountPrimaryView.setViewModel(accountSwitcherViewModel)
+        accountSwitcherViewModel.onActionPerformed().onEach {
+            when (it) {
+                AccountSwitcherViewModel.Action.Add,
+                AccountSwitcherViewModel.Action.Switch -> {
+                    accountPrimaryView.dismissDialog()
+                    closeDrawer(animate = false)
+                }
+                AccountSwitcherViewModel.Action.Remove,
+                AccountSwitcherViewModel.Action.Logout -> Unit
+            }
+        }.launchIn(lifecycleScope)
+
         sideDrawer.setOnItemClick { drawerItem ->
             // Header clicked
             if (drawerItem is Primary) {
@@ -222,16 +239,9 @@ abstract class NavigationActivity : BaseActivity() {
         }
     }
 
-    @JvmOverloads
-    protected fun closeDrawer(ignoreIfPossible: Boolean = false): Boolean {
+    protected fun closeDrawer(animate: Boolean = true): Boolean {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            var closeIt = true
-            if (!ignoreIfPossible) {
-                closeIt = false
-            }
-            if (closeIt) {
-                drawerLayout.closeDrawers()
-            }
+            drawerLayout.closeDrawer(GravityCompat.START, animate)
             return true
         }
         return false
