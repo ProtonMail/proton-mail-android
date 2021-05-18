@@ -61,6 +61,8 @@ import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
@@ -76,10 +78,12 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -108,6 +112,8 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val attachmentsHelper: AttachmentsHelper,
     private val downloadUtils: DownloadUtils,
     private val moveMessagesToFolder: MoveMessagesToFolder,
+    private val conversationModeEnabled: ConversationModeEnabled,
+    private val conversationRepository: ConversationsRepository,
     savedStateHandle: SavedStateHandle,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
@@ -116,6 +122,13 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private val messageId: String = savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID)
         ?: throw IllegalStateException("messageId in MessageDetails is Empty!")
+
+    private val location: Constants.MessageLocationType by lazy {
+        Constants.MessageLocationType.fromInt(
+            savedStateHandle.get<Int>(MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID)
+                ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
+        )
+    }
 
     private val messageRenderer
         by lazy { messageRendererFactory.create(viewModelScope, messageId) }
@@ -242,22 +255,40 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun loadMessageDetails() {
         viewModelScope.launch(dispatchers.Io) {
+            val userId = userManager.requireCurrentUserId()
 
-            val userId = Id(userManager.requireCurrentUserId().s)
-            val message = messageRepository.getMessage(userId, messageId, true)
-
-            if (message == null) {
-                Timber.d("Failed fetching Message Details for message $messageId")
-                _messageDetailsError.postValue(Event("Failed getting message details"))
+            if (conversationModeEnabled(location)) {
+                conversationRepository.getConversation(messageId, userId)
+                    .map {
+                        if (it is DataResult.Success) {
+                            val conversation = it.value
+                            val convMessage = conversation.messages?.get(0)!!
+                            val message = messageRepository.getMessage(userId, convMessage.id, true)
+                            onMessageLoaded(message)
+                        } else if (it is DataResult.Error) {
+                            onMessageLoaded(null)
+                        }
+                    }.first()
                 return@launch
             }
 
-            val contactEmail = contactsRepository.findContactEmailByEmail(message.senderEmail)
-            message.senderDisplayName = contactEmail?.name.orEmpty()
-
-            refreshedKeys = true
-            decryptAndEmit(message)
+            val message = messageRepository.getMessage(userId, messageId, true)
+            onMessageLoaded(message)
         }
+    }
+
+    private suspend fun onMessageLoaded(message: Message?) {
+        if (message == null) {
+            Timber.d("Failed fetching Message Details for message $messageId")
+            _messageDetailsError.postValue(Event("Failed getting message details"))
+            return
+        }
+
+        val contactEmail = contactsRepository.findContactEmailByEmail(message.senderEmail)
+        message.senderDisplayName = contactEmail?.name.orEmpty()
+
+        refreshedKeys = true
+        decryptAndEmit(message)
     }
 
     private suspend fun decryptAndEmit(message: Message) {

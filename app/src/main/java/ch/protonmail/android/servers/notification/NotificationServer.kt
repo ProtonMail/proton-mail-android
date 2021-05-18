@@ -351,6 +351,7 @@ class NotificationServer @Inject constructor(
         // Create content Intent for open MessageDetailsActivity
         val contentIntent = Intent(context, MessageDetailsActivity::class.java)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, messageId)
+            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID, message?.location)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USER_ID, user.id.s)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USERNAME, user.name.s)
 

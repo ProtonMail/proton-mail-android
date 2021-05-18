@@ -861,6 +861,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     companion object {
 
         const val EXTRA_MESSAGE_ID = "messageId"
+        const val EXTRA_MESSAGE_LOCATION_ID = "location"
 
         const val EXTRA_MESSAGE_RECIPIENT_USER_ID = "message_recipient_user_id"
         const val EXTRA_MESSAGE_RECIPIENT_USERNAME = "message_recipient_username"

@@ -134,6 +134,10 @@ public class SearchActivity extends BaseActivity {
             } else {
                 Intent intent = AppUtil.decorInAppIntent(new Intent(SearchActivity.this, MessageDetailsActivity.class));
                 intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, mailboxUiItem.getItemId());
+                intent.putExtra(
+                        MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID,
+                        MessageLocationType.SEARCH.getMessageLocationTypeValue()
+                );
                 startActivity(intent);
             }
             return null;
