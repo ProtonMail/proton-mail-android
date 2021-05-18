@@ -27,8 +27,9 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.contacts.ErrorEnum
+import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
+import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,14 +49,15 @@ import kotlin.time.milliseconds
 @HiltViewModel
 class ContactGroupDetailsViewModel @Inject constructor(
     private val contactGroupDetailsRepository: ContactGroupDetailsRepository,
-    private val deleteLabel: DeleteLabel
+    private val deleteLabel: DeleteLabel,
+    private val contactsMapper: ContactsListMapper
 ) : ViewModel() {
 
-    private lateinit var _contactLabel: ContactLabel
+    private lateinit var _contactLabel: ContactGroupListItem
     private val _contactGroupEmailsResult: MutableLiveData<List<ContactEmail>> = MutableLiveData()
     private val filteringChannel = BroadcastChannel<String>(1)
     private val _contactGroupEmailsEmpty: MutableLiveData<Event<String>> = MutableLiveData()
-    private val _setupUIData = MutableLiveData<ContactLabel>()
+    private val _setupUIData = MutableLiveData<ContactGroupListItem>()
     private val _deleteLabelIds: MutableLiveData<List<String>> = MutableLiveData()
 
     init {
@@ -68,7 +70,7 @@ class ContactGroupDetailsViewModel @Inject constructor(
     val contactGroupEmailsEmpty: LiveData<Event<String>>
         get() = _contactGroupEmailsEmpty
 
-    val setupUIData: LiveData<ContactLabel>
+    val setupUIData: LiveData<ContactGroupListItem>
         get() = _setupUIData
 
     val deleteGroupStatus: LiveData<Event<Status>>
@@ -91,7 +93,7 @@ class ContactGroupDetailsViewModel @Inject constructor(
         }
     }
 
-    fun setData(contactLabel: ContactLabel?) {
+    fun setData(contactLabel: ContactGroupListItem?) {
         contactLabel?.let { newContact ->
             _contactLabel = newContact
             getContactGroupEmails(newContact)
@@ -99,10 +101,10 @@ class ContactGroupDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getData(): ContactLabel = _contactLabel
+    fun getData(): ContactGroupListItem = _contactLabel
 
-    private fun getContactGroupEmails(contactLabel: ContactLabel) {
-        contactGroupDetailsRepository.getContactGroupEmails(contactLabel.ID)
+    private fun getContactGroupEmails(contactLabel: ContactGroupListItem) {
+        contactGroupDetailsRepository.getContactGroupEmails(contactLabel.contactId)
             .onEach { list ->
                 updateContactGroup()
                 _contactGroupEmailsResult.postValue(list)
@@ -116,13 +118,13 @@ class ContactGroupDetailsViewModel @Inject constructor(
     }
 
     private suspend fun updateContactGroup() {
-        runCatching { contactGroupDetailsRepository.findContactGroupDetails(_contactLabel.ID) }
+        runCatching { contactGroupDetailsRepository.findContactGroupDetails(_contactLabel.contactId) }
             .fold(
                 onSuccess = { contactLabel ->
                     Timber.v("ContactLabel: $contactLabel retrieved")
                     contactLabel?.let { label ->
-                        _contactLabel = label
-                        _setupUIData.value = label
+                        _contactLabel = contactsMapper.mapLabelToContactGroup(label)
+                        _setupUIData.value = contactsMapper.mapLabelToContactGroup(label)
                     }
                 },
                 onFailure = { throwable ->
@@ -139,7 +141,7 @@ class ContactGroupDetailsViewModel @Inject constructor(
             .asFlow()
             .debounce(300.milliseconds)
             .distinctUntilChanged()
-            .flatMapLatest { contactGroupDetailsRepository.filterContactGroupEmails(_contactLabel.ID, it) }
+            .flatMapLatest { contactGroupDetailsRepository.filterContactGroupEmails(_contactLabel.contactId, it) }
             .catch {
                 _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.DEFAULT_ERROR.name)
             }
@@ -157,7 +159,7 @@ class ContactGroupDetailsViewModel @Inject constructor(
     }
 
     fun delete() {
-        _deleteLabelIds.value = listOf(_contactLabel.ID)
+        _deleteLabelIds.value = listOf(_contactLabel.contactId)
     }
 
     enum class Status(var message: String?) {

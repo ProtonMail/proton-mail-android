@@ -19,10 +19,13 @@
 
 package ch.protonmail.android.contacts.list.viewModel
 
+import android.graphics.Color
 import ch.protonmail.android.R
+import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.utils.UiUtil
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
@@ -94,8 +97,6 @@ class ContactsListMapper @Inject constructor() {
             mergedContacts.add(
                 ContactItem(
                     isProtonMailContact = true,
-                    contactEmails = null,
-                    contactId = "-1",
                     headerStringRes = R.string.protonmail_contacts
                 )
             )
@@ -106,8 +107,6 @@ class ContactsListMapper @Inject constructor() {
             mergedContacts.add(
                 ContactItem(
                     isProtonMailContact = false,
-                    contactEmails = null,
-                    contactId = "-1",
                     headerStringRes = R.string.device_contacts
                 )
             )
@@ -115,4 +114,18 @@ class ContactsListMapper @Inject constructor() {
         }
         return mergedContacts
     }
+
+    fun mapLabelToContactGroup(label: ContactLabel): ContactGroupListItem =
+        ContactGroupListItem(
+            contactId = label.ID,
+            name = label.name,
+            contactEmailsCount = label.contactEmailsCount,
+            color = Color.parseColor(UiUtil.normalizeColor(label.color))
+        )
+
+    fun mapLabelsToContactGroups(contactLabels: List<ContactLabel>): List<ContactGroupListItem> =
+        contactLabels.map { label ->
+            mapLabelToContactGroup(label)
+        }
+
 }

@@ -25,9 +25,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
+import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,16 +45,17 @@ import javax.inject.Inject
 class ContactGroupsViewModel @Inject constructor(
     private val contactGroupsRepository: ContactGroupsRepository,
     private val userManager: UserManager,
-    private val deleteLabel: DeleteLabel
+    private val deleteLabel: DeleteLabel,
+    private val contactsListMapper: ContactsListMapper
 ) : ViewModel(), ISearchListenerViewModel {
 
-    private val _contactGroupsResult: MutableLiveData<List<ContactLabel>> = MutableLiveData()
+    private val _contactGroupsResult: MutableLiveData<List<ContactGroupListItem>> = MutableLiveData()
     private val _contactGroupsError: MutableLiveData<Event<String>> = MutableLiveData()
     private var searchPhraseFlow = MutableStateFlow("")
     private val _contactGroupEmailsResult: MutableLiveData<Event<List<ContactEmail>>> = MutableLiveData()
     private val _contactGroupEmailsError: MutableLiveData<Event<String>> = MutableLiveData()
 
-    val contactGroupsResult: LiveData<List<ContactLabel>>
+    val contactGroupsResult: LiveData<List<ContactGroupListItem>>
         get() = _contactGroupsResult
 
     val contactGroupsError: LiveData<Event<String>>
@@ -77,7 +78,7 @@ class ContactGroupsViewModel @Inject constructor(
             .catch { _contactGroupsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name) }
             .onEach { labels ->
                 Timber.d("Contacts groups labels received size: ${labels.size}")
-                _contactGroupsResult.value = labels
+                _contactGroupsResult.value = contactsListMapper.mapLabelsToContactGroups(labels)
             }
             .launchIn(viewModelScope)
     }
@@ -88,8 +89,8 @@ class ContactGroupsViewModel @Inject constructor(
         }
     }
 
-    fun deleteSelected(contactGroups: List<ContactLabel>) {
-        val labelIds = contactGroups.map { it.ID }
+    fun deleteSelected(contactGroups: List<ContactGroupListItem>) {
+        val labelIds = contactGroups.map { it.contactId }
         Timber.v("Delete labelIds $labelIds")
         viewModelScope.launch {
             deleteLabel(labelIds)
@@ -98,9 +99,9 @@ class ContactGroupsViewModel @Inject constructor(
         }
     }
 
-    fun getContactGroupEmails(contactLabel: ContactLabel) {
+    fun getContactGroupEmails(contactLabel: ContactGroupListItem) {
         viewModelScope.launch {
-            runCatching { contactGroupsRepository.getContactGroupEmails(contactLabel.ID) }
+            runCatching { contactGroupsRepository.getContactGroupEmails(contactLabel.contactId) }
                 .fold(
                     onSuccess = { list ->
                         Timber.v("Contacts groups emails list received size: ${list.size}")
