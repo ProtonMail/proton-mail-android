@@ -21,6 +21,8 @@ package ch.protonmail.android.mailbox.data.remote
 
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
+import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 
@@ -34,4 +36,12 @@ interface ConversationApiSpec {
         conversationId: String,
         userId: Id
     ): ConversationResponse
+
+    suspend fun markConversationsRead(
+        conversationIds: ConversationIdsRequestBody
+    ): ConversationsActionResponses
+
+    suspend fun markConversationsUnread(
+        conversationIds: ConversationIdsRequestBody
+    ): ConversationsActionResponses
 }
