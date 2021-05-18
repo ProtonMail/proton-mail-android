@@ -24,7 +24,6 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.room.Transaction
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
-import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
@@ -73,7 +72,6 @@ private const val DEPRECATION_MESSAGE = "We should strive towards moving methods
 class MessageDetailsRepository @Inject constructor(
     private val applicationContext: Context,
     private val jobManager: JobManager,
-    private val api: ProtonMailApiManager,
     private var messagesDao: MessageDao,
     private var pendingActionDao: PendingActionDao,
     private val databaseProvider: DatabaseProvider,
@@ -84,14 +82,12 @@ class MessageDetailsRepository @Inject constructor(
     constructor(
         context: Context,
         jobManager: JobManager,
-        api: ProtonMailApiManager,
         databaseProvider: DatabaseProvider,
         attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
         @Assisted userId: Id
     ) : this(
         applicationContext = context,
         jobManager = jobManager,
-        api = api,
         messagesDao = databaseProvider.provideMessageDao(userId),
         pendingActionDao = databaseProvider.providePendingActionDao(userId),
         databaseProvider = databaseProvider,
@@ -136,7 +132,7 @@ class MessageDetailsRepository @Inject constructor(
                 list.mapNotNull { readMessageBodyFromFileIfNeeded(it) }
             }
 
-    fun findAllMessageByLastMessageAccessTimeBlocking(laterThan: Long = 0): List<Message> =
+    fun findAllMessageByLastMessageAccessTimeBlocking(laterThan: Long = 0) =
         runBlocking { findAllMessageByLastMessageAccessTime(laterThan).first() }
 
     /**

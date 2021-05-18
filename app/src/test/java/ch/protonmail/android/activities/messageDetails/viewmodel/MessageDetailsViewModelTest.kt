@@ -25,6 +25,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.attachments.AttachmentsHelper
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.LabelRepository
@@ -35,11 +36,13 @@ import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.DownloadUtils
+import io.mockk.Called
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -54,33 +57,17 @@ import kotlin.test.assertEquals
 
 class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
-    private val savedStateHandle = mockk<SavedStateHandle> {
-        every { get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID) } returns "mockMessageId"
-    }
-
-    private val downloadUtils = DownloadUtils()
-
     private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true)
 
     private val messageRepository: MessageRepository = mockk(relaxed = true)
 
     private val labelRepository: LabelRepository = mockk(relaxed = true)
 
-    private val userManager: UserManager = mockk(relaxed = true) {
-        every { requireCurrentUserId() } returns Id("userId1")
-    }
-
     private val contactsRepository: ContactsRepository = mockk(relaxed = true)
 
     private val attachmentsHelper: AttachmentsHelper = mockk(relaxed = true)
 
     private val attachmentMetadataDao: AttachmentMetadataDao = mockk(relaxed = true)
-
-    private var messageRendererFactory = mockk<MessageRenderer.Factory> {
-        every { create(any(), any()) } returns mockk(relaxed = true) {
-            every { renderedBody } returns Channel()
-        }
-    }
 
     private val moveMessagesToFolder: MoveMessagesToFolder = mockk(relaxed = true)
 
@@ -91,6 +78,22 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val networkConfigurator: NetworkConfigurator = mockk(relaxed = true)
 
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer = mockk(relaxed = true)
+
+    private val conversationModeEnabled: ConversationModeEnabled = mockk()
+
+    private val savedStateHandle = mockk<SavedStateHandle> {
+        every { get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID) } returns "mockMessageId"
+    }
+
+    private val userManager: UserManager = mockk(relaxed = true) {
+        every { requireCurrentUserId() } returns Id("userId1")
+    }
+
+    private var messageRendererFactory = mockk<MessageRenderer.Factory> {
+        every { create(any(), any()) } returns mockk(relaxed = true) {
+            every { renderedBody } returns Channel()
+        }
+    }
 
     private lateinit var viewModel: MessageDetailsViewModel
 
@@ -107,7 +110,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             attachmentsWorker,
             dispatchers,
             attachmentsHelper,
-            downloadUtils,
+            DownloadUtils(),
             moveMessagesToFolder,
             savedStateHandle,
             messageRendererFactory,
