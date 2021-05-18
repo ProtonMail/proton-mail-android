@@ -26,9 +26,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.LinearLayout
 import androidx.annotation.Px
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
@@ -46,6 +48,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_contacts_groups.*
 import timber.log.Timber
 import java.io.Serializable
+
 
 // region constants
 private const val TAG_CONTACT_GROUPS_FRAGMENT = "ProtonMail.ContactGroupsFragment"
@@ -140,8 +143,20 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
             this::onContactGroupSelect
         )
 
-        contactGroupsRecyclerView.layoutManager = LinearLayoutManager(context)
-        contactGroupsRecyclerView.adapter = contactGroupsAdapter
+        val itemDecoration = DividerItemDecoration(
+            context,
+            LinearLayout.VERTICAL
+        ).apply {
+            context?.getDrawable(R.drawable.list_divider)?.let {
+                setDrawable(it)
+            }
+        }
+
+        contactGroupsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = contactGroupsAdapter
+            addItemDecoration(itemDecoration)
+        }
     }
 
     override fun updateRecyclerViewBottomPadding(@Px size: Int) {
@@ -248,6 +263,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
     private fun getSelectedItems() = contactGroupsAdapter.currentList.filter { it.isSelected }
 
     companion object {
+
         fun newInstance() = ContactGroupsFragment()
     }
 }

@@ -178,7 +178,7 @@ private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
 class MailboxActivity :
     NavigationActivity(),
     ActionMode.Callback,
-    OnRefreshListener{
+    OnRefreshListener {
 
     private lateinit var counterDao: CounterDao
     private lateinit var pendingActionDao: PendingActionDao
@@ -823,12 +823,12 @@ class MailboxActivity :
         val mailboxLocation = mailboxLocationMain.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
-                MessageLocationType.DRAFT,
-                MessageLocationType.SPAM,
-                MessageLocationType.TRASH,
-                MessageLocationType.LABEL,
-                MessageLocationType.LABEL_FOLDER
-            )
+            MessageLocationType.DRAFT,
+            MessageLocationType.SPAM,
+            MessageLocationType.TRASH,
+            MessageLocationType.LABEL,
+            MessageLocationType.LABEL_FOLDER
+        )
         return super.onPrepareOptionsMenu(menu)
     }
 

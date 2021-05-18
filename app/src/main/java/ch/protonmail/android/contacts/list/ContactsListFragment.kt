@@ -28,6 +28,7 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.annotation.Px
 import androidx.core.os.bundleOf
@@ -35,6 +36,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.loader.app.LoaderManager
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Operation
 import androidx.work.WorkManager
@@ -334,8 +336,21 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
             this::onContactSelect,
             this::onWriteToContact
         )
-        contactsRecyclerView.layoutManager = LinearLayoutManager(context)
-        contactsRecyclerView.adapter = contactsAdapter
+
+        val itemDecoration = DividerItemDecoration(
+            context,
+            LinearLayout.VERTICAL
+        ).apply {
+            context?.getDrawable(R.drawable.list_divider)?.let {
+                setDrawable(it)
+            }
+        }
+
+        contactsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = contactsAdapter
+            addItemDecoration(itemDecoration)
+        }
     }
 
     override fun updateRecyclerViewBottomPadding(@Px size: Int) {
