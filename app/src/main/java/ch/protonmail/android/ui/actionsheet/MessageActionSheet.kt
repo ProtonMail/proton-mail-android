@@ -87,7 +87,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         bottomSheetDialog.setOnShowListener { dialogInterface ->
             val dialog = dialogInterface as BottomSheetDialog
             val bottomSheet: View? = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet)
-            val targetOffsetSize = resources.getDimensionPixelSize(R.dimen.padding_xxxl)
+            val targetOffsetSize = resources.getDimensionPixelSize(R.dimen.padding_3xl)
             if (bottomSheet != null) {
                 val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
                 bottomSheetBehavior.addBottomSheetCallback(

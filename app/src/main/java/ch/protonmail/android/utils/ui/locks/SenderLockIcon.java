@@ -25,9 +25,6 @@ import ch.protonmail.android.api.models.enumerations.MessageEncryption;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.data.local.model.Message;
 
-/**
- * Created by kaylukas on 21/06/2018.
- */
 public class SenderLockIcon implements LockIcon {
 
     private Message mMessage;

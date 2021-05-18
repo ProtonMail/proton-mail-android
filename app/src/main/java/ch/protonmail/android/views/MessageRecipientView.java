@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -80,8 +80,10 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
     @Override
     protected View getViewForObject(MessageRecipient messageRecipient) {
         removeToken(messageRecipient.getEmailAddress());
-        LinearLayout view = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.message_recipient_token, (ViewGroup) getParent(), false);
-        TextView tokenView = view.findViewById(R.id.tokenText);
+        LinearLayout view = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.layout_recipient_chip, (ViewGroup) getParent(), false);
+
+        // Text
+        TextView tokenView = view.findViewById(R.id.recipient_text_text_view);
         String name = messageRecipient.getEmailAddress();
         if (!TextUtils.isEmpty(messageRecipient.getGroup())) {
             name = messageRecipient.getName();
@@ -91,27 +93,28 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
         if (tokenView.getMeasuredWidth() > maxTextWidth()) {
             tokenView.setWidth(getWidth() - 100);
         }
-        TextView tokenPgpView = view.findViewById(R.id.tokenPgpText);
+
+        // Icon
+        TextView tokenPgpView = view.findViewById(R.id.recipient_pgp_text_view);
         int icon = messageRecipient.getIcon();
         int groupIcon = messageRecipient.getGroupIcon();
         int color = messageRecipient.getIconColor();
         int groupColor = messageRecipient.getGroupColor();
         boolean isGroup = messageRecipient.getGroupRecipients() != null;
+
         if (isGroup) {
             tokenPgpView.setTypeface(mTypefaceGroups);
-            tokenPgpView.setPadding(15,0,15,15);
             if (groupIcon != 0) {
                 tokenPgpView.setVisibility(VISIBLE);
                 tokenPgpView.setText(getContext().getString(groupIcon));
             }
             if (groupColor != 0) {
-                tokenPgpView.setTextColor(messageRecipient.getGroupColor());
+                // tokenPgpView.setTextColor(messageRecipient.getGroupColor());
             }
         } else {
             tokenPgpView.setTypeface(mTypefacePgp);
-            tokenPgpView.setPadding(15,0,15,0);
             if (color != 0) {
-                tokenPgpView.setTextColor(getContext().getResources().getColor(messageRecipient.getIconColor()));
+                // tokenPgpView.setTextColor(getContext().getResources().getColor(messageRecipient.getIconColor()));
             }
         }
 
@@ -156,13 +159,15 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
                 for (Map.Entry<String, View> entry : mMapView.entrySet()) {
                     if (entry.getKey().equals(email)) {
                         View view = entry.getValue();
-                        TextView tokenPgpView = view.findViewById(R.id.tokenPgpText);
+                        TextView tokenPgpView = view.findViewById(R.id.recipient_pgp_text_view);
                         if (icon != 0) {
                             tokenPgpView.setVisibility(VISIBLE);
                             tokenPgpView.setText(getContext().getString(messageRecipient.getIcon()));
+                        } else {
+                            tokenPgpView.setVisibility(GONE);
                         }
                         if (color != 0) {
-                            tokenPgpView.setTextColor(getContext().getResources().getColor(messageRecipient.getIconColor()));
+                            // tokenPgpView.setTextColor(getContext().getResources().getColor(messageRecipient.getIconColor()));
                         }
                         tokenPgpView.setTypeface(mTypefacePgp);
                         view.invalidate();
