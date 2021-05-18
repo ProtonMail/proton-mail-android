@@ -43,12 +43,12 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.databinding.LayoutMessageDetailsHeaderBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.ui.view.LabelChipUiModel
+import ch.protonmail.android.ui.view.MultiLineLabelChipGroupView
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.ui.locks.SenderLockIcon
 import ch.protonmail.android.views.messagesList.SenderInitialView
-import kotlinx.android.synthetic.main.layout_message_details_header.view.*
 
 /**
  * A view for the collapsible header in message details
@@ -79,6 +79,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
 
     private val labelsImageView: ImageView
     private val labelsCollapsedGroupView: SingleLineLabelChipGroupView
+    private val labelsExpandedGroupView: MultiLineLabelChipGroupView
 
     private val timeDateTextView: TextView
     private val timeDateExtendedTextView: TextView
@@ -120,6 +121,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
 
         labelsImageView = binding.labelsImageView
         labelsCollapsedGroupView = binding.labelsCollapsedGroupView
+        labelsExpandedGroupView = binding.labelsExpandedGroupView
 
         timeDateTextView = binding.timeDateTextView
         timeDateExtendedTextView = binding.timeDateExtendedTextView
@@ -181,8 +183,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     }
 
     private fun getMessageFolder(labelsList: List<Label>): Label? = labelsList.find { it.exclusive }
-
-    private fun checkIfMessageHasLabels(labelsList: List<Label>): Boolean = labelsList.any { it.exclusive.not() }
 
     // TODO: Showing the location is buggy, review together with MAILAND-1422
     private fun getIconForMessageLocation(messageLocation: Constants.MessageLocationType) = when (messageLocation) {
@@ -290,8 +290,17 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         senderEmailTextView.text = context.getString(R.string.recipient_email_format, message.senderEmail)
         senderEmailTextView.setOnClickListener(getOnSenderClickListener(message.senderEmail))
 
-        labelsCollapsedGroupView.setLabels(nonInclusiveLabels)
-        labelsExpandedGroupView.setLabels(nonInclusiveLabels)
+        if (nonInclusiveLabels.isEmpty().not()) {
+            labelsCollapsedGroupView.setLabels(nonInclusiveLabels)
+            labelsExpandedGroupView.setLabels(nonInclusiveLabels)
+            collapsedHeaderGroup.addView(labelsCollapsedGroupView)
+            expandedHeaderGroup.addView(labelsExpandedGroupView)
+            expandedHeaderGroup.addView(labelsImageView)
+        } else {
+            labelsCollapsedGroupView.visibility = View.GONE
+            labelsExpandedGroupView.visibility = View.GONE
+            labelsImageView.visibility = View.GONE
+        }
 
         val senderLockIcon = SenderLockIcon(message, message.hasValidSignature, message.hasInvalidSignature)
         lockIconTextView.text = context.getText(senderLockIcon.icon)
@@ -320,12 +329,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         timeDateExtendedTextView.text = DateUtil.formatDetailedDateTime(context, message.timeMs)
 
         loadRecipients(message)
-
-        if (checkIfMessageHasLabels(allLabels)) {
-            expandedHeaderGroup.addView(labelsImageView)
-        } else {
-            labelsImageView.visibility = View.GONE
-        }
 
         storageTextView.text = Formatter.formatShortFileSize(context, message.totalSize)
 

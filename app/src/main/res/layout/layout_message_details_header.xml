@@ -338,8 +338,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="lockIconTextView, locationImageView,
-        toCollapsedTextView, recipientsCollapsedTextView, labelsCollapsedGroupView"
-        android:visibility="gone"/>
+        toCollapsedTextView, recipientsCollapsedTextView"
+        tools:visibility="gone"/>
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/expandedHeaderGroup"
@@ -348,7 +348,7 @@
         app:constraint_referenced_ids="senderEmailTextView, lockIconExtendedTextView,
         encryptionInfoTextView, locationExtendedImageView, locationTextView,
         calendarImageView, timeDateExtendedTextView, storageImageView,
-        storageTextView, learnMoreTextView, labelsExpandedGroupView"
+        storageTextView, learnMoreTextView"
         tools:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
