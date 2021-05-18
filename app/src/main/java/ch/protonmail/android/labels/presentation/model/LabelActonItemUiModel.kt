@@ -25,7 +25,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 
-data class ManageLabelItemUiModel(
+data class LabelActonItemUiModel(
     val labelId: String,
     @DrawableRes val iconRes: Int,
     val title: String? = null, // for item custom titles e.g. "Lablel123"

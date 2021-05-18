@@ -28,7 +28,7 @@ import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetAllLabels
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
-import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
+import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.MockKAnnotations
@@ -79,7 +79,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         every { messageId } returns messageId1
         every { labelIDsNotIncludingLocations } returns listOf(labelId1)
     }
-    private val model1label = ManageLabelItemUiModel(
+    private val model1label = LabelActonItemUiModel(
         labelId1,
         iconRes,
         title,
@@ -87,7 +87,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         colorInt,
         true
     )
-    private val model2folder = ManageLabelItemUiModel(
+    private val model2folder = LabelActonItemUiModel(
         labelId2,
         iconRes,
         title,

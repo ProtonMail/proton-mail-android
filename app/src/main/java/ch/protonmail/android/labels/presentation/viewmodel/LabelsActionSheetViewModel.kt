@@ -28,7 +28,7 @@ import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetAllLabels
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
-import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
+import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.repository.MessageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -60,10 +60,10 @@ class LabelsActionSheetViewModel @Inject constructor(
     private val messageIds = savedStateHandle.get<List<String>>(LabelsActionSheet.EXTRA_ARG_MESSAGES_IDS)
         ?: emptyList()
 
-    private val labelsMutableFlow = MutableStateFlow(emptyList<ManageLabelItemUiModel>())
+    private val labelsMutableFlow = MutableStateFlow(emptyList<LabelActonItemUiModel>())
     private val actionsResultMutableFlow = MutableStateFlow<ManageLabelActionResult>(ManageLabelActionResult.Default)
 
-    val labels: StateFlow<List<ManageLabelItemUiModel>>
+    val labels: StateFlow<List<LabelActonItemUiModel>>
         get() = labelsMutableFlow
 
     val actionsResult: StateFlow<ManageLabelActionResult>
@@ -79,7 +79,7 @@ class LabelsActionSheetViewModel @Inject constructor(
         }
     }
 
-    fun onLabelClicked(model: ManageLabelItemUiModel) {
+    fun onLabelClicked(model: LabelActonItemUiModel) {
 
         if (model.labelType == LabelsActionSheet.Type.FOLDER.typeInt) {
             onFolderClicked(model.labelId)
