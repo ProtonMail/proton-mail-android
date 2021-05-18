@@ -30,6 +30,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
@@ -74,6 +75,7 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -118,7 +120,19 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val messageRenderer
         by lazy { messageRendererFactory.create(viewModelScope, messageId) }
 
-    private var message: Message? = null
+    private val messageFlow: Flow<Message?> =
+        userManager.primaryUserId
+            .flatMapLatest { userId ->
+                if (userId != null) {
+                    messageRepository.findMessage(userId, messageId)
+                } else {
+                    emptyFlow()
+                }
+            }
+
+    val message: LiveData<Message?> =
+        messageFlow.asLiveData(viewModelScope.coroutineContext)
+
     private var publicKeys: List<KeyInformation>? = null
 
     var renderingPassed = false
@@ -145,14 +159,13 @@ internal class MessageDetailsViewModel @Inject constructor(
             messageRenderer.messageBody = value
         }
 
-    val labels: Flow<List<Label>>
-        get() {
-            val userId = UserId(userManager.requireCurrentUserId().s)
-            return messageRepository.findMessage(userId, messageId).flatMapLatest {
+    val labels: Flow<List<Label>> =
+        messageFlow
+            .flatMapLatest { message ->
+                val userId = UserId(userManager.requireCurrentUserId().s)
                 val labelsIds = (message?.labelIDsNotIncludingLocations ?: emptyList()).map(::Id)
                 labelRepository.findLabels(userId, labelsIds)
             }
-        }
 
     val nonExclusiveLabelsUiModels: Flow<List<LabelChipUiModel>> =
         labels.map { labelsList ->
@@ -241,8 +254,6 @@ internal class MessageDetailsViewModel @Inject constructor(
 
             val contactEmail = contactsRepository.findContactEmailByEmail(message.senderEmail)
             message.senderDisplayName = contactEmail?.name.orEmpty()
-
-            this@MessageDetailsViewModel.message = message
 
             refreshedKeys = true
             decryptAndEmit(message)
@@ -465,7 +476,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun triggerVerificationKeyLoading() {
         if (!fetchingPubKeys && publicKeys == null) {
-            val message = message
+            val message = message.value
             message?.let {
                 fetchingPubKeys = true
                 viewModelScope.launch {
@@ -478,7 +489,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private suspend fun onFetchVerificationKeysEvent(pubKeys: List<KeyInformation>) {
         Timber.v("FetchVerificationKeys received $pubKeys")
-        val message = message
+        val message = message.value
 
         publicKeys = pubKeys
         refreshedKeys = false
@@ -498,10 +509,10 @@ internal class MessageDetailsViewModel @Inject constructor(
         message!!.setAttachmentList(attachments)
     }
 
-    fun isPgpEncrypted(): Boolean = message?.messageEncryption?.isPGPEncrypted ?: false
+    fun isPgpEncrypted(): Boolean = message.value?.messageEncryption?.isPGPEncrypted ?: false
 
     fun printMessage(activityContext: Context) {
-        val message = message
+        val message = message.value
         message?.let {
             MessagePrinter(
                 activityContext,
@@ -535,7 +546,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         moveMessagesToFolder(
             listOf(messageId),
             Constants.MessageLocationType.TRASH.toString(),
-            message?.folderLocation ?: EMPTY_STRING
+            message.value?.folderLocation ?: EMPTY_STRING
         )
     }
 
