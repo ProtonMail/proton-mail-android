@@ -28,7 +28,6 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.utils.UiUtil
 import me.proton.core.util.kotlin.EMPTY_STRING
-import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 
@@ -41,7 +40,6 @@ class ContactsListMapper @Inject constructor() {
         val emailsMap = emailsList.groupBy(ContactEmail::contactId)
 
         return dataList.map { contactData ->
-            Timber.v("Map contactData: $contactData")
             val contactId = contactData.contactId
             val name = contactData.name
             var primaryEmail: String = EMPTY_STRING

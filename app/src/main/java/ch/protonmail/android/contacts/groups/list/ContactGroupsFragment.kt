@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.contacts.groups.list
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.ActionMode
@@ -28,7 +27,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.annotation.Px
-import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,7 +40,6 @@ import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsActivity
 import ch.protonmail.android.contacts.groups.details.EXTRA_CONTACT_GROUP
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -73,8 +70,34 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         checked: Boolean
     ) = Unit
 
-    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
+        menu.findItem(R.id.action_delete).isVisible = true
+        menu.findItem(R.id.action_search).isVisible = false
+        menu.findItem(R.id.action_sync).isVisible = false
+        menu.findItem(R.id.action_convert).isVisible = false
+        return true
+    }
+
+    override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+        actionMode = mode
+        mode.menuInflater.inflate(R.menu.contacts_menu, menu)
+        menu.findItem(R.id.action_delete).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        menu.findItem(R.id.action_search).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+        menu.findItem(R.id.action_sync).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+        menu.findItem(R.id.action_convert).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+
+        return true
+    }
+
+    override fun onDestroyActionMode(mode: ActionMode?) {
+        actionMode?.finish()
+        actionMode = null
+
+        listener.setTitle(getString(R.string.contacts))
+    }
+
+    override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.action_delete -> {
                 DialogUtils.showDeleteConfirmationDialog(
                     requireContext(), getString(R.string.delete),
@@ -85,41 +108,11 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
                     )
                 ) {
                     onDelete()
-                    mode?.finish()
+                    mode.finish()
                 }
             }
         }
         return true
-    }
-
-    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-        actionMode = mode
-        UiUtil.setStatusBarColor(
-            activity as Activity,
-            UiUtil.scaleColor(ContextCompat.getColor(requireContext(), R.color.dark_purple_statusbar), 1f, true)
-        )
-        mode!!.menuInflater.inflate(R.menu.contacts_menu, menu)
-        menu!!.findItem(R.id.action_delete).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        menu.findItem(R.id.action_search).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-        menu.findItem(R.id.action_sync).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-        menu.findItem(R.id.action_convert).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-
-        return true
-    }
-
-    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu): Boolean {
-        menu.findItem(R.id.action_delete).isVisible = true
-        menu.findItem(R.id.action_search).isVisible = false
-        menu.findItem(R.id.action_sync).isVisible = false
-        menu.findItem(R.id.action_convert).isVisible = false
-        return true
-    }
-
-    override fun onDestroyActionMode(mode: ActionMode?) {
-        actionMode?.finish()
-        actionMode = null
-
-        listener.setTitle(getString(R.string.contacts))
     }
 
     override fun onContactPermissionChange(hasPermission: Boolean) {}

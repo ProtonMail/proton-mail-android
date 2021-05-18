@@ -101,7 +101,7 @@ class ListItemThumbnail @JvmOverloads constructor(
             0
         ).apply {
             try {
-                val defaultCircleSize = context.resources.getDimensionPixelSize(R.dimen.padding_xxxl)
+                val defaultCircleSize = context.resources.getDimensionPixelSize(R.dimen.padding_3xl)
                 circleSize = getDimensionPixelSize(R.styleable.ListItemThumbnail_circleSize, defaultCircleSize)
                 iconResource = getResourceId(R.styleable.ListItemThumbnail_icon, R.drawable.ic_contact_groups_filled)
             } finally {

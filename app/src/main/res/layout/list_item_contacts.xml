@@ -34,7 +34,7 @@
         android:clickable="true"
         android:focusable="true"
         android:layout_marginStart="@dimen/padding_l"
-        app:circleSize="@dimen/padding_xxxl"
+        app:circleSize="@dimen/padding_3xl"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
