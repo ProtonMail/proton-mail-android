@@ -18,6 +18,12 @@
  */
 package ch.protonmail.android.activities.composeMessage;
 
+import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
+import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_ATTACHMENT_IMPORT_EVENT;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -173,12 +179,6 @@ import kotlin.jvm.functions.Function0;
 import me.proton.core.accountmanager.domain.AccountManager;
 import timber.log.Timber;
 
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_ATTACHMENT_IMPORT_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
-
 @AndroidEntryPoint
 public class ComposeMessageActivity
         extends BaseContactsActivity
@@ -328,10 +328,6 @@ public class ComposeMessageActivity
         binding.composerExpandRecipientsButton.setOnClickListener((View view) -> {
             mAreAdditionalRowsVisible = !mAreAdditionalRowsVisible;
             setAdditionalRowVisibility(mAreAdditionalRowsVisible);
-        });
-        toRecipientView.setOnClickListener((View view) -> {
-            toRecipientView.requestFocus();
-            UiUtil.toggleKeyboard(this, toRecipientView);
         });
         // endregion
         
