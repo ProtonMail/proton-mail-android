@@ -81,6 +81,7 @@ import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
+import me.proton.core.util.kotlin.takeIfNotBlank
 import okio.buffer
 import okio.sink
 import okio.source
@@ -170,11 +171,10 @@ internal class MessageDetailsViewModel @Inject constructor(
     val nonExclusiveLabelsUiModels: Flow<List<LabelChipUiModel>> =
         labels.map { labelsList ->
             labelsList.map { label ->
-                val color =
-                    if (label.color.isNotBlank()) Color.parseColor(UiUtil.normalizeColor(label.color))
-                    else Color.BLACK
+                val labelColor = label.color.takeIfNotBlank()
+                    ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
 
-                LabelChipUiModel(Id(label.id), Name(label.name), color)
+                LabelChipUiModel(Id(label.id), Name(label.name), labelColor)
             }
         }
 

@@ -104,9 +104,12 @@ class SingleLineLabelChipGroupViewTest : ViewTest<SingleLineLabelChipGroupView>(
         chipGroupView.setLabels(labels)
 
         // then
+        val (expectedLabelName, expectedLabelColor) = with(labels.first()) {
+            name.s to checkNotNull(color)
+        }
         onLabelView()
-            .check(matches(withText(testLabelsList.first().name.s)))
-            .check(matches(withBackgroundColor(testLabelsList.first().color)))
+            .check(matches(withText(expectedLabelName)))
+            .check(matches(withBackgroundColor(expectedLabelColor)))
     }
 
     @Test
