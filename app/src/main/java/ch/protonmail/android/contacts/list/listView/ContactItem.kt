@@ -27,7 +27,7 @@ data class ContactItem(
     val contactEmails: String? = null,
     var additionalEmailsCount: Int = 0,
     val contactId: String? = null,
-    var isChecked: Boolean = false,
+    var isSelected: Boolean = false,
     val initials: String = EMPTY_STRING,
     @StringRes val headerStringRes: Int? = null
 )

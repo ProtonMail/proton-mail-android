@@ -134,7 +134,7 @@ public class UiUtil {
      * @return normalized color
      */
     public static String normalizeColor(String color) {
-        if (TextUtils.isEmpty(color)) {
+        if (color == null || color.length() == 0) {
             return "";
         }
         if (color.length() == 7) {

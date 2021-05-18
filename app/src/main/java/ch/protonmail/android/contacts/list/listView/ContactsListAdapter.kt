@@ -115,11 +115,11 @@ class ContactsListAdapter(
                 itemView.isClickable = true
             }
 
-            itemView.isActivated = item.isChecked
+            itemView.isActivated = item.isSelected
 
             if (item.initials.isNotEmpty()) {
                 initialsView.apply {
-                    bind(item.initials, item.isChecked)
+                    bind(item.initials, item.isSelected)
                     isVisible = true
                 }
             } else {
@@ -153,7 +153,7 @@ class ContactsListAdapter(
             oldItem.contactId == newItem.contactId &&
                 oldItem.name == newItem.name &&
                 oldItem.contactEmails == newItem.contactEmails &&
-                oldItem.isChecked == newItem.isChecked &&
+                oldItem.isSelected == newItem.isSelected &&
                 oldItem.isProtonMailContact == newItem.isProtonMailContact
     }
 }

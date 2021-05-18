@@ -359,7 +359,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         Timber.v("onContactSelect ${contactItem.contactId}")
         val updatedItems = contactsAdapter.currentList.map { item ->
             if (item.contactId == contactItem.contactId) {
-                item.copy(isChecked = !item.isChecked)
+                item.copy(isSelected = !item.isSelected)
             } else {
                 item
             }
@@ -372,7 +372,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
             actionMode?.invalidate()
         }
 
-        val checkedItemsCount = updatedItems.filter { it.isChecked }.size
+        val checkedItemsCount = updatedItems.filter { it.isSelected }.size
         if (checkedItemsCount == 0) {
             listener.setTitle(getString(R.string.contacts))
             actionMode?.finish()
@@ -382,7 +382,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         }
     }
 
-    private fun getSelectedItems() = contactsAdapter.currentList.filter { it.isChecked }
+    private fun getSelectedItems() = contactsAdapter.currentList.filter { it.isSelected }
 
     companion object {
 

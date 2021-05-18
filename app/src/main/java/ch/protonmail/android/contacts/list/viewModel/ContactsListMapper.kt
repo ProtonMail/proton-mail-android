@@ -73,7 +73,7 @@ class ContactsListMapper @Inject constructor() {
                 contactEmails = contactEmails,
                 additionalEmailsCount = additionalEmailsCount,
                 contactId = contactId,
-                initials = UiUtil.extractInitials(name),
+                initials = UiUtil.extractInitials(name).take(2),
                 headerStringRes = null
             )
         }

@@ -34,9 +34,9 @@ import kotlin.test.assertEquals
 
 class LabelsMapperTest {
 
-    val mapper = LabelsMapper()
+    private val mapper = LabelsMapper()
 
-    val testColorInt = 123
+    private val testColorInt = 123
 
     @BeforeTest
     fun setUp() {

@@ -32,7 +32,7 @@ import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.Locale
 
 /**
- * A view for the selectable sender initial
+ * A view for the selectable sender initial(s).
  */
 class SenderInitialView @JvmOverloads constructor(
     context: Context,

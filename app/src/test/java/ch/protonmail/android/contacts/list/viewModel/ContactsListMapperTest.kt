@@ -19,11 +19,19 @@
 
 package ch.protonmail.android.contacts.list.viewModel
 
+import android.graphics.Color
 import ch.protonmail.android.R
+import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactLabel
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import me.proton.core.util.kotlin.EMPTY_STRING
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -31,9 +39,9 @@ class ContactsListMapperTest {
 
     private val mapper = ContactsListMapper()
     private val contactId1 = "contactId1"
-    private val name1 = "name1"
+    private val name1 = "John Doe Italiano"
     private val contactId2 = "contactId2"
-    private val name2 = "name2"
+    private val name2 = "Perro Caliente Comer Manana"
     private val email1 = "email1@abc.com"
     private val email2 = "email2@abc.com"
     private val contactItem1 = ContactItem(
@@ -42,8 +50,8 @@ class ContactsListMapperTest {
         contactEmails = email1,
         additionalEmailsCount = 0,
         contactId = contactId1,
-        isChecked = false,
-        initials = "N",
+        isSelected = false,
+        initials = "JD",
         headerStringRes = null
     )
     private val contactItem2 = ContactItem(
@@ -52,10 +60,22 @@ class ContactsListMapperTest {
         contactEmails = email2,
         additionalEmailsCount = 0,
         contactId = contactId2,
-        isChecked = false,
-        initials = "N",
+        isSelected = false,
+        initials = "PC",
         headerStringRes = null
     )
+    private val testColorInt = 321
+
+    @BeforeTest
+    fun setUp() {
+        mockkStatic(Color::class)
+        every { Color.parseColor(any()) } returns testColorInt
+    }
+
+    @AfterTest
+    fun tearDown() {
+        unmockkStatic(Color::class)
+    }
 
     @Test
     fun verifyThatEmptyContactsAreMappedProperly() {
@@ -110,26 +130,18 @@ class ContactsListMapperTest {
             contactEmails = email3,
             additionalEmailsCount = 0,
             contactId = contactId3,
-            isChecked = false,
+            isSelected = false,
             initials = EMPTY_STRING,
             headerStringRes = null
         )
         val protonHeaderItem =
             ContactItem(
                 isProtonMailContact = true,
-                name = EMPTY_STRING,
-                contactEmails = null,
-                additionalEmailsCount = 0,
-                contactId = "-1",
-                isChecked = false,
-                initials = EMPTY_STRING,
                 headerStringRes = R.string.protonmail_contacts
             )
         val otherHeaderItem =
             ContactItem(
                 isProtonMailContact = false,
-                contactId = "-1",
-                name = EMPTY_STRING,
                 headerStringRes = R.string.device_contacts
             )
         val protonContacts = listOf(contactItem1, contactItem2)
@@ -156,19 +168,13 @@ class ContactsListMapperTest {
             contactEmails = email1,
             additionalEmailsCount = 0,
             contactId = contactId3,
-            isChecked = false,
+            isSelected = false,
             initials = EMPTY_STRING,
             headerStringRes = null
         )
         val headerItem =
             ContactItem(
                 isProtonMailContact = true,
-                name = EMPTY_STRING,
-                contactEmails = null,
-                additionalEmailsCount = 0,
-                contactId = "-1",
-                isChecked = false,
-                initials = EMPTY_STRING,
                 headerStringRes = R.string.protonmail_contacts
             )
         val protonContacts = listOf(contactItem1, contactItem2)
@@ -177,6 +183,26 @@ class ContactsListMapperTest {
 
         // when
         val result = mapper.mergeContactItems(protonContacts, androidContacts)
+
+        // then
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun verifyThatContactLabelIsConvertedToContactGroupListUiElementCorrectly() {
+        // given
+        val testId = "ID1"
+        val testName = "name1"
+        val label1 = ContactLabel(testId, testName, "green", 1, 0, false, 2)
+        val expected = ContactGroupListItem(
+            contactId = testId,
+            name = testName,
+            contactEmailsCount = 0,
+            color = testColorInt
+        )
+
+        // when
+        val result = mapper.mapLabelToContactGroup(label1)
 
         // then
         assertEquals(expected, result)
