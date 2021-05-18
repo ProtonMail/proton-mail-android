@@ -285,29 +285,6 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    fun saveMessage() {
-        val message = message ?: return
-        viewModelScope.launch(dispatchers.Io) {
-            val result = runCatching {
-                messageDetailsRepository.saveMessage(message)
-            }
-            _messageSavedInDBResult.postValue(result.isSuccess)
-        }
-    }
-
-    fun markRead(read: Boolean) {
-        val message = message
-        message?.let {
-            message.accessTime = ServerTime.currentTimeMillis()
-            message.setIsRead(read)
-            saveMessage()
-            if (read) {
-                messageDetailsRepository.markRead(listOf(messageId))
-                saveMessage()
-            }
-        }
-    }
-
     fun startDownloadEmbeddedImagesJob() {
         hasEmbeddedImages = false
 
