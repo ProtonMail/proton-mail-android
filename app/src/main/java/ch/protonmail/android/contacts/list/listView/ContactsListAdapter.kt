@@ -18,12 +18,10 @@
  */
 package ch.protonmail.android.contacts.list.listView
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -31,15 +29,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.databinding.ListItemContactsBinding
-import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.views.messagesList.SenderInitialView
+import timber.log.Timber
 
 class ContactsListAdapter(
     private val onContactGroupClickListener: (ContactItem) -> Unit,
-    private val onContactGroupSelect: (ContactItem) -> Unit
+    private val onContactGroupSelect: (ContactItem) -> Unit,
+    private val onWriteToContactClicked: (String) -> Unit
 ) : ListAdapter<ContactItem, RecyclerView.ViewHolder>(ContactItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -52,17 +49,15 @@ class ContactsListAdapter(
             binding.root
         )
 
-        binding.imageViewEditButton.setOnClickListener { view ->
-            val emailValue = getItem(viewHolder.adapterPosition).contactEmails
-            if (!emailValue.isNullOrEmpty()) {
-                val intent = Intent(view.context, ComposeMessageActivity::class.java)
-                intent.putExtra(BaseActivity.EXTRA_IN_APP, true)
-                intent.putExtra(
-                    ComposeMessageActivity.EXTRA_TO_RECIPIENTS, arrayOf(emailValue)
-                )
-                view.context.startActivity(intent)
-            } else {
-                view.context.showToast(R.string.email_empty, Toast.LENGTH_SHORT)
+        binding.imageViewEditButton.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            if (position != NO_POSITION) {
+                val emailValue = getItem(viewHolder.adapterPosition).contactEmails
+                if (!emailValue.isNullOrEmpty()) {
+                    onWriteToContactClicked(emailValue)
+                } else {
+                    Timber.v("Cannot edit empty emails.")
+                }
             }
         }
 

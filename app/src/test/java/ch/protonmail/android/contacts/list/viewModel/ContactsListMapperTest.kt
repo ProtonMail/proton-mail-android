@@ -207,4 +207,35 @@ class ContactsListMapperTest {
         // then
         assertEquals(expected, result)
     }
+
+
+    @Test
+    fun verifyThatListOfContactLabelsIsConvertedToContactGroupListUiElementCorrectly() {
+        // given
+        val testId = "ID1"
+        val testId2 = "ID2"
+        val testName = "name1"
+        val testName2 = "name2"
+        val label1 = ContactLabel(testId, testName, "green", 1, 0, false, 2)
+        val label2 = ContactLabel(testId2, testName2, "yellow", 1, 0, false, 2)
+        val listItem1 = ContactGroupListItem(
+            contactId = testId,
+            name = testName,
+            contactEmailsCount = 0,
+            color = testColorInt
+        )
+        val listItem2 = ContactGroupListItem(
+            contactId = testId2,
+            name = testName2,
+            contactEmailsCount = 0,
+            color = testColorInt
+        )
+        val expected = listOf(listItem1, listItem2)
+
+        // when
+        val result = mapper.mapLabelsToContactGroups(listOf(label1, label2))
+
+        // then
+        assertEquals(expected, result)
+    }
 }

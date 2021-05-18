@@ -85,7 +85,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
                     )
                 ) {
                     onDelete()
-                    mode!!.finish()
+                    mode?.finish()
                 }
             }
         }
@@ -118,7 +118,6 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
     override fun onDestroyActionMode(mode: ActionMode?) {
         actionMode?.finish()
         actionMode = null
-        //contactGroupsAdapter.endSelectionMode()
 
         listener.setTitle(getString(R.string.contacts))
     }
@@ -142,8 +141,6 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
     }
 
     private fun initAdapter() {
-        var actionMode: ActionMode? = null
-
         contactGroupsAdapter = ContactsGroupsListAdapter(
             this::onContactGroupClick,
             this::onWriteToContactGroup,

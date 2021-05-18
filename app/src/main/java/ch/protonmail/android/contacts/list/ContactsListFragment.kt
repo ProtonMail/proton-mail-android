@@ -28,9 +28,9 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.Px
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
@@ -39,6 +39,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Operation
 import androidx.work.WorkManager
 import ch.protonmail.android.R
+import ch.protonmail.android.activities.BaseActivity
+import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.fragments.BaseFragment
 import ch.protonmail.android.contacts.IContactsFragment
 import ch.protonmail.android.contacts.IContactsListFragmentListener
@@ -55,7 +57,6 @@ import ch.protonmail.android.contacts.list.viewModel.ContactsListViewModel
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import com.birbit.android.jobqueue.JobManager
@@ -133,13 +134,6 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     override fun onDestroyActionMode(mode: ActionMode?) {
         actionMode?.finish()
         actionMode = null
-        UiUtil.setStatusBarColor(
-            requireActivity() as AppCompatActivity,
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.dark_purple_statusbar
-            )
-        )
 
         listener.setTitle(getString(R.string.contacts))
     }
@@ -337,7 +331,8 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     private fun initAdapter() {
         contactsAdapter = ContactsListAdapter(
             this::onContactClick,
-            this::onContactSelect
+            this::onContactSelect,
+            this::onWriteToContact
         )
         contactsRecyclerView.layoutManager = LinearLayoutManager(context)
         contactsRecyclerView.adapter = contactsAdapter
@@ -382,15 +377,26 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         }
     }
 
+    private fun onWriteToContact(emailAddress: String) {
+        if (emailAddress.isNotEmpty()) {
+            val intent = Intent(context, ComposeMessageActivity::class.java)
+            intent.putExtra(BaseActivity.EXTRA_IN_APP, true)
+            intent.putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENTS, arrayOf(emailAddress))
+            startActivity(intent)
+        } else {
+            context?.showToast(R.string.email_empty, Toast.LENGTH_SHORT)
+        }
+    }
+
     private fun getSelectedItems() = contactsAdapter.currentList.filter { it.isSelected }
 
     companion object {
 
         fun newInstance(hasPermission: Boolean): ContactsListFragment {
             val fragment = ContactsListFragment()
-            val extras = Bundle()
-            extras.putBoolean(EXTRA_PERMISSION, hasPermission)
-            fragment.arguments = extras
+            fragment.arguments = bundleOf(
+                EXTRA_PERMISSION to hasPermission
+            )
             return fragment
         }
     }

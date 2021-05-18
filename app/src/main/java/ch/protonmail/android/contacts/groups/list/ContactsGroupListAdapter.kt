@@ -38,10 +38,6 @@ class ContactsGroupsListAdapter(
     private val onContactGroupSelect: (ContactGroupListItem) -> Unit
 ) : ListAdapter<ContactGroupListItem, RecyclerView.ViewHolder>(ContactGroupItemDiffCallback()) {
 
-//    private var selectedItems: MutableSet<ContactLabel>? = null
-//
-//    val getSelectedItems get() = selectedItems
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = ListItemContactsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
@@ -90,109 +86,6 @@ class ContactsGroupsListAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         (holder as ContactGroupsViewHolder).bind(getItem(position))
     }
-
-//    fun endSelectionMode() {
-//        selectedItems?.forEach {
-//            if (items.contains(it)) {
-//                items.find { contactLabel -> (contactLabel == it) }?.isSelected =
-//                    ContactEmailGroupSelectionState.DEFAULT
-//            }
-//        }
-//        selectedItems = null
-//        notifyDataSetChanged()
-//    }
-//
-//    private fun bind(
-//        contactLabel: ContactLabel,
-//        clickListener: (ContactLabel) -> Unit,
-//        writeToGroupListener: (ContactLabel) -> Unit,
-//        onContactGroupSelect: (() -> Unit)?
-//    ) {
-//        itemView.contactIcon.isVisible = true
-//        itemView.contactIconLetter.isVisible = false
-
-//        itemView.text_view_contact_name.text = contactLabel.name
-//        val members = contactLabel.contactEmailsCount
-//        itemView.text_view_contact_subtitle.text = itemView.context.resources.getQuantityString(
-//            R.plurals.contact_group_members,
-//            members,
-//            members
-//        )
-//        var colorString = contactLabel.color
-//        colorString = UiUtil.normalizeColor(colorString)
-//        itemView.initials_view_contacts_list.background.setColorFilter(
-//            Color.parseColor(colorString),
-//            PorterDuff.Mode.SRC_IN
-//        )
-//
-//        updateSelectedUI(contactLabel, itemView)
-//        itemView.initials_view_contacts_list.setOnClickListener {
-//            val selectedItems = selectedItems
-//            if (selectedItems != null) {
-//                if (selectedItems.contains(contactLabel)) {
-//                    contactLabel.isSelected = ContactEmailGroupSelectionState.DEFAULT
-//                    selectedItems.remove(contactLabel)
-//                    if (selectedItems.isEmpty()) {
-//                        this@ContactsGroupsListAdapter.selectedItems = null
-//                        onSelectionModeChange?.invoke(SelectionModeEnum.ENDED)
-//                        notifyDataSetChanged()
-//                    }
-//                } else {
-//                    contactLabel.isSelected = ContactEmailGroupSelectionState.SELECTED
-//                    selectedItems.add(contactLabel)
-//                }
-//                notifyItemChanged(adapterPosition)
-//            } else {
-//                if (onSelectionModeChange == null) {
-//                    return@setOnClickListener
-//                }
-//                if (this@ContactsGroupsListAdapter.selectedItems == null) {
-//                    contactLabel.isSelected = ContactEmailGroupSelectionState.SELECTED
-//                    this@ContactsGroupsListAdapter.selectedItems = hashSetOf(contactLabel)
-//                    onSelectionModeChange.invoke(SelectionModeEnum.STARTED)
-//                    notifyDataSetChanged()
-//                }
-//            }
-//            onContactGroupSelect?.invoke()
-//        }
-//
-//        itemView.setOnLongClickListener {
-//            if (onSelectionModeChange == null) {
-//                return@setOnLongClickListener false
-//            }
-//            if (this@ContactsGroupsListAdapter.selectedItems == null) {
-//                contactLabel.isSelected = ContactEmailGroupSelectionState.SELECTED
-//                this@ContactsGroupsListAdapter.selectedItems = hashSetOf(contactLabel)
-//                onSelectionModeChange.invoke(SelectionModeEnum.STARTED)
-//                notifyDataSetChanged()
-//            }
-//            onContactGroupSelect?.invoke()
-//            return@setOnLongClickListener true
-//        }
-//
-//        itemView.setOnClickListener {
-//            val selectedItems = selectedItems
-//            if (selectedItems != null) {
-//                if (selectedItems.contains(contactLabel)) {
-//                    contactLabel.isSelected = ContactEmailGroupSelectionState.DEFAULT
-//                    selectedItems.remove(contactLabel)
-//                    if (selectedItems.isEmpty()) {
-//                        this@ContactsGroupsListAdapter.selectedItems = null
-//                        onSelectionModeChange?.invoke(SelectionModeEnum.ENDED)
-//                        notifyDataSetChanged()
-//                    }
-//                } else {
-//                    contactLabel.isSelected = ContactEmailGroupSelectionState.SELECTED
-//                    selectedItems.add(contactLabel)
-//                }
-//                notifyItemChanged(adapterPosition)
-//            } else {
-//                clickListener(contactLabel)
-//            }
-//        }
-//
-//    }
-
 
     private class ContactGroupsViewHolder(
         val initialsView: SenderInitialView,
