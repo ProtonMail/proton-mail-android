@@ -18,9 +18,12 @@
  */
 package ch.protonmail.android.contacts.groups
 
+import android.graphics.Color
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModel
+import ch.protonmail.android.contacts.list.viewModel.ContactsListMapper
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
 import ch.protonmail.android.data.local.model.ContactLabel
@@ -29,17 +32,20 @@ import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-
 
 class ContactGroupsViewModelTest : CoroutinesTest {
 
@@ -52,6 +58,8 @@ class ContactGroupsViewModelTest : CoroutinesTest {
     @RelaxedMockK
     private lateinit var deleteLabel: DeleteLabel
 
+    private val contactsListMapper = ContactsListMapper()
+
     @RelaxedMockK
     private lateinit var contactGroupsRepository: ContactGroupsRepository
 
@@ -62,9 +70,18 @@ class ContactGroupsViewModelTest : CoroutinesTest {
     private val label2 = ContactLabel("b", "bb")
     private val label3 = ContactLabel("c", "cc")
 
+    private val testColorInt = 871
+
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
+        mockkStatic(Color::class)
+        every { Color.parseColor(any()) } returns testColorInt
+    }
+
+    @AfterTest
+    fun tearDown() {
+        unmockkStatic(Color::class)
     }
 
     @Test
@@ -73,6 +90,25 @@ class ContactGroupsViewModelTest : CoroutinesTest {
         val searchTerm = "searchTerm"
         val resultLiveData = contactGroupsViewModel.contactGroupsResult.testObserver()
         val contactLabels = listOf(label1, label2, label3)
+        val listItem1 = ContactGroupListItem(
+            label1.ID,
+            label1.name,
+            0,
+            color = testColorInt
+        )
+        val listItem2 = ContactGroupListItem(
+            label2.ID,
+            label2.name,
+            0,
+            color = testColorInt
+        )
+        val listItem3 = ContactGroupListItem(
+            label3.ID,
+            label3.name,
+            0,
+            color = testColorInt
+        )
+        val contactListItems = listOf(listItem1, listItem2, listItem3)
         coEvery { contactGroupsRepository.observeContactGroups(searchTerm) } returns flowOf(contactLabels)
         val join1 = mockk<ContactEmailContactLabelJoin>()
         val joins = listOf(join1)
@@ -84,7 +120,7 @@ class ContactGroupsViewModelTest : CoroutinesTest {
 
         // then
         val observedContactLabels = resultLiveData.observedValues[0]
-        assertEquals(contactLabels, observedContactLabels)
+        assertEquals(contactListItems, observedContactLabels)
     }
 
     @Test
