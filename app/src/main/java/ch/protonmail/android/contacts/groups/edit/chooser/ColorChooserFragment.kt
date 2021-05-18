@@ -19,25 +19,25 @@
 package ch.protonmail.android.contacts.groups.edit.chooser
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import androidx.annotation.ColorInt
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.dialogs.AbstractDialogFragment
 import ch.protonmail.android.adapters.LabelColorsAdapter
 import kotlinx.android.synthetic.main.fragment_color_chooser.*
-import java.util.*
+import java.util.Random
 
 // region constants
 private const val TAG_COLOR_CHOOSER_FRAGMENT = "ProtonMail.ColorChooserFragment"
 // endregion
 
-/**
- * Created by kadrikj on 9/7/18. */
 class ColorChooserFragment : AbstractDialogFragment(), AdapterView.OnItemClickListener {
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val colorId = colorOptions[position]
-        selectedNewColor = String.format("#%06X", 0xFFFFFF and colorId)
+        selectedNewColor = colorId
         colorsAdapter.setChecked(position)
     }
 
@@ -52,7 +52,9 @@ class ColorChooserFragment : AbstractDialogFragment(), AdapterView.OnItemClickLi
     private lateinit var colorsAdapter: LabelColorsAdapter
     private lateinit var colorOptions: IntArray
     private var currentSelection: Int = 0
-    private lateinit var selectedNewColor: String
+
+    @ColorInt
+    private var selectedNewColor: Int? = null
     private lateinit var colorChooserListener: IColorChooserListener
 
     override fun getLayoutResourceId(): Int = R.layout.fragment_color_chooser
@@ -70,7 +72,7 @@ class ColorChooserFragment : AbstractDialogFragment(), AdapterView.OnItemClickLi
             dismissAllowingStateLoss()
         }
         apply.setOnClickListener {
-            colorChooserListener.colorChosen(selectedNewColor)
+            colorChooserListener.colorChosen(selectedNewColor ?: Color.BLACK)
             dismissAllowingStateLoss()
         }
     }
@@ -86,7 +88,7 @@ class ColorChooserFragment : AbstractDialogFragment(), AdapterView.OnItemClickLi
         val random = Random()
         currentSelection = random.nextInt(colorOptions.size)
         val colorId = colorOptions[currentSelection]
-        selectedNewColor = String.format("#%06X", 0xFFFFFF and colorId)
+        selectedNewColor = colorId
         colorsAdapter.setChecked(currentSelection)
     }
 
@@ -98,6 +100,6 @@ class ColorChooserFragment : AbstractDialogFragment(), AdapterView.OnItemClickLi
     }
 
     interface IColorChooserListener {
-        fun colorChosen(color: String)
+        fun colorChosen(@ColorInt color: Int)
     }
 }
