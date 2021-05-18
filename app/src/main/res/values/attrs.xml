@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2020 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
@@ -21,7 +20,7 @@
 
     <!-- region V4 -->
     <declare-styleable name="LabelChipView">
-        <attr name="labelColor" format="color"/>
+        <attr name="labelColor" format="color" />
     </declare-styleable>
     <!-- endregion -->
 
@@ -106,11 +105,11 @@
         <attr name="contactInitialsColor" format="color" />
         <attr name="contactInitialsBackground" format="reference" />
         <attr name="contactPhoto" format="integer" />
-        <attr name="contactPhotoCornerRadius" format="float" type="dimen"/>
+        <attr name="contactPhotoCornerRadius" format="float" type="dimen" />
         <attr name="avatarType" format="enum">
-        <enum name="initials" value="0" />
-        <enum name="photo" value="1" />
-    </attr>
+            <enum name="initials" value="0" />
+            <enum name="photo" value="1" />
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="SettingsDefaultItemView">
@@ -129,5 +128,10 @@
         <attr name="settingsHint" format="string" />
     </declare-styleable>
     <!-- endregion -->
+
+    <declare-styleable name="ListItemThumbnail">
+        <attr name="circleSize" format="dimension" />
+        <attr name="icon" format="reference" />
+    </declare-styleable>
 
 </resources>

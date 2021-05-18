@@ -249,7 +249,7 @@ class ContactsActivity :
 
     private fun onContactsFetchedEvent(isSuccessful: Boolean) {
         Timber.v("onContactsFetchedEvent isSuccessful:$isSuccessful")
-        progressLayoutView?.isVisible = false
+        progressLayoutView.isVisible = false
         val toastTextId =
             if (isSuccessful) R.string.fetching_contacts_success
             else R.string.fetching_contacts_failure

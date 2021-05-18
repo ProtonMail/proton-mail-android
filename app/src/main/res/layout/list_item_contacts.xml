@@ -27,19 +27,17 @@
     android:focusable="true"
     android:paddingVertical="@dimen/padding_l">
 
-    <ch.protonmail.android.views.messagesList.SenderInitialView
-        android:id="@+id/initials_view_contacts_list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ch.protonmail.android.views.ListItemThumbnail
+        android:id="@+id/thumbnail_view_contacts_list"
+        android:layout_width="@dimen/padding_l"
+        android:layout_height="@dimen/padding_l"
         android:clickable="true"
         android:focusable="true"
-        android:paddingStart="@dimen/padding_l"
-        android:visibility="gone"
+        android:layout_marginStart="@dimen/padding_l"
+        app:circleSize="@dimen/padding_xxxl"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="RtlSymmetry"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_view_contact_name"
@@ -50,7 +48,7 @@
         android:paddingHorizontal="@dimen/padding_l"
         android:textAppearance="@style/Proton.Text.Default"
         app:layout_constraintEnd_toStartOf="@+id/image_view_edit_button"
-        app:layout_constraintStart_toEndOf="@+id/initials_view_contacts_list"
+        app:layout_constraintStart_toEndOf="@+id/thumbnail_view_contacts_list"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@tools:sample/lorem/random" />
 
@@ -64,7 +62,7 @@
         android:paddingHorizontal="@dimen/padding_l"
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/image_view_edit_button"
-        app:layout_constraintStart_toEndOf="@+id/initials_view_contacts_list"
+        app:layout_constraintStart_toEndOf="@+id/thumbnail_view_contacts_list"
         app:layout_constraintTop_toBottomOf="@+id/text_view_contact_name"
         tools:text="@tools:sample/lorem/random"
         tools:visibility="visible" />

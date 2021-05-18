@@ -58,8 +58,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <FrameLayout
         android:id="@+id/layout_no_connectivity_info"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar" />
+        android:layout_height="wrap_content" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_progress_contacts"

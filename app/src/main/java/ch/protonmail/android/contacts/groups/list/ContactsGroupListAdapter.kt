@@ -30,7 +30,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ListItemContactsBinding
-import ch.protonmail.android.views.messagesList.SenderInitialView
+import ch.protonmail.android.views.ListItemThumbnail
 
 class ContactsGroupsListAdapter(
     private val onContactGroupClickListener: (ContactGroupListItem) -> Unit,
@@ -42,7 +42,7 @@ class ContactsGroupsListAdapter(
         val binding = ListItemContactsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         val viewHolder = ContactGroupsViewHolder(
-            binding.initialsViewContactsList,
+            binding.thumbnailViewContactsList,
             binding.textViewContactName,
             binding.textViewContactSubtitle,
             binding.imageViewEditButton,
@@ -56,7 +56,7 @@ class ContactsGroupsListAdapter(
             }
         }
 
-        binding.initialsViewContactsList.setOnClickListener {
+        binding.thumbnailViewContactsList.setOnClickListener {
             val position = viewHolder.adapterPosition
             if (position != RecyclerView.NO_POSITION) {
                 onContactGroupSelect(getItem(position))
@@ -88,7 +88,7 @@ class ContactsGroupsListAdapter(
     }
 
     private class ContactGroupsViewHolder(
-        val initialsView: SenderInitialView,
+        val itemThumbnail: ListItemThumbnail,
         val contactName: TextView,
         val contactSubtitle: TextView,
         val editButton: ImageView,
@@ -100,8 +100,9 @@ class ContactsGroupsListAdapter(
 
             itemView.isActivated = item.isSelected
 
-            initialsView.apply {
-                bind("", item.isSelected, item.color)
+            itemThumbnail.apply {
+                isSelected = item.isSelected
+                circleColor = item.color
                 isVisible = true
             }
 

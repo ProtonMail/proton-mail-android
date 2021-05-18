@@ -30,7 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ListItemContactsBinding
-import ch.protonmail.android.views.messagesList.SenderInitialView
+import ch.protonmail.android.views.ListItemThumbnail
 import timber.log.Timber
 
 class ContactsListAdapter(
@@ -42,7 +42,7 @@ class ContactsListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = ListItemContactsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val viewHolder = ContactViewHolder(
-            binding.initialsViewContactsList,
+            binding.thumbnailViewContactsList,
             binding.textViewContactName,
             binding.textViewContactSubtitle,
             binding.imageViewEditButton,
@@ -61,7 +61,7 @@ class ContactsListAdapter(
             }
         }
 
-        binding.initialsViewContactsList.setOnClickListener {
+        binding.thumbnailViewContactsList.setOnClickListener {
             val position = viewHolder.adapterPosition
             if (position != NO_POSITION) {
                 onContactGroupSelect(getItem(position))
@@ -92,7 +92,7 @@ class ContactsListAdapter(
     }
 
     private class ContactViewHolder(
-        val initialsView: SenderInitialView,
+        val itemThumbnail: ListItemThumbnail,
         val contactName: TextView,
         val contactSubtitle: TextView,
         val editButton: ImageView,
@@ -113,12 +113,13 @@ class ContactsListAdapter(
             itemView.isActivated = item.isSelected
 
             if (item.initials.isNotEmpty()) {
-                initialsView.apply {
-                    bind(item.initials, item.isSelected)
+                itemThumbnail.apply {
+                    isSelected = item.isSelected
+                    text = item.initials
                     isVisible = true
                 }
             } else {
-                initialsView.isVisible = false
+                itemThumbnail.isVisible = false
             }
 
             if (item.contactEmails == null) {
