@@ -243,7 +243,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:id="@+id/animToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/background_norm"
         app:layout_collapseMode="pin"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
         app:theme="@style/ThemeOverlay.AppCompat.Dark"
