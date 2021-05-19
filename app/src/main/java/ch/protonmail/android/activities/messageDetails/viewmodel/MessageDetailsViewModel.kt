@@ -61,6 +61,7 @@ import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
@@ -146,6 +147,15 @@ internal class MessageDetailsViewModel @Inject constructor(
     val message: LiveData<Message?> =
         messageFlow.asLiveData(viewModelScope.coroutineContext)
 
+    val conversation: LiveData<Conversation?> =
+        conversationRepository.getConversation(messageId, userManager.requireCurrentUserId()).map {
+            if (it is DataResult.Success) {
+                return@map it.value
+            } else {
+                return@map null
+            }
+        }.asLiveData()
+
     private var publicKeys: List<KeyInformation>? = null
 
     var renderingPassed = false
@@ -191,7 +201,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
 
     val messageAttachments: LiveData<List<Attachment>> by lazy {
-        val message = decryptedMessageData.value!!.message
+        val message = decryptedMessageData.value!!.messages.last()
         messageDetailsRepository.findAttachments(message).distinctUntilChanged()
     }
     val pendingSend: LiveData<PendingSend?> by lazy {
@@ -259,39 +269,46 @@ internal class MessageDetailsViewModel @Inject constructor(
 
             if (conversationModeEnabled(location)) {
                 conversationRepository.getConversation(messageId, userId)
-                    .map {
-                        if (it is DataResult.Success) {
-                            val conversation = it.value
-                            val convMessage = conversation.messages?.get(0)!!
-                            val message = messageRepository.getMessage(userId, convMessage.id, true)
-                            onMessageLoaded(message)
-                        } else if (it is DataResult.Error) {
-                            onMessageLoaded(null)
+                    .map { result ->
+                        if (result is DataResult.Success) {
+                            val conversation = result.value
+                            val messages = conversation.messages?.map { message ->
+                                messageRepository.findMessageOnce(userId, message.id)
+                            }
+                            Timber.v("Loaded conversation ${conversation.id} with ${messages?.size} messages")
+                            onMessageLoaded(messages.orEmpty())
+                        } else if (result is DataResult.Error) {
+                            Timber.d("Error loading conversation $messageId")
+                            onMessageLoaded(emptyList())
                         }
                     }.first()
                 return@launch
             }
 
             val message = messageRepository.getMessage(userId, messageId, true)
-            onMessageLoaded(message)
+            onMessageLoaded(listOf(message))
         }
     }
 
-    private suspend fun onMessageLoaded(message: Message?) {
-        if (message == null) {
+    private suspend fun onMessageLoaded(messages: List<Message?>) {
+        if (messages.isEmpty() || messages.any { it == null }) {
             Timber.d("Failed fetching Message Details for message $messageId")
             _messageDetailsError.postValue(Event("Failed getting message details"))
             return
         }
+        val validMessages = messages.filterNotNull()
 
-        val contactEmail = contactsRepository.findContactEmailByEmail(message.senderEmail)
-        message.senderDisplayName = contactEmail?.name.orEmpty()
+        validMessages.map {
+            val contactEmail = contactsRepository.findContactEmailByEmail(it.senderEmail)
+            it.senderDisplayName = contactEmail?.name.orEmpty()
+        }
 
         refreshedKeys = true
-        decryptAndEmit(message)
+        decryptAndEmit(validMessages)
     }
 
-    private suspend fun decryptAndEmit(message: Message) {
+    private suspend fun decryptAndEmit(messages: List<Message>) {
+        val message = messages.last()
         if (!message.isDownloaded) {
             return
         }
@@ -300,10 +317,17 @@ internal class MessageDetailsViewModel @Inject constructor(
             message.tryDecrypt(publicKeys) ?: false
         }
         Timber.v("Emitting Message Detail = $message keys size: ${publicKeys?.size}")
-        _decryptedMessageLiveData.postValue(conversationFrom(message))
+        _decryptedMessageLiveData.postValue(conversationFrom(messages))
     }
 
-    private fun conversationFrom(message: Message) = ConversationUiModel(message)
+    private fun conversationFrom(messages: List<Message?>): ConversationUiModel {
+        val message = messages.last()
+        return ConversationUiModel(
+            message?.isStarred ?: false,
+            message?.subject ?: "",
+            messages.filterNotNull()
+        )
+    }
 
     private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
         return try {
@@ -335,7 +359,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(messageId)
             val embeddedImages = _embeddedImagesAttachments.mapNotNull {
                 attachmentsHelper.fromAttachmentToEmbeddedImage(
-                    it, decryptedMessageData.value!!.message.embeddedImageIds.toList()
+                    it, decryptedMessageData.value!!.messages.last().embeddedImageIds.toList()
                 )
             }
             val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
@@ -483,7 +507,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun prepareEmbeddedImages(): Boolean {
-        val message = decryptedMessageData.value?.message
+        val message = decryptedMessageData.value?.messages?.last()
         message?.let {
             val attachments = message.attachments
             val embeddedImagesToFetch = ArrayList<EmbeddedImage>()
@@ -524,7 +548,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
         publicKeys = pubKeys
         refreshedKeys = false
-        message?.let { decryptAndEmit(it) }
+        message?.let { decryptAndEmit(listOf(it)) }
 
         fetchingPubKeys = false
         renderedFromCache = AtomicBoolean(false)
@@ -536,7 +560,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun setAttachmentsList(attachments: List<Attachment>) {
-        val message = decryptedMessageData.value?.message
+        val message = decryptedMessageData.value?.messages?.last()
         message!!.setAttachmentList(attachments)
     }
 

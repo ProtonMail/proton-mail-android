@@ -203,6 +203,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private fun continueSetup() {
         viewModel.message.observe(this) { viewModel.loadMessageDetails() }
+        viewModel.conversation.observe(this) {
+            if (it != null) viewModel.loadMessageDetails()
+        }
         viewModel.decryptedMessageData.observe(this, DecryptedMessageObserver())
 
         viewModel.labels
@@ -283,7 +286,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         return true
     }
 
-    fun showReportPhishingDialog(message: Message? = viewModel.decryptedMessageData.value?.message) {
+    fun showReportPhishingDialog(message: Message? = viewModel.decryptedMessageData.value?.messages?.last()) {
         AlertDialog.Builder(this)
             .setTitle(R.string.phishing_dialog_title)
             .setMessage(R.string.phishing_dialog_message)
@@ -565,15 +568,18 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         messageExpandableAdapter.displayAttachmentsViews(attachmentsVisibility)
     }
 
-    private inner class DecryptedMessageObserver : Observer<ConversationUiModel?> {
+    private inner class DecryptedMessageObserver : Observer<ConversationUiModel> {
 
-        override fun onChanged(conversationUiModel: ConversationUiModel?) {
-            val message = conversationUiModel?.message ?: return
+        override fun onChanged(conversation: ConversationUiModel) {
+            val message = lastMessage(conversation)
 
-            starToggleButton.isChecked = message.isStarred ?: false
+            starToggleButton.isChecked = conversation.isStarred
+            val isInvalidSubject = conversation.subject.isNullOrEmpty()
+            val subject = if (isInvalidSubject) getString(R.string.empty_subject) else conversation.subject
+            collapsedToolbarTitleTextView.text = subject
+            collapsedToolbarTitleTextView.visibility = View.INVISIBLE
+            expandedToolbarTitleTextView.text = subject
 
-            // we need to update the details, when e.g. message has been moved to another folder
-            messageExpandableAdapter.setMessageData(message)
             messageDetailsActionsView.setOnMoreActionClickListener {
                 MessageActionSheet.newInstance(
                     MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
@@ -594,11 +600,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 UiUtil.showInfoSnack(mSnackLayout, this@MessageDetailsActivity, R.string.decryption_error_desc).show()
                 return
             }
-
-            val subject = if (message.subject.isNullOrEmpty()) getString(R.string.empty_subject) else message.subject
-            collapsedToolbarTitleTextView.text = subject
-            collapsedToolbarTitleTextView.visibility = View.INVISIBLE
-            expandedToolbarTitleTextView.text = subject
 
             messageExpandableAdapter.setMessageData(message)
             messageExpandableAdapter.refreshRecipientsLayout()
@@ -634,17 +635,18 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 executeMessageAction(messageAction, message)
             }
 
-
             progress.visibility = View.GONE
             invalidateOptionsMenu()
             viewModel.renderingPassed = true
         }
     }
 
+    private fun lastMessage(conversation: ConversationUiModel): Message = conversation.messages.last()
+
     // TODO: Move as much as possible of this method to ViewModel
     fun executeMessageAction(
         messageAction: Constants.MessageActionType,
-        message: Message = requireNotNull(viewModel.decryptedMessageData.value?.message)
+        message: Message = requireNotNull(viewModel.decryptedMessageData.value?.messages?.last())
     ) {
         try {
             val user = mUserManager.requireCurrentLegacyUser()

@@ -189,7 +189,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         // Then
         val expectedMessage = message.copy()
         expectedMessage.senderDisplayName = "senderContactName"
-        val emittedMessage = messageObserver.observedValues[0]?.message
+        val emittedMessage = messageObserver.observedValues[0]?.messages?.last()
         assertEquals(expectedMessage, emittedMessage)
         assertEquals(expectedMessage.senderDisplayName, emittedMessage!!.senderDisplayName)
     }
@@ -282,13 +282,17 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
                 inputMessageLocation.messageLocationTypeValue
             coEvery { conversationRepository.getConversation(inputConversationId, userId) } returns
                 flowOf(DataResult.Success(ResponseSource.Local, buildConversation(conversationId)))
+            // Return the same message from DB for simplicity
             coEvery { messageRepository.getMessage(userId, "messageId4", true) } returns conversationMessage
+            coEvery { messageRepository.getMessage(userId, "messageId5", true) } returns conversationMessage
 
             // When
             viewModel.loadMessageDetails()
 
             // Then
-            val conversationUiModel = ConversationUiModel(message = conversationMessage)
+            val conversationUiModel = ConversationUiModel(
+                false, "subject4", messages = listOf(conversationMessage, conversationMessage)
+            )
             assertEquals(conversationUiModel, conversationObserver.observedValues[0])
         }
 
@@ -327,7 +331,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             val inputConversationId = INPUT_ITEM_DETAIL_ID
             val userId = Id("userId4")
             val errorObserver = viewModel.messageDetailsError.testObserver()
-            val conversationId = UUID.randomUUID().toString()
             every { userManager.requireCurrentUserId() } returns userId
             coEvery { conversationModeEnabled(inputMessageLocation) } returns true
             every { savedStateHandle.get<String>(EXTRA_MESSAGE_ID) } returns inputConversationId
@@ -344,6 +347,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         }
 
     private fun buildConversation(conversationId: String): Conversation {
+        val messageId = "messageId4"
+        val secondMessageId = "messageId5"
         return Conversation(
             conversationId,
             "Conversation subject",
@@ -355,26 +360,29 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             0,
             listOf(inboxLabelContext()),
             listOf(
-                MessageDomainModel(
-                    "messageId4",
-                    conversationId,
-                    "subject4",
-                    false,
-                    Correspondent("senderName", "sender@protonmail.ch"),
-                    listOf(),
-                    82374724L,
-                    1,
-                    0L,
-                    isReplied = false,
-                    isRepliedAll = true,
-                    isForwarded = false,
-                    ccReceivers = emptyList(),
-                    bccReceivers = emptyList(),
-                    labelsIds = listOf("1", "2")
-                )
+                buildMessageDomainModel(messageId, conversationId),
+                buildMessageDomainModel(secondMessageId, conversationId)
             )
         )
     }
+
+    private fun buildMessageDomainModel(messageId: String, conversationId: String) = MessageDomainModel(
+        messageId,
+        conversationId,
+        "subject4",
+        false,
+        Correspondent("senderName", "sender@protonmail.ch"),
+        listOf(),
+        82374724L,
+        1,
+        0L,
+        isReplied = false,
+        isRepliedAll = true,
+        isForwarded = false,
+        ccReceivers = emptyList(),
+        bccReceivers = emptyList(),
+        labelsIds = listOf("1", "2")
+    )
 
     private fun inboxLabelContext() = LabelContext(INBOX.messageLocationTypeValue.toString(), 0, 0, 0L, 0, 0)
 

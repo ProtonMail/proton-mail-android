@@ -22,5 +22,7 @@ package ch.protonmail.android.details.presentation.model
 import ch.protonmail.android.data.local.model.Message
 
 data class ConversationUiModel(
-    val message: Message
+    val isStarred: Boolean,
+    val subject: String?,
+    val messages: List<Message>
 )
