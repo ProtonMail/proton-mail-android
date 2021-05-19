@@ -19,9 +19,11 @@
 
 package ch.protonmail.android.views.messageDetails
 
+import android.animation.LayoutTransition
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.os.Build
 import android.text.format.Formatter
 import android.text.method.LinkMovementMethod
 import android.util.AttributeSet
@@ -138,6 +140,10 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         learnMoreTextView = binding.learnMoreTextView
         // endregion
 
+        // animated layout changes looks buggy on Android 27, so we enable only on 28 +
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            binding.root.layoutTransition = LayoutTransition()
+        }
         val typefacePgp = Typeface.createFromAsset(context.assets, "pgp-icons-android.ttf")
         lockIconTextView.typeface = typefacePgp
         lockIconExtendedTextView.typeface = typefacePgp
