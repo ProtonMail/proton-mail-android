@@ -35,6 +35,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
+import androidx.core.view.updatePadding
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.details.RecipientContextMenuFactory
 import ch.protonmail.android.api.models.MessageRecipient
@@ -100,8 +101,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     init {
         val binding = LayoutMessageDetailsHeaderBinding.inflate(
             LayoutInflater.from(context),
-            this,
-            true
+            this
         )
         // region init views' references
         collapsedHeaderGroup = binding.collapsedHeaderGroup
@@ -142,8 +142,17 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
 
         // animated layout changes looks buggy on Android 27, so we enable only on 28 +
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            binding.root.layoutTransition = LayoutTransition()
+            layoutTransition = LayoutTransition()
         }
+        val horizontalPadding = resources.getDimensionPixelSize(R.dimen.message_details_header_padding_horizontal)
+        val verticalPadding = resources.getDimensionPixelSize(R.dimen.message_details_header_padding_vertical)
+        updatePadding(
+            left = horizontalPadding,
+            right = horizontalPadding,
+            top = verticalPadding,
+            bottom = verticalPadding
+        )
+
         val typefacePgp = Typeface.createFromAsset(context.assets, "pgp-icons-android.ttf")
         lockIconTextView.typeface = typefacePgp
         lockIconExtendedTextView.typeface = typefacePgp

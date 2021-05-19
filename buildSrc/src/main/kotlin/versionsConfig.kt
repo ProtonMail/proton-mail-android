@@ -34,7 +34,7 @@ fun initVersions() {
     `android-annotation version` =              "1.1.0"         // Released: Jun 05, 2019
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
-    `constraint-layout version` =               "2.1.0-beta02"  // Released: May 05, 2021
+    `constraint-layout version` =               "2.0.4"         // Released: Oct 31, 2020
     `espresso version` =                        "3.4.0-alpha05" // Released: Mar 15, 2021
     `hilt-android version` =                    "2.35.1"        // Released: Apr 28, 2021
     `hilt-androidx version` =                   "1.0.0"         // Released: May 05, 2021
