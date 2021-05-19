@@ -419,8 +419,9 @@ class UserManager @Inject constructor(
 
                 prefs -= PREF_USERNAME
 
-                val currentUserId = allUsernamesToIds.getValue(currentUsername)
-                prefs[PREF_CURRENT_USER_ID] = currentUserId.s
+                allUsernamesToIds[currentUsername]?.let { currentUserId ->
+                    prefs[PREF_CURRENT_USER_ID] = currentUserId.s
+                }
             }
         }
     }
