@@ -19,7 +19,6 @@
 package ch.protonmail.android.contacts.groups.edit.chooser
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -72,7 +71,7 @@ class ColorChooserFragment : AbstractDialogFragment(), AdapterView.OnItemClickLi
             dismissAllowingStateLoss()
         }
         apply.setOnClickListener {
-            colorChooserListener.colorChosen(selectedNewColor ?: Color.BLACK)
+            colorChooserListener.colorChosen(selectedNewColor ?: colorOptions[0])
             dismissAllowingStateLoss()
         }
     }

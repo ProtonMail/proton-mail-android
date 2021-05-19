@@ -31,6 +31,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.content.withStyledAttributes
 import ch.protonmail.android.R
 import timber.log.Timber
 
@@ -63,6 +64,7 @@ class ListItemThumbnail @JvmOverloads constructor(
 
     var circleColor: Int
         get() = basePaint.color
+
         @ColorInt set(value) {
             Timber.v("new circleColor: $value")
             basePaint.color = value
@@ -79,11 +81,6 @@ class ListItemThumbnail @JvmOverloads constructor(
 
     private val checkIconDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_check)
 
-    override fun setSelected(selected: Boolean) {
-        super.setSelected(selected)
-        invalidate()
-    }
-
     /**
      * Sets text for the Thumbnail, set it to empty string to display the icon
      */
@@ -94,20 +91,19 @@ class ListItemThumbnail @JvmOverloads constructor(
         }
 
     init {
-        context.theme.obtainStyledAttributes(
+        context.withStyledAttributes(
             attrs,
-            R.styleable.ListItemThumbnail,
-            0,
-            0
-        ).apply {
-            try {
-                val defaultCircleSize = context.resources.getDimensionPixelSize(R.dimen.padding_3xl)
-                circleSize = getDimensionPixelSize(R.styleable.ListItemThumbnail_circleSize, defaultCircleSize)
-                iconResource = getResourceId(R.styleable.ListItemThumbnail_icon, R.drawable.ic_contact_groups_filled)
-            } finally {
-                recycle()
-            }
+            R.styleable.ListItemThumbnail
+        ) {
+            val defaultCircleSize = context.resources.getDimensionPixelSize(R.dimen.padding_3xl)
+            circleSize = getDimensionPixelSize(R.styleable.ListItemThumbnail_circleSize, defaultCircleSize)
+            iconResource = getResourceId(R.styleable.ListItemThumbnail_icon, R.drawable.ic_contact_groups_filled)
         }
+    }
+
+    override fun setSelected(selected: Boolean) {
+        super.setSelected(selected)
+        invalidate()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -143,7 +139,7 @@ class ListItemThumbnail @JvmOverloads constructor(
                 centerY + textRectangle.height() / 2,
                 textPaint
             )
-        } else {  // otherwise draw the icon
+        } else { // otherwise draw the icon
             val imageWidth = iconDrawable?.intrinsicWidth?.div(2) ?: 0
             val imageHeight = iconDrawable?.intrinsicHeight?.div(2) ?: 0
             iconDrawable?.setBounds(

@@ -147,9 +147,8 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
             context,
             LinearLayout.VERTICAL
         ).apply {
-            context?.getDrawable(R.drawable.list_divider)?.let {
-                setDrawable(it)
-            }
+            val drawable = requireNotNull(context?.getDrawable(R.drawable.list_divider))
+            setDrawable(drawable)
         }
 
         contactGroupsRecyclerView.apply {
