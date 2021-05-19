@@ -162,7 +162,7 @@ class MailboxViewModelTest : CoroutinesTest {
         }
         every { labelRepository.findAllLabels(any()) } returns flowOf(allLabels)
 
-        every { userManager.requireCurrentUserId() } returns currentUserId
+        every { userManager.currentUserId } returns currentUserId
     }
 
     @After
@@ -517,7 +517,7 @@ class MailboxViewModelTest : CoroutinesTest {
         // Represents pagination. Only messages older than the given timestamp will be returned
         val timestamp = 123L
         val userId = Id("userId")
-        every { userManager.requireCurrentUserId() } returns userId
+        every { userManager.currentUserId } returns userId
 
         viewModel.loadMailboxItems(
             location,
@@ -542,7 +542,7 @@ class MailboxViewModelTest : CoroutinesTest {
         // Represents pagination. Only messages older than the given timestamp will be returned
         val oldestMessageTimestamp = 1323L
         val userId = Id("userId1")
-        every { userManager.requireCurrentUserId() } returns userId
+        every { userManager.currentUserId } returns userId
 
         viewModel.loadMailboxItems(
             location,
@@ -569,7 +569,7 @@ class MailboxViewModelTest : CoroutinesTest {
         val refreshMessages = true
         // Represents pagination. Only messages older than the given timestamp will be returned
         val userId = Id("userId")
-        every { userManager.requireCurrentUserId() } returns userId
+        every { userManager.currentUserId } returns userId
 
         viewModel.loadMailboxItems(
             ARCHIVE,
@@ -591,7 +591,7 @@ class MailboxViewModelTest : CoroutinesTest {
         // Represents pagination. Only messages older than the given timestamp will be returned
         val oldestMessageTimestamp = 1323L
         val userId = Id("userId1")
-        every { userManager.requireCurrentUserId() } returns userId
+        every { userManager.currentUserId } returns userId
         every { conversationModeEnabled(location) } returns true
 
         viewModel.loadMailboxItems(
