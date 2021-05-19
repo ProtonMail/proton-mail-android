@@ -22,6 +22,7 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
@@ -35,8 +36,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import me.proton.core.util.android.workmanager.toWorkData
-import me.proton.core.util.kotlin.EMPTY_STRING
 import java.io.IOException
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -125,8 +124,11 @@ class PingWorkerTest {
     fun verifyFailureIsReturnedWhenNetworkConnectionFails() {
         runBlockingTest {
             // given
-            val ioException = IOException("NetworkError!")
-            val expected = ListenableWorker.Result.failure(WorkerError(ioException.message ?: EMPTY_STRING).toWorkData())
+            val exceptionMessage = "NetworkError!"
+            val ioException = IOException(exceptionMessage)
+            val expected = ListenableWorker.Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $exceptionMessage")
+            )
             coEvery { api.pingAsync() } throws ioException
 
             // when

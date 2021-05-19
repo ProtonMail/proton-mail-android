@@ -35,7 +35,6 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
-import ch.protonmail.android.worker.failure
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
@@ -102,7 +101,9 @@ class DownloadEmbeddedAttachmentsWorker @AssistedInject constructor(
             message.decrypt(addressCrypto)
         } catch (exception: GeneralSecurityException) {
             Timber.e(exception, "Decrypt exception")
-            failure(exception)
+            Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${exception.message}")
+            )
         }
 
         if (message.isPGPMime) {

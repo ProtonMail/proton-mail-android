@@ -22,6 +22,7 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactsDataResponse
 import ch.protonmail.android.api.models.DatabaseProvider
@@ -37,7 +38,6 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.assertIs
-import me.proton.core.util.android.workmanager.toWorkData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -106,7 +106,7 @@ class FetchContactsDataWorkerTest {
         // then
         assertIs<ListenableWorker.Result.Failure>(operationResult)
         val failure = operationResult as ListenableWorker.Result.Failure
-        assertEquals(WorkerError("Can't fetch contacts without a logged in user"), failure.outputData.error())
+        assertEquals("Can't fetch contacts without a logged in user", failure.outputData.keyValueMap.values.first())
     }
 
     @Test
@@ -133,7 +133,9 @@ class FetchContactsDataWorkerTest {
             val testException = Exception(exceptionMessage)
             val retryCount = 3
             coEvery { api.fetchContacts(0, Constants.CONTACTS_PAGE_SIZE) } throws testException
-            val expected = ListenableWorker.Result.failure(WorkerError(exceptionMessage).toWorkData())
+            val expected = ListenableWorker.Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $exceptionMessage")
+            )
             every { parameters.runAttemptCount } returns retryCount
 
             // when

@@ -31,6 +31,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.UserManager
 import dagger.assisted.Assisted
@@ -60,7 +61,9 @@ class FetchContactsEmailsWorker @AssistedInject constructor(
                     if (throwable is CancellationException) {
                         throw throwable
                     }
-                    failure(throwable)
+                    failure(
+                        workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${throwable.message}")
+                    )
                 }
             )
     }

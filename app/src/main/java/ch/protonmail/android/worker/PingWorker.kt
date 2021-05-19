@@ -30,6 +30,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
@@ -72,7 +73,9 @@ class PingWorker @AssistedInject constructor(
                 onFailure = { throwable ->
                     Timber.v("Ping isAccessible: failed")
                     queueNetworkUtil.setConnectivityHasFailed(throwable)
-                    failure(throwable)
+                    Result.failure(
+                        workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${throwable.message}")
+                    )
                 }
             )
         }

@@ -30,6 +30,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.segments.TEN_SECONDS
@@ -63,7 +64,9 @@ class FetchContactsDataWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         val userId = userManager.currentUserId
-            ?: return failure("Can't fetch contacts without a logged in user")
+            ?: return Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Can't fetch contacts without a logged in user")
+            )
 
         val contactDao = databaseProvider.provideContactDao(userId)
 
@@ -108,11 +111,14 @@ class FetchContactsDataWorker @AssistedInject constructor(
             Timber.d(throwable, "Fetch Contacts Worker failure, retrying count: $runAttemptCount")
             Result.retry()
         } else {
-            failure(throwable)
+            Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${throwable.message}")
+            )
         }
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
+
         fun enqueue(): LiveData<WorkInfo> {
             val networkConstraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
