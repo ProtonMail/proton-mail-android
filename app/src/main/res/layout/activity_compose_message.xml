@@ -17,435 +17,467 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:clipChildren="false"
     android:fitsSystemWindows="true"
-    android:orientation="vertical"
+    android:animateLayoutChanges="true"
     tools:context=".activities.composeMessage.ComposeMessageActivity">
 
-    <LinearLayout
-        android:id="@+id/compose_view"
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/composer_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:title=" "
+        app:navigationIcon="@drawable/ic_close"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar" />
-
-        <FrameLayout
-            android:id="@+id/layout_no_connectivity_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ScrollView
-                android:id="@+id/scroll_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="true">
-
-                <FrameLayout
-                    android:id="@+id/scroll_parent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <LinearLayout
-                        android:id="@+id/scroll_content"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:id="@+id/message_fields"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TableLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-
-                                <TableRow
-                                    android:id="@+id/addresses_spinner_container"
-                                    android:gravity="center_vertical">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="@dimen/message_spacing_small"
-                                        android:layout_marginLeft="@dimen/message_spacing"
-                                        android:layout_marginRight="@dimen/message_spacing_small"
-                                        android:layout_marginStart="@dimen/message_spacing"
-                                        android:gravity="center_vertical"
-                                        android:clickable="true"
-                                        android:minHeight="@dimen/compose_message_section_height"
-                                        android:text="@string/from_prefix"
-                                        android:textColor="@color/iron_gray_70" />
-
-                                    <Spinner
-                                        android:id="@+id/addresses_spinner"
-                                        android:layout_width="0dp"
-                                        android:layout_height="@dimen/compose_message_section_height"
-                                        android:layout_weight="1" />
-                                </TableRow>
-
-                                <View
-                                    android:id="@+id/to_row_divider"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="@dimen/divider_height"
-                                    android:background="@color/fog_gray"
-                                    android:orientation="horizontal" />
-
-                                <TableRow android:gravity="center_vertical">
-
-                                    <TextView
-                                        android:id="@+id/to"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="@dimen/message_spacing_small"
-                                        android:layout_marginLeft="@dimen/message_spacing"
-                                        android:layout_marginRight="@dimen/message_spacing_small"
-                                        android:layout_marginStart="@dimen/message_spacing"
-                                        android:gravity="center_vertical"
-                                        android:minHeight="@dimen/compose_message_section_height"
-                                        android:text="@string/to"
-                                        android:textColor="@color/iron_gray_70" />
-
-                                    <ch.protonmail.android.views.MessageRecipientView
-                                        android:id="@+id/to_recipients"
-                                        style="@style/MessageRecipientView"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="@dimen/message_spacing_small"
-                                        android:layout_marginRight="@dimen/message_spacing_small"
-                                        android:layout_weight="1"
-                                        android:focusable="true"
-                                        android:focusableInTouchMode="true"
-                                        android:minHeight="@dimen/compose_message_section_height"
-                                        android:textCursorDrawable="@null" />
-
-                                    <ImageButton
-                                        android:id="@+id/show_additional_rows"
-                                        android:layout_height="match_parent"
-                                        android:background="@drawable/compose_message_button_selector"
-                                        android:contentDescription="@null"
-                                        android:paddingLeft="@dimen/message_spacing"
-                                        android:paddingRight="@dimen/message_spacing"
-                                        android:src="@drawable/plus_compose" />
-
-                                </TableRow>
-
-                                <LinearLayout
-                                    android:id="@+id/cc_row_divider"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="@dimen/divider_height"
-                                    android:background="@color/fog_gray"
-                                    android:orientation="horizontal"
-                                    android:visibility="gone" />
-
-                                <TableRow
-                                    android:id="@+id/cc_row"
-                                    android:layout_width="match_parent"
-                                    android:gravity="center_vertical"
-                                    android:visibility="gone">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="@dimen/message_spacing_small"
-                                        android:layout_marginLeft="@dimen/message_spacing"
-                                        android:layout_marginRight="@dimen/message_spacing_small"
-                                        android:layout_marginStart="@dimen/message_spacing"
-                                        android:gravity="center_vertical"
-                                        android:minHeight="@dimen/compose_message_section_height"
-                                        android:text="@string/cc"
-                                        android:textColor="@color/iron_gray_70" />
-
-                                    <ch.protonmail.android.views.MessageRecipientView
-                                        android:id="@+id/cc_recipients"
-                                        style="@style/MessageRecipientView"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginRight="@dimen/message_spacing"
-                                        android:layout_weight="1"
-                                        android:minHeight="@dimen/compose_message_section_height"
-                                        android:textCursorDrawable="@null" />
-
-                                </TableRow>
-
-                                <LinearLayout
-                                    android:id="@+id/bcc_row_divider"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="@dimen/divider_height"
-                                    android:background="@color/fog_gray"
-                                    android:orientation="horizontal"
-                                    android:visibility="gone" />
-
-                                <TableRow
-                                    android:id="@+id/bcc_row"
-                                    android:layout_width="match_parent"
-                                    android:gravity="center_vertical"
-                                    android:visibility="gone">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="@dimen/message_spacing_small"
-                                        android:layout_marginLeft="@dimen/message_spacing"
-                                        android:layout_marginRight="@dimen/message_spacing_small"
-                                        android:layout_marginStart="@dimen/message_spacing"
-                                        android:gravity="center_vertical"
-                                        android:minHeight="@dimen/compose_message_section_height"
-                                        android:text="@string/bcc"
-                                        android:textColor="@color/iron_gray_70" />
-
-                                    <ch.protonmail.android.views.MessageRecipientView
-                                        android:id="@+id/bcc_recipients"
-                                        style="@style/MessageRecipientView"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginRight="@dimen/message_spacing"
-                                        android:layout_weight="1"
-                                        android:minHeight="@dimen/compose_message_section_height"
-                                        android:textCursorDrawable="@null" />
-
-                                </TableRow>
-
-                            </TableLayout>
-
-                            <include layout="@layout/horizontal_divider" />
-
-                            <FrameLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/compose_message_section_height">
-
-                                <EditText
-                                    android:id="@+id/message_title"
-                                    style="@style/MessageRecipientView"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_marginLeft="@dimen/message_spacing"
-                                    android:layout_marginRight="@dimen/message_spacing"
-                                    android:hint="@string/subject"
-                                    android:imeOptions="actionNext"
-                                    android:inputType="textCapSentences"
-                                    android:minHeight="@dimen/compose_message_section_height" />
-
-                            </FrameLayout>
-
-                            <include layout="@layout/horizontal_divider" />
-
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/compose_message_section_height">
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal">
-
-                                    <ch.protonmail.android.views.MessagePasswordButton
-                                        android:id="@+id/set_message_password"
-                                        android:layout_width="0dp"
-                                        android:layout_height="match_parent"
-                                        android:layout_weight="1"
-                                        android:background="@drawable/compose_message_button_selector"
-                                        android:contentDescription="@null"
-                                        android:scaleType="center"
-                                        android:src="@drawable/encrypted_compose_level_list" />
-
-                                    <View
-                                        android:layout_width="@dimen/divider_width"
-                                        android:layout_height="match_parent"
-                                        android:background="@color/fog_gray" />
-
-                                    <ImageButton
-                                        android:id="@+id/set_message_expiration"
-                                        android:layout_width="0dp"
-                                        android:layout_height="match_parent"
-                                        android:layout_weight="1"
-                                        android:background="@drawable/compose_message_button_selector"
-                                        android:contentDescription="@null"
-                                        android:scaleType="center"
-                                        android:src="@drawable/expiration_compose_level_list" />
-
-                                    <View
-                                        android:layout_width="@dimen/divider_width"
-                                        android:layout_height="match_parent"
-                                        android:background="@color/fog_gray" />
-
-                                    <LinearLayout
-                                        android:id="@+id/add_attachments"
-                                        android:layout_width="0dp"
-                                        android:layout_height="match_parent"
-                                        android:layout_weight="1"
-                                        android:background="@drawable/compose_message_button_selector"
-                                        android:gravity="center"
-                                        android:orientation="horizontal">
-
-                                        <ImageView
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:contentDescription="@null"
-                                            android:scaleType="center"
-                                            android:src="@drawable/compose_attachment" />
-
-                                        <TextView
-                                            android:id="@+id/attachment_count"
-                                            style="@style/ComposeMessageAttachmentCount"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_marginLeft="2dp"
-                                            android:layout_marginStart="5dp" />
-
-                                        <TextView
-                                            android:id="@+id/attachment_sync"
-                                            style="@style/ComposeMessageAttachmentCount"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_marginLeft="2dp"
-                                            android:layout_marginStart="5dp"
-                                            android:text="@string/sync_short"
-                                            android:textSize="@dimen/h6"
-                                            android:visibility="gone" />
-
-                                    </LinearLayout>
-                                </LinearLayout>
-
-                                <ch.protonmail.android.views.MessageExpirationView
-                                    android:id="@+id/message_expiration_view"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:background="@color/white"
-                                    android:visibility="gone" />
-
-                            </RelativeLayout>
-
-
-                            <include layout="@layout/horizontal_divider" />
-
-                        </LinearLayout>
-
-                        <ch.protonmail.android.views.ComposeEditText
-                            android:id="@+id/message_body"
-                            style="@style/ComposeMessageBodyText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:layout_marginEnd="@dimen/message_spacing"
-                            android:layout_marginLeft="@dimen/message_spacing"
-                            android:layout_marginRight="@dimen/message_spacing"
-                            android:layout_marginStart="@dimen/message_spacing"
-                            android:layout_marginTop="10dp"
-                            android:focusable="true"
-                            android:focusableInTouchMode="true"
-                            android:hint="@string/compose"
-                            android:paddingBottom="4dp" />
-
-                        <LinearLayout
-                            android:id="@+id/respond_inline_layout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:paddingBottom="10dp">
-
-                            <Button
-                                android:id="@+id/button_respond_inline"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="right|center_vertical"
-                                android:layout_marginEnd="10dp"
-                                android:layout_marginRight="10dp"
-                                android:background="@android:color/transparent"
-                                android:gravity="right|center_vertical"
-                                android:padding="2dp"
-                                android:text="@string/respond_inline"
-                                android:textAllCaps="true"
-                                android:textColor="@color/deep_blue"
-                                android:visibility="gone" />
-
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="1dp"
-                                android:layout_marginBottom="10dp"
-                                android:background="@color/fog_gray" />
-
-                            <TextView
-                                android:id="@+id/quoted_header"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="@dimen/message_spacing"
-                                android:layout_marginLeft="@dimen/message_spacing"
-                                android:layout_marginRight="@dimen/message_spacing"
-                                android:textSize="@dimen/h4" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/message_web_view_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginBottom="@dimen/message_spacing"
-                            android:layout_marginEnd="@dimen/message_spacing"
-                            android:layout_marginLeft="@dimen/message_spacing"
-                            android:layout_marginRight="@dimen/message_spacing"
-                            android:layout_marginStart="@dimen/message_spacing"
-                            android:orientation="horizontal"
-                            android:visibility="gone">
-                            <!-- add webview through code use application context to avoid memory leaks -->
-                            <!-- https://code.google.com/p/android/issues/detail?id=9375 -->
-                        </LinearLayout>
-
-                        <View
-                            android:id="@+id/dummy_keyboard"
-                            android:layout_width="match_parent"
-                            android:layout_height="20dp"
-                            android:background="@android:color/transparent"
-                            android:visibility="gone" />
-                    </LinearLayout>
-
-                    <FrameLayout
-                        android:id="@+id/progress"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/white_55"
-                        android:clickable="true"
-                        android:visibility="gone"
-                        tools:visibility="visible">
-
-                        <ProgressBar
-                            android:id="@+id/progress_spinner"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:indeterminate="true" />
-
-                    </FrameLayout>
-                </FrameLayout>
-            </ScrollView>
-        </RelativeLayout>
-    </LinearLayout>
-
-    <View
+    <!-- No Connectivity -->
+    <FrameLayout
+        android:id="@+id/layout_no_connectivity_info"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/shadow_height"
-        android:layout_below="@id/compose_view"
-        android:background="@drawable/actionbar_shadow" />
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/composer_toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible"/>
 
+    <!-- Progress -->
+    <FrameLayout
+        android:id="@+id/composer_progress_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/composer_toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:elevation="99dp"
+        android:background="@color/white_55"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true" />
+
+    </FrameLayout>
+
+    <!-- Screen Protector -->
     <View
-        android:orientation="vertical"
         android:id="@+id/screenProtectorView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:background="@android:color/transparent"
         android:clickable="true"
-        android:focusable="true" />
-</RelativeLayout>
+        android:focusable="true"
+        tools:visibility="gone"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/composer_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintTop_toBottomOf="@id/layout_no_connectivity_info"
+        app:layout_constraintBottom_toTopOf="@id/composer_buttons_layout"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/composer_fields_start_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/padding_l"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/composer_fields_end_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/padding_l"/>
+
+            <!-- From -->
+            <TextView
+                android:id="@+id/composer_from_hint_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/height_composer_field"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="@id/composer_fields_start_guideline"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/Proton.Text.Default.Weak"
+                android:textColor="@color/text_weak"
+                android:text="@string/composer_from" />
+
+            <Spinner
+                android:id="@+id/composer_from_spinner"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_composer_field"
+                android:background="@drawable/bg_spinner_three_dots"
+                android:backgroundTint="@color/shade_80"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/composer_from_hint_text_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="@dimen/padding_m" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_divider"
+                android:background="@color/message_divider_gray"
+                app:layout_constraintTop_toBottomOf="@id/composer_from_hint_text_view"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <!-- To -->
+            <TextView
+                android:id="@+id/composer_to_hint_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/height_composer_field"
+                app:layout_constraintTop_toBottomOf="@id/composer_from_hint_text_view"
+                app:layout_constraintStart_toStartOf="@id/composer_fields_start_guideline"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/Proton.Text.Default.Weak"
+                android:textColor="@color/text_weak"
+                android:text="@string/composer_to" />
+
+            <ch.protonmail.android.views.MessageRecipientView
+                android:id="@+id/composer_to_recipient_view"
+                style="@style/MessageRecipientView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/height_composer_field"
+                app:layout_constraintTop_toBottomOf="@id/composer_from_spinner"
+                app:layout_constraintStart_toEndOf="@id/composer_to_hint_text_view"
+                app:layout_constraintEnd_toStartOf="@id/composer_expand_recipients_button"
+                android:layout_marginStart="@dimen/padding_m"
+                android:paddingTop="@dimen/padding_m"
+                android:paddingBottom="@dimen/padding_m"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:textCursorDrawable="@null"/>
+
+            <ImageButton
+                android:id="@+id/composer_expand_recipients_button"
+                style="@style/ProtonImage.ImageButton"
+                android:layout_width="@dimen/size_button_m"
+                android:layout_height="@dimen/size_button_m"
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/composer_from_spinner"
+                android:src="@drawable/ic_chevron_down"
+                android:tint="@color/shade_80"/>
+
+            <View
+                android:id="@+id/composer_cc_top_divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_divider"
+                android:background="@color/message_divider_gray"
+                app:layout_constraintTop_toBottomOf="@id/composer_to_recipient_view"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <!-- Cc -->
+            <TextView
+                android:id="@+id/composer_cc_hint_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/height_composer_field"
+                app:layout_constraintTop_toBottomOf="@id/composer_to_recipient_view"
+                app:layout_constraintStart_toStartOf="@id/composer_fields_start_guideline"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/Proton.Text.Default.Weak"
+                android:textColor="@color/text_weak"
+                android:text="@string/composer_cc" />
+
+            <ch.protonmail.android.views.MessageRecipientView
+                android:id="@+id/composer_cc_recipient_view"
+                style="@style/MessageRecipientView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/height_composer_field"
+                app:layout_constraintTop_toBottomOf="@id/composer_to_recipient_view"
+                app:layout_constraintStart_toEndOf="@id/composer_cc_hint_text_view"
+                app:layout_constraintEnd_toEndOf="@id/composer_fields_end_guideline"
+                android:layout_marginStart="@dimen/padding_m"
+                android:paddingTop="@dimen/padding_m"
+                android:paddingBottom="@dimen/padding_m"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:textCursorDrawable="@null" />
+
+            <View
+                android:id="@+id/composer_bcc_top_divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_divider"
+                android:background="@color/message_divider_gray"
+                app:layout_constraintTop_toBottomOf="@id/composer_cc_recipient_view"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <!-- Bcc -->
+            <TextView
+                android:id="@+id/composer_bcc_hint_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/height_composer_field"
+                app:layout_constraintTop_toBottomOf="@id/composer_cc_recipient_view"
+                app:layout_constraintStart_toStartOf="@id/composer_fields_start_guideline"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/Proton.Text.Default.Weak"
+                android:textColor="@color/text_weak"
+                android:text="@string/composer_bcc" />
+
+            <ch.protonmail.android.views.MessageRecipientView
+                android:id="@+id/composer_bcc_recipient_view"
+                style="@style/MessageRecipientView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/height_composer_field"
+                app:layout_constraintTop_toBottomOf="@id/composer_cc_recipient_view"
+                app:layout_constraintStart_toEndOf="@id/composer_bcc_hint_text_view"
+                app:layout_constraintEnd_toEndOf="@id/composer_fields_end_guideline"
+                android:layout_marginStart="@dimen/padding_m"
+                android:paddingTop="@dimen/padding_m"
+                android:paddingBottom="@dimen/padding_m"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:textCursorDrawable="@null"/>
+
+            <!-- Expanded Recipients group -->
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/composer_expanded_recipients_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="composer_cc_top_divider, composer_cc_hint_text_view, composer_cc_recipient_view, composer_bcc_top_divider, composer_bcc_hint_text_view, composer_bcc_recipient_view"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+            <View
+                android:id="@+id/composer_subject_top_divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_divider"
+                android:background="@color/message_divider_gray"
+                app:layout_constraintTop_toBottomOf="@id/composer_bcc_recipient_view"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <!-- Subject -->
+            <EditText
+                android:id="@+id/composer_subject_edit_text"
+                style="@style/ProtonInput.Plain"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                app:layout_constraintTop_toBottomOf="@id/composer_bcc_recipient_view"
+                app:layout_constraintStart_toStartOf="@id/composer_fields_start_guideline"
+                app:layout_constraintEnd_toEndOf="@id/composer_fields_end_guideline"
+                android:textAppearance="@style/Proton.Text.Default.Weak"
+                android:hint="@string/composer_subject"
+                android:imeOptions="actionNext"
+                android:inputType="textCapSentences"
+                android:minHeight="@dimen/height_composer_field" />
+
+            <View
+                android:id="@+id/composer_body_top_divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_divider"
+                android:background="@color/message_divider_gray"
+                app:layout_constraintTop_toBottomOf="@id/composer_subject_edit_text"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <!-- Body -->
+            <EditText
+                android:id="@+id/composer_message_body_edit_text"
+                style="@style/ComposeMessageBodyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/composer_subject_edit_text"
+                android:padding="@dimen/padding_composer_body"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:hint="@string/composer_compose_email"
+                android:paddingBottom="4dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/composer_body_start_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/padding_composer_body"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/composer_body_end_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/padding_composer_body"/>
+
+            <!-- Respond inline -->
+            <Button
+                android:id="@+id/composer_respond_inline_button"
+                style="@style/ProtonButton.Borderless.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/composer_message_body_edit_text"
+                app:layout_constraintEnd_toEndOf="@id/composer_body_end_guideline"
+                android:text="@string/respond_inline"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+            <!-- Quote Header -->
+            <TextView
+                android:id="@+id/composer_quote_header_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/composer_respond_inline_button"
+                app:layout_constraintStart_toStartOf="@id/composer_body_start_guideline"
+                app:layout_constraintEnd_toEndOf="@id/composer_body_end_guideline"
+                android:textSize="@dimen/h4"
+                tools:visibility="visible"
+                tools:text="@tools:sample/lorem"/>
+
+            <!-- Quoted Message -->
+            <FrameLayout
+                android:id="@+id/composer_quoted_message_container"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                app:layout_constraintStart_toStartOf="@id/composer_body_start_guideline"
+                app:layout_constraintEnd_toEndOf="@id/composer_body_end_guideline"
+                app:layout_constraintTop_toBottomOf="@id/composer_quote_header_text_view"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:layout_height="20dp"
+                tools:background="@color/green">
+                <!-- add WebView through code use application context to avoid memory leaks -->
+                <!-- https://code.google.com/p/android/issues/detail?id=9375 -->
+            </FrameLayout>
+
+            <!-- Dummy keyboard TODO: still needed? -->
+            <View
+                android:id="@+id/dummy_keyboard"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/composer_quoted_message_container"
+                android:background="@android:color/transparent"
+                android:visibility="gone" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/composer_buttons_layout"
+        android:background="@color/message_divider_gray"/>
+
+    <!-- Buttons TODO -->
+    <RelativeLayout
+        android:id="@+id/composer_buttons_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_composer_field">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ch.protonmail.android.views.MessagePasswordButton
+                android:id="@+id/set_message_password"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/compose_message_button_selector"
+                android:contentDescription="@null"
+                android:scaleType="center"
+                android:src="@drawable/ic_lock_wide" />
+
+            <View
+                android:layout_width="@dimen/divider_width"
+                android:layout_height="match_parent"
+                android:background="@color/fog_gray" />
+
+            <ImageButton
+                android:id="@+id/set_message_expiration"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/compose_message_button_selector"
+                android:contentDescription="@null"
+                android:scaleType="center"
+                android:src="@drawable/ic_hourglass" />
+
+            <View
+                android:layout_width="@dimen/divider_width"
+                android:layout_height="match_parent"
+                android:background="@color/fog_gray" />
+
+            <LinearLayout
+                android:id="@+id/add_attachments"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/compose_message_button_selector"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@null"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_paper_clip" />
+
+                <TextView
+                    android:id="@+id/attachment_count"
+                    style="@style/ComposeMessageAttachmentCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginStart="5dp" />
+
+                <TextView
+                    android:id="@+id/attachment_sync"
+                    style="@style/ComposeMessageAttachmentCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginStart="5dp"
+                    android:text="@string/sync_short"
+                    android:textSize="@dimen/h6"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <ch.protonmail.android.views.MessageExpirationView
+            android:id="@+id/message_expiration_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
