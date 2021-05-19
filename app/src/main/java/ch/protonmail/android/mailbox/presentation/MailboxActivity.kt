@@ -750,10 +750,6 @@ class MailboxActivity :
     override fun onResume() {
         super.onResume()
 
-        if (mailboxViewModel.userId != userManager.currentUserId) {
-            onAccountSwitched(AccountStateManager.AccountSwitch())
-        }
-
         mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
         registerFcmReceiver()
         checkDelinquency()

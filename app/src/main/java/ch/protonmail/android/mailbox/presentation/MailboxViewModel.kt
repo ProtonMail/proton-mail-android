@@ -114,9 +114,6 @@ class MailboxViewModel @Inject constructor(
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
 
-    val userId: Id
-        get() = userManager.requireCurrentUserId()
-
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning
     val manageLimitApproachingWarning: LiveData<Event<Boolean>>
@@ -261,8 +258,9 @@ class MailboxViewModel @Inject constructor(
         oldestItemTimestamp: Long
     ) {
         if (conversationModeEnabled(location)) {
+            val userId = userManager.currentUserId ?: return
             val locationId = labelId ?: location.messageLocationTypeValue.toString()
-            return getConversations.loadMore(userManager.requireCurrentUserId(), locationId, oldestItemTimestamp)
+            return getConversations.loadMore(userId, locationId, oldestItemTimestamp)
         }
 
         fetchMessages(
@@ -287,10 +285,13 @@ class MailboxViewModel @Inject constructor(
         uuid: String,
         refreshMessages: Boolean
     ) {
+        // UserId is needed. We currently don't support merged inbox.
+        val userId = userManager.currentUserId ?: return
+
         // When oldestMessageTimestamp is valid the request is about paginated messages (page > 1)
 
         if (refreshMessages) {
-            messageDetailsRepository.reloadDependenciesForUser(userManager.requireCurrentUserId())
+            messageDetailsRepository.reloadDependenciesForUser(userId)
         }
 
         if (oldestMessageTimestamp != null) {
@@ -299,14 +300,14 @@ class MailboxViewModel @Inject constructor(
             if (isCustomLocation) {
                 messageServiceScheduler.fetchMessagesOlderThanTimeByLabel(
                     location,
-                    userManager.requireCurrentUserId(),
+                    userId,
                     oldestMessageTimestamp,
                     labelId ?: ""
                 )
             } else {
                 messageServiceScheduler.fetchMessagesOlderThanTime(
                     location,
-                    userManager.requireCurrentUserId(),
+                    userId,
                     oldestMessageTimestamp
                 )
             }
@@ -327,9 +328,10 @@ class MailboxViewModel @Inject constructor(
         location: Constants.MessageLocationType,
         labelId: String?
     ): LiveData<MailboxState> {
+        val userId = userManager.currentUserId ?: return MutableLiveData(MailboxState(noMoreItems = true))
         val locationId = labelId ?: location.messageLocationTypeValue.toString()
         return getConversations(
-            userManager.requireCurrentUserId(), locationId
+            userId, locationId
         ).map { result ->
             when (result) {
                 is GetConversationsResult.Success -> {
@@ -351,6 +353,9 @@ class MailboxViewModel @Inject constructor(
         conversations: List<Conversation>,
         locationId: String
     ): List<MailboxUiItem> {
+        // Note for future: Get userId from Conversation (should contain it).
+        val userId = userManager.currentUserId ?: return emptyList()
+
         val contacts = contactsRepository.findAllContactEmails().first()
         val labels = labelRepository.findAllLabels(UserId(userId.s)).first()
 
@@ -392,6 +397,9 @@ class MailboxViewModel @Inject constructor(
         }
 
     private suspend fun messagesToMailboxItems(messages: List<Message>): List<MailboxUiItem> {
+        // Note for future: Get userId from Message (should contain it).
+        val userId = userManager.currentUserId ?: return emptyList()
+
         val contacts = contactsRepository.findAllContactEmails().first()
         val labels = labelRepository.findAllLabels(UserId(userId.s)).first()
 
