@@ -22,13 +22,13 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.UserManager
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.util.android.workmanager.toWorkData
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -72,7 +72,9 @@ class FetchContactsEmailsWorkerTest {
             val exceptionMessage = "testException"
             val testException = Exception(exceptionMessage)
             coEvery { contactEmailsManager.refresh() } throws testException
-            val expected = ListenableWorker.Result.failure(WorkerError(exceptionMessage).toWorkData())
+            val expected = ListenableWorker.Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $exceptionMessage")
+            )
 
             // when
             val operationResult = worker.doWork()
