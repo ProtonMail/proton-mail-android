@@ -1420,7 +1420,7 @@ class MailboxActivity :
                         mailboxActivity, MessageDetailsActivity::class.java
                     )
                 )
-                intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, messageId)
+                intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_OR_CONVERSATION_ID, messageId)
                 intent.putExtra(
                     MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID,
                     messageLocation?.messageLocationTypeValue

@@ -167,7 +167,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        messageId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_ID))
+        messageId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_OR_CONVERSATION_ID))
         messageRecipientUserId = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USER_ID)?.let(::Id)
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
         val currentUser = mUserManager.requireCurrentUser()
@@ -862,8 +862,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     companion object {
 
-        const val EXTRA_MESSAGE_ID = "messageId"
-        const val EXTRA_MESSAGE_LOCATION_ID = "location"
+        const val EXTRA_MESSAGE_OR_CONVERSATION_ID = "messageOrConversationId"
+        const val EXTRA_MESSAGE_LOCATION_ID = "messageOrConversationLocation"
 
         const val EXTRA_MESSAGE_RECIPIENT_USER_ID = "message_recipient_user_id"
         const val EXTRA_MESSAGE_RECIPIENT_USERNAME = "message_recipient_username"

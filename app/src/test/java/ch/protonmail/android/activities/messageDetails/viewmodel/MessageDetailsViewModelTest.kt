@@ -33,8 +33,8 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
-import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_ID
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_LOCATION_ID
+import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_OR_CONVERSATION_ID
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
@@ -98,7 +98,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     private val savedStateHandle = mockk<SavedStateHandle> {
-        every { get<String>(EXTRA_MESSAGE_ID) } returns INPUT_ITEM_DETAIL_ID
+        every { get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns INPUT_ITEM_DETAIL_ID
         every { get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns INBOX.messageLocationTypeValue
     }
 
@@ -236,7 +236,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             val userId = Id("userId3")
             every { userManager.requireCurrentUserId() } returns userId
             coEvery { conversationModeEnabled(inputMessageLocation) } returns true
-            every { savedStateHandle.get<String>(EXTRA_MESSAGE_ID) } returns inputConversationId
+            every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
             every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
                 inputMessageLocation.messageLocationTypeValue
 
@@ -277,7 +277,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             )
             every { userManager.requireCurrentUserId() } returns userId
             coEvery { conversationModeEnabled(inputMessageLocation) } returns true
-            every { savedStateHandle.get<String>(EXTRA_MESSAGE_ID) } returns inputConversationId
+            every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
             every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
                 inputMessageLocation.messageLocationTypeValue
             coEvery { conversationRepository.getConversation(inputConversationId, userId) } returns
@@ -308,7 +308,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             val conversationId = UUID.randomUUID().toString()
             every { userManager.requireCurrentUserId() } returns userId
             coEvery { conversationModeEnabled(inputMessageLocation) } returns true
-            every { savedStateHandle.get<String>(EXTRA_MESSAGE_ID) } returns inputConversationId
+            every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
             every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
                 inputMessageLocation.messageLocationTypeValue
             coEvery { conversationRepository.getConversation(inputConversationId, userId) } returns
@@ -333,7 +333,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             val errorObserver = viewModel.messageDetailsError.testObserver()
             every { userManager.requireCurrentUserId() } returns userId
             coEvery { conversationModeEnabled(inputMessageLocation) } returns true
-            every { savedStateHandle.get<String>(EXTRA_MESSAGE_ID) } returns inputConversationId
+            every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
             every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
                 inputMessageLocation.messageLocationTypeValue
             coEvery { conversationRepository.getConversation(inputConversationId, userId) } returns

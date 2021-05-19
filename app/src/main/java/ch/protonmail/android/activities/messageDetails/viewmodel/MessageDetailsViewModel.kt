@@ -121,8 +121,9 @@ internal class MessageDetailsViewModel @Inject constructor(
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
-    private val messageId: String = savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID)
-        ?: throw IllegalStateException("messageId in MessageDetails is Empty!")
+    private val messageOrConversationId: String =
+        savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MESSAGE_OR_CONVERSATION_ID)
+            ?: throw IllegalStateException("messageId in MessageDetails is Empty!")
 
     private val location: Constants.MessageLocationType by lazy {
         Constants.MessageLocationType.fromInt(
@@ -132,13 +133,13 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     private val messageRenderer
-        by lazy { messageRendererFactory.create(viewModelScope, messageId) }
+        by lazy { messageRendererFactory.create(viewModelScope, messageOrConversationId) }
 
     private val messageFlow: Flow<Message?> =
         userManager.primaryUserId
             .flatMapLatest { userId ->
                 if (userId != null) {
-                    messageRepository.findMessage(userId, messageId)
+                    messageRepository.findMessage(userId, messageOrConversationId)
                 } else {
                     emptyFlow()
                 }
@@ -148,7 +149,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         messageFlow.asLiveData(viewModelScope.coroutineContext)
 
     val conversation: LiveData<Conversation?> =
-        conversationRepository.getConversation(messageId, userManager.requireCurrentUserId()).map {
+        conversationRepository.getConversation(messageOrConversationId, userManager.requireCurrentUserId()).map {
             if (it is DataResult.Success) {
                 return@map it.value
             } else {
@@ -205,7 +206,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         messageDetailsRepository.findAttachments(message).distinctUntilChanged()
     }
     val pendingSend: LiveData<PendingSend?> by lazy {
-        messageDetailsRepository.findPendingSendByOfflineMessageIdAsync(messageId)
+        messageDetailsRepository.findPendingSendByOfflineMessageIdAsync(messageOrConversationId)
     }
 
     val checkStoragePermission: LiveData<Event<Boolean>>
@@ -260,7 +261,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun markUnread() {
-        messageRepository.markUnRead(listOf(messageId))
+        messageRepository.markUnRead(listOf(messageOrConversationId))
     }
 
     fun loadMessageDetails() {
@@ -268,7 +269,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             val userId = userManager.requireCurrentUserId()
 
             if (conversationModeEnabled(location)) {
-                conversationRepository.getConversation(messageId, userId)
+                conversationRepository.getConversation(messageOrConversationId, userId)
                     .map { result ->
                         if (result is DataResult.Success) {
                             val conversation = result.value
@@ -278,21 +279,21 @@ internal class MessageDetailsViewModel @Inject constructor(
                             Timber.v("Loaded conversation ${conversation.id} with ${messages?.size} messages")
                             onMessageLoaded(messages.orEmpty())
                         } else if (result is DataResult.Error) {
-                            Timber.d("Error loading conversation $messageId")
+                            Timber.d("Error loading conversation $messageOrConversationId")
                             onMessageLoaded(emptyList())
                         }
                     }.first()
                 return@launch
             }
 
-            val message = messageRepository.getMessage(userId, messageId, true)
+            val message = messageRepository.getMessage(userId, messageOrConversationId, true)
             onMessageLoaded(listOf(message))
         }
     }
 
     private suspend fun onMessageLoaded(messages: List<Message?>) {
         if (messages.isEmpty() || messages.any { it == null }) {
-            Timber.d("Failed fetching Message Details for message $messageId")
+            Timber.d("Failed fetching Message Details for message $messageOrConversationId")
             _messageDetailsError.postValue(Event("Failed getting message details"))
             return
         }
@@ -356,7 +357,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
         viewModelScope.launch(dispatchers.Io) {
 
-            val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(messageId)
+            val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(messageOrConversationId)
             val embeddedImages = _embeddedImagesAttachments.mapNotNull {
                 attachmentsHelper.fromAttachmentToEmbeddedImage(
                     it, decryptedMessageData.value!!.messages.last().embeddedImageIds.toList()
@@ -378,7 +379,9 @@ internal class MessageDetailsViewModel @Inject constructor(
             ) {
                 AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImagesWithLocalFiles))
             } else {
-                messageDetailsRepository.startDownloadEmbeddedImages(messageId, userManager.requireCurrentUserId())
+                messageDetailsRepository.startDownloadEmbeddedImages(
+                    messageOrConversationId, userManager.requireCurrentUserId()
+                )
             }
         }
     }
@@ -599,7 +602,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun moveToTrash() {
         moveMessagesToFolder(
-            listOf(messageId),
+            listOf(messageOrConversationId),
             Constants.MessageLocationType.TRASH.toString(),
             message.value?.folderLocation ?: EMPTY_STRING
         )
