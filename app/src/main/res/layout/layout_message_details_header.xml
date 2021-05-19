@@ -18,14 +18,13 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout
+<merge
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="@dimen/message_details_header_padding_horizontal"
-    android:paddingVertical="@dimen/message_details_header_padding_vertical">
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <ch.protonmail.android.views.messagesList.SenderInitialView
         android:id="@+id/senderInitialView"
@@ -350,4 +349,4 @@
         storageTextView, learnMoreTextView"
         tools:visibility="visible"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</merge>
