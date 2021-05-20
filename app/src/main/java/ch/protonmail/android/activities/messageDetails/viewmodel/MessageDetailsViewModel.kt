@@ -34,7 +34,6 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.map
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessagePrinter
@@ -231,12 +230,6 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
         }
 
-    val messageAttachments: LiveData<List<Attachment>> =
-        conversationUiModel.switchMap {
-            val message = it.messages.last()
-            messageDetailsRepository.findAttachments(message).distinctUntilChanged()
-        }
-
     val pendingSend: LiveData<PendingSend?> by lazy {
         messageDetailsRepository.findPendingSendByOfflineMessageIdAsync(messageOrConversationId)
     }
@@ -257,7 +250,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         get() = _prepareEditMessageIntentResult
 
     val decryptedMessageData: LiveData<ConversationUiModel>
-        get() = _decryptedMessageLiveData
+        get() = _decryptedMessageLiveData.distinctUntilChanged()
 
     val webViewContentWithoutImages = MutableLiveData<String>()
     val webViewContentWithImages = MutableLiveData<String>()
@@ -349,7 +342,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         withContext(dispatchers.Comp) {
             message.tryDecrypt(publicKeys) ?: false
         }
-        Timber.v("Emitting Message Detail = $message keys size: ${publicKeys?.size}")
+        Timber.v("Emitting Message Detail = ${message.messageId} keys size: ${publicKeys?.size}")
         _decryptedMessageLiveData.postValue(conversationFrom(messages))
     }
 
@@ -595,10 +588,6 @@ internal class MessageDetailsViewModel @Inject constructor(
         if (renderingPassed && message != null) {
             RegisterReloadTask(message).execute()
         }
-    }
-
-    fun setAttachmentsList(attachments: List<Attachment>) {
-        conversationUiModel.value?.messages?.last()?.setAttachmentList(attachments)
     }
 
     fun isPgpEncrypted(): Boolean =

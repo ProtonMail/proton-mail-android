@@ -83,8 +83,10 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.android.synthetic.main.layout_message_details_activity_toolbar.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
@@ -518,40 +520,36 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private var prevAttachments: List<Attachment>? = null
 
-    private inner class AttachmentsObserver : Observer<List<Attachment>?> {
-
-        override fun onChanged(newAttachments: List<Attachment>?) {
-            /* Workaround for don't let it loop. TODO: Find the cause of the infinite loop after
-            Attachments are downloaded and screen has been locked / unlocked */
-            val attachments: List<Attachment>?
-            var loadImages = false
-            if (newAttachments != null && newAttachments == prevAttachments) {
-                attachments = prevAttachments
-            } else {
-                // load images only if there is a difference in attachments from the previous load
-                loadImages = true
-                prevAttachments = newAttachments
-                attachments = prevAttachments
-            }
-            if (attachments != null) {
-                viewModel.setAttachmentsList(attachments)
-                val hasEmbeddedImages = viewModel.prepareEmbeddedImages()
-                if (hasEmbeddedImages) {
-                    if (isAutoShowEmbeddedImages || viewModel.isEmbeddedImagesDisplayed()) {
-                        if (loadImages) {
-                            viewModel.displayEmbeddedImages()
-                        }
-                        messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
-                    } else {
-                        messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.VISIBLE)
+    fun showMessageAttachments(newAttachments: List<Attachment>?) {
+        /* Workaround for don't let it loop. TODO: Find the cause of the infinite loop after
+        Attachments are downloaded and screen has been locked / unlocked */
+        val attachments: List<Attachment>?
+        var loadImages = false
+        if (newAttachments != null && newAttachments == prevAttachments) {
+            attachments = prevAttachments
+        } else {
+            // load images only if there is a difference in attachments from the previous load
+            loadImages = true
+            prevAttachments = newAttachments
+            attachments = prevAttachments
+        }
+        if (attachments != null) {
+            val hasEmbeddedImages = viewModel.prepareEmbeddedImages()
+            if (hasEmbeddedImages) {
+                if (isAutoShowEmbeddedImages || viewModel.isEmbeddedImagesDisplayed()) {
+                    if (loadImages) {
+                        viewModel.displayEmbeddedImages()
                     }
-                } else {
                     messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
+                } else {
+                    messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.VISIBLE)
                 }
-                displayAttachmentInfo(attachments)
             } else {
-                messageExpandableAdapter.displayAttachmentsViews(View.GONE)
+                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
             }
+            displayAttachmentInfo(attachments)
+        } else {
+            messageExpandableAdapter.displayAttachmentsViews(View.GONE)
         }
     }
 
@@ -590,7 +588,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             }
 
             Timber.v("New decrypted message ${message.messageId}")
-            viewModel.messageAttachments.observe(this@MessageDetailsActivity, AttachmentsObserver())
             viewModel.renderedFromCache = AtomicBoolean(true)
             val decryptedBody = getDecryptedBody(message.decryptedHTML)
             if (decryptedBody.isEmpty() || message.messageBody.isNullOrEmpty()) {
@@ -600,6 +597,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
             messageExpandableAdapter.setMessageData(message)
             messageExpandableAdapter.refreshRecipientsLayout()
+            showAttachmentsDelayed(message)
             if (viewModel.refreshedKeys) {
                 filterAndLoad(decryptedBody)
                 messageExpandableAdapter.mode = MODE_ACCORDION
@@ -635,6 +633,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             progress.visibility = View.GONE
             invalidateOptionsMenu()
             viewModel.renderingPassed = true
+        }
+
+        private fun showAttachmentsDelayed(message: Message) {
+            this@MessageDetailsActivity.lifecycleScope.launch {
+                val showAttachmentsDelay = 200L
+                delay(showAttachmentsDelay)
+                showMessageAttachments(message.Attachments)
+            }
         }
     }
 
