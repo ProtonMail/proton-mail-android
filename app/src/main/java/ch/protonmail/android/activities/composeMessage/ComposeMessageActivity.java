@@ -110,7 +110,6 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.activities.AddAttachmentsActivity;
 import ch.protonmail.android.activities.BaseContactsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
-import ch.protonmail.android.adapters.MessageRecipientViewAdapter;
 import ch.protonmail.android.api.models.MessageRecipient;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
@@ -121,6 +120,7 @@ import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker;
 import ch.protonmail.android.attachments.ImportAttachmentsWorker;
 import ch.protonmail.android.compose.ComposeMessageViewModel;
 import ch.protonmail.android.compose.ComposeMessageViewModelFactory;
+import ch.protonmail.android.compose.presentation.ui.MessageRecipientArrayAdapter;
 import ch.protonmail.android.compose.recipients.GroupRecipientsDialogFragment;
 import ch.protonmail.android.contacts.PostResult;
 import ch.protonmail.android.core.Constants;
@@ -244,7 +244,7 @@ public class ComposeMessageActivity
     private WebView mMessageBody;
     private PMWebViewClient pmWebViewClient;
     final String newline = "<br>";
-    private MessageRecipientViewAdapter mMessageRecipientViewAdapter;
+    private MessageRecipientArrayAdapter recipientAdapter;
     private boolean mAreAdditionalRowsVisible;
 
     private int mSelectedAddressPosition = 0;
@@ -341,10 +341,10 @@ public class ComposeMessageActivity
 
         binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new KeyboardManager());
 
-        mMessageRecipientViewAdapter = new MessageRecipientViewAdapter(this);
-        initRecipientsView(toRecipientView, mMessageRecipientViewAdapter, Constants.RecipientLocationType.TO);
-        initRecipientsView(ccRecipientView, mMessageRecipientViewAdapter, Constants.RecipientLocationType.CC);
-        initRecipientsView(bccRecipientView, mMessageRecipientViewAdapter, Constants.RecipientLocationType.BCC);
+        recipientAdapter = new MessageRecipientArrayAdapter(this);
+        initRecipientsView(toRecipientView, recipientAdapter, Constants.RecipientLocationType.TO);
+        initRecipientsView(ccRecipientView, recipientAdapter, Constants.RecipientLocationType.CC);
+        initRecipientsView(bccRecipientView, recipientAdapter, Constants.RecipientLocationType.BCC);
         subjectEditText.setSelection(subjectEditText.getText().length(), subjectEditText.getText().length());
 
         mMessageBody = new WebView(this);
@@ -1461,7 +1461,7 @@ public class ComposeMessageActivity
 
     @Subscribe
     public void onPostLoadContactsEvent(PostLoadContactsEvent event) {
-        mMessageRecipientViewAdapter.setData(event.recipients);
+        recipientAdapter.setData(event.recipients);
     }
 
     @Subscribe
@@ -1731,7 +1731,7 @@ public class ComposeMessageActivity
     private void loadPMContacts() {
         if (mUserManager.getCurrentLegacyUser().getCombinedContacts()) {
             composeMessageViewModel.getMergedContactsLiveData().observe(this, messageRecipients -> {
-                mMessageRecipientViewAdapter.setData(messageRecipients);
+                recipientAdapter.setData(messageRecipients);
             });
             Set<Id> userIds = AccountManagerKt.allLoggedInBlocking(accountManager);
             for(Id userId : userIds) {
@@ -1741,11 +1741,11 @@ public class ComposeMessageActivity
         } else {
 
             composeMessageViewModel.getContactGroupsResult().observe(this, messageRecipients -> {
-                mMessageRecipientViewAdapter.setData(messageRecipients);
+                recipientAdapter.setData(messageRecipients);
             });
             composeMessageViewModel.fetchContactGroups(mUserManager.requireCurrentUserId());
             composeMessageViewModel.getPmMessageRecipientsResult().observe(this, messageRecipients -> {
-                mMessageRecipientViewAdapter.setData(messageRecipients);
+                recipientAdapter.setData(messageRecipients);
             });
             composeMessageViewModel.loadPMContacts();
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
@@ -1766,7 +1766,7 @@ public class ComposeMessageActivity
                 fromAndroidCursor(data);
             }
             composeMessageViewModel.getAndroidMessageRecipientsResult().observe(this, messageRecipients -> {
-                mMessageRecipientViewAdapter.setData(messageRecipients); // no groups
+                recipientAdapter.setData(messageRecipients); // no groups
             });
             composeMessageViewModel.onAndroidContactsLoaded();
         }
