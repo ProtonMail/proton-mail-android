@@ -256,12 +256,15 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         val windowWidth = 500
         val defaultErrorMessage = "errorHappened"
         val cssContent = "css"
+        val darkCssContent = "darkCss"
         val expected =
-            "<html>\n <head>\n  <style>$cssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessageContent  \n  </div>\n </body>\n</html>"
-
+            "<html>\n <head>\n  <style>$cssContent$darkCssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessageContent  \n  </div>\n </body>\n</html>"
+        
         // when
         val parsedMessage =
-            viewModel.formatMessageHtmlBody(decryptedMessage, windowWidth, cssContent, defaultErrorMessage)
+            viewModel.formatMessageHtmlBody(
+                decryptedMessage, windowWidth, cssContent, darkCssContent, defaultErrorMessage
+            )
 
         // then
         assertEquals(expected, parsedMessage)
@@ -277,6 +280,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         }
         val decryptedConversationObserver = viewModel.decryptedConversationUiModel.testObserver()
         val cssContent = "css"
+        val darkCssContent = "darkCss"
         val windowWidth = 500
 
         val conversationId = UUID.randomUUID().toString()
@@ -291,11 +295,11 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         // when
         userIdFlow.tryEmit(testUserId2)
         observeConversationFlow.tryEmit(conversationResult)
-        viewModel.formatMessageHtmlBody(decryptedMessage, windowWidth, cssContent, "errorHappened")
+        viewModel.formatMessageHtmlBody(decryptedMessage, windowWidth, cssContent, darkCssContent, "errorHappened")
 
         // then
         val expectedMessageContent =
-            "<html>\n <head>\n  <style>$cssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessageContent  \n  </div>\n </body>\n</html>"
+            "<html>\n <head>\n  <style>$cssContent$darkCssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessageContent  \n  </div>\n </body>\n</html>"
         verify { conversationMessage setProperty "decryptedHTML" value expectedMessageContent }
         assertEquals(conversationMessage, decryptedConversationObserver.observedValues.last()!!.messages[0])
     }

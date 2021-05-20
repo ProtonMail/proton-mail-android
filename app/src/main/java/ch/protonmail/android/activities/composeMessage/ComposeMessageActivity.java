@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -1637,8 +1638,12 @@ public class ComposeMessageActivity
 
         String content = composeMessageViewModel.getMessageDataResult().getContent();
         if (!respondInline) {
-            String css = AppUtil.readTxt(this, R.raw.editor);
-            Transformer viewportTransformer = new ViewportTransformer(UiUtil.getRenderWidth(getWindowManager()), css);
+            String css = AppUtil.readTxt(this, R.raw.css_reset_with_custom_props);
+            String darkCss = "";
+            if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+                darkCss = AppUtil.readTxt(this, R.raw.css_reset_dark_mode_only);
+            }
+            Transformer viewportTransformer = new ViewportTransformer(UiUtil.getRenderWidth(getWindowManager()), css, darkCss);
             Transformer contentTransformer = new DefaultTransformer()
                     .pipe(viewportTransformer)
                     .pipe(new AbstractTransformer() {
@@ -1677,8 +1682,12 @@ public class ComposeMessageActivity
         if (event.getStatus().equals(Status.SUCCESS)) {
             Timber.v("onDownloadEmbeddedImagesEvent %s", event.getStatus());
             String content = composeMessageViewModel.getMessageDataResult().getContent();
-            String css = AppUtil.readTxt(this, R.raw.editor);
-            Transformer contentTransformer = new ViewportTransformer(UiUtil.getRenderWidth(getWindowManager()), css);
+            String css = AppUtil.readTxt(this, R.raw.css_reset_with_custom_props);
+            String darkCss = "";
+            if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+                darkCss = AppUtil.readTxt(this, R.raw.css_reset_dark_mode_only);
+            }
+            Transformer contentTransformer = new ViewportTransformer(UiUtil.getRenderWidth(getWindowManager()), css, darkCss);
             Document doc = Jsoup.parse(content);
             doc.outputSettings().indentAmount(0).prettyPrint(false);
             doc = contentTransformer.transform(doc);
