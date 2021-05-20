@@ -49,11 +49,8 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     override fun messages(location: Int, userIdTag: UserIdTag): MessagesResponse =
         ParseUtils.parse(service.messages(location, "time", "", "", userIdTag).execute())
 
-    override fun fetchMessages(location: Int, time: Long): MessagesResponse? {
-        return if (Constants.MessageLocationType.fromInt(location) == Constants.MessageLocationType.STARRED) {
-            ParseUtils.parse(service.fetchStarredMessages(1, time).execute())
-        } else ParseUtils.parse(service.fetchMessages(location, time).execute())
-    }
+    override fun fetchMessages(location: Int, time: Long): MessagesResponse? =
+        ParseUtils.parse(service.fetchMessages(location, time).execute())
 
     override suspend fun fetchMessageMetadata(messageId: String, userIdTag: UserIdTag): MessagesResponse =
         service.fetchMessageMetadata(messageId, userIdTag)

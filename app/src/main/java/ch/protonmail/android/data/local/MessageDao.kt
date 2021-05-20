@@ -73,13 +73,20 @@ abstract class MessageDao {
     )
     abstract fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message>
 
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_IS_STARRED = 1")
+    @Query(
+        """
+        SELECT *
+        FROM $TABLE_MESSAGES
+        WHERE $COLUMN_MESSAGE_IS_STARRED = 1
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+    """
+    )
     abstract fun getStarredMessagesAsync(): LiveData<List<Message>>
 
     @Query(
         """
-        SELECT * 
-        FROM $TABLE_MESSAGES 
+        SELECT *
+        FROM $TABLE_MESSAGES
         WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
