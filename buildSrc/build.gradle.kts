@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  */
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.4.30-RC"
+    kotlin("jvm") version "1.4.32"
 }
 
 repositories {
@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    val android =       "4.0.1"         // Released: Jul 14, 2020
+    val android =       "4.2.0"         // Released: May, 2021
     val easyGradle =    "2.7"           // Released: Oct 15, 2020
 
     // Needed for setup Android config

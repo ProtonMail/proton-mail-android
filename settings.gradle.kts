@@ -28,8 +28,6 @@ println("Modules: ${modules.sorted().joinToString()}")
 for (p in projects) includeBuild(p)
 for (m in modules) include(m)
 
-enableFeaturePreview("GRADLE_METADATA")
-
 pluginManagement {
     repositories {
         mavenCentral()
