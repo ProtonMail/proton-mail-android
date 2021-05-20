@@ -369,6 +369,14 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     }
 
     private fun onContactClick(contactItem: ContactItem) {
+        if (getSelectedItems().isEmpty()) {
+            showDetails(contactItem)
+        } else {
+            onContactSelect(contactItem)
+        }
+    }
+
+    private fun showDetails(contactItem: ContactItem) {
         if (contactItem.isProtonMailContact) {
             activity?.startContactDetails(contactItem.contactId!!)
         } else {

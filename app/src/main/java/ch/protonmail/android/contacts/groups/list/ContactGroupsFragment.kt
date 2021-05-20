@@ -137,6 +137,12 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         startObserving()
     }
 
+    override fun onStop() {
+        actionMode?.finish()
+        actionMode = null
+        super.onStop()
+    }
+
     override fun updateRecyclerViewBottomPadding(@Px size: Int) {
         contactGroupsRecyclerView.updatePadding(bottom = size)
     }
@@ -222,6 +228,14 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
     }
 
     private fun onContactGroupClick(labelItem: ContactGroupListItem) {
+        if (getSelectedItems().isEmpty()) {
+            showDetails(labelItem)
+        } else {
+            onContactGroupSelect(labelItem)
+        }
+    }
+
+    private fun showDetails(labelItem: ContactGroupListItem) {
         val detailsIntent = Intent(context, ContactGroupDetailsActivity::class.java)
         val bundle = Bundle()
         bundle.putParcelable(EXTRA_CONTACT_GROUP, labelItem)
@@ -260,14 +274,6 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         }
 
         contactGroupsViewModel.getContactGroupEmails(contactGroup)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (actionMode != null) {
-            actionMode!!.finish()
-            actionMode = null
-        }
     }
 
     private fun getSelectedItems() = contactGroupsAdapter.currentList.filter { it.isSelected }

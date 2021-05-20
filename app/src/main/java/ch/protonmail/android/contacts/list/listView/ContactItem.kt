@@ -25,9 +25,9 @@ data class ContactItem(
     val isProtonMailContact: Boolean,
     val name: String = EMPTY_STRING,
     val contactEmails: String? = null,
-    var additionalEmailsCount: Int = 0,
+    val additionalEmailsCount: Int = 0,
     val contactId: String? = null,
-    var isSelected: Boolean = false,
+    val isSelected: Boolean = false,
     val initials: String = EMPTY_STRING,
     @StringRes val headerStringRes: Int? = null
 )

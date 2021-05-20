@@ -49,7 +49,7 @@ class ContactItemListFactory {
                 val contactId = contactItem.contactId ?: continue
                 val item = contactsMap[contactId]
                 if (item != null) {
-                    item.additionalEmailsCount = item.additionalEmailsCount + 1
+                    contactsMap[contactId] = item.copy(additionalEmailsCount = item.additionalEmailsCount + 1)
                 } else {
                     contactsMap[contactId] = contactItem
                     contactsList.add(contactItem)
