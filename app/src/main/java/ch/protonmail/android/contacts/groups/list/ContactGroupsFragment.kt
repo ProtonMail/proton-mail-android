@@ -95,6 +95,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
     override fun onDestroyActionMode(mode: ActionMode?) {
         actionMode?.finish()
         actionMode = null
+        resetSelections()
 
         listener.setTitle(getString(R.string.contacts))
     }
@@ -136,6 +137,10 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         startObserving()
     }
 
+    override fun updateRecyclerViewBottomPadding(@Px size: Int) {
+        contactGroupsRecyclerView.updatePadding(bottom = size)
+    }
+
     private fun initAdapter() {
         contactGroupsAdapter = ContactsGroupsListAdapter(
             this::onContactGroupClick,
@@ -158,10 +163,6 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         }
     }
 
-    override fun updateRecyclerViewBottomPadding(@Px size: Int) {
-        contactGroupsRecyclerView.updatePadding(bottom = size)
-    }
-
     private fun startObserving() {
         contactGroupsViewModel.contactGroupsResult.observe(this) { list ->
             Timber.d("contactGroupsResult size: ${list.size}")
@@ -181,6 +182,16 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
             }
         }
         contactGroupsViewModel.observeContactGroups()
+    }
+
+    private fun resetSelections() {
+        val unselectedItems = contactGroupsAdapter.currentList.map { item ->
+            if (item.isSelected) {
+                item.copy(isSelected = false)
+            } else
+                item
+        }
+        contactGroupsAdapter.submitList(unselectedItems)
     }
 
     private fun onContactGroupSelect(labelItem: ContactGroupListItem) {

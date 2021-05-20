@@ -136,6 +136,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     override fun onDestroyActionMode(mode: ActionMode?) {
         actionMode?.finish()
         actionMode = null
+        resetSelections()
 
         listener.setTitle(getString(R.string.contacts))
     }
@@ -206,6 +207,10 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         startObserving()
     }
 
+    override fun getLayoutResourceId() = R.layout.fragment_contacts
+
+    override fun getFragmentKey() = TAG_CONTACTS_LIST_FRAGMENT
+
     private fun startObserving() {
         viewModel.contactItems.observe(viewLifecycleOwner) { contactItems ->
             Timber.v("New Contact items size: ${contactItems.size}")
@@ -234,9 +239,15 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         }
     }
 
-    override fun getLayoutResourceId() = R.layout.fragment_contacts
-
-    override fun getFragmentKey() = TAG_CONTACTS_LIST_FRAGMENT
+    private fun resetSelections() {
+        val unselectedItems = contactsAdapter.currentList.map { item ->
+            if (item.isSelected) {
+                item.copy(isSelected = false)
+            } else
+                item
+        }
+        contactsAdapter.submitList(unselectedItems)
+    }
 
     fun optionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {

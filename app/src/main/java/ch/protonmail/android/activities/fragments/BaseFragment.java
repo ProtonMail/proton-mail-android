@@ -19,21 +19,19 @@
 package ch.protonmail.android.activities.fragments;
 
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import ch.protonmail.android.R;
 
-/**
- * Created by dkadrikj on 17.7.15.
- */
 public abstract class BaseFragment extends Fragment {
 
     @Nullable
