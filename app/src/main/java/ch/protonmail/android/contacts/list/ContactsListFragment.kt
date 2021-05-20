@@ -111,18 +111,18 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     private fun getSelectedContactsIds(): List<String> = getSelectedItems().mapNotNull { it.contactId }
 
     override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
-        val noProtonContacts = getSelectedItems().none(
+        val selectedItems = getSelectedItems()
+        val noProtonContactsSelected = selectedItems.isNotEmpty() && selectedItems.none(
             ContactItem::isProtonMailContact
         )
-        Timber.v("onPrepareActionMode noProtonContacts: $noProtonContacts")
-        menu.findItem(R.id.transform_phone_contacts).isVisible = noProtonContacts
+        Timber.v("onPrepareActionMode noProton: $noProtonContactsSelected selected count: ${selectedItems.size}")
+        menu.findItem(R.id.transform_phone_contacts).isVisible = noProtonContactsSelected
         return true
     }
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         mode.menuInflater.inflate(R.menu.contacts_selection_menu, menu)
         actionMode = mode
-        Timber.v("onCreateActionMode $mode")
         return true
     }
 
@@ -393,12 +393,9 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
                 item
             }
         }
-        contactsAdapter.submitList(updatedItems)
 
         if (actionMode == null) {
             actionMode = listener.doStartActionMode(this@ContactsListFragment)
-        } else {
-            actionMode?.invalidate()
         }
 
         val checkedItemsCount = updatedItems.filter { it.isSelected }.size
@@ -408,6 +405,11 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         } else {
             actionMode?.title =
                 String.format(getString(R.string.contact_group_selected), checkedItemsCount)
+        }
+
+        Timber.v("onContactSelect update list")
+        contactsAdapter.submitList(updatedItems) {
+            actionMode?.invalidate()
         }
     }
 
