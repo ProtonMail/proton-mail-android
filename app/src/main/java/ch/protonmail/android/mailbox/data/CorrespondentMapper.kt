@@ -17,13 +17,14 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.details.presentation.model
+package ch.protonmail.android.mailbox.data
 
-import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.api.models.MessageRecipient
+import ch.protonmail.android.data.local.model.MessageSender
+import ch.protonmail.android.mailbox.domain.model.Correspondent
 
-data class ConversationUiModel(
-    val isStarred: Boolean,
-    val subject: String?,
-    val labelIds: List<String>,
-    val messages: List<Message>
-)
+internal fun Correspondent.toMessageSender() = MessageSender(name, address)
+
+internal fun Correspondent.toMessageRecipient() = MessageRecipient(name, address)
+
+internal fun List<Correspondent>.toMessageRecipients() = map { it.toMessageRecipient() }

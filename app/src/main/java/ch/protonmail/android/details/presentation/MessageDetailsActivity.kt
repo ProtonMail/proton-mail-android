@@ -202,10 +202,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun continueSetup() {
-        viewModel.message.observe(this) { viewModel.loadMessageDetails() }
-        viewModel.conversation.observe(this) {
-            if (it != null) viewModel.loadMessageDetails()
-        }
+        viewModel.conversationUiModel.observe(this) { viewModel.loadMessageDetails() }
         viewModel.decryptedMessageData.observe(this, DecryptedMessageObserver())
 
         viewModel.labels

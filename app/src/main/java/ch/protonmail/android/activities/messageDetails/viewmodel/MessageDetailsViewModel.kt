@@ -30,8 +30,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessagePrinter
@@ -53,6 +56,7 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
+import ch.protonmail.android.details.data.toDbModelList
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
@@ -61,7 +65,6 @@ import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
@@ -79,6 +82,8 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -98,6 +103,8 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
+
+private const val STARRED_LABEL_ID = "10"
 
 @HiltViewModel
 internal class MessageDetailsViewModel @Inject constructor(
@@ -135,26 +142,51 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val messageRenderer
         by lazy { messageRendererFactory.create(viewModelScope, messageOrConversationId) }
 
-    private val messageFlow: Flow<Message?> =
-        userManager.primaryUserId
-            .flatMapLatest { userId ->
-                if (userId != null) {
-                    messageRepository.findMessage(userId, messageOrConversationId)
-                } else {
-                    emptyFlow()
+    val conversationUiModel: LiveData<ConversationUiModel>
+        get() {
+            return if (conversationModeEnabled(location)) {
+                getConversationLiveData().distinctUntilChanged().map { conversation ->
+                    ConversationUiModel(
+                        conversation.labels.any { it.id == STARRED_LABEL_ID },
+                        conversation.subject,
+                        conversation.labels.map { it.id },
+                        conversation.messages?.toDbModelList().orEmpty()
+                    )
+                }
+            } else {
+                getMessageLiveData().distinctUntilChanged().map {
+                    ConversationUiModel(
+                        it.isStarred ?: false,
+                        it.subject,
+                        it.labelIDsNotIncludingLocations,
+                        listOf(it)
+                    )
                 }
             }
+        }
 
-    val message: LiveData<Message?> =
-        messageFlow.asLiveData(viewModelScope.coroutineContext)
-
-    val conversation: LiveData<Conversation?> =
-        conversationRepository.getConversation(messageOrConversationId, userManager.requireCurrentUserId()).map {
-            if (it is DataResult.Success) {
-                return@map it.value
+    private fun getMessageLiveData() = userManager.primaryUserId
+        .flatMapLatest { userId ->
+            if (userId != null) {
+                messageRepository.findMessage(userId, messageOrConversationId)
             } else {
-                return@map null
+                emptyFlow()
             }
+        }
+        .filterNotNull()
+        .asLiveData()
+
+    private fun getConversationLiveData() = userManager.primaryUserId
+        .flatMapLatest { userId ->
+            if (userId == null) {
+                return@flatMapLatest emptyFlow()
+            }
+
+            conversationRepository.getConversation(messageOrConversationId, Id(userId.id))
+                .filter { it is DataResult.Success }
+                .map {
+                    return@map (it as DataResult.Success).value
+                }
         }.asLiveData()
 
     private var publicKeys: List<KeyInformation>? = null
@@ -184,10 +216,10 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
 
     val labels: Flow<List<Label>> =
-        messageFlow
-            .flatMapLatest { message ->
+        conversationUiModel.asFlow()
+            .flatMapLatest { conversation ->
                 val userId = UserId(userManager.requireCurrentUserId().s)
-                val labelsIds = (message?.labelIDsNotIncludingLocations ?: emptyList()).map(::Id)
+                val labelsIds = (conversation.labelIds).map(::Id)
                 labelRepository.findLabels(userId, labelsIds)
             }
 
@@ -201,10 +233,12 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
         }
 
-    val messageAttachments: LiveData<List<Attachment>> by lazy {
-        val message = decryptedMessageData.value!!.messages.last()
-        messageDetailsRepository.findAttachments(message).distinctUntilChanged()
-    }
+    val messageAttachments: LiveData<List<Attachment>> =
+        conversationUiModel.switchMap {
+            val message = it.messages.last()
+            messageDetailsRepository.findAttachments(message).distinctUntilChanged()
+        }
+
     val pendingSend: LiveData<PendingSend?> by lazy {
         messageDetailsRepository.findPendingSendByOfflineMessageIdAsync(messageOrConversationId)
     }
@@ -326,7 +360,8 @@ internal class MessageDetailsViewModel @Inject constructor(
         return ConversationUiModel(
             message?.isStarred ?: false,
             message?.subject ?: "",
-            messages.filterNotNull()
+            message?.labelIDsNotIncludingLocations.orEmpty(),
+            messages.filterNotNull(),
         )
     }
 
@@ -360,7 +395,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(messageOrConversationId)
             val embeddedImages = _embeddedImagesAttachments.mapNotNull {
                 attachmentsHelper.fromAttachmentToEmbeddedImage(
-                    it, decryptedMessageData.value!!.messages.last().embeddedImageIds.toList()
+                    it, conversationUiModel.value?.messages?.last()?.embeddedImageIds?.toList().orEmpty()
                 )
             }
             val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
@@ -422,6 +457,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             _prepareEditMessageIntentResult.value = Event(intent)
         }
     }
+
     fun viewOrDownloadAttachment(context: Context, attachmentToDownloadId: String, messageId: String) {
 
         viewModelScope.launch(dispatchers.Io) {
@@ -510,7 +546,8 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun prepareEmbeddedImages(): Boolean {
-        val message = decryptedMessageData.value?.messages?.last()
+
+        val message = conversationUiModel.value?.messages?.last()
         message?.let {
             val attachments = message.attachments
             val embeddedImagesToFetch = ArrayList<EmbeddedImage>()
@@ -534,7 +571,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun triggerVerificationKeyLoading() {
         if (!fetchingPubKeys && publicKeys == null) {
-            val message = message.value
+            val message = conversationUiModel.value?.messages?.last()
             message?.let {
                 fetchingPubKeys = true
                 viewModelScope.launch {
@@ -547,7 +584,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private suspend fun onFetchVerificationKeysEvent(pubKeys: List<KeyInformation>) {
         Timber.v("FetchVerificationKeys received $pubKeys")
-        val message = message.value
+        val message = conversationUiModel.value?.messages?.last()
 
         publicKeys = pubKeys
         refreshedKeys = false
@@ -563,14 +600,14 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun setAttachmentsList(attachments: List<Attachment>) {
-        val message = decryptedMessageData.value?.messages?.last()
-        message!!.setAttachmentList(attachments)
+        conversationUiModel.value?.messages?.last()?.setAttachmentList(attachments)
     }
 
-    fun isPgpEncrypted(): Boolean = message.value?.messageEncryption?.isPGPEncrypted ?: false
+    fun isPgpEncrypted(): Boolean =
+        conversationUiModel.value?.messages?.last()?.messageEncryption?.isPGPEncrypted ?: false
 
     fun printMessage(activityContext: Context) {
-        val message = message.value
+        val message = conversationUiModel.value?.messages?.last()
         message?.let {
             MessagePrinter(
                 activityContext,
@@ -601,10 +638,11 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun moveToTrash() {
+        val message = conversationUiModel.value?.messages?.last()
         moveMessagesToFolder(
             listOf(messageOrConversationId),
             Constants.MessageLocationType.TRASH.toString(),
-            message.value?.folderLocation ?: EMPTY_STRING
+            message?.folderLocation ?: EMPTY_STRING
         )
     }
 
