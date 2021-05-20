@@ -36,7 +36,7 @@ class ContactItemListFactory {
             contactEmails = email,
             additionalEmailsCount = 0,
             contactId = contactId,
-            initials = UiUtil.extractInitials(name)
+            initials = UiUtil.extractInitials(name).take(2)
         )
     }
 
