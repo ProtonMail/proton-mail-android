@@ -20,8 +20,6 @@ package ch.protonmail.android.utils
 
 import java.util.concurrent.atomic.AtomicBoolean
 
-/**
- * Created by Kamil Rajtar on 24.08.18.  */
 class Event<out T>(private val content: T) {
 
     private val hasBeenHandled = AtomicBoolean(false)

@@ -40,41 +40,41 @@ const val COLUMN_CONTACT_DATA_UID = "UID"
 // endregion
 
 @Entity(
-	tableName = TABLE_CONTACT_DATA,
-	indices = [
-		Index(COLUMN_CONTACT_DATA_ID, unique = true),
-		Index(COLUMN_CONTACT_DATA_NAME, unique = false)
-	]
+    tableName = TABLE_CONTACT_DATA,
+    indices = [
+        Index(COLUMN_CONTACT_DATA_ID, unique = true),
+        Index(COLUMN_CONTACT_DATA_NAME, unique = false)
+    ]
 )
 data class ContactData @JvmOverloads constructor(
 
-	@SerializedName(COLUMN_CONTACT_DATA_ID)
-	@ColumnInfo(name = COLUMN_CONTACT_DATA_ID)
-	var contactId: String?,
+    @SerializedName(COLUMN_CONTACT_DATA_ID)
+    @ColumnInfo(name = COLUMN_CONTACT_DATA_ID)
+    var contactId: String?,
 
-	@SerializedName(COLUMN_CONTACT_DATA_NAME)
-	@ColumnInfo(name = COLUMN_CONTACT_DATA_NAME)
-	var name: String,
+    @SerializedName(COLUMN_CONTACT_DATA_NAME)
+    @ColumnInfo(name = COLUMN_CONTACT_DATA_NAME)
+    var name: String,
 
-	@SerializedName(COLUMN_CONTACT_DATA_LABEL_IDS)
-	@Ignore
-	private var labelIds: List<String>? = null,
+    @SerializedName(COLUMN_CONTACT_DATA_LABEL_IDS)
+    @Ignore
+    private var labelIds: List<String>? = null,
 
-	@SerializedName(COLUMN_CONTACT_DATA_UID)
-	@Ignore
-	private val uid: String? = null,
+    @SerializedName(COLUMN_CONTACT_DATA_UID)
+    @Ignore
+    private val uid: String? = null,
 
-	@SerializedName(COLUMN_CONTACT_DATA_CREATE_TIME)
-	@Ignore
-	private val createTime: Long = 0,
+    @SerializedName(COLUMN_CONTACT_DATA_CREATE_TIME)
+    @Ignore
+    private val createTime: Long = 0,
 
-	@SerializedName(COLUMN_CONTACT_DATA_MODIFY_TIME)
-	@Ignore
-	private val modifyTime: Long = 0,
+    @SerializedName(COLUMN_CONTACT_DATA_MODIFY_TIME)
+    @Ignore
+    private val modifyTime: Long = 0,
 
-	@SerializedName(COLUMN_CONTACT_DATA_SIZE)
-	@Ignore
-	private var size: Int = 0
+    @SerializedName(COLUMN_CONTACT_DATA_SIZE)
+    @Ignore
+    private var size: Int = 0
 
 ) : Serializable {
 

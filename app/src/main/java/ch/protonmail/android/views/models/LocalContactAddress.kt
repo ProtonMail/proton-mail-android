@@ -16,17 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.events;
+package ch.protonmail.android.views.models
 
-public class ContactProgressEvent {
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
-    private final int mCompleted;
-
-    public ContactProgressEvent(int completed) {
-        mCompleted = completed;
-    }
-
-    public int getCompleted() {
-        return mCompleted;
-    }
-}
+@Parcelize
+data class LocalContactAddress(
+    val street: String?,
+    val city: String?,
+    val region: String?,
+    val postcode: String?,
+    val country: String?
+) : Parcelable

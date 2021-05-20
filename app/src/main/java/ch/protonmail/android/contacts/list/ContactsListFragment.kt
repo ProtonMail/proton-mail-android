@@ -108,8 +108,6 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
             else -> R.string.contact_saved_offline
         }
 
-    private fun getSelectedContactsIds(): List<String> = getSelectedItems().mapNotNull { it.contactId }
-
     override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
         val selectedItems = getSelectedItems()
         val noProtonContactsSelected = selectedItems.isNotEmpty() && selectedItems.none(
@@ -304,7 +302,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     }
 
     override fun onDelete() {
-        viewModel.deleteSelected(getSelectedContactsIds()).observe(
+        viewModel.deleteSelected(getSelectedItems().mapNotNull { it.contactId }).observe(
             this,
             { state ->
                 if (state is Operation.State.FAILURE) {
@@ -369,6 +367,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     }
 
     private fun onContactClick(contactItem: ContactItem) {
+        Timber.v("onContactClick id: ${contactItem.contactId}")
         if (getSelectedItems().isEmpty()) {
             showDetails(contactItem)
         } else {
@@ -407,7 +406,6 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
                 String.format(getString(R.string.contact_group_selected), checkedItemsCount)
         }
 
-        Timber.v("onContactSelect update list")
         contactsAdapter.submitList(updatedItems) {
             actionMode?.invalidate()
         }

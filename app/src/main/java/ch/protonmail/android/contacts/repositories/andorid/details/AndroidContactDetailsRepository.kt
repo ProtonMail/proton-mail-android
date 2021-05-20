@@ -28,6 +28,7 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.views.models.LocalContact
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import timber.log.Timber
 
 class AndroidContactDetailsRepository @AssistedInject constructor(
     @Assisted private val loaderManager: LoaderManager,
@@ -40,6 +41,7 @@ class AndroidContactDetailsRepository @AssistedInject constructor(
         val args = Bundle()
         args.putString(ARGUMENT_CONTACT_ID, contactId)
         val loaderCallbacks = callbacksFactory.create(contactDetails)
+        Timber.v("makeQuery id: $contactId restartLoader")
         loaderManager.restartLoader(
             LOADER_ID_ANDROID_CONTACTS_DETAILS,
             args,
@@ -49,13 +51,14 @@ class AndroidContactDetailsRepository @AssistedInject constructor(
 
     companion object {
 
-        const val ANDROID_DETAILS_SELECTION = """
-            ${Data.RAW_CONTACT_ID} = ? 
-                AND (${Data.MIMETYPE} = '${CommonDataKinds.Phone.CONTENT_ITEM_TYPE}' 
-                OR ${Data.MIMETYPE} = '${CommonDataKinds.Email.CONTENT_ITEM_TYPE}' 
-                OR ${Data.MIMETYPE} = '${CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE}' 
-                OR ${Data.MIMETYPE} = '${CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE}'
-        """
+        const val ANDROID_DETAILS_SELECTION =
+            Data.RAW_CONTACT_ID + " = ? AND (" +
+                Data.MIMETYPE + "='" + CommonDataKinds.Phone.CONTENT_ITEM_TYPE +
+                "' OR " + Data.MIMETYPE + "='" + CommonDataKinds.Email.CONTENT_ITEM_TYPE +
+                "' OR " + Data.MIMETYPE + "='" + CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE +
+                "' OR " + Data.MIMETYPE + "='" + CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE +
+                "')"
+
 
         val ANDROID_DETAILS_PROJECTION = arrayOf(
             Contacts._ID,

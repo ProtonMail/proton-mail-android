@@ -69,7 +69,6 @@ import ch.protonmail.android.api.models.Organization;
 import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
-import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
@@ -156,8 +155,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private String mCurrentLocale;
     private AlertDialog forceUpgradeDialog;
     private boolean changedSystemTimeDate;
-
-    private MessageDao messageDao;
 
     @NonNull
     @Deprecated // Using this is an ERROR!

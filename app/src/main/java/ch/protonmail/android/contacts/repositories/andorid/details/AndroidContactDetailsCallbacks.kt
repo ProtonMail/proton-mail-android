@@ -31,6 +31,8 @@ import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContac
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.views.models.LocalContact
 import ch.protonmail.android.views.models.LocalContactAddress
+import me.proton.core.util.kotlin.EMPTY_STRING
+import timber.log.Timber
 import java.util.ArrayList
 
 // region constants
@@ -46,22 +48,23 @@ class AndroidContactDetailsCallbacks(
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
         val contactId = args?.getString(ARGUMENT_CONTACT_ID) ?: throw IllegalArgumentException("Unknown contact id")
-        val selectionArgs = arrayOf(contactId)
+        Timber.v("onCreateLoader id: $id, contactId: $contactId")
         return CursorLoader(
             context,
             ContactsContract.Data.CONTENT_URI,
             ANDROID_DETAILS_PROJECTION,
             ANDROID_DETAILS_SELECTION,
-            selectionArgs,
+            arrayOf(contactId),
             null
         )
     }
 
     override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
+        Timber.v("onLoadFinished count: ${data?.columnCount}")
         data ?: return
         if (data.isAfterLast)
             return
-        var name = ""
+        var name = EMPTY_STRING
         val phones = ArrayList<String>()
         val emails = ArrayList<String>()
         val addresses = ArrayList<LocalContactAddress>()
@@ -69,38 +72,71 @@ class AndroidContactDetailsCallbacks(
         while (data.moveToNext()) {
             val dataKind = data.getString(data.getColumnIndex(ContactsContract.Data.MIMETYPE))
             when (dataKind) {
-                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE -> phones.add(data.getString(
-                    data.getColumnIndex(
-                        ContactsContract.CommonDataKinds.Phone.NUMBER)))
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE -> phones.add(
+                    data.getString(
+                        data.getColumnIndex(
+                            ContactsContract.CommonDataKinds.Phone.NUMBER
+                        )
+                    )
+                )
                 ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE -> {
                     name = data.getString(
-                        data.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                    emails.add(data.getString(data.getColumnIndex(
-                        ContactsContract.CommonDataKinds.Email.ADDRESS)))
+                        data.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
+                    )
+                    emails.add(
+                        data.getString(
+                            data.getColumnIndex(
+                                ContactsContract.CommonDataKinds.Email.ADDRESS
+                            )
+                        )
+                    )
                 }
                 ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE -> {
-                    val street = data.getString(data.getColumnIndex(
-                        ContactsContract.CommonDataKinds.StructuredPostal.STREET))
-                    val city = data.getString(data.getColumnIndex(
-                        ContactsContract.CommonDataKinds.StructuredPostal.CITY))
-                    val region = data.getString(data.getColumnIndex(
-                        ContactsContract.CommonDataKinds.StructuredPostal.REGION))
-                    val postcode = data.getString(data.getColumnIndex(
-                        ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE))
-                    val country = data.getString(data.getColumnIndex(
-                        ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY))
+                    val street = data.getString(
+                        data.getColumnIndex(
+                            ContactsContract.CommonDataKinds.StructuredPostal.STREET
+                        )
+                    )
+                    val city = data.getString(
+                        data.getColumnIndex(
+                            ContactsContract.CommonDataKinds.StructuredPostal.CITY
+                        )
+                    )
+                    val region = data.getString(
+                        data.getColumnIndex(
+                            ContactsContract.CommonDataKinds.StructuredPostal.REGION
+                        )
+                    )
+                    val postcode = data.getString(
+                        data.getColumnIndex(
+                            ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE
+                        )
+                    )
+                    val country = data.getString(
+                        data.getColumnIndex(
+                            ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY
+                        )
+                    )
                     addresses.add(LocalContactAddress(street, city, region, postcode, country))
                 }
                 else -> {
-                    //ignore
+                    // ignore
                 }
             }
         }
 
-        contactDetails.value = Event(LocalContact(name, emails, phones, addresses, emptyList() /* TODO get contact groups if it makes sense later */))
+        contactDetails.value = Event(
+            LocalContact(
+                name,
+                emails,
+                phones,
+                addresses,
+                emptyList() /* TODO get contact groups if it makes sense later */
+            )
+        )
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>) {
-        //NO OP
+        // NO OP
     }
 }
