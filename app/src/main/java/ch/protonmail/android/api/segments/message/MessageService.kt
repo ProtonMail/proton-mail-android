@@ -90,13 +90,6 @@ interface MessageService {
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchStarredMessages(
-        @Query("Starred") starred: Int,
-        @Query("End") unixTime: Long
-    ): Call<MessagesResponse>
-
-    @GET("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun search(
         @Query("Keyword") query: String,
         @Query("Page") page: Int
