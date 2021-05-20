@@ -75,7 +75,7 @@ class AvatarImageBehavior(context: Context, attrs: AttributeSet?) :
     }
 
     private fun bindDimensions() {
-        mAvatarMaxSize = mContext!!.resources.getDimension(R.dimen.image_width)
+        mAvatarMaxSize = mContext!!.resources.getDimension(R.dimen.avatar_size)
     }
 
     override fun layoutDependsOn(

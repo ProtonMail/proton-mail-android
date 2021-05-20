@@ -235,7 +235,7 @@
     <dimen name="fab_menu_item_margin">8dp</dimen>
 
     <!-- CollapsingToolbarLayout Avatar -->
-    <dimen name="image_width">120dp</dimen>
+    <dimen name="avatar_size">120dp</dimen>
     <dimen name="image_final_width">42dp</dimen>
     <dimen name="spacing_normal">16dp</dimen>
 

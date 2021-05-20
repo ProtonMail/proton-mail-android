@@ -288,7 +288,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
                 ContactDetailsActivity::class.java
             )
         )
-        intent.putExtra(ContactDetailsActivity.EXTRA_CONTACT, contactId)
+        intent.putExtra(ContactDetailsActivity.EXTRA_ARG_CONTACT_ID, contactId)
         startActivityForResult(intent, REQUEST_CODE_CONTACT_DETAILS)
     }
 

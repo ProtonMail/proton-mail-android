@@ -92,7 +92,7 @@ public class RecipientDropDownClickListener implements View.OnClickListener {
     private void openContactDetails(@Nullable ContactEmail contactEmail) {
         if (contactEmail != null && contactEmail.getContactId() != null) {
             Intent contactDetailsIntent = AppUtil.decorInAppIntent(new Intent(mContext, ContactDetailsActivity.class));
-            contactDetailsIntent.putExtra(ContactDetailsActivity.EXTRA_CONTACT, contactEmail.getContactId());
+            contactDetailsIntent.putExtra(ContactDetailsActivity.EXTRA_ARG_CONTACT_ID, contactEmail.getContactId());
             mContext.startActivity(contactDetailsIntent);
         } else {
             mContext.startActivity(EditContactDetailsActivity.startNewContactActivity(mContext, mRecipientEmail, mRecipientEmail));

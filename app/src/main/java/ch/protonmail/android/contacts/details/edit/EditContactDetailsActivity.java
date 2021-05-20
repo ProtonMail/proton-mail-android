@@ -304,7 +304,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     }
 
     private Bitmap resizeBitmap(Bitmap bitmap) {
-        int imageSize = getResources().getDimensionPixelSize(R.dimen.image_width);
+        int imageSize = getResources().getDimensionPixelSize(R.dimen.avatar_size);
         return Bitmap.createScaledBitmap(bitmap, imageSize, imageSize, true);
     }
 

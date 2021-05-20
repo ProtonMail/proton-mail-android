@@ -139,7 +139,7 @@ import kotlin.Unit;
 import timber.log.Timber;
 
 @AndroidEntryPoint
-public class ContactDetailsActivity extends BaseActivity implements AppBarLayout.OnOffsetChangedListener {
+public class ContactDetailsActivityOld extends BaseActivity implements AppBarLayout.OnOffsetChangedListener {
 
     public static final String EXTRA_CONTACT = "extra_contact";
     private static final int REQUEST_CODE_EDIT_CONTACT = 1;
@@ -241,7 +241,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         mVCardPhoneOptions = Arrays.asList(getResources().getStringArray(R.array.vcard_option_phone_val));
         mVCardAddressUIOptions = Arrays.asList(getResources().getStringArray(R.array.vcard_option_address));
         mVCardAddressOptions = Arrays.asList(getResources().getStringArray(R.array.vcard_option_address_val));
-        contactEditDetailsEmailGroupsAdapter = new ContactEditDetailsEmailGroupsAdapter(ContactDetailsActivity.this, new ArrayList<>());
+        contactEditDetailsEmailGroupsAdapter = new ContactEditDetailsEmailGroupsAdapter(ContactDetailsActivityOld.this, new ArrayList<>());
         viewModel.getSetupComplete().observe(this, booleanEvent -> {
             Boolean didSetupCompleteBoxed = booleanEvent.getContentIfNotHandled();
             boolean didSetupComplete;
@@ -261,8 +261,8 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
                 error = event.getContentIfNotHandled();
             }
             if (error != null) {
-                TextExtensions.showToast(ContactDetailsActivity.this,
-                        error.getMessage(ContactDetailsActivity.this));
+                TextExtensions.showToast(ContactDetailsActivityOld.this,
+                        error.getMessage(ContactDetailsActivityOld.this));
             }
         });
 
@@ -370,7 +370,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_contact_details;
+        return R.layout.activity_contact_details_old;
         // TODO change to activity_contact_details_new. Some adjustments are needed
     }
 
@@ -476,7 +476,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         writeEmailButton.setVisibility(View.VISIBLE);
         titleView.setText(type);
         writeEmailButton.setOnClickListener(v -> {
-            final Intent intent = AppUtil.decorInAppIntent(new Intent(ContactDetailsActivity.this, ComposeMessageActivity.class));
+            final Intent intent = AppUtil.decorInAppIntent(new Intent(ContactDetailsActivityOld.this, ComposeMessageActivity.class));
             intent.putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENTS, new String[]{email});
             startActivity(intent);
         });
@@ -693,7 +693,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
         fabWeb.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(ContactDetailsActivity.this, getApplicationContext().getPackageName() + ".provider", vcfFile));
+            intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(ContactDetailsActivityOld.this, getApplicationContext().getPackageName() + ".provider", vcfFile));
             intent.putExtra(Intent.EXTRA_SUBJECT, mDisplayName);
             intent.setType(ContactsContract.Contacts.CONTENT_VCARD_TYPE);
             startActivity(intent);
@@ -768,8 +768,8 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
                 error = event.getContentIfNotHandled();
             }
             if (error != null) {
-                TextExtensions.showToast(ContactDetailsActivity.this,
-                        error.getMessage(ContactDetailsActivity.this));
+                TextExtensions.showToast(ContactDetailsActivityOld.this,
+                        error.getMessage(ContactDetailsActivityOld.this));
             }
         });
         for (Email email : vCardEmails) {
@@ -785,7 +785,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             View emailRowView = createEmailRow(emailType, email.getValue());
             ViewCompat.setBackgroundTintList(fabMail, ColorStateList.valueOf(getResources().getColor(R.color.new_purple)));
             fabMail.setOnClickListener(v -> {
-                final Intent intent = AppUtil.decorInAppIntent(new Intent(ContactDetailsActivity.this, ComposeMessageActivity.class));
+                final Intent intent = AppUtil.decorInAppIntent(new Intent(ContactDetailsActivityOld.this, ComposeMessageActivity.class));
                 intent.putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENTS, new String[]{vCardEmails.get(0).getValue()});
                 startActivity(intent);
             });
@@ -1011,7 +1011,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         } else {
-            TextExtensions.showToast(ContactDetailsActivity.this, R.string.no_browser_found, Toast.LENGTH_SHORT);
+            TextExtensions.showToast(ContactDetailsActivityOld.this, R.string.no_browser_found, Toast.LENGTH_SHORT);
         }
     };
 
@@ -1041,7 +1041,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
                 Timber.w(ise, "Clipboard bug");
             }
         }
-        TextExtensions.showToast(ContactDetailsActivity.this, R.string.details_copied, Toast.LENGTH_SHORT);
+        TextExtensions.showToast(ContactDetailsActivityOld.this, R.string.details_copied, Toast.LENGTH_SHORT);
     }
 
     private PopupWindow initDialog(String email) {
@@ -1061,7 +1061,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         CustomFontButton applyBtn = popupView.findViewById(R.id.applyBtn);
 
         viewModel.mergeContactEmailGroups(email);
-        viewModel.getMergedContactEmailGroupsResult().observe(ContactDetailsActivity.this, contactLabels -> {
+        viewModel.getMergedContactEmailGroupsResult().observe(ContactDetailsActivityOld.this, contactLabels -> {
 
             if (contactLabels != null) {
                 if (contactLabels.isEmpty()) {
@@ -1075,14 +1075,14 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             }
         });
 
-        viewModel.getMergedContactEmailGroupsError().observe(ContactDetailsActivity.this, event -> {
+        viewModel.getMergedContactEmailGroupsError().observe(ContactDetailsActivityOld.this, event -> {
             ErrorResponse error = new ErrorResponse("", ErrorEnum.DEFAULT);
             if (event != null) {
                 error = event.getContentIfNotHandled();
             }
             if (error != null) {
-                TextExtensions.showToast(ContactDetailsActivity.this,
-                        error.getMessage(ContactDetailsActivity.this));
+                TextExtensions.showToast(ContactDetailsActivityOld.this,
+                        error.getMessage(ContactDetailsActivityOld.this));
             }
         });
 
@@ -1127,7 +1127,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     }
 
     private void handleAlphaOnTitle(float percentage) {
-        TextView title = new TextView(ContactDetailsActivity.this);
+        TextView title = new TextView(ContactDetailsActivityOld.this);
         if (toolbar != null) {
             for (int i = 0; i < toolbar.getChildCount(); i++) {
                 if (toolbar.getChildAt(i) instanceof TextView) {
