@@ -142,28 +142,26 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val messageRenderer
         by lazy { messageRendererFactory.create(viewModelScope, messageOrConversationId) }
 
-    val conversationUiModel: LiveData<ConversationUiModel>
-        get() {
-            return if (conversationModeEnabled(location)) {
-                getConversationLiveData().distinctUntilChanged().map { conversation ->
-                    ConversationUiModel(
-                        conversation.labels.any { it.id == STARRED_LABEL_ID },
-                        conversation.subject,
-                        conversation.labels.map { it.id },
-                        conversation.messages?.toDbModelList().orEmpty()
-                    )
-                }
-            } else {
-                getMessageLiveData().distinctUntilChanged().map {
-                    ConversationUiModel(
-                        it.isStarred ?: false,
-                        it.subject,
-                        it.labelIDsNotIncludingLocations,
-                        listOf(it)
-                    )
-                }
+    val conversationUiModel: LiveData<ConversationUiModel> =
+        if (conversationModeEnabled(location)) {
+            getConversationLiveData().map { conversation ->
+                ConversationUiModel(
+                    conversation.labels.any { it.id == STARRED_LABEL_ID },
+                    conversation.subject,
+                    conversation.labels.map { it.id },
+                    conversation.messages?.toDbModelList().orEmpty()
+                )
             }
-        }
+        } else {
+            getMessageLiveData().map {
+                ConversationUiModel(
+                    it.isStarred ?: false,
+                    it.subject,
+                    it.labelIDsNotIncludingLocations,
+                    listOf(it)
+                )
+            }
+        }.distinctUntilChanged()
 
     private fun getMessageLiveData() = userManager.primaryUserId
         .flatMapLatest { userId ->
