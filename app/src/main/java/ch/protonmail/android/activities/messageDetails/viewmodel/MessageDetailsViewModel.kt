@@ -64,6 +64,7 @@ import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
@@ -289,7 +290,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         messageRepository.markUnRead(listOf(messageOrConversationId))
     }
 
-    fun loadMessageDetails() {
+    fun loadMailboxItemDetails() {
         viewModelScope.launch(dispatchers.Io) {
             val userId = userManager.requireCurrentUserId()
 
@@ -298,30 +299,53 @@ internal class MessageDetailsViewModel @Inject constructor(
                     .map { result ->
                         if (result is DataResult.Success) {
                             val conversation = result.value
-                            val messages = conversation.messages?.map { message ->
-                                messageRepository.findMessageOnce(userId, message.id)
+                            if (conversation.messages?.isEmpty() == true) {
+                                return@map null
                             }
-                            Timber.v("Loaded conversation ${conversation.id} with ${messages?.size} messages")
-                            onMessageLoaded(messages.orEmpty())
+                            onConversationLoaded(conversation, userId)
+                            return@map conversation
                         } else if (result is DataResult.Error) {
                             Timber.d("Error loading conversation $messageOrConversationId")
-                            onMessageLoaded(emptyList())
+                            _messageDetailsError.postValue(Event("Failed getting conversation details"))
                         }
-                    }.first()
+                        return@map null
+                    }.first { it?.messages?.isNotEmpty() ?: false }
                 return@launch
             }
 
             val message = messageRepository.getMessage(userId, messageOrConversationId, true)
+            if (message == null) {
+                Timber.d("Failed fetching Message Details for message $messageOrConversationId")
+                _messageDetailsError.postValue(Event("Failed getting message details"))
+                return@launch
+            }
             onMessageLoaded(listOf(message))
         }
     }
 
-    private suspend fun onMessageLoaded(messages: List<Message?>) {
-        if (messages.isEmpty() || messages.any { it == null }) {
+    private suspend fun onConversationLoaded(
+        conversation: Conversation, userId: Id
+    ) {
+        val messages = conversation.messages?.mapNotNull { message ->
+            messageRepository.findMessageOnce(userId, message.id)?.let { localMessage ->
+                val contactEmail = contactsRepository.findContactEmailByEmail(localMessage.senderEmail)
+                localMessage.senderDisplayName = contactEmail?.name.orEmpty()
+                localMessage
+            }
+        }
+        Timber.v("Loaded conversation ${conversation.id} with ${messages?.size} messages")
+        if (messages.isNullOrEmpty()) {
             Timber.d("Failed fetching Message Details for message $messageOrConversationId")
-            _messageDetailsError.postValue(Event("Failed getting message details"))
+            _messageDetailsError.postValue(Event("Failed getting conversation's messages"))
             return
         }
+
+        val conversationUiItem = conversationUiItemFrom(conversation, messages)
+        decryptLastMessageAndEmit(conversationUiItem)
+
+    }
+
+    private suspend fun onMessageLoaded(messages: List<Message?>) {
         val validMessages = messages.filterNotNull()
 
         validMessages.map {
@@ -329,24 +353,24 @@ internal class MessageDetailsViewModel @Inject constructor(
             it.senderDisplayName = contactEmail?.name.orEmpty()
         }
 
-        refreshedKeys = true
-        decryptAndEmit(validMessages)
+        decryptLastMessageAndEmit(conversationUiItemFrom(validMessages))
     }
 
-    private suspend fun decryptAndEmit(messages: List<Message>) {
-        val message = messages.last()
-        if (!message.isDownloaded) {
+    private suspend fun decryptLastMessageAndEmit(conversationUiModel: ConversationUiModel) {
+        refreshedKeys = true
+        val lastMessage = conversationUiModel.messages.last()
+        if (!lastMessage.isDownloaded) {
             return
         }
 
         withContext(dispatchers.Comp) {
-            message.tryDecrypt(publicKeys) ?: false
+            lastMessage.tryDecrypt(publicKeys) ?: false
         }
-        Timber.v("Emitting Message Detail = ${message.messageId} keys size: ${publicKeys?.size}")
-        _decryptedMessageLiveData.postValue(conversationFrom(messages))
+        Timber.v("Emitting ConversationUiItem Detail = ${lastMessage.messageId} keys size: ${publicKeys?.size}")
+        _decryptedMessageLiveData.postValue(conversationUiModel)
     }
 
-    private fun conversationFrom(messages: List<Message?>): ConversationUiModel {
+    private fun conversationUiItemFrom(messages: List<Message?>): ConversationUiModel {
         val message = messages.last()
         return ConversationUiModel(
             message?.isStarred ?: false,
@@ -355,6 +379,14 @@ internal class MessageDetailsViewModel @Inject constructor(
             messages.filterNotNull(),
         )
     }
+
+    private fun conversationUiItemFrom(conversation: Conversation, messages: List<Message?>) =
+        ConversationUiModel(
+            conversation.labels.any { it.id == STARRED_LABEL_ID },
+            conversation.subject,
+            conversation.labels.map { it.id },
+            messages.filterNotNull(),
+        )
 
     private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
         return try {
@@ -579,7 +611,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
         publicKeys = pubKeys
         refreshedKeys = false
-        message?.let { decryptAndEmit(listOf(it)) }
+        message?.let { decryptLastMessageAndEmit(conversationUiItemFrom(listOf(it))) }
 
         fetchingPubKeys = false
         renderedFromCache = AtomicBoolean(false)

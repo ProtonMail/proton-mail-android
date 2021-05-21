@@ -204,7 +204,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun continueSetup() {
-        viewModel.conversationUiModel.observe(this) { viewModel.loadMessageDetails() }
+        viewModel.conversationUiModel.observe(this) { viewModel.loadMailboxItemDetails() }
         viewModel.decryptedMessageData.observe(this, DecryptedMessageObserver())
 
         viewModel.labels
@@ -315,7 +315,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun onConnectivityCheckRetry() {
-        viewModel.loadMessageDetails()
+        viewModel.loadMailboxItemDetails()
         networkSnackBarUtil.getCheckingConnectionSnackBar(
             mSnackLayout,
             R.id.messageDetailsActionsView
@@ -335,7 +335,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 Timber.v("isConnectionActive:${isConnectionActive.name}")
                 if (isConnectionActive == Constants.ConnectionState.CONNECTED) {
                     hideNoConnSnackExtended()
-                    viewModel.loadMessageDetails()
+                    viewModel.loadMailboxItemDetails()
                 } else {
                     showNoConnSnackExtended(isConnectionActive)
                 }
