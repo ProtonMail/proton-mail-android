@@ -20,42 +20,43 @@ package ch.protonmail.android.contacts.list.listView
 
 import android.database.Cursor
 import android.provider.ContactsContract
+import ch.protonmail.android.utils.UiUtil
 
-/**
- * Created by Kamil Rajtar on 23.08.18.  */
 class ContactItemListFactory {
 
-	private fun Cursor.getStringByName(name:String)=getString(getColumnIndex(name))
+    private fun Cursor.getStringByName(name: String) = getString(getColumnIndex(name))
 
+    private fun Cursor.extractContactItem(): ContactItem {
+        val contactId = getStringByName(ContactsContract.CommonDataKinds.Email.RAW_CONTACT_ID)
+        val name = getStringByName(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME_PRIMARY)
+        val email = getStringByName(ContactsContract.CommonDataKinds.Email.ADDRESS)
+        return ContactItem(
+            isProtonMailContact = false,
+            name = name,
+            contactId = contactId,
+            contactEmails = email,
+            initials = UiUtil.extractInitials(name).take(2),
+            additionalEmailsCount = 0,
+        )
+    }
 
-	private fun Cursor.extractContactItem():ContactItem {
-		val contactId=getStringByName(ContactsContract.CommonDataKinds.Email.RAW_CONTACT_ID)
-		val name=getStringByName(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME_PRIMARY)
-		val email=getStringByName(ContactsContract.CommonDataKinds.Email.ADDRESS)
-		return ContactItem(false,
-				contactId,
-				name,
-				email,
-				0)
-	}
+    fun convert(cursor: Cursor): List<ContactItem> {
+        val contactsMap = mutableMapOf<String, ContactItem>()
+        val contactsList = mutableListOf<ContactItem>()
+        cursor.apply {
+            while (moveToNext()) {
+                val contactItem = extractContactItem()
+                val contactId = contactItem.contactId ?: continue
+                val item = contactsMap[contactId]
+                if (item != null) {
+                    contactsMap[contactId] = item.copy(additionalEmailsCount = item.additionalEmailsCount + 1)
+                } else {
+                    contactsMap[contactId] = contactItem
+                    contactsList.add(contactItem)
+                }
+            }
+        }
 
-	fun convert(cursor:Cursor):List<ContactItem> {
-		val contactsMap=mutableMapOf<String,ContactItem>()
-		val contactsList=mutableListOf<ContactItem>()
-		cursor.apply {
-			while(moveToNext()) {
-				val contactItem=extractContactItem()
-				val contactId=contactItem.contactId ?: continue
-				val item=contactsMap[contactId]
-				if(item!=null) {
-					item.additionalEmailsCount=item.additionalEmailsCount+1
-				} else {
-					contactsMap[contactId]=contactItem
-					contactsList.add(contactItem)
-				}
-			}
-		}
-
-		return contactsList
-	}
+        return contactsList
+    }
 }

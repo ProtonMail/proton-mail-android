@@ -23,8 +23,6 @@ import android.widget.AbsListView
 import androidx.annotation.Px
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 
-/**
- * Created by kadrikj on 9/15/18. */
 interface IContactsFragment : AbsListView.MultiChoiceModeListener {
     val actionMode: ActionMode?
 

@@ -18,13 +18,9 @@
  */
 package ch.protonmail.android.events;
 
-/**
- * Created by dino on 12/29/16.
- */
-
 public class ContactProgressEvent {
 
-    private int mCompleted;
+    private final int mCompleted;
 
     public ContactProgressEvent(int completed) {
         mCompleted = completed;

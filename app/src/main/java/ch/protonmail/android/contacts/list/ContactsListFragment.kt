@@ -28,18 +28,21 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.annotation.Px
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.loader.app.LoaderManager
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Operation
 import androidx.work.WorkManager
 import ch.protonmail.android.R
+import ch.protonmail.android.activities.BaseActivity
+import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.fragments.BaseFragment
 import ch.protonmail.android.contacts.IContactsFragment
 import ch.protonmail.android.contacts.IContactsListFragmentListener
@@ -56,10 +59,8 @@ import ch.protonmail.android.contacts.list.viewModel.ContactsListViewModel
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
-import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import com.birbit.android.jobqueue.JobManager
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
@@ -107,29 +108,19 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
             else -> R.string.contact_saved_offline
         }
 
-    private fun getSelectedContactsIds(): List<String> {
-        val selectedContactIds = ArrayList<String>()
-        contactsAdapter.getSelectedItems!!.forEach {
-            it.contactId?.let { contactId ->
-                if (contactId.isNotEmpty()) {
-                    selectedContactIds.add(contactId)
-                }
-            }
-        }
-        return selectedContactIds
-    }
-
     override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
-        menu.findItem(R.id.transform_phone_contacts).isVisible =
-            contactsAdapter.getSelectedItems!!.none(
-                ContactItem::isProtonMailContact
-            )
+        val selectedItems = getSelectedItems()
+        val noProtonContactsSelected = selectedItems.isNotEmpty() && selectedItems.none(
+            ContactItem::isProtonMailContact
+        )
+        Timber.v("onPrepareActionMode noProton: $noProtonContactsSelected selected count: ${selectedItems.size}")
+        menu.findItem(R.id.transform_phone_contacts).isVisible = noProtonContactsSelected
         return true
     }
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-        actionMode = mode
         mode.menuInflater.inflate(R.menu.contacts_selection_menu, menu)
+        actionMode = mode
         return true
     }
 
@@ -138,29 +129,22 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         position: Int,
         id: Long,
         checked: Boolean
-    ) {
-    }
+    ) = Unit
 
     override fun onDestroyActionMode(mode: ActionMode?) {
-        actionMode!!.finish()
+        Timber.v("onDestroyActionMode: $mode")
         actionMode = null
-        contactsAdapter.endSelectionMode()
-        UiUtil.setStatusBarColor(
-            requireActivity() as AppCompatActivity,
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.dark_purple_statusbar
-            )
-        )
+        resetSelections()
 
         listener.setTitle(getString(R.string.contacts))
     }
 
     override fun onActionItemClicked(mode: ActionMode, menuItem: MenuItem): Boolean {
         val menuItemId = menuItem.itemId
-        val selectedContacts = contactsAdapter.getSelectedItems!!
-        val allContactsLocal = selectedContacts.none(ContactItem::isProtonMailContact)
-        val allContactsProtonMail = selectedContacts.all(ContactItem::isProtonMailContact)
+
+        val selectedItems = getSelectedItems()
+        val allContactsLocal = selectedItems.none(ContactItem::isProtonMailContact)
+        val allContactsProtonMail = selectedItems.all(ContactItem::isProtonMailContact)
 
         when (menuItemId) {
             R.id.delete_contacts ->
@@ -172,8 +156,8 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
                         getString(R.string.delete),
                         requireContext().resources.getQuantityString(
                             R.plurals.are_you_sure_delete_contact,
-                            contactsAdapter.getSelectedItems!!.toList().size,
-                            contactsAdapter.getSelectedItems!!.toList().size
+                            selectedItems.toList().size,
+                            selectedItems.toList().size
                         )
                     ) {
                         onDelete()
@@ -186,7 +170,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
                 } else {
                     LocalContactsConverter(jobManager, viewModel)
                         .startConversion(
-                            contactsAdapter.getSelectedItems!!.toList()
+                            selectedItems.toList()
                         )
                     mode.finish()
                 }
@@ -205,11 +189,8 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     override fun onStop() {
         listener.unregisterObject(this)
+        actionMode?.finish()
         super.onStop()
-        if (actionMode != null) {
-            actionMode!!.finish()
-            actionMode = null
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -223,16 +204,16 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         startObserving()
     }
 
+    override fun getLayoutResourceId() = R.layout.fragment_contacts
+
+    override fun getFragmentKey() = TAG_CONTACTS_LIST_FRAGMENT
+
     private fun startObserving() {
         viewModel.contactItems.observe(viewLifecycleOwner) { contactItems ->
             Timber.v("New Contact items size: ${contactItems.size}")
-            if (contactItems.isEmpty()) {
-                noResults.visibility = VISIBLE
-            } else {
-                noResults.visibility = GONE
-            }
+            noResults.isVisible = contactItems.isEmpty()
             contactsAdapter.apply {
-                setData(contactItems)
+                submitList(contactItems)
                 val count = contactItems.size - contactItems
                     .count { contactItem -> contactItem.contactId == "-1" }
                 listener.dataUpdated(0, count)
@@ -255,9 +236,12 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         }
     }
 
-    override fun getLayoutResourceId() = R.layout.fragment_contacts
-
-    override fun getFragmentKey() = TAG_CONTACTS_LIST_FRAGMENT
+    private fun resetSelections() {
+        val unselectedItems = contactsAdapter.currentList.map { item ->
+            item.copy(isSelected = false, isMultiselectActive = false)
+        }
+        contactsAdapter.submitList(unselectedItems)
+    }
 
     fun optionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -314,7 +298,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     }
 
     override fun onDelete() {
-        viewModel.deleteSelected(getSelectedContactsIds()).observe(
+        viewModel.deleteSelected(getSelectedItems().mapNotNull { it.contactId }).observe(
             this,
             { state ->
                 if (state is Operation.State.FAILURE) {
@@ -352,29 +336,26 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     }
 
     private fun initAdapter() {
-        var actionMode: ActionMode? = null
         contactsAdapter = ContactsListAdapter(
-            requireContext(),
-            ArrayList(),
             this::onContactClick,
             this::onContactSelect,
-            onSelectionModeChange = { selectionModeEvent ->
-                when (selectionModeEvent) {
-                    SelectionModeEnum.STARTED -> {
-                        actionMode = listener.doStartActionMode(this@ContactsListFragment)
-                    }
-                    SelectionModeEnum.ENDED -> {
-                        if (actionMode != null) {
-                            actionMode!!.finish()
-                            actionMode = null
-                        }
-                    }
-                }
-            }
+            this::onWriteToContact
         )
 
-        contactsRecyclerView.layoutManager = LinearLayoutManager(context)
-        contactsRecyclerView.adapter = contactsAdapter
+        val itemDecoration = DividerItemDecoration(
+            context,
+            LinearLayout.VERTICAL
+        ).apply {
+            context?.getDrawable(R.drawable.list_divider)?.let {
+                setDrawable(it)
+            }
+        }
+
+        contactsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = contactsAdapter
+            addItemDecoration(itemDecoration)
+        }
     }
 
     override fun updateRecyclerViewBottomPadding(@Px size: Int) {
@@ -382,6 +363,20 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     }
 
     private fun onContactClick(contactItem: ContactItem) {
+        Timber.v("onContactClick id: ${contactItem.contactId}")
+        if (contactItem.contactId.isNullOrEmpty()) {
+            // ignore headers an other invalid items
+            return
+        }
+
+        if (getSelectedItems().isEmpty()) {
+            showDetails(contactItem)
+        } else {
+            onContactSelect(contactItem)
+        }
+    }
+
+    private fun showDetails(contactItem: ContactItem) {
         if (contactItem.isProtonMailContact) {
             activity?.startContactDetails(contactItem.contactId!!)
         } else {
@@ -389,23 +384,63 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         }
     }
 
-    private fun onContactSelect() {
-        val checkedItemsCount = contactsAdapter.getSelectedItems?.size
-        if (checkedItemsCount == null) {
+    private fun onContactSelect(contactItem: ContactItem) {
+        Timber.v("onContactSelect ${contactItem.contactId}")
+        var updatedItems = contactsAdapter.currentList.map { item ->
+            if (item.contactId == contactItem.contactId) {
+                item.copy(isSelected = !item.isSelected)
+            } else {
+                item
+            }
+        }
+        updatedItems = if (updatedItems.any { it.isSelected }) {
+            updatedItems.map {
+                it.copy(isMultiselectActive = true)
+            }
+        } else {
+            updatedItems.map {
+                it.copy(isMultiselectActive = false)
+            }
+        }
+
+        if (actionMode == null) {
+            actionMode = listener.doStartActionMode(this@ContactsListFragment)
+        }
+
+        val checkedItemsCount = updatedItems.filter { it.isSelected }.size
+        if (checkedItemsCount == 0) {
             listener.setTitle(getString(R.string.contacts))
+            actionMode?.finish()
         } else {
             actionMode?.title =
                 String.format(getString(R.string.contact_group_selected), checkedItemsCount)
         }
+
+        contactsAdapter.submitList(updatedItems) {
+            actionMode?.invalidate()
+        }
     }
+
+    private fun onWriteToContact(emailAddress: String) {
+        if (emailAddress.isNotEmpty()) {
+            val intent = Intent(context, ComposeMessageActivity::class.java)
+            intent.putExtra(BaseActivity.EXTRA_IN_APP, true)
+            intent.putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENTS, arrayOf(emailAddress))
+            startActivity(intent)
+        } else {
+            context?.showToast(R.string.email_empty, Toast.LENGTH_SHORT)
+        }
+    }
+
+    private fun getSelectedItems() = contactsAdapter.currentList.filter { it.isSelected }
 
     companion object {
 
         fun newInstance(hasPermission: Boolean): ContactsListFragment {
             val fragment = ContactsListFragment()
-            val extras = Bundle()
-            extras.putBoolean(EXTRA_PERMISSION, hasPermission)
-            fragment.arguments = extras
+            fragment.arguments = bundleOf(
+                EXTRA_PERMISSION to hasPermission
+            )
             return fragment
         }
     }

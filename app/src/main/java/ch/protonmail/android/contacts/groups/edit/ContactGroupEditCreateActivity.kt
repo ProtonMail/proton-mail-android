@@ -19,14 +19,13 @@
 package ch.protonmail.android.contacts.groups.edit
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -43,7 +42,6 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.content_edit_create_contact_group_header.*
@@ -56,13 +54,10 @@ import javax.inject.Inject
 private const val REQUEST_CODE_ADDRESSES = 1
 // endregion
 
-/*
- * Created by kadrikj on 9/5/18.
- */
-
 @AndroidEntryPoint
 class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.IColorChooserListener {
-    override fun colorChosen(color: String) {
+
+    override fun colorChosen(@ColorInt color: Int) {
         contactGroupEditCreateViewModel.setGroupColor(color)
         setColor()
         contactGroupEditCreateViewModel.setChanged()
@@ -82,11 +77,11 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         super.onCreate(savedInstanceState)
 
         contactGroupEditCreateViewModel = ViewModelProviders.of(this, contactGroupEditCreateViewModelFactory)
-                .get(ContactGroupEditCreateViewModel::class.java)
+            .get(ContactGroupEditCreateViewModel::class.java)
         contactGroupEditCreateViewModel.setData(intent?.extras?.getParcelable(EXTRA_CONTACT_GROUP))
         setColor()
         setName()
-        contactGroupEditCreateViewModel.contactGroupSetupLayout.observe(this, Observer { event ->
+        contactGroupEditCreateViewModel.contactGroupSetupLayout.observe(this, { event ->
             event?.getContentIfNotHandled()?.let { contactGroupMode ->
                 when (contactGroupMode) {
                     ContactGroupMode.EDIT -> setupEditContactGroupLayout()
@@ -235,14 +230,14 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
                 visibility = View.GONE
             } else {
                 visibility = View.VISIBLE
-				text=resources.getQuantityString(R.plurals.contact_group_members,it.size,it.size)
-			}
+                text = resources.getQuantityString(R.plurals.contact_group_members, it.size, it.size)
+            }
         }
     }
 
     private fun setName() {
         contactGroupName.setText(contactGroupEditCreateViewModel.getGroupName())
-        contactGroupName.addTextChangedListener(object: TextWatcher {
+        contactGroupName.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 contactGroupEditCreateViewModel.setChanged()
             }
@@ -256,12 +251,13 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
     }
 
     private fun setColor() {
-        val colorString: String? = UiUtil.normalizeColor(contactGroupEditCreateViewModel.getGroupColor())
-        val color = if (!TextUtils.isEmpty(colorString)) Color.parseColor(colorString)
-        else {
+        val colorInt: Int? = contactGroupEditCreateViewModel.getGroupColor()
+        val color = if (colorInt != null && colorInt != 0) {
+            colorInt
+        } else {
             val randomColor = generateNewColor()
             contactGroupEditCreateViewModel.setGroupColor(randomColor)
-            Color.parseColor(randomColor)
+            randomColor
         }
         groupColor.background.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
     }
@@ -273,11 +269,11 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         }).build()
     }
 
-    private fun generateNewColor(): String {
+    @ColorInt
+    private fun generateNewColor(): Int {
         val colorOptions = resources.getIntArray(R.array.label_colors)
         val random = Random()
         val currentSelection = random.nextInt(colorOptions.size)
-        val colorId = colorOptions[currentSelection]
-        return String.format("#%06X", 0xFFFFFF and colorId)
+        return colorOptions[currentSelection]
     }
 }

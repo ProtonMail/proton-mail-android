@@ -18,149 +18,142 @@
  */
 package ch.protonmail.android.contacts.list.listView
 
-import android.content.Context
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import ch.protonmail.android.contacts.groups.list.ViewHolder
-import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
-import ch.protonmail.android.views.contactsList.ContactListItemView
-import kotlinx.android.synthetic.main.contacts_v2_list_item.view.*
+import androidx.recyclerview.widget.RecyclerView.NO_POSITION
+import ch.protonmail.android.R
+import ch.protonmail.android.databinding.ListItemContactsBinding
+import ch.protonmail.android.views.ListItemThumbnail
+import timber.log.Timber
 
 class ContactsListAdapter(
-    val context: Context,
-    var items: List<ContactItem>,
     private val onContactGroupClickListener: (ContactItem) -> Unit,
-    private val onContactGroupSelect: (() -> Unit)?,
-    val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?
-) : RecyclerView.Adapter<ViewHolder>() {
+    private val onContactGroupSelect: (ContactItem) -> Unit,
+    private val onWriteToContactClicked: (String) -> Unit
+) : ListAdapter<ContactItem, RecyclerView.ViewHolder>(ContactItemDiffCallback()) {
 
-    private enum class ItemType {
-        CONTACT, HEADER
-    }
-
-    private var selectedItems: MutableSet<ContactItem>? = null
-
-    val getSelectedItems get() = selectedItems
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(
-            items[position],
-            onContactGroupClickListener,
-            onContactGroupSelect,
-            position
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val binding = ListItemContactsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val viewHolder = ContactViewHolder(
+            binding.thumbnailViewContactsList,
+            binding.textViewContactName,
+            binding.textViewContactSubtitle,
+            binding.imageViewEditButton,
+            binding.root
         )
-    }
 
-    private fun ViewHolder.bind(
-        contactItem: ContactItem,
-        clickListener: (ContactItem) -> Unit,
-        onContactGroupSelect: (() -> Unit)?,
-        position: Int
-    ) {
-        val rowType = getItemType(position)
-        val result = itemView as? ContactListItemView ?: when (rowType) {
-            ItemType.HEADER -> ContactListItemView.ContactsHeaderView(context)
-            ItemType.CONTACT -> ContactListItemView.ContactView(context)
-        }
-
-        result.bind(contactItem)
-        if (rowType == ItemType.CONTACT) {
-            result.contactIconLetter.setOnClickListener {
-                val selectedItems = selectedItems
-                if (selectedItems != null) {
-                    selectDeselectItems(selectedItems, contactItem)
-                    notifyItemChanged(adapterPosition)
+        binding.imageViewEditButton.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            if (position != NO_POSITION) {
+                val emailValue = getItem(viewHolder.adapterPosition).contactEmails
+                if (!emailValue.isNullOrEmpty()) {
+                    onWriteToContactClicked(emailValue)
                 } else {
-                    if (onSelectionModeChange == null) {
-                        return@setOnClickListener
-                    }
-                    if (this@ContactsListAdapter.selectedItems == null) {
-                        contactItem.isChecked = true
-                        this@ContactsListAdapter.selectedItems = hashSetOf(contactItem)
-                        onSelectionModeChange.invoke(SelectionModeEnum.STARTED)
-                        notifyDataSetChanged()
-                    }
+                    Timber.v("Cannot edit empty emails.")
                 }
-                onContactGroupSelect?.invoke()
+            }
+        }
+
+        binding.thumbnailViewContactsList.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            if (position != NO_POSITION) {
+                onContactGroupSelect(getItem(position))
+            }
+        }
+
+        binding.root.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            if (position != NO_POSITION) {
+                onContactGroupClickListener(getItem(position))
+            }
+        }
+
+        binding.root.setOnLongClickListener {
+            val position = viewHolder.adapterPosition
+            if (position != NO_POSITION) {
+                onContactGroupSelect(getItem(position))
+                true
+            } else
+                false
+        }
+
+        return viewHolder
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        (holder as ContactViewHolder).bind(getItem(position))
+    }
+
+    private class ContactViewHolder(
+        val itemThumbnail: ListItemThumbnail,
+        val contactName: TextView,
+        val contactSubtitle: TextView,
+        val editButton: ImageView,
+        root: ConstraintLayout
+    ) : RecyclerView.ViewHolder(root) {
+
+        fun bind(item: ContactItem) {
+            Timber.v("Bind contact item: $item")
+            contactName.text = item.name
+
+            // special case for header items, where the text is in the string res
+            if (item.headerStringRes != null) {
+                contactName.text = itemView.resources.getString(item.headerStringRes)
+                itemView.isClickable = false
+            } else {
+                itemView.isClickable = true
             }
 
-            result.setOnLongClickListener {
-                if (onSelectionModeChange == null) {
-                    return@setOnLongClickListener false
+            itemView.isSelected = item.isSelected
+
+            if (item.initials.isNotEmpty()) {
+                itemThumbnail.apply {
+                    bind(
+                        item.isSelected,
+                        item.isMultiselectActive,
+                        item.initials
+                    )
+                    isVisible = true
                 }
-                if (this@ContactsListAdapter.selectedItems == null) {
-                    contactItem.isChecked = true
-                    this@ContactsListAdapter.selectedItems = hashSetOf(contactItem)
-                    onSelectionModeChange.invoke(SelectionModeEnum.STARTED)
-                    notifyDataSetChanged()
-                }
-                onContactGroupSelect?.invoke()
-                return@setOnLongClickListener true
+            } else {
+                itemThumbnail.isVisible = false
             }
 
-            result.setOnClickListener {
-                val selectedItems = selectedItems
-                if (selectedItems != null) {
-                    selectDeselectItems(selectedItems, contactItem)
-                    notifyDataSetChanged()
-                } else {
-                    clickListener(contactItem)
+            if (item.contactEmails == null) {
+                contactSubtitle.isVisible = false
+                editButton.isVisible = false
+            } else {
+                contactSubtitle.apply {
+                    text = if (item.contactEmails.isNotEmpty())
+                        item.contactEmails
+                    else
+                        itemView.resources.getString(R.string.empty_email_list)
+                    isVisible = true
                 }
-                onContactGroupSelect?.invoke()
+                editButton.isVisible = true
             }
         }
     }
 
-    private fun getItemType(position: Int): ItemType {
-        val contactItem = items[position]
-        return if (contactItem.contactId == "-1") {
-            ItemType.HEADER
-        } else
-            ItemType.CONTACT
-    }
+    class ContactItemDiffCallback : DiffUtil.ItemCallback<ContactItem>() {
 
-    override fun getItemViewType(position: Int) = getItemType(position).ordinal
+        override fun areItemsTheSame(oldItem: ContactItem, newItem: ContactItem): Boolean =
+            oldItem.contactId == newItem.contactId &&
+                oldItem.headerStringRes == newItem.headerStringRes
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return when (ItemType.values()[viewType]) {
-            ItemType.HEADER -> ViewHolder(ContactListItemView.ContactsHeaderView(context))
-            ItemType.CONTACT -> ViewHolder(ContactListItemView.ContactView(context))
-        }
-    }
-
-    fun setData(items: List<ContactItem>) {
-        this.items = items
-        notifyDataSetChanged()
-    }
-
-    override fun getItemCount(): Int = items.size
-
-    fun endSelectionMode() {
-        selectedItems?.forEach {
-            if (items.contains(it)) {
-                items.find { contactItem -> (contactItem == it) }?.isChecked =
-                    false
-            }
-        }
-        selectedItems = null
-        notifyDataSetChanged()
-    }
-
-    private fun selectDeselectItems(selectedItems: MutableSet<ContactItem>, contactItem: ContactItem) {
-        if (selectedItems.contains(contactItem)) {
-            selectedItems.remove(contactItem)
-            contactItem.isChecked = false
-            if (selectedItems.isEmpty()) {
-                this@ContactsListAdapter.selectedItems = null
-                onSelectionModeChange?.invoke(SelectionModeEnum.ENDED)
-                notifyDataSetChanged()
-            }
-        } else {
-            contactItem.isChecked = true
-            selectedItems.add(contactItem)
-        }
+        override fun areContentsTheSame(oldItem: ContactItem, newItem: ContactItem): Boolean =
+            oldItem.contactId == newItem.contactId &&
+                oldItem.name == newItem.name &&
+                oldItem.contactEmails == newItem.contactEmails &&
+                oldItem.isSelected == newItem.isSelected &&
+                oldItem.isMultiselectActive == newItem.isMultiselectActive &&
+                oldItem.isProtonMailContact == newItem.isProtonMailContact
     }
 }
-
-class ViewHolder(view: View) : RecyclerView.ViewHolder(view)

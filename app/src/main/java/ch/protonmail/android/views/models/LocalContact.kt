@@ -16,19 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.contacts.list.listView
+package ch.protonmail.android.views.models
 
-import androidx.annotation.StringRes
-import me.proton.core.util.kotlin.EMPTY_STRING
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
-data class ContactItem(
-    val isProtonMailContact: Boolean,
-    val name: String = EMPTY_STRING,
-    val contactId: String? = null,
-    val contactEmails: String? = null,
-    val initials: String = EMPTY_STRING,
-    val additionalEmailsCount: Int = 0,
-    val isSelected: Boolean = false,
-    val isMultiselectActive: Boolean = false,
-    @StringRes val headerStringRes: Int? = null
-)
+@Parcelize
+data class LocalContact(
+    val name: String,
+    val emails: List<String>,
+    val phones: List<String>,
+    val addresses: List<LocalContactAddress>,
+    val groups: List<String>
+) : Parcelable

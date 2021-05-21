@@ -22,7 +22,7 @@ package ch.protonmail.android.labels.presentation.mapper
 import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
 import ch.protonmail.android.data.local.model.Label
-import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
+import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import javax.inject.Inject
 
@@ -32,7 +32,7 @@ class LabelsMapper @Inject constructor() {
         label: Label,
         currentLabelsSelection: List<String>,
         labelsSheetType: LabelsActionSheet.Type
-    ): ManageLabelItemUiModel {
+    ): LabelActonItemUiModel {
         val iconRes = if (labelsSheetType == LabelsActionSheet.Type.LABEL) {
             R.drawable.circle_labels_selection
         } else {
@@ -49,7 +49,7 @@ class LabelsMapper @Inject constructor() {
             null
         }
 
-        return ManageLabelItemUiModel(
+        return LabelActonItemUiModel(
             labelId = label.id,
             iconRes = iconRes,
             title = label.name,

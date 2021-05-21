@@ -27,9 +27,9 @@ import ch.protonmail.android.views.models.LocalContact
 import javax.inject.Inject
 
 class AndroidContactDetailsCallbacksFactory @Inject constructor(
-	private val context: Context
+    private val context: Context
 ) {
 
     fun create(contactDetails: MutableLiveData<Event<LocalContact>>): LoaderManager.LoaderCallbacks<Cursor> =
-		AndroidContactDetailsCallbacks(context, contactDetails)
+        AndroidContactDetailsCallbacks(context, contactDetails)
 }

@@ -25,7 +25,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
 import ch.protonmail.android.labels.presentation.mapper.LabelsMapper
-import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
+import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -69,7 +69,7 @@ class GetAllLabelsTest {
             every { id } returns testLabelId2
             every { exclusive } returns false // false for normal label/not a folder (api v3)
         }
-        val uiLabel1 = ManageLabelItemUiModel(
+        val uiLabel1 = LabelActonItemUiModel(
             testLabelId1,
             R.drawable.circle_labels_selection,
             "labelName1",
@@ -78,7 +78,7 @@ class GetAllLabelsTest {
             true,
             LabelsActionSheet.Type.LABEL.typeInt
         )
-        val uiLabel2 = ManageLabelItemUiModel(
+        val uiLabel2 = LabelActonItemUiModel(
             testLabelId2,
             R.drawable.circle_labels_selection,
             "labelName2",
@@ -116,7 +116,7 @@ class GetAllLabelsTest {
             every { id } returns testLabelId2
             every { exclusive } returns true  // true for a folder/not a normal label (api v3)
         }
-        val uiLabel1 = ManageLabelItemUiModel(
+        val uiLabel1 = LabelActonItemUiModel(
             testLabelId1,
             R.drawable.circle_labels_selection,
             "labelName1",
@@ -125,7 +125,7 @@ class GetAllLabelsTest {
             true,
             LabelsActionSheet.Type.FOLDER.typeInt
         )
-        val uiLabel2 = ManageLabelItemUiModel(
+        val uiLabel2 = LabelActonItemUiModel(
             testLabelId2,
             R.drawable.circle_labels_selection,
             "labelName2",
@@ -167,7 +167,7 @@ class GetAllLabelsTest {
             every { id } returns testLabelId2
             every { exclusive } returns true  // true for a folder/not a normal label (api v3)
         }
-        val uiLabel1 = ManageLabelItemUiModel(
+        val uiLabel1 = LabelActonItemUiModel(
             testLabelId1,
             R.drawable.circle_labels_selection,
             "labelName1",
@@ -176,7 +176,7 @@ class GetAllLabelsTest {
             true,
             LabelsActionSheet.Type.FOLDER.typeInt
         )
-        val uiLabel2 = ManageLabelItemUiModel(
+        val uiLabel2 = LabelActonItemUiModel(
             testLabelId2,
             R.drawable.circle_labels_selection,
             "labelName2",
@@ -203,10 +203,10 @@ class GetAllLabelsTest {
         assertEquals(expected, result)
     }
 
-    private fun getAllStandardFolders(): List<ManageLabelItemUiModel> =
+    private fun getAllStandardFolders(): List<LabelActonItemUiModel> =
         StandardFolderLocation.values()
             .map { location ->
-                ManageLabelItemUiModel(
+                LabelActonItemUiModel(
                     labelId = location.id,
                     iconRes = location.iconRes,
                     titleRes = location.title,

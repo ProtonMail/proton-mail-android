@@ -23,12 +23,14 @@ import android.os.Bundle
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
@@ -45,12 +47,15 @@ import ch.protonmail.android.contacts.list.search.SearchExpandListener
 import ch.protonmail.android.contacts.list.search.SearchViewQueryListener
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.ConnectionState
+import ch.protonmail.android.databinding.ActivityContactsBinding
 import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import com.github.clans.fab.FloatingActionButton
+import com.github.clans.fab.FloatingActionMenu
+import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_contacts_v2.*
+
 import timber.log.Timber
 
 // region constants
@@ -66,6 +71,11 @@ class ContactsActivity :
     ContactsActivityContract {
 
     lateinit var pagerAdapter: ContactsFragmentsPagerAdapter
+
+    private lateinit var progressLayoutView: View
+    private lateinit var viewPager: ViewPager
+    private lateinit var addFab: FloatingActionMenu
+    private lateinit var tabLayoutContacts: TabLayout
 
     private var alreadyCheckedPermission = false
 
@@ -86,32 +96,40 @@ class ContactsActivity :
 
     override fun dataUpdated(position: Int, count: Int) {
         pagerAdapter.update(position, count)
-        tabLayout.setupWithViewPager(viewPager, true)
+        tabLayoutContacts.setupWithViewPager(viewPager, true)
     }
 
-    override fun getLayoutId() = R.layout.activity_contacts_v2
+    override fun getLayoutId() = R.layout.activity_contacts
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val binding = ActivityContactsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbarContacts.toolbar as Toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setTitle(R.string.contacts)
         }
 
         pagerAdapter = ContactsFragmentsPagerAdapter(this, supportFragmentManager)
-        viewPager.adapter = pagerAdapter
-        viewPager?.addOnPageChangeListener(ViewPagerOnPageSelected(this@ContactsActivity::onPageSelected))
-        tabLayout.setupWithViewPager(viewPager)
+        viewPager = binding.viewpagerContacts.apply {
+            adapter = pagerAdapter
+            addOnPageChangeListener(ViewPagerOnPageSelected(this@ContactsActivity::onPageSelected))
+        }
+        binding.tablayoutContacts.setupWithViewPager(viewPager)
 
-        addContactItem.setOnClickListener {
+        addFab = binding.fabContactsAddMenu
+        binding.fabContactsAddContact.setOnClickListener {
             startActivityForResult(
                 EditContactDetailsActivity.startNewContactActivity(this),
                 REQUEST_CODE_NEW_CONTACT
             )
-            addFab.close(false)
+            binding.fabContactsAddMenu.close(false)
         }
 
-        addContactGroupItem.setOnClickListener {
+        binding.fabContactsAddContactGroup.setOnClickListener {
             if (!contactsViewModel.isPaidUser()) {
                 showToast(R.string.paid_plan_needed)
                 return@setOnClickListener
@@ -119,7 +137,7 @@ class ContactsActivity :
             val intent =
                 AppUtil.decorInAppIntent(Intent(this, ContactGroupEditCreateActivity::class.java))
             startActivity(intent)
-            addFab.close(false)
+            binding.fabContactsAddMenu.close(false)
         }
         contactsViewModel.fetchContactsResult.observe(
             this,
@@ -130,6 +148,9 @@ class ContactsActivity :
             this,
             { onConnectivityEvent(it) }
         )
+
+        progressLayoutView = binding.layoutProgressContacts
+        tabLayoutContacts = binding.tablayoutContacts
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -160,15 +181,14 @@ class ContactsActivity :
         }
     }
 
-    override fun requestContactsPermission() {
-        contactsPermissionHelper.checkPermission()
-        alreadyCheckedPermission = true
-    }
-
     override fun onStop() {
         mApp.bus.unregister(this)
         alreadyCheckedPermission = false
         super.onStop()
+    }
+    override fun requestContactsPermission() {
+        contactsPermissionHelper.checkPermission()
+        alreadyCheckedPermission = true
     }
 
     private fun onConnectivityCheckRetry() {
@@ -200,7 +220,7 @@ class ContactsActivity :
                 return true
             }
             R.id.action_sync -> {
-                progressLayoutView?.isVisible = true
+                progressLayoutView.isVisible = true
                 contactsViewModel.fetchContacts()
                 return true
             }
@@ -229,7 +249,7 @@ class ContactsActivity :
 
     private fun onContactsFetchedEvent(isSuccessful: Boolean) {
         Timber.v("onContactsFetchedEvent isSuccessful:$isSuccessful")
-        progressLayoutView?.isVisible = false
+        progressLayoutView.isVisible = false
         val toastTextId =
             if (isSuccessful) R.string.fetching_contacts_success
             else R.string.fetching_contacts_failure
@@ -315,5 +335,6 @@ class ViewPagerOnPageSelected(private val pageSelected: (Int) -> Unit = {}) : Vi
 }
 
 interface ContactsActivityContract {
+
     fun requestContactsPermission()
 }

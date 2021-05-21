@@ -20,6 +20,7 @@ package ch.protonmail.android.contacts.groups.edit
 
 import android.annotation.SuppressLint
 import android.text.TextUtils
+import androidx.annotation.ColorInt
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,6 +29,7 @@ import ch.protonmail.android.api.rx.RxEventBus
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.PostResult
+import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
@@ -37,14 +39,15 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.extensions.toPMResponseBody
 import io.reactivex.Completable
 import retrofit2.HttpException
+import java.util.Locale
 import javax.inject.Inject
 
-/**
- * Created by kadrikj on 9/5/18. */
-class ContactGroupEditCreateViewModel @Inject constructor(private val userManager: UserManager,
-        private val contactGroupEditCreateRepository: ContactGroupEditCreateRepository) : ViewModel() {
+class ContactGroupEditCreateViewModel @Inject constructor(
+    private val userManager: UserManager,
+    private val contactGroupEditCreateRepository: ContactGroupEditCreateRepository
+) : ViewModel() {
 
-    private var contactLabel: ContactLabel? = null
+    private var contactGroupItem: ContactGroupListItem? = null
     private lateinit var _data: List<ContactEmail>
     private lateinit var _toBeDeleted: List<ContactEmail>
     private lateinit var _toBeAdded: List<ContactEmail>
@@ -80,37 +83,39 @@ class ContactGroupEditCreateViewModel @Inject constructor(private val userManage
         RxEventBus.listen(ResponseBody::class.java).subscribe(_apiError)
     }
 
-    fun setData(contactLabel: ContactLabel?) {
-        this.contactLabel = contactLabel
+    fun setData(contactLabel: ContactGroupListItem?) {
+        this.contactGroupItem = contactLabel
         mode = if (contactLabel == null) ContactGroupMode.CREATE else ContactGroupMode.EDIT
         _contactGroupSetupLayout.postValue(Event(mode))
     }
 
-    fun getGroupName(): String? = contactLabel?.name
+    fun getGroupName(): String? = contactGroupItem?.name
 
-    fun getGroupColor(): String? = contactLabel?.color
+    @ColorInt
+    fun getGroupColor(): Int? = contactGroupItem?.color
 
-    fun setGroupColor(color: String) {
-        if (contactLabel == null) {
-            contactLabel = ContactLabel()
+    fun setGroupColor(@ColorInt color: Int) {
+        contactGroupItem = if (contactGroupItem == null) {
+            ContactGroupListItem("", "", 0, color,)
+        } else {
+            contactGroupItem?.copy(color = color)
         }
-        contactLabel?.color = color
     }
 
     fun getContactGroupEmails() {
-        val label = contactLabel
+        val label = contactGroupItem
         if (label != null)
-            contactGroupEditCreateRepository.getContactGroupEmails(label.ID)
-                    .subscribeOn(ThreadSchedulers.io())
-                    .observeOn(ThreadSchedulers.main()).subscribe(
-                            {
-                                _data = it
-                                _contactGroupEmailsResult.postValue(it)
-                            },
-                            {
-                                _contactGroupEmailsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
-                            }
-                    )
+            contactGroupEditCreateRepository.getContactGroupEmails(label.contactId)
+                .subscribeOn(ThreadSchedulers.io())
+                .observeOn(ThreadSchedulers.main()).subscribe(
+                    {
+                        _data = it
+                        _contactGroupEmailsResult.postValue(it)
+                    },
+                    {
+                        _contactGroupEmailsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
+                    }
+                )
         else {
             _data = ArrayList()
             _contactGroupEmailsResult.postValue(ArrayList())
@@ -127,79 +132,106 @@ class ContactGroupEditCreateViewModel @Inject constructor(private val userManage
         }
         when (mode) {
             ContactGroupMode.CREATE ->
-                createContactGroup(name, _toBeAdded.mapNotNull {
-                    it.contactEmailId
-                })
+                createContactGroup(
+                    name,
+                    _toBeAdded.mapNotNull {
+                        it.contactEmailId
+                    }
+                )
             ContactGroupMode.EDIT ->
-                editContactGroup(name, _toBeAdded.mapNotNull {
-                    it.contactEmailId
-                }, _toBeDeleted.mapNotNull {
-                    it.contactEmailId
-                })
+                editContactGroup(
+                    name,
+                    _toBeAdded.mapNotNull {
+                        it.contactEmailId
+                    },
+                    _toBeDeleted.mapNotNull {
+                        it.contactEmailId
+                    }
+                )
         }
     }
 
     @SuppressLint("CheckResult")
-    private fun editContactGroup(name: String, toBeAdded: List<String>, toBeDeleted:List<String>) {
-        val contactLabel = ContactLabel(ID = contactLabel!!.ID, name = name, color = contactLabel!!.color, display = contactLabel!!.display, exclusive = contactLabel!!.exclusive, type = contactLabel!!.type)
+    private fun editContactGroup(name: String, toBeAdded: List<String>, toBeDeleted: List<String>) {
+        val contactLabel = ContactLabel(
+            ID = contactGroupItem!!.contactId,
+            name = name,
+            color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.getDefault()),
+            display = 0,
+            exclusive = true,
+            type = Constants.LABEL_TYPE_CONTACT_GROUPS
+        )
         contactGroupEditCreateRepository.editContactGroup(contactLabel)
-                .doOnError {
-                    if (it is HttpException) {
-                        val responseBody = it.toPMResponseBody()
-                        _contactGroupUpdateResult.postValue(Event(PostResult(responseBody?.error, Status.FAILED)))
-                    }
+            .doOnError {
+                if (it is HttpException) {
+                    val responseBody = it.toPMResponseBody()
+                    _contactGroupUpdateResult.postValue(Event(PostResult(responseBody?.error, Status.FAILED)))
                 }
-                .concatWith(
-                    contactGroupEditCreateRepository.setMembersForContactGroup(contactLabel!!.ID, name, toBeAdded)
-                )
-                .concatWith(
-                    contactGroupEditCreateRepository.removeMembersFromContactGroup(contactLabel!!.ID, name, toBeDeleted)
-                )
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main())
-                .subscribe({
+            }
+            .concatWith(
+                contactGroupEditCreateRepository.setMembersForContactGroup(contactLabel!!.ID, name, toBeAdded)
+            )
+            .concatWith(
+                contactGroupEditCreateRepository.removeMembersFromContactGroup(contactLabel!!.ID, name, toBeDeleted)
+            )
+            .subscribeOn(ThreadSchedulers.io())
+            .observeOn(ThreadSchedulers.main())
+            .subscribe(
+                {
                     _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.SUCCESS)))
-                }, {
+                },
+                {
                     var message = it.message
                     if (it is HttpException) {
                         message = it.toPMResponseBody()?.error
                     }
                     _contactGroupUpdateResult.postValue(Event(PostResult(message, Status.FAILED)))
-                })
+                }
+            )
     }
 
     @SuppressLint("CheckResult")
     private fun createContactGroup(name: String, membersList: List<String>) {
-        val contactLabel = ContactLabel(name = name, color = contactLabel!!.color, display = 1, exclusive = false, type = Constants.LABEL_TYPE_CONTACT_GROUPS)
+        val contactLabel = ContactLabel(
+            name = name,
+            color = String.format("#%06X", 0xFFFFFF and contactGroupItem!!.color, Locale.US),
+            display = 1,
+            exclusive = false,
+            type = Constants.LABEL_TYPE_CONTACT_GROUPS
+        )
         if (!validate(contactLabel)) {
             _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.VALIDATION_FAILED)))
             return
         }
         contactGroupEditCreateRepository.createContactGroup(contactLabel)
-                .onErrorReturn {
-                    if (it is HttpException) {
-                        val responseBody = it.toPMResponseBody()
-                        _contactGroupUpdateResult.postValue(Event(PostResult(responseBody?.error, Status.FAILED)))
-                    }
-                    contactLabel
+            .onErrorReturn {
+                if (it is HttpException) {
+                    val responseBody = it.toPMResponseBody()
+                    _contactGroupUpdateResult.postValue(Event(PostResult(responseBody?.error, Status.FAILED)))
                 }
-                .flatMapCompletable {
-                    Completable.complete().andThen(contactGroupEditCreateRepository.setMembersForContactGroup(it.ID, name, membersList))
-                }
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main())
-                .subscribe({
+                contactLabel
+            }
+            .flatMapCompletable {
+                Completable.complete()
+                    .andThen(contactGroupEditCreateRepository.setMembersForContactGroup(it.ID, name, membersList))
+            }
+            .subscribeOn(ThreadSchedulers.io())
+            .observeOn(ThreadSchedulers.main())
+            .subscribe(
+                {
                     _contactGroupUpdateResult.postValue(Event(PostResult(status = Status.SUCCESS)))
-                }, {
+                },
+                {
                     var message = it.message
                     if (it is HttpException) {
                         message = it.toPMResponseBody()?.error
                     }
                     _contactGroupUpdateResult.postValue(Event(PostResult(message, Status.FAILED)))
-                })
+                }
+            )
     }
 
-    private fun validate(contactLabel: ContactLabel) : Boolean {
+    private fun validate(contactLabel: ContactLabel): Boolean {
         if (TextUtils.isEmpty(contactLabel.name)) {
             return false
         }

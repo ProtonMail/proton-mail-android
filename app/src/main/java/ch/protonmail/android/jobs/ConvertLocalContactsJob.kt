@@ -59,7 +59,7 @@ import ezvcard.property.Email
 import ezvcard.property.Telephone
 import ezvcard.property.Uid
 import me.proton.core.util.kotlin.toInt
-import java.io.Serializable
+import timber.log.Timber
 import java.util.ArrayList
 import java.util.UUID
 
@@ -67,15 +67,11 @@ class ConvertLocalContactsJob(
     localContacts: List<ContactItem>
 ) : ProtonMailEndlessJob(Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT)) {
 
-    private val mLocalContacts: List<LocalContactItem>
-
-    init {
-        mLocalContacts = localContacts
-            .asSequence()
-            .filter { it.contactId != null }
-            .map { LocalContactItem(it.contactId!!, it.getName(), it.getEmail()) }
-            .toList()
-    }
+    private val localContacts: List<LocalContactItem> = localContacts
+        .asSequence()
+        .filter { it.contactId != null }
+        .map { LocalContactItem(requireNotNull(it.contactId), it.name) }
+        .toList()
 
     override fun onAdded() {
         if (!getQueueNetworkUtil().isConnected()) {
@@ -97,21 +93,25 @@ class ConvertLocalContactsJob(
 
             val results = ArrayList<Int>()
             var counter = 1
-            for (contactItem in mLocalContacts) {
+            for (contactItem in localContacts) {
 
-                val c = ProtonMailApplication.getApplication()
+                Timber.v("Launching query contact id: ${contactItem.id}")
+                val c = applicationContext
                     .contentResolver
                     .query(
                         ContactsContract.Data.CONTENT_URI,
                         AndroidContactDetailsRepository.ANDROID_DETAILS_PROJECTION,
                         AndroidContactDetailsRepository.ANDROID_DETAILS_SELECTION,
-                        arrayOf(contactItem.id), null
+                        arrayOf(contactItem.id),
+                        null
                     ) ?: continue
 
                 val localContact = createLocalContact(c, contactsGroups)
                 c.close()
 
-                val contactGroupIds = contactGroupsOnServer.filter { localContact.groups.contains(it.key) }.map { it.value }
+                val contactGroupIds = contactGroupsOnServer
+                    .filter { localContact.groups.contains(it.key) }
+                    .map { it.value }
 
                 val vCardEncrypted = VCard()
                 vCardEncrypted.version = VCardVersion.V4_0
@@ -354,5 +354,5 @@ class ConvertLocalContactsJob(
         }
     }
 
-    private inner class LocalContactItem(val id: String, val name: String, val email: String) : Serializable
+    private data class LocalContactItem(val id: String, val name: String)
 }

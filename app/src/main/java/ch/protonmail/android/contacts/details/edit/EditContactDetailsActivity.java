@@ -75,7 +75,6 @@ import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
-import ch.protonmail.android.utils.Event;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.VCardUtil;
 import ch.protonmail.android.utils.extensions.CommonExtensionsKt;
@@ -230,7 +229,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         viewModel.setup(
                 extras.getInt(EXTRA_FLOW),
                 extras.getString(EXTRA_CONTACT, ""),
-                (LocalContact) extras.getSerializable(EXTRA_LOCAL_CONTACT),
+                extras.getParcelable(EXTRA_LOCAL_CONTACT),
                 extras.getString(EXTRA_EMAIL, ""),
                 Arrays.asList(getResources().getStringArray(R.array.vcard_option_phone)),
                 Arrays.asList(getResources().getStringArray(R.array.vcard_option_phone_val)),
@@ -243,7 +242,9 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 extras.getString(EXTRA_CONTACT_VCARD_TYPE2),
                 extras.getString(EXTRA_CONTACT_VCARD_TYPE3_PATH));
 
-        viewModel.getSetupComplete().observe(this, setupCompleteObserver);
+        viewModel.getSetupComplete().observe(this, event ->
+                viewModel.fetchContactGroupsForEmails()
+        );
 
         addPhotoBtn.setOnClickListener(v -> {
 
@@ -1160,10 +1161,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         createOtherView(viewModel.getDefaultOtherOption(), "", Constants.VCardOtherInfoType.ORGANIZATION);
         initNewOptionRow();
         initExistingOptionsRow();
-    };
-
-    private Observer setupCompleteObserver = (Observer<Event<Boolean>>) event -> {
-        viewModel.fetchContactGroupsForEmails();
     };
 
     // region helper methods

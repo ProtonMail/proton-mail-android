@@ -22,7 +22,7 @@ package ch.protonmail.android.labels.domain.usecase
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.presentation.mapper.LabelsMapper
-import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
+import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import me.proton.core.util.kotlin.toBooleanOrFalse
@@ -37,7 +37,7 @@ class GetAllLabels @Inject constructor(
         currentLabelsSelection: List<String>,
         labelsSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL,
         currentMessageFolder: Constants.MessageLocationType? = null // only required for Type.FOLDER
-    ): List<ManageLabelItemUiModel> {
+    ): List<LabelActonItemUiModel> {
         val dbLabels = messageDetailsRepository.getAllLabels()
 
         val uiLabelsFromDb = dbLabels
@@ -52,7 +52,7 @@ class GetAllLabels @Inject constructor(
             uiLabelsFromDb
     }
 
-    private fun getStandardFolders(currentMessageFolder: Constants.MessageLocationType): List<ManageLabelItemUiModel> {
+    private fun getStandardFolders(currentMessageFolder: Constants.MessageLocationType): List<LabelActonItemUiModel> {
         return when (currentMessageFolder) {
             Constants.MessageLocationType.INBOX,
             Constants.MessageLocationType.ARCHIVE,
@@ -67,7 +67,7 @@ class GetAllLabels @Inject constructor(
     ) = StandardFolderLocation.values()
         .filter { it.id != currentMessageFolder.name }
         .map { location ->
-            ManageLabelItemUiModel(
+            LabelActonItemUiModel(
                 labelId = location.id,
                 iconRes = location.iconRes,
                 titleRes = location.title,

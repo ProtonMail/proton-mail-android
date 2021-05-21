@@ -20,7 +20,6 @@ package ch.protonmail.android.contacts.groups.details
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.Editable
@@ -153,9 +152,7 @@ class ContactGroupDetailsActivity : BaseActivity() {
         }
 
         contactGroupDetailsViewModel.setupUIData.observe(this) { contactLabel ->
-            val colorString = UiUtil.normalizeColor(contactLabel?.color)
-            val color = Color.parseColor(colorString)
-            initCollapsingToolbar(color, contactLabel.name, contactLabel.contactEmailsCount)
+            initCollapsingToolbar(contactLabel.color, contactLabel.name, contactLabel.contactEmailsCount)
         }
 
         contactGroupDetailsViewModel.deleteGroupStatus.observe(this) {

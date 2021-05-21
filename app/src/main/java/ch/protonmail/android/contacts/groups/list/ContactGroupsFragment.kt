@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.contacts.groups.list
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.ActionMode
@@ -27,38 +26,35 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.LinearLayout
 import androidx.annotation.Px
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.fragments.BaseFragment
 import ch.protonmail.android.api.models.MessageRecipient
-import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.IContactsFragment
 import ch.protonmail.android.contacts.IContactsListFragmentListener
 import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsActivity
 import ch.protonmail.android.contacts.groups.details.EXTRA_CONTACT_GROUP
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
-import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
-import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_contacts_groups.*
 import timber.log.Timber
 import java.io.Serializable
 
+
 // region constants
 private const val TAG_CONTACT_GROUPS_FRAGMENT = "ProtonMail.ContactGroupsFragment"
 // endregion
 
-@AndroidEntryPoint
+@AndroidEntryPoint  // TODO: Investigate if it could be merged together with [ContactsListFragment].
 class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
     private lateinit var contactGroupsAdapter: ContactsGroupsListAdapter
@@ -77,41 +73,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         checked: Boolean
     ) = Unit
 
-    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-        when (item?.itemId) {
-            R.id.action_delete -> {
-                DialogUtils.showDeleteConfirmationDialog(
-                    requireContext(), getString(R.string.delete),
-                    requireContext().resources.getQuantityString(
-                        R.plurals.are_you_sure_delete_group,
-                        contactGroupsAdapter.getSelectedItems!!.toList().size,
-                        contactGroupsAdapter.getSelectedItems!!.toList().size
-                    )
-                ) {
-                    onDelete()
-                    mode!!.finish()
-                }
-            }
-        }
-        return true
-    }
-
-    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-        actionMode = mode
-        UiUtil.setStatusBarColor(
-            activity as Activity,
-            UiUtil.scaleColor(ContextCompat.getColor(requireContext(), R.color.dark_purple_statusbar), 1f, true)
-        )
-        mode!!.menuInflater.inflate(R.menu.contacts_menu, menu)
-        menu!!.findItem(R.id.action_delete).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        menu.findItem(R.id.action_search).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-        menu.findItem(R.id.action_sync).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-        menu.findItem(R.id.action_convert).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-
-        return true
-    }
-
-    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu): Boolean {
+    override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
         menu.findItem(R.id.action_delete).isVisible = true
         menu.findItem(R.id.action_search).isVisible = false
         menu.findItem(R.id.action_sync).isVisible = false
@@ -119,17 +81,41 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         return true
     }
 
-    override fun onDestroyActionMode(mode: ActionMode?) {
-        actionMode!!.finish()
-        actionMode = null
-        contactGroupsAdapter.endSelectionMode()
+    override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+        actionMode = mode
+        mode.menuInflater.inflate(R.menu.contacts_menu, menu)
+        menu.findItem(R.id.action_delete).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        menu.findItem(R.id.action_search).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+        menu.findItem(R.id.action_sync).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+        menu.findItem(R.id.action_convert).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
 
-        UiUtil.setStatusBarColor(
-            activity as AppCompatActivity,
-            ContextCompat.getColor(requireContext(), R.color.dark_purple_statusbar)
-        )
+        return true
+    }
+
+    override fun onDestroyActionMode(mode: ActionMode?) {
+        actionMode = null
+        resetSelections()
 
         listener.setTitle(getString(R.string.contacts))
+    }
+
+    override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_delete -> {
+                DialogUtils.showDeleteConfirmationDialog(
+                    requireContext(), getString(R.string.delete),
+                    requireContext().resources.getQuantityString(
+                        R.plurals.are_you_sure_delete_group,
+                        getSelectedItems().toList().size,
+                        getSelectedItems().toList().size
+                    )
+                ) {
+                    onDelete()
+                    mode.finish()
+                }
+            }
+        }
+        return true
     }
 
     override fun onContactPermissionChange(hasPermission: Boolean) {}
@@ -150,33 +136,35 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         startObserving()
     }
 
-    private fun initAdapter() {
-        var actionMode: ActionMode? = null
-
-        contactGroupsAdapter = ContactsGroupsListAdapter(
-            ArrayList(),
-            this::onContactGroupClick,
-            this::onWriteToContactGroup,
-            this::onContactGroupSelect
-        ) { selectionModeEvent ->
-            actionMode = when (selectionModeEvent) {
-
-                SelectionModeEnum.STARTED ->
-                    listener.doStartActionMode(this@ContactGroupsFragment)
-
-                SelectionModeEnum.ENDED -> {
-                    actionMode?.finish()
-                    null
-                }
-            }
-        }
-
-        contactGroupsRecyclerView.layoutManager = LinearLayoutManager(context)
-        contactGroupsRecyclerView.adapter = contactGroupsAdapter
+    override fun onStop() {
+        actionMode?.finish()
+        super.onStop()
     }
 
     override fun updateRecyclerViewBottomPadding(@Px size: Int) {
         contactGroupsRecyclerView.updatePadding(bottom = size)
+    }
+
+    private fun initAdapter() {
+        contactGroupsAdapter = ContactsGroupsListAdapter(
+            this::onContactGroupClick,
+            this::onWriteToContactGroup,
+            this::onContactGroupSelect
+        )
+
+        val itemDecoration = DividerItemDecoration(
+            context,
+            LinearLayout.VERTICAL
+        ).apply {
+            val drawable = requireNotNull(context?.getDrawable(R.drawable.list_divider))
+            setDrawable(drawable)
+        }
+
+        contactGroupsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = contactGroupsAdapter
+            addItemDecoration(itemDecoration)
+        }
     }
 
     private fun startObserving() {
@@ -188,7 +176,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
                 noResults.visibility = GONE
             }
             listener.dataUpdated(1, list?.size ?: 0)
-            contactGroupsAdapter.setData(list ?: ArrayList())
+            contactGroupsAdapter.submitList(list)
         }
 
         contactGroupsViewModel.contactGroupsError.observe(this) { event ->
@@ -200,16 +188,62 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         contactGroupsViewModel.observeContactGroups()
     }
 
-    private fun onContactGroupSelect() {
-        val checkedItemsCount = contactGroupsAdapter.getSelectedItems?.size
-        if (checkedItemsCount == null) {
+    private fun resetSelections() {
+        val unselectedItems = contactGroupsAdapter.currentList.map { item ->
+            if (item.isSelected) {
+                item.copy(isSelected = false, isMultiselectActive = false)
+            } else
+                item
+        }
+        contactGroupsAdapter.submitList(unselectedItems)
+    }
+
+    private fun onContactGroupSelect(labelItem: ContactGroupListItem) {
+        Timber.v("onContactGroupSelect ${labelItem.contactId}")
+
+        var updatedItems = contactGroupsAdapter.currentList.map { item ->
+            if (item.contactId == labelItem.contactId) {
+                item.copy(isSelected = !item.isSelected)
+            } else {
+                item
+            }
+        }
+        updatedItems = if (updatedItems.any { it.isSelected }) {
+            updatedItems.map {
+                it.copy(isMultiselectActive = true)
+            }
+        } else {
+            updatedItems.map {
+                it.copy(isMultiselectActive = false)
+            }
+        }
+
+        if (actionMode == null) {
+            actionMode = listener.doStartActionMode(this@ContactGroupsFragment)
+        }
+
+        val checkedItemsCount = updatedItems.filter { it.isSelected }.size
+        if (checkedItemsCount == 0) {
             listener.setTitle(getString(R.string.contacts))
+            actionMode?.finish()
         } else {
             actionMode?.title = String.format(getString(R.string.contact_group_selected), checkedItemsCount)
         }
+
+        contactGroupsAdapter.submitList(updatedItems) {
+            actionMode?.invalidate()
+        }
     }
 
-    private fun onContactGroupClick(labelItem: ContactLabel) {
+    private fun onContactGroupClick(labelItem: ContactGroupListItem) {
+        if (getSelectedItems().isEmpty()) {
+            showDetails(labelItem)
+        } else {
+            onContactGroupSelect(labelItem)
+        }
+    }
+
+    private fun showDetails(labelItem: ContactGroupListItem) {
         val detailsIntent = Intent(context, ContactGroupDetailsActivity::class.java)
         val bundle = Bundle()
         bundle.putParcelable(EXTRA_CONTACT_GROUP, labelItem)
@@ -218,10 +252,10 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
     }
 
     override fun onDelete() {
-        contactGroupsViewModel.deleteSelected(contactGroupsAdapter.getSelectedItems!!.toList())
+        contactGroupsViewModel.deleteSelected(getSelectedItems().toList())
     }
 
-    private fun onWriteToContactGroup(contactGroup: ContactLabel) {
+    private fun onWriteToContactGroup(contactGroup: ContactGroupListItem) {
         val composeIntent = Intent(context, ComposeMessageActivity::class.java)
         if (!contactGroupsViewModel.isPaidUser()) {
             context?.showToast(R.string.paid_plan_needed)
@@ -250,15 +284,10 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         contactGroupsViewModel.getContactGroupEmails(contactGroup)
     }
 
-    override fun onStop() {
-        super.onStop()
-        if (actionMode != null) {
-            actionMode!!.finish()
-            actionMode = null
-        }
-    }
+    private fun getSelectedItems() = contactGroupsAdapter.currentList.filter { it.isSelected }
 
     companion object {
+
         fun newInstance() = ContactGroupsFragment()
     }
 }

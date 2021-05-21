@@ -19,10 +19,15 @@
 
 package ch.protonmail.android.contacts.list.viewModel
 
+import android.graphics.Color
+import ch.protonmail.android.R
+import ch.protonmail.android.contacts.groups.list.ContactGroupListItem
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
-import timber.log.Timber
+import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.utils.UiUtil
+import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.Locale
 import javax.inject.Inject
 
@@ -35,10 +40,9 @@ class ContactsListMapper @Inject constructor() {
         val emailsMap = emailsList.groupBy(ContactEmail::contactId)
 
         return dataList.map { contactData ->
-            Timber.v("Map contactData: $contactData")
             val contactId = contactData.contactId
             val name = contactData.name
-            var primaryEmail: String? = null
+            var primaryEmail: String = EMPTY_STRING
             var additionalEmailsCount = 0
 
             emailsMap[contactId]?.apply {
@@ -50,12 +54,25 @@ class ContactsListMapper @Inject constructor() {
                 }
             }
 
+            val contactEmails =
+                if (primaryEmail.isEmpty()) {
+                    EMPTY_STRING
+                } else {
+                    val additionalEmailsText = if (additionalEmailsCount > 0)
+                        ", +$additionalEmailsCount"
+                    else
+                        ""
+                    primaryEmail + additionalEmailsText
+                }
+
             ContactItem(
-                true,
-                contactId,
-                name,
-                primaryEmail,
-                additionalEmailsCount
+                isProtonMailContact = true,
+                name = name,
+                contactId = contactId,
+                contactEmails = contactEmails,
+                initials = UiUtil.extractInitials(name).take(2),
+                additionalEmailsCount = additionalEmailsCount,
+                headerStringRes = null
             )
         }
     }
@@ -65,24 +82,48 @@ class ContactsListMapper @Inject constructor() {
         androidContacts: List<ContactItem>
     ): List<ContactItem> {
         val protonMailEmails = protonmailContacts.asSequence()
-            .map { it.getEmail().toLowerCase(Locale.ENGLISH) }
+            .map { it.contactEmails?.toLowerCase(Locale.ENGLISH) }
             .toSet()
 
         val filteredAndroidContacts = androidContacts.filter {
-            !protonMailEmails.contains(it.getEmail().toLowerCase(Locale.ENGLISH))
+            !protonMailEmails.contains(it.contactEmails?.toLowerCase(Locale.ENGLISH))
         }
 
         val mergedContacts = mutableListOf<ContactItem>()
         if (protonmailContacts.isNotEmpty()) {
             // adding this for serving as a header item
-            mergedContacts.add(ContactItem(contactId = "-1", isProtonMailContact = true))
+            mergedContacts.add(
+                ContactItem(
+                    isProtonMailContact = true,
+                    headerStringRes = R.string.protonmail_contacts,
+                )
+            )
             mergedContacts.addAll(protonmailContacts)
         }
         if (filteredAndroidContacts.isNotEmpty()) {
             // adding this for serving as a header item
-            mergedContacts.add(ContactItem(contactId = "-1", isProtonMailContact = false))
+            mergedContacts.add(
+                ContactItem(
+                    isProtonMailContact = false,
+                    headerStringRes = R.string.device_contacts,
+                )
+            )
             mergedContacts.addAll(filteredAndroidContacts)
         }
         return mergedContacts
     }
+
+    fun mapLabelToContactGroup(label: ContactLabel): ContactGroupListItem =
+        ContactGroupListItem(
+            contactId = label.ID,
+            name = label.name,
+            contactEmailsCount = label.contactEmailsCount,
+            color = Color.parseColor(UiUtil.normalizeColor(label.color)),
+        )
+
+    fun mapLabelsToContactGroups(contactLabels: List<ContactLabel>): List<ContactGroupListItem> =
+        contactLabels.map { label ->
+            mapLabelToContactGroup(label)
+        }
+
 }

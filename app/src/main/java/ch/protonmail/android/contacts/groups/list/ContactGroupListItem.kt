@@ -17,20 +17,18 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.presentation.model
+package ch.protonmail.android.contacts.groups.list
 
-import android.graphics.Color
+import android.os.Parcelable
 import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import kotlinx.android.parcel.Parcelize
 
-data class ManageLabelItemUiModel(
-    val labelId: String,
-    @DrawableRes val iconRes: Int,
-    val title: String? = null, // for item custom titles e.g. "Lablel123"
-    @StringRes val titleRes: Int? = null, // for standard titles e.g. "Inbox"
-    @ColorInt val colorInt: Int = Color.BLACK,
-    val isChecked: Boolean? = null,
-    val labelType: Int = LabelsActionSheet.Type.LABEL.typeInt
-)
+@Parcelize
+data class ContactGroupListItem(
+    val contactId: String,
+    val name: String,
+    val contactEmailsCount: Int,
+    @ColorInt val color: Int,
+    val isSelected: Boolean = false,
+    val isMultiselectActive: Boolean = false
+) : Parcelable

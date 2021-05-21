@@ -29,39 +29,47 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.databinding.ItemManageLabelsActionBinding
+import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.model.ManageLabelItemDiffUtil
-import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
 import timber.log.Timber
 
-class ManageLabelsActionAdapter(
-    private val clickListener: (ManageLabelItemUiModel) -> Unit
-) : ListAdapter<ManageLabelItemUiModel, RecyclerView.ViewHolder>(ManageLabelItemDiffUtil()) {
+class LabelsActionAdapter(
+    private val clickListener: (LabelActonItemUiModel) -> Unit
+) : ListAdapter<LabelActonItemUiModel, RecyclerView.ViewHolder>(ManageLabelItemDiffUtil()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = ItemManageLabelsActionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ManageLabelsViewHolder(
+
+        val viewHolder = ManageLabelsViewHolder(
             view.textviewCheckboxManageLabelsTitle,
             view.checkboxManageLabelsActionIsChecked,
             view.root
         )
+
+        viewHolder.itemView.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                clickListener(getItem(position))
+            }
+        }
+
+        return viewHolder
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ManageLabelsViewHolder).bind(getItem(position), clickListener)
+        (holder as ManageLabelsViewHolder).bind(getItem(position))
     }
 
-    class ManageLabelsViewHolder(
+    private class ManageLabelsViewHolder(
         private val titleTextView: TextView,
         private val checkbox: CompoundButton,
         root: ConstraintLayout
     ) : RecyclerView.ViewHolder(root) {
 
         fun bind(
-            model: ManageLabelItemUiModel,
-            clickListener: (ManageLabelItemUiModel) -> Unit
+            model: LabelActonItemUiModel
         ) {
             Timber.v("Bind ManageLabelsViewHolder $model")
-            itemView.setOnClickListener { clickListener(model) }
             titleTextView.apply {
                 text = if (model.titleRes != null)
                     resources.getString(model.titleRes)

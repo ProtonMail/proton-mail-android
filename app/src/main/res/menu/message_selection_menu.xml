@@ -29,14 +29,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <item
         android:id="@+id/move_to_trash"
-        android:icon="@drawable/top_trash"
+        android:icon="@drawable/ic_trash"
         android:title="@string/move_to_trash"
 		app:showAsAction="always"
 	/>
 
     <item
         android:id="@+id/delete_message"
-        android:icon="@drawable/top_trash"
+        android:icon="@drawable/ic_trash"
         android:title="@string/delete_messages"
 		app:showAsAction="ifRoom"
 	/>

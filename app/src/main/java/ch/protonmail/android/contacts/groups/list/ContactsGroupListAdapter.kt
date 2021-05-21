@@ -18,187 +18,128 @@
  */
 package ch.protonmail.android.contacts.groups.list
 
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState
-import ch.protonmail.android.data.local.model.*
-import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
-import kotlinx.android.synthetic.main.contacts_v2_list_item.view.*
+import ch.protonmail.android.databinding.ListItemContactsBinding
+import ch.protonmail.android.views.ListItemThumbnail
 
 class ContactsGroupsListAdapter(
-    private var items: List<ContactLabel>,
-    private val onContactGroupClickListener: (ContactLabel) -> Unit,
-    private val onWriteToGroupClickListener: (ContactLabel) -> Unit,
-    private val onContactGroupSelect: (() -> Unit)?,
-    private val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?
-) : RecyclerView.Adapter<ViewHolder>() {
+    private val onContactGroupClickListener: (ContactGroupListItem) -> Unit,
+    private val onWriteToGroupClickListener: (ContactGroupListItem) -> Unit,
+    private val onContactGroupSelect: (ContactGroupListItem) -> Unit
+) : ListAdapter<ContactGroupListItem, RecyclerView.ViewHolder>(ContactGroupItemDiffCallback()) {
 
-    private var selectedItems: MutableSet<ContactLabel>? = null
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val binding = ListItemContactsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
-    val getSelectedItems get() = selectedItems
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(
-            items[position],
-            onContactGroupClickListener,
-            onWriteToGroupClickListener,
-            onContactGroupSelect
+        val viewHolder = ContactGroupsViewHolder(
+            binding.thumbnailViewContactsList,
+            binding.textViewContactName,
+            binding.textViewContactSubtitle,
+            binding.imageViewEditButton,
+            binding.root
         )
-    }
 
-    fun endSelectionMode() {
-        selectedItems?.forEach {
-            if (items.contains(it)) {
-                items.find { contactLabel -> (contactLabel == it) }?.isSelected =
-                    ContactEmailGroupSelectionState.DEFAULT
+        binding.imageViewEditButton.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                onWriteToGroupClickListener(getItem(position))
             }
         }
-        selectedItems = null
-        notifyDataSetChanged()
-    }
 
-    private fun ViewHolder.bind(
-        contactLabel: ContactLabel,
-        clickListener: (ContactLabel) -> Unit,
-        writeToGroupListener: (ContactLabel) -> Unit,
-        onContactGroupSelect: (() -> Unit)?
-    ) {
-        itemView.contactIcon.isVisible = true
-        itemView.contactIconLetter.isVisible = false
+        binding.thumbnailViewContactsList.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                onContactGroupSelect(getItem(position))
+            }
+        }
 
-        itemView.contact_name.text = contactLabel.name
-        val members = contactLabel.contactEmailsCount
-        itemView.contact_subtitle.text = itemView.context.resources.getQuantityString(
-            R.plurals.contact_group_members,
-            members,
-            members
-        )
-        var colorString = contactLabel.color
-        colorString = UiUtil.normalizeColor(colorString)
-        itemView.contactIcon.background.setColorFilter(
-            Color.parseColor(colorString),
-            PorterDuff.Mode.SRC_IN
-        )
+        binding.root.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                onContactGroupClickListener(getItem(position))
+            }
+        }
 
-        updateSelectedUI(contactLabel, itemView)
-        itemView.contactIcon.setOnClickListener {
-            val selectedItems = selectedItems
-            if (selectedItems != null) {
-                if (selectedItems.contains(contactLabel)) {
-                    contactLabel.isSelected = ContactEmailGroupSelectionState.DEFAULT
-                    selectedItems.remove(contactLabel)
-                    if (selectedItems.isEmpty()) {
-                        this@ContactsGroupsListAdapter.selectedItems = null
-                        onSelectionModeChange?.invoke(SelectionModeEnum.ENDED)
-                        notifyDataSetChanged()
-                    }
-                } else {
-                    contactLabel.isSelected = ContactEmailGroupSelectionState.SELECTED
-                    selectedItems.add(contactLabel)
-                }
-                notifyItemChanged(adapterPosition)
+        binding.root.setOnLongClickListener {
+            val position = viewHolder.adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                onContactGroupSelect(getItem(position))
+                true
             } else {
-                if (onSelectionModeChange == null) {
-                    return@setOnClickListener
-                }
-                if (this@ContactsGroupsListAdapter.selectedItems == null) {
-                    contactLabel.isSelected = ContactEmailGroupSelectionState.SELECTED
-                    this@ContactsGroupsListAdapter.selectedItems = hashSetOf(contactLabel)
-                    onSelectionModeChange.invoke(SelectionModeEnum.STARTED)
-                    notifyDataSetChanged()
-                }
-            }
-            onContactGroupSelect?.invoke()
-        }
-
-        itemView.setOnLongClickListener {
-            if (onSelectionModeChange == null) {
-                return@setOnLongClickListener false
-            }
-            if (this@ContactsGroupsListAdapter.selectedItems == null) {
-                contactLabel.isSelected = ContactEmailGroupSelectionState.SELECTED
-                this@ContactsGroupsListAdapter.selectedItems = hashSetOf(contactLabel)
-                onSelectionModeChange.invoke(SelectionModeEnum.STARTED)
-                notifyDataSetChanged()
-            }
-            onContactGroupSelect?.invoke()
-            return@setOnLongClickListener true
-        }
-
-        itemView.setOnClickListener {
-            val selectedItems = selectedItems
-            if (selectedItems != null) {
-                if (selectedItems.contains(contactLabel)) {
-                    contactLabel.isSelected = ContactEmailGroupSelectionState.DEFAULT
-                    selectedItems.remove(contactLabel)
-                    if (selectedItems.isEmpty()) {
-                        this@ContactsGroupsListAdapter.selectedItems = null
-                        onSelectionModeChange?.invoke(SelectionModeEnum.ENDED)
-                        notifyDataSetChanged()
-                    }
-                } else {
-                    contactLabel.isSelected = ContactEmailGroupSelectionState.SELECTED
-                    selectedItems.add(contactLabel)
-                }
-                notifyItemChanged(adapterPosition)
-            } else {
-                clickListener(contactLabel)
+                false
             }
         }
 
-        itemView.writeButton.setOnClickListener {
-            writeToGroupListener.invoke(contactLabel)
+        return viewHolder
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        (holder as ContactGroupsViewHolder).bind(getItem(position))
+    }
+
+    private class ContactGroupsViewHolder(
+        val itemThumbnail: ListItemThumbnail,
+        val contactName: TextView,
+        val contactSubtitle: TextView,
+        val editButton: ImageView,
+        root: ConstraintLayout
+    ) : RecyclerView.ViewHolder(root) {
+
+        fun bind(item: ContactGroupListItem) {
+            contactName.text = item.name
+
+            itemView.isSelected = item.isSelected
+
+            itemThumbnail.apply {
+                bind(
+                    isSelectedActive = item.isSelected,
+                    isMultiselectActive = item.isMultiselectActive,
+                    circleColor = item.color
+                )
+                isVisible = true
+            }
+
+            contactSubtitle.apply {
+                text = if (item.contactEmailsCount > 0)
+                    context.resources.getQuantityString(
+                        R.plurals.contact_group_members,
+                        item.contactEmailsCount,
+                        item.contactEmailsCount
+                    )
+                else
+                    itemView.resources.getString(R.string.empty_email_list)
+                isVisible = true
+            }
+
+            editButton.visibility = View.VISIBLE
         }
     }
 
-    private fun updateSelectedUI(contactLabel: ContactLabel, itemView: View) {
-        if (contactLabel.isSelected == ContactEmailGroupSelectionState.SELECTED) {
-            itemView.contactIcon.setBackgroundResource(0)
-            itemView.contactIcon.setImageResource(R.drawable.ic_contacts_checkmark)
-            itemView.contactIcon.setBackgroundResource(R.drawable.bg_circle)
-            itemView.contactIcon.drawable.setColorFilter(
-                ContextCompat.getColor(itemView.context, R.color.contact_action),
-                PorterDuff.Mode.SRC_IN
-            )
-            itemView.rowWrapper.setBackgroundResource(R.color.selectable_color)
-        } else {
-            updateNotSelectedUI(contactLabel, itemView)
-        }
+    class ContactGroupItemDiffCallback : DiffUtil.ItemCallback<ContactGroupListItem>() {
+
+        override fun areItemsTheSame(oldItem: ContactGroupListItem, newItem: ContactGroupListItem): Boolean =
+            oldItem.contactId == newItem.contactId &&
+                oldItem.name == newItem.name
+
+        override fun areContentsTheSame(oldItem: ContactGroupListItem, newItem: ContactGroupListItem): Boolean =
+            oldItem.contactId == newItem.contactId &&
+                oldItem.name == newItem.name &&
+                oldItem.color == newItem.color &&
+                oldItem.contactEmailsCount == newItem.contactEmailsCount &&
+                oldItem.isMultiselectActive == newItem.isMultiselectActive &&
+                oldItem.isSelected == newItem.isSelected
     }
 
-    private fun updateNotSelectedUI(contactLabel: ContactLabel, itemView: View) {
-        itemView.contactIcon.setBackgroundResource(0)
-        itemView.contactIcon.setImageResource(R.drawable.ic_contact_groups)
-        itemView.contactIcon.setBackgroundResource(R.drawable.label_color_circle)
-        var colorString = contactLabel.color
-        colorString = UiUtil.normalizeColor(colorString)
-        itemView.contactIcon.background.setColorFilter(
-            Color.parseColor(colorString),
-            PorterDuff.Mode.SRC_IN
-        )
-        itemView.rowWrapper.setBackgroundResource(R.color.white)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.contacts_v2_list_item, parent, false)
-        )
-    }
-
-    fun setData(items: List<ContactLabel>) {
-        this.items = items
-        notifyDataSetChanged()
-    }
-
-    override fun getItemCount(): Int = items.size
 }
 
-class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
+

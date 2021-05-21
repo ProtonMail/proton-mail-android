@@ -22,16 +22,17 @@ package ch.protonmail.android.views.messagesList
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import ch.protonmail.android.databinding.LayoutSenderInitialBinding
 import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.Locale
 
 /**
- * A view for the selectable sender initial
+ * A view for the selectable sender initial(s).
  */
 class SenderInitialView @JvmOverloads constructor(
     context: Context,
@@ -53,17 +54,20 @@ class SenderInitialView @JvmOverloads constructor(
         checkImageView = binding.checkImageView
     }
 
-    fun bind(senderText: String, isMultiSelectionMode: Boolean = false) {
+    fun bind(
+        senderText: String,
+        isMultiSelectionMode: Boolean = false,
+        @ColorInt customBackgroundColor: Int? = null
+    ) {
         senderInitialTextView.text = if (senderText.isNotEmpty()) {
-            senderText.capitalize(Locale.getDefault()).subSequence(0, 1)
+            senderText.capitalize(Locale.getDefault())
         } else EMPTY_STRING
 
-        if (isMultiSelectionMode) {
-            senderInitialTextView.visibility = View.INVISIBLE
-            checkImageView.visibility = View.VISIBLE
-        } else {
-            checkImageView.visibility = View.INVISIBLE
-            senderInitialTextView.visibility = View.VISIBLE
+        senderInitialTextView.isVisible = !isMultiSelectionMode
+        checkImageView.isVisible = isMultiSelectionMode
+
+        customBackgroundColor?.let {
+            senderInitialTextView.setBackgroundColor(it)
         }
     }
 }

@@ -32,9 +32,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.FragmentLabelsActionSheetBinding
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
-import ch.protonmail.android.labels.presentation.model.ManageLabelItemUiModel
+import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
+import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionAdapter
 import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionSheetViewModel
-import ch.protonmail.android.labels.presentation.viewmodel.ManageLabelsActionAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -75,7 +75,7 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
                 }
             }
         }
-        val manageLabelsActionAdapter = ManageLabelsActionAdapter(::onLabelClicked)
+        val manageLabelsActionAdapter = LabelsActionAdapter(::onLabelClicked)
         with(binding.recyclerviewLabelsSheet) {
             layoutManager = LinearLayoutManager(context)
             adapter = manageLabelsActionAdapter
@@ -86,19 +86,19 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
             setOnClickListener {
                 binding.switchLabelsSheetArchive.toggle()
             }
+        }
 
-            binding.textViewLabelsSheetNewLabel.apply {
-                isVisible = actionSheetType == Type.LABEL
-                setOnClickListener {
-                    // TODO: Link it to appropriate setting section for adding new Label
-                }
+        binding.textViewLabelsSheetNewLabel.apply {
+            isVisible = actionSheetType == Type.LABEL
+            setOnClickListener {
+                // TODO: Link it to appropriate setting section for adding new Label
             }
+        }
 
-            binding.textViewLabelsSheetNewFolder.apply {
-                isVisible = actionSheetType == Type.FOLDER
-                setOnClickListener {
-                    // TODO: Link it to appropriate setting section for adding new Folder
-                }
+        binding.textViewLabelsSheetNewFolder.apply {
+            isVisible = actionSheetType == Type.FOLDER
+            setOnClickListener {
+                // TODO: Link it to appropriate setting section for adding new Folder
             }
         }
 
@@ -131,7 +131,7 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private fun onLabelClicked(model: ManageLabelItemUiModel) {
+    private fun onLabelClicked(model: LabelActonItemUiModel) {
         viewModel.onLabelClicked(model)
     }
 

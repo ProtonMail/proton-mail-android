@@ -29,6 +29,7 @@
         <item name="actionModeStyle">@style/ProtonMailActionMode</item>
         <item name="actionModeCloseDrawable">@drawable/ic_arrow_left</item>
         <item name="bottomSheetDialogTheme">@style/ProtonMail.BottomSheetDialogTheme</item>
+        <item name="colorControlHighlight">@color/interaction_weak_pressed</item>
     </style>
 
     <style name="ProtonMailActionMode" parent="Widget.AppCompat.ActionMode">

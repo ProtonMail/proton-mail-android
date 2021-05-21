@@ -37,15 +37,10 @@ class ActionSheetHeader @JvmOverloads constructor(
     @StyleRes defStyleRes: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr, defStyleRes) {
 
-    private var _binding: ViewActionSheetHeaderBinding? = null
-    private val binding get() = requireNotNull(_binding)
-
-    init {
-        _binding = ViewActionSheetHeaderBinding.inflate(
-            LayoutInflater.from(context),
-            this
-        )
-    }
+    private var binding = ViewActionSheetHeaderBinding.inflate(
+        LayoutInflater.from(context),
+        this
+    )
 
     fun setTitle(title: String) {
         binding.textviewActionSheetTitle.text = title
