@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.mailbox.domain
 
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import kotlinx.coroutines.flow.Flow
@@ -50,4 +51,8 @@ interface ConversationsRepository {
     fun clearConversations()
 
     fun loadMore(params: GetConversationsParameters)
+
+    suspend fun markRead(conversationIds: List<String>)
+
+    suspend fun markUnread(conversationIds: List<String>, userId: Id, location: Constants.MessageLocationType)
 }

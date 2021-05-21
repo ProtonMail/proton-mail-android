@@ -36,6 +36,8 @@ import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
 import ch.protonmail.android.mailbox.data.remote.model.LabelContextApiModel
+import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRemoteWorker
+import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsUnreadRemoteWorker
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
@@ -48,6 +50,9 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
@@ -60,6 +65,7 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Before
 import org.junit.Test
 import java.io.IOException
@@ -154,6 +160,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     @RelaxedMockK
     private lateinit var messageFactory: MessageFactory
 
+    @RelaxedMockK
+    private lateinit var markConversationsReadRemoteWorker: MarkConversationsReadRemoteWorker.Enqueuer
+
+    @RelaxedMockK
+    private lateinit var markConversationsUnreadRemoteWorker: MarkConversationsUnreadRemoteWorker.Enqueuer
+
     @MockK
     private lateinit var api: ProtonMailApiManager
 
@@ -168,7 +180,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 conversationDao,
                 messageDao,
                 api,
-                messageFactory
+                messageFactory,
+                markConversationsReadRemoteWorker,
+                markConversationsUnreadRemoteWorker
             )
     }
 
@@ -531,6 +545,70 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             }
 
             verify { conversationDao wasNot Called }
+        }
+    }
+
+    @Test
+    fun verifyConversationsAndMessagesAreMarkedRead() {
+        runBlockingTest {
+            // given
+            val conversation1 = "conversation1"
+            val conversation2 = "conversation2"
+            val conversationIds = listOf(conversation1, conversation2)
+            val message = mockk<Message> {
+                every { setIsRead(any()) } just runs
+            }
+            coEvery { conversationDao.updateNumUnreadMessages(0, any()) } just runs
+            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
+            coEvery { messageDao.saveMessage(any()) } returns 123
+
+            // when
+            conversationsRepository.markRead(conversationIds)
+
+            // then
+            coVerify {
+                conversationDao.updateNumUnreadMessages(0, conversation1)
+                conversationDao.updateNumUnreadMessages(0, conversation2)
+            }
+            coVerify(exactly = 4) {
+                messageDao.saveMessage(message)
+            }
+        }
+    }
+
+    @Test
+    fun verifyConversationsAndMessagesAreMarkedUnread() {
+        runBlockingTest {
+            // given
+            val conversation1 = "conversation1"
+            val conversation2 = "conversation2"
+            val conversationIds = listOf(conversation1, conversation2)
+            val mailboxLocation = Constants.MessageLocationType.ARCHIVE
+            val message = mockk<Message> {
+                every { setIsRead(any()) } just runs
+                every { location } returns mailboxLocation.messageLocationTypeValue
+            }
+            val unreadMessages = 0
+            every { conversationDao.getConversation(any(), any()) } returns flowOf(
+                mockk {
+                    every { numUnread } returns unreadMessages
+                }
+            )
+            coEvery { conversationDao.updateNumUnreadMessages(unreadMessages + 1, any()) } just runs
+            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
+            coEvery { messageDao.saveMessage(any()) } returns 123
+
+            // when
+            conversationsRepository.markUnread(conversationIds, Id("id"), mailboxLocation)
+
+            // then
+            coVerify {
+                conversationDao.updateNumUnreadMessages(unreadMessages + 1, conversation1)
+                conversationDao.updateNumUnreadMessages(unreadMessages + 1, conversation2)
+            }
+            coVerify(exactly = 2) {
+                messageDao.saveMessage(message)
+            }
         }
     }
 

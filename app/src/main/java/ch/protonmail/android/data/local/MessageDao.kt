@@ -226,6 +226,7 @@ abstract class MessageDao {
         SELECT *
         FROM $TABLE_MESSAGES
         WHERE $COLUMN_CONVERSATION_ID = :conversationId
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
     abstract fun findAllMessageInfoFromAConversation(conversationId: String): Flow<List<Message>>
