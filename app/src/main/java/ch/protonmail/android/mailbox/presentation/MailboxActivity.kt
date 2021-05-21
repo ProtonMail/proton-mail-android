@@ -1082,8 +1082,8 @@ class MailboxActivity :
                     )
                     mode.finish()
                 }
-            R.id.mark_read -> mailboxViewModel.markRead(messageIds)
-            R.id.mark_unread -> mailboxViewModel.markUnRead(messageIds)
+            R.id.mark_read -> {}
+            R.id.mark_unread -> {}
             R.id.add_star -> job = PostStarJob(messageIds)
             R.id.add_label -> {
             }
@@ -1175,9 +1175,9 @@ class MailboxActivity :
         mailboxActionsView.setOnSecondActionClickListener {
             val messageIds = getSelectedMessageIds()
             if (MessageUtils.areAllUnRead(selectedMessages)) {
-                mailboxViewModel.markRead(messageIds)
+                mailboxViewModel.markRead(messageIds, userManager.requireCurrentUserId(), currentMailboxLocation)
             } else {
-                mailboxViewModel.markUnRead(messageIds)
+                mailboxViewModel.markUnRead(messageIds, userManager.requireCurrentUserId(), currentMailboxLocation)
             }
             actionMode?.finish()
         }
