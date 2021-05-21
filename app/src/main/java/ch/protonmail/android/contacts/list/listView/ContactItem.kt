@@ -24,10 +24,11 @@ import me.proton.core.util.kotlin.EMPTY_STRING
 data class ContactItem(
     val isProtonMailContact: Boolean,
     val name: String = EMPTY_STRING,
-    val contactEmails: String? = null,
-    val additionalEmailsCount: Int = 0,
     val contactId: String? = null,
-    val isSelected: Boolean = false,
+    val contactEmails: String? = null,
     val initials: String = EMPTY_STRING,
+    val additionalEmailsCount: Int = 0,
+    val isSelected: Boolean = false,
+    val isMultiselectActive: Boolean = false,
     @StringRes val headerStringRes: Int? = null
 )

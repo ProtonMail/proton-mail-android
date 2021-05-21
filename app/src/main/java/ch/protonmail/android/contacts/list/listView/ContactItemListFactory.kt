@@ -33,10 +33,10 @@ class ContactItemListFactory {
         return ContactItem(
             isProtonMailContact = false,
             name = name,
-            contactEmails = email,
-            additionalEmailsCount = 0,
             contactId = contactId,
-            initials = UiUtil.extractInitials(name).take(2)
+            contactEmails = email,
+            initials = UiUtil.extractInitials(name).take(2),
+            additionalEmailsCount = 0,
         )
     }
 

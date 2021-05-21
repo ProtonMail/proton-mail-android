@@ -96,7 +96,7 @@ class ContactGroupEditCreateViewModel @Inject constructor(
 
     fun setGroupColor(@ColorInt color: Int) {
         contactGroupItem = if (contactGroupItem == null) {
-            ContactGroupListItem("", "", 0, color)
+            ContactGroupListItem("", "", 0, color,)
         } else {
             contactGroupItem?.copy(color = color)
         }

@@ -98,11 +98,14 @@ class ContactsGroupsListAdapter(
         fun bind(item: ContactGroupListItem) {
             contactName.text = item.name
 
-            itemView.isActivated = item.isSelected
+            itemView.isSelected = item.isSelected
 
             itemThumbnail.apply {
-                isSelected = item.isSelected
-                circleColor = item.color
+                bind(
+                    isSelectedActive = item.isSelected,
+                    isMultiselectActive = item.isMultiselectActive,
+                    circleColor = item.color
+                )
                 isVisible = true
             }
 
@@ -119,7 +122,6 @@ class ContactsGroupsListAdapter(
             }
 
             editButton.visibility = View.VISIBLE
-
         }
     }
 
@@ -134,6 +136,7 @@ class ContactsGroupsListAdapter(
                 oldItem.name == newItem.name &&
                 oldItem.color == newItem.color &&
                 oldItem.contactEmailsCount == newItem.contactEmailsCount &&
+                oldItem.isMultiselectActive == newItem.isMultiselectActive &&
                 oldItem.isSelected == newItem.isSelected
     }
 

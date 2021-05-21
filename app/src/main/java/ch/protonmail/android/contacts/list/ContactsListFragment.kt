@@ -132,7 +132,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     ) = Unit
 
     override fun onDestroyActionMode(mode: ActionMode?) {
-        actionMode?.finish()
+        Timber.v("onDestroyActionMode: $mode")
         actionMode = null
         resetSelections()
 
@@ -189,9 +189,8 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     override fun onStop() {
         listener.unregisterObject(this)
-        super.onStop()
         actionMode?.finish()
-        actionMode = null
+        super.onStop()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -239,10 +238,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     private fun resetSelections() {
         val unselectedItems = contactsAdapter.currentList.map { item ->
-            if (item.isSelected) {
-                item.copy(isSelected = false)
-            } else
-                item
+            item.copy(isSelected = false, isMultiselectActive = false)
         }
         contactsAdapter.submitList(unselectedItems)
     }
@@ -390,11 +386,20 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     private fun onContactSelect(contactItem: ContactItem) {
         Timber.v("onContactSelect ${contactItem.contactId}")
-        val updatedItems = contactsAdapter.currentList.map { item ->
+        var updatedItems = contactsAdapter.currentList.map { item ->
             if (item.contactId == contactItem.contactId) {
                 item.copy(isSelected = !item.isSelected)
             } else {
                 item
+            }
+        }
+        updatedItems = if (updatedItems.any { it.isSelected }) {
+            updatedItems.map {
+                it.copy(isMultiselectActive = true)
+            }
+        } else {
+            updatedItems.map {
+                it.copy(isMultiselectActive = false)
             }
         }
 

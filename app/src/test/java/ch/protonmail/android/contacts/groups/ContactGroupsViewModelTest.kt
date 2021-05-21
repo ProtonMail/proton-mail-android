@@ -94,19 +94,19 @@ class ContactGroupsViewModelTest : CoroutinesTest {
             label1.ID,
             label1.name,
             0,
-            color = testColorInt
+            color = testColorInt,
         )
         val listItem2 = ContactGroupListItem(
             label2.ID,
             label2.name,
             0,
-            color = testColorInt
+            color = testColorInt,
         )
         val listItem3 = ContactGroupListItem(
             label3.ID,
             label3.name,
             0,
-            color = testColorInt
+            color = testColorInt,
         )
         val contactListItems = listOf(listItem1, listItem2, listItem3)
         coEvery { contactGroupsRepository.observeContactGroups(searchTerm) } returns flowOf(contactLabels)

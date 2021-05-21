@@ -47,22 +47,22 @@ class ContactsListMapperTest {
     private val contactItem1 = ContactItem(
         isProtonMailContact = true,
         name = name1,
-        contactEmails = email1,
-        additionalEmailsCount = 0,
         contactId = contactId1,
-        isSelected = false,
+        contactEmails = email1,
         initials = "JD",
-        headerStringRes = null
+        additionalEmailsCount = 0,
+        isSelected = false,
+        headerStringRes = null,
     )
     private val contactItem2 = ContactItem(
         isProtonMailContact = true,
         name = name2,
-        contactEmails = email2,
-        additionalEmailsCount = 0,
         contactId = contactId2,
-        isSelected = false,
+        contactEmails = email2,
         initials = "PC",
-        headerStringRes = null
+        additionalEmailsCount = 0,
+        isSelected = false,
+        headerStringRes = null,
     )
     private val testColorInt = 321
 
@@ -127,22 +127,22 @@ class ContactsListMapperTest {
         val contactItem3 = ContactItem(
             isProtonMailContact = true,
             name = name3,
-            contactEmails = email3,
-            additionalEmailsCount = 0,
             contactId = contactId3,
-            isSelected = false,
+            contactEmails = email3,
             initials = EMPTY_STRING,
-            headerStringRes = null
+            additionalEmailsCount = 0,
+            isSelected = false,
+            headerStringRes = null,
         )
         val protonHeaderItem =
             ContactItem(
                 isProtonMailContact = true,
-                headerStringRes = R.string.protonmail_contacts
+                headerStringRes = R.string.protonmail_contacts,
             )
         val otherHeaderItem =
             ContactItem(
                 isProtonMailContact = false,
-                headerStringRes = R.string.device_contacts
+                headerStringRes = R.string.device_contacts,
             )
         val protonContacts = listOf(contactItem1, contactItem2)
         val androidContacts = listOf(contactItem3)
@@ -165,17 +165,17 @@ class ContactsListMapperTest {
         val contactItem3 = ContactItem(
             isProtonMailContact = true,
             name = name3,
-            contactEmails = email1,
-            additionalEmailsCount = 0,
             contactId = contactId3,
-            isSelected = false,
+            contactEmails = email1,
             initials = EMPTY_STRING,
-            headerStringRes = null
+            additionalEmailsCount = 0,
+            isSelected = false,
+            headerStringRes = null,
         )
         val headerItem =
             ContactItem(
                 isProtonMailContact = true,
-                headerStringRes = R.string.protonmail_contacts
+                headerStringRes = R.string.protonmail_contacts,
             )
         val protonContacts = listOf(contactItem1, contactItem2)
         val androidContacts = listOf(contactItem3)
@@ -198,7 +198,7 @@ class ContactsListMapperTest {
             contactId = testId,
             name = testName,
             contactEmailsCount = 0,
-            color = testColorInt
+            color = testColorInt,
         )
 
         // when
@@ -222,13 +222,13 @@ class ContactsListMapperTest {
             contactId = testId,
             name = testName,
             contactEmailsCount = 0,
-            color = testColorInt
+            color = testColorInt,
         )
         val listItem2 = ContactGroupListItem(
             contactId = testId2,
             name = testName2,
             contactEmailsCount = 0,
-            color = testColorInt
+            color = testColorInt,
         )
         val expected = listOf(listItem1, listItem2)
 

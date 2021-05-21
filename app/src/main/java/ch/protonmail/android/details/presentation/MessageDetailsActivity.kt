@@ -27,6 +27,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -80,6 +81,8 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
+import io.sentry.Sentry
+import io.sentry.event.EventBuilder
 import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.android.synthetic.main.layout_message_details_activity_toolbar.*
 import kotlinx.coroutines.flow.launchIn
@@ -89,6 +92,7 @@ import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.abs
+
 
 private const val TITLE_ANIMATION_THRESHOLD = 0.9
 private const val TITLE_ANIMATION_DURATION = 200L

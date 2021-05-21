@@ -29,5 +29,6 @@ data class ContactGroupListItem(
     val name: String,
     val contactEmailsCount: Int,
     @ColorInt val color: Int,
-    val isSelected: Boolean = false
+    val isSelected: Boolean = false,
+    val isMultiselectActive: Boolean = false
 ) : Parcelable

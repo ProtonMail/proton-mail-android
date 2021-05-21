@@ -32,6 +32,7 @@
     <dimen name="message_number_view_padding_vertical">2dp</dimen>
 
     <!-- generic padding -->
+    <dimen name="padding_xxs">1dp</dimen>
     <dimen name="padding_xs">2dp</dimen>
     <dimen name="padding_s">4dp</dimen>
     <dimen name="padding_m">8dp</dimen>

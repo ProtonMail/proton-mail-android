@@ -93,7 +93,6 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
     }
 
     override fun onDestroyActionMode(mode: ActionMode?) {
-        actionMode?.finish()
         actionMode = null
         resetSelections()
 
@@ -139,7 +138,6 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
     override fun onStop() {
         actionMode?.finish()
-        actionMode = null
         super.onStop()
     }
 
@@ -193,7 +191,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
     private fun resetSelections() {
         val unselectedItems = contactGroupsAdapter.currentList.map { item ->
             if (item.isSelected) {
-                item.copy(isSelected = false)
+                item.copy(isSelected = false, isMultiselectActive = false)
             } else
                 item
         }
@@ -203,19 +201,25 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
     private fun onContactGroupSelect(labelItem: ContactGroupListItem) {
         Timber.v("onContactGroupSelect ${labelItem.contactId}")
 
-        val updatedItems = contactGroupsAdapter.currentList.map { item ->
+        var updatedItems = contactGroupsAdapter.currentList.map { item ->
             if (item.contactId == labelItem.contactId) {
                 item.copy(isSelected = !item.isSelected)
             } else {
                 item
             }
         }
-        contactGroupsAdapter.submitList(updatedItems)
+        updatedItems = if (updatedItems.any { it.isSelected }) {
+            updatedItems.map {
+                it.copy(isMultiselectActive = true)
+            }
+        } else {
+            updatedItems.map {
+                it.copy(isMultiselectActive = false)
+            }
+        }
 
         if (actionMode == null) {
             actionMode = listener.doStartActionMode(this@ContactGroupsFragment)
-        } else {
-            actionMode?.invalidate()
         }
 
         val checkedItemsCount = updatedItems.filter { it.isSelected }.size
@@ -224,6 +228,10 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
             actionMode?.finish()
         } else {
             actionMode?.title = String.format(getString(R.string.contact_group_selected), checkedItemsCount)
+        }
+
+        contactGroupsAdapter.submitList(updatedItems) {
+            actionMode?.invalidate()
         }
     }
 

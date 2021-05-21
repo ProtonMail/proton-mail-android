@@ -68,10 +68,10 @@ class ContactsListMapper @Inject constructor() {
             ContactItem(
                 isProtonMailContact = true,
                 name = name,
-                contactEmails = contactEmails,
-                additionalEmailsCount = additionalEmailsCount,
                 contactId = contactId,
+                contactEmails = contactEmails,
                 initials = UiUtil.extractInitials(name).take(2),
+                additionalEmailsCount = additionalEmailsCount,
                 headerStringRes = null
             )
         }
@@ -95,7 +95,7 @@ class ContactsListMapper @Inject constructor() {
             mergedContacts.add(
                 ContactItem(
                     isProtonMailContact = true,
-                    headerStringRes = R.string.protonmail_contacts
+                    headerStringRes = R.string.protonmail_contacts,
                 )
             )
             mergedContacts.addAll(protonmailContacts)
@@ -105,7 +105,7 @@ class ContactsListMapper @Inject constructor() {
             mergedContacts.add(
                 ContactItem(
                     isProtonMailContact = false,
-                    headerStringRes = R.string.device_contacts
+                    headerStringRes = R.string.device_contacts,
                 )
             )
             mergedContacts.addAll(filteredAndroidContacts)
@@ -118,7 +118,7 @@ class ContactsListMapper @Inject constructor() {
             contactId = label.ID,
             name = label.name,
             contactEmailsCount = label.contactEmailsCount,
-            color = Color.parseColor(UiUtil.normalizeColor(label.color))
+            color = Color.parseColor(UiUtil.normalizeColor(label.color)),
         )
 
     fun mapLabelsToContactGroups(contactLabels: List<ContactLabel>): List<ContactGroupListItem> =

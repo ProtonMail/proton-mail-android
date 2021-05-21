@@ -47,6 +47,11 @@ class ListItemThumbnail @JvmOverloads constructor(
     private val basePaint = Paint(ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.interaction_weak)
     }
+    private val borderPaint = Paint(ANTI_ALIAS_FLAG).apply {
+        color = ContextCompat.getColor(context, R.color.cornflower_blue)
+        style = Paint.Style.STROKE
+        strokeWidth = context.resources.getDimension(R.dimen.padding_xxs)
+    }
     private val textPaint = TextPaint(ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.text_norm)
     }
@@ -62,15 +67,6 @@ class ListItemThumbnail @JvmOverloads constructor(
             invalidate()
         }
 
-    var circleColor: Int
-        get() = basePaint.color
-
-        @ColorInt set(value) {
-            Timber.v("new circleColor: $value")
-            basePaint.color = value
-            invalidate()
-        }
-
     @DrawableRes
     var iconResource = R.drawable.ic_contact_groups_filled
         set(value) {
@@ -79,16 +75,11 @@ class ListItemThumbnail @JvmOverloads constructor(
         }
     private var iconDrawable = AppCompatResources.getDrawable(context, iconResource)
 
-    private val checkIconDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_check)
+    private val checkIconDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_check_white)
 
-    /**
-     * Sets text for the Thumbnail, set it to empty string to display the icon
-     */
-    var text: String = ""
-        set(value) {
-            field = value
-            invalidate()
-        }
+    private var isMultiselectModeActive: Boolean = false
+
+    private var text: String = ""
 
     init {
         context.withStyledAttributes(
@@ -101,11 +92,6 @@ class ListItemThumbnail @JvmOverloads constructor(
         }
     }
 
-    override fun setSelected(selected: Boolean) {
-        super.setSelected(selected)
-        invalidate()
-    }
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         setMeasuredDimension(
             circleSize,
@@ -116,19 +102,18 @@ class ListItemThumbnail @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         val centerX = width / 2f
         val centerY = height / 2f
-        canvas.drawCircle(centerX, centerY, centerX, basePaint)
 
         if (isSelected) {
-            val imageWidth = checkIconDrawable?.intrinsicWidth?.div(2) ?: 0
-            val imageHeight = checkIconDrawable?.intrinsicHeight?.div(2) ?: 0
-            checkIconDrawable?.setBounds(
-                centerX.toInt() - imageWidth,
-                centerY.toInt() - imageHeight,
-                centerX.toInt() + imageWidth,
-                centerY.toInt() + imageHeight
-            )
-            checkIconDrawable?.draw(canvas)
+            drawCheckSign(centerX, centerY, canvas)
             return
+        } else {
+            canvas.drawCircle(centerX, centerY, centerX, basePaint)
+            if (isMultiselectModeActive) {
+                // draw border
+                borderPaint.style = Paint.Style.STROKE
+                canvas.drawCircle(centerX, centerY, centerX - borderPaint.strokeWidth, borderPaint)
+                return
+            }
         }
 
         if (text.isNotBlank()) { // if text not empty draw it
@@ -139,17 +124,51 @@ class ListItemThumbnail @JvmOverloads constructor(
                 centerY + textRectangle.height() / 2,
                 textPaint
             )
-        } else { // otherwise draw the icon
-            val imageWidth = iconDrawable?.intrinsicWidth?.div(2) ?: 0
-            val imageHeight = iconDrawable?.intrinsicHeight?.div(2) ?: 0
-            iconDrawable?.setBounds(
-                centerX.toInt() - imageWidth,
-                centerY.toInt() - imageHeight,
-                centerX.toInt() + imageWidth,
-                centerY.toInt() + imageHeight
-            )
-            iconDrawable?.draw(canvas)
-
+        } else {
+            drawIcon(centerX, centerY, canvas)
         }
+    }
+
+    private fun drawCheckSign(centerX: Float, centerY: Float, canvas: Canvas) {
+        borderPaint.style = Paint.Style.FILL
+        canvas.drawCircle(centerX, centerY, centerX, borderPaint)
+
+        val imageWidth = checkIconDrawable?.intrinsicWidth?.div(2) ?: 0
+        val imageHeight = checkIconDrawable?.intrinsicHeight?.div(2) ?: 0
+        checkIconDrawable?.setBounds(
+            centerX.toInt() - imageWidth,
+            centerY.toInt() - imageHeight,
+            centerX.toInt() + imageWidth,
+            centerY.toInt() + imageHeight
+        )
+        checkIconDrawable?.draw(canvas)
+    }
+
+    private fun drawIcon(centerX: Float, centerY: Float, canvas: Canvas) {
+        val imageWidth = iconDrawable?.intrinsicWidth?.div(2) ?: 0
+        val imageHeight = iconDrawable?.intrinsicHeight?.div(2) ?: 0
+        iconDrawable?.setBounds(
+            centerX.toInt() - imageWidth,
+            centerY.toInt() - imageHeight,
+            centerX.toInt() + imageWidth,
+            centerY.toInt() + imageHeight
+        )
+        iconDrawable?.draw(canvas)
+    }
+
+    fun bind(
+        isSelectedActive: Boolean,
+        isMultiselectActive: Boolean,
+        initials: String = "",
+        @ColorInt circleColor: Int? = null
+    ) {
+        Timber.v("on bind $isSelectedActive, $isMultiselectActive, $initials, $circleColor")
+        isSelected = isSelectedActive
+        isMultiselectModeActive = isMultiselectActive
+        text = initials
+        circleColor?.let {
+            basePaint.color = it
+        }
+        invalidate()
     }
 }

@@ -23,7 +23,7 @@
     android:viewportWidth="16"
     android:viewportHeight="16">
     <path
-        android:fillColor="@color/icon_norm"
+        android:fillColor="#FFF"
         android:fillType="evenOdd"
         android:pathData="M2,8.5L2.7,7.8L6.05,11.14L13.2,4L13.9,4.7L6.05,12.56L2,8.5Z" />
 </vector>

@@ -100,6 +100,7 @@ class ContactsListAdapter(
     ) : RecyclerView.ViewHolder(root) {
 
         fun bind(item: ContactItem) {
+            Timber.v("Bind contact item: $item")
             contactName.text = item.name
 
             // special case for header items, where the text is in the string res
@@ -110,12 +111,15 @@ class ContactsListAdapter(
                 itemView.isClickable = true
             }
 
-            itemView.isActivated = item.isSelected
+            itemView.isSelected = item.isSelected
 
             if (item.initials.isNotEmpty()) {
                 itemThumbnail.apply {
-                    isSelected = item.isSelected
-                    text = item.initials
+                    bind(
+                        item.isSelected,
+                        item.isMultiselectActive,
+                        item.initials
+                    )
                     isVisible = true
                 }
             } else {
@@ -142,7 +146,6 @@ class ContactsListAdapter(
 
         override fun areItemsTheSame(oldItem: ContactItem, newItem: ContactItem): Boolean =
             oldItem.contactId == newItem.contactId &&
-                oldItem.name == newItem.name &&
                 oldItem.headerStringRes == newItem.headerStringRes
 
         override fun areContentsTheSame(oldItem: ContactItem, newItem: ContactItem): Boolean =
@@ -150,6 +153,7 @@ class ContactsListAdapter(
                 oldItem.name == newItem.name &&
                 oldItem.contactEmails == newItem.contactEmails &&
                 oldItem.isSelected == newItem.isSelected &&
+                oldItem.isMultiselectActive == newItem.isMultiselectActive &&
                 oldItem.isProtonMailContact == newItem.isProtonMailContact
     }
 }
