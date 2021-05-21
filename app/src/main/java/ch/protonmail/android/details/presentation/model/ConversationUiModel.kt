@@ -25,5 +25,6 @@ data class ConversationUiModel(
     val isStarred: Boolean,
     val subject: String?,
     val labelIds: List<String>,
-    val messages: List<Message>
+    val messages: List<Message>,
+    val messagesCount: Int?
 )

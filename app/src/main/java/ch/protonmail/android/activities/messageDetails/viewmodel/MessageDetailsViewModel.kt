@@ -149,7 +149,8 @@ internal class MessageDetailsViewModel @Inject constructor(
                     conversation.labels.any { it.id == STARRED_LABEL_ID },
                     conversation.subject,
                     conversation.labels.map { it.id },
-                    conversation.messages?.toDbModelList().orEmpty()
+                    conversation.messages?.toDbModelList().orEmpty(),
+                    conversation.messagesCount
                 )
             }
         } else {
@@ -158,7 +159,8 @@ internal class MessageDetailsViewModel @Inject constructor(
                     it.isStarred ?: false,
                     it.subject,
                     it.labelIDsNotIncludingLocations,
-                    listOf(it)
+                    listOf(it),
+                    null
                 )
             }
         }.distinctUntilChanged()
@@ -380,6 +382,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             message?.subject ?: "",
             message?.labelIDsNotIncludingLocations.orEmpty(),
             messages.filterNotNull(),
+            null
         )
     }
 
@@ -389,6 +392,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             conversation.subject,
             conversation.labels.map { it.id },
             messages.filterNotNull(),
+            conversation.messagesCount
         )
 
     private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {

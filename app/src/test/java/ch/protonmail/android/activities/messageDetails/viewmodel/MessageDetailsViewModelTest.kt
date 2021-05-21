@@ -291,7 +291,11 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
             // Then
             val conversationUiModel = ConversationUiModel(
-                false, "Conversation subject", listOf("0"), listOf(conversationMessage, conversationMessage)
+                false,
+                "Conversation subject",
+                listOf("0"),
+                listOf(conversationMessage, conversationMessage),
+                5
             )
             assertEquals(conversationUiModel, conversationObserver.observedValues[0])
         }
