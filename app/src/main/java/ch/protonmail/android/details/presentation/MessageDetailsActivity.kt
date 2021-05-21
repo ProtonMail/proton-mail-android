@@ -229,7 +229,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         pmWebViewClient = MessageDetailsPmWebViewClient(mUserManager, this)
         messageExpandableAdapter = MessageDetailsAdapter(
             this,
-            Message(),
+            listOf(),
             "",
             messageDetailsRecyclerView,
             pmWebViewClient,
@@ -580,7 +580,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 return
             }
 
-            messageExpandableAdapter.setMessageData(message)
+            messageExpandableAdapter.setMessageData(conversation.messages)
             messageExpandableAdapter.refreshRecipientsLayout()
             showAttachmentsDelayed(message)
             if (viewModel.refreshedKeys) {

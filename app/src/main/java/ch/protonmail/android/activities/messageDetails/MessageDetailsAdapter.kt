@@ -62,7 +62,7 @@ private const val TYPE_HEADER = 1000
 
 class MessageDetailsAdapter(
     private val context: Context,
-    private var message: Message,
+    private var messages: List<Message>,
     private var content: String,
     private val messageDetailsRecyclerView: RecyclerView,
     private var pmWebViewClient: PMWebViewClient,
@@ -83,8 +83,10 @@ class MessageDetailsAdapter(
 
     init {
         val items = ArrayList<MessageDetailsListItem>()
-        items.add(MessageDetailsListItem(message))
-        items.add(MessageDetailsListItem(content))
+        messages.forEach { message ->
+            items.add(MessageDetailsListItem(message))
+            items.add(MessageDetailsListItem(content))
+        }
         setItems(items)
     }
 
@@ -232,22 +234,24 @@ class MessageDetailsAdapter(
         }
     }
 
-    fun setMessageData(messageData: Message) {
-        message = messageData
+    fun setMessageData(messageData: List<Message>) {
+        messages = messageData
         val items = ArrayList<MessageDetailsListItem>()
-        items.add(MessageDetailsListItem(messageData))
-        items.add(MessageDetailsListItem(content))
+        messages.forEach { message ->
+            items.add(MessageDetailsListItem(message))
+            items.add(MessageDetailsListItem(content))
+        }
         setItems(items)
     }
 
     fun setAllLabels(labels: List<Label>) {
         allLabelsList = labels
-        setMessageData(message)
+        setMessageData(messages)
     }
 
     fun setNonInclusiveLabels(labels: List<LabelChipUiModel>) {
         nonInclusiveLabelsList = labels
-        setMessageData(message)
+        setMessageData(messages)
     }
 
     /**
@@ -259,21 +263,18 @@ class MessageDetailsAdapter(
         val contentItem = visibleItems?.find {
             it.ItemType == TYPE_ITEM
         } ?: MessageDetailsListItem(contentData)
-        val messageItem = visibleItems?.find {
-            it.ItemType == TYPE_HEADER
-        } ?: MessageDetailsListItem(message)
 
         contentItem.content = contentData
         if (contentItem.isInit()) {
             contentItem.messageWebView.loadDataWithBaseURL(
                 Constants.DUMMY_URL_PREFIX,
-                if (content.isEmpty()) message.decryptedHTML!! else content,
+                if (content.isEmpty()) messages[0].decryptedHTML!! else content,
                 "text/html",
                 UTF_8,
                 ""
             )
         } else {
-            setItems(arrayListOf(messageItem, contentItem))
+            setItems(allItems)
         }
     }
 
@@ -309,7 +310,7 @@ class MessageDetailsAdapter(
     }
 
     fun refreshRecipientsLayout() {
-        messageDetailsHeaderView.loadRecipients(message)
+        messageDetailsHeaderView.loadRecipients(messages[0])
     }
 
     private fun configureWebView(webView: WebView, pmWebViewClient: PMWebViewClient) {
