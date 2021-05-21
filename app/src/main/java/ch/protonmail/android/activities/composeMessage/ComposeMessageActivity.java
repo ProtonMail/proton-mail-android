@@ -1457,12 +1457,6 @@ public class ComposeMessageActivity
         setResult(RESULT_OK);
         saveLastInteraction();
         finish();
-        if (!TextUtils.isEmpty(mAction)) {
-            Intent home = AppUtil.decorInAppIntent(new Intent(this, MailboxActivity.class));
-            home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(home);
-        }
     }
 
     @Subscribe

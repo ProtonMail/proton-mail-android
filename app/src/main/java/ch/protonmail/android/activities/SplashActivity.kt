@@ -24,9 +24,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import ch.protonmail.android.R
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.utils.startMailboxActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.auth.presentation.AuthOrchestrator
@@ -58,15 +60,17 @@ class SplashActivity : AppCompatActivity() {
                         AccountStateManager.State.AccountNeeded ->
                             login()
                         AccountStateManager.State.PrimaryExist -> {
+                            delay(resources.getInteger(R.integer.splash_transition_millis).toLong())
                             startMailboxActivity()
-                            finish()
+                            overridePendingTransition(0, 0)
+                            finishAndRemoveTask()
                         }
                     }
                 }.launchIn(lifecycleScope)
 
             // Finish if Login closed.
             onLoginClosed {
-                finish()
+                finishAndRemoveTask()
             }
         }
     }

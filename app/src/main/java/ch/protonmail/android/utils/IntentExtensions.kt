@@ -33,11 +33,7 @@ fun Context.startSplashActivity() =
     startActivity(getSplashActivityIntent())
 
 fun Context.getSplashActivityIntent(): Intent =
-    Intent(this, SplashActivity::class.java).apply {
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-    }
+    Intent(this, SplashActivity::class.java)
 
 
 fun Context.startMailboxActivity(userId: UserId? = null, type: Constants.MessageLocationType? = null) =
@@ -48,7 +44,4 @@ fun Context.getMailboxActivityIntent(userId: UserId? = null, type: Constants.Mes
         userId?.let { putExtra(EXTRA_USER_ID, it.id) }
         type?.let { putExtra(EXTRA_MAILBOX_LOCATION, it.messageLocationTypeValue) }
         putExtra(EXTRA_FIRST_LOGIN, ProtonMailApplication.getApplication().hasUpdateOccurred())
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
     }

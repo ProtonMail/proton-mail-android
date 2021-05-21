@@ -169,7 +169,7 @@ abstract class NavigationActivity : BaseActivity() {
                             Unit
                         AccountStateManager.State.AccountNeeded -> {
                             startSplashActivity()
-                            finish()
+                            finishAndRemoveTask()
                         }
                     }
                 }.launchIn(lifecycleScope)
