@@ -368,6 +368,11 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     private fun onContactClick(contactItem: ContactItem) {
         Timber.v("onContactClick id: ${contactItem.contactId}")
+        if (contactItem.contactId.isNullOrEmpty()) {
+            // ignore headers an other invalid items
+            return
+        }
+
         if (getSelectedItems().isEmpty()) {
             showDetails(contactItem)
         } else {
