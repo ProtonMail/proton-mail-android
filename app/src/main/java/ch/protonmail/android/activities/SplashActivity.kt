@@ -29,6 +29,7 @@ import ch.protonmail.android.utils.startMailboxActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import me.proton.core.auth.presentation.AuthOrchestrator
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -37,22 +38,26 @@ class SplashActivity : AppCompatActivity() {
     @Inject
     lateinit var accountStateManager: AccountStateManager
 
+    @Inject
+    lateinit var authOrchestrator: AuthOrchestrator
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        authOrchestrator.register(this)
 
         with(accountStateManager) {
-            register(this@SplashActivity)
-
+            setAuthOrchestrator(authOrchestrator)
+            observeAccountStateWithExternalLifecycle(lifecycle, isSplashActivity = true)
             // Start Login or MailboxActivity.
             state
-                .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
                 .onEach {
                     when (it) {
-                        AccountStateManager.State.Processing -> Unit
+                        AccountStateManager.State.Processing ->
+                            Unit
                         AccountStateManager.State.AccountNeeded ->
                             login()
                         AccountStateManager.State.PrimaryExist -> {
-                            unregister()
                             startMailboxActivity()
                             finish()
                         }
@@ -61,9 +66,18 @@ class SplashActivity : AppCompatActivity() {
 
             // Finish if Login closed.
             onLoginClosed {
-                unregister()
                 finish()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        accountStateManager.setAuthOrchestrator(authOrchestrator)
+    }
+
+    override fun onDestroy() {
+        authOrchestrator.unregister()
+        super.onDestroy()
     }
 }

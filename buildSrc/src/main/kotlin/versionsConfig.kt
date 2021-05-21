@@ -78,9 +78,9 @@ const val `Proton-network version` =            "1.1"           // Released: May
 const val `Proton-human-verification version` = "1.1.1"         // Released: May 12, 2021
 const val `Proton-crypto version` =             "1.0.2"         // Released: Mar 05, 2021
 const val `Proton-country version` =            "0.1.4"         // Released: May 12, 2021
-const val `Proton-auth version` =               "1.1.1"         // Released: May 12, 2021
+const val `Proton-auth version` =               "1.1.2"         // Released: May 12, 2021
 const val `Proton-account version` =            "1.1"           // Released: May 12, 2021
-const val `Proton-account-manager version` =    "1.1.2"         // Released: May 13, 2021
+const val `Proton-account-manager version` =    "1.1.3"         // Released: May 13, 2021
 const val `Proton-user version` =               "1.1.1"         // Released: May 12, 2021
 const val `Proton-key version` =                "1.0.4"         // Released: Mar 22, 2021
 
