@@ -100,7 +100,7 @@ private const val ONE_HUNDRED_PERCENT = 1.0
 @AndroidEntryPoint
 internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
-    private lateinit var messageId: String
+    private lateinit var messageOrConversationId: String
     private lateinit var pmWebViewClient: PMWebViewClient
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
     private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
@@ -156,7 +156,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     override fun storagePermissionGranted() {
         val attachmentToDownloadIdAux = attachmentToDownloadId.getAndSet(null)
         if (!attachmentToDownloadIdAux.isNullOrEmpty()) {
-            viewModel.viewOrDownloadAttachment(this, attachmentToDownloadIdAux, messageId)
+            viewModel.viewOrDownloadAttachment(this, attachmentToDownloadIdAux)
         }
     }
 
@@ -169,7 +169,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        messageId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_OR_CONVERSATION_ID))
+        messageOrConversationId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_OR_CONVERSATION_ID))
         messageRecipientUserId = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USER_ID)?.let(::Id)
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
         val currentUser = mUserManager.requireCurrentUser()
@@ -200,7 +200,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
         appBarLayout.addOnOffsetChangedListener(onOffsetChangedListener)
 
-        starToggleButton.setOnCheckedChangeListener(OnStarToggleListener(mJobManager, messageId))
+        starToggleButton.setOnCheckedChangeListener(OnStarToggleListener(mJobManager, messageOrConversationId))
     }
 
     private fun continueSetup() {
@@ -365,7 +365,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         val toastMessageId: Int
         when (status) {
             Status.SUCCESS -> {
-                mJobManager.addJobInBackground(PostSpamJob(listOf(messageId)))
+                mJobManager.addJobInBackground(PostSpamJob(listOf(messageOrConversationId)))
                 toastMessageId = R.string.phishing_report_send_message_moved_to_spam
                 finish()
             }
@@ -518,39 +518,24 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private var prevAttachments: List<Attachment>? = null
-
-    fun showMessageAttachments(newAttachments: List<Attachment>?) {
-        /* Workaround for don't let it loop. TODO: Find the cause of the infinite loop after
-        Attachments are downloaded and screen has been locked / unlocked */
-        val attachments: List<Attachment>?
-        var loadImages = false
-        if (newAttachments != null && newAttachments == prevAttachments) {
-            attachments = prevAttachments
-        } else {
-            // load images only if there is a difference in attachments from the previous load
-            loadImages = true
-            prevAttachments = newAttachments
-            attachments = prevAttachments
-        }
-        if (attachments != null) {
-            val hasEmbeddedImages = viewModel.prepareEmbeddedImages()
-            if (hasEmbeddedImages) {
-                if (isAutoShowEmbeddedImages || viewModel.isEmbeddedImagesDisplayed()) {
-                    if (loadImages) {
-                        viewModel.displayEmbeddedImages()
-                    }
-                    messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
-                } else {
-                    messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.VISIBLE)
-                }
-            } else {
-                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
-            }
-            displayAttachmentInfo(attachments)
-        } else {
+    fun showMessageAttachments(attachments: List<Attachment>?) {
+        if (attachments == null) {
             messageExpandableAdapter.displayAttachmentsViews(View.GONE)
+            return
         }
+
+        val hasEmbeddedImages = viewModel.prepareEmbeddedImages()
+        if (hasEmbeddedImages) {
+            if (isAutoShowEmbeddedImages || viewModel.isEmbeddedImagesDisplayed()) {
+                viewModel.displayEmbeddedImages()
+                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
+            } else {
+                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.VISIBLE)
+            }
+        } else {
+            messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
+        }
+        displayAttachmentInfo(attachments)
     }
 
     private fun displayAttachmentInfo(attachments: List<Attachment>) {
@@ -578,7 +563,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             messageDetailsActionsView.setOnMoreActionClickListener {
                 MessageActionSheet.newInstance(
                     MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
-                    listOf(message.messageId ?: messageId),
+                    listOf(message.messageId ?: messageOrConversationId),
                     message.location,
                     getCurrentSubject(),
                     getMessagesFrom(message.sender?.name),
@@ -636,6 +621,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
 
         private fun showAttachmentsDelayed(message: Message) {
+            // See caaf8a4232a5bbfa150 for details on why this patch is currently needed
             this@MessageDetailsActivity.lifecycleScope.launch {
                 val showAttachmentsDelay = 200L
                 delay(showAttachmentsDelay)
@@ -646,7 +632,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private fun lastMessage(conversation: ConversationUiModel): Message = conversation.messages.last()
 
-    // TODO: Move as much as possible of this method to ViewModel
     fun executeMessageAction(
         messageAction: Constants.MessageActionType,
         message: Message = requireNotNull(viewModel.decryptedMessageData.value?.messages?.last())

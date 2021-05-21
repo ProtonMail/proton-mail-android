@@ -295,21 +295,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             val userId = userManager.requireCurrentUserId()
 
             if (conversationModeEnabled(location)) {
-                conversationRepository.getConversation(messageOrConversationId, userId)
-                    .map { result ->
-                        if (result is DataResult.Success) {
-                            val conversation = result.value
-                            if (conversation.messages?.isEmpty() == true) {
-                                return@map null
-                            }
-                            onConversationLoaded(conversation, userId)
-                            return@map conversation
-                        } else if (result is DataResult.Error) {
-                            Timber.d("Error loading conversation $messageOrConversationId")
-                            _messageDetailsError.postValue(Event("Failed getting conversation details"))
-                        }
-                        return@map null
-                    }.first { it?.messages?.isNotEmpty() ?: false }
+                loadConversationDetails(userId)
                 return@launch
             }
 
@@ -321,6 +307,23 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
             onMessageLoaded(listOf(message))
         }
+    }
+
+    private suspend fun loadConversationDetails(userId: Id) {
+        conversationRepository.getConversation(messageOrConversationId, userId).map { result ->
+            if (result is DataResult.Success) {
+                val conversation = result.value
+                if (conversation.messages?.isEmpty() == true) {
+                    return@map null
+                }
+                onConversationLoaded(conversation, userId)
+                return@map conversation
+            } else if (result is DataResult.Error) {
+                Timber.d("Error loading conversation $messageOrConversationId")
+                _messageDetailsError.postValue(Event("Failed getting conversation details"))
+            }
+            return@map null
+        }.first { it?.messages?.isNotEmpty() ?: false }
     }
 
     private suspend fun onConversationLoaded(
@@ -415,10 +418,11 @@ internal class MessageDetailsViewModel @Inject constructor(
 
         viewModelScope.launch(dispatchers.Io) {
 
-            val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(messageOrConversationId)
+            val lastMessageId = lastMessage()?.messageId ?: return@launch
+            val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(lastMessageId)
             val embeddedImages = _embeddedImagesAttachments.mapNotNull {
                 attachmentsHelper.fromAttachmentToEmbeddedImage(
-                    it, conversationUiModel.value?.messages?.last()?.embeddedImageIds?.toList().orEmpty()
+                    it, lastMessage()?.embeddedImageIds?.toList().orEmpty()
                 )
             }
             val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
@@ -438,7 +442,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImagesWithLocalFiles))
             } else {
                 messageDetailsRepository.startDownloadEmbeddedImages(
-                    messageOrConversationId, userManager.requireCurrentUserId()
+                    lastMessageId, userManager.requireCurrentUserId()
                 )
             }
         }
@@ -455,6 +459,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             messageRenderer.images.offer(event.images)
         }
     }
+
 
     fun prepareEditMessageIntent(
         messageAction: Constants.MessageActionType,
@@ -481,9 +486,9 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    fun viewOrDownloadAttachment(context: Context, attachmentToDownloadId: String, messageId: String) {
-
+    fun viewOrDownloadAttachment(context: Context, attachmentToDownloadId: String) {
         viewModelScope.launch(dispatchers.Io) {
+            val messageId = lastMessage()?.messageId ?: return@launch
             val metadata = attachmentMetadataDao
                 .getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
             Timber.v("viewOrDownloadAttachment Id: $attachmentToDownloadId metadataId: ${metadata?.id}")
@@ -501,6 +506,8 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
         }
     }
+
+    private fun lastMessage() = conversationUiModel.value?.messages?.last()
 
     /**
      * Explicitly make a copy of embedded attachment to downloads and display it (product requirement)
@@ -570,7 +577,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun prepareEmbeddedImages(): Boolean {
 
-        val message = conversationUiModel.value?.messages?.last()
+        val message = lastMessage()
         message?.let {
             val attachments = message.attachments
             val embeddedImagesToFetch = ArrayList<EmbeddedImage>()
@@ -594,7 +601,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun triggerVerificationKeyLoading() {
         if (!fetchingPubKeys && publicKeys == null) {
-            val message = conversationUiModel.value?.messages?.last()
+            val message = lastMessage()
             message?.let {
                 fetchingPubKeys = true
                 viewModelScope.launch {
@@ -607,7 +614,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private suspend fun onFetchVerificationKeysEvent(pubKeys: List<KeyInformation>) {
         Timber.v("FetchVerificationKeys received $pubKeys")
-        val message = conversationUiModel.value?.messages?.last()
+        val message = lastMessage()
 
         publicKeys = pubKeys
         refreshedKeys = false
@@ -623,10 +630,10 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun isPgpEncrypted(): Boolean =
-        conversationUiModel.value?.messages?.last()?.messageEncryption?.isPGPEncrypted ?: false
+        lastMessage()?.messageEncryption?.isPGPEncrypted ?: false
 
     fun printMessage(activityContext: Context) {
-        val message = conversationUiModel.value?.messages?.last()
+        val message = lastMessage()
         message?.let {
             MessagePrinter(
                 activityContext,
@@ -657,7 +664,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun moveToTrash() {
-        val message = conversationUiModel.value?.messages?.last()
+        val message = lastMessage()
         moveMessagesToFolder(
             listOf(messageOrConversationId),
             Constants.MessageLocationType.TRASH.toString(),
