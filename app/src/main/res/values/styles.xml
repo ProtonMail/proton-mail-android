@@ -20,7 +20,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- region V4 -->
-    <style name="ProtonTheme.Splash.Mail" parent="ProtonTheme.Splash">
+    <style name="ProtonTheme.Splash.Light.Mail">
         <item name="brand_splash_logo">@drawable/splash_logo</item>
     </style>
 
