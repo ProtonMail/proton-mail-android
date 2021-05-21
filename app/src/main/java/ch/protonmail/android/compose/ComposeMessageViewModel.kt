@@ -20,6 +20,7 @@ package ch.protonmail.android.compose
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.net.Uri
 import android.text.Spanned
 import android.text.TextUtils
 import androidx.core.net.MailTo
@@ -39,7 +40,9 @@ import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.rx.ThreadSchedulers
+import ch.protonmail.android.attachments.domain.usecase.ImportAttachmentsToCache
 import ch.protonmail.android.bl.HtmlProcessor
+import ch.protonmail.android.compose.presentation.model.AttachmentsEventUiModel
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
@@ -69,6 +72,10 @@ import io.reactivex.Single
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
@@ -89,14 +96,15 @@ const val GREATER_THAN = "&gt;"
 class ComposeMessageViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository,
     private val userManager: UserManager,
-    private val accountManager: AccountManager,
+    accountManager: AccountManager,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val deleteMessage: DeleteMessage,
     private val fetchPublicKeys: FetchPublicKeys,
     private val saveDraft: SaveDraft,
     private val dispatchers: DispatcherProvider,
+    private val importAttachmentsToCache: ImportAttachmentsToCache,
     private val stringResourceResolver: StringResourceResolver,
-    private val sendMessageUseCase: SendMessage,
+    private val sendMessage: SendMessage,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -132,7 +140,6 @@ class ComposeMessageViewModel @Inject constructor(
 
     val messageDataResult: MessageBuilderData
         get() = _messageDataResult
-
     // endregion
     // region data
     private var _actionType = UserAction.NONE
@@ -195,6 +202,10 @@ class ComposeMessageViewModel @Inject constructor(
             }
         }
 
+    private val _attachmentsEvent: MutableStateFlow<AttachmentsEventUiModel> =
+        MutableStateFlow(AttachmentsEventUiModel.None)
+    val attachmentsEvent: StateFlow<AttachmentsEventUiModel> =
+        _attachmentsEvent.asStateFlow()
     // endregion
     // region getters
     var draftId: String
@@ -728,7 +739,7 @@ class ComposeMessageViewModel @Inject constructor(
             if (_dbId != null) {
                 val newAttachments = calculateNewAttachments(true)
 
-                sendMessageUseCase(
+                sendMessage(
                     SendMessage.SendMessageParameters(
                         message,
                         newAttachments,
@@ -1261,6 +1272,24 @@ class ComposeMessageViewModel @Inject constructor(
             setBeforeSaveDraft(false, messageDataResult.content, UserAction.SAVE_DRAFT)
         }
     }
+
+    // region attachments
+    fun addAttachments(uris: List<Uri>, deleteOriginalFiles: Boolean) {
+        viewModelScope.launch {
+            importAttachmentsToCache(uris, deleteOriginalFiles).collect {
+                // TODO add attachment
+                _attachmentsEvent.emit(AttachmentsEventUiModel.Import(it))
+            }
+        }
+    }
+
+    fun removeAttachment(uri: Uri) {
+        viewModelScope.launch {
+            // TODO remove attachment"
+            _attachmentsEvent.emit(AttachmentsEventUiModel.Remove(uri))
+        }
+    }
+    // endregion
 
     fun autoSaveDraft(messageBody: String) {
         Timber.v("Draft auto save scheduled!")
