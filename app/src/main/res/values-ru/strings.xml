@@ -79,14 +79,14 @@
     <string name="message_drafted">Сбой отправки сообщения. Ваши сообщения сохранены в папке Черновики</string>
     <string name="open_drawer">Открыть</string>
     <string name="close_drawer">Закрыть</string>
-    <string name="inbox_option">Inbox</string>
-    <string name="starred_option">Starred</string>
-    <string name="drafts_option">Drafts</string>
-    <string name="sent_option">Sent</string>
-    <string name="archive_option">Archive</string>
-    <string name="trash_option">Trash</string>
-    <string name="spam_option">Spam</string>
-    <string name="allmail_option">All Mail</string>
+    <string name="inbox_option">Входящие</string>
+    <string name="starred_option">Со звездой</string>
+    <string name="drafts_option">Черновики</string>
+    <string name="sent_option">Отправленные</string>
+    <string name="archive_option">Архив</string>
+    <string name="trash_option">Корзина</string>
+    <string name="spam_option">Спам</string>
+    <string name="allmail_option">Все письма</string>
     <string name="inbox">Входящие</string>
     <string name="starred">Со звёздами</string>
     <string name="drafts">Черновики</string>
@@ -118,7 +118,7 @@
     <string name="move_to_trash">Переместить в корзину</string>
     <string name="move_to_spam">Переместить к спаму</string>
     <string name="move_to_inbox">Переместить во Входящие</string>
-    <string name="move_to">Move to…</string>
+    <string name="move_to">Переместить в…</string>
     <string name="are_you_sure_empty">Вы уверены, что хотите удалить все сообщения из этой папки?</string>
     <string name="send">Отправить</string>
     <string name="selected">Выбрано</string>
@@ -170,9 +170,9 @@
         <item quantity="many">%d минут</item>
         <item quantity="other">%d минут</item>
     </plurals>
-    <string name="expiration_days">%dD</string>
-    <string name="expiration_hours">%dH</string>
-    <string name="expiration_minutes">%dM</string>
+    <string name="expiration_days">%dД</string>
+    <string name="expiration_hours">%dЧ</string>
+    <string name="expiration_minutes">%dм</string>
     <plurals name="attachments">
         <item quantity="one">Одно вложение</item>
         <item quantity="few">%d вложения</item>
@@ -186,10 +186,10 @@
         <item quantity="other">\u0020 %d вложений</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 Attachment</item>
-        <item quantity="few">%d Attachments</item>
-        <item quantity="many">%d Attachments</item>
-        <item quantity="other">%d Attachments</item>
+        <item quantity="one">1 вложение</item>
+        <item quantity="few">%d вложения</item>
+        <item quantity="many">%d вложений</item>
+        <item quantity="other">%d вложений</item>
     </plurals>
     <string name="add_attachment">Добавить вложение</string>
     <string name="select_file">Выбрать файл</string>
@@ -506,7 +506,7 @@
     <string name="print_error">Ошибка печати</string>
     <string name="download_complete">Скачивание завершено</string>
     <string name="download_in_progress">Идёт скачивание</string>
-    <string name="message_expires_in">This message will expire in %s</string>
+    <string name="message_expires_in">Сообщение будет недействительно через %s</string>
     <string name="unsaved_changes_title">Несохранённые изменения</string>
     <string name="unsaved_changes_subtitle">В форме присутствуют несохранённые данные. Вы уверены, что хотите отказаться от них?</string>
     <string name="request_timeout">Истекло время ожидания запроса, пожалуйста, попробуйте ещё раз</string>
@@ -606,7 +606,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Сообщение, зашифрованное сквозным методом</string>
     <string name="sender_lock_internal_verified">Сообщение, зашифрованное сквозным методом; с проверенного адреса</string>
-    <string name="sender_lock_learn_more"><a href="">Learn more</a></string>
+    <string name="sender_lock_learn_more"><a href="">Подробнее</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Зашифровано сквозным методом</string>
     <string name="composer_lock_internal_pinned">Зашифровано сквозным методом для проверенного адреса</string>
@@ -830,11 +830,11 @@
     <string name="swipe_action_chooser_title">Выберите действие смахивания</string>
     <string name="swipe_action_trash">Сообщение перемещено в корзину</string>
     <string name="swipe_action_star">Звезда сообщения обновлена</string>
-    <string name="swipe_action_star_short">Update star</string>
+    <string name="swipe_action_star_short">Обновить отметку</string>
     <string name="swipe_action_spam">Сообщение помечено как спам</string>
     <string name="swipe_action_archive">Сообщение отправлено в архив</string>
     <string name="swipe_action_mark_read">Сообщение помечено как прочитанное</string>
-    <string name="swipe_action_mark_read_short">Read</string>
+    <string name="swipe_action_mark_read_short">Прочитанное</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Сообщение перемещено в корзину</item>
         <item quantity="few">Сообщения перемещены в корзину</item>
@@ -926,33 +926,33 @@
     <string name="invalid_firebase_api_key_message">Неверный ключ API Firebase. Push-уведомления не будут работать.</string>
     <string name="failed_saving_draft_online">Не удалось сохранить онлайн черновик сообщения: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Невозможно открыть сообщение пока оно отправляется</string>
-    <string name="enable_conversation_mode">Enable conversation mode</string>
+    <string name="enable_conversation_mode">Включить обсуждения</string>
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="error_loading_conversations">Error loading conversations, please try again</string>
-    <string name="star">Star</string>
-    <string name="unstar">Unstar</string>
-    <string name="send_to_archive">Send to archive?</string>
-    <string name="new_label">New Label</string>
-    <string name="new_folder">New Folder</string>
-    <string name="label_as">Label as…</string>
-    <string name="mark_as_unread">Mark as unread</string>
-    <string name="mark_as_read">Mark as read</string>
-    <string name="move_message">Move message</string>
-    <string name="manage">Manage</string>
-    <string name="message_from">Message from %s</string>
-    <string name="not_spam_move_to_inbox">Not spam (Move to Inbox)</string>
+    <string name="error_loading_conversations">Ошибка загрузки бесед, попробуйте еще раз</string>
+    <string name="star">Отметить звездой</string>
+    <string name="unstar">Убрать звезду</string>
+    <string name="send_to_archive">Отправить в архив?</string>
+    <string name="new_label">Новый ярлык</string>
+    <string name="new_folder">Новая папка</string>
+    <string name="label_as">Отметить...</string>
+    <string name="mark_as_unread">Отметить как непрочитанное</string>
+    <string name="mark_as_read">Отметить как прочитанное</string>
+    <string name="move_message">Переместить сообщение</string>
+    <string name="manage">Управление</string>
+    <string name="message_from">Сообщение от %s</string>
+    <string name="not_spam_move_to_inbox">Не спам (Переместить во \"Входящие\")</string>
     <plurals name="x_messages_count">
-        <item quantity="one">%d message</item>
-        <item quantity="few">%d messages</item>
-        <item quantity="many">%d messages</item>
-        <item quantity="other">%d messages</item>
+        <item quantity="one">%d сообщение</item>
+        <item quantity="few">%d сообщения</item>
+        <item quantity="many">%d сообщений</item>
+        <item quantity="other">%d сообщений</item>
     </plurals>
     <plurals name="x_conversations_count">
-        <item quantity="one">%d conversation</item>
-        <item quantity="few">%d conversations</item>
-        <item quantity="many">%d conversations</item>
-        <item quantity="other">%d conversations</item>
+        <item quantity="one">%d беседа</item>
+        <item quantity="few">%d беседы</item>
+        <item quantity="many">%d бесед</item>
+        <item quantity="other">%d бесед</item>
     </plurals>
 </resources>

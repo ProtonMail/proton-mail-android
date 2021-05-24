@@ -36,10 +36,10 @@
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
     <string name="composer_cc">Cc:</string>
-    <string name="composer_compose_email">Compose email</string>
-    <string name="composer_from">From:</string>
-    <string name="composer_subject">Subject:</string>
-    <string name="composer_to">To:</string>
+    <string name="composer_compose_email">Tulis surel</string>
+    <string name="composer_from">Dari:</string>
+    <string name="composer_subject">Subyek:</string>
+    <string name="composer_to">Kepada:</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -118,7 +118,7 @@
     <string name="move_to_trash">Pindahkan ke Sampah</string>
     <string name="move_to_spam">Pindahkan ke spam</string>
     <string name="move_to_inbox">Pindahkan ke Kotak masuk</string>
-    <string name="move_to">Move to…</string>
+    <string name="move_to">Pindahkan ke…</string>
     <string name="are_you_sure_empty">Yakin ingin menghapus semua pesan dari folder ini?</string>
     <string name="send">Kirim</string>
     <string name="selected">Dipilih</string>
@@ -709,7 +709,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="payment_method">Metode Pembayaran</string>
     <string name="password_manager">Pengelolaan kata sandi</string>
     <string name="recovery_email">Alamat email pemulihan</string>
-    <string name="info_for_missing_functionality">Please log in through <a href="https://www.protonmail.com/">protonmail.com</a> and access your settings to edit this information.</string>
+    <string name="info_for_missing_functionality">Mohon masuk melalui <a href="https://www.protonmail.com/">protonmail.com</a> dan akses pengaturan Anda untuk mengedit informasi ini.</string>
     <string name="storage">Ukuran Kotak Surat</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Alamat</string>
@@ -791,11 +791,11 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="swipe_action_chooser_title">Pilih tindakan usap</string>
     <string name="swipe_action_trash">Pesan dipindahkan ke sampah</string>
     <string name="swipe_action_star">Pesan berbintang diperbarui</string>
-    <string name="swipe_action_star_short">Update star</string>
+    <string name="swipe_action_star_short">Perbarui Bintang</string>
     <string name="swipe_action_spam">Pesan ditandai sebagai spam</string>
     <string name="swipe_action_archive">Pesan diarsipkan</string>
     <string name="swipe_action_mark_read">Pesan ditandai telah dibaca</string>
-    <string name="swipe_action_mark_read_short">Read</string>
+    <string name="swipe_action_mark_read_short">Telah dibaca</string>
     <plurals name="action_move_to_trash">
         <item quantity="other">Pesan telah dipindahkan ke folder sampah</item>
     </plurals>
@@ -882,23 +882,23 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="error_loading_conversations">Error loading conversations, please try again</string>
-    <string name="star">Star</string>
-    <string name="unstar">Unstar</string>
-    <string name="send_to_archive">Send to archive?</string>
-    <string name="new_label">New Label</string>
-    <string name="new_folder">New Folder</string>
-    <string name="label_as">Label as…</string>
-    <string name="mark_as_unread">Mark as unread</string>
-    <string name="mark_as_read">Mark as read</string>
-    <string name="move_message">Move message</string>
-    <string name="manage">Manage</string>
-    <string name="message_from">Message from %s</string>
-    <string name="not_spam_move_to_inbox">Not spam (Move to Inbox)</string>
+    <string name="error_loading_conversations">Kesalahan memuat percakapan, silakan coba lagi</string>
+    <string name="star">Bintang</string>
+    <string name="unstar">Hapus Bintang</string>
+    <string name="send_to_archive">Kirim ke arsip?</string>
+    <string name="new_label">Label Baru</string>
+    <string name="new_folder">Folder Baru</string>
+    <string name="label_as">Labeli sebagai…</string>
+    <string name="mark_as_unread">Tandai belum dibaca</string>
+    <string name="mark_as_read">Tandai telah dibaca</string>
+    <string name="move_message">Pindahkan pesan</string>
+    <string name="manage">Kelola</string>
+    <string name="message_from">Pesan dari %s</string>
+    <string name="not_spam_move_to_inbox">Bukan spam (Pindah ke kotak masuk)</string>
     <plurals name="x_messages_count">
-        <item quantity="other">%d messages</item>
+        <item quantity="other">%d pesan</item>
     </plurals>
     <plurals name="x_conversations_count">
-        <item quantity="other">%d conversations</item>
+        <item quantity="other">%d percakapan</item>
     </plurals>
 </resources>

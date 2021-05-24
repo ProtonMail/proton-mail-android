@@ -34,12 +34,12 @@
     <string name="drawer_sign_out">Abmelden</string>
     <!-- endregion -->
     <!-- region Composer -->
-    <string name="composer_bcc">Bcc:</string>
-    <string name="composer_cc">Cc:</string>
-    <string name="composer_compose_email">Compose email</string>
-    <string name="composer_from">From:</string>
-    <string name="composer_subject">Subject:</string>
-    <string name="composer_to">To:</string>
+    <string name="composer_bcc">BCC:</string>
+    <string name="composer_cc">CC:</string>
+    <string name="composer_compose_email">Neue E-Mail verfassen</string>
+    <string name="composer_from">Von:</string>
+    <string name="composer_subject">Betreff:</string>
+    <string name="composer_to">An:</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -711,7 +711,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="payment_method">Zahlungsmethode</string>
     <string name="password_manager">Passwörter verwalten</string>
     <string name="recovery_email">Wiederherstellungs-E-Mail-Adresse</string>
-    <string name="info_for_missing_functionality">Please log in through <a href="https://www.protonmail.com/">protonmail.com</a> and access your settings to edit this information.</string>
+    <string name="info_for_missing_functionality">Bitte melden Sie sich über <a href="https://www.protonmail.com/">protonmail.com</a> an und öffnen Sie Ihre Einstellungen, um diese Informationen bearbeiten zu können.</string>
     <string name="storage">Größe des Postfachs</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">E-Mail-Adressen</string>
