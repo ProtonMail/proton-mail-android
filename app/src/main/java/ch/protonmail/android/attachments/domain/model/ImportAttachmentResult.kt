@@ -40,9 +40,12 @@ sealed class ImportAttachmentResult(val isTerminal: Boolean) {
     data class Idle(override val originalFileUri: Uri) : ImportAttachmentResult(isTerminal = false)
 
     /**
-     * Attachment has been skipped, no need to me imported
+     * Attachment has been skipped, no need to be imported
      */
-    data class Skipped(override val originalFileUri: Uri) : ImportAttachmentResult(isTerminal = true)
+    data class Skipped(
+        override val originalFileUri: Uri,
+        val fileInfo: FileInfo
+    ) : ImportAttachmentResult(isTerminal = true)
 
     /**
      * Information for file has been loaded
