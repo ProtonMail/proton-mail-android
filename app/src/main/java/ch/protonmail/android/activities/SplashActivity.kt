@@ -58,7 +58,7 @@ class SplashActivity : AppCompatActivity() {
                         AccountStateManager.State.Processing ->
                             Unit
                         AccountStateManager.State.AccountNeeded ->
-                            login()
+                            signIn()
                         AccountStateManager.State.PrimaryExist -> {
                             delay(resources.getInteger(R.integer.splash_transition_millis).toLong())
                             startMailboxActivity()

@@ -112,7 +112,7 @@ class ChangePinActivity : BaseActivity(),
             savePin("")
             resetPinAttempts()
         }
-        accountStateManager.logout(mUserManager.requireCurrentUserId()).invokeOnCompletion {
+        accountStateManager.signOut(mUserManager.requireCurrentUserId()).invokeOnCompletion {
             val intent = Intent()
             setResult(Activity.RESULT_OK, intent)
             finish()

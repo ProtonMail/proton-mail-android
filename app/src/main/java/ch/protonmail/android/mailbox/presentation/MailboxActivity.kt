@@ -300,7 +300,6 @@ class MailboxActivity :
 
         checkUserAndFetchNews()
 
-        setUpDrawer()
         setTitle()
 
         mailboxRecyclerView.adapter = mailboxAdapter
@@ -366,7 +365,6 @@ class MailboxActivity :
         }
 
         checkRegistration()
-        closeDrawer(animate = false)
 
         mailboxRecyclerView.addOnScrollListener(listScrollListener)
 
@@ -761,8 +759,6 @@ class MailboxActivity :
         if (mailboxLocation == MessageLocationType.INBOX) {
             AppUtil.clearNotifications(this, userManager.requireCurrentUserId())
         }
-        setUpDrawer()
-        closeDrawer()
 
         if (shouldShowSwipeGesturesChangedDialog()) {
             showSwipeGesturesChangedDialog()

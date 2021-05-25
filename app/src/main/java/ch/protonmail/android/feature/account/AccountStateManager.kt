@@ -164,15 +164,15 @@ class AccountStateManager @Inject constructor(
 
     suspend fun getAccountOrNull(userId: UserId) = getAccount(userId).firstOrNull()
 
-    fun logout(userId: UserId) = scope.launch {
+    fun signOut(userId: UserId) = scope.launch {
         accountManager.disableAccount(userId)
     }
 
-    fun logoutPrimary() = scope.launch {
-        getPrimaryUserId().first()?.let { logout(it) }
+    fun signOutPrimary() = scope.launch {
+        getPrimaryUserId().first()?.let { signOut(it) }
     }
 
-    fun login(userId: UserId? = null) = scope.launch {
+    fun signIn(userId: UserId? = null) = scope.launch {
         val account = userId?.let { getAccountOrNull(it) }
         currentAuthOrchestrator.startLoginWorkflow(
             requiredAccountType = requiredAccountType,
@@ -191,6 +191,10 @@ class AccountStateManager @Inject constructor(
         }
     }
 
+    fun remove(userId: UserId) = scope.launch {
+        accountManager.removeAccount(userId)
+    }
+
     data class AccountSwitch(val previous: Account? = null, val current: Account? = null)
 
     fun onAccountSwitched() = getPrimaryUserId().scan(AccountSwitch()) { previous, currentUserId ->
@@ -205,8 +209,6 @@ class AccountStateManager @Inject constructor(
     // Currently, Old UserManager is the source of truth for current primary user id.
     fun getPrimaryUserId() = oldUserManager.primaryUserId
 
-    fun getPrimaryUserIdValue() = oldUserManager.primaryUserId.value
-
     // endregion
 
     // region Deprecated
@@ -219,9 +221,9 @@ class AccountStateManager @Inject constructor(
 
     @Deprecated(
         message = "Use UserId version of the function",
-        replaceWith = ReplaceWith("logout(UserId(userId.s))", "me.proton.core.domain.entity.UserId")
+        replaceWith = ReplaceWith("signOut(UserId(userId.s))", "me.proton.core.domain.entity.UserId")
     )
-    fun logout(userId: Id) = logout(UserId(userId.s))
+    fun signOut(userId: Id) = signOut(UserId(userId.s))
 
     // endregion
 

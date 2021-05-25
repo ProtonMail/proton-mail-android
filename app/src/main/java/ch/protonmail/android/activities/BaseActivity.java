@@ -414,7 +414,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             Button btnLogout = dialogView.findViewById(R.id.logout);
 
             btnLogout.setOnClickListener(v -> {
-                accountStateManager.logoutPrimary().invokeOnCompletion(throwable -> {
+                accountStateManager.signOutPrimary().invokeOnCompletion(throwable -> {
                     finish();
                     return null;
                 });
