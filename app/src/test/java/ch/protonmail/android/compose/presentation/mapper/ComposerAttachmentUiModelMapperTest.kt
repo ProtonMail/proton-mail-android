@@ -23,6 +23,7 @@ import android.net.Uri
 import assert4k.*
 import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
 import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel
+import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel.Icon
 import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel.State
 import ch.protonmail.android.domain.entity.Bytes
 import ch.protonmail.android.domain.entity.Name
@@ -88,7 +89,7 @@ class ComposerAttachmentUiModelMapperTest {
             displayName = testFileName,
             extension = testFileExtension,
             size = testFileSize,
-            icon = 0,
+            icon = Icon.GENERIC,
             state = State.Importing
         )
 
@@ -113,7 +114,7 @@ class ComposerAttachmentUiModelMapperTest {
             displayName = testFileName,
             extension = testFileExtension,
             size = testFileSize,
-            icon = 0,
+            icon = Icon.GENERIC,
             state = State.Ready
         )
 
@@ -155,7 +156,7 @@ class ComposerAttachmentUiModelMapperTest {
             displayName = testFileName,
             extension = testFileExtension,
             size = testFileSize,
-            icon = 0,
+            icon = Icon.GENERIC,
             state = State.Error
         )
 

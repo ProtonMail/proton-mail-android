@@ -41,14 +41,20 @@ import kotlinx.serialization.Serializable
  */
 inline class Bytes(val l: ULong) {
 
-    fun toKilobytes() =
+    fun toKilobytes(): ULong =
         l / 1024uL
 
-    fun toMegabytes() =
+    fun toMegabytes(): ULong =
         toKilobytes() / 1024uL
 
-    fun toLong() =
+    fun toLong(): Long =
         l.toLong()
+
+    fun formatToMegabytesString(floatingPoints: Int): String {
+        val mb = toMegabytes()
+        val decimalString = (l - mb).toString()
+        return "$mb.${decimalString.take(floatingPoints)} MB"
+    }
 }
 val Number.bytes get() = Bytes(toLong().toULong())
 

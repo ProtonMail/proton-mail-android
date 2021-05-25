@@ -20,10 +20,10 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:drawable="@drawable/bg_recipient_chip_selected"
+        android:drawable="@drawable/shape_rectangle_small_corners_brand_fill"
         android:state_selected="true" />
 
     <item
-        android:drawable="@drawable/bg_recipient_chip_default"
+        android:drawable="@drawable/shape_rectangle_small_corners_weak_fill"
         android:state_selected="false" />
 </selector>

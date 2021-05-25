@@ -36,6 +36,7 @@ import ch.protonmail.android.domain.entity.user.MimeType
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheet
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheet.Action
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheetViewModel
+import ch.protonmail.android.utils.UiUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -77,7 +78,10 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
         super.onCreate(savedInstanceState)
 
         // region setup UI
-        binding.addAttachments.onClick { AddAttachmentsActionSheet.show(supportFragmentManager) }
+        binding.addAttachments.onClick {
+            UiUtil.hideKeyboard(this)
+            AddAttachmentsActionSheet.show(supportFragmentManager)
+        }
         // endregion
         // region observe
         composeViewModel.attachmentsEvent
@@ -114,7 +118,8 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
     }
 
     private fun onAttachmentsChanged(newAttachments: List<ComposerAttachmentUiModel>) {
-
+        binding.composerAttachmentsView
+            .setAttachments(newAttachments, onRemoveClicked = composeViewModel::removeAttachment)
     }
- // endregion
+    // endregion
 }
