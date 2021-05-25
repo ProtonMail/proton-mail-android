@@ -27,10 +27,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.activities.BaseContactsActivity
-import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
 import ch.protonmail.android.attachments.domain.model.UriPair
 import ch.protonmail.android.compose.ComposeMessageViewModel
 import ch.protonmail.android.compose.presentation.model.AttachmentsEventUiModel
+import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel
 import ch.protonmail.android.databinding.ActivityComposeMessage2Binding
 import ch.protonmail.android.domain.entity.user.MimeType
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheet
@@ -83,8 +83,7 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
         composeViewModel.attachmentsEvent
             .onEach { event ->
                 when (event) {
-                    is AttachmentsEventUiModel.Import -> onAttachmentsImported(event.results)
-                    is AttachmentsEventUiModel.Remove -> onAttachmentRemoved(event.fileUri)
+                    is AttachmentsEventUiModel.OnAttachmentsChange -> onAttachmentsChanged(event.attachments)
                     is AttachmentsEventUiModel.OnPhotoUriReady -> takePhotoFromCamera(event.uri)
                 }
             }.launchIn(lifecycleScope)
@@ -114,12 +113,8 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
         getContentsLauncher.launch(MimeType.ALL.string)
     }
 
-    private fun onAttachmentsImported(results: List<ImportAttachmentResult>) {
+    private fun onAttachmentsChanged(newAttachments: List<ComposerAttachmentUiModel>) {
 
     }
-
-    private fun onAttachmentRemoved(originalAttachmentUri: Uri) {
-
-    }
-    // endregion
+ // endregion
 }

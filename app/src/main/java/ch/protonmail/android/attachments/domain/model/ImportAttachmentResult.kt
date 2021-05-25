@@ -41,14 +41,6 @@ sealed class ImportAttachmentResult(val isTerminal: Boolean) {
     data class Idle(override val originalFileUri: Uri) : ImportAttachmentResult(isTerminal = false)
 
     /**
-     * Attachment has been skipped, no need to be imported
-     */
-    data class Skipped(
-        override val originalFileUri: Uri,
-        val fileInfo: FileInfo
-    ) : ImportAttachmentResult(isTerminal = true)
-
-    /**
      * Information for file has been loaded
      */
     data class OnInfo(
@@ -58,11 +50,15 @@ sealed class ImportAttachmentResult(val isTerminal: Boolean) {
 
     /**
      * Attachment has been imported correctly
+     *
+     * @property importedFileUri [Uri] of the imported file
+     * @property skipped `true` if the file was already in the app's folder
      */
     data class Success(
         override val originalFileUri: Uri,
         val importedFileUri: Uri,
-        val fileInfo: FileInfo
+        val fileInfo: FileInfo,
+        val skipped: Boolean = originalFileUri == importedFileUri
     ) : ImportAttachmentResult(isTerminal = true)
 
     /**
@@ -88,12 +84,25 @@ sealed class ImportAttachmentResult(val isTerminal: Boolean) {
         val size: Bytes,
         val mimeType: MimeType
     )
+
+    companion object {
+
+        /**
+         * Attachment has been skipped, no need to be imported
+         */
+        fun Skipped(
+            originalFileUri: Uri,
+            fileInfo: FileInfo
+        ) = Success(
+            originalFileUri = originalFileUri,
+            importedFileUri = originalFileUri,
+            fileInfo = fileInfo,
+            skipped = true
+        )
+    }
 }
 
 val ImportAttachmentResult.FileInfo.fullName get() = "${fileName.s}.$extension"
-
-val ImportAttachmentResult.isValid get() =
-    this is ImportAttachmentResult.Success || this is ImportAttachmentResult.Skipped
 
 fun ImportAttachmentResult.requireFileInfo(): ImportAttachmentResult.FileInfo =
     when (this) {
@@ -101,13 +110,5 @@ fun ImportAttachmentResult.requireFileInfo(): ImportAttachmentResult.FileInfo =
         is ImportAttachmentResult.CantWrite -> requireNotNull(fileInfo)
         is ImportAttachmentResult.Idle -> unsupported
         is ImportAttachmentResult.OnInfo -> fileInfo
-        is ImportAttachmentResult.Skipped -> fileInfo
         is ImportAttachmentResult.Success -> fileInfo
-    }
-
-fun ImportAttachmentResult.requireImportedFileUri(): Uri =
-    when (this) {
-        is ImportAttachmentResult.Skipped -> originalFileUri
-        is ImportAttachmentResult.Success -> importedFileUri
-        else -> unsupported
     }
