@@ -55,6 +55,7 @@ import me.proton.core.network.domain.session.SessionId
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.internal.closeQuietly
 import timber.log.Timber
 import java.io.IOException
 
@@ -149,6 +150,7 @@ abstract class BaseRequestInterceptor(
                         runBlocking { sessionManager.refreshScopes(sessionId) }
                     }
                     if (refresh.isSuccess) {
+                        response.closeQuietly()
                         val newRequest: Request = getRequestWithHeaders(response.request)
                         return chain.proceed(newRequest)
                     }
