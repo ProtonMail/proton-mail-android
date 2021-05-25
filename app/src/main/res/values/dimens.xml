@@ -41,6 +41,7 @@
     <dimen name="padding_xxl">32dp</dimen>
     <dimen name="padding_3xl">40dp</dimen>
     <dimen name="padding_4xl">48dp</dimen>
+    <dimen name="padding_5xl">56dp</dimen>
 
     <dimen name="elevation_s">2dp</dimen> // standard button low 2dp
     <dimen name="elevation_m">4dp</dimen> // standard app bar 4dp
