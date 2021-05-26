@@ -73,6 +73,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.proton.core.accountmanager.presentation.view.AccountPrimaryView
 import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewModel
+import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.domain.entity.UserId
 import java.util.Calendar
 import javax.inject.Inject
@@ -107,6 +108,9 @@ abstract class NavigationActivity : BaseActivity() {
 
     @Inject
     lateinit var accountManager: AccountManager
+
+    @Inject
+    lateinit var authOrchestrator: AuthOrchestrator
 
     @Inject
     lateinit var databaseProvider: DatabaseProvider
@@ -150,19 +154,22 @@ abstract class NavigationActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        authOrchestrator.register(this)
 
         with(accountStateManager) {
-            register(this@NavigationActivity)
+            setAuthOrchestrator(authOrchestrator)
+            observeAccountStateWithExternalLifecycle(lifecycle)
+            // Start Splash on AccountNeeded.
             state
-                .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
                 .onEach {
                     when (it) {
                         AccountStateManager.State.Processing,
-                        AccountStateManager.State.PrimaryExist -> Unit
+                        AccountStateManager.State.PrimaryExist ->
+                            Unit
                         AccountStateManager.State.AccountNeeded -> {
-                            unregister()
                             startSplashActivity()
-                            finish()
+                            finishAndRemoveTask()
                         }
                     }
                 }.launchIn(lifecycleScope)
@@ -174,17 +181,20 @@ abstract class NavigationActivity : BaseActivity() {
         }
 
         accountPrimaryView.setViewModel(accountSwitcherViewModel)
-        accountSwitcherViewModel.onActionPerformed().onEach {
-            when (it) {
-                AccountSwitcherViewModel.Action.Add,
-                AccountSwitcherViewModel.Action.Switch -> {
-                    accountPrimaryView.dismissDialog()
-                    closeDrawer(animate = false)
+        accountSwitcherViewModel.onDefaultAction(authOrchestrator)
+            .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+            .onEach {
+                when (it) {
+                    is AccountSwitcherViewModel.Action.Add,
+                    is AccountSwitcherViewModel.Action.SetPrimary,
+                    is AccountSwitcherViewModel.Action.SignIn -> {
+                        accountPrimaryView.dismissDialog()
+                        closeDrawer(animate = false)
+                    }
+                    is AccountSwitcherViewModel.Action.Remove,
+                    is AccountSwitcherViewModel.Action.SignOut -> Unit
                 }
-                AccountSwitcherViewModel.Action.Remove,
-                AccountSwitcherViewModel.Action.Logout -> Unit
-            }
-        }.launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
 
         sideDrawer.setOnItemClick { drawerItem ->
             // Header clicked
@@ -202,12 +212,18 @@ abstract class NavigationActivity : BaseActivity() {
         }
     }
 
+    override fun onDestroy() {
+        authOrchestrator.unregister()
+        super.onDestroy()
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
     }
 
     override fun onResume() {
+        accountStateManager.setAuthOrchestrator(authOrchestrator)
         super.onResume()
         checkUserId()
         setLightStatusBar()

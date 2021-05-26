@@ -73,6 +73,7 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:theme="@style/ProtonTheme.Mail"
+        android:taskAffinity=""
         tools:replace="android:theme">
 
         <!-- Disable default WorkManagerInitializer for use Hilt injection -->
@@ -132,14 +133,15 @@
 
         <activity android:name=".ViewTestActivity"/>
 
+        <!-- Begin - Root Activities -->
         <activity
             android:name=".activities.SplashActivity"
-            android:clearTaskOnLaunch="true"
+            android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/ProtonTheme.Splash.Mail">
+            android:launchMode="singleInstance"
+            android:theme="@style/ProtonTheme.Splash.Light.Mail">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <meta-data
@@ -147,16 +149,17 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity
+            android:name=".mailbox.presentation.MailboxActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize"
+            android:maxRecents="1"
+            android:theme="@style/ProtonTheme.Splash.Light.Mail" />
+        <!-- End - Root Activities -->
+        <activity
             android:name=".activities.settings.AttachmentStorageActivity"
             android:exported="false"
             android:label="@string/local_storage"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".mailbox.presentation.MailboxActivity"
-            android:exported="false"
-            android:configChanges="orientation|screenSize"
-            android:launchMode="singleTask"
-            android:maxRecents="1" />
         <activity
             android:name=".details.presentation.MessageDetailsActivity"
             android:exported="false"
@@ -177,7 +180,6 @@
         </activity>
         <activity
             android:name=".activities.composeMessage.ComposeMessageActivity"
-            android:clearTaskOnLaunch="true"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".mailbox.presentation.MailboxActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible">

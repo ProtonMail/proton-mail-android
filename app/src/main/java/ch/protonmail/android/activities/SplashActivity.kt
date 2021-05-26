@@ -24,11 +24,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import ch.protonmail.android.R
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.utils.startMailboxActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import me.proton.core.auth.presentation.AuthOrchestrator
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -37,33 +40,48 @@ class SplashActivity : AppCompatActivity() {
     @Inject
     lateinit var accountStateManager: AccountStateManager
 
+    @Inject
+    lateinit var authOrchestrator: AuthOrchestrator
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        authOrchestrator.register(this)
 
         with(accountStateManager) {
-            register(this@SplashActivity)
-
+            setAuthOrchestrator(authOrchestrator)
+            observeAccountStateWithExternalLifecycle(lifecycle, isSplashActivity = true)
             // Start Login or MailboxActivity.
             state
-                .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+                .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
                 .onEach {
                     when (it) {
-                        AccountStateManager.State.Processing -> Unit
+                        AccountStateManager.State.Processing ->
+                            Unit
                         AccountStateManager.State.AccountNeeded ->
                             login()
                         AccountStateManager.State.PrimaryExist -> {
-                            unregister()
+                            delay(resources.getInteger(R.integer.splash_transition_millis).toLong())
                             startMailboxActivity()
-                            finish()
+                            overridePendingTransition(0, 0)
+                            finishAndRemoveTask()
                         }
                     }
                 }.launchIn(lifecycleScope)
 
             // Finish if Login closed.
             onLoginClosed {
-                unregister()
-                finish()
+                finishAndRemoveTask()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        accountStateManager.setAuthOrchestrator(authOrchestrator)
+    }
+
+    override fun onDestroy() {
+        authOrchestrator.unregister()
+        super.onDestroy()
     }
 }

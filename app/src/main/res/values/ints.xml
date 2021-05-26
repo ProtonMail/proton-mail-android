@@ -49,4 +49,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>10000</item>
         <item>10000</item>
     </integer-array>
+
+    <integer name="splash_transition_millis">300</integer>
 </resources>

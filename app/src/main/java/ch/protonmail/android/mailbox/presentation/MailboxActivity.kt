@@ -221,6 +221,7 @@ class MailboxActivity :
     override fun getLayoutId(): Int = R.layout.activity_mailbox
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.ProtonTheme_Mail)
         super.onCreate(savedInstanceState)
 
         val userId = userManager.currentUserId ?: return

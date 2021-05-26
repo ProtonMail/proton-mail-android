@@ -18,7 +18,6 @@
 
 package ch.protonmail.android.feature.account
 
-import androidx.activity.ComponentActivity
 import androidx.core.content.edit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -53,6 +52,7 @@ import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.account.domain.entity.isDisabled
 import me.proton.core.account.domain.entity.isReady
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.accountmanager.presentation.AccountManagerObserver
 import me.proton.core.accountmanager.presentation.disableInitialNotReadyAccounts
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountCreateAddressFailed
@@ -76,7 +76,6 @@ class AccountStateManager @Inject constructor(
     private val requiredAccountType: AccountType,
     private val accountManager: AccountManager,
     private val userManager: UserManager,
-    private var authOrchestrator: AuthOrchestrator,
     private val eventManager: EventManager,
     private val jobManager: JobManager,
     private val oldUserManager: ch.protonmail.android.core.UserManager,
@@ -92,6 +91,8 @@ class AccountStateManager @Inject constructor(
     private val scope = lifecycleOwner.lifecycleScope
     private val lifecycle = lifecycleOwner.lifecycle
 
+    private lateinit var currentAuthOrchestrator: AuthOrchestrator
+
     private val mutableStateFlow = MutableStateFlow(State.Processing)
 
     enum class State { Processing, AccountNeeded, PrimaryExist }
@@ -99,47 +100,64 @@ class AccountStateManager @Inject constructor(
     val state = mutableStateFlow.asStateFlow()
 
     init {
-        with(authOrchestrator) {
-            // Observe all Accounts States (need a registered authOrchestrator, see register).
-            accountManager.observe(lifecycle, minActiveState = Lifecycle.State.CREATED)
-                .onSessionSecondFactorNeeded { startSecondFactorWorkflow(it) }
-                .onAccountTwoPassModeNeeded { startTwoPassModeWorkflow(it) }
-                .onAccountCreateAddressNeeded { startChooseAddressWorkflow(it) }
-                .onAccountTwoPassModeFailed { accountManager.disableAccount(it.userId) }
-                .onAccountCreateAddressFailed { accountManager.disableAccount(it.userId) }
-                .onAccountRemoved { onAccountDisabled(it) }
-                .onAccountDisabled { onAccountDisabled(it) }
-                .onAccountReady { onAccountReady(it) }
-                .disableInitialNotReadyAccounts()
-        }
+        // Handle basic account state with lifecycle provided via constructor.
+        observeAccountStateWithInternalLifecycle()
 
-        // Raise AccountNeeded on empty/disabled account list.
+        // Change mutable state according all accounts states.
         accountManager.getAccounts()
             .flowWithLifecycle(lifecycle, minActiveState = Lifecycle.State.CREATED)
             .onEach { accounts ->
-                if (accounts.isEmpty() || accounts.all { it.isDisabled() }) {
-                    onAccountNeeded()
-                    mutableStateFlow.tryEmit(State.AccountNeeded)
-                } else if (accounts.any { it.isReady() }) {
-                    mutableStateFlow.tryEmit(State.PrimaryExist)
-                } else {
-                    mutableStateFlow.tryEmit(State.Processing)
+                when {
+                    accounts.isEmpty() || accounts.all { it.isDisabled() } -> {
+                        onAccountNeeded()
+                        mutableStateFlow.tryEmit(State.AccountNeeded)
+                    }
+                    accounts.any { it.isReady() } -> {
+                        mutableStateFlow.tryEmit(State.PrimaryExist)
+                    }
+                    else -> {
+                        mutableStateFlow.tryEmit(State.Processing)
+                    }
                 }
             }.launchIn(scope)
     }
 
-    fun register(context: ComponentActivity) {
-        // Make sure there is only 1 ComponentActivity registered at a time.
-        authOrchestrator.unregister()
-        authOrchestrator.register(context)
+    /**
+     * Observe all accounts states that can be solved without any workflow ([AuthOrchestrator]).
+     */
+    private fun observeAccountStateWithInternalLifecycle() {
+        observe(lifecycle, minActiveState = Lifecycle.State.CREATED)
+            .onAccountTwoPassModeFailed { accountManager.disableAccount(it.userId) }
+            .onAccountCreateAddressFailed { accountManager.disableAccount(it.userId) }
+            .onAccountRemoved { onAccountDisabled(it) }
+            .onAccountDisabled { onAccountDisabled(it) }
+            .onAccountReady { onAccountReady(it) }
+            .disableInitialNotReadyAccounts()
     }
 
-    fun unregister() {
-        authOrchestrator.unregister()
+    /**
+     * Observe all accounts states that can be solved with [AuthOrchestrator], starting corresponding workflow.
+     *
+     * For example, SecondFactor Workflow, TwoPassMode Workflow or ChooseAddress Workflow.
+     */
+    fun observeAccountStateWithExternalLifecycle(lifecycle: Lifecycle, isSplashActivity: Boolean = false) {
+        // Don't start workflow if MailboxActivity will do it later.
+        fun shouldStart() = !isSplashActivity || state.value != State.PrimaryExist
+        observe(lifecycle, Lifecycle.State.CREATED)
+            .onSessionSecondFactorNeeded { if (shouldStart()) currentAuthOrchestrator.startSecondFactorWorkflow(it) }
+            .onAccountTwoPassModeNeeded { if (shouldStart()) currentAuthOrchestrator.startTwoPassModeWorkflow(it) }
+            .onAccountCreateAddressNeeded { if (shouldStart()) currentAuthOrchestrator.startChooseAddressWorkflow(it) }
+    }
+
+    fun observe(lifecycle: Lifecycle, minActiveState: Lifecycle.State): AccountManagerObserver =
+        accountManager.observe(lifecycle, minActiveState)
+
+    fun setAuthOrchestrator(authOrchestrator: AuthOrchestrator) {
+        currentAuthOrchestrator = authOrchestrator
     }
 
     fun onLoginClosed(block: () -> Unit) {
-        authOrchestrator.onLoginResult { result -> if (result == null) block() }
+        currentAuthOrchestrator.onLoginResult { result -> if (result == null) block() }
     }
 
     fun getAccount(userId: UserId) = accountManager.getAccount(userId)
@@ -156,7 +174,7 @@ class AccountStateManager @Inject constructor(
 
     fun login(userId: UserId? = null) = scope.launch {
         val account = userId?.let { getAccountOrNull(it) }
-        authOrchestrator.startLoginWorkflow(
+        currentAuthOrchestrator.startLoginWorkflow(
             requiredAccountType = requiredAccountType,
             username = account?.username
         )
@@ -165,7 +183,7 @@ class AccountStateManager @Inject constructor(
     fun switch(userId: UserId) = scope.launch {
         val account = getAccountOrNull(userId) ?: return@launch
         when {
-            account.isDisabled() -> authOrchestrator.startLoginWorkflow(
+            account.isDisabled() -> currentAuthOrchestrator.startLoginWorkflow(
                 requiredAccountType = AccountType.Internal,
                 username = account.username
             )
