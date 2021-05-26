@@ -25,6 +25,7 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.activities.BaseContactsActivity
 import ch.protonmail.android.attachments.domain.model.UriPair
@@ -120,6 +121,10 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
     private fun onAttachmentsChanged(newAttachments: List<ComposerAttachmentUiModel>) {
         binding.composerAttachmentsView
             .setAttachments(newAttachments, onRemoveClicked = composeViewModel::removeAttachment)
+        binding.attachmentCount.apply {
+            isVisible = newAttachments.isNotEmpty()
+            text = "${newAttachments.size}"
+        }
     }
     // endregion
 }
