@@ -32,7 +32,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbar"
+            android:id="@+id/collapsing_toolbar_contact_details"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -58,7 +58,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 tools:text="@tools:sample/full_names" />
 
             <include
-                android:id="@+id/toolbar"
+                android:id="@+id/include_toolbar"
                 layout="@layout/toolbar" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -76,13 +76,17 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <include
+                android:id="@+id/include_contact_details_buttons"
+                layout="@layout/layout_contact_details_main_buttons" />
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
 
     <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/editContactDetails"
+        android:id="@+id/fab_contact_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -90,7 +94,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/fab_ic_contact_edit"
-        app:fab_colorNormal="@color/new_purple"
+        app:fab_colorNormal="@color/interaction_strong"
         app:fab_colorPressed="@color/dark_purple_statusbar"
         app:menu_colorRipple="@color/dark_purple_statusbar"
         tools:ignore="VectorDrawableCompat" />

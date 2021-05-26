@@ -20,15 +20,29 @@
 package ch.protonmail.android.contacts.details
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import ch.protonmail.android.databinding.ActivityContactsBinding
+import androidx.appcompat.widget.Toolbar
+import ch.protonmail.android.R
+import ch.protonmail.android.databinding.ActivityContactDetailsBinding
 
 class ContactDetailsActivity : AppCompatActivity() {
 
+    private val viewModel by viewModels<ContactDetailsViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityContactsBinding.inflate(layoutInflater)
+        val binding = ActivityContactDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setSupportActionBar(binding.includeToolbar.toolbar as Toolbar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setTitle(R.string.contact_details)
+        }
+
+        val contactId = requireNotNull(intent.extras?.getString(EXTRA_ARG_CONTACT_ID))
+        viewModel.getContactDetails(contactId)
     }
 
     override fun onBackPressed() {
@@ -37,6 +51,7 @@ class ContactDetailsActivity : AppCompatActivity() {
     }
 
     companion object {
+
         const val EXTRA_ARG_CONTACT_ID = "extra_arg_contact_id"
     }
 }

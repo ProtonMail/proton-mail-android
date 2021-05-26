@@ -18,10 +18,6 @@
  */
 package ch.protonmail.android.contacts.details;
 
-import static ch.protonmail.android.usecase.create.CreateContactKt.VCARD_TEMP_FILE_NAME;
-import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_INITIALS;
-import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_PHOTO;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ClipData;
@@ -138,7 +134,12 @@ import ezvcard.util.PartialDate;
 import kotlin.Unit;
 import timber.log.Timber;
 
+import static ch.protonmail.android.usecase.create.CreateContactKt.VCARD_TEMP_FILE_NAME;
+import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_INITIALS;
+import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_PHOTO;
+
 @AndroidEntryPoint
+@Deprecated
 public class ContactDetailsActivityOld extends BaseActivity implements AppBarLayout.OnOffsetChangedListener {
 
     public static final String EXTRA_CONTACT = "extra_contact";
@@ -209,7 +210,7 @@ public class ContactDetailsActivityOld extends BaseActivity implements AppBarLay
     private List<String> mVCardAddressUIOptions;
     private List<String> mVCardAddressOptions;
     private Menu collapsedMenu;
-    private ContactDetailsViewModel viewModel;
+    private ContactDetailsViewModelOld viewModel;
     private ContactEditDetailsEmailGroupsAdapter contactEditDetailsEmailGroupsAdapter;
     private static final float PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.9f;
     private static final float PERCENTAGE_TO_HIDE_TITLE_DETAILS = 0.3f;
@@ -224,7 +225,7 @@ public class ContactDetailsActivityOld extends BaseActivity implements AppBarLay
         contactDao = ContactDatabase.Companion
                 .getInstance(getApplicationContext(), mUserManager.requireCurrentUserId())
                 .getDao();
-        viewModel = new ViewModelProvider(this).get(ContactDetailsViewModel.class);
+        viewModel = new ViewModelProvider(this).get(ContactDetailsViewModelOld.class);
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {

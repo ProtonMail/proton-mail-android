@@ -26,7 +26,7 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import ch.protonmail.android.R
-import ch.protonmail.android.contacts.details.ContactDetailsViewModel
+import ch.protonmail.android.contacts.details.ContactDetailsViewModelOld
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabel
@@ -88,7 +88,7 @@ class EditContactDetailsViewModel @Inject constructor(
     private val fileHelper: FileHelper,
     workManager: WorkManager,
     fetchContactDetails: FetchContactDetails
-) : ContactDetailsViewModel(dispatchers, downloadFile, editContactDetailsRepository, workManager, fetchContactDetails) {
+) : ContactDetailsViewModelOld(dispatchers, downloadFile, editContactDetailsRepository, workManager, fetchContactDetails) {
 
     // region events
     private val _cleanUpComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
