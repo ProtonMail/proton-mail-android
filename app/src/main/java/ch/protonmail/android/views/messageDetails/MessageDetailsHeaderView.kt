@@ -52,7 +52,8 @@ import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.ui.locks.SenderLockIcon
 import ch.protonmail.android.views.messagesList.SenderInitialView
-import me.proton.core.util.kotlin.EMPTY_STRING
+
+private const val HYPHEN = "-"
 
 /**
  * A view for the collapsible header in message details
@@ -302,7 +303,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     fun bind(message: Message, allLabels: List<Label>, nonInclusiveLabels: List<LabelChipUiModel>) {
         val senderText = getSenderText(message)
         val initials = if (senderText.isEmpty())
-            EMPTY_STRING
+            HYPHEN
         else
             senderText.substring(0, 1)
         senderInitialView.bind(initials)
