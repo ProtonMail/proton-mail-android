@@ -49,13 +49,10 @@ import ch.protonmail.android.activities.BaseStoragePermissionActivity
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
-import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
-import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
@@ -83,10 +80,8 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.android.synthetic.main.layout_message_details_activity_toolbar.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
@@ -103,7 +98,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private lateinit var messageOrConversationId: String
     private lateinit var pmWebViewClient: PMWebViewClient
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
-    private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
     private lateinit var primaryBaseActivity: Context
 
     private var messageRecipientUserId: Id? = null
@@ -221,10 +215,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun initAdapters() {
-        attachmentsListAdapter = MessageDetailsAttachmentListAdapter(
-            this,
-            OnAttachmentDownloadCallback(storagePermissionHelper, attachmentToDownloadId)
-        )
         pmWebViewClient = MessageDetailsPmWebViewClient(mUserManager, this)
         messageExpandableAdapter = MessageDetailsAdapter(
             this,
@@ -233,7 +223,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             pmWebViewClient,
             { onLoadEmbeddedImagesCLick() },
             { onDisplayImagesCLick() },
-            viewModel
+            viewModel,
+            storagePermissionHelper,
+            attachmentToDownloadId
         )
     }
 
@@ -448,10 +440,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     fun onDownloadAttachmentEvent(event: DownloadedAttachmentEvent) {
         when (val status = event.status) {
             Status.STARTED, Status.SUCCESS -> {
-                val eventAttachmentId = event.attachmentId
                 val isDownloaded = Status.SUCCESS == status
-                attachmentsListAdapter.setIsPgpEncrypted(viewModel.isPgpEncrypted())
-                attachmentsListAdapter.setDownloaded(eventAttachmentId, isDownloaded)
                 if (isDownloaded) {
                     viewModel.viewAttachment(this, event.filename, event.attachmentUri)
                 } else {
@@ -573,7 +562,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
             messageExpandableAdapter.setMessageData(conversation.messages)
             messageExpandableAdapter.refreshRecipientsLayout()
-            showAttachmentsDelayed(message)
             if (viewModel.refreshedKeys) {
                 filterAndLoad()
                 messageExpandableAdapter.mode = MODE_ACCORDION
@@ -609,15 +597,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             progress.visibility = View.GONE
             invalidateOptionsMenu()
             viewModel.renderingPassed = true
-        }
-
-        private fun showAttachmentsDelayed(message: Message) {
-            // See caaf8a4232a5bbfa150 for details on why this patch is currently needed
-            this@MessageDetailsActivity.lifecycleScope.launch {
-                val showAttachmentsDelay = 200L
-                delay(showAttachmentsDelay)
-                showMessageAttachments(message.attachments)
-            }
         }
     }
 

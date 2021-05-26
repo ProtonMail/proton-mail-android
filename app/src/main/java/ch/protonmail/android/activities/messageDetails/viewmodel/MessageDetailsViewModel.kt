@@ -536,6 +536,11 @@ internal class MessageDetailsViewModel @Inject constructor(
         startDownloadEmbeddedImagesJob()
     }
 
+    fun isAutoShowEmbeddedImages(): Boolean {
+        val mailSettings = userManager.getCurrentUserMailSettingsBlocking()
+        return mailSettings?.showImagesFrom?.includesEmbedded() ?: false
+    }
+
     fun prepareEmbeddedImages(): Boolean {
 
         val message = lastMessage()
