@@ -181,20 +181,37 @@ abstract class NavigationActivity : BaseActivity() {
         }
 
         accountPrimaryView.setViewModel(accountSwitcherViewModel)
-        accountSwitcherViewModel.onDefaultAction(authOrchestrator)
+        accountSwitcherViewModel.onAction()
             .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+            // Handle Dialog/Drawer state.
             .onEach {
+                val primaryUserId = accountStateManager.getPrimaryUserId().value
+
+                fun dismiss() { closeDrawerAndDialog() }
+
+                fun dismissIfPrimary(userId: UserId) {
+                    if (primaryUserId == userId) dismiss()
+                }
+
                 when (it) {
                     is AccountSwitcherViewModel.Action.Add,
                     is AccountSwitcherViewModel.Action.SetPrimary,
-                    is AccountSwitcherViewModel.Action.SignIn -> {
-                        accountPrimaryView.dismissDialog()
-                        closeDrawer(animate = false)
-                    }
-                    is AccountSwitcherViewModel.Action.Remove,
-                    is AccountSwitcherViewModel.Action.SignOut -> Unit
+                    is AccountSwitcherViewModel.Action.SignIn -> dismiss()
+                    is AccountSwitcherViewModel.Action.Remove -> dismissIfPrimary(it.account.userId)
+                    is AccountSwitcherViewModel.Action.SignOut -> dismissIfPrimary(it.account.userId)
                 }
-            }.launchIn(lifecycleScope)
+            }
+            // Handle action.
+            .onEach {
+                when (it) {
+                    is AccountSwitcherViewModel.Action.Add -> accountStateManager.signIn()
+                    is AccountSwitcherViewModel.Action.SetPrimary -> accountStateManager.switch(it.account.userId)
+                    is AccountSwitcherViewModel.Action.SignIn -> accountStateManager.signIn(it.account.userId)
+                    is AccountSwitcherViewModel.Action.Remove -> accountStateManager.remove(it.account.userId)
+                    is AccountSwitcherViewModel.Action.SignOut -> accountStateManager.signOut(it.account.userId)
+                }
+            }
+            .launchIn(lifecycleScope)
 
         sideDrawer.setOnItemClick { drawerItem ->
             // Header clicked
@@ -210,6 +227,8 @@ abstract class NavigationActivity : BaseActivity() {
                 drawerLayout.closeDrawer(GravityCompat.START)
             }
         }
+
+        setUpDrawer()
     }
 
     override fun onDestroy() {
@@ -231,6 +250,8 @@ abstract class NavigationActivity : BaseActivity() {
         mJobManager.addJobInBackground(FetchUpdatesJob())
         val alarmReceiver = AlarmReceiver()
         alarmReceiver.setAlarm(this)
+
+        closeDrawerAndDialog()
     }
 
     override fun onStart() {
@@ -248,11 +269,16 @@ abstract class NavigationActivity : BaseActivity() {
         // Requested UserId match the current ?
         intent.extras?.getString(EXTRA_USER_ID)?.let { extraUserId ->
             val requestedUserId = UserId(extraUserId)
-            if (requestedUserId != accountStateManager.getPrimaryUserIdValue()) {
+            if (requestedUserId != accountStateManager.getPrimaryUserId().value) {
                 accountStateManager.switch(requestedUserId)
             }
             intent.extras?.remove(EXTRA_USER_ID)
         }
+    }
+
+    private fun closeDrawerAndDialog() {
+        closeDrawer(animate = false)
+        accountPrimaryView.dismissDialog()
     }
 
     protected fun closeDrawer(animate: Boolean = true): Boolean {
@@ -359,7 +385,7 @@ abstract class NavigationActivity : BaseActivity() {
         fun onSignOutSelected() {
 
             fun onLogoutConfirmed(currentUserId: Id) {
-                accountStateManager.logout(currentUserId)
+                accountStateManager.signOut(currentUserId)
             }
 
             lifecycleScope.launch {
@@ -367,10 +393,10 @@ abstract class NavigationActivity : BaseActivity() {
 
                 val (title, message) = if (nextLoggedInUserId != null) {
                     val next = userManager.getUser(nextLoggedInUserId)
-                    getString(R.string.logout) to getString(R.string.logout_question_next_account, next.name.s)
+                    getString(R.string.sign_out) to getString(R.string.logout_question_next_account, next.name.s)
                 } else {
                     val current = checkNotNull(userManager.currentUser)
-                    getString(R.string.log_out, current.name.s) to getString(R.string.logout_question)
+                    getString(R.string.sign_out, current.name.s) to getString(R.string.sign_out_question)
                 }
 
                 showTwoButtonInfoDialog(
