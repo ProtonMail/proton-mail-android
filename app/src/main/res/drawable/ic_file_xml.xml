@@ -1,0 +1,39 @@
+<!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M4,0L20,0A4,4 0,0 1,24 4L24,20A4,4 0,0 1,20 24L4,24A4,4 0,0 1,0 20L0,4A4,4 0,0 1,4 0z"
+      android:fillColor="#EBEDF3"/>
+  <path
+      android:pathData="M19.5378,13.045C19.9274,12.6555 19.9274,12.0239 19.5378,11.6344L19.3163,11.4129L16.6218,8.7184C16.3659,8.4625 15.951,8.4625 15.695,8.7184C15.4391,8.9744 15.4391,9.3893 15.695,9.6453L18.3895,12.3397L15.8076,14.9216C15.5517,15.1775 15.5517,15.5925 15.8076,15.8484C16.0635,16.1044 16.4785,16.1044 16.7344,15.8484L19.5378,13.045Z"
+      android:fillColor="#3A3F4A"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M4.4654,11.5219C4.0758,11.9114 4.0758,12.543 4.4654,12.9325L4.6869,13.154L7.3813,15.8485C7.6373,16.1044 8.0522,16.1044 8.3082,15.8485C8.5641,15.5925 8.5641,15.1776 8.3082,14.9216L5.6137,12.2272L8.1956,9.6453C8.4515,9.3894 8.4515,8.9744 8.1956,8.7185C7.9397,8.4625 7.5247,8.4625 7.2688,8.7185L4.4654,11.5219Z"
+      android:fillColor="#3A3F4A"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M13.6016,5.6696L13.6016,5.6696A0.6554,0.6554 60,0 1,14.0651 6.4723L11.0119,17.867A0.6554,0.6554 60,0 1,10.2092 18.3304L10.2092,18.3304A0.6554,0.6554 60,0 1,9.7458 17.5277L12.799,6.133A0.6554,0.6554 60,0 1,13.6016 5.6696z"
+      android:fillColor="#3A3F4A"/>
+</vector>
