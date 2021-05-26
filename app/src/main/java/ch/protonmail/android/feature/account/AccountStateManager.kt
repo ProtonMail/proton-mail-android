@@ -64,7 +64,8 @@ import me.proton.core.accountmanager.presentation.onAccountTwoPassModeFailed
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeNeeded
 import me.proton.core.accountmanager.presentation.onSessionSecondFactorNeeded
 import me.proton.core.auth.presentation.AuthOrchestrator
-import me.proton.core.auth.presentation.onLoginResult
+import me.proton.core.auth.presentation.onAddAccountResult
+import me.proton.core.domain.entity.Product
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.domain.UserManager
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -73,6 +74,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AccountStateManager @Inject constructor(
+    private val product: Product,
     private val requiredAccountType: AccountType,
     private val accountManager: AccountManager,
     private val userManager: UserManager,
@@ -156,8 +158,8 @@ class AccountStateManager @Inject constructor(
         currentAuthOrchestrator = authOrchestrator
     }
 
-    fun onLoginClosed(block: () -> Unit) {
-        currentAuthOrchestrator.onLoginResult { result -> if (result == null) block() }
+    fun onAddAccountClosed(block: () -> Unit) {
+        currentAuthOrchestrator.onAddAccountResult { result -> if (result == null) block() }
     }
 
     fun getAccount(userId: UserId) = accountManager.getAccount(userId)
@@ -177,6 +179,13 @@ class AccountStateManager @Inject constructor(
         currentAuthOrchestrator.startLoginWorkflow(
             requiredAccountType = requiredAccountType,
             username = account?.username
+        )
+    }
+
+    fun addAccount() = scope.launch {
+        currentAuthOrchestrator.startAddAccountWorkflow(
+            requiredAccountType = requiredAccountType,
+            product = product
         )
     }
 

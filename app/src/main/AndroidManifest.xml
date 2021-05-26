@@ -139,7 +139,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:launchMode="singleInstance"
-            android:theme="@style/ProtonTheme.Splash.Light.Mail">
+            android:theme="@style/ProtonTheme.Splash.Mail.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -153,7 +153,7 @@
             android:exported="false"
             android:configChanges="orientation|screenSize"
             android:maxRecents="1"
-            android:theme="@style/ProtonTheme.Splash.Light.Mail" />
+            android:theme="@style/ProtonTheme.Splash.Mail.Light" />
         <!-- End - Root Activities -->
         <activity
             android:name=".activities.settings.AttachmentStorageActivity"
@@ -333,11 +333,6 @@
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_address_chooser"/>
-        <activity
-            android:name=".activities.multiuser.AccountManagerActivity"
-            android:screenOrientation="portrait"
-            android:exported="false"
-            android:label="@string/title_activity_account_manager"/>
         <service
             android:name=".api.services.MessagesService"
             android:exported="false"
@@ -367,7 +362,13 @@
             android:name="me.proton.core.auth.presentation.ui.CreateAddressActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name="me.proton.core.auth.presentation.ui.AddAccountActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name="me.proton.core.auth.presentation.ui.LoginActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.signup.SignupActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="me.proton.core.auth.presentation.ui.TwoPassModeActivity"
