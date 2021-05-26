@@ -27,7 +27,6 @@ import android.os.Environment
 import android.print.PrintManager
 import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
@@ -80,6 +79,7 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
@@ -235,28 +235,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     val decryptedMessageData: LiveData<ConversationUiModel>
         get() = _decryptedMessageLiveData.distinctUntilChanged()
 
-    val webViewContentWithoutImages = MutableLiveData<String>()
-    val webViewContentWithImages = MutableLiveData<String>()
-    val webViewContent = object : MediatorLiveData<String>() {
-        var contentWithoutImages: String? = null
-        var contentWithImages: String? = null
-
-        init {
-            addSource(webViewContentWithoutImages) {
-                contentWithoutImages = it
-                emit()
-            }
-            addSource(webViewContentWithImages) {
-                contentWithImages = it
-                emit()
-            }
-        }
-
-        fun emit() {
-            value = contentWithImages ?: contentWithoutImages
-        }
-    }
-
     private var areImagesDisplayed: Boolean = false
 
     init {
@@ -270,6 +248,26 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun markUnread() {
         messageRepository.markUnRead(listOf(messageOrConversationId))
+    }
+
+    fun loadMessageBody(message: Message): Flow<Message> {
+        val decryptedMessageFlow = MutableSharedFlow<Message>(1)
+
+        viewModelScope.launch(dispatchers.Io) {
+            message.decryptedHTML?.let {
+                decryptedMessageFlow.emit(message)
+                return@launch
+            }
+
+            val userId = userManager.requireCurrentUserId()
+
+            val fetchedMessage = messageRepository.getMessage(userId, message.messageId!!, true)
+            val isDecrypted = fetchedMessage?.tryDecrypt(publicKeys)
+            if (isDecrypted == true) {
+                decryptedMessageFlow.emit(fetchedMessage)
+            }
+        }
+        return decryptedMessageFlow
     }
 
     fun loadMailboxItemDetails() {
@@ -527,7 +525,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun displayRemoteContentClicked() {
-        webViewContentWithImages.value = bodyString
         remoteContentDisplayed()
         prepareEmbeddedImages()
     }
@@ -609,7 +606,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun getParsedMessage(
-        decryptedMessage: String,
+        decryptedMessageHtml: String?,
         windowWidth: Int,
         css: String,
         defaultErrorMessage: String
@@ -618,13 +615,13 @@ internal class MessageDetailsViewModel @Inject constructor(
             val contentTransformer = DefaultTransformer()
                 .pipe(ViewportTransformer(windowWidth, css))
 
-            contentTransformer.transform(Jsoup.parse(decryptedMessage)).toString()
+            contentTransformer.transform(Jsoup.parse(decryptedMessageHtml)).toString()
         } catch (ioException: IOException) {
             Timber.e(ioException, "Jsoup is unable to parse HTML message details")
             defaultErrorMessage
         }
 
-        return bodyString
+        return bodyString!!
     }
 
     fun moveToTrash() {

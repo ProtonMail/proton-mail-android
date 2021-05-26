@@ -57,6 +57,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
@@ -446,6 +447,42 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             // Called twice as the second returned conversation has two messages
             coVerify(exactly = 2) { messageRepository.findMessageOnce(userId, any()) }
         }
+
+    @Test
+    fun loadMessageBodyEmitsInputMessageWhenBodyIsAlreadyDecrypted() = runBlockingTest {
+        val message = mockk<Message>()
+        val decryptedMessageHtml = "<html>Decrypted message body HTML</html>"
+        every { message.decryptedHTML } returns decryptedMessageHtml
+
+        val decryptedMessage = viewModel.loadMessageBody(message).first()
+
+        assertEquals(decryptedMessageHtml, decryptedMessage.decryptedHTML)
+    }
+
+    @Test
+    fun loadMessageBodyFetchesMessageFromMessageRepositoryWhenInputMessageIsNotDecrypted() = runBlockingTest {
+        // Given
+        val messageId = "messageId"
+
+        val userId = Id("userId3")
+        every { userManager.requireCurrentUserId() } returns userId
+
+        val message = mockk<Message>()
+        every { message.messageId } returns messageId
+        every { message.decryptedHTML } returns null
+
+        val fetchedMessage = mockk<Message>()
+        every { fetchedMessage.messageBody } returns "encrypted message body"
+        every { fetchedMessage.decrypt(any(), any(), any()) } just Runs
+
+        coEvery { messageRepository.getMessage(userId, messageId, true) } returns fetchedMessage
+
+        // When
+        val decryptedMessage = viewModel.loadMessageBody(message).first()
+
+        // Then
+        assertEquals(fetchedMessage, decryptedMessage)
+    }
 
     private fun buildEmptyConversation(conversationId: String) = Conversation(
         conversationId,

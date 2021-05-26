@@ -214,7 +214,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             .onEach(messageExpandableAdapter::setNonInclusiveLabels)
             .launchIn(lifecycleScope)
 
-        viewModel.webViewContent.observe(this, WebViewContentObserver())
         viewModel.messageDetailsError.observe(this, MessageDetailsErrorObserver())
         viewModel.pendingSend.observe(this, PendingSendObserver())
         listenForConnectivityEvent()
@@ -230,11 +229,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         messageExpandableAdapter = MessageDetailsAdapter(
             this,
             listOf(),
-            "",
             messageDetailsRecyclerView,
             pmWebViewClient,
-            { onLoadEmbeddedImagesCLick() }
-        ) { onDisplayImagesCLick() }
+            { onLoadEmbeddedImagesCLick() },
+            { onDisplayImagesCLick() },
+            viewModel
+        )
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenuInfo?) {
@@ -392,21 +392,13 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         return decryptedBody
     }
 
-    private fun filterAndLoad(decryptedMessage: String) {
-
-        val parsedMessage = viewModel.getParsedMessage(
-            decryptedMessage,
-            UiUtil.getRenderWidth(windowManager),
-            AppUtil.readTxt(this, R.raw.editor),
-            resources.getString(R.string.request_timeout)
-        )
+    private fun filterAndLoad() {
 
         if (isAutoShowRemoteImages) {
             viewModel.remoteContentDisplayed()
         }
         messageExpandableAdapter.displayContainerDisplayImages(View.GONE)
         pmWebViewClient.blockRemoteResources(!isAutoShowRemoteImages)
-        viewModel.webViewContentWithoutImages.value = parsedMessage
     }
 
     override fun onBackPressed() {
@@ -426,7 +418,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     if (content.isNullOrEmpty()) {
                         return@observe
                     }
-                    viewModel.webViewContentWithImages.setValue(content)
                 }
 
                 viewModel.onEmbeddedImagesDownloaded(event)
@@ -584,7 +575,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             messageExpandableAdapter.refreshRecipientsLayout()
             showAttachmentsDelayed(message)
             if (viewModel.refreshedKeys) {
-                filterAndLoad(decryptedBody)
+                filterAndLoad()
                 messageExpandableAdapter.mode = MODE_ACCORDION
                 messageDetailsRecyclerView.layoutManager = LinearLayoutManager(this@MessageDetailsActivity)
                 listenForRecipientsKeys()
@@ -798,13 +789,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     progress.visibility = View.GONE
                 }
             }
-        }
-    }
-
-    private inner class WebViewContentObserver : Observer<String?> {
-
-        override fun onChanged(content: String?) {
-            messageExpandableAdapter.loadDataFromUrlToMessageView(content!!)
         }
     }
 

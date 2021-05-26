@@ -33,15 +33,19 @@ import android.webkit.WebView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyScaleListener
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyTouchListener
+import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.ui.view.LabelChipUiModel
+import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.views.PMWebViewClient
@@ -51,8 +55,10 @@ import ch.protonmail.android.views.messageDetails.MessageDetailsExpirationInfoVi
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
-import me.proton.core.util.kotlin.takeIfNotEmpty
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
 import org.apache.http.protocol.HTTP.UTF_8
+import timber.log.Timber
 import java.util.ArrayList
 
 // region constants
@@ -60,14 +66,14 @@ private const val TYPE_ITEM = 1001
 private const val TYPE_HEADER = 1000
 // endregion
 
-class MessageDetailsAdapter(
+internal class MessageDetailsAdapter(
     private val context: Context,
     private var messages: List<Message>,
-    private var content: String,
     private val messageDetailsRecyclerView: RecyclerView,
     private var pmWebViewClient: PMWebViewClient,
     private val onLoadEmbeddedImagesCLick: (() -> Unit)?,
-    private val onDisplayImagesCLick: (() -> Unit)?
+    private val onDisplayImagesClick: (() -> Unit)?,
+    private val viewModel: MessageDetailsViewModel
 ) : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
 
     var containerDisplayImages = LoadContentButton(context)
@@ -85,7 +91,7 @@ class MessageDetailsAdapter(
         val items = ArrayList<MessageDetailsListItem>()
         messages.forEach { message ->
             items.add(MessageDetailsListItem(message))
-            items.add(MessageDetailsListItem(content))
+            items.add(MessageDetailsListItem())
         }
         setItems(items)
     }
@@ -96,7 +102,7 @@ class MessageDetailsAdapter(
                 position,
                 visibleItems!![position].message,
                 onLoadEmbeddedImagesCLick,
-                onDisplayImagesCLick
+                onDisplayImagesClick
             )
         } else {
             (holder as ItemViewHolder).bind(
@@ -129,16 +135,13 @@ class MessageDetailsAdapter(
 
     class MessageDetailsListItem : ListItem {
         var message = Message()
-        var content = ""
         lateinit var messageWebView: WebView
 
         constructor(messageData: Message) : super(TYPE_HEADER) {
             message = messageData
         }
 
-        constructor(contentData: String) : super(TYPE_ITEM) {
-            content = contentData
-        }
+        constructor() : super(TYPE_ITEM)
 
         fun isInit(): Boolean = ::messageWebView.isInitialized
     }
@@ -214,6 +217,7 @@ class MessageDetailsAdapter(
                 (context as FragmentActivity).redirectToChrome()
                 return
             }
+            val progress = ProgressBar(context)
             configureWebView(webView, pmWebViewClient)
             setUpScrollListener(webView, messageDetailsView, itemView.messageWebViewContainer)
 
@@ -221,16 +225,29 @@ class MessageDetailsAdapter(
             (context as MessageDetailsActivity).registerForContextMenu(webView)
             itemView.messageWebViewContainer.removeAllViews()
             itemView.messageWebViewContainer.addView(webView)
+            itemView.messageWebViewContainer.addView(progress)
 
             visibleItems!![position].messageWebView = webView
 
-            webView.loadDataWithBaseURL(
-                Constants.DUMMY_URL_PREFIX,
-                content.takeIfNotEmpty() ?: message.decryptedHTML!!,
-                "text/html",
-                UTF_8,
-                ""
-            )
+            viewModel.loadMessageBody(message).mapLatest {
+                Timber.v("Load data for message: ${it.messageId} at position $position")
+                val parsedBody = viewModel.getParsedMessage(
+                    it.decryptedHTML,
+                    UiUtil.getRenderWidth(context.windowManager),
+                    AppUtil.readTxt(context, R.raw.editor),
+                    context.getString(R.string.request_timeout)
+                )
+
+                webView.loadDataWithBaseURL(
+                    Constants.DUMMY_URL_PREFIX,
+                    parsedBody!!,
+                    "text/html",
+                    UTF_8,
+                    ""
+                )
+                progress.visibility = View.INVISIBLE
+            }.launchIn(context.lifecycleScope)
+
         }
     }
 
@@ -239,7 +256,7 @@ class MessageDetailsAdapter(
         val items = ArrayList<MessageDetailsListItem>()
         messages.forEach { message ->
             items.add(MessageDetailsListItem(message))
-            items.add(MessageDetailsListItem(content))
+            items.add(MessageDetailsListItem())
         }
         setItems(items)
     }
@@ -252,30 +269,6 @@ class MessageDetailsAdapter(
     fun setNonInclusiveLabels(labels: List<LabelChipUiModel>) {
         nonInclusiveLabelsList = labels
         setMessageData(messages)
-    }
-
-    /**
-     * Update the [WebView] content
-     * @param contentData [String] representation of the HTML page to be displayed in the [WebView]
-     */
-    fun loadDataFromUrlToMessageView(contentData: String) {
-        content = contentData
-        val contentItem = visibleItems?.find {
-            it.ItemType == TYPE_ITEM
-        } ?: MessageDetailsListItem(contentData)
-
-        contentItem.content = contentData
-        if (contentItem.isInit()) {
-            contentItem.messageWebView.loadDataWithBaseURL(
-                Constants.DUMMY_URL_PREFIX,
-                if (content.isEmpty()) messages[0].decryptedHTML!! else content,
-                "text/html",
-                UTF_8,
-                ""
-            )
-        } else {
-            setItems(allItems)
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
