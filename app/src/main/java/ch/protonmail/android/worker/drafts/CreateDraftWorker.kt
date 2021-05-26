@@ -176,7 +176,7 @@ class CreateDraftWorker @AssistedInject constructor(
         MessageUtils.isLocalMessageId(message.messageId)
 
     private suspend fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {
-        val localAttachments = localDraft.Attachments.filterNot { it.isUploaded }
+        val localAttachments = localDraft.attachments.filterNot { it.isUploaded }
         apiDraft.apply {
             dbId = localDraft.dbId
             toList = localDraft.toList
@@ -189,7 +189,7 @@ class CreateDraftWorker @AssistedInject constructor(
             isDownloaded = true
             setIsRead(true)
             numAttachments = localDraft.numAttachments
-            Attachments = localAttachments.plus(Attachments)
+            attachments = localAttachments.plus(attachments)
             localId = localDraft.messageId
         }
 

@@ -527,7 +527,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     fun prepareEmbeddedImages(): Boolean {
         val message = decryptedMessageData.value
         message?.let {
-            val attachments = message.Attachments
+            val attachments = message.attachments
             val embeddedImagesToFetch = ArrayList<EmbeddedImage>()
             val embeddedImagesAttachments = ArrayList<Attachment>()
             for (attachment in attachments) {

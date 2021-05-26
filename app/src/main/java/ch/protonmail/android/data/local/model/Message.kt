@@ -208,7 +208,7 @@ data class Message @JvmOverloads constructor(
 ) : Serializable {
 
     @Ignore
-    var Attachments = listOf<Attachment>() // TODO change the name to lowercase, look out for getter naming conflicts
+    var attachments = listOf<Attachment>()
         internal set
 
     @Ignore
@@ -327,7 +327,7 @@ data class Message @JvmOverloads constructor(
         message.messageBody = messageBody
         message.embeddedImageIds = embeddedImageIds
         message.numAttachments = numAttachments
-        val attachments = Attachments
+        val attachments = attachments
         attachments.forEach { attachment ->
             attachment.isUploaded = true
             attachment.isNew = false
@@ -379,7 +379,7 @@ data class Message @JvmOverloads constructor(
     @Deprecated("We target removing all logic from Models. `MessageDao` can be used to get attachments instead")
     suspend fun attachments(messageDao: MessageDao): List<Attachment> {
         if (isPGPMime) {
-            return this.Attachments
+            return this.attachments
         }
         val messageId = messageId
         if (messageId == null || messageId.isEmpty()) {
@@ -396,7 +396,7 @@ data class Message @JvmOverloads constructor(
             }
         }
 
-        Attachments = result
+        attachments = result
         return result
     }
 
@@ -405,7 +405,7 @@ data class Message @JvmOverloads constructor(
     fun getAttachmentsAsync(messageDao: MessageDao): LiveData<List<Attachment>> {
         if (isPGPMime) {
             val result = MutableLiveData<List<Attachment>>()
-            result.value = this.Attachments
+            result.value = this.attachments
             return result
         }
         val messageId = messageId
@@ -541,7 +541,7 @@ data class Message @JvmOverloads constructor(
     }
 
     fun setAttachmentList(attachmentList: List<Attachment>) {
-        Attachments = attachmentList
+        attachments = attachmentList
     }
 
     fun getEventLabelIDs() = allLabelIDs

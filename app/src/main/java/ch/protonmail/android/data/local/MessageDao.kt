@@ -131,17 +131,17 @@ abstract class MessageDao {
     fun findMessageById(messageId: String): Flow<Message?> = findMessageInfoById(messageId)
         .onEach { message ->
             message ?: return@onEach
-            message.Attachments = message.attachments(this)
+            message.attachments = message.attachments(this)
         }
 
     suspend fun findMessageByIdOnce(messageId: String): Message? = findMessageInfoByIdOnce(messageId)?.also { message ->
-        message.Attachments = message.attachmentsBlocking(this)
+        message.attachments = message.attachmentsBlocking(this)
     }
 
     @Deprecated("Use Flow variant", ReplaceWith("findMessageById(messageId).first()"))
     fun findMessageByIdBlocking(messageId: String): Message? = findMessageInfoByIdBlocking(messageId)
         ?.also { message ->
-            message.Attachments = message.attachmentsBlocking(this)
+            message.attachments = message.attachmentsBlocking(this)
         }
 
     fun findMessageByIdAsync(messageId: String) = findMessageInfoByIdAsync(messageId)
@@ -153,18 +153,18 @@ abstract class MessageDao {
     fun findMessageByMessageDbId(messageDbId: Long) = findMessageInfoByDbId(messageDbId)
         .onEach { message ->
             message ?: return@onEach
-            message.Attachments = message.attachmentsBlocking(this)
+            message.attachments = message.attachmentsBlocking(this)
         }
 
     fun findMessageByMessageDbIdBlocking(messageDbId: Long) = findMessageInfoByDbIdBlocking(messageDbId)
         ?.also { message ->
-            message.Attachments = message.attachmentsBlocking(this)
+            message.attachments = message.attachmentsBlocking(this)
         }
 
     fun findMessageByDbId(dbId: Long): Flow<Message?> =
         findMessageInfoByDbId(dbId).map { message ->
             return@map message?.let {
-                it.Attachments = it.attachmentsBlocking(this)
+                it.attachments = it.attachmentsBlocking(this)
                 it
             }
         }
@@ -174,7 +174,7 @@ abstract class MessageDao {
         findAllMessageInfoByLastMessageAccessTime(laterThan)
             .map { messages ->
                 messages.onEach { message ->
-                    message.Attachments = message.attachments(this)
+                    message.attachments = message.attachments(this)
                 }
             }
 
@@ -182,7 +182,7 @@ abstract class MessageDao {
         findAllMessageInfoFromAConversation(conversationId)
             .map { messages ->
                 messages.onEach { message ->
-                    message.Attachments = message.attachments(this)
+                    message.attachments = message.attachments(this)
                 }
             }
 
@@ -244,7 +244,7 @@ abstract class MessageDao {
             localAttachments = findAttachmentsByMessageId(messageId).first()
         }
 
-        var preservedAttachments = message.Attachments.map {
+        var preservedAttachments = message.attachments.map {
             Attachment(
                 fileName = it.fileName,
                 mimeType = it.mimeType,
@@ -300,7 +300,7 @@ abstract class MessageDao {
         if (preservedAttachments.isNotEmpty()) {
             saveAllAttachments(preservedAttachments)
         }
-        message.Attachments = preservedAttachments
+        message.attachments = preservedAttachments
     }
 
     open suspend fun saveMessages(vararg messages: Message) {
