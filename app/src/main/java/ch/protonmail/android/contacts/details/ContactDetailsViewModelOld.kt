@@ -71,6 +71,7 @@ import javax.inject.Inject
  *   [ x] Inject dispatchers in the constructor
  *   [ ] Replace [ContactDetailsRepository] with a `ContactsRepository`
  */
+@Deprecated("Use new ContactDetailsViewModel")
 @HiltViewModel
 open class ContactDetailsViewModelOld @Inject constructor(
     dispatchers: DispatcherProvider,

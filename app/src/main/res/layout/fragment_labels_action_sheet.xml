@@ -79,7 +79,7 @@
 
             <TextView
                 android:id="@+id/text_view_labels_sheet_new_label"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?selectableItemBackground"
@@ -91,7 +91,7 @@
 
             <TextView
                 android:id="@+id/text_view_labels_sheet_new_folder"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?selectableItemBackground"

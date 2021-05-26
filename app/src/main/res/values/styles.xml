@@ -46,6 +46,7 @@
     <style name="Proton.Text.DefaultSmall.Interaction">
         <item name="android:textColor">@color/cornflower_blue</item>
     </style>
+
     <style name="Proton.Text.Caption.Strong.Inverted">
         <item name="android:textColor">@color/text_inverted</item>
     </style>
@@ -100,7 +101,7 @@
     </style>
 
     <!-- region Action Sheet -->
-    <style name="ActionSheetStandardItem">
+    <style name="ListStandardItem">
         <item name="android:background">?selectableItemBackground</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
@@ -109,7 +110,8 @@
         <item name="android:textAppearance">@style/Proton.Text.Default</item>
     </style>
 
-    <style name="ActionSheetSectionTitleItem">
+    <style name="ListSectionTitleItem">
+        <item name="android:maxLines">1</item>
         <item name="android:clickable">false</item>
         <item name="android:focusable">false</item>
         <item name="android:paddingStart">@dimen/padding_l</item>
@@ -134,9 +136,7 @@
         <item name="drawableTint">@color/cornflower_blue</item>
     </style>
 
-    <style
-        name="ProtonMail.BottomSheetDialogTheme"
-        parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+    <style name="ProtonMail.BottomSheetDialogTheme" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/Widget.App.BottomSheet.Modal</item>
     </style>
 

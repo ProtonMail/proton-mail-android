@@ -1022,4 +1022,5 @@
         <item quantity="other">%d conversations</item>
     </plurals>
 
+    <string name="contacts_call">Call</string>
 </resources>
