@@ -20,15 +20,18 @@
 package ch.protonmail.android.contacts.details
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ActivityContactDetailsBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ContactDetailsActivity : AppCompatActivity() {
 
-    private val viewModel by viewModels<ContactDetailsViewModel>()
+    private val viewModel: ContactDetailsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +46,14 @@ class ContactDetailsActivity : AppCompatActivity() {
 
         val contactId = requireNotNull(intent.extras?.getString(EXTRA_ARG_CONTACT_ID))
         viewModel.getContactDetails(contactId)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onBackPressed() {

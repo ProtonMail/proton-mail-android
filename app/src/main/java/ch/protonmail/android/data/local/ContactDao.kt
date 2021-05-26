@@ -101,7 +101,10 @@ interface ContactDao {
     fun findContactEmailByEmailLiveData(email: String): LiveData<ContactEmail>
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_CONTACT_ID = :contactId")
-    fun findContactEmailsByContactId(contactId: String): List<ContactEmail>
+    fun findContactEmailsByContactIdBlocking(contactId: String): List<ContactEmail>
+
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_CONTACT_ID = :contactId")
+    suspend fun findContactEmailsByContactId(contactId: String): List<ContactEmail>
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_CONTACT_ID = :contactId")
     fun findContactEmailsByContactIdObservable(contactId: String): Flowable<List<ContactEmail>>
@@ -319,6 +322,9 @@ interface ContactDao {
     @Query("SELECT * FROM $TABLE_CONTACT_LABEL ORDER BY $COLUMN_LABEL_NAME")
     fun findContactGroupsObservable(): Flowable<List<ContactLabel>>
 
+    @Query("SELECT * FROM $TABLE_CONTACT_LABEL ORDER BY $COLUMN_LABEL_NAME")
+    fun observeContactGroups(): Flow<List<ContactLabel>>
+
     @Query(
         """
         SELECT *
@@ -397,7 +403,10 @@ interface ContactDao {
     fun insertFullContactDetails(fullContactDetails: FullContactDetails)
 
     @Query("SELECT * FROM $TABLE_FULL_CONTACT_DETAILS WHERE $COLUMN_CONTACT_ID = :id")
-    fun findFullContactDetailsById(id: String): FullContactDetails?
+    fun findFullContactDetailsByIdBlocking(id: String): FullContactDetails?
+
+    @Query("SELECT * FROM $TABLE_FULL_CONTACT_DETAILS WHERE $COLUMN_CONTACT_ID = :id")
+    suspend fun findFullContactDetailsById(id: String): FullContactDetails?
 
     @Query("DELETE FROM $TABLE_FULL_CONTACT_DETAILS")
     fun clearFullContactDetailsCache()

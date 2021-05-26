@@ -32,7 +32,7 @@ class ExtractFullContactDetailsTask(
 
     override fun doInBackground(vararg voids: Void): FullContactDetails? {
         return try {
-            contactDao.findFullContactDetailsById(contactId)
+            contactDao.findFullContactDetailsByIdBlocking(contactId)
         } catch (tooBigException: SQLiteBlobTooBigException) {
             Timber.i(tooBigException, "Data too big to be fetched")
             null

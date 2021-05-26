@@ -466,7 +466,7 @@ class EventHandler @AssistedInject constructor(
                     }
 
                     val localFullContact = try {
-                        contactDao.findFullContactDetailsById(contactId)
+                        contactDao.findFullContactDetailsByIdBlocking(contactId)
                     } catch (tooBigException: SQLiteBlobTooBigException) {
                         Timber.i(tooBigException, "Data too big to be fetched")
                         null

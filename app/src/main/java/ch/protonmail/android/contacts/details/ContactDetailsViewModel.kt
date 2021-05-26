@@ -19,18 +19,25 @@
 
 package ch.protonmail.android.contacts.details
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkManager
 import ch.protonmail.android.usecase.fetch.FetchContactDetails
+import ch.protonmail.android.worker.DeleteContactWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import me.proton.core.user.domain.UserManager
+import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 @HiltViewModel
 class ContactDetailsViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
-    private val fetchContactDetails: FetchContactDetails
+    private val dispatchers: DispatcherProvider,
+    private val contactDetailsRepository: ContactDetailsRepository,
+    private val fetchContactDetails: FetchContactDetails,
+    private val userManager: UserManager,
+    private val workManager: WorkManager
 ) : ViewModel() {
 
     fun getContactDetails(contactId: String) {
@@ -38,4 +45,43 @@ class ContactDetailsViewModel @Inject constructor(
             fetchContactDetails(contactId)
         }
     }
+
+    fun deleteContact(contactId: String) = DeleteContactWorker.Enqueuer(workManager).enqueue(listOf(contactId))
+
+    fun observeContactGroups() = contactDetailsRepository.observeContactGroups()
+        .flowOn(dispatchers.Io)
+
+    suspend fun observeContactEmails(contactId: String) = contactDetailsRepository.getContactEmails(contactId)
+
+//    private fun decryptAndFillVCard(contact: FullContactDetails?) {
+//        var hasDecryptionError = false
+//        val crypto: Crypto<*> = forUser(userManager, userManager.requireCurrentUserId())
+//        var encData: List<ContactEncryptedData>? = ArrayList()
+//        if (contact != null && contact.encryptedData != null) {
+//            encData = contact.encryptedData
+//        } else {
+//            hasDecryptionError = true
+//        }
+//        for (contactEncryptedData in encData!!) {
+//            if (contactEncryptedData.type == 0) {
+//                mVCardType0 = contactEncryptedData.data
+//            } else if (contactEncryptedData.type == 2) {
+//                mVCardType2 = contactEncryptedData.data
+//                mVCardType2Signature = contactEncryptedData.signature
+//            } else if (contactEncryptedData.type == 3) {
+//                try {
+//                    val tct = CipherText(contactEncryptedData.data)
+//                    val tdr = crypto.decrypt(tct)
+//                    mVCardType3 = tdr.decryptedData
+//                } catch (e: Exception) {
+//                    hasDecryptionError = true
+//                    Logger.doLogException(e)
+//                }
+//                mVCardType3Signature = contactEncryptedData.signature
+//            }
+//        }
+//        fillVCard(hasDecryptionError)
+//    }
+
+
 }

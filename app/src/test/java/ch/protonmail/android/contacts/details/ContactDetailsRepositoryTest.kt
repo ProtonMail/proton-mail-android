@@ -98,11 +98,11 @@ class ContactDetailsRepositoryTest {
                 ContactEmail("ID3", "martin@proton.com", "Martin"),
                 ContactEmail("ID4", "kent@proton.com", "kent")
             )
-            every { contactDao.findContactEmailsByContactId(contactId) } returns localContactEmails
+            every { contactDao.findContactEmailsByContactIdBlocking(contactId) } returns localContactEmails
 
             repository.updateAllContactEmails(contactId, serverEmails)
 
-            verify { contactDao.findContactEmailsByContactId(contactId) }
+            verify { contactDao.findContactEmailsByContactIdBlocking(contactId) }
             verify { contactDao.deleteAllContactsEmails(localContactEmails) }
             coVerify { contactDao.saveAllContactsEmails(serverEmails) }
         }

@@ -99,7 +99,7 @@ class DeleteContactWorker @AssistedInject constructor(
             contactData?.let { contact ->
                 contactDatabase.runInTransaction {
                     contact.contactId?.let {
-                        val contactEmails = contactDao.findContactEmailsByContactId(it)
+                        val contactEmails = contactDao.findContactEmailsByContactIdBlocking(it)
                         contactDao.deleteAllContactsEmails(contactEmails)
                     }
                     contactDao.deleteContactData(contact)

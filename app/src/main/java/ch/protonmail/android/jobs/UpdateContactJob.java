@@ -150,7 +150,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             mContactDao.saveContactData(contactData);
         }
 
-        List<ContactEmail> emails = mContactDao.findContactEmailsByContactId(mContactId);
+        List<ContactEmail> emails = mContactDao.findContactEmailsByContactIdBlocking(mContactId);
         mContactDao.deleteAllContactsEmails(emails);
 
         for (ContactEmail email : contactEmails) {
@@ -174,7 +174,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
         }
         FullContactDetails contact = null;
         try {
-            contact = mContactDao.findFullContactDetailsById(mContactId);
+            contact = mContactDao.findFullContactDetailsByIdBlocking(mContactId);
         } catch (SQLiteBlobTooBigException tooBigException) {
             Timber.i(tooBigException,"Data too big to be fetched");
         }

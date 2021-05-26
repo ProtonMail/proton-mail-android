@@ -104,7 +104,7 @@ class DeleteContactWorkerTest {
             val expected = ListenableWorker.Result.success()
 
             every { contactDao.findContactDataById(contactId) } returns contactData
-            every { contactDao.findContactEmailsByContactId(contactId) } returns listOf(contactEmail)
+            every { contactDao.findContactEmailsByContactIdBlocking(contactId) } returns listOf(contactEmail)
             every { contactDao.deleteAllContactsEmails(any()) } returns mockk()
             every { contactDao.deleteContactData(any()) } returns mockk()
             every { parameters.inputData } returns
@@ -135,7 +135,7 @@ class DeleteContactWorkerTest {
             )
 
             every { contactDao.findContactDataById(contactId) } returns contactData
-            every { contactDao.findContactEmailsByContactId(contactId) } returns listOf(contactEmail)
+            every { contactDao.findContactEmailsByContactIdBlocking(contactId) } returns listOf(contactEmail)
             every { contactDao.deleteAllContactsEmails(any()) } returns mockk()
             every { contactDao.deleteContactData(any()) } returns mockk()
             every { parameters.inputData } returns

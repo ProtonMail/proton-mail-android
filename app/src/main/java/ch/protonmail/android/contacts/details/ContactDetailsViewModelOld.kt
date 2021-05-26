@@ -213,7 +213,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
                         )
                     }
                 },
-            contactDetailsRepository.getContactEmails(contactId).subscribeOn(ThreadSchedulers.io())
+            contactDetailsRepository.getContactEmailsBlocking(contactId).subscribeOn(ThreadSchedulers.io())
                 .doOnError {
                     if (allContactEmails.isEmpty()) {
                         _setupError.postValue(

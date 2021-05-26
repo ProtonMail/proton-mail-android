@@ -68,7 +68,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
             AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.ERROR, mDestination));
             return;
         }
-        FullContactDetails fullContactDetails = contactDao.findFullContactDetailsById(contactId);
+        FullContactDetails fullContactDetails = contactDao.findFullContactDetailsByIdBlocking(contactId);
 
         if (user == null || fullContactDetails == null) {
             AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.ERROR, mDestination));
@@ -106,7 +106,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
             return;
         }
 
-        FullContactDetails fullContactDetails = contactDao.findFullContactDetailsById(
+        FullContactDetails fullContactDetails = contactDao.findFullContactDetailsByIdBlocking(
                 contactId);
         UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().requireCurrentUserId());
         ContactEncryptedData signedCard = getCardByType(fullContactDetails.getEncryptedData(), ContactEncryption.SIGNED);

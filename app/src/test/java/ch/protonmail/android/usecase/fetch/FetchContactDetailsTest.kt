@@ -80,7 +80,7 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             val fullContactsResponse = mockk<FullContactDetailsResponse> {
                 every { contact } returns fullContactsFromNet
             }
-            every { contactDao.findFullContactDetailsById(contactId) } returns fullContactsFromDb
+            every { contactDao.findFullContactDetailsByIdBlocking(contactId) } returns fullContactsFromDb
             every { contactDao.insertFullContactDetails(any()) } returns Unit
             coEvery { api.fetchContactDetails(contactId) } returns fullContactsResponse
             val expectedDb = FetchContactDetailsResult.Data(
@@ -113,7 +113,7 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             val fullContactsFromDb = mockk<FullContactDetails> {
                 every { encryptedData } returns mutableListOf(contactEncryptedData)
             }
-            every { contactDao.findFullContactDetailsById(contactId) } returns fullContactsFromDb
+            every { contactDao.findFullContactDetailsByIdBlocking(contactId) } returns fullContactsFromDb
             val ioException = IOException("Cannot load contacts")
             coEvery { api.fetchContactDetails(contactId) } throws ioException
             val expected = FetchContactDetailsResult.Data(
@@ -152,7 +152,7 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             val fullContactsResponse = mockk<FullContactDetailsResponse> {
                 every { contact } returns fullContactsFromNet
             }
-            every { contactDao.findFullContactDetailsById(contactId) } returns fullContactsFromDb
+            every { contactDao.findFullContactDetailsByIdBlocking(contactId) } returns fullContactsFromDb
             every { contactDao.insertFullContactDetails(any()) } returns Unit
             coEvery { api.fetchContactDetails(contactId) } returns fullContactsResponse
             val expected = FetchContactDetailsResult.Data(
@@ -173,7 +173,7 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             // given
             val contactId = "testContactId"
             val exception = Exception("An error!")
-            every { contactDao.findFullContactDetailsById(contactId) } returns null
+            every { contactDao.findFullContactDetailsByIdBlocking(contactId) } returns null
             coEvery { api.fetchContactDetails(contactId) } throws exception
             val expected = FetchContactDetailsResult.Error(exception)
 
