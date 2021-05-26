@@ -21,17 +21,17 @@
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
     <string name="x_folders">Pastas</string>
-    <string name="x_labels">Labels</string>
+    <string name="x_labels">Marcadores</string>
     <string name="x_more">Mais</string>
-    <string name="x_search">Search</string>
+    <string name="x_search">Pesquisa</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contatos</string>
     <string name="drawer_lock_the_app">Lock the app</string>
-    <string name="drawer_report_bug">Report bug</string>
+    <string name="drawer_report_bug">Reportar erro</string>
     <string name="drawer_settings">Configurações</string>
     <string name="drawer_subscription">Assinatura</string>
-    <string name="drawer_sign_out">Sign out</string>
+    <string name="drawer_sign_out">Encerrar sessão</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
@@ -743,7 +743,7 @@
         <item>4 horas</item>
         <item>8 horas</item>
         <item>12 horas</item>
-        <item>Custom</item>
+        <item>Personalizado</item>
         <item>Agendado</item>
     </string-array>
     <string name="notifications_snoozed">Notificações adiadas</string>
@@ -792,7 +792,7 @@
     <string name="hyperlink_confirmation">Solicitar link de confirmação</string>
     <string name="labels_and_folders">Marcadores e pastas </string>
     <string name="folders">Pastas</string>
-    <string name="labels">Labels</string>
+    <string name="labels">Marcadores</string>
     <string name="labels_manage">Gerenciador de marcadores</string>
     <string name="folders_manage">Gerenciador de pastas</string>
     <string name="swiping_gesture">Gestos de deslizar</string>
@@ -806,7 +806,7 @@
     <string name="swipe_action_spam">Mensagem marcada como spam</string>
     <string name="swipe_action_archive">Mensagem arquivada</string>
     <string name="swipe_action_mark_read">Mensagem marcada como lida</string>
-    <string name="swipe_action_mark_read_short">Read</string>
+    <string name="swipe_action_mark_read_short">Lida</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Mensagem movida para a lixeira</item>
         <item quantity="other">Mensagens movidas para a lixeira</item>
