@@ -662,7 +662,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         assertEquals(ListenableWorker.Result.Retry(), result)
         verify(exactly = 0) { userNotifier.showSendMessageError(any(), any()) }
         verify(exactly = 0) { pendingActionDao.deletePendingSendByMessageId(any()) }
-        verify { Timber.w("Failed building MessageSendBody for API request, exception $exception") }
+        verify { Timber.w(exception, "Failed building MessageSendBody for API request") }
         unmockkStatic(Timber::class)
     }
 

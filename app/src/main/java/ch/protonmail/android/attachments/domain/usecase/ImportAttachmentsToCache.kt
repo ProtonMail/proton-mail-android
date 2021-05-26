@@ -32,7 +32,6 @@ import ch.protonmail.android.di.AppDataDirectory
 import ch.protonmail.android.domain.entity.Bytes
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.MimeType
-import ch.protonmail.android.utils.DateUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flowOn
@@ -43,7 +42,6 @@ import me.proton.core.util.kotlin.forEachAsync
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
-import java.io.InputStream
 import javax.inject.Inject
 
 /**
@@ -55,8 +53,8 @@ import javax.inject.Inject
  *  @see AppDataDirectory
  */
 class ImportAttachmentsToCache @Inject constructor(
-    @AppCacheDirectory private val cacheDirectory: File,
     @AppDataDirectory private val dataDirectory: File,
+    private val writeTempFileToCache: WriteTempFileToCache,
     private val contentResolver: ContentResolver,
     private val dispatchers: DispatcherProvider
 ) {
@@ -112,7 +110,7 @@ class ImportAttachmentsToCache @Inject constructor(
                 result -= uri
             }
             val importedFile = try {
-                writeTempFile(inputStream)
+                writeTempFileToCache(uri, inputStream)
 
             } catch (e: IOException) {
                 onWriteException(e)
@@ -136,21 +134,6 @@ class ImportAttachmentsToCache @Inject constructor(
             result -= uri
         }
     }.flowOn(dispatchers.Io)
-
-    /**
-     * @throws IOException
-     * @throws SecurityException
-     */
-    private fun writeTempFile(inputStream: InputStream): File {
-        val file = File.createTempFile(DateUtil.generateTimestamp(), null, cacheDirectory)
-        val output = file.outputStream().buffered()
-        inputStream.use { input ->
-            output.use { output ->
-                input.copyTo(output)
-            }
-        }
-        return file
-    }
 
     /**
      * @throws IllegalArgumentException if [importedFile] is `null` and we fail to get info from [uri]
