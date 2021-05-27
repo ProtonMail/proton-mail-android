@@ -61,7 +61,7 @@ suspend fun <T, V> Iterable<T>.mapAsync(mapper: suspend (T) -> V) = coroutineSco
  * @receiver [C] is [MutableCollection] of [T]
  */
 inline fun <C : MutableCollection<T>, T> C.changeFirst(newItem: T, predicate: (T) -> Boolean) =
-        removeFirst(predicate) && add(newItem)
+    removeFirst(predicate) && add(newItem)
 
 /**
  * Remove first the element matching the [predicate]
@@ -70,7 +70,7 @@ inline fun <C : MutableCollection<T>, T> C.changeFirst(newItem: T, predicate: (T
  * @receiver [C] is [MutableCollection] of [T]
  */
 inline fun <C : MutableCollection<T>, T> C.removeFirst(predicate: (T) -> Boolean) =
-        find(predicate)?.let { remove(it) } ?: false
+    find(predicate)?.let { remove(it) } ?: false
 
 /**
  * Replace first the element matching the [predicate] with [newItem].
@@ -82,17 +82,14 @@ inline fun <C : MutableCollection<T>, T> C.removeFirst(predicate: (T) -> Boolean
  * @receiver [C] is [MutableCollection] of [T]
  */
 inline fun <C : MutableCollection<T>, T> C.replaceFirst(newItem: T, predicate: (T) -> Boolean) =
-        removeFirst(predicate) or add(newItem)
+    removeFirst(predicate) or add(newItem)
 
 /** @return [Map] of [K] and [V] by filtering by values which are instance of [javaClass] */
 @Suppress("UNCHECKED_CAST")
-fun <K, V: Any> Map<K, Any?>.filterValues(javaClass: Class<V>) =
-        filterValues { it != null && it::class.java == javaClass } as Map<K, V>
+fun <K, V : Any> Map<K, Any?>.filterValues(javaClass: Class<V>) =
+    filterValues { it != null && it::class.java == javaClass } as Map<K, V>
 
 /** @return [Map] of [K] and [V] by filtering by values which are instance of [kClass] */
 @Suppress("UNCHECKED_CAST")
-fun <K, V: Any> Map<K, Any?>.filterValues(kClass: KClass<V>) =
-        filterValues { it != null && it::class == kClass } as Map<K, V>
-
-/** @return [Map] of [K] and [V] by filtering by values which are instance of [V] */
-inline fun <K, reified V : Any> Map<K, Any?>.filterValues() = filterValues(V::class)
+fun <K, V : Any> Map<K, Any?>.filterValues(kClass: KClass<V>) =
+    filterValues { it != null && it::class == kClass } as Map<K, V>

@@ -21,9 +21,9 @@ package ch.protonmail.android.utils.extensions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import kotlin.test.Test
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.measureTimeMillis
+import kotlin.test.Test
 
 internal class CollectionExtensionsTest {
 
@@ -100,16 +100,4 @@ internal class CollectionExtensionsTest {
         assertEquals(expected, result)
     }
 
-    @Test
-    fun `Map filterValues by reified`() {
-        val mixedMap = mapOf(
-            "1" to 1,
-            "2" to 2,
-            "3" to false,
-            "4" to "hello"
-        )
-        val expected = mapOf("1" to 1, "2" to 2)
-        val result = mixedMap.filterValues<String, Int>()
-        assertEquals(expected, result)
-    }
 }

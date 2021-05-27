@@ -83,7 +83,6 @@ android(
     flavorDimensions("default")
 
     defaultConfig {
-        multiDexEnabled = true
 
         // Private
         buildConfigField("String", "SENTRY_DNS_1", "\"${privateProperties["sentryDNS_1"]}\"")
