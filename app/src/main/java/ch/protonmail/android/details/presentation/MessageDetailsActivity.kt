@@ -335,21 +335,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         )
     }
 
-    fun listenForRecipientsKeys() {
-        viewModel.reloadRecipientsEvent.observe(
-            this,
-            Observer { event: Event<Boolean?>? ->
-                if (event == null) {
-                    return@Observer
-                }
-                val content = event.getContentIfNotHandled() ?: return@Observer
-                if (content) {
-                    messageExpandableAdapter.refreshRecipientsLayout()
-                }
-            }
-        )
-    }
-
     @Subscribe
     @Suppress("unused")
     fun onPostPhishingReportEvent(event: PostPhishingReportEvent) {
@@ -498,36 +483,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    fun showMessageAttachments(attachments: List<Attachment>?) {
-        if (attachments == null) {
-            messageExpandableAdapter.displayAttachmentsViews(View.GONE)
-            return
-        }
-
-        val hasEmbeddedImages = viewModel.prepareEmbeddedImages()
-        if (hasEmbeddedImages) {
-            if (isAutoShowEmbeddedImages || viewModel.isEmbeddedImagesDisplayed()) {
-                viewModel.displayEmbeddedImages()
-                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
-            } else {
-                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.VISIBLE)
-            }
-        } else {
-            messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
-        }
-        displayAttachmentInfo(attachments)
-    }
-
-    private fun displayAttachmentInfo(attachments: List<Attachment>) {
-        val attachmentsCount = attachments.size
-        val totalAttachmentSize = attachments.map { it.fileSize }.sum()
-
-        attachmentsListAdapter.setList(attachments)
-        messageExpandableAdapter.attachmentsView.bind(attachmentsCount, totalAttachmentSize, attachmentsListAdapter)
-        val attachmentsVisibility = if (attachmentsCount > 0) View.VISIBLE else View.GONE
-        messageExpandableAdapter.displayAttachmentsViews(attachmentsVisibility)
-    }
-
     private inner class DecryptedMessageObserver : Observer<ConversationUiModel> {
 
         override fun onChanged(conversation: ConversationUiModel) {
@@ -561,12 +516,10 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             }
 
             messageExpandableAdapter.setMessageData(conversation.messages)
-            messageExpandableAdapter.refreshRecipientsLayout()
             if (viewModel.refreshedKeys) {
                 filterAndLoad()
                 messageExpandableAdapter.mode = MODE_ACCORDION
                 messageDetailsRecyclerView.layoutManager = LinearLayoutManager(this@MessageDetailsActivity)
-                listenForRecipientsKeys()
                 messageDetailsRecyclerView.adapter = messageExpandableAdapter
             }
             viewModel.triggerVerificationKeyLoading()

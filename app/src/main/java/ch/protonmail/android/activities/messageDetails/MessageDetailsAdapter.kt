@@ -31,6 +31,7 @@ import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
@@ -56,8 +57,6 @@ import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.LoadContentButton
 import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
-import ch.protonmail.android.views.messageDetails.MessageDetailsExpirationInfoView
-import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
 import kotlinx.coroutines.flow.launchIn
@@ -67,10 +66,8 @@ import timber.log.Timber
 import java.util.ArrayList
 import java.util.concurrent.atomic.AtomicReference
 
-// region constants
 private const val TYPE_ITEM = 1001
 private const val TYPE_HEADER = 1000
-// endregion
 
 internal class MessageDetailsAdapter(
     private val context: Context,
@@ -84,14 +81,8 @@ internal class MessageDetailsAdapter(
     private val attachmentToDownloadId: AtomicReference<String?>
 ) : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
 
-    var containerDisplayImages = LoadContentButton(context)
+    var displayRemoteContentButton = LoadContentButton(context)
     var loadEmbeddedImagesContainer = LoadContentButton(context)
-    var attachmentsView = MessageDetailsAttachmentsView(context)
-    var attachmentsViewDivider = View(context)
-    var embeddedImagesDownloadProgress = ProgressBar(context)
-    var expirationInfoView = MessageDetailsExpirationInfoView(context)
-    var messageDetailsView = View(context)
-    var messageDetailsHeaderView = MessageDetailsHeaderView(context)
 
     private var allLabelsList: List<Label>? = listOf()
     private var nonInclusiveLabelsList: List<LabelChipUiModel> = emptyList()
@@ -157,8 +148,7 @@ internal class MessageDetailsAdapter(
     ) : ExpandableRecyclerAdapter<MessageDetailsListItem>.HeaderViewHolder(view) {
 
         fun bind(position: Int, message: Message) {
-            messageDetailsView = itemView.messageDetailsView
-            messageDetailsHeaderView = itemView.headerView
+            val messageDetailsHeaderView = itemView.headerView
             messageDetailsHeaderView.bind(message, allLabelsList ?: listOf(), nonInclusiveLabelsList)
         }
     }
@@ -171,8 +161,8 @@ internal class MessageDetailsAdapter(
             val attachmentsView = itemView.attachmentsView
             attachmentsView.visibility = View.GONE
 
-            expirationInfoView = itemView.expirationInfoView
-            containerDisplayImages = itemView.containerDisplayImages
+            val expirationInfoView = itemView.expirationInfoView
+            displayRemoteContentButton = itemView.displayRemoteContentButton
             loadEmbeddedImagesContainer = itemView.containerLoadEmbeddedImagesContainer
 
             val webView = setupMessageWebView(messageBodyProgress, position) ?: return
@@ -198,7 +188,8 @@ internal class MessageDetailsAdapter(
                 )
                 messageBodyProgress.visibility = View.INVISIBLE
 
-                showMessageAttachments(loadedMessage.Attachments, attachmentsView)
+                displayAttachmentInfo(loadedMessage.attachments, attachmentsView)
+                showLoadEmbeddedImagesButton()
             }.launchIn(context.lifecycleScope)
 
             setupMessageContentActions(position)
@@ -212,12 +203,12 @@ internal class MessageDetailsAdapter(
                 onLoadEmbeddedImagesClick?.invoke()
             }
 
-            itemView.containerDisplayImages.setOnClickListener {
+            itemView.displayRemoteContentButton.setOnClickListener {
                 val item = visibleItems!![position + 1]
                 // isInit will prevent clicking the button before the WebView is ready.
                 // WebView init can take a bit longer.
                 if (item.isInit() && item.messageWebView.contentHeight > 0) {
-                    itemView.containerDisplayImages.visibility = View.GONE
+                    itemView.displayRemoteContentButton.visibility = View.GONE
                     pmWebViewClient.loadRemoteResources()
                     onDisplayImagesClick?.invoke()
                 }
@@ -238,7 +229,7 @@ internal class MessageDetailsAdapter(
             }
 
             configureWebView(webView, pmWebViewClient)
-            setUpScrollListener(webView, messageDetailsView, itemView.messageWebViewContainer)
+            setUpScrollListener(webView, itemView.messageWebViewContainer)
 
             webView.invalidate()
             (context as MessageDetailsActivity).registerForContextMenu(webView)
@@ -282,12 +273,11 @@ internal class MessageDetailsAdapter(
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun setUpScrollListener(webView: WebView, messageInfoView: View, directParent: LinearLayout) {
+    private fun setUpScrollListener(webView: WebView, directParent: LinearLayout) {
         val mScaleDetector = ScaleGestureDetector(
             context,
             MessageBodyScaleListener(
                 messageDetailsRecyclerView,
-                messageInfoView,
                 webView,
                 directParent
             )
@@ -300,19 +290,14 @@ internal class MessageDetailsAdapter(
     }
 
     fun displayContainerDisplayImages(visibility: Int) {
-        containerDisplayImages.visibility = visibility
+        displayRemoteContentButton.visibility = visibility
     }
 
     fun displayLoadEmbeddedImagesContainer(visibility: Int) {
         loadEmbeddedImagesContainer.visibility = visibility
     }
 
-    fun showMessageAttachments(attachments: List<Attachment>?, attachmentView: AttachmentsView) {
-        if (attachments == null) {
-            attachmentView.visibility = View.GONE
-            return
-        }
-
+    private fun showLoadEmbeddedImagesButton() {
         val hasEmbeddedImages = viewModel.prepareEmbeddedImages()
         if (hasEmbeddedImages) {
             if (viewModel.isAutoShowEmbeddedImages() || viewModel.isEmbeddedImagesDisplayed()) {
@@ -324,26 +309,23 @@ internal class MessageDetailsAdapter(
         } else {
             displayLoadEmbeddedImagesContainer(View.GONE)
         }
-        displayAttachmentInfo(attachments, attachmentView)
     }
 
-    private fun displayAttachmentInfo(attachments: List<Attachment>, attachmentsView: AttachmentsView) {
+    private fun displayAttachmentInfo(attachments: List<Attachment>?, attachmentsView: MessageDetailsAttachmentsView) {
+        if (attachments == null) {
+            attachmentsView.visibility = View.GONE
+            return
+        }
         val attachmentsCount = attachments.size
         val totalAttachmentSize = attachments.map { it.fileSize }.sum()
 
-        attachmentsView.setTitle(attachmentsCount, totalAttachmentSize)
         val attachmentsListAdapter = MessageDetailsAttachmentListAdapter(
             context,
             OnAttachmentDownloadCallback(storagePermissionHelper, attachmentToDownloadId)
         )
         attachmentsListAdapter.setList(attachments)
-        attachmentsView.attachmentsAdapter = attachmentsListAdapter
-        attachmentsView.visibility = if (attachmentsCount > 0) View.VISIBLE else View.GONE
-    }
-
-
-    fun refreshRecipientsLayout() {
-        messageDetailsHeaderView.loadRecipients(messages[0])
+        attachmentsView.bind(attachmentsCount, totalAttachmentSize, attachmentsListAdapter)
+        attachmentsView.isVisible = attachmentsCount > 0
     }
 
     private fun configureWebView(webView: WebView, pmWebViewClient: PMWebViewClient) {

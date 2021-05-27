@@ -66,7 +66,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <!-- TODO: To be replaced in another ticket for banners -->
     <ch.protonmail.android.views.messageDetails.LoadContentButton
-        android:id="@+id/containerDisplayImages"
+        android:id="@+id/displayRemoteContentButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/message_spacing"
@@ -91,7 +91,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_marginBottom="@dimen/message_spacing_small"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/containerDisplayImages"
+        app:layout_constraintTop_toBottomOf="@id/displayRemoteContentButton"
         android:visibility="gone"
         app:text="@string/load_embedded_images"
         tools:visibility="visible" />

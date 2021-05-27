@@ -186,7 +186,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
     private val _decryptedMessageLiveData: MutableLiveData<ConversationUiModel> = MutableLiveData()
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
-    private val _reloadRecipientsEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
 
     private var bodyString: String? = null
@@ -219,9 +218,6 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     val checkStoragePermission: LiveData<Event<Boolean>>
         get() = _checkStoragePermission
-
-    val reloadRecipientsEvent: LiveData<Event<Boolean>>
-        get() = _reloadRecipientsEvent
 
     val messageDetailsError: LiveData<Event<String>>
         get() = _messageDetailsError
@@ -588,15 +584,11 @@ internal class MessageDetailsViewModel @Inject constructor(
 
         fetchingPubKeys = false
         renderedFromCache = AtomicBoolean(false)
-        _reloadRecipientsEvent.value = Event(true)
         // render with the new verification keys
         if (renderingPassed && message != null) {
             RegisterReloadTask(message).execute()
         }
     }
-
-    fun isPgpEncrypted(): Boolean =
-        lastMessage()?.messageEncryption?.isPGPEncrypted ?: false
 
     fun printMessage(activityContext: Context) {
         val message = lastMessage()
