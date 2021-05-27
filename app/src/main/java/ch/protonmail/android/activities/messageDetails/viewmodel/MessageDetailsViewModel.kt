@@ -33,7 +33,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessagePrinter
@@ -55,7 +54,7 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
-import ch.protonmail.android.details.data.toDbModelList
+import ch.protonmail.android.details.data.toConversationUiModel
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
@@ -104,8 +103,6 @@ import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
-private const val STARRED_LABEL_ID = "10"
-
 @HiltViewModel
 internal class MessageDetailsViewModel @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
@@ -144,28 +141,12 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     val conversationUiModel: LiveData<ConversationUiModel> =
         if (conversationModeEnabled(location)) {
-            getConversationLiveData().map { conversation ->
-                ConversationUiModel(
-                    conversation.labels.any { it.id == STARRED_LABEL_ID },
-                    conversation.subject,
-                    conversation.labels.map { it.id },
-                    conversation.messages?.toDbModelList().orEmpty(),
-                    conversation.messagesCount
-                )
-            }
+            getConversationFlow().map { it.toConversationUiModel() }
         } else {
-            getMessageLiveData().map {
-                ConversationUiModel(
-                    it.isStarred ?: false,
-                    it.subject,
-                    it.labelIDsNotIncludingLocations,
-                    listOf(it),
-                    null
-                )
-            }
-        }.distinctUntilChanged()
+            getMessageFlow().map { it.toConversationUiModel() }
+        }.asLiveData().distinctUntilChanged()
 
-    private fun getMessageLiveData() = userManager.primaryUserId
+    private fun getMessageFlow() = userManager.primaryUserId
         .flatMapLatest { userId ->
             if (userId != null) {
                 messageRepository.findMessage(userId, messageOrConversationId)
@@ -174,9 +155,8 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
         }
         .filterNotNull()
-        .asLiveData()
 
-    private fun getConversationLiveData() = userManager.primaryUserId
+    private fun getConversationFlow() = userManager.primaryUserId
         .flatMapLatest { userId ->
             if (userId == null) {
                 return@flatMapLatest emptyFlow()
@@ -187,7 +167,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 .map {
                     return@map (it as DataResult.Success).value
                 }
-        }.asLiveData()
+        }
 
     private var publicKeys: List<KeyInformation>? = null
 
@@ -307,7 +287,9 @@ internal class MessageDetailsViewModel @Inject constructor(
                 _messageDetailsError.postValue(Event("Failed getting message details"))
                 return@launch
             }
-            onMessageLoaded(listOf(message))
+            val contactEmail = contactsRepository.findContactEmailByEmail(message.senderEmail)
+            message.senderDisplayName = contactEmail?.name.orEmpty()
+            decryptLastMessageAndEmit(message.toConversationUiModel())
         }
     }
 
@@ -345,26 +327,18 @@ internal class MessageDetailsViewModel @Inject constructor(
             return
         }
 
-        val conversationUiItem = conversationUiItemFrom(conversation, messages)
+        val conversationUiItem = conversation.toConversationUiModel().copy(
+            messages = messages
+        )
         decryptLastMessageAndEmit(conversationUiItem)
 
-    }
-
-    private suspend fun onMessageLoaded(messages: List<Message?>) {
-        val validMessages = messages.filterNotNull()
-
-        validMessages.map {
-            val contactEmail = contactsRepository.findContactEmailByEmail(it.senderEmail)
-            it.senderDisplayName = contactEmail?.name.orEmpty()
-        }
-
-        decryptLastMessageAndEmit(conversationUiItemFrom(validMessages))
     }
 
     private suspend fun decryptLastMessageAndEmit(conversationUiModel: ConversationUiModel) {
         refreshedKeys = true
         val lastMessage = conversationUiModel.messages.last()
         if (!lastMessage.isDownloaded) {
+            Timber.d("Message detail tried loading a non-downloaded message")
             return
         }
 
@@ -378,26 +352,6 @@ internal class MessageDetailsViewModel @Inject constructor(
             _decryptedMessageLiveData.postValue(conversationUiModel)
         }
     }
-
-    private fun conversationUiItemFrom(messages: List<Message?>): ConversationUiModel {
-        val message = messages.last()
-        return ConversationUiModel(
-            message?.isStarred ?: false,
-            message?.subject ?: "",
-            message?.labelIDsNotIncludingLocations.orEmpty(),
-            messages.filterNotNull(),
-            null
-        )
-    }
-
-    private fun conversationUiItemFrom(conversation: Conversation, messages: List<Message?>) =
-        ConversationUiModel(
-            conversation.labels.any { it.id == STARRED_LABEL_ID },
-            conversation.subject,
-            conversation.labels.map { it.id },
-            messages.filterNotNull(),
-            conversation.messagesCount
-        )
 
     private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
         return try {
@@ -626,7 +580,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
         publicKeys = pubKeys
         refreshedKeys = false
-        message?.let { decryptLastMessageAndEmit(conversationUiItemFrom(listOf(it))) }
+        message?.let { decryptLastMessageAndEmit(it.toConversationUiModel()) }
 
         fetchingPubKeys = false
         renderedFromCache = AtomicBoolean(false)
