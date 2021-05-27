@@ -30,6 +30,8 @@ import ch.protonmail.android.usecase.model.FetchContactDetailsResult
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -52,18 +54,26 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
     private val api: ProtonMailApiManager = mockk()
 
     private val useCase = FetchContactDetails(
-        repository, userManager, api, mockk()
+        repository, userManager, api, mockk(), dispatchers
     )
 
     @Test
-    fun verifyThatExistingContactsDataIsFetchedFromDbIsEmptyAndApiDataIsReturned() =
+    fun verifyThatExistingContactsDataIsFetchedFromTheDbAndPassedInFlowAndThenApiReturnsData() =
         runBlockingTest {
             // given
             val contactId = "testContactId"
+            val testDataDb = "testDataDb"
             val testDataNet = "testDataNet"
+            val contactEncryptedDataDb = mockk<ContactEncryptedData> {
+                every { type } returns 0
+                every { data } returns testDataDb
+            }
             val contactEncryptedDataNet = mockk<ContactEncryptedData> {
                 every { type } returns 0
                 every { data } returns testDataNet
+            }
+            val fullContactsFromDb = mockk<FullContactDetails> {
+                every { encryptedData } returns mutableListOf(contactEncryptedDataDb)
             }
             val fullContactsFromNet = mockk<FullContactDetails> {
                 every { encryptedData } returns mutableListOf(contactEncryptedDataNet)
@@ -71,23 +81,26 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             val fullContactsResponse = mockk<FullContactDetailsResponse> {
                 every { contact } returns fullContactsFromNet
             }
-            coEvery { repository.getFullContactDetails(contactId) } returns null
+            coEvery { repository.getFullContactDetails(contactId) } returns fullContactsFromDb
             every { repository.insertFullContactDetails(any()) } returns Unit
             coEvery { api.fetchContactDetails(contactId) } returns fullContactsResponse
-
+            val expectedDb = FetchContactDetailsResult.Data(
+                decryptedVCardType0 = testDataDb
+            )
             val expectedNet = FetchContactDetailsResult.Data(
                 decryptedVCardType0 = testDataNet
             )
 
             // when
-            val result = useCase.invoke(contactId)
+            val result = useCase.invoke(contactId).take(2).toList()
 
             // then
-            assertEquals(expectedNet, result)
+            assertEquals(expectedDb, result[0])
+            assertEquals(expectedNet, result[1])
         }
 
     @Test
-    fun verifyThatExistingContactsDataIsFetchedFromTheDbAndReturned() =
+    fun verifyThatExistingContactsDataIsFetchedFromTheDbAndPassedInFlowAndThenNetworkErrorIsEmitted() =
         runBlockingTest {
             // given
             val contactId = "testContactId"
@@ -108,12 +121,14 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
                 decryptedVCardType2 = testData,
                 vCardType2Signature = testSignature
             )
+            val expectedNetError = FetchContactDetailsResult.Error(ioException)
 
             // when
-            val result = useCase.invoke(contactId)
+            val result = useCase.invoke(contactId).take(2).toList()
 
             // then
-            assertEquals(expected, result)
+            assertEquals(expected, result[0])
+            assertEquals(expectedNetError, result[1])
         }
 
     @Test
@@ -144,10 +159,10 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             )
 
             // when
-            val result = useCase.invoke(contactId)
+            val result = useCase.invoke(contactId).take(1).toList()
 
             // then
-            assertEquals(expected, result)
+            assertEquals(expected, result[0])
         }
 
     @Test
@@ -163,10 +178,10 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             val expectedNetError = FetchContactDetailsResult.Error(ioException)
 
             // when
-            val result = useCase.invoke(contactId)
+            val result = useCase.invoke(contactId).take(1).toList()
 
             // then
-            assertEquals(expectedNetError, result)
+            assertEquals(expectedNetError, result[0])
         }
 
     @Test
@@ -180,9 +195,9 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             val expected = FetchContactDetailsResult.Error(exception)
 
             // when
-            val result = useCase.invoke(contactId)
+            val result = useCase.invoke(contactId).take(1).toList()
 
             // then
-            assertEquals(expected, result)
+            assertEquals(expected, result[0])
         }
 }

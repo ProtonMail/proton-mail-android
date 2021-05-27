@@ -21,16 +21,26 @@ package ch.protonmail.android.contacts.details
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.ProgressBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ActivityContactDetailsBinding
+import ch.protonmail.android.usecase.model.FetchContactDetailsResult
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 
 @AndroidEntryPoint
 class ContactDetailsActivity : AppCompatActivity() {
 
+    private lateinit var detailsContainer: NestedScrollView
+    private lateinit var progressBar: ProgressBar
     private val viewModel: ContactDetailsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +53,13 @@ class ContactDetailsActivity : AppCompatActivity() {
             setDisplayHomeAsUpEnabled(true)
             setTitle(R.string.contact_details)
         }
+
+        progressBar = binding.progressBarContactDetails
+        detailsContainer = binding.scrollViewContactDetails
+
+        viewModel.contactsResultFlow
+            .onEach { renderState(it) }
+            .launchIn(lifecycleScope)
 
         val contactId = requireNotNull(intent.extras?.getString(EXTRA_ARG_CONTACT_ID))
         viewModel.getContactDetails(contactId)
@@ -59,6 +76,43 @@ class ContactDetailsActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         finish()
+    }
+
+    private fun renderState(state: FetchContactDetailsResult) {
+        Timber.v("State $state received")
+        when (state) {
+            is FetchContactDetailsResult.Loading -> showLoading()
+            is FetchContactDetailsResult.Error -> showError(state.exception)
+            is FetchContactDetailsResult.Data -> showData(
+                state.decryptedVCardType0,
+                state.decryptedVCardType2,
+                state.decryptedVCardType3,
+                state.vCardType2Signature,
+                state.vCardType3Signature
+            )
+        }
+    }
+
+    private fun showData(
+        decryptedVCardType0: String,
+        decryptedVCardType2: String,
+        decryptedVCardType3: String,
+        vCardType2Signature: String,
+        vCardType3Signature: String
+    ) {
+        progressBar.isVisible = false
+        detailsContainer.isVisible = true
+    }
+
+    private fun showError(exception: Throwable) {
+        progressBar.isVisible = false
+        detailsContainer.isVisible = false
+        Timber.i(exception, "Fetching contacts data has failed")
+    }
+
+    private fun showLoading() {
+        progressBar.isVisible = true
+        detailsContainer.isVisible = false
     }
 
     companion object {

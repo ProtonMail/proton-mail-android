@@ -30,6 +30,10 @@ import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.usecase.model.FetchContactDetailsResult
 import ch.protonmail.android.utils.crypto.OpenPGP
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import javax.inject.Inject
@@ -38,14 +42,17 @@ class FetchContactDetails @Inject constructor(
     private val repository: ContactDetailsRepository,
     private val userManager: UserManager,
     private val api: ProtonMailApiManager,
-    private val openPgp: OpenPGP
+    private val openPgp: OpenPGP,
+    private val dispatchers: DispatcherProvider
 ) {
 
-    suspend operator fun invoke(contactId: String): FetchContactDetailsResult? {
+    operator fun invoke(contactId: String): Flow<FetchContactDetailsResult> = flow {
 
         if (contactId.isBlank()) {
             throw IllegalArgumentException("Cannot fetch contact with an empty id")
         }
+
+        Timber.v("Fetching contact data for $contactId")
 
         // fetch existing data from the DB
         val fullContact = try {
@@ -58,25 +65,29 @@ class FetchContactDetails @Inject constructor(
             val parsedContact = parseContactDetails(fullDetailsFromDb)
             Timber.v("Fetched existing Contacts Details $parsedContact")
             if (parsedContact != null) {
-                return parsedContact
+                emit(parsedContact)
             }
         }
 
         // fetch data from the server
-        return runCatching {
+        runCatching {
             api.fetchContactDetails(contactId)
         }.fold(
             onSuccess = { response ->
                 val fetchedContact = response.contact
                 Timber.v("Fetched new Contact Details $fetchedContact")
                 repository.insertFullContactDetails(fetchedContact)
-                parseContactDetails(fetchedContact)
+                val parsedContact = parseContactDetails(fetchedContact)
+                if (parsedContact != null) {
+                    emit(parsedContact)
+                }
             },
             onFailure = {
-                FetchContactDetailsResult.Error(it)
+                emit(FetchContactDetailsResult.Error(it))
             }
         )
     }
+        .flowOn(dispatchers.Io)
 
     private fun parseContactDetails(contact: FullContactDetails): FetchContactDetailsResult? {
         val encryptedDataList: List<ContactEncryptedData>? = contact.encryptedData

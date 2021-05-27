@@ -66,6 +66,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_view_contact_details"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/appbar"
@@ -84,12 +85,19 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:id="@+id/recycler_view_contacts_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:listitem="@layout/list_item_contact_detail"/>
+                tools:listitem="@layout/list_item_contact_detail" />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
+    <ProgressBar
+        android:id="@+id/progress_bar_contact_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fab_contact_details"
