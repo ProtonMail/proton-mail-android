@@ -65,6 +65,8 @@ fun org.gradle.api.Project.android(
         vectorDrawables.useSupportLibrary = true
 
         buildFeatures.viewBinding = true
+        // Core needs dataBinding (to be removed).
+        dataBinding.isEnabled = useDataBinding
     }
 
     lintOptions {
