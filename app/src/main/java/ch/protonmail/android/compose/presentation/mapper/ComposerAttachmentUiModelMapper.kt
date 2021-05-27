@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.compose.presentation.mapper
 
+import ch.protonmail.android.attachments.domain.model.AttachmentFileInfo
 import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
 import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel
 import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel.Icon
@@ -46,19 +47,19 @@ class ComposerAttachmentUiModelMapper @Inject constructor() :
     private fun ImportAttachmentResult.Idle.toIdle() =
         ComposerAttachmentUiModel.Idle(id = originalFileUri)
 
-    private fun ImportAttachmentResult.toImporting(fileInfo: ImportAttachmentResult.FileInfo) =
+    private fun ImportAttachmentResult.toImporting(fileInfo: AttachmentFileInfo) =
         toDataWithState(fileInfo, State.Importing)
 
-    private fun ImportAttachmentResult.toReady(fileInfo: ImportAttachmentResult.FileInfo) =
+    private fun ImportAttachmentResult.toReady(fileInfo: AttachmentFileInfo) =
         toDataWithState(fileInfo, State.Ready)
 
-    private fun ImportAttachmentResult.toError(fileInfo: ImportAttachmentResult.FileInfo? = null) =
+    private fun ImportAttachmentResult.toError(fileInfo: AttachmentFileInfo? = null) =
         if (fileInfo != null)
             toDataWithState(fileInfo, State.Error)
         else
             ComposerAttachmentUiModel.NoFileInfo(id = originalFileUri)
 
-    private fun ImportAttachmentResult.toDataWithState(fileInfo: ImportAttachmentResult.FileInfo, state: State) =
+    private fun ImportAttachmentResult.toDataWithState(fileInfo: AttachmentFileInfo, state: State) =
         ComposerAttachmentUiModel.Data(
             id = originalFileUri,
             displayName = fileInfo.fileName.s,

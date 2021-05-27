@@ -40,8 +40,8 @@ import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.rx.ThreadSchedulers
+import ch.protonmail.android.attachments.domain.model.AttachmentFileInfo
 import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
-import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult.FileInfo
 import ch.protonmail.android.attachments.domain.model.fullName
 import ch.protonmail.android.attachments.domain.model.requireFileInfo
 import ch.protonmail.android.attachments.domain.usecase.GetNewPhotoUri
@@ -1297,7 +1297,7 @@ class ComposeMessageViewModel @Inject constructor(
                 val uri = attachment.uri
                 val fullName = checkNotNull(attachment.displayName)
                 val extension = fullName.substringAfter(".", missingDelimiterValue = EMPTY_STRING)
-                val fileInfo = FileInfo(
+                val fileInfo = AttachmentFileInfo(
                     fileName = Name(fullName.substringBeforeLast(".")),
                     extension = extension,
                     size = Bytes(attachment.size.toULong()),

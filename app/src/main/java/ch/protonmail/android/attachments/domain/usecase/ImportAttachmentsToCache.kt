@@ -26,6 +26,7 @@ import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import androidx.core.database.getStringOrNull
 import androidx.core.net.toUri
+import ch.protonmail.android.attachments.domain.model.AttachmentFileInfo
 import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
 import ch.protonmail.android.di.AppCacheDirectory
 import ch.protonmail.android.di.AppDataDirectory
@@ -34,7 +35,6 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.MimeType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.flowOn
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.equalsNoCase
@@ -138,7 +138,7 @@ class ImportAttachmentsToCache @Inject constructor(
     /**
      * @throws IllegalArgumentException if [importedFile] is `null` and we fail to get info from [uri]
      */
-    private fun getFileInfo(uri: Uri, importedFile: File? = null): ImportAttachmentResult.FileInfo {
+    private fun getFileInfo(uri: Uri, importedFile: File? = null): AttachmentFileInfo {
         return when {
             FileScheme.FILE.matches(uri) -> getFileInfoFromFile(File(requireNotNull(uri.path)))
             FileScheme.CONTENT.matches(uri) -> getFileInfoForContentScheme(uri, importedFile)
@@ -149,7 +149,7 @@ class ImportAttachmentsToCache @Inject constructor(
     /**
      * @throws IllegalArgumentException if [importedFileFallback] is `null` and we fail to get info from [uri]
      */
-    private fun getFileInfoForContentScheme(uri: Uri, importedFileFallback: File?): ImportAttachmentResult.FileInfo {
+    private fun getFileInfoForContentScheme(uri: Uri, importedFileFallback: File?): AttachmentFileInfo {
         val cursor = contentResolver.query(uri, null, null, null)
             ?: return getFileInfoFromFile(requireNotNull(importedFileFallback))
 
@@ -175,7 +175,7 @@ class ImportAttachmentsToCache @Inject constructor(
 
                 val mimeTypeString = contentResolver.getType(uri)
 
-                ImportAttachmentResult.FileInfo(
+                AttachmentFileInfo(
                     fileName = Name(name),
                     extension = extension,
                     size = Bytes(sizeLong.toULong()),
@@ -188,9 +188,9 @@ class ImportAttachmentsToCache @Inject constructor(
         }
     }
 
-    private fun getFileInfoFromFile(file: File): ImportAttachmentResult.FileInfo {
+    private fun getFileInfoFromFile(file: File): AttachmentFileInfo {
         val mimeTypeString = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
-        return ImportAttachmentResult.FileInfo(
+        return AttachmentFileInfo(
             fileName = Name(file.nameWithoutExtension),
             extension = file.extension,
             size = Bytes(file.length().toULong()),
@@ -228,16 +228,16 @@ class ImportAttachmentsToCache @Inject constructor(
 private fun toIdle(uri: Uri) = ImportAttachmentResult.Idle(uri)
 
 
-private fun Set<Uri>.setSkipped(uri: Uri, fileInfo: ImportAttachmentResult.FileInfo): List<ImportAttachmentResult> =
+private fun Set<Uri>.setSkipped(uri: Uri, fileInfo: AttachmentFileInfo): List<ImportAttachmentResult> =
     set(uri) { ImportAttachmentResult.Skipped(uri, fileInfo) }
 
-private fun Set<Uri>.setFileInfo(uri: Uri, fileInfo: ImportAttachmentResult.FileInfo): List<ImportAttachmentResult> =
+private fun Set<Uri>.setFileInfo(uri: Uri, fileInfo: AttachmentFileInfo): List<ImportAttachmentResult> =
     set(uri) { ImportAttachmentResult.OnInfo(uri, fileInfo) }
 
 private fun Set<Uri>.setCantRead(uri: Uri): List<ImportAttachmentResult> =
     set(uri, ImportAttachmentResult::CantRead)
 
-private fun Set<Uri>.setCantWrite(uri: Uri, fileInfo: ImportAttachmentResult.FileInfo?): List<ImportAttachmentResult> =
+private fun Set<Uri>.setCantWrite(uri: Uri, fileInfo: AttachmentFileInfo?): List<ImportAttachmentResult> =
     set(uri) { ImportAttachmentResult.CantWrite(uri, fileInfo) }
 
 private fun Set<Uri>.setSuccess(uri: Uri, success: ImportAttachmentResult.Success): List<ImportAttachmentResult> =

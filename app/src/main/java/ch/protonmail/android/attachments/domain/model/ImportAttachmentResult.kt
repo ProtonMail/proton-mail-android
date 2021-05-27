@@ -21,9 +21,6 @@ package ch.protonmail.android.attachments.domain.model
 
 import android.net.Uri
 import ch.protonmail.android.attachments.domain.usecase.ImportAttachmentsToCache
-import ch.protonmail.android.domain.entity.Bytes
-import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.domain.entity.user.MimeType
 import me.proton.core.util.kotlin.unsupported
 
 /**
@@ -43,7 +40,7 @@ sealed class ImportAttachmentResult {
      */
     data class OnInfo(
         override val originalFileUri: Uri,
-        val fileInfo: FileInfo
+        val fileInfo: AttachmentFileInfo
     ) : ImportAttachmentResult()
 
     /**
@@ -55,7 +52,7 @@ sealed class ImportAttachmentResult {
     data class Success(
         override val originalFileUri: Uri,
         val importedFileUri: Uri,
-        val fileInfo: FileInfo,
+        val fileInfo: AttachmentFileInfo,
         val skipped: Boolean = originalFileUri == importedFileUri
     ) : ImportAttachmentResult()
 
@@ -72,16 +69,8 @@ sealed class ImportAttachmentResult {
      */
     data class CantWrite(
         override val originalFileUri: Uri,
-        val fileInfo: FileInfo?
+        val fileInfo: AttachmentFileInfo?
     ) : ImportAttachmentResult()
-
-
-    data class FileInfo(
-        val fileName: Name,
-        val extension: String,
-        val size: Bytes,
-        val mimeType: MimeType
-    )
 
     companion object {
 
@@ -90,7 +79,7 @@ sealed class ImportAttachmentResult {
          */
         fun Skipped(
             originalFileUri: Uri,
-            fileInfo: FileInfo
+            fileInfo: AttachmentFileInfo
         ) = Success(
             originalFileUri = originalFileUri,
             importedFileUri = originalFileUri,
@@ -100,9 +89,7 @@ sealed class ImportAttachmentResult {
     }
 }
 
-val ImportAttachmentResult.FileInfo.fullName get() = "${fileName.s}.$extension"
-
-fun ImportAttachmentResult.requireFileInfo(): ImportAttachmentResult.FileInfo =
+fun ImportAttachmentResult.requireFileInfo(): AttachmentFileInfo =
     when (this) {
         is ImportAttachmentResult.CantRead -> unsupported
         is ImportAttachmentResult.CantWrite -> requireNotNull(fileInfo)
