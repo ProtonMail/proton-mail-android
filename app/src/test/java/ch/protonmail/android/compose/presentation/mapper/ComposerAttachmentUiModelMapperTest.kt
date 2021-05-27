@@ -27,7 +27,6 @@ import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiMode
 import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel.State
 import ch.protonmail.android.domain.entity.Bytes
 import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.domain.entity.user.MimeType
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.*
@@ -43,7 +42,7 @@ class ComposerAttachmentUiModelMapperTest {
     private val testFileName = "photo"
     private val testFileExtension = "jpg"
     private val testFileSize = Bytes(4096uL)
-    private val testFileMimeType = MimeType.IMAGE
+    private val testFileMimeType = "image/*"
 
     private val testOriginalFileUri = mockUri("file://downloads/$testFileName.$testFileExtension")
     private val testImportedFileUri = mockUri("file://data/$testFileName.$testFileExtension")

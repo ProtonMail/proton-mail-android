@@ -21,7 +21,6 @@ package ch.protonmail.android.attachments.domain.model
 
 import ch.protonmail.android.domain.entity.Bytes
 import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.domain.entity.user.MimeType
 
 /**
  * Info for a File related to a given attachment
@@ -30,7 +29,7 @@ data class AttachmentFileInfo(
     val fileName: Name,
     val extension: String,
     val size: Bytes,
-    val mimeType: MimeType
+    val mimeType: String
 )
 
 val AttachmentFileInfo.fullName get() = "${fileName.s}.$extension"

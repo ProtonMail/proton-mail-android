@@ -29,11 +29,11 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.activities.BaseContactsActivity
 import ch.protonmail.android.attachments.domain.model.UriPair
+import ch.protonmail.android.attachments.presentation.model.FilePickerMask
 import ch.protonmail.android.compose.ComposeMessageViewModel
 import ch.protonmail.android.compose.presentation.model.AttachmentsEventUiModel
 import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel
 import ch.protonmail.android.databinding.ActivityComposeMessage2Binding
-import ch.protonmail.android.domain.entity.user.MimeType
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheet
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheet.Action
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheetViewModel
@@ -106,7 +106,7 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
 
     // region attachments
     private fun openGallery() {
-        getContentsLauncher.launch(MimeType.IMAGE.string)
+        getContentsLauncher.launch(FilePickerMask.IMAGE.mimeType)
     }
 
     private fun takePhotoFromCamera(uri: UriPair) {
@@ -115,7 +115,7 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
     }
 
     private fun openFileExplorer() {
-        getContentsLauncher.launch(MimeType.ALL.string)
+        getContentsLauncher.launch(FilePickerMask.ALL.mimeType)
     }
 
     private fun onAttachmentsChanged(newAttachments: List<ComposerAttachmentUiModel>) {

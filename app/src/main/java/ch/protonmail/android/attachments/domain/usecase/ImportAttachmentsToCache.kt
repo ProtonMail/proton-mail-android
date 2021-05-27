@@ -32,7 +32,6 @@ import ch.protonmail.android.di.AppCacheDirectory
 import ch.protonmail.android.di.AppDataDirectory
 import ch.protonmail.android.domain.entity.Bytes
 import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.domain.entity.user.MimeType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flowOn
@@ -174,13 +173,11 @@ class ImportAttachmentsToCache @Inject constructor(
                     .takeIf { it > 0 }
                     ?: requireNotNull(importedFileFallback).length()
 
-                val mimeTypeString = contentResolver.getType(uri)
-
                 AttachmentFileInfo(
                     fileName = Name(name),
                     extension = extension,
                     size = Bytes(sizeLong.toULong()),
-                    mimeType = MimeType.fromString(mimeTypeString)
+                    mimeType = contentResolver.getType(uri) ?: "*/*"
                 )
 
             } else {
@@ -190,12 +187,11 @@ class ImportAttachmentsToCache @Inject constructor(
     }
 
     private fun getFileInfoFromFile(file: File): AttachmentFileInfo {
-        val mimeTypeString = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
         return AttachmentFileInfo(
             fileName = Name(file.nameWithoutExtension),
             extension = file.extension,
             size = Bytes(file.length().toULong()),
-            mimeType = MimeType.fromString(mimeTypeString)
+            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension) ?: "*/*"
         )
     }
 

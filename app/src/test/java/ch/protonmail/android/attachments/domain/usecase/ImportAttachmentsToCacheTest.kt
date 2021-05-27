@@ -27,7 +27,6 @@ import ch.protonmail.android.attachments.domain.model.AttachmentFileInfo
 import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
 import ch.protonmail.android.domain.entity.Bytes
 import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.domain.entity.user.MimeType
 import io.mockk.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
@@ -54,23 +53,25 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
     private val importedUri2 = mockUri("file://cache/photo2.jpg")
     private val importedUri3 = mockUri("file://cache/photo3.jpg")
 
+    private val testMimeType = "image/*"
+
     private val fileInfo1 = AttachmentFileInfo(
         fileName = Name("photo1"),
         extension = "jpg",
         size = Bytes(0uL),
-        mimeType = MimeType.MULTIPART_MIXED
+        mimeType = testMimeType
     )
     private val fileInfo2 = AttachmentFileInfo(
         fileName = Name("photo2"),
         extension = "jpg",
         size = Bytes(0uL),
-        mimeType = MimeType.MULTIPART_MIXED
+        mimeType = testMimeType
     )
     private val fileInfo3 = AttachmentFileInfo(
         fileName = Name("photo3"),
         extension = "jpg",
         size = Bytes(0uL),
-        mimeType = MimeType.MULTIPART_MIXED
+        mimeType = testMimeType
     )
     // endregion
 
@@ -100,7 +101,7 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
     @BeforeTest
     fun setup() {
         mockkStatic(MimeTypeMap::class, Uri::class)
-        every { MimeTypeMap.getSingleton().getMimeTypeFromExtension(any()) } returns MimeType.MULTIPART_MIXED.string
+        every { MimeTypeMap.getSingleton().getMimeTypeFromExtension(any()) } returns testMimeType
         every { Uri.fromFile(any()) } answers {
             when (val name = firstArg<File>().name) {
                 "photo1.jpg" -> importedUri1
