@@ -23,11 +23,12 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.domain.FetchContactDetails
+import ch.protonmail.android.contacts.details.domain.FetchContactsMapper
+import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -44,18 +45,12 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
 
     private val repository: ContactDetailsRepository = mockk()
 
-    private val testUserId = Id("id")
-
-    private val userManager: UserManager = mockk {
-        every { currentUserId } returns testUserId
-        every { requireCurrentUserId() } returns testUserId
-        every { openPgp } returns mockk(relaxed = true)
-    }
-
     private val api: ProtonMailApiManager = mockk()
 
+    val mapper = mockk<FetchContactsMapper>()
+
     private val useCase = FetchContactDetails(
-        repository, userManager, api, mockk(), dispatchers
+        repository, api, mapper, dispatchers,
     )
 
     @Test

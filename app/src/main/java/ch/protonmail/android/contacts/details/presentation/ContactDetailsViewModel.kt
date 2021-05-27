@@ -38,6 +38,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactDetailsViewModel @Inject constructor(
     private val fetchContactDetails: FetchContactDetails,
+    private val mapper: ContactDetailsMapper,
     private val userManager: UserManager,
     private val workManager: WorkManager
 ) : ViewModel() {
@@ -52,7 +53,10 @@ class ContactDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             fetchContactDetails(contactId)
                 .catch { FetchContactDetailsResult.Error(it) }
-                .collect { mutableContactsResultFlow.value = it }
+                .collect { fetchResult ->
+                    //mapper.mapTo(fetchResult)
+                    mutableContactsResultFlow.value = fetchResult
+                }
         }
     }
 

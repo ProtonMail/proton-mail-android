@@ -604,11 +604,11 @@ public class ContactDetailsActivityOld extends BaseActivity implements AppBarLay
                 mErrorEncryptedView.setVisibility(View.GONE);
             }
             FetchContactDetailsResult.Data data = (FetchContactDetailsResult.Data) result;
-            mVCardType0 = data.getDecryptedVCardType0();
-            mVCardType2 = data.getDecryptedVCardType2();
-            mVCardType3 = data.getDecryptedVCardType3();
-            mVCardType2Signature = data.getVCardType2Signature();
-            mVCardType3Signature = data.getVCardType3Signature();
+//            mVCardType0 = data.getDecryptedVCardType0();
+//            mVCardType2 = data.getDecryptedVCardType2();
+//            mVCardType3 = data.getDecryptedVCardType3();
+//            mVCardType2Signature = data.getVCardType2Signature();
+//            mVCardType3Signature = data.getVCardType3Signature();
             fillVCard(false);
         } else if (result instanceof FetchContactDetailsResult.Error) {
             FetchContactDetailsResult.Error error = (FetchContactDetailsResult.Error) result;

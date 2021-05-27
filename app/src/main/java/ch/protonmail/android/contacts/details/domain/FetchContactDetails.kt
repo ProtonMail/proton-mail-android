@@ -21,28 +21,20 @@ package ch.protonmail.android.contacts.details.domain
 
 import android.database.sqlite.SQLiteBlobTooBigException
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
-import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.crypto.CipherText
-import ch.protonmail.android.crypto.UserCrypto
-import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
-import ch.protonmail.android.utils.crypto.OpenPGP
+import ch.protonmail.android.data.local.model.FullContactDetails
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import me.proton.core.util.kotlin.DispatcherProvider
-import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import javax.inject.Inject
 
 class FetchContactDetails @Inject constructor(
     private val repository: ContactDetailsRepository,
-    private val userManager: UserManager,
     private val api: ProtonMailApiManager,
-    private val openPgp: OpenPGP,
+    private val mapper: FetchContactsMapper,
     private val dispatchers: DispatcherProvider
 ) {
 
@@ -89,47 +81,7 @@ class FetchContactDetails @Inject constructor(
     }
         .flowOn(dispatchers.Io)
 
-    private fun parseContactDetails(contact: FullContactDetails): FetchContactDetailsResult? {
-        val encryptedDataList: List<ContactEncryptedData>? = contact.encryptedData
+    private fun parseContactDetails(contact: FullContactDetails): FetchContactDetailsResult? =
+        mapper.mapEncryptedDataToResult(contact.encryptedData)
 
-        if (!encryptedDataList.isNullOrEmpty()) {
-            val crypto = UserCrypto(userManager, openPgp, userManager.requireCurrentUserId())
-            var decryptedVCardType0: String = EMPTY_STRING
-            var decryptedVCardType2: String = EMPTY_STRING
-            var decryptedVCardType3: String = EMPTY_STRING
-            var vCardType2Signature: String = EMPTY_STRING
-            var vCardType3Signature: String = EMPTY_STRING
-
-            for (contactEncryptedData in encryptedDataList) {
-                when (getCardTypeFromInt(contactEncryptedData.type)) {
-                    Constants.VCardType.SIGNED_ENCRYPTED -> {
-                        val tct = CipherText(contactEncryptedData.data)
-                        decryptedVCardType3 = crypto.decrypt(tct).decryptedData
-                        vCardType3Signature = contactEncryptedData.signature
-                    }
-                    Constants.VCardType.SIGNED -> {
-                        decryptedVCardType2 = contactEncryptedData.data
-                        vCardType2Signature = contactEncryptedData.signature
-                    }
-                    Constants.VCardType.UNSIGNED -> {
-                        decryptedVCardType0 = contactEncryptedData.data
-                    }
-                }
-            }
-            return FetchContactDetailsResult.Data(
-                decryptedVCardType0,
-                decryptedVCardType2,
-                decryptedVCardType3,
-                vCardType2Signature,
-                vCardType3Signature
-            )
-        }
-        return null
-    }
-
-    private fun getCardTypeFromInt(vCardTypeValue: Int): Constants.VCardType {
-        return Constants.VCardType.values().find {
-            vCardTypeValue == it.vCardTypeValue
-        } ?: Constants.VCardType.UNSIGNED
-    }
 }

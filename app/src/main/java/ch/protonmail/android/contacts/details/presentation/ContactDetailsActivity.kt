@@ -29,8 +29,8 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
-import ch.protonmail.android.databinding.ActivityContactDetailsBinding
 import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
+import ch.protonmail.android.databinding.ActivityContactDetailsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -84,22 +84,12 @@ class ContactDetailsActivity : AppCompatActivity() {
             is FetchContactDetailsResult.Loading -> showLoading()
             is FetchContactDetailsResult.Error -> showError(state.exception)
             is FetchContactDetailsResult.Data -> showData(
-                state.decryptedVCardType0,
-                state.decryptedVCardType2,
-                state.decryptedVCardType3,
-                state.vCardType2Signature,
-                state.vCardType3Signature
+                state
             )
         }
     }
 
-    private fun showData(
-        decryptedVCardType0: String,
-        decryptedVCardType2: String,
-        decryptedVCardType3: String,
-        vCardType2Signature: String,
-        vCardType3Signature: String
-    ) {
+    private fun showData(state: FetchContactDetailsResult.Data) {
         progressBar.isVisible = false
         detailsContainer.isVisible = true
     }

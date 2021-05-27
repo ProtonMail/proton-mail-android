@@ -19,16 +19,36 @@
 
 package ch.protonmail.android.contacts.details.domain.model
 
-import me.proton.core.util.kotlin.EMPTY_STRING
+import ezvcard.property.Address
+import ezvcard.property.Anniversary
+import ezvcard.property.Birthday
+import ezvcard.property.Email
+import ezvcard.property.Gender
+import ezvcard.property.Nickname
+import ezvcard.property.Organization
+import ezvcard.property.Photo
+import ezvcard.property.Role
+import ezvcard.property.Telephone
+import ezvcard.property.Title
+import ezvcard.property.Url
 
 sealed class FetchContactDetailsResult {
     object Loading : FetchContactDetailsResult()
     data class Data(
-        val decryptedVCardType0: String = EMPTY_STRING,
-        val decryptedVCardType2: String = EMPTY_STRING,
-        val decryptedVCardType3: String = EMPTY_STRING,
-        val vCardType2Signature: String = EMPTY_STRING,
-        val vCardType3Signature: String = EMPTY_STRING
+        val emails: List<Email>,
+        val telephoneNumbers: List<Telephone>,
+        val addresses: List<Address>,
+        val photos: List<Photo>,
+        val organizations: List<Organization>,
+        val titles: List<Title>,
+        val nicknames: List<Nickname>,
+        val birthdays: List<Birthday>,
+        val anniversaries: List<Anniversary>,
+        val roles: List<Role>,
+        val urls: List<Url>,
+        val gender: Gender?,
+        val isType2SignatureValid: Boolean?,
+        val isType3SignatureValid: Boolean?
     ) : FetchContactDetailsResult()
 
     data class Error(val exception: Throwable) : FetchContactDetailsResult()
