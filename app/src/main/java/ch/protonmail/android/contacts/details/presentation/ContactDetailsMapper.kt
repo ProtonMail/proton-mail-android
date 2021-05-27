@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.contacts.details
+package ch.protonmail.android.contacts.details.presentation
 
 import javax.inject.Inject
 

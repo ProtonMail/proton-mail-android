@@ -33,7 +33,7 @@ import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.create.CreateContact
-import ch.protonmail.android.usecase.fetch.FetchContactDetails
+import ch.protonmail.android.contacts.details.domain.FetchContactDetails
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.viewmodel.NETWORK_CHECK_DELAY

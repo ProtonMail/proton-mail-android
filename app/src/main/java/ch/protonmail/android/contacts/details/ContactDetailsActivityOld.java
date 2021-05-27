@@ -96,7 +96,7 @@ import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.model.ContactLabel;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.events.ContactEvent;
-import ch.protonmail.android.usecase.model.FetchContactDetailsResult;
+import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.FileHelper;

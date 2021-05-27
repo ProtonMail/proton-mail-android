@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.usecase.model
+package ch.protonmail.android.contacts.details.domain.model
 
 import me.proton.core.util.kotlin.EMPTY_STRING
 

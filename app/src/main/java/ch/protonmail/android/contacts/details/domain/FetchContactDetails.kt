@@ -17,18 +17,18 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.usecase.fetch
+package ch.protonmail.android.contacts.details.domain
 
 import android.database.sqlite.SQLiteBlobTooBigException
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
-import ch.protonmail.android.contacts.details.ContactDetailsRepository
+import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.model.FullContactDetails
-import ch.protonmail.android.usecase.model.FetchContactDetailsResult
+import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
 import ch.protonmail.android.utils.crypto.OpenPGP
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

@@ -35,14 +35,15 @@ import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.SELECTED
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.UNSELECTED
+import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.exceptions.BadImageUrlException
 import ch.protonmail.android.exceptions.ImageNotFoundException
-import ch.protonmail.android.usecase.fetch.FetchContactDetails
-import ch.protonmail.android.usecase.model.FetchContactDetailsResult
+import ch.protonmail.android.contacts.details.domain.FetchContactDetails
+import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.BaseViewModel
 import ch.protonmail.android.worker.DeleteContactWorker

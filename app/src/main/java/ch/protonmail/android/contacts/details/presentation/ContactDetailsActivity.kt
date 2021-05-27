@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.contacts.details
+package ch.protonmail.android.contacts.details.presentation
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -30,7 +30,7 @@ import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.ActivityContactDetailsBinding
-import ch.protonmail.android.usecase.model.FetchContactDetailsResult
+import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

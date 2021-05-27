@@ -26,7 +26,7 @@ import androidx.lifecycle.switchMap
 import androidx.work.Data
 import androidx.work.WorkInfo
 import ch.protonmail.android.contacts.ContactIdGenerator
-import ch.protonmail.android.contacts.details.ContactDetailsRepository
+import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail

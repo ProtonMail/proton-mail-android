@@ -21,12 +21,13 @@ package ch.protonmail.android.usecase.fetch
 
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
-import ch.protonmail.android.contacts.details.ContactDetailsRepository
+import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
+import ch.protonmail.android.contacts.details.domain.FetchContactDetails
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.usecase.model.FetchContactDetailsResult
+import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

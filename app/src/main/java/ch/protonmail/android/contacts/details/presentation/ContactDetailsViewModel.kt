@@ -17,13 +17,13 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.contacts.details
+package ch.protonmail.android.contacts.details.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
-import ch.protonmail.android.usecase.fetch.FetchContactDetails
-import ch.protonmail.android.usecase.model.FetchContactDetailsResult
+import ch.protonmail.android.contacts.details.domain.FetchContactDetails
+import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
 import ch.protonmail.android.worker.DeleteContactWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.contacts.details
+package ch.protonmail.android.contacts.details.data
 
 import android.database.sqlite.SQLiteBlobTooBigException
 import androidx.work.WorkManager
