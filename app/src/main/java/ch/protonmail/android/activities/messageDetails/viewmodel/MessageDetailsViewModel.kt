@@ -321,7 +321,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 onConversationLoaded(conversation, userId)
                 return@map conversation
             } else if (result is DataResult.Error) {
-                Timber.d("Error loading conversation $messageOrConversationId")
+                Timber.d("Error loading conversation $messageOrConversationId - cause: ${result.cause}")
                 _messageDetailsError.postValue(Event("Failed getting conversation details"))
             }
             return@map null
@@ -368,11 +368,15 @@ internal class MessageDetailsViewModel @Inject constructor(
             return
         }
 
-        withContext(dispatchers.Comp) {
+        val isDecrypted = withContext(dispatchers.Comp) {
             lastMessage.tryDecrypt(publicKeys) ?: false
         }
-        Timber.v("Emitting ConversationUiItem Detail = ${lastMessage.messageId} keys size: ${publicKeys?.size}")
-        _decryptedMessageLiveData.postValue(conversationUiModel)
+        if (isDecrypted && lastMessage.messageId != null) {
+            messageRepository.markRead(listOf(lastMessage.messageId!!))
+
+            Timber.v("Emitting ConversationUiItem Detail = ${lastMessage.messageId} keys size: ${publicKeys?.size}")
+            _decryptedMessageLiveData.postValue(conversationUiModel)
+        }
     }
 
     private fun conversationUiItemFrom(messages: List<Message?>): ConversationUiModel {
