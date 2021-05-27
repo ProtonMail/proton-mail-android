@@ -326,7 +326,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
 
         val conversationUiItem = conversation.toConversationUiModel().copy(
-            messages = messages
+            messages = messages.sortedBy { it.time }
         )
         decryptLastMessageAndEmit(conversationUiItem)
 

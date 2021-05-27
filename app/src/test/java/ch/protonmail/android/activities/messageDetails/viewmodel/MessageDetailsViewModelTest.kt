@@ -318,7 +318,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         }
 
     @Test
-    fun loadMailboxItemEmitsConversationUiItemWithConversationDataWhenRepositoryReturnsAConversationAndLastMessageDecryptionSucceeds() =
+    fun loadMailboxItemEmitsConversationUiItemWithOrderedConversationDataWhenRepositoryReturnsAConversationAndLastMessageDecryptionSucceeds() =
         runBlockingTest {
             // Given
             val inputMessageLocation = INBOX
@@ -336,8 +336,19 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             every { conversationMessage.isDownloaded } returns true
             every { conversationMessage.senderEmail } returns "sender@protonmail.com"
             every { conversationMessage.numAttachments } returns 1
-            every { conversationMessage.time } returns 82374724L
+            every { conversationMessage.time } returns 82374730L
             every { conversationMessage.decrypt(any(), any(), any()) } just Runs
+
+            val olderConversationMessage = mockk<Message>(relaxed = true)
+            every { olderConversationMessage.messageId } returns "messageId5"
+            every { olderConversationMessage.conversationId } returns conversationId
+            every { olderConversationMessage.subject } returns "subject5"
+            every { olderConversationMessage.sender } returns MessageSender("senderName", "sender@protonmail.ch")
+            every { olderConversationMessage.isDownloaded } returns true
+            every { olderConversationMessage.senderEmail } returns "sender@protonmail.com"
+            every { olderConversationMessage.numAttachments } returns 0
+            every { olderConversationMessage.time } returns 82374724L
+            every { olderConversationMessage.decrypt(any(), any(), any()) } just Runs
 
             every { userManager.requireCurrentUserId() } returns userId
             coEvery { conversationModeEnabled(inputMessageLocation) } returns true
@@ -346,9 +357,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
                 inputMessageLocation.messageLocationTypeValue
             coEvery { conversationRepository.getConversation(inputConversationId, userId) } returns
                 flowOf(DataResult.Success(ResponseSource.Local, buildConversation(conversationId)))
-            // Return the same message from DB for simplicity
             coEvery { messageRepository.findMessageOnce(userId, "messageId4") } returns conversationMessage
-            coEvery { messageRepository.findMessageOnce(userId, "messageId5") } returns conversationMessage
+            coEvery { messageRepository.findMessageOnce(userId, "messageId5") } returns olderConversationMessage
 
             // When
             viewModel.loadMailboxItemDetails()
@@ -358,7 +368,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
                 false,
                 "Conversation subject",
                 listOf("0"),
-                listOf(conversationMessage, conversationMessage),
+                listOf(olderConversationMessage, conversationMessage),
                 5
             )
             assertEquals(conversationUiModel, conversationObserver.observedValues[0])
