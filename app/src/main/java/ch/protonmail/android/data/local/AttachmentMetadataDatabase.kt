@@ -22,7 +22,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import ch.protonmail.android.data.local.model.AttachmentMetadata
 
-@Database(entities = [AttachmentMetadata::class], version = 1)
+@Database(entities = [AttachmentMetadata::class], version = 3)
 abstract class AttachmentMetadataDatabase : RoomDatabase() {
 
     abstract fun getDao(): AttachmentMetadataDao
