@@ -17,19 +17,18 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.usecase.model
+package ch.protonmail.android.contacts.details
 
-import me.proton.core.util.kotlin.EMPTY_STRING
+import javax.inject.Inject
 
-sealed class FetchContactDetailsResult {
-    object Loading : FetchContactDetailsResult()
-    data class Data(
-        val decryptedVCardType0: String = EMPTY_STRING,
-        val decryptedVCardType2: String = EMPTY_STRING,
-        val decryptedVCardType3: String = EMPTY_STRING,
-        val vCardType2Signature: String = EMPTY_STRING,
-        val vCardType3Signature: String = EMPTY_STRING
-    ) : FetchContactDetailsResult()
+class ContactDetailsMapper @Inject constructor() {
 
-    data class Error(val exception: Throwable) : FetchContactDetailsResult()
+//    fun mapToUiContactItems(contactDetails: FullContactDetails): ContactDetailsUiItem {
+//        return ContactDetailsUiItem(
+//            contactDetails.contactId,
+//            contactDetails.name,
+//            contactDetails.emails
+//        )
+//    }
+
 }

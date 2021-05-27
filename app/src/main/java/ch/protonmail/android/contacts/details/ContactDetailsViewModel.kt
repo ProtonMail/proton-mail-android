@@ -23,8 +23,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import ch.protonmail.android.usecase.fetch.FetchContactDetails
+import ch.protonmail.android.usecase.model.FetchContactDetailsResult
 import ch.protonmail.android.worker.DeleteContactWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import me.proton.core.user.domain.UserManager
@@ -40,9 +43,15 @@ class ContactDetailsViewModel @Inject constructor(
     private val workManager: WorkManager
 ) : ViewModel() {
 
+    private val mutableContactsResultFlow =
+        MutableStateFlow<FetchContactDetailsResult>(FetchContactDetailsResult.Loading)
+    val contactsResultFlow: StateFlow<FetchContactDetailsResult>
+        get() = mutableContactsResultFlow
+
     fun getContactDetails(contactId: String) {
         viewModelScope.launch {
-            fetchContactDetails(contactId)
+            val result = fetchContactDetails(contactId)
+            mutableContactsResultFlow.value = result!! // TODO: Map it
         }
     }
 
@@ -51,7 +60,9 @@ class ContactDetailsViewModel @Inject constructor(
     fun observeContactGroups() = contactDetailsRepository.observeContactGroups()
         .flowOn(dispatchers.Io)
 
-    suspend fun observeContactEmails(contactId: String) = contactDetailsRepository.getContactEmails(contactId)
+    suspend fun getContactEmails(contactId: String) = contactDetailsRepository.getContactEmails(contactId)
+
+    suspend fun getFullContactDetails(contactId: String) = contactDetailsRepository.getFullContactDetails(contactId)
 
 //    private fun decryptAndFillVCard(contact: FullContactDetails?) {
 //        var hasDecryptionError = false

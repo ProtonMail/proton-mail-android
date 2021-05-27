@@ -120,7 +120,7 @@ open class ContactDetailsViewModelOld @Inject constructor(
     val contactDetailsFetchResult: LiveData<FetchContactDetailsResult>
         get() = fetchContactDetailsId.switchMap {
             liveData {
-                emitSource(fetchContactDetails(it))
+                //emitSource(fetchContactDetails(it))
             }
         }
 

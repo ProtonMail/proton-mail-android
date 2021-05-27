@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.contacts.details
 
+import android.database.sqlite.SQLiteBlobTooBigException
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
@@ -36,6 +37,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.toInt
+import timber.log.Timber
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -208,7 +210,16 @@ open class ContactDetailsRepository @Inject constructor(
             return@withContext contactDao.saveContactData(contactData)
         }
 
-    suspend fun getFullContactDetails(contactId: String): FullContactDetails? =
-        contactDao.findFullContactDetailsById(contactId)
+    suspend fun getFullContactDetails(contactId: String): FullContactDetails? {
+        return try {
+            contactDao.findFullContactDetailsById(contactId)
+        } catch (tooBigException: SQLiteBlobTooBigException) {
+            Timber.e(tooBigException, "Data too big to be fetched")
+            null
+        }
+    }
+
+    fun insertFullContactDetails(fullContactDetails: FullContactDetails) =
+        contactDao.insertFullContactDetails(fullContactDetails)
 
 }

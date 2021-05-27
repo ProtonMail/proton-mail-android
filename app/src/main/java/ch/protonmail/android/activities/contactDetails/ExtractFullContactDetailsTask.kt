@@ -24,6 +24,7 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.FullContactDetails
 import timber.log.Timber
 
+@Deprecated("removed with the new ContactDetailsViewModel")
 class ExtractFullContactDetailsTask(
     private val contactDao: ContactDao,
     private val contactId: String,
