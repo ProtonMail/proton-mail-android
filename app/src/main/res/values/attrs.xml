@@ -25,6 +25,10 @@
         <attr name="itemIconDescription" format="string"/>
     </declare-styleable>
 
+    <declare-styleable name="CheckableButton">
+        <attr name="icon" format="reference"/>
+    </declare-styleable>
+
     <declare-styleable name="LabelChipView">
         <attr name="labelColor" format="color" />
     </declare-styleable>

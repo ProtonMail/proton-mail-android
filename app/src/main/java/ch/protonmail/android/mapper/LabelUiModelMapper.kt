@@ -43,7 +43,7 @@ internal class LabelUiModelMapper(private val isLabelEditable: Boolean) : UiMode
             LabelUiModel.Type.FOLDERS else LabelUiModel.Type.LABELS
 
         val image = when (type) {
-            LabelUiModel.Type.LABELS -> R.drawable.ic_drawer_label_ellipse
+            LabelUiModel.Type.LABELS -> R.drawable.shape_ellipse
             LabelUiModel.Type.FOLDERS -> R.drawable.ic_folder
         }
 

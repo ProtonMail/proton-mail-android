@@ -90,8 +90,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.api.models.MessageRecipient;
@@ -129,6 +127,7 @@ import ch.protonmail.android.feature.account.AccountManagerKt;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
 import ch.protonmail.android.mailbox.presentation.MailboxActivity;
 import ch.protonmail.android.tasks.EmbeddedImagesThread;
+import ch.protonmail.android.ui.view.ComposerBottomAppBar;
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest;
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult;
 import ch.protonmail.android.utils.AppUtil;
@@ -153,6 +152,7 @@ import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
 import ch.protonmail.android.views.PMWebViewClient;
 import dagger.hilt.android.AndroidEntryPoint;
+import kotlin.Unit;
 import me.proton.core.accountmanager.domain.AccountManager;
 import timber.log.Timber;
 
@@ -210,14 +210,7 @@ public class ComposeMessageActivity
     private EditText messageBodyEditText;
     private Button respondInlineButton;
 
-    @BindView(R.id.message_expiration_view)
-    MessageExpirationView mMessageExpirationView;
-    @BindView(R.id.set_message_password)
-    MessagePasswordButton mSetMessagePasswordButton;
-    @BindView(R.id.set_message_expiration)
-    ImageButton mSetMessageExpirationImageButton;
-    @BindView(R.id.attachment_count)
-    TextView mAttachmentCountTextView;
+    private ComposerBottomAppBar bottomAppBar;
     //endregion
 
     private WebView mMessageBody;
@@ -264,12 +257,6 @@ public class ComposeMessageActivity
         onStoragePermissionGranted();
     }
 
-    // TODO
-    @OnClick(R.id.set_message_expiration)
-    public void onSetMessageExpiration() {
-        mMessageExpirationView.show();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -283,11 +270,23 @@ public class ComposeMessageActivity
         subjectEditText = binding.composerSubjectEditText;
         messageBodyEditText = binding.composerMessageBodyEditText;
         respondInlineButton = binding.composerRespondInlineButton;
+        bottomAppBar = binding.composerButtonsLayout;
 
         // region setup click listeners
         binding.composerExpandRecipientsButton.setOnClickListener((View view) -> {
             mAreAdditionalRowsVisible = !mAreAdditionalRowsVisible;
             setAdditionalRowVisibility(mAreAdditionalRowsVisible);
+        });
+        toRecipientView.setOnClickListener((View view) -> {
+            toRecipientView.requestFocus();
+        });
+        bottomAppBar.onPasswordClick(() -> {
+            // TODO
+            return Unit.INSTANCE;
+        });
+        bottomAppBar.onExpirationClick(() -> {
+            // TODO mMessageExpirationView.show();
+            return Unit.INSTANCE;
         });
         // endregion
 
@@ -930,8 +929,8 @@ public class ComposeMessageActivity
     private void onOptionSendHandler() {
         boolean containsNonPMAndNonPGPRecipients = toRecipientView.includesNonProtonMailAndNonPGPRecipient() || ccRecipientView.includesNonProtonMailAndNonPGPRecipient() || bccRecipientView.includesNonProtonMailAndNonPGPRecipient();
         boolean containsPgpRecipients = toRecipientView.containsPGPRecipient() || ccRecipientView.containsPGPRecipient() || bccRecipientView.containsPGPRecipient();
-        boolean showSection1 = mMessageExpirationView.getExpirationTime() > 0 && !mSetMessagePasswordButton.isPasswordSet() && containsNonPMAndNonPGPRecipients;
-        boolean showSection2 = mMessageExpirationView.getExpirationTime() > 0 && containsPgpRecipients;
+        boolean showSection1 = bottomAppBar.hasExpiration() && !bottomAppBar.hasPassword() && containsNonPMAndNonPGPRecipients;
+        boolean showSection2 = bottomAppBar.hasExpiration() && containsPgpRecipients;
         if (showSection1 && showSection2) {
             List<String> nonProtonMailRecipients = toRecipientView.getNonProtonMailAndNonPGPRecipients();
             nonProtonMailRecipients.addAll(ccRecipientView.getNonProtonMailAndNonPGPRecipients());
@@ -1029,11 +1028,8 @@ public class ComposeMessageActivity
 
     private void renderViews() {
         setAdditionalRowVisibility(mAreAdditionalRowsVisible);
-        mSetMessagePasswordButton.setImageLevel(mSetMessagePasswordButton.isPasswordSet() ? 1 : 0);
-        mSetMessageExpirationImageButton.setImageLevel(mMessageExpirationView.getExpirationTime() > 0 ? 1 : 0);
         int attachmentsListSize = composeMessageViewModel.getMessageDataResult().getAttachmentList().size();
-        mAttachmentCountTextView.setText(String.valueOf(attachmentsListSize));
-        mAttachmentCountTextView.setVisibility(attachmentsListSize > 0 ? View.VISIBLE : View.GONE);
+        bottomAppBar.setAttachmentsCount(attachmentsListSize);
         if (composeMessageViewModel.getMessageDataResult().getSendPreferences() == null) {
             return;
         }
@@ -1135,7 +1131,7 @@ public class ComposeMessageActivity
             TextExtensions.showToast(this, message, Toast.LENGTH_LONG, Gravity.CENTER);
             return false;
         }
-        if (mSetMessagePasswordButton.isPasswordSet()) {
+        if (bottomAppBar.hasPassword()) {
             List<String> toMissingKeys = toRecipientView.addressesWithMissingKeys();
             List<String> ccMissingKeys = ccRecipientView.addressesWithMissingKeys();
             List<String> bccMissingKeys = bccRecipientView.addressesWithMissingKeys();
@@ -1172,7 +1168,7 @@ public class ComposeMessageActivity
             }
         }
         boolean includesNonProtonMailRecipient = includesNonProtonMailRecipient();
-        if (!sendAnyway && includesNonProtonMailRecipient && mMessageExpirationView.getExpirationTime() > 0 && !mSetMessagePasswordButton.isPasswordSet()) {
+        if (!sendAnyway && includesNonProtonMailRecipient && bottomAppBar.hasExpiration() && !bottomAppBar.hasPassword()) {
             TextExtensions.showToast(this, R.string.no_password_specified, Toast.LENGTH_LONG, Gravity.CENTER);
             return false;
         }
@@ -1272,7 +1268,7 @@ public class ComposeMessageActivity
                     setRecipientIconAndDescription(sendPreference, recipientsView);
                 }
             }
-            recipientsView.setSendPreferenceMap(composeMessageViewModel.getMessageDataResult().getSendPreferences(), mSetMessagePasswordButton.isPasswordSet());
+            recipientsView.setSendPreferenceMap(composeMessageViewModel.getMessageDataResult().getSendPreferences(), bottomAppBar.hasPassword());
         }
     }
 
@@ -1304,7 +1300,7 @@ public class ComposeMessageActivity
     private void setRecipientIconAndDescription(SendPreference sendPreference, MessageRecipientView recipientView) {
 
         String email = sendPreference.getEmailAddress();
-        ComposerLockIcon lock = new ComposerLockIcon(sendPreference, mSetMessagePasswordButton.isPasswordSet());
+        ComposerLockIcon lock = new ComposerLockIcon(sendPreference, bottomAppBar.hasPassword());
 
         composeMessageViewModel.addSendPreferences(sendPreference);
         recipientView.setIconAndDescription(email, lock.getIcon(), lock.getColor(), lock.getTooltip(), sendPreference.isPGP());
@@ -1932,7 +1928,7 @@ public class ComposeMessageActivity
             } else if (composeMessageViewModel.getActionType() == UserAction.FINISH_EDIT) {
                 mSendingInProgress = true;
                 //region prepare sending message
-                composeMessageViewModel.setMessagePassword(mSetMessagePasswordButton.getMessagePassword(), mSetMessagePasswordButton.getPasswordHint(), mSetMessagePasswordButton.isValid(), mMessageExpirationView.getExpirationTime(), respondInlineButton.getVisibility() == View.VISIBLE);
+                // TODO composeMessageViewModel.setMessagePassword(mSetMessagePasswordButton.getMessagePassword(), mSetMessagePasswordButton.getPasswordHint(), mSetMessagePasswordButton.isValid(), mMessageExpirationView.getExpirationTime(), respondInlineButton.getVisibility() == View.VISIBLE);
                 if (!composeMessageViewModel.getMessageDataResult().isPasswordValid()) {
                     TextExtensions.showToast(ComposeMessageActivity.this, R.string.eo_password_not_completed, Toast.LENGTH_LONG, Gravity.CENTER);
                     return;

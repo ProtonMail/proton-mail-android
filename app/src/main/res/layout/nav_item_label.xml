@@ -69,7 +69,7 @@
 		tools:textColor="#808080"/>
 	<TextView
 		android:id="@+id/drawer_item_notifications_text_view"
-		style="@style/DrawerItemNotification"
+		style="@style/ProtonBadge"
 		android:layout_width="28dp"
 		android:layout_height="28dp"
 		android:layout_marginBottom="8dp"

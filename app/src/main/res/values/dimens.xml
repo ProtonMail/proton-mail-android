@@ -28,6 +28,7 @@
     <dimen name="size_icon_m">24dp</dimen>
     <dimen name="size_icon_l">32dp</dimen>
     <dimen name="size_corner_xs">8dp</dimen>
+    <dimen name="size_badge">24dp</dimen>
     <dimen name="size_corner_s">16dp</dimen>
     <dimen name="size_outline">1dp</dimen>
 

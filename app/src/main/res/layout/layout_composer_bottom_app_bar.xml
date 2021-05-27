@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/height_composer_field">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/composer_bottom_bar_start_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/padding_m"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/composer_bottom_bar_end_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/padding_m"/>
+
+    <ch.protonmail.android.ui.view.CheckableButton
+        android:id="@+id/composer_password_button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1"
+        app:icon="@drawable/ic_lock_wide"
+        app:layout_constraintStart_toStartOf="@id/composer_bottom_bar_start_guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ch.protonmail.android.ui.view.CheckableButton
+        android:id="@+id/composer_expiration_button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1"
+        app:icon="@drawable/ic_hourglass"
+        app:layout_constraintStart_toEndOf="@id/composer_password_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ImageButton
+        android:id="@+id/composer_attachments_button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1"
+        android:background="?attr/selectableItemBackground"
+        android:src="@drawable/ic_paper_clip"
+        app:layout_constraintEnd_toEndOf="@id/composer_bottom_bar_end_guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/composer_attachments_count_text_view"
+        style="@style/ProtonBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_badge"
+        app:layout_constraintTop_toTopOf="@id/composer_attachments_button"
+        app:layout_constraintBottom_toBottomOf="@id/composer_attachments_button"
+        app:layout_constraintEnd_toStartOf="@id/composer_attachments_button"
+        app:layout_constraintHorizontal_bias="0"
+        android:paddingHorizontal="@dimen/padding_m"
+        android:paddingVertical="@dimen/padding_xs"
+        android:visibility="invisible"
+        tools:text="1"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
