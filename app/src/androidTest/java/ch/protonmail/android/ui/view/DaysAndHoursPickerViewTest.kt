@@ -43,7 +43,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Test suite for [MultiLineLabelChipGroupView]
+ * Test suite for [DaysAndHoursPickerView]
  */
 @RunWith(AndroidJUnit4ClassRunner::class)
 class DaysAndHoursPickerViewTest : ViewTest<DaysAndHoursPickerView>(::DaysAndHoursPickerView), CoroutinesTest {

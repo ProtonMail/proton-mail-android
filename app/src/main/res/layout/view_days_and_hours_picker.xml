@@ -17,6 +17,7 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
+<!-- This is a temporary replacement of the final design -->
 <merge
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -35,7 +36,7 @@
 
     <me.proton.core.presentation.ui.view.ProtonInput
         android:id="@+id/days_and_hours_picker_days_input"
-        android:layout_width="wrap_content"
+        android:layout_width="48dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -71,7 +72,7 @@
 
     <me.proton.core.presentation.ui.view.ProtonInput
         android:id="@+id/days_and_hours_picker_hours_input"
-        android:layout_width="wrap_content"
+        android:layout_width="48dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

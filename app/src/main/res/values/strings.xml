@@ -47,6 +47,26 @@
     <string name="composer_from">From:</string>
     <string name="composer_subject">Subject:</string>
     <string name="composer_to">To:</string>
+
+    <string name="set_msg_password_title">Set password</string>
+    <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Learn more</a></string>
+    <string name="set_msg_password_info_icon_description">Info</string>
+    <string name="set_msg_password_msg_password_title">Message password</string>
+    <string name="set_msg_password_msg_password_hint">4 to 21 characters long</string>
+    <string name="set_msg_password_repeat_password_title">Repeat password</string>
+    <string name="set_msg_password_repeat_password_hint">Passwords must match</string>
+    <string name="set_msg_password_password_hint_title">Password hint</string>
+    <string name="set_msg_password_password_hint_hint">Define hint (Optional)</string>
+    <string name="set_msg_password_apply_password">Apply password</string>
+
+    <string name="set_msg_expiration_title">Message expiration</string>
+    <string name="set_msg_expiration_none">None</string>
+    <string name="set_msg_expiration_1_hour">1 hour</string>
+    <string name="set_msg_expiration_1_day">1 day</string>
+    <string name="set_msg_expiration_3_days">3 days</string>
+    <string name="set_msg_expiration_1_week">1 week</string>
+    <string name="set_msg_expiration_custom">Custom</string>
+    <string name="set_msg_expiration_check_description">This item is checked</string>
     <!-- endregion -->
 
     <!-- region Attachments -->

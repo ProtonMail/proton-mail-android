@@ -20,19 +20,26 @@
 package ch.protonmail.android.compose.presentation.model
 
 import ch.protonmail.android.attachments.domain.model.UriPair
+import ch.protonmail.android.compose.presentation.ui.ComposeMessageKotlinActivity
+import ch.protonmail.android.ui.view.DaysHoursPair
 
 /**
- * Describes an action on Attachment
+ * Describes an event for [ComposeMessageKotlinActivity]
  */
-sealed class AttachmentsEventUiModel {
+sealed class ComposeMessageEventUiModel {
 
     /**
      * Attachments for Composer has been changed
      */
-    data class OnAttachmentsChange(val attachments: List<ComposerAttachmentUiModel>) : AttachmentsEventUiModel()
+    data class OnAttachmentsChange(val attachments: List<ComposerAttachmentUiModel>) : ComposeMessageEventUiModel()
+
+    /**
+     * Expiration change has been requested and previous expiration is ready
+     */
+    data class OnExpirationChangeRequest(val currentExpiration: DaysHoursPair) : ComposeMessageEventUiModel()
 
     /**
      * Uri has been created for a photo to be taken from camera
      */
-    data class OnPhotoUriReady(val uri: UriPair) : AttachmentsEventUiModel()
+    data class OnPhotoUriReady(val uri: UriPair) : ComposeMessageEventUiModel()
 }

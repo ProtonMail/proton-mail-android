@@ -49,7 +49,7 @@ import ch.protonmail.android.attachments.domain.usecase.GetNewPhotoUri
 import ch.protonmail.android.attachments.domain.usecase.ImportAttachmentsToCache
 import ch.protonmail.android.bl.HtmlProcessor
 import ch.protonmail.android.compose.presentation.mapper.ComposerAttachmentUiModelMapper
-import ch.protonmail.android.compose.presentation.model.AttachmentsEventUiModel
+import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
@@ -217,12 +217,12 @@ class ComposeMessageViewModel @Inject constructor(
             }
         }
 
-    private val _attachmentsEvent = MutableSharedFlow<AttachmentsEventUiModel>(
+    private val _events = MutableSharedFlow<ComposeMessageEventUiModel>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-    val attachmentsEvent: Flow<AttachmentsEventUiModel> =
-        _attachmentsEvent.asSharedFlow()
+    val events: Flow<ComposeMessageEventUiModel> =
+        _events.asSharedFlow()
     // endregion
     // region getters
     var draftId: String
@@ -1281,7 +1281,7 @@ class ComposeMessageViewModel @Inject constructor(
     fun requestNewPhotoUri() {
         viewModelScope.launch {
             val uri = getNewPhotoUri()
-            _attachmentsEvent.emit(AttachmentsEventUiModel.OnPhotoUriReady(uri))
+            _events.emit(ComposeMessageEventUiModel.OnPhotoUriReady(uri))
         }
     }
 
@@ -1340,7 +1340,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     private fun notifyAttachmentsChanged() {
         val uiModels = importedAttachments.map(composerAttachmentUiModelMapper) { it.toUiModel() }
-        _attachmentsEvent.tryEmit(AttachmentsEventUiModel.OnAttachmentsChange(uiModels))
+        _events.tryEmit(ComposeMessageEventUiModel.OnAttachmentsChange(uiModels))
     }
 
     private fun refreshMessageAttachments() {

@@ -30,12 +30,13 @@ import ch.protonmail.android.activities.BaseContactsActivity
 import ch.protonmail.android.attachments.domain.model.UriPair
 import ch.protonmail.android.attachments.presentation.model.FilePickerMask
 import ch.protonmail.android.compose.ComposeMessageViewModel
-import ch.protonmail.android.compose.presentation.model.AttachmentsEventUiModel
+import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel
 import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel
 import ch.protonmail.android.databinding.ActivityComposeMessage2Binding
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheet
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheet.Action
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheetViewModel
+import ch.protonmail.android.ui.view.DaysHoursPair
 import ch.protonmail.android.utils.UiUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -50,7 +51,15 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
     private val addAttachmentsViewModel: AddAttachmentsActionSheetViewModel by viewModels()
     protected lateinit var binding: ActivityComposeMessage2Binding
 
-    // region Attachments activity results
+    // region activity results
+    // region expiration
+    private val setExpirationLauncher =
+        registerForActivityResult(SetMessageExpirationActivity.ResultContract()) { daysHoursPair ->
+            // TODO set message expiration
+        }
+    // endregion
+
+    // region attachments
     private var takePhotoFromCameraUri: UriPair? = null
     private val takePhotoFromCameraLauncher: ActivityResultLauncher<Uri> =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
@@ -67,6 +76,7 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
             composeViewModel.addAttachments(uris, deleteOriginalFiles = false)
         }
     // endregion
+    // endregion
 
     override fun getRootView(): View {
         binding = ActivityComposeMessage2Binding.inflate(layoutInflater)
@@ -77,17 +87,26 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
         super.onCreate(savedInstanceState)
 
         // region setup UI
-        binding.composerBottomAppBar.onAttachmentsClick {
-            UiUtil.hideKeyboard(this)
-            AddAttachmentsActionSheet.show(supportFragmentManager)
+        binding.composerBottomAppBar.apply {
+            onExpirationClick {
+                // TODO ask current expiration to ViewModel
+            }
+            onAttachmentsClick {
+                UiUtil.hideKeyboard(this@ComposeMessageKotlinActivity)
+                AddAttachmentsActionSheet.show(supportFragmentManager)
+            }
         }
         // endregion
         // region observe
-        composeViewModel.attachmentsEvent
+        composeViewModel.events
             .onEach { event ->
                 when (event) {
-                    is AttachmentsEventUiModel.OnAttachmentsChange -> onAttachmentsChanged(event.attachments)
-                    is AttachmentsEventUiModel.OnPhotoUriReady -> takePhotoFromCamera(event.uri)
+                    is ComposeMessageEventUiModel.OnAttachmentsChange ->
+                        onAttachmentsChanged(event.attachments)
+                    is ComposeMessageEventUiModel.OnExpirationChangeRequest ->
+                        openSetExpiration(event.currentExpiration)
+                    is ComposeMessageEventUiModel.OnPhotoUriReady ->
+                        takePhotoFromCamera(event.uri)
                 }
             }.launchIn(lifecycleScope)
 
@@ -101,6 +120,12 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
             }.launchIn(lifecycleScope)
         // endregion
     }
+
+    // region expiration
+    private fun openSetExpiration(currentExpiration: DaysHoursPair) {
+        setExpirationLauncher.launch(currentExpiration)
+    }
+    // endregion
 
     // region attachments
     private fun openGallery() {

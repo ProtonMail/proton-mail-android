@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/set_msg_expiration_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:title="@string/set_msg_expiration_title"
+        app:menu="@menu/menu_set_message_expiration" />
+
+    <!-- None -->
+    <TextView
+        android:id="@+id/set_msg_expiration_none_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/set_msg_expiration_toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="@dimen/padding_l"
+        android:background="?selectableItemBackground"
+        android:text="@string/set_msg_expiration_none"
+        android:textAppearance="@style/Proton.Text.Default.Weak"
+        android:textColor="@color/text_weak"/>
+
+    <ImageView
+        android:id="@+id/set_msg_expiration_none_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/set_msg_expiration_none_text_view"
+        app:layout_constraintBottom_toBottomOf="@id/set_msg_expiration_none_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/padding_l"
+        android:src="@drawable/ic_check"
+        app:tint="@color/interaction_norm"
+        android:contentDescription="@string/set_msg_expiration_check_description"
+        android:visibility="gone"/>
+
+    <!-- 1 hour -->
+    <TextView
+        android:id="@+id/set_msg_expiration_1_hour_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/set_msg_expiration_none_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="@dimen/padding_l"
+        android:background="?selectableItemBackground"
+        android:text="@string/set_msg_expiration_1_hour"
+        android:textAppearance="@style/Proton.Text.Default.Weak"
+        android:textColor="@color/text_weak"/>
+
+    <ImageView
+        android:id="@+id/set_msg_expiration_1_hour_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/set_msg_expiration_1_hour_text_view"
+        app:layout_constraintBottom_toBottomOf="@id/set_msg_expiration_1_hour_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/padding_l"
+        android:src="@drawable/ic_check"
+        app:tint="@color/interaction_norm"
+        android:contentDescription="@string/set_msg_expiration_check_description"
+        android:visibility="gone"/>
+
+    <!-- 1 day -->
+    <TextView
+        android:id="@+id/set_msg_expiration_1_day_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/set_msg_expiration_1_hour_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="@dimen/padding_l"
+        android:background="?selectableItemBackground"
+        android:text="@string/set_msg_expiration_1_day"
+        android:textAppearance="@style/Proton.Text.Default.Weak"
+        android:textColor="@color/text_weak"/>
+
+    <ImageView
+        android:id="@+id/set_msg_expiration_1_day_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/set_msg_expiration_1_day_text_view"
+        app:layout_constraintBottom_toBottomOf="@id/set_msg_expiration_1_day_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/padding_l"
+        android:src="@drawable/ic_check"
+        app:tint="@color/interaction_norm"
+        android:contentDescription="@string/set_msg_expiration_check_description"
+        android:visibility="gone"/>
+
+    <!-- 3 days -->
+    <TextView
+        android:id="@+id/set_msg_expiration_3_days_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/set_msg_expiration_1_day_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="@dimen/padding_l"
+        android:background="?selectableItemBackground"
+        android:text="@string/set_msg_expiration_3_days"
+        android:textAppearance="@style/Proton.Text.Default.Weak"
+        android:textColor="@color/text_weak"/>
+
+    <ImageView
+        android:id="@+id/set_msg_expiration_3_days_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/set_msg_expiration_3_days_text_view"
+        app:layout_constraintBottom_toBottomOf="@id/set_msg_expiration_3_days_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/padding_l"
+        android:src="@drawable/ic_check"
+        app:tint="@color/interaction_norm"
+        android:contentDescription="@string/set_msg_expiration_check_description"
+        android:visibility="gone"/>
+
+    <!-- 1 week -->
+    <TextView
+        android:id="@+id/set_msg_expiration_1_week_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/set_msg_expiration_3_days_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="@dimen/padding_l"
+        android:background="?selectableItemBackground"
+        android:text="@string/set_msg_expiration_1_week"
+        android:textAppearance="@style/Proton.Text.Default.Weak"
+        android:textColor="@color/text_weak"/>
+
+    <ImageView
+        android:id="@+id/set_msg_expiration_1_week_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/set_msg_expiration_1_week_text_view"
+        app:layout_constraintBottom_toBottomOf="@id/set_msg_expiration_1_week_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/padding_l"
+        android:src="@drawable/ic_check"
+        app:tint="@color/interaction_norm"
+        android:contentDescription="@string/set_msg_expiration_check_description"
+        android:visibility="gone"/>
+
+    <!-- custom -->
+    <TextView
+        android:id="@+id/set_msg_expiration_custom_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/set_msg_expiration_1_week_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="@dimen/padding_l"
+        android:background="?selectableItemBackground"
+        android:text="@string/set_msg_expiration_custom"
+        android:textAppearance="@style/Proton.Text.Default.Weak"
+        android:textColor="@color/text_weak"/>
+
+    <ImageView
+        android:id="@+id/set_msg_expiration_custom_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/set_msg_expiration_custom_text_view"
+        app:layout_constraintBottom_toBottomOf="@id/set_msg_expiration_custom_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/padding_l"
+        android:src="@drawable/ic_check"
+        app:tint="@color/interaction_norm"
+        android:contentDescription="@string/set_msg_expiration_check_description"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <ch.protonmail.android.ui.view.DaysAndHoursPickerView
+        android:id="@+id/set_msg_expiration_picker_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/set_msg_expiration_custom_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
