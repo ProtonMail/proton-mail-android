@@ -28,11 +28,12 @@ import androidx.annotation.VisibleForTesting
 import androidx.constraintlayout.widget.ConstraintLayout
 import ch.protonmail.android.databinding.ViewDaysAndHoursPickerBinding
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.receiveAsFlow
 import me.proton.core.presentation.ui.view.ProtonInput
 import me.proton.core.presentation.utils.onTextChange
 import kotlin.time.milliseconds
@@ -51,10 +52,13 @@ class DaysAndHoursPickerView @JvmOverloads constructor(
     private val daysInput: ProtonInput
     private val hoursInput: ProtonInput
 
-    private val changesBuffer = Channel<DaysHoursPair>(Channel.BUFFERED)
+    private val changesBuffer = MutableSharedFlow<DaysHoursPair>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
 
     val onChange: Flow<DaysHoursPair> =
-        changesBuffer.receiveAsFlow()
+        changesBuffer.asSharedFlow()
             .distinctUntilChanged()
             .debounce(50.milliseconds)
 
@@ -70,13 +74,13 @@ class DaysAndHoursPickerView @JvmOverloads constructor(
         daysInput.onTextChange { text ->
             val hours = hoursInput.text?.toString()?.toIntOrNull()
             if (normaliseDays(text) == HasChanged.False && hours != null) {
-                changesBuffer.offer(DaysHoursPair(text.toString().toInt(), hours))
+                changesBuffer.tryEmit(DaysHoursPair(text.toString().toInt(), hours))
             }
         }
         hoursInput.onTextChange { text ->
             val days = daysInput.text?.toString()?.toIntOrNull()
             if (normaliseHours(text) == HasChanged.False && days != null) {
-                changesBuffer.offer(DaysHoursPair(days, text.toString().toInt()))
+                changesBuffer.tryEmit(DaysHoursPair(days, text.toString().toInt()))
             }
         }
     }
