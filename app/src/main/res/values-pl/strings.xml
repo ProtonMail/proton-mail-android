@@ -399,24 +399,9 @@ zresetować hasło logowania, jeśli je zapomnisz.</string>
     <string name="log_out">Wylogować się z konta %s?</string>
     <string name="logout_question">Czy na pewno chcesz się wylogować?</string>
     <string name="logout_question_next_account">Zostaniesz przełączony na konto %s.</string>
-    <string name="upselling">Ulepsz konto/Wspomóż nas</string>
     <string name="upselling_title">ProtonMail jest darmowym i otwartym oprogramowaniem</string>
     <string name="upselling_subtitle">Potrzebujemy Twojego wsparcia, aby móc chronić prywatność i udoskonalać ProtonMaila</string>
-    <string name="upselling_donate_title">Wspomóż nas</string>
     <string name="upselling_upgrade_title">Ulepsz do planu ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Twoja darowizna pozwoli nam zwiększyć
-    przestrzeń dyskową oraz rozwijać ProtonMaila jako darmowe i otwarte oprogramowanie.
-    Tylko dzięki wsparciu społeczności, możemy w dalszym ciągu dostarczać ProtonMaila
-    ludziom na całym świecie.</string>
-    <string name="upgrade_donate">Ulepsz konto/Wspomóż nas</string>
-    <string name="upselling_donate_pick_amount">Wybierz kwotę darowizny lub wpisz dowolną kwotę</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">Wpisz kwotę darowizny</string>
-    <string name="donate">Wspomóż nas</string>
-    <string name="donate_paypal_bitcoin">Darowizna przez PayPal lub Bitcoin</string>
     <string name="upgrade_line1">Wszystko zawarte w naszym planie Free</string>
     <string name="upgrade_line2">5 GB przestrzeni dyskowej</string>
     <string name="upgrade_line3">Korzystaj z własnej domeny</string>
@@ -480,8 +465,6 @@ zresetować hasło logowania, jeśli je zapomnisz.</string>
     <string name="payment_picker_disclaimer">Wybierz typ płatności</string>
     <string name="payment_success_title">Zapłacono pomyślnie!</string>
     <string name="payment_success_text">Ulepszamy teraz Twoje konto, poczekaj chwilę. Dziękujemy za Twoje wsparcie!</string>
-    <string name="donation_success_title">Darowizna została przekazana!</string>
-    <string name="donation_success_text">Twoja pomoc jest niezbędna do funkcjonowania poczty ProtonMail. Dziękujemy za wsparcie prywatności w Internecie!</string>
     <string name="create_free_account">Utwórz darmowe konto</string>
     <string name="storage_gb">%d GB przestrzeni dyskowej</string>
     <string name="storage_mb">%d MB przestrzeni dyskowej</string>

@@ -378,25 +378,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="log_out">登出 %s？</string>
     <string name="logout_question">您確定要登出嗎？</string>
     <string name="logout_question_next_account">您將切換為 %s。</string>
-    <string name="upselling">升級／捐款</string>
     <string name="upselling_title">ProtonMail 免費自由，並開放原始碼</string>
     <string name="upselling_subtitle">我們需要您的支持，以繼續保護隱私並改進 ProtonMail</string>
-    <string name="upselling_donate_title">捐款</string>
     <string name="upselling_upgrade_title">升級至 ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">您的捐款可以協助我們成長，
-    並繼續開發免費自由且開放原始碼的 ProtonMail。
-    感謝社群的支持，我們才得以持續向世界各地的人們
-    提供 ProtonMail 服務。</string>
-    <string name="upgrade_donate">升級／捐款</string>
-    <string name="upselling_donate_pick_amount">選取捐款金額或輸入任何金額</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">輸入捐款金額</string>
-    <string name="donate">捐款</string>
-    <string name="donate_paypal_bitcoin">透過 PayPal 或比特幣捐款</string>
-    <string name="upgrade_line1">我們的免費方案包含的所有功能</string>
     <string name="upgrade_line2">5 GB 儲存空間</string>
     <string name="upgrade_line3">使用自訂域名</string>
     <string name="upgrade_line4">最多 5 個電子郵件別名</string>
@@ -462,8 +446,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_picker_disclaimer">請選擇付款類型</string>
     <string name="payment_success_title">付款成功！</string>
     <string name="payment_success_text">我們目前正在升級您的帳號，請稍候。感謝您的支持！</string>
-    <string name="donation_success_title">捐款成功！</string>
-    <string name="donation_success_text">您的支持是讓 ProtonMail 得以繼續運作的關鍵。感謝您對網路隱私的支持！</string>
     <string name="create_free_account">建立免費帳號</string>
     <string name="storage_gb">%d GB 儲存空間</string>
     <string name="storage_mb">%d MB 儲存空間</string>

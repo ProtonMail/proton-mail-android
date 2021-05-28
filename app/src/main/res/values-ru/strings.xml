@@ -399,24 +399,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="log_out">Выйти из %s?</string>
     <string name="logout_question">Вы уверены, что хотите выйти?</string>
     <string name="logout_question_next_account">Вы будете переключены на %s.</string>
-    <string name="upselling">Повысить/Пожертвовать</string>
     <string name="upselling_title">ProtonMail свободный и с открытым исходным кодом</string>
     <string name="upselling_subtitle">Нам нужна ваша поддержка для продолжения защиты конфиденциальности и развития ProtonMail</string>
-    <string name="upselling_donate_title">Пожертвовать</string>
     <string name="upselling_upgrade_title">Повысить до ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Ваше пожертвование поможет нам увеличить
-    вместимость и продолжать разработку ProtonMail как свободного ПО с открытым исходным кодом. Только благодаря
-    поддержке сообщества мы можем продолжать предоставлять доступ к ProtonMail людям со всего
-    мира.</string>
-    <string name="upgrade_donate">Повысить/Пожертвовать</string>
-    <string name="upselling_donate_pick_amount">Выберите размер пожертвования или введите любую сумму</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">Введите сумму пожертвования</string>
-    <string name="donate">Пожертвовать</string>
-    <string name="donate_paypal_bitcoin">Пожертвовать через PayPal или Bitcoin</string>
     <string name="upgrade_line1">Всё, что включено в наш Бесплатный тариф</string>
     <string name="upgrade_line2">5 ГБ хранилища</string>
     <string name="upgrade_line3">Используйте свой домен</string>
@@ -483,8 +468,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_picker_disclaimer">Пожалуйста, выберите тип оплаты</string>
     <string name="payment_success_title">Платёж выполнен успешно!</string>
     <string name="payment_success_text">Сейчас мы расширяем вашу учётную запись, подождите немного, пожалуйста. Благодарим вас за поддержку!</string>
-    <string name="donation_success_title">Пожертвование успешно!</string>
-    <string name="donation_success_text">Ваша поддержка крайне важна для продолжения работы ProtonMail. Благодарим за поддержку конфиденциальности в Интернете!</string>
     <string name="create_free_account">Создать бесплатную учётную запись</string>
     <string name="storage_gb">%d ГБ хранилища</string>
     <string name="storage_mb">%d МБ хранилища</string>
