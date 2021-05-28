@@ -385,24 +385,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="log_out">Skrá út %s?</string>
     <string name="logout_question">Ertu viss að þú viljir skrá þig út?</string>
     <string name="logout_question_next_account">Þér mun verða skipt yfir á %s.</string>
-    <string name="upselling">Uppfæra/Styrkja</string>
     <string name="upselling_title">ProtonMail er frjálst, ókeypis og með opinn grunnkóða</string>
     <string name="upselling_subtitle">Við þurfum stuðning þinn til halda áfram að verja friðhelgi fólks og að bæta ProtonMail</string>
-    <string name="upselling_donate_title">Styrkja</string>
     <string name="upselling_upgrade_title">Uppfæra í ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Styrkurinn frá þér mun hjálpa okkur að bæta við
-    nýjum eiginleikum og halda áfram þróun ProtonMail sem frjáls og opins hugbúnaðar.
-    Það er einungis með hjálp samfélagsins sem við getum haldið áfram að bjóða ProtonMail
-    til fólks um víða veröld.</string>
-    <string name="upgrade_donate">Uppfæra/Styrkja</string>
-    <string name="upselling_donate_pick_amount">Veldu upphæð styrks eða settu inn einhverja upphæð</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">Settu inn upphæð styrks</string>
-    <string name="donate">Styrkja</string>
-    <string name="donate_paypal_bitcoin">Styrkja með PayPal eða Bitcoin</string>
     <string name="upgrade_line1">Allt sem er innifalið í ókeypis áskriftarleiðinni</string>
     <string name="upgrade_line2">5 GB geymslurými</string>
     <string name="upgrade_line3">Notaðu þitt eigið lén</string>
@@ -470,8 +455,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_picker_disclaimer">Veldu gerð greiðslu</string>
     <string name="payment_success_title">Greiðsla tókst!</string>
     <string name="payment_success_text">Við erum að uppfæra aðganginn þinn, hinkraðu aðeins. Þakka þér fyrir stuðninginn!</string>
-    <string name="donation_success_title">Greiðsla styrks tókst!</string>
-    <string name="donation_success_text">Stuðningur þinn er undirstaða áframhaldandi þróunar ProtonMail. Þakka þér kærlega fyrir að styðja gagnaleynd á netinu!</string>
     <string name="create_free_account">Búa til ókeypis notandaaðgang</string>
     <string name="storage_gb">%d GB geymslurými</string>
     <string name="storage_mb">%d MB geymslurými</string>

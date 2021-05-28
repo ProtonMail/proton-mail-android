@@ -401,11 +401,6 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
     }
 
     @Override
-    public void donateForPaymentToken(int amount, Constants.CurrencyType currency, String paymentToken) {
-        // noop
-    }
-
-    @Override
     public Constants.CurrencyType getCurrency() {
         return currency;
     }
@@ -497,11 +492,6 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
         fragmentTransaction.replace(R.id.fragmentContainer, fragment);
         fragmentTransaction.addToBackStack(backstackName);
         fragmentTransaction.commitAllowingStateLoss();
-    }
-
-    @Override
-    public void donateDone() {
-        // noop
     }
 
     @Override

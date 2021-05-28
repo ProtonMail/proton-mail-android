@@ -392,24 +392,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="log_out">Odjavi %s?</string>
     <string name="logout_question">Jesi li siguran da se želiš odjaviti?</string>
     <string name="logout_question_next_account">Biti će te prebačeni na %s.</string>
-    <string name="upselling">Nadogradite/Donirajte</string>
     <string name="upselling_title">ProtonMail je besplatan i otvorenog kôda</string>
     <string name="upselling_subtitle">Potrebna nam je vaša podrška kako bismo nastavili štititi privatnost i poboljšavali ProtonMail</string>
-    <string name="upselling_donate_title">Donirajte</string>
     <string name="upselling_upgrade_title">Nadogradite na ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Vaša donacija će nam pomoći 
-    u povećanju kapaciteta i nastavku razvoja ProtonMaila kao besplatni softver otvorenog koda. Samo uz 
-    podršku zajednice možemo nastaviti pružati ProtonMail ljudima 
-    širom svijeta.</string>
-    <string name="upgrade_donate">Nadogradite/Donirajte</string>
-    <string name="upselling_donate_pick_amount">Odaberite iznos donacije ili unesite bilo koji iznos</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">Unesite iznos donacije</string>
-    <string name="donate">Donirajte</string>
-    <string name="donate_paypal_bitcoin">Donirajte putem PayPala ili Bitcoina</string>
     <string name="upgrade_line1">Sve uključeno u naš Free plan</string>
     <string name="upgrade_line2">5 GB prostora za pohranu</string>
     <string name="upgrade_line3">Koristite vlastitu domenu</string>
@@ -476,8 +461,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_picker_disclaimer">Odaberite način plaćanja</string>
     <string name="payment_success_title">Plaćanje je uspješno!</string>
     <string name="payment_success_text">Sada nadograđujemo vaš račun, pričekajte trenutak. Hvala na podršci!</string>
-    <string name="donation_success_title">Donacija je uspješna!</string>
-    <string name="donation_success_text">Vaša podrška je neophodna za održavanje ProtonMaila. Hvala na podržavanju internetske privatnosti!</string>
     <string name="create_free_account">Izrada besplatnog računa</string>
     <string name="storage_gb">%d GB prostora za pohranu</string>
     <string name="storage_mb">%d MB prostora za pohranu</string>

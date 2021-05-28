@@ -200,11 +200,6 @@ public class CreateAccountFeedbackActivity extends BaseActivity implements
     }
 
     @Override
-    public void donateForPaymentToken(int amount, Constants.CurrencyType currency, String paymentToken) {
-        // noop
-    }
-
-    @Override
     public Constants.CurrencyType getCurrency() {
         return null;
     }
@@ -252,11 +247,6 @@ public class CreateAccountFeedbackActivity extends BaseActivity implements
 
     @Override
     public void replaceFragment(Fragment fragment, String backstackName) {
-        // noop
-    }
-
-    @Override
-    public void donateDone() {
         // noop
     }
 

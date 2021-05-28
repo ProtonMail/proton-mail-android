@@ -36,7 +36,6 @@ import ch.protonmail.android.api.models.CreateSubscriptionBody
 import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
 import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.DirectEnabledResponse
-import ch.protonmail.android.api.models.DonateBody
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.GetPaymentTokenResponse
 import ch.protonmail.android.api.models.GetSubscriptionResponse
@@ -362,8 +361,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse =
         api.checkSubscription(body)
-
-    override fun donate(body: DonateBody): ResponseBody? = api.donate(body)
 
     override suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse =
         api.createUpdateSubscription(body)

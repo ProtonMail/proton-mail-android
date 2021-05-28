@@ -420,7 +420,7 @@ abstract class NavigationActivity :
             if (hasPin) {
                 add(Primary.Static(Type.LOCK, R.string.lock_the_app, R.drawable.notification_icon))
             }
-            add(Primary.Static(Type.UPSELLING, R.string.upselling, R.drawable.cubes))
+            add(Primary.Static(Type.UPSELLING, R.string.upgrade, R.drawable.cubes))
             add(Primary.Static(Type.SIGNOUT, R.string.logout, R.drawable.signout))
         }.toList()
     }

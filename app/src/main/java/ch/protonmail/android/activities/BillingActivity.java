@@ -44,7 +44,6 @@ import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.jobs.CheckUsernameAvailableJob;
-import ch.protonmail.android.jobs.DonateJob;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
@@ -263,12 +262,6 @@ public class BillingActivity extends BaseActivity implements
     }
 
     @Override
-    public void donateForPaymentToken(int amount, Constants.CurrencyType currency, String paymentToken) {
-        DonateJob job = new DonateJob(paymentToken, amount, currency);
-        mJobManager.addJobInBackground(job);
-    }
-
-    @Override
     public Constants.CurrencyType getCurrency() {
         return currency;
     }
@@ -328,15 +321,6 @@ public class BillingActivity extends BaseActivity implements
     @Override
     public void replaceFragment(Fragment fragment, String backstackName) {
         // noop
-    }
-
-    @Override
-    public void donateDone() {
-        Intent intent = new Intent();
-        intent.putExtra(EXTRA_SUCCESS, true);
-        setResult(RESULT_OK, intent);
-        saveLastInteraction();
-        finish();
     }
 
     @Override
