@@ -174,15 +174,14 @@ internal class MessageDetailsViewModel @Inject constructor(
     var renderingPassed = false
     var hasEmbeddedImages: Boolean = false
     private var fetchingPubKeys: Boolean = false
-    private var _embeddedImagesAttachments: ArrayList<Attachment> = ArrayList()
-    private var _embeddedImagesToFetch: ArrayList<EmbeddedImage> = ArrayList()
+    private var embeddedImagesAttachments: ArrayList<Attachment> = ArrayList()
+    private var embeddedImagesToFetch: ArrayList<EmbeddedImage> = ArrayList()
     private var remoteContentDisplayed: Boolean = false
 
     var renderedFromCache = AtomicBoolean(false)
 
     var refreshedKeys: Boolean = true
 
-    private val _downloadEmbeddedImagesResult: MutableLiveData<String> = MutableLiveData()
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
     private val _decryptedMessageLiveData: MutableLiveData<ConversationUiModel> = MutableLiveData()
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
@@ -221,9 +220,6 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     val messageDetailsError: LiveData<Event<String>>
         get() = _messageDetailsError
-
-    val downloadEmbeddedImagesResult: LiveData<String>
-        get() = _downloadEmbeddedImagesResult
 
     val prepareEditMessageIntent: LiveData<Event<IntentExtrasData>>
         get() = _prepareEditMessageIntentResult
@@ -378,7 +374,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
             val lastMessageId = lastMessage()?.messageId ?: return@launch
             val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(lastMessageId)
-            val embeddedImages = _embeddedImagesAttachments.mapNotNull {
+            val embeddedImages = embeddedImagesAttachments.mapNotNull {
                 attachmentsHelper.fromAttachmentToEmbeddedImage(
                     it, lastMessage()?.embeddedImageIds?.toList().orEmpty()
                 )
@@ -408,14 +404,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun onEmbeddedImagesDownloaded(event: DownloadEmbeddedImagesEvent) {
         Timber.v("onEmbeddedImagesDownloaded status: ${event.status} images size: ${event.images.size}")
-        if (bodyString.isNullOrEmpty()) {
-            _downloadEmbeddedImagesResult.value = bodyString ?: ""
-            return
-        }
-
-        if (event.status == Status.SUCCESS) {
-            messageRenderer.images.offer(event.images)
-        }
+        messageRenderer.images.offer(event.images)
     }
 
 
@@ -437,7 +426,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 mBigContentHolder,
                 areImagesDisplayed,
                 remoteContentDisplayed,
-                _embeddedImagesAttachments,
+                embeddedImagesAttachments,
                 dispatchers.Io
             )
             _prepareEditMessageIntentResult.value = Event(intent)
@@ -551,13 +540,13 @@ internal class MessageDetailsViewModel @Inject constructor(
                 embeddedImagesAttachments.add(attachment)
             }
 
-            this._embeddedImagesToFetch = embeddedImagesToFetch
-            this._embeddedImagesAttachments = embeddedImagesAttachments
+        this.embeddedImagesToFetch = embeddedImagesToFetch
+        this.embeddedImagesAttachments = embeddedImagesAttachments
 
-            if (embeddedImagesToFetch.isNotEmpty()) {
-                hasEmbeddedImages = true
-            }
+        if (embeddedImagesToFetch.isNotEmpty()) {
+            hasEmbeddedImages = true
         }
+
         return hasEmbeddedImages
     }
 

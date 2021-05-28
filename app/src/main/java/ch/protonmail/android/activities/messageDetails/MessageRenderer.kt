@@ -23,6 +23,7 @@ package ch.protonmail.android.activities.messageDetails
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import ch.protonmail.android.details.presentation.model.RenderedMessage
 import ch.protonmail.android.di.AttachmentsDirectory
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.utils.extensions.forEachAsync
@@ -88,7 +89,7 @@ internal class MessageRenderer(
     }
 
     /** A [Channel] that will emits message body [String] with inlined images */
-    val renderedBody = Channel<String>()
+    val renderedMessage = Channel<RenderedMessage>()
 
     /** [List] for keep track of ids of the already inlined images across the threads */
     private val inlinedImageIds = mutableListOf<String>()
@@ -188,14 +189,18 @@ internal class MessageRenderer(
                 document.findImageElements(contentId)
                     ?.attr("src", "data:$contentType;$encoding,$image64")
             }
-            documentStringifier.send(Unit) // Deliver after all the elements for now
+
+            // Extract the message ID for which embedded images are being loaded
+            // to pass it back to the caller along with the rendered body
+            val messageId = imageStrings.firstOrNull()?.first?.messageId ?: continue
+            documentStringifier.send(messageId)
         }
     }
 
     /** Actor that will stringify the [document] */
-    private val documentStringifier = actor<Unit> {
-        for (unit in channel)
-            renderedBody.send(document.toString())
+    private val documentStringifier = actor<String> {
+        for (messageId in channel)
+            renderedMessage.send(RenderedMessage(messageId, document.toString()))
     }
 
     /** `CoroutineContext` for [idsListUpdater] for update [inlinedImageIds] of a single thread */

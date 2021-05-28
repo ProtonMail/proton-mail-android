@@ -213,7 +213,6 @@ data class Message @JvmOverloads constructor(
 
     @Ignore
     var decryptedHTML: String? = null
-        private set
 
     @Ignore
     var decryptedBody: String? = null

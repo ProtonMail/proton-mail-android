@@ -83,13 +83,13 @@ internal class MessageRendererTest : CoroutinesTest {
 
             with(renderer) {
                 launch(Unconfined) {
-                    renderedBody.consumeEach(consumer)
+                    renderedMessage.consumeEach(consumer)
                 }
                 repeat(count) {
                     images.offer(mockEmbeddedImages)
                 }
                 advanceUntilIdle()
-                renderedBody.close()
+                renderedMessage.close()
                 scope.cancel()
             }
 
@@ -111,14 +111,14 @@ internal class MessageRendererTest : CoroutinesTest {
 
             with(renderer) {
                 launch(Unconfined) {
-                    renderedBody.consumeEach(consumer)
+                    renderedMessage.consumeEach(consumer)
                 }
                 repeat(count) {
                     images.offer(mockEmbeddedImages)
                     advanceTimeBy(expectedDebounceTime)
                 }
                 advanceUntilIdle()
-                renderedBody.close()
+                renderedMessage.close()
                 scope.cancel()
             }
 

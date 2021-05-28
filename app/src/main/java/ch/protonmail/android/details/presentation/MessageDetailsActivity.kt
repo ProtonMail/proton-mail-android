@@ -383,32 +383,20 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         finish()
     }
 
-    // TODO should be moved inside view model
     @Subscribe
     @Suppress("unused")
     fun onDownloadEmbeddedImagesEvent(event: DownloadEmbeddedImagesEvent) {
         when (event.status) {
             Status.SUCCESS -> {
-                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
-                viewModel.downloadEmbeddedImagesResult.observe(this) { content ->
-                    Timber.v("downloadEmbeddedImagesResult content size: ${content.length}")
-                    if (content.isNullOrEmpty()) {
-                        return@observe
-                    }
-                }
-
                 viewModel.onEmbeddedImagesDownloaded(event)
             }
             Status.NO_NETWORK -> {
-                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.VISIBLE)
                 showToast(R.string.load_embedded_images_failed_no_network)
             }
             Status.FAILED -> {
-                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.VISIBLE)
                 showToast(R.string.load_embedded_images_failed)
             }
             Status.STARTED -> {
-                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
                 viewModel.hasEmbeddedImages = false
             }
             Status.UNAUTHORIZED -> {
