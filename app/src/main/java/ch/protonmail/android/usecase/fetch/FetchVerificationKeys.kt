@@ -58,7 +58,7 @@ class FetchVerificationKeys @Inject constructor(
             return@withContext publicKeys
         }
 
-        val contactEmail = contactDao.findContactEmailByEmail(email)
+        val contactEmail = contactDao.findContactEmailByEmailBlocking(email)
         contactEmail?.contactId?.let {
 
             return@withContext runCatching {

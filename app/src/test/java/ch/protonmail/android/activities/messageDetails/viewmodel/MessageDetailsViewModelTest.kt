@@ -80,7 +80,11 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private val labelRepository: LabelRepository = mockk(relaxed = true)
 
-    private val contactsRepository: ContactsRepository = mockk(relaxed = true)
+    private val contactsRepository: ContactsRepository = mockk(relaxed = true) {
+        coEvery { findContactEmailByEmail(any()) } returns ContactEmail(
+            "defaultMockContactEmailId", "defaultMockContactEmailAddress", "defaultMockContactName"
+        )
+    }
 
     private val attachmentsHelper: AttachmentsHelper = mockk(relaxed = true)
 

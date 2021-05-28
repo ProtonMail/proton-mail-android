@@ -625,7 +625,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             this@MessageDetailsActivity.lifecycleScope.launch {
                 val showAttachmentsDelay = 200L
                 delay(showAttachmentsDelay)
-                showMessageAttachments(message.Attachments)
+                showMessageAttachments(message.attachments)
             }
         }
     }

@@ -22,8 +22,6 @@ import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.ContactEmail
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -37,14 +35,9 @@ class ContactsRepository @Inject constructor(
         databaseProvider.provideContactDao(userManager.requireCurrentUserId())
     }
 
-    fun findContactEmailByEmail(email: String): ContactEmail? =
+    suspend fun findContactEmailByEmail(email: String): ContactEmail? =
         contactDao.findContactEmailByEmail(email)
 
     fun findAllContactEmails(): Flow<List<ContactEmail>> = contactDao.findAllContactsEmails()
-
-    fun findAllContactEmailsBlocking(): List<ContactEmail> =
-        runBlocking {
-            findAllContactEmails().first()
-        }
 
 }
