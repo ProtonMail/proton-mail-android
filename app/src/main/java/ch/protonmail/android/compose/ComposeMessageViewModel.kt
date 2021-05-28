@@ -50,6 +50,7 @@ import ch.protonmail.android.attachments.domain.usecase.ImportAttachmentsToCache
 import ch.protonmail.android.bl.HtmlProcessor
 import ch.protonmail.android.compose.presentation.mapper.ComposerAttachmentUiModelMapper
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel
+import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
@@ -62,6 +63,7 @@ import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.feature.account.allLoggedInBlocking
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
+import ch.protonmail.android.ui.view.DaysHoursPair
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
@@ -100,6 +102,10 @@ import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 import kotlin.collections.set
+import kotlin.math.roundToInt
+import kotlin.time.days
+import kotlin.time.hours
+import kotlin.time.seconds
 
 const val NEW_LINE = "<br>"
 const val LESS_THAN = "&lt;"
@@ -854,23 +860,6 @@ class ComposeMessageViewModel @Inject constructor(
             .build()
     }
 
-    fun setMessagePassword(
-        messagePassword: String?,
-        passwordHint: String?,
-        isPasswordValid: Boolean,
-        expiresIn: Long?,
-        isRespondInlineButtonVisible: Boolean
-    ) {
-        _messageDataResult = MessageBuilderData.Builder()
-            .fromOld(_messageDataResult)
-            .messagePassword(messagePassword)
-            .passwordHint(passwordHint)
-            .isPasswordValid(isPasswordValid)
-            .expirationTime(expiresIn)
-            .isRespondInlineButtonVisible(isRespondInlineButtonVisible)
-            .build()
-    }
-
     fun setRespondInline(respondInline: Boolean) {
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)
@@ -1276,6 +1265,59 @@ class ComposeMessageViewModel @Inject constructor(
         }
         importAttachmentsFromLoadedMessage(localAttachments)
     }
+
+    // region password
+    fun requestCurrentPasswordForUpdate() {
+        viewModelScope.launch {
+            val currentPassword = messageDataResult.messagePassword
+            val currentHint = messageDataResult.passwordHint
+            val uiModel = MessagePasswordUiModel.from(currentPassword, currentHint)
+            _events.send(ComposeMessageEventUiModel.OnPasswordChangeRequest(uiModel))
+        }
+    }
+
+    fun setPassword(password: MessagePasswordUiModel) {
+        viewModelScope.launch {
+            val (newPassword, newHint) = when (password) {
+                is MessagePasswordUiModel.Set -> password.password to password.hint
+                MessagePasswordUiModel.Unset -> null to null
+            }
+            _messageDataResult = MessageBuilderData.Builder()
+                .fromOld(_messageDataResult)
+                .messagePassword(newPassword)
+                .passwordHint(newHint)
+                .build()
+            _events.send(ComposeMessageEventUiModel.OnPasswordChange(newPassword != null))
+        }
+    }
+    // endregion
+
+    // region expiration
+    fun requestCurrentExpirationForUpdate() {
+        viewModelScope.launch {
+            val currentExpiration = (messageDataResult.expirationTime ?: 0).seconds
+            val days = currentExpiration.inDays
+            val hours = (currentExpiration - days.days).inHours
+            val uiModel = DaysHoursPair(
+                days = days.roundToInt(),
+                hours = hours.roundToInt()
+            )
+            _events.send(ComposeMessageEventUiModel.OnExpirationChangeRequest(uiModel))
+        }
+    }
+
+    fun setExpiration(expiration: DaysHoursPair) {
+        viewModelScope.launch {
+            val newExpiration = expiration.days.days + expiration.hours.hours
+            val newExpirationInSeconds = newExpiration.inSeconds.toLong().takeIf { it > 0 }
+            _messageDataResult = MessageBuilderData.Builder()
+                .fromOld(_messageDataResult)
+                .expirationTime(newExpirationInSeconds)
+                .build()
+            _events.send(ComposeMessageEventUiModel.OnExpirationChange(hasExpiration = newExpirationInSeconds != null))
+        }
+    }
+    // endregion
 
     // region attachments
     fun requestNewPhotoUri() {

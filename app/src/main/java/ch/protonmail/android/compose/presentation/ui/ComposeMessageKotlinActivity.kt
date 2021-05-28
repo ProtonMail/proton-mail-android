@@ -31,7 +31,9 @@ import ch.protonmail.android.attachments.domain.model.UriPair
 import ch.protonmail.android.attachments.presentation.model.FilePickerMask
 import ch.protonmail.android.compose.ComposeMessageViewModel
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnAttachmentsChange
+import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnExpirationChange
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnExpirationChangeRequest
+import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPasswordChange
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPasswordChangeRequest
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPhotoUriReady
 import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel
@@ -58,15 +60,15 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
     // region activity results
     // region password
     private val setPasswordLauncher =
-        registerForActivityResult(SetMessagePasswordActivity.ResultContract()) { messagePassword ->
-            // TODO set message password
+        registerForActivityResult(SetMessagePasswordActivity.ResultContract()) {
+            composeViewModel.setPassword(it)
         }
     // endregion
 
     // region expiration
     private val setExpirationLauncher =
-        registerForActivityResult(SetMessageExpirationActivity.ResultContract()) { daysHoursPair ->
-            // TODO set message expiration
+        registerForActivityResult(SetMessageExpirationActivity.ResultContract()) {
+            composeViewModel.setExpiration(it)
         }
     // endregion
 
@@ -100,10 +102,10 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
         // region setup UI
         binding.composerBottomAppBar.apply {
             onPasswordClick {
-                // TODO ask current expiration to ViewModel
+                composeViewModel.requestCurrentPasswordForUpdate()
             }
             onExpirationClick {
-                // TODO ask current expiration to ViewModel
+                composeViewModel.requestCurrentExpirationForUpdate()
             }
             onAttachmentsClick {
                 UiUtil.hideKeyboard(this@ComposeMessageKotlinActivity)
@@ -116,8 +118,10 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
             .onEach { event ->
                 when (event) {
                     is OnAttachmentsChange -> onAttachmentsChanged(event.attachments)
-                    is OnPasswordChangeRequest -> openSetPassword(event.currentPassword)
+                    is OnExpirationChange -> binding.composerBottomAppBar.setHasExpiration(event.hasExpiration)
                     is OnExpirationChangeRequest -> openSetExpiration(event.currentExpiration)
+                    is OnPasswordChange -> binding.composerBottomAppBar.setHasPassword(event.hasPassword)
+                    is OnPasswordChangeRequest -> openSetPassword(event.currentPassword)
                     is OnPhotoUriReady -> takePhotoFromCamera(event.uri)
                 }
             }.launchIn(lifecycleScope)

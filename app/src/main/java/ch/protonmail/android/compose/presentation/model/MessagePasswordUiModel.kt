@@ -27,4 +27,11 @@ sealed class MessagePasswordUiModel {
     ) : MessagePasswordUiModel()
 
     object Unset : MessagePasswordUiModel()
+
+    companion object {
+
+        fun from(password: String?, hint: String?): MessagePasswordUiModel =
+            if (!password.isNullOrBlank()) Set(password, hint)
+            else Unset
+    }
 }

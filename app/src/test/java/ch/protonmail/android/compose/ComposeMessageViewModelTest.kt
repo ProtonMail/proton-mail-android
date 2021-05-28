@@ -24,6 +24,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
+import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
@@ -363,7 +364,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             // Given
             val message = Message()
             givenViewModelPropertiesAreInitialised()
-            viewModel.setMessagePassword("messagePassword", "a hint to discover it", true, 172800L, false)
+            viewModel.setPassword(MessagePasswordUiModel.from("messagePassword", "a hint to discover it"))
             every { workManager.cancelUniqueWork(any()) } returns mockk()
 
             // When

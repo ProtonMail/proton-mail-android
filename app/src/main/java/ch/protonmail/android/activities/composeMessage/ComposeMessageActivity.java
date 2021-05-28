@@ -154,7 +154,6 @@ import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
 import ch.protonmail.android.views.PMWebViewClient;
 import dagger.hilt.android.AndroidEntryPoint;
-import kotlin.Unit;
 import me.proton.core.accountmanager.domain.AccountManager;
 import timber.log.Timber;
 
@@ -278,14 +277,6 @@ public class ComposeMessageActivity
         });
         toRecipientView.setOnClickListener((View view) -> {
             toRecipientView.requestFocus();
-        });
-        bottomAppBar.onPasswordClick(() -> {
-            // TODO
-            return Unit.INSTANCE;
-        });
-        bottomAppBar.onExpirationClick(() -> {
-            // TODO mMessageExpirationView.show();
-            return Unit.INSTANCE;
         });
         // endregion
 
@@ -1927,7 +1918,6 @@ public class ComposeMessageActivity
             } else if (composeMessageViewModel.getActionType() == UserAction.FINISH_EDIT) {
                 mSendingInProgress = true;
                 //region prepare sending message
-                // TODO composeMessageViewModel.setMessagePassword(mSetMessagePasswordButton.getMessagePassword(), mSetMessagePasswordButton.getPasswordHint(), mSetMessagePasswordButton.isValid(), mMessageExpirationView.getExpirationTime(), respondInlineButton.getVisibility() == View.VISIBLE);
                 if (!composeMessageViewModel.getMessageDataResult().isPasswordValid()) {
                     TextExtensions.showToast(ComposeMessageActivity.this, R.string.eo_password_not_completed, Toast.LENGTH_LONG, Gravity.CENTER);
                     return;

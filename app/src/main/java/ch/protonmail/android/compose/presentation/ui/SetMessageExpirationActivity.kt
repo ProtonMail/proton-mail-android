@@ -102,10 +102,11 @@ class SetMessageExpirationActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.set_msg_expiration_set) {
-            return setResultAndFinish()
+        return when (item.itemId) {
+            R.id.set_msg_expiration_set -> setResultAndFinish()
+            android.R.id.home -> cancelResultAndFinish()
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun setResultAndFinish(): Boolean {
@@ -114,6 +115,11 @@ class SetMessageExpirationActivity : AppCompatActivity() {
             .putExtra(ARG_SET_MESSAGE_EXPIRATION_DAYS, expiration.days)
             .putExtra(ARG_SET_MESSAGE_EXPIRATION_HOURS, expiration.hours)
         setResult(Activity.RESULT_OK, resultIntent)
+        finish()
+        return true
+    }
+
+    private fun cancelResultAndFinish(): Boolean {
         finish()
         return true
     }

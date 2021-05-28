@@ -43,7 +43,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1"
-        app:icon="@drawable/ic_lock_wide"
+        app:checkableButtonIcon="@drawable/ic_lock_wide"
         app:layout_constraintStart_toStartOf="@id/composer_bottom_bar_start_guideline"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
@@ -53,7 +53,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1"
-        app:icon="@drawable/ic_hourglass"
+        app:checkableButtonIcon="@drawable/ic_hourglass"
         app:layout_constraintStart_toEndOf="@id/composer_password_button"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

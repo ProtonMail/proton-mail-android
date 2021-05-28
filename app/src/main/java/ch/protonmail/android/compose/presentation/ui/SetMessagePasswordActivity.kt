@@ -23,6 +23,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.viewModels
 import androidx.annotation.VisibleForTesting
@@ -88,8 +89,16 @@ class SetMessagePasswordActivity : AppCompatActivity() {
             .launchIn(lifecycleScope)
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> cancelResultAndFinish()
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun cancelResultAndFinish(): Boolean {
+        finish()
+        return true
     }
 
     private fun updateUi(model: SetMessagePasswordUiModel) {
