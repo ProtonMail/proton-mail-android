@@ -22,7 +22,6 @@ import ch.protonmail.android.api.models.CheckSubscriptionBody
 import ch.protonmail.android.api.models.CheckSubscriptionResponse
 import ch.protonmail.android.api.models.CreateSubscriptionBody
 import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
-import ch.protonmail.android.api.models.DonateBody
 import ch.protonmail.android.api.models.GetSubscriptionResponse
 import ch.protonmail.android.api.models.PaymentMethodResponse
 import ch.protonmail.android.api.models.PaymentMethodsResponse
@@ -58,10 +57,6 @@ interface PaymentService {
     @POST("payments/subscription")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun createUpdateSubscription(@Body body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse
-
-    @POST("payments/donate")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun donate(@Body body: DonateBody): Call<ResponseBody>
 
     @POST("payments/subscription/check")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

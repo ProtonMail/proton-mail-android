@@ -644,7 +644,7 @@ style:
     maxJumpCount: 2
   MagicNumber:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**', '**/*.kts']
     ignoreNumbers: ['-1', '0', '1', '2']
     ignoreHashCodeFunction: true
     ignorePropertyDeclaration: true

@@ -78,7 +78,6 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.CreateUserEvent;
-import ch.protonmail.android.events.DonateEvent;
 import ch.protonmail.android.events.KeysSetupEvent;
 import ch.protonmail.android.events.LoginEvent;
 import ch.protonmail.android.events.LoginInfoEvent;
@@ -332,13 +331,9 @@ public class BillingFragment extends CreateAccountBaseFragment {
 
     private void showSuccessPage() {
 
-        if (billingType == Constants.BillingType.DONATE) {
-            paymentSuccessTitle.setText(R.string.donation_success_title);
-            paymentSuccessText.setText(R.string.donation_success_text);
-        } else {
-            paymentSuccessTitle.setText(R.string.payment_success_title);
-            paymentSuccessText.setText(R.string.payment_success_text);
-        }
+        paymentSuccessTitle.setText(R.string.payment_success_title);
+        paymentSuccessText.setText(R.string.payment_success_text);
+
 
         mProgressContainer.setVisibility(View.GONE);
         mInputFormLayout.setVisibility(View.GONE);
@@ -428,7 +423,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
     public void onSubmitPaymentMethodClicked() { // on screen with saved payment methods spinner
         int selectedPosition = mPaymentMethodsSpinner.getSelectedItemPosition();
         PaymentMethod paymentMethod = mPaymentMethods.get(selectedPosition);
-        if (billingType == Constants.BillingType.UPGRADE || billingType == Constants.BillingType.DONATE) {
+        if (billingType == Constants.BillingType.UPGRADE) {
             mProgressContainer.setVisibility(View.VISIBLE);
             viewModel.createPaymentTokenFromPaymentMethodId(amount, currency, paymentMethod.getId()).observe(this, createPaymentTokenResponse -> {
                 handleCreatePaymentTokenResponse(createPaymentTokenResponse, paymentMethod.getCardDetails().getPayer() == null ? PAYMENT_TYPE_CARD : PAYMENT_TYPE_PAYPAL);
@@ -539,10 +534,6 @@ public class BillingFragment extends CreateAccountBaseFragment {
                         break;
                     case UPGRADE:
                         viewModel.createSubscriptionForPaymentToken(token, amount, currency, planIds, cycle, couponCode);
-                        break;
-                    case DONATE:
-                        mListener.donateForPaymentToken(amount, currency, token);
-                        mProgressContainer.setVisibility(View.VISIBLE);
                         break;
                 }
                 break;
@@ -671,17 +662,6 @@ public class BillingFragment extends CreateAccountBaseFragment {
         }
     }
 
-    @Subscribe
-    public void onDonateEvent(DonateEvent event) {
-        if (event.getStatus() == Status.SUCCESS) {
-            showSuccessPage();
-            new Handler().postDelayed(() -> mListener.donateDone(), PAYMENT_SUCCESS_PAGE_TIMEOUT);
-        } else {
-            mProgressContainer.setVisibility(View.GONE);
-            showPaymentError(event.getError(), event.getErrorDescription());
-        }
-    }
-
     private void clearFields() {
         creditCardNameEditText.setText("");
         creditCardNumberEditText.setText("");
@@ -704,7 +684,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         View dialogView;
         if (billingType == Constants.BillingType.CREATE) {
             dialogView = inflater.inflate(R.layout.layout_payment_error_create_account, null);
-        } else if (billingType == Constants.BillingType.UPGRADE || billingType == Constants.BillingType.DONATE) {
+        } else if (billingType == Constants.BillingType.UPGRADE) {
             dialogView = inflater.inflate(R.layout.layout_payment_error_upgrade, null);
         } else {
             return;

@@ -20,20 +20,16 @@ package ch.protonmail.android.activities;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.ViewModelProvider;
@@ -73,37 +69,20 @@ import timber.log.Timber;
 public class UpsellingActivity extends BaseActivity {
 
     public static final String EXTRA_OPEN_UPGRADE_CONTAINER = "EXTRA_OPEN_UPGRADE";
-    private static final int REQUEST_CODE_DONATE = 1;
     private static final int REQUEST_CODE_UPGRADE = 2;
 
     @BindView(R.id.upgrade_container)
     View upgradeContainer;
-    @BindView(R.id.donate_container)
-    View donateContainer;
     @BindView(R.id.main_container)
     View mainContainer;
     @BindView(R.id.expand_upgrade)
     View upgradeExpand;
     @BindView(R.id.contract_upgrade)
     View upgradeContract;
-    @BindView(R.id.expand_donate)
-    View donateExpand;
-    @BindView(R.id.contract_donate)
-    View donateContract;
     @BindView(R.id.upgrade_header_title)
     TextView upgradeHeaderTitle;
-    @BindView(R.id.amount_5)
-    Button btnAmount5;
-    @BindView(R.id.amount_15)
-    Button btnAmount15;
-    @BindView(R.id.amount_50)
-    Button btnAmount50;
-    @BindView(R.id.amount_100)
-    Button btnAmount100;
     @BindView(R.id.upgrade_header)
     View upgradeHeader;
-    @BindView(R.id.custom_amount)
-    EditText donateCustomAmountEditText;
     @BindView(R.id.upselling_progress_container)
     View upsellingProgress;
     @BindView(R.id.billing_info)
@@ -116,20 +95,7 @@ public class UpsellingActivity extends BaseActivity {
     private UpsellingViewModel viewModel;
 
     private State upgradeContainerState;
-    private State donateContainerState;
 
-    private int donationAmount;
-    private int donationAmountPosition;
-    View.OnTouchListener pressListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            resetAmountButtonsState();
-            v.setPressed(!v.isPressed());
-            donationAmount = getPresetChosenAmount();
-            donateCustomAmountEditText.setText(String.valueOf(donationAmount));
-            return true;
-        }
-    };
     private double selectedAnnualMonthlyPrice;
     private double selectedMonthlyPrice;
     private int fullAnnualMonthlyPriceCents;
@@ -154,14 +120,6 @@ public class UpsellingActivity extends BaseActivity {
         viewModel = new ViewModelProvider(this).get(UpsellingViewModel.class);
         boolean openUpgrade = getIntent().getBooleanExtra(EXTRA_OPEN_UPGRADE_CONTAINER, false);
         fetchPlan(Constants.CurrencyType.EUR);
-        donateContainerState = State.CLOSED;
-        btnAmount5.setOnTouchListener(pressListener);
-        btnAmount15.setOnTouchListener(pressListener);
-        btnAmount50.setOnTouchListener(pressListener);
-        btnAmount100.setOnTouchListener(pressListener);
-        btnAmount15.setPressed(true);
-        donationAmountPosition = 1;
-        donationAmount = getPresetChosenAmount();
         User user = mUserManager.getUser();
         Organization organization = ProtonMailApplication.getApplication().getOrganization();
         if (user != null && organization != null) {
@@ -220,8 +178,6 @@ public class UpsellingActivity extends BaseActivity {
         if (upsellingProgress != null) {
             upsellingProgress.setVisibility(View.GONE);
         }
-        resetAmountButtonsState();
-        setPressedByPosition();
     }
 
     @Override
@@ -234,25 +190,6 @@ public class UpsellingActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         ProtonMailApplication.getApplication().getBus().unregister(this);
-    }
-
-    private void setPressedByPosition() {
-        if (donationAmountPosition == 0) {
-            btnAmount5.setPressed(true);
-        } else if (donationAmountPosition == 1) {
-            btnAmount15.setPressed(true);
-        } else if (donationAmountPosition == 2) {
-            btnAmount50.setPressed(true);
-        } else if (donationAmountPosition == 3) {
-            btnAmount100.setPressed(true);
-        }
-    }
-
-    private void resetAmountButtonsState() {
-        btnAmount5.setPressed(false);
-        btnAmount15.setPressed(false);
-        btnAmount50.setPressed(false);
-        btnAmount100.setPressed(false);
     }
 
     @Override
@@ -272,35 +209,10 @@ public class UpsellingActivity extends BaseActivity {
     public void onUpgradeHeaderClick() {
         if (upgradeContainerState == State.CLOSED) {
             upgradeContainerState = State.OPENED;
-            donateContainerState = State.CLOSED;
             openUpgradeContainer();
         } else {
             upgradeContainerState = State.CLOSED;
-            donateContainerState = State.CLOSED;
             closeUpgradeContainer();
-        }
-    }
-
-    @OnClick(R.id.donate_paypal)
-    public void onDonatePaypalClicked() {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.donate_paypal)));
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        } else {
-            TextExtensions.showToast(this, R.string.no_browser_found, Toast.LENGTH_SHORT);
-        }
-    }
-
-    @OnClick(R.id.donate_header)
-    public void onDonateHeaderClick() {
-        if (donateContainerState == State.CLOSED) {
-            upgradeContainerState = State.CLOSED;
-            donateContainerState = State.OPENED;
-            openDonateContainer();
-        } else {
-            upgradeContainerState = State.CLOSED;
-            donateContainerState = State.CLOSED;
-            closeDonateContainer();
         }
     }
 
@@ -313,29 +225,11 @@ public class UpsellingActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.donate)
-    public void onDonateClicked() {
-        int amount;
-        String customAmount = donateCustomAmountEditText.getText().toString();
-        if (!TextUtils.isEmpty(customAmount)) {
-            amount = Integer.valueOf(customAmount);
-        } else {
-            amount = donationAmount;
-        }
-        if (amount <= 0) {
-            return;
-        }
-        Intent billingIntent = new Intent(this, BillingActivity.class);
-        billingIntent.putExtra(BillingActivity.EXTRA_AMOUNT, amount * 100); // amount in cents
-        billingIntent.putExtra(BillingActivity.EXTRA_BILLING_TYPE, Constants.BillingType.DONATE);
-        startActivityForResult(AppUtil.decorInAppIntent(billingIntent), REQUEST_CODE_DONATE);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            if (requestCode == REQUEST_CODE_DONATE || requestCode == REQUEST_CODE_UPGRADE) {
+            if (requestCode == REQUEST_CODE_UPGRADE) {
                 boolean success = extras.getBoolean(BillingActivity.EXTRA_SUCCESS);
                 if (success) {
                     Intent intent = new Intent();
@@ -375,62 +269,19 @@ public class UpsellingActivity extends BaseActivity {
         alert.show();
     }
 
-    private int getPresetChosenAmount() {
-        if (btnAmount5.isPressed()) {
-            donationAmountPosition = 0;
-            return 5;
-        }
-        if (btnAmount15.isPressed()) {
-            donationAmountPosition = 1;
-            return 15;
-        }
-        if (btnAmount50.isPressed()) {
-            donationAmountPosition = 2;
-            return 50;
-        }
-        if (btnAmount100.isPressed()) {
-            donationAmountPosition = 3;
-            return 100;
-        }
-        return 0;
-    }
 
     private void openUpgradeContainer() {
         upgradeContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 6f));
-        donateContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
         mainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
         upgradeExpand.setVisibility(View.GONE);
         upgradeContract.setVisibility(View.VISIBLE);
-        donateExpand.setVisibility(View.VISIBLE);
-        donateContract.setVisibility(View.GONE);
-    }
-
-    private void openDonateContainer() {
-        donateContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 6f));
-        upgradeContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
-        mainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
-        donateExpand.setVisibility(View.GONE);
-        donateContract.setVisibility(View.VISIBLE);
-        if (!paidUser) {
-            upgradeExpand.setVisibility(View.VISIBLE);
-            upgradeContract.setVisibility(View.GONE);
-        }
     }
 
     private void closeUpgradeContainer() {
         upgradeContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
-        donateContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
         mainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 6f));
         upgradeExpand.setVisibility(View.VISIBLE);
         upgradeContract.setVisibility(View.GONE);
-    }
-
-    private void closeDonateContainer() {
-        donateContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
-        upgradeContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0f));
-        mainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 6f));
-        donateExpand.setVisibility(View.VISIBLE);
-        donateContract.setVisibility(View.GONE);
     }
 
     private void onCheckSubscriptionEvent(CheckSubscriptionResult result) {

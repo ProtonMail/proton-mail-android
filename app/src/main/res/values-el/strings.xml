@@ -385,24 +385,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="log_out">Αποσύνδεση %s;</string>
     <string name="logout_question">Είστε βέβαιοι ότι θέλετε να αποσυνδεθείτε;</string>
     <string name="logout_question_next_account">Θα μεταβείτε στο %s.</string>
-    <string name="upselling">Αναβάθμιση/Δωρεά</string>
     <string name="upselling_title">Το ProtonMail είναι δωρεάν και ανοιχτού κώδικα (open source)</string>
     <string name="upselling_subtitle">Χρειαζόμαστε την υποστήριξή σας για να συνεχίσουμε να προστατεύουμε το απόρρητο και να βελτιώσουμε το ProtonMail</string>
-    <string name="upselling_donate_title">Κάντε Δωρεά</string>
     <string name="upselling_upgrade_title">Αναβαθμίστε σε ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Η δωρεά σας θα μας βοηθήσει να προσθέσουμε
-    και να συνεχίσουμε την ανάπτυξη του ProtonMail ως λογισμικό ελεύθερου και ανοικτού κώδικα. Είναι δυνατό μόνο μέσω της
-    υποστήριξης απο την κοινότητα για να είμαστε σε θέση να συνεχίσουμε να παρέχουμε ProtonMail σε ανθρώπους από όλο
-    τον κόσμο.</string>
-    <string name="upgrade_donate">Αναβάθμιση/Δωρεά</string>
-    <string name="upselling_donate_pick_amount">Επιλέξτε ένα ποσό δωρεάς ή εισάγετε ένα οποιοδήποτε ποσό</string>
-    <string name="amount_5">5€</string>
-    <string name="amount_15">15€</string>
-    <string name="amount_50">50€</string>
-    <string name="amount_100">100€</string>
-    <string name="donation_amount">Εισάγετε ποσό δωρεάς</string>
-    <string name="donate">Δωρεά</string>
-    <string name="donate_paypal_bitcoin">Δωρεά μέσω PayPal ή Bitcoin</string>
     <string name="upgrade_line1">Όλα περιλαμβάνονται στο δωρεάν πακέτο μας</string>
     <string name="upgrade_line2">5 GB Αποθηκευτικός Χώρος</string>
     <string name="upgrade_line3">Χρησιμοποιήστε το δικό σας Domain</string>
@@ -469,8 +454,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_picker_disclaimer">Παρακαλούμε επιλέξτε έναν τρόπο πληρωμής</string>
     <string name="payment_success_title">Επιτυχής πληρωμή!</string>
     <string name="payment_success_text">Αναβαθμίζουμε τον λογαριασμό σας, παρακαλώ περιμένετε λίγο. Σας ευχαριστούμε για την υποστήριξή!</string>
-    <string name="donation_success_title">Επιτυχία δωρεάς!</string>
-    <string name="donation_success_text">Η υποστήριξή σας είναι απαραίτητη για τη λειτουργία του ProtonMail. Σας ευχαριστούμε για την υποστήριξη της ιδιωτικότητας στο διαδίκτυο!</string>
     <string name="create_free_account">Δημιουργία δωρεάν λογαριασμού</string>
     <string name="storage_gb">%d GB αποθηκευτικός χώρος</string>
     <string name="storage_mb">%d MB αποθηκευτικός χώρος</string>

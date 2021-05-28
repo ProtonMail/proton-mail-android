@@ -391,23 +391,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="log_out">Deconectare %s?</string>
     <string name="logout_question">Sigur doriţi să vă deconectați?</string>
     <string name="logout_question_next_account">Veți fi comutat la %s.</string>
-    <string name="upselling">Upgrade/Donare</string>
     <string name="upselling_title">ProtonMail este gratuit și cu cod sursă public</string>
     <string name="upselling_subtitle">Avem nevoie de susținerea dvs. pentru continuarea protejării intimității și îmbunătățirii ProtonMail</string>
-    <string name="upselling_donate_title">Donați</string>
     <string name="upselling_upgrade_title">Upgrade la ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Prin donația dvs. ne veți ajuta să
-    ne mărim capacitatea și să continuăm dezvoltarea ProtonMail, gratuit și cu cod sursă public.
-    Doar cu susținerea comunității putem continua să oferim ProtonMail tuturor oamenilor.</string>
-    <string name="upgrade_donate">Upgrade/Donare</string>
-    <string name="upselling_donate_pick_amount">Selectați suma donată sau introduceți orice sumă</string>
-    <string name="amount_5">5 €</string>
-    <string name="amount_15">15 €</string>
-    <string name="amount_50">50 €</string>
-    <string name="amount_100">100 €</string>
-    <string name="donation_amount">Introduceți suma donată</string>
-    <string name="donate">Donați</string>
-    <string name="donate_paypal_bitcoin">Donați prin PayPal sau Bitcoin</string>
     <string name="upgrade_line1">Tot ce este inclus în planul Gratuit</string>
     <string name="upgrade_line2">5 GB de spațiu</string>
     <string name="upgrade_line3">Folosiți domeniul propriu</string>
@@ -474,8 +460,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_picker_disclaimer">Selectați metoda de plată</string>
     <string name="payment_success_title">Plată reușită!</string>
     <string name="payment_success_text">Se îmbunătățește contul, așteptați puțin. Vă mulțumim pentru suport!</string>
-    <string name="donation_success_title">Donație reușită!</string>
-    <string name="donation_success_text">Suportul dvs. este esențial pentru a păstra funcționarea ProtonMail. Vă mulțumim pentru sprijinirea confidențialității Internetului!</string>
     <string name="create_free_account">Creare cont gratuit</string>
     <string name="storage_gb">%d GB spațiu</string>
     <string name="storage_mb">%d MB spațiu</string>
