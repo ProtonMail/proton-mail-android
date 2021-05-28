@@ -36,6 +36,8 @@ import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
 
+private const val HYPHEN = "-"
+
 class MailboxItemView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -131,9 +133,13 @@ class MailboxItemView @JvmOverloads constructor(
 
         val senderText = getSenderText(mailboxUiItem)
         // Sender text can only be empty in drafts where we show recipients instead of senders
-        sender_text_view.text =
-            if (senderText.isEmpty()) context.getString(R.string.empty_recipients) else senderText
-        sender_initial_view.bind(senderText.substring(0, 1), isMultiSelectionMode)
+        if (senderText.isEmpty()) {
+            sender_text_view.text = context.getString(R.string.empty_recipients)
+            sender_initial_view.bind(HYPHEN, isMultiSelectionMode)
+        } else {
+            sender_text_view.text = senderText
+            sender_initial_view.bind(senderText.substring(0, 1), isMultiSelectionMode)
+        }
 
         subject_text_view.text = mailboxUiItem.subject
 
