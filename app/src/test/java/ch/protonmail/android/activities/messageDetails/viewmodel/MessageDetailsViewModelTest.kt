@@ -235,6 +235,30 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
+    fun loadMessageDoesNotMarkMessageAsReadWhenTheMessageIsAlreadyRead() = runBlockingTest {
+        // This prevents the message detail to be refreshed in a loop, caused by the messageFlow to continuously emit
+        // the message after it was marked as read (ignoring distinctUntilChanged clause). This is probably due to
+        // some mutable property of `Message` class changing unexpectedly.
+        // Given
+        val messageObserver = viewModel.decryptedMessageData.testObserver()
+        val message = mockk<Message>(relaxed = true)
+        every { message.messageId } returns "messageId3"
+        every { message.isDownloaded } returns true
+        every { message.isRead } returns true
+        every { message.senderEmail } returns "senderEmail"
+        every { message.decrypt(any(), any(), any()) } just Runs
+        coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
+
+        // When
+        viewModel.loadMailboxItemDetails()
+
+        // Then
+        verify(exactly = 0) { messageRepository.markRead(any()) }
+        val actual = messageObserver.observedValues.first()
+        assertEquals(message, actual?.messages?.first())
+    }
+
+    @Test
     fun loadMessageDoesNotEmitTheFoundMessageToLiveDataWhenTheMessageIsNotDownloaded() = runBlockingTest {
         // Given
         val senderEmail = "senderEmail2"

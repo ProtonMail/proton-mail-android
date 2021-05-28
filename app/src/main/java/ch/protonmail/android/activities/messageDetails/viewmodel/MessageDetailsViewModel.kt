@@ -345,8 +345,10 @@ internal class MessageDetailsViewModel @Inject constructor(
         val isDecrypted = withContext(dispatchers.Comp) {
             lastMessage.tryDecrypt(publicKeys) ?: false
         }
-        if (isDecrypted && lastMessage.messageId != null) {
-            messageRepository.markRead(listOf(lastMessage.messageId!!))
+        if (isDecrypted) {
+            if (!lastMessage.isRead && lastMessage.messageId != null) {
+                messageRepository.markRead(listOf(lastMessage.messageId!!))
+            }
 
             Timber.v("Emitting ConversationUiItem Detail = ${lastMessage.messageId} keys size: ${publicKeys?.size}")
             _decryptedMessageLiveData.postValue(conversationUiModel)
