@@ -61,6 +61,7 @@ class SetMessagePasswordActivity : AppCompatActivity() {
     }
 
     private lateinit var messagePassword: MessagePasswordUiModel
+    private var initiallyHasPassword = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(binding.root)
@@ -69,6 +70,7 @@ class SetMessagePasswordActivity : AppCompatActivity() {
 
         val password = intent.getStringExtra(ARG_SET_MESSAGE_PASSWORD_PASSWORD)
         val hint = intent.getStringExtra(ARG_SET_MESSAGE_PASSWORD_HINT)
+        initiallyHasPassword = password.isNullOrBlank().not()
         viewModel.validate(password, password, hint)
 
         with(binding) {
@@ -79,7 +81,9 @@ class SetMessagePasswordActivity : AppCompatActivity() {
             ).forEach {
                 it.onTextChange { validateInput() }
             }
-            setMsgPasswordApplyButton.onClick {
+            setMsgPasswordApplyButton.onClick { setResultAndFinish() }
+            setMsgPasswordRemoveButton.onClick {
+                messagePassword = MessagePasswordUiModel.Unset
                 setResultAndFinish()
             }
         }
@@ -107,6 +111,7 @@ class SetMessagePasswordActivity : AppCompatActivity() {
         setRepeatInput(model.repeatInput)
         setHintInput((messagePassword as? MessagePasswordUiModel.Set)?.hint)
         setApplyButton(model.hasErrors)
+        setDeleteButton(initiallyHasPassword)
     }
 
     private fun setPasswordInput(input: SetMessagePasswordUiModel.Input) {
@@ -133,6 +138,13 @@ class SetMessagePasswordActivity : AppCompatActivity() {
 
     private fun setApplyButton(hasErrors: Boolean) {
         binding.setMsgPasswordApplyButton.isEnabled = hasErrors.not()
+    }
+
+    private fun setDeleteButton(enabled: Boolean) {
+        binding.setMsgPasswordRemoveButton.apply {
+            isEnabled = enabled
+            if (!enabled) setTextColor(getColor(R.color.text_disabled))
+        }
     }
 
     private fun setResultAndFinish() {

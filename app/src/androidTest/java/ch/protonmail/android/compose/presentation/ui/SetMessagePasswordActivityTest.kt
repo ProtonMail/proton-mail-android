@@ -91,6 +91,24 @@ class SetMessagePasswordActivityTest {
         assertResult(scenario, expectedPassword, expectedHint)
     }
 
+    @Test
+    fun passwordIsRemovedCorrectly() {
+
+        // given
+        val expectedPassword: String? = null
+        val expectedHint: String? = null
+
+        // when
+        val intent = baseIntent
+            .putExtra(ARG_SET_MESSAGE_PASSWORD_PASSWORD, expectedPassword)
+            .putExtra(ARG_SET_MESSAGE_PASSWORD_HINT, expectedHint)
+        val scenario = ActivityScenario.launch<SetMessagePasswordActivity>(intent)
+        performRemovePasswordClick()
+
+        // then
+        assertResult(scenario, expectedPassword, expectedHint)
+    }
+
     private fun onPasswordView(): ViewInteraction =
         onView(withTextInputEditTextId(R.id.set_msg_password_msg_password_input))
 
@@ -113,10 +131,14 @@ class SetMessagePasswordActivityTest {
         onView(withId(R.id.set_msg_password_apply_button)).perform(click())
     }
 
+    private fun performRemovePasswordClick() {
+        onView(withId(R.id.set_msg_password_remove_button)).perform(click())
+    }
+
     private fun assertResult(
         scenario: ActivityScenario<SetMessagePasswordActivity>,
-        expectedPassword: String,
-        expectedHint: String
+        expectedPassword: String?,
+        expectedHint: String?
     ) {
         val resultIntent = scenario.result.resultData
         ViewMatchers.assertThat(
