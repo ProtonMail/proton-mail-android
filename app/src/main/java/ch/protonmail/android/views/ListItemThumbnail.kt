@@ -35,6 +35,9 @@ import androidx.core.content.withStyledAttributes
 import ch.protonmail.android.R
 import timber.log.Timber
 
+private const val TEXT_SIZE_PROPORTION = 2.5f
+private const val DEFAULT_CIRCLE_SIZE = 100
+
 /**
  * Round/oval list item thumbnail with custom background color, icon or text.
  */
@@ -54,14 +57,15 @@ class ListItemThumbnail @JvmOverloads constructor(
     }
     private val textPaint = TextPaint(ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.text_norm)
+        textAlign = Paint.Align.LEFT
     }
 
     private val textRectangle = Rect()
 
-    private var circleSize: Int = 100
+    private var circleSize: Int = DEFAULT_CIRCLE_SIZE
         set(value) {
             // also set proportionally text size
-            textPaint.textSize = value.toFloat().div(2.5f)
+            textPaint.textSize = value.toFloat().div(TEXT_SIZE_PROPORTION)
             Timber.v("new circleSize: $value")
             field = value
             invalidate()
@@ -120,8 +124,8 @@ class ListItemThumbnail @JvmOverloads constructor(
             textPaint.getTextBounds(text, 0, text.length, textRectangle)
             canvas.drawText(
                 text,
-                centerX - textRectangle.width() / 2,
-                centerY + textRectangle.height() / 2,
+                centerX - textRectangle.width() / 2 - textRectangle.left,
+                centerY + textRectangle.height() / 2 - textRectangle.bottom,
                 textPaint
             )
         } else {
