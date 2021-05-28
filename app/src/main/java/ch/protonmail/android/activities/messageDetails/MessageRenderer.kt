@@ -59,9 +59,9 @@ private const val DEBOUNCE_DELAY_MILLIS = 500L
  */
 internal class MessageRenderer(
     private val dispatchers: DispatcherProvider,
-    private val directory: File,
     private val documentParser: DocumentParser,
     private val bitmapImageDecoder: ImageDecoder,
+    private val attachmentsDirectory: File,
     scope: CoroutineScope
 ) : CoroutineScope by scope + dispatchers.Comp {
 
@@ -126,7 +126,7 @@ internal class MessageRenderer(
                     val embeddedImage = imageSelector.receive()
 
                     // Process the image
-                    val file = File(directory, embeddedImage.localFileName)
+                    val file = File(messageDirectory(embeddedImage.messageId), embeddedImage.localFileName)
                     // Skip if file does not exist
                     if (!file.exists() || file.length() == 0L) continue
 
@@ -211,6 +211,9 @@ internal class MessageRenderer(
         for (id in channel) inlinedImageIds += id
     }
 
+    /** @return [File] directory for the current message */
+    private fun messageDirectory(messageId: String) = File(attachmentsDirectory, messageId)
+
     /**
      * A Factory for create [MessageRenderer]
      * We use this because [MessageRenderer] needs a message body that will be retrieved lazily,
@@ -224,12 +227,10 @@ internal class MessageRenderer(
         private val documentParser: DocumentParser = DefaultDocumentParser(),
         private val imageDecoder: ImageDecoder = DefaultImageDecoder()
     ) {
-        /** @return [File] directory for the current message */
-        private fun messageDirectory(messageId: String) = File(attachmentsDirectory, messageId)
 
         /** @return new instance of [MessageRenderer] with the given [messageBody] */
-        fun create(scope: CoroutineScope, messageId: String) =
-            MessageRenderer(dispatchers, messageDirectory(messageId), documentParser, imageDecoder, scope)
+        fun create(scope: CoroutineScope) =
+            MessageRenderer(dispatchers, documentParser, imageDecoder, attachmentsDirectory, scope)
     }
 
 }

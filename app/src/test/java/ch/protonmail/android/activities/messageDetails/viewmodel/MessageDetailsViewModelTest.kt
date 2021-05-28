@@ -115,8 +115,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     private var messageRendererFactory = mockk<MessageRenderer.Factory> {
-        every { create(any(), any()) } returns mockk(relaxed = true) {
-            every { renderedBody } returns Channel()
+        every { create(any()) } returns mockk(relaxed = true) {
+            every { renderedMessage } returns Channel()
         }
     }
 

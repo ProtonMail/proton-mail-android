@@ -137,7 +137,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     private val messageRenderer
-        by lazy { messageRendererFactory.create(viewModelScope, messageOrConversationId) }
+        by lazy { messageRendererFactory.create(viewModelScope) }
 
     val conversationUiModel: LiveData<ConversationUiModel> =
         if (conversationModeEnabled(location)) {
