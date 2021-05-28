@@ -311,8 +311,7 @@ object Constants {
 
     enum class BillingType {
         CREATE,
-        UPGRADE,
-        DONATE
+        UPGRADE
     }
 
     enum class TokenType(val tokenTypeValue: String) {
