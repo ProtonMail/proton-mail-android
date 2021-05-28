@@ -23,8 +23,7 @@ sealed class ContactDetailsUiItem {
 
     data class HeaderData(
         val title: String,
-        val initials: String,
-        val gender: String? = null
+        val initials: String
     ) : ContactDetailsUiItem()
 
     data class Email(
@@ -78,6 +77,10 @@ sealed class ContactDetailsUiItem {
 
     data class Url(
         val value: String
+    ) : ContactDetailsUiItem()
+
+    data class Gender(
+        val value: String?
     ) : ContactDetailsUiItem()
 
 }

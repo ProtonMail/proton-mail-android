@@ -38,7 +38,6 @@ class ContactDetailsMapper @Inject constructor() {
         val header = ContactDetailsUiItem.HeaderData(
             fetchResult.contactName,
             UiUtil.extractInitials(fetchResult.contactName).take(2),
-            fetchResult.gender?.text
         )
 
         items.add(header)
@@ -143,12 +142,19 @@ class ContactDetailsMapper @Inject constructor() {
         }
         items.addAll(urls)
 
+        val gender = ContactDetailsUiItem.Gender(
+            fetchResult.gender?.text
+        )
+
+        items.add(gender)
+
         Timber.v("Ui Contacts details: $items")
 
         return ContactDetailsViewState.Data(
             items,
             fetchResult.isType2SignatureValid,
-            fetchResult.isType3SignatureValid
+            fetchResult.isType3SignatureValid,
+            fetchResult.vCardToShare
         )
     }
 

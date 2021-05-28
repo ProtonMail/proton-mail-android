@@ -45,6 +45,7 @@ data class FetchContactDetailsResult(
     val anniversaries: List<Anniversary>,
     val roles: List<Role>,
     val urls: List<Url>,
+    val vCardToShare: String,
     val gender: Gender?,
     val isType2SignatureValid: Boolean?,
     val isType3SignatureValid: Boolean?

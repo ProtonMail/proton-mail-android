@@ -182,7 +182,6 @@ class HandleSingleAttachment @Inject constructor(
         return file
     }
 
-
     private suspend fun awaitUriFromMediaScanned(
         context: Context,
         file: File,

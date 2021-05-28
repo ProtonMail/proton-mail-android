@@ -24,7 +24,8 @@ sealed class ContactDetailsViewState {
     data class Data(
         val contactDetailsItems: List<ContactDetailsUiItem>,
         val isType2SignatureValid: Boolean?,
-        val isType3SignatureValid: Boolean?
+        val isType3SignatureValid: Boolean?,
+        val vCardToShare: String
     ) : ContactDetailsViewState()
 
     data class Error(val exception: Throwable) : ContactDetailsViewState()

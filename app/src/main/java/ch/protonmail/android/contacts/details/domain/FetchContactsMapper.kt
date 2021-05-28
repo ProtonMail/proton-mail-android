@@ -94,9 +94,9 @@ class FetchContactsMapper @Inject constructor(
     }
 
     private fun mapResultToCardItems(
-        decryptedVCardType0: String,
-        decryptedVCardType2: String,
-        decryptedVCardType3: String,
+        decryptedVCardType0: String, // UNSIGNED
+        decryptedVCardType2: String, // SIGNED
+        decryptedVCardType3: String, // SIGNED_ENCRYPTED
         vCardType2Signature: String,
         vCardType3Signature: String
     ): FetchContactDetailsResult {
@@ -112,6 +112,12 @@ class FetchContactsMapper @Inject constructor(
         val vCardType3 = if (decryptedVCardType3.isNotEmpty()) {
             Ezvcard.parse(decryptedVCardType3).first()
         } else null
+
+        val vCardToShare = if (decryptedVCardType0.isNotEmpty()) {
+            decryptedVCardType0
+        } else {
+            decryptedVCardType2
+        }
 
         val contactName = when {
             vCardType0?.formattedName?.value != null -> vCardType0.formattedName.value
@@ -276,6 +282,7 @@ class FetchContactsMapper @Inject constructor(
             anniversaries,
             roles,
             urls,
+            vCardToShare,
             gender,
             isType2SignatureValid,
             isType3SignatureValid

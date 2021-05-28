@@ -19,10 +19,15 @@
 
 package ch.protonmail.android.contacts.details.presentation
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.MenuItem
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -30,13 +35,17 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
+import ch.protonmail.android.activities.BaseActivity
+import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
 import ch.protonmail.android.databinding.ActivityContactDetailsBinding
+import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.views.ListItemThumbnail
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -46,6 +55,9 @@ class ContactDetailsActivity : AppCompatActivity() {
     private lateinit var contactName: TextView
     private lateinit var detailsContainer: NestedScrollView
     private lateinit var progressBar: ProgressBar
+    private var vCardToShare: String = EMPTY_STRING
+    private var contactEmail: String = EMPTY_STRING
+    private var contactPhone: String = EMPTY_STRING
     private val viewModel: ContactDetailsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,8 +76,24 @@ class ContactDetailsActivity : AppCompatActivity() {
         contactName = binding.textViewContactDetailsContactName
         thumbnail = binding.thumbnailContactDetails
 
+        binding.includeContactDetailsButtons.textViewContactDetailsCompose.setOnClickListener {
+            onWriteToContact(contactEmail)
+        }
+
+        binding.includeContactDetailsButtons.textViewContactDetailsCall.setOnClickListener {
+            onCallContact(contactPhone)
+        }
+
+        binding.includeContactDetailsButtons.textViewContactDetailsShare.setOnClickListener {
+            onShare(contactName.text.toString(), vCardToShare, this)
+        }
+
         viewModel.contactsViewState
             .onEach { renderState(it) }
+            .launchIn(lifecycleScope)
+
+        viewModel.vCardShareFlow
+            .onEach { shareVcard(it, contactName.text.toString()) }
             .launchIn(lifecycleScope)
 
         val contactId = requireNotNull(intent.extras?.getString(EXTRA_ARG_CONTACT_ID))
@@ -90,9 +118,7 @@ class ContactDetailsActivity : AppCompatActivity() {
         when (state) {
             is ContactDetailsViewState.Loading -> showLoading()
             is ContactDetailsViewState.Error -> showError(state.exception)
-            is ContactDetailsViewState.Data -> showData(
-                state
-            )
+            is ContactDetailsViewState.Data -> showData(state)
         }
     }
 
@@ -111,6 +137,8 @@ class ContactDetailsActivity : AppCompatActivity() {
         progressBar.isVisible = false
         detailsContainer.isVisible = true
 
+        vCardToShare = state.vCardToShare
+
         state.contactDetailsItems.onEach { item ->
             when (item) {
                 is ContactDetailsUiItem.HeaderData -> {
@@ -123,6 +151,13 @@ class ContactDetailsActivity : AppCompatActivity() {
 
     private fun showDetail(item: ContactDetailsUiItem) {
         Timber.v("Detail item $item")
+        if (item is ContactDetailsUiItem.Email) {
+            contactEmail = item.value
+        }
+
+        if (item is ContactDetailsUiItem.TelephoneNumber) {
+            contactPhone = item.value
+        }
         // TODO : add to recycler view
     }
 
@@ -131,6 +166,46 @@ class ContactDetailsActivity : AppCompatActivity() {
         thumbnail.bind(isSelectedActive = false, isMultiselectActive = false, initials = item.initials)
     }
 
+    private fun onWriteToContact(emailAddress: String) {
+        if (emailAddress.isNotEmpty()) {
+            val intent = Intent(this, ComposeMessageActivity::class.java)
+            intent.putExtra(BaseActivity.EXTRA_IN_APP, true)
+            intent.putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENTS, arrayOf(emailAddress))
+            startActivity(intent)
+        } else {
+            showToast(R.string.email_empty, Toast.LENGTH_SHORT)
+        }
+    }
+
+    private fun onCallContact(phoneNumber: String) {
+        if (phoneNumber.isNotEmpty()) {
+            val callIntent = Intent(Intent.ACTION_DIAL)
+            callIntent.data = Uri.parse("tel:$phoneNumber")
+            startActivity(callIntent)
+        } else {
+            showToast(R.string.contact_vcard_new_row_phone, Toast.LENGTH_SHORT)
+        }
+    }
+
+    private fun onShare(contactName: String, vCardToShare: String, context: Context) {
+        if (vCardToShare.isNotEmpty()) {
+            viewModel.saveVcard(vCardToShare, contactName, context)
+        } else {
+            showToast(R.string.default_error_message, Toast.LENGTH_SHORT)
+        }
+    }
+
+    private fun shareVcard(vcfFileUri: Uri, contactName: String) {
+        if (vcfFileUri != Uri.EMPTY) {
+            Timber.v("Share contact uri: $vcfFileUri")
+            val intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_STREAM, vcfFileUri)
+                type = ContactsContract.Contacts.CONTENT_VCARD_TYPE
+            }
+            startActivity(Intent.createChooser(intent, contactName))
+        }
+    }
 
     companion object {
 
