@@ -364,7 +364,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             // Given
             val message = Message()
             givenViewModelPropertiesAreInitialised()
-            viewModel.setPassword(MessagePasswordUiModel.from("messagePassword", "a hint to discover it"))
+            viewModel.setPassword(MessagePasswordUiModel.Set("messagePassword", "a hint to discover it"))
             every { workManager.cancelUniqueWork(any()) } returns mockk()
 
             // When
@@ -377,7 +377,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
                 "parentId823",
                 Constants.MessageActionType.FORWARD,
                 "previousSenderAddressId",
-                MessageSecurityOptions("messagePassword", "a hint to discover it", 172800L)
+                MessageSecurityOptions("messagePassword", "a hint to discover it", 0)
             )
             coVerify { sendMessage(params) }
         }
