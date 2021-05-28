@@ -22,6 +22,7 @@ package ch.protonmail.android.contacts.details.presentation
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -29,8 +30,10 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
-import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
+import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
+import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
 import ch.protonmail.android.databinding.ActivityContactDetailsBinding
+import ch.protonmail.android.views.ListItemThumbnail
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -39,6 +42,8 @@ import timber.log.Timber
 @AndroidEntryPoint
 class ContactDetailsActivity : AppCompatActivity() {
 
+    private lateinit var thumbnail: ListItemThumbnail
+    private lateinit var contactName: TextView
     private lateinit var detailsContainer: NestedScrollView
     private lateinit var progressBar: ProgressBar
     private val viewModel: ContactDetailsViewModel by viewModels()
@@ -56,8 +61,10 @@ class ContactDetailsActivity : AppCompatActivity() {
 
         progressBar = binding.progressBarContactDetails
         detailsContainer = binding.scrollViewContactDetails
+        contactName = binding.textViewContactDetailsContactName
+        thumbnail = binding.thumbnailContactDetails
 
-        viewModel.contactsResultFlow
+        viewModel.contactsViewState
             .onEach { renderState(it) }
             .launchIn(lifecycleScope)
 
@@ -78,20 +85,15 @@ class ContactDetailsActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun renderState(state: FetchContactDetailsResult) {
+    private fun renderState(state: ContactDetailsViewState) {
         Timber.v("State $state received")
         when (state) {
-            is FetchContactDetailsResult.Loading -> showLoading()
-            is FetchContactDetailsResult.Error -> showError(state.exception)
-            is FetchContactDetailsResult.Data -> showData(
+            is ContactDetailsViewState.Loading -> showLoading()
+            is ContactDetailsViewState.Error -> showError(state.exception)
+            is ContactDetailsViewState.Data -> showData(
                 state
             )
         }
-    }
-
-    private fun showData(state: FetchContactDetailsResult.Data) {
-        progressBar.isVisible = false
-        detailsContainer.isVisible = true
     }
 
     private fun showError(exception: Throwable) {
@@ -104,6 +106,31 @@ class ContactDetailsActivity : AppCompatActivity() {
         progressBar.isVisible = true
         detailsContainer.isVisible = false
     }
+
+    private fun showData(state: ContactDetailsViewState.Data) {
+        progressBar.isVisible = false
+        detailsContainer.isVisible = true
+
+        state.contactDetailsItems.onEach { item ->
+            when (item) {
+                is ContactDetailsUiItem.HeaderData -> {
+                    setHeaderData(item)
+                }
+                else -> showDetail(item)
+            }
+        }
+    }
+
+    private fun showDetail(item: ContactDetailsUiItem) {
+        Timber.v("Detail item $item")
+        // TODO : add to recycler view
+    }
+
+    private fun setHeaderData(item: ContactDetailsUiItem.HeaderData) {
+        contactName.text = item.title
+        thumbnail.bind(isSelectedActive = false, isMultiselectActive = false, initials = item.initials)
+    }
+
 
     companion object {
 

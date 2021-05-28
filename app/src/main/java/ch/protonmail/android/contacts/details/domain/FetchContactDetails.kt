@@ -61,23 +61,15 @@ class FetchContactDetails @Inject constructor(
             }
         }
 
-        // fetch data from the server
-        runCatching {
-            api.fetchContactDetails(contactId)
-        }.fold(
-            onSuccess = { response ->
-                val fetchedContact = response.contact
-                Timber.v("Fetched new Contact Details $fetchedContact")
-                repository.insertFullContactDetails(fetchedContact)
-                val parsedContact = parseContactDetails(fetchedContact)
-                if (parsedContact != null) {
-                    emit(parsedContact)
-                }
-            },
-            onFailure = {
-                emit(FetchContactDetailsResult.Error(it))
-            }
-        )
+        // fetch data from the server (refresh)
+        val response = api.fetchContactDetails(contactId)
+        val fetchedContact = response.contact
+        Timber.v("Fetched new Contact Details $fetchedContact")
+        repository.insertFullContactDetails(fetchedContact)
+        val parsedContact = parseContactDetails(fetchedContact)
+        if (parsedContact != null) {
+            emit(parsedContact)
+        }
     }
         .flowOn(dispatchers.Io)
 

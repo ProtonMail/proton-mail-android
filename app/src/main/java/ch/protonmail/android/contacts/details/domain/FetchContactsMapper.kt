@@ -49,7 +49,7 @@ class FetchContactsMapper @Inject constructor(
     openPgp: OpenPGP,
 ) {
 
-    val crypto = UserCrypto(userManager, openPgp, userManager.requireCurrentUserId())
+    private val crypto by lazy { UserCrypto(userManager, openPgp, userManager.requireCurrentUserId()) }
 
     fun mapEncryptedDataToResult(encryptedDataList: MutableList<ContactEncryptedData>?): FetchContactDetailsResult? {
         if (!encryptedDataList.isNullOrEmpty()) {
@@ -99,7 +99,7 @@ class FetchContactsMapper @Inject constructor(
         decryptedVCardType3: String,
         vCardType2Signature: String,
         vCardType3Signature: String
-    ): FetchContactDetailsResult.Data {
+    ): FetchContactDetailsResult {
 
         val vCardType0 = if (decryptedVCardType0.isNotEmpty()) {
             Ezvcard.parse(decryptedVCardType0).first()
@@ -112,6 +112,16 @@ class FetchContactsMapper @Inject constructor(
         val vCardType3 = if (decryptedVCardType3.isNotEmpty()) {
             Ezvcard.parse(decryptedVCardType3).first()
         } else null
+
+        val contactName = when {
+            vCardType0?.formattedName?.value != null -> vCardType0.formattedName.value
+            vCardType2?.formattedName?.value != null -> vCardType2.formattedName.value
+            vCardType3?.formattedName?.value != null -> vCardType3.formattedName.value
+            else -> {
+                Timber.i("Unable to get name information from available vCard data")
+                EMPTY_STRING
+            }
+        }
 
         val emails: List<Email> = when {
             vCardType0?.emails?.isNotEmpty() == true -> vCardType0.emails
@@ -253,7 +263,8 @@ class FetchContactsMapper @Inject constructor(
                 null
             }
 
-        return FetchContactDetailsResult.Data(
+        return FetchContactDetailsResult(
+            contactName,
             emails,
             telephoneNumbers,
             addresses,

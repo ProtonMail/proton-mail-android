@@ -23,7 +23,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import ch.protonmail.android.contacts.details.domain.FetchContactDetails
-import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
+import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
 import ch.protonmail.android.worker.DeleteContactWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import me.proton.core.user.domain.UserManager
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -39,23 +38,21 @@ import javax.inject.Inject
 class ContactDetailsViewModel @Inject constructor(
     private val fetchContactDetails: FetchContactDetails,
     private val mapper: ContactDetailsMapper,
-    private val userManager: UserManager,
     private val workManager: WorkManager
 ) : ViewModel() {
 
     private val mutableContactsResultFlow =
-        MutableStateFlow<FetchContactDetailsResult>(FetchContactDetailsResult.Loading)
-    val contactsResultFlow: StateFlow<FetchContactDetailsResult>
+        MutableStateFlow<ContactDetailsViewState>(ContactDetailsViewState.Loading)
+    val contactsViewState: StateFlow<ContactDetailsViewState>
         get() = mutableContactsResultFlow
 
     fun getContactDetails(contactId: String) {
         Timber.v("getContactDetails for $contactId")
         viewModelScope.launch {
             fetchContactDetails(contactId)
-                .catch { FetchContactDetailsResult.Error(it) }
+                .catch { ContactDetailsViewState.Error(it) }
                 .collect { fetchResult ->
-                    //mapper.mapTo(fetchResult)
-                    mutableContactsResultFlow.value = fetchResult
+                    mutableContactsResultFlow.value = mapper.mapToContactViewData(fetchResult)
                 }
         }
     }

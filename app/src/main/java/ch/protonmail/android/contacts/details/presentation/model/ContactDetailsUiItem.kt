@@ -19,10 +19,65 @@
 
 package ch.protonmail.android.contacts.details.presentation.model
 
-import ezvcard.VCard
+sealed class ContactDetailsUiItem {
 
-data class ContactDetailsUiItem(
-    val vCardType0: VCard,
-    val vCardType2: VCard,
-    val vCardType3: VCard,
-)
+    data class HeaderData(
+        val title: String,
+        val initials: String,
+        val gender: String? = null
+    ) : ContactDetailsUiItem()
+
+    data class Email(
+        val value: String,
+        val type: String
+    ) : ContactDetailsUiItem()
+
+    data class TelephoneNumber(
+        val value: String,
+        val type: String
+    ) : ContactDetailsUiItem()
+
+    data class Address(
+        val type: String,
+        var street: String?,
+        var locality: String?,
+        var region: String?,
+        var postalCode: String?,
+        var country: String?
+    ) : ContactDetailsUiItem()
+
+    data class Photo(
+        val photoUrl: String? = null,
+        val photoBytes: List<Byte>? = null,
+    ) : ContactDetailsUiItem()
+
+    data class Organization(
+        val values: List<String>,
+    ) : ContactDetailsUiItem()
+
+    data class Title(
+        val value: String
+    ) : ContactDetailsUiItem()
+
+    data class Nickname(
+        val value: String,
+        val type: String
+    ) : ContactDetailsUiItem()
+
+    data class Birthday(
+        val birthdayDate: String
+    ) : ContactDetailsUiItem()
+
+    data class Anniversary(
+        val anniversaryDate: String
+    ) : ContactDetailsUiItem()
+
+    data class Role(
+        val value: String
+    ) : ContactDetailsUiItem()
+
+    data class Url(
+        val value: String
+    ) : ContactDetailsUiItem()
+
+}

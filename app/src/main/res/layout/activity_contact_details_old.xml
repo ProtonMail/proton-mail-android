@@ -34,35 +34,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:paddingTop="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:background="@color/white"
-            android:fitsSystemWindows="true"
-            app:contentScrim="@color/white"
-            app:expandedTitleGravity="bottom|center_horizontal"
-            app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Headline"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
-
-            <TextView
-                android:id="@+id/contactTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginLeft="@dimen/fields_default_space_medium"
-                android:layout_marginRight="@dimen/fields_default_space_medium"
-                android:ellipsize="end"
-                android:gravity="bottom|center"
-                android:maxLines="1"
-                android:minLines="1"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="0.3" />
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -302,5 +273,36 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         app:fab_colorPressed="@color/dark_purple_statusbar"
         app:menu_colorRipple="@color/dark_purple_statusbar"
         tools:ignore="VectorDrawableCompat" />
+
+    <com.google.android.material.appbar.CollapsingToolbarLayout
+        android:id="@+id/collapsingToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/white"
+        android:fitsSystemWindows="true"
+        app:contentScrim="@color/white"
+        app:expandedTitleGravity="bottom|center_horizontal"
+        app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Headline"
+        app:layout_anchor="@+id/contactAvatar"
+        app:layout_anchorGravity="center"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+        <TextView
+            android:id="@+id/contactTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginLeft="@dimen/fields_default_space_medium"
+            android:layout_marginRight="@dimen/fields_default_space_medium"
+            android:ellipsize="end"
+            android:gravity="bottom|center"
+            android:maxLines="1"
+            android:minLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            app:layout_collapseMode="parallax"
+            app:layout_collapseParallaxMultiplier="0.3" />
+
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

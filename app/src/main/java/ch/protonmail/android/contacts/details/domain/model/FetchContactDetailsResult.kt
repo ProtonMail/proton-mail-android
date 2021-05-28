@@ -32,24 +32,20 @@ import ezvcard.property.Telephone
 import ezvcard.property.Title
 import ezvcard.property.Url
 
-sealed class FetchContactDetailsResult {
-    object Loading : FetchContactDetailsResult()
-    data class Data(
-        val emails: List<Email>,
-        val telephoneNumbers: List<Telephone>,
-        val addresses: List<Address>,
-        val photos: List<Photo>,
-        val organizations: List<Organization>,
-        val titles: List<Title>,
-        val nicknames: List<Nickname>,
-        val birthdays: List<Birthday>,
-        val anniversaries: List<Anniversary>,
-        val roles: List<Role>,
-        val urls: List<Url>,
-        val gender: Gender?,
-        val isType2SignatureValid: Boolean?,
-        val isType3SignatureValid: Boolean?
-    ) : FetchContactDetailsResult()
-
-    data class Error(val exception: Throwable) : FetchContactDetailsResult()
-}
+data class FetchContactDetailsResult(
+    val contactName: String,
+    val emails: List<Email>,
+    val telephoneNumbers: List<Telephone>,
+    val addresses: List<Address>,
+    val photos: List<Photo>,
+    val organizations: List<Organization>,
+    val titles: List<Title>,
+    val nicknames: List<Nickname>,
+    val birthdays: List<Birthday>,
+    val anniversaries: List<Anniversary>,
+    val roles: List<Role>,
+    val urls: List<Url>,
+    val gender: Gender?,
+    val isType2SignatureValid: Boolean?,
+    val isType3SignatureValid: Boolean?
+)

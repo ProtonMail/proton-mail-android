@@ -25,10 +25,8 @@ import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.domain.FetchContactDetails
 import ch.protonmail.android.contacts.details.domain.FetchContactsMapper
 import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
-import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
-import ch.protonmail.android.domain.entity.Id
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -80,10 +78,10 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             coEvery { repository.getFullContactDetails(contactId) } returns fullContactsFromDb
             every { repository.insertFullContactDetails(any()) } returns Unit
             coEvery { api.fetchContactDetails(contactId) } returns fullContactsResponse
-            val expectedDb = FetchContactDetailsResult.Data(
+            val expectedDb = FetchContactDetailsResult(
                 decryptedVCardType0 = testDataDb
             )
-            val expectedNet = FetchContactDetailsResult.Data(
+            val expectedNet = FetchContactDetailsResult(
                 decryptedVCardType0 = testDataNet
             )
 
@@ -113,11 +111,11 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             coEvery { repository.getFullContactDetails(contactId) } returns fullContactsFromDb
             val ioException = IOException("Cannot load contacts")
             coEvery { api.fetchContactDetails(contactId) } throws ioException
-            val expected = FetchContactDetailsResult.Data(
+            val expected = FetchContactDetailsResult(
                 decryptedVCardType2 = testData,
                 vCardType2Signature = testSignature
             )
-            val expectedNetError = FetchContactDetailsResult.Error(ioException)
+            val expectedNetError = FetchContactDetailsResult(ioException)
 
             // when
             val result = useCase.invoke(contactId).take(2).toList()
@@ -149,7 +147,7 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             coEvery { repository.getFullContactDetails(contactId) } returns null
             every { repository.insertFullContactDetails(any()) } returns Unit
             coEvery { api.fetchContactDetails(contactId) } returns fullContactsResponse
-            val expected = FetchContactDetailsResult.Data(
+            val expected = FetchContactDetailsResult(
                 decryptedVCardType2 = testDataNet,
                 vCardType2Signature = testSignature
             )
@@ -171,7 +169,7 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             every { repository.insertFullContactDetails(any()) } returns Unit
             val ioException = IOException("Cannot load contacts")
             coEvery { api.fetchContactDetails(contactId) } throws ioException
-            val expectedNetError = FetchContactDetailsResult.Error(ioException)
+            val expectedNetError = FetchContactDetailsResult(ioException)
 
             // when
             val result = useCase.invoke(contactId).take(1).toList()
@@ -188,7 +186,7 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             val exception = Exception("An error!")
             coEvery { repository.getFullContactDetails(contactId) } returns null
             coEvery { api.fetchContactDetails(contactId) } throws exception
-            val expected = FetchContactDetailsResult.Error(exception)
+            val expected = FetchContactDetailsResult(exception)
 
             // when
             val result = useCase.invoke(contactId).take(1).toList()

@@ -19,16 +19,145 @@
 
 package ch.protonmail.android.contacts.details.presentation
 
+import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
+import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
+import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
+import ch.protonmail.android.utils.DateUtil
+import ch.protonmail.android.utils.UiUtil
+import ch.protonmail.android.utils.VCardUtil
+import ezvcard.parameter.VCardParameter
+import me.proton.core.util.kotlin.EMPTY_STRING
+import timber.log.Timber
 import javax.inject.Inject
 
 class ContactDetailsMapper @Inject constructor() {
 
-//    fun mapToUiContactItems(contactDetails: FullContactDetails): ContactDetailsUiItem {
-//        return ContactDetailsUiItem(
-//            contactDetails.contactId,
-//            contactDetails.name,
-//            contactDetails.emails
-//        )
-//    }
+    fun mapToContactViewData(fetchResult: FetchContactDetailsResult): ContactDetailsViewState.Data {
+        val items = mutableListOf<ContactDetailsUiItem>()
+
+        val header = ContactDetailsUiItem.HeaderData(
+            fetchResult.contactName,
+            UiUtil.extractInitials(fetchResult.contactName).take(2),
+            fetchResult.gender?.text
+        )
+
+        items.add(header)
+
+        val emailItems = fetchResult.emails.map { email ->
+            ContactDetailsUiItem.Email(
+                value = email.value,
+                type = getType(email.types)
+            )
+        }
+
+        items.addAll(emailItems)
+
+        val telephoneNumbers = fetchResult.telephoneNumbers.map { telephone ->
+            ContactDetailsUiItem.TelephoneNumber(
+                value = telephone.text,
+                type = getType(telephone.types)
+            )
+        }
+
+        items.addAll(telephoneNumbers)
+
+        val addresses = fetchResult.addresses.map { address ->
+            ContactDetailsUiItem.Address(
+                type = getType(address.types),
+                street = address.streetAddress,
+                locality = address.locality,
+                region = address.region,
+                postalCode = address.postalCode,
+                country = address.country
+            )
+        }
+        items.addAll(addresses)
+
+        val photos = fetchResult.photos.map { photo ->
+            ContactDetailsUiItem.Photo(
+                photo.url,
+                photo.data?.toList()
+            )
+        }
+        items.addAll(photos)
+
+        val organizations = fetchResult.organizations.map { organization ->
+            ContactDetailsUiItem.Organization(
+                organization.values
+            )
+        }
+        items.addAll(organizations)
+
+        val titles = fetchResult.titles.map { title ->
+            ContactDetailsUiItem.Title(
+                title.value
+            )
+        }
+        items.addAll(titles)
+
+        val nicknames = fetchResult.nicknames.map { nickname ->
+            ContactDetailsUiItem.Nickname(
+                nickname.values[0],
+                nickname.type
+            )
+        }
+        items.addAll(nicknames)
+
+        val birthdays = fetchResult.birthdays.map { birthday ->
+            val dateString = when {
+                birthday.date != null -> DateUtil.formatDate(birthday.date)
+                birthday.partialDate != null -> birthday.partialDate.toISO8601(false)
+                else -> birthday.text
+            }
+
+            ContactDetailsUiItem.Birthday(
+                dateString
+            )
+        }
+        items.addAll(birthdays)
+
+        val anniversaries = fetchResult.anniversaries.map { anniversary ->
+            val dateString = when {
+                anniversary.date != null -> DateUtil.formatDate(anniversary.date)
+                anniversary.partialDate != null -> anniversary.partialDate.toISO8601(false)
+                else -> anniversary.text
+            }
+
+            ContactDetailsUiItem.Anniversary(
+                dateString
+            )
+        }
+        items.addAll(anniversaries)
+
+        val roles = fetchResult.roles.map { role ->
+            ContactDetailsUiItem.Role(
+                role.value
+            )
+        }
+        items.addAll(roles)
+
+        val urls = fetchResult.urls.map { url ->
+            ContactDetailsUiItem.Url(
+                url.value
+            )
+        }
+        items.addAll(urls)
+
+        Timber.v("Ui Contacts details: $items")
+
+        return ContactDetailsViewState.Data(
+            items,
+            fetchResult.isType2SignatureValid,
+            fetchResult.isType3SignatureValid
+        )
+    }
+
+    private fun getType(parameter: List<VCardParameter>) = if (parameter.isNotEmpty()) {
+        VCardUtil.capitalizeType(
+            VCardUtil.removeCustomPrefixForCustomType(parameter[0].value)
+        )
+    } else {
+        EMPTY_STRING
+    }
 
 }

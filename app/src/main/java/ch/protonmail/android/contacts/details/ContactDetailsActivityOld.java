@@ -88,6 +88,7 @@ import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.contacts.ErrorEnum;
 import ch.protonmail.android.contacts.ErrorResponse;
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity;
+import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.crypto.UserCrypto;
@@ -96,7 +97,6 @@ import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.model.ContactLabel;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.events.ContactEvent;
-import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.FileHelper;
@@ -283,10 +283,10 @@ public class ContactDetailsActivityOld extends BaseActivity implements AppBarLay
             return Unit.INSTANCE;
         });
 
-        viewModel.getContactDetailsFetchResult().observe(
-                this,
-                this::onContactDetailsLoadedEvent
-        );
+//        viewModel.getContactDetailsFetchResult().observe(
+//                this,
+//                this::onContactDetailsLoadedEvent
+//        );
 
         viewModel.fetchContactGroupsAndContactEmails(mContactId);
         appBarLayout.addOnOffsetChangedListener(this);
@@ -597,21 +597,21 @@ public class ContactDetailsActivityOld extends BaseActivity implements AppBarLay
     }
 
 
-    public void onContactDetailsLoadedEvent(FetchContactDetailsResult result) {
+    public void onContactDetailsLoadedEvent(ContactDetailsViewState result) {
         Timber.v("FetchContactDetailsResult received");
-        if (result instanceof FetchContactDetailsResult.Data) {
+        if (result instanceof ContactDetailsViewState.Data) {
             if (mErrorEncryptedView != null) {
                 mErrorEncryptedView.setVisibility(View.GONE);
             }
-            FetchContactDetailsResult.Data data = (FetchContactDetailsResult.Data) result;
+            ContactDetailsViewState data = (ContactDetailsViewState) result;
 //            mVCardType0 = data.getDecryptedVCardType0();
 //            mVCardType2 = data.getDecryptedVCardType2();
 //            mVCardType3 = data.getDecryptedVCardType3();
 //            mVCardType2Signature = data.getVCardType2Signature();
 //            mVCardType3Signature = data.getVCardType3Signature();
             fillVCard(false);
-        } else if (result instanceof FetchContactDetailsResult.Error) {
-            FetchContactDetailsResult.Error error = (FetchContactDetailsResult.Error) result;
+        } else if (result instanceof ContactDetailsViewState.Error) {
+            ContactDetailsViewState.Error error = (ContactDetailsViewState.Error) result;
             Timber.w(error.getException(), "Fetch contact details error");
             hideProgress();
             if (mErrorEncryptedView != null) {

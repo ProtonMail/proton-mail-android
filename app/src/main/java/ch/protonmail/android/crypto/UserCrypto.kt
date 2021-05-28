@@ -27,6 +27,7 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.crypto.TextDecryptionResult
 import com.proton.gopenpgp.armor.Armor
+import timber.log.Timber
 import java.util.Arrays
 
 class UserCrypto(
@@ -46,7 +47,6 @@ class UserCrypto(
 
     protected override fun passphraseFor(key: UserKey): ByteArray? = passphrase
 
-
     fun verify(data: String, signature: String): TextDecryptionResult {
         val valid = openPgp.verifyTextSignDetachedBinKey(signature, data, getVerificationKeys(), openPgp.time)
         return TextDecryptionResult(data, true, valid)
@@ -55,8 +55,11 @@ class UserCrypto(
     /**
      * Decrypt Message or Contact Data
      */
-    override fun decrypt(message: CipherText): TextDecryptionResult =
-        decrypt(message, getVerificationKeys(), openPgp.time)
+    override fun decrypt(message: CipherText): TextDecryptionResult {
+        val publicKeys = getVerificationKeys()
+        Timber.v("Decrypt with keys $publicKeys")
+        return decrypt(message, publicKeys, openPgp.time)
+    }
 
     fun decryptMessage(message: String): TextDecryptionResult {
         val errorMessage = "Error decrypting message, invalid passphrase"
@@ -85,7 +88,6 @@ class UserCrypto(
 
     fun isAllowedForSending(key: AddressKey): Boolean =
         openPgp.checkPassphrase(key.privateKey.string, mailboxPassword!!)
-
 
     @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
     override val UserKey.privateKey: PgpField.PrivateKey
