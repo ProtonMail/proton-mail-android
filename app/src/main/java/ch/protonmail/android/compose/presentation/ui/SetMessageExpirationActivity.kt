@@ -138,7 +138,10 @@ class SetMessageExpirationActivity : AppCompatActivity() {
             OneWeek -> setChecked(oneWeekEntry)
             is Custom -> {
                 setChecked(customEntry)
-                binding.setMsgExpirationPickerView.isVisible = true
+                binding.setMsgExpirationPickerView.apply {
+                    isVisible = true
+                    set(expiration.days, expiration.hours)
+                }
             }
         }
     }

@@ -19,20 +19,26 @@
 
 package ch.protonmail.android.compose.presentation.ui
 
+import android.content.Intent
+import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.ext.junit.rules.activityScenarioRule
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import ch.protonmail.android.R
 import ch.protonmail.android.util.withTextInputEditTextId
 import org.hamcrest.core.AllOf
-import org.junit.Rule
 import org.junit.runner.RunWith
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -43,16 +49,137 @@ import kotlin.test.Test
 @RunWith(AndroidJUnit4ClassRunner::class)
 class SetMessageExpirationActivityTest {
 
-    @get:Rule
-    val activityScenarioRule = activityScenarioRule<SetMessageExpirationActivity>()
-
     @BeforeTest
     fun setup() {
         Intents.init()
     }
 
     // region inputs
-    // TODO parametrized tests
+    @Test
+    fun noneInputIsSetCorrectly() {
+        // given
+        val expectedDays = 0
+        val expectedHours = 0
+
+        // when
+        launchActivity(expectedDays, expectedHours)
+
+        // then
+        onNoneCheck().checkSelected()
+
+        onOneHourCheck().checkNotSelected()
+        onOneDayCheck().checkNotSelected()
+        onThreeDaysCheck().checkNotSelected()
+        onOneWeekCheck().checkNotSelected()
+        onCustomCheck().checkNotSelected()
+        onCustomPickerView().checkNotVisible()
+    }
+
+    @Test
+    fun oneHourInputIsSetCorrectly() {
+        // given
+        val expectedDays = 0
+        val expectedHours = 1
+
+        // when
+        launchActivity(expectedDays, expectedHours)
+
+        // then
+        onNoneCheck().checkNotSelected()
+
+        onOneHourCheck().checkSelected()
+
+        onOneDayCheck().checkNotSelected()
+        onThreeDaysCheck().checkNotSelected()
+        onOneWeekCheck().checkNotSelected()
+        onCustomCheck().checkNotSelected()
+        onCustomPickerView().checkNotVisible()
+    }
+
+    @Test
+    fun oneDayInputIsSetCorrectly() {
+        // given
+        val expectedDays = 1
+        val expectedHours = 0
+
+        // when
+        launchActivity(expectedDays, expectedHours)
+
+        // then
+        onNoneCheck().checkNotSelected()
+        onOneHourCheck().checkNotSelected()
+
+        onOneDayCheck().checkSelected()
+
+        onThreeDaysCheck().checkNotSelected()
+        onOneWeekCheck().checkNotSelected()
+        onCustomCheck().checkNotSelected()
+        onCustomPickerView().checkNotVisible()
+    }
+
+    @Test
+    fun threeDaysInputIsSetCorrectly() {
+        // given
+        val expectedDays = 3
+        val expectedHours = 0
+
+        // when
+        launchActivity(expectedDays, expectedHours)
+
+        // then
+        onNoneCheck().checkNotSelected()
+        onOneHourCheck().checkNotSelected()
+        onOneDayCheck().checkNotSelected()
+
+        onThreeDaysCheck().checkSelected()
+
+        onOneWeekCheck().checkNotSelected()
+        onCustomCheck().checkNotSelected()
+        onCustomPickerView().checkNotVisible()
+    }
+
+    @Test
+    fun oneWeekInputIsSetCorrectly() {
+        // given
+        val expectedDays = 7
+        val expectedHours = 0
+
+        // when
+        launchActivity(expectedDays, expectedHours)
+
+        // then
+        onNoneCheck().checkNotSelected()
+        onOneHourCheck().checkNotSelected()
+        onOneDayCheck().checkNotSelected()
+        onThreeDaysCheck().checkNotSelected()
+
+        onOneWeekCheck().checkSelected()
+
+        onCustomCheck().checkNotSelected()
+        onCustomPickerView().checkNotVisible()
+    }
+
+    @Test
+    fun customInputIsSetCorrectly() {
+        // given
+        val expectedDays = 4
+        val expectedHours = 7
+
+        // when
+        launchActivity(expectedDays, expectedHours)
+
+        // then
+        onNoneCheck().checkNotSelected()
+        onOneHourCheck().checkNotSelected()
+        onOneDayCheck().checkNotSelected()
+        onThreeDaysCheck().checkNotSelected()
+        onOneWeekCheck().checkNotSelected()
+
+        onCustomCheck().checkSelected()
+        onCustomPickerView().checkVisible()
+        onCustomDaysView().matchesNumberText(expectedDays)
+        onCustomHoursView().matchesNumberText(expectedHours)
+    }
     // endregion
 
     // region outputs
@@ -63,11 +190,12 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 0
 
         // when
-        onNoneSelected()
+        val scenario = launchActivity()
+        onNoneView().performSelection()
         performSetClick()
 
         // then
-        assertResult(expectedDays, expectedHours)
+        assertResult(scenario, expectedDays, expectedHours)
     }
 
     @Test
@@ -77,11 +205,12 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 1
 
         // when
-        onOneHourSelected()
+        val scenario = launchActivity()
+        onOneHourView().performSelection()
         performSetClick()
 
         // then
-        assertResult(expectedDays, expectedHours)
+        assertResult(scenario, expectedDays, expectedHours)
     }
 
     @Test
@@ -91,11 +220,12 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 0
 
         // when
-        onOneDaySelected()
+        val scenario = launchActivity()
+        onOneDayView().performSelection()
         performSetClick()
 
         // then
-        assertResult(expectedDays, expectedHours)
+        assertResult(scenario, expectedDays, expectedHours)
     }
 
     @Test
@@ -105,11 +235,12 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 0
 
         // when
-        onThreeDaysSelected()
+        val scenario = launchActivity()
+        onThreeDaysView().performSelection()
         performSetClick()
 
         // then
-        assertResult(expectedDays, expectedHours)
+        assertResult(scenario, expectedDays, expectedHours)
     }
 
     @Test
@@ -119,11 +250,12 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 0
 
         // when
-        onOneWeekSelected()
+        val scenario = launchActivity()
+        onOneWeekView().performSelection()
         performSetClick()
 
         // then
-        assertResult(expectedDays, expectedHours)
+        assertResult(scenario, expectedDays, expectedHours)
     }
 
     @Test
@@ -133,47 +265,21 @@ class SetMessageExpirationActivityTest {
         val expectedHours = 7
 
         // when
-        onCustomSelected()
+        val scenario = launchActivity()
+        onCustomView().performSelection()
         setCustomDaysAndHours(expectedDays, expectedHours)
         performSetClick()
 
         // then
-        assertResult(expectedDays, expectedHours)
-    }
-    // endregion
-
-    private fun onNoneSelected(): ViewInteraction =
-        onView(withId(R.id.set_msg_expiration_none_text_view)).perform(click())
-
-    private fun onOneHourSelected(): ViewInteraction =
-        onView(withId(R.id.set_msg_expiration_1_hour_text_view)).perform(click())
-
-    private fun onOneDaySelected(): ViewInteraction =
-        onView(withId(R.id.set_msg_expiration_1_day_text_view)).perform(click())
-
-    private fun onThreeDaysSelected(): ViewInteraction =
-        onView(withId(R.id.set_msg_expiration_3_days_text_view)).perform(click())
-
-    private fun onOneWeekSelected(): ViewInteraction =
-        onView(withId(R.id.set_msg_expiration_1_week_text_view)).perform(click())
-
-    private fun onCustomSelected(): ViewInteraction =
-        onView(withId(R.id.set_msg_expiration_custom_text_view)).perform(click())
-
-    @Suppress("SameParameterValue")
-    private fun setCustomDaysAndHours(days: Int, hours: Int) {
-        onView(withTextInputEditTextId(R.id.days_and_hours_picker_days_input))
-            .perform(replaceText(days.toString()))
-
-        onView(withTextInputEditTextId(R.id.days_and_hours_picker_hours_input))
-            .perform(replaceText(hours.toString()))
+        assertResult(scenario, expectedDays, expectedHours)
     }
 
-    private fun performSetClick(): ViewInteraction =
-        onView(withId(R.id.set_msg_expiration_set)).perform(click())
-
-    private fun assertResult(expectedDays: Int, expectedHours: Int) {
-        val resultIntent = activityScenarioRule.scenario.result.resultData
+    private fun assertResult(
+        scenario: ActivityScenario<SetMessageExpirationActivity>,
+        expectedDays: Int,
+        expectedHours: Int
+    ) {
+        val resultIntent = scenario.result.resultData
         assertThat(
             resultIntent,
             AllOf.allOf(
@@ -182,4 +288,88 @@ class SetMessageExpirationActivityTest {
             )
         )
     }
+    // endregion
+
+    private fun launchActivity(
+        extraExpirationDays: Int? = 0,
+        extraExpirationHours: Int? = 0
+    ) = launchActivity<SetMessageExpirationActivity>(
+        Intent(ApplicationProvider.getApplicationContext(), SetMessageExpirationActivity::class.java)
+            .apply {
+                extraExpirationDays?.let { putExtra(ARG_SET_MESSAGE_EXPIRATION_DAYS, it) }
+                extraExpirationHours?.let { putExtra(ARG_SET_MESSAGE_EXPIRATION_HOURS, it) }
+            }
+    )
+
+    private fun onNoneView(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_none_text_view))
+
+    private fun onOneHourView(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_1_hour_text_view))
+
+    private fun onOneDayView(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_1_day_text_view))
+
+    private fun onThreeDaysView(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_3_days_text_view))
+
+    private fun onOneWeekView(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_1_week_text_view))
+
+    private fun onCustomView(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_custom_text_view))
+
+    private fun onNoneCheck(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_none_check))
+
+    private fun onOneHourCheck(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_1_hour_check))
+
+    private fun onOneDayCheck(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_1_day_check))
+
+    private fun onThreeDaysCheck(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_3_days_check))
+
+    private fun onOneWeekCheck(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_1_week_check))
+
+    private fun onCustomCheck(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_custom_check))
+
+    private fun onCustomPickerView(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_picker_view))
+
+    private fun onCustomDaysView(): ViewInteraction =
+        onView(withTextInputEditTextId(R.id.days_and_hours_picker_days_input))
+
+    private fun onCustomHoursView(): ViewInteraction =
+        onView(withTextInputEditTextId(R.id.days_and_hours_picker_hours_input))
+
+    private fun ViewInteraction.checkSelected(): ViewInteraction =
+        checkVisible()
+
+    private fun ViewInteraction.checkNotSelected(): ViewInteraction =
+        checkNotVisible()
+
+    private fun ViewInteraction.checkVisible(): ViewInteraction =
+        check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+
+    private fun ViewInteraction.checkNotVisible(): ViewInteraction =
+        check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+
+    private fun ViewInteraction.matchesNumberText(number: Int): ViewInteraction =
+        check(matches(withText(number.toString())))
+
+    private fun ViewInteraction.performSelection(): ViewInteraction =
+        perform(click())
+
+    @Suppress("SameParameterValue")
+    private fun setCustomDaysAndHours(days: Int, hours: Int) {
+        onCustomDaysView().perform(replaceText(days.toString()))
+        onCustomHoursView().perform(replaceText(hours.toString()))
+    }
+
+    private fun performSetClick(): ViewInteraction =
+        onView(withId(R.id.set_msg_expiration_set)).perform(click())
 }
