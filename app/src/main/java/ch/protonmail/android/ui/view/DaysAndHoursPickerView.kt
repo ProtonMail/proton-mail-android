@@ -69,13 +69,15 @@ class DaysAndHoursPickerView @JvmOverloads constructor(
 
         daysInput.onTextChange { text ->
             val hours = hoursInput.text?.toString()?.toIntOrNull()
-            if (normaliseDays(text) == HasChanged.False && hours != null)
+            if (normaliseDays(text) == HasChanged.False && hours != null) {
                 changesBuffer.offer(DaysHoursPair(text.toString().toInt(), hours))
+            }
         }
         hoursInput.onTextChange { text ->
             val days = daysInput.text?.toString()?.toIntOrNull()
-            if (normaliseHours(text) == HasChanged.False && days != null)
+            if (normaliseHours(text) == HasChanged.False && days != null) {
                 changesBuffer.offer(DaysHoursPair(days, text.toString().toInt()))
+            }
         }
     }
 

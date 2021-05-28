@@ -34,6 +34,11 @@ sealed class ComposeMessageEventUiModel {
     data class OnAttachmentsChange(val attachments: List<ComposerAttachmentUiModel>) : ComposeMessageEventUiModel()
 
     /**
+     * Password change has been requested and previous password is ready
+     */
+    data class OnPasswordChangeRequest(val currentPassword: MessagePasswordUiModel) : ComposeMessageEventUiModel()
+
+    /**
      * Expiration change has been requested and previous expiration is ready
      */
     data class OnExpirationChangeRequest(val currentExpiration: DaysHoursPair) : ComposeMessageEventUiModel()

@@ -26,13 +26,11 @@ import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
-import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import ch.protonmail.android.R
-import com.google.android.material.textfield.TextInputEditText
-import org.hamcrest.Matchers.`is`
+import ch.protonmail.android.util.withTextInputEditTextId
 import org.hamcrest.core.AllOf
 import org.junit.Rule
 import org.junit.runner.RunWith
@@ -164,19 +162,11 @@ class SetMessageExpirationActivityTest {
 
     @Suppress("SameParameterValue")
     private fun setCustomDaysAndHours(days: Int, hours: Int) {
-        onView(
-            AllOf.allOf(
-                withId(R.id.days_and_hours_picker_days_input),
-                withClassName(`is`(TextInputEditText::class.qualifiedName))
-            )
-        ).perform(replaceText(days.toString()))
+        onView(withTextInputEditTextId(R.id.days_and_hours_picker_days_input))
+            .perform(replaceText(days.toString()))
 
-        onView(
-            AllOf.allOf(
-                withId(R.id.days_and_hours_picker_hours_input),
-                withClassName(`is`(TextInputEditText::class.qualifiedName))
-            )
-        ).perform(replaceText(hours.toString()))
+        onView(withTextInputEditTextId(R.id.days_and_hours_picker_hours_input))
+            .perform(replaceText(hours.toString()))
     }
 
     private fun performSetClick(): ViewInteraction =

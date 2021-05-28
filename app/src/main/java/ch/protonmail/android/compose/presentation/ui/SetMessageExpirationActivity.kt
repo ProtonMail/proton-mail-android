@@ -31,6 +31,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.compose.presentation.ui.SetMessageExpirationActivity.Expiration.Custom
 import ch.protonmail.android.compose.presentation.ui.SetMessageExpirationActivity.Expiration.None
@@ -40,6 +41,8 @@ import ch.protonmail.android.compose.presentation.ui.SetMessageExpirationActivit
 import ch.protonmail.android.compose.presentation.ui.SetMessageExpirationActivity.Expiration.ThreeDays
 import ch.protonmail.android.databinding.ActivitySetMessageExpirationBinding
 import ch.protonmail.android.ui.view.DaysHoursPair
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import me.proton.core.presentation.utils.onClick
 import timber.log.Timber
 
@@ -88,6 +91,9 @@ class SetMessageExpirationActivity : AppCompatActivity() {
         threeDaysEntry.first.onClick { setExpiration(ThreeDays) }
         oneWeekEntry.first.onClick { setExpiration(OneWeek) }
         customEntry.first.onClick { setExpiration(Custom(0, 0)) }
+        binding.setMsgExpirationPickerView.onChange
+            .onEach { setExpiration(Custom(it.days, it.hours)) }
+            .launchIn(lifecycleScope)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
