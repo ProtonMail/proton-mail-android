@@ -54,6 +54,7 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_ALLOW_SECURE_CONNE
 import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOCK_PIN_PERIOD;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOGOUT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_BACKGROUND_SYNC;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_BLOCK_SWIPING_GESTURES;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_COMBINED_CONTACTS;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_DELINQUENT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_MOBILE;
@@ -167,6 +168,7 @@ public class User {
     private boolean ManuallyLocked; // this can remain here, local only setting
     private String username; // this can remain here, local only setting
     private boolean CombinedContacts; // this can remain here, local only setting
+    private boolean BlockSwipingGestures;
     private boolean isLegacyAccount;
     // endregion
 
@@ -202,6 +204,7 @@ public class User {
         user.Addresses = deserializeAddresses(securePrefs.getString(PREF_ALIASES, ""));
         user.keys = deserializeKeys(securePrefs.getString(PREF_KEYS, ""));
         user.NotificationSetting = user.loadNotificationSettingsFromBackup();
+        user.BlockSwipingGestures = securePrefs.getBoolean(PREF_BLOCK_SWIPING_GESTURES, false);
         user.BackgroundSync = securePrefs.getBoolean(PREF_BACKGROUND_SYNC, true);
         user.PreventTakingScreenshots = securePrefs.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
         user.GcmDownloadMessageDetails = securePrefs.getBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, false);
@@ -288,12 +291,15 @@ public class User {
         ShowSignature = loadShowSignatureSetting();
         ShowMobileSignature = loadShowMobileSignatureSetting();
 
+        BlockSwipingGestures = loadBlockSwipingGestures();
+
         pref.edit()
                 .putLong(PREF_USED_SPACE, usedSpace)
                 .putString(PREF_SIGNATURE, Signature)
                 .putString(PREF_MOBILE_SIGNATURE, MobileSignature)
                 .putBoolean(PREF_DISPLAY_MOBILE, ShowMobileSignature)
                 .putBoolean(PREF_DISPLAY_SIGNATURE, ShowSignature)
+                .putBoolean(PREF_BLOCK_SWIPING_GESTURES, BlockSwipingGestures)
                 .putString(PREF_DISPLAY_NAME, DisplayName)
                 .putLong(PREF_MAX_SPACE, maxSpace)
                 .putInt(PREF_MAX_UPLOAD_FILE_SIZE, maxUpload)
@@ -403,6 +409,16 @@ public class User {
     private int loadNotificationSettingsFromBackup() {
         final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
         return pref.getInt(PREF_NOTIFICATION, 3);
+    }
+
+    public void saveBlockSwipingGestures() {
+        final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
+        pref.edit().putBoolean(PREF_BLOCK_SWIPING_GESTURES, BlockSwipingGestures).apply();
+    }
+
+    private boolean loadBlockSwipingGestures() {
+        final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
+        return pref.getBoolean(PREF_BLOCK_SWIPING_GESTURES, false);
     }
 
     public void saveNotificationVisibilityLockScreenSettingsBackup() {
@@ -1028,6 +1044,13 @@ public class User {
     public void setPreventTakingScreenshots(boolean preventTakingScreenshots) {
         PreventTakingScreenshots = preventTakingScreenshots ? 1 : 0;
         savePreventTakingScreenshotsSetting();
+    }
+
+    public boolean isBlockSwipingGestures() { return BlockSwipingGestures; }
+
+    public void setBlockSwipingGestures(boolean blockSwipingGestures) {
+        BlockSwipingGestures = blockSwipingGestures;
+        saveBlockSwipingGestures();
     }
 
     public boolean isGcmDownloadMessageDetails() {

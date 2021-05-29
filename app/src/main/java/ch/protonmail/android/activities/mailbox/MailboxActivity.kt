@@ -424,7 +424,9 @@ class MailboxActivity :
             }
         )
         messagesLiveData.observe(this, MessagesListObserver(messagesAdapter))
-        ItemTouchHelper(SwipeController()).attachToRecyclerView(messages_list_view)
+        if (!mUserManager.user.isBlockSwipingGestures) {
+            ItemTouchHelper(SwipeController()).attachToRecyclerView(messages_list_view)
+        }
 
         if (extras != null && extras.getBoolean(EXTRA_SWITCHED_USER, false)) {
             val newUser = extras.getString(EXTRA_SWITCHED_TO_USER)

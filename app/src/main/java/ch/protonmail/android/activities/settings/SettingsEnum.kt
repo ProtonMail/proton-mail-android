@@ -106,6 +106,10 @@ enum class SettingsEnum {
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String = context.resources.getString(R.string.swipe_action_right)
     },
+    BLOCK_SWIPING_GESTURES {
+        override fun getHint(context: Context): String = ""
+        override fun getHeader(context: Context): String = context.resources.getString(R.string.block_swiping_gestures)
+    },
     LOCAL_STORAGE_LIMIT {
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String = context.resources.getString(R.string.local_storage)
