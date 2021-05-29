@@ -244,7 +244,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="resend_verification_code">Poslat znovu</string>
     <string name="enter_verification_code">Zadejte ověřovací kód</string>
     <string name="verify">Ověřit</string>
-    <string name="reply_prefix_on">Zapnuto</string>
+    <string name="reply_prefix_on">Dne</string>
     <string name="create_new_account">Vytvořit nový účet</string>
     <string name="setup_new_account">Nastavení účtu</string>
     <string name="create_account">Vytvořit účet</string>
