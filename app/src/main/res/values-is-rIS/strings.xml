@@ -20,26 +20,26 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
-    <string name="x_folders">Möppur</string>
-    <string name="x_labels">Merkingar</string>
-    <string name="x_more">Meira</string>
-    <string name="x_search">Leita</string>
+    <string name="x_folders">Folders</string>
+    <string name="x_labels">Labels</string>
+    <string name="x_more">More</string>
+    <string name="x_search">Search</string>
     <!-- endregion -->
     <!-- region Drawer -->
-    <string name="drawer_contacts">Tengiliðir</string>
+    <string name="drawer_contacts">Contacts</string>
     <string name="drawer_lock_the_app">Lock the app</string>
-    <string name="drawer_report_bug">Tilkynna galla</string>
-    <string name="drawer_settings">Stillingar</string>
-    <string name="drawer_subscription">Áskrift</string>
-    <string name="drawer_sign_out">Skrá út</string>
+    <string name="drawer_report_bug">Report bug</string>
+    <string name="drawer_settings">Settings</string>
+    <string name="drawer_subscription">Subscription</string>
+    <string name="drawer_sign_out">Sign out</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Bcc:</string>
-    <string name="composer_cc">Afrit:</string>
+    <string name="composer_cc">Cc:</string>
     <string name="composer_compose_email">Compose email</string>
-    <string name="composer_from">Frá:</string>
-    <string name="composer_subject">Viðfangsefni:</string>
-    <string name="composer_to">Til:</string>
+    <string name="composer_from">From:</string>
+    <string name="composer_subject">Subject:</string>
+    <string name="composer_to">To:</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -735,14 +735,14 @@
     <string name="snooze_header">Fresta</string>
     <string name="notifications_snooze">Frestun tilkynninga</string>
     <string-array name="quick_snooze_values">
-        <item>30 mínútur</item>
+        <item>30 minutes</item>
         <item>1 hour</item>
         <item>2 hours</item>
         <item>4 hours</item>
         <item>8 hours</item>
         <item>12 hours</item>
-        <item>Sérsniðið</item>
-        <item>Áætlað</item>
+        <item>Custom</item>
+        <item>Scheduled</item>
     </string-array>
     <string name="notifications_snoozed">Tilkynningum frestað</string>
     <string name="notifications_snooze_scheduled">Áætlað</string>
@@ -789,8 +789,8 @@
     <string name="settings_prevent_taking_screenshots">Hindra skjámyndatöku</string>
     <string name="hyperlink_confirmation">Krefjast staðfestingar á tengli</string>
     <string name="labels_and_folders">Merkingar og möppur </string>
-    <string name="folders">Möppur</string>
-    <string name="labels">Merkingar</string>
+    <string name="folders">Folders</string>
+    <string name="labels">Labels</string>
     <string name="labels_manage">Sýsla með merkingar</string>
     <string name="folders_manage">Sýsla með möppur</string>
     <string name="swiping_gesture">Strokubending</string>
@@ -804,7 +804,7 @@
     <string name="swipe_action_spam">Skilaboð merkt sem ruslpóstur</string>
     <string name="swipe_action_archive">Skilaboð sett í safn</string>
     <string name="swipe_action_mark_read">Skilaboðin voru merkt sem lesin</string>
-    <string name="swipe_action_mark_read_short">Lesa</string>
+    <string name="swipe_action_mark_read_short">Read</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Skilaboð voru færð í ruslið</item>
         <item quantity="other">Skilaboð voru færð í ruslið</item>
@@ -881,7 +881,7 @@
     <!-- endregion -->
     <string name="allowed">Heimilað</string>
     <string name="denied">Hafnað</string>
-    <string name="more">Meira</string>
+    <string name="more">More</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Strokuhreyfingar breyttust</string>
     <string name="swipe_gestures_changed_message">Eftir síðustu uppfærslu var strokuhreyfingum víxlað. Ef þú vilt geturðu endurstillt þetta í stillingunum.</string>
@@ -895,16 +895,16 @@
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
     <string name="error_loading_conversations">Error loading conversations, please try again</string>
-    <string name="star">Stjörnumerkja</string>
-    <string name="unstar">Fjarlægja stjörnugjöf</string>
+    <string name="star">Star</string>
+    <string name="unstar">Unstar</string>
     <string name="send_to_archive">Send to archive?</string>
     <string name="new_label">New Label</string>
     <string name="new_folder">New Folder</string>
     <string name="label_as">Label as…</string>
-    <string name="mark_as_unread">Merkja sem ólesið</string>
-    <string name="mark_as_read">Merkja sem lesið</string>
+    <string name="mark_as_unread">Mark as unread</string>
+    <string name="mark_as_read">Mark as read</string>
     <string name="move_message">Move message</string>
-    <string name="manage">Stjórna</string>
+    <string name="manage">Manage</string>
     <string name="message_from">Message from %s</string>
     <string name="not_spam_move_to_inbox">Not spam (Move to Inbox)</string>
     <plurals name="x_messages_count">

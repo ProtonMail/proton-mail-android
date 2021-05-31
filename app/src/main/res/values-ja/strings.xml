@@ -872,23 +872,23 @@
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="error_loading_conversations">Error loading conversations, please try again</string>
-    <string name="star">星印を付ける</string>
+    <string name="error_loading_conversations">会話の読み込み中にエラーが発生しました。もう一度やり直してください。</string>
+    <string name="star">星印</string>
     <string name="unstar">星印をはずす</string>
-    <string name="send_to_archive">Send to archive?</string>
-    <string name="new_label">New Label</string>
-    <string name="new_folder">New Folder</string>
-    <string name="label_as">Label as…</string>
-    <string name="mark_as_unread">未読に戻す</string>
+    <string name="send_to_archive">アーカイブに送る</string>
+    <string name="new_label">新しいラベル</string>
+    <string name="new_folder">新規フォルダ</string>
+    <string name="label_as">…としてラベル付け</string>
+    <string name="mark_as_unread">未読にする</string>
     <string name="mark_as_read">既読にする</string>
-    <string name="move_message">Move message</string>
-    <string name="manage">管理する</string>
-    <string name="message_from">Message from %s</string>
-    <string name="not_spam_move_to_inbox">Not spam (Move to Inbox)</string>
+    <string name="move_message">メールを移動</string>
+    <string name="manage">管理</string>
+    <string name="message_from">\"%s\"からのメッセージ</string>
+    <string name="not_spam_move_to_inbox">迷惑メールではありません (受信箱に移動)</string>
     <plurals name="x_messages_count">
-        <item quantity="other">%d messages</item>
+        <item quantity="other">%d 件のメッセージ</item>
     </plurals>
     <plurals name="x_conversations_count">
-        <item quantity="other">%d conversations</item>
+        <item quantity="other">%d 件の会話</item>
     </plurals>
 </resources>

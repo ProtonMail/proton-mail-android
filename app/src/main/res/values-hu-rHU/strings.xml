@@ -20,26 +20,26 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
-    <string name="x_folders">Mappák</string>
-    <string name="x_labels">Címkék</string>
-    <string name="x_more">Továbbiak</string>
-    <string name="x_search">Keresés</string>
+    <string name="x_folders">Folders</string>
+    <string name="x_labels">Labels</string>
+    <string name="x_more">More</string>
+    <string name="x_search">Search</string>
     <!-- endregion -->
     <!-- region Drawer -->
-    <string name="drawer_contacts">Névjegyek</string>
-    <string name="drawer_lock_the_app">Lock the app</string>
-    <string name="drawer_report_bug">Hibajelentés</string>
-    <string name="drawer_settings">Beállítások</string>
-    <string name="drawer_subscription">Előfizetés</string>
-    <string name="drawer_sign_out">Kijelentkezés</string>
+    <string name="drawer_contacts">Contacts</string>
+    <string name="drawer_lock_the_app">Alkalmazás zárolása</string>
+    <string name="drawer_report_bug">Report bug</string>
+    <string name="drawer_settings">Settings</string>
+    <string name="drawer_subscription">Subscription</string>
+    <string name="drawer_sign_out">Sign out</string>
     <!-- endregion -->
     <!-- region Composer -->
-    <string name="composer_bcc">Titkos másolat:</string>
-    <string name="composer_cc">Másolat:</string>
-    <string name="composer_compose_email">Compose email</string>
-    <string name="composer_from">Feladó:</string>
-    <string name="composer_subject">Tárgy:</string>
-    <string name="composer_to">Címzett:</string>
+    <string name="composer_bcc">Bcc:</string>
+    <string name="composer_cc">Cc:</string>
+    <string name="composer_compose_email">E-mail írása</string>
+    <string name="composer_from">From:</string>
+    <string name="composer_subject">Subject:</string>
+    <string name="composer_to">To:</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -68,7 +68,7 @@ Svájci székhellyel</string>
     <string name="no_network_queued">Nincs hálózat, az üzenet várólistára került</string>
     <string name="update_app_title">Frissítés szükséges</string>
     <string name="update_app">A ProtonMail alkalmazás nem használható, amíg nincs frissítve</string>
-    <string name="you_are_offline">You are offline</string>
+    <string name="you_are_offline">Offline vagy</string>
     <string name="api_offline_title">A ProtonMail API jelenleg nem elérhető</string>
     <string name="api_offline">A ProtonMail nem érhető el. Kérjük, nézze meg a https://protonstatus.com vagy https://twitter.com/protonmail oldalakat a friss hírekért.</string>
     <string name="contact_saved">Névjegy elmentve</string>
@@ -80,14 +80,14 @@ Svájci székhellyel</string>
     <string name="message_drafted">Az üzenet küldése sikertelen volt. A Piszkozatok mappában került mentésre.</string>
     <string name="open_drawer">Megnyitás</string>
     <string name="close_drawer">Bezárás</string>
-    <string name="inbox_option">Beérkezett üzenetek</string>
-    <string name="starred_option">Csillagozott</string>
-    <string name="drafts_option">Piszkozatok</string>
-    <string name="sent_option">Elküldött</string>
-    <string name="archive_option">Archív</string>
-    <string name="trash_option">Lomtár</string>
-    <string name="spam_option">Levélszemét</string>
-    <string name="allmail_option">Összes levél</string>
+    <string name="inbox_option">Inbox</string>
+    <string name="starred_option">Starred</string>
+    <string name="drafts_option">Drafts</string>
+    <string name="sent_option">Sent</string>
+    <string name="archive_option">Archive</string>
+    <string name="trash_option">Trash</string>
+    <string name="spam_option">Spam</string>
+    <string name="allmail_option">All Mail</string>
     <string name="inbox">Beérkezett üzenetek</string>
     <string name="starred">Csillagozott</string>
     <string name="drafts">Piszkozatok</string>
@@ -119,7 +119,7 @@ Svájci székhellyel</string>
     <string name="move_to_trash">Áthelyezés a lomtárba</string>
     <string name="move_to_spam">Áthelyezés a levélszeméthez</string>
     <string name="move_to_inbox">Áthelyezés a beérkezett üzenetekhez</string>
-    <string name="move_to">Move to…</string>
+    <string name="move_to">Áthelyezés ide…</string>
     <string name="are_you_sure_empty">Biztosan törli az összes üzenetet ebben a mappában?</string>
     <string name="send">Küldés</string>
     <string name="selected">Kiválasztva</string>
@@ -165,9 +165,9 @@ Svájci székhellyel</string>
         <item quantity="one">%d perc</item>
         <item quantity="other">%d perc</item>
     </plurals>
-    <string name="expiration_days">%dD</string>
-    <string name="expiration_hours">%dH</string>
-    <string name="expiration_minutes">%dM</string>
+    <string name="expiration_days">%dnap</string>
+    <string name="expiration_hours">%dóra</string>
+    <string name="expiration_minutes">%dperc</string>
     <plurals name="attachments">
         <item quantity="one">Egy melléklet</item>
         <item quantity="other">%d melléklet</item>
@@ -177,8 +177,8 @@ Svájci székhellyel</string>
         <item quantity="other">\u0020 %d melléklet</item>
     </plurals>
     <plurals name="attachments_number">
-        <item quantity="one">1 Attachment</item>
-        <item quantity="other">%d Attachments</item>
+        <item quantity="one">1 csatolmány</item>
+        <item quantity="other">%d csatolmány</item>
     </plurals>
     <string name="add_attachment">Melléklet hozzáadása</string>
     <string name="select_file">Fájl kiválasztása</string>
@@ -266,7 +266,7 @@ Svájci székhellyel</string>
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Válaszolás az eredeti levélben</string>
     <string name="no_connectivity_detected">Nincs kapcsolat...</string>
-    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">A szerver nem elérhető… (<u>Hibajavítás</u>)</string>
     <string name="connectivity_checking">Várakozás a kapcsolatra...</string>
     <string name="sync_short">szinkronizálás</string>
     <string name="draft_attachments_uploading">A piszkozat még feltöltés alatt...</string>
@@ -489,7 +489,7 @@ Svájci székhellyel</string>
     <string name="print_error">Nyomtatási hiba</string>
     <string name="download_complete">A letöltés befejeződött</string>
     <string name="download_in_progress">Letöltés folyamatban</string>
-    <string name="message_expires_in">This message will expire in %s</string>
+    <string name="message_expires_in">Ez az üzenet lejár %s belül</string>
     <string name="unsaved_changes_title">Nem mentett módosítások</string>
     <string name="unsaved_changes_subtitle">Az űrlapon nem mentett módosítások vannak. Biztos, hogy elveti?</string>
     <string name="request_timeout">Kapcsolat-időtúllépés, próbálja meg újra</string>
@@ -538,7 +538,7 @@ Svájci székhellyel</string>
     <string name="recheck_delinquency">Ellenőrizze újra</string>
     <string name="close_app">Alkalmazás bezárása</string>
     <string name="empty_subject">(Nincs tárgy)</string>
-    <string name="empty_recipients">(No recipients)</string>
+    <string name="empty_recipients">(Nincs címzett)</string>
     <string name="contacts_unknown">Ismeretlen</string>
     <string name="learn_more"><u>További információk</u></string>
     <string name="info">Infó</string>
@@ -589,7 +589,7 @@ Svájci székhellyel</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Végpontok közt titkosított üzenet</string>
     <string name="sender_lock_internal_verified">Végpontok közt titkosított, ellenőrzött címről</string>
-    <string name="sender_lock_learn_more"><a href="">Learn more</a></string>
+    <string name="sender_lock_learn_more"><a href="">Részletek</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Végpontok közt titkosított</string>
     <string name="composer_lock_internal_pinned">Végpontok közt titkosított, ellenőrzött címre</string>
@@ -612,7 +612,7 @@ Svájci székhellyel</string>
     <string name="channel_name_ongoing_operations">Folyamatban lévő műveletek</string>
     <string name="channel_description_ongoing_operations">Mutatja az összes folyamatban lévő műveletet,
 	mint új üzenet letöltése a háttérben</string>
-    <string name="retrieving_notifications">Retrieving notifications</string>
+    <string name="retrieving_notifications">Értesítések keresése</string>
     <string name="report_phishing">Adathalászat bejelentése</string>
     <string name="print">Nyomtatás</string>
     <string name="phishing_dialog_title">Erősítse meg az adathalász bejelentést</string>
@@ -720,7 +720,7 @@ Svájci székhellyel</string>
     <string name="payment_method">Fizetési mód</string>
     <string name="password_manager">Jelszókezelő</string>
     <string name="recovery_email">Helyreállítási e-mail</string>
-    <string name="info_for_missing_functionality">Please log in through <a href="https://www.protonmail.com/">protonmail.com</a> and access your settings to edit this information.</string>
+    <string name="info_for_missing_functionality">Kérjük, jelentkezzen be a <a href="https://www.protonmail.com/">protonmail.com</a> -on keresztül, és a beállításoknál módosítsa ezt az információt.</string>
     <string name="storage">Postafiók mérete</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Címek</string>
@@ -738,14 +738,14 @@ Svájci székhellyel</string>
     <string name="snooze_header">Szüneteltetés</string>
     <string name="notifications_snooze">Értesítések szüneteltetése</string>
     <string-array name="quick_snooze_values">
-        <item>30 perc</item>
-        <item>1 hour</item>
-        <item>2 hours</item>
-        <item>4 hours</item>
-        <item>8 hours</item>
-        <item>12 hours</item>
-        <item>Egyéni</item>
-        <item>Ütemezett</item>
+        <item>30 minutes</item>
+        <item>1 óra</item>
+        <item>2 óra</item>
+        <item>4 óra</item>
+        <item>8 óra</item>
+        <item>12 óra</item>
+        <item>Custom</item>
+        <item>Scheduled</item>
     </string-array>
     <string name="notifications_snoozed">Értesítések szüneteltetve</string>
     <string name="notifications_snooze_scheduled">Ütemezés</string>
@@ -767,13 +767,13 @@ Svájci székhellyel</string>
     <string name="weekends">Weekend</string>
     <string name="every_day">Every day</string>
     <string-array name="snooze_repeat_values">
-        <item>Mo</item>
-        <item>Tu</item>
-        <item>We</item>
-        <item>Th</item>
-        <item>Fr</item>
-        <item>Sa</item>
-        <item>Su</item>
+        <item>H</item>
+        <item>K</item>
+        <item>Sze</item>
+        <item>Cs</item>
+        <item>P</item>
+        <item>Szo</item>
+        <item>V</item>
     </string-array>
     <string name="quick_and_scheduled_enabled">Gyors szüneteltetés és ütemezett szüneteltetés aktív</string>
     <string name="quick_only_enabled">Gyors szüneteltetés aktív</string>
@@ -792,8 +792,8 @@ Svájci székhellyel</string>
     <string name="settings_prevent_taking_screenshots">Képernyőkép készítés megakadályozása</string>
     <string name="hyperlink_confirmation">Kérés link megerősítése</string>
     <string name="labels_and_folders">Címkék és Mappák </string>
-    <string name="folders">Mappák</string>
-    <string name="labels">Címkék</string>
+    <string name="folders">Folders</string>
+    <string name="labels">Labels</string>
     <string name="labels_manage">Címkék kezelése</string>
     <string name="folders_manage">Mappák kezelése</string>
     <string name="swiping_gesture">Csúsztatási műveletek</string>
@@ -803,11 +803,11 @@ Svájci székhellyel</string>
     <string name="swipe_action_chooser_title">Válasszon műveletet a csúsztatáshoz</string>
     <string name="swipe_action_trash">Áthelyezés a Lomtárba</string>
     <string name="swipe_action_star">Csillagozás frissítése</string>
-    <string name="swipe_action_star_short">Update star</string>
+    <string name="swipe_action_star_short">Csillagozás</string>
     <string name="swipe_action_spam">Levélszemétként megjelölés</string>
     <string name="swipe_action_archive">Archiválás</string>
     <string name="swipe_action_mark_read">Megjelölés olvasottként</string>
-    <string name="swipe_action_mark_read_short">Olvasott</string>
+    <string name="swipe_action_mark_read_short">Read</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Üzenet áthelyezve a lomtárba</item>
         <item quantity="other">Üzenetek áthelyezve a lomtárba</item>
@@ -884,7 +884,7 @@ Svájci székhellyel</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
-    <string name="more">Továbbiak</string>
+    <string name="more">More</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Csúsztatás műveletek frissítve</string>
     <string name="swipe_gestures_changed_message">A legutóbbi frissítés után a csúsztatás műveletek megváltoztak. Ha szeretné, visszaállíthatja a beállításoknál.</string>
@@ -893,29 +893,29 @@ Svájci székhellyel</string>
     <string name="invalid_firebase_api_key_message">Helytelen Firebase API kulcs. A Push értesítések nem fognak működni.</string>
     <string name="failed_saving_draft_online">Hiba történt a piszkozat mentése közben: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Nem nyitható meg az üzenet, miközben elküldés alatt van</string>
-    <string name="enable_conversation_mode">Enable conversation mode</string>
+    <string name="enable_conversation_mode">Beszélgetés engedélyezése</string>
     <!-- endregion -->
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
-    <string name="error_loading_conversations">Error loading conversations, please try again</string>
-    <string name="star">Csillagozás</string>
-    <string name="unstar">Nem csillagozás</string>
-    <string name="send_to_archive">Send to archive?</string>
-    <string name="new_label">New Label</string>
-    <string name="new_folder">New Folder</string>
-    <string name="label_as">Label as…</string>
-    <string name="mark_as_unread">Megjelölés olvasatlanként</string>
-    <string name="mark_as_read">Megjelölés olvasottként</string>
-    <string name="move_message">Move message</string>
-    <string name="manage">Kezelés</string>
-    <string name="message_from">Message from %s</string>
-    <string name="not_spam_move_to_inbox">Not spam (Move to Inbox)</string>
+    <string name="error_loading_conversations">Hiba a beszélgetések betöltése során, kérjük próbálja újra</string>
+    <string name="star">Star</string>
+    <string name="unstar">Unstar</string>
+    <string name="send_to_archive">Áthelyezi az archívumba?</string>
+    <string name="new_label">Új címke</string>
+    <string name="new_folder">Új mappa</string>
+    <string name="label_as">Címkézés, mint…</string>
+    <string name="mark_as_unread">Mark as unread</string>
+    <string name="mark_as_read">Mark as read</string>
+    <string name="move_message">Levél áthelyezése</string>
+    <string name="manage">Manage</string>
+    <string name="message_from">Üzenetek tőle: %s</string>
+    <string name="not_spam_move_to_inbox">Nem spam (áthelyezés a bejövő üzenetek közé)</string>
     <plurals name="x_messages_count">
-        <item quantity="one">%d message</item>
-        <item quantity="other">%d messages</item>
+        <item quantity="one">%d üzenet</item>
+        <item quantity="other">%d üzenet(ek)</item>
     </plurals>
     <plurals name="x_conversations_count">
-        <item quantity="one">%d conversation</item>
-        <item quantity="other">%d conversations</item>
+        <item quantity="one">%d beszélgetés</item>
+        <item quantity="other">%d beszélgetés(ek)</item>
     </plurals>
 </resources>

@@ -540,7 +540,7 @@
     <string name="contacts_unknown">Okänd</string>
     <string name="learn_more"><u>Läs Mer</u></string>
     <string name="info">Info</string>
-    <string name="error_can_not_send_from_this_address">Uppgradera till betalabonnemang för att skicka från din %s-adress.</string>
+    <string name="error_can_not_send_from_this_address">Uppgradera till en betald plan för att skicka från din %s-adress.</string>
     <string name="email_empty">E-postadressen saknas</string>
     <string name="add_contact_details">Lägg till kontaktinformation</string>
     <string name="encrypted_contact_details">Krypterade kontaktuppgifter</string>
@@ -710,7 +710,7 @@
     <!-- region Acc Settings -->
     <string name="account">Konto</string>
     <string name="subscription">Prenumeration</string>
-    <string name="plan_and_user">Abonnemang</string>
+    <string name="plan_and_user">Plan</string>
     <string name="payment_method">Betalningsmetod</string>
     <string name="password_manager">Lösenordshanterare</string>
     <string name="recovery_email">E-postadress för återställning</string>

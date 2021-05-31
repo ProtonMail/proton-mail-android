@@ -21,17 +21,17 @@
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
     <string name="x_folders">Pastas</string>
-    <string name="x_labels">Marcadores</string>
+    <string name="x_labels">Labels</string>
     <string name="x_more">Mais</string>
-    <string name="x_search">Pesquisa</string>
+    <string name="x_search">Search</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contatos</string>
-    <string name="drawer_lock_the_app">Lock the app</string>
-    <string name="drawer_report_bug">Reportar erro</string>
+    <string name="drawer_lock_the_app">Bloquear o aplicativo</string>
+    <string name="drawer_report_bug">Report bug</string>
     <string name="drawer_settings">Configurações</string>
     <string name="drawer_subscription">Assinatura</string>
-    <string name="drawer_sign_out">Encerrar sessão</string>
+    <string name="drawer_sign_out">Sign out</string>
     <!-- endregion -->
     <!-- region Composer -->
     <string name="composer_bcc">Cco:</string>
@@ -719,7 +719,7 @@
     <string name="payment_method">Método de pagamento</string>
     <string name="password_manager">Gerenciamento de senhas</string>
     <string name="recovery_email">E-mail de recuperação</string>
-    <string name="info_for_missing_functionality">Please log in through <a href="https://www.protonmail.com/">protonmail.com</a> and access your settings to edit this information.</string>
+    <string name="info_for_missing_functionality">Faça login através do <a href="https://www.protonmail.com/">protonmail.com</a> e acesse suas configurações para editar essas informações.</string>
     <string name="storage">Tamanho da caixa de correio</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Endereços</string>
@@ -743,7 +743,7 @@
         <item>4 horas</item>
         <item>8 horas</item>
         <item>12 horas</item>
-        <item>Personalizado</item>
+        <item>Custom</item>
         <item>Agendado</item>
     </string-array>
     <string name="notifications_snoozed">Notificações adiadas</string>
@@ -792,7 +792,7 @@
     <string name="hyperlink_confirmation">Solicitar link de confirmação</string>
     <string name="labels_and_folders">Marcadores e pastas </string>
     <string name="folders">Pastas</string>
-    <string name="labels">Marcadores</string>
+    <string name="labels">Labels</string>
     <string name="labels_manage">Gerenciador de marcadores</string>
     <string name="folders_manage">Gerenciador de pastas</string>
     <string name="swiping_gesture">Gestos de deslizar</string>
@@ -806,7 +806,7 @@
     <string name="swipe_action_spam">Mensagem marcada como spam</string>
     <string name="swipe_action_archive">Mensagem arquivada</string>
     <string name="swipe_action_mark_read">Mensagem marcada como lida</string>
-    <string name="swipe_action_mark_read_short">Lida</string>
+    <string name="swipe_action_mark_read_short">Read</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Mensagem movida para a lixeira</item>
         <item quantity="other">Mensagens movidas para a lixeira</item>
@@ -900,9 +900,9 @@
     <string name="star">Estrela</string>
     <string name="unstar">Remover estrela</string>
     <string name="send_to_archive">Enviar para o arquivo?</string>
-    <string name="new_label">New Label</string>
+    <string name="new_label">Novo marcador</string>
     <string name="new_folder">Nova pasta</string>
-    <string name="label_as">Label as…</string>
+    <string name="label_as">Marcar como…</string>
     <string name="mark_as_unread">Marcar como não lida</string>
     <string name="mark_as_read">Marcar como lida</string>
     <string name="move_message">Mover mensagem</string>
