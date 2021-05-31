@@ -44,6 +44,7 @@ import ch.protonmail.android.activities.messageDetails.body.MessageBodyScaleList
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyTouchListener
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
@@ -73,16 +74,13 @@ internal class MessageDetailsAdapter(
     private val context: Context,
     private var messages: List<Message>,
     private val messageDetailsRecyclerView: RecyclerView,
-    private var pmWebViewClient: PMWebViewClient,
     private val onLoadEmbeddedImagesClicked: (() -> Unit)?,
     private val onDisplayRemoteContentClicked: ((Message) -> Unit)?,
     private val viewModel: MessageDetailsViewModel,
     private val storagePermissionHelper: PermissionHelper,
-    private val attachmentToDownloadId: AtomicReference<String?>
+    private val attachmentToDownloadId: AtomicReference<String?>,
+    private val userManager: UserManager
 ) : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
-
-    var displayRemoteContentButton = LoadContentButton(context)
-    var loadEmbeddedImagesContainer = LoadContentButton(context)
 
     private var allLabelsList: List<Label>? = listOf()
     private var nonInclusiveLabelsList: List<LabelChipUiModel> = emptyList()
@@ -162,8 +160,8 @@ internal class MessageDetailsAdapter(
             attachmentsView.visibility = View.GONE
 
             val expirationInfoView = itemView.expirationInfoView
-            displayRemoteContentButton = itemView.displayRemoteContentButton
-            loadEmbeddedImagesContainer = itemView.containerLoadEmbeddedImagesContainer
+            val displayRemoteContentButton = itemView.displayRemoteContentButton
+            val loadEmbeddedImagesContainer = itemView.containerLoadEmbeddedImagesContainer
 
             val webView = setupMessageWebView(messageBodyProgress, position) ?: return
             expirationInfoView.bind(message.expirationTime)
@@ -192,26 +190,30 @@ internal class MessageDetailsAdapter(
                 showLoadEmbeddedImagesButton()
             }.launchIn(context.lifecycleScope)
 
-            setupMessageContentActions(position)
+            setupMessageContentActions(position, loadEmbeddedImagesContainer, displayRemoteContentButton)
 
             setUpViewDividers()
         }
 
-        private fun setupMessageContentActions(position: Int) {
+        private fun setupMessageContentActions(
+            position: Int,
+            loadEmbeddedImagesContainer: LoadContentButton,
+            displayRemoteContentButton: LoadContentButton
+        ) {
             loadEmbeddedImagesContainer.setOnClickListener {
                 it.visibility = View.GONE
                 onLoadEmbeddedImagesClicked?.invoke()
             }
 
-            itemView.displayRemoteContentButton.setOnClickListener {
+            displayRemoteContentButton.setOnClickListener {
                 val item = visibleItems!![position]
                 // isInit will prevent clicking the button before the WebView is ready.
                 // WebView init can take a bit longer.
                 if (item.isInit() && item.messageWebView.contentHeight > 0) {
                     itemView.displayRemoteContentButton.visibility = View.GONE
-                    pmWebViewClient.loadRemoteResources()
+                    (item.messageWebView.webViewClient as MessageDetailsPmWebViewClient).allowLoadingRemoteResources()
+                    item.messageWebView.reload()
                     onDisplayRemoteContentClicked?.invoke(item.message)
-                    this@MessageDetailsAdapter.notifyItemChanged(position)
                 }
             }
         }
@@ -220,6 +222,7 @@ internal class MessageDetailsAdapter(
             messageBodyProgress: ProgressBar,
             position: Int
         ): WebView? {
+            val context = context as MessageDetailsActivity
             // Looks like some devices are not able to create a WebView in some conditions.
             // Show Toast and redirect to the proper page.
             val webView = try {
@@ -229,11 +232,12 @@ internal class MessageDetailsAdapter(
                 return null
             }
 
-            configureWebView(webView, pmWebViewClient)
+            val webViewClient = MessageDetailsPmWebViewClient(userManager, context, itemView)
+            configureWebView(webView, webViewClient)
             setUpScrollListener(webView, itemView.messageWebViewContainer)
 
             webView.invalidate()
-            (context as MessageDetailsActivity).registerForContextMenu(webView)
+            context.registerForContextMenu(webView)
             itemView.messageWebViewContainer.removeAllViews()
             itemView.messageWebViewContainer.addView(webView)
             itemView.messageWebViewContainer.addView(messageBodyProgress)
@@ -290,13 +294,12 @@ internal class MessageDetailsAdapter(
         webView.setOnTouchListener(touchListener)
     }
 
-    fun displayContainerDisplayImages(visibility: Int) {
-        displayRemoteContentButton.visibility = visibility
-    }
-
-    fun displayLoadEmbeddedImagesContainer(visibility: Int) {
-        loadEmbeddedImagesContainer.visibility = visibility
-    }
+    private fun showLoadEmbeddedImagesButton(loadEmbeddedImagesContainer: LoadContentButton, message: Message) {
+        val hasEmbeddedImages = viewModel.prepareEmbeddedImages(message)
+        if (!hasEmbeddedImages) {
+            loadEmbeddedImagesContainer.isVisible = false
+            return
+        }
 
     private fun showLoadEmbeddedImagesButton() {
         val hasEmbeddedImages = viewModel.prepareEmbeddedImages()
@@ -391,6 +394,28 @@ internal class MessageDetailsAdapter(
             101 -> R.string.spam_score_101
             102 -> R.string.spam_score_102
             else -> throw IllegalArgumentException("Unknown spam score.")
+        }
+    }
+
+    private inner class MessageDetailsPmWebViewClient(
+        userManager: UserManager,
+        activity: Activity,
+        private val itemView: View
+    ) : PMWebViewClient(userManager, activity, false) {
+
+        override fun onPageFinished(view: WebView, url: String) {
+            if (amountOfRemoteResourcesBlocked() > 0) {
+                itemView.displayRemoteContentButton.isVisible = true
+            }
+
+            this.blockRemoteResources(!isAutoShowRemoteImages())
+
+            super.onPageFinished(view, url)
+        }
+
+        private fun isAutoShowRemoteImages(): Boolean {
+            val mailSettings = userManager.getCurrentUserMailSettingsBlocking()
+            return mailSettings?.showImagesFrom?.includesRemote() ?: false
         }
     }
 }

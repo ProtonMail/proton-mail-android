@@ -28,8 +28,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
 import android.view.MenuItem
@@ -52,7 +50,6 @@ import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
@@ -72,7 +69,6 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.MODE_ACCORDION
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
-import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.BottomActionsView
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
@@ -96,13 +92,11 @@ private const val ONE_HUNDRED_PERCENT = 1.0
 internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private lateinit var messageOrConversationId: String
-    private lateinit var pmWebViewClient: PMWebViewClient
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
     private lateinit var primaryBaseActivity: Context
 
     private var messageRecipientUserId: Id? = null
     private var messageRecipientUsername: String? = null
-    private val buttonsVisibilityHandler = Handler(Looper.getMainLooper())
     private val attachmentToDownloadId = AtomicReference<String?>(null)
     private var showPhishingReportButton = true
     private var shouldTitleFadeOut = false
@@ -111,9 +105,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     /** Lazy instance of [ClipboardManager] that will be used for copy content into the Clipboard */
     private val clipboardManager by lazy { getSystemService<ClipboardManager>() }
-
-    private var showActionButtons = false
-    private var buttonsVisibilityRunnable = Runnable { messageDetailsActionsView.visibility = View.VISIBLE }
 
     private val onOffsetChangedListener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
         val scrolledPercentage = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange.toFloat()
@@ -215,17 +206,16 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun initAdapters() {
-        pmWebViewClient = MessageDetailsPmWebViewClient(mUserManager, this)
         messageExpandableAdapter = MessageDetailsAdapter(
             this,
             listOf(),
             messageDetailsRecyclerView,
-            pmWebViewClient,
             { onLoadEmbeddedImagesClicked() },
             { onDisplayRemoteContentClicked(Message()) },
             viewModel,
             storagePermissionHelper,
-            attachmentToDownloadId
+            attachmentToDownloadId,
+            mUserManager
         )
     }
 
@@ -286,11 +276,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 mJobManager.addJobInBackground(ReportPhishingJob(message))
             }
             .setNegativeButton(R.string.cancel, null).show()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        buttonsVisibilityHandler.removeCallbacks(buttonsVisibilityRunnable)
     }
 
     private fun showNoConnSnackExtended(connectivity: Constants.ConnectionState) {
@@ -369,15 +354,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         return decryptedBody
     }
 
-    private fun filterAndLoad() {
-
-        if (isAutoShowRemoteImages) {
-            viewModel.remoteContentDisplayed()
-        }
-        messageExpandableAdapter.displayContainerDisplayImages(View.GONE)
-        pmWebViewClient.blockRemoteResources(!isAutoShowRemoteImages)
-    }
-
     override fun onBackPressed() {
         saveLastInteraction()
         finish()
@@ -453,24 +429,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private inner class MessageDetailsPmWebViewClient(
-        userManager: UserManager,
-        activity: MessageDetailsActivity
-    ) : PMWebViewClient(userManager, activity, false) {
-
-        override fun onPageFinished(view: WebView, url: String) {
-            if (amountOfRemoteResourcesBlocked() > 0) {
-                messageExpandableAdapter.displayContainerDisplayImages(View.VISIBLE)
-            }
-            if (showActionButtons) {
-                // workaround on some devices, the buttons appear quicker than the webview renders
-                // the data
-                buttonsVisibilityHandler.postDelayed(buttonsVisibilityRunnable, 500)
-            }
-            super.onPageFinished(view, url)
-        }
-    }
-
     private inner class DecryptedMessageObserver : Observer<ConversationUiModel> {
 
         override fun onChanged(conversation: ConversationUiModel) {
@@ -505,7 +463,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
             messageExpandableAdapter.setMessageData(conversation.messages)
             if (viewModel.refreshedKeys) {
-                filterAndLoad()
+                if (isAutoShowRemoteImages) {
+                    viewModel.remoteContentDisplayed()
+                }
                 messageExpandableAdapter.mode = MODE_ACCORDION
                 messageDetailsRecyclerView.layoutManager = LinearLayoutManager(this@MessageDetailsActivity)
                 messageDetailsRecyclerView.adapter = messageExpandableAdapter
@@ -715,21 +675,21 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private inner class PendingSendObserver : Observer<PendingSend?> {
 
         override fun onChanged(pendingSend: PendingSend?) {
-            if (pendingSend != null) {
-                val cannotEditSnack = Snackbar.make(
-                    findViewById(R.id.root_layout),
-                    R.string.message_can_not_edit,
-                    Snackbar.LENGTH_INDEFINITE
-                )
-                val view = cannotEditSnack.view
-                view.setBackgroundColor(getColor(R.color.red))
-                val tv = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-                tv.setTextColor(Color.WHITE)
-                cannotEditSnack.show()
-                messageDetailsActionsView.visibility = View.INVISIBLE
-            } else {
-                showActionButtons = true
+            if (pendingSend == null) {
+                return
             }
+
+            val cannotEditSnack = Snackbar.make(
+                findViewById(R.id.root_layout),
+                R.string.message_can_not_edit,
+                Snackbar.LENGTH_INDEFINITE
+            )
+            val view = cannotEditSnack.view
+            view.setBackgroundColor(getColor(R.color.red))
+            val tv = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+            tv.setTextColor(Color.WHITE)
+            cannotEditSnack.show()
+            messageDetailsActionsView.visibility = View.INVISIBLE
         }
     }
 
