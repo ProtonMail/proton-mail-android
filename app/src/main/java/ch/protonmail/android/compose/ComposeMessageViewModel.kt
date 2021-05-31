@@ -1239,6 +1239,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun onMessageLoaded(message: Message) {
         val messageId = message.messageId
+        val localAttachments = LocalAttachment.createLocalAttachmentList(message.attachments)
         val isLocalMessageId = MessageUtils.isLocalMessageId(messageId)
         if (!isLocalMessageId) {
             viewModelScope.launch {
@@ -1246,12 +1247,13 @@ class ComposeMessageViewModel @Inject constructor(
                 message.isDownloaded = true
                 val attachments = message.attachments
                 message.setAttachmentList(attachments)
-                setAttachmentList(ArrayList(LocalAttachment.createLocalAttachmentList(attachments)))
+                setAttachmentList(ArrayList(localAttachments))
                 _dbId = message.dbId
             }
         } else {
             setBeforeSaveDraft(false, messageDataResult.content, UserAction.SAVE_DRAFT)
         }
+        importAttachmentsFromLoadedMessage(localAttachments)
     }
 
     // region attachments
