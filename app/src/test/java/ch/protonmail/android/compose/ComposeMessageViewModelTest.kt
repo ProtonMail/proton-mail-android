@@ -37,6 +37,7 @@ import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
+import ch.protonmail.android.worker.DeleteAttachmentWorker
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -88,6 +89,8 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     private val workManager: WorkManager = mockk(relaxed = true)
 
+    private val deleteAttachmentWorker: DeleteAttachmentWorker.Enqueuer = mockk()
+
     private val viewModel = ComposeMessageViewModel(
         composeMessageRepository,
         userManager,
@@ -104,6 +107,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         mockk(),
         verifyConnection,
         networkConfigurator,
+        deleteAttachmentWorker
     )
 
     @Test
