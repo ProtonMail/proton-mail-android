@@ -221,8 +221,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             listOf(),
             messageDetailsRecyclerView,
             pmWebViewClient,
-            { onLoadEmbeddedImagesCLick() },
-            { onDisplayImagesCLick() },
+            { onLoadEmbeddedImagesClicked() },
+            { onDisplayRemoteContentClicked(Message()) },
             viewModel,
             storagePermissionHelper,
             attachmentToDownloadId
@@ -733,7 +733,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private fun onLoadEmbeddedImagesCLick() {
+    private fun onLoadEmbeddedImagesClicked() {
         // this will ensure that the message has been loaded
         // and will protect from premature clicking on download attachments button
         if (viewModel.renderingPassed) {
@@ -742,8 +742,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         return
     }
 
-    private fun onDisplayImagesCLick() {
-        viewModel.displayRemoteContentClicked()
+    private fun onDisplayRemoteContentClicked(message: Message) {
+        viewModel.displayRemoteContent(message)
         viewModel.checkStoragePermission.observe(this, { storagePermissionHelper.checkPermission() })
         return
     }

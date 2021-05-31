@@ -509,9 +509,9 @@ internal class MessageDetailsViewModel @Inject constructor(
         remoteContentDisplayed = true
     }
 
-    fun displayRemoteContentClicked() {
+    fun displayRemoteContent(message: Message) {
         remoteContentDisplayed()
-        prepareEmbeddedImages()
+        prepareEmbeddedImages(message)
     }
 
     fun isEmbeddedImagesDisplayed() = areImagesDisplayed

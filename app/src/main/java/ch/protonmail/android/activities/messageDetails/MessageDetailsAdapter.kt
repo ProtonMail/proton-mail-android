@@ -74,8 +74,8 @@ internal class MessageDetailsAdapter(
     private var messages: List<Message>,
     private val messageDetailsRecyclerView: RecyclerView,
     private var pmWebViewClient: PMWebViewClient,
-    private val onLoadEmbeddedImagesClick: (() -> Unit)?,
-    private val onDisplayImagesClick: (() -> Unit)?,
+    private val onLoadEmbeddedImagesClicked: (() -> Unit)?,
+    private val onDisplayRemoteContentClicked: ((Message) -> Unit)?,
     private val viewModel: MessageDetailsViewModel,
     private val storagePermissionHelper: PermissionHelper,
     private val attachmentToDownloadId: AtomicReference<String?>
@@ -200,17 +200,18 @@ internal class MessageDetailsAdapter(
         private fun setupMessageContentActions(position: Int) {
             loadEmbeddedImagesContainer.setOnClickListener {
                 it.visibility = View.GONE
-                onLoadEmbeddedImagesClick?.invoke()
+                onLoadEmbeddedImagesClicked?.invoke()
             }
 
             itemView.displayRemoteContentButton.setOnClickListener {
-                val item = visibleItems!![position + 1]
+                val item = visibleItems!![position]
                 // isInit will prevent clicking the button before the WebView is ready.
                 // WebView init can take a bit longer.
                 if (item.isInit() && item.messageWebView.contentHeight > 0) {
                     itemView.displayRemoteContentButton.visibility = View.GONE
                     pmWebViewClient.loadRemoteResources()
-                    onDisplayImagesClick?.invoke()
+                    onDisplayRemoteContentClicked?.invoke(item.message)
+                    this@MessageDetailsAdapter.notifyItemChanged(position)
                 }
             }
         }
