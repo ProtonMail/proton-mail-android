@@ -35,13 +35,6 @@ class ContactDetailsMapper @Inject constructor() {
     fun mapToContactViewData(fetchResult: FetchContactDetailsResult): ContactDetailsViewState.Data {
         val items = mutableListOf<ContactDetailsUiItem>()
 
-        val header = ContactDetailsUiItem.HeaderData(
-            fetchResult.contactName,
-            UiUtil.extractInitials(fetchResult.contactName).take(2),
-        )
-
-        items.add(header)
-
         val emailItems = fetchResult.emails.map { email ->
             ContactDetailsUiItem.Email(
                 value = email.value,
@@ -71,14 +64,6 @@ class ContactDetailsMapper @Inject constructor() {
             )
         }
         items.addAll(addresses)
-
-        val photos = fetchResult.photos.map { photo ->
-            ContactDetailsUiItem.Photo(
-                photo.url,
-                photo.data?.toList()
-            )
-        }
-        items.addAll(photos)
 
         val organizations = fetchResult.organizations.map { organization ->
             ContactDetailsUiItem.Organization(
@@ -142,19 +127,24 @@ class ContactDetailsMapper @Inject constructor() {
         }
         items.addAll(urls)
 
-        val gender = ContactDetailsUiItem.Gender(
-            fetchResult.gender?.text
-        )
-
-        items.add(gender)
+        if (!fetchResult.gender?.text.isNullOrEmpty()) {
+            val gender = ContactDetailsUiItem.Gender(
+                fetchResult.gender?.text
+            )
+            items.add(gender)
+        }
 
         Timber.v("Ui Contacts details: $items")
 
         return ContactDetailsViewState.Data(
+            fetchResult.contactName,
+            UiUtil.extractInitials(fetchResult.contactName).take(2),
             items,
+            fetchResult.vCardToShare,
             fetchResult.isType2SignatureValid,
             fetchResult.isType3SignatureValid,
-            fetchResult.vCardToShare
+            fetchResult.photos.firstOrNull()?.url,
+            fetchResult.photos.firstOrNull()?.data?.toList()
         )
     }
 

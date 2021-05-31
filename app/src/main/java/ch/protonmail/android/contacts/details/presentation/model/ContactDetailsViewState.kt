@@ -22,10 +22,14 @@ package ch.protonmail.android.contacts.details.presentation.model
 sealed class ContactDetailsViewState {
     object Loading : ContactDetailsViewState()
     data class Data(
+        val title: String,
+        val initials: String,
         val contactDetailsItems: List<ContactDetailsUiItem>,
+        val vCardToShare: String,
         val isType2SignatureValid: Boolean?,
         val isType3SignatureValid: Boolean?,
-        val vCardToShare: String
+        val photoUrl: String?,
+        val photoBytes: List<Byte>?
     ) : ContactDetailsViewState()
 
     data class Error(val exception: Throwable) : ContactDetailsViewState()

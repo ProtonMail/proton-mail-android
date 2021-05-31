@@ -21,11 +21,6 @@ package ch.protonmail.android.contacts.details.presentation.model
 
 sealed class ContactDetailsUiItem {
 
-    data class HeaderData(
-        val title: String,
-        val initials: String
-    ) : ContactDetailsUiItem()
-
     data class Email(
         val value: String,
         val type: String
@@ -43,11 +38,6 @@ sealed class ContactDetailsUiItem {
         var region: String?,
         var postalCode: String?,
         var country: String?
-    ) : ContactDetailsUiItem()
-
-    data class Photo(
-        val photoUrl: String? = null,
-        val photoBytes: List<Byte>? = null,
     ) : ContactDetailsUiItem()
 
     data class Organization(

@@ -34,6 +34,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
@@ -51,6 +52,7 @@ import timber.log.Timber
 @AndroidEntryPoint
 class ContactDetailsActivity : AppCompatActivity() {
 
+    private lateinit var detailsAdapter: ContactDetailsAdapter
     private lateinit var thumbnail: ListItemThumbnail
     private lateinit var contactName: TextView
     private lateinit var detailsContainer: NestedScrollView
@@ -75,6 +77,17 @@ class ContactDetailsActivity : AppCompatActivity() {
         detailsContainer = binding.scrollViewContactDetails
         contactName = binding.textViewContactDetailsContactName
         thumbnail = binding.thumbnailContactDetails
+
+        detailsAdapter = ContactDetailsAdapter(
+            ::onWriteToContact,
+            ::onCallContact,
+            ::onAddressClicked,
+            ::onUrlClicked
+            )
+        binding.recyclerViewContactsDetails.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = detailsAdapter
+        }
 
         binding.includeContactDetailsButtons.textViewContactDetailsCompose.setOnClickListener {
             onWriteToContact(contactEmail)
@@ -139,31 +152,37 @@ class ContactDetailsActivity : AppCompatActivity() {
 
         vCardToShare = state.vCardToShare
 
+        setHeaderData(
+            state.title,
+            state.initials,
+            state.photoUrl,
+            state.photoBytes
+        )
+
+        detailsAdapter.submitList(state.contactDetailsItems)
+
         state.contactDetailsItems.onEach { item ->
-            when (item) {
-                is ContactDetailsUiItem.HeaderData -> {
-                    setHeaderData(item)
-                }
-                else -> showDetail(item)
-            }
+            setContactDataForActionButtons(item)
         }
     }
 
-    private fun showDetail(item: ContactDetailsUiItem) {
-        Timber.v("Detail item $item")
+    private fun setHeaderData(
+        title: String,
+        initials: String,
+        photoUrl: String?,
+        photoBytes: List<Byte>?
+    ) {
+        contactName.text = title
+        thumbnail.bind(isSelectedActive = false, isMultiselectActive = false, initials = initials)
+    }
+
+    private fun setContactDataForActionButtons(item: ContactDetailsUiItem) {
         if (item is ContactDetailsUiItem.Email) {
             contactEmail = item.value
         }
-
         if (item is ContactDetailsUiItem.TelephoneNumber) {
             contactPhone = item.value
         }
-        // TODO : add to recycler view
-    }
-
-    private fun setHeaderData(item: ContactDetailsUiItem.HeaderData) {
-        contactName.text = item.title
-        thumbnail.bind(isSelectedActive = false, isMultiselectActive = false, initials = item.initials)
     }
 
     private fun onWriteToContact(emailAddress: String) {
@@ -178,6 +197,7 @@ class ContactDetailsActivity : AppCompatActivity() {
     }
 
     private fun onCallContact(phoneNumber: String) {
+        Timber.v("On Call $phoneNumber")
         if (phoneNumber.isNotEmpty()) {
             val callIntent = Intent(Intent.ACTION_DIAL)
             callIntent.data = Uri.parse("tel:$phoneNumber")
@@ -205,6 +225,19 @@ class ContactDetailsActivity : AppCompatActivity() {
             }
             startActivity(Intent.createChooser(intent, contactName))
         }
+    }
+
+    private fun onAddressClicked(address: String) {
+        onUrlClicked("geo:0,0?q=$address")
+    }
+
+    private fun onUrlClicked(url: String) {
+        Timber.v("On Url clicked $url")
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(url)
+        )
+        startActivity(intent)
     }
 
     companion object {

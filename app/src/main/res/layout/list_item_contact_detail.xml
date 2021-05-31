@@ -39,7 +39,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawablePadding="@dimen/padding_l"
-        app:drawableStartCompat="@drawable/ic_envelope_full"
         app:drawableTint="@color/icon_weak"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -47,6 +46,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_view_contact_details_item_header"
         app:layout_constraintVertical_bias="0.0"
+        tools:drawableStartCompat="@drawable/ic_envelope_full"
         tools:text="@tools:sample/cities" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
