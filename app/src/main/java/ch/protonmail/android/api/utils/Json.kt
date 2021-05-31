@@ -24,10 +24,8 @@ import com.fasterxml.jackson.core.Version
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
+import timber.log.Timber
 
-/**
- * Created by dinokadrikj on 3/5/20.
- */
 object Json {
     var MAPPER: ObjectMapper = ObjectMapper()
 
@@ -35,6 +33,7 @@ object Json {
         return try {
             MAPPER.writeValueAsString(value)
         } catch (e: JsonProcessingException) {
+            Timber.i(e)
             null
         }
     }
