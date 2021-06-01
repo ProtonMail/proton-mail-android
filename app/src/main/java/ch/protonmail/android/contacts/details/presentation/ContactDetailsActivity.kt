@@ -19,15 +19,20 @@
 
 package ch.protonmail.android.contacts.details.presentation
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.view.Gravity
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -38,6 +43,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
@@ -62,7 +68,7 @@ class ContactDetailsActivity : AppCompatActivity() {
     private lateinit var thumbnailImage: ImageView
     private lateinit var detailsAdapter: ContactDetailsAdapter
     private lateinit var thumbnail: ListItemThumbnail
-    private lateinit var contactName: TextView
+    private lateinit var contactNameView: TextView
     private lateinit var detailsContainer: NestedScrollView
     private lateinit var progressBar: ProgressBar
     private var vCardToShare: String = EMPTY_STRING
@@ -75,7 +81,7 @@ class ContactDetailsActivity : AppCompatActivity() {
         val binding = ActivityContactDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.includeToolbar.toolbar as Toolbar)
+        setSupportActionBar(binding.toolbar as Toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setTitle(R.string.contact_details)
@@ -83,9 +89,18 @@ class ContactDetailsActivity : AppCompatActivity() {
 
         progressBar = binding.progressBarContactDetails
         detailsContainer = binding.scrollViewContactDetails
-        contactName = binding.textViewContactDetailsContactName
+        contactNameView = binding.textViewContactDetailsContactName
         thumbnail = binding.thumbnailContactDetails
         thumbnailImage = binding.imageViewContactDetailsThumbnail
+
+        val itemDecoration = DividerItemDecoration(
+            this,
+            LinearLayout.VERTICAL
+        ).apply {
+            getDrawable(R.drawable.list_divider)?.let {
+                setDrawable(it)
+            }
+        }
 
         detailsAdapter = ContactDetailsAdapter(
             ::onWriteToContact,
@@ -96,6 +111,7 @@ class ContactDetailsActivity : AppCompatActivity() {
         binding.recyclerViewContactsDetails.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = detailsAdapter
+            addItemDecoration(itemDecoration)
         }
 
         binding.includeContactDetailsButtons.textViewContactDetailsCompose.setOnClickListener {
@@ -107,7 +123,7 @@ class ContactDetailsActivity : AppCompatActivity() {
         }
 
         binding.includeContactDetailsButtons.textViewContactDetailsShare.setOnClickListener {
-            onShare(contactName.text.toString(), vCardToShare, this)
+            onShare(contactNameView.text.toString(), vCardToShare, this)
         }
 
         viewModel.contactsViewState
@@ -115,17 +131,30 @@ class ContactDetailsActivity : AppCompatActivity() {
             .launchIn(lifecycleScope)
 
         viewModel.vCardShareFlow
-            .onEach { shareVcard(it, contactName.text.toString()) }
+            .onEach { shareVcard(it, contactNameView.text.toString()) }
             .launchIn(lifecycleScope)
 
         val contactId = requireNotNull(intent.extras?.getString(EXTRA_ARG_CONTACT_ID))
         viewModel.getContactDetails(contactId)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_contact_details, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            onBackPressed()
-            return true
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+            R.id.action_contact_details_edit -> onEditContacts()
+            R.id.action_contact_details_delete ->
+                onDeleteContact(
+                    requireNotNull(intent.extras?.getString(EXTRA_ARG_CONTACT_ID)),
+                    contactNameView.text.toString()
+                )
         }
         return super.onOptionsItemSelected(item)
     }
@@ -133,6 +162,29 @@ class ContactDetailsActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         finish()
+    }
+
+    private fun onEditContacts() {
+        // TODO: Display in edit mode here
+        showToast(R.string.edit_contact, Toast.LENGTH_SHORT, Gravity.CENTER)
+    }
+
+    private fun onDeleteContact(contactId: String, contactName: String) {
+        val clickListener = DialogInterface.OnClickListener { dialog: DialogInterface, which: Int ->
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                viewModel.deleteContact(contactId)
+            }
+            dialog.dismiss()
+        }
+        if (!isFinishing) {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(R.string.confirm)
+                .setMessage(String.format(getString(R.string.delete_contact), contactName))
+                .setNegativeButton(R.string.no, clickListener)
+                .setPositiveButton(R.string.yes, clickListener)
+                .create()
+                .show()
+        }
     }
 
     private fun renderState(state: ContactDetailsViewState) {
@@ -181,7 +233,7 @@ class ContactDetailsActivity : AppCompatActivity() {
         photoUrl: String?,
         photoBytes: List<Byte>?
     ) {
-        contactName.text = title
+        contactNameView.text = title
         thumbnail.bind(isSelectedActive = false, isMultiselectActive = false, initials = initials)
 
         if (!photoBytes.isNullOrEmpty()) {
