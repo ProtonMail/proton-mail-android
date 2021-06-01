@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -184,6 +185,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
+            enableStrictMode();
         } else {
             Sentry.init(
                     String.format(
@@ -543,6 +545,19 @@ public class ProtonMailApplication extends Application implements androidx.work.
     public void setChangedSystemTimeDate(boolean changed) {
         final SharedPreferences pref = getSharedPreferences(BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
         pref.edit().putBoolean(PREF_TIME_AND_DATE_CHANGED, changed).apply();
+    }
+
+    private void enableStrictMode() {
+        StrictMode.ThreadPolicy.Builder threadPolicyBuilder = new StrictMode.ThreadPolicy.Builder()
+                .detectAll()
+                .penaltyFlashScreen()
+                .penaltyLog();
+        StrictMode.VmPolicy.Builder vmPolicyBuilder = new StrictMode.VmPolicy.Builder()
+                .detectAll()
+                .penaltyLog();
+
+        StrictMode.setThreadPolicy(threadPolicyBuilder.build());
+        StrictMode.setVmPolicy(vmPolicyBuilder.build());
     }
 
 }
