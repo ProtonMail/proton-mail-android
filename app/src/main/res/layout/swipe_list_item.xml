@@ -26,7 +26,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     android:paddingBottom="@dimen/fields_default_space_medium"
     android:paddingTop="@dimen/fields_default_space_medium"
     android:button="@null"
-    android:drawableEnd="@drawable/radio_drawable"
+    android:drawableEnd="@drawable/selector"
     android:paddingEnd="@dimen/fields_default_space_xlarge"
     android:paddingLeft="@dimen/fields_default_space_xlarge"
     android:paddingRight="@dimen/fields_default_space_xlarge"

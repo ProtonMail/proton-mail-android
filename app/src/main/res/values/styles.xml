@@ -164,6 +164,12 @@
         <item name="trackTint">@drawable/switch_track_selector</item>
         <item name="useMaterialThemeColors">false</item>
     </style>
+
+    <style name="ProtonRadioButton.Mail" parent="ProtonTheme.Mail">
+        <item name="android:textAppearance">@style/Proton.Text.Default</item>
+        <item name="tint">@drawable/switch_thumb_selector</item>
+        <item name="useMaterialThemeColors">false</item>
+    </style>
     <!-- V4 -->
 
     <!-- end region -->

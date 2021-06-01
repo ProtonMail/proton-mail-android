@@ -17,17 +17,8 @@ You should have received a copy of the GNU General Public License
 along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 
-<ch.protonmail.android.views.CustomFontTextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Proton.Text.Default.Weak"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/fields_default_space"
-    android:layout_marginTop="@dimen/fields_default_space"
-    android:clickable="false"
-    android:enabled="false"
-    android:paddingEnd="@dimen/fields_default_space_xlarge"
-    android:paddingLeft="@dimen/fields_default_space_xlarge"
-    android:paddingRight="@dimen/fields_default_space_xlarge"
-    android:paddingStart="@dimen/fields_default_space_xlarge"
-    android:textColor="@color/alias_inactive"
-    app:fontName="Roboto-Regular.ttf" />
+    android:padding="@dimen/padding_l"/>
