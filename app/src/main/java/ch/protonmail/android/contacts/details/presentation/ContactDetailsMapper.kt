@@ -19,7 +19,9 @@
 
 package ch.protonmail.android.contacts.details.presentation
 
+import android.graphics.Color
 import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
+import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
 import ch.protonmail.android.utils.DateUtil
@@ -32,8 +34,21 @@ import javax.inject.Inject
 
 class ContactDetailsMapper @Inject constructor() {
 
-    fun mapToContactViewData(fetchResult: FetchContactDetailsResult): ContactDetailsViewState.Data {
+    fun mapToContactViewData(
+        fetchResult: FetchContactDetailsResult,
+        groupsResult: FetchContactGroupsResult
+    ): ContactDetailsViewState.Data {
         val items = mutableListOf<ContactDetailsUiItem>()
+
+        val groups = groupsResult.groupsList.mapIndexed { index, group ->
+            ContactDetailsUiItem.Group(
+                group.ID,
+                group.name,
+                Color.parseColor(UiUtil.normalizeColor(group.color)),
+                index
+            )
+        }
+        items.addAll(groups)
 
         val emailItems = fetchResult.emails.map { email ->
             ContactDetailsUiItem.Email(

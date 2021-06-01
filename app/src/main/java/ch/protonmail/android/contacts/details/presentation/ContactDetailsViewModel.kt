@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import ch.protonmail.android.contacts.details.domain.FetchContactDetails
+import ch.protonmail.android.contacts.details.domain.FetchContactGroups
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
 import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.worker.DeleteContactWorker
@@ -35,6 +36,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -42,6 +44,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactDetailsViewModel @Inject constructor(
     private val fetchContactDetails: FetchContactDetails,
+    private val fetchContactGroups: FetchContactGroups,
     private val mapper: ContactDetailsMapper,
     private val workManager: WorkManager,
     private val fileHelper: FileHelper
@@ -56,14 +59,17 @@ class ContactDetailsViewModel @Inject constructor(
         get() = mutableFlowVcard
 
     fun getContactDetails(contactId: String) {
-        Timber.v("getContactDetails for $contactId")
         viewModelScope.launch {
             fetchContactDetails(contactId)
+                .combine(fetchContactGroups(contactId)) { contacts, groups ->
+                    Timber.v("Details for $contactId emails: ${contacts.emails.size}, groups: ${groups.groupsList.size}")
+                    mapper.mapToContactViewData(contacts, groups)
+                }
                 .catch {
                     mutableContactsResultFlow.value = ContactDetailsViewState.Error(it)
                 }
                 .collect { fetchResult ->
-                    mutableContactsResultFlow.value = mapper.mapToContactViewData(fetchResult)
+                    mutableContactsResultFlow.value = fetchResult
                 }
         }
     }

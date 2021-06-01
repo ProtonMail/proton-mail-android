@@ -23,12 +23,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.databinding.ListItemContactDetailBinding
 import timber.log.Timber
+
 
 class ContactDetailsAdapter(
     private val onEmailClicked: (String) -> Unit,
@@ -81,6 +84,25 @@ class ContactDetailsAdapter(
         fun bind(item: ContactDetailsUiItem) {
             Timber.v("Bind $item")
             when (item) {
+                is ContactDetailsUiItem.Group -> {
+                    textViewContactDetailsItemHeader.setText(R.string.groups)
+                    textViewContactDetailsItemHeader.isVisible = item.groupIndex == 0
+
+                    textViewContactDetailsItem.apply {
+                        text = item.name
+                        val iconDrawable =
+                            ResourcesCompat.getDrawable(resources, R.drawable.circle_labels_selection, null)
+                                ?.mutate()
+                        iconDrawable?.setTint(item.colorInt)
+                        setCompoundDrawablesRelativeWithIntrinsicBounds(
+                            iconDrawable,
+                            null,
+                            null,
+                            null
+                        )
+                        isClickable = false
+                    }
+                }
                 is ContactDetailsUiItem.Email -> {
                     textViewContactDetailsItemHeader.text = if (item.type.isNotEmpty()) {
                         item.type

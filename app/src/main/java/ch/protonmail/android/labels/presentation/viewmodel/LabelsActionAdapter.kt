@@ -71,10 +71,11 @@ class LabelsActionAdapter(
         ) {
             Timber.v("Bind ManageLabelsViewHolder $model")
             titleTextView.apply {
-                text = if (model.titleRes != null)
+                text = if (model.titleRes != null) {
                     resources.getString(model.titleRes)
-                else
+                } else {
                     model.title
+                }
 
                 val iconDrawable = ResourcesCompat.getDrawable(resources, model.iconRes, null)?.mutate()
                 iconDrawable?.setTint(model.colorInt)

@@ -19,7 +19,16 @@
 
 package ch.protonmail.android.contacts.details.presentation.model
 
+import androidx.annotation.ColorInt
+
 sealed class ContactDetailsUiItem {
+
+    data class Group(
+        val id: String,
+        val name: String,
+        @ColorInt val colorInt: Int,
+        val groupIndex: Int
+    ) : ContactDetailsUiItem()
 
     data class Email(
         val value: String,

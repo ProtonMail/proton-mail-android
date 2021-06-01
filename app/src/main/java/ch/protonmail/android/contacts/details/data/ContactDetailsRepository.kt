@@ -50,16 +50,23 @@ open class ContactDetailsRepository @Inject constructor(
     private val dispatcherProvider: DispatcherProvider
 ) {
 
+    @Deprecated("Use non rx version observeContactGroupsForId")
     fun getContactGroups(id: String): Observable<List<ContactLabel>> {
         return contactDao.findAllContactGroupsByContactEmailAsyncObservable(id)
             .toObservable()
     }
+
+    suspend fun getContactGroupsLabelForId(emailId: String): List<ContactLabel> =
+        contactDao.getAllContactGroupsByContactEmail(emailId)
 
     @Deprecated("Use non rx version observeContactEmails")
     fun getContactEmailsBlocking(id: String): Observable<List<ContactEmail>> {
         return contactDao.findContactEmailsByContactIdObservable(id)
             .toObservable()
     }
+
+    fun observeContactEmails(contactId: String): Flow<List<ContactEmail>> =
+        contactDao.observeContactEmailsByContactId(contactId)
 
     suspend fun getContactEmails(contactId: String): List<ContactEmail> =
         contactDao.findContactEmailsByContactId(contactId)
@@ -73,10 +80,10 @@ open class ContactDetailsRepository @Inject constructor(
         )
     }
 
-    fun observeContactGroups(): Flow<List<ContactLabel>> = observeContactGroupsFromDb()
-        .onEach { fetchContactGroupsFromApi() }
+    fun observeContactLabels(): Flow<List<ContactLabel>> = observeContactLabelsFromDb()
+        .onEach { fetchContactLabelsFromApi() }
 
-    private suspend fun fetchContactGroupsFromApi() {
+    private suspend fun fetchContactLabelsFromApi() {
         api.fetchContactGroupsList().also {
             contactDao.clearContactGroupsLabelsTable()
             contactDao.saveContactGroupsList(it)
@@ -104,7 +111,7 @@ open class ContactDetailsRepository @Inject constructor(
             .toObservable()
     }
 
-    private fun observeContactGroupsFromDb() = contactDao.observeContactGroups()
+    private fun observeContactLabelsFromDb() = contactDao.observeContactLabels()
         .map { labels ->
             labels.map { label -> label.contactEmailsCount = contactDao.countContactEmailsByLabelId(label.ID) }
             labels
