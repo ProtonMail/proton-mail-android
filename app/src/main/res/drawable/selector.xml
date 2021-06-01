@@ -20,6 +20,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:color="@color/interaction_norm" android:state_checked="true" />
     <item android:color="@color/shade_60" android:state_checked="false" />
-    <item android:color="@color/interaction_norm_pressed" android:state_selected="true" />
+    <item android:color="@color/interaction_norm_pressed" android:state_pressed="true" />
     <item android:color="@color/shade_40" android:state_enabled="false" />
 </selector>

@@ -176,37 +176,8 @@
     <!-- endregion -->
 
     <!-- region V3 -->
-    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/dark_purple</item>
-        <item name="colorPrimaryDark">@color/dark_purple</item>
-        <item name="android:colorAccent">@color/dark_purple</item>
-        <item name="actionModeStyle">@style/ActionModeStyle</item>
-        <item name="searchViewStyle">@style/SearchViewStyle</item>
-        <item name="android:checkboxStyle">@style/CustomCheckBox</item>
-        <item name="android:colorBackground">@color/white</item>
-        <item name="android:textColor">@android:color/black</item>
-        <item name="android:textColorHint">@color/ice_gray</item>
-        <item name="windowActionModeOverlay">true</item>
-        <item name="android:windowActionModeOverlay">true</item>
-        <item name="actionModeBackground">@color/deep_blue</item>
-        <item name="android:actionModeBackground">@color/deep_blue</item>
-        <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
-        <item name="colorControlNormal">@color/dark_purple</item>
-        <item name="colorControlActivated">@color/dark_purple</item>
-        <item name="colorControlHighlight">@color/dark_purple</item>
-        <item name="autoCompleteTextViewStyle">@style/PMAutoCompleteView</item>
-        <item name="android:windowAnimationStyle">@null</item>
-        <item name="android:windowDisablePreview">true</item>
-    </style>
 
     <style name="AppTheme" parent="ProtonTheme" />
-
-    <style name="AppTheme.Immersive" parent="AppTheme.Base">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-    </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
@@ -590,23 +561,6 @@
         <item name="fontName">Roboto-Regular.ttf</item>
     </style>
 
-    <style name="SettingsSubHeaderText">
-        <item name="android:textColor">@color/iron_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-    </style>
-
-    <style name="SettingsText">
-        <item name="android:textColor">@color/chateau_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-    </style>
-
-    <style name="SettingsTextHeader">
-        <item name="android:layout_marginLeft">@dimen/fields_default_space_medium</item>
-        <item name="android:layout_marginTop">@dimen/fields_default_space_medium</item>
-        <item name="android:layout_marginBottom">@dimen/fields_default_space_medium</item>
-        <item name="fontName">Roboto-Regular.ttf</item>
-    </style>
-
     <style name="CustomCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:button">@drawable/custom_checkbox</item>
         <item name="android:textColor">@color/white</item>
@@ -616,19 +570,9 @@
 
     </style>
 
-    <style name="EditContactTheme" parent="AppTheme">
-        <item name="colorAccent">@color/water_blue</item>
-    </style>
-
     <style name="DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/zoom_in</item>
         <item name="android:windowExitAnimation">@null</item>
-    </style>
-
-    <style name="AppTheme.Dialog" parent="AppTheme">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowIsFloating">false</item>
     </style>
 
     <style name="AppTheme.Dialog.Labels" parent="AppTheme">
