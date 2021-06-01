@@ -21,16 +21,20 @@ package ch.protonmail.android.contacts.details.presentation
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
@@ -43,15 +47,19 @@ import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsV
 import ch.protonmail.android.databinding.ActivityContactDetailsBinding
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.views.ListItemThumbnail
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 
+
 @AndroidEntryPoint
 class ContactDetailsActivity : AppCompatActivity() {
 
+    private lateinit var thumbnailImage: ImageView
     private lateinit var detailsAdapter: ContactDetailsAdapter
     private lateinit var thumbnail: ListItemThumbnail
     private lateinit var contactName: TextView
@@ -77,13 +85,14 @@ class ContactDetailsActivity : AppCompatActivity() {
         detailsContainer = binding.scrollViewContactDetails
         contactName = binding.textViewContactDetailsContactName
         thumbnail = binding.thumbnailContactDetails
+        thumbnailImage = binding.imageViewContactDetailsThumbnail
 
         detailsAdapter = ContactDetailsAdapter(
             ::onWriteToContact,
             ::onCallContact,
             ::onAddressClicked,
             ::onUrlClicked
-            )
+        )
         binding.recyclerViewContactsDetails.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = detailsAdapter
@@ -174,6 +183,50 @@ class ContactDetailsActivity : AppCompatActivity() {
     ) {
         contactName.text = title
         thumbnail.bind(isSelectedActive = false, isMultiselectActive = false, initials = initials)
+
+        if (!photoBytes.isNullOrEmpty()) {
+            setThumbnailImage(photoBytes)
+        } else if (photoUrl != null) {
+            loadThumbnailImage(photoUrl)
+        }
+    }
+
+    private fun setThumbnailImage(photoBytes: List<Byte>) {
+        val byteArray = photoBytes.toByteArray()
+        val imageBitmap: Bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        val roundedImage = RoundedBitmapDrawableFactory.create(resources, imageBitmap).apply {
+            setAntiAlias(true)
+            cornerRadius = resources.getDimensionPixelSize(R.dimen.avatar_size) / 2f
+        }
+        thumbnailImage.apply {
+            setImageDrawable(roundedImage)
+            isVisible = true
+        }
+        thumbnail.isVisible = false
+    }
+
+    private fun loadThumbnailImage(photoUrl: String?) {
+        Timber.v("Loading photo url: $photoUrl")
+        val targetSize = resources.getDimensionPixelSize(R.dimen.avatar_size)
+        ImageRequest.Builder(this)
+            .data(photoUrl)
+            .size(targetSize, targetSize)
+            .transformations(CircleCropTransformation())
+            .target(
+                onSuccess = { drawable ->
+                    Timber.d("Thumbnail loading finished")
+                    thumbnailImage.apply {
+                        setImageDrawable(drawable)
+                        isVisible = true
+                    }
+                    thumbnail.isVisible = false
+                },
+                onError = {
+                    Timber.i("Thumbnail loading error")
+                    thumbnailImage.isVisible = false
+                    thumbnail.isVisible = true
+                }
+            )
     }
 
     private fun setContactDataForActionButtons(item: ContactDetailsUiItem) {

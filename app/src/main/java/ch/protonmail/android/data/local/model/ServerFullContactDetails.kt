@@ -71,7 +71,6 @@ class FullContactDetailsResponse : ResponseBody() {
     @SerializedName(FIELD_CONTACT)
     private lateinit var serverContact: ServerFullContactDetails
 
-
     val contact: FullContactDetails by lazy {
         val factory = FullContactDetailsFactory()
         factory.createFullContactDetails(serverContact)

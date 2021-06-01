@@ -82,7 +82,6 @@ class FetchVerificationKeys @Inject constructor(
                     emptyList()
                 }
             )
-
         } ?: emptyList()
     }
 

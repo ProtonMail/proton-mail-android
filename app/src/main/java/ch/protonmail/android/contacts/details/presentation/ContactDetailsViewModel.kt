@@ -59,7 +59,9 @@ class ContactDetailsViewModel @Inject constructor(
         Timber.v("getContactDetails for $contactId")
         viewModelScope.launch {
             fetchContactDetails(contactId)
-                .catch { ContactDetailsViewState.Error(it) }
+                .catch {
+                    mutableContactsResultFlow.value = ContactDetailsViewState.Error(it)
+                }
                 .collect { fetchResult ->
                     mutableContactsResultFlow.value = mapper.mapToContactViewData(fetchResult)
                 }

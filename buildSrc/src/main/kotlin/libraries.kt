@@ -122,6 +122,8 @@ val DependencyHandler.`fasterxml-jackson-anno` get() =      dependency("com.fast
 val DependencyHandler.`fasterxml-jackson-databind` get() =  dependency("com.fasterxml.jackson.core", module = "jackson-databind") version `jackson version`
 val DependencyHandler.`remark` get() =                      dependency("com.overzealous", module = "remark") version `remark version`
 val DependencyHandler.`store` get() =                       dependency("com.dropbox.mobile.store", module = "store4") version `store version`
+val DependencyHandler.`coil` get() =                        dependency("io.coil-kt", module="coil") version `coil version`
+val DependencyHandler.`coil-base` get() =                   dependency("io.coil-kt", module="coil-base") version `coil version`
 // endregion
 
 // endregion

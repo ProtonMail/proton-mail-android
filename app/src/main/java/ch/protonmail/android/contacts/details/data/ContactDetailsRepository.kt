@@ -219,7 +219,7 @@ open class ContactDetailsRepository @Inject constructor(
         }
     }
 
-    fun insertFullContactDetails(fullContactDetails: FullContactDetails) =
+    suspend fun insertFullContactDetails(fullContactDetails: FullContactDetails) =
         contactDao.insertFullContactDetails(fullContactDetails)
 
 }

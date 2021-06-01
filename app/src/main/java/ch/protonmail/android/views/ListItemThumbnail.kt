@@ -35,7 +35,7 @@ import androidx.core.content.withStyledAttributes
 import ch.protonmail.android.R
 import timber.log.Timber
 
-private const val TEXT_SIZE_PROPORTION = 2.5f
+private const val TEXT_SIZE_PROPORTION = 3f
 private const val DEFAULT_CIRCLE_SIZE = 100
 
 /**

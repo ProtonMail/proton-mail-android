@@ -43,14 +43,24 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:layout_margin="@dimen/padding_l"
             app:circleSize="@dimen/avatar_size" />
 
+        <ImageView
+            android:id="@+id/image_view_contact_details_thumbnail"
+            android:layout_width="@dimen/avatar_size"
+            android:layout_height="@dimen/avatar_size"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/padding_l"
+            android:contentDescription="@string/contact_details"
+            android:scaleType="fitXY"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/text_view_contact_details_contact_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/Proton.Text.Headline"
             android:layout_gravity="center|bottom"
             android:layout_marginBottom="@dimen/padding_l"
             android:gravity="center"
+            android:textAppearance="@style/Proton.Text.Headline"
             tools:text="@tools:sample/full_names" />
 
     </com.google.android.material.appbar.AppBarLayout>

@@ -167,7 +167,7 @@ internal class ContactDaoTest {
             saveAllContactsData(contactData)
             saveAllContactsEmails(contactEmails)
         }
-        fullContactDetails.forEach(this::insertFullContactDetails)
+        fullContactDetails.forEach(this::insertFullContactDetailsBlocking)
     }
 
     private fun assertDatabaseState(
@@ -528,7 +528,7 @@ internal class ContactDaoTest {
             )
         )
         val expected = fullContactDetails + inserted
-        database.insertFullContactDetails(inserted)
+        database.insertFullContactDetailsBlocking(inserted)
         assertDatabaseState(expectedFullContactDetails = expected)
     }
 

@@ -200,7 +200,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             contact.addEncryptedData(contactEncryptedData);
             contact.setName(contactName);
             contact.setEmails(contactEmails);
-            mContactDao.insertFullContactDetails(contact);
+            mContactDao.insertFullContactDetailsBlocking(contact);
             if (updateJoins) {
                 for (Map.Entry<ContactLabel, List<String>> entry : mapContactGroupContactEmails.entrySet()) {
                     updateJoins(entry.getKey().getID(), entry.getKey().getName(), entry.getValue());

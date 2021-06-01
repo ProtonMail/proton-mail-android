@@ -400,7 +400,10 @@ interface ContactDao {
 
     //region Full contact details
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertFullContactDetails(fullContactDetails: FullContactDetails)
+    fun insertFullContactDetailsBlocking(fullContactDetails: FullContactDetails)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFullContactDetails(fullContactDetails: FullContactDetails)
 
     @Query("SELECT * FROM $TABLE_FULL_CONTACT_DETAILS WHERE $COLUMN_CONTACT_ID = :id")
     fun findFullContactDetailsByIdBlocking(id: String): FullContactDetails?

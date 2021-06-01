@@ -122,7 +122,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
             AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.ERROR, mDestination));
             return;
         }
-        contactDao.insertFullContactDetails(fullContactDetails);
+        contactDao.insertFullContactDetailsBlocking(fullContactDetails);
 
         ContactEncryptedData encCard = getCardByType(fullContactDetails.getEncryptedData(), ContactEncryption.ENCRYPTED_AND_SIGNED);
         CreateContactV2BodyItem body;
@@ -145,7 +145,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
                 AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.DUPLICATE_EMAIL, mDestination));
             } else {
                 //TODO this insert is probably not needed as it is already saved some lines above
-                contactDao.insertFullContactDetails(fullContactDetails);
+                contactDao.insertFullContactDetailsBlocking(fullContactDetails);
                 AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.SUCCESS, mDestination));
             }
         }

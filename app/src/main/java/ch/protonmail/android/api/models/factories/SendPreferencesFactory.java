@@ -164,7 +164,7 @@ public class SendPreferencesFactory {
                 continue;
             }
             FullContactDetails contact = contactDetails.get(contactID).getContact();
-            contactDao.insertFullContactDetails(contact);
+            contactDao.insertFullContactDetailsBlocking(contact);
             result.put(email, contact);
         }
         return result;
