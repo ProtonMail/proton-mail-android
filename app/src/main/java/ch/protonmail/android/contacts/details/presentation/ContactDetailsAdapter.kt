@@ -22,6 +22,7 @@ package ch.protonmail.android.contacts.details.presentation
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
@@ -31,7 +32,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.databinding.ListItemContactDetailBinding
 import timber.log.Timber
-
 
 class ContactDetailsAdapter(
     private val onEmailClicked: (String) -> Unit,
@@ -84,121 +84,149 @@ class ContactDetailsAdapter(
         fun bind(item: ContactDetailsUiItem) {
             Timber.v("Bind $item")
             when (item) {
-                is ContactDetailsUiItem.Group -> {
-                    textViewContactDetailsItemHeader.setText(R.string.groups)
-                    textViewContactDetailsItemHeader.isVisible = item.groupIndex == 0
-
-                    textViewContactDetailsItem.apply {
-                        text = item.name
-                        val iconDrawable =
-                            ResourcesCompat.getDrawable(resources, R.drawable.circle_labels_selection, null)
-                                ?.mutate()
-                        iconDrawable?.setTint(item.colorInt)
-                        setCompoundDrawablesRelativeWithIntrinsicBounds(
-                            iconDrawable,
-                            null,
-                            null,
-                            null
-                        )
-                        isClickable = false
-                    }
-                }
-                is ContactDetailsUiItem.Email -> {
-                    textViewContactDetailsItemHeader.text = if (item.type.isNotEmpty()) {
-                        item.type
-                    } else {
-                        textViewContactDetailsItemHeader.context.getString(R.string.email)
-                    }
-                    textViewContactDetailsItem.apply {
-                        text = item.value
-                        setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_envelope_full, 0, 0, 0)
-                        isClickable = true
-                    }
-                }
-                is ContactDetailsUiItem.TelephoneNumber -> {
-                    textViewContactDetailsItemHeader.text = if (item.type.isNotEmpty()) {
-                        item.type
-                    } else {
-                        textViewContactDetailsItemHeader.context.getString(R.string.phone)
-                    }
-                    textViewContactDetailsItem.apply {
-                        text = item.value
-                        setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_contact_phone_dark, 0, 0, 0)
-                        isClickable = true
-                    }
-                }
-                is ContactDetailsUiItem.Address -> {
-                    textViewContactDetailsItemHeader.text = if (item.type.isNotEmpty()) {
-                        item.type
-                    } else {
-                        textViewContactDetailsItemHeader.context.getString(R.string.default_address)
-                    }
-                    textViewContactDetailsItem.apply {
-                        text = getAddressToDisplay(item)
-                        setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_map_marker, 0, 0, 0)
-                        isClickable = true
-                    }
-                }
+                is ContactDetailsUiItem.Group -> setGroupData(item)
+                is ContactDetailsUiItem.Email -> setEmailData(item)
+                is ContactDetailsUiItem.TelephoneNumber -> setPhoneData(item)
+                is ContactDetailsUiItem.Address -> setAddressData(item)
                 is ContactDetailsUiItem.Organization -> {
-                    textViewContactDetailsItemHeader.setText(R.string.vcard_other_option_org)
-                    textViewContactDetailsItem.apply {
-                        text = item.values.toString()
-                        isClickable = false
-                    }
+                    setBasicItemData(
+                        R.string.vcard_other_option_org,
+                        item.values.toString(),
+                        false
+                    )
                 }
                 is ContactDetailsUiItem.Title -> {
-                    textViewContactDetailsItemHeader.setText(R.string.vcard_other_option_title)
-                    textViewContactDetailsItem.apply {
-                        text = item.value
-                        isClickable = false
-                    }
+                    setBasicItemData(
+                        R.string.vcard_other_option_title,
+                        item.value,
+                        false
+                    )
                 }
-                is ContactDetailsUiItem.Nickname -> {
-                    textViewContactDetailsItemHeader.text = if (item.type.isNotEmpty()) {
-                        item.type
-                    } else {
-                        textViewContactDetailsItemHeader.context.getString(R.string.vcard_other_option_nickname)
-                    }
-                    textViewContactDetailsItem.apply {
-                        text = item.value
-                        isClickable = false
-                    }
-                }
+                is ContactDetailsUiItem.Nickname -> setNickNameData(item)
                 is ContactDetailsUiItem.Birthday -> {
-                    textViewContactDetailsItemHeader.setText(R.string.vcard_other_option_birthday)
-                    textViewContactDetailsItem.apply {
-                        text = item.birthdayDate
-                        isClickable = false
-                    }
+                    setBasicItemData(
+                        R.string.vcard_other_option_birthday,
+                        item.birthdayDate,
+                        false
+                    )
                 }
                 is ContactDetailsUiItem.Anniversary -> {
-                    textViewContactDetailsItemHeader.setText(R.string.vcard_other_option_anniversary)
-                    textViewContactDetailsItem.apply {
-                        text = item.anniversaryDate
-                        isClickable = false
-                    }
+                    setBasicItemData(
+                        R.string.vcard_other_option_anniversary,
+                        item.anniversaryDate,
+                        false
+                    )
                 }
                 is ContactDetailsUiItem.Role -> {
-                    textViewContactDetailsItemHeader.setText(R.string.vcard_other_option_role)
-                    textViewContactDetailsItem.apply {
-                        text = item.value
-                        isClickable = false
-                    }
+                    setBasicItemData(
+                        R.string.vcard_other_option_role,
+                        item.value,
+                        false
+                    )
                 }
                 is ContactDetailsUiItem.Url -> {
-                    textViewContactDetailsItemHeader.setText(R.string.vcard_other_option_url)
-                    textViewContactDetailsItem.apply {
-                        text = item.value
-                        isClickable = true
-                    }
+                    setBasicItemData(
+                        R.string.vcard_other_option_url,
+                        item.value,
+                        true
+                    )
                 }
                 is ContactDetailsUiItem.Gender -> {
-                    textViewContactDetailsItemHeader.setText(R.string.vcard_other_option_gender)
-                    textViewContactDetailsItem.apply {
-                        text = item.value
-                        isClickable = false
-                    }
+                    setBasicItemData(
+                        R.string.vcard_other_option_gender,
+                        item.value,
+                        false
+                    )
                 }
+            }
+        }
+
+        private fun setGroupData(item: ContactDetailsUiItem.Group) {
+            textViewContactDetailsItemHeader.setText(R.string.groups)
+            textViewContactDetailsItemHeader.isVisible = item.groupIndex == 0
+
+            textViewContactDetailsItem.apply {
+                text = item.name
+                val iconDrawable =
+                    ResourcesCompat.getDrawable(resources, R.drawable.circle_labels_selection, null)
+                        ?.mutate()
+                iconDrawable?.setTint(item.colorInt)
+                setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    iconDrawable,
+                    null,
+                    null,
+                    null
+                )
+                isClickable = false
+            }
+        }
+
+        private fun setEmailData(item: ContactDetailsUiItem.Email) {
+            textViewContactDetailsItemHeader.text = if (item.type.isNotEmpty()) {
+                item.type
+            } else {
+                textViewContactDetailsItemHeader.context.getString(R.string.email)
+            }
+            textViewContactDetailsItem.apply {
+                text = item.value
+                setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_envelope_full, 0, 0, 0)
+                isClickable = true
+            }
+        }
+
+        private fun setPhoneData(
+            item: ContactDetailsUiItem.TelephoneNumber
+        ) {
+            textViewContactDetailsItemHeader.text = if (item.type.isNotEmpty()) {
+                item.type
+            } else {
+                textViewContactDetailsItemHeader.context.getString(R.string.phone)
+            }
+            textViewContactDetailsItem.apply {
+                text = item.value
+                setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_contact_phone_dark, 0, 0, 0)
+                isClickable = true
+            }
+        }
+
+        private fun setAddressData(
+            item: ContactDetailsUiItem.Address
+        ) {
+            textViewContactDetailsItemHeader.text = if (item.type.isNotEmpty()) {
+                item.type
+            } else {
+                textViewContactDetailsItemHeader.context.getString(R.string.default_address)
+            }
+            textViewContactDetailsItem.apply {
+                text = getAddressToDisplay(item)
+                setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_map_marker, 0, 0, 0)
+                isClickable = true
+            }
+        }
+
+        private fun setNickNameData(
+            item: ContactDetailsUiItem.Nickname
+        ) {
+            textViewContactDetailsItemHeader.text = if (item.type.isNotEmpty()) {
+                item.type
+            } else {
+                textViewContactDetailsItemHeader.context.getString(R.string.vcard_other_option_nickname)
+            }
+            textViewContactDetailsItem.apply {
+                text = item.value
+                isClickable = false
+            }
+        }
+
+        private fun setBasicItemData(
+            @StringRes titleRes: Int,
+            textToDisplay: String?,
+            shouldBeClickable: Boolean
+        ) {
+            textViewContactDetailsItemHeader.setText(titleRes)
+            textViewContactDetailsItem.apply {
+                text = textToDisplay
+                isClickable = shouldBeClickable
             }
         }
 
