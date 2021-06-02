@@ -71,6 +71,7 @@ import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
+import ch.protonmail.android.settings.presentation.AttachmentStorageActivity
 import ch.protonmail.android.settings.presentation.CustomDividerItemDecoration
 import ch.protonmail.android.settings.presentation.SnoozeNotificationsActivity
 import ch.protonmail.android.uiModel.SettingsItemUiModel

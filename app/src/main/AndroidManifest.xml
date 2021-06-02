@@ -313,7 +313,7 @@
             android:label="@string/notification_settings"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".activities.SnoozeNotificationsActivity"
+            android:name=".settings.presentation.SnoozeNotificationsActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="@string/notifications_snooze"
