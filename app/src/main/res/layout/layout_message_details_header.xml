@@ -55,11 +55,48 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
+    <ImageView
+        android:id="@+id/repliedImageView"
+        android:layout_width="@dimen/message_details_header_small_icon_size"
+        android:layout_height="@dimen/message_details_header_small_icon_size"
+        android:layout_marginEnd="@dimen/message_details_header_margin_normal"
+        app:layout_constraintTop_toTopOf="@id/senderNameTextView"
+        app:layout_constraintBottom_toBottomOf="@id/senderNameTextView"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
+        app:layout_constraintRight_toLeftOf="@id/repliedAllImageView"
+        app:tint="@color/icon_norm"
+        android:src="@drawable/ic_reply"
+        tools:src="@drawable/ic_reply" />
+
+    <ImageView
+        android:id="@+id/repliedAllImageView"
+        android:layout_width="@dimen/message_details_header_small_icon_size"
+        android:layout_height="@dimen/message_details_header_small_icon_size"
+        android:layout_marginEnd="@dimen/message_details_header_margin_normal"
+        app:layout_constraintTop_toTopOf="@id/senderNameTextView"
+        app:layout_constraintBottom_toBottomOf="@id/senderNameTextView"
+        app:layout_constraintLeft_toRightOf="@id/repliedImageView"
+        app:tint="@color/icon_norm"
+        android:src="@drawable/ic_reply_all"
+        tools:src="@drawable/ic_reply_all" />
+
+    <ImageView
+        android:id="@+id/forwardedImageView"
+        android:layout_width="@dimen/message_details_header_small_icon_size"
+        android:layout_height="@dimen/message_details_header_small_icon_size"
+        android:layout_marginEnd="@dimen/message_details_header_margin_normal"
+        app:layout_constraintTop_toTopOf="@id/senderNameTextView"
+        app:layout_constraintBottom_toBottomOf="@id/senderNameTextView"
+        app:layout_constraintLeft_toRightOf="@id/repliedAllImageView"
+        app:tint="@color/icon_norm"
+        android:src="@drawable/ic_forward"
+        tools:src="@drawable/ic_forward" />
+
     <TextView
         android:id="@+id/senderNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
+        app:layout_constraintLeft_toRightOf="@id/forwardedImageView"
         app:layout_constraintRight_toLeftOf="@id/lockIconTextView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"

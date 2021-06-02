@@ -103,6 +103,10 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     private val encryptionInfoTextView: TextView
     private val learnMoreTextView: TextView
 
+    private val repliedImageView: ImageView
+    private val repliedAllImageView: ImageView
+    private val forwardedImageView: ImageView
+
     init {
         val binding = LayoutMessageDetailsHeaderBinding.inflate(
             LayoutInflater.from(context),
@@ -144,6 +148,10 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         lockIconExtendedTextView = binding.lockIconExtendedTextView
         encryptionInfoTextView = binding.encryptionInfoTextView
         learnMoreTextView = binding.learnMoreTextView
+
+        repliedImageView = binding.repliedImageView
+        repliedAllImageView = binding.repliedAllImageView
+        forwardedImageView = binding.forwardedImageView
         // endregion
 
         // animated layout changes looks buggy on Android 27, so we enable only on 28 +
@@ -363,5 +371,9 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         expandCollapseChevronImageView.setOnClickListener(onChevronClickListener)
         expandedHeaderGroup.visibility = View.GONE
         collapsedHeaderGroup.visibility = View.VISIBLE
+
+        repliedImageView.isVisible = message.isReplied == true && message.isRepliedAll == false
+        repliedAllImageView.isVisible = message.isRepliedAll ?: false
+        forwardedImageView.isVisible = message.isForwarded ?: false
     }
 }
