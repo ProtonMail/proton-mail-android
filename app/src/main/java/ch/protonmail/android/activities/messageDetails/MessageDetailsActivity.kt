@@ -87,7 +87,6 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
-import ch.protonmail.android.utils.ProtonCalendarUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.utils.extensions.app
@@ -615,7 +614,7 @@ internal class MessageDetailsActivity :
                 attachmentsListAdapter.setIsPgpEncrypted(viewModel.isPgpEncrypted())
                 attachmentsListAdapter.setDownloaded(eventAttachmentId, isDownloaded)
                 if (isDownloaded) {
-                    viewModel.viewAttachment(this, event.filename, event.attachmentUri)
+                    viewModel.viewAttachment(this, event.filename, event.attachmentUri, event.attachmentId)
                 } else {
                     showToast(R.string.downloading)
                 }
@@ -827,15 +826,14 @@ internal class MessageDetailsActivity :
 
     private fun displayProtonCalendarButton(attachments: List<Attachment>) {
         val ics = attachments.firstOrNull { it.mimeTypeFirstValue?.toLowerCase(Locale.ENGLISH) == "text/calendar" }
+        val attachmentId = ics?.attachmentId
 
-        if (ics != null) {
+        if (ics != null && attachmentId != null) {
             findViewById<ConstraintLayout>(R.id.includeOpenInProtonCalendar)?.apply {
                 visibility = View.VISIBLE
 
                 setOnClickListener {
-                    if (ProtonCalendarUtils.openPlayStoreIfNotInstalled(this@MessageDetailsActivity)) {
-                        // Proton Calendar is installed, open explicit intent
-                    }
+                    viewModel.handleProtonCalendarButtonClick(this@MessageDetailsActivity, attachmentId, messageId)
                 }
             }
         } else {

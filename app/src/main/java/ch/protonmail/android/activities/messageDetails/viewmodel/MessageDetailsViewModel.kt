@@ -67,6 +67,7 @@ import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer
 import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
+import ch.protonmail.android.utils.ProtonCalendarUtils
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
@@ -100,6 +101,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val dispatchers: DispatcherProvider,
     private val attachmentsHelper: AttachmentsHelper,
     private val downloadUtils: DownloadUtils,
+    private val protonCalendarUtils: ProtonCalendarUtils,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
@@ -125,6 +127,9 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private var _embeddedImagesAttachments: ArrayList<Attachment> = ArrayList()
     private var _embeddedImagesToFetch: ArrayList<EmbeddedImage> = ArrayList()
     private var remoteContentDisplayed: Boolean = false
+
+    // stores ICalendar Attachment ID to open with Proton Calendar in case it has to be downloaded asynchronously
+    private var protonCalendarAttachmentId: String? = null
 
     // region properties and data
     private val requestPending = AtomicBoolean(false)
@@ -504,9 +509,9 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             // extra check if user has not deleted the file
             if (uri != null && attachmentsHelper.isFileAvailable(context, uri)) {
                 if (uri.path?.contains(DIR_EMB_ATTACHMENT_DOWNLOADS) == true) {
-                    copyAttachmentToDownloadsAndDisplay(context, metadata.name, uri)
+                    copyAttachmentToDownloadsAndDisplay(context, metadata.name, uri, attachmentToDownloadId)
                 } else {
-                    viewAttachment(context, metadata.name, uri)
+                    viewAttachment(context, metadata.name, uri, attachmentToDownloadId)
                 }
             } else {
                 Timber.d("Attachment id: $attachmentToDownloadId file not available, uri: $uri ")
@@ -522,7 +527,8 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private fun copyAttachmentToDownloadsAndDisplay(
         context: Context,
         filename: String,
-        uri: Uri
+        uri: Uri,
+        attachmentId: String
     ) {
         val newUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             getCopiedUriFromQ(filename, uri, context)
@@ -531,7 +537,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         }
 
         Timber.v("Copied attachment file from ${uri.path} to ${newUri?.path}")
-        viewAttachment(context, filename, newUri)
+        viewAttachment(context, filename, newUri, attachmentId)
     }
 
     @TargetApi(Build.VERSION_CODES.Q)
@@ -562,8 +568,34 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         )
     }
 
-    fun viewAttachment(context: Context, filename: String?, uri: Uri?) =
-        downloadUtils.viewAttachment(context, filename, uri)
+    fun viewAttachment(context: Context, filename: String?, uri: Uri?, attachmentId: String) {
+        downloadUtils.viewAttachment(context, filename, uri, getAndResetPackageNameForAttachment(attachmentId))
+    }
+
+    /**
+     * Determines the custom App package to open the Attachment with. Only supports ProtonCalendar for now.
+     */
+    private fun getAndResetPackageNameForAttachment(attachmentId: String): String? {
+        val packageName = if (protonCalendarAttachmentId == attachmentId) {
+            ProtonCalendarUtils.protonCalendarPackageName
+        } else null
+
+        protonCalendarAttachmentId = null // always reset temporary AttachmentID
+
+        return packageName
+    }
+
+    fun handleProtonCalendarButtonClick(context: Context, attachmentId: String, messageId: String) {
+        if (protonCalendarUtils.openPlayStoreIfNotInstalled()) {
+            // Proton Calendar is installed, open explicit intent
+            protonCalendarAttachmentId = attachmentId
+            viewOrDownloadAttachment(
+                context,
+                attachmentId,
+                messageId
+            )
+        }
+    }
 
     fun remoteContentDisplayed() {
         remoteContentDisplayed = true

@@ -24,33 +24,36 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import timber.log.Timber
+import javax.inject.Inject
 
-object ProtonCalendarUtils {
-
-    private const val protonCalendarPackageName = "me.proton.android.calendar"
+class ProtonCalendarUtils @Inject constructor(private val context: Context) {
 
     /**
      * @return [true] if Proton Calendar is installed, [false] otherwise and tries to open Play Store
      */
-    fun openPlayStoreIfNotInstalled(context: Context): Boolean {
+    fun openPlayStoreIfNotInstalled(): Boolean {
 
         val protonCalendarIntent = context.packageManager.getLaunchIntentForPackage(protonCalendarPackageName)
 
         return if (protonCalendarIntent == null) {
             val playStoreIntent = Intent(Intent.ACTION_VIEW).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                data = Uri.parse("market://details?id=$protonCalendarPackageName")
+                data = Uri.parse("market://details?id=${protonCalendarPackageName}")
             }
 
             try {
                 context.startActivity(playStoreIntent)
             } catch (e: ActivityNotFoundException) {
-                Timber.d("play store not installed when opening Proton Calendar with CTA")
+                Timber.d(e, "play store not installed when opening Proton Calendar with CTA")
             }
 
             false
 
         } else true
+    }
+
+    companion object {
+        const val protonCalendarPackageName = "me.proton.android.calendar"
     }
 
 }

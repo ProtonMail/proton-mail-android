@@ -34,7 +34,10 @@ import javax.inject.Inject
 
 class DownloadUtils @Inject constructor() {
 
-    fun viewAttachment(context: Context, filename: String?, uri: Uri?) {
+    /**
+     * @param [explicitPackageName] allows for using explicit Intent to view Attachment
+     */
+    fun viewAttachment(context: Context, filename: String?, uri: Uri?, explicitPackageName: String? = null) {
         if (uri != null) {
             val mimeType = getMimeType(uri, context, filename)
             Timber.d("viewAttachment mimeType: $mimeType uri: $uri uriScheme: ${uri.scheme}")
@@ -45,6 +48,7 @@ class DownloadUtils @Inject constructor() {
                     Intent.FLAG_ACTIVITY_NEW_TASK or
                     Intent.FLAG_GRANT_READ_URI_PERMISSION
                 setDataAndType(uri, mimeType)
+                if (explicitPackageName != null) setPackage(explicitPackageName)
             }
             try {
                 context.startActivity(intent)
