@@ -126,7 +126,8 @@ internal class MessageRenderer(
                     val embeddedImage = imageSelector.receive()
 
                     // Process the image
-                    val file = File(messageDirectory(embeddedImage.messageId), embeddedImage.localFileName)
+                    val child = embeddedImage.localFileName ?: continue
+                    val file = File(messageDirectory(embeddedImage.messageId), child)
                     // Skip if file does not exist
                     if (!file.exists() || file.length() == 0L) continue
 
