@@ -106,7 +106,7 @@
     <color name="professional">#D4B46E</color>
     <color name="visionary">#5EDEFB</color>
     <color name="plus">@color/lime</color>
-    <color name="free">@color/upgrade_section</color>
+    <color name="free">@color/cornflower_blue</color>
 
     <color name="switch_settings_item">#9199CA</color>
     <color name="switch_settings_item_highlight">#656FAB</color>
