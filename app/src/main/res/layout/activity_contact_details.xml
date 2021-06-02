@@ -50,7 +50,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/padding_5xl"
                 android:layout_marginBottom="@dimen/padding_xxl"
-                app:circleSize="@dimen/avatar_size" />
+                app:circleSize="@dimen/avatar_size"
+                app:layout_collapseMode="parallax" />
 
             <ImageView
                 android:id="@+id/image_view_contact_details_thumbnail"
@@ -61,7 +62,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_marginBottom="@dimen/padding_xxl"
                 android:contentDescription="@string/contact_details"
                 android:scaleType="fitXY"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:layout_collapseMode="parallax" />
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"

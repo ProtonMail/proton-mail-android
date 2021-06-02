@@ -53,6 +53,7 @@ import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsV
 import ch.protonmail.android.databinding.ActivityContactDetailsBinding
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.views.ListItemThumbnail
+import coil.imageLoader
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,7 +61,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
-
 
 @AndroidEntryPoint
 class ContactDetailsActivity : AppCompatActivity() {
@@ -260,7 +260,7 @@ class ContactDetailsActivity : AppCompatActivity() {
     private fun loadThumbnailImage(photoUrl: String?) {
         Timber.v("Loading photo url: $photoUrl")
         val targetSize = resources.getDimensionPixelSize(R.dimen.avatar_size)
-        ImageRequest.Builder(this)
+        val imageRequest = ImageRequest.Builder(this)
             .data(photoUrl)
             .size(targetSize, targetSize)
             .transformations(CircleCropTransformation())
@@ -279,6 +279,8 @@ class ContactDetailsActivity : AppCompatActivity() {
                     thumbnail.isVisible = true
                 }
             )
+            .build()
+        imageLoader.enqueue(imageRequest)
     }
 
     private fun setContactDataForActionButtons(item: ContactDetailsUiItem) {
