@@ -87,6 +87,7 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
+import ch.protonmail.android.utils.ProtonCalendarUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.utils.extensions.app
@@ -828,7 +829,15 @@ internal class MessageDetailsActivity :
         val ics = attachments.firstOrNull { it.mimeTypeFirstValue?.toLowerCase(Locale.ENGLISH) == "text/calendar" }
 
         if (ics != null) {
-            findViewById<ConstraintLayout>(R.id.includeOpenInProtonCalendar)?.visibility = View.VISIBLE
+            findViewById<ConstraintLayout>(R.id.includeOpenInProtonCalendar)?.apply {
+                visibility = View.VISIBLE
+
+                setOnClickListener {
+                    if (ProtonCalendarUtils.openPlayStoreIfNotInstalled(this@MessageDetailsActivity)) {
+                        // Proton Calendar is installed, open explicit intent
+                    }
+                }
+            }
         } else {
             findViewById<ConstraintLayout>(R.id.includeOpenInProtonCalendar)?.visibility = View.GONE
         }
