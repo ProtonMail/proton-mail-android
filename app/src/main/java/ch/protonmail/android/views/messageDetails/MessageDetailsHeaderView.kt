@@ -46,6 +46,7 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.databinding.LayoutMessageDetailsHeaderBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.MessageDetailsHeaderIcons
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.ui.view.MultiLineLabelChipGroupView
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
@@ -107,6 +108,8 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     private val repliedAllImageView: ImageView
     private val forwardedImageView: ImageView
 
+    private val messageDetailsIcons: MessageDetailsHeaderIcons
+
     init {
         val binding = LayoutMessageDetailsHeaderBinding.inflate(
             LayoutInflater.from(context),
@@ -152,6 +155,8 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         repliedImageView = binding.repliedImageView
         repliedAllImageView = binding.repliedAllImageView
         forwardedImageView = binding.forwardedImageView
+
+        messageDetailsIcons = binding.messageDetailsIcons
         // endregion
 
         // animated layout changes looks buggy on Android 27, so we enable only on 28 +
@@ -375,5 +380,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         repliedImageView.isVisible = message.isReplied == true && message.isRepliedAll == false
         repliedAllImageView.isVisible = message.isRepliedAll ?: false
         forwardedImageView.isVisible = message.isForwarded ?: false
+
+        messageDetailsIcons.bind(message)
     }
 }
