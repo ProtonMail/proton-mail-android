@@ -62,6 +62,7 @@ import kotlinx.coroutines.flow.onEach
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 
+
 @AndroidEntryPoint
 class ContactDetailsActivity : AppCompatActivity() {
 

@@ -33,6 +33,7 @@ import ezvcard.property.Birthday
 import ezvcard.property.Email
 import ezvcard.property.Gender
 import ezvcard.property.Nickname
+import ezvcard.property.Note
 import ezvcard.property.Organization
 import ezvcard.property.Photo
 import ezvcard.property.Role
@@ -47,9 +48,8 @@ import javax.inject.Inject
 class FetchContactsMapper @Inject constructor(
     userManager: UserManager,
     openPgp: OpenPGP,
+    val crypto: UserCrypto = UserCrypto(userManager, openPgp, userManager.requireCurrentUserId())
 ) {
-
-    private val crypto by lazy { UserCrypto(userManager, openPgp, userManager.requireCurrentUserId()) }
 
     fun mapEncryptedDataToResult(encryptedDataList: MutableList<ContactEncryptedData>?): FetchContactDetailsResult? {
         if (!encryptedDataList.isNullOrEmpty()) {
@@ -235,6 +235,7 @@ class FetchContactsMapper @Inject constructor(
                 emptyList()
             }
         }
+
         val gender: Gender? = when {
             vCardType3?.gender != null -> vCardType3.gender
             vCardType0?.gender != null -> vCardType0.gender
@@ -242,6 +243,26 @@ class FetchContactsMapper @Inject constructor(
             else -> {
                 Timber.d("Unable to get gender information from available vCard data")
                 null
+            }
+        }
+
+        val notes: List<Note> = when {
+            vCardType3?.notes != null -> vCardType3.notes
+            vCardType0?.notes != null -> vCardType0.notes
+            vCardType2?.notes != null -> vCardType2.notes
+            else -> {
+                Timber.d("Unable to get notes information from available vCard data")
+                emptyList()
+            }
+        }
+
+        val contactUid = when {
+            vCardType3?.uid?.value != null -> vCardType3.uid.value
+            vCardType0?.uid?.value != null -> vCardType0.uid.value
+            vCardType2?.uid?.value != null -> vCardType2.uid.value
+            else -> {
+                Timber.i("Unable to get name information from available vCard data")
+                EMPTY_STRING
             }
         }
 
@@ -270,6 +291,7 @@ class FetchContactsMapper @Inject constructor(
             }
 
         return FetchContactDetailsResult(
+            contactUid,
             contactName,
             emails,
             telephoneNumbers,
@@ -284,8 +306,9 @@ class FetchContactsMapper @Inject constructor(
             urls,
             vCardToShare,
             gender,
+            notes,
             isType2SignatureValid,
-            isType3SignatureValid
+            isType3SignatureValid,
         )
     }
 

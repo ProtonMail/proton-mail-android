@@ -21,18 +21,24 @@ package ch.protonmail.android.contacts.details.domain
 
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.model.FullContactDetails
-import ch.protonmail.android.data.local.model.FullContactDetailsResponse
+import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.domain.entity.Id
-import io.mockk.coEvery
+import ch.protonmail.android.utils.crypto.TextDecryptionResult
+import ezvcard.parameter.VCardParameters
+import ezvcard.property.Address
+import ezvcard.property.Birthday
+import ezvcard.property.Email
+import ezvcard.property.Note
+import ezvcard.property.Photo
+import ezvcard.property.Telephone
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
-import java.io.IOException
+import java.text.SimpleDateFormat
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
 class FetchContactsMapperTest {
@@ -42,48 +48,215 @@ class FetchContactsMapperTest {
         every { currentUserId } returns testUserId
         every { requireCurrentUserId() } returns testUserId
         every { openPgp } returns mockk(relaxed = true)
+        every { getUserBlocking(any()) } returns mockk()
     }
 
-    val mapper = FetchContactsMapper(userManager, mockk())
+    private val crypto: UserCrypto = mockk()
 
+    val mapper = FetchContactsMapper(userManager, mockk(), crypto)
+
+    private val testCardTypeO = "BEGIN:VCARD\r\n" +
+        "VERSION:4.0\r\n" +
+        "PRODID:-//ProtonMail//ProtonMail vCard 1.0.0//EN\r\n" +
+        "FN:jant.rosales\r\n" +
+        "UID:proton-autosave-15713e29-80f7-44e3-8537-2ebabe4c7955\r\n" +
+        "TEL;TYPE=voice:054644651212\r\n" +
+        "ADR;TYPE=adr:;;Rainstreet 1\r\n" +
+        "item1.EMAIL;PREF=1:jant.rosales@gmail.com\r\n" +
+        "END:VCARD\r\n"
+
+    private val testCardType2 = "BEGIN:VCARD\r\n" +
+        "VERSION:4.0\r\n" +
+        "FN:Tomek9\r\n" +
+        "item1.EMAIL;TYPE=email:tomek9@abc.com\r\n" +
+        "item1.X-PM-ENCRYPT:false\r\n" +
+        "item1.X-PM-SIGN:false\r\n" +
+        "UID:proton-web-3d6b22b5-04ce-4300-605a-3bfd2d3652d1\r\n" +
+        "PHOTO:https://miro.medium.com/fit/c/96/96/1*6lE2RWE0pVCnr52yc6o6rw.jpeg\r\n" +
+        "NOTE:Gender: Male\r\n" +
+        "BDAY:19810404\r\n" +
+        "END:VCARD\r\n"
+
+    private val type2Signature = "-----BEGIN PGP SIGNATURE-----\r\n" +
+        "Version: ProtonMail\r\n" +
+        "type2Signature\r\n" +
+        "-----END PGP SIGNATURE-----\r\n"
+
+    private val testCardType3 = """BEGIN:VCARD
+                VERSION:4.0
+                ITEM3.X-ABDATE;TYPE=x-_${'$'}!<Anniversary>!$\_:20151107094
+                ITEM1.ORG:N/A
+                PHOTO:https://miro.medium.com/fit/c/96/96/1*6lE2RWE0pVCnr52yc6o6rw.jpeg
+                NOTE:Gender: Male
+                BDAY:19810404
+                N:LastName;FirstName;;;
+                END:VCARD"""
+
+    val type3Signature = "-----BEGIN PGP SIGNATURE-----\r\n" +
+        "Version: ProtonMail\r\n" +
+        "type3Signature\r\n" +
+        "-----END PGP SIGNATURE-----\r\n"
 
     @Test
-    fun verifyThatExistingContactsDataIsFetchedFromTheDbAndPassedInFlowAndThenApiReturnsData() =
+    fun verifyThatBasicUnsignedVcardDataIsMappedProperly() =
         runBlockingTest {
             // given
-            val contactId = "testContactId"
-            val testDataDb = "testDataDb"
-            val testDataNet = "testDataNet"
+            val testContactName = "jant.rosales"
+            val testContactUid = "proton-autosave-15713e29-80f7-44e3-8537-2ebabe4c7955"
+
             val contactEncryptedDataDb = mockk<ContactEncryptedData> {
-                every { type } returns 0
-                every { data } returns testDataDb
+                every { type } returns Constants.VCardType.UNSIGNED.vCardTypeValue
+                every { data } returns testCardTypeO
             }
-            val contactEncryptedDataNet = mockk<ContactEncryptedData> {
-                every { type } returns 0
-                every { data } returns testDataNet
+
+            val email1 = Email(
+                "jant.rosales@gmail.com"
+            ).apply {
+                group = "item1"
+                parameters = VCardParameters(mapOf("PREF" to listOf("1")))
             }
-            val fullContactsFromDb = mockk<FullContactDetails> {
-                every { encryptedData } returns mutableListOf(contactEncryptedDataDb)
+            val phone1 = Telephone("054644651212").apply {
+                parameters = VCardParameters(mapOf("TYPE" to listOf("voice")))
             }
-            val fullContactsFromNet = mockk<FullContactDetails> {
-                every { encryptedData } returns mutableListOf(contactEncryptedDataNet)
+            val address1 = Address().apply {
+                streetAddress = "Rainstreet 1"
+                parameters = VCardParameters(mapOf("TYPE" to listOf("adr")))
             }
-            val fullContactsResponse = mockk<FullContactDetailsResponse> {
-                every { contact } returns fullContactsFromNet
-            }
-            val expectedDb = FetchContactDetailsResult.Data(
-                decryptedVCardType0 = testDataDb
-            )
-            val expectedNet = FetchContactDetailsResult.Data(
-                decryptedVCardType0 = testDataNet
+            val expectedDb = FetchContactDetailsResult(
+                testContactUid,
+                testContactName,
+                emails = listOf(email1),
+                telephoneNumbers = listOf(phone1),
+                addresses = listOf(address1),
+                photos = emptyList(),
+                organizations = emptyList(),
+                titles = emptyList(),
+                nicknames = emptyList(),
+                birthdays = emptyList(),
+                anniversaries = emptyList(),
+                roles = emptyList(),
+                urls = emptyList(),
+                testCardTypeO,
+                null,
+                emptyList(),
+                null,
+                null,
             )
 
             // when
             val result = mapper.mapEncryptedDataToResult(mutableListOf(contactEncryptedDataDb))
 
             // then
-            assertEquals(expectedDb, result[0])
-            assertEquals(expectedNet, result[1])
+            assertEquals(expectedDb, result)
+        }
+
+    @Test
+    fun verifyThatBasicSignedVcardDataIsMappedProperly() =
+        runBlockingTest {
+            // given
+            val testContactName = "Tomek9"
+            val testContactUid = "proton-web-3d6b22b5-04ce-4300-605a-3bfd2d3652d1"
+
+            val contactEncryptedDataDb = mockk<ContactEncryptedData> {
+                every { type } returns Constants.VCardType.SIGNED.vCardTypeValue
+                every { data } returns testCardType2
+                every { signature } returns type2Signature
+            }
+            every { crypto.verify(testCardType2, type2Signature) } returns TextDecryptionResult(
+                testCardType2, true, true
+            )
+
+            val email1 = Email(
+                "tomek9@abc.com"
+            ).apply {
+                group = "item1"
+                parameters = VCardParameters(mapOf("TYPE" to listOf("email")))
+            }
+
+            val photo1 = Photo("https://miro.medium.com/fit/c/96/96/1*6lE2RWE0pVCnr52yc6o6rw.jpeg", null)
+            val simpleDate = SimpleDateFormat("yyyyMMdd")
+            val date = simpleDate.parse("19810404")
+            val birthday1 = Birthday(date)
+            val note1 = Note("Gender: Male")
+            val expectedDb = FetchContactDetailsResult(
+                testContactUid,
+                testContactName,
+                emails = listOf(email1),
+                telephoneNumbers = emptyList(),
+                addresses = emptyList(),
+                photos = listOf(photo1),
+                organizations = emptyList(),
+                titles = emptyList(),
+                nicknames = emptyList(),
+                birthdays = listOf(birthday1),
+                anniversaries = emptyList(),
+                roles = emptyList(),
+                urls = emptyList(),
+                vCardToShare = testCardType2,
+                gender = null,
+                notes = listOf(note1),
+                isType2SignatureValid = true,
+                isType3SignatureValid = null,
+            )
+
+            // when
+            val result = mapper.mapEncryptedDataToResult(mutableListOf(contactEncryptedDataDb))
+
+            // then
+            assertEquals(expectedDb, result)
+        }
+
+    @Ignore(
+        "java.lang.UnsatisfiedLinkError: no gojni in java.library.path: error due to use of CipherText " +
+            "is preventing this test from running, any ideas?"
+    )
+    @Test
+    fun verifyThatEncryptedSignedVcardDataWithPhotoUrlIsMappedProperly() =
+        runBlockingTest {
+            // given
+            val testContactName = "Tomek9"
+            val testContactUid = "proton-web-3d6b22b5-04ce-4300-605a-3bfd2d3652d1"
+
+            val contactEncryptedDataDb = mockk<ContactEncryptedData> {
+                every { type } returns Constants.VCardType.SIGNED_ENCRYPTED.vCardTypeValue
+                every { data } returns testCardType3
+                every { signature } returns type3Signature
+            }
+            every { crypto.verify(testCardType3, type3Signature) } returns
+                TextDecryptionResult(testCardType3, true, true)
+
+            val email1 = Email(
+                "tomek9@abc.com"
+            ).apply {
+                group = "item1"
+                parameters = VCardParameters(mapOf("TYPE" to listOf("email")))
+            }
+            val expectedDb = FetchContactDetailsResult(
+                testContactUid,
+                testContactName,
+                listOf(email1),
+                emptyList(),
+                emptyList(),
+                emptyList(),
+                emptyList(),
+                emptyList(),
+                emptyList(),
+                emptyList(),
+                emptyList(),
+                emptyList(),
+                emptyList(),
+                testCardType2,
+                null,
+                emptyList(),
+                true,
+                null,
+            )
+
+            // when
+            val result = mapper.mapEncryptedDataToResult(mutableListOf(contactEncryptedDataDb))
+
+            // then
+            assertEquals(expectedDb, result)
         }
 
 }

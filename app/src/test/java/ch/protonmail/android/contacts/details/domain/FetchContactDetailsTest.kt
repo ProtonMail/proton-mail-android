@@ -17,13 +17,11 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.usecase.fetch
+package ch.protonmail.android.contacts.details.domain
 
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
-import ch.protonmail.android.contacts.details.domain.FetchContactDetails
-import ch.protonmail.android.contacts.details.domain.FetchContactsMapper
 import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
@@ -45,7 +43,7 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
 
     private val api: ProtonMailApiManager = mockk()
 
-    val mapper = mockk<FetchContactsMapper>()
+    val mapper: FetchContactsMapper = mockk()
 
     private val useCase = FetchContactDetails(
         repository, api, mapper, dispatchers,
@@ -66,24 +64,25 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
                 every { type } returns 0
                 every { data } returns testDataNet
             }
+            val listOfDbData = mutableListOf(contactEncryptedDataDb)
             val fullContactsFromDb = mockk<FullContactDetails> {
-                every { encryptedData } returns mutableListOf(contactEncryptedDataDb)
+                every { encryptedData } returns listOfDbData
             }
+            val listOfNetData = mutableListOf(contactEncryptedDataNet)
             val fullContactsFromNet = mockk<FullContactDetails> {
-                every { encryptedData } returns mutableListOf(contactEncryptedDataNet)
+                every { encryptedData } returns listOfNetData
             }
             val fullContactsResponse = mockk<FullContactDetailsResponse> {
                 every { contact } returns fullContactsFromNet
             }
             coEvery { repository.getFullContactDetails(contactId) } returns fullContactsFromDb
-            every { repository.insertFullContactDetails(any()) } returns Unit
+            coEvery { repository.insertFullContactDetails(any()) } returns Unit
             coEvery { api.fetchContactDetails(contactId) } returns fullContactsResponse
-            val expectedDb = FetchContactDetailsResult(
-                decryptedVCardType0 = testDataDb
-            )
-            val expectedNet = FetchContactDetailsResult(
-                decryptedVCardType0 = testDataNet
-            )
+
+            val expectedDb = mockk<FetchContactDetailsResult>()
+            every { mapper.mapEncryptedDataToResult(listOfDbData) } returns expectedDb
+            val expectedNet = mockk<FetchContactDetailsResult>()
+            every { mapper.mapEncryptedDataToResult(listOfNetData) } returns expectedNet
 
             // when
             val result = useCase.invoke(contactId).take(2).toList()
@@ -91,38 +90,6 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             // then
             assertEquals(expectedDb, result[0])
             assertEquals(expectedNet, result[1])
-        }
-
-    @Test
-    fun verifyThatExistingContactsDataIsFetchedFromTheDbAndPassedInFlowAndThenNetworkErrorIsEmitted() =
-        runBlockingTest {
-            // given
-            val contactId = "testContactId"
-            val testData = "testData"
-            val testSignature = "testSignature"
-            val contactEncryptedData = mockk<ContactEncryptedData> {
-                every { type } returns 2
-                every { data } returns testData
-                every { signature } returns testSignature
-            }
-            val fullContactsFromDb = mockk<FullContactDetails> {
-                every { encryptedData } returns mutableListOf(contactEncryptedData)
-            }
-            coEvery { repository.getFullContactDetails(contactId) } returns fullContactsFromDb
-            val ioException = IOException("Cannot load contacts")
-            coEvery { api.fetchContactDetails(contactId) } throws ioException
-            val expected = FetchContactDetailsResult(
-                decryptedVCardType2 = testData,
-                vCardType2Signature = testSignature
-            )
-            val expectedNetError = FetchContactDetailsResult(ioException)
-
-            // when
-            val result = useCase.invoke(contactId).take(2).toList()
-
-            // then
-            assertEquals(expected, result[0])
-            assertEquals(expectedNetError, result[1])
         }
 
     @Test
@@ -138,19 +105,18 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
                 every { data } returns testDataNet
                 every { signature } returns testSignature
             }
+            val listOfNetData = mutableListOf(contactEncryptedDataNet)
             val fullContactsFromNet = mockk<FullContactDetails> {
-                every { encryptedData } returns mutableListOf(contactEncryptedDataNet)
+                every { encryptedData } returns listOfNetData
             }
             val fullContactsResponse = mockk<FullContactDetailsResponse> {
                 every { contact } returns fullContactsFromNet
             }
             coEvery { repository.getFullContactDetails(contactId) } returns null
-            every { repository.insertFullContactDetails(any()) } returns Unit
+            coEvery { repository.insertFullContactDetails(any()) } returns Unit
             coEvery { api.fetchContactDetails(contactId) } returns fullContactsResponse
-            val expected = FetchContactDetailsResult(
-                decryptedVCardType2 = testDataNet,
-                vCardType2Signature = testSignature
-            )
+            val expected = mockk<FetchContactDetailsResult>()
+            every { mapper.mapEncryptedDataToResult(listOfNetData) } returns expected
 
             // when
             val result = useCase.invoke(contactId).take(1).toList()
@@ -159,39 +125,20 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             assertEquals(expected, result[0])
         }
 
-    @Test
-    fun verifyThatWhenThereIsNotContactsDataForGivenContactInTheDbAndThereWasApiErrorAnErrorWillBeReturned() =
+    @Test(expected = IOException::class)
+    fun verifyThatWhenThereIsNotContactsDataForGivenContactInTheDbAndThereWasApiErrorExceptionWillBeThrown() =
         runBlockingTest {
             // given
             val contactId = "testContactId"
 
             coEvery { repository.getFullContactDetails(contactId) } returns null
-            every { repository.insertFullContactDetails(any()) } returns Unit
+            coEvery { repository.insertFullContactDetails(any()) } returns Unit
             val ioException = IOException("Cannot load contacts")
             coEvery { api.fetchContactDetails(contactId) } throws ioException
-            val expectedNetError = FetchContactDetailsResult(ioException)
 
             // when
-            val result = useCase.invoke(contactId).take(1).toList()
+            useCase.invoke(contactId).take(1).toList()
 
-            // then
-            assertEquals(expectedNetError, result[0])
-        }
-
-    @Test
-    fun verifyThatWhenExceptionIsThrownErrorDataWillBeReturned() =
-        runBlockingTest {
-            // given
-            val contactId = "testContactId"
-            val exception = Exception("An error!")
-            coEvery { repository.getFullContactDetails(contactId) } returns null
-            coEvery { api.fetchContactDetails(contactId) } throws exception
-            val expected = FetchContactDetailsResult(exception)
-
-            // when
-            val result = useCase.invoke(contactId).take(1).toList()
-
-            // then
-            assertEquals(expected, result[0])
+            // then expect IOException
         }
 }

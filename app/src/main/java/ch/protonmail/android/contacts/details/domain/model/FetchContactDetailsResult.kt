@@ -25,6 +25,7 @@ import ezvcard.property.Birthday
 import ezvcard.property.Email
 import ezvcard.property.Gender
 import ezvcard.property.Nickname
+import ezvcard.property.Note
 import ezvcard.property.Organization
 import ezvcard.property.Photo
 import ezvcard.property.Role
@@ -33,6 +34,7 @@ import ezvcard.property.Title
 import ezvcard.property.Url
 
 data class FetchContactDetailsResult(
+    val contactUid: String,
     val contactName: String,
     val emails: List<Email>,
     val telephoneNumbers: List<Telephone>,
@@ -47,6 +49,7 @@ data class FetchContactDetailsResult(
     val urls: List<Url>,
     val vCardToShare: String,
     val gender: Gender?,
+    val notes: List<Note>,
     val isType2SignatureValid: Boolean?,
     val isType3SignatureValid: Boolean?
 )
