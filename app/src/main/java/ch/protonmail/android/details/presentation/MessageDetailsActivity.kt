@@ -39,6 +39,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.getSystemService
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -435,6 +436,13 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             starToggleButton.isChecked = conversation.isStarred
             val isInvalidSubject = conversation.subject.isNullOrEmpty()
             val subject = if (isInvalidSubject) getString(R.string.empty_subject) else conversation.subject
+            val messagesInConversation = conversation.messages.count()
+            toolbarMessagesCountTextView.text = resources.getQuantityString(
+                R.plurals.x_messages_count,
+                messagesInConversation,
+                messagesInConversation
+            )
+            toolbarMessagesCountTextView.isVisible = messagesInConversation > 1
             collapsedToolbarTitleTextView.text = subject
             collapsedToolbarTitleTextView.visibility = View.INVISIBLE
             expandedToolbarTitleTextView.text = subject
