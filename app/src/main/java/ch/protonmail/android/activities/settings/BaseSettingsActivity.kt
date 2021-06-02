@@ -45,7 +45,6 @@ import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
 import ch.protonmail.android.activities.EXTRA_SWIPE_ID
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.SettingsItem
-import ch.protonmail.android.activities.SnoozeNotificationsActivity
 import ch.protonmail.android.activities.SwipeChooserActivity
 import ch.protonmail.android.activities.SwipeType
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
@@ -73,6 +72,7 @@ import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.settings.presentation.CustomDividerItemDecoration
+import ch.protonmail.android.settings.presentation.SnoozeNotificationsActivity
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil

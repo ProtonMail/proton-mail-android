@@ -156,7 +156,7 @@
             android:theme="@style/ProtonTheme.Splash.Mail.Light" />
         <!-- End - Root Activities -->
         <activity
-            android:name=".activities.settings.AttachmentStorageActivity"
+            android:name=".settings.presentation.AttachmentStorageActivity"
             android:exported="false"
             android:label="@string/local_storage"
             android:screenOrientation="portrait" />

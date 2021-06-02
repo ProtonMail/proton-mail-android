@@ -16,23 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities
+package ch.protonmail.android.settings.presentation
 
 import android.app.Activity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.CompoundButton
+import androidx.core.view.isVisible
 import butterknife.OnClick
 import ch.protonmail.android.R
-import ch.protonmail.android.utils.extensions.app
+import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.utils.extensions.buildRepeatingDaysString
 import ch.protonmail.android.utils.extensions.buildUILabel
 import ch.protonmail.android.utils.extensions.countSelected
 import ch.protonmail.android.utils.extensions.countTrue
 import ch.protonmail.android.utils.extensions.roundHourOrMinute
 import ch.protonmail.android.utils.extensions.selectAll
-import ch.protonmail.android.views.SnoozeRepeatDayView
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.activity_snooze_notifications.*
 import java.util.ArrayList
@@ -45,16 +45,11 @@ private const val TAG_END_TIME_PICKED = "EndTimePicker"
 private const val DAYS_OF_THE_WEEK = "mo:tu:we:th:fr:sa:su"
 // endregion
 
-/**
- * Created by dino on 6/10/17.
- */
-
 class SnoozeNotificationsActivity : BaseActivity() {
 
     private val startTimePicker: TimePickerDialog by lazy {
         val repeatingSnoozeDefaultStartHour = resources.getInteger(R.integer.repeating_snooze_start_hour)
         TimePickerDialog.newInstance(mStartTimePickerListener, repeatingSnoozeDefaultStartHour, 0, true)
-
     }
     private val endTimePicker: TimePickerDialog by lazy {
         val repeatingSnoozeDefaultEndHour = resources.getInteger(R.integer.repeating_snooze_end_hour)
@@ -76,12 +71,14 @@ class SnoozeNotificationsActivity : BaseActivity() {
         snoozeScheduledEnabled = isChecked
         notificationsSnoozeScheduledContainer.visibility = if (isChecked) View.VISIBLE else View.GONE
         if (mUserManager != null) {
-            mUserManager.setSnoozeScheduledBlocking(isChecked,
+            mUserManager.setSnoozeScheduledBlocking(
+                isChecked,
                 startTimeHour,
                 startTimeMinute,
                 endTimeHour,
                 endTimeMinute,
-                buildRepeatingDaysString())
+                buildRepeatingDaysString()
+            )
         }
         setCurrentStatus()
         if (isChecked) {
@@ -117,6 +114,9 @@ class SnoozeNotificationsActivity : BaseActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
+        val elevation = resources.getDimensionPixelSize(R.dimen.action_bar_elevation).toFloat()
+        actionBar?.elevation = elevation
+
         dayViewsList = listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 
         startTimePicker.version = TimePickerDialog.Version.VERSION_2
@@ -143,7 +143,7 @@ class SnoozeNotificationsActivity : BaseActivity() {
         setRepeatingDaysLabel()
 
         notificationSnoozeScheduledSwitch.isChecked = snoozeScheduledEnabled
-        notificationsSnoozeScheduledContainer.visibility = if (snoozeScheduledEnabled) View.VISIBLE else View.GONE
+        notificationsSnoozeScheduledContainer.isVisible = snoozeScheduledEnabled
 
         dayViewsList.forEach {
             it.setOnClickListener(dayClickListener)
@@ -164,18 +164,20 @@ class SnoozeNotificationsActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        app.bus.register(this)
+        mApp.bus.register(this)
     }
 
     override fun onStop() {
         super.onStop()
-        app.bus.unregister(this)
-        mUserManager.setSnoozeScheduledBlocking(snoozeScheduledEnabled,
+        mApp.bus.unregister(this)
+        mUserManager.setSnoozeScheduledBlocking(
+            snoozeScheduledEnabled,
             startTimeHour,
             startTimeMinute,
             endTimeHour,
             endTimeMinute,
-            buildRepeatingDaysString())
+            buildRepeatingDaysString()
+        )
     }
 
     override fun onBackPressed() {

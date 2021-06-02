@@ -21,7 +21,7 @@ package ch.protonmail.android.utils.extensions
 import android.content.Context
 import android.text.TextUtils
 import ch.protonmail.android.R
-import ch.protonmail.android.views.SnoozeRepeatDayView
+import ch.protonmail.android.settings.presentation.SnoozeRepeatDayView
 import ch.protonmail.libs.core.utils.EMPTY_STRING
 
 /**

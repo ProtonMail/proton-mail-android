@@ -125,6 +125,10 @@
     <!-- Labels -->
     <dimen name="min_width_label">56dp</dimen>
 
+    <!-- Settings -->
+    <dimen name="settings_margin_radio_button">12dp</dimen>
+    <dimen name="settings_snooze_day_size">40dp</dimen>
+
     <!-- endregion -->
 
     <!-- region V3 -->

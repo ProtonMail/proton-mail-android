@@ -22,7 +22,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     android:id="@+id/settingsItemWrapper"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_centerVertical="true">
+    android:layout_centerVertical="true"
+    android:layout_gravity="center_vertical">
 
     <LinearLayout
         android:id="@+id/headingContainer"
@@ -49,8 +50,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             style="@style/Proton.Text.DefaultSmall.Weak"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/padding_xxl"
             android:duplicateParentState="true"
             android:orientation="vertical"
+            android:paddingTop="@dimen/padding_s"
             android:visibility="gone" />
 
         <Spinner
@@ -61,22 +64,20 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:clickable="false"
             android:duplicateParentState="true"
             android:visibility="gone" />
-
-
-        <ch.protonmail.android.views.CustomFontEditText
-            android:id="@+id/editText"
-            style="@style/SignatureEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/fields_default_space"
-            android:clickable="true"
-            android:duplicateParentState="true"
-            android:focusable="true"
-            android:gravity="top"
-            android:textCursorDrawable="@drawable/cursor_black"
-            android:visibility="gone"
-            app:fontName="Roboto-Regular.ttf" />
     </LinearLayout>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/actionSwitch"
+        style="@style/ProtonSwitch.Mail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="end|center_vertical"
+        android:duplicateParentState="true"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="@+id/guideline_01"
+        app:layout_constraintTop_toTopOf="@id/headingContainer" />
 
     <LinearLayout
         android:id="@+id/buttonsContainer"

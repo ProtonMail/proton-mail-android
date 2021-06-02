@@ -38,9 +38,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
-import ch.protonmail.android.activities.SnoozeNotificationsActivity;
 import ch.protonmail.android.adapters.QuickSnoozeOptionAdapter;
 import ch.protonmail.android.core.UserManager;
+import ch.protonmail.android.settings.presentation.SnoozeNotificationsActivity;
 import ch.protonmail.android.views.CustomQuickSnoozeDialog;
 import dagger.hilt.android.AndroidEntryPoint;
 
