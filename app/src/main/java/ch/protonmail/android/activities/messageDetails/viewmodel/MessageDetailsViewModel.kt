@@ -183,7 +183,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     var refreshedKeys: Boolean = true
 
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
-    private val _decryptedMessageLiveData: MutableLiveData<ConversationUiModel> = MutableLiveData()
+    private val _decryptedConversationUiModel: MutableLiveData<ConversationUiModel> = MutableLiveData()
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
 
@@ -224,15 +224,18 @@ internal class MessageDetailsViewModel @Inject constructor(
     val prepareEditMessageIntent: LiveData<Event<IntentExtrasData>>
         get() = _prepareEditMessageIntentResult
 
-    val decryptedMessageData: LiveData<ConversationUiModel>
-        get() = _decryptedMessageLiveData.distinctUntilChanged()
+    val decryptedConversationUiModel: LiveData<ConversationUiModel>
+        get() = _decryptedConversationUiModel
 
     private var areImagesDisplayed: Boolean = false
 
     init {
         viewModelScope.launch {
-            for (body in messageRenderer.renderedBody) {
-                _downloadEmbeddedImagesResult.postValue(body)
+            for (renderedMessage in messageRenderer.renderedMessage) {
+                val currentUiModel = _decryptedConversationUiModel.value
+                val message = currentUiModel?.messages?.find { it.messageId == renderedMessage.messageId }
+                message?.decryptedHTML = renderedMessage.renderedHtmlBody
+                _decryptedConversationUiModel.value = currentUiModel
                 areImagesDisplayed = true
             }
         }
@@ -341,7 +344,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
 
             Timber.v("Emitting ConversationUiItem Detail = ${lastMessage.messageId} keys size: ${publicKeys?.size}")
-            _decryptedMessageLiveData.postValue(conversationUiModel)
+            _decryptedConversationUiModel.postValue(conversationUiModel)
         }
     }
 

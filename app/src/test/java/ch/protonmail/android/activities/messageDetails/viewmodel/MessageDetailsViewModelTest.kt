@@ -187,7 +187,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { message.senderEmail } returns senderEmail
         every { message.decrypt(any(), any(), any()) } just Runs
         val senderContact = ContactEmail("ceId2", senderEmail, "senderContactName")
-        val messageObserver = viewModel.decryptedMessageData.testObserver()
+        val messageObserver = viewModel.decryptedConversationUiModel.testObserver()
         coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
         coEvery { contactsRepository.findContactEmailByEmail(senderEmail) } returns senderContact
 
@@ -203,7 +203,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun loadMessageMarksMessageAsReadAndEmitsItWhenTheMessageWasSuccessfullyDecrypted() = runBlockingTest {
         // Given
-        val messageObserver = viewModel.decryptedMessageData.testObserver()
+        val messageObserver = viewModel.decryptedConversationUiModel.testObserver()
         val message = mockk<Message>(relaxed = true)
         every { message.messageId } returns "messageId1"
         every { message.isDownloaded } returns true
@@ -223,7 +223,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun loadMessageDoesNotMarkMessageAsReadOrEmitWhenTheMessageDecryptionFails() = runBlockingTest {
         // Given
-        val messageObserver = viewModel.decryptedMessageData.testObserver()
+        val messageObserver = viewModel.decryptedConversationUiModel.testObserver()
         val message = mockk<Message>(relaxed = true)
         every { message.messageId } returns "messageId2"
         every { message.isDownloaded } returns true
@@ -245,7 +245,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         // the message after it was marked as read (ignoring distinctUntilChanged clause). This is probably due to
         // some mutable property of `Message` class changing unexpectedly.
         // Given
-        val messageObserver = viewModel.decryptedMessageData.testObserver()
+        val messageObserver = viewModel.decryptedConversationUiModel.testObserver()
         val message = mockk<Message>(relaxed = true)
         every { message.messageId } returns "messageId3"
         every { message.isDownloaded } returns true
@@ -272,7 +272,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             isDownloaded = false,
             sender = MessageSender("senderName", senderEmail)
         )
-        val messageObserver = viewModel.decryptedMessageData.testObserver()
+        val messageObserver = viewModel.decryptedConversationUiModel.testObserver()
         coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
 
         // When
@@ -325,7 +325,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             // messageId is defined as a field as it's needed at VM's instantiation time.
             val inputConversationId = INPUT_ITEM_DETAIL_ID
             val userId = Id("userId4")
-            val conversationObserver = viewModel.decryptedMessageData.testObserver()
+            val conversationObserver = viewModel.decryptedConversationUiModel.testObserver()
             val conversationId = UUID.randomUUID().toString()
 
             val conversationMessage = mockk<Message>(relaxed = true)

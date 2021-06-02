@@ -191,7 +191,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private fun continueSetup() {
         viewModel.conversationUiModel.observe(this) { viewModel.loadMailboxItemDetails() }
-        viewModel.decryptedMessageData.observe(this, DecryptedMessageObserver())
+        viewModel.decryptedConversationUiModel.observe(this, ConversationUiModelObserver())
 
         viewModel.labels
             .onEach(messageExpandableAdapter::setAllLabels)
@@ -266,7 +266,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         return true
     }
 
-    fun showReportPhishingDialog(message: Message? = viewModel.decryptedMessageData.value?.messages?.last()) {
+    fun showReportPhishingDialog(message: Message? = viewModel.decryptedConversationUiModel.value?.messages?.last()) {
         AlertDialog.Builder(this)
             .setTitle(R.string.phishing_dialog_title)
             .setMessage(R.string.phishing_dialog_message)
@@ -428,36 +428,13 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private inner class DecryptedMessageObserver : Observer<ConversationUiModel> {
+    private inner class ConversationUiModelObserver : Observer<ConversationUiModel> {
 
         override fun onChanged(conversation: ConversationUiModel) {
             val message = lastMessage(conversation)
 
-            starToggleButton.isChecked = conversation.isStarred
-            val isInvalidSubject = conversation.subject.isNullOrEmpty()
-            val subject = if (isInvalidSubject) getString(R.string.empty_subject) else conversation.subject
-            val messagesInConversation = conversation.messages.count()
-            toolbarMessagesCountTextView.text = resources.getQuantityString(
-                R.plurals.x_messages_count,
-                messagesInConversation,
-                messagesInConversation
-            )
-            toolbarMessagesCountTextView.isVisible = messagesInConversation > 1
-            collapsedToolbarTitleTextView.text = subject
-            collapsedToolbarTitleTextView.visibility = View.INVISIBLE
-            expandedToolbarTitleTextView.text = subject
-
-            messageDetailsActionsView.setOnMoreActionClickListener {
-                MessageActionSheet.newInstance(
-                    MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
-                    listOf(message.messageId ?: messageOrConversationId),
-                    message.location,
-                    getCurrentSubject(),
-                    getMessagesFrom(message.sender?.name),
-                    message.isStarred ?: false
-                )
-                    .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
-            }
+            displayToolbarData(conversation)
+            setupLastMessageActionsListener(message)
 
             Timber.v("New decrypted message ${message.messageId}")
             viewModel.renderedFromCache = AtomicBoolean(true)
@@ -478,40 +455,71 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             }
             viewModel.triggerVerificationKeyLoading()
 
-            val actionsUiModel = BottomActionsView.UiModel(
-                if (message.toList.size + message.ccList.size > 1) R.drawable.ic_reply_all else R.drawable.ic_reply,
-                R.drawable.ic_envelope_dot,
-                R.drawable.ic_trash
-            )
-            messageDetailsActionsView.bind(actionsUiModel)
-            messageDetailsActionsView.setOnThirdActionClickListener {
-                viewModel.moveToTrash()
-                onBackPressed()
-            }
-            messageDetailsActionsView.setOnSecondActionClickListener {
-                viewModel.markUnread()
-                onBackPressed()
-            }
-            messageDetailsActionsView.setOnFirstActionClickListener {
-                val messageAction = if (message.toList.size + message.ccList.size > 1) {
-                    Constants.MessageActionType.REPLY_ALL
-                } else {
-                    Constants.MessageActionType.REPLY
-                }
-                executeMessageAction(messageAction, message)
-            }
-
             progress.visibility = View.GONE
             invalidateOptionsMenu()
             viewModel.renderingPassed = true
         }
     }
 
+    private fun setupLastMessageActionsListener(message: Message) {
+        messageDetailsActionsView.setOnMoreActionClickListener {
+            MessageActionSheet.newInstance(
+                MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
+                listOf(message.messageId ?: messageOrConversationId),
+                message.location,
+                getCurrentSubject(),
+                getMessagesFrom(message.sender?.name),
+                message.isStarred ?: false
+            )
+                .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
+        }
+
+        val actionsUiModel = BottomActionsView.UiModel(
+            if (message.toList.size + message.ccList.size > 1) R.drawable.ic_reply_all else R.drawable.ic_reply,
+            R.drawable.ic_envelope_dot,
+            R.drawable.ic_trash
+        )
+        messageDetailsActionsView.bind(actionsUiModel)
+        messageDetailsActionsView.setOnThirdActionClickListener {
+            viewModel.moveToTrash()
+            onBackPressed()
+        }
+        messageDetailsActionsView.setOnSecondActionClickListener {
+            viewModel.markUnread()
+            onBackPressed()
+        }
+        messageDetailsActionsView.setOnFirstActionClickListener {
+            val messageAction = if (message.toList.size + message.ccList.size > 1) {
+                Constants.MessageActionType.REPLY_ALL
+            } else {
+                Constants.MessageActionType.REPLY
+            }
+            executeMessageAction(messageAction, message)
+        }
+
+    }
+
+    private fun displayToolbarData(conversation: ConversationUiModel) {
+        starToggleButton.isChecked = conversation.isStarred
+        val isInvalidSubject = conversation.subject.isNullOrEmpty()
+        val subject = if (isInvalidSubject) getString(R.string.empty_subject) else conversation.subject
+        val messagesInConversation = conversation.messages.count()
+        toolbarMessagesCountTextView.text = resources.getQuantityString(
+            R.plurals.x_messages_count,
+            messagesInConversation,
+            messagesInConversation
+        )
+        toolbarMessagesCountTextView.isVisible = messagesInConversation > 1
+        collapsedToolbarTitleTextView.text = subject
+        collapsedToolbarTitleTextView.visibility = View.INVISIBLE
+        expandedToolbarTitleTextView.text = subject
+    }
+
     private fun lastMessage(conversation: ConversationUiModel): Message = conversation.messages.last()
 
     fun executeMessageAction(
         messageAction: Constants.MessageActionType,
-        message: Message = requireNotNull(viewModel.decryptedMessageData.value?.messages?.last())
+        message: Message = requireNotNull(viewModel.decryptedConversationUiModel.value?.messages?.last())
     ) {
         try {
             val user = mUserManager.requireCurrentLegacyUser()
