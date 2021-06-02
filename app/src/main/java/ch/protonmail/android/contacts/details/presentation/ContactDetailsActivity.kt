@@ -53,7 +53,7 @@ import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsV
 import ch.protonmail.android.databinding.ActivityContactDetailsBinding
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.views.ListItemThumbnail
-import coil.imageLoader
+import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import dagger.hilt.android.AndroidEntryPoint
@@ -131,7 +131,7 @@ class ContactDetailsActivity : AppCompatActivity() {
             .onEach { renderState(it) }
             .launchIn(lifecycleScope)
 
-        viewModel.vCardShareFlow
+        viewModel.vCardSharedFlow
             .onEach { shareVcard(it, contactNameView.text.toString()) }
             .launchIn(lifecycleScope)
 
@@ -281,7 +281,7 @@ class ContactDetailsActivity : AppCompatActivity() {
                 }
             )
             .build()
-        imageLoader.enqueue(imageRequest)
+        ImageLoader(this).enqueue(imageRequest)
     }
 
     private fun setContactDataForActionButtons(item: ContactDetailsUiItem) {

@@ -76,6 +76,7 @@ val DependencyHandler.`android-test-junit` get() =          androidx("test.ext",
 val DependencyHandler.`assert4k` get() =                    forface(module = "assert4k-jvm") version `assert4k version`
 val DependencyHandler.`assertJ` get() =                     dependency("org.assertj", module = "assertj-core") version `assertJ version`
 val DependencyHandler.`hamcrest` get() =                    dependency("org.hamcrest", module = "hamcrest-library") version `hamcrest version`
+val DependencyHandler.`turbine` get() =                     dependency( "app.cash.turbine", module = "turbine") version `turbine version`
 // endregion
 
 // testRail
@@ -122,7 +123,6 @@ val DependencyHandler.`fasterxml-jackson-anno` get() =      dependency("com.fast
 val DependencyHandler.`fasterxml-jackson-databind` get() =  dependency("com.fasterxml.jackson.core", module = "jackson-databind") version `jackson version`
 val DependencyHandler.`remark` get() =                      dependency("com.overzealous", module = "remark") version `remark version`
 val DependencyHandler.`store` get() =                       dependency("com.dropbox.mobile.store", module = "store4") version `store version`
-val DependencyHandler.`coil` get() =                        dependency("io.coil-kt", module="coil") version `coil version`
 val DependencyHandler.`coil-base` get() =                   dependency("io.coil-kt", module="coil-base") version `coil version`
 // endregion
 

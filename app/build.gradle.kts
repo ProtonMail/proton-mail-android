@@ -342,7 +342,7 @@ dependencies {
         `remark`,
         `okio`,
         `store`,
-        `coil`
+        `coil-base`
     )
 
     debugImplementation(

@@ -49,6 +49,7 @@ dependencies {
         // Other
         `assertJ`,
         `mockk`,
-        `assert4k`
+        `assert4k`,
+        `turbine`
     )
 }
