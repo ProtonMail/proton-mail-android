@@ -34,4 +34,6 @@ sealed class MessageActionSheetAction {
     ) : MessageActionSheetAction()
 
     data class ShowMessageHeaders(val messageHeaders: String) : MessageActionSheetAction()
+
+    data class ChangeReadStatus(val readStatus: Boolean) : MessageActionSheetAction()
 }

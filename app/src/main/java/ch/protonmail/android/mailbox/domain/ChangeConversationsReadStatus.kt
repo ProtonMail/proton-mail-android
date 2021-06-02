@@ -20,7 +20,7 @@
 package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 /**
@@ -33,7 +33,7 @@ class ChangeConversationsReadStatus @Inject constructor(
     suspend operator fun invoke(
         conversationIds: List<String>,
         action: Action,
-        userId: Id,
+        userId: UserId,
         location: Constants.MessageLocationType
     ) {
         if (action == Action.ACTION_MARK_READ) {

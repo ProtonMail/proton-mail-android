@@ -50,6 +50,7 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.DataResult.Error
 import me.proton.core.domain.arch.DataResult.Success
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
@@ -141,13 +142,13 @@ class ConversationsRepositoryImpl @Inject constructor(
 
     override suspend fun markUnread(
         conversationIds: List<String>,
-        userId: Id,
+        userId: UserId,
         location: Constants.MessageLocationType
     ) {
         markConversationsUnreadWorker.enqueue(conversationIds)
 
         conversationIds.forEach forEachConversation@{ conversationId ->
-            val conversation = conversationDao.getConversation(conversationId, userId.s).first()
+            val conversation = conversationDao.getConversation(conversationId, userId.id).first()
             conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
             // Only the latest message from the current location is marked as unread
             messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->

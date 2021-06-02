@@ -541,7 +541,7 @@ class MailboxViewModel @Inject constructor(
             LabelChipUiModel(Id(label.id), Name(label.name), labelColor)
         }
 
-    fun markRead(ids: List<String>, userId: Id, location: Constants.MessageLocationType) {
+    fun markRead(ids: List<String>, userId: UserId, location: Constants.MessageLocationType) {
         if (conversationModeEnabled(location)) {
             viewModelScope.launch {
                 changeConversationsReadStatus(
@@ -556,7 +556,7 @@ class MailboxViewModel @Inject constructor(
         }
     }
 
-    fun markUnRead(ids: List<String>, userId: Id, location: Constants.MessageLocationType) {
+    fun markUnRead(ids: List<String>, userId: UserId, location: Constants.MessageLocationType) {
         if (conversationModeEnabled(location)) {
             viewModelScope.launch {
                 changeConversationsReadStatus(

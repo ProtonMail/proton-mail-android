@@ -20,13 +20,13 @@
 package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.domain.entity.Id
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -59,7 +59,7 @@ class ChangeConversationsReadStatusTest {
             changeConversationsReadStatus(
                 conversationIds,
                 ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
-                Id("id"),
+                UserId("id"),
                 Constants.MessageLocationType.ARCHIVE
             )
 
@@ -83,7 +83,7 @@ class ChangeConversationsReadStatusTest {
             changeConversationsReadStatus(
                 conversationIds,
                 ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
-                Id("id"),
+                UserId("id"),
                 Constants.MessageLocationType.ARCHIVE
             )
 

@@ -24,12 +24,16 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
+import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.util.kotlin.EMPTY_STRING
 import javax.inject.Inject
 
@@ -37,7 +41,10 @@ import javax.inject.Inject
 class MessageActionSheetViewModel @Inject constructor(
     private val deleteMessage: DeleteMessage,
     private val moveMessagesToFolder: MoveMessagesToFolder,
-    private val messageRepository: MessageRepository
+    private val messageRepository: MessageRepository,
+    private val changeConversationsReadStatus: ChangeConversationsReadStatus,
+    private val conversationModeEnabled: ConversationModeEnabled,
+    private val accountManager: AccountManager
 ) : ViewModel() {
 
     private val actionsMutableFlow = MutableStateFlow<MessageActionSheetAction>(MessageActionSheetAction.Default)
@@ -103,9 +110,49 @@ class MessageActionSheetViewModel @Inject constructor(
 
     fun unStarMessage(messageId: List<String>) = messageRepository.unStarMessages(messageId)
 
-    fun markUnread(messageIds: List<String>) = messageRepository.markUnRead(messageIds)
+    fun markUnread(
+        ids: List<String>,
+        location: Constants.MessageLocationType
+    ) {
+        viewModelScope.launch {
+            if (conversationModeEnabled(location)) {
+                accountManager.getPrimaryUserId().first()?.let {
+                    changeConversationsReadStatus(
+                        ids,
+                        ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
+                        it,
+                        location
+                    )
+                }
+            } else {
+                messageRepository.markUnRead(ids)
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.ChangeReadStatus(false)
+        }
+    }
 
-    fun markRead(messageIds: List<String>) = messageRepository.markRead(messageIds)
+    fun markRead(
+        ids: List<String>,
+        location: Constants.MessageLocationType
+    ) {
+        viewModelScope.launch {
+            if (conversationModeEnabled(location)) {
+                accountManager.getPrimaryUserId().first()?.let {
+                    changeConversationsReadStatus(
+                        ids,
+                        ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
+                        it,
+                        location
+                    )
+                }
+            } else {
+                messageRepository.markRead(ids)
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.ChangeReadStatus(true)
+        }
+    }
 
     fun showMessageHeaders(messageId: String) {
         viewModelScope.launch {

@@ -195,15 +195,11 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             textViewDetailsActionsMarkRead.apply {
                 isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
                 setOnClickListener {
-                    viewModel.markRead(messageIds)
-                    dismiss()
-                    popBackDetailsActivity()
+                    viewModel.markRead(messageIds, messageLocation)
                 }
             }
             textViewDetailsActionsMarkUnread.setOnClickListener {
-                viewModel.markUnread(messageIds)
-                dismiss()
-                popBackDetailsActivity()
+                viewModel.markUnread(messageIds, messageLocation)
             }
             textViewDetailsActionsLabelAs.setOnClickListener {
                 viewModel.showLabelsManager(messageIds, messageLocation)
@@ -228,8 +224,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 }
                 setOnClickListener {
                     viewModel.moveToInbox(messageIds, messageLocation)
-                    dismiss()
-                    popBackDetailsActivity()
+                    dismissActionSheetAndGoToMailbox()
                 }
             }
             textViewDetailsActionsTrash.apply {
@@ -237,8 +232,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     .filter { it != Constants.MessageLocationType.TRASH }
                 setOnClickListener {
                     viewModel.moveToTrash(messageIds, messageLocation)
-                    dismiss()
-                    popBackDetailsActivity()
+                    dismissActionSheetAndGoToMailbox()
                 }
             }
             textViewDetailsActionsMoveToArchive.apply {
@@ -246,8 +240,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     .filter { it != Constants.MessageLocationType.ARCHIVE }
                 setOnClickListener {
                     viewModel.moveToArchive(messageIds, messageLocation)
-                    dismiss()
-                    popBackDetailsActivity()
+                    dismissActionSheetAndGoToMailbox()
                 }
             }
             textViewDetailsActionsMoveToSpam.apply {
@@ -255,8 +248,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     .filter { it != Constants.MessageLocationType.SPAM }
                 setOnClickListener {
                     viewModel.moveToSpam(messageIds, messageLocation)
-                    dismiss()
-                    popBackDetailsActivity()
+                    dismissActionSheetAndGoToMailbox()
                 }
             }
             textViewDetailsActionsDelete.apply {
@@ -323,7 +315,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     private fun setCloseIconVisibility(shouldBeVisible: Boolean) =
         actionSheetHeader?.setCloseIconVisibility(shouldBeVisible)
 
-
     private fun processAction(sheetAction: MessageActionSheetAction) {
         Timber.v("Action received $sheetAction")
         when (sheetAction) {
@@ -333,6 +324,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 sheetAction.currentFolderLocationId
             )
             is MessageActionSheetAction.ShowMessageHeaders -> showMessageHeaders(sheetAction.messageHeaders)
+            is MessageActionSheetAction.ChangeReadStatus -> dismissActionSheetAndGoToMailbox()
             else -> Timber.v("unhandled action $sheetAction")
         }
     }
@@ -361,6 +353,11 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             )
         )
         dismiss()
+    }
+
+    private fun dismissActionSheetAndGoToMailbox() {
+        dismiss()
+        popBackDetailsActivity()
     }
 
     companion object {

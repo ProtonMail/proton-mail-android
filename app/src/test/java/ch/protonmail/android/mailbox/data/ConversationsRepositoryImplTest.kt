@@ -63,9 +63,9 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Before
 import org.junit.Test
 import java.io.IOException
@@ -599,7 +599,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { messageDao.saveMessage(any()) } returns 123
 
             // when
-            conversationsRepository.markUnread(conversationIds, Id("id"), mailboxLocation)
+            conversationsRepository.markUnread(conversationIds, UserId("id"), mailboxLocation)
 
             // then
             coVerify {

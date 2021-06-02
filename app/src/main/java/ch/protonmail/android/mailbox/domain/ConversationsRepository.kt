@@ -24,6 +24,7 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.entity.UserId
 
 interface ConversationsRepository {
 
@@ -54,5 +55,5 @@ interface ConversationsRepository {
 
     suspend fun markRead(conversationIds: List<String>)
 
-    suspend fun markUnread(conversationIds: List<String>, userId: Id, location: Constants.MessageLocationType)
+    suspend fun markUnread(conversationIds: List<String>, userId: UserId, location: Constants.MessageLocationType)
 }
