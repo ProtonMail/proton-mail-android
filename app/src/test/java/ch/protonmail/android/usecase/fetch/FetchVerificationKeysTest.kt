@@ -71,7 +71,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
             every { contactId } returns testContactId
         }
         every { contactDao.findContactEmailByEmail(testEmail) } returns testContactEmail
-        every { contactDao.insertFullContactDetailsBlocking(any()) } returns Unit
+        coEvery { contactDao.insertFullContactDetails(any()) } returns Unit
         val fullContactDetailsResponse = mockk<FullContactDetailsResponse> {
             every { contact } returns mockk {
                 every { contactId } returns "contactId"
@@ -123,7 +123,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
             every { contactId } returns testContactId
         }
         every { contactDao.findContactEmailByEmail(testEmail) } returns testContactEmail
-        every { contactDao.insertFullContactDetailsBlocking(any()) } returns Unit
+        coEvery { contactDao.insertFullContactDetails(any()) } returns Unit
         val fullContactDetailsResponse = mockk<FullContactDetailsResponse> {
             every { contact } returns mockk {
                 every { contactId } returns "contactId"

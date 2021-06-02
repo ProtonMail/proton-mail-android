@@ -49,7 +49,7 @@ import kotlin.test.Test
  * @author Davide Farella
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class ContactDetailsViewModelTest :
+internal class ContactDetailsViewModelOldTest :
     ArchTest,
     CoroutinesTest,
     ViewStateStoreTest by viewStateStoreTest(errorStateGenerator) {

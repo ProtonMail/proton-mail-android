@@ -82,4 +82,8 @@ sealed class ContactDetailsUiItem {
         val value: String?
     ) : ContactDetailsUiItem()
 
+    data class Note(
+        val value: String
+    ) : ContactDetailsUiItem()
+
 }

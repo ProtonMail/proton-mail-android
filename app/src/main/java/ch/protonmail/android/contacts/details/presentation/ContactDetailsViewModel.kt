@@ -55,14 +55,14 @@ class ContactDetailsViewModel @Inject constructor(
         get() = mutableContactsResultFlow
 
     private val mutableFlowVcard = MutableSharedFlow<Uri>()
-    val vCardShareFlow: SharedFlow<Uri>
+    val vCardSharedFlow: SharedFlow<Uri>
         get() = mutableFlowVcard
 
     fun getContactDetails(contactId: String) {
         viewModelScope.launch {
             fetchContactDetails(contactId)
                 .combine(fetchContactGroups(contactId)) { contacts, groups ->
-                    Timber.v("Details for $contactId emails: ${contacts.emails.size}, groups: ${groups.groupsList.size}")
+                    Timber.v("Details $contactId, emails: ${contacts.emails.size}, groups: ${groups.groupsList.size}")
                     mapper.mapToContactViewData(contacts, groups)
                 }
                 .catch {

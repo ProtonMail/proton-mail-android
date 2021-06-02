@@ -142,6 +142,13 @@ class ContactDetailsMapper @Inject constructor() {
         }
         items.addAll(urls)
 
+        val notes = fetchResult.notes.map { note ->
+            ContactDetailsUiItem.Note(
+                note.value
+            )
+        }
+        items.addAll(notes)
+
         if (!fetchResult.gender?.text.isNullOrEmpty()) {
             val gender = ContactDetailsUiItem.Gender(
                 fetchResult.gender?.text

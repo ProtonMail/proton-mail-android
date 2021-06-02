@@ -35,17 +35,17 @@ fun initVersions() {
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
     `constraint-layout version` =               "2.0.4"         // Released: Oct 31, 2020
-    `espresso version` =                        "3.4.0-alpha05" // Released: Mar 15, 2021
+    `espresso version` =                        "3.4.0-beta01"  // Released: May 15, 2021
     `hilt-android version` =                    "2.35.1"        // Released: Apr 28, 2021
     `hilt-androidx version` =                   "1.0.0"         // Released: May 05, 2021
-    `ktx version` =                             "1.5.0-rc01"    // Released: Mar 24, 2021
+    `ktx version` =                             "1.5.0-rc02"    // Released: May 24, 2021
     `lifecycle version` =                       "2.4.0-alpha01" // Released: Mar 24, 2021
     `material version` =                        "1.3.0"         // Released: Feb 04, 2021
     `android-paging version` =                  "2.1.0"         // Released: Jan 26, 2019
     `android-room version` =                    "2.3.0"         // Released: Apr 21, 2021
     `android-work version` =                    "2.5.0"         // Released: Jan 27, 2021
 
-    `android-test version` =                    "1.4.0-alpha05" // Released: Mar 15, 2021
+    `android-test version` =                    "1.4.0-beta01"  // Released: May 15, 2021
     // endregion
 
     // region Others
@@ -98,7 +98,7 @@ const val `json-simple version` =               "1.1.1"         // Released: Mar
 const val `browserstack-plugin version` =       "3.0.1"         // Released: Jun 10, 2020
 const val `uiautomator version` =               "2.2.0"         // Released: Oct 25, 2018
 const val `sun-mail-android version` =          "1.5.5"         // Released: Mar 06, 2020
-const val `turbine version` =                   "0.5.1"         // Released: May 18, 2021
+const val `turbine version` =                   "0.4.1"         // Released: Mar 15, 2021
 
 // Android
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020

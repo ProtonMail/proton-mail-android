@@ -141,7 +141,9 @@ open class ContactDetailsRepository @Inject constructor(
     }
 
     fun setMembersForContactGroup(
-        contactGroupId: String, contactGroupName: String, membersList: List<String>
+        contactGroupId: String,
+        contactGroupName: String,
+        membersList: List<String>
     ): Completable {
         val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
         return api.labelContacts(labelContactsBody)
@@ -162,7 +164,8 @@ open class ContactDetailsRepository @Inject constructor(
     }
 
     fun removeMembersForContactGroup(
-        contactGroupId: String, contactGroupName: String,
+        contactGroupId: String,
+        contactGroupName: String,
         membersList: List<String>
     ): Completable {
         if (membersList.isEmpty()) {
