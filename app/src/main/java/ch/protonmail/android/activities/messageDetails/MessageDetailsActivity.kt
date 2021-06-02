@@ -38,6 +38,7 @@ import android.webkit.WebView.HitTestResult
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
@@ -105,6 +106,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
 import me.proton.core.util.android.workmanager.activity.getWorkManager
 import timber.log.Timber
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 
@@ -801,6 +803,9 @@ internal class MessageDetailsActivity :
                     messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
                 }
                 displayAttachmentInfo(attachments)
+                if (Constants.FeatureFlags.DISPLAY_PROTON_CALENDAR_BUTTON) {
+                    displayProtonCalendarButton(attachments)
+                }
             } else {
                 messageExpandableAdapter.displayAttachmentsViews(View.GONE)
             }
@@ -817,6 +822,17 @@ internal class MessageDetailsActivity :
         messageExpandableAdapter.attachmentsContainer.attachmentsAdapter = attachmentsListAdapter
         attachmentsVisibility = if (attachmentsCount > 0) View.VISIBLE else View.GONE
         messageExpandableAdapter.displayAttachmentsViews(attachmentsVisibility)
+    }
+
+    private fun displayProtonCalendarButton(attachments: List<Attachment>) {
+        val ics = attachments.firstOrNull { it.mimeTypeFirstValue?.toLowerCase(Locale.ENGLISH) == "text/calendar" }
+
+        if (ics != null) {
+            findViewById<ConstraintLayout>(R.id.includeOpenInProtonCalendar)?.visibility = View.VISIBLE
+        } else {
+            findViewById<ConstraintLayout>(R.id.includeOpenInProtonCalendar)?.visibility = View.GONE
+        }
+
     }
 
     private inner class DecryptedMessageObserver : Observer<Message?> {

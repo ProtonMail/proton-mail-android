@@ -210,6 +210,7 @@ object Constants {
         const val HYPERLINK_CONFIRMATION = true
         const val PAYPAL_PAYMENT = false
         const val TLS_12_UPGRADE = true
+        const val DISPLAY_PROTON_CALENDAR_BUTTON = false
     }
 
     // Enums
