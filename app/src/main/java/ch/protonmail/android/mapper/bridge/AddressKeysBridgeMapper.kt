@@ -59,7 +59,7 @@ class AddressKeyBridgeMapper @Inject constructor() : BridgeMapper<OldKey, Addres
 
     override fun OldKey.toNewModel() = AddressKey(
         id = Id(id),
-        version = 4u, // TODO not implemented on old Keys
+        version = 4.toUInt(), // TODO not implemented on old Keys
         canEncrypt = canEncrypt(flags),
         canVerifySignature = canVerifySignature(flags),
         publicKey = PgpField.PublicKey(NotBlankString("none")), // TODO not implemented on old Keys!!!
