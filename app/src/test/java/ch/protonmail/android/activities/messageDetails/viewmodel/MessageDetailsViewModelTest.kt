@@ -57,6 +57,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
@@ -201,42 +202,45 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun loadMessageMarksMessageAsReadAndEmitsItWhenTheMessageWasSuccessfullyDecrypted() = runBlockingTest {
+    fun loadMessageBodyMarksMessageAsReadAndEmitsItWhenTheMessageWasSuccessfullyDecrypted() = runBlockingTest {
         // Given
-        val messageObserver = viewModel.decryptedConversationUiModel.testObserver()
         val message = mockk<Message>(relaxed = true)
         every { message.messageId } returns "messageId1"
         every { message.isDownloaded } returns true
         every { message.senderEmail } returns "senderEmail"
+        every { message.decryptedHTML } returns null
+        every { message.isRead } returns false
         every { message.decrypt(any(), any(), any()) } just Runs
         coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
 
+        val userId = Id("userId4")
+        every { userManager.requireCurrentUserId() } returns userId
+
         // When
-        viewModel.loadMailboxItemDetails()
+        val actual = viewModel.loadMessageBody(message).first()
 
         // Then
         verify { messageRepository.markRead(listOf("messageId1")) }
-        val actual = messageObserver.observedValues.first()
-        assertEquals(message, actual?.messages?.first())
+        assertEquals(message, actual)
     }
 
     @Test
-    fun loadMessageDoesNotMarkMessageAsReadOrEmitWhenTheMessageDecryptionFails() = runBlockingTest {
+    fun loadMessageBodyDoesNotMarkMessageAsReadWhenTheMessageDecryptionFails() = runBlockingTest {
         // Given
-        val messageObserver = viewModel.decryptedConversationUiModel.testObserver()
         val message = mockk<Message>(relaxed = true)
         every { message.messageId } returns "messageId2"
         every { message.isDownloaded } returns true
+        every { message.isRead } returns false
+        every { message.decryptedHTML } returns null
         every { message.senderEmail } returns "senderEmail"
         every { message.decrypt(any(), any(), any()) } throws Exception("Test - Decryption failed")
         coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
 
         // When
-        viewModel.loadMailboxItemDetails()
+        val actual: Flow<Message> = viewModel.loadMessageBody(message)
 
         // Then
         verify(exactly = 0) { messageRepository.markRead(any()) }
-        assertEquals(emptyList(), messageObserver.observedValues)
     }
 
     @Test
@@ -484,6 +488,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         val fetchedMessage = mockk<Message>()
         every { fetchedMessage.messageBody } returns "encrypted message body"
         every { fetchedMessage.decrypt(any(), any(), any()) } just Runs
+        every { fetchedMessage.isRead } returns true
 
         coEvery { messageRepository.getMessage(userId, messageId, true) } returns fetchedMessage
 

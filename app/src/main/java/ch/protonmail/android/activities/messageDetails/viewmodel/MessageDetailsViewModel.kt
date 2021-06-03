@@ -87,7 +87,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -259,6 +258,10 @@ internal class MessageDetailsViewModel @Inject constructor(
             val fetchedMessage = messageRepository.getMessage(userId, message.messageId!!, true)
             val isDecrypted = fetchedMessage?.tryDecrypt(publicKeys)
             if (isDecrypted == true) {
+                if (!fetchedMessage.isRead) {
+                    messageRepository.markRead(listOf(fetchedMessage.messageId!!))
+                }
+
                 decryptedMessageFlow.emit(fetchedMessage)
             }
         }
@@ -282,7 +285,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
             val contactEmail = contactsRepository.findContactEmailByEmail(message.senderEmail)
             message.senderDisplayName = contactEmail?.name.orEmpty()
-            decryptLastMessageAndEmit(message.toConversationUiModel())
+            emitConversationUiItem(message.toConversationUiModel())
         }
     }
 
@@ -323,11 +326,11 @@ internal class MessageDetailsViewModel @Inject constructor(
         val conversationUiItem = conversation.toConversationUiModel().copy(
             messages = messages.sortedBy { it.time }
         )
-        decryptLastMessageAndEmit(conversationUiItem)
+        emitConversationUiItem(conversationUiItem)
 
     }
 
-    private suspend fun decryptLastMessageAndEmit(conversationUiModel: ConversationUiModel) {
+    private fun emitConversationUiItem(conversationUiModel: ConversationUiModel) {
         refreshedKeys = true
         val lastMessage = conversationUiModel.messages.last()
         if (!lastMessage.isDownloaded) {
@@ -335,17 +338,8 @@ internal class MessageDetailsViewModel @Inject constructor(
             return
         }
 
-        val isDecrypted = withContext(dispatchers.Comp) {
-            lastMessage.tryDecrypt(publicKeys) ?: false
-        }
-        if (isDecrypted) {
-            if (!lastMessage.isRead && lastMessage.messageId != null) {
-                messageRepository.markRead(listOf(lastMessage.messageId!!))
-            }
-
-            Timber.v("Emitting ConversationUiItem Detail = ${lastMessage.messageId} keys size: ${publicKeys?.size}")
-            _decryptedConversationUiModel.postValue(conversationUiModel)
-        }
+        Timber.v("Emitting ConversationUiItem Detail = ${lastMessage.messageId} keys size: ${publicKeys?.size}")
+        _decryptedConversationUiModel.postValue(conversationUiModel)
     }
 
     private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
@@ -566,13 +560,13 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun onFetchVerificationKeysEvent(pubKeys: List<KeyInformation>) {
+    private fun onFetchVerificationKeysEvent(pubKeys: List<KeyInformation>) {
         Timber.v("FetchVerificationKeys received $pubKeys")
         val message = lastMessage()
 
         publicKeys = pubKeys
         refreshedKeys = false
-        message?.let { decryptLastMessageAndEmit(it.toConversationUiModel()) }
+        message?.let { emitConversationUiItem(it.toConversationUiModel()) }
 
         fetchingPubKeys = false
         renderedFromCache = AtomicBoolean(false)
