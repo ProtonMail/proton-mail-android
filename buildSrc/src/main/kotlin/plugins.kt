@@ -24,6 +24,7 @@ import org.gradle.plugin.use.PluginDependencySpec
 val PluginDependenciesSpec.`android-application` get() =        plugin("com.android.application")
 val PluginDependenciesSpec.`android-library` get() =            plugin("com.android.library")
 val PluginDependenciesSpec.`google-services` get() =            plugin("com.google.gms.google-services")
+val PluginDependenciesSpec.`detekt` get() =                     plugin("io.gitlab.arturbosch.detekt")
 val PluginDependenciesSpec.`hilt` get() =                       plugin("dagger.hilt.android.plugin")
 val PluginDependenciesSpec.`java-library` get() =               plugin("java-library")
 val PluginDependenciesSpec.`kotlin` get() =                     plugin("kotlin")
