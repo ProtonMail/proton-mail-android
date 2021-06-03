@@ -31,10 +31,10 @@ stages:
   tags:
     - medium
   script:
-    - ./gradlew multiModuleDetekt
+    - ./gradlew detekt
   artifacts:
     reports:
-      codequality: config/detekt/reports/mergedReport.json
+      codequality: config/detekt/reports/detekt.txt
 
 detekt analysis release:
   extends: .detekt-analysis-common
