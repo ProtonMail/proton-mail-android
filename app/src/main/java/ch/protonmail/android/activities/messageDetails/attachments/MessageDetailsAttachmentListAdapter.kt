@@ -30,20 +30,20 @@ import ch.protonmail.android.views.messageDetails.AttachmentDetailView
 class MessageDetailsAttachmentListAdapter(
     context: Context,
     private val downloadListener: (String) -> Unit
-) : ArrayAdapter<Attachment>(context, R.layout.view_attachment_detail) {
+) : ArrayAdapter<Attachment>(context, R.layout.layout_message_details_attachments_details) {
     private val downloadingIds = mutableSetOf<String>()
     private var pgpEncrypted: Boolean = false
 
     @DrawableRes
     private fun String?.getIconRes(): Int {
         return when (this) {
-            "image/jpeg", "image/pjpeg" -> R.drawable.mail_attachment_jpeg
-            "image/png" -> R.drawable.mail_attachment_png
-            "application/zip", "application/x-compressed", "application/x-zip-compressed", "multipart/x-zip" -> R.drawable.mail_attachment_zip
-            "text/plain" -> R.drawable.mail_attachment_txt
-            "application/pdf" -> R.drawable.mail_attachment_pdf
-            "application/msword" -> R.drawable.mail_attachment_doc
-            else -> R.drawable.mail_attachment_file
+            "image/jpeg", "image/pjpeg", "image/png" -> R.drawable.ic_file_image_variants
+            "application/zip", "application/x-compressed", "application/x-zip-compressed", "multipart/x-zip" ->
+                R.drawable.ic_file_rar_zip_variants
+            "text/plain" -> R.drawable.ic_file_attachment_variants // currently no icon for plain text files
+            "application/pdf" -> R.drawable.ic_file_pdf_variants
+            "application/msword" -> R.drawable.ic_file_word_variants
+            else -> R.drawable.ic_file_attachment_variants
         }
     }
 

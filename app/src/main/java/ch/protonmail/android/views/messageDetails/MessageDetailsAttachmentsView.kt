@@ -19,11 +19,15 @@
 package ch.protonmail.android.views.messageDetails
 
 import android.content.Context
+import android.database.DataSetObserver
 import android.text.format.Formatter
 import android.util.AttributeSet
+import android.widget.Adapter
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import ch.protonmail.android.R
 import kotlinx.android.synthetic.main.layout_message_details_attachments.view.*
+import kotlinx.android.synthetic.main.layout_message_details_attachments.view.attachments_list_linear_layout
 import me.proton.core.presentation.utils.inflate
 
 /**
@@ -38,11 +42,41 @@ class MessageDetailsAttachmentsView @JvmOverloads constructor(
     init {
         inflate(R.layout.layout_message_details_attachments, true)
         setOnClickListener {
-            // TODO: To be implemented with MAILAND-1545
+            expanded = !expanded
         }
     }
 
-    fun bind(attachmentsCount: Int, sizeOfAttachments: Long) {
+    private var expanded = false
+        set(value) {
+            attachments_list_linear_layout.isVisible = value
+            chevron_image_view.setImageResource(if (value) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down)
+            field = value
+        }
+
+    private var attachmentsAdapter: Adapter? = null
+        set(value) {
+            field?.unregisterDataSetObserver(dataSetObserver)
+            value?.registerDataSetObserver(dataSetObserver)
+            field = value
+            dataSetObserver.onChanged()
+        }
+
+    private val dataSetObserver = object : DataSetObserver() {
+        override fun onChanged() {
+            attachmentsAdapter?.apply {
+                attachments_list_linear_layout.removeAllViews()
+                (0 until count).forEach {
+                    attachments_list_linear_layout.addView(getView(it, null, attachments_list_linear_layout))
+                }
+            }
+        }
+
+        override fun onInvalidated() {
+            attachments_list_linear_layout.removeAllViews()
+        }
+    }
+
+    fun bind(attachmentsCount: Int, sizeOfAttachments: Long, attachmentsAdapter: Adapter) {
         val attachmentsText = resources.getQuantityString(
             R.plurals.attachments_number,
             attachmentsCount,
@@ -52,6 +86,7 @@ class MessageDetailsAttachmentsView @JvmOverloads constructor(
             R.string.attachment_size,
             Formatter.formatShortFileSize(context, sizeOfAttachments)
         )
-        attachmentsTextView.text = "$attachmentsText $sizeText"
+        attachments_text_view.text = "$attachmentsText $sizeText"
+        this.attachmentsAdapter = attachmentsAdapter
     }
 }

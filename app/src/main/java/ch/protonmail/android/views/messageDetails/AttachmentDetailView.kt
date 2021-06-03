@@ -19,14 +19,13 @@
 package ch.protonmail.android.views.messageDetails
 
 import android.content.Context
-import android.graphics.Typeface
 import android.text.format.Formatter
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import ch.protonmail.android.R
-import kotlinx.android.synthetic.main.view_attachment_detail.view.*
+import kotlinx.android.synthetic.main.layout_message_details_attachments_details.view.*
 
 class AttachmentDetailView @JvmOverloads constructor(
     context: Context,
@@ -34,11 +33,7 @@ class AttachmentDetailView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
     init {
-        inflate(context, R.layout.view_attachment_detail, this)
-        val typefacePgp = Typeface.createFromAsset(context.assets, "pgp-icons-android.ttf")
-        attachment_modifier.typeface = typefacePgp
-        attachment_modifier.setText(R.string.pgp_lock_open)
-        attachment_modifier.setTextColor(ContextCompat.getColor(context, R.color.icon_warning))
+        inflate(context, R.layout.layout_message_details_attachments_details, this)
     }
 
     fun bind(
@@ -48,11 +43,12 @@ class AttachmentDetailView @JvmOverloads constructor(
         showWarningIcon: Boolean,
         downloading: Boolean
     ) {
-        attachment_name.text = fileName
+        attachment_name_text_view.text = fileName
         val formattedSize = Formatter.formatShortFileSize(context, fileSize)
-        attachment_size.text = context.getString(R.string.attachment_size, formattedSize)
-        attachment_specific_icon.setImageResource(attachmentSpecificIcon)
-        attachment_modifier.visibility = if (showWarningIcon) View.VISIBLE else View.GONE
-        attachment_download_progress.visibility = if (downloading) View.VISIBLE else View.GONE
+        attachment_size_text_view.text = context.getString(R.string.attachment_size, formattedSize)
+        attachment_name_text_view.setCompoundDrawablesRelativeWithIntrinsicBounds(attachmentSpecificIcon, 0, 0, 0)
+        attachment_modifier_text_view.isVisible = showWarningIcon
+        attachment_download_progress.isVisible = downloading
+        attachment_download_image_view.visibility = if (downloading) View.INVISIBLE else View.VISIBLE
     }
 }
