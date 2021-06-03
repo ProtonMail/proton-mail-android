@@ -34,9 +34,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import me.proton.core.test.kotlin.CoroutinesTest
+import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.time.minutes
 import kotlin.time.seconds
+import kotlin.time.toDuration
 
 class GetSavedCredentialsTest : CoroutinesTest {
 
@@ -103,8 +105,8 @@ class GetSavedCredentialsTest : CoroutinesTest {
     fun `does publish updates correctly for all the credentials`() = coroutinesTest {
 
         val result = mutableListOf<Map<EmailAddress, Credential>>()
-        val interval = 30.seconds
-        val flow = getSavedCredentials(interval - 5.seconds)
+        val interval = 30.toDuration(TimeUnit.SECONDS)
+        val flow = getSavedCredentials(interval - 5.toDuration(TimeUnit.SECONDS))
         val job = launch {
             delay(10)
             flow.toList(result)
