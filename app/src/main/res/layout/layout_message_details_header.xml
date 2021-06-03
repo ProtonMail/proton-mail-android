@@ -403,6 +403,6 @@
         encryptionInfoTextView, locationExtendedImageView, locationTextView,
         calendarImageView, timeDateExtendedTextView, storageImageView,
         storageTextView, learnMoreTextView"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 
 </merge>

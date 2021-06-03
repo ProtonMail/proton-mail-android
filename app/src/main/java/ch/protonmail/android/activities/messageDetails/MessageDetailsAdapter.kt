@@ -185,12 +185,11 @@ internal class MessageDetailsAdapter(
                 messageBodyProgress.visibility = View.INVISIBLE
 
                 displayAttachmentInfo(loadedMessage.attachments, attachmentsView)
-                showLoadEmbeddedImagesButton()
+                showLoadEmbeddedImagesButton(loadEmbeddedImagesContainer, message)
+                setUpViewDividers()
             }.launchIn(context.lifecycleScope)
 
             setupMessageContentActions(position, loadEmbeddedImagesContainer, displayRemoteContentButton)
-
-            setUpViewDividers()
         }
 
         private fun setupMessageContentActions(
@@ -251,9 +250,9 @@ internal class MessageDetailsAdapter(
         }
 
         private fun setUpViewDividers() {
-            val showHeaderDivider = itemView.attachmentsView.visibility == View.GONE
+            val hideHeaderDivider = itemView.attachmentsView.visibility == View.GONE
                 && itemView.expirationInfoView.visibility == View.VISIBLE
-            itemView.headerDividerView.isVisible = showHeaderDivider
+            itemView.headerDividerView.isVisible = !hideHeaderDivider
 
             val showAttachmentsDivider = itemView.attachmentsView.visibility == View.VISIBLE
                 && itemView.expirationInfoView.visibility != View.VISIBLE
