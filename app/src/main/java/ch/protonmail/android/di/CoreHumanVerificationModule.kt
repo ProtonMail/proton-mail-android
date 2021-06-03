@@ -18,6 +18,7 @@
 
 package ch.protonmail.android.di
 
+import ch.protonmail.android.core.Constants
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -27,26 +28,46 @@ import me.proton.core.accountmanager.data.db.AccountManagerDatabase
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.humanverification.data.HumanVerificationListenerImpl
 import me.proton.core.humanverification.data.HumanVerificationManagerImpl
+import me.proton.core.humanverification.data.HumanVerificationProviderImpl
 import me.proton.core.humanverification.data.repository.HumanVerificationRepositoryImpl
+import me.proton.core.humanverification.data.repository.UserVerificationRepositoryImpl
 import me.proton.core.humanverification.domain.HumanVerificationManager
 import me.proton.core.humanverification.domain.HumanVerificationWorkflowHandler
 import me.proton.core.humanverification.domain.repository.HumanVerificationRepository
+import me.proton.core.humanverification.domain.repository.UserVerificationRepository
+import me.proton.core.humanverification.presentation.CaptchaBaseUrl
+import me.proton.core.humanverification.presentation.HumanVerificationOrchestrator
 import me.proton.core.network.data.ApiProvider
-import me.proton.core.network.domain.session.HumanVerificationListener
-import me.proton.core.network.domain.session.HumanVerificationProvider
-import me.proton.core.user.data.repository.UserValidationRepositoryImpl
-import me.proton.core.user.domain.repository.UserValidationRepository
+import me.proton.core.network.domain.client.ClientIdProvider
+import me.proton.core.network.domain.humanverification.HumanVerificationListener
+import me.proton.core.network.domain.humanverification.HumanVerificationProvider
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object HumanVerificationModule {
+
+    @Provides
+    @CaptchaBaseUrl
+    fun provideCaptchaBaseUrl(): String = Constants.BASE_URL
+
+    @Provides
+    fun provideHumanVerificationOrchestrator(): HumanVerificationOrchestrator =
+        HumanVerificationOrchestrator()
+
     @Provides
     @Singleton
     fun provideHumanVerificationListener(
         humanVerificationRepository: HumanVerificationRepository
     ): HumanVerificationListener =
         HumanVerificationListenerImpl(humanVerificationRepository)
+
+    @Provides
+    @Singleton
+    fun provideHumanVerificationProvider(
+        humanVerificationRepository: HumanVerificationRepository
+    ): HumanVerificationProvider =
+        HumanVerificationProviderImpl(humanVerificationRepository)
 
     @Provides
     @Singleton
@@ -58,16 +79,21 @@ object HumanVerificationModule {
 
     @Provides
     @Singleton
-    fun provideHumanVerificationManager(
+    fun provideHumanVerificationManagerImpl(
+        humanVerificationProvider: HumanVerificationProvider,
+        humanVerificationListener: HumanVerificationListener,
         humanVerificationRepository: HumanVerificationRepository
-    ): HumanVerificationManagerImpl = HumanVerificationManagerImpl(humanVerificationRepository)
+    ): HumanVerificationManagerImpl =
+        HumanVerificationManagerImpl(humanVerificationProvider, humanVerificationListener, humanVerificationRepository)
 
     @Provides
     @Singleton
-    fun provideUserValidationRepositoryImpl(
-        provider: ApiProvider,
-        humanVerificationListener: HumanVerificationListener
-    ): UserValidationRepository = UserValidationRepositoryImpl(provider, humanVerificationListener)
+    fun provideUserVerificationRepository(
+        apiProvider: ApiProvider,
+        clientIdProvider: ClientIdProvider,
+        humanVerificationRepository: HumanVerificationRepository
+    ): UserVerificationRepository =
+        UserVerificationRepositoryImpl(apiProvider, clientIdProvider, humanVerificationRepository)
 }
 
 @Module
@@ -83,9 +109,4 @@ interface HumanVerificationBindModule {
     fun bindHumanVerificationWorkflowHandler(
         humanVerificationManagerImpl: HumanVerificationManagerImpl
     ): HumanVerificationWorkflowHandler
-
-    @Binds
-    fun bindHumanVerificationProvider(
-        humanVerificationManagerImpl: HumanVerificationManagerImpl
-    ): HumanVerificationProvider
 }

@@ -61,5 +61,4 @@ object CoreAuthModule {
         accountManager: AccountManager,
         userManager: UserManager
     ): SetupAccountCheck.UserCheck = DefaultUserCheck(context, accountManager, userManager)
-
 }

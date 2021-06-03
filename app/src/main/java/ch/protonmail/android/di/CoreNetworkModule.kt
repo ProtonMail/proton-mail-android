@@ -14,16 +14,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import me.proton.core.auth.domain.ClientSecret
+import me.proton.core.network.data.ApiManagerFactory
 import me.proton.core.network.data.ApiProvider
+import me.proton.core.network.data.NetworkManager
+import me.proton.core.network.data.NetworkPrefs
 import me.proton.core.network.data.ProtonCookieStore
-import me.proton.core.network.data.di.ApiFactory
-import me.proton.core.network.data.di.NetworkManager
-import me.proton.core.network.data.di.NetworkPrefs
+import me.proton.core.network.data.client.ClientIdProviderImpl
 import me.proton.core.network.domain.ApiClient
 import me.proton.core.network.domain.NetworkManager
 import me.proton.core.network.domain.NetworkPrefs
-import me.proton.core.network.domain.session.HumanVerificationListener
-import me.proton.core.network.domain.session.HumanVerificationProvider
+import me.proton.core.network.domain.client.ClientIdProvider
+import me.proton.core.network.domain.humanverification.HumanVerificationListener
+import me.proton.core.network.domain.humanverification.HumanVerificationProvider
 import me.proton.core.network.domain.session.SessionListener
 import me.proton.core.network.domain.session.SessionProvider
 import me.proton.core.util.kotlin.Logger
@@ -53,34 +55,46 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideApiFactory(
-        @ApplicationContext context: Context,
+    fun provideApiManagerFactory(
         logger: Logger,
         apiClient: ApiClient,
+        clientIdProvider: ClientIdProvider,
         networkManager: NetworkManager,
         networkPrefs: NetworkPrefs,
+        protonCookieStore: ProtonCookieStore,
         sessionProvider: SessionProvider,
         sessionListener: SessionListener,
         humanVerificationProvider: HumanVerificationProvider,
         humanVerificationListener: HumanVerificationListener
-    ): ApiFactory = ApiFactory(
+    ): ApiManagerFactory = ApiManagerFactory(
         Constants.ENDPOINT_URI,
         apiClient,
+        clientIdProvider,
         logger,
         networkManager,
         networkPrefs,
         sessionProvider,
-        humanVerificationProvider,
         sessionListener,
+        humanVerificationProvider,
         humanVerificationListener,
-        ProtonCookieStore(context),
+        protonCookieStore,
         CoroutineScope(Job() + Dispatchers.Default)
     )
 
     @Provides
     @Singleton
-    fun provideApiProvider(apiFactory: ApiFactory, sessionProvider: SessionProvider): ApiProvider =
-        ApiProvider(apiFactory, sessionProvider)
+    fun provideApiProvider(apiManagerFactory: ApiManagerFactory, sessionProvider: SessionProvider): ApiProvider =
+        ApiProvider(apiManagerFactory, sessionProvider)
+
+    @Provides
+    @Singleton
+    fun provideProtonCookieStore(@ApplicationContext context: Context): ProtonCookieStore =
+        ProtonCookieStore(context)
+
+    @Provides
+    @Singleton
+    fun provideClientIdProvider(protonCookieStore: ProtonCookieStore): ClientIdProvider =
+        ClientIdProviderImpl(Constants.ENDPOINT_URI, protonCookieStore)
 }
 
 @Module
