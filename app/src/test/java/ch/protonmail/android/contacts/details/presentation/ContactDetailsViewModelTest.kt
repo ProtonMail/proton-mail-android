@@ -20,20 +20,32 @@
 package ch.protonmail.android.contacts.details.presentation
 
 import android.content.Context
+import android.graphics.Color
 import android.net.Uri
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import app.cash.turbine.test
 import ch.protonmail.android.contacts.details.domain.FetchContactDetails
 import ch.protonmail.android.contacts.details.domain.FetchContactGroups
+import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
+import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
+import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
+import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.utils.FileHelper
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Test
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -45,7 +57,30 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val workManager: WorkManager = mockk()
     private val fileHelper: FileHelper = mockk()
 
-    val viewModel = ContactDetailsViewModel(
+    private val contactName1 = "testContactName"
+    private val vCardToShare1 = "testCardType2"
+    private val fetchContactResult = FetchContactDetailsResult(
+        "testContactUid",
+        contactName1,
+        emails = emptyList(),
+        telephoneNumbers = emptyList(),
+        addresses = emptyList(),
+        photos = emptyList(),
+        organizations = emptyList(),
+        titles = emptyList(),
+        nicknames = emptyList(),
+        birthdays = emptyList(),
+        anniversaries = emptyList(),
+        roles = emptyList(),
+        urls = emptyList(),
+        vCardToShare = vCardToShare1,
+        gender = null,
+        notes = emptyList(),
+        isType2SignatureValid = true,
+        isType3SignatureValid = null,
+    )
+
+    private val viewModel = ContactDetailsViewModel(
         fetchContactDetails,
         fetchContactGroups,
         mapper,
@@ -53,8 +88,82 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
         fileHelper
     )
 
+    private val testColorInt = 321
+
+    @BeforeTest
+    fun setUp() {
+        mockkStatic(Color::class)
+        every { Color.parseColor(any()) } returns testColorInt
+    }
+
+    @AfterTest
+    fun tearDown() {
+        unmockkStatic(Color::class)
+    }
+
     @Test
-    fun getContactDetails() {
+    fun verifyThatContactDetailsAndGroupsAreMergedAndMappedCorrectlyToDataState() = runBlockingTest {
+        // given
+        val contactId = "contactId1"
+        every { fetchContactDetails(contactId) } returns flowOf(fetchContactResult)
+        val groupId1 = "ID1"
+        val groupName1 = "name1"
+        val contactLabel = ContactLabel(groupId1, groupName1, "color", 1, 0, false, 2)
+        val fetchContactGroupResult = FetchContactGroupsResult(
+            listOf(contactLabel)
+        )
+        every { fetchContactGroups(contactId) } returns flowOf(fetchContactGroupResult)
+        val expected = ContactDetailsViewState.Data(
+            contactName1,
+            "T",
+            listOf(
+                ContactDetailsUiItem.Group(
+                    groupId1,
+                    groupName1,
+                    testColorInt,
+                    0
+                )
+            ),
+            vCardToShare1,
+            true,
+            null,
+            null,
+            null
+        )
+
+        // when
+        viewModel.getContactDetails(contactId)
+
+        // then
+        assertEquals(expected, viewModel.contactsViewState.value)
+    }
+
+    @Test
+    fun verifyThatContactDetailsMergingErrorIsMappedToErrorState() = runBlockingTest {
+        // given
+        val contactId = "contactId1"
+        val errorMessage = "An error occurred!"
+        val exception = Exception(errorMessage)
+        every { fetchContactDetails(contactId) } returns flow {
+            throw exception
+        }
+        val groupId1 = "ID1"
+        val groupName1 = "name1"
+        val contactLabel = ContactLabel(groupId1, groupName1, "color", 1, 0, false, 2)
+        val fetchContactGroupResult = FetchContactGroupsResult(
+            listOf(contactLabel)
+        )
+        every { fetchContactGroups(contactId) } returns flowOf(fetchContactGroupResult)
+        val expected = ContactDetailsViewState.Error(
+            exception
+        )
+
+        // when
+        viewModel.getContactDetails(contactId)
+
+        // then
+        val actual = viewModel.contactsViewState.value
+        assertEquals(expected.exception.message, (actual as ContactDetailsViewState.Error).exception.message)
     }
 
     @Test

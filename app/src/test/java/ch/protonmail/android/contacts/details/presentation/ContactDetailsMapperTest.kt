@@ -19,14 +19,93 @@
 
 package ch.protonmail.android.contacts.details.presentation
 
-import org.junit.Test
+import android.graphics.Color
+import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
+import ch.protonmail.android.contacts.details.domain.model.FetchContactGroupsResult
+import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
+import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
+import ch.protonmail.android.data.local.model.ContactLabel
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ContactDetailsMapperTest {
 
     val mapper = ContactDetailsMapper()
 
+    private val contactName1 = "testContactName"
+    private val vCardToShare1 = "testCardType2"
+    private val fetchContactResult = FetchContactDetailsResult(
+        "testContactUid",
+        contactName1,
+        emails = emptyList(),
+        telephoneNumbers = emptyList(),
+        addresses = emptyList(),
+        photos = emptyList(),
+        organizations = emptyList(),
+        titles = emptyList(),
+        nicknames = emptyList(),
+        birthdays = emptyList(),
+        anniversaries = emptyList(),
+        roles = emptyList(),
+        urls = emptyList(),
+        vCardToShare = vCardToShare1,
+        gender = null,
+        notes = emptyList(),
+        isType2SignatureValid = true,
+        isType3SignatureValid = null,
+    )
+
+    private val groupId1 = "ID1"
+    private val groupName1 = "name1"
+    private val contactLabel = ContactLabel(groupId1, groupName1, "color", 1, 0, false, 2)
+    private val fetchContactGroupResult = FetchContactGroupsResult(
+        listOf(contactLabel)
+    )
+
+    private val testColorInt = 321
+
+    @BeforeTest
+    fun setUp() {
+        mockkStatic(Color::class)
+        every { Color.parseColor(any()) } returns testColorInt
+    }
+
+    @AfterTest
+    fun tearDown() {
+        unmockkStatic(Color::class)
+    }
+
     @Test
-    fun mapToContactViewData() {
-        // TODO:
+    fun verifyBasicMappingWithDefaultValues() {
+
+        // given
+        val expected = ContactDetailsViewState.Data(
+            contactName1,
+            "T",
+            listOf(
+                ContactDetailsUiItem.Group(
+                    groupId1,
+                    groupName1,
+                    testColorInt,
+                    0
+                )
+            ),
+            vCardToShare1,
+            true,
+            null,
+            null,
+            null
+        )
+
+        // when
+        val result = mapper.mapToContactViewData(fetchContactResult, fetchContactGroupResult)
+
+        // then
+        assertEquals(expected, result)
     }
 }

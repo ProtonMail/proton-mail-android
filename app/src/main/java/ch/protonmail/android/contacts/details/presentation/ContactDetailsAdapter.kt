@@ -138,6 +138,14 @@ class ContactDetailsAdapter(
                         false
                     )
                 }
+                is ContactDetailsUiItem.Note -> {
+                    textViewContactDetailsItemHeader.setText(R.string.contact_vcard_note)
+                    textViewContactDetailsItem.apply {
+                        text = item.value
+                        setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_note, 0, 0, 0)
+                        isClickable = false
+                    }
+                }
             }
         }
 
