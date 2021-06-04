@@ -134,7 +134,7 @@ class FetchContactsMapper @Inject constructor(
             vCardType2?.emails?.isNotEmpty() == true -> vCardType2.emails
             vCardType3?.emails?.isNotEmpty() == true -> vCardType3.emails
             else -> {
-                Timber.i("Unable to get emails information from available vCard data")
+                Timber.d("Unable to get emails information from available vCard data")
                 emptyList()
             }
         }
@@ -247,9 +247,9 @@ class FetchContactsMapper @Inject constructor(
         }
 
         val notes: List<Note> = when {
-            vCardType3?.notes != null -> vCardType3.notes
-            vCardType0?.notes != null -> vCardType0.notes
-            vCardType2?.notes != null -> vCardType2.notes
+            vCardType3?.notes?.isNotEmpty() != null -> vCardType3.notes
+            vCardType0?.notes?.isNotEmpty() != null -> vCardType0.notes
+            vCardType2?.notes?.isNotEmpty() != null -> vCardType2.notes
             else -> {
                 Timber.d("Unable to get notes information from available vCard data")
                 emptyList()

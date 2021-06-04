@@ -64,9 +64,9 @@ class FetchContactDetails @Inject constructor(
         // fetch data from the server (refresh)
         val response = api.fetchContactDetails(contactId)
         val fetchedContact = response.contact
-        Timber.v("Fetched new Contact Details $fetchedContact")
         repository.insertFullContactDetails(fetchedContact)
         val parsedContact = parseContactDetails(fetchedContact)
+        Timber.v("Fetched new Contact Details $parsedContact")
         if (parsedContact != null) {
             emit(parsedContact)
         }
