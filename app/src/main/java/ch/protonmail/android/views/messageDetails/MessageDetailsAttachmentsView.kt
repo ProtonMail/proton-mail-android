@@ -22,13 +22,15 @@ import android.content.Context
 import android.database.DataSetObserver
 import android.text.format.Formatter
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.widget.Adapter
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import ch.protonmail.android.R
-import kotlinx.android.synthetic.main.layout_message_details_attachments.view.*
-import kotlinx.android.synthetic.main.layout_message_details_attachments.view.attachments_list_linear_layout
-import me.proton.core.presentation.utils.inflate
+import ch.protonmail.android.databinding.LayoutMessageDetailsAttachmentsBinding
 
 /**
  * A view for attachments banner in message details
@@ -39,8 +41,20 @@ class MessageDetailsAttachmentsView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
+    private val attachmentsTextView: TextView
+    private val chevronImageView: ImageView
+    private val attachmentsListLinearLayout: LinearLayout
+
     init {
-        inflate(R.layout.layout_message_details_attachments, true)
+        val binding = LayoutMessageDetailsAttachmentsBinding.inflate(
+            LayoutInflater.from(context),
+            this,
+            true
+        )
+        attachmentsTextView = binding.attachmentsTextView
+        chevronImageView = binding.chevronImageView
+        attachmentsListLinearLayout = binding.attachmentsListLinearLayout
+
         setOnClickListener {
             expanded = !expanded
         }
@@ -48,8 +62,8 @@ class MessageDetailsAttachmentsView @JvmOverloads constructor(
 
     private var expanded = false
         set(value) {
-            attachments_list_linear_layout.isVisible = value
-            chevron_image_view.setImageResource(if (value) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down)
+            attachmentsListLinearLayout.isVisible = value
+            chevronImageView.setImageResource(if (value) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down)
             field = value
         }
 
@@ -64,15 +78,15 @@ class MessageDetailsAttachmentsView @JvmOverloads constructor(
     private val dataSetObserver = object : DataSetObserver() {
         override fun onChanged() {
             attachmentsAdapter?.apply {
-                attachments_list_linear_layout.removeAllViews()
+                attachmentsListLinearLayout.removeAllViews()
                 (0 until count).forEach {
-                    attachments_list_linear_layout.addView(getView(it, null, attachments_list_linear_layout))
+                    attachmentsListLinearLayout.addView(getView(it, null, attachmentsListLinearLayout))
                 }
             }
         }
 
         override fun onInvalidated() {
-            attachments_list_linear_layout.removeAllViews()
+            attachmentsListLinearLayout.removeAllViews()
         }
     }
 
@@ -86,7 +100,7 @@ class MessageDetailsAttachmentsView @JvmOverloads constructor(
             R.string.attachment_size,
             Formatter.formatShortFileSize(context, sizeOfAttachments)
         )
-        attachments_text_view.text = "$attachmentsText $sizeText"
+        attachmentsTextView.text = "$attachmentsText $sizeText"
         this.attachmentsAdapter = attachmentsAdapter
     }
 }
