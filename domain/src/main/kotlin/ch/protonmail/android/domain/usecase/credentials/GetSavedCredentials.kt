@@ -28,7 +28,9 @@ import kotlinx.coroutines.flow.flowOn
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 import kotlin.time.seconds
+import kotlin.time.toDuration
 
 /**
  * Get / Observe all the saved credentials or for a single [EmailAddress]
@@ -44,7 +46,7 @@ class GetSavedCredentials @Inject constructor (
     operator fun invoke(interval: Duration = DEFAULT_INTERVAL) = flow {
         while (true) {
             emit(repository.getAll())
-            delay(interval)
+            delay(interval.toLongMilliseconds())
         }
     }.flowOn(dispatchers.Io).distinctUntilChanged()
 
@@ -54,11 +56,11 @@ class GetSavedCredentials @Inject constructor (
     operator fun invoke(emailAddress: EmailAddress, interval: Duration = DEFAULT_INTERVAL) = flow {
         while (true) {
             emit(repository[emailAddress])
-            delay(interval)
+            delay(interval.toLongMilliseconds())
         }
     }.flowOn(dispatchers.Io).distinctUntilChanged()
 
     private companion object {
-        val DEFAULT_INTERVAL = 30.seconds
+        val DEFAULT_INTERVAL = 30.toDuration(DurationUnit.SECONDS)
     }
 }
