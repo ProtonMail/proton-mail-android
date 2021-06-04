@@ -83,6 +83,14 @@
     <string name="composer_attachment_remove_description">Remove attachment</string>
     <!-- endregion -->
 
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Set PIN code</string>
+    <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
+    <string name="settings_pins_dont_match">The PIN codes must match!</string>
+    <string name="settings_enter_pin_code_title">Enter PIN code</string>
+
+    <!-- end region -->
+
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">ENCRYPTED EMAIL</string>
@@ -943,12 +951,12 @@
     <!-- region App Settings -->
     <string name="push_notifications">Push Notifications</string>
     <string name="extended_notifications">Extended Notifications</string>
-    <string name="extended_notifications_description">Turn this feature on to see the sender\nof the emails in the push notifications.</string>
+    <string name="extended_notifications_description">Turn this feature on to see the sender of the emails in the push notifications.</string>
     <string name="notification_settings">Notification Settings</string>
 
     <string name="auto_lock">Auto-lock</string>
     <string name="auto_lock_app">Auto-lock app</string>
-    <string name="auto_lock_description">Turn this feature on to auto-lock your\napp and use a PIN code or fingerprint\nto unlock it.</string>
+    <string name="auto_lock_description">Turn this feature on to auto-lock your app and use a PIN code or fingerprint to unlock it.</string>
     <string name="change_pin_code">Change PIN code</string>
     <string name="auto_lock_timer">Auto-lock timer</string>
 

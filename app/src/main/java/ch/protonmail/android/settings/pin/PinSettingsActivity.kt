@@ -46,19 +46,20 @@ private const val REQUEST_CODE_SETUP_PIN = 9
 private const val REQUEST_CODE_CHANGE_PIN = 14
 // endregion
 
-/*
- * Created by dkadrikj on 10/24/16.
- */
-
 @SuppressLint("ServiceCast")
 class PinSettingsActivity : BaseActivity() {
+
     private val autoLockContainer by lazy { findViewById<SettingsDefaultItemView>(R.id.autoLockContainer) }
     private val autoLockContainerToggle by lazy { autoLockContainer.getToggle() }
     private val autoLockTimer by lazy { findViewById<SettingsDefaultItemView>(R.id.autoLockTimer) }
     private val autoLockTimerSpinner by lazy { autoLockTimer.getSpinner() as Spinner }
     private val useFingerprint by lazy { findViewById<SettingsDefaultItemView>(R.id.useFingerprint) }
     private val useFingerprintToggle by lazy { useFingerprint.getToggle() }
-    private val autoLockOtherSettingsContainer by lazy { findViewById<LinearLayout>(R.id.autoLockOtherSettingsContainer) }
+    private val autoLockOtherSettingsContainer by lazy {
+        findViewById<LinearLayout>(
+            R.id.autoLockOtherSettingsContainer
+        )
+    }
     private var mPinTimeoutValue: Int = 0
     private val user by lazy { mUserManager.requireCurrentLegacyUser() }
 
@@ -72,7 +73,8 @@ class PinSettingsActivity : BaseActivity() {
             val oldPin = mUserManager.getMailboxPin()
             if (TextUtils.isEmpty(oldPin)) {
                 autoLockContainerToggle.setOnCheckedChangeListener(null)
-                val pinIntent = AppUtil.decorInAppIntent(Intent(this@PinSettingsActivity, CreatePinActivity::class.java))
+                val pinIntent =
+                    AppUtil.decorInAppIntent(Intent(this@PinSettingsActivity, CreatePinActivity::class.java))
                 startActivityForResult(pinIntent, REQUEST_CODE_SETUP_PIN)
                 autoLockContainerToggle.isChecked = false
             } else {
@@ -89,7 +91,13 @@ class PinSettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        val timeoutAdapter = ArrayAdapter(this, R.layout.timeout_spinner_item, resources.getStringArray(R.array.auto_logout_options_array))
+
+        val elevation = resources.getDimensionPixelSize(R.dimen.action_bar_elevation).toFloat()
+        supportActionBar?.elevation = elevation
+
+        val timeoutAdapter = ArrayAdapter(
+            this, R.layout.timeout_spinner_item, resources.getStringArray(R.array.auto_logout_options_array)
+        )
         timeoutAdapter.setDropDownViewResource(R.layout.timeout_spinner_item_dropdown)
         autoLockTimerSpinner.adapter = timeoutAdapter
         isBiometricHardwareDetected()
@@ -133,7 +141,8 @@ class PinSettingsActivity : BaseActivity() {
     fun onChangePinClicked() {
         if (autoLockContainerToggle.isChecked) {
             autoLockContainerToggle.setOnCheckedChangeListener(null)
-            val changePinIntent = AppUtil.decorInAppIntent(Intent(this@PinSettingsActivity, ChangePinActivity::class.java))
+            val changePinIntent =
+                AppUtil.decorInAppIntent(Intent(this@PinSettingsActivity, ChangePinActivity::class.java))
             startActivityForResult(changePinIntent, REQUEST_CODE_CHANGE_PIN)
         } else {
             showToast(R.string.pin_not_activated, Toast.LENGTH_SHORT)
@@ -185,9 +194,9 @@ class PinSettingsActivity : BaseActivity() {
                 }
                 autoLockContainerToggle.setOnCheckedChangeListener(usePinCheckListener)
             } else if (requestCode == REQUEST_CODE_CHANGE_PIN) {
-                val pinSet = data!!.getBooleanExtra(EXTRA_NEW_PIN_SET, false)
-                val newPin = data.getStringExtra(EXTRA_PIN)
-                if (pinSet) {
+                val pinSet = data?.getBooleanExtra(EXTRA_NEW_PIN_SET, false)
+                val newPin = data?.getStringExtra(EXTRA_PIN)
+                if (pinSet != null) {
                     mUserManager.savePin(newPin)
                     showToast(R.string.new_pin_saved, Toast.LENGTH_SHORT)
                     autoLockContainerToggle.isChecked = true
@@ -197,9 +206,10 @@ class PinSettingsActivity : BaseActivity() {
             } else if (requestCode == REQUEST_CODE_VALIDATE_PIN) {
                 val pinValid = data!!.getBooleanExtra(EXTRA_PIN_VALID, false)
                 if (pinValid) {
-                    autoLockContainerToggle.isChecked = user.isUsePin && !TextUtils.isEmpty(mUserManager.getMailboxPin())
+                    autoLockContainerToggle.isChecked =
+                        user.isUsePin && !TextUtils.isEmpty(mUserManager.getMailboxPin())
                     autoLockContainerToggle.setOnCheckedChangeListener(usePinCheckListener)
-                    if(autoLockContainerToggle.isChecked){
+                    if (autoLockContainerToggle.isChecked) {
                         changeItemsEnabledState(true)
                     } else {
                         changeItemsEnabledState(false)
@@ -233,8 +243,8 @@ class PinSettingsActivity : BaseActivity() {
         }
         if (useFingerprintChanged) {
             if (useFingerprintToggle.isChecked) {
-                mBiometricManager?.let {
-                    if(it.canAuthenticate() == BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED) {
+                mBiometricManager.let {
+                    if (it.canAuthenticate() == BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED) {
                         showToast(getString(R.string.no_biometric_data_enrolled), Toast.LENGTH_SHORT)
                         useFingerprintToggle.isChecked = false
                     }
@@ -260,7 +270,7 @@ class PinSettingsActivity : BaseActivity() {
         if (enable) {
             autoLockOtherSettingsContainer.visibility = View.VISIBLE
             autoLockTimerSpinner.visibility = View.VISIBLE
-            mBiometricManager?.let {
+            mBiometricManager.let {
                 changePinCode.foreground = null
                 autoLockTimer.foreground = null
                 useFingerprint.foreground = null
@@ -283,8 +293,11 @@ class PinSettingsActivity : BaseActivity() {
     }
 
     private fun isBiometricHardwareDetected() {
-        mBiometricManager?.let {
-            if(it.canAuthenticate() == BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE || it.canAuthenticate() == BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE) {
+        mBiometricManager.let {
+            if (
+                it.canAuthenticate() == BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ||
+                it.canAuthenticate() == BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE
+            ) {
                 useFingerprint.setHasValue(true)
                 useFingerprint.foreground = ColorDrawable(getColor(R.color.white_30))
                 useFingerprint.isClickable = false
@@ -292,12 +305,6 @@ class PinSettingsActivity : BaseActivity() {
                 useFingerprintToggle.isClickable = false
                 useFingerprintToggle.isEnabled = false
             }
-        } ?: run {
-            useFingerprint.setHasValue(true)
-            useFingerprint.isClickable = false
-            useFingerprintToggle.isChecked = false
-            useFingerprintToggle.isClickable = false
-            useFingerprintToggle.isEnabled = false
         }
     }
 }

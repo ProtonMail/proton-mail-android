@@ -146,8 +146,9 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
 
     /**
      * Optional id for the layout
+     *
      * @return the id of the layout to inflate, or {@link #NO_LAYOUT_ID} if
-     *  {@link #getRootView()} is used
+     * {@link #getRootView()} is used
      */
     @LayoutRes
     protected int getLayoutId() {
@@ -156,6 +157,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
 
     /**
      * Optional View to set as content
+     *
      * @return the {@link View} to set as content or {@code null} if {@link #getLayoutId()} is used
      */
     @Nullable
@@ -243,9 +245,11 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         return false;
     }
 
-    protected void enableScreenshotProtector() { }
+    protected void enableScreenshotProtector() {
+    }
 
-    protected void disableScreenshotProtector() { }
+    protected void disableScreenshotProtector() {
+    }
 
     @Override
     protected void onResume() {
@@ -323,9 +327,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         }
         if (shouldLock) {
             Intent validatePinIntent = new Intent(this, ValidatePinActivity.class);
-            if (this instanceof MessageDetailsActivity) {
-                validatePinIntent.putExtra(EXTRA_FRAGMENT_TITLE, R.string.enter_pin_message_details);
-            }
+            validatePinIntent.putExtra(EXTRA_FRAGMENT_TITLE, R.string.settings_enter_pin_code_title);
             Intent pinIntent = AppUtil.decorInAppIntent(validatePinIntent);
             startActivityForResult(pinIntent, REQUEST_CODE_VALIDATE_PIN);
         } else {
@@ -462,7 +464,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         }
     }
 
-    protected BroadcastReceiver setupLangReceiver(){
+    protected BroadcastReceiver setupLangReceiver() {
         if (mLangReceiver == null) {
             mLangReceiver = new BroadcastReceiver() {
                 @Override
@@ -501,7 +503,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     @Override
-    public void stopDohSignal () {
+    public void stopDohSignal() {
         isDohOngoing = false;
         Timber.d("BaseActivity: stopDohSignal");
     }

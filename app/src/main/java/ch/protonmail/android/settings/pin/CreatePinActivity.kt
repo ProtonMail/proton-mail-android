@@ -18,25 +18,22 @@
  */
 package ch.protonmail.android.settings.pin
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.views.SecureEditText
+import ch.protonmail.android.views.ISecurePINListener
 
 // region constants
 const val EXTRA_PIN_SET = "extra_pin_set"
 const val EXTRA_PIN = "extra_pin"
 // endregion
-
-/*
- * Created by dkadrikj on 3/27/16.
- */
 
 enum class PinAction {
     CREATE,
@@ -46,7 +43,7 @@ enum class PinAction {
 
 class CreatePinActivity : BaseActivity(),
     PinFragmentViewModel.IPinCreationListener,
-    SecureEditText.ISecurePINListener {
+    ISecurePINListener {
 
     private val fragmentContainer by lazy { findViewById<ViewGroup>(R.id.fragmentContainer) }
 
@@ -58,20 +55,43 @@ class CreatePinActivity : BaseActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+
+        val actionBar = supportActionBar
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+
         if (fragmentContainer != null) {
             if (savedInstanceState != null) {
                 return
             }
-            val createPinFragment = PinFragment.newInstance(R.string.pin_subtitle_create, PinAction.CREATE, null, false, false)
+            val createPinFragment =
+                PinFragment.newInstance(R.string.settings_create_pin_code_title, PinAction.CREATE, null, false, false)
             supportFragmentManager.beginTransaction()
-                    .add(R.id.fragmentContainer, createPinFragment, createPinFragment.fragmentKey)
-                    .commitAllowingStateLoss()
+                .add(R.id.fragmentContainer, createPinFragment, createPinFragment.fragmentKey)
+                .commitAllowingStateLoss()
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            saveLastInteraction()
+            setResult(Activity.RESULT_OK)
+            finish()
         }
     }
 
     override fun onPinCreated(pin: String) {
-        val confirmPinFragment = PinFragment.newInstance(R.string.pin_subtitle_confirm, PinAction.CONFIRM, pin, false, false)
+        val confirmPinFragment =
+            PinFragment.newInstance(R.string.settings_confirm_pin_code_title, PinAction.CONFIRM, pin, false, false)
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.fragmentContainer, confirmPinFragment)
         fragmentTransaction.addToBackStack(confirmPinFragment.fragmentKey)
@@ -80,10 +100,11 @@ class CreatePinActivity : BaseActivity(),
 
     override fun showCreatePin() {
         supportFragmentManager.popBackStack()
-        val createPinFragment = PinFragment.newInstance(R.string.pin_subtitle_create, PinAction.CREATE, null, false, false)
+        val createPinFragment =
+            PinFragment.newInstance(R.string.settings_create_pin_code_title, PinAction.CREATE, null, false, false)
         supportFragmentManager.beginTransaction()
-                .add(R.id.fragmentContainer, createPinFragment, createPinFragment.fragmentKey)
-                .commitAllowingStateLoss()
+            .add(R.id.fragmentContainer, createPinFragment, createPinFragment.fragmentKey)
+            .commitAllowingStateLoss()
     }
 
     override fun onPinConfirmed(confirmPin: String?) {
@@ -100,7 +121,7 @@ class CreatePinActivity : BaseActivity(),
     }
 
     override fun onPinSuccess() {
-
+        // noop
     }
 
     override fun onPinError() {

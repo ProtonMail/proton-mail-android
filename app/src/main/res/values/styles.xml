@@ -170,6 +170,16 @@
         <item name="tint">@drawable/switch_thumb_selector</item>
         <item name="useMaterialThemeColors">false</item>
     </style>
+
+    <style name="ProtonInput.PIN">
+        <item name="android:textAppearance">@style/Proton.Text.Default</item>
+        <item name="tint">@drawable/switch_thumb_selector</item>
+        <item name="android:textSize">@dimen/settings_pin_font_size</item>
+        <item name="android:textColor">@color/cornflower_blue</item>
+        <item name="android:background">@color/transparent</item>
+
+<!--        android:layout_marginBottom="-24dp"-->
+    </style>
     <!-- V4 -->
 
     <!-- end region -->
@@ -602,16 +612,16 @@
     </style>
 
     <style name="CustomKeyboardButton">
-        <item name="android:textSize">30dp</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textAppearance">@style/Proton.Text.Default</item>
         <item name="android:gravity">center</item>
-        <item name="android:background">@drawable/keyboard_button_selector</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:layout_marginRight">10dp</item>
-        <item name="android:layout_marginLeft">10dp</item>
-        <item name="fontName">Roboto-Light.ttf</item>
+        <item name="android:textSize">@dimen/settings_pin_key_button_font</item>
+        <item name="android:background">@drawable/keyboard_button_background</item>
+        <item name="android:layout_width">@dimen/settings_pin_key_button_size</item>
+        <item name="android:layout_height">@dimen/settings_pin_key_button_size</item>
+        <item name="android:layout_marginStart">@dimen/settings_pin_key_button_margin</item>
+        <item name="android:layout_marginEnd">@dimen/settings_pin_key_button_margin</item>
+        <item name="android:layout_marginBottom">@dimen/padding_m</item>
+        <item name="android:layout_marginTop">@dimen/padding_m</item>
     </style>
 
     <style name="CustomKeyboardButton.Arrow.Right" parent="CustomKeyboardButton">

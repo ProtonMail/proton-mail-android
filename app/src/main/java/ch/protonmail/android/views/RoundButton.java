@@ -23,12 +23,11 @@ import android.content.res.TypedArray;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
+import androidx.appcompat.widget.AppCompatButton;
+
 import ch.protonmail.android.R;
 
-/**
- * Created by dkadrikj on 3/27/16.
- */
-public class RoundButton extends CustomFontButton {
+public class RoundButton extends AppCompatButton {
 
     private String mKeyValue;
 

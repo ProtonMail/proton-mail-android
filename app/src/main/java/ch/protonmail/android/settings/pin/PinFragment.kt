@@ -29,23 +29,18 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.fragments.BaseFragment
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
-import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.views.RoundButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_pin.*
 import javax.inject.Inject
 
 // region constants
-private const val ARGUMENT_SUBTITLE = "extra_pin_subtitle"
+private const val ARGUMENT_TITLE = "extra_pin_title"
 private const val ARGUMENT_ACTION_TYPE = "extra_pin_action"
 private const val ARGUMENT_WANTED_PIN = "extra_wanted_pin"
 private const val ARGUMENT_SIGN_OUT = "extra_signout_possible"
 private const val ARGUMENT_FINGERPRINT = "extra_use_fingerprint"
 // endregion
-
-/*
- * Created by dkadrikj on 3/28/16.
- */
 
 @AndroidEntryPoint
 class PinFragment : BaseFragment() {
@@ -63,40 +58,52 @@ class PinFragment : BaseFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        pinFragmentViewModel = ViewModelProviders.of(this, pinFragmentViewModelFactory).get(PinFragmentViewModel::class.java)
+        pinFragmentViewModel =
+            ViewModelProviders.of(this, pinFragmentViewModelFactory).get(PinFragmentViewModel::class.java)
+
+        arguments?.run {
+            subtitleRes = getInt(ARGUMENT_TITLE)
+            pinFragmentViewModel.setup(
+                getSerializable(ARGUMENT_ACTION_TYPE) as PinAction, getBoolean(ARGUMENT_SIGN_OUT),
+                getString(ARGUMENT_WANTED_PIN), getBoolean(ARGUMENT_FINGERPRINT)
+            )
+        }
         if (context is PinFragmentViewModel.IPinCreationListener) {
             pinFragmentViewModel.setListener(context)
         } else {
             throw ClassCastException("Activity must implement IPinCreationListener")
         }
+        if (context is PinFragmentViewModel.ReopenFingerprintDialogListener) {
+            pinFragmentViewModel.setListener(context as PinFragmentViewModel.ReopenFingerprintDialogListener)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.run {
-            subtitleRes = getInt(ARGUMENT_SUBTITLE)
-            pinFragmentViewModel.setup(getSerializable(ARGUMENT_ACTION_TYPE) as PinAction, getBoolean(ARGUMENT_SIGN_OUT),
-                    getString(ARGUMENT_WANTED_PIN), getBoolean(ARGUMENT_FINGERPRINT))
+        activity?.run {
+            title = getString(subtitleRes)
         }
-        val context = context
-        if (context is PinFragmentViewModel.ReopenFingerprintDialogListener) {
-            pinFragmentViewModel.setListener(context)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        activity?.run {
+            title = getString(subtitleRes)
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (subtitleRes != 0) {
-            mPinEdit.setTitle(getString(subtitleRes))
-        }
         pinFragmentViewModel.setupDoneObservable.observe(this, setupObserver)
     }
 
     private val forwardObserver = Observer<PinFragmentViewModel.ValidationResult> {
         if (it.actionType == PinAction.CREATE && !it.valid) {
-            context?.showToast(R.string.pin_invalid)
+            mPinEdit.setErrorText(getString(R.string.pin_invalid))
+            mPinEdit.setTextColor(resources.getColor(R.color.notification_error))
         } else if (it.actionType == PinAction.CONFIRM && !it.valid) {
-            context?.showToast(R.string.pin_confirmation_not_match)
+            mPinEdit.setErrorText(getString(R.string.settings_pins_dont_match))
+            mPinEdit.setTextColor(resources.getColor(R.color.notification_error))
         }
     }
 
@@ -111,7 +118,7 @@ class PinFragment : BaseFragment() {
             PinAction.CONFIRM -> {
                 mBtnForward.visibility = View.VISIBLE
                 mBtnForward.text = getString(R.string.confirm)
-                mBtnBackward.visibility = View.VISIBLE
+                backward_button.visibility = View.VISIBLE
             }
             else -> {
                 mForgotPin.visibility = if (it.signOutPossible) View.VISIBLE else View.GONE
@@ -125,19 +132,19 @@ class PinFragment : BaseFragment() {
     // region click listeners
     @OnClick(R.id.mBtnForward)
     fun onNextClicked() {
-        pinFragmentViewModel.nextClicked(mPinEdit.pin, mPinEdit.isValid, mPinEdit.isValid(pinFragmentViewModel.wantedPin()))
-                .observe(this, forwardObserver)
+        pinFragmentViewModel.nextClicked(
+            mPinEdit.pin, mPinEdit.isValid, mPinEdit.isValid(pinFragmentViewModel.wantedPin())
+        )
+            .observe(this, forwardObserver)
     }
 
-    @OnClick(R.id.btn_pin_0, R.id.btn_pin_1, R.id.btn_pin_2, R.id.btn_pin_3, R.id.btn_pin_4, R.id.btn_pin_5, R.id.btn_pin_6, R.id.btn_pin_7, R.id.btn_pin_8, R.id.btn_pin_9)
+    @OnClick(
+        R.id.btn_pin_0, R.id.btn_pin_1, R.id.btn_pin_2, R.id.btn_pin_3, R.id.btn_pin_4, R.id.btn_pin_5, R.id.btn_pin_6,
+        R.id.btn_pin_7, R.id.btn_pin_8, R.id.btn_pin_9
+    )
     fun onKeyClicked(button: RoundButton) {
         val keyValue = button.keyValue
         mPinEdit.enterKey(keyValue)
-    }
-
-    @OnClick(R.id.mBtnBackward)
-    fun onBackClicked() {
-        pinFragmentViewModel.onBackClicked()
     }
 
     @OnClick(R.id.openFingerprintPrompt)
@@ -149,15 +156,32 @@ class PinFragment : BaseFragment() {
     fun onForgotPinClicked() {
         pinFragmentViewModel.onForgotPin()
     }
+
+    @OnClick(R.id.backward_button)
+    fun onBackwardButtonClicked() {
+
+        val currentValue: StringBuilder = StringBuilder(mPinEdit.pin)
+        if (currentValue.isNotEmpty()) {
+            currentValue.deleteCharAt(currentValue.length - 1)
+        }
+        mPinEdit.setText(currentValue.toString())
+        mPinEdit.setSelection(currentValue.length)
+    }
     // endregion
 
     companion object {
 
         @JvmOverloads
-        fun newInstance(@StringRes subtitleRes: Int, actionType: PinAction, wantedPin: String?, signOutPossible: Boolean = true, useFingerprint: Boolean): PinFragment {
+        fun newInstance(
+            @StringRes subtitleRes: Int,
+            actionType: PinAction,
+            wantedPin: String?,
+            signOutPossible: Boolean = true,
+            useFingerprint: Boolean
+        ): PinFragment {
             val fragment = PinFragment()
             val extras = Bundle()
-            extras.putInt(ARGUMENT_SUBTITLE, subtitleRes)
+            extras.putInt(ARGUMENT_TITLE, subtitleRes)
             extras.putSerializable(ARGUMENT_ACTION_TYPE, actionType)
             extras.putString(ARGUMENT_WANTED_PIN, wantedPin)
             extras.putBoolean(ARGUMENT_SIGN_OUT, signOutPossible)

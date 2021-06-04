@@ -258,6 +258,7 @@
         <activity
             android:name=".settings.pin.ChangePinActivity"
             android:exported="false"
+            android:label="@string/settings_confirm_pin_code_title"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
         <activity

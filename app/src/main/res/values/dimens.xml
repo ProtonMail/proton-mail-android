@@ -126,8 +126,12 @@
     <dimen name="min_width_label">56dp</dimen>
 
     <!-- Settings -->
-    <dimen name="settings_margin_radio_button">12dp</dimen>
+    <dimen name="settings_radio_button_margin">12dp</dimen>
     <dimen name="settings_snooze_day_size">40dp</dimen>
+    <dimen name="settings_pin_key_button_size">72dp</dimen>
+    <dimen name="settings_pin_key_button_margin">12dp</dimen>
+    <dimen name="settings_pin_font_size">24sp</dimen>
+    <dimen name="settings_pin_key_button_font">20sp</dimen>
 
     <!-- endregion -->
 
