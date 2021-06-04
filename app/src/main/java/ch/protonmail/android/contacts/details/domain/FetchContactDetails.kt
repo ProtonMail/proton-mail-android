@@ -74,6 +74,6 @@ class FetchContactDetails @Inject constructor(
         .flowOn(dispatchers.Io)
 
     private fun parseContactDetails(contact: FullContactDetails): FetchContactDetailsResult? =
-        mapper.mapEncryptedDataToResult(contact.encryptedData)
+        mapper.mapEncryptedDataToResult(contact.encryptedData, contact.contactId)
 
 }

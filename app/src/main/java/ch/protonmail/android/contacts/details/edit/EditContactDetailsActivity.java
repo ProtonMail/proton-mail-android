@@ -128,6 +128,7 @@ import static ch.protonmail.android.contacts.details.edit.EditContactDetailsView
 @AndroidEntryPoint
 public class EditContactDetailsActivity extends BaseConnectivityActivity {
 
+    public static final int REQUEST_CODE_EDIT_CONTACT = 1;
     private static final int REQUEST_CODE_UPGRADE = 2;
     private static final int REQUEST_CODE_OPEN_GALLERY = 1000;
     private static final int REQUEST_CODE_OPEN_CAMERA = 1001;

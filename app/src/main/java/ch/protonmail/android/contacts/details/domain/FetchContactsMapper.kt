@@ -51,7 +51,10 @@ class FetchContactsMapper @Inject constructor(
     val crypto: UserCrypto = UserCrypto(userManager, openPgp, userManager.requireCurrentUserId())
 ) {
 
-    fun mapEncryptedDataToResult(encryptedDataList: MutableList<ContactEncryptedData>?): FetchContactDetailsResult? {
+    fun mapEncryptedDataToResult(
+        encryptedDataList: MutableList<ContactEncryptedData>?,
+        contactId: String
+    ): FetchContactDetailsResult? {
         if (!encryptedDataList.isNullOrEmpty()) {
 
             var decryptedVCardType0: String = EMPTY_STRING
@@ -81,7 +84,8 @@ class FetchContactsMapper @Inject constructor(
                 decryptedVCardType2,
                 decryptedVCardType3,
                 vCardType2Signature,
-                vCardType3Signature
+                vCardType3Signature,
+                contactId
             )
         }
         return null
@@ -98,7 +102,8 @@ class FetchContactsMapper @Inject constructor(
         decryptedVCardType2: String, // SIGNED
         decryptedVCardType3: String, // SIGNED_ENCRYPTED
         vCardType2Signature: String,
-        vCardType3Signature: String
+        vCardType3Signature: String,
+        contactId: String
     ): FetchContactDetailsResult {
 
         val vCardType0 = if (decryptedVCardType0.isNotEmpty()) {
@@ -256,16 +261,6 @@ class FetchContactsMapper @Inject constructor(
             }
         }
 
-        val contactUid = when {
-            vCardType3?.uid?.value != null -> vCardType3.uid.value
-            vCardType0?.uid?.value != null -> vCardType0.uid.value
-            vCardType2?.uid?.value != null -> vCardType2.uid.value
-            else -> {
-                Timber.i("Unable to get name information from available vCard data")
-                EMPTY_STRING
-            }
-        }
-
         val isType2SignatureValid: Boolean? =
             if (vCardType2Signature.isNotEmpty() && decryptedVCardType2.isNotEmpty()) {
                 try {
@@ -291,7 +286,7 @@ class FetchContactsMapper @Inject constructor(
             }
 
         return FetchContactDetailsResult(
-            contactUid,
+            contactId,
             contactName,
             emails,
             telephoneNumbers,
@@ -309,6 +304,9 @@ class FetchContactsMapper @Inject constructor(
             notes,
             isType2SignatureValid,
             isType3SignatureValid,
+            decryptedVCardType0,
+            decryptedVCardType2,
+            decryptedVCardType3
         )
     }
 

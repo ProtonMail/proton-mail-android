@@ -37,10 +37,12 @@ class ContactDetailsMapperTest {
 
     val mapper = ContactDetailsMapper()
 
+    private val contactId1 = "contactUid1"
     private val contactName1 = "testContactName"
     private val vCardToShare1 = "testCardType2"
+    private val decryptedCardType0 = "decryptedCardType0"
     private val fetchContactResult = FetchContactDetailsResult(
-        "testContactUid",
+        contactId1,
         contactName1,
         emails = emptyList(),
         telephoneNumbers = emptyList(),
@@ -58,6 +60,9 @@ class ContactDetailsMapperTest {
         notes = emptyList(),
         isType2SignatureValid = true,
         isType3SignatureValid = null,
+        vDecryptedCardType0 = decryptedCardType0,
+        vDecryptedCardType2 = null,
+        vDecryptedCardType3 = null,
     )
 
     private val groupId1 = "ID1"
@@ -85,6 +90,7 @@ class ContactDetailsMapperTest {
 
         // given
         val expected = ContactDetailsViewState.Data(
+            contactId1,
             contactName1,
             "T",
             listOf(
@@ -96,8 +102,11 @@ class ContactDetailsMapperTest {
                 )
             ),
             vCardToShare1,
+            null,
+            null,
             true,
             null,
+            decryptedCardType0,
             null,
             null
         )

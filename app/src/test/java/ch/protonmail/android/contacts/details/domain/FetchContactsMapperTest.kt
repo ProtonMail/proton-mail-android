@@ -102,7 +102,8 @@ class FetchContactsMapperTest {
         runBlockingTest {
             // given
             val testContactName = "jant.rosales"
-            val testContactUid = "proton-autosave-15713e29-80f7-44e3-8537-2ebabe4c7955"
+            val testContactId =
+                "4Grx7G3QwDCMLuPZEXcIUc8fpb7kqnuJei-dcqZhUKZGndYJnnrslj-Sb58OG0FVKsvODhMNxo910cLVDhUrOw=="
 
             val contactEncryptedDataDb = mockk<ContactEncryptedData> {
                 every { type } returns Constants.VCardType.UNSIGNED.vCardTypeValue
@@ -123,7 +124,7 @@ class FetchContactsMapperTest {
                 parameters = VCardParameters(mapOf("TYPE" to listOf("adr")))
             }
             val expectedDb = FetchContactDetailsResult(
-                testContactUid,
+                testContactId,
                 testContactName,
                 emails = listOf(email1),
                 telephoneNumbers = listOf(phone1),
@@ -136,15 +137,18 @@ class FetchContactsMapperTest {
                 anniversaries = emptyList(),
                 roles = emptyList(),
                 urls = emptyList(),
-                testCardTypeO,
-                null,
-                emptyList(),
-                null,
-                null,
+                vCardToShare = testCardTypeO,
+                gender = null,
+                notes = emptyList(),
+                isType2SignatureValid = null,
+                isType3SignatureValid = null,
+                vDecryptedCardType0 = testCardTypeO,
+                vDecryptedCardType2 = "",
+                vDecryptedCardType3 = ""
             )
 
             // when
-            val result = mapper.mapEncryptedDataToResult(mutableListOf(contactEncryptedDataDb))
+            val result = mapper.mapEncryptedDataToResult(mutableListOf(contactEncryptedDataDb), testContactId)
 
             // then
             assertEquals(expectedDb, result)
@@ -155,7 +159,8 @@ class FetchContactsMapperTest {
         runBlockingTest {
             // given
             val testContactName = "Tomek9"
-            val testContactUid = "proton-web-3d6b22b5-04ce-4300-605a-3bfd2d3652d1"
+            val testContactId =
+                "4Grx7G3QwDCMLuPZEXcIUc8fpb7kqnuJei-dcqZhUKZGndYJnnrslj-Sb58OG0FVKsvODhMNxo910cLVDhUrOw=="
 
             val contactEncryptedDataDb = mockk<ContactEncryptedData> {
                 every { type } returns Constants.VCardType.SIGNED.vCardTypeValue
@@ -179,7 +184,7 @@ class FetchContactsMapperTest {
             val birthday1 = Birthday(date)
             val note1 = Note("Gender: Male")
             val expectedDb = FetchContactDetailsResult(
-                testContactUid,
+                testContactId,
                 testContactName,
                 emails = listOf(email1),
                 telephoneNumbers = emptyList(),
@@ -197,10 +202,13 @@ class FetchContactsMapperTest {
                 notes = listOf(note1),
                 isType2SignatureValid = true,
                 isType3SignatureValid = null,
+                vDecryptedCardType0 = "",
+                vDecryptedCardType2 = testCardType2,
+                vDecryptedCardType3 = ""
             )
 
             // when
-            val result = mapper.mapEncryptedDataToResult(mutableListOf(contactEncryptedDataDb))
+            val result = mapper.mapEncryptedDataToResult(mutableListOf(contactEncryptedDataDb), testContactId)
 
             // then
             assertEquals(expectedDb, result)
@@ -215,7 +223,8 @@ class FetchContactsMapperTest {
         runBlockingTest {
             // given
             val testContactName = "Tomek9"
-            val testContactUid = "proton-web-3d6b22b5-04ce-4300-605a-3bfd2d3652d1"
+            val testContactId =
+                "4Grx7G3QwDCMLuPZEXcIUc8fpb7kqnuJei-dcqZhUKZGndYJnnrslj-Sb58OG0FVKsvODhMNxo910cLVDhUrOw=="
 
             val contactEncryptedDataDb = mockk<ContactEncryptedData> {
                 every { type } returns Constants.VCardType.SIGNED_ENCRYPTED.vCardTypeValue
@@ -232,7 +241,7 @@ class FetchContactsMapperTest {
                 parameters = VCardParameters(mapOf("TYPE" to listOf("email")))
             }
             val expectedDb = FetchContactDetailsResult(
-                testContactUid,
+                testContactId,
                 testContactName,
                 listOf(email1),
                 emptyList(),
@@ -250,10 +259,13 @@ class FetchContactsMapperTest {
                 emptyList(),
                 true,
                 null,
+                vDecryptedCardType0 = testCardTypeO,
+                vDecryptedCardType2 = null,
+                vDecryptedCardType3 = null
             )
 
             // when
-            val result = mapper.mapEncryptedDataToResult(mutableListOf(contactEncryptedDataDb))
+            val result = mapper.mapEncryptedDataToResult(mutableListOf(contactEncryptedDataDb), testContactId)
 
             // then
             assertEquals(expectedDb, result)

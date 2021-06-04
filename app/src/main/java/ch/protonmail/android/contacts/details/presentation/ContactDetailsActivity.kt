@@ -28,7 +28,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
@@ -48,9 +47,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
+import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsUiItem
 import ch.protonmail.android.contacts.details.presentation.model.ContactDetailsViewState
 import ch.protonmail.android.databinding.ActivityContactDetailsBinding
+import ch.protonmail.android.usecase.create.VCARD_TEMP_FILE_NAME
+import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.views.ListItemThumbnail
 import coil.ImageLoader
@@ -61,6 +63,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
+import java.io.File
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -72,10 +76,17 @@ class ContactDetailsActivity : AppCompatActivity() {
     private lateinit var contactNameView: TextView
     private lateinit var detailsContainer: NestedScrollView
     private lateinit var progressBar: ProgressBar
+    private var contactId: String = EMPTY_STRING
     private var vCardToShare: String = EMPTY_STRING
     private var contactEmail: String = EMPTY_STRING
     private var contactPhone: String = EMPTY_STRING
+    private var decryptedCardType0: String? = null
+    private var decryptedCardType2: String? = null
+    private var decryptedCardType3: String? = null
     private val viewModel: ContactDetailsViewModel by viewModels()
+
+    @Inject
+    lateinit var fileHelper: FileHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -166,8 +177,21 @@ class ContactDetailsActivity : AppCompatActivity() {
     }
 
     private fun onEditContacts() {
-        // TODO: Display in edit mode here
-        showToast(R.string.edit_contact, Toast.LENGTH_SHORT, Gravity.CENTER)
+
+        val vCardFilePath = if (!decryptedCardType3.isNullOrEmpty()) {
+            val filePath = "$cacheDir${File.separator}$VCARD_TEMP_FILE_NAME"
+            fileHelper.saveStringToFile(filePath, checkNotNull(decryptedCardType3))
+            filePath
+        } else {
+            EMPTY_STRING
+        }
+        EditContactDetailsActivity.startEditContactActivity(
+            this, contactId,
+            EditContactDetailsActivity.REQUEST_CODE_EDIT_CONTACT,
+            decryptedCardType0,
+            decryptedCardType2,
+            vCardFilePath
+        )
     }
 
     private fun onDeleteContact(contactId: String, contactName: String) {
@@ -213,6 +237,10 @@ class ContactDetailsActivity : AppCompatActivity() {
         detailsContainer.isVisible = true
 
         vCardToShare = state.vCardToShare
+        contactId = state.contactId
+        decryptedCardType0 = state.vDecryptedCardType0
+        decryptedCardType2 = state.vDecryptedCardType2
+        decryptedCardType3 = state.vDecryptedCardType3
 
         setHeaderData(
             state.title,

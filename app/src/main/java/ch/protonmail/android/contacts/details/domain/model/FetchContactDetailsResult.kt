@@ -34,7 +34,7 @@ import ezvcard.property.Title
 import ezvcard.property.Url
 
 data class FetchContactDetailsResult(
-    val contactUid: String,
+    val contactId: String,
     val contactName: String,
     val emails: List<Email>,
     val telephoneNumbers: List<Telephone>,
@@ -51,5 +51,8 @@ data class FetchContactDetailsResult(
     val gender: Gender?,
     val notes: List<Note>,
     val isType2SignatureValid: Boolean?,
-    val isType3SignatureValid: Boolean?
+    val isType3SignatureValid: Boolean?,
+    val vDecryptedCardType0: String?,
+    val vDecryptedCardType2: String?,
+    val vDecryptedCardType3: String?
 )

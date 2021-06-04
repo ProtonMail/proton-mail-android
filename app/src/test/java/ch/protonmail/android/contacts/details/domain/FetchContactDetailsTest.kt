@@ -53,7 +53,7 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
     fun verifyThatExistingContactsDataIsFetchedFromTheDbAndPassedInFlowAndThenApiReturnsData() =
         runBlockingTest {
             // given
-            val contactId = "testContactId"
+            val testContactId = "testContactId"
             val testDataDb = "testDataDb"
             val testDataNet = "testDataNet"
             val contactEncryptedDataDb = mockk<ContactEncryptedData> {
@@ -67,25 +67,27 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             val listOfDbData = mutableListOf(contactEncryptedDataDb)
             val fullContactsFromDb = mockk<FullContactDetails> {
                 every { encryptedData } returns listOfDbData
+                every { contactId } returns testContactId
             }
             val listOfNetData = mutableListOf(contactEncryptedDataNet)
             val fullContactsFromNet = mockk<FullContactDetails> {
                 every { encryptedData } returns listOfNetData
+                every { contactId } returns testContactId
             }
             val fullContactsResponse = mockk<FullContactDetailsResponse> {
                 every { contact } returns fullContactsFromNet
             }
-            coEvery { repository.getFullContactDetails(contactId) } returns fullContactsFromDb
+            coEvery { repository.getFullContactDetails(testContactId) } returns fullContactsFromDb
             coEvery { repository.insertFullContactDetails(any()) } returns Unit
-            coEvery { api.fetchContactDetails(contactId) } returns fullContactsResponse
+            coEvery { api.fetchContactDetails(testContactId) } returns fullContactsResponse
 
             val expectedDb = mockk<FetchContactDetailsResult>()
-            every { mapper.mapEncryptedDataToResult(listOfDbData) } returns expectedDb
+            every { mapper.mapEncryptedDataToResult(listOfDbData, testContactId) } returns expectedDb
             val expectedNet = mockk<FetchContactDetailsResult>()
-            every { mapper.mapEncryptedDataToResult(listOfNetData) } returns expectedNet
+            every { mapper.mapEncryptedDataToResult(listOfNetData, testContactId) } returns expectedNet
 
             // when
-            val result = useCase.invoke(contactId).take(2).toList()
+            val result = useCase.invoke(testContactId).take(2).toList()
 
             // then
             assertEquals(expectedDb, result[0])
@@ -96,7 +98,7 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
     fun verifyThatWhenThereIsNotContactsDataForGivenContactInTheDbOnlyApiDataWillBeReturned() =
         runBlockingTest {
             // given
-            val contactId = "testContactId"
+            val testContactId = "testContactId"
             val testSignature = "testSignature"
             val testDataNet = "testDataNet"
 
@@ -108,18 +110,19 @@ class FetchContactDetailsTest : ArchTest, CoroutinesTest {
             val listOfNetData = mutableListOf(contactEncryptedDataNet)
             val fullContactsFromNet = mockk<FullContactDetails> {
                 every { encryptedData } returns listOfNetData
+                every { contactId } returns testContactId
             }
             val fullContactsResponse = mockk<FullContactDetailsResponse> {
                 every { contact } returns fullContactsFromNet
             }
-            coEvery { repository.getFullContactDetails(contactId) } returns null
+            coEvery { repository.getFullContactDetails(testContactId) } returns null
             coEvery { repository.insertFullContactDetails(any()) } returns Unit
-            coEvery { api.fetchContactDetails(contactId) } returns fullContactsResponse
+            coEvery { api.fetchContactDetails(testContactId) } returns fullContactsResponse
             val expected = mockk<FetchContactDetailsResult>()
-            every { mapper.mapEncryptedDataToResult(listOfNetData) } returns expected
+            every { mapper.mapEncryptedDataToResult(listOfNetData, testContactId) } returns expected
 
             // when
-            val result = useCase.invoke(contactId).take(1).toList()
+            val result = useCase.invoke(testContactId).take(1).toList()
 
             // then
             assertEquals(expected, result[0])

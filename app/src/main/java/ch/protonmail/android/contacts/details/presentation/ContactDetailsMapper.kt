@@ -159,14 +159,18 @@ class ContactDetailsMapper @Inject constructor() {
         Timber.v("Ui Contacts details: $items")
 
         return ContactDetailsViewState.Data(
+            fetchResult.contactId,
             fetchResult.contactName,
             UiUtil.extractInitials(fetchResult.contactName).take(2),
             items,
             fetchResult.vCardToShare,
+            fetchResult.photos.firstOrNull()?.url,
+            fetchResult.photos.firstOrNull()?.data?.toList(),
             fetchResult.isType2SignatureValid,
             fetchResult.isType3SignatureValid,
-            fetchResult.photos.firstOrNull()?.url,
-            fetchResult.photos.firstOrNull()?.data?.toList()
+            fetchResult.vDecryptedCardType0,
+            fetchResult.vDecryptedCardType2,
+            fetchResult.vDecryptedCardType3
         )
     }
 

@@ -107,9 +107,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
     @Override
     public void onRun() throws Throwable {
         UserCrypto crypto = Crypto.forUser(getUserManager(), getUserId());
-        mContactDao = ContactDatabase.Companion
-                .getInstance(getApplicationContext(), getUserId())
-                .getDao();
+        requireContactDao();
 
         CipherText tct = crypto.encrypt(mEncryptedData, false);
         String encryptedDataSignature = crypto.sign(mEncryptedData);
@@ -120,6 +118,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
         FullContactDetailsResponse response = getApi().updateContact(mContactId, body);
 
         if (response != null) {
+            Timber.v("Update contacts response code:%s error:%s", response.getCode(), response.getError());
             if (response.getCode() == RESPONSE_CODE_ERROR_EMAIL_EXIST) {
                 // TODO: 9/14/17 todoContacts throw error
                 AppUtil.postEventOnUi(new ContactEvent(ContactEvent.ALREADY_EXIST, true));
@@ -144,6 +143,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             boolean updateJoins
     ) {
 
+        requireContactDao();
         final ContactData contactData = mContactDao.findContactDataById(mContactId);
         if (contactData != null) {
             contactData.setName(contactName);
@@ -242,5 +242,13 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             }
         }
         return Collections.emptyList();
+    }
+
+    private void requireContactDao() {
+        if (mContactDao == null) {
+            mContactDao = ContactDatabase.Companion
+                    .getInstance(getApplicationContext(), getUserId())
+                    .getDao();
+        }
     }
 }

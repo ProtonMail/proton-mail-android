@@ -57,10 +57,12 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val workManager: WorkManager = mockk()
     private val fileHelper: FileHelper = mockk()
 
+    private val contactId1 = "contactUid1"
     private val contactName1 = "testContactName"
     private val vCardToShare1 = "testCardType2"
+    private val decryptedCardType0 = "decryptedCardType0"
     private val fetchContactResult = FetchContactDetailsResult(
-        "testContactUid",
+        contactId1,
         contactName1,
         emails = emptyList(),
         telephoneNumbers = emptyList(),
@@ -78,6 +80,9 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
         notes = emptyList(),
         isType2SignatureValid = true,
         isType3SignatureValid = null,
+        vDecryptedCardType0 = decryptedCardType0,
+        vDecryptedCardType2 = null,
+        vDecryptedCardType3 = null,
     )
 
     private val viewModel = ContactDetailsViewModel(
@@ -114,6 +119,7 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
         )
         every { fetchContactGroups(contactId) } returns flowOf(fetchContactGroupResult)
         val expected = ContactDetailsViewState.Data(
+            contactId1,
             contactName1,
             "T",
             listOf(
@@ -125,8 +131,11 @@ class ContactDetailsViewModelTest : ArchTest, CoroutinesTest {
                 )
             ),
             vCardToShare1,
+            null,
+            null,
             true,
             null,
+            decryptedCardType0,
             null,
             null
         )
