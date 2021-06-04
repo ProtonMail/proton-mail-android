@@ -254,7 +254,6 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
 
             val userId = userManager.requireCurrentUserId()
-
             val fetchedMessage = messageRepository.getMessage(userId, message.messageId!!, true)
             val isDecrypted = fetchedMessage?.tryDecrypt(publicKeys)
             if (isDecrypted == true) {
@@ -523,19 +522,16 @@ internal class MessageDetailsViewModel @Inject constructor(
         return mailSettings?.showImagesFrom?.includesEmbedded() ?: false
     }
 
-    fun prepareEmbeddedImages(): Boolean {
-
-        val message = lastMessage()
-        message?.let {
-            val attachments = message.attachments
-            val embeddedImagesToFetch = ArrayList<EmbeddedImage>()
-            val embeddedImagesAttachments = ArrayList<Attachment>()
-            for (attachment in attachments) {
-                val embeddedImage = attachmentsHelper
-                    .fromAttachmentToEmbeddedImage(attachment, message.embeddedImageIds) ?: continue
-                embeddedImagesToFetch.add(embeddedImage)
-                embeddedImagesAttachments.add(attachment)
-            }
+    fun prepareEmbeddedImages(message: Message): Boolean {
+        val attachments = message.attachments
+        val embeddedImagesToFetch = ArrayList<EmbeddedImage>()
+        val embeddedImagesAttachments = ArrayList<Attachment>()
+        for (attachment in attachments) {
+            val embeddedImage = attachmentsHelper
+                .fromAttachmentToEmbeddedImage(attachment, message.embeddedImageIds) ?: continue
+            embeddedImagesToFetch.add(embeddedImage)
+            embeddedImagesAttachments.add(attachment)
+        }
 
         this.embeddedImagesToFetch = embeddedImagesToFetch
         this.embeddedImagesAttachments = embeddedImagesAttachments

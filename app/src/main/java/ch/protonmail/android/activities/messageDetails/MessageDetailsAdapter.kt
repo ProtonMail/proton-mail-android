@@ -35,14 +35,12 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
 import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyScaleListener
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyTouchListener
-import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
@@ -51,8 +49,6 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.ui.view.LabelChipUiModel
-import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.views.PMWebViewClient
@@ -60,9 +56,7 @@ import ch.protonmail.android.views.messageDetails.LoadContentButton
 import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.mapLatest
-import org.apache.http.protocol.HTTP.UTF_8
+import org.apache.http.protocol.HTTP
 import timber.log.Timber
 import java.util.ArrayList
 import java.util.concurrent.atomic.AtomicReference
@@ -76,10 +70,10 @@ internal class MessageDetailsAdapter(
     private val messageDetailsRecyclerView: RecyclerView,
     private val onLoadEmbeddedImagesClicked: (() -> Unit)?,
     private val onDisplayRemoteContentClicked: ((Message) -> Unit)?,
-    private val viewModel: MessageDetailsViewModel,
     private val storagePermissionHelper: PermissionHelper,
     private val attachmentToDownloadId: AtomicReference<String?>,
-    private val userManager: UserManager
+    private val userManager: UserManager,
+    private val onLoadMessage: (Message) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
 
     private var allLabelsList: List<Label>? = listOf()
@@ -89,7 +83,7 @@ internal class MessageDetailsAdapter(
         val items = ArrayList<MessageDetailsListItem>()
         messages.forEach { message ->
             items.add(MessageDetailsListItem(message))
-            items.add(MessageDetailsListItem())
+            items.add(MessageDetailsListItem(message, message.decryptedHTML))
         }
         setItems(items)
     }
@@ -97,13 +91,12 @@ internal class MessageDetailsAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (getItemViewType(position) == TYPE_HEADER) {
             (holder as HeaderViewHolder).bind(
-                position,
                 visibleItems!![position].message
             )
         } else {
             (holder as ItemViewHolder).bind(
                 position,
-                visibleItems!![position - 1].message
+                visibleItems!![position]
             )
         }
     }
@@ -118,34 +111,65 @@ internal class MessageDetailsAdapter(
                 )
             )
         } else {
-            ItemViewHolder(
-                LayoutInflater.from(context).inflate(
-                    R.layout.layout_message_details_web_view,
-                    parent,
-                    false
-                )
+            val messageBodyProgress = ProgressBar(context)
+            val view = LayoutInflater.from(context).inflate(
+                R.layout.layout_message_details_web_view,
+                parent,
+                false
             )
+            setupMessageWebView(messageBodyProgress, view)
+            ItemViewHolder(view)
         }
     }
 
+    private fun setupMessageWebView(
+        messageBodyProgress: ProgressBar,
+        itemView: View
+    ): WebView? {
+        val context = context as MessageDetailsActivity
+        // Looks like some devices are not able to create a WebView in some conditions.
+        // Show Toast and redirect to the proper page.
+        val webView = try {
+            WebView(context)
+        } catch (ignored: Throwable) {
+            (context as FragmentActivity).redirectToChrome()
+            return null
+        }
+
+        val webViewClient = MessageDetailsPmWebViewClient(userManager, context, itemView)
+        configureWebView(webView, webViewClient)
+        setUpScrollListener(webView, itemView.messageWebViewContainer)
+
+        webView.invalidate()
+        context.registerForContextMenu(webView)
+        itemView.messageWebViewContainer.removeAllViews()
+        itemView.messageWebViewContainer.addView(webView)
+        itemView.messageWebViewContainer.addView(messageBodyProgress)
+
+        return webView
+    }
+
     class MessageDetailsListItem : ListItem {
-        var message = Message()
-        lateinit var messageWebView: WebView
+
+        var message: Message
+        var messageFormattedHtml: String? = null
+        var showLoadEmbeddedImagesButton: Boolean = false
 
         constructor(messageData: Message) : super(TYPE_HEADER) {
             message = messageData
         }
 
-        constructor() : super(TYPE_ITEM)
-
-        fun isInit(): Boolean = ::messageWebView.isInitialized
+        constructor(message: Message, content: String?) : super(TYPE_ITEM) {
+            this.message = message
+            this.messageFormattedHtml = content
+        }
     }
 
     inner class HeaderViewHolder(
         view: View
     ) : ExpandableRecyclerAdapter<MessageDetailsListItem>.HeaderViewHolder(view) {
 
-        fun bind(position: Int, message: Message) {
+        fun bind(message: Message) {
             val messageDetailsHeaderView = itemView.headerView
             messageDetailsHeaderView.bind(message, allLabelsList ?: listOf(), nonInclusiveLabelsList)
         }
@@ -153,9 +177,8 @@ internal class MessageDetailsAdapter(
 
     open inner class ItemViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.ViewHolder(view) {
 
-        fun bind(position: Int, message: Message) {
-            val context = context as MessageDetailsActivity
-            val messageBodyProgress = ProgressBar(context)
+        fun bind(position: Int, listItem: MessageDetailsListItem) {
+            val message = listItem.message
             val attachmentsView = itemView.attachmentsView
             attachmentsView.visibility = View.GONE
 
@@ -163,33 +186,30 @@ internal class MessageDetailsAdapter(
             val displayRemoteContentButton = itemView.displayRemoteContentButton
             val loadEmbeddedImagesContainer = itemView.containerLoadEmbeddedImagesContainer
 
-            val webView = setupMessageWebView(messageBodyProgress, position) ?: return
             expirationInfoView.bind(message.expirationTime)
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
 
-            viewModel.loadMessageBody(message).mapLatest { loadedMessage ->
-                Timber.v("Load data for message: ${loadedMessage.messageId} at position $position")
+            Timber.v("Load data for message: ${message.messageId} at position $position")
+            if (listItem.messageFormattedHtml == null) {
+                onLoadMessage(message)
+            }
 
-                val parsedBody = viewModel.getParsedMessage(
-                    loadedMessage.decryptedHTML,
-                    UiUtil.getRenderWidth(context.windowManager),
-                    AppUtil.readTxt(context, R.raw.editor),
-                    context.getString(R.string.request_timeout)
-                )
+            val webView = itemView.messageWebViewContainer.getChildAt(0) as? WebView ?: return
+            val messageBodyProgress = itemView.messageWebViewContainer.getChildAt(1) as? ProgressBar ?: return
+            webView.loadDataWithBaseURL(
+                Constants.DUMMY_URL_PREFIX,
+                listItem.messageFormattedHtml ?: "",
+                "text/html",
+                HTTP.UTF_8,
+                ""
+            )
 
-                webView.loadDataWithBaseURL(
-                    Constants.DUMMY_URL_PREFIX,
-                    parsedBody!!,
-                    "text/html",
-                    UTF_8,
-                    ""
-                )
+            listItem.messageFormattedHtml?.let {
                 messageBodyProgress.visibility = View.INVISIBLE
-
-                displayAttachmentInfo(loadedMessage.attachments, attachmentsView)
-                showLoadEmbeddedImagesButton(loadEmbeddedImagesContainer, message)
-                setUpViewDividers()
-            }.launchIn(context.lifecycleScope)
+            }
+            displayAttachmentInfo(listItem.message.attachments, attachmentsView)
+            loadEmbeddedImagesContainer.isVisible = listItem.showLoadEmbeddedImagesButton
+            setUpViewDividers()
 
             setupMessageContentActions(position, loadEmbeddedImagesContainer, displayRemoteContentButton)
         }
@@ -206,43 +226,16 @@ internal class MessageDetailsAdapter(
 
             displayRemoteContentButton.setOnClickListener {
                 val item = visibleItems!![position]
+                val webView = itemView.messageWebViewContainer.getChildAt(0) as? WebView
                 // isInit will prevent clicking the button before the WebView is ready.
                 // WebView init can take a bit longer.
-                if (item.isInit() && item.messageWebView.contentHeight > 0) {
+                if (webView != null && webView.contentHeight > 0) {
                     itemView.displayRemoteContentButton.visibility = View.GONE
-                    (item.messageWebView.webViewClient as MessageDetailsPmWebViewClient).allowLoadingRemoteResources()
-                    item.messageWebView.reload()
+                    (webView.webViewClient as MessageDetailsPmWebViewClient).allowLoadingRemoteResources()
+                    webView.reload()
                     onDisplayRemoteContentClicked?.invoke(item.message)
                 }
             }
-        }
-
-        private fun setupMessageWebView(
-            messageBodyProgress: ProgressBar,
-            position: Int
-        ): WebView? {
-            val context = context as MessageDetailsActivity
-            // Looks like some devices are not able to create a WebView in some conditions.
-            // Show Toast and redirect to the proper page.
-            val webView = try {
-                WebView(context)
-            } catch (ignored: Throwable) {
-                (context as FragmentActivity).redirectToChrome()
-                return null
-            }
-
-            val webViewClient = MessageDetailsPmWebViewClient(userManager, context, itemView)
-            configureWebView(webView, webViewClient)
-            setUpScrollListener(webView, itemView.messageWebViewContainer)
-
-            webView.invalidate()
-            context.registerForContextMenu(webView)
-            itemView.messageWebViewContainer.removeAllViews()
-            itemView.messageWebViewContainer.addView(webView)
-            itemView.messageWebViewContainer.addView(messageBodyProgress)
-
-            visibleItems!![position].messageWebView = webView
-            return webView
         }
 
         private fun setUpViewDividers() {
@@ -256,12 +249,23 @@ internal class MessageDetailsAdapter(
         }
     }
 
+    fun showMessageBody(parsedBody: String?, messageId: String, showLoadEmbeddedImagesButton: Boolean) {
+        val item: MessageDetailsListItem = visibleItems!!.first {
+            it.ItemType == TYPE_ITEM && it.message.messageId == messageId
+        }
+        item.messageFormattedHtml = parsedBody
+        item.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton
+
+        val changedItemIndex = visibleItems!!.indexOf(item)
+        notifyItemChanged(changedItemIndex, item)
+    }
+
     fun setMessageData(messageData: List<Message>) {
         messages = messageData
         val items = ArrayList<MessageDetailsListItem>()
         messages.forEach { message ->
             items.add(MessageDetailsListItem(message))
-            items.add(MessageDetailsListItem())
+            items.add(MessageDetailsListItem(message, message.decryptedHTML))
         }
         setItems(items)
     }
@@ -291,27 +295,6 @@ internal class MessageDetailsAdapter(
         val touchListener = MessageBodyTouchListener(messageDetailsRecyclerView, mScaleDetector, scaledTouchSlop)
         messageDetailsRecyclerView.setOnTouchListener(touchListener)
         webView.setOnTouchListener(touchListener)
-    }
-
-    private fun showLoadEmbeddedImagesButton(loadEmbeddedImagesContainer: LoadContentButton, message: Message) {
-        val hasEmbeddedImages = viewModel.prepareEmbeddedImages(message)
-        if (!hasEmbeddedImages) {
-            loadEmbeddedImagesContainer.isVisible = false
-            return
-        }
-
-    private fun showLoadEmbeddedImagesButton() {
-        val hasEmbeddedImages = viewModel.prepareEmbeddedImages()
-        if (hasEmbeddedImages) {
-            if (viewModel.isAutoShowEmbeddedImages() || viewModel.isEmbeddedImagesDisplayed()) {
-                viewModel.displayEmbeddedImages()
-                displayLoadEmbeddedImagesContainer(View.GONE)
-            } else {
-                displayLoadEmbeddedImagesContainer(View.VISIBLE)
-            }
-        } else {
-            displayLoadEmbeddedImagesContainer(View.GONE)
-        }
     }
 
     private fun displayAttachmentInfo(attachments: List<Attachment>?, attachmentsView: MessageDetailsAttachmentsView) {
