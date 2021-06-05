@@ -44,6 +44,9 @@ class SettingsActivity : BaseSettingsActivity() {
             actionBar.setTitle(R.string.settings)
         }
 
+        val elevation = resources.getDimensionPixelSize(R.dimen.action_bar_elevation).toFloat()
+        actionBar?.elevation = elevation
+
         mSnackLayout = findViewById(R.id.layout_no_connectivity_info)
 
         setUpSettingsItems(R.raw.settings_structure)
@@ -74,7 +77,6 @@ class SettingsActivity : BaseSettingsActivity() {
         val appLanguage = sharedPreferences!!.getString(PREF_CUSTOM_APP_LANGUAGE, "")
         if (appLanguage.isNullOrEmpty()) {
             setValue(SettingsEnum.APP_LANGUAGE, getString(R.string.auto_detect))
-
         } else {
             for (i in languageLabels.indices) {
                 if (languageValues[i] == appLanguage) {
@@ -89,10 +91,15 @@ class SettingsActivity : BaseSettingsActivity() {
         setValue(SettingsEnum.AUTO_LOCK, autoLockSettingValue)
 
         val allowSecureConnectionsViaThirdPartiesSettingValue =
-            if (legacyUser.allowSecureConnectionsViaThirdParties) getString(R.string.allowed) else getString(R.string.denied)
+            if (legacyUser.allowSecureConnectionsViaThirdParties) getString(R.string.allowed) else getString(
+                R.string.denied
+            )
         setValue(SettingsEnum.CONNECTIONS_VIA_THIRD_PARTIES, allowSecureConnectionsViaThirdPartiesSettingValue)
 
-        setValue(SettingsEnum.COMBINED_CONTACTS, if (legacyUser.combinedContacts) getString(R.string.enabled) else getString(R.string.disabled))
+        setValue(
+            SettingsEnum.COMBINED_CONTACTS,
+            if (legacyUser.combinedContacts) getString(R.string.enabled) else getString(R.string.disabled)
+        )
 
         setValue(
             SettingsEnum.APP_VERSION,

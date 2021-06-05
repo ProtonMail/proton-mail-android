@@ -46,7 +46,6 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_edit_settings_item.*
 import me.proton.core.util.android.sharedpreferences.set
-import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 
 // region constants
@@ -87,14 +86,14 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
+        val elevation = resources.getDimensionPixelSize(R.dimen.action_bar_elevation).toFloat()
+        actionBar?.elevation = elevation
+
         settingsItemType = intent.getSerializableExtra(EXTRA_SETTINGS_ITEM_TYPE) as SettingsItem
         settingsItemValue = intent.getStringExtra(EXTRA_SETTINGS_ITEM_VALUE)
 
         mSnackLayout = findViewById(R.id.layout_no_connectivity_info)
 
-        val oldSettings = arrayOf(SettingsItem.AUTO_DOWNLOAD_MESSAGES, SettingsItem.BACKGROUND_SYNC)
-
-        if (settingsItemType !in oldSettings) {
             val jsonSettingsListResponse =
                 resources.openRawResource(R.raw.edit_settings_structure).bufferedReader().use { it.readText() }
 
@@ -102,7 +101,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
             val settingsUiList =
                 gson.fromJson(jsonSettingsListResponse, Array<Array<SettingsItemUiModel>>::class.java).asList()
             setUpSettingsItems(settingsUiList[settingsItemType.ordinal].asList())
-        }
 
         renderViews()
 
@@ -110,7 +108,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
             actionBar.setTitle(actionBarTitle)
         }
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -166,7 +163,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     setValue(SettingsEnum.SIGNATURE, currentSignature)
                 }
                 setEnabled(SettingsEnum.SIGNATURE, legacyUser.isShowSignature)
-
 
                 val currentMobileSignature = legacyUser.mobileSignature
                 if (!currentMobileSignature.isNullOrEmpty()) {
@@ -240,8 +236,9 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
                 setToggleListener(SettingsEnum.LINK_CONFIRMATION) { view: View, isChecked: Boolean ->
                     val prefs = checkNotNull(sharedPreferences)
-                    if (view.isPressed && isChecked != prefs.getBoolean(PREF_HYPERLINK_CONFIRM, true))
+                    if (view.isPressed && isChecked != prefs.getBoolean(PREF_HYPERLINK_CONFIRM, true)) {
                         prefs[PREF_HYPERLINK_CONFIRM] = isChecked
+                    }
                 }
 
                 setEnabled(SettingsEnum.PREVENT_SCREENSHOTS, legacyUser.isPreventTakingScreenshots)
@@ -284,45 +281,58 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     }
                 }
 
-
                 actionBarTitle = R.string.privacy
             }
             SettingsItem.AUTO_DOWNLOAD_MESSAGES -> {
-                settingsRecyclerViewParent.visibility = View.GONE
-                featureTitle.text = getString(R.string.auto_download_messages_title)
-                enableFeatureSwitch.isChecked = legacyUser.isGcmDownloadMessageDetails
 
-                enableFeatureSwitch.setOnCheckedChangeListener { view, isChecked ->
+                setValue(
+                    SettingsEnum.AUTO_DOWNLOAD_MESSAGES,
+                    getString(R.string.auto_download_messages_subtitle)
+                )
+                setEnabled(SettingsEnum.AUTO_DOWNLOAD_MESSAGES, legacyUser.isGcmDownloadMessageDetails)
 
-                    val gcmDownloadDetailsChanged = legacyUser.isGcmDownloadMessageDetails != isChecked
-                    if (view.isPressed && gcmDownloadDetailsChanged) {
+                setToggleListener(SettingsEnum.AUTO_DOWNLOAD_MESSAGES) { _: View, isChecked: Boolean ->
+                    if (isChecked != legacyUser.isGcmDownloadMessageDetails) {
                         legacyUser.isGcmDownloadMessageDetails = isChecked
                     }
                 }
-                descriptionParent.visibility = View.VISIBLE
-                description.text = getString(R.string.auto_download_messages_subtitle)
+
                 actionBarTitle = R.string.auto_download_messages_title
             }
             SettingsItem.BACKGROUND_SYNC -> {
-                settingsRecyclerViewParent.visibility = View.GONE
-                featureTitle.text = getString(R.string.settings_background_sync)
-                enableFeatureSwitch.isChecked = legacyUser.isBackgroundSync
 
-                enableFeatureSwitch.setOnCheckedChangeListener { view, isChecked ->
+                setValue(
+                    SettingsEnum.BACKGROUND_SYNC,
+                    getString(R.string.background_sync_subtitle)
+                )
+                setEnabled(SettingsEnum.BACKGROUND_SYNC, legacyUser.isBackgroundSync)
 
-                    if (view.isPressed && isChecked != legacyUser.isBackgroundSync) {
+                setToggleListener(SettingsEnum.BACKGROUND_SYNC) { _: View, isChecked: Boolean ->
+                    if (isChecked != legacyUser.isBackgroundSync) {
                         legacyUser.isBackgroundSync = isChecked
-                        if (legacyUser.isBackgroundSync) {
-                            val alarmReceiver = AlarmReceiver()
-                            alarmReceiver.setAlarm(ProtonMailApplication.getApplication())
-
-                        }
                     }
                 }
 
-                descriptionParent.visibility = View.VISIBLE
-                description.text = getString(R.string.background_sync_subtitle)
                 actionBarTitle = R.string.settings_background_sync
+
+//                settingsRecyclerViewParent.visibility = View.GONE
+//                featureTitle.text = getString(R.string.settings_background_sync)
+//                enableFeatureSwitch.isChecked = legacyUser.isBackgroundSync
+//
+//                enableFeatureSwitch.setOnCheckedChangeListener { view, isChecked ->
+//
+//                    if (view.isPressed && isChecked != legacyUser.isBackgroundSync) {
+//                        legacyUser.isBackgroundSync = isChecked
+//                        if (legacyUser.isBackgroundSync) {
+//                            val alarmReceiver = AlarmReceiver()
+//                            alarmReceiver.setAlarm(ProtonMailApplication.getApplication())
+//                        }
+//                    }
+//                }
+//
+//                descriptionParent.visibility = View.VISIBLE
+//                description.text = getString(R.string.background_sync_subtitle)
+//                actionBarTitle = R.string.settings_background_sync
             }
             SettingsItem.SWIPE -> {
                 val mailSettings = checkNotNull(userManager.getCurrentUserMailSettingsBlocking())

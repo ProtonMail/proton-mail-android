@@ -131,5 +131,23 @@
       "setting_hasValue": true,
       "setting_type": "toggle"
     }
+  ],
+  [
+    {
+      "setting_id": "auto_download_messages",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "toggle"
+    }
+  ],
+  [
+    {
+      "setting_id": "background_sync",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "toggle"
+    }
   ]
 ]
