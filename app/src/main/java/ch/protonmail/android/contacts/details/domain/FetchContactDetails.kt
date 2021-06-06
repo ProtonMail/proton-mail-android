@@ -19,26 +19,21 @@
 
 package ch.protonmail.android.contacts.details.domain
 
-import android.database.sqlite.SQLiteBlobTooBigException
-import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
 import ch.protonmail.android.data.local.model.FullContactDetails
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import me.proton.core.util.kotlin.DispatcherProvider
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import javax.inject.Inject
 
 class FetchContactDetails @Inject constructor(
     private val repository: ContactDetailsRepository,
-    private val api: ProtonMailApiManager,
-    private val mapper: FetchContactsMapper,
-    private val dispatchers: DispatcherProvider
+    private val mapper: FetchContactsMapper
 ) {
 
-    operator fun invoke(contactId: String): Flow<FetchContactDetailsResult> = flow {
+    operator fun invoke(contactId: String): Flow<FetchContactDetailsResult> {
 
         if (contactId.isBlank()) {
             throw IllegalArgumentException("Cannot fetch contact with an empty id")
@@ -46,32 +41,14 @@ class FetchContactDetails @Inject constructor(
 
         Timber.v("Fetching contact data for $contactId")
 
-        // fetch existing data from the DB
-        val fullContact = try {
-            repository.getFullContactDetails(contactId)
-        } catch (tooBigException: SQLiteBlobTooBigException) {
-            Timber.i(tooBigException, "Data too big to be fetched")
-            null
-        }
-        fullContact?.let { fullDetailsFromDb ->
-            val parsedContact = parseContactDetails(fullDetailsFromDb)
-            Timber.v("Fetched existing Contacts Details $parsedContact")
-            if (parsedContact != null) {
-                emit(parsedContact)
+        return repository.observeFullContactDetails(contactId)
+            .map { fullContact ->
+                val parsedContact = parseContactDetails(fullContact)
+                Timber.v("Fetched existing Contacts Details $parsedContact")
+                parsedContact
             }
-        }
-
-        // fetch data from the server (refresh)
-        val response = api.fetchContactDetails(contactId)
-        val fetchedContact = response.contact
-        repository.insertFullContactDetails(fetchedContact)
-        val parsedContact = parseContactDetails(fetchedContact)
-        Timber.v("Fetched new Contact Details $parsedContact")
-        if (parsedContact != null) {
-            emit(parsedContact)
-        }
+            .filterNotNull()
     }
-        .flowOn(dispatchers.Io)
 
     private fun parseContactDetails(contact: FullContactDetails): FetchContactDetailsResult? =
         mapper.mapEncryptedDataToResult(contact.encryptedData, contact.contactId)

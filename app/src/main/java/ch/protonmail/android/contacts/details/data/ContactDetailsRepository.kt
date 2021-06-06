@@ -18,20 +18,25 @@
  */
 package ch.protonmail.android.contacts.details.data
 
-import android.database.sqlite.SQLiteBlobTooBigException
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.ContactData
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.worker.PostLabelWorker
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
 import io.reactivex.Observable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
@@ -220,14 +225,19 @@ open class ContactDetailsRepository @Inject constructor(
             return@withContext contactDao.saveContactData(contactData)
         }
 
-    suspend fun getFullContactDetails(contactId: String): FullContactDetails? {
-        return try {
-            contactDao.findFullContactDetailsById(contactId)
-        } catch (tooBigException: SQLiteBlobTooBigException) {
-            Timber.e(tooBigException, "Data too big to be fetched")
-            null
-        }
-    }
+    fun observeFullContactDetails(contactId: String): Flow<FullContactDetails> =
+        contactDao.observeFullContactDetailsById(contactId)
+            .distinctUntilChanged()
+            .onEach { savedContacts ->
+                Timber.v("Fetched saved Contact Details $savedContacts")
+                if (savedContacts == null) {
+                    val response = api.fetchContactDetails(contactId)
+                    val fetchedContact = response.contact
+                    Timber.d("Fetched new Contact Details $fetchedContact")
+                    insertFullContactDetails(fetchedContact)
+                }
+            }
+            .filterNotNull()
 
     suspend fun insertFullContactDetails(fullContactDetails: FullContactDetails) =
         contactDao.insertFullContactDetails(fullContactDetails)

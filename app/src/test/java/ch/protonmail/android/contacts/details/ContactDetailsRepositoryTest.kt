@@ -20,11 +20,14 @@
 package ch.protonmail.android.contacts.details
 
 import androidx.work.WorkManager
+import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactData
 import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.FullContactDetails
+import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -34,6 +37,9 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import kotlin.test.Test
@@ -133,4 +139,44 @@ class ContactDetailsRepositoryTest {
             assertEquals(expectedDbId, actualDbId)
         }
     }
+
+    @Test
+    fun verifyObservedContactDetailsAreFetchedFromDbSuccessfullyWhenTheyArePresent() = runBlockingTest {
+        // given
+        val testContactId = "testContactId"
+        val mockContact = mockk<FullContactDetails>()
+        coEvery { contactDao.observeFullContactDetailsById(testContactId) } returns flowOf(mockContact)
+
+        // when
+        repository.observeFullContactDetails(testContactId).test {
+            // then
+            assertEquals(mockContact, expectItem())
+            expectComplete()
+        }
+    }
+
+    @Test
+    fun verifyObservedContactDetailsAreFetchedFromApiWhenTheyAreNotInTheDbAndThenEmittedFromDb() = runBlockingTest {
+        // given
+        val testContactId = "testContactId"
+        val mockContact = mockk<FullContactDetails>()
+        val apiResponse = mockk<FullContactDetailsResponse> {
+            every { contact } returns mockContact
+        }
+        val dbResponseFlow = Channel<FullContactDetails?>()
+        coEvery { contactDao.observeFullContactDetailsById(testContactId) } returns dbResponseFlow.receiveAsFlow()
+        coEvery { apiManager.fetchContactDetails(testContactId) } returns apiResponse
+        coEvery { contactDao.insertFullContactDetails(mockContact) } just Runs
+
+        // when
+        repository.observeFullContactDetails(testContactId).test {
+            dbResponseFlow.send(null)
+
+            // then
+            coVerify { contactDao.insertFullContactDetails(mockContact) }
+            dbResponseFlow.send(mockContact)
+            assertEquals(mockContact, expectItem())
+        }
+    }
+
 }

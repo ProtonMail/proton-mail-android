@@ -425,7 +425,7 @@ interface ContactDao {
     fun findFullContactDetailsByIdBlocking(id: String): FullContactDetails?
 
     @Query("SELECT * FROM $TABLE_FULL_CONTACT_DETAILS WHERE $COLUMN_CONTACT_ID = :id")
-    suspend fun findFullContactDetailsById(id: String): FullContactDetails?
+    fun observeFullContactDetailsById(id: String): Flow<FullContactDetails?>
 
     @Query("DELETE FROM $TABLE_FULL_CONTACT_DETAILS")
     fun clearFullContactDetailsCache()
