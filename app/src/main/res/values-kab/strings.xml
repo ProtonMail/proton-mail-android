@@ -623,7 +623,7 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Rnu Tawlaft</string>
-    <string name="contact_display_name">\ue91c Sken Isem</string>
+    <string name="contact_display_name">Sken Isem</string>
     <string name="add_new_email">\ue914 Rnu Tansa Imayl</string>
     <string name="no_groups">Ulac Igrawen</string>
     <string name="contact_vcard_note">Tazmilt</string>

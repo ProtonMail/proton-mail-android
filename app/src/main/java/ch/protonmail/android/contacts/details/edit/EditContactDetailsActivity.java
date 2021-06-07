@@ -51,11 +51,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.cardview.widget.CardView;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -82,8 +85,7 @@ import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.views.ContactAddressView;
 import ch.protonmail.android.views.ContactBirthdayClickListener;
 import ch.protonmail.android.views.ContactOptionTypeClickListener;
-import ch.protonmail.android.views.CustomFontButton;
-import ch.protonmail.android.views.CustomFontTextView;
+import ch.protonmail.android.views.ListItemThumbnail;
 import ch.protonmail.android.views.VCardLinearLayout;
 import ch.protonmail.android.views.models.LocalContact;
 import ch.protonmail.android.views.models.LocalContactAddress;
@@ -97,7 +99,6 @@ import ezvcard.property.Address;
 import ezvcard.property.Anniversary;
 import ezvcard.property.Birthday;
 import ezvcard.property.Email;
-import ezvcard.property.FormattedName;
 import ezvcard.property.Gender;
 import ezvcard.property.Key;
 import ezvcard.property.Nickname;
@@ -111,6 +112,8 @@ import ezvcard.property.Title;
 import ezvcard.property.Url;
 import ezvcard.util.PartialDate;
 import kotlin.Unit;
+import me.proton.core.presentation.ui.view.ProtonButton;
+import me.proton.core.presentation.ui.view.ProtonInput;
 import timber.log.Timber;
 
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT;
@@ -134,7 +137,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     private static final int REQUEST_CODE_OPEN_CAMERA = 1001;
 
     @BindView(R.id.contact_display_name)
-    EditText mDisplayNameView;
+    ProtonInput mDisplayNameView;
     @BindView(R.id.emailAddressesContainer)
     VCardLinearLayout mEmailAddressesContainer;
     @BindView(R.id.progress_bar)
@@ -152,13 +155,11 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     @BindView(R.id.scroll_parent)
     ScrollView mScrollParentView;
     @BindView(R.id.addPhotoBtn)
-    CustomFontButton addPhotoBtn;
+    ProtonButton addPhotoBtn;
     @BindView(R.id.contactPhoto)
     ImageView contactPhoto;
-    @BindView(R.id.photoCardViewWrapper)
-    CardView photoCardViewWrapper;
     @BindView(R.id.contactInitials)
-    CustomFontTextView contactInitials;
+    ListItemThumbnail contactInitials;
 
     private LayoutInflater inflater;
     private final AtomicBoolean mSavingInProgress = new AtomicBoolean(false);
@@ -286,7 +287,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 Uri contentURI = data.getData();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                    photoCardViewWrapper.setVisibility(View.VISIBLE);
+                    contactPhoto.setVisibility(View.VISIBLE);
                     contactInitials.setVisibility(View.GONE);
                     // resize bitmap to prevent problems with too big images
                     contactPhoto.setImageBitmap(resizeBitmap(bitmap));
@@ -298,7 +299,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
 
         } else if (requestCode == REQUEST_CODE_OPEN_CAMERA) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            photoCardViewWrapper.setVisibility(View.VISIBLE);
+            contactPhoto.setVisibility(View.VISIBLE);
             contactInitials.setVisibility(View.GONE);
             contactPhoto.setImageBitmap(resizeBitmap(thumbnail));
         }
@@ -600,12 +601,9 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             View view = createEmailAddressView(emailType, emailUIType, email.getValue());
             view.setTag(email.getGroup());
         }
-        FormattedName formattedName = vCard.getFormattedName();
-        if (formattedName != null && !TextUtils.isEmpty(formattedName.getValue())) {
-            mDisplayNameView.setText(formattedName.getValue());
-            contactInitials.setText(UiUtil.extractInitials(formattedName.getValue()));
+        if (vCard.getFormattedName() != null) {
+            mDisplayNameView.setText(vCard.getFormattedName().getValue());
         }
-
         return vCardEmails.size() > 0;
     }
 
@@ -918,13 +916,13 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         viewModel.getSetupConvertContactFlow().observe(this, setupConvertContactObserver);
         viewModel.getProfilePicture().observe(this, observer -> {
             observer.doOnData(bitmap -> {
-                photoCardViewWrapper.setVisibility(View.VISIBLE);
                 contactInitials.setVisibility(View.GONE);
-                contactPhoto.setImageBitmap(bitmap);
+                contactPhoto.setImageDrawable(getRoundedDrawable(bitmap));
+                contactPhoto.setVisibility(View.VISIBLE);
                 return Unit.INSTANCE;
             });
             observer.doOnError(error -> {
-                photoCardViewWrapper.setVisibility(View.GONE);
+                contactPhoto.setVisibility(View.GONE);
                 contactInitials.setVisibility(View.VISIBLE);
                 TextExtensions.showToast(this, error);
                 return Unit.INSTANCE;
@@ -933,6 +931,14 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             return Unit.INSTANCE;
         });
         viewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
+    }
+
+    @NotNull
+    private RoundedBitmapDrawable getRoundedDrawable(Bitmap bitmap) {
+        RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+        roundedDrawable.setAntiAlias(true);
+        roundedDrawable.setCornerRadius(getResources().getDimensionPixelSize(R.dimen.avatar_size) / 2f);
+        return roundedDrawable;
     }
 
     private Observer setupNewContactObserver = (Observer<String>) email -> {
@@ -987,13 +993,13 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         List<RawProperty> vCardCustomFields = viewModel.getExtendedPropertiesType3();
 
         if (vCardPhotos != null && vCardPhotos.size() > 0) {
-            photoCardViewWrapper.setVisibility(View.VISIBLE);
+            contactPhoto.setVisibility(View.VISIBLE);
             contactInitials.setVisibility(View.GONE);
             if (vCardPhotos.get(0).getData() != null) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(vCardPhotos.get(0).getData(), 0, vCardPhotos.get(0).getData().length);
-                contactPhoto.setImageBitmap(bmp);
+                contactPhoto.setImageDrawable(getRoundedDrawable(bmp));
             } else if (!vCardPhotos.get(0).getUrl().isEmpty()) {
-                photoCardViewWrapper.setVisibility(View.GONE);
+                contactPhoto.setVisibility(View.GONE);
                 contactInitials.setVisibility(View.VISIBLE);
                 if (mNetworkUtil.isConnected()) {
                     viewModel.getBitmapFromURL(vCardPhotos.get(0).getUrl());
@@ -1124,7 +1130,11 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         getSupportActionBar().setTitle(R.string.convert_contact);
         LocalContact localContact = viewModel.getLocalContact();
         mDisplayNameView.setText(localContact.getName());
-        contactInitials.setText(UiUtil.extractInitials(localContact.getName()));
+        contactInitials.bind(
+                false,
+                false,
+                UiUtil.extractInitials(localContact.getName()),
+                null);
 
         List<String> emails = localContact.getEmails();
         List<String> phones = localContact.getPhones();

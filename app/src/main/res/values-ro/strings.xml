@@ -631,7 +631,7 @@
     <string name="title_activity_contact_group_details">Detalii activitate grupuri contacte</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Adăugare fotografie</string>
-    <string name="contact_display_name">\ue91c Nume afișat</string>
+    <string name="contact_display_name">Nume afișat</string>
     <string name="add_new_email">\ue914 Adăugare e-mail</string>
     <string name="no_groups">Lipsă grupuri</string>
     <string name="contact_vcard_note">Notă</string>

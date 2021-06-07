@@ -620,7 +620,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Foto hinzufügen</string>
-    <string name="contact_display_name">\ue91c Name anzeigen</string>
+    <string name="contact_display_name">Name anzeigen</string>
     <string name="add_new_email">\ue914 E-Mail-Adresse hinzufügen</string>
     <string name="no_groups">Keine Gruppen</string>
     <string name="contact_vcard_note">Notiz</string>

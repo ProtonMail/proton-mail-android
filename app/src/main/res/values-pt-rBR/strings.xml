@@ -623,7 +623,7 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Adicionar foto</string>
-    <string name="contact_display_name">\ue91c Nome de exibição</string>
+    <string name="contact_display_name">Nome de exibição</string>
     <string name="add_new_email">\ue914 Adicionar endereço de e-mail</string>
     <string name="no_groups">Sem grupos</string>
     <string name="contact_vcard_note">Nota</string>

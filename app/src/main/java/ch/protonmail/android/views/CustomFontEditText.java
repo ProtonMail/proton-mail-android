@@ -28,10 +28,7 @@ import ch.protonmail.android.R;
 
 import static ch.protonmail.android.core.Constants.FONTS_FOLDER;
 
-/**
- * Created by dkadrikj on 12/6/15.
- */
-
+@Deprecated // replaced with ProtonInput
 public class CustomFontEditText extends androidx.appcompat.widget.AppCompatEditText {
 
     public CustomFontEditText(Context context, AttributeSet attrs) {

@@ -620,7 +620,7 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Fotoğraf ekle</string>
-    <string name="contact_display_name">\ue91c Görünen ad</string>
+    <string name="contact_display_name">Görünen ad</string>
     <string name="add_new_email">\ue914 E-posta adresi ekle</string>
     <string name="no_groups">Grup yok</string>
     <string name="contact_vcard_note">Not</string>

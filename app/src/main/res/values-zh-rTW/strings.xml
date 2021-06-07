@@ -612,7 +612,7 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">新增照片</string>
-    <string name="contact_display_name">\ue91c 顯示名稱</string>
+    <string name="contact_display_name">顯示名稱</string>
     <string name="add_new_email">\ue914 新增電子郵件地址</string>
     <string name="no_groups">沒有群組</string>
     <string name="contact_vcard_note">備註</string>

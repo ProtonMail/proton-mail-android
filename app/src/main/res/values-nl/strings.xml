@@ -623,7 +623,7 @@
     <string name="title_activity_contact_group_details">Activiteit van contactgroepen</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Foto toevoegen</string>
-    <string name="contact_display_name">\ue91c Weergavenaam</string>
+    <string name="contact_display_name">Weergavenaam</string>
     <string name="add_new_email">\ue914 E-mailadres toevoegen</string>
     <string name="no_groups">Geen groepen</string>
     <string name="contact_vcard_note">Opmerking</string>

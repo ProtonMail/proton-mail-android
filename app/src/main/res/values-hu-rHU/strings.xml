@@ -624,7 +624,7 @@ Svájci székhellyel</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Fénykép hozzáadása</string>
-    <string name="contact_display_name">\ue91c Megjelenített név</string>
+    <string name="contact_display_name">Megjelenített név</string>
     <string name="add_new_email">\ue914 Email cím hozzáadása</string>
     <string name="no_groups">Nincs csoport</string>
     <string name="contact_vcard_note">Megjegyzés</string>
