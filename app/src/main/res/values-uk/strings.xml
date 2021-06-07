@@ -413,7 +413,7 @@
         <item>Безплатний</item>
         <item>Plus</item>
         <item>Visionary</item>
-        <item>Професійний</item>
+        <item>Professional</item>
     </string-array>
     <plurals name="custom_domains">
         <item quantity="one">Використовуйте свій власний домен (наприклад: petro@shevchenko.com)</item>
