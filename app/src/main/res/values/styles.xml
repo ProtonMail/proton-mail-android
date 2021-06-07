@@ -218,7 +218,7 @@
     </style>
 
     <style name="MessagePrimaryText">
-        <item name="android:textColor">@color/rain_gray</item>
+        <item name="android:textColor">@color/text_norm</item>
         <item name="android:textSize">@dimen/h4</item>
         <item name="android:textStyle">normal</item>
         <item name="android:singleLine">true</item>
@@ -234,7 +234,7 @@
     </style>
 
     <style name="MessageSecondaryText">
-        <item name="android:textColor">@color/iron_gray</item>
+        <item name="android:textColor">@color/text_norm</item>
         <item name="android:textSize">@dimen/h6</item>
         <item name="android:textStyle">normal</item>
         <item name="android:singleLine">true</item>

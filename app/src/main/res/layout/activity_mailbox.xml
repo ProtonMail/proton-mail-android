@@ -23,7 +23,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/background_norm"
     android:fitsSystemWindows="true"
     tools:context=".activities.mailbox.MailboxActivity">
 
@@ -128,6 +128,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:textColor="@color/text_norm"
                         android:text="@string/no_messages" />
 
                 </ScrollView>
