@@ -19,6 +19,12 @@
 <resources>
 
     <!-- region V4 -->
+    <declare-styleable name="AddAttachmentsActionSheetItem">
+        <attr name="itemText" format="string"/>
+        <attr name="itemIcon" format="reference"/>
+        <attr name="itemIconDescription" format="string"/>
+    </declare-styleable>
+
     <declare-styleable name="LabelChipView">
         <attr name="labelColor" format="color" />
     </declare-styleable>

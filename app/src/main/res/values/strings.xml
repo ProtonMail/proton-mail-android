@@ -43,7 +43,14 @@
     <string name="composer_from">From:</string>
     <string name="composer_subject">Subject:</string>
     <string name="composer_to">To:</string>
-    <!-- end region -->
+    <!-- endregion -->
+
+    <!-- region Attachments -->
+    <string name="actionsheet_add_attachments_gallery">Select from your photo library</string>
+    <string name="actionsheet_add_attachments_camera">Take new photo</string>
+    <string name="actionsheet_add_attachments_import">Import from…</string>
+    <string name="actionsheet_add_attachments_import_description">Import file from File Explorer</string>
+    <!-- endregion -->
 
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>

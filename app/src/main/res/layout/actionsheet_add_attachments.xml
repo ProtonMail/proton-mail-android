@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/padding_l"
+    android:paddingBottom="@dimen/padding_5xl"
+    android:orientation="vertical">
+
+    <ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheetItem
+        android:id="@+id/add_attachments_gallery_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:itemText="@string/actionsheet_add_attachments_gallery"
+        app:itemIcon="@drawable/ic_photo"
+        app:itemIconDescription="@string/actionsheet_add_attachments_gallery"/>
+
+    <ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheetItem
+        android:id="@+id/add_attachments_camera_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:itemText="@string/actionsheet_add_attachments_camera"
+        app:itemIcon="@drawable/ic_camera"
+        app:itemIconDescription="@string/actionsheet_add_attachments_camera"/>
+
+    <ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheetItem
+        android:id="@+id/add_attachments_file_explorer_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:itemText="@string/actionsheet_add_attachments_import"
+        app:itemIcon="@drawable/ic_export"
+        app:itemIconDescription="@string/actionsheet_add_attachments_import_description"/>
+
+</LinearLayout>
