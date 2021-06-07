@@ -20,12 +20,15 @@ package ch.protonmail.android.mailbox.data
 
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
+import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRemoteWorker
+import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsUnreadRemoteWorker
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
@@ -38,6 +41,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
@@ -46,6 +50,7 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.DataResult.Error
 import me.proton.core.domain.arch.DataResult.Success
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
 const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
@@ -54,7 +59,9 @@ class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
     private val messageDao: MessageDao,
     private val api: ProtonMailApiManager,
-    private val messageFactory: MessageFactory
+    private val messageFactory: MessageFactory,
+    private val markConversationsReadWorker: MarkConversationsReadRemoteWorker.Enqueuer,
+    private val markConversationsUnreadWorker: MarkConversationsUnreadRemoteWorker.Enqueuer
 ) : ConversationsRepository {
 
     private val paramFlow = MutableSharedFlow<GetConversationsParameters>(replay = 1)
@@ -75,7 +82,6 @@ class ConversationsRepositoryImpl @Inject constructor(
             delete = { key -> conversationDao.deleteConversation(key.conversationId, key.userId.s) }
         )
     ).build()
-
 
     override fun getConversations(params: GetConversationsParameters): Flow<DataResult<List<Conversation>>> {
         loadMore(params)
@@ -122,6 +128,37 @@ class ConversationsRepositoryImpl @Inject constructor(
 
     override fun clearConversations() = conversationDao.clear()
 
+    override suspend fun markRead(conversationIds: List<String>) {
+        markConversationsReadWorker.enqueue(conversationIds)
+
+        conversationIds.forEach { conversationId ->
+            conversationDao.updateNumUnreadMessages(0, conversationId)
+            // All the messages from the conversation are marked as read
+            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+                messageDao.saveMessage(message.apply { setIsRead(true) })
+            }
+        }
+    }
+
+    override suspend fun markUnread(
+        conversationIds: List<String>,
+        userId: UserId,
+        location: Constants.MessageLocationType
+    ) {
+        markConversationsUnreadWorker.enqueue(conversationIds)
+
+        conversationIds.forEach forEachConversation@{ conversationId ->
+            val conversation = conversationDao.getConversation(conversationId, userId.id).first()
+            conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
+            // Only the latest message from the current location is marked as unread
+            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+                if (Constants.MessageLocationType.fromInt(message.location) == location) {
+                    messageDao.saveMessage(message.apply { setIsRead(false) })
+                    return@forEachConversation
+                }
+            }
+        }
+    }
 
     private fun getConversationsLocal(params: GetConversationsParameters): Flow<List<Conversation>> =
         conversationDao.getConversations(params.userId.s).map { list ->
@@ -139,5 +176,4 @@ class ConversationsRepositoryImpl @Inject constructor(
         }
 
     private data class ConversationStoreKey(val conversationId: String, val userId: Id)
-
 }

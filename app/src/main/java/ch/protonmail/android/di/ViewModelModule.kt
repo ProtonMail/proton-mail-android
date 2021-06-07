@@ -35,6 +35,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.mailbox.domain.GetConversations
+import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
@@ -104,7 +105,8 @@ internal class ViewModelModule {
         networkConfigurator: NetworkConfigurator,
         messageServiceScheduler: MessagesService.Scheduler,
         conversationModeEnabled: ConversationModeEnabled,
-        getConversations: GetConversations
+        getConversations: GetConversations,
+        changeConversationsReadStatus: ChangeConversationsReadStatus
     ) = MailboxViewModel(
         messageDetailsRepository,
         userManager,
@@ -117,6 +119,7 @@ internal class ViewModelModule {
         networkConfigurator,
         messageServiceScheduler,
         conversationModeEnabled,
-        getConversations
+        getConversations,
+        changeConversationsReadStatus
     )
 }

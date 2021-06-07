@@ -17,23 +17,23 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.ui.actionsheet
+package ch.protonmail.android.mailbox.data.remote.model
 
-import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import com.google.gson.annotations.SerializedName
+
+private const val CODE = "Code"
+private const val RESPONSES = "Responses"
+private const val UNDO_TOKEN = "UndoToken"
 
 /**
- * Contains types of actions executed from message action sheet.
+ * A model for the response body returned when we do one of the following conversation actions:
+ * mark read, mark unread, delete, label, unlabel or move
  */
-sealed class MessageActionSheetAction {
-
-    object Default : MessageActionSheetAction()
-    data class ShowLabelsManager(
-        val messageIds: List<String>,
-        val currentFolderLocationId: Int,
-        val labelActionSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL
-    ) : MessageActionSheetAction()
-
-    data class ShowMessageHeaders(val messageHeaders: String) : MessageActionSheetAction()
-
-    data class ChangeReadStatus(val readStatus: Boolean) : MessageActionSheetAction()
-}
+data class ConversationsActionResponses(
+    @SerializedName(CODE)
+    val code: Int,
+    @SerializedName(RESPONSES)
+    val responses: List<ConversationsActionResponse>,
+    @SerializedName(UNDO_TOKEN)
+    val undoToken: UndoTokenApiModel?
+)

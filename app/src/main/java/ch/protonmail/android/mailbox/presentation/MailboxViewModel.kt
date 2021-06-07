@@ -57,6 +57,7 @@ import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetConversationsResult
+import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
@@ -101,7 +102,8 @@ class MailboxViewModel @Inject constructor(
     networkConfigurator: NetworkConfigurator,
     private val messageServiceScheduler: MessagesService.Scheduler,
     private val conversationModeEnabled: ConversationModeEnabled,
-    private val getConversations: GetConversations
+    private val getConversations: GetConversations,
+    private val changeConversationsReadStatus: ChangeConversationsReadStatus
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -539,9 +541,35 @@ class MailboxViewModel @Inject constructor(
             LabelChipUiModel(Id(label.id), Name(label.name), labelColor)
         }
 
-    fun markRead(messageIds: List<String>) = messageDetailsRepository.markRead(messageIds)
+    fun markRead(ids: List<String>, userId: UserId, location: Constants.MessageLocationType) {
+        if (conversationModeEnabled(location)) {
+            viewModelScope.launch {
+                changeConversationsReadStatus(
+                    ids,
+                    ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
+                    userId,
+                    location
+                )
+            }
+        } else {
+            messageDetailsRepository.markRead(ids)
+        }
+    }
 
-    fun markUnRead(messageIds: List<String>) = messageDetailsRepository.markUnRead(messageIds)
+    fun markUnRead(ids: List<String>, userId: UserId, location: Constants.MessageLocationType) {
+        if (conversationModeEnabled(location)) {
+            viewModelScope.launch {
+                changeConversationsReadStatus(
+                    ids,
+                    ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
+                    userId,
+                    location
+                )
+            }
+        } else {
+            messageDetailsRepository.markUnRead(ids)
+        }
+    }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)
 }

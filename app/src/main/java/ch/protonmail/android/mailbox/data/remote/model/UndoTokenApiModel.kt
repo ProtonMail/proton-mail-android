@@ -17,23 +17,16 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.ui.actionsheet
+package ch.protonmail.android.mailbox.data.remote.model
 
-import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import com.google.gson.annotations.SerializedName
 
-/**
- * Contains types of actions executed from message action sheet.
- */
-sealed class MessageActionSheetAction {
+private const val TOKEN = "Token"
+private const val VALID_UNTIL = "ValidUntil"
 
-    object Default : MessageActionSheetAction()
-    data class ShowLabelsManager(
-        val messageIds: List<String>,
-        val currentFolderLocationId: Int,
-        val labelActionSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL
-    ) : MessageActionSheetAction()
-
-    data class ShowMessageHeaders(val messageHeaders: String) : MessageActionSheetAction()
-
-    data class ChangeReadStatus(val readStatus: Boolean) : MessageActionSheetAction()
-}
+data class UndoTokenApiModel(
+    @SerializedName(TOKEN)
+    val token: String,
+    @SerializedName(VALID_UNTIL)
+    val validUntil: Long
+)

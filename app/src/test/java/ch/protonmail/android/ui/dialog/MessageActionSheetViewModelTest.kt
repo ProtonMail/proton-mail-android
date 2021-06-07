@@ -23,6 +23,8 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
+import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetAction
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetViewModel
@@ -33,6 +35,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.BeforeTest
@@ -49,6 +52,16 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
     @MockK
     private lateinit var repository: MessageRepository
+
+    @MockK
+    private lateinit var changeConversationsReadStatus: ChangeConversationsReadStatus
+
+    @MockK
+    private lateinit var conversationModeEnabled: ConversationModeEnabled
+
+    @MockK
+    private lateinit var accountManager: AccountManager
+
     private lateinit var viewModel: MessageActionSheetViewModel
 
     @BeforeTest
@@ -57,7 +70,10 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         viewModel = MessageActionSheetViewModel(
             deleteMessage,
             moveMessagesToFolder,
-            repository
+            repository,
+            changeConversationsReadStatus,
+            conversationModeEnabled,
+            accountManager
         )
     }
 

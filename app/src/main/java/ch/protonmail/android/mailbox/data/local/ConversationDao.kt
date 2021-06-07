@@ -23,6 +23,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel.Companion.COLUMN_ID
+import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel.Companion.COLUMN_NUM_UNREAD
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel.Companion.COLUMN_USER_ID
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel.Companion.TABLE_CONVERSATIONS
 import kotlinx.coroutines.flow.Flow
@@ -47,7 +48,6 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
     )
     abstract fun getConversation(conversationId: String, userId: String): Flow<ConversationDatabaseModel>
 
-
     @Query(
         """
             DELETE FROM $TABLE_CONVERSATIONS
@@ -59,5 +59,13 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
 
     @Query("DELETE FROM $TABLE_CONVERSATIONS")
     abstract fun clear()
-}
 
+    @Query(
+        """
+            UPDATE $TABLE_CONVERSATIONS
+            SET $COLUMN_NUM_UNREAD = :numUnreadMessages
+            WHERE $COLUMN_ID = :conversationId
+            """
+    )
+    abstract suspend fun updateNumUnreadMessages(numUnreadMessages: Int, conversationId: String)
+}

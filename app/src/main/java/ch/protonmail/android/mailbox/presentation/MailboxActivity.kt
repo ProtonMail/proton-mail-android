@@ -154,6 +154,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
@@ -1082,8 +1083,8 @@ class MailboxActivity :
                     )
                     mode.finish()
                 }
-            R.id.mark_read -> mailboxViewModel.markRead(messageIds)
-            R.id.mark_unread -> mailboxViewModel.markUnRead(messageIds)
+            R.id.mark_read -> {}
+            R.id.mark_unread -> {}
             R.id.add_star -> job = PostStarJob(messageIds)
             R.id.add_label -> {
             }
@@ -1175,9 +1176,17 @@ class MailboxActivity :
         mailboxActionsView.setOnSecondActionClickListener {
             val messageIds = getSelectedMessageIds()
             if (MessageUtils.areAllUnRead(selectedMessages)) {
-                mailboxViewModel.markRead(messageIds)
+                mailboxViewModel.markRead(
+                    messageIds,
+                    UserId(userManager.requireCurrentUserId().s),
+                    currentMailboxLocation
+                )
             } else {
-                mailboxViewModel.markUnRead(messageIds)
+                mailboxViewModel.markUnRead(
+                    messageIds,
+                    UserId(userManager.requireCurrentUserId().s),
+                    currentMailboxLocation
+                )
             }
             actionMode?.finish()
         }

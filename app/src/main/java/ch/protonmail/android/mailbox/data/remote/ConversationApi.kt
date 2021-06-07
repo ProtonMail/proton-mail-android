@@ -21,6 +21,7 @@ package ch.protonmail.android.mailbox.data.remote
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 
 class ConversationApi(private val service: ConversationService) : BaseApi(), ConversationApiSpec {
@@ -37,4 +38,12 @@ class ConversationApi(private val service: ConversationService) : BaseApi(), Con
         conversationId: String,
         userId: Id
     ) = service.fetchConversation(conversationId, userIdTag = UserIdTag(userId))
+
+    override suspend fun markConversationsRead(
+        conversationIds: ConversationIdsRequestBody
+    ) = service.markConversationsRead(conversationIds)
+
+    override suspend fun markConversationsUnread(
+        conversationIds: ConversationIdsRequestBody
+    ) = service.markConversationsUnread(conversationIds)
 }

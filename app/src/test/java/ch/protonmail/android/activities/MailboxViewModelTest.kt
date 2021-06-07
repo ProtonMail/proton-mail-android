@@ -47,6 +47,7 @@ import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetConversationsResult
+import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
@@ -127,6 +128,9 @@ class MailboxViewModelTest : CoroutinesTest {
     @RelaxedMockK
     private lateinit var getConversations: GetConversations
 
+    @RelaxedMockK
+    private lateinit var changeConversationsReadStatus: ChangeConversationsReadStatus
+
     private lateinit var viewModel: MailboxViewModel
 
     private val currentUserId = Id("8237462347237428")
@@ -146,7 +150,8 @@ class MailboxViewModelTest : CoroutinesTest {
             networkConfigurator,
             messageServiceScheduler,
             conversationModeEnabled,
-            getConversations
+            getConversations,
+            changeConversationsReadStatus
         )
 
         val jobEntryPoint = mockk<JobEntryPoint>()
