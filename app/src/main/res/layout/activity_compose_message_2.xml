@@ -288,8 +288,9 @@
                 android:textAppearance="@style/Proton.Text.Default.Weak"
                 android:hint="@string/composer_subject"
                 android:imeOptions="actionNext"
-                android:inputType="textCapSentences"
-                android:minHeight="@dimen/height_composer_field" />
+                android:inputType="textCapSentences|textMultiLine"
+                android:minHeight="@dimen/height_composer_field"
+                tools:text="very very long subject that will never fits in a single line"/>
 
             <View
                 android:id="@+id/composer_body_top_divider"

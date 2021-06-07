@@ -1,0 +1,93 @@
+<!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding_l">
+
+    <!-- Initial -->
+    <TextView
+        android:id="@+id/contact_initials_text_view"
+        android:layout_width="@dimen/size_contact_icon"
+        android:layout_height="@dimen/size_contact_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/shape_oval"
+        android:textAppearance="@style/Proton.Text.DefaultSmall"
+        android:gravity="center"
+        android:maxLines="1"
+        tools:text="PM"
+        android:visibility="invisible"/>
+
+    <!-- Group Icon -->
+    <ImageView
+        android:id="@+id/contact_group_icon_image_view"
+        android:layout_width="@dimen/size_contact_icon"
+        android:layout_height="@dimen/size_contact_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/shape_oval"
+        android:visibility="visible"
+        android:padding="@dimen/padding_contact_group_icon"
+        app:srcCompat="@drawable/ic_contact_groups" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/contact_text_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="contact_initials_text_view, contact_group_icon_image_view"
+        app:barrierMargin="@dimen/padding_l"
+        app:barrierDirection="end"/>
+
+    <!-- Name -->
+    <TextView
+        android:id="@+id/contact_name_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/contact_text_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/contact_email_text_view"
+        android:textAppearance="@style/Proton.Text.Default"
+        android:maxLines="1"
+        android:ellipsize="end"
+        tools:text="ProtonMail user"/>
+
+    <!-- email -->
+    <TextView
+        android:id="@+id/contact_email_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/contact_text_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/contact_name_text_view"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:textAppearance="@style/Proton.Text.DefaultSmall.Weak"
+        android:maxLines="1"
+        android:ellipsize="end"
+        tools:text="user@protonmail.com"
+        tools:visibility="visible"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

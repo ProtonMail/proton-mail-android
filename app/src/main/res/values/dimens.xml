@@ -107,6 +107,11 @@
     <dimen name="height_composer_field">48dp</dimen>
     <dimen name="padding_composer_body">20dp</dimen>
 
+    <!-- Contact -->
+    <dimen name="height_contact_entry">68dp</dimen>
+    <dimen name="size_contact_icon">40dp</dimen>
+    <dimen name="padding_contact_group_icon">10dp</dimen>
+
     <!-- endregion -->
 
     <!-- region V3 -->
