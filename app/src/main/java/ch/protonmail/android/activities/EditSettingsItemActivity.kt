@@ -30,10 +30,7 @@ import androidx.core.view.children
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
-import ch.protonmail.android.adapters.swipe.SwipeAction
-import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants.Prefs.PREF_HYPERLINK_CONFIRM
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -73,7 +70,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
     }
     private var settingsItemType: SettingsItem = SettingsItem.DISPLAY_NAME_AND_SIGNATURE
     private var settingsItemValue: String? = null
-    private var title: String? = null
     private var actionBarTitle: Int = -1
     private var initializedRemote = false
     private var initializedEmbedded = false
@@ -314,37 +310,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 }
 
                 actionBarTitle = R.string.settings_background_sync
-
-//                settingsRecyclerViewParent.visibility = View.GONE
-//                featureTitle.text = getString(R.string.settings_background_sync)
-//                enableFeatureSwitch.isChecked = legacyUser.isBackgroundSync
-//
-//                enableFeatureSwitch.setOnCheckedChangeListener { view, isChecked ->
-//
-//                    if (view.isPressed && isChecked != legacyUser.isBackgroundSync) {
-//                        legacyUser.isBackgroundSync = isChecked
-//                        if (legacyUser.isBackgroundSync) {
-//                            val alarmReceiver = AlarmReceiver()
-//                            alarmReceiver.setAlarm(ProtonMailApplication.getApplication())
-//                        }
-//                    }
-//                }
-//
-//                descriptionParent.visibility = View.VISIBLE
-//                description.text = getString(R.string.background_sync_subtitle)
-//                actionBarTitle = R.string.settings_background_sync
-            }
-            SettingsItem.SWIPE -> {
-                val mailSettings = checkNotNull(userManager.getCurrentUserMailSettingsBlocking())
-                setValue(
-                    SettingsEnum.SWIPE_LEFT,
-                    getString(SwipeAction.values()[mailSettings.leftSwipeAction].actionDescription)
-                )
-                setValue(
-                    SettingsEnum.SWIPE_RIGHT,
-                    getString(SwipeAction.values()[mailSettings.rightSwipeAction].actionDescription)
-                )
-                actionBarTitle = R.string.swiping_gesture
             }
             SettingsItem.LABELS_AND_FOLDERS -> {
                 actionBarTitle = R.string.labels_and_folders

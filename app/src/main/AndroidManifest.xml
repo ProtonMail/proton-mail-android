@@ -291,7 +291,7 @@
             android:label="@string/default_mail_address"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".activities.SwipeChooserActivity"
+            android:name=".settings.presentation.SwipeChooserActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="@string/swipe_action_chooser_title"

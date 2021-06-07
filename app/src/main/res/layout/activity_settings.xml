@@ -58,4 +58,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:orientation="vertical"
         android:visibility="gone" />
 
+    <FrameLayout
+        android:id="@+id/settings_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:orientation="vertical"/>
+
 </RelativeLayout>

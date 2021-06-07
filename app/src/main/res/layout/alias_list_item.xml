@@ -21,7 +21,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     style="@style/ProtonRadioButton.Mail"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/settings_margin_radio_button"
+    android:layout_marginStart="@dimen/settings_radio_button_margin"
     android:padding="@dimen/padding_l"
     android:layoutDirection="rtl"
     android:layout_gravity="start"/>

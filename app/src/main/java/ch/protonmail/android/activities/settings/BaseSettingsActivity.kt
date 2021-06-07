@@ -40,13 +40,9 @@ import ch.protonmail.android.activities.AccountSettingsActivity
 import ch.protonmail.android.settings.presentation.AccountTypeActivity
 import ch.protonmail.android.activities.BaseConnectivityActivity
 import ch.protonmail.android.activities.DefaultAddressActivity
-import ch.protonmail.android.activities.EXTRA_CURRENT_ACTION
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
-import ch.protonmail.android.activities.EXTRA_SWIPE_ID
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.SettingsItem
-import ch.protonmail.android.activities.SwipeChooserActivity
-import ch.protonmail.android.activities.SwipeType
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
 import ch.protonmail.android.activities.settings.SettingsEnum.*
@@ -74,6 +70,7 @@ import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.settings.presentation.AttachmentStorageActivity
 import ch.protonmail.android.settings.presentation.CustomDividerItemDecoration
 import ch.protonmail.android.settings.presentation.SnoozeNotificationsActivity
+import ch.protonmail.android.settings.presentation.SwipeSettingFragment
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
@@ -97,6 +94,7 @@ import ch.protonmail.android.api.models.User as LegacyUser
 // region constants
 const val EXTRA_CURRENT_MAILBOX_LOCATION = "Extra_Current_Mailbox_Location"
 const val EXTRA_CURRENT_MAILBOX_LABEL_ID = "Extra_Current_Mailbox_Label_ID"
+private const val EXTRA_CURRENT_ACTION = "EXTRA_CURRENT_ACTION"
 // endregion
 
 abstract class BaseSettingsActivity : BaseConnectivityActivity() {
@@ -181,7 +179,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
         fetchOrganizationData()
 
-
         val primaryAddress = checkNotNull(user.addresses.primary)
         mDisplayName = primaryAddress.displayName?.s
             ?: primaryAddress.email.s
@@ -216,9 +213,13 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     }
 
     override fun onBackPressed() {
-        saveLastInteraction()
-        setResult(Activity.RESULT_OK)
-        finish()
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            saveLastInteraction()
+            setResult(Activity.RESULT_OK)
+            finish()
+        }
     }
 
     override fun setContentView(layoutResID: Int) {
@@ -250,7 +251,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
             .create()
             .show()
     }
-
 
     private fun showSortAliasDialog() {
         val defaultAddressIntent = AppUtil.decorInAppIntent(Intent(this, DefaultAddressActivity::class.java))
@@ -338,32 +338,12 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 startActivity(foldersManagerIntent)
             }
             SWIPING_GESTURE -> {
-                val swipeGestureIntent = Intent(this, EditSettingsItemActivity::class.java)
-                swipeGestureIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.SWIPE)
-                startActivityForResult(
-                    AppUtil.decorInAppIntent(swipeGestureIntent),
-                    SWIPING_GESTURE.ordinal
-                )
-            }
-            SWIPE_LEFT -> {
-                val swipeLeftChooserIntent = Intent(this, SwipeChooserActivity::class.java)
                 val mailSettings = checkNotNull(userManager.getCurrentUserMailSettingsBlocking())
-                swipeLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mailSettings.leftSwipeAction)
-                swipeLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.LEFT)
-                startActivityForResult(
-                    AppUtil.decorInAppIntent(swipeLeftChooserIntent),
-                    SWIPE_LEFT.ordinal
-                )
-            }
-            SWIPE_RIGHT -> {
-                val rightLeftChooserIntent = Intent(this, SwipeChooserActivity::class.java)
-                val mailSettings = checkNotNull(userManager.getCurrentUserMailSettingsBlocking())
-                rightLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mailSettings.rightSwipeAction)
-                rightLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.RIGHT)
-                startActivityForResult(
-                    AppUtil.decorInAppIntent(rightLeftChooserIntent),
-                    SWIPE_RIGHT.ordinal
-                )
+                val swipeFragment = SwipeSettingFragment.newInstance(mailSettings)
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.settings_fragment_container, swipeFragment)
+                    .addToBackStack(swipeFragment.fragmentKey)
+                    .commitAllowingStateLoss()
             }
             LOCAL_STORAGE_LIMIT -> {
                 val attachmentStorageIntent = Intent(this, AttachmentStorageActivity::class.java)
@@ -479,7 +459,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         itemDecoration.setDrawable(getDrawable(R.drawable.list_divider)!!)
         settingsRecyclerView.addItemDecoration(itemDecoration)
     }
-
 
     protected fun setUpSettingsItems(settingsList: List<SettingsItemUiModel>) {
         settingsUiList = settingsList

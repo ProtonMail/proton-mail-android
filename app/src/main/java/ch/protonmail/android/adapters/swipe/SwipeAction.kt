@@ -22,6 +22,9 @@ import ch.protonmail.android.R
 
 enum class SwipeAction {
     TRASH {
+        override val actionName: Int
+            get() = R.string.swipe_action_trash_short
+
         override val actionDescription: Int
             get() = R.string.swipe_action_trash
 
@@ -29,6 +32,9 @@ enum class SwipeAction {
             if (right) R.layout.mailbox_right_swipe_action_trash else R.layout.mailbox_left_swipe_action_trash
     },
     SPAM {
+        override val actionName: Int
+            get() = R.string.swipe_action_spam_short
+
         override val actionDescription: Int
             get() = R.string.swipe_action_spam
 
@@ -36,6 +42,10 @@ enum class SwipeAction {
             if (right) R.layout.mailbox_right_swipe_action_spam else R.layout.mailbox_left_swipe_action_spam
     },
     STAR {
+
+        override val actionName: Int
+            get() = R.string.swipe_action_star_short
+
         override val actionDescription: Int
             get() = R.string.swipe_action_star
 
@@ -43,6 +53,10 @@ enum class SwipeAction {
             if (right) R.layout.mailbox_right_swipe_action_star else R.layout.mailbox_left_swipe_action_star
     },
     ARCHIVE {
+
+        override val actionName: Int
+            get() = R.string.swipe_action_archive_short
+
         override val actionDescription: Int
             get() = R.string.swipe_action_archive
 
@@ -50,6 +64,10 @@ enum class SwipeAction {
             if (right) R.layout.mailbox_right_swipe_action_archive else R.layout.mailbox_left_swipe_action_archive
     },
     MARK_READ {
+
+        override val actionName: Int
+            get() = R.string.swipe_action_mark_read_short
+
         override val actionDescription: Int
             get() = R.string.swipe_action_mark_read
 
@@ -57,6 +75,7 @@ enum class SwipeAction {
             if (right) R.layout.mailbox_right_swipe_action_mark_read else R.layout.mailbox_left_swipe_action_mark_read
     };
 
+    abstract val actionName: Int
     abstract val actionDescription: Int
     abstract fun getActionBackgroundResource(right: Boolean): Int
 }

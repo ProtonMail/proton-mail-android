@@ -132,6 +132,8 @@
     <dimen name="settings_pin_key_button_margin">12dp</dimen>
     <dimen name="settings_pin_font_size">24sp</dimen>
     <dimen name="settings_pin_key_button_font">20sp</dimen>
+    <dimen name="settings_swipe_placeholder_height">96dp</dimen>
+    <dimen name="settings_swipe_placeholder_width">96dp</dimen>
 
     <!-- endregion -->
 

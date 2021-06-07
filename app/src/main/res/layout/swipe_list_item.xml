@@ -17,19 +17,11 @@ You should have received a copy of the GNU General Public License
 along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 
-<ch.protonmail.android.views.CustomFontRadioButton xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ProtonRadioButton.Mail"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentEnd="true"
-    android:layout_centerVertical="true"
-    android:paddingBottom="@dimen/fields_default_space_medium"
-    android:paddingTop="@dimen/fields_default_space_medium"
-    android:button="@null"
-    android:drawableEnd="@drawable/selector"
-    android:paddingEnd="@dimen/fields_default_space_xlarge"
-    android:paddingLeft="@dimen/fields_default_space_xlarge"
-    android:paddingRight="@dimen/fields_default_space_xlarge"
-    android:paddingStart="@dimen/fields_default_space_xlarge"
-    android:textColor="@color/iron_gray"
-    app:fontName="Roboto-Regular.ttf" />
+    android:layout_gravity="start"
+    android:layout_marginStart="@dimen/settings_radio_button_margin"
+    android:layoutDirection="rtl"
+    android:padding="@dimen/padding_l" />
