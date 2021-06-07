@@ -81,12 +81,13 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.domain.arch.map
@@ -215,9 +216,12 @@ class ComposeMessageViewModel @Inject constructor(
             }
         }
 
-    private val _attachmentsEvent = Channel<AttachmentsEventUiModel>(Channel.BUFFERED)
+    private val _attachmentsEvent = MutableSharedFlow<AttachmentsEventUiModel>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     val attachmentsEvent: Flow<AttachmentsEventUiModel> =
-        _attachmentsEvent.receiveAsFlow()
+        _attachmentsEvent.asSharedFlow()
     // endregion
     // region getters
     var draftId: String
@@ -1262,7 +1266,7 @@ class ComposeMessageViewModel @Inject constructor(
     fun requestNewPhotoUri() {
         viewModelScope.launch {
             val uri = getNewPhotoUri()
-            _attachmentsEvent.send(AttachmentsEventUiModel.OnPhotoUriReady(uri))
+            _attachmentsEvent.emit(AttachmentsEventUiModel.OnPhotoUriReady(uri))
         }
     }
 
@@ -1321,7 +1325,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     private fun notifyAttachmentsChanged() {
         val uiModels = importedAttachments.map(composerAttachmentUiModelMapper) { it.toUiModel() }
-        _attachmentsEvent.offer(AttachmentsEventUiModel.OnAttachmentsChange(uiModels))
+        _attachmentsEvent.tryEmit(AttachmentsEventUiModel.OnAttachmentsChange(uiModels))
     }
 
     private fun refreshMessageAttachments() {

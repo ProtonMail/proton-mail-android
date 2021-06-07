@@ -17,6 +17,8 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
+@file:Suppress("NOTHING_TO_INLINE") // Extension functions are inlined for avoid a crash on JaCoCo
+
 package ch.protonmail.android.attachments.domain.usecase
 
 import android.content.ContentResolver
@@ -73,41 +75,43 @@ class ImportAttachmentsToCache @Inject constructor(
     ): Flow<List<ImportAttachmentResult>> = channelFlow {
 
         // Emit initial state
-        send(fileUris.map(::toIdle))
+        val result: MutableList<ImportAttachmentResult> = fileUris.map(::toIdle)
+            .toMutableList()
+        send(result.toList())
         val urisToProcess: Map<Uri, Boolean> = fileUris.associateWith {
             // Skip files already in app's data directory
             FileScheme.FILE.matches(it) && dataDirectory.path in it.path ?: EMPTY_STRING
         }
 
         // Process
-        var result = urisToProcess.keys
         urisToProcess.toList().forEachAsync { (uri, shouldSkip) ->
 
             // Get File info
             val fileInfo = runCatching { getFileInfo(uri) }.getOrNull()
             if (shouldSkip) {
-                fileInfo?.let { send(result.setSkipped(uri, it)) }
-                    ?: send(result.setCantRead(uri))
-                result -= uri
+                fileInfo?.let { result.setSkipped(uri, it) }
+                    ?: result.setCantRead(uri)
+                send(result.toList())
                 return@forEachAsync
             } else if (fileInfo != null) {
-                send(result.setFileInfo(uri, fileInfo))
+                result.setFileInfo(uri, fileInfo)
+                send(result.toList())
             }
 
             // Read
             val inputStream = contentResolver.openInputStream(uri)
 
             if (inputStream == null) {
-                send(result.setCantRead(uri))
-                result -= uri
+                result.setCantRead(uri)
+                send(result.toList())
                 return@forEachAsync
             }
 
             // Write
             val onWriteException: suspend (Exception) -> Unit = { e ->
                 Timber.e(e)
-                send(result.setCantWrite(uri, fileInfo))
-                result -= uri
+                result.setCantWrite(uri, fileInfo)
+                send(result.toList())
             }
             val importedFile = try {
                 writeTempFileToCache(uri, inputStream)
@@ -126,12 +130,12 @@ class ImportAttachmentsToCache @Inject constructor(
                 importedFileUri = importedFile.toUri(),
                 fileInfo = fileInfo ?: getFileInfo(uri, importedFile)
             )
-            send(result.setSuccess(uri, success))
+            result.setSuccess(uri, success)
+            send(result.toList())
 
-            if (deleteOriginalFiles)
+            if (deleteOriginalFiles) {
                 deleteFileIfPossible(uri)
-
-            result -= uri
+            }
         }
     }.flowOn(dispatchers.Io)
 
@@ -224,26 +228,31 @@ class ImportAttachmentsToCache @Inject constructor(
 
 private fun toIdle(uri: Uri) = ImportAttachmentResult.Idle(uri)
 
-
-private fun Set<Uri>.setSkipped(uri: Uri, fileInfo: AttachmentFileInfo): List<ImportAttachmentResult> =
+private inline fun MutableList<ImportAttachmentResult>.setSkipped(uri: Uri, fileInfo: AttachmentFileInfo) {
     set(uri) { ImportAttachmentResult.Skipped(uri, fileInfo) }
+}
 
-private fun Set<Uri>.setFileInfo(uri: Uri, fileInfo: AttachmentFileInfo): List<ImportAttachmentResult> =
+private inline fun MutableList<ImportAttachmentResult>.setFileInfo(uri: Uri, fileInfo: AttachmentFileInfo) {
     set(uri) { ImportAttachmentResult.OnInfo(uri, fileInfo) }
+}
 
-private fun Set<Uri>.setCantRead(uri: Uri): List<ImportAttachmentResult> =
+private inline fun MutableList<ImportAttachmentResult>.setCantRead(uri: Uri) {
     set(uri, ImportAttachmentResult::CantRead)
+}
 
-private fun Set<Uri>.setCantWrite(uri: Uri, fileInfo: AttachmentFileInfo?): List<ImportAttachmentResult> =
+private inline fun MutableList<ImportAttachmentResult>.setCantWrite(uri: Uri, fileInfo: AttachmentFileInfo?) {
     set(uri) { ImportAttachmentResult.CantWrite(uri, fileInfo) }
+}
 
-private fun Set<Uri>.setSuccess(uri: Uri, success: ImportAttachmentResult.Success): List<ImportAttachmentResult> =
+private inline fun MutableList<ImportAttachmentResult>.setSuccess(uri: Uri, success: ImportAttachmentResult.Success) {
     set(uri) { success }
+}
 
-private fun Set<Uri>.set(uri: Uri, toResult: (Uri) -> ImportAttachmentResult) =
-    map {
-        if (it == uri)
-            toResult(uri)
-        else
-            ImportAttachmentResult.Idle(it)
-    }
+private inline fun MutableList<ImportAttachmentResult>.set(
+    uri: Uri,
+    toResult: (Uri) -> ImportAttachmentResult
+) {
+    val indexToReplace = indexOfFirst { it.originalFileUri == uri }
+        .also { check(it != -1) { "Item not found" } }
+    set(indexToReplace, toResult(get(indexToReplace).originalFileUri))
+}
