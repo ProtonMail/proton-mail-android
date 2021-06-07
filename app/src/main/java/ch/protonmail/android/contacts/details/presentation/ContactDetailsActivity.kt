@@ -196,11 +196,11 @@ class ContactDetailsActivity : AppCompatActivity() {
 
     private fun onDeleteContact(contactId: String, contactName: String) {
         val clickListener = DialogInterface.OnClickListener { dialog: DialogInterface, which: Int ->
+            dialog.dismiss()
             if (which == DialogInterface.BUTTON_POSITIVE) {
                 viewModel.deleteContact(contactId)
+                finish()
             }
-            dialog.dismiss()
-            finish()
         }
         if (!isFinishing) {
             val builder = AlertDialog.Builder(this)
