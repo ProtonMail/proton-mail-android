@@ -21,13 +21,12 @@ package ch.protonmail.android.compose.presentation.model
 
 import android.net.Uri
 import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
+import ch.protonmail.android.attachments.domain.model.UriPair
 
 /**
  * Describes an action on Attachment
  */
 sealed class AttachmentsEventUiModel {
-
-    object None : AttachmentsEventUiModel()
 
     /**
      * One or a set of attachments is being imported
@@ -39,4 +38,9 @@ sealed class AttachmentsEventUiModel {
      * One attachment has been removed by User Interaction
      */
     data class Remove(val fileUri: Uri) : AttachmentsEventUiModel()
+
+    /**
+     * Uri has been created for a photo to be taken from camera
+     */
+    data class OnPhotoUriReady(val uri: UriPair) : AttachmentsEventUiModel()
 }

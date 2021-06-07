@@ -24,7 +24,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import ch.protonmail.android.databinding.ActionsheetAddAttachmentsBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,14 +33,21 @@ import me.proton.core.presentation.utils.onClick
 @AndroidEntryPoint
 class AddAttachmentsActionSheet : BottomSheetDialogFragment() {
 
-    private val viewModel: AddAttachmentsActionSheetViewModel by viewModels()
+    private val viewModel: AddAttachmentsActionSheetViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return ActionsheetAddAttachmentsBinding.inflate(inflater).apply {
-            addAttachmentsGalleryItem.onClick(viewModel::requestOpenGallery)
-            addAttachmentsCameraItem.onClick(viewModel::requestOpenCamera)
-            addAttachmentsFileExplorerItem.onClick(viewModel::requestOpenFileExplorer)
+            addAttachmentsGalleryItem.onClickAndDismiss(viewModel::requestOpenGallery)
+            addAttachmentsCameraItem.onClickAndDismiss(viewModel::requestOpenCamera)
+            addAttachmentsFileExplorerItem.onClickAndDismiss(viewModel::requestOpenFileExplorer)
         }.root
+    }
+
+    private fun View.onClickAndDismiss(action: () -> Unit) {
+        onClick {
+            dismissAllowingStateLoss()
+            action()
+        }
     }
 
     enum class Action {
@@ -72,7 +79,6 @@ class AddAttachmentsActionSheet : BottomSheetDialogFragment() {
          * Creates a new instance of the action sheet and shows it
          * @return the newly created [AddAttachmentsActionSheet]
          */
-        @JvmOverloads
         fun show(
             fragmentManager: FragmentManager,
             tag: String? = AddAttachmentsActionSheet::class.qualifiedName,

@@ -214,7 +214,7 @@ class SendMessageWorker @AssistedInject constructor(
         }.fold(
             onSuccess = { return it },
             onFailure = {
-                Timber.w("Failed building MessageSendBody for API request, exception $it")
+                Timber.w(it, "Failed building MessageSendBody for API request")
                 return null
             }
         )

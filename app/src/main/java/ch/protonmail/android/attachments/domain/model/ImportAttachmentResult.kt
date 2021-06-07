@@ -24,6 +24,7 @@ import ch.protonmail.android.attachments.domain.usecase.ImportAttachmentsToCache
 import ch.protonmail.android.domain.entity.Bytes
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.MimeType
+import me.proton.core.util.kotlin.unsupported
 
 /**
  * Result for [ImportAttachmentsToCache]
@@ -60,6 +61,7 @@ sealed class ImportAttachmentResult(val isTerminal: Boolean) {
      */
     data class Success(
         override val originalFileUri: Uri,
+        val importedFileUri: Uri,
         val fileInfo: FileInfo
     ) : ImportAttachmentResult(isTerminal = true)
 
@@ -89,3 +91,23 @@ sealed class ImportAttachmentResult(val isTerminal: Boolean) {
 }
 
 val ImportAttachmentResult.FileInfo.fullName get() = "${fileName.s}.$extension"
+
+val ImportAttachmentResult.isValid get() =
+    this is ImportAttachmentResult.Success || this is ImportAttachmentResult.Skipped
+
+fun ImportAttachmentResult.requireFileInfo(): ImportAttachmentResult.FileInfo =
+    when (this) {
+        is ImportAttachmentResult.CantRead -> unsupported
+        is ImportAttachmentResult.CantWrite -> requireNotNull(fileInfo)
+        is ImportAttachmentResult.Idle -> unsupported
+        is ImportAttachmentResult.OnInfo -> fileInfo
+        is ImportAttachmentResult.Skipped -> fileInfo
+        is ImportAttachmentResult.Success -> fileInfo
+    }
+
+fun ImportAttachmentResult.requireImportedFileUri(): Uri =
+    when (this) {
+        is ImportAttachmentResult.Skipped -> originalFileUri
+        is ImportAttachmentResult.Success -> importedFileUri
+        else -> unsupported
+    }

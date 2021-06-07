@@ -46,6 +46,9 @@ inline class Bytes(val l: ULong) {
 
     fun toMegabytes() =
         toKilobytes() / 1024uL
+
+    fun toLong() =
+        l.toLong()
 }
 val Number.bytes get() = Bytes(toLong().toULong())
 
