@@ -200,6 +200,7 @@ class ContactDetailsActivity : AppCompatActivity() {
                 viewModel.deleteContact(contactId)
             }
             dialog.dismiss()
+            finish()
         }
         if (!isFinishing) {
             val builder = AlertDialog.Builder(this)
