@@ -118,8 +118,6 @@
             <enum name="button" value="2" />
             <enum name="toggle" value="3" />
             <enum name="spinner" value="4" />
-            <enum name="edit" value="5" />
-            <enum name="toggle_n_edit" value="6" />
         </attr>
         <attr name="hasValue" format="boolean" />
         <attr name="settingsHint" format="string" />

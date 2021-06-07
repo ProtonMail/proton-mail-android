@@ -69,6 +69,7 @@ import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.settings.presentation.AttachmentStorageActivity
 import ch.protonmail.android.settings.presentation.CustomDividerItemDecoration
+import ch.protonmail.android.settings.presentation.DisplayAndSignatureFragment
 import ch.protonmail.android.settings.presentation.SnoozeNotificationsActivity
 import ch.protonmail.android.settings.presentation.SwipeSettingFragment
 import ch.protonmail.android.uiModel.SettingsItemUiModel
@@ -285,11 +286,11 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 showSortAliasDialog()
             }
             DISPLAY_NAME_N_SIGNATURE -> {
-                val editSignatureIntent = Intent(this, EditSettingsItemActivity::class.java)
-                editSignatureIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.DISPLAY_NAME_AND_SIGNATURE)
-                startActivityForResult(
-                    AppUtil.decorInAppIntent(editSignatureIntent), DISPLAY_NAME_N_SIGNATURE.ordinal
-                )
+                val displayAndSignatureFragment = DisplayAndSignatureFragment.newInstance(user, mJobManager)
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.settings_fragment_container, displayAndSignatureFragment)
+                    .addToBackStack(displayAndSignatureFragment.fragmentKey)
+                    .commitAllowingStateLoss()
             }
             NOTIFICATION_SNOOZE -> {
                 val notificationSnoozeIntent =
@@ -483,17 +484,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         settingsAdapter.items
             .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
             ?.apply { toggleListener = listener }
-    }
-
-    protected fun setEditTextListener(settingType: SettingsEnum, listener: (View) -> Unit) {
-        settingsAdapter.items
-            .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
-            ?.apply { editTextListener = listener }
-    }
-
-    protected fun setEditTextChangeListener(settingType: SettingsEnum, listener: (String) -> Unit) {
-        settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
-            ?.apply { editTextChangeListener = listener }
     }
 
     protected fun setValue(settingType: SettingsEnum, settingValueNew: String) {

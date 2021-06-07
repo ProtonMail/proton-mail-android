@@ -61,10 +61,6 @@ data class SettingsItemUiModel constructor(
         @SerializedName("toggle")
         TOGGLE,
         @SerializedName("spinner")
-        SPINNER,
-        @SerializedName("edit")
-        EDIT_TEXT,
-        @SerializedName("toggle_n_edit")
-        TOGGLE_N_EDIT
+        SPINNER
     }
 }

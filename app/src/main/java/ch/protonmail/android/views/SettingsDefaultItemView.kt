@@ -22,14 +22,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.doOnPreDraw
-import androidx.core.widget.doAfterTextChanged
 import ch.protonmail.android.R
 import kotlinx.android.synthetic.main.settings_item_layout.view.*
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -171,12 +169,9 @@ class SettingsDefaultItemView @JvmOverloads constructor(
                 }
             }
             TYPE_TOGGLE -> {
-                clearCacheButton.visibility = View.GONE
+                buttonsContainer.visibility = View.GONE
                 actionSwitch.visibility = View.VISIBLE
 
-                setConstraints(buttonsContainer, true, false, false, true, guideline_01.id)
-                setConstraints(headingContainer, false, true, false, false, guideline_01.id)
-                buttonsContainer.gravity = Gravity.TOP
             }
             TYPE_SPINNER -> {
                 clearCacheButton.visibility = View.GONE

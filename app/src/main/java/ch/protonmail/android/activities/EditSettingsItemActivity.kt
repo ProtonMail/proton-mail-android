@@ -37,13 +37,11 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.views.CustomFontEditText
 import com.google.gson.Gson
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_edit_settings_item.*
 import me.proton.core.util.android.sharedpreferences.set
-import timber.log.Timber
 
 // region constants
 const val EXTRA_SETTINGS_ITEM_TYPE = "EXTRA_SETTINGS_ITEM_TYPE"
@@ -51,7 +49,6 @@ const val EXTRA_SETTINGS_ITEM_VALUE = "EXTRA_SETTINGS_ITEM_VALUE"
 // endregion
 
 enum class SettingsItem {
-    DISPLAY_NAME_AND_SIGNATURE,
     PRIVACY,
     LABELS_AND_FOLDERS,
     SWIPE,
@@ -68,7 +65,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
     private val mailSettings by lazy {
         checkNotNull(userManager.getCurrentUserMailSettingsBlocking())
     }
-    private var settingsItemType: SettingsItem = SettingsItem.DISPLAY_NAME_AND_SIGNATURE
+    private var settingsItemType: SettingsItem = SettingsItem.PRIVACY
     private var settingsItemValue: String? = null
     private var actionBarTitle: Int = -1
     private var initializedRemote = false
@@ -124,94 +121,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
     override fun renderViews() {
 
         when (settingsItemType) {
-            SettingsItem.DISPLAY_NAME_AND_SIGNATURE -> {
-
-                selectedAddress = checkNotNull(user.addresses.primary)
-                val (newAddressId, currentSignature) = selectedAddress.id to selectedAddress.signature?.s
-
-                if (mDisplayName.isNotEmpty()) {
-                    setValue(SettingsEnum.DISPLAY_NAME, mDisplayName)
-                }
-
-                setEditTextListener(SettingsEnum.DISPLAY_NAME) {
-                    var newDisplayName = (it as CustomFontEditText).text.toString()
-
-                    val containsBannedChars = newDisplayName.matches(".*[<>].*".toRegex())
-                    if (containsBannedChars) {
-                        showToast(R.string.display_name_banned_chars, Toast.LENGTH_SHORT, Gravity.CENTER)
-                        val primaryAddress = checkNotNull(user.addresses.primary)
-                        newDisplayName = primaryAddress.displayName?.s ?: primaryAddress.email.s
-                    }
-
-                    val displayChanged = newDisplayName != mDisplayName
-                    if (displayChanged) {
-                        mDisplayName = newDisplayName
-
-                        val job = UpdateSettingsJob(
-                            newDisplayName = newDisplayName,
-                            addressId = newAddressId
-                        )
-                        mJobManager.addJobInBackground(job)
-                    }
-                }
-
-                if (!currentSignature.isNullOrEmpty()) {
-                    setValue(SettingsEnum.SIGNATURE, currentSignature)
-                }
-                setEnabled(SettingsEnum.SIGNATURE, legacyUser.isShowSignature)
-
-                val currentMobileSignature = legacyUser.mobileSignature
-                if (!currentMobileSignature.isNullOrEmpty()) {
-                    Timber.v("set mobileSignature $currentMobileSignature")
-                    setValue(SettingsEnum.MOBILE_SIGNATURE, currentMobileSignature)
-                }
-                if (legacyUser.isPaidUserSignatureEdit) {
-                    setEnabled(SettingsEnum.MOBILE_SIGNATURE, legacyUser.isShowMobileSignature)
-                } else {
-                    setEnabled(SettingsEnum.MOBILE_SIGNATURE, true)
-                    setSettingDisabled(
-                        SettingsEnum.MOBILE_SIGNATURE,
-                        true,
-                        getString(R.string.mobile_signature_is_premium)
-                    )
-                }
-
-                setEditTextListener(SettingsEnum.SIGNATURE) {
-                    val newSignature = (it as CustomFontEditText).text.toString()
-                    val isSignatureChanged = newSignature != currentSignature
-                    if (isSignatureChanged) {
-                        val job = UpdateSettingsJob(
-                            newSignature = newSignature,
-                            addressId = newAddressId
-                        )
-                        mJobManager.addJobInBackground(job)
-                    }
-                }
-
-                setToggleListener(SettingsEnum.SIGNATURE) { _: View, isChecked: Boolean ->
-                    legacyUser.isShowSignature = isChecked
-                }
-
-                setEditTextListener(SettingsEnum.MOBILE_SIGNATURE) {
-                    val newMobileSignature = (it as CustomFontEditText).text.toString()
-                    val isMobileSignatureChanged = newMobileSignature != currentMobileSignature
-
-                    if (isMobileSignatureChanged) {
-                        legacyUser.mobileSignature = newMobileSignature
-                    }
-                }
-
-                setEditTextChangeListener(SettingsEnum.MOBILE_SIGNATURE) { newMobileSignature ->
-                    Timber.v("text change save mobileSignature $newMobileSignature")
-                    legacyUser.mobileSignature = newMobileSignature
-                }
-
-                setToggleListener(SettingsEnum.MOBILE_SIGNATURE) { _: View, isChecked: Boolean ->
-                    legacyUser.isShowMobileSignature = isChecked
-                }
-
-                actionBarTitle = R.string.display_name_n_signature
-            }
             SettingsItem.PRIVACY -> {
 
                 mAutoDownloadGcmMessages = legacyUser.isGcmDownloadMessageDetails

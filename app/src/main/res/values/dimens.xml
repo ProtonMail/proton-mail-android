@@ -135,6 +135,9 @@
     <dimen name="settings_swipe_placeholder_height">96dp</dimen>
     <dimen name="settings_swipe_placeholder_width">96dp</dimen>
 
+    <!-- Settings -->
+    <dimen name="settings_min_height_input_field">96dp</dimen>
+    <dimen name="settings_margin_radio_button">12dp</dimen>
     <!-- endregion -->
 
     <!-- region V3 -->
