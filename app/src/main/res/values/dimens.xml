@@ -98,6 +98,9 @@
     <dimen name="message_details_banner_drawable_padding">8dp</dimen>
     <dimen name="message_details_banner_small_icon_size">16dp</dimen>
 
+    <dimen name="message_details_attachment_details_attachment_modifier_width">18dp</dimen>
+    <dimen name="message_details_attachment_details_attachment_modifier_height">12dp</dimen>
+
     <dimen name="message_details_actions_button_size">40dp</dimen>
 
     <!-- Composer -->

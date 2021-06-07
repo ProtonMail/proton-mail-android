@@ -43,8 +43,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/headerView" />
 
-    <!-- TODO: Replace with MessageDetailsAttachmentsView -->
-    <ch.protonmail.android.views.messageDetails.AttachmentsView
+    <ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
         android:id="@+id/attachmentsView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

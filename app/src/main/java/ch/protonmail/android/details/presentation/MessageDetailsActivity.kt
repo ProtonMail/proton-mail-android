@@ -27,7 +27,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -81,8 +80,6 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
-import io.sentry.Sentry
-import io.sentry.event.EventBuilder
 import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.android.synthetic.main.layout_message_details_activity_toolbar.*
 import kotlinx.coroutines.flow.launchIn
@@ -92,7 +89,6 @@ import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.abs
-
 
 private const val TITLE_ANIMATION_THRESHOLD = 0.9
 private const val TITLE_ANIMATION_DURATION = 200L
@@ -263,7 +259,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     override fun onStop() {
         super.onStop()
         mApp.bus.unregister(viewModel)
-        stopEmbeddedImagesTask()
         mApp.bus.unregister(this)
     }
 
@@ -275,10 +270,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     override fun disableScreenshotProtector() {
         screenShotPreventerView.visibility = View.GONE
-    }
-
-    private fun stopEmbeddedImagesTask() {
-        messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -416,7 +407,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     override fun onBackPressed() {
-        stopEmbeddedImagesTask()
         saveLastInteraction()
         finish()
     }
@@ -428,10 +418,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         when (event.status) {
             Status.SUCCESS -> {
                 messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
-                messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.VISIBLE)
                 viewModel.downloadEmbeddedImagesResult.observe(this) { content ->
                     Timber.v("downloadEmbeddedImagesResult content size: ${content.length}")
-                    messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
                     if (content.isNullOrEmpty()) {
                         return@observe
                     }
@@ -442,17 +430,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             }
             Status.NO_NETWORK -> {
                 messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.VISIBLE)
-                messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
                 showToast(R.string.load_embedded_images_failed_no_network)
             }
             Status.FAILED -> {
                 messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.VISIBLE)
-                messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
                 showToast(R.string.load_embedded_images_failed)
             }
             Status.STARTED -> {
                 messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
-                messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.VISIBLE)
                 viewModel.hasEmbeddedImages = false
             }
             Status.UNAUTHORIZED -> {
@@ -616,12 +601,10 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private fun displayAttachmentInfo(attachments: List<Attachment>) {
         val attachmentsCount = attachments.size
         val totalAttachmentSize = attachments.map { it.fileSize }.sum()
-        val attachmentsVisibility: Int
 
-        messageExpandableAdapter.attachmentsView.setTitle(attachmentsCount, totalAttachmentSize)
         attachmentsListAdapter.setList(attachments)
-        messageExpandableAdapter.attachmentsView.attachmentsAdapter = attachmentsListAdapter
-        attachmentsVisibility = if (attachmentsCount > 0) View.VISIBLE else View.GONE
+        messageExpandableAdapter.attachmentsView.bind(attachmentsCount, totalAttachmentSize, attachmentsListAdapter)
+        val attachmentsVisibility = if (attachmentsCount > 0) View.VISIBLE else View.GONE
         messageExpandableAdapter.displayAttachmentsViews(attachmentsVisibility)
     }
 

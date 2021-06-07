@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/padding_l"
+    android:paddingVertical="@dimen/padding_m">
+
+    <TextView
+        android:id="@+id/attachment_name_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/padding_m"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/attachment_size_text_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constrainedWidth="true"
+        app:drawableStartCompat="@drawable/ic_file_image_variants"
+        android:drawablePadding="@dimen/padding_m"
+        android:maxLines="1"
+        android:ellipsize="middle"
+        style="@style/Proton.Text.DefaultSmall"
+        tools:text="Attachment.jpg" />
+
+    <TextView
+        android:id="@+id/attachment_modifier_text_view"
+        android:layout_width="@dimen/message_details_attachment_details_attachment_modifier_width"
+        android:layout_height="@dimen/message_details_attachment_details_attachment_modifier_height"
+        app:layout_constraintBottom_toBottomOf="@+id/attachment_name_text_view"
+        app:layout_constraintStart_toStartOf="@+id/attachment_name_text_view"
+        android:orientation="horizontal"
+        android:textSize="18sp"
+        android:text="@string/pgp_lock_open"
+        android:textColor="@color/icon_warning" />
+
+    <TextView
+        android:id="@+id/attachment_size_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/padding_m"
+        app:layout_constraintEnd_toStartOf="@id/attachment_download_image_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        style="@style/Proton.Text.DefaultSmall"
+        tools:text="1.2MB" />
+
+    <ImageView
+        android:id="@+id/attachment_download_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/ic_download"
+        android:background="?selectableItemBackgroundBorderless" />
+
+    <ProgressBar
+        android:id="@+id/attachment_download_progress"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="@id/attachment_download_image_view"
+        app:layout_constraintEnd_toEndOf="@id/attachment_download_image_view"
+        app:layout_constraintTop_toTopOf="@id/attachment_download_image_view"
+        app:layout_constraintBottom_toBottomOf="@id/attachment_download_image_view"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

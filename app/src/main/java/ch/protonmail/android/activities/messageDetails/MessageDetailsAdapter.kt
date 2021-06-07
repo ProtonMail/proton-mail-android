@@ -31,7 +31,6 @@ import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -46,8 +45,8 @@ import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.views.PMWebViewClient
-import ch.protonmail.android.views.messageDetails.AttachmentsView
 import ch.protonmail.android.views.messageDetails.LoadContentButton
+import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.MessageDetailsExpirationInfoView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
@@ -73,8 +72,7 @@ class MessageDetailsAdapter(
 
     var containerDisplayImages = LoadContentButton(context)
     var loadEmbeddedImagesContainer = LoadContentButton(context)
-    var embeddedImagesDownloadProgress = ProgressBar(context)
-    var attachmentsView = AttachmentsView(context)
+    var attachmentsView = MessageDetailsAttachmentsView(context)
     var attachmentsViewDivider = View(context)
     var expirationInfoView = MessageDetailsExpirationInfoView(context)
     var messageDetailsView = View(context)
@@ -301,10 +299,6 @@ class MessageDetailsAdapter(
         containerDisplayImages.visibility = visibility
     }
 
-    fun displayEmbeddedImagesDownloadProgress(visibility: Int) {
-        embeddedImagesDownloadProgress.visibility = visibility
-    }
-
     fun displayLoadEmbeddedImagesContainer(visibility: Int) {
         loadEmbeddedImagesContainer.visibility = visibility
     }
@@ -382,5 +376,4 @@ class MessageDetailsAdapter(
             else -> throw IllegalArgumentException("Unknown spam score.")
         }
     }
-
 }
