@@ -20,34 +20,29 @@ package ch.protonmail.android.views;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import androidx.fragment.app.FragmentManager;
-import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import ch.protonmail.android.R;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.utils.UiUtil;
-
-/**
- * Created by dino on 12/16/17.
- */
+import me.proton.core.presentation.ui.view.ProtonInput;
 
 public class ContactOptionTypeClickListener implements View.OnClickListener {
 
     private final View mRowView;
     private final TextView mTextViewTitle, mTextViewIcon;
-    private final EditText mEditTextValue;
-    private final AtomicInteger sNextGeneratedId = new AtomicInteger(100);
+    private final ProtonInput mEditTextValue;
     private String mCurrentUIValue;
     private ViewGroup mStandardOptionsView;
     private List<String> mStandardOptionUIValues;
@@ -56,8 +51,6 @@ public class ContactOptionTypeClickListener implements View.OnClickListener {
     private List<Integer> mRadioIds = new ArrayList<>();
     private Context mContext;
     private FragmentManager mSupportFragmentManager;
-
-    private boolean mIsDirty;
 
     public ContactOptionTypeClickListener(Context context, FragmentManager fragmentManager, View rowView, String currentUIValue, List<String> standardOptionUIValues, List<String> standardOptionValues) {
         mContext = context;
@@ -70,7 +63,6 @@ public class ContactOptionTypeClickListener implements View.OnClickListener {
         mStandardOptionUIValues = standardOptionUIValues;
         mStandardOptionValues = standardOptionValues;
         mStandardOptionsRadioButtons = new ArrayList<>();
-        mIsDirty = false;
     }
 
     private void resetRadiosState() {
@@ -128,7 +120,6 @@ public class ContactOptionTypeClickListener implements View.OnClickListener {
             boolean previousValueBDay = mContext.getString(R.string.vcard_other_option_birthday).equals(mCurrentUIValue);
             for (RadioButton radioButton : mStandardOptionsRadioButtons) {
                 if (radioButton.isChecked()) {
-                    mIsDirty = true;
                     mCurrentUIValue = radioButton.getText().toString();
                     String currentValue = (String) radioButton.getTag();
                     mTextViewTitle.setText(mCurrentUIValue);

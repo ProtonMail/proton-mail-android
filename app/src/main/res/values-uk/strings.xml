@@ -642,7 +642,7 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">Додати світлину</string>
     <string name="contact_display_name">Показуване ім\'я</string>
-    <string name="add_new_email">\ue914 Додати адресу е-пошти</string>
+    <string name="add_new_email">Додати адресу е-пошти</string>
     <string name="no_groups">Немає груп</string>
     <string name="contact_vcard_note">Нотатка</string>
     <string name="edit_contact">Редагувати контакт</string>

@@ -642,7 +642,7 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">Přidat fotku</string>
     <string name="contact_display_name">Zobrazit jméno</string>
-    <string name="add_new_email">\ue914 Přidat e-mailovou adresu</string>
+    <string name="add_new_email">Přidat e-mailovou adresu</string>
     <string name="no_groups">Žádné skupiny</string>
     <string name="contact_vcard_note">Poznámka</string>
     <string name="edit_contact">Upravit kontakt</string>

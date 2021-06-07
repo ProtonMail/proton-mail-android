@@ -25,7 +25,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,7 +43,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -142,8 +140,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     VCardLinearLayout mEmailAddressesContainer;
     @BindView(R.id.progress_bar)
     View mProgressBar;
-    @BindView(R.id.encryptedDataContainer)
-    LinearLayout mEncryptedDataContainer;
+
     @BindView(R.id.encrypted_data_address)
     VCardLinearLayout mEncryptedDataAddress;
     @BindView(R.id.encrypted_data_phone)
@@ -372,7 +369,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         VCard vCardSigned = viewModel.buildSignedCard(contactName);
 
         if (contactPhoto.getVisibility() == View.VISIBLE && contactPhoto.getDrawable() != null) {
-            Bitmap bitmap = ((BitmapDrawable) contactPhoto.getDrawable()).getBitmap();
+            Bitmap bitmap = ((RoundedBitmapDrawable) contactPhoto.getDrawable()).getBitmap();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 40, stream);
             byte[] bytemapdata = stream.toByteArray();
@@ -390,7 +387,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             TextView optionTypeView = rowView.findViewById(R.id.optionTitle);
             Object optionTypeTag = optionTypeView.getTag();
             optionType = (String) optionTypeTag;
-            EditText optionEditText = rowView.findViewById(R.id.option);
+            ProtonInput optionEditText = rowView.findViewById(R.id.option);
             optionValue = optionEditText.getText().toString();
             Object groupTag = rowView.getTag();
             String groupId = null;
@@ -398,7 +395,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 groupId = (String) groupTag;
             }
             if (!TextUtils.isEmpty(optionValue) && !CommonExtensionsKt.isValidEmail(optionValue)) {
-                optionEditText.setError(getString(R.string.invalid_email));
+                optionEditText.setInputError(getString(R.string.invalid_email));
                 mScrollParentView.requestChildFocus(optionEditText, optionEditText);
                 mSavingInProgress.set(false);
                 return;
@@ -433,7 +430,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             TextView optionTypeView = rowView.findViewById(R.id.optionTitle);
             optionType = (String) optionTypeView.getTag();
             optionType = optionType == null ? "" : optionType;
-            optionValue = ((TextView) rowView.findViewById(R.id.option)).getText().toString();
+            optionValue = ((ProtonInput) rowView.findViewById(R.id.option)).getText().toString();
             if (TextUtils.isEmpty(optionValue)) {
                 continue;
             }
@@ -486,7 +483,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             View rowView = mEncryptedDataOther.findViewById(id);
             TextView optionTypeView = rowView.findViewById(R.id.optionTitle);
             optionType = optionTypeView.getText().toString();
-            TextView optionValueView = rowView.findViewById(R.id.option);
+            ProtonInput optionValueView = rowView.findViewById(R.id.option);
             optionValue = optionValueView.getText().toString();
             Constants.VCardOtherInfoType otherInfoType = (Constants.VCardOtherInfoType) rowView.getTag();
             if (otherInfoType != null && !TextUtils.isEmpty(optionType) && !TextUtils.isEmpty(
@@ -536,7 +533,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         childIds = mEncryptedDataNote.getChildIds();
         for (Integer id : childIds) {
             View rowView = mEncryptedDataNote.findViewById(id);
-            TextView optionValueView = rowView.findViewById(R.id.option);
+            ProtonInput optionValueView = rowView.findViewById(R.id.option);
             optionValue = optionValueView.getText().toString();
             if (!TextUtils.isEmpty(optionValue)) {
                 Note note = new Note(optionValue);
@@ -636,15 +633,13 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 R.layout.contact_vcard_item_editable :
                 R.layout.contact_vcard_item_note, rootView, false);
         UiUtil.generateViewId(emailRowView);
-        final TextView optionIcon = emailRowView.findViewById(R.id.optionIcon);
+
         final TextView titleView = emailRowView.findViewById(R.id.optionTitle);
-        final EditText optionValueView = emailRowView.findViewById(R.id.option);
+        final ProtonInput optionValueView = emailRowView.findViewById(R.id.option);
         optionValueView.setVisibility(View.VISIBLE);
         if (singleLine) {
             optionValueView.setInputType(inputType);
         } else {
-            optionValueView.setLines(maxLines);
-            optionValueView.setMaxLines(maxLines);
             optionValueView.setOnTouchListener((v, event) -> {
                 if (optionValueView.hasFocus()) {
                     v.getParent().requestDisallowInterceptTouchEvent(true);
@@ -660,7 +655,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         final ImageButton btnMinus = emailRowView.findViewById(R.id.btn_minus);
         btnMinus.setVisibility(View.VISIBLE);
         optionValueView.addTextChangedListener(new DirtyWatcher());
-        optionValueView.setHint(optionHint);
+        optionValueView.setHintText(optionHint);
         ImageButton btnEmailType = emailRowView.findViewById(R.id.btnOptionType);
         if (standardOptionUIValues == null || standardOptionUIValues.size() == 0) {
             btnEmailType.setVisibility(View.GONE);
@@ -673,7 +668,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             } else {
                 optionUITypeText = standardOptionUIValues.get(0);
             }
-            optionIcon.setText(optionUITypeTextSplit[0]);
+
         } else {
             optionUITypeText = optionUIType;
         }
@@ -717,24 +712,24 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         }
         UiUtil.generateViewId(newOptionRowView);
         final Button btnAddNewRow = newOptionRowView.findViewById(R.id.btnAddNewRow);
-        final EditText option = newOptionRowView.findViewById(R.id.option);
+        final ProtonInput option = newOptionRowView.findViewById(R.id.option);
         final View inputFields = newOptionRowView.findViewById(R.id.fields_parent);
         final ImageButton btnOptionType = newOptionRowView.findViewById(R.id.btnOptionType);
         final ImageButton btnMinus = newOptionRowView.findViewById(R.id.btn_minus);
         final TextView optionTitle = newOptionRowView.findViewById(R.id.optionTitle);
-        final TextView optionIcon = newOptionRowView.findViewById(R.id.optionIcon);
+
         String optionUITypeText;
         if (optionTitleText.contains(" ")) {
-            optionIcon.setText(optionTitleText.split(" ")[0]);
+
             optionUITypeText = optionTitleText.split(" ")[1];
         } else {
             optionUITypeText = optionTitleText;
         }
 
-        option.setHint(editTextHint);
+        option.setHintText(editTextHint);
         option.addTextChangedListener(new DirtyWatcher());
         option.setInputType(inputType);
-        optionTitle.setText(optionUITypeText);
+        option.setLabelText(optionUITypeText);
 
         btnAddNewRow.setVisibility(View.VISIBLE);
         option.setVisibility(View.GONE);
@@ -752,7 +747,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             option.setVisibility(View.VISIBLE);
             btnMinus.setVisibility(View.VISIBLE);
             option.requestFocus();
-            UiUtil.toggleKeyboard(this, option);
+
             ContactOptionTypeClickListener optionTypeClickListener = new ContactOptionTypeClickListener(
                     EditContactDetailsActivity.this, getSupportFragmentManager(),
                     newOptionRowView, optionTitleText,
@@ -1050,7 +1045,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
 
                     if (!TextUtils.isEmpty(value)) {
                         View view = createOtherView(getString(R.string.vcard_other_option_birthday), value, Constants.VCardOtherInfoType.BIRTHDAY);
-                        final TextView birthdayValue = view.findViewById(R.id.option);
+                        final ProtonInput birthdayValue = view.findViewById(R.id.option);
                         birthdayValue.setFocusable(false);
                         birthdayValue.setFocusableInTouchMode(false);
                         birthdayValue.setOnClickListener(new ContactBirthdayClickListener(this, getSupportFragmentManager()));
@@ -1222,7 +1217,8 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     }
 
     private void initEmptyEmailView() {
-        mEmailAddressesContainer.addView(createNewVCardOptionRow("\ue914 " + viewModel.getDefaultEmailUIOption(), getString(R.string.contact_vcard_hint_email), getString(R.string.contact_vcard_new_row_email),
+        mEmailAddressesContainer.addView(
+                createNewVCardOptionRow("\ue914 " + viewModel.getDefaultEmailUIOption(), getString(R.string.contact_vcard_hint_email), getString(R.string.contact_vcard_new_row_email),
                 viewModel.getEmailUIOptions(), viewModel.getEmailOptions(),
                 mEmailAddressesContainer, true, InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS));
     }
@@ -1230,7 +1226,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     private void initNewPhone() {
         mEncryptedDataPhone.addView(
                 createNewVCardOptionRow(getString(R.string.contact_vcard_new_row_phone),
-                        "\ue913 " + viewModel.getDefaultPhoneUIOption(), getString(R.string.contact_vcard_new_row_phone),
+                        viewModel.getDefaultPhoneUIOption(), getString(R.string.contact_vcard_new_row_phone),
                         viewModel.getPhoneUIOptions(),
                         viewModel.getPhoneOptions(), mEncryptedDataPhone, false,
                         InputType.TYPE_CLASS_NUMBER | InputType.TYPE_CLASS_PHONE));

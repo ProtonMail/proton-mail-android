@@ -618,7 +618,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- Contact Groups Strings -->
     <string name="add_photo">Tambah Foto</string>
     <string name="contact_display_name">Nama Tampilan</string>
-    <string name="add_new_email">\ue914 Tambahkan Alamat Email</string>
+    <string name="add_new_email">Tambahkan Alamat Email</string>
     <string name="no_groups">Tidak ada grup</string>
     <string name="contact_vcard_note">Catatan</string>
     <string name="edit_contact">Ubah Kontak</string>

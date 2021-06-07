@@ -119,26 +119,15 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:orientation="vertical"
                     tools:ignore="UselessParent">
 
-                    <LinearLayout
-                        android:id="@+id/display_name_container"
+                    <!-- Display name edit text -->
+                    <me.proton.core.presentation.ui.view.ProtonInput
+                        android:id="@+id/contact_display_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="@dimen/padding_l"
-                        android:paddingTop="@dimen/padding_l"
-                        android:paddingBottom="@dimen/padding_l">
-
-                        <!-- Display name edit text -->
-                        <me.proton.core.presentation.ui.view.ProtonInput
-                            android:id="@+id/contact_display_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/fields_default_space_medium"
-                            android:layout_marginBottom="@dimen/fields_default_space"
-                            android:hint="@string/contact_display_name"
-                            app:label="@string/contact_display_name" />
-
-                    </LinearLayout>
+                        android:layout_marginVertical="@dimen/padding_s"
+                        android:layout_marginHorizontal="@dimen/padding_l"
+                        android:hint="@string/contact_display_name"
+                        app:label="@string/contact_display_name" />
 
                     <ch.protonmail.android.views.VCardLinearLayout
                         android:id="@+id/emailAddressesContainer"

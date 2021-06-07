@@ -621,7 +621,7 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">Fotoğraf ekle</string>
     <string name="contact_display_name">Görünen ad</string>
-    <string name="add_new_email">\ue914 E-posta adresi ekle</string>
+    <string name="add_new_email">E-posta adresi ekle</string>
     <string name="no_groups">Grup yok</string>
     <string name="contact_vcard_note">Not</string>
     <string name="edit_contact">Kişiyi Düzenle</string>

@@ -21,16 +21,11 @@ package ch.protonmail.android.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-/**
- * Created by dkadrikj on 12/3/16.
- */
 
 public class VCardLinearLayout extends LinearLayout {
 

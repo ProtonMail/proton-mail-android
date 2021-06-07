@@ -640,7 +640,7 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">Dodaj zdjęcie</string>
     <string name="contact_display_name">Nazwa wyświetlana</string>
-    <string name="add_new_email">\ue914 Dodaj adres e-mail</string>
+    <string name="add_new_email">Dodaj adres e-mail</string>
     <string name="no_groups">Brak grup</string>
     <string name="contact_vcard_note">Notatki</string>
     <string name="edit_contact">Edytuj kontakt</string>

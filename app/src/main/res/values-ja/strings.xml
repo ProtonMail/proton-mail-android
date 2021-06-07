@@ -612,7 +612,7 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">写真を追加</string>
     <string name="contact_display_name">表示名</string>
-    <string name="add_new_email">\ue914 メールアドレスを追加する</string>
+    <string name="add_new_email">メールアドレスを追加する</string>
     <string name="no_groups">グループはありません。</string>
     <string name="contact_vcard_note">メモ</string>
     <string name="edit_contact">連絡先の編集</string>

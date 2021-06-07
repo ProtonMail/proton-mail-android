@@ -621,7 +621,7 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">Lägg till foto</string>
     <string name="contact_display_name">Visningsnamn</string>
-    <string name="add_new_email">\ue914 Lägga till e-postadress</string>
+    <string name="add_new_email">Lägga till e-postadress</string>
     <string name="no_groups">Inga grupper</string>
     <string name="contact_vcard_note">Anteckning</string>
     <string name="edit_contact">Redigera kontakt</string>

@@ -632,7 +632,7 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">Adăugare fotografie</string>
     <string name="contact_display_name">Nume afișat</string>
-    <string name="add_new_email">\ue914 Adăugare e-mail</string>
+    <string name="add_new_email">Adăugare e-mail</string>
     <string name="no_groups">Lipsă grupuri</string>
     <string name="contact_vcard_note">Notă</string>
     <string name="edit_contact">Editare contact</string>

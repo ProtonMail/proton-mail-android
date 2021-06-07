@@ -611,7 +611,7 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">添加照片</string>
     <string name="contact_display_name">名称</string>
-    <string name="add_new_email">\ue914 添加邮箱地址</string>
+    <string name="add_new_email">添加邮箱地址</string>
     <string name="no_groups">无群组</string>
     <string name="contact_vcard_note">备注</string>
     <string name="edit_contact">更改联系人信息</string>

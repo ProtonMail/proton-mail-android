@@ -690,7 +690,7 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">Add Photo</string>
     <string name="contact_display_name">Display Name</string>
-    <string name="add_new_email">\ue914 Add Email Address</string>
+    <string name="add_new_email">Add Email Address</string>
     <string name="no_groups">No Groups</string>
     <string name="contact_vcard_note">Note</string>
     <string name="edit_contact">Edit Contact</string>
