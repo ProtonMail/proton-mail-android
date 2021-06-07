@@ -20,14 +20,17 @@ package ch.protonmail.android.settings.presentation
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.adapters.swipe.SwipeAction
+import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
-import kotlinx.android.synthetic.main.activity_swipe_chooser.*
 
 // region constants
 const val EXTRA_CURRENT_ACTION = "EXTRA_CURRENT_ACTION"
@@ -42,8 +45,13 @@ enum class SwipeType {
 
 class SwipeChooserActivity : BaseActivity() {
 
-    private var mCurrentAction: Int = 0
-    private var mSwipeId: SwipeType = SwipeType.RIGHT
+    private var currentAction: Int = 0
+    private var swipeId: SwipeType = SwipeType.RIGHT
+    private var mailSettings: MailSettings? = null
+    private var actionLeftSwipeChanged = false
+    private var actionRightSwipeChanged = false
+
+    private val swipeRadioGroup by lazy { findViewById<RadioGroup>(R.id.swipeRadioGroup) }
 
     override fun getLayoutId(): Int {
         return R.layout.activity_swipe_chooser
@@ -57,8 +65,15 @@ class SwipeChooserActivity : BaseActivity() {
         val elevation = resources.getDimensionPixelSize(R.dimen.action_bar_elevation).toFloat()
         actionBar?.elevation = elevation
 
-        mCurrentAction = intent.getIntExtra(EXTRA_CURRENT_ACTION, 0)
-        mSwipeId = intent.getSerializableExtra(EXTRA_SWIPE_ID) as SwipeType
+        currentAction = intent.getIntExtra(EXTRA_CURRENT_ACTION, 0)
+        swipeId = intent.getSerializableExtra(EXTRA_SWIPE_ID) as SwipeType
+        mailSettings = checkNotNull(mUserManager.getCurrentUserMailSettingsBlocking())
+
+        if (swipeId == SwipeType.LEFT) {
+            actionBar?.title = getString(R.string.settings_swipe_right_to_left)
+        } else if (swipeId == SwipeType.RIGHT) {
+            actionBar?.title = getString(R.string.settings_swipe_left_to_right)
+        }
         createActions()
     }
 
@@ -72,13 +87,31 @@ class SwipeChooserActivity : BaseActivity() {
         ProtonMailApplication.getApplication().bus.unregister(this)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val itemId = item.itemId
-        if (itemId == android.R.id.home) {
-            saveAndFinish()
-            return true
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.save_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        return when (menuItem.itemId) {
+            android.R.id.home -> {
+                saveAndFinish()
+                true
+            }
+            R.id.save -> {
+                val userPreferences =
+                    SecureSharedPreferences.getPrefsForUser(this, mUserManager.requireCurrentUserId())
+                mailSettings?.saveBlocking(userPreferences)
+                val job = UpdateSettingsJob(
+                    actionLeftSwipeChanged = actionLeftSwipeChanged,
+                    actionRightSwipeChanged = actionRightSwipeChanged
+                )
+                mJobManager.addJobInBackground(job)
+                saveAndFinish()
+                true
+            }
+            else -> super.onOptionsItemSelected(menuItem)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onBackPressed() {
@@ -87,53 +120,49 @@ class SwipeChooserActivity : BaseActivity() {
 
     private fun createActions() {
 
+        val availableActions = arrayOf(
+            getString(SwipeAction.MARK_READ.actionDescription), getString(SwipeAction.STAR.actionDescription),
+            getString(SwipeAction.TRASH.actionDescription), getString(SwipeAction.ARCHIVE.actionDescription),
+            getString(SwipeAction.SPAM.actionDescription)
+        )
+
+        for (index in availableActions.indices) {
+            val swipeAction = availableActions[index]
+            if (getString(SwipeAction.values()[currentAction].actionDescription) == swipeAction) {
+                (swipeRadioGroup.getChildAt(index) as RadioButton).isChecked = true
+            }
+        }
+
         swipeRadioGroup!!.setOnCheckedChangeListener { _, _ ->
             when (swipeRadioGroup!!.checkedRadioButtonId) {
-                R.id.none -> {
-                }
                 R.id.read_unread -> {
-                    mCurrentAction = SwipeAction.MARK_READ.ordinal
+                    currentAction = SwipeAction.MARK_READ.ordinal
                 }
                 R.id.star_unstar -> {
-                    mCurrentAction = SwipeAction.STAR.ordinal
+                    currentAction = SwipeAction.STAR.ordinal
                 }
                 R.id.trash -> {
-                    mCurrentAction = SwipeAction.TRASH.ordinal
-                }
-                R.id.label_as -> {
-                }
-                R.id.move_to -> {
+                    currentAction = SwipeAction.TRASH.ordinal
                 }
                 R.id.move_to_archive -> {
-                    mCurrentAction = SwipeAction.ARCHIVE.ordinal
+                    currentAction = SwipeAction.ARCHIVE.ordinal
                 }
                 R.id.move_to_spam -> {
-                    mCurrentAction = SwipeAction.SPAM.ordinal
+                    currentAction = SwipeAction.SPAM.ordinal
                 }
             }
-            var actionLeftSwipeChanged = false
-            var actionRightSwipeChanged = false
 
-            val mailSettings = checkNotNull(mUserManager.getCurrentUserMailSettingsBlocking())
-            if (mSwipeId == SwipeType.LEFT) {
-                actionLeftSwipeChanged = mCurrentAction != mailSettings.leftSwipeAction
+            if (swipeId == SwipeType.LEFT) {
+                actionLeftSwipeChanged = currentAction != mailSettings?.leftSwipeAction
                 if (actionLeftSwipeChanged) {
-                    mailSettings.leftSwipeAction = mCurrentAction
+                    mailSettings?.leftSwipeAction = currentAction
                 }
-            } else if (mSwipeId == SwipeType.RIGHT) {
-                actionRightSwipeChanged = mCurrentAction != mailSettings.rightSwipeAction
+            } else if (swipeId == SwipeType.RIGHT) {
+                actionRightSwipeChanged = currentAction != mailSettings?.rightSwipeAction
                 if (actionRightSwipeChanged) {
-                    mailSettings.rightSwipeAction = mCurrentAction
+                    mailSettings?.rightSwipeAction = currentAction
                 }
             }
-            val userPreferences =
-                SecureSharedPreferences.getPrefsForUser(this, mUserManager.requireCurrentUserId())
-            mailSettings.saveBlocking(userPreferences)
-            val job = UpdateSettingsJob(
-                actionLeftSwipeChanged = actionLeftSwipeChanged,
-                actionRightSwipeChanged = actionRightSwipeChanged
-            )
-            mJobManager.addJobInBackground(job)
         }
     }
 
