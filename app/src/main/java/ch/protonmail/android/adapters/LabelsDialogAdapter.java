@@ -39,13 +39,13 @@ import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.views.ThreeStateButton;
 
 @Deprecated // replaced with ManageLabelsActionAdapter
-public class LabelsAdapter extends ArrayAdapter<LabelsAdapter.LabelItem> {
+public class LabelsDialogAdapter extends ArrayAdapter<LabelsDialogAdapter.LabelItem> {
 
     private List<LabelItem> items;
     private final int mStrokeWidth;
 
-    public LabelsAdapter(Context context, List<LabelItem> items) {
-        super(context, R.layout.labels_list_item);
+    public LabelsDialogAdapter(Context context, List<LabelItem> items) {
+        super(context, R.layout.dialog_labels_list_item);
         this.items = items;
         addAll(items);
         mStrokeWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, context
@@ -63,7 +63,7 @@ public class LabelsAdapter extends ArrayAdapter<LabelsAdapter.LabelItem> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            View view = LayoutInflater.from(getContext()).inflate(R.layout.labels_list_item, null);
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_labels_list_item, null);
             final ViewHolder viewHolder = new ViewHolder(view);
             view.setTag(viewHolder);
             convertView = view;

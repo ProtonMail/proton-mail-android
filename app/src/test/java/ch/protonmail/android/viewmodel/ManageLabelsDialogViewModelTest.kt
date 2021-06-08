@@ -21,7 +21,7 @@ package ch.protonmail.android.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import ch.protonmail.android.adapters.LabelsAdapter
+import ch.protonmail.android.adapters.LabelsDialogAdapter
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.HideLabelsView
@@ -99,7 +99,7 @@ class ManageLabelsDialogViewModelTest {
     @Test
     fun `show LabelNameDuplicatedError when creating a label with a name which is already used`() {
         val labelName = "label-name-already-in-use"
-        val labelItem = LabelsAdapter.LabelItem(false)
+        val labelItem = LabelsDialogAdapter.LabelItem(false)
         labelItem.name = labelName
 
         viewModel.onDoneClicked(

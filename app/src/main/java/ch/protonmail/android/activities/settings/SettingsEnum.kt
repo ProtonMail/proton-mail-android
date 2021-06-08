@@ -114,7 +114,7 @@ enum class SettingsEnum {
     LABELS_MANAGER {
 
         override fun getHint(context: Context): String = ""
-        override fun getHeader(context: Context): String = context.resources.getString(R.string.labels_manage)
+        override fun getHeader(context: Context): String = context.resources.getString(R.string.labels_manager)
     },
     FOLDERS_MANAGER {
 

@@ -97,15 +97,14 @@
 
     <!-- upselling -->
     <color name="upgrade_section">#9497CE</color>
-    <color name="lime">#C3E129</color>
 
     <!-- edit settings screens-->
     <color name="switch_background">#41404E</color>
 
     <!-- account types -->
     <color name="professional">#D4B46E</color>
-    <color name="visionary">#5EDEFB</color>
-    <color name="plus">@color/lime</color>
+    <color name="visionary">#6ddcfb</color>
+    <color name="plus">#c6e422</color>
     <color name="free">@color/cornflower_blue</color>
 
     <color name="switch_settings_item">#9199CA</color>
@@ -133,50 +132,51 @@
 
     <color name="warning">@color/red_orange</color>
 
-    <!-- labels -->
-    <color name="label_color_1">#7272A7</color>
-    <color name="label_color_2">#CF5858</color>
-    <color name="label_color_3">#C26CC7</color>
-    <color name="label_color_4">#7569D1</color>
-    <color name="label_color_5">#69A9D1</color>
-    <color name="label_color_6">#5EC7B7</color>
-    <color name="label_color_7">#72BB75</color>
-    <color name="label_color_8">#C3D261</color>
-    <color name="label_color_9">#E6C04C</color>
-    <color name="label_color_10">#E6984C</color>
-    <color name="label_color_11">#8989AC</color>
-    <color name="label_color_12">#CF7E7E</color>
-    <color name="label_color_13">#C793CA</color>
-    <color name="label_color_14">#9B94D1</color>
-    <color name="label_color_15">#A8C4D5</color>
-    <color name="label_color_16">#97C9C1</color>
-    <color name="label_color_17">#9DB99F</color>
-    <color name="label_color_18">#C6CD97</color>
-    <color name="label_color_19">#E7D292</color>
-    <color name="label_color_20">#DFB286</color>
     <color name="label_buttons">#9497ce</color>
+    <!-- labels -->
+    <color name="purple_base">#7272A7</color>
+    <color name="heather_base">#8989AC</color>
+    <color name="strawberry_base">#CF5858</color>
+    <color name="blush_base">#CF7E7E</color>
+    <color name="pink_base">#C26CC7</color>
+    <color name="lilac_base">#C793CA</color>
+    <color name="slateblue_base">#7569D1</color>
+    <color name="kimberly_base">#9B94D1</color>
+    <color name="pacific_base">#69A9D1</color>
+    <color name="glacier_base">#A8C4D5</color>
+    <color name="aqua_base">#79C4B7</color>
+    <color name="sage_base">#A1C8C1</color>
+    <color name="fern_base">#72BB75</color>
+    <color name="moss_base">#9DB99F</color>
+    <color name="pear_base">#C3D261</color>
+    <color name="olive_base">#C6CD97</color>
+    <color name="mustard_base">#E6C04C</color>
+    <color name="sahara_base">#E7D292</color>
+    <color name="carrot_base">#E6984C</color>
+    <color name="cinnamon_base">#DFB286</color>
+
 
     <array name="label_colors">
-        <item>@color/label_color_1</item>
-        <item>@color/label_color_2</item>
-        <item>@color/label_color_3</item>
-        <item>@color/label_color_4</item>
-        <item>@color/label_color_5</item>
-        <item>@color/label_color_6</item>
-        <item>@color/label_color_7</item>
-        <item>@color/label_color_8</item>
-        <item>@color/label_color_9</item>
-        <item>@color/label_color_10</item>
-        <item>@color/label_color_11</item>
-        <item>@color/label_color_12</item>
-        <item>@color/label_color_13</item>
-        <item>@color/label_color_14</item>
-        <item>@color/label_color_15</item>
-        <item>@color/label_color_16</item>
-        <item>@color/label_color_17</item>
-        <item>@color/label_color_18</item>
-        <item>@color/label_color_19</item>
-        <item>@color/label_color_20</item>
+        <item>@color/purple_base</item>
+        <item>@color/heather_base</item>
+        <item>@color/strawberry_base</item>
+        <item>@color/blush_base</item>
+        <item>@color/pink_base</item>
+        <item>@color/lilac_base</item>
+        <item>@color/slateblue_base</item>
+        <item>@color/kimberly_base</item>
+        <item>@color/pacific_base</item>
+        <item>@color/glacier_base</item>
+        <item>@color/aqua_base</item>
+        <item>@color/sage_base</item>
+        <item>@color/fern_base</item>
+        <item>@color/moss_base</item>
+        <item>@color/pear_base</item>
+        <item>@color/olive_base</item>
+        <item>@color/mustard_base</item>
+        <item>@color/sahara_base</item>
+        <item>@color/carrot_base</item>
+        <item>@color/cinnamon_base</item>
     </array>
 
 

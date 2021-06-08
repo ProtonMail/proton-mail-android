@@ -32,5 +32,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:top="0dp" />
     <stroke
         android:width="3dp"
-        android:color="#4F5062" />
+        android:color="@color/icon_inverted" />
 </shape>

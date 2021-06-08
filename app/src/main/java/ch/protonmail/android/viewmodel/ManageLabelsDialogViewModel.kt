@@ -22,7 +22,7 @@ package ch.protonmail.android.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import ch.protonmail.android.adapters.LabelsAdapter
+import ch.protonmail.android.adapters.LabelsDialogAdapter
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.HideLabelCreationViews
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.HideLabelsView
@@ -50,7 +50,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
         checkedLabelIds: List<String>,
         archiveCheckboxState: Int,
         labelName: String,
-        labelItemsList: List<LabelsAdapter.LabelItem>
+        labelItemsList: List<LabelsDialogAdapter.LabelItem>
     ) {
 
         if (isCreationMode) {
@@ -97,7 +97,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
     private fun createLabel(
         labelName: String,
         labelColor: String?,
-        labelItemsList: List<LabelsAdapter.LabelItem>
+        labelItemsList: List<LabelsDialogAdapter.LabelItem>
     ): ViewState {
         if (labelColor.isNullOrEmpty()) {
             return ShowMissingColorError

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright (c) 2020 Proton Technologies AG
 
 This file is part of ProtonMail.
@@ -22,29 +21,27 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/fields_default_space"
-    android:paddingRight="@dimen/fields_default_space"
-    android:paddingStart="@dimen/fields_default_space"
-    android:paddingEnd="@dimen/fields_default_space"
-    android:paddingTop="@dimen/fields_default_space_large">
+    android:paddingStart="@dimen/padding_m"
+    android:paddingTop="@dimen/padding_xl"
+    android:paddingEnd="@dimen/padding_m"
+    android:paddingBottom="@dimen/padding_m">
 
     <GridView
         android:id="@+id/colorsGrid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin_small"
-        android:layout_marginRight="@dimen/activity_horizontal_margin_small"
-        android:layout_marginTop="@dimen/fields_default_space_large"
-        android:horizontalSpacing="@dimen/fields_default_space"
-        android:stretchMode="columnWidth"
-        android:divider="@null"
-        android:gravity="center"
         android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/padding_s"
+        android:layout_marginTop="@dimen/fields_default_space_large"
+        android:layout_marginRight="@dimen/padding_s"
+        android:divider="@null"
         android:dividerHeight="0dp"
+        android:gravity="center"
+        android:horizontalSpacing="@dimen/padding_xl"
         android:listSelector="@android:color/transparent"
-        android:numColumns="4"
+        android:numColumns="5"
         android:scrollbars="none"
-        android:verticalSpacing="@dimen/fields_default_space" />
+        android:verticalSpacing="@dimen/padding_xl" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -53,31 +50,24 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:minHeight="50dp"
         android:orientation="horizontal">
 
-        <ch.protonmail.android.views.CustomFontTextView
+        <Button
             android:id="@+id/cancel"
+            style="@style/ProtonButton.Borderless.Text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/cancel"
-            android:clickable="true"
-            android:focusable="true"
-            android:textColor="@color/name_gray"
-            android:textSize="@dimen/h2"
-            app:fontName="Roboto-Thin.ttf" />
+            android:textColor="@color/interaction_weak_selector" />
 
-        <ch.protonmail.android.views.CustomFontTextView
+        <Button
             android:id="@+id/apply"
+            style="@style/ProtonButton.Borderless.Text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
             android:gravity="center"
-            android:text="@string/label_apply"
-            android:textColor="@color/new_purple_dark"
-            android:textSize="@dimen/h2"
-            app:fontName="Roboto-Regular.ttf" />
+            android:text="@string/label_apply" />
 
     </LinearLayout>
 

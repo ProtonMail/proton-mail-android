@@ -78,7 +78,7 @@ class ColorChooserFragment : AbstractDialogFragment(), AdapterView.OnItemClickLi
 
     private fun initColors() {
         colorOptions = resources.getIntArray(R.array.label_colors)
-        colorsAdapter = LabelColorsAdapter(context, colorOptions, R.layout.label_color_item_circle)
+        colorsAdapter = LabelColorsAdapter(context!!, colorOptions, R.layout.label_color_item_circle)
         colorsGrid.adapter = colorsAdapter
         colorsGrid.onItemClickListener = this
     }
