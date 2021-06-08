@@ -133,10 +133,10 @@ class AccountStateManager @Inject constructor(
     }
 
     private fun observeAccountManager(lifecycle: Lifecycle): AccountManagerObserver =
-        accountManager.observe(lifecycle, Lifecycle.State.CREATED)
+        accountManager.observe(lifecycle, Lifecycle.State.STARTED)
 
     private fun observeHumanVerificationManager(lifecycle: Lifecycle): HumanVerificationManagerObserver =
-        humanVerificationManager.observe(lifecycle, Lifecycle.State.RESUMED)
+        humanVerificationManager.observe(lifecycle, Lifecycle.State.STARTED)
 
     /**
      * Observe all accounts states that can be solved without any workflow ([AuthOrchestrator]).
