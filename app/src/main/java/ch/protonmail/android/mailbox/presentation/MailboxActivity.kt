@@ -217,7 +217,6 @@ class MailboxActivity :
     private val handler = Handler(Looper.getMainLooper())
 
     override val currentLabelId get() = mailboxLabelId
-    val currentLocation get() = mailboxLocationMain
 
     override fun getLayoutId(): Int = R.layout.activity_mailbox
 
@@ -357,7 +356,7 @@ class MailboxActivity :
 
             mailboxActionsView.setAction(
                 BottomActionsView.ActionPosition.ACTION_SECOND,
-                currentLocation.value != MessageLocationType.DRAFT,
+                currentMailboxLocation != MessageLocationType.DRAFT,
                 if (MessageUtils.areAllUnRead(
                         selectedMessages
                     )
@@ -1132,7 +1131,7 @@ class MailboxActivity :
 
     private fun setUpMailboxActionsView() {
         val actionsUiModel = BottomActionsView.UiModel(
-            if (currentLocation.value in arrayOf(
+            if (currentMailboxLocation in arrayOf(
                     MessageLocationType.TRASH,
                     MessageLocationType.DRAFT
                 )
@@ -1144,7 +1143,7 @@ class MailboxActivity :
         mailboxActionsView.bind(actionsUiModel)
         mailboxActionsView.setOnFirstActionClickListener {
             val messageIds = getSelectedMessageIds()
-            if (currentLocation.value in arrayOf(MessageLocationType.TRASH, MessageLocationType.DRAFT)) {
+            if (currentMailboxLocation in arrayOf(MessageLocationType.TRASH, MessageLocationType.DRAFT)) {
                 showDeleteConfirmationDialog(
                     this,
                     getString(R.string.delete_messages),
@@ -1152,7 +1151,7 @@ class MailboxActivity :
                 ) {
                     mailboxViewModel.deleteMessages(
                         messageIds,
-                        currentLocation.value?.messageLocationTypeValue.toString()
+                        currentMailboxLocation.messageLocationTypeValue.toString()
                     )
                 }
             } else {
