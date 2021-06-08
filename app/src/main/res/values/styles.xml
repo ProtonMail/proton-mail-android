@@ -707,7 +707,7 @@
     </style>
 
     <style name="ContactOptionButton" parent="android:Widget.Button">
-        <item name="android:textColor">@color/new_purple</item>
+        <item name="android:textColor">@color/interaction_norm</item>
         <item name="android:textColorHint">@color/name_gray</item>
         <item name="android:textSize">@dimen/h5</item>
         <item name="android:paddingLeft">8dp</item>

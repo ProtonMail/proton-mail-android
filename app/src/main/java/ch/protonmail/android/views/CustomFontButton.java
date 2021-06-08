@@ -29,7 +29,7 @@ import ch.protonmail.android.R;
 
 import static ch.protonmail.android.core.Constants.FONTS_FOLDER;
 
-@Deprecated
+@Deprecated // use ProtonButton or normal Button instead
 public class CustomFontButton extends Button {
 
     public CustomFontButton(Context context, AttributeSet attrs) {

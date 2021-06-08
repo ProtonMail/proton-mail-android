@@ -35,17 +35,15 @@
 
         <ch.protonmail.android.views.CustomFontButton
             android:id="@+id/btnAddNewRow"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/fields_default_space_small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/white"
             android:drawableStart="@drawable/ic_plus"
             android:drawablePadding="@dimen/padding_m"
-            android:elevation="@dimen/elevation_m"
-            android:paddingHorizontal="@dimen/padding_l"
+            android:gravity="start|center_vertical"
+            android:inputType="textCapSentences"
+            android:paddingHorizontal="@dimen/padding_m"
             android:text="@string/add_new_email"
-            android:textAllCaps="false"
             android:textSize="16sp"
             app:fontName="contacts_icons.ttf" />
     </LinearLayout>
@@ -81,13 +79,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/padding_m"
                     android:clickable="true"
                     android:focusable="true"
-                    tools:text="@tools:sample/lorem"
-                    android:layout_marginStart="@dimen/padding_m"
                     android:gravity="center_vertical"
                     android:textColor="@color/contact_heading"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    tools:text="@tools:sample/lorem" />
             </LinearLayout>
 
             <ImageButton

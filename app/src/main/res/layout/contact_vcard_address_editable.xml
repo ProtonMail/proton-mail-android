@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright (c) 2020 Proton Technologies AG
 
 This file is part of ProtonMail.
@@ -51,13 +50,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:textColor="@color/contact_heading"
                 android:textSize="16sp"
                 app:fontName="contacts_icons.ttf"
-                tools:text="Adr"/>
+                tools:text="Adr" />
 
             <TextView
                 android:id="@+id/optionTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAlignment="viewStart"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
@@ -86,13 +84,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
         <ImageButton
             android:id="@+id/btn_minus"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_circle_minus" />
+            android:src="@drawable/ic_minus" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -108,9 +106,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:focusable="true"
                 android:paddingBottom="@dimen/fields_default_space_small"
                 android:singleLine="true"
+                android:textAlignment="viewStart"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                android:textAlignment="viewStart"
                 app:fontName="Roboto-Bold.ttf" />
 
             <include layout="@layout/contact_address_detailed" />

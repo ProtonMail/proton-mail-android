@@ -20,9 +20,6 @@ package ch.protonmail.android.views;
 
 import android.app.Activity;
 import android.content.Context;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -32,6 +29,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import java.util.Arrays;
 import java.util.List;
@@ -126,6 +127,7 @@ public class ContactAddressView extends LinearLayout {
         // set the values
 
         mRowTitleView.setText(titleText);
+        mRowTitleView.setTextColor(R.color.interaction_norm);
 
 
     }

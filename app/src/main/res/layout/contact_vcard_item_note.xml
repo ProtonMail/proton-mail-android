@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright (c) 2020 Proton Technologies AG
 
 This file is part of ProtonMail.
@@ -35,17 +34,17 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingEnd="@dimen/fields_default_space_small"
             android:orientation="horizontal"
-            android:paddingStart="@dimen/fields_default_space_small"
-            android:paddingBottom="@dimen/fields_default_space">
+            android:paddingStart="@dimen/padding_s"
+            android:paddingEnd="@dimen/padding_s"
+            android:paddingBottom="@dimen/padding_m">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:paddingStart="@dimen/padding_s"
-                android:layout_toStartOf="@id/btnOptionType">
+                android:layout_toStartOf="@id/btnOptionType"
+                android:paddingStart="@dimen/padding_s">
 
                 <!-- Option Name -->
                 <TextView
@@ -54,16 +53,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="true"
+                    android:textAlignment="viewStart"
                     android:textColor="@color/contact_heading"
                     android:textSize="16sp"
-                    android:textAlignment="viewStart"
-                    tools:text="Email Address"/>
+                    tools:text="Email Address" />
             </LinearLayout>
 
             <ImageButton
                 android:id="@+id/btnOptionType"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="@dimen/padding_l"
+                android:layout_height="@dimen/padding_l"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_gravity="center"
@@ -80,14 +79,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         style="@style/ContactOptionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_circle_plus"
-        android:drawablePadding="@dimen/fields_default_space_small_plus"
+        android:drawableStart="@drawable/ic_plus"
+        android:drawablePadding="@dimen/padding_s"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
         android:text=""
-        android:textAllCaps="true"
-        android:textColor="@color/contact_action"
-        android:visibility="gone"
         android:textAlignment="viewStart"
-        app:fontName="Roboto-Regular.ttf" />
+        android:textColor="@color/contact_action"
+        android:textAllCaps="true"
+        android:visibility="gone"
+        app:fontName="Roboto-Regular.ttf"
+        tools:text="Add new x"
+        tools:visibility="visible" />
 </LinearLayout>

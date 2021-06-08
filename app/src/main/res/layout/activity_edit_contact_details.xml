@@ -61,7 +61,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:id="@+id/contactInitials"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_l"
                     android:layout_marginBottom="@dimen/padding_6xl"
                     app:circleSize="@dimen/avatar_size"
                     app:icon="@drawable/ic_camera_filled"
