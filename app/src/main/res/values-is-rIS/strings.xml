@@ -631,7 +631,7 @@
     <string name="create_contact_group">Búa til tengiliðahóp</string>
     <string name="edit_contact_group">Breyta tengiliðahóp</string>
     <string name="contact_groups_manage_addresses">Sýsla með vistföng</string>
-    <string name="contact_group_display_name">\ue91a Birtingarnafn</string>
+    <string name="contact_group_display_name">Birtingarnafn</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Bæta vistfangi við hópa</string>
     <string name="title_activity_address_chooser">Sýsla með vistföng</string>

@@ -628,7 +628,7 @@
     <string name="create_contact_group">Skapa kontaktgrupp</string>
     <string name="edit_contact_group">Redigera kontaktgrupp</string>
     <string name="contact_groups_manage_addresses">Hantera adresser</string>
-    <string name="contact_group_display_name">\ue91a Visningsnamn</string>
+    <string name="contact_group_display_name">Visningsnamn</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Lägga till adressen till grupper</string>
     <string name="title_activity_address_chooser">Hantera adresser</string>

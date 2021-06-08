@@ -631,7 +631,7 @@
     <string name="create_contact_group">Rnu Agraw n Unermes</string>
     <string name="edit_contact_group">Ẓreg Agraw n Unermes</string>
     <string name="contact_groups_manage_addresses">Sefrek Tansiwin</string>
-    <string name="contact_group_display_name">\ue91a Sken Isem</string>
+    <string name="contact_group_display_name">Sken Isem</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Rnu tansa ɣer igrawen</string>
     <string name="title_activity_address_chooser">Sefrek Tansiwin</string>

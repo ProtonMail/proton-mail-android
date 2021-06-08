@@ -631,7 +631,7 @@
     <string name="create_contact_group">Criar grupo de contato</string>
     <string name="edit_contact_group">Editar grupo de contato</string>
     <string name="contact_groups_manage_addresses">Gerenciar endereços</string>
-    <string name="contact_group_display_name">\ue91a Nome de exibição</string>
+    <string name="contact_group_display_name">Nome de exibição</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Adicionar endereço aos grupos</string>
     <string name="title_activity_address_chooser">Gerenciar endereços</string>

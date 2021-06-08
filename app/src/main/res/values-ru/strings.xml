@@ -649,7 +649,7 @@
     <string name="create_contact_group">Создать группу контактов</string>
     <string name="edit_contact_group">Изменить группу контактов</string>
     <string name="contact_groups_manage_addresses">Управление адресами</string>
-    <string name="contact_group_display_name">\ue91a Отображаемое имя</string>
+    <string name="contact_group_display_name">Отображаемое имя</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Добавить адрес в группы</string>
     <string name="title_activity_address_chooser">Управление адресами</string>

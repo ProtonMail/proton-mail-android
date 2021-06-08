@@ -620,7 +620,7 @@
     <string name="create_contact_group">建立聯絡人群組</string>
     <string name="edit_contact_group">編輯聯絡人群組</string>
     <string name="contact_groups_manage_addresses">管理電子郵件地址</string>
-    <string name="contact_group_display_name">\ue91a 顯示名稱</string>
+    <string name="contact_group_display_name">顯示名稱</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">新增電子郵件地址到群組</string>
     <string name="title_activity_address_chooser">管理電子郵件地址</string>

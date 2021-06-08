@@ -237,6 +237,7 @@
 
     <!-- CollapsingToolbarLayout Avatar -->
     <dimen name="avatar_size">120dp</dimen>
+    <dimen name="small_avatar_size">80dp</dimen>
     <dimen name="image_final_width">42dp</dimen>
     <dimen name="spacing_normal">16dp</dimen>
 

@@ -632,7 +632,7 @@ Svájci székhellyel</string>
     <string name="create_contact_group">Új névjegy csoport</string>
     <string name="edit_contact_group">Névjegy csoport szerkesztése</string>
     <string name="contact_groups_manage_addresses">Tagok kezelése</string>
-    <string name="contact_group_display_name">\ue91a Megjelenített név</string>
+    <string name="contact_group_display_name">Megjelenített név</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Címek hozzáadása a csoporthoz</string>
     <string name="title_activity_address_chooser">Tagok kezelése</string>

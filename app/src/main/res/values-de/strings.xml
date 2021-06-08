@@ -628,7 +628,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="create_contact_group">Kontaktgruppe erstellen</string>
     <string name="edit_contact_group">Kontaktgruppe bearbeiten</string>
     <string name="contact_groups_manage_addresses">E-Mail-Adressen verwalten</string>
-    <string name="contact_group_display_name">\ue91a Name anzeigen</string>
+    <string name="contact_group_display_name">Name anzeigen</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Adresse zu Gruppen hinzufügen</string>
     <string name="title_activity_address_chooser">E-Mail-Adressen verwalten</string>

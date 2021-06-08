@@ -649,7 +649,7 @@
     <string name="create_contact_group">Vytvoření skupinu kontaktů</string>
     <string name="edit_contact_group">Upravit Skupinu Kontaktů</string>
     <string name="contact_groups_manage_addresses">Upravit Adresy</string>
-    <string name="contact_group_display_name">\ue91a Zobrazit název</string>
+    <string name="contact_group_display_name">Zobrazit název</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Přidat adresu do skupin</string>
     <string name="title_activity_address_chooser">Upravit Adresy</string>
