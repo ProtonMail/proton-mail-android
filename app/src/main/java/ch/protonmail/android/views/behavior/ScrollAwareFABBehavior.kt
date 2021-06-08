@@ -23,8 +23,6 @@ import androidx.core.view.ViewCompat
 import android.view.View
 import com.github.clans.fab.FloatingActionMenu
 
-
-
 class ScrollAwareFABBehavior : CoordinatorLayout.Behavior<FloatingActionMenu>() {
 
     val TAG = "ScrollAwareFABBehavior"

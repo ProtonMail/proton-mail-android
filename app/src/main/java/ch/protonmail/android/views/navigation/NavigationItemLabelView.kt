@@ -44,8 +44,9 @@ class NavigationItemLabelView @JvmOverloads constructor(
 	{
 		label_name.text=name
 
-		val normalDrawable=ContextCompat.getDrawable(context,labelRes)?:throw RuntimeException("Cannot find drawable for $labelRes")
-		val wrapDrawable=DrawableCompat.wrap(normalDrawable)
+		val normalDrawable =
+			ContextCompat.getDrawable(context,labelRes)?:throw RuntimeException("Cannot find drawable for $labelRes")
+		val wrapDrawable = DrawableCompat.wrap(normalDrawable)
 		DrawableCompat.setTint(wrapDrawable,labelColor)
 		wrapDrawable.mutate().setColorFilter(labelColor,PorterDuff.Mode.SRC_IN)
 		label_icon.setImageDrawable(wrapDrawable)

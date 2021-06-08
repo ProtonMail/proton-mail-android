@@ -34,11 +34,29 @@ import ch.protonmail.android.utils.ui.locks.RecipientLockIcon
 import ch.protonmail.android.utils.ui.locks.SenderLockIcon
 import kotlinx.android.synthetic.main.layout_message_details_recipients.view.*
 
+private const val FIRST_NAME_MAX_LENGTH = 40
+
 /**
  * Created by Kamil Rajtar on 14.08.18.  */
 class MessageDetailsRecipientsLayout @JvmOverloads constructor(
 		context:Context,attrs:AttributeSet?=null,defStyleAttr:Int=0
 ): ConstraintLayout(context,attrs,defStyleAttr) {
+	var isExpanded=false
+		set(value) {
+			val shortenedViewVisibility:Int
+			val expandedViewVisibility:Int
+			if(value) {
+				shortenedViewVisibility=View.GONE
+				expandedViewVisibility=View.VISIBLE
+			} else {
+				shortenedViewVisibility=View.VISIBLE
+				expandedViewVisibility=View.GONE
+			}
+			messageShortenedDetails.visibility = shortenedViewVisibility
+			messageExpandedDetails.visibility = expandedViewVisibility
+			field=value
+		}
+
 	init {
 		inflate(context,R.layout.layout_message_details_recipients,this)
 	}
@@ -140,8 +158,8 @@ class MessageDetailsRecipientsLayout @JvmOverloads constructor(
 			firstName = listForShowing[0].emailAddress
 		}
 
-		if (firstName!!.length > 40) {
-			firstName = firstName.substring(0, 40) + "..."
+		if (firstName!!.length > FIRST_NAME_MAX_LENGTH) {
+			firstName = firstName.substring(0, FIRST_NAME_MAX_LENGTH) + "..."
 		}
 
 		val extraNamesCount = if (!isEmpty()) {
@@ -149,25 +167,6 @@ class MessageDetailsRecipientsLayout @JvmOverloads constructor(
 		} else {
 			listForShowing.size - 1
 		}
-		return when (extraNamesCount) {
-			0 -> firstName
-			else -> "$firstName, +$extraNamesCount "
-		}
+		return if (extraNamesCount == 0) { firstName } else "$firstName, +$extraNamesCount "
 	}
-
-	var isExpanded=false
-		set(value) {
-			val shortenedViewVisibility:Int
-			val expandedViewVisibility:Int
-			if(value) {
-				shortenedViewVisibility=View.GONE
-				expandedViewVisibility=View.VISIBLE
-			} else {
-				shortenedViewVisibility=View.VISIBLE
-				expandedViewVisibility=View.GONE
-			}
-			messageShortenedDetails.visibility = shortenedViewVisibility
-			messageExpandedDetails.visibility = expandedViewVisibility
-			field=value
-		}
 }

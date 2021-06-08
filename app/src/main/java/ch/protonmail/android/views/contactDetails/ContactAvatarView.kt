@@ -46,32 +46,6 @@ class ContactAvatarView : FrameLayout {
     private var mType: Int? = 0
     private var mRadius: Float? = 0.toFloat()
 
-    @JvmOverloads
-    constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
-    )
-            : super(context, attrs, defStyleAttr) {
-        mContext = context
-        mAttrs = attrs
-        mDefStyleAttr = defStyleAttr
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    constructor(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    )
-            : super(context, attrs, defStyleAttr, defStyleRes) {
-        mContext = context
-        mAttrs = attrs
-        mDefStyleAttr = defStyleAttr
-        mDefStyleRes = defStyleRes
-    }
-
     init {
         LayoutInflater.from(context).inflate(R.layout.cv_contact_avatar, this, true)
 
@@ -143,6 +117,32 @@ class ContactAvatarView : FrameLayout {
 
             typedArray.recycle()
         }
+    }
+
+    @JvmOverloads
+    constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
+    )
+        : super(context, attrs, defStyleAttr) {
+        mContext = context
+        mAttrs = attrs
+        mDefStyleAttr = defStyleAttr
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    constructor(
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    )
+            : super(context, attrs, defStyleAttr, defStyleRes) {
+        mContext = context
+        mAttrs = attrs
+        mDefStyleAttr = defStyleAttr
+        mDefStyleRes = defStyleRes
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

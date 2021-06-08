@@ -21,49 +21,28 @@ package ch.protonmail.android.uiModel
 import android.view.View
 import com.google.gson.annotations.SerializedName
 
-class SettingsItemUiModel {
-    @SerializedName("is_section")
-    var isSection: Boolean = false
-    @SerializedName("setting_id")
-    var settingId: String = ""
-    @SerializedName("setting_hasValue")
-    var settingHasValue: Boolean = false
-    @SerializedName("setting_type")
-    var settingType: SettingsItemTypeEnum? = SettingsItemTypeEnum.INFO
-    var settingsDescription: String? = ""
-    var settingHeader: String? = ""
-    var settingValue: String? = ""
-    var settingsHint: String? = ""
-    var enabled: Boolean = false
-    /**
-     * [settingDisabled] is used if we don't wanna show the feature with [settingId] to user
-     */
-    var settingDisabled: Boolean = false
-    var toggleListener: ((View, Boolean) -> Unit)? = { _: View, _: Boolean -> }
-    var editTextListener: (View) -> Unit = {}
+/**
+ * @property settingDisabled is used if we don't wanna show the feature with [settingId] to user
+ */
+data class SettingsItemUiModel(
+    @field:SerializedName("setting_id")
+    var settingId: String = "",
+    var settingHeader: String? = "",
+    var settingValue: String? = "",
+    @field:SerializedName("setting_hasValue")
+    var settingHasValue: Boolean = false,
+    @field:SerializedName("is_section")
+    var isSection: Boolean = false,
+    @field:SerializedName("setting_type")
+    var settingType: SettingsItemTypeEnum? = SettingsItemTypeEnum.INFO,
+    var settingsDescription: String? = "",
+    var settingsHint: String? = "",
+    var enabled: Boolean = false,
+    var settingDisabled: Boolean = false,
+    var toggleListener: ((View, Boolean) -> Unit)? = { _: View, _: Boolean -> },
+    var editTextListener: (View) -> Unit = {},
     var editTextChangeListener: (String) -> Unit = {}
-
-    constructor(settingId: String,
-                settingHeader: String,
-                settingValue: String,
-                settingHasValue: Boolean = false,
-                isSection: Boolean = false,
-                settingType: SettingsItemTypeEnum?) {
-        this.isSection = isSection
-        this.settingId = settingId
-        this.settingHeader = settingHeader
-        this.settingValue = settingValue
-        this.settingHasValue = settingHasValue
-        this.settingType = settingType
-        this.settingsHint = ""
-        this.settingsDescription = ""
-        this.enabled = false
-        this.settingDisabled = false
-        this.toggleListener = { _: View, _: Boolean -> }
-        this.editTextListener = {}
-        this.editTextChangeListener = {}
-    }
-
+) {
     enum class SettingsItemTypeEnum {
         @SerializedName("info")
         INFO,

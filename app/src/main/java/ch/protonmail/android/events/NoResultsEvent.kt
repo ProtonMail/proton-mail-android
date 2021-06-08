@@ -20,4 +20,4 @@ package ch.protonmail.android.events
 
 /**
  * Created by kadrikj on 11/3/18. */
-class NoResultsEvent(val page: Int)
+data class NoResultsEvent(val page: Int)

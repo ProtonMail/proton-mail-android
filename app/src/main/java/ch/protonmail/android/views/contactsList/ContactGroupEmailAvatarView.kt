@@ -36,16 +36,16 @@ class ContactGroupEmailAvatarView(
         defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
+    init {
+        inflate(context, R.layout.contact_group_email_avatar, this)
+    }
+
     constructor(
             context: Context,
             attrs: AttributeSet? = null
     ): this (context, attrs, 0)
 
     constructor(context: Context): this(context, null, 0)
-
-    init {
-        inflate(context, R.layout.contact_group_email_avatar, this)
-    }
 
     //todo: add support for images
     fun setDrawable() {

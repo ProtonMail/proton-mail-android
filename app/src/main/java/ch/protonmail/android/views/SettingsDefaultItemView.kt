@@ -41,6 +41,9 @@ private const val TYPE_TOGGLE = 3
 private const val TYPE_SPINNER = 4
 private const val TYPE_EDIT_TEXT = 5
 private const val TYPE_TOGGLE_N_EDIT = 6
+
+private const val TOGGLE_N_EDIT_LINES = 8
+private const val DISABLED_SETTING_ALPHA = 0.5f
 // endregion
 
 class SettingsDefaultItemView @JvmOverloads constructor(
@@ -116,13 +119,9 @@ class SettingsDefaultItemView @JvmOverloads constructor(
         }
     }
 
-    fun getSpinner(): View {
-        return timeoutSpinner
-    }
+    fun getSpinner(): View = timeoutSpinner
 
-    fun getToggle(): SwitchCompat {
-        return actionSwitch
-    }
+    fun getToggle(): SwitchCompat = actionSwitch
 
     fun checkToggle(value: Boolean) {
         actionSwitch.isChecked = value
@@ -132,7 +131,7 @@ class SettingsDefaultItemView @JvmOverloads constructor(
         mDisabled = value
         if (mDisabled) {
             isEnabled = false
-            alpha = 0.5f
+            alpha = DISABLED_SETTING_ALPHA
             isClickable = false
             this.forEachChildView {
                 it.isClickable = false
@@ -229,8 +228,22 @@ class SettingsDefaultItemView @JvmOverloads constructor(
                 editText.visibility = View.VISIBLE
                 editText.minLines = 1
 
-                setConstraints(buttonsContainer, true, false, false, true, guideline_01.id)
-                setConstraints(headingContainer, false, false, true, false, buttonsContainer.id)
+                setConstraints(
+                    buttonsContainer,
+                    startToStart = true,
+                    endToStart = false,
+                    endToEnd = false,
+                    bottomToBottom = true,
+                    guideline_01.id
+                )
+                setConstraints(
+                    headingContainer,
+                    startToStart = false,
+                    endToStart = false,
+                    endToEnd = true,
+                    bottomToBottom = false,
+                    buttonsContainer.id
+                )
 
                 buttonsContainer.gravity = Gravity.TOP
             }
@@ -240,8 +253,8 @@ class SettingsDefaultItemView @JvmOverloads constructor(
                 actionSwitch.visibility = View.VISIBLE
                 timeoutSpinner.visibility = View.GONE
                 editText.visibility = View.VISIBLE
-                editText.minLines = 8
-                editText.maxLines = 8
+                editText.minLines = TOGGLE_N_EDIT_LINES
+                editText.maxLines = TOGGLE_N_EDIT_LINES
                 editText.setOnTouchListener { v, event ->
                     if (v.id == R.id.editText) {
                         v.parent.requestDisallowInterceptTouchEvent(true)
@@ -260,8 +273,22 @@ class SettingsDefaultItemView @JvmOverloads constructor(
                     setSettingDisabled(mDisabled, mDescription)
                 }
 
-                setConstraints(buttonsContainer, true, false, false, true, guideline_01.id)
-                setConstraints(headingContainer, false, false, true, false, buttonsContainer.id)
+                setConstraints(
+                    buttonsContainer,
+                    startToStart = true,
+                    endToStart = false,
+                    endToEnd = false,
+                    bottomToBottom = true,
+                    guideline_01.id
+                )
+                setConstraints(
+                    headingContainer,
+                    startToStart = false,
+                    endToStart = false,
+                    endToEnd = true,
+                    bottomToBottom = false,
+                    buttonsContainer.id
+                )
 
                 buttonsContainer.gravity = Gravity.TOP
             }
@@ -272,7 +299,14 @@ class SettingsDefaultItemView @JvmOverloads constructor(
         this.tag = tag?.toString()
     }
 
-    private fun setConstraints(view: View, startToStart: Boolean, endToStart: Boolean, endToEnd: Boolean, bottomToBottom: Boolean, viewId: Int) {
+    private fun setConstraints(
+        view: View,
+        startToStart: Boolean,
+        endToStart: Boolean,
+        endToEnd: Boolean,
+        bottomToBottom: Boolean,
+        viewId: Int
+    ) {
         val constraintSet = ConstraintSet()
         constraintSet.clone(settingsItemWrapper)
 

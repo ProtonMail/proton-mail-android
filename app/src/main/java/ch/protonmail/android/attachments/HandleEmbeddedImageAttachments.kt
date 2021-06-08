@@ -124,7 +124,9 @@ class HandleEmbeddedImageAttachments @Inject constructor(
                     uri
                 )
                 Timber.v(
-                    "Insert embd attachment id: ${embeddedImageWithFile.attachmentId} messageId: ${embeddedImageWithFile.messageId}"
+                    "Insert embed attachment id: %s messageId: %s",
+                        embeddedImageWithFile.attachmentId,
+                        embeddedImageWithFile.messageId
                 )
                 attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
 

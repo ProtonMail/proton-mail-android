@@ -36,7 +36,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.DispatcherProvider
 
-
 class AttachmentsViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
     private val dispatchers: DispatcherProvider,

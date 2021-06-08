@@ -44,7 +44,10 @@ constructor(
                     context.getString(R.string.storage_limit_reached_text),
                     context.getString(R.string.learn_more),
                     context.getString(R.string.okay), { unit ->
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.limit_reached_learn_more)))
+                val browserIntent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(context.getString(R.string.limit_reached_learn_more))
+                )
                 context.startActivity(browserIntent)
                 unit
             }, { unit ->

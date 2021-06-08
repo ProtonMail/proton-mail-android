@@ -19,4 +19,4 @@
 package ch.protonmail.android.events
 
 
-class ForceUpgradeEvent(val message: String)
+data class ForceUpgradeEvent(val message: String)

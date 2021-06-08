@@ -86,6 +86,7 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_SERVICES;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_FINGERPRINT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_PIN;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
+import static ch.protonmail.android.servers.notification.NotificationServerKt.NOTIFICATION_SETTING_SOUND_VIBRATE;
 
 
 public class User {
@@ -572,9 +573,8 @@ public class User {
         }
     }
 
-    // TODO use enum. Return value is not clear at all!
     public int getNotificationSetting() {
-        return (NotificationSetting == -1) ? 3 : NotificationSetting;
+        return (NotificationSetting == -1) ? NOTIFICATION_SETTING_SOUND_VIBRATE : NotificationSetting;
     }
 
     public void setNotificationSetting(int setting) {

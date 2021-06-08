@@ -73,7 +73,9 @@ class DrawerHeaderView : RelativeLayout {
     }
 
     fun refresh(snoozeIsOn: Boolean) {
-        buttonQuickSnooze!!.setImageResource(if (snoozeIsOn) R.drawable.ic_notifications_off else R.drawable.ic_notifications_active)
+        buttonQuickSnooze!!.setImageResource(
+            if (snoozeIsOn) R.drawable.ic_notifications_off else R.drawable.ic_notifications_active
+        )
     }
 
     private fun handleUserClicks() {

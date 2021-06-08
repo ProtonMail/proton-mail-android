@@ -56,12 +56,7 @@ class MessageDetailsRecipientView @JvmOverloads constructor(
 	 fun setIconLock(lockIcon:LockIcon) {
 		lockIcon.apply {
 			val description=tooltip
-			val onClickListener=when(description) {
-				0->null
-				else->OnClickListener {
-					context.showToast(description)
-				}
-			}
+			val onClickListener=if(description == 0) null else OnClickListener { context.showToast(description) }
 			pgp_icon.setOnClickListener(onClickListener)
 			pgp_icon.text=context.getString(icon)
 			pgp_icon.setTextColor(ContextCompat.getColor(context,color))

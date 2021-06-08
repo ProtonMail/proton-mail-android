@@ -25,7 +25,6 @@ import com.google.android.material.snackbar.Snackbar
 import android.util.AttributeSet
 import android.view.View
 
-
 /**
  * Created by kadrikj on 11/9/18. */
 @Keep
@@ -36,9 +35,8 @@ class MoveUpwardBehavior : CoordinatorLayout.Behavior<View> {
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
 
-    override fun layoutDependsOn(parent: CoordinatorLayout, child: View, dependency: View): Boolean {
-        return dependency is Snackbar.SnackbarLayout
-    }
+    override fun layoutDependsOn(parent: CoordinatorLayout, child: View, dependency: View): Boolean =
+        dependency is Snackbar.SnackbarLayout
 
     override fun onDependentViewChanged(parent: CoordinatorLayout, child: View, dependency: View): Boolean {
         val translationY = Math.min(0f, dependency.translationY - dependency.height)

@@ -59,6 +59,15 @@ internal sealed class DrawerItemUiModel {
         open val notificationCount: Int = 0
 
         /**
+         * Whether this element is currently selected
+         * Default is `false`
+         */
+        open val selected: Boolean = false
+
+        /** @return `true` if [notificationCount] greater than 0 */
+        fun hasNotifications() = notificationCount > 0
+
+        /**
          * @return a new instance of [Primary] by mutating [Primary.notificationCount] with the
          * given [count]
          */
@@ -69,14 +78,6 @@ internal sealed class DrawerItemUiModel {
          * [select]
          */
         abstract fun copyWithSelected( select: Boolean ) : Primary
-
-        /**
-         * Whether this element is currently selected
-         * Default is `false`
-         */
-        open val selected: Boolean = false
-        /** @return `true` if [notificationCount] greater than 0 */
-        fun hasNotifications() = notificationCount > 0
 
         /**
          * Static Item for the Drawer. like: Inbox, Sent, Draft, etc
@@ -106,15 +107,42 @@ internal sealed class DrawerItemUiModel {
                     val itemId: Int,
                     val drawerOptionType: Constants.DrawerOptionType
             ) {
-                INBOX(Constants.MessageLocationType.INBOX.messageLocationTypeValue, Constants.DrawerOptionType.INBOX),
-                STARRED(Constants.MessageLocationType.STARRED.messageLocationTypeValue, Constants.DrawerOptionType.STARRED),
-                DRAFTS(Constants.MessageLocationType.DRAFT.messageLocationTypeValue, Constants.DrawerOptionType.DRAFTS),
-                SENT(Constants.MessageLocationType.SENT.messageLocationTypeValue, Constants.DrawerOptionType.SENT),
-                ARCHIVE(Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue, Constants.DrawerOptionType.ARCHIVE),
-                TRASH(Constants.MessageLocationType.TRASH.messageLocationTypeValue, Constants.DrawerOptionType.TRASH),
-                SPAM(Constants.MessageLocationType.SPAM.messageLocationTypeValue, Constants.DrawerOptionType.SPAM),
-                LABEL(Constants.MessageLocationType.LABEL.messageLocationTypeValue, Constants.DrawerOptionType.LABEL),
-                ALLMAIL(Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue, Constants.DrawerOptionType.ALL_MAIL),
+                INBOX(
+                    Constants.MessageLocationType.INBOX.messageLocationTypeValue,
+                    Constants.DrawerOptionType.INBOX
+                ),
+                STARRED(
+                    Constants.MessageLocationType.STARRED.messageLocationTypeValue,
+                    Constants.DrawerOptionType.STARRED
+                ),
+                DRAFTS(
+                    Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
+                    Constants.DrawerOptionType.DRAFTS
+                ),
+                SENT(
+                    Constants.MessageLocationType.SENT.messageLocationTypeValue,
+                    Constants.DrawerOptionType.SENT
+                ),
+                ARCHIVE(
+                    Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue,
+                    Constants.DrawerOptionType.ARCHIVE
+                ),
+                TRASH(
+                    Constants.MessageLocationType.TRASH.messageLocationTypeValue,
+                    Constants.DrawerOptionType.TRASH
+                ),
+                SPAM(
+                    Constants.MessageLocationType.SPAM.messageLocationTypeValue,
+                    Constants.DrawerOptionType.SPAM
+                ),
+                LABEL(
+                    Constants.MessageLocationType.LABEL.messageLocationTypeValue,
+                    Constants.DrawerOptionType.LABEL
+                ),
+                ALLMAIL(
+                    Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
+                    Constants.DrawerOptionType.ALL_MAIL
+                ),
                 CONTACTS(108, Constants.DrawerOptionType.CONTACTS),
                 SETTINGS(109, Constants.DrawerOptionType.SETTINGS),
                 REPORT_BUGS(101, Constants.DrawerOptionType.REPORT_BUGS),
