@@ -61,14 +61,18 @@ class ImportAttachmentsWorker(context: Context, params: WorkerParameters) : Work
 
     override fun doWork(): Result {
 
-        val fileUris = inputData.getStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY)?.mapNotNull { Uri.parse(it) } ?: return Result.failure()
+        val fileUris = inputData.getStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY)?.mapNotNull {
+            Uri.parse(it)
+        } ?: return Result.failure()
         val deleteOriginalFile = inputData.getBoolean(KEY_INPUT_DATA_DELETE_ORIGINAL_FILE_BOOLEAN, false)
         val composerInstanceId = inputData.getString(KEY_INPUT_DATA_COMPOSER_INSTANCE_ID)
 
         val postImportAttachmentEvents = mutableListOf<PostImportAttachmentEvent>()
         val contentResolver = applicationContext.contentResolver
 
-        fileUris.filterNot { it.scheme == "file" && (it.path ?: "").contains(applicationContext.applicationInfo.dataDir) }.forEach { uri ->
+        fileUris.filterNot {
+            it.scheme == "file" && (it.path ?: "").contains(applicationContext.applicationInfo.dataDir)
+        }.forEach { uri ->
             try {
                 contentResolver.openInputStream(uri)?.let {
                     AppUtil.createTempFileFromInputStream(applicationContext, it)?.let { importedFile ->
@@ -86,7 +90,13 @@ class ImportAttachmentsWorker(context: Context, params: WorkerParameters) : Work
                                     displayName = try {
                                         cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
                                     } catch (e: java.lang.Exception) {
-                                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)).split("/")[cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)).split("/").size - 1]
+                                        cursor.getString(
+                                            cursor.getColumnIndex(MediaStore.Audio.Media.DATA)
+                                        ).split("/")[
+                                            cursor.getString(
+                                                cursor.getColumnIndex(MediaStore.Audio.Media.DATA)
+                                            ).split("/").size - 1
+                                        ]
                                     }
                                     size = cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE))
                                     size = if (size > 0) size else importedFile.length()
@@ -109,7 +119,15 @@ class ImportAttachmentsWorker(context: Context, params: WorkerParameters) : Work
                             }
                         }
 
-                        postImportAttachmentEvents.add(PostImportAttachmentEvent(Uri.fromFile(importedFile), displayName, size, mimeType ?: Constants.MIME_TYPE_UNKNOWN_FILE, composerInstanceId))
+                        postImportAttachmentEvents.add(
+                            PostImportAttachmentEvent(
+                                Uri.fromFile(importedFile),
+                                displayName,
+                                size,
+                                mimeType ?: Constants.MIME_TYPE_UNKNOWN_FILE,
+                                composerInstanceId
+                            )
+                        )
                     }
                 }
 

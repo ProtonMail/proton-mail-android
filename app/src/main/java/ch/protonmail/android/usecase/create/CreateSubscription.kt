@@ -82,7 +82,14 @@ class CreateSubscription @Inject constructor(
                 CreateSubscriptionBody(0, currency, null, couponCode, mutablePlanIds, cycle)
             } else {
                 // provide new payment method in body
-                CreateSubscriptionBody(amount, currency, TokenPaymentBody(paymentToken), couponCode, mutablePlanIds, cycle)
+                CreateSubscriptionBody(
+                    amount,
+                    currency,
+                    TokenPaymentBody(paymentToken),
+                    couponCode,
+                    mutablePlanIds,
+                    cycle
+                )
             }
 
             val subscriptionResponse = api.createUpdateSubscription(subscriptionBody)

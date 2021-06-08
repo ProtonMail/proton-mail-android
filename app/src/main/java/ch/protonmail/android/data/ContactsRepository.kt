@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.data
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
@@ -26,10 +25,12 @@ import javax.inject.Inject
 
 class ContactsRepository @Inject constructor(private val databaseProvider: DatabaseProvider) {
 
-    private val contactsDao by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDao in ContactsRepository"); databaseProvider.provideContactsDao() }
+    private val contactsDao by lazy {
+        databaseProvider.provideContactsDao()
+    }
 
-    fun findContactEmailByEmailLiveData(email: String): LiveData<ContactEmail> = contactsDao.findContactEmailByEmailLiveData(email)
+    fun findContactEmailByEmailLiveData(email: String): LiveData<ContactEmail> =
+        contactsDao.findContactEmailByEmailLiveData(email)
 
     fun findAllContactsEmailsAsync(): LiveData<List<ContactEmail>> = contactsDao.findAllContactsEmailsAsync()
-
 }

@@ -82,9 +82,8 @@ class AvatarImageBehavior(context: Context, attrs: AttributeSet?) :
             parent: CoordinatorLayout,
             child: ContactAvatarView,
             dependency: View
-    ): Boolean {
-        return dependency is AppBarLayout
-    }
+    ): Boolean =
+        dependency is AppBarLayout
 
     override fun onDependentViewChanged(
             parent: CoordinatorLayout,
@@ -93,15 +92,12 @@ class AvatarImageBehavior(context: Context, attrs: AttributeSet?) :
     ): Boolean {
         maybeInitProperties(child, dependency)
         val maxScrollDistance = mStartToolbarPosition.toInt()
-        val expandedPercentageFactor =
-            ((dependency.height - dependency.y * (-1)) / maxScrollDistance)
+        val expandedPercentageFactor = (dependency.height - dependency.y * -1) / maxScrollDistance
 
 
         if (expandedPercentageFactor < mChangeBehaviorPoint) {
             val heightFactor =
                 2 * (mChangeBehaviorPoint - expandedPercentageFactor) / mChangeBehaviorPoint
-            val distanceXToSubtract =
-                (mStartXPosition - mFinalXPosition) * heightFactor + child.height / 2
             val distanceYToSubtract =
                 (mStartYPosition - mFinalYPosition) * (1f - expandedPercentageFactor) + child.height / 2
 
@@ -145,7 +141,7 @@ class AvatarImageBehavior(context: Context, attrs: AttributeSet?) :
             mFinalXPosition = (child.x + child.width / 2).toInt()
 
         if (mStartToolbarPosition == 0.toFloat())
-            mStartToolbarPosition = dependency.height - dependency.y * (-1)
+            mStartToolbarPosition = dependency.height - dependency.y * -1
 
         if (mChangeBehaviorPoint == 0.toFloat()) {
             mChangeBehaviorPoint = 1.toFloat()

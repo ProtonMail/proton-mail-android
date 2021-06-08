@@ -26,6 +26,8 @@ import android.view.View
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.views.contactDetails.SquareFloatingButtonView
 
+private const val LIMIT_TOOLBAR_MULTIPLE_TO_HIDE_OR_SHOW = -2
+
 class ScrollingBehavior(
     context: Context?, attrs: AttributeSet? = null
 ) : CoordinatorLayout.Behavior<SquareFloatingButtonView>(context, attrs) {
@@ -45,9 +47,8 @@ class ScrollingBehavior(
             parent: CoordinatorLayout,
             child: SquareFloatingButtonView,
             dependency: View
-    ): Boolean {
-        return dependency is AppBarLayout
-    }
+    ): Boolean =
+        dependency is AppBarLayout
 
 
     override fun onDependentViewChanged(
@@ -56,9 +57,15 @@ class ScrollingBehavior(
     ): Boolean {
         if (dependency is AppBarLayout) {
             child.translationY = dependency.getScrollY().toFloat()
-            if (dependency.getY() < -2 * toolbarHeight && child.visibility == View.VISIBLE) {
+            if (
+                dependency.getY() < LIMIT_TOOLBAR_MULTIPLE_TO_HIDE_OR_SHOW * toolbarHeight &&
+                child.visibility == View.VISIBLE
+            ) {
                 child.hide()
-            } else if (dependency.getY() > -2 * toolbarHeight && child.visibility != View.VISIBLE) {
+            } else if (
+                dependency.getY() > LIMIT_TOOLBAR_MULTIPLE_TO_HIDE_OR_SHOW * toolbarHeight &&
+                child.visibility != View.VISIBLE
+            ) {
                 child.show()
             }
         }

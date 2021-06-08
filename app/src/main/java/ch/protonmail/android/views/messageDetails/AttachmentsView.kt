@@ -30,8 +30,17 @@ import ch.protonmail.android.R
 import kotlinx.android.synthetic.main.view_attachments_message_details.view.*
 
 /**
- * Created by Kamil Rajtar on 10.08.18.  */
-class AttachmentsView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
+ * Created by Kamil Rajtar on 10.08.18.
+ */
+class AttachmentsView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : ConstraintLayout(
+    context,
+    attrs,
+    defStyleAttr
+) {
     init {
         inflate(context, R.layout.view_attachments_message_details, this)
         val typeface = Typeface.createFromAsset(context.assets, "protonmail-mobile-icons.ttf");
@@ -48,15 +57,6 @@ class AttachmentsView @JvmOverloads constructor(context: Context, attrs: Attribu
             field = value
         }
 
-    fun setTitle(attachmentsCount: Int, sizeOfAttachments: Long) {
-        val attachmentsText = resources.getQuantityString(R.plurals.attachments_non_descriptive,
-                attachmentsCount,
-                attachmentsCount)
-        val sizeText = context.getString(R.string.attachment_size,
-                Formatter.formatShortFileSize(context, sizeOfAttachments))
-        attachment_title.text = "$attachmentsText $sizeText"
-    }
-
     var attachmentsAdapter: Adapter? = null
         set(value) {
             field?.unregisterDataSetObserver(dataSetObserver)
@@ -64,6 +64,7 @@ class AttachmentsView @JvmOverloads constructor(context: Context, attrs: Attribu
             field = value
             dataSetObserver.onChanged()
         }
+
     private val dataSetObserver = object : DataSetObserver() {
         override fun onChanged() {
             attachmentsAdapter?.apply {
@@ -78,5 +79,14 @@ class AttachmentsView @JvmOverloads constructor(context: Context, attrs: Attribu
         override fun onInvalidated() {
             attachment_detail_list.removeAllViews()
         }
+    }
+
+    fun setTitle(attachmentsCount: Int, sizeOfAttachments: Long) {
+        val attachmentsText = resources.getQuantityString(R.plurals.attachments_non_descriptive,
+            attachmentsCount,
+            attachmentsCount)
+        val sizeText = context.getString(R.string.attachment_size,
+            Formatter.formatShortFileSize(context, sizeOfAttachments))
+        attachment_title.text = "$attachmentsText $sizeText"
     }
 }

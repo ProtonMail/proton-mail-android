@@ -150,10 +150,14 @@ class MessagesListItemView @JvmOverloads constructor(
         val messageLabelsIDs = message.allLabelIDs
         val isMessageSentAndTrashed =
                 message.searchForLocation(Constants.MessageLocationType.SENT.messageLocationTypeValue) &&
-                        messageLabelsIDs.any { it == Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString() }
+                        messageLabelsIDs.any {
+                            it == Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
+                        }
         val isMessageSentAndArchived =
                 message.searchForLocation(Constants.MessageLocationType.SENT.messageLocationTypeValue) &&
-                        messageLabelsIDs.any { it == Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString() }
+                        messageLabelsIDs.any {
+                            it == Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+                        }
         //region labels
         labels.forEach { allFolders[it.id] = it }
         val nonExclusiveLabels = labels.filter { !it.exclusive }
@@ -161,13 +165,10 @@ class MessagesListItemView @JvmOverloads constructor(
         var commonHeight = 20
         nonExclusiveLabels.forEachIndexed { i, (_, name, colorString) ->
             val labelItemView = ItemLabelMarginlessSmallView(context)
-            val color = when {
-                colorString.isNotEmpty() -> {
-                    val normalizedColor = UiUtil.normalizeColor(colorString)
-                    Color.parseColor(normalizedColor)
-                }
-                else -> 0
-            }
+            val color = if(colorString.isNotEmpty()) {
+                val normalizedColor = UiUtil.normalizeColor(colorString)
+                Color.parseColor(normalizedColor)
+            } else 0
 
             if (i < MAX_LABELS_WITH_TEXT) {
                 labelItemView.bind(name, color, mStrokeWidth)
@@ -209,9 +210,11 @@ class MessagesListItemView @JvmOverloads constructor(
         messageDateTextView.text = DateUtil.formatDateTime(context, message.timeMs)
         TextViewCompat.setTextAppearance(messageDateTextView, secondaryTextStyle)
         messageExpirationTextView.visibility = if (message.expirationTime > 0) View.VISIBLE else View.GONE
-        val hasAttachments = message.Attachments.isNotEmpty() || message.numAttachments >= 1 || message.hasPendingUploads()
+        val hasAttachments =
+            message.Attachments.isNotEmpty() || message.numAttachments >= 1 || message.hasPendingUploads()
         messageAttachmentTextView.visibility = if (hasAttachments) View.VISIBLE else View.GONE
-        messageReplyTextView.visibility = if (message.isReplied == true && message.isRepliedAll != true) View.VISIBLE else View.GONE
+        messageReplyTextView.visibility =
+            if (message.isReplied == true && message.isRepliedAll != true) View.VISIBLE else View.GONE
         messageReplyAllTextView.visibility = if (message.isRepliedAll == true) View.VISIBLE else View.GONE
         messageForwardTextView.visibility = if (message.isForwarded == true) View.VISIBLE else View.GONE
         messageStarredTextView.visibility = if (message.isStarred == true) View.VISIBLE else View.GONE
@@ -253,7 +256,8 @@ class MessagesListItemView @JvmOverloads constructor(
             messageSenderContainerLinearLayout.layoutParams = paramsSender
         }
 
-        uploadCircularProgressBar.visibility = if (message.isBeingSent || message.isAttachmentsBeingUploaded) View.VISIBLE else View.GONE
+        uploadCircularProgressBar.visibility =
+            if (message.isBeingSent || message.isAttachmentsBeingUploaded) View.VISIBLE else View.GONE
         if (message.isAttachmentsBeingUploaded) {
             messageDateTextView.text = context.getString(R.string.draft_label_attachments_uploading)
         }
@@ -311,7 +315,14 @@ class MessagesListItemView @JvmOverloads constructor(
     }
 
     private fun Message.getFolderTitle(): String {
-        return allLabelIDs.asReversed().asSequence().map(allFolders::get).filterNotNull().filter(Label::exclusive).map { it.name }.lastOrNull()
+        return allLabelIDs
+            .asReversed()
+            .asSequence()
+            .map(allFolders::get)
+            .filterNotNull()
+            .filter(Label::exclusive)
+            .map { it.name }
+            .lastOrNull()
                 ?: ""
     }
 }

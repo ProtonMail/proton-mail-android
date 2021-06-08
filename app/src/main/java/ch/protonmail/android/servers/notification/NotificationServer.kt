@@ -72,6 +72,13 @@ private const val NOTIFICATION_ID_SAVE_DRAFT_ERROR = 6812
 private const val NOTIFICATION_GROUP_ID_EMAIL = 99
 private const val NOTIFICATION_ID_VERIFICATION = 2
 private const val NOTIFICATION_ID_LOGGED_OUT = 3
+private const val NOTIFICATION_LIGHT_ON = 1500
+private const val NOTIFICATION_LIGHT_OFF = 2000
+private const val NOTIFICATION_SETTING_SOUND_ONLY = 1
+private const val NOTIFICATION_SETTING_VIBRATE_ONLY = 2
+public const val NOTIFICATION_SETTING_SOUND_VIBRATE = 3
+private const val NOTIFICATION_VIBRATE_ON = 1000L
+private const val NOTIFICATION_VIBRATE_OFF = 500L
 
 /**
  * A class that is responsible for creating notification channels, and creating and showing notifications.
@@ -198,11 +205,13 @@ class NotificationServer @Inject constructor(
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.notification_icon)
             .setContentTitle(context.getString(R.string.verification_needed))
-            .setContentText(String.format(context.getString(R.string.verification_needed_description_notification), messageSubject))
+            .setContentText(
+                String.format(context.getString(R.string.verification_needed_description_notification), messageSubject)
+            )
             .setContentIntent(contentIntent)
             .setColor(ContextCompat.getColor(context, R.color.ocean_blue))
             .setStyle(inboxStyle)
-            .setLights(lightIndicatorColor, 1500, 2000)
+            .setLights(lightIndicatorColor, NOTIFICATION_LIGHT_ON, NOTIFICATION_LIGHT_OFF)
             .setAutoCancel(true)
 
         val notification = builder.build()
@@ -240,8 +249,8 @@ class NotificationServer @Inject constructor(
             .setStyle(inboxStyle)
             .setLights(
                 ContextCompat.getColor(context, R.color.light_indicator),
-                1500,
-                2000
+                NOTIFICATION_LIGHT_ON,
+                NOTIFICATION_LIGHT_OFF
             )
             .setAutoCancel(true)
             .setContentIntent(clickIntent)
@@ -319,7 +328,7 @@ class NotificationServer @Inject constructor(
             .setSmallIcon(R.drawable.notification_icon)
             .setCategory(NotificationCompat.CATEGORY_EMAIL)
             .setColor(mainColor)
-            .setLights(lightColor, 1500, 2000)
+            .setLights(lightColor, NOTIFICATION_LIGHT_ON, NOTIFICATION_LIGHT_OFF)
             .setAutoCancel(true)
             .setDeleteIntent(deletePendingIntent)
             .setPriority(PRIORITY_HIGH)
@@ -329,13 +338,19 @@ class NotificationServer @Inject constructor(
             builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         }
 
-        // Set Vibration - TODO those Int's are not very clear :/
-        if (user.notificationSetting == 2 || user.notificationSetting == 3) {
-            builder.setVibrate(longArrayOf(1000, 500))
+        // Set Vibration
+        if (
+            user.notificationSetting == NOTIFICATION_SETTING_VIBRATE_ONLY ||
+            user.notificationSetting == NOTIFICATION_SETTING_SOUND_VIBRATE
+        ) {
+            builder.setVibrate(longArrayOf(NOTIFICATION_VIBRATE_ON, NOTIFICATION_VIBRATE_OFF))
         }
 
-        // Set Sound - TODO those Int's are not very clear :/
-        if (user.notificationSetting == 1 || user.notificationSetting == 3) {
+        // Set Sound
+        if (
+            user.notificationSetting == NOTIFICATION_SETTING_SOUND_ONLY ||
+            user.notificationSetting == NOTIFICATION_SETTING_SOUND_VIBRATE
+        ) {
             val notificationSound = try {
                 // TODO Make sure we have needed permissions and sound file can be read -
                 //  I am not sure if this even does anything (Adam)
@@ -395,7 +410,10 @@ class NotificationServer @Inject constructor(
         // Create Action Intent's
         val archiveIntent = context.buildArchiveIntent(messageId)
         val trashIntent = context.buildTrashIntent(messageId)
-        val replyIntent = if (primaryUser) message?.let { context.buildReplyIntent(message, user, userManager) } else null
+        val replyIntent = if (primaryUser)
+            message?.let { context.buildReplyIntent(message, user, userManager) }
+        else
+            null
 
         // Create Notification Style
         val userDisplayName = user.defaultAddress?.displayName?.ifBlank { user.defaultAddress?.email }
@@ -529,7 +547,10 @@ class NotificationServer @Inject constructor(
             .addParentStack(MailboxActivity::class.java)
             .addNextIntent(contentIntent)
 
-        val contentPendingIntent = stackBuilder.getPendingIntent(username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, PendingIntent.FLAG_UPDATE_CURRENT)
+        val contentPendingIntent = stackBuilder.getPendingIntent(
+            username.hashCode() + NOTIFICATION_ID_SENDING_FAILED,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
         // Set Notification's colors
         val mainColor = context.getColorCompat(R.color.ocean_blue)
@@ -540,7 +561,7 @@ class NotificationServer @Inject constructor(
             .setSmallIcon(R.drawable.notification_icon)
             .setContentIntent(contentPendingIntent)
             .setColor(mainColor)
-            .setLights(lightColor, 1500, 2000)
+            .setLights(lightColor, NOTIFICATION_LIGHT_ON, NOTIFICATION_LIGHT_OFF)
             .setAutoCancel(true)
     }
 
@@ -562,7 +583,10 @@ class NotificationServer @Inject constructor(
         user: User
     ) {
 
-        val notificationTitle = context.getString(R.string.message_sending_failures, unreadSendingFailedNotifications.size)
+        val notificationTitle = context.getString(
+            R.string.message_sending_failures,
+            unreadSendingFailedNotifications.size
+        )
 
         // Create Notification Style
         val bigTextStyle = NotificationCompat.BigTextStyle()

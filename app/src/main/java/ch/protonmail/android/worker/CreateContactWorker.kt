@@ -72,28 +72,27 @@ class CreateContactWorker @WorkerInject constructor(
         val request = buildCreateContactRequestBody()
         val response = withContext(dispatcherProvider.Io) { apiManager.createContact(request) }
 
-        if (response?.code != Constants.RESPONSE_CODE_MULTIPLE_OK) {
-            return failureWithError(ServerError)
+        return when {
+            response?.code != Constants.RESPONSE_CODE_MULTIPLE_OK -> {
+                failureWithError(ServerError)
+            }
+            response.contactId.isNotEmpty() -> {
+                val outputData = contactIdAndEmailsOutputData(response)
+                Result.success(outputData)
+            }
+            isContactAlreadyExistsError(response) -> {
+                failureWithError(ContactAlreadyExistsError)
+            }
+            isInvalidEmailError(response) -> {
+                failureWithError(InvalidEmailError)
+            }
+            isDuplicatedEmailError(response) -> {
+                failureWithError(DuplicatedEmailError)
+            }
+            else -> {
+                Result.failure()
+            }
         }
-
-        if (response.contactId.isNotEmpty()) {
-            val outputData = contactIdAndEmailsOutputData(response)
-            return Result.success(outputData)
-        }
-
-        if (isContactAlreadyExistsError(response)) {
-            return failureWithError(ContactAlreadyExistsError)
-        }
-
-        if (isInvalidEmailError(response)) {
-            return failureWithError(InvalidEmailError)
-        }
-
-        if (isDuplicatedEmailError(response)) {
-            return failureWithError(DuplicatedEmailError)
-        }
-
-        return Result.failure()
     }
 
 
@@ -134,8 +133,16 @@ class CreateContactWorker @WorkerInject constructor(
         val encryptDataSignature = crypto.sign(encryptedDataParam)
         val signedDataSignature = crypto.sign(signedDataParam)
 
-        val contactEncryptedDataType2 = ContactEncryptedData(signedDataParam, signedDataSignature, Constants.VCardType.SIGNED)
-        val contactEncryptedDataType3 = ContactEncryptedData(encryptedData, encryptDataSignature, Constants.VCardType.SIGNED_ENCRYPTED)
+        val contactEncryptedDataType2 = ContactEncryptedData(
+            signedDataParam,
+            signedDataSignature,
+            Constants.VCardType.SIGNED
+        )
+        val contactEncryptedDataType3 = ContactEncryptedData(
+            encryptedData,
+            encryptDataSignature,
+            Constants.VCardType.SIGNED_ENCRYPTED
+        )
 
         val contactEncryptedDataList = ArrayList<ContactEncryptedData>()
         contactEncryptedDataList.add(contactEncryptedDataType2)

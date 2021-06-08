@@ -97,7 +97,9 @@ class CreateDraftWorker @WorkerInject constructor(
                 createDraftRequest.parentID = parentId
                 createDraftRequest.action = getInputActionType().messageActionTypeValue
                 val parentMessage = messageDetailsRepository.findMessageByIdBlocking(parentId)
-                val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
+                val attachments = parentMessage?.attachments(
+                    messageDetailsRepository.databaseProvider.provideMessagesDao()
+                )
 
                 buildParentAttachmentsKeyPacketsMap(attachments, senderAddress).forEach {
                     createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
