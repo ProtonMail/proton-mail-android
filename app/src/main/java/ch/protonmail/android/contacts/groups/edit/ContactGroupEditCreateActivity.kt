@@ -258,7 +258,7 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
             contactGroupEditCreateViewModel.setGroupColor(randomColor)
             randomColor
         }
-        groupColor.bind(
+        thumbnail_contact_group_details.bind(
             isSelectedActive = false,
             isMultiselectActive = false,
             circleColor = color

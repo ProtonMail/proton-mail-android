@@ -41,6 +41,9 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contact_group_details.*
 import kotlinx.android.synthetic.main.content_contact_group_details.*
+import kotlinx.android.synthetic.main.content_contact_group_details.contactEmailsRecyclerView
+import kotlinx.android.synthetic.main.content_contact_group_details.noResults
+import kotlinx.android.synthetic.main.content_edit_create_contact_group_header.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -112,17 +115,16 @@ class ContactGroupDetailsActivity : BaseActivity() {
         name: String,
         membersCount: Int
     ) {
-        collapsingToolbar.apply {
-            setBackgroundColor(color)
-            setContentScrimColor(color)
-            setStatusBarScrimColor(color)
-            title = name
-            setTitle(name, membersCount)
-        }
+
+        groupColor.bind(
+            isSelectedActive = false,
+            isMultiselectActive = false,
+            circleColor = color
+        )
     }
 
     private fun setTitle(name: String?, membersCount: Int) {
-        collapsingToolbar.title = name?.let {
+        supportActionBar?.title = name?.let {
             formatTitle(name, membersCount)
         } ?: ""
     }

@@ -27,7 +27,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,7 +34,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:layout_marginBottom="@dimen/padding_m">
 
             <ch.protonmail.android.views.ListItemThumbnail
-                android:id="@+id/groupColor"
+                android:id="@+id/thumbnail_contact_group_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/padding_6xl"
@@ -58,8 +57,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <include layout="@layout/horizontal_separator" />
 
         <LinearLayout
             android:layout_width="match_parent"
