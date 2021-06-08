@@ -78,7 +78,7 @@
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/settings_toggle_signature"
-        style="@style/ProtonSwitch.Mail"
+        style="@style/ProtonSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/padding_l"
@@ -127,7 +127,7 @@
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/settings_toggle_mobile_signature"
-        style="@style/ProtonSwitch.Mail"
+        style="@style/ProtonSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/padding_l"

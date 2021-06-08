@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright (c) 2020 Proton Technologies AG
 
 This file is part of ProtonMail.
@@ -17,67 +16,55 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:paddingTop="@dimen/fields_default_space_medium"
-    android:overScrollMode="never">
+    android:paddingTop="@dimen/padding_xxl">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/troubleshoot_switch_text"
+        style="@style/Proton.Text.Default"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_l"
+        android:text="@string/allow_secure_connections_via_third_parties"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/troubleshoot_switch"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/troubleshoot_switch_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/troubleshoot_switch"
-            android:paddingLeft="@dimen/fields_default_space_large"
-            android:text="@string/allow_secure_connections_via_third_parties"
-            android:textSize="@dimen/h5" />
+    <TextView
+        android:id="@+id/troubleshoot_switch_description"
+        style="@style/Proton.Text.DefaultSmall.Weak"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/padding_l"
+        android:paddingEnd="@dimen/padding_xxl"
+        android:text="@string/allow_secure_connections_via_third_parties_troubleshoot_description"
+        android:textColorLink="@color/hyperlink_color"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/troubleshoot_switch_text" />
 
-        <TextView
-            android:id="@+id/troubleshoot_switch_description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/troubleshoot_switch_text"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/troubleshoot_switch"
-            android:paddingLeft="@dimen/fields_default_space_large"
-            android:paddingBottom="@dimen/fields_default_space_large"
-            android:text="@string/allow_secure_connections_via_third_parties_troubleshoot_description"
-            android:textColor="@color/iron_gray"
-            android:textSize="@dimen/h6"
-            android:textColorLink="@color/hyperlink_color" />
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/troubleshoot_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/padding_l"
+        android:duplicateParentState="true"
+        app:layout_constraintBottom_toBottomOf="@id/troubleshoot_switch_text"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/troubleshoot_switch_text" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/troubleshoot_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/troubleshoot_switch_text"
-            app:layout_constraintBottom_toBottomOf="@id/troubleshoot_switch_text"
-            app:layout_constraintRight_toRightOf="parent"
-            android:paddingLeft="@dimen/fields_default_space_large"
-            android:paddingRight="@dimen/fields_default_space_large"
-            android:theme="@style/SwitchSettings"
-            android:duplicateParentState="true" />
-
-        <TextView
-            android:id="@+id/troubleshoot_message"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/troubleshoot_switch_description"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:paddingLeft="@dimen/fields_default_space_large"
-            android:paddingRight="@dimen/fields_default_space_large"
-            android:textSize="@dimen/h5"
-            android:textColorLink="@color/hyperlink_color" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</ScrollView>
+    <TextView
+        android:id="@+id/troubleshoot_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/fields_default_space_large"
+        android:paddingRight="@dimen/fields_default_space_large"
+        android:textColorLink="@color/hyperlink_color"
+        android:textSize="@dimen/h5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/troubleshoot_switch_description" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -68,7 +68,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/actionSwitch"
-        style="@style/ProtonSwitch.Mail"
+        style="@style/ProtonSwitch"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="end|center_vertical"

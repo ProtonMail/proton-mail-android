@@ -163,7 +163,7 @@ class DefaultAddressActivity : BaseActivity() {
             var addressRadio: RadioButton? = null
             var inactiveAddress: TextView? = null
             if (aliasAvailable) {
-                addressRadio = mInflater!!.inflate(R.layout.alias_list_item, availableAddresses, false) as RadioButton
+                addressRadio = mInflater!!.inflate(R.layout.radio_button_list_item, availableAddresses, false) as RadioButton
                 addressRadio.text = address.email
                 addressRadio.isChecked = index == 0
                 if (index == 0) {

@@ -134,10 +134,9 @@
     <dimen name="settings_pin_key_button_font">20sp</dimen>
     <dimen name="settings_swipe_placeholder_height">96dp</dimen>
     <dimen name="settings_swipe_placeholder_width">96dp</dimen>
-
-    <!-- Settings -->
     <dimen name="settings_min_height_input_field">96dp</dimen>
-    <dimen name="settings_margin_radio_button">12dp</dimen>
+    <dimen name="settings_color_indicator_size">16dp</dimen>
+    <dimen name="settings_color_item_size">40dp</dimen>
     <!-- endregion -->
 
     <!-- region V3 -->
@@ -195,26 +194,10 @@
     <dimen name="labels_separator_padding">16dp</dimen>
     <dimen name="navdrawer_width">300dp</dimen>
 
-    <!-- composing -->
-    <dimen name="right_sliding_offse">100dp</dimen>
-    <dimen name="sliding_overlay_blur_size">4dp</dimen>
-    <dimen name="manage_labels_min_width">250dp</dimen>
-
-    <!-- message details -->
-    <dimen name="popup_width">200dp</dimen>
-    <dimen name="snackbar">48dp</dimen>
-
     <!-- login -->
     <dimen name="spacing">40dp</dimen>
     <dimen name="spacing_large">60dp</dimen>
     <dimen name="spacing_small">20dp</dimen>
-
-    <!-- plans -->
-    <dimen name="plan_item_text">@dimen/h5</dimen>
-
-    <!-- settings -->
-    <dimen name="view_padding">20dp</dimen>
-    <dimen name="view_padding_large">30dp</dimen>
 
     <!-- contacts -->
     <dimen name="contact_list_item_height">80dp</dimen>
@@ -225,8 +208,6 @@
     <dimen name="contact_selection_write_size">55dp</dimen>
 
     <!-- labels -->
-    <dimen name="label_item_min_height">50dp</dimen>
-    <dimen name="label_color_item_size">40dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
     <!-- CollapsingToolbarLayout -->

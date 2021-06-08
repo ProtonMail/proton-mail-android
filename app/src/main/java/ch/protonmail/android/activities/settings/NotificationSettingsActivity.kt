@@ -139,7 +139,7 @@ internal class NotificationSettingsActivity : BaseActivity(), ViewStateActivity 
 
             // Create a RadioButton
             val button = layoutInflater.inflate(
-                R.layout.swipe_list_item,
+                R.layout.radio_button_list_item,
                 notification_radio_group,
                 false
             ) as RadioButton

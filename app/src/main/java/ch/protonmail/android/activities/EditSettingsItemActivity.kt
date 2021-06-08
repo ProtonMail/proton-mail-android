@@ -111,7 +111,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         super.onStop()
         initializedRemote = true
         initializedEmbedded = true
-        enableFeatureSwitch.setOnCheckedChangeListener(null)
         setToggleListener(SettingsEnum.LINK_CONFIRMATION, null)
         setToggleListener(SettingsEnum.PREVENT_SCREENSHOTS, null)
         setToggleListener(SettingsEnum.SHOW_REMOTE_IMAGES, null)

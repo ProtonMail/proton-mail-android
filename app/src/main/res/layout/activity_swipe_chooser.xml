@@ -29,6 +29,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:id="@+id/swipeRadioGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_m"
         android:layout_marginStart="@dimen/padding_l">
 
 <!--        <RadioButton-->
@@ -48,44 +49,32 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
         <RadioButton
             android:id="@+id/read_unread"
-            style="@style/ProtonRadioButton.Mail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="@dimen/settings_radio_button_margin"
             android:drawableEnd="@drawable/ic_envelope_dot"
             android:drawablePadding="@dimen/padding_m"
-            android:layoutDirection="rtl"
-            android:paddingTop="@dimen/padding_l"
-            android:paddingBottom="@dimen/padding_l"
             android:text="@string/mark_as_read" />
 
         <RadioButton
             android:id="@+id/star_unstar"
-            style="@style/ProtonRadioButton.Mail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="@dimen/settings_radio_button_margin"
             android:drawableEnd="@drawable/ic_star"
             android:drawablePadding="@dimen/padding_m"
-            android:layoutDirection="rtl"
-            android:paddingTop="@dimen/padding_l"
-            android:paddingBottom="@dimen/padding_l"
             android:text="@string/star_unstar" />
 
         <RadioButton
             android:id="@+id/trash"
-            style="@style/ProtonRadioButton.Mail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="@dimen/settings_radio_button_margin"
             android:drawableEnd="@drawable/ic_trash"
             android:drawablePadding="@dimen/padding_m"
-            android:layoutDirection="rtl"
-            android:paddingTop="@dimen/padding_l"
-            android:paddingBottom="@dimen/padding_l"
             android:text="@string/trash" />
 
 <!--        <RadioButton-->
@@ -120,30 +109,22 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
         <RadioButton
             android:id="@+id/move_to_archive"
-            style="@style/ProtonRadioButton.Mail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="@dimen/settings_radio_button_margin"
             android:drawableEnd="@drawable/ic_archive"
             android:drawablePadding="@dimen/padding_m"
-            android:layoutDirection="rtl"
-            android:paddingTop="@dimen/padding_l"
-            android:paddingBottom="@dimen/padding_l"
             android:text="@string/move_to_archive" />
 
         <RadioButton
             android:id="@+id/move_to_spam"
-            style="@style/ProtonRadioButton.Mail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="@dimen/settings_radio_button_margin"
             android:drawableEnd="@drawable/ic_fire"
             android:drawablePadding="@dimen/padding_m"
-            android:layoutDirection="rtl"
-            android:paddingTop="@dimen/padding_l"
-            android:paddingBottom="@dimen/padding_l"
             android:text="@string/move_to_spam" />
     </RadioGroup>
 

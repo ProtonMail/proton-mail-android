@@ -159,21 +159,9 @@
         <item name="backgroundTint">@color/background_norm</item>
     </style>
 
-    <style name="ProtonSwitch.Mail" parent="ProtonTheme.Mail">
-        <item name="thumbTint">@drawable/switch_thumb_selector</item>
-        <item name="trackTint">@drawable/switch_track_selector</item>
-        <item name="useMaterialThemeColors">false</item>
-    </style>
-
-    <style name="ProtonRadioButton.Mail" parent="ProtonTheme.Mail">
-        <item name="android:textAppearance">@style/Proton.Text.Default</item>
-        <item name="tint">@drawable/switch_thumb_selector</item>
-        <item name="useMaterialThemeColors">false</item>
-    </style>
-
     <style name="ProtonInput.PIN">
         <item name="android:textAppearance">@style/Proton.Text.Default</item>
-        <item name="tint">@drawable/switch_thumb_selector</item>
+        <item name="android:letterSpacing">0.4</item>
         <item name="android:textSize">@dimen/settings_pin_font_size</item>
         <item name="android:textColor">@color/cornflower_blue</item>
         <item name="android:background">@color/transparent</item>
@@ -212,23 +200,6 @@
 
     <style name="SearchViewStyle" parent="Widget.AppCompat.Light.SearchView">
         <item name="searchIcon">@drawable/ic_menu_search</item>
-    </style>
-
-    <style name="SignupButton" parent="android:Widget.Button">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textColorHint">@color/white_85</item>
-        <item name="android:textSize">@dimen/h4</item>
-        <item name="android:background">@android:color/transparent</item>
-    </style>
-
-    <style name="SettingsButton" parent="android:Widget.Button">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:background">@drawable/settings_button_selector</item>
-    </style>
-
-    <style name="SettingsButtonBlue" parent="SettingsButton">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:background">@drawable/settings_button_blue_selector</item>
     </style>
 
     <style name="V3EditText" parent="@android:style/Widget.EditText">
@@ -632,12 +603,6 @@
     <style name="CustomKeyboardButton.Arrow.Left" parent="CustomKeyboardButton">
         <item name="android:background">@drawable/keyboard_button_arrow_selector</item>
         <item name="android:src">@drawable/ic_arrow_back_white</item>
-    </style>
-
-    <style name="SwitchSettings" parent="Theme.AppCompat.Light">
-        <item name="colorControlActivated">@color/switch_settings_item</item>
-        <item name="colorSwitchThumbNormal">#C3C3C3</item>
-        <item name="android:colorForeground">@color/chateau_gray</item>
     </style>
 
     <style name="CustomTabLayout" parent="Widget.Design.TabLayout">

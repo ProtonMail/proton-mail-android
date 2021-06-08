@@ -49,44 +49,38 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1" />
 
-    <ch.protonmail.android.views.CustomFontButton
+    <Button
         android:id="@+id/close_app"
-        style="@style/SettingsButtonBlue"
         android:layout_width="wrap_content"
         android:layout_height="42dp"
         android:layout_marginTop="24dp"
         android:maxLines="1"
         android:text="@string/close_app"
         android:textAllCaps="true"
-        app:fontName="Roboto-Regular.ttf"
         app:layout_constraintEnd_toStartOf="@+id/logout"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/recheck"
         app:layout_constraintTop_toBottomOf="@+id/subtitle" />
 
-    <ch.protonmail.android.views.CustomFontButton
+    <Button
         android:id="@+id/recheck"
-        style="@style/SettingsButtonBlue"
         android:layout_width="wrap_content"
         android:layout_height="42dp"
         android:layout_marginTop="24dp"
         android:maxLines="1"
         android:text="@string/recheck_delinquency"
-        app:fontName="Roboto-Regular.ttf"
         app:layout_constraintEnd_toStartOf="@+id/close_app"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/subtitle" />
 
-    <ch.protonmail.android.views.CustomFontButton
+    <Button
         android:id="@+id/logout"
-        style="@style/SettingsButtonBlue"
         android:layout_width="wrap_content"
         android:layout_height="42dp"
         android:layout_marginTop="24dp"
         android:maxLines="1"
         android:text="@string/logout"
-        app:fontName="Roboto-Regular.ttf"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/close_app"

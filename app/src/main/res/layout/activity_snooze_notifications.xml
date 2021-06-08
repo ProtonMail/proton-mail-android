@@ -53,7 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/notificationSnoozeScheduledSwitch"
-                    style="@style/ProtonSwitch.Mail"
+                    style="@style/ProtonSwitch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/padding_l"

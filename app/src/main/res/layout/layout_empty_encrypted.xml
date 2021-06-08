@@ -29,9 +29,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     android:orientation="vertical"
     android:padding="@dimen/activity_horizontal_margin_large">
 
-    <ch.protonmail.android.views.CustomFontButton
+    <Button
         android:id="@+id/add_contact_details"
-        style="@style/SettingsButtonBlue"
         android:layout_width="wrap_content"
         android:layout_height="44dp"
         android:layout_gravity="center_horizontal"
@@ -42,7 +41,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:paddingRight="@dimen/fields_default_space_medium"
         android:paddingStart="@dimen/fields_default_space_medium"
         android:text="@string/add_contact_details"
-        android:textAllCaps="true"
-        app:fontName="Roboto-Regular.ttf" />
+        android:textAllCaps="true" />
 
 </LinearLayout>

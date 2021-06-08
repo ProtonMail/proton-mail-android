@@ -43,8 +43,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/padding_m"
-        android:paddingBottom="@dimen/padding_l"
         android:src="@drawable/ic_lock_wide"
+        app:layout_constraintBottom_toTopOf="@id/mPinEdit"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ch.protonmail.android.views.SecureEditText
