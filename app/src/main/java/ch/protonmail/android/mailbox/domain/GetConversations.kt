@@ -25,6 +25,7 @@ import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.arch.DataResult
+import timber.log.Timber
 import javax.inject.Inject
 
 class GetConversations @Inject constructor(
@@ -57,6 +58,7 @@ class GetConversations @Inject constructor(
                         )
                     }
                     is DataResult.Error.Remote -> {
+                        Timber.e(result.cause, "Conversations couldn't be fetched")
                         if (result.protonCode == NO_MORE_CONVERSATIONS_ERROR_CODE) {
                             return@map GetConversationsResult.NoConversationsFound
                         }
@@ -81,5 +83,4 @@ class GetConversations @Inject constructor(
         )
         conversationRepository.loadMore(params)
     }
-
 }
