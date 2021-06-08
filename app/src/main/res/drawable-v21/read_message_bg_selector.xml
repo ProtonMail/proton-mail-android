@@ -18,6 +18,6 @@ You should have received a copy of the GNU General Public License
 along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/dark_silver_gray">
-    <item android:drawable="@color/read_message_gray" />
+    android:color="@color/background_norm">
+    <item android:drawable="@color/background_secondary" />
 </ripple>
