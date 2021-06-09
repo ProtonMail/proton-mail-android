@@ -32,16 +32,25 @@ import ch.protonmail.android.R
 /**
  * A [LinearLayout] that will show items as much as they can fit, then show a "+N" text
  */
-@SuppressWarnings("TooManyFunctions")
-open // Android's View overrides
-class MoreItemsLinearLayout @JvmOverloads constructor (
+@SuppressWarnings("TooManyFunctions") // Android's View overrides
+open class MoreItemsLinearLayout @JvmOverloads constructor (
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     @StyleRes defStyleRes: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
 
-    public operator fun ViewGroup.iterator(): MutableIterator<View> = object : MutableIterator<View> {
+    /**
+     * Override for *declared minimum width for a TextView*
+     *
+     * Normally a View will be visible only if can be shown in its totality, but if:
+     *  * the [getOrientation] of this [MoreItemsLinearLayout] is [LinearLayout.HORIZONTAL]
+     *  * the View is a [TextView]
+     *  it will be shown, only if the available space is bigger than this value [minTextViewWidth]
+     */
+    open val minTextViewWidth = 0
+
+    operator fun ViewGroup.iterator(): MutableIterator<View> = object : MutableIterator<View> {
         private var index = 0
         override fun hasNext() = index < allChildCount
         override fun next() = getChildAt(index++) ?: throw IndexOutOfBoundsException()
@@ -61,7 +70,7 @@ class MoreItemsLinearLayout @JvmOverloads constructor (
     val visibleChildCount get() = allChildren.filter { it.isVisible }.toList().size
     val hiddenChildCount get() = allChildren.filterNot { it.isVisible }.toList().size
 
-    val moreTextView = TextView(context).apply {
+    private val moreTextView = TextView(context).apply {
         id = R.id.more_items_ll_more_text_view
         layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         setTextAppearance(R.style.Proton_Text_Caption)
@@ -101,8 +110,8 @@ class MoreItemsLinearLayout @JvmOverloads constructor (
             val relevantSize = getRelevantSizeFor(child)
 
             if (relevantSize > effectiveAvailableSize) {
-                // Children can't fit anymore
-                child.isVisible = false
+                // Children can't fit in its totality
+                child.isVisible = canBeStretchedToFit(child, effectiveAvailableSize)
                 limitReached = true
             } else {
                 // We can fit this child
@@ -111,6 +120,14 @@ class MoreItemsLinearLayout @JvmOverloads constructor (
             }
         }
         moreTextView.isVisible = limitReached
+    }
+
+    private fun canBeStretchedToFit(view: View, effectiveAvailableSize: Int): Boolean =
+        orientation == HORIZONTAL && isOrWrapTextView(view) && effectiveAvailableSize > minTextViewWidth
+
+    private fun isOrWrapTextView(view: View): Boolean {
+        return view is TextView ||
+            view is ViewGroup && view.childCount == 1 && view.getChildAt(0) is TextView
     }
 
     // region add

@@ -47,6 +47,8 @@ class LabelChipView @JvmOverloads constructor(
     defStyleAttr: Int = android.R.attr.textViewStyle
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
 
+    var labelId: Id? = null
+
     @get:ColorInt
     private val defaultBackgroundTint: Int get() =
         context.getColor(R.color.shade_60)
@@ -79,6 +81,7 @@ class LabelChipView @JvmOverloads constructor(
     }
 
     fun setLabel(label: LabelChipUiModel) {
+        labelId = label.id
         text = label.name.s
         setLabelColor(label.color)
     }

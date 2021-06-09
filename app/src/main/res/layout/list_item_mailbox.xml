@@ -180,7 +180,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/third_location_image_view"
         app:layout_constraintEnd_toStartOf="@id/messages_number_text_view"
-        app:layout_constraintTop_toBottomOf="@id/first_row_barrier"
+        app:layout_constraintTop_toBottomOf="@id/sender_text_view"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constrainedWidth="true"
         android:maxLines="1"
@@ -259,21 +259,19 @@
         android:padding="@dimen/mailbox_list_item_expiration_icon_padding"
         android:layout_marginTop="@dimen/mailbox_list_item_views_margin"
         app:layout_constraintStart_toEndOf="@id/sender_initial_barrier"
-        app:layout_constraintTop_toBottomOf="@id/second_row_barrier"
+        app:layout_constraintTop_toBottomOf="@id/subject_text_view"
         android:src="@drawable/ic_hourglass"
         android:background="@drawable/circle_background_interaction_weak" />
 
     <ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
         android:id="@+id/mailbox_label_chip_group"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constrainedWidth="true"
         android:layout_marginTop="@dimen/mailbox_list_item_views_margin"
         android:layout_marginStart="@dimen/mailbox_list_item_views_margin"
         app:layout_goneMarginStart="0dp"
         app:layout_constraintStart_toEndOf="@id/expiration_image_view"
-        app:layout_constraintTop_toBottomOf="@id/second_row_barrier"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"/>
+        app:layout_constraintTop_toBottomOf="@id/subject_text_view"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
