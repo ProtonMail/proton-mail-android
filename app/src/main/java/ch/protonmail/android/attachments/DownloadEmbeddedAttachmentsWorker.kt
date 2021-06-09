@@ -107,7 +107,7 @@ class DownloadEmbeddedAttachmentsWorker @AssistedInject constructor(
         }
 
         if (message.isPGPMime) {
-            attachments = message.Attachments
+            attachments = message.attachments
         }
 
         val embeddedImages = attachments.mapNotNull {

@@ -18,11 +18,6 @@
  */
 package ch.protonmail.android.activities;
 
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
-import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_NAME;
-import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
-
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -78,6 +73,11 @@ import ch.protonmail.android.worker.FetchMailSettingsWorker;
 import ch.protonmail.android.worker.FetchUserWorker;
 import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
+
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
+import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_NAME;
+import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
 
 @AndroidEntryPoint
 public abstract class BaseActivity extends AppCompatActivity implements INetworkConfiguratorCallback {
@@ -372,10 +372,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
 
         if (!validationCanceled && !(this instanceof ValidatePinActivity)) {
             saveLastInteraction();
-        }
-        if (!(this instanceof AddAttachmentsActivity)) {
-            inApp = false;
-            activateScreenProtector();
         }
     }
 

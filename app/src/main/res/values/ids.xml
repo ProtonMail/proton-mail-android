@@ -19,7 +19,9 @@
   -->
 <resources>
 
+    <item name="composer_attachments_recycler_view" type="id"/>
     <item name="multi_line_label_recycler_view" type="id"/>
+    <item name="side_drawer_recycler_view" type="id"/>
 
     <item name="monday" type="id"/>
     <item name="tuesday" type="id"/>

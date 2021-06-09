@@ -27,6 +27,7 @@ import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ch.protonmail.android.R
 import ch.protonmail.android.adapters.DrawerAdapter
 import ch.protonmail.android.uiModel.DrawerItemUiModel
 
@@ -52,6 +53,7 @@ internal class ProtonSideDrawer @JvmOverloads constructor(
 
     init {
         bodyRecyclerView = RecyclerView(context).apply {
+            id = R.id.side_drawer_recycler_view
             layoutManager = LinearLayoutManager(context)
             adapter = bodyAdapter
         }

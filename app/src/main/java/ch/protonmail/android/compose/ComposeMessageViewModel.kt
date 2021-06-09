@@ -20,8 +20,10 @@ package ch.protonmail.android.compose
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.net.Uri
 import android.text.Spanned
 import android.text.TextUtils
+import androidx.annotation.VisibleForTesting
 import androidx.core.net.MailTo
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -39,13 +41,23 @@ import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.rx.ThreadSchedulers
+import ch.protonmail.android.attachments.domain.model.AttachmentFileInfo
+import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
+import ch.protonmail.android.attachments.domain.model.fullName
+import ch.protonmail.android.attachments.domain.model.requireFileInfo
+import ch.protonmail.android.attachments.domain.usecase.GetNewPhotoUri
+import ch.protonmail.android.attachments.domain.usecase.ImportAttachmentsToCache
 import ch.protonmail.android.bl.HtmlProcessor
+import ch.protonmail.android.compose.presentation.mapper.ComposerAttachmentUiModelMapper
+import ch.protonmail.android.compose.presentation.model.AttachmentsEventUiModel
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.domain.entity.Bytes
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.feature.account.allLoggedInBlocking
@@ -63,15 +75,23 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
+import ch.protonmail.android.worker.DeleteAttachmentWorker
 import com.squareup.otto.Subscribe
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.arch.map
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
@@ -85,20 +105,24 @@ const val NEW_LINE = "<br>"
 const val LESS_THAN = "&lt;"
 const val GREATER_THAN = "&gt;"
 
-
+@HiltViewModel
 class ComposeMessageViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository,
     private val userManager: UserManager,
-    private val accountManager: AccountManager,
+    accountManager: AccountManager,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val deleteMessage: DeleteMessage,
     private val fetchPublicKeys: FetchPublicKeys,
+    private val getNewPhotoUri: GetNewPhotoUri,
     private val saveDraft: SaveDraft,
     private val dispatchers: DispatcherProvider,
+    private val importAttachmentsToCache: ImportAttachmentsToCache,
     private val stringResourceResolver: StringResourceResolver,
-    private val sendMessageUseCase: SendMessage,
+    private val sendMessage: SendMessage,
+    private val composerAttachmentUiModelMapper: ComposerAttachmentUiModelMapper,
     verifyConnection: VerifyConnection,
-    networkConfigurator: NetworkConfigurator
+    networkConfigurator: NetworkConfigurator,
+    private val deleteAttachmentWorker: DeleteAttachmentWorker.Enqueuer
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     // region events data
@@ -114,7 +138,6 @@ class ComposeMessageViewModel @Inject constructor(
     private val _deleteResult: MutableLiveData<Event<PostResult>> = MutableLiveData()
     private val _loadingDraftResult: MutableLiveData<Message> = MutableLiveData()
     private val _messageResultError: MutableLiveData<Event<PostResult>> = MutableLiveData()
-    private val _openAttachmentsScreenResult: MutableLiveData<List<LocalAttachment>> = MutableLiveData()
     private val _buildingMessageCompleted: MutableLiveData<Event<Message>> = MutableLiveData()
     private val _dbIdWatcher: MutableLiveData<Long> = MutableLiveData()
     private val _fetchMessageDetailsEvent: MutableLiveData<Event<MessageBuilderData>> = MutableLiveData()
@@ -132,7 +155,6 @@ class ComposeMessageViewModel @Inject constructor(
 
     val messageDataResult: MessageBuilderData
         get() = _messageDataResult
-
     // endregion
     // region data
     private var _actionType = UserAction.NONE
@@ -145,6 +167,8 @@ class ComposeMessageViewModel @Inject constructor(
     private var _oldSenderAddressId: String = ""
     private lateinit var htmlProcessor: HtmlProcessor
     private var _dbId: Long? = null
+
+    private val importedAttachments = mutableListOf<ImportAttachmentResult>()
 
     private var sendingInProcess = false
     private var signatureContainsHtml = false
@@ -175,8 +199,6 @@ class ComposeMessageViewModel @Inject constructor(
         get() = _deleteResult
     val loadingDraftResult: LiveData<Message>
         get() = _loadingDraftResult
-    val openAttachmentsScreenResult: LiveData<List<LocalAttachment>>
-        get() = _openAttachmentsScreenResult
     val buildingMessageCompleted: LiveData<Event<Message>>
         get() = _buildingMessageCompleted
     val dbIdWatcher: LiveData<Long>
@@ -195,6 +217,12 @@ class ComposeMessageViewModel @Inject constructor(
             }
         }
 
+    private val _attachmentsEvent = MutableSharedFlow<AttachmentsEventUiModel>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val attachmentsEvent: Flow<AttachmentsEventUiModel> =
+        _attachmentsEvent.asSharedFlow()
     // endregion
     // region getters
     var draftId: String
@@ -216,6 +244,7 @@ class ComposeMessageViewModel @Inject constructor(
     val parentId: String?
         get() = _parentId
 
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal var autoSaveJob: Job? = null
     // endregion
 
@@ -228,7 +257,6 @@ class ComposeMessageViewModel @Inject constructor(
     } else {
         listOf(userManager.currentUserId)
     }
-
 
     fun init(processor: HtmlProcessor) {
         htmlProcessor = processor
@@ -284,6 +312,7 @@ class ComposeMessageViewModel @Inject constructor(
             messageTitle,
             attachments
         )
+        importAttachmentsFromLoadedMessage(attachments)
     }
 
     @SuppressLint("CheckResult")
@@ -430,7 +459,7 @@ class ComposeMessageViewModel @Inject constructor(
                     watchForMessageSent()
                 }
                 var newAttachmentIds: List<String> = ArrayList()
-                val listOfAttachments = ArrayList(message.Attachments)
+                val listOfAttachments = ArrayList(message.attachments)
                 if (uploadAttachments && listOfAttachments.isNotEmpty()) {
                     message.numAttachments = listOfAttachments.size
                     saveMessage(message)
@@ -584,7 +613,7 @@ class ComposeMessageViewModel @Inject constructor(
                 _draftId.set(message.messageId)
                 watchForMessageSent()
                 // region here in this block we are updating local view model attachments with the latest data for the attachments filled from the API
-                val savedAttachments = message.Attachments // already saved attachments in DB
+                val savedAttachments = message.attachments // already saved attachments in DB
                 val iterator = _messageDataResult.attachmentList.iterator() // current attachments in view model
                 val listLocalAttachmentsAlreadySavedInDb = ArrayList<LocalAttachment>()
                 while (iterator.hasNext()) {
@@ -655,35 +684,6 @@ class ComposeMessageViewModel @Inject constructor(
             )
     }
 
-    fun openAttachmentsScreen() {
-        val oldList = _messageDataResult.attachmentList
-
-        viewModelScope.launch {
-            if (draftId.isNotEmpty()) {
-                val message = composeMessageRepository.findMessage(draftId)
-
-                if (message != null) {
-                    val messageAttachments =
-                        composeMessageRepository.getAttachments(message, dispatchers.Io)
-                    if (oldList.size <= messageAttachments.size) {
-                        val attachments = LocalAttachment.createLocalAttachmentList(messageAttachments)
-                        _messageDataResult = MessageBuilderData.Builder()
-                            .fromOld(_messageDataResult)
-                            .attachmentList(ArrayList(attachments))
-                            .build()
-                        _openAttachmentsScreenResult.postValue(attachments)
-                        return@launch
-                    }
-                }
-            }
-            _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .attachmentList(ArrayList(oldList))
-                .build()
-            _openAttachmentsScreenResult.postValue(oldList)
-        }
-    }
-
     fun deleteDraft() {
         viewModelScope.launch {
             if (_draftId.get().isNotEmpty()) {
@@ -728,7 +728,7 @@ class ComposeMessageViewModel @Inject constructor(
             if (_dbId != null) {
                 val newAttachments = calculateNewAttachments(true)
 
-                sendMessageUseCase(
+                sendMessage(
                     SendMessage.SendMessageParameters(
                         message,
                         newAttachments,
@@ -892,7 +892,7 @@ class ComposeMessageViewModel @Inject constructor(
             .build()
     }
 
-    fun setAttachmentList(attachments: ArrayList<LocalAttachment>) {
+    fun setAttachmentList(attachments: List<LocalAttachment>) {
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)
             .attachmentList(attachments)
@@ -1137,13 +1137,25 @@ class ComposeMessageViewModel @Inject constructor(
     @JvmOverloads
     fun setBeforeSaveDraft(
         uploadAttachments: Boolean,
-        contentFromComposeBodyEditText: String,
+        updatedMessageBody: String? = null,
         userAction: UserAction = UserAction.SAVE_DRAFT
     ) {
         setUploadAttachments(uploadAttachments)
-
+        if (updatedMessageBody != null) {
+            setContent(buildMessageContent(updatedMessageBody))
+        }
         _actionType = userAction
-        var content = contentFromComposeBodyEditText
+
+        if (isRespondInline()) {
+            setRespondInline(true)
+        } else {
+            setRespondInline(false)
+        }
+        buildMessage()
+    }
+
+    private fun buildMessageContent(plainContent: String): String {
+        var content = plainContent
         content = UiUtil.toHtml(content)
         content.replace("   ", "&nbsp;&nbsp;&nbsp;").replace("  ", "&nbsp;&nbsp;")
         content = content.replace("<", LESS_THAN).replace(">", GREATER_THAN).replace("\n", NEW_LINE)
@@ -1164,16 +1176,17 @@ class ComposeMessageViewModel @Inject constructor(
             content = content.replace(fromHtmlMobileSignature.toString(), _messageDataResult.mobileSignature)
         }
 
-        if ((_messageDataResult.isRespondInlineChecked || _messageDataResult.isRespondInlineButtonVisible.not()) && _messageDataResult.isMessageBodyVisible.not()) {
-            setContent(content)
-            setRespondInline(true)
+        return if (isRespondInline()) {
+            content
         } else {
             val quotedHeader = messageDataResult.quotedHeader.toString().replace("\n", NEW_LINE)
-            setContent(content + quotedHeader + _messageDataResult.initialMessageContent)
-            setRespondInline(false)
+            content + quotedHeader + _messageDataResult.initialMessageContent
         }
-        buildMessage()
     }
+
+    private fun isRespondInline() =
+        (_messageDataResult.isRespondInlineChecked || _messageDataResult.isRespondInlineButtonVisible.not()) &&
+            _messageDataResult.isMessageBodyVisible.not()
 
     fun finishBuildingMessage(contentFromComposeBodyEditText: String) {
         setUploadAttachments(true)
@@ -1247,29 +1260,118 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun onMessageLoaded(message: Message) {
         val messageId = message.messageId
+        val localAttachments = LocalAttachment.createLocalAttachmentList(message.attachments)
         val isLocalMessageId = MessageUtils.isLocalMessageId(messageId)
         if (!isLocalMessageId) {
             viewModelScope.launch {
                 draftId = messageId!!
                 message.isDownloaded = true
-                val attachments = message.Attachments
+                val attachments = message.attachments
                 message.setAttachmentList(attachments)
-                setAttachmentList(ArrayList(LocalAttachment.createLocalAttachmentList(attachments)))
+                setAttachmentList(ArrayList(localAttachments))
                 _dbId = message.dbId
             }
         } else {
             setBeforeSaveDraft(false, messageDataResult.content, UserAction.SAVE_DRAFT)
         }
+        importAttachmentsFromLoadedMessage(localAttachments)
     }
 
-    fun autoSaveDraft(messageBody: String) {
+    // region attachments
+    fun requestNewPhotoUri() {
+        viewModelScope.launch {
+            val uri = getNewPhotoUri()
+            _attachmentsEvent.emit(AttachmentsEventUiModel.OnPhotoUriReady(uri))
+        }
+    }
+
+    fun addAttachments(uris: List<Uri>, deleteOriginalFiles: Boolean) {
+        viewModelScope.launch {
+            importAttachmentsToCache(uris, deleteOriginalFiles).collect { results ->
+                val newAttachments = (results + importedAttachments).distinctBy { it.originalFileUri }
+                importedAttachments.apply {
+                    clear()
+                    addAll(newAttachments)
+                }
+
+                refreshMessageAttachments()
+                notifyAttachmentsChanged()
+            }
+        }
+    }
+
+    fun addAttachment(uri: Uri, deleteOriginalFile: Boolean) {
+        addAttachments(listOf(uri), deleteOriginalFile)
+    }
+
+    fun removeAttachment(uri: Uri) {
+        viewModelScope.launch {
+            deleteAttachmentWorker.enqueue(uri.lastPathSegment!!)
+            importedAttachments.removeIf { it.originalFileUri == uri }
+
+            refreshMessageAttachments()
+            notifyAttachmentsChanged()
+        }
+    }
+
+    private fun importAttachmentsFromLoadedMessage(attachments: List<LocalAttachment>) {
+        viewModelScope.launch(dispatchers.Io) {
+            val newImportedAttachments = attachments.map { attachment ->
+                val uri = attachment.uri
+                val fullName = checkNotNull(attachment.displayName)
+                val extension = fullName.substringAfter(".", missingDelimiterValue = EMPTY_STRING)
+                val fileInfo = AttachmentFileInfo(
+                    fileName = Name(fullName.substringBeforeLast(".")),
+                    extension = extension,
+                    size = Bytes(attachment.size.toULong()),
+                    mimeType = attachment.mimeType
+                )
+                ImportAttachmentResult.Skipped(uri, fileInfo)
+            }
+            val newAttachments = (newImportedAttachments + importedAttachments).distinctBy { it.originalFileUri }
+            importedAttachments.apply {
+                clear()
+                addAll(newAttachments)
+            }
+            refreshMessageAttachments()
+            notifyAttachmentsChanged()
+        }
+    }
+
+    private fun notifyAttachmentsChanged() {
+        val uiModels = importedAttachments.map(composerAttachmentUiModelMapper) { it.toUiModel() }
+        _attachmentsEvent.tryEmit(AttachmentsEventUiModel.OnAttachmentsChange(uiModels))
+    }
+
+    private fun refreshMessageAttachments() {
+        val successfulAttachments = importedAttachments.filterIsInstance<ImportAttachmentResult.Success>()
+        val newAttachments = successfulAttachments.map { attachmentResult ->
+            val fileInfo = attachmentResult.requireFileInfo()
+            LocalAttachment(
+                uri = attachmentResult.importedFileUri,
+                displayName = fileInfo.fullName,
+                size = fileInfo.size.toLong(),
+                mimeType = fileInfo.mimeType
+            )
+        }
+        _messageDataResult = MessageBuilderData.Builder()
+            .fromOld(_messageDataResult)
+            .attachmentList(newAttachments)
+            .build()
+    }
+    // endregion
+
+    /**
+     * @param updatedMessageBody is `null` if message body has not changed
+     */
+    fun autoSaveDraft(updatedMessageBody: String? = null) {
         Timber.v("Draft auto save scheduled!")
 
         autoSaveJob?.cancel()
         autoSaveJob = viewModelScope.launch(dispatchers.Io) {
-            delay(1000)
+            delay(1_000)
             Timber.d("Draft auto save triggered")
-            setBeforeSaveDraft(false, messageBody)
+            setBeforeSaveDraft(false, updatedMessageBody)
         }
     }
 

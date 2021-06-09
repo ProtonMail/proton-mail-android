@@ -18,12 +18,15 @@
  */
 package ch.protonmail.android.utils.extensions
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.annotation.StyleRes
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.views.contactsList.ContactGroupEmailAvatarView
@@ -33,6 +36,12 @@ import ch.protonmail.android.views.contactsList.ContactGroupEmailAvatarView
  *
  * Author: Davide Farella
  */
+
+/**
+ * @return non null [Drawable] or throw [IllegalStateException]
+ */
+fun Context.getDrawableOrThrow(@DrawableRes id: Int): Drawable =
+    checkNotNull(getDrawable(id))
 
 /** Execute the [listener] on [TextWatcher.onTextChanged] */
 inline fun EditText.onTextChange(crossinline listener: (CharSequence) -> Unit): TextWatcher {
@@ -55,6 +64,35 @@ inline fun EditText.onTextChange(crossinline listener: (CharSequence) -> Unit): 
 
 fun TextView.setStyle(@StyleRes styleId: Int) {
     setTextAppearance(styleId)
+}
+
+/**
+ * This is useful for use a placeholder resource for Preview.
+ * Given a view 'X', that contains a view `Y`, for 'Y' we can't simply use `if ([isInPreviewMode]()) setText("hello")`, "
+ *  because we would not be able to correctly preview 'X', using 'B' using another text for 'Y'
+ *
+ * @return [fromAttributes] if not null, or [forPreview] only if [isInPreviewMode], otherwise throws
+ * @throws IllegalArgumentException
+ */
+fun <T> View.fromAttributesOrPreviewOrThrow(fromAttributes: T?, forPreview: T): T {
+    return if (isInPreviewMode())
+        fromAttributes ?: forPreview
+    else
+        requireNotNull(fromAttributes)
+}
+
+/**
+ * This is useful for use a placeholder resource for Preview.
+ * Given a view 'X', that contains a view `Y`, for 'Y' we can't simply use `if ([isInPreviewMode]()) setText("hello")`, "
+ *  because we would not be able to correctly preview 'X', using 'B' using another text for 'Y'
+ *
+ * @return [fromAttributes] if not null, or [forPreview] only if [isInPreviewMode], otherwise `null`
+ */
+fun <T> View.fromAttributesOrPreviewOrNull(fromAttributes: T?, forPreview: T): T? {
+    return if (isInPreviewMode())
+        fromAttributes ?: forPreview
+    else
+        fromAttributes
 }
 
 /**

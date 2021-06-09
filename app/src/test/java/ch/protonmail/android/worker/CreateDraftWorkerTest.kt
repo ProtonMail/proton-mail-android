@@ -730,12 +730,12 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 setLabelIDs(listOf("label", "label1", "label2"))
                 parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
                 numAttachments = 2
-                Attachments = emptyList()
+                attachments = emptyList()
             }
 
             val apiDraftRequest = mockk<DraftBody>(relaxed = true)
             val responseMessage = Message(messageId = "created_draft_id").apply {
-                Attachments = listOf(Attachment("235423"), Attachment("823421"))
+                attachments = listOf(Attachment("235423"), Attachment("823421"))
             }
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000
@@ -773,13 +773,13 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 this.isDownloaded = true
                 this.setIsRead(true)
                 this.numAttachments = message.numAttachments
-                this.Attachments = responseMessage.Attachments
+                this.attachments = responseMessage.attachments
                 this.localId = message.messageId
             }
             val actualMessage = slot<Message>()
             coVerify { messageDetailsRepository.saveMessage(capture(actualMessage)) }
             assertEquals(expected, actualMessage.captured)
-            assertEquals(expected.Attachments, actualMessage.captured.Attachments)
+            assertEquals(expected.attachments, actualMessage.captured.attachments)
         }
     }
 
@@ -987,12 +987,12 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 setLabelIDs(listOf("label", "label1", "label2"))
                 parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
                 numAttachments = 1
-                Attachments = listOf(Attachment(attachmentId = "12749"))
+                attachments = listOf(Attachment(attachmentId = "12749"))
             }
 
             val apiDraftRequest = mockk<DraftBody>(relaxed = true)
             val responseMessage = Message(messageId = "created_draft_id").apply {
-                Attachments = listOf(Attachment(attachmentId = "82374"))
+                attachments = listOf(Attachment(attachmentId = "82374"))
             }
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000
@@ -1031,13 +1031,13 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 this.isDownloaded = true
                 this.setIsRead(true)
                 this.numAttachments = message.numAttachments
-                this.Attachments = responseMessage.Attachments
+                this.attachments = responseMessage.attachments
                 this.localId = message.messageId
             }
             val actualMessage = slot<Message>()
             coVerify { messageDetailsRepository.saveMessage(capture(actualMessage)) }
             assertEquals(expectedMessage, actualMessage.captured)
-            assertEquals(expectedMessage.Attachments, actualMessage.captured.Attachments)
+            assertEquals(expectedMessage.attachments, actualMessage.captured.attachments)
         }
     }
 
@@ -1058,13 +1058,13 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 setLabelIDs(listOf("label", "label1", "label2"))
                 parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
                 numAttachments = 1
-                Attachments = listOf(localAttachment)
+                attachments = listOf(localAttachment)
             }
 
             val apiDraftRequest = mockk<DraftBody>(relaxed = true)
             val remoteAttachment = Attachment(attachmentId = "REMOTE-12736", isUploaded = true)
             val responseMessage = Message(messageId = "created_draft_id").apply {
-                Attachments = listOf(remoteAttachment)
+                attachments = listOf(remoteAttachment)
             }
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000
@@ -1103,13 +1103,13 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 this.isDownloaded = true
                 this.setIsRead(true)
                 this.numAttachments = localMessage.numAttachments
-                this.Attachments = listOf(localAttachment, remoteAttachment)
+                this.attachments = listOf(localAttachment, remoteAttachment)
                 this.localId = localMessage.messageId
             }
             val actualMessage = slot<Message>()
             coVerify { messageDetailsRepository.saveMessage(capture(actualMessage)) }
             assertEquals(expectedMessage, actualMessage.captured)
-            assertEquals(expectedMessage.Attachments, actualMessage.captured.Attachments)
+            assertEquals(expectedMessage.attachments, actualMessage.captured.attachments)
         }
     }
 

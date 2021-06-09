@@ -40,9 +40,9 @@ import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.di.CurrentUserId
 import ch.protonmail.android.di.CurrentUserMailSettings
+import ch.protonmail.android.domain.entity.Id
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -165,7 +165,7 @@ class UploadAttachments @AssistedInject constructor(
     ) {
         val uploadedAttachment = messageDetailsRepository.findAttachmentById(uploadedAttachmentId)
         uploadedAttachment?.let {
-            val attachments = message.Attachments.toMutableList()
+            val attachments = message.attachments.toMutableList()
             attachments
                 .find { it.fileName == uploadedAttachment.fileName }
                 ?.let {

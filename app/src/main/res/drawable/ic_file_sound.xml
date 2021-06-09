@@ -1,0 +1,40 @@
+<!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M4,0L20,0A4,4 0,0 1,24 4L24,20A4,4 0,0 1,20 24L4,24A4,4 0,0 1,0 20L0,4A4,4 0,0 1,4 0z"
+      android:fillColor="#EBEDF3"/>
+  <path
+      android:pathData="M11.444,17.9193C11.6687,18.0976 12,17.9376 12,17.6508V6.3499C12,6.063 11.6687,5.903 11.444,6.0813L7.2001,9.4486V9.4487L5.143,9.4487C4.9537,9.4487 4.8002,9.6022 4.8002,9.7915V14.2092C4.8002,14.3985 4.9537,14.552 5.143,14.552L7.2002,14.552L11.444,17.9193Z"
+      android:fillColor="#3A3F4A"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M18.1691,12.0085C18.1691,9.2508 15.9388,7.0322 13.2,7.0322V6C16.506,6 19.1999,8.6786 19.1999,12.0085C19.1999,15.3404 16.5039,18 13.2,18V16.9677C15.9409,16.9677 18.1691,14.7641 18.1691,12.0085Z"
+      android:fillColor="#3A3F4A"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M15.4269,12C15.4269,10.7732 14.4327,9.7785 13.2,9.7785V8.7462C14.999,8.7462 16.4576,10.2001 16.4576,12C16.4576,13.7958 15.0032,15.2708 13.2,15.2708V14.2386C14.4286,14.2386 15.4269,13.231 15.4269,12Z"
+      android:fillColor="#3A3F4A"
+      android:fillType="evenOdd"/>
+</vector>

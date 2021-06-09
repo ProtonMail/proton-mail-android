@@ -18,12 +18,6 @@
  */
 package ch.protonmail.android.activities.composeMessage;
 
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_ATTACHMENT_IMPORT_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -46,12 +40,10 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.Formatter;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.webkit.WebSettings;
@@ -72,13 +64,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.otto.Subscribe;
@@ -99,7 +86,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -107,8 +93,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
-import ch.protonmail.android.activities.AddAttachmentsActivity;
-import ch.protonmail.android.activities.BaseContactsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.api.models.MessageRecipient;
 import ch.protonmail.android.api.models.SendPreference;
@@ -117,10 +101,9 @@ import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.api.models.enumerations.MessageEncryption;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker;
-import ch.protonmail.android.attachments.ImportAttachmentsWorker;
 import ch.protonmail.android.compose.ComposeMessageViewModel;
-import ch.protonmail.android.compose.ComposeMessageViewModelFactory;
 import ch.protonmail.android.compose.presentation.ui.MessageRecipientArrayAdapter;
+import ch.protonmail.android.compose.presentation.ui.ComposeMessageKotlinActivity;
 import ch.protonmail.android.compose.recipients.GroupRecipientsDialogFragment;
 import ch.protonmail.android.contacts.PostResult;
 import ch.protonmail.android.core.Constants;
@@ -132,14 +115,12 @@ import ch.protonmail.android.data.local.model.ContactLabel;
 import ch.protonmail.android.data.local.model.LocalAttachment;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.MessageSender;
-import ch.protonmail.android.databinding.ActivityComposeMessage2Binding;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
 import ch.protonmail.android.events.MessageSavedEvent;
-import ch.protonmail.android.events.PostImportAttachmentEvent;
 import ch.protonmail.android.events.PostLoadContactsEvent;
 import ch.protonmail.android.events.ResignContactEvent;
 import ch.protonmail.android.events.Status;
@@ -164,7 +145,6 @@ import ch.protonmail.android.utils.ServerTime;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.crypto.TextDecryptionResult;
 import ch.protonmail.android.utils.extensions.CommonExtensionsKt;
-import ch.protonmail.android.utils.extensions.SerializationUtils;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import ch.protonmail.android.utils.ui.locks.ComposerLockIcon;
@@ -173,15 +153,15 @@ import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
 import ch.protonmail.android.views.PMWebViewClient;
 import dagger.hilt.android.AndroidEntryPoint;
-import kotlin.Unit;
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function0;
 import me.proton.core.accountmanager.domain.AccountManager;
 import timber.log.Timber;
 
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
+
 @AndroidEntryPoint
 public class ComposeMessageActivity
-        extends BaseContactsActivity
+        extends ComposeMessageKotlinActivity
         implements MessagePasswordButton.OnMessagePasswordChangedListener,
         MessageExpirationView.OnMessageExpirationChangedListener,
         LoaderManager.LoaderCallbacks<Cursor>,
@@ -210,7 +190,6 @@ public class ComposeMessageActivity
     public static final String EXTRA_REPLY_FROM_GCM = "reply_from_gcm";
     public static final String EXTRA_LOAD_IMAGES = "load_images";
     public static final String EXTRA_LOAD_REMOTE_CONTENT = "load_remote_content";
-    private static final int REQUEST_CODE_ADD_ATTACHMENTS = 1;
     private static final String STATE_ATTACHMENT_LIST = "attachment_list";
     private static final String STATE_ADDITIONAL_ROWS_VISIBLE = "additional_rows_visible";
     private static final String STATE_DIRTY = "dirty";
@@ -254,8 +233,6 @@ public class ComposeMessageActivity
     private boolean mUpdateDraftPmMeChanged;
     private boolean largeBody;
 
-    @Inject
-    ComposeMessageViewModelFactory composeMessageViewModelFactory;
     private ComposeMessageViewModel composeMessageViewModel;
     @Inject
     MessageDetailsRepository messageDetailsRepository;
@@ -265,17 +242,7 @@ public class ComposeMessageActivity
     @Inject
     DownloadEmbeddedAttachmentsWorker.Enqueuer attachmentsWorker;
 
-    String composerInstanceId;
-
     Menu menu;
-
-    private ActivityComposeMessage2Binding binding;
-
-    @Override
-    protected View getRootView() {
-        binding = ActivityComposeMessage2Binding.inflate(getLayoutInflater());
-        return binding.getRoot();
-    }
 
     @Override
     public void onPermissionConfirmed(Constants.PermissionType type) {
@@ -303,13 +270,6 @@ public class ComposeMessageActivity
         mMessageExpirationView.show();
     }
 
-    // TODO
-    @OnClick(R.id.add_attachments)
-    public void onAddAttachments() {
-        UiUtil.hideKeyboard(this);
-        composeMessageViewModel.openAttachmentsScreen();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -330,8 +290,8 @@ public class ComposeMessageActivity
             setAdditionalRowVisibility(mAreAdditionalRowsVisible);
         });
         // endregion
-        
-        composeMessageViewModel = new ViewModelProvider(this, composeMessageViewModelFactory).get(ComposeMessageViewModel.class);
+
+        composeMessageViewModel = getComposeViewModel();
         composeMessageViewModel.init(mHtmlProcessor);
         observeSetup();
 
@@ -440,7 +400,6 @@ public class ComposeMessageActivity
         });
 
         composeMessageViewModel.getDeleteResult().observe(ComposeMessageActivity.this, new CheckLocalMessageObserver());
-        composeMessageViewModel.getOpenAttachmentsScreenResult().observe(ComposeMessageActivity.this, new AddAttachmentsObserver());
         composeMessageViewModel.getSavingDraftError().observe(this, errorMessage ->
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show());
         composeMessageViewModel.getSavingDraftComplete().observe(this, event -> {
@@ -701,15 +660,6 @@ public class ComposeMessageActivity
         addRecipientsToView(recipients, recipient);
     }
 
-    @NonNull
-    private Function0<Unit> onConnectivityCheckRetry() {
-        return () -> {
-            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
-            composeMessageViewModel.checkConnectivityDelayed();
-            return null;
-        };
-    }
-
     private void onConnectivityEvent(Constants.ConnectionState connectivity) {
         Timber.v("onConnectivityEvent hasConnectivity:%s DoHOngoing:%s", connectivity.name(), isDohOngoing);
         if (!isDohOngoing) {
@@ -813,34 +763,7 @@ public class ComposeMessageActivity
 
     private void handleSendFileUri(Uri uri) {
         if (uri != null) {
-            composerInstanceId = UUID.randomUUID().toString();
-            Data data = new Data.Builder()
-                    .putStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY, new String[]{uri.toString()})
-                    .putString(KEY_INPUT_DATA_COMPOSER_INSTANCE_ID, composerInstanceId)
-                    .build();
-            OneTimeWorkRequest importAttachmentsWork = new OneTimeWorkRequest.Builder(ImportAttachmentsWorker.class)
-                    .setInputData(data)
-                    .build();
-            WorkManager workManager = WorkManager.getInstance();
-            workManager.enqueue(importAttachmentsWork);
-
-            // Observe the Worker with a LiveData, because result will be received when the
-            // Activity will back in foreground, since an EventBut event would be lost while in
-            // Background
-            workManager.getWorkInfoByIdLiveData(importAttachmentsWork.getId())
-                    .observe(this, workInfo -> {
-                        if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-
-                            // Get the Event from Worker
-                            String json = workInfo.getOutputData().getString(composerInstanceId);
-                            if (json != null) {
-                                PostImportAttachmentEvent event = SerializationUtils.deserialize(
-                                        json, PostImportAttachmentEvent.class
-                                );
-                                onPostImportAttachmentEvent(event);
-                            }
-                        }
-                    });
+            composeMessageViewModel.addAttachment(uri, false);
             composeMessageViewModel.setIsDirty(true);
         }
     }
@@ -848,42 +771,7 @@ public class ComposeMessageActivity
     void handleSendMultipleFiles(Intent intent) {
         ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         if (fileUris != null) {
-            String[] uriStrings = new String[fileUris.size()];
-            for (int i = 0; i < fileUris.size(); i++) {
-                uriStrings[i] = fileUris.get(i).toString();
-            }
-            composerInstanceId = UUID.randomUUID().toString();
-            Data data = new Data.Builder()
-                    .putStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY, uriStrings)
-                    .putString(KEY_INPUT_DATA_COMPOSER_INSTANCE_ID, composerInstanceId)
-                    .build();
-            OneTimeWorkRequest importAttachmentsWork = new OneTimeWorkRequest.Builder(ImportAttachmentsWorker.class)
-                    .setInputData(data)
-                    .build();
-            WorkManager.getInstance().enqueue(importAttachmentsWork);
-            WorkManager.getInstance().getWorkInfoByIdLiveData(importAttachmentsWork.getId()).observe(this, workInfo -> {
-                if (workInfo != null) {
-                    Log.d("PMTAG", "ImportAttachmentsWorker workInfo = " + workInfo.getState());
-                }
-            });
-        }
-    }
-
-    @Subscribe
-    public void onPostImportAttachmentEvent(PostImportAttachmentEvent event) {
-        if (event == null || event.composerInstanceId == null || !event.composerInstanceId.equals(composerInstanceId)) {
-            return;
-        }
-
-        List<LocalAttachment> attachmentsList = composeMessageViewModel.getMessageDataResult().getAttachmentList();
-        boolean alreadyAdded = CollectionsKt.firstOrNull(attachmentsList, localAttachment ->
-                localAttachment.getUri().toString().equals(event.uri)
-        ) != null;
-
-        if (!alreadyAdded) {
-            composeMessageViewModel.setIsDirty(true);
-            attachmentsList.add(new LocalAttachment(Uri.parse(event.uri), event.displayName, event.size, event.mimeType));
-            renderViews();
+            composeMessageViewModel.addAttachments(fileUris, false);
         }
     }
 
@@ -1307,25 +1195,9 @@ public class ComposeMessageActivity
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_ADD_ATTACHMENTS && resultCode == RESULT_OK) {
-            Timber.d("ComposeMessageAct.onActivityResult Received add attachment response with result OK");
-            askForPermission = false;
-            ArrayList<LocalAttachment> resultAttachmentList = data.getParcelableArrayListExtra(AddAttachmentsActivity.EXTRA_ATTACHMENT_LIST);
-            ArrayList<LocalAttachment> listToSet = resultAttachmentList != null ? resultAttachmentList : new ArrayList<>();
-            composeMessageViewModel.setAttachmentList(listToSet);
-            composeMessageViewModel.setIsDirty(true);
-            String oldDraftId = composeMessageViewModel.getDraftId();
-            afterAttachmentsAdded();
-            composeMessageViewModel.setIsDirty(true);
-        } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_VALIDATE_PIN) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_VALIDATE_PIN) {
             // region pin results
-            if (data.hasExtra(EXTRA_ATTACHMENT_IMPORT_EVENT)) {
-                Object attachmentExtra = data.getSerializableExtra(EXTRA_ATTACHMENT_IMPORT_EVENT);
-                if (attachmentExtra instanceof PostImportAttachmentEvent) {
-                    onPostImportAttachmentEvent((PostImportAttachmentEvent) attachmentExtra);
-                }
-                composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
-            } else if (data.hasExtra(EXTRA_MESSAGE_DETAIL_EVENT) || data.hasExtra(EXTRA_DRAFT_DETAILS_EVENT)) {
+            if (data.hasExtra(EXTRA_MESSAGE_DETAIL_EVENT) || data.hasExtra(EXTRA_DRAFT_DETAILS_EVENT)) {
                 FetchMessageDetailEvent messageDetailEvent = (FetchMessageDetailEvent) data.getSerializableExtra(EXTRA_MESSAGE_DETAIL_EVENT);
                 FetchDraftDetailEvent draftDetailEvent = (FetchDraftDetailEvent) data.getSerializableExtra(EXTRA_DRAFT_DETAILS_EVENT);
                 if (messageDetailEvent != null) {
@@ -1337,18 +1209,11 @@ public class ComposeMessageActivity
             }
             toRecipientView.requestFocus();
             UiUtil.toggleKeyboard(this, toRecipientView);
-            super.onActivityResult(requestCode, resultCode, data);
             // endregion
         } else {
             Timber.w("ComposeMessageAct.onActivityResult Received result not handled", requestCode, resultCode);
-            super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    private void afterAttachmentsAdded() {
-        composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
-        composeMessageViewModel.setIsDirty(true);
-        renderViews();
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Subscribe
@@ -1834,16 +1699,6 @@ public class ComposeMessageActivity
         }
     }
 
-    private class ParentViewScrollListener implements View.OnTouchListener {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-
-            messageBodyEditText.setFocusableInTouchMode(true);
-            messageBodyEditText.requestFocus();
-            return false;
-        }
-    }
-
     private class RespondInlineButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -1984,20 +1839,6 @@ public class ComposeMessageActivity
                 TextExtensions.showToast(ComposeMessageActivity.this, sendingToast);
                 new Handler(Looper.getMainLooper()).postDelayed(ComposeMessageActivity.this::finishActivity, 500);
             }
-        }
-    }
-
-    private class AddAttachmentsObserver implements Observer<List<LocalAttachment>> {
-
-        @Override
-        public void onChanged(@Nullable List<LocalAttachment> attachments) {
-            String draftId = composeMessageViewModel.getDraftId();
-            Intent intent = AppUtil.decorInAppIntent(new Intent(ComposeMessageActivity.this, AddAttachmentsActivity.class));
-            intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_CREATED, !TextUtils.isEmpty(draftId) && !MessageUtils.INSTANCE.isLocalMessageId(draftId));
-            intent.putParcelableArrayListExtra(AddAttachmentsActivity.EXTRA_ATTACHMENT_LIST, new ArrayList<>(attachments));
-            intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_ID, draftId);
-            startActivityForResult(intent, REQUEST_CODE_ADD_ATTACHMENTS);
-            renderViews();
         }
     }
 

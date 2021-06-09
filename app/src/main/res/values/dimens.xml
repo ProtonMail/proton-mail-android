@@ -22,10 +22,14 @@
     <!-- region V4 -->
 
     <!-- generic size -->
+    <dimen name="size_button_xs">24dp</dimen>
     <dimen name="size_button_m">48dp</dimen>
     <dimen name="size_divider">2px</dimen>
     <dimen name="size_icon_m">24dp</dimen>
+    <dimen name="size_icon_l">32dp</dimen>
+    <dimen name="size_corner_xs">8dp</dimen>
     <dimen name="size_corner_s">16dp</dimen>
+    <dimen name="size_outline">1dp</dimen>
 
     <dimen name="unread_messages_chip_size">20dp</dimen>
     <dimen name="message_number_view_padding_horizontal">8dp</dimen>
@@ -111,6 +115,9 @@
     <dimen name="height_contact_entry">68dp</dimen>
     <dimen name="size_contact_icon">40dp</dimen>
     <dimen name="padding_contact_group_icon">10dp</dimen>
+
+    <!-- Attachments -->
+    <dimen name="height_add_attachments_action_sheet_item">56dp</dimen>
 
     <!-- endregion -->
 

@@ -327,13 +327,22 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_end="@dimen/padding_composer_body"/>
 
+            <!-- Attachments -->
+            <ch.protonmail.android.compose.presentation.ui.ComposerAttachmentsView
+                android:id="@+id/composer_attachments_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/composer_message_body_edit_text"
+                app:layout_constraintStart_toStartOf="@id/composer_body_start_guideline"
+                app:layout_constraintEnd_toEndOf="@id/composer_body_end_guideline"/>
+
             <!-- Respond inline -->
             <Button
                 android:id="@+id/composer_respond_inline_button"
                 style="@style/ProtonButton.Borderless.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/composer_message_body_edit_text"
+                app:layout_constraintTop_toBottomOf="@id/composer_attachments_view"
                 app:layout_constraintEnd_toEndOf="@id/composer_body_end_guideline"
                 android:text="@string/respond_inline"
                 android:visibility="gone"
