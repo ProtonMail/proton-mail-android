@@ -110,7 +110,6 @@ import ezvcard.property.Title;
 import ezvcard.property.Url;
 import ezvcard.util.PartialDate;
 import kotlin.Unit;
-import me.proton.core.presentation.ui.view.ProtonButton;
 import me.proton.core.presentation.ui.view.ProtonInput;
 import timber.log.Timber;
 
@@ -152,7 +151,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     @BindView(R.id.scroll_parent)
     ScrollView mScrollParentView;
     @BindView(R.id.addPhotoBtn)
-    ProtonButton addPhotoBtn;
+    Button addPhotoBtn;
     @BindView(R.id.contactPhoto)
     ImageView contactPhoto;
     @BindView(R.id.contactInitials)
