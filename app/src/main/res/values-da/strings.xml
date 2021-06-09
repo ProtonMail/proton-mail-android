@@ -630,7 +630,6 @@
     <string name="edit_contact">Redigér kontakt</string>
     <string name="create_contact_group">Opret kontaktgruppe</string>
     <string name="edit_contact_group">Redigér kontaktgruppe</string>
-    <string name="contact_groups_manage_addresses">Håndtere adresser</string>
     <string name="contact_group_display_name">\ue91c Visningsnavn</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Føj adresse til grupper</string>

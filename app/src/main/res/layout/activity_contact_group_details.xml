@@ -53,7 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:id="@+id/chooseGroupColor"
+                android:id="@+id/contact_group_details_send_message"
                 style="@style/ProtonButton.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

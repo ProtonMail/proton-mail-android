@@ -617,7 +617,6 @@
     <string name="edit_contact">更改联系人信息</string>
     <string name="create_contact_group">创建联系人群组</string>
     <string name="edit_contact_group">更改联系人群组</string>
-    <string name="contact_groups_manage_addresses">管理邮箱</string>
     <string name="contact_group_display_name">名称</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">加入群组</string>

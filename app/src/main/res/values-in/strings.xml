@@ -624,7 +624,6 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="edit_contact">Ubah Kontak</string>
     <string name="create_contact_group">Buat Grup Kontak</string>
     <string name="edit_contact_group">Edit Grup Kontak</string>
-    <string name="contact_groups_manage_addresses">Kelola Alamat</string>
     <string name="contact_group_display_name">Nama Tampilan</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Tambahkan alamat ke grup</string>

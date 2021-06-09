@@ -639,7 +639,6 @@
     <string name="edit_contact">Uredi kontakt</string>
     <string name="create_contact_group">Stvaranje grupe kontakta</string>
     <string name="edit_contact_group">Uredi grupu kontakata</string>
-    <string name="contact_groups_manage_addresses">Upravljanje adresama</string>
     <string name="contact_group_display_name">Zaslonski naziv</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Dodajte adresu u grupu</string>

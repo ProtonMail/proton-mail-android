@@ -618,7 +618,6 @@
     <string name="edit_contact">連絡先の編集</string>
     <string name="create_contact_group">連絡先グループの作成</string>
     <string name="edit_contact_group">連絡先グループの編集</string>
-    <string name="contact_groups_manage_addresses">メンバーの管理</string>
     <string name="contact_group_display_name">表示名</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">アドレスをグループへ追加</string>

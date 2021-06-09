@@ -151,7 +151,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:scaleType="centerInside"
                     android:visibility="gone"
                     tools:visibility="visible"
-                    android:tint="@color/contact_action"
+                    android:tint="@color/interaction_norm"
                     app:srcCompat="@drawable/ic_paper_plane"
                     tools:ignore="ContentDescription" />
 

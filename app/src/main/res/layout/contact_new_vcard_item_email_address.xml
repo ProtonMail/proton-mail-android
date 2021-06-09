@@ -24,29 +24,18 @@
     android:layout_marginBottom="@dimen/fields_default_space"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/new_row_parent"
+    <TextView
+        android:id="@+id/btnAddNewRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="true"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:background="?selectableItemBackground"
+        android:drawablePadding="@dimen/padding_m"
+        android:gravity="center_vertical"
+        android:padding="@dimen/padding_m"
+        android:text="@string/add_new_email"
 
-        <ch.protonmail.android.views.CustomFontButton
-            android:id="@+id/btnAddNewRow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:drawableStart="@drawable/ic_plus"
-            android:drawablePadding="@dimen/padding_m"
-            android:gravity="start|center_vertical"
-            android:inputType="textCapSentences"
-            android:paddingHorizontal="@dimen/padding_m"
-            android:text="@string/add_new_email"
-            android:textSize="16sp"
-            app:fontName="contacts_icons.ttf" />
-    </LinearLayout>
+        android:textSize="16sp"
+        app:drawableStartCompat="@drawable/ic_plus" />
 
     <LinearLayout
         android:id="@+id/fields_parent"
@@ -56,50 +45,9 @@
         android:visibility="gone"
         tools:visibility="visible">
 
+        <include layout="@layout/layout_contacts_edit_filed_type_selector" />
 
-        <RelativeLayout
-            android:id="@+id/rowWrapper"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="@dimen/fields_default_space_small"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/fields_default_space_small"
-            android:paddingBottom="@dimen/fields_default_space"
-            tools:ignore="RtlSymmetry">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@id/btnOptionType">
-
-                <TextView
-                    android:id="@+id/optionTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="@dimen/padding_m"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/contact_heading"
-                    android:textSize="16sp"
-                    tools:text="@tools:sample/lorem" />
-            </LinearLayout>
-
-            <ImageButton
-                android:id="@+id/btnOptionType"
-                android:layout_width="@dimen/fields_default_space_medium"
-                android:layout_height="@dimen/fields_default_space_medium"
-                android:layout_alignParentEnd="true"
-                android:layout_gravity="center"
-                android:background="@android:color/transparent"
-                android:src="@drawable/triangle_down"
-                tools:ignore="ContentDescription" />
-        </RelativeLayout>
-
-        <include layout="@layout/layout_edit_filed_with_delete" />
+        <include layout="@layout/layout_contacts_edit_filed_with_delete" />
 
         <View
             android:id="@+id/separator"

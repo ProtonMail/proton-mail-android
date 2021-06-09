@@ -627,7 +627,6 @@
     <string name="edit_contact">Kişiyi Düzenle</string>
     <string name="create_contact_group">Kişi Grubu Oluştur</string>
     <string name="edit_contact_group">Kişi Grubunu Düzenle</string>
-    <string name="contact_groups_manage_addresses">Adresleri yönet</string>
     <string name="contact_group_display_name">Görünen ad</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Gruplara adres ekle</string>

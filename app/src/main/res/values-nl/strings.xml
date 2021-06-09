@@ -630,7 +630,6 @@
     <string name="edit_contact">Contactpersoon bewerken</string>
     <string name="create_contact_group">Contactgroep aanmaken</string>
     <string name="edit_contact_group">Contactgroep bewerken</string>
-    <string name="contact_groups_manage_addresses">Adressen beheren</string>
     <string name="contact_group_display_name">Weergavenaam</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Adres toevoegen aan groepen</string>

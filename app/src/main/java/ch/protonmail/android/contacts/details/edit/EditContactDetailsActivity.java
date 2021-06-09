@@ -713,7 +713,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             newOptionRowView = inflater.inflate(R.layout.contact_vcard_item_note, rootView, false);
         }
         UiUtil.generateViewId(newOptionRowView);
-        final Button btnAddNewRow = newOptionRowView.findViewById(R.id.btnAddNewRow);
+        final TextView btnAddNewRow = newOptionRowView.findViewById(R.id.btnAddNewRow);
         final ProtonInput option = newOptionRowView.findViewById(R.id.option);
         final View inputFields = newOptionRowView.findViewById(R.id.fields_parent);
         final ImageButton btnOptionType = newOptionRowView.findViewById(R.id.btnOptionType);
@@ -731,6 +731,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         option.addTextChangedListener(new DirtyWatcher());
         option.setInputType(inputType);
         option.setLabelText(optionUITypeText);
+        optionTitle.setText(optionUITypeText);
 
         btnAddNewRow.setVisibility(View.VISIBLE);
         btnAddNewRow.setTextColor(R.color.interaction_norm);

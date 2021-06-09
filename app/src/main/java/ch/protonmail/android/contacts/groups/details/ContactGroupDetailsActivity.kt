@@ -52,6 +52,8 @@ const val EXTRA_CONTACT_GROUP = "extra_contact_group"
 @AndroidEntryPoint
 class ContactGroupDetailsActivity : BaseActivity() {
 
+    private var allEmails: List<String> = emptyList()
+
     @Inject
     lateinit var app: ProtonMailApplication
 
@@ -147,6 +149,7 @@ class ContactGroupDetailsActivity : BaseActivity() {
             if (list != null && TextUtils.isEmpty(filterView.text.toString())) {
                 setTitle(contactGroupDetailsViewModel.getData()?.name, list.size)
             }
+            allEmails = list.map { it.email }
         }
 
         contactGroupDetailsViewModel.contactGroupEmailsEmpty.observe(this) {
@@ -169,7 +172,6 @@ class ContactGroupDetailsActivity : BaseActivity() {
                     ContactGroupDetailsViewModel.Status.ERROR ->
                         showToast(status.message ?: getString(R.string.error))
                 }
-
             }
         }
     }

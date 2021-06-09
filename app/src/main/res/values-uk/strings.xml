@@ -648,7 +648,6 @@
     <string name="edit_contact">Редагувати контакт</string>
     <string name="create_contact_group">Створити групу контактів</string>
     <string name="edit_contact_group">Редагувати групу контактів</string>
-    <string name="contact_groups_manage_addresses">Керування адресами</string>
     <string name="contact_group_display_name">Показуване ім\'я</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Додати адресу до груп</string>

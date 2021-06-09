@@ -630,7 +630,6 @@
     <string name="edit_contact">Breyta tengilið</string>
     <string name="create_contact_group">Búa til tengiliðahóp</string>
     <string name="edit_contact_group">Breyta tengiliðahóp</string>
-    <string name="contact_groups_manage_addresses">Sýsla með vistföng</string>
     <string name="contact_group_display_name">Birtingarnafn</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Bæta vistfangi við hópa</string>

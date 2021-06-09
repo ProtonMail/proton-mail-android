@@ -630,7 +630,6 @@
     <string name="edit_contact">Editar Contacte</string>
     <string name="create_contact_group">Crear Grup de Contactes</string>
     <string name="edit_contact_group">Edita Grup de Contactes</string>
-    <string name="contact_groups_manage_addresses">Gestionar les adreces</string>
     <string name="contact_group_display_name">Nom de Visualització</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Afegiu adreces a grups</string>

@@ -630,7 +630,6 @@
     <string name="edit_contact">Modifica contatto</string>
     <string name="create_contact_group">Creare un gruppo di contatto</string>
     <string name="edit_contact_group">Modifica un gruppo di contatto</string>
-    <string name="contact_groups_manage_addresses">Gestire gli indirizzi</string>
     <string name="contact_group_display_name">Nome visualizzato</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Aggiungere indirizzo ai gruppi</string>
