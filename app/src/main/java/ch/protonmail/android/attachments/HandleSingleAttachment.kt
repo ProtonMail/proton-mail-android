@@ -176,6 +176,10 @@ class HandleSingleAttachment @Inject constructor(
             filename
         )
 
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+
         file.sink().buffer().use { sink ->
             sink.write(bytes)
         }
