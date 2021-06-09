@@ -27,7 +27,7 @@ private const val UNDO_TOKEN = "UndoToken"
 
 /**
  * A model for the response body returned when we do one of the following conversation actions:
- * mark read, mark unread, delete, label, unlabel or move
+ * mark read, mark unread, delete, star, label, unlabel or move
  */
 data class ConversationsActionResponses(
     @SerializedName(CODE)

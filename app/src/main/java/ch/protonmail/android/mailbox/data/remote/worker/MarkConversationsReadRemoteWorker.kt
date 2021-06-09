@@ -56,7 +56,7 @@ class MarkConversationsReadRemoteWorker @AssistedInject constructor(
                 workDataOf(KEY_MARK_READ_WORKER_ERROR_DESCRIPTION to "Conversation ids list is null")
             )
 
-        val requestBody = ConversationIdsRequestBody(conversationIds.asList())
+        val requestBody = ConversationIdsRequestBody(ids = conversationIds.asList())
 
         return runCatching {
             protonMailApiManager.markConversationsRead(requestBody)

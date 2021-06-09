@@ -22,8 +22,14 @@ package ch.protonmail.android.mailbox.data.remote.model
 import com.google.gson.annotations.SerializedName
 
 private const val IDS = "IDs"
+private const val LABEL_ID = "LabelID"
 
+/**
+ * Request body that should be used when performing an action on conversations.
+ */
 data class ConversationIdsRequestBody(
+    @SerializedName(LABEL_ID)
+    val labelId: String? = null,
     @SerializedName(IDS)
     val ids: List<String>
 )
