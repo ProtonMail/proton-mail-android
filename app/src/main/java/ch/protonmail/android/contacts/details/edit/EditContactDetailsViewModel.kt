@@ -27,13 +27,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.contacts.details.ContactDetailsViewModelOld
+import ch.protonmail.android.contacts.details.domain.FetchContactDetails
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.create.CreateContact
-import ch.protonmail.android.contacts.details.domain.FetchContactDetails
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.viewmodel.NETWORK_CHECK_DELAY
@@ -88,7 +88,7 @@ class EditContactDetailsViewModel @Inject constructor(
     private val fileHelper: FileHelper,
     workManager: WorkManager,
     fetchContactDetails: FetchContactDetails
-) : ContactDetailsViewModelOld(dispatchers, downloadFile, editContactDetailsRepository, workManager, fetchContactDetails) {
+) : ContactDetailsViewModelOld(dispatchers, downloadFile, editContactDetailsRepository) {
 
     // region events
     private val _cleanUpComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
