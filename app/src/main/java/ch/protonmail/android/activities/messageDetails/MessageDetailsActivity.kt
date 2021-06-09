@@ -803,7 +803,7 @@ internal class MessageDetailsActivity :
                     messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
                 }
                 displayAttachmentInfo(attachments)
-                if (Constants.FeatureFlags.DISPLAY_PROTON_CALENDAR_BUTTON) {
+                if (viewModel.shouldShowProtonCalendarButton(packageManager)) {
                     displayProtonCalendarButton(attachments)
                 }
             } else {

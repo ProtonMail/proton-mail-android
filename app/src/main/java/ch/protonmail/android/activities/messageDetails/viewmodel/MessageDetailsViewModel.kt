@@ -20,6 +20,8 @@ package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.annotation.TargetApi
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -583,6 +585,24 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         protonCalendarAttachmentId = null // always reset temporary AttachmentID
 
         return packageName
+    }
+
+    /**
+     * If ProtonCalendar is installed but outdated (can't handle ICS files) we shouldn't show the button.
+     */
+    fun shouldShowProtonCalendarButton(packageManager: PackageManager): Boolean {
+
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(
+                Uri.parse("content://proton/calendar/intent/check/invite.ics"),
+                "text/calendar"
+            )
+            setPackage(ProtonCalendarUtils.protonCalendarPackageName)
+        }
+
+        val protonCalendarCanHandleIcs = intent.resolveActivity(packageManager) != null
+
+        return protonCalendarCanHandleIcs && Constants.FeatureFlags.DISPLAY_PROTON_CALENDAR_BUTTON
     }
 
     fun handleProtonCalendarButtonClick(context: Context, attachmentId: String, messageId: String) {
