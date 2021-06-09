@@ -34,7 +34,10 @@ import kotlinx.coroutines.flow.Flow
 interface AttachmentMetadataDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAttachmentMetadata(attachmentMetadata: AttachmentMetadata)
+    suspend fun insertAttachmentMetadata(attachmentMetadata: AttachmentMetadata)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAttachmentMetadataBlocking(attachmentMetadata: AttachmentMetadata)
 
     @Delete
     fun deleteAttachmentMetadata(attachmentMetadata: AttachmentMetadata)

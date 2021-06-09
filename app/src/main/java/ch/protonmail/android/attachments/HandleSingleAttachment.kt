@@ -44,6 +44,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 private const val ATTACHMENT_UNKNOWN_FILE_NAME = "attachment"
+private const val MAX_RETRY_ATTEMPTS = 3
 
 /**
  * Handles single attachments download logic, part of [DownloadEmbeddedAttachmentsWorker].
@@ -55,6 +56,8 @@ class HandleSingleAttachment @Inject constructor(
     private val clearingServiceHelper: AttachmentClearingServiceHelper,
     private val attachmentsRepository: AttachmentsRepository
 ) {
+
+    private var runAttemptCount = 0
 
     suspend operator fun invoke(
         attachment: Attachment,
@@ -105,24 +108,32 @@ class HandleSingleAttachment @Inject constructor(
         return ListenableWorker.Result.success()
     }
 
-    private suspend fun downloadAttachment(attachment: Attachment, filename: String, crypto: AddressCrypto): Uri? =
-        try {
-            // Sometimes mime type in attachment.mimeType does not match the file extension type, therefore
-            // we determinate is again here, just before saving the file.
-            // This is to prevent problems with saving multiple times a file with same name, which was causing errors
-            // like saving "invite.ics (1)" instead of "invite (1).ics"
-            val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                filename.substringAfterLast(".", attachment.mimeType ?: "")
-            )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                downloadAttachmentForAndroidQ(attachment, filename, crypto, mimeType)
-            } else {
-                downloadAttachmentBeforeQ(attachment, filename, crypto, mimeType)
+    private suspend fun downloadAttachment(attachment: Attachment, filename: String, crypto: AddressCrypto): Uri? {
+        while (runAttemptCount < MAX_RETRY_ATTEMPTS) {
+            try {
+                runAttemptCount++
+                // Sometimes mime type in attachment.mimeType does not match the file extension type, therefore
+                // we determinate is again here, just before saving the file.
+                // This is to prevent problems with saving multiple times a file with same name,
+                // which was causing errors like saving "invite.ics (1)" instead of "invite (1).ics"
+                val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    filename.substringAfterLast(".", attachment.mimeType ?: "")
+                )
+                return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    downloadAttachmentForAndroidQ(attachment, filename, crypto, mimeType)
+                } else {
+                    downloadAttachmentBeforeQ(attachment, filename, crypto, mimeType)
+                }
+            } catch (exception: IOException) {
+                if (runAttemptCount >= MAX_RETRY_ATTEMPTS) {
+                    Timber.w(exception, "Unable to download attachment file $filename retry has failed")
+                } else {
+                    Timber.i(exception, "Unable to download attachment file $filename")
+                }
             }
-        } catch (exception: IOException) {
-            Timber.w(exception, "Unable to download attachment file $filename")
-            null
         }
+        return null
+    }
 
     @TargetApi(Build.VERSION_CODES.Q)
     private suspend fun downloadAttachmentForAndroidQ(
