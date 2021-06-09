@@ -31,9 +31,11 @@ import androidx.recyclerview.widget.DiffUtil
 import ch.protonmail.android.R
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.utils.extensions.fromAttributesOrPreviewOrNull
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.RoundedCornerTreatment
 import com.google.android.material.shape.ShapeAppearanceModel
+import me.proton.core.util.kotlin.takeIfNotBlank
 
 /**
  * View for a single label - see MailboxActivity or MessageDetailsActivity
@@ -62,8 +64,17 @@ class LabelChipView @JvmOverloads constructor(
         maxLines = 1
 
         context.withStyledAttributes(attrs, R.styleable.LabelChipView, defStyleAttr) {
-            val labelColor = getColor(R.styleable.LabelChipView_labelColor, INITIAL_BACKGROUND_COLOR)
-            setLabelColor(labelColor)
+            val labelName = fromAttributesOrPreviewOrNull(
+                fromAttributes = text?.toString()?.takeIfNotBlank(),
+                forPreview = "label"
+            )
+            val labelColor = fromAttributesOrPreviewOrNull(
+                fromAttributes = getColor(R.styleable.LabelChipView_labelColor, -1).takeIf { it != -1 },
+                forPreview = Color.BLUE
+            )
+
+            labelName?.let(::setText)
+            setLabelColor(labelColor ?: INITIAL_BACKGROUND_COLOR)
         }
     }
 
