@@ -41,7 +41,7 @@ class ComposerAttachmentUiModelMapperTest {
     // region test data
     private val testFileName = "photo"
     private val testFileExtension = "jpg"
-    private val testFileSize = Bytes(4096uL)
+    private val testFileSize = Bytes(4096.toULong())
     private val testFileMimeType = "image/*"
 
     private val testOriginalFileUri = mockUri("file://downloads/$testFileName.$testFileExtension")

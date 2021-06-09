@@ -58,19 +58,19 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
     private val fileInfo1 = AttachmentFileInfo(
         fileName = Name("photo1"),
         extension = "jpg",
-        size = Bytes(0uL),
+        size = Bytes(0.toULong()),
         mimeType = testMimeType
     )
     private val fileInfo2 = AttachmentFileInfo(
         fileName = Name("photo2"),
         extension = "jpg",
-        size = Bytes(0uL),
+        size = Bytes(0.toULong()),
         mimeType = testMimeType
     )
     private val fileInfo3 = AttachmentFileInfo(
         fileName = Name("photo3"),
         extension = "jpg",
-        size = Bytes(0uL),
+        size = Bytes(0.toULong()),
         mimeType = testMimeType
     )
     // endregion
