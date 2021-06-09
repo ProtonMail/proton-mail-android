@@ -20,6 +20,7 @@ package ch.protonmail.android.api.segments.event
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.api.interceptors.UserIdTag
@@ -98,11 +99,23 @@ class EventManager @Inject constructor(
 
     suspend fun consumeEventsFor(loggedInUsers: Collection<Id>) = withContext(dispatchers.Io) {
         for (user in loggedInUsers) {
-            eventHandlers.putIfAbsent(user, eventHandlerFactory.create(user))
+            eventHandlers.putIfAbsentApi23(user, eventHandlerFactory.create(user))
         }
 
         for ((_, handler) in eventHandlers) {
             handleAllEvents(handler)
+        }
+    }
+
+    private fun <K, V> MutableMap<K, V>.putIfAbsentApi23(key: K, value: V): V? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            putIfAbsent(key, value)
+        } else {
+            var v: V? = get(key)
+            if (v == null) {
+                v = put(key, value)
+            }
+            v
         }
     }
 
@@ -195,3 +208,5 @@ class EventManager @Inject constructor(
     }
 
 }
+
+
