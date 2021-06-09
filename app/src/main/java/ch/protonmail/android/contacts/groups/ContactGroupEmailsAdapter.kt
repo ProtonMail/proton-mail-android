@@ -21,22 +21,20 @@ package ch.protonmail.android.contacts.groups
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.contacts.groups.details.ContactGroupEmailViewHolder
 import ch.protonmail.android.data.local.model.ContactEmail
-import ch.protonmail.android.utils.extensions.listen
-import ch.protonmail.android.utils.extensions.listenForDelete
+import kotlinx.android.synthetic.main.contact_groups_email_list_item_selectable.view.*
 
-/**
- * Created by kadrikj on 9/3/18. */
 class ContactGroupEmailsAdapter(
-        private val context: Context,
-        private var items: List<ContactEmail>,
-        private val contactEmailClick: ((ContactEmail) -> Unit)?,
-        private val contactEmailDeleteClick: ((ContactEmail) -> Unit)? = null,
-        private val mode: GroupsItemAdapterMode = GroupsItemAdapterMode.NORMAL
-): RecyclerView.Adapter<ContactGroupEmailViewHolder>() {
+    private val context: Context,
+    private var items: List<ContactEmail>,
+    private val contactEmailClick: ((ContactEmail) -> Unit)?,
+    private val contactEmailDeleteClick: ((ContactEmail) -> Unit)? = null,
+    private val mode: GroupsItemAdapterMode = GroupsItemAdapterMode.NORMAL
+) : RecyclerView.Adapter<ContactGroupEmailViewHolder>() {
 
     fun setData(items: List<ContactEmail>) {
         this.items = items
@@ -47,19 +45,15 @@ class ContactGroupEmailsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactGroupEmailViewHolder {
         val viewHolder = ContactGroupEmailViewHolder(
-                LayoutInflater.from(context).inflate(
-                        when (mode) {
-                            GroupsItemAdapterMode.NORMAL -> R.layout.contact_groups_email_list_item
-                            GroupsItemAdapterMode.CHECKBOXES -> R.layout.contact_groups_email_list_item_selectable
-                            GroupsItemAdapterMode.DELETE -> R.layout.contact_groups_email_list_item_closeable
-                        },
-                        parent, false
-                ), mode
+            LayoutInflater.from(context).inflate(R.layout.contact_groups_email_list_item_selectable, parent, false),
+            mode
         )
         viewHolder.listen { position ->
             contactEmailClick?.invoke(items[position])
             viewHolder.toggle()
         }
+        viewHolder.itemView.delete.isVisible = mode == GroupsItemAdapterMode.DELETE
+        viewHolder.itemView.check.isVisible = mode != GroupsItemAdapterMode.DELETE
         if (mode == GroupsItemAdapterMode.DELETE) {
             viewHolder.listenForDelete { position -> contactEmailDeleteClick?.invoke(items[position]) }
         }
@@ -82,5 +76,17 @@ class ContactGroupEmailsAdapter(
         return ArrayList(items.filter {
             it.selected
         })
+    }
+
+    private fun <T : RecyclerView.ViewHolder> T.listen(event: (position: Int) -> Unit) {
+        itemView.setOnClickListener {
+            event.invoke(layoutPosition)
+        }
+    }
+
+    private fun <T : RecyclerView.ViewHolder> T.listenForDelete(event: (position: Int) -> Unit) {
+        itemView.delete.setOnClickListener {
+            event.invoke(layoutPosition)
+        }
     }
 }

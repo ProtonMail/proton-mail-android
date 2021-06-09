@@ -105,19 +105,6 @@
         <attr name="finalHeight" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="ContactAvatarView">
-        <attr name="contactInitials" format="string" />
-        <attr name="contactInitialsAllCaps" format="boolean" />
-        <attr name="contactInitialsColor" format="color" />
-        <attr name="contactInitialsBackground" format="reference" />
-        <attr name="contactPhoto" format="integer" />
-        <attr name="contactPhotoCornerRadius" format="float" type="dimen" />
-        <attr name="avatarType" format="enum">
-            <enum name="initials" value="0" />
-            <enum name="photo" value="1" />
-        </attr>
-    </declare-styleable>
-
     <declare-styleable name="SettingsDefaultItemView">
         <attr name="settingsHeading" format="string" />
         <attr name="settingsValue" format="string" />

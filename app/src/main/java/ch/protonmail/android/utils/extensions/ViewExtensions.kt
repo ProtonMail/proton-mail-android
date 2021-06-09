@@ -21,7 +21,6 @@ package ch.protonmail.android.utils.extensions
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
@@ -29,7 +28,6 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.annotation.StyleRes
 import ch.protonmail.android.BuildConfig
-import ch.protonmail.android.views.contactsList.ContactGroupEmailAvatarView
 
 /*
  * Extensions for Android's View's
@@ -99,23 +97,6 @@ fun <T> View.fromAttributesOrPreviewOrNull(fromAttributes: T?, forPreview: T): T
  * @return `true` if we're in Debug configuration and [View.isInEditMode]
  */
 fun View.isInPreviewMode() = BuildConfig.DEBUG && isInEditMode
-
-fun ContactGroupEmailAvatarView.setAccountLetters(displayName: String) {
-    when (displayName.length) {
-        0 -> setLetters("")
-        1 -> setLetters(displayName)
-        else -> {
-            val nameCompounds = displayName.split(" ")
-            if (nameCompounds.size == 1) {
-                setLetters(displayName.substring(0, 1))
-            } else {
-                val firstCompound = if (!TextUtils.isEmpty(nameCompounds[0])) nameCompounds[0].substring(0, 1) else ""
-                val secondCompound = if (!TextUtils.isEmpty(nameCompounds[1])) nameCompounds[1].substring(0, 1) else ""
-                setLetters("$firstCompound$secondCompound")
-            }
-        }
-    }
-}
 
 fun TextView.setNotificationIndicatorSize(notificationCount: Int) {
     textSize = when {
