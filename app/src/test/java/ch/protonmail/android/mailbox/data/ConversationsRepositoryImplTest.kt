@@ -36,8 +36,10 @@ import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
 import ch.protonmail.android.mailbox.data.remote.model.LabelContextApiModel
+import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsUnreadRemoteWorker
+import ch.protonmail.android.mailbox.data.remote.worker.UnlabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
@@ -166,6 +168,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     @RelaxedMockK
     private lateinit var markConversationsUnreadRemoteWorker: MarkConversationsUnreadRemoteWorker.Enqueuer
 
+    @RelaxedMockK
+    private lateinit var labelConversationsRemoteWorker: LabelConversationsRemoteWorker.Enqueuer
+
+    @RelaxedMockK
+    private lateinit var unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer
+
     @MockK
     private lateinit var api: ProtonMailApiManager
 
@@ -182,7 +190,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 api,
                 messageFactory,
                 markConversationsReadRemoteWorker,
-                markConversationsUnreadRemoteWorker
+                markConversationsUnreadRemoteWorker,
+                labelConversationsRemoteWorker,
+                unlabelConversationsRemoteWorker
             )
     }
 
