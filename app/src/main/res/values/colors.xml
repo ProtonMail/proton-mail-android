@@ -39,7 +39,7 @@
     <color name="water_blue">#85B1DE</color>
     <color name="black">#000000</color>
 
-    <color name="icon_background">#515060</color>
+    <color name="icon_background">?attr/brand_norm</color>
 
     <!-- new color scheme -->
     <color name="dark_purple">#4F4F60</color>
