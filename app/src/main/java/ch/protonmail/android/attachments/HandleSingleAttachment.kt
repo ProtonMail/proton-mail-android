@@ -127,6 +127,8 @@ class HandleSingleAttachment @Inject constructor(
             } catch (exception: IOException) {
                 if (runAttemptCount >= MAX_RETRY_ATTEMPTS) {
                     Timber.w(exception, "Unable to download attachment file $filename retry has failed")
+                    runAttemptCount = 0
+                    return null
                 } else {
                     Timber.i(exception, "Unable to download attachment file $filename")
                 }

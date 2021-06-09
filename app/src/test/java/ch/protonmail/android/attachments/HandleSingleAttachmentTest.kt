@@ -23,9 +23,9 @@ import android.content.Context
 import android.os.Environment
 import android.webkit.MimeTypeMap
 import androidx.work.ListenableWorker
+import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
+import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.data.local.AttachmentMetadataDao
-import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.storage.AttachmentClearingServiceHelper
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.coEvery
@@ -48,7 +48,7 @@ class HandleSingleAttachmentTest : ArchTest {
     private val attachmentsRepository: AttachmentsRepository = mockk()
     private val clearingServiceHelper: AttachmentClearingServiceHelper = mockk()
     private val attachmentsHelper: AttachmentsHelper = mockk()
-    private val attachmentsDao: AttachmentMetadataDao = mockk()
+    private val attachmentsDao: AttachmentMetadataDatabase = mockk()
     private val testMimeType = "image/jpeg"
 
     val useCase = HandleSingleAttachment(
