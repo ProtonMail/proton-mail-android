@@ -45,11 +45,11 @@ class ContactsListAdapter(
             binding.thumbnailViewContactsList,
             binding.textViewContactName,
             binding.textViewContactSubtitle,
-            binding.imageViewEditButton,
+            binding.imageViewContactItemSendButton,
             binding.root
         )
 
-        binding.imageViewEditButton.setOnClickListener {
+        binding.imageViewContactItemSendButton.setOnClickListener {
             val position = viewHolder.adapterPosition
             if (position != NO_POSITION) {
                 val emailValue = getItem(viewHolder.adapterPosition).contactEmails

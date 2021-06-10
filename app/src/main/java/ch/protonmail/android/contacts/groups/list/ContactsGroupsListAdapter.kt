@@ -45,11 +45,11 @@ class ContactsGroupsListAdapter(
             binding.thumbnailViewContactsList,
             binding.textViewContactName,
             binding.textViewContactSubtitle,
-            binding.imageViewEditButton,
+            binding.imageViewContactItemSendButton,
             binding.root
         )
 
-        binding.imageViewEditButton.setOnClickListener {
+        binding.imageViewContactItemSendButton.setOnClickListener {
             val position = viewHolder.adapterPosition
             if (position != RecyclerView.NO_POSITION) {
                 onWriteToGroupClickListener(getItem(position))
@@ -110,14 +110,15 @@ class ContactsGroupsListAdapter(
             }
 
             contactSubtitle.apply {
-                text = if (item.contactEmailsCount > 0)
+                text = if (item.contactEmailsCount > 0) {
                     context.resources.getQuantityString(
                         R.plurals.contact_group_members,
                         item.contactEmailsCount,
                         item.contactEmailsCount
                     )
-                else
+                } else {
                     itemView.resources.getString(R.string.empty_email_list)
+                }
                 isVisible = true
             }
 

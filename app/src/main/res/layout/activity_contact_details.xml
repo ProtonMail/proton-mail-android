@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright (c) 2020 Proton Technologies AG
 
 This file is part of ProtonMail.
@@ -27,48 +26,66 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     tools:context=".contacts.ContactsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
+        android:id="@+id/appbar_contact_details"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/appbar_header_height"
+        android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
-        android:paddingTop="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbar"
+            android:id="@+id/collapsing_toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:background="@color/white"
+            android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            app:contentScrim="@color/white"
-            app:expandedTitleGravity="bottom|center_horizontal"
-            app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Headline"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            app:collapsedTitleGravity="center"
+            app:contentScrim="@color/background_norm"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleEnabled="false"
+            app:toolbarId="@+id/toolbar">
 
-            <TextView
-                android:id="@+id/contactTitle"
+            <ch.protonmail.android.views.ListItemThumbnail
+                android:id="@+id/thumbnail_contact_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginLeft="@dimen/fields_default_space_medium"
-                android:layout_marginRight="@dimen/fields_default_space_medium"
-                android:ellipsize="end"
-                android:gravity="bottom|center"
-                android:maxLines="1"
-                android:minLines="1"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="0.3" />
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/padding_4xl"
+                android:layout_marginBottom="@dimen/padding_l"
+                app:circleSize="@dimen/avatar_size"
+                app:layout_collapseMode="parallax" />
+
+            <ImageView
+                android:id="@+id/image_view_contact_details_thumbnail"
+                android:layout_width="@dimen/avatar_size"
+                android:layout_height="@dimen/avatar_size"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/padding_4xl"
+                android:layout_marginBottom="@dimen/padding_l"
+                android:contentDescription="@string/contact_details"
+                android:scaleType="fitXY"
+                android:visibility="gone"
+                app:layout_collapseMode="parallax" />
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:minHeight="?attr/actionBarSize"
+                app:contentInsetStartWithNavigation="0dp"
+                app:layout_collapseMode="pin"
+                app:menu="@menu/menu_contact_details"
+                app:navigationIcon="@drawable/ic_arrow_left"
+                tools:title="Title" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_view_contact_details"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appbar"
+        android:layout_below="@id/appbar_contact_details"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -76,231 +93,37 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/card_view_top_part"
+            <TextView
+                android:id="@+id/text_view_contact_details_contact_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:orientation="vertical">
+                android:layout_marginVertical="@dimen/padding_m"
+                android:gravity="center"
+                android:textAppearance="@style/Proton.Text.Headline"
+                app:layout_collapseMode="pin"
+                tools:text="@tools:sample/full_names" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/activity_margin_half"
-                    android:layout_marginBottom="@dimen/activity_margin_half"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+            <include
+                android:id="@+id/include_contact_details_buttons"
+                layout="@layout/layout_contact_details_main_buttons" />
 
-                    <ImageButton
-                        android:id="@+id/fabMail"
-                        android:layout_width="@dimen/fab_size_mini"
-                        android:layout_height="@dimen/fab_size_mini"
-                        android:background="@drawable/fab_circle_bg"
-                        app:backgroundTint="@color/fog_gray"
-                        android:padding="@dimen/fields_default_space_small_plus"
-                        app:srcCompat="@drawable/ic_contact_email" />
-
-                    <ImageButton
-                        android:id="@+id/fabPhone"
-                        android:layout_width="@dimen/fab_size_mini"
-                        android:layout_height="@dimen/fab_size_mini"
-                        android:layout_marginStart="@dimen/fab_margin"
-                        android:background="@drawable/fab_circle_bg"
-                        app:backgroundTint="@color/fog_gray"
-                        android:padding="@dimen/fields_default_space_small_plus"
-                        app:srcCompat="@drawable/ic_contact_phone" />
-
-                    <ImageButton
-                        android:id="@+id/fabWeb"
-                        android:layout_width="@dimen/fab_size_mini"
-                        android:layout_height="@dimen/fab_size_mini"
-                        android:layout_marginStart="@dimen/fab_margin"
-                        android:background="@drawable/fab_circle_bg"
-                        app:backgroundTint="@color/fog_gray"
-                        android:padding="@dimen/fields_default_space_small_plus"
-                        app:srcCompat="@drawable/ic_contact_website" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="@color/placeholder_gray"
-                    />
-
-                <LinearLayout
-                    android:id="@+id/top_panel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    tools:ignore="UselessParent">
-
-                    <ViewStub
-                        android:id="@+id/top_panel_verification_error"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inflatedId="@+id/top_panel_verification_error"
-                        android:layout="@layout/contacts_error_panel" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <ch.protonmail.android.views.VCardLinearLayout
-                            android:id="@+id/emailAddressesContainer"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical" />
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/cardViewBottomPart"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_contacts_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/encryptedContactTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/placeholder_gray"
-                    android:paddingLeft="@dimen/contact_details_encrypted_info_separator_side_padding"
-                    android:paddingTop="@dimen/contact_details_encrypted_info_separator_topbottom_padding"
-                    android:paddingRight="@dimen/contact_details_encrypted_info_separator_side_padding"
-                    android:paddingBottom="@dimen/contact_details_encrypted_info_separator_topbottom_padding"
-                    android:text="@string/encrypted_contact_details" />
-
-                <ViewStub
-                    android:id="@+id/bottom_panel_verification_error"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inflatedId="@+id/bottom_panel_verification_error"
-                    android:layout="@layout/contacts_error_panel" />
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/fields_default_space">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:id="@+id/encryptedDataContainer"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:paddingTop="@dimen/fields_default_space"
-                            android:paddingBottom="@dimen/fields_default_space" />
-
-
-                    </LinearLayout>
-
-                    <ViewStub
-                        android:id="@+id/errorEncryptedStub"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inflatedId="@+id/error_encrypted"
-                        android:layout="@layout/layout_error_encrypted" />
-                </FrameLayout>
-            </LinearLayout>
-
-            <ViewStub
-                android:id="@+id/emptyEncryptedStub"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:inflatedId="@+id/empty_encrypted"
-                android:layout="@layout/layout_empty_encrypted" />
-
+                tools:listitem="@layout/list_item_contact_detail" />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-    <!--
-          The Render Problem that appears if because of the app: tags on the view below, but it still works..
-          -->
-    <ch.protonmail.android.views.contactDetails.ContactAvatarView
-        android:id="@+id/contactAvatar"
+    <ProgressBar
+        android:id="@+id/progress_bar_contact_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        app:finalHeight="@dimen/image_final_width"
-        app:finalYPosition="2dp"
-        app:layout_behavior="ch.protonmail.android.views.behavior.AvatarImageBehavior"
-        app:startHeight="2dp"
-        app:startToolbarPosition="2dp"
-        app:startXPosition="2dp" />
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/animToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:layout_collapseMode="pin"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark"
-        app:title="">
-
-        <LinearLayout
-            android:id="@+id/contactCollapsedTitleContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/contactCollapsedTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/fields_default_space_small_plus"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:minLines="1"
-                android:textColor="@android:color/white"
-                android:textSize="20sp" />
-
-        </LinearLayout>
-
-    </androidx.appcompat.widget.Toolbar>
-
-    <FrameLayout
-        android:id="@+id/contactDetailsProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
-        android:background="@color/white_55"
-        android:focusable="true"
-        android:visibility="gone">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true" />
-
-    </FrameLayout>
-
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/editContactDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/fab_ic_contact_edit"
-        app:fab_colorNormal="@color/new_purple"
-        app:fab_colorPressed="@color/dark_purple_statusbar"
-        app:menu_colorRipple="@color/dark_purple_statusbar"
-        tools:ignore="VectorDrawableCompat" />
+        android:layout_gravity="center"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

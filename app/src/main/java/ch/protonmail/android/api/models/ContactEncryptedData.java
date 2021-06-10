@@ -27,12 +27,9 @@ import ch.protonmail.android.api.models.enumerations.ContactEncryption;
 import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.core.Constants;
 
-/**
- * Created by dkadrikj on 11/23/16.
- */
-
 public class ContactEncryptedData implements Serializable {
 
+    private static final long serialVersionUID = 5326002769846478436L;
     @SerializedName(Fields.Contact.TYPE)
     private int type;
     @SerializedName(Fields.Contact.DATA)

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.contacts.details
+package ch.protonmail.android.contacts.details.data
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
@@ -24,15 +24,25 @@ import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
 import ch.protonmail.android.data.local.ContactDao
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.ContactData
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.worker.PostLabelWorker
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
 import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.toInt
+import timber.log.Timber
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -45,22 +55,44 @@ open class ContactDetailsRepository @Inject constructor(
     private val dispatcherProvider: DispatcherProvider
 ) {
 
+    @Deprecated("Use non rx version observeContactGroupsForId")
     fun getContactGroups(id: String): Observable<List<ContactLabel>> {
         return contactDao.findAllContactGroupsByContactEmailAsyncObservable(id)
             .toObservable()
     }
 
-    fun getContactEmails(id: String): Observable<List<ContactEmail>> {
+    suspend fun getContactGroupsLabelForId(emailId: String): List<ContactLabel> =
+        contactDao.getAllContactGroupsByContactEmail(emailId)
+
+    @Deprecated("Use non rx version observeContactEmails")
+    fun getContactEmailsBlocking(id: String): Observable<List<ContactEmail>> {
         return contactDao.findContactEmailsByContactIdObservable(id)
             .toObservable()
     }
 
+    fun observeContactEmails(contactId: String): Flow<List<ContactEmail>> =
+        contactDao.observeContactEmailsByContactId(contactId)
+
+    suspend fun getContactEmails(contactId: String): List<ContactEmail> =
+        contactDao.findContactEmailsByContactId(contactId)
+
+    @Deprecated("Use non rx version observeContactGroups")
     fun getContactGroups(): Observable<List<ContactLabel>> {
         return Observable.concatArrayDelayError(
             getContactGroupsFromDB(),
             getContactGroupsFromApi()
                 .debounce(400, TimeUnit.MILLISECONDS)
         )
+    }
+
+    fun observeContactLabels(): Flow<List<ContactLabel>> = observeContactLabelsFromDb()
+        .onEach { fetchContactLabelsFromApi() }
+
+    private suspend fun fetchContactLabelsFromApi() {
+        api.fetchContactGroupsList().also {
+            contactDao.clearContactGroupsLabelsTable()
+            contactDao.saveContactGroupsList(it)
+        }
     }
 
     private fun getContactGroupsFromApi(): Observable<List<ContactLabel>> {
@@ -83,6 +115,12 @@ open class ContactDetailsRepository @Inject constructor(
             }
             .toObservable()
     }
+
+    private fun observeContactLabelsFromDb() = contactDao.observeContactLabels()
+        .map { labels ->
+            labels.map { label -> label.contactEmailsCount = contactDao.countContactEmailsByLabelId(label.ID) }
+            labels
+        }
 
     fun editContactGroup(contactLabel: ContactLabel): Completable {
         val contactLabelConverterFactory = ContactLabelFactory()
@@ -107,7 +145,11 @@ open class ContactDetailsRepository @Inject constructor(
             }
     }
 
-    fun setMembersForContactGroup(contactGroupId: String, contactGroupName: String, membersList: List<String>): Completable {
+    fun setMembersForContactGroup(
+        contactGroupId: String,
+        contactGroupName: String,
+        membersList: List<String>
+    ): Completable {
         val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
         return api.labelContacts(labelContactsBody)
             .doOnComplete {
@@ -119,13 +161,16 @@ open class ContactDetailsRepository @Inject constructor(
             }
             .doOnError { throwable ->
                 if (throwable is IOException) {
-                    jobManager.addJobInBackground(SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList))
+                    jobManager.addJobInBackground(
+                        SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList)
+                    )
                 }
             }
     }
 
     fun removeMembersForContactGroup(
-        contactGroupId: String, contactGroupName: String,
+        contactGroupId: String,
+        contactGroupName: String,
         membersList: List<String>
     ): Completable {
         if (membersList.isEmpty()) {
@@ -163,7 +208,7 @@ open class ContactDetailsRepository @Inject constructor(
     suspend fun updateAllContactEmails(contactId: String?, contactServerEmails: List<ContactEmail>) {
         withContext(dispatcherProvider.Io) {
             contactId?.let {
-                val localContactEmails = contactDao.findContactEmailsByContactId(it)
+                val localContactEmails = contactDao.findContactEmailsByContactIdBlocking(it)
                 contactDao.deleteAllContactsEmails(localContactEmails)
                 contactDao.saveAllContactsEmails(contactServerEmails)
             }
@@ -179,5 +224,22 @@ open class ContactDetailsRepository @Inject constructor(
         withContext(dispatcherProvider.Io) {
             return@withContext contactDao.saveContactData(contactData)
         }
+
+    fun observeFullContactDetails(contactId: String): Flow<FullContactDetails> =
+        contactDao.observeFullContactDetailsById(contactId)
+            .distinctUntilChanged()
+            .onEach { savedContacts ->
+                Timber.v("Fetched saved Contact Details $savedContacts")
+                if (savedContacts == null) {
+                    val response = api.fetchContactDetails(contactId)
+                    val fetchedContact = response.contact
+                    Timber.d("Fetched new Contact Details $fetchedContact")
+                    insertFullContactDetails(fetchedContact)
+                }
+            }
+            .filterNotNull()
+
+    suspend fun insertFullContactDetails(fullContactDetails: FullContactDetails) =
+        contactDao.insertFullContactDetails(fullContactDetails)
 
 }

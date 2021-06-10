@@ -97,11 +97,11 @@ data class User( // TODO: consider naming UserInfo or similar
 
 sealed class Delinquent(val i: UInt, val mailRoutesAccessible: Boolean = true) {
 
-    object None : Delinquent(0u)
-    object InvoiceAvailable : Delinquent(1u)
-    object InvoiceOverdue : Delinquent(2u)
-    object InvoiceDelinquent : Delinquent(3u, mailRoutesAccessible = false)
-    object IncomingMailDisabled : Delinquent(4u, mailRoutesAccessible = false)
+    object None : Delinquent(0.toUInt())
+    object InvoiceAvailable : Delinquent(1.toUInt())
+    object InvoiceOverdue : Delinquent(2.toUInt())
+    object InvoiceDelinquent : Delinquent(3.toUInt(), mailRoutesAccessible = false)
+    object IncomingMailDisabled : Delinquent(4.toUInt(), mailRoutesAccessible = false)
 }
 
 enum class Role(val i: Int) {

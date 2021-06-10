@@ -49,14 +49,14 @@
                 layout="@layout/layout_message_details_actions_sheet_buttons" />
 
             <TextView
-                style="@style/ActionSheetSectionTitleItem"
+                style="@style/ListSectionTitleItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/manage" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_mark_unread"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/mark_as_unread"
@@ -65,7 +65,7 @@
 
             <TextView
                 android:id="@+id/text_view_details_actions_mark_read"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/mark_as_read"
@@ -76,7 +76,7 @@
 
             <TextView
                 android:id="@+id/text_view_details_actions_star"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/star"
@@ -87,7 +87,7 @@
 
             <TextView
                 android:id="@+id/text_view_details_actions_unstar"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/unstar"
@@ -97,7 +97,7 @@
 
             <TextView
                 android:id="@+id/text_view_details_actions_label_as"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_as"
@@ -106,14 +106,14 @@
             <View style="@style/ViewSeparatorHorizontal" />
 
             <TextView
-                style="@style/ActionSheetSectionTitleItem"
+                style="@style/ListSectionTitleItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_message" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_move_to_inbox"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_inbox"
@@ -122,7 +122,7 @@
 
             <TextView
                 android:id="@+id/text_view_details_actions_trash"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_trash"
@@ -131,7 +131,7 @@
 
             <TextView
                 android:id="@+id/text_view_details_actions_move_to_archive"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_archive"
@@ -140,7 +140,7 @@
 
             <TextView
                 android:id="@+id/text_view_details_actions_delete"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/delete"
@@ -148,7 +148,7 @@
 
             <TextView
                 android:id="@+id/text_view_details_actions_move_to_spam"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to_spam"
@@ -156,7 +156,7 @@
 
             <TextView
                 android:id="@+id/text_view_details_actions_move_to"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/move_to"
@@ -168,14 +168,14 @@
 
             <TextView
                 android:id="@+id/text_view_action_sheet_more_title"
-                style="@style/ActionSheetSectionTitleItem"
+                style="@style/ListSectionTitleItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/more" />
 
             <TextView
                 android:id="@+id/text_view_details_actions_print"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/print"
@@ -183,7 +183,7 @@
 
             <TextView
                 android:id="@+id/text_view_details_actions_view_headers"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/view_headers"
@@ -191,7 +191,7 @@
 
             <TextView
                 android:id="@+id/text_view_details_actions_report_phishing"
-                style="@style/ActionSheetStandardItem"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/report_phishing"

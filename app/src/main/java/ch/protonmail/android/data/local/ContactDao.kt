@@ -101,10 +101,16 @@ interface ContactDao {
     fun findContactEmailByEmailLiveData(email: String): LiveData<ContactEmail>
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_CONTACT_ID = :contactId")
-    fun findContactEmailsByContactId(contactId: String): List<ContactEmail>
+    fun findContactEmailsByContactIdBlocking(contactId: String): List<ContactEmail>
+
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_CONTACT_ID = :contactId")
+    suspend fun findContactEmailsByContactId(contactId: String): List<ContactEmail>
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_CONTACT_ID = :contactId")
     fun findContactEmailsByContactIdObservable(contactId: String): Flowable<List<ContactEmail>>
+
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_CONTACT_ID = :contactId")
+    fun observeContactEmailsByContactId(contactId: String): Flow<List<ContactEmail>>
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS ORDER BY $COLUMN_CONTACT_EMAILS_EMAIL")
     fun findAllContactsEmails(): Flow<List<ContactEmail>>
@@ -199,6 +205,19 @@ interface ContactDao {
     """
     )
     fun findAllContactGroupsByContactEmailAsyncObservable(emailId: String): Flowable<List<ContactLabel>>
+
+    @Query(
+        """
+        SELECT $TABLE_CONTACT_LABEL.* 
+        FROM $TABLE_CONTACT_LABEL 
+        INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN
+          ON $TABLE_CONTACT_LABEL.$COLUMN_LABEL_ID =
+            $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID 
+        WHERE $TABLE_CONTACT_EMAILS_LABELS_JOIN.$COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID = :emailId
+        ORDER BY $COLUMN_LABEL_NAME
+    """
+    )
+    suspend fun getAllContactGroupsByContactEmail(emailId: String): List<ContactLabel>
 
     /**
      * Make sure you provide @param filter with included % or ?
@@ -319,6 +338,9 @@ interface ContactDao {
     @Query("SELECT * FROM $TABLE_CONTACT_LABEL ORDER BY $COLUMN_LABEL_NAME")
     fun findContactGroupsObservable(): Flowable<List<ContactLabel>>
 
+    @Query("SELECT * FROM $TABLE_CONTACT_LABEL ORDER BY $COLUMN_LABEL_NAME")
+    fun observeContactLabels(): Flow<List<ContactLabel>>
+
     @Query(
         """
         SELECT *
@@ -394,10 +416,16 @@ interface ContactDao {
 
     //region Full contact details
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertFullContactDetails(fullContactDetails: FullContactDetails)
+    fun insertFullContactDetailsBlocking(fullContactDetails: FullContactDetails)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFullContactDetails(fullContactDetails: FullContactDetails)
 
     @Query("SELECT * FROM $TABLE_FULL_CONTACT_DETAILS WHERE $COLUMN_CONTACT_ID = :id")
-    fun findFullContactDetailsById(id: String): FullContactDetails?
+    fun findFullContactDetailsByIdBlocking(id: String): FullContactDetails?
+
+    @Query("SELECT * FROM $TABLE_FULL_CONTACT_DETAILS WHERE $COLUMN_CONTACT_ID = :id")
+    fun observeFullContactDetailsById(id: String): Flow<FullContactDetails?>
 
     @Query("DELETE FROM $TABLE_FULL_CONTACT_DETAILS")
     fun clearFullContactDetailsCache()

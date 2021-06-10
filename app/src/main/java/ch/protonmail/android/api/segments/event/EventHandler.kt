@@ -453,7 +453,7 @@ class EventHandler @AssistedInject constructor(
                     val contactName = contact.name
                     val contactData = ContactData(contactId, contactName!!)
                     contactDao.saveContactData(contactData)
-                    contactDao.insertFullContactDetails(contact)
+                    contactDao.insertFullContactDetailsBlocking(contact)
                 }
 
                 EventType.UPDATE -> {
@@ -466,7 +466,7 @@ class EventHandler @AssistedInject constructor(
                     }
 
                     val localFullContact = try {
-                        contactDao.findFullContactDetailsById(contactId)
+                        contactDao.findFullContactDetailsByIdBlocking(contactId)
                     } catch (tooBigException: SQLiteBlobTooBigException) {
                         Timber.i(tooBigException, "Data too big to be fetched")
                         null
@@ -474,7 +474,7 @@ class EventHandler @AssistedInject constructor(
                     if (localFullContact != null) {
                         contactDao.deleteFullContactsDetails(localFullContact)
                     }
-                    contactDao.insertFullContactDetails(fullContact)
+                    contactDao.insertFullContactDetailsBlocking(fullContact)
                 }
 
                 EventType.DELETE -> {

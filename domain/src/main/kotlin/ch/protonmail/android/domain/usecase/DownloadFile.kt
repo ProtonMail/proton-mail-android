@@ -28,6 +28,7 @@ import java.io.InputStream
  *
  * @author Davide Farella
  */
+@Deprecated("Replaced with coil library")
 interface DownloadFile {
 
     suspend operator fun invoke(url: String): InputStream

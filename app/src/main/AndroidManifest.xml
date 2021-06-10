@@ -264,7 +264,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
         <activity
-            android:name=".contacts.details.ContactDetailsActivity"
+            android:name=".contacts.details.presentation.ContactDetailsActivity"
             android:exported="false"
             android:label="@string/contact_details"
             android:screenOrientation="portrait"

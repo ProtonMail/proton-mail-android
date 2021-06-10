@@ -24,6 +24,7 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.FullContactDetails
 import timber.log.Timber
 
+@Deprecated("removed with the new ContactDetailsViewModel")
 class ExtractFullContactDetailsTask(
     private val contactDao: ContactDao,
     private val contactId: String,
@@ -32,7 +33,7 @@ class ExtractFullContactDetailsTask(
 
     override fun doInBackground(vararg voids: Void): FullContactDetails? {
         return try {
-            contactDao.findFullContactDetailsById(contactId)
+            contactDao.findFullContactDetailsByIdBlocking(contactId)
         } catch (tooBigException: SQLiteBlobTooBigException) {
             Timber.i(tooBigException, "Data too big to be fetched")
             null

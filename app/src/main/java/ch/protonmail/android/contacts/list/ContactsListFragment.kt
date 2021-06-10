@@ -48,7 +48,7 @@ import ch.protonmail.android.contacts.IContactsFragment
 import ch.protonmail.android.contacts.IContactsListFragmentListener
 import ch.protonmail.android.contacts.REQUEST_CODE_CONTACT_DETAILS
 import ch.protonmail.android.contacts.REQUEST_CODE_CONVERT_CONTACT
-import ch.protonmail.android.contacts.details.ContactDetailsActivity
+import ch.protonmail.android.contacts.details.presentation.ContactDetailsActivity
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.contacts.list.listView.ContactsListAdapter
@@ -288,7 +288,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
                 ContactDetailsActivity::class.java
             )
         )
-        intent.putExtra(ContactDetailsActivity.EXTRA_CONTACT, contactId)
+        intent.putExtra(ContactDetailsActivity.EXTRA_ARG_CONTACT_ID, contactId)
         startActivityForResult(intent, REQUEST_CODE_CONTACT_DETAILS)
     }
 

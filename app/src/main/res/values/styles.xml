@@ -46,6 +46,7 @@
     <style name="Proton.Text.DefaultSmall.Interaction">
         <item name="android:textColor">@color/cornflower_blue</item>
     </style>
+
     <style name="Proton.Text.Caption.Strong.Inverted">
         <item name="android:textColor">@color/text_inverted</item>
     </style>
@@ -100,7 +101,7 @@
     </style>
 
     <!-- region Action Sheet -->
-    <style name="ActionSheetStandardItem">
+    <style name="ListStandardItem">
         <item name="android:background">?selectableItemBackground</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
@@ -109,7 +110,8 @@
         <item name="android:textAppearance">@style/Proton.Text.Default</item>
     </style>
 
-    <style name="ActionSheetSectionTitleItem">
+    <style name="ListSectionTitleItem">
+        <item name="android:maxLines">1</item>
         <item name="android:clickable">false</item>
         <item name="android:focusable">false</item>
         <item name="android:paddingStart">@dimen/padding_l</item>
@@ -120,9 +122,21 @@
         <item name="android:textAppearance">@style/Proton.Text.DefaultSmall</item>
     </style>
 
-    <style
-        name="ProtonMail.BottomSheetDialogTheme"
-        parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+    <style name="ActionButtons">
+        <item name="android:layout_margin">@dimen/padding_m</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/shape_background_action_sheet_buttons</item>
+        <item name="android:drawablePadding">@dimen/padding_l</item>
+        <item name="android:elevation">@dimen/elevation_s</item>
+        <item name="android:focusable">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">@dimen/padding_l</item>
+        <item name="android:textColor">@color/cornflower_blue</item>
+        <item name="android:textAppearance">@style/Proton.Text.Default</item>
+        <item name="drawableTint">@color/cornflower_blue</item>
+    </style>
+
+    <style name="ProtonMail.BottomSheetDialogTheme" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/Widget.App.BottomSheet.Modal</item>
     </style>
 

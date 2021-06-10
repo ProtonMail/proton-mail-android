@@ -102,10 +102,10 @@ internal class UserBridgeMapperTest {
             +currency.s equals "eur"
             +credits.fix() equals 10
             +delinquent equals Delinquent.InvoiceDelinquent
-            +totalUploadLimit.l equals 12_345uL
+            +totalUploadLimit.l equals 12_345.toULong()
             +(dedicatedSpace * {
-                +used.l.fix() equals 15_000uL
-                +total.l.fix() equals 30_000uL
+                +used.l.fix() equals 15_000.toULong()
+                +total.l.fix() equals 30_000.toULong()
             })
             + isLegacy equals true
         }
@@ -167,10 +167,10 @@ internal class UserBridgeMapperTest {
                 +currency.s equals "eur"
                 +credits.fix() equals 10
                 +delinquent equals Delinquent.InvoiceDelinquent
-                +totalUploadLimit.l equals 12_345uL
+                +totalUploadLimit.l equals 12_345.toULong()
                 +(dedicatedSpace * {
-                    +used.l.fix() equals 15_000uL
-                    +total.l.fix() equals 30_000uL
+                    +used.l.fix() equals 15_000.toULong()
+                    +total.l.fix() equals 30_000.toULong()
                 })
                 +isLegacy equals true
             }

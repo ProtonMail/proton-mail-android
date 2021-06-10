@@ -19,6 +19,9 @@
 
 package ch.protonmail.android.utils
 
+import android.content.Context
+import android.net.Uri
+import androidx.core.content.FileProvider
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import okio.buffer
@@ -54,7 +57,6 @@ class FileHelper @Inject constructor(
             .onSuccess { Timber.v("File ${file.path} read success") }
             .getOrNull()
 
-
     suspend fun writeToFile(file: File, text: String): Boolean = withContext(dispatcherProvider.Io) {
         return@withContext runCatching {
             FileOutputStream(file)
@@ -67,10 +69,36 @@ class FileHelper @Inject constructor(
             sink.writeUtf8(dataToSave)
         }
 
-
     fun readStringFromFilePath(filePath: String): String =
         File(filePath)
             .source()
             .buffer()
             .readUtf8()
+
+    /**
+     * Saves string content for sharing to the file provider defined in AndroidManifest.
+     * [androidx.core.content.FileProvider]
+     *
+     * @param fileName name of the file to save (with extension)
+     * @param dataToSave string content to save
+     * @param context Android context
+     * @return Uri to the saved data
+     */
+    suspend fun saveStringToFileProvider(
+        fileName: String,
+        dataToSave: String,
+        context: Context
+    ): Uri =
+        withContext(dispatcherProvider.Io) {
+            val filePath = "${context.cacheDir}${File.separator}$fileName"
+            val file = File(filePath)
+            file.sink().buffer().use { sink ->
+                sink.writeUtf8(dataToSave)
+            }
+            FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.provider",
+                file
+            )
+        }
 }

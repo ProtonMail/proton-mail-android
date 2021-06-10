@@ -17,18 +17,24 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.usecase.model
+package ch.protonmail.android.contacts.details.presentation.model
 
-import me.proton.core.util.kotlin.EMPTY_STRING
-
-sealed class FetchContactDetailsResult {
+sealed class ContactDetailsViewState {
+    object Loading : ContactDetailsViewState()
     data class Data(
-        val decryptedVCardType0: String = EMPTY_STRING,
-        val decryptedVCardType2: String = EMPTY_STRING,
-        val decryptedVCardType3: String = EMPTY_STRING,
-        val vCardType2Signature: String = EMPTY_STRING,
-        val vCardType3Signature: String = EMPTY_STRING
-    ) : FetchContactDetailsResult()
+        val contactId: String,
+        val title: String,
+        val initials: String,
+        val contactDetailsItems: List<ContactDetailsUiItem>,
+        val vCardToShare: String,
+        val photoUrl: String?,
+        val photoBytes: List<Byte>?,
+        val isType2SignatureValid: Boolean?,
+        val isType3SignatureValid: Boolean?,
+        val vDecryptedCardType0: String?,
+        val vDecryptedCardType2: String?,
+        val vDecryptedCardType3: String?
+    ) : ContactDetailsViewState()
 
-    data class Error(val exception: Throwable) : FetchContactDetailsResult()
+    data class Error(val exception: Throwable) : ContactDetailsViewState()
 }

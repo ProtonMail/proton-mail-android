@@ -94,8 +94,6 @@ class ContactGroupsViewModel @Inject constructor(
         Timber.v("Delete labelIds $labelIds")
         viewModelScope.launch {
             deleteLabel(labelIds)
-            // reply with empty success status
-            _contactGroupsResult.value = emptyList()
         }
     }
 
@@ -112,8 +110,9 @@ class ContactGroupsViewModel @Inject constructor(
                             _contactGroupEmailsError.value = Event(
                                 throwable.message ?: ErrorEnum.INVALID_EMAIL_LIST.name
                             )
-                        } else
+                        } else {
                             throw throwable
+                        }
                     }
                 )
         }

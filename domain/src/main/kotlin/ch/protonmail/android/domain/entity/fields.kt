@@ -42,10 +42,10 @@ import kotlinx.serialization.Serializable
 inline class Bytes(val l: ULong) {
 
     fun toKilobytes(): ULong =
-        l / 1024uL
+        l / 1024.toULong()
 
     fun toMegabytes(): ULong =
-        toKilobytes() / 1024uL
+        toKilobytes() / 1024.toULong()
 
     fun toLong(): Long =
         l.toLong()

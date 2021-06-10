@@ -47,7 +47,7 @@
         android:maxLines="1"
         android:paddingHorizontal="@dimen/padding_l"
         android:textAppearance="@style/Proton.Text.Default"
-        app:layout_constraintEnd_toStartOf="@+id/image_view_edit_button"
+        app:layout_constraintEnd_toStartOf="@+id/image_view_contact_item_send_button"
         app:layout_constraintStart_toEndOf="@+id/thumbnail_view_contacts_list"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@tools:sample/lorem/random" />
@@ -61,19 +61,19 @@
         android:maxLines="1"
         android:paddingHorizontal="@dimen/padding_l"
         android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@+id/image_view_edit_button"
+        app:layout_constraintEnd_toStartOf="@+id/image_view_contact_item_send_button"
         app:layout_constraintStart_toEndOf="@+id/thumbnail_view_contacts_list"
         app:layout_constraintTop_toBottomOf="@+id/text_view_contact_name"
         tools:text="@tools:sample/lorem/random"
         tools:visibility="visible" />
 
     <ImageView
-        android:id="@+id/image_view_edit_button"
+        android:id="@+id/image_view_contact_item_send_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackgroundBorderless"
         android:clickable="true"
-        android:contentDescription="@string/edit_contact"
+        android:contentDescription="@string/send"
         android:focusable="true"
         android:paddingHorizontal="@dimen/padding_l"
         android:visibility="gone"

@@ -107,9 +107,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
     @Override
     public void onRun() throws Throwable {
         UserCrypto crypto = Crypto.forUser(getUserManager(), getUserId());
-        mContactDao = ContactDatabase.Companion
-                .getInstance(getApplicationContext(), getUserId())
-                .getDao();
+        requireContactDao();
 
         CipherText tct = crypto.encrypt(mEncryptedData, false);
         String encryptedDataSignature = crypto.sign(mEncryptedData);
@@ -120,6 +118,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
         FullContactDetailsResponse response = getApi().updateContact(mContactId, body);
 
         if (response != null) {
+            Timber.v("Update contacts response code:%s error:%s", response.getCode(), response.getError());
             if (response.getCode() == RESPONSE_CODE_ERROR_EMAIL_EXIST) {
                 // TODO: 9/14/17 todoContacts throw error
                 AppUtil.postEventOnUi(new ContactEvent(ContactEvent.ALREADY_EXIST, true));
@@ -144,13 +143,14 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             boolean updateJoins
     ) {
 
+        requireContactDao();
         final ContactData contactData = mContactDao.findContactDataById(mContactId);
         if (contactData != null) {
             contactData.setName(contactName);
             mContactDao.saveContactData(contactData);
         }
 
-        List<ContactEmail> emails = mContactDao.findContactEmailsByContactId(mContactId);
+        List<ContactEmail> emails = mContactDao.findContactEmailsByContactIdBlocking(mContactId);
         mContactDao.deleteAllContactsEmails(emails);
 
         for (ContactEmail email : contactEmails) {
@@ -174,7 +174,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
         }
         FullContactDetails contact = null;
         try {
-            contact = mContactDao.findFullContactDetailsById(mContactId);
+            contact = mContactDao.findFullContactDetailsByIdBlocking(mContactId);
         } catch (SQLiteBlobTooBigException tooBigException) {
             Timber.i(tooBigException,"Data too big to be fetched");
         }
@@ -200,7 +200,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             contact.addEncryptedData(contactEncryptedData);
             contact.setName(contactName);
             contact.setEmails(contactEmails);
-            mContactDao.insertFullContactDetails(contact);
+            mContactDao.insertFullContactDetailsBlocking(contact);
             if (updateJoins) {
                 for (Map.Entry<ContactLabel, List<String>> entry : mapContactGroupContactEmails.entrySet()) {
                     updateJoins(entry.getKey().getID(), entry.getKey().getName(), entry.getValue());
@@ -242,5 +242,13 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
             }
         }
         return Collections.emptyList();
+    }
+
+    private void requireContactDao() {
+        if (mContactDao == null) {
+            mContactDao = ContactDatabase.Companion
+                    .getInstance(getApplicationContext(), getUserId())
+                    .getDao();
+        }
     }
 }

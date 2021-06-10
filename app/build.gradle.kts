@@ -341,7 +341,8 @@ dependencies {
         `viewStateStore-paging`,
         `remark`,
         `okio`,
-        `store`
+        `store`,
+        `coil-base`
     )
 
     debugImplementation(

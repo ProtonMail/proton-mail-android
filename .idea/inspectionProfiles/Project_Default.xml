@@ -8,8 +8,8 @@
     <inspection_tool class="FunctionName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="namePattern" value="[a-zA-Z][A-Za-z\d]*" />
     </inspection_tool>
-    <inspection_tool class="IllegalIdentifier" enabled="false" level="ERROR" enabled_by_default="false">
-      <scope name="Gradle files" level="None" enabled="false" />
+    <inspection_tool class="IllegalIdentifier" enabled="true" level="ERROR" enabled_by_default="true">
+      <scope name="Gradle files" level="None" enabled="true" />
     </inspection_tool>
     <inspection_tool class="IncompatibleAPI" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="ObjectPropertyName" enabled="true" level="WEAK WARNING" enabled_by_default="true">

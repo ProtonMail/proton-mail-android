@@ -41,7 +41,7 @@ import java.io.FileNotFoundException
 import kotlin.test.Test
 
 /**
- * __Unit__ test suite for [ContactDetailsViewModel]
+ * __Unit__ test suite for [ContactDetailsViewModelOld]
  *
  * Verifies:
  * * handling of error loading profile pictures
@@ -49,7 +49,7 @@ import kotlin.test.Test
  * @author Davide Farella
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class ContactDetailsViewModelTest :
+internal class ContactDetailsViewModelOldTest :
     ArchTest,
     CoroutinesTest,
     ViewStateStoreTest by viewStateStoreTest(errorStateGenerator) {
@@ -58,7 +58,7 @@ internal class ContactDetailsViewModelTest :
     fun `getBitmapFromURL handles timeout`() = coroutinesTest {
 
         // GIVEN
-        val viewModel = ContactDetailsViewModel(
+        val viewModel = ContactDetailsViewModelOld(
             dispatchers,
             downloadFile = mockk {
                 coEvery { invoke(url = any()) } coAnswers {
@@ -68,9 +68,7 @@ internal class ContactDetailsViewModelTest :
                     }
                 }
             },
-            contactDetailsRepository = mockk(),
-            workManager = mockk(),
-            fetchContactDetails = mockk()
+            contactDetailsRepository = mockk()
         )
 
         // WHEN
@@ -85,12 +83,10 @@ internal class ContactDetailsViewModelTest :
     fun `getBitmapFromURL handles malformed url`() = coroutinesTest {
 
         // GIVEN
-        val viewModel = ContactDetailsViewModel(
+        val viewModel = ContactDetailsViewModelOld(
             dispatchers,
             downloadFile = mockk(),
-            contactDetailsRepository = mockk(),
-            workManager = mockk(),
-            fetchContactDetails = mockk()
+            contactDetailsRepository = mockk()
         )
 
         // WHEN
@@ -103,14 +99,12 @@ internal class ContactDetailsViewModelTest :
     @Test
     fun `getBitmapFromURL handles 404`() = coroutinesTest {
         // GIVEN
-        val viewModel = ContactDetailsViewModel(
+        val viewModel = ContactDetailsViewModelOld(
             dispatchers,
             downloadFile = mockk {
                 coEvery { invoke(url = any()) } answers  { throw FileNotFoundException() }
             },
-            contactDetailsRepository = mockk(),
-            workManager = mockk(),
-            fetchContactDetails = mockk()
+            contactDetailsRepository = mockk()
         )
 
         // WHEN
@@ -126,14 +120,12 @@ internal class ContactDetailsViewModelTest :
         every { BitmapFactory.decodeStream(any()) } returns mockk()
 
         // GIVEN
-        val viewModel = ContactDetailsViewModel(
+        val viewModel = ContactDetailsViewModelOld(
             dispatchers,
             downloadFile = mockk {
                 coEvery { invoke(url = any()) } returns mockk()
             },
-            contactDetailsRepository = mockk(),
-            workManager = mockk(),
-            fetchContactDetails = mockk()
+            contactDetailsRepository = mockk()
         )
 
         // WHEN

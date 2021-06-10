@@ -20,6 +20,9 @@ package ch.protonmail.android.contacts.details
 
 import ch.protonmail.android.data.local.model.ContactLabel
 
-data class ContactEmailsGroups(val groups: List<ContactLabel>,
-                               var emailId: String?,
-                               val rowID: Int)
+data class ContactEmailsGroups(
+    val groups: List<ContactLabel>,
+    var emailId: String?,
+    val rowID: Int
+)
+

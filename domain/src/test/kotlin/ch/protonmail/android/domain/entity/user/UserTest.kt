@@ -116,8 +116,8 @@ internal class UserTest {
         NotBlankString("Eur"),
         0,
         Delinquent.None,
-        Bytes(5_000u),
-        UserSpace(Bytes(25_000u), Bytes(5_000_000u))
+        Bytes(5_000.toULong()),
+        UserSpace(Bytes(25_000.toULong()), Bytes(5_000_000.toULong()))
     )
 
     private val notEmptyAddresses = Addresses(
@@ -140,7 +140,7 @@ internal class UserTest {
 
     private val dummyKey = UserKey(
         Id("key"),
-        4u,
+        4.toUInt(),
         PgpField.PrivateKey(NotBlankString("key")),
         PgpField.Message(NotBlankString("token"))
     )

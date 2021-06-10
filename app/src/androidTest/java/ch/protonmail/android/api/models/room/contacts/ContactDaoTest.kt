@@ -167,7 +167,7 @@ internal class ContactDaoTest {
             saveAllContactsData(contactData)
             saveAllContactsEmails(contactEmails)
         }
-        fullContactDetails.forEach(this::insertFullContactDetails)
+        fullContactDetails.forEach(this::insertFullContactDetailsBlocking)
     }
 
     private fun assertDatabaseState(
@@ -186,7 +186,7 @@ internal class ContactDaoTest {
         //hack as encrypted data has equals not defined
         val actualFullContactDetailsSet = expectedFullContactDetails
             .map(FullContactDetails::contactId)
-            .map(database::findFullContactDetailsById)
+            .map(database::findFullContactDetailsByIdBlocking)
             .map { it?.apply { encryptedData = mutableListOf() } }
             .toSet()
 
@@ -296,7 +296,7 @@ internal class ContactDaoTest {
     fun findContactEmailsByContactId() {
         val contactId = contactEmails[2].contactId!!
         val expected = contactEmails.filter { it.contactId == contactId }
-        val actual = database.findContactEmailsByContactId(contactId)
+        val actual = database.findContactEmailsByContactIdBlocking(contactId)
         Assert.assertEquals(expected, actual)
         assertDatabaseState()
     }
@@ -528,14 +528,14 @@ internal class ContactDaoTest {
             )
         )
         val expected = fullContactDetails + inserted
-        database.insertFullContactDetails(inserted)
+        database.insertFullContactDetailsBlocking(inserted)
         assertDatabaseState(expectedFullContactDetails = expected)
     }
 
     @Test
     fun findFullContactDetailsById() {
         val expected = fullContactDetails[1]
-        val actual = database.findFullContactDetailsById(expected.contactId)
+        val actual = database.findFullContactDetailsByIdBlocking(expected.contactId)
         Assert.assertThat(
             actual, `is`(FullContactsDetailsMatcher(expected))
         )
@@ -554,7 +554,7 @@ internal class ContactDaoTest {
         val deleted = fullContactDetails[1]
         val expected = fullContactDetails - deleted
         database.deleteFullContactsDetails(deleted)
-        val found = database.findFullContactDetailsById(deleted.contactId)
+        val found = database.findFullContactDetailsByIdBlocking(deleted.contactId)
         Assert.assertNull(found)
         assertDatabaseState(expectedFullContactDetails = expected)
     }

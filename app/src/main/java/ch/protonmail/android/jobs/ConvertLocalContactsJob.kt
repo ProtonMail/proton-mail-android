@@ -311,7 +311,7 @@ class ConvertLocalContactsJob(
         val remoteContactId = response.contactId
         val previousContactData = contactDao.findContactDataByDbId(contactDataDbId)
         if (remoteContactId != "") {
-            val contactEmails = contactDao.findContactEmailsByContactId(
+            val contactEmails = contactDao.findContactEmailsByContactIdBlocking(
                 previousContactData!!.contactId!!
             )
             previousContactData.contactId = remoteContactId
