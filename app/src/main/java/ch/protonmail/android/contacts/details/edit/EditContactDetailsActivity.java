@@ -157,7 +157,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     @BindView(R.id.contactInitials)
     ListItemThumbnail contactInitials;
 
-    private LayoutInflater inflater;
     private final AtomicBoolean mSavingInProgress = new AtomicBoolean(false);
 
     private EditContactDetailsViewModel viewModel;
@@ -213,7 +212,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        inflater = LayoutInflater.from(this);
+
         mEmailAddressesContainer.removeAllViews();
         mDisplayNameView.addTextChangedListener(new DirtyWatcher());
 
@@ -707,10 +706,11 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                                          boolean singleLine,
                                          final int inputType) {
         View newOptionRowView;
+        LayoutInflater layoutInflater = getLayoutInflater();
         if (singleLine) {
-            newOptionRowView = inflater.inflate(R.layout.contact_new_vcard_item_email_address, rootView, false);
+            newOptionRowView = layoutInflater.inflate(R.layout.contact_new_vcard_item_email_address, rootView, false);
         } else {
-            newOptionRowView = inflater.inflate(R.layout.contact_vcard_item_note, rootView, false);
+            newOptionRowView = layoutInflater.inflate(R.layout.contact_vcard_item_note, rootView, false);
         }
         UiUtil.generateViewId(newOptionRowView);
         final TextView btnAddNewRow = newOptionRowView.findViewById(R.id.btnAddNewRow);
@@ -734,7 +734,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         optionTitle.setText(optionUITypeText);
 
         btnAddNewRow.setVisibility(View.VISIBLE);
-        btnAddNewRow.setTextColor(R.color.interaction_norm);
         option.setVisibility(View.GONE);
         btnMinus.setVisibility(View.GONE);
         if (!singleLine) {

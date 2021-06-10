@@ -58,7 +58,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/padding_l"
-                android:text="@string/send_group_message"
+                android:text="@string/contacts_send_group_message"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

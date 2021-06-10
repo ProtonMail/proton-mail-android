@@ -43,6 +43,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:gravity="center_vertical"
         android:padding="@dimen/padding_m"
         android:textAllCaps="true"
+        android:textColor="@color/cornflower_blue"
         android:visibility="gone"
         app:drawableStartCompat="@drawable/ic_plus"
         tools:text="Add new x"

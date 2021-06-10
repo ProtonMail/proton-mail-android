@@ -44,9 +44,6 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.utils.UiUtil;
 import ezvcard.property.Address;
 
-/**
- * Created by dino on 12/16/17.
- */
 public class ContactAddressView extends LinearLayout {
 
     //region common address UI elements
@@ -74,8 +71,6 @@ public class ContactAddressView extends LinearLayout {
     //endregion
 
     //region new address UI elements
-    @Nullable @BindView(R.id.new_row_parent)
-    View mNewRowParent;
     @Nullable @BindView(R.id.title)
     TextView mRowTitleView;
     @Nullable @BindView(R.id.fields_parent)
@@ -84,7 +79,6 @@ public class ContactAddressView extends LinearLayout {
 
     private boolean mIsDirty = false;
     private boolean mHasFocus = false;
-    private boolean mIsNew;
 
     //region common values
     private final List<String> mStandardOptionUIValues;
@@ -97,7 +91,6 @@ public class ContactAddressView extends LinearLayout {
 
     public ContactAddressView(final Context context, final String titleText, final String optionTitleText, final List<String> standardOptionUIValues, final List<String> standardOptionValues, final VCardLinearLayout rootView) {
         super(context, null, 0);
-        mIsNew = true;
         mStandardOptionUIValues = standardOptionUIValues;
         mStandardOptionValues = standardOptionValues;
         mLinearLayoutParent = rootView;
@@ -113,11 +106,10 @@ public class ContactAddressView extends LinearLayout {
         mAddressFullCombinedView.setOnClickListener(new AddressClickListener(mAddressFullCombinedView, mAddressDetailsParentView, mAddressStreetView, mAddressCityView, mAddressRegionView, mAddressPostcodeView, mAddressCountryView));
         final FragmentManager fragmentManager = ((FragmentActivity) getContext()).getSupportFragmentManager();
         mOptionTitleView.setText(optionTitleText);
-        mNewRowParent.setClickable(true);
-        mNewRowParent.setOnClickListener(v -> {
+        mRowTitleView.setOnClickListener(v -> {
             mRowTitleView.setVisibility(View.GONE);
             mInputFieldsView.setVisibility(View.VISIBLE);
-            mNewRowParent.setVisibility(View.GONE);
+            mRowTitleView.setVisibility(View.GONE);
             ContactOptionTypeClickListener optionTypeClickListener =
                     new ContactOptionTypeClickListener(getContext(), fragmentManager, view, "\ue910 "+standardOptionUIValues.get(0), standardOptionUIValues, standardOptionValues);
             mBtnOptionTypeView.setOnClickListener(optionTypeClickListener);
@@ -127,15 +119,12 @@ public class ContactAddressView extends LinearLayout {
         // set the values
 
         mRowTitleView.setText(titleText);
-        mRowTitleView.setTextColor(R.color.interaction_norm);
-
 
     }
 
     public ContactAddressView(final Context context, final String optionType, final String optionUIType, final Address address,
                               final String optionHint, final List<String> standardOptionUIValues, final List<String> standardOptionValues, final VCardLinearLayout rootView) {
         super(context, null, 0);
-        mIsNew = false;
         mStandardOptionUIValues = standardOptionUIValues;
         mStandardOptionValues = standardOptionValues;
         mLinearLayoutParent = rootView;

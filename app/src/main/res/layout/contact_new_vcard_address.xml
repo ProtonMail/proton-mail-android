@@ -21,27 +21,23 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/fields_default_space"
     android:layout_marginBottom="@dimen/fields_default_space"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/new_row_parent"
+    <TextView
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:drawableStart="@drawable/ic_plus"
-            android:drawablePadding="@dimen/padding_s"
-            android:gravity="center"
-            android:textAllCaps="true"
-            tools:text="Option title" />
-    </LinearLayout>
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="@dimen/padding_m"
+        android:focusable="true"
+        android:gravity="start|center_vertical"
+        android:padding="@dimen/padding_m"
+        android:textAllCaps="true"
+        android:textColor="@color/cornflower_blue"
+        app:drawableStartCompat="@drawable/ic_plus"
+        tools:text="Option title" />
 
     <LinearLayout
         android:id="@+id/fields_parent"

@@ -1023,5 +1023,5 @@
     </plurals>
 
     <string name="contacts_call">Call</string>
-    <string name="send_group_message">Send group message</string>
+    <string name="contacts_send_group_message">Send group message</string>
 </resources>
