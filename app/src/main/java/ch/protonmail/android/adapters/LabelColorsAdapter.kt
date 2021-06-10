@@ -39,24 +39,20 @@ class LabelColorsAdapter(context: Context, colors: IntArray, private val mLayout
             item.isChecked = false
         }
         val item = getItem(position)
-        item!!.isChecked = true
+        item?.isChecked = true
         notifyDataSetChanged()
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var view = convertView
-        if (convertView == null) {
-            view = LayoutInflater.from(context).inflate(mLayoutResourceId, parent, false)
-        }
-        val item = getItem(position)
+        val view = convertView ?: LayoutInflater.from(context).inflate(mLayoutResourceId, parent, false)
+        val item = getItem(position) ?: return view
         selectItem(view, item)
-        return view!!
+        return view
     }
 
-    private fun selectItem(view: View?, item: LabelColorItem?) {
-        val circle = view!!.findViewById<View>(R.id.color_item)
-        val background = circle.background
-        background.setColorFilter(item!!.colorId, PorterDuff.Mode.SRC_IN)
+    private fun selectItem(view: View, item: LabelColorItem) {
+        val circle = view.findViewById<View>(R.id.color_item)
+        circle.background.setColorFilter(item.colorId, PorterDuff.Mode.SRC_IN)
         val checkView = view.findViewById<View>(R.id.is_checked_indicator)
         if (item.isChecked) {
             checkView.visibility = View.VISIBLE
