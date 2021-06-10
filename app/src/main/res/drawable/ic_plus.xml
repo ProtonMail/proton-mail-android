@@ -23,7 +23,7 @@
     android:viewportWidth="16"
     android:viewportHeight="16">
     <path
-        android:fillColor="@color/interaction_norm"
+        android:fillColor="@color/cornflower_blue"
         android:fillType="evenOdd"
         android:pathData="M14.5,7.5H8.5V1.5H7.5V7.5H1.5V8.5H7.5V14.5H8.5V8.5H14.5V7.5Z" />
 </vector>
