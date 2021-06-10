@@ -67,10 +67,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:textCursorDrawable="@null" />
             </RelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="@drawable/list_divider" />
+            <View style="@style/ViewSeparatorHorizontal"/>
 
             <LinearLayout
                 android:id="@+id/label_color_parent"

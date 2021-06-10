@@ -52,14 +52,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/settings_text_view_display_name_section" />
 
-    <View
+    <View style="@style/ViewSeparatorHorizontal"
         android:id="@+id/settings_section_signature_divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/padding_xl"
-        android:background="@drawable/list_divider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/padding_xl"
         app:layout_constraintTop_toBottomOf="@id/settings_input_display_name" />
 
     <TextView
@@ -102,12 +99,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/settings_text_view_signature_section" />
 
-    <View
+    <View style="@style/ViewSeparatorHorizontal"
         android:id="@+id/settings_section_mobile_signature_divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
         android:layout_marginTop="@dimen/padding_xl"
-        android:background="@drawable/list_divider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/settings_input_signature" />

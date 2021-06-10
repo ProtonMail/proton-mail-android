@@ -60,10 +60,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:padding="@dimen/padding_l"
                 app:drawableEndCompat="@drawable/ic_chevron_down" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@drawable/list_divider" />
+            <View style="@style/ViewSeparatorHorizontal"/>
 
             <LinearLayout
                 android:id="@+id/addressChooser"
@@ -97,10 +94,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@drawable/list_divider" />
+                <View style="@style/ViewSeparatorHorizontal"/>
 
                 <TextView
                     android:id="@+id/titleInactiveAddresses"
@@ -128,10 +122,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@drawable/list_divider" />
+                <View style="@style/ViewSeparatorHorizontal"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
