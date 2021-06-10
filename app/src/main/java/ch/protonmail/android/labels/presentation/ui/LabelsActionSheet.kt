@@ -89,14 +89,16 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
         }
 
         binding.textViewLabelsSheetNewLabel.apply {
-            isVisible = actionSheetType == Type.LABEL
+            // TODO: Change visibility logic when the feature is implemented
+            isVisible = false
             setOnClickListener {
                 // TODO: Link it to appropriate setting section for adding new Label
             }
         }
 
         binding.textViewLabelsSheetNewFolder.apply {
-            isVisible = actionSheetType == Type.FOLDER
+            // TODO: Change visibility logic when the feature is implemented
+            isVisible = false
             setOnClickListener {
                 // TODO: Link it to appropriate setting section for adding new Folder
             }
