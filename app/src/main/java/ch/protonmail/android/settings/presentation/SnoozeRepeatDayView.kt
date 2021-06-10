@@ -31,7 +31,7 @@ class SnoozeRepeatDayView @JvmOverloads constructor(
     defStyleAttr: Int = android.R.attr.textViewStyle
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
 
-    private var mSelected = false
+    private var isSelected = false
     var code: String = EMPTY_STRING
 
     init {
@@ -73,7 +73,7 @@ class SnoozeRepeatDayView @JvmOverloads constructor(
     }
 
     override fun isSelected(): Boolean {
-        return mSelected
+        return isSelected
     }
 
     fun setSelected(selectedValues: List<String>) {
@@ -85,11 +85,11 @@ class SnoozeRepeatDayView @JvmOverloads constructor(
     }
 
     override fun setSelected(selected: Boolean) {
-        mSelected = selected
-        if (mSelected) {
-            background = ContextCompat.getDrawable(context, R.drawable.repeat_day_selected_background)
+        isSelected = selected
+        background = if (isSelected) {
+            ContextCompat.getDrawable(context, R.drawable.repeat_day_selected_background)
         } else {
-            background = ContextCompat.getDrawable(context, R.drawable.repeat_day_unselected_background)
+            ContextCompat.getDrawable(context, R.drawable.repeat_day_unselected_background)
         }
     }
 

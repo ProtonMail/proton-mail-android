@@ -30,6 +30,9 @@ import ch.protonmail.android.storage.AttachmentClearingService
 import ch.protonmail.android.utils.extensions.showToast
 import com.google.android.material.slider.Slider
 
+const val EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE = "EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE"
+const val MAX_STORAGE_VALUE = 1200
+
 class AttachmentStorageActivity : BaseActivity() {
 
     private val slider by lazy { findViewById<Slider>(R.id.attachment_storage_value) }
@@ -100,11 +103,5 @@ class AttachmentStorageActivity : BaseActivity() {
         setResult(RESULT_OK)
         saveLastInteraction()
         finish()
-    }
-
-    companion object {
-
-        const val EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE = "EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE"
-        const val MAX_STORAGE_VALUE = 1200
     }
 }

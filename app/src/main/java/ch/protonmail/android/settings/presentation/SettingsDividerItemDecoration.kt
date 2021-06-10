@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.adapters.VIEW_TYPE_ITEM
 
-class CustomDividerItemDecoration(context: Context?, orientation: Int) : DividerItemDecoration(context, orientation) {
+class SettingsDividerItemDecoration(context: Context, orientation: Int) : DividerItemDecoration(context, orientation) {
 
     override fun onDraw(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
 

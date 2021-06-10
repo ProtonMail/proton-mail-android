@@ -48,6 +48,8 @@ import ch.protonmail.android.viewmodel.AccountTypeViewModel
 import com.squareup.otto.Subscribe
 import timber.log.Timber
 
+private const val REQUEST_CODE_UPGRADE = 1
+
 class AccountTypeActivity : BaseActivity() {
 
     private val upgrade by lazy { findViewById<Button>(R.id.upgrade) }
@@ -247,10 +249,5 @@ class AccountTypeActivity : BaseActivity() {
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
-    }
-
-    companion object {
-
-        private const val REQUEST_CODE_UPGRADE = 1
     }
 }

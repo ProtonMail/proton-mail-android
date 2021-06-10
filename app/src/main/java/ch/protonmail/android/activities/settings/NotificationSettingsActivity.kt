@@ -39,7 +39,7 @@ import studio.forface.viewstatestore.ViewStateActivity
 import javax.inject.Inject
 
 // region constants
-private const val EXTRA_CURRENT_ACTION = "EXTRA_CURRENT_ACTION"
+private const val EXTRA_CURRENT_ACTION = "extra.current.action"
 private const val REQUEST_CODE_PICK_RINGTONE = 5
 // endregion
 

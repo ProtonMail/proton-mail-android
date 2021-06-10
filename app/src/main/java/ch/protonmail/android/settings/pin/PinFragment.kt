@@ -80,16 +80,12 @@ class PinFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.run {
-            title = getString(subtitleRes)
-        }
+        requireActivity().title = getString(subtitleRes)
     }
 
     override fun onResume() {
         super.onResume()
-        activity?.run {
-            title = getString(subtitleRes)
-        }
+        requireActivity().title = getString(subtitleRes)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -100,10 +96,10 @@ class PinFragment : BaseFragment() {
     private val forwardObserver = Observer<PinFragmentViewModel.ValidationResult> {
         if (it.actionType == PinAction.CREATE && !it.valid) {
             mPinEdit.setErrorText(getString(R.string.pin_invalid))
-            mPinEdit.setTextColor(resources.getColor(R.color.notification_error))
+            context?.getColor(R.color.notification_error)?.let { color -> mPinEdit.setTextColor(color) }
         } else if (it.actionType == PinAction.CONFIRM && !it.valid) {
             mPinEdit.setErrorText(getString(R.string.settings_pins_dont_match))
-            mPinEdit.setTextColor(resources.getColor(R.color.notification_error))
+            context?.getColor(R.color.notification_error)?.let { color -> mPinEdit.setTextColor(color) }
         }
     }
 

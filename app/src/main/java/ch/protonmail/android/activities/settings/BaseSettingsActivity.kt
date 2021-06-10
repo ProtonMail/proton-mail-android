@@ -35,6 +35,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.AccountSettingsActivity
 import ch.protonmail.android.settings.presentation.AccountTypeActivity
@@ -68,8 +69,9 @@ import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.settings.presentation.AttachmentStorageActivity
-import ch.protonmail.android.settings.presentation.CustomDividerItemDecoration
+import ch.protonmail.android.settings.presentation.SettingsDividerItemDecoration
 import ch.protonmail.android.settings.presentation.DisplayAndSignatureFragment
+import ch.protonmail.android.settings.presentation.EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE
 import ch.protonmail.android.settings.presentation.SnoozeNotificationsActivity
 import ch.protonmail.android.settings.presentation.SwipeSettingFragment
 import ch.protonmail.android.uiModel.SettingsItemUiModel
@@ -83,7 +85,6 @@ import ch.protonmail.android.utils.startMailboxActivity
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialog
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_mailbox.*
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.settings_item_layout.view.*
 import timber.log.Timber
@@ -95,7 +96,7 @@ import ch.protonmail.android.api.models.User as LegacyUser
 // region constants
 const val EXTRA_CURRENT_MAILBOX_LOCATION = "Extra_Current_Mailbox_Location"
 const val EXTRA_CURRENT_MAILBOX_LABEL_ID = "Extra_Current_Mailbox_Label_ID"
-private const val EXTRA_CURRENT_ACTION = "EXTRA_CURRENT_ACTION"
+private const val EXTRA_CURRENT_ACTION = "extra.current.action"
 // endregion
 
 abstract class BaseSettingsActivity : BaseConnectivityActivity() {
@@ -349,7 +350,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
             LOCAL_STORAGE_LIMIT -> {
                 val attachmentStorageIntent = Intent(this, AttachmentStorageActivity::class.java)
                 attachmentStorageIntent.putExtra(
-                    AttachmentStorageActivity.EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE,
+                    EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE,
                     mAttachmentStorageValue
                 )
                 startActivityForResult(
@@ -455,10 +456,8 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         settingsAdapter.items = settingsUiList
         settingsRecyclerView.layoutManager = LinearLayoutManager(this@BaseSettingsActivity)
         settingsRecyclerView.adapter = settingsAdapter
-        // Set the list divider
-        val itemDecoration = CustomDividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-        itemDecoration.setDrawable(getDrawable(R.drawable.list_divider)!!)
-        settingsRecyclerView.addItemDecoration(itemDecoration)
+
+        settingsRecyclerView.setUpItemDecorations(SettingsDividerItemDecoration(this, DividerItemDecoration.VERTICAL))
     }
 
     protected fun setUpSettingsItems(settingsList: List<SettingsItemUiModel>) {
@@ -466,10 +465,8 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         settingsAdapter.items = settingsUiList
         settingsRecyclerView.layoutManager = LinearLayoutManager(this@BaseSettingsActivity)
         settingsRecyclerView.adapter = settingsAdapter
-        // Set the list divider
-        val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-        itemDecoration.setDrawable(getDrawable(R.drawable.list_divider)!!)
-        settingsRecyclerView.addItemDecoration(itemDecoration)
+
+        settingsRecyclerView.setUpItemDecorations(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
     }
 
     protected fun refreshSettings(settingsList: List<SettingsItemUiModel>) {
@@ -557,5 +554,10 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
             showToast(R.string.cache_cleared, gravity = Gravity.CENTER)
         }
         canClick.set(true)
+    }
+
+    private fun RecyclerView.setUpItemDecorations(itemDecoration: DividerItemDecoration) {
+        itemDecoration.setDrawable(getDrawable(R.drawable.list_divider)!!)
+        addItemDecoration(itemDecoration)
     }
 }
