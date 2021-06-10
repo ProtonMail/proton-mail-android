@@ -40,7 +40,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -448,11 +447,11 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             View rowView = mEncryptedDataAddress.findViewById(id);
             TextView optionTypeView = rowView.findViewById(R.id.optionTitle);
             optionType = (String) optionTypeView.getTag();
-            EditText addressStreetView = rowView.findViewById(R.id.address_street);
-            EditText addressCityView = rowView.findViewById(R.id.address_city);
-            EditText addressRegionView = rowView.findViewById(R.id.address_region);
-            EditText addressPostcodeView = rowView.findViewById(R.id.address_postcode);
-            EditText addressCountryView = rowView.findViewById(R.id.address_country);
+            ProtonInput addressStreetView = rowView.findViewById(R.id.address_street);
+            ProtonInput addressCityView = rowView.findViewById(R.id.address_city);
+            ProtonInput addressRegionView = rowView.findViewById(R.id.address_region);
+            ProtonInput addressPostcodeView = rowView.findViewById(R.id.address_postcode);
+            ProtonInput addressCountryView = rowView.findViewById(R.id.address_country);
 
             String streetAddress = addressStreetView.getText().toString();
             String localityAddress = addressCityView.getText().toString();

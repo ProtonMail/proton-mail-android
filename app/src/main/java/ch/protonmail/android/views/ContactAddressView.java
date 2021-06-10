@@ -18,14 +18,12 @@
  */
 package ch.protonmail.android.views;
 
-import android.app.Activity;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -43,26 +41,25 @@ import butterknife.OnClick;
 import ch.protonmail.android.R;
 import ch.protonmail.android.utils.UiUtil;
 import ezvcard.property.Address;
+import me.proton.core.presentation.ui.view.ProtonInput;
 
 public class ContactAddressView extends LinearLayout {
 
     //region common address UI elements
-    @BindView(R.id.optionIcon)
-    TextView optionIcon;
     @BindView(R.id.optionTitle)
     TextView mOptionTitleView;
     @BindView(R.id.btnOptionType)
     ImageButton mBtnOptionTypeView;
     @BindView(R.id.address_street)
-    EditText mAddressStreetView;
+    ProtonInput mAddressStreetView;
     @BindView(R.id.address_city)
-    EditText mAddressCityView;
+    ProtonInput mAddressCityView;
     @BindView(R.id.address_region)
-    EditText mAddressRegionView;
+    ProtonInput mAddressRegionView;
     @BindView(R.id.address_postcode)
-    EditText mAddressPostcodeView;
+    ProtonInput mAddressPostcodeView;
     @BindView(R.id.address_country)
-    EditText mAddressCountryView;
+    ProtonInput mAddressCountryView;
     @BindView(R.id.address_full_combined)
     TextView mAddressFullCombinedView;
     @BindView(R.id.address_detailed_parent)
@@ -100,7 +97,7 @@ public class ContactAddressView extends LinearLayout {
         UiUtil.generateViewId(view);
 
         setHandlers();
-        optionIcon.setText("\ue910");
+
         mAddressDetailsParentView.setVisibility(View.VISIBLE);
         mAddressFullCombinedView.setVisibility(GONE);
         mAddressFullCombinedView.setOnClickListener(new AddressClickListener(mAddressFullCombinedView, mAddressDetailsParentView, mAddressStreetView, mAddressCityView, mAddressRegionView, mAddressPostcodeView, mAddressCountryView));
@@ -137,7 +134,6 @@ public class ContactAddressView extends LinearLayout {
         UiUtil.generateViewId(view);
         setHandlers();
 
-        optionIcon.setText("\ue910");
         if (standardOptionUIValues == null || standardOptionUIValues.size() == 0) {
             mBtnOptionTypeView.setVisibility(View.GONE);
         }
@@ -281,15 +277,19 @@ public class ContactAddressView extends LinearLayout {
         private final TextView addressFullCombined;
         private final View addressDetailsParent;
 
-        private final EditText addressStreetView;
-        private final EditText addressCityView;
-        private final EditText addressRegionView;
-        private final EditText addressPostcodeView;
-        private final EditText addressCountryView;
+        private final ProtonInput addressStreetView;
+        private final ProtonInput addressCityView;
+        private final ProtonInput addressRegionView;
+        private final ProtonInput addressPostcodeView;
+        private final ProtonInput addressCountryView;
 
-        public AddressClickListener(TextView addressFullCombined, View addressDetailsParent,
-                                    EditText addressStreetView, EditText addressCityView, EditText addressRegionView,
-                                    EditText addressPostcodeView, EditText addressCountryView) {
+        public AddressClickListener(TextView addressFullCombined,
+                                    View addressDetailsParent,
+                                    ProtonInput addressStreetView,
+                                    ProtonInput addressCityView,
+                                    ProtonInput addressRegionView,
+                                    ProtonInput addressPostcodeView,
+                                    ProtonInput addressCountryView) {
             this.addressFullCombined = addressFullCombined;
             this.addressDetailsParent = addressDetailsParent;
             this.addressStreetView = addressStreetView;
@@ -307,7 +307,7 @@ public class ContactAddressView extends LinearLayout {
                 addressFullCombined.setVisibility(View.GONE);
                 mAddressStreetView.post(() -> {
                     mAddressStreetView.requestFocusFromTouch();
-                    UiUtil.showKeyboard((Activity) getContext(), mAddressStreetView);
+
                 });
             } else {
                 addressDetailsParent.setVisibility(View.GONE);

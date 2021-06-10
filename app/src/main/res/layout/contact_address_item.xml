@@ -55,7 +55,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ch.protonmail.android.views.CustomFontTextView
+        <TextView
             android:id="@+id/address_full_combined"
             style="@style/ContactsTextView"
             android:layout_width="match_parent"
@@ -70,7 +70,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:maxLines="4"
             android:text="@string/address"
             android:textColor="@color/black"
-            android:textStyle="bold"
-            app:fontName="Roboto-Regular.ttf" />
+            android:textStyle="bold"/>
     </FrameLayout>
 </LinearLayout>
