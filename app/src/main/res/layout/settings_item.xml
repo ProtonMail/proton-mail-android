@@ -20,5 +20,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 <ch.protonmail.android.views.SettingsDefaultItemView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="48dp"
+    android:minHeight="@dimen/settings_item_min_height"
     android:padding="@dimen/padding_l"/>
