@@ -20,8 +20,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- region V4 -->
-    <style name="ProtonTheme.Splash.Light.Mail">
-        <item name="brand_splash_logo">@drawable/splash_logo</item>
+    <style name="ProtonTheme.Splash.Mail.Light">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="proton_background_norm">@color/white</item>
+        <item name="proton_text_norm">@color/woodsmoke</item>
     </style>
 
     <style name="ProtonTheme.Mail" parent="ProtonTheme">

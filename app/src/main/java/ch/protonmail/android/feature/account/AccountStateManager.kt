@@ -64,8 +64,15 @@ import me.proton.core.accountmanager.presentation.onAccountTwoPassModeFailed
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeNeeded
 import me.proton.core.accountmanager.presentation.onSessionSecondFactorNeeded
 import me.proton.core.auth.presentation.AuthOrchestrator
-import me.proton.core.auth.presentation.onLoginResult
+import me.proton.core.auth.presentation.onAddAccountResult
+import me.proton.core.domain.entity.Product
 import me.proton.core.domain.entity.UserId
+import me.proton.core.humanverification.domain.HumanVerificationManager
+import me.proton.core.humanverification.presentation.HumanVerificationManagerObserver
+import me.proton.core.humanverification.presentation.HumanVerificationOrchestrator
+import me.proton.core.humanverification.presentation.observe
+import me.proton.core.humanverification.presentation.onHumanVerificationNeeded
+import me.proton.core.network.domain.humanverification.HumanVerificationAvailableMethods
 import me.proton.core.user.domain.UserManager
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
@@ -73,11 +80,13 @@ import javax.inject.Singleton
 
 @Singleton
 class AccountStateManager @Inject constructor(
+    private val product: Product,
     private val requiredAccountType: AccountType,
     private val accountManager: AccountManager,
     private val userManager: UserManager,
     private val eventManager: EventManager,
     private val jobManager: JobManager,
+    private val humanVerificationManager: HumanVerificationManager,
     private val oldUserManager: ch.protonmail.android.core.UserManager,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val clearUserData: ClearUserData,
@@ -92,6 +101,7 @@ class AccountStateManager @Inject constructor(
     private val lifecycle = lifecycleOwner.lifecycle
 
     private lateinit var currentAuthOrchestrator: AuthOrchestrator
+    private lateinit var currentHumanVerificationOrchestrator: HumanVerificationOrchestrator
 
     private val mutableStateFlow = MutableStateFlow(State.Processing)
 
@@ -122,11 +132,17 @@ class AccountStateManager @Inject constructor(
             }.launchIn(scope)
     }
 
+    private fun observeAccountManager(lifecycle: Lifecycle): AccountManagerObserver =
+        accountManager.observe(lifecycle, Lifecycle.State.STARTED)
+
+    private fun observeHumanVerificationManager(lifecycle: Lifecycle): HumanVerificationManagerObserver =
+        humanVerificationManager.observe(lifecycle, Lifecycle.State.STARTED)
+
     /**
      * Observe all accounts states that can be solved without any workflow ([AuthOrchestrator]).
      */
     private fun observeAccountStateWithInternalLifecycle() {
-        observe(lifecycle, minActiveState = Lifecycle.State.CREATED)
+        observeAccountManager(lifecycle)
             .onAccountTwoPassModeFailed { accountManager.disableAccount(it.userId) }
             .onAccountCreateAddressFailed { accountManager.disableAccount(it.userId) }
             .onAccountRemoved { onAccountDisabled(it) }
@@ -143,21 +159,35 @@ class AccountStateManager @Inject constructor(
     fun observeAccountStateWithExternalLifecycle(lifecycle: Lifecycle, isSplashActivity: Boolean = false) {
         // Don't start workflow if MailboxActivity will do it later.
         fun shouldStart() = !isSplashActivity || state.value != State.PrimaryExist
-        observe(lifecycle, Lifecycle.State.CREATED)
+        observeAccountManager(lifecycle)
             .onSessionSecondFactorNeeded { if (shouldStart()) currentAuthOrchestrator.startSecondFactorWorkflow(it) }
             .onAccountTwoPassModeNeeded { if (shouldStart()) currentAuthOrchestrator.startTwoPassModeWorkflow(it) }
             .onAccountCreateAddressNeeded { if (shouldStart()) currentAuthOrchestrator.startChooseAddressWorkflow(it) }
     }
 
-    fun observe(lifecycle: Lifecycle, minActiveState: Lifecycle.State): AccountManagerObserver =
-        accountManager.observe(lifecycle, minActiveState)
+    /**
+     * Observe all human verification states that can be solved with [HumanVerificationOrchestrator].
+     */
+    fun observeHumanVerificationStateWithExternalLifecycle(lifecycle: Lifecycle) {
+        observeHumanVerificationManager(lifecycle)
+            .onHumanVerificationNeeded {
+                currentHumanVerificationOrchestrator.startHumanVerificationWorkflow(
+                    clientId = it.clientId,
+                    methods = HumanVerificationAvailableMethods(it.verificationMethods, it.captchaVerificationToken)
+                )
+            }
+    }
 
     fun setAuthOrchestrator(authOrchestrator: AuthOrchestrator) {
         currentAuthOrchestrator = authOrchestrator
     }
 
-    fun onLoginClosed(block: () -> Unit) {
-        currentAuthOrchestrator.onLoginResult { result -> if (result == null) block() }
+    fun setHumanVerificationOrchestrator(humanVerificationOrchestrator: HumanVerificationOrchestrator) {
+        currentHumanVerificationOrchestrator = humanVerificationOrchestrator
+    }
+
+    fun onAddAccountClosed(block: () -> Unit) {
+        currentAuthOrchestrator.onAddAccountResult { result -> if (result == null) block() }
     }
 
     fun getAccount(userId: UserId) = accountManager.getAccount(userId)
@@ -177,6 +207,13 @@ class AccountStateManager @Inject constructor(
         currentAuthOrchestrator.startLoginWorkflow(
             requiredAccountType = requiredAccountType,
             username = account?.username
+        )
+    }
+
+    fun addAccount() = scope.launch {
+        currentAuthOrchestrator.startAddAccountWorkflow(
+            requiredAccountType = requiredAccountType,
+            product = product
         )
     }
 

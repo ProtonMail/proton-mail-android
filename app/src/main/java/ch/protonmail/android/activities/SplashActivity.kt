@@ -58,7 +58,7 @@ class SplashActivity : AppCompatActivity() {
                         AccountStateManager.State.Processing ->
                             Unit
                         AccountStateManager.State.AccountNeeded ->
-                            signIn()
+                            addAccount()
                         AccountStateManager.State.PrimaryExist -> {
                             delay(resources.getInteger(R.integer.splash_transition_millis).toLong())
                             startMailboxActivity()
@@ -68,8 +68,8 @@ class SplashActivity : AppCompatActivity() {
                     }
                 }.launchIn(lifecycleScope)
 
-            // Finish if Login closed.
-            onLoginClosed {
+            // Finish if AddAccount closed.
+            onAddAccountClosed {
                 finishAndRemoveTask()
             }
         }

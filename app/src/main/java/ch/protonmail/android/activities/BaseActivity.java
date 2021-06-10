@@ -72,6 +72,7 @@ import ch.protonmail.android.utils.INetworkConfiguratorCallback;
 import ch.protonmail.android.worker.FetchMailSettingsWorker;
 import ch.protonmail.android.worker.FetchUserWorker;
 import dagger.hilt.android.AndroidEntryPoint;
+import me.proton.core.humanverification.presentation.HumanVerificationOrchestrator;
 import timber.log.Timber;
 
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
@@ -102,6 +103,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected UserManager mUserManager;
     @Inject
     protected AccountStateManager accountStateManager;
+    @Inject
+    protected HumanVerificationOrchestrator humanVerificationOrchestrator;
     @Inject
     protected JobManager mJobManager;
     @Inject
@@ -199,6 +202,16 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
         }
+
+        humanVerificationOrchestrator.register(this);
+        accountStateManager.setHumanVerificationOrchestrator(humanVerificationOrchestrator);
+        accountStateManager.observeHumanVerificationStateWithExternalLifecycle(getLifecycle());
+    }
+
+    @Override
+    protected void onDestroy() {
+        humanVerificationOrchestrator.unregister();
+        super.onDestroy();
     }
 
     @Override
@@ -251,6 +264,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         }
         app.setAppInBackground(false);
         NetworkConfigurator.Companion.setNetworkConfiguratorCallback(this);
+
+        accountStateManager.setHumanVerificationOrchestrator(humanVerificationOrchestrator);
     }
 
     @Override
