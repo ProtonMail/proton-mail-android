@@ -95,7 +95,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             tools:text="0 Members" />
 
         <TextView
-            android:id="@+id/manageAddresses"
+            android:id="@+id/manageMembers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/padding_l"
@@ -104,7 +104,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:focusable="true"
             android:maxLines="1"
             android:padding="@dimen/padding_l"
-            android:text="@string/contact_groups_manage_members" />
+            android:text="@string/contact_groups_manage_members"
+            android:textAllCaps="true"
+            android:textColor="@color/cornflower_blue" />
 
         <FrameLayout
             android:layout_width="match_parent"

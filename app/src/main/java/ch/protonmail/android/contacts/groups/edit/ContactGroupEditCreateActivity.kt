@@ -87,8 +87,7 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
                     ContactGroupMode.EDIT -> setupEditContactGroupLayout()
                     ContactGroupMode.CREATE -> setupNewContactGroupLayout()
                 }
-                manageAddresses.setTextColor(R.color.interaction_norm)
-                manageAddresses.setOnClickListener {
+                manageMembers.setOnClickListener {
                     val intent = Intent(this@ContactGroupEditCreateActivity, AddressChooserActivity::class.java)
                     intent.putExtra(EXTRA_CONTACT_EMAILS, contactGroupEmailsAdapter.getData())
                     val addressChooserIntent = AppUtil.decorInAppIntent(intent)
