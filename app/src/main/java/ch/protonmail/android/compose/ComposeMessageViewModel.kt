@@ -1272,7 +1272,7 @@ class ComposeMessageViewModel @Inject constructor(
             val currentPassword = messageDataResult.messagePassword
             val currentHint = messageDataResult.passwordHint
             val uiModel = MessagePasswordUiModel.from(currentPassword, currentHint)
-            _events.send(ComposeMessageEventUiModel.OnPasswordChangeRequest(uiModel))
+            _events.emit(ComposeMessageEventUiModel.OnPasswordChangeRequest(uiModel))
         }
     }
 
@@ -1287,7 +1287,7 @@ class ComposeMessageViewModel @Inject constructor(
                 .messagePassword(newPassword)
                 .passwordHint(newHint)
                 .build()
-            _events.send(ComposeMessageEventUiModel.OnPasswordChange(newPassword != null))
+            _events.emit(ComposeMessageEventUiModel.OnPasswordChange(newPassword != null))
         }
     }
     // endregion
@@ -1302,7 +1302,7 @@ class ComposeMessageViewModel @Inject constructor(
                 days = days.roundToInt(),
                 hours = hours.roundToInt()
             )
-            _events.send(ComposeMessageEventUiModel.OnExpirationChangeRequest(uiModel))
+            _events.emit(ComposeMessageEventUiModel.OnExpirationChangeRequest(uiModel))
         }
     }
 
@@ -1314,7 +1314,7 @@ class ComposeMessageViewModel @Inject constructor(
                 .fromOld(_messageDataResult)
                 .expirationTime(newExpirationInSeconds)
                 .build()
-            _events.send(ComposeMessageEventUiModel.OnExpirationChange(hasExpiration = newExpirationInSeconds != null))
+            _events.emit(ComposeMessageEventUiModel.OnExpirationChange(hasExpiration = newExpirationInSeconds != null))
         }
     }
     // endregion
