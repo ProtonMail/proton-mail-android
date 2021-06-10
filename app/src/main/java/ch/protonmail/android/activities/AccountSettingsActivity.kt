@@ -56,7 +56,7 @@ class AccountSettingsActivity : BaseSettingsActivity() {
             actionBar.setTitle(R.string.account_settings)
         }
 
-        val elevation = resources.getDimensionPixelSize(R.dimen.action_bar_elevation).toFloat()
+        val elevation = resources.getDimension(R.dimen.action_bar_elevation)
         actionBar?.elevation = elevation
 
         mSnackLayout = findViewById(R.id.layout_no_connectivity_info)

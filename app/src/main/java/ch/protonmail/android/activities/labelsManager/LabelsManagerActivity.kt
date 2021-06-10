@@ -133,7 +133,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             if (popupStyle) hide()
             else setDisplayHomeAsUpEnabled(true)
 
-            val elevation = resources.getDimensionPixelSize(R.dimen.action_bar_elevation).toFloat()
+            val elevation = resources.getDimension(R.dimen.action_bar_elevation)
             this.elevation = elevation
             title = getString(
                 if (type == LABELS) R.string.labels_manager

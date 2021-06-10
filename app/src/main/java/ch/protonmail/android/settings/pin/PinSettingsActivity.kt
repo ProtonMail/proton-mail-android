@@ -92,7 +92,7 @@ class PinSettingsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val elevation = resources.getDimensionPixelSize(R.dimen.action_bar_elevation).toFloat()
+        val elevation = resources.getDimension(R.dimen.action_bar_elevation)
         supportActionBar?.elevation = elevation
 
         val timeoutAdapter = ArrayAdapter(
@@ -196,7 +196,7 @@ class PinSettingsActivity : BaseActivity() {
             } else if (requestCode == REQUEST_CODE_CHANGE_PIN) {
                 val pinSet = data?.getBooleanExtra(EXTRA_NEW_PIN_SET, false)
                 val newPin = data?.getStringExtra(EXTRA_PIN)
-                if (pinSet != null) {
+                if (pinSet == true) {
                     mUserManager.savePin(newPin)
                     showToast(R.string.new_pin_saved, Toast.LENGTH_SHORT)
                     autoLockContainerToggle.isChecked = true

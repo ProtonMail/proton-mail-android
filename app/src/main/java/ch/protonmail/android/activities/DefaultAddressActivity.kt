@@ -94,7 +94,7 @@ class DefaultAddressActivity : BaseActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val elevation = resources.getDimensionPixelSize(R.dimen.action_bar_elevation).toFloat()
+        val elevation = resources.getDimension(R.dimen.action_bar_elevation)
         actionBar?.elevation = elevation
 
         mAvailableAddressesMap = HashMap()

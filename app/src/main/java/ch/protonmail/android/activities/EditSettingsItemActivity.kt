@@ -79,7 +79,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val elevation = resources.getDimensionPixelSize(R.dimen.action_bar_elevation).toFloat()
+        val elevation = resources.getDimension(R.dimen.action_bar_elevation)
         actionBar?.elevation = elevation
 
         settingsItemType = intent.getSerializableExtra(EXTRA_SETTINGS_ITEM_TYPE) as SettingsItem

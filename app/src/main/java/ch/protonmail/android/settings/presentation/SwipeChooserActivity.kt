@@ -33,7 +33,7 @@ import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
 
 // region constants
-const val EXTRA_CURRENT_ACTION = "EXTRA_CURRENT_ACTION"
+const val EXTRA_CURRENT_ACTION = "extra.current.action"
 const val EXTRA_SWIPE_ID = "EXTRA_SWIPE_ID"
 // endregion
 
@@ -62,7 +62,7 @@ class SwipeChooserActivity : BaseActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val elevation = resources.getDimensionPixelSize(R.dimen.action_bar_elevation).toFloat()
+        val elevation = resources.getDimension(R.dimen.action_bar_elevation)
         actionBar?.elevation = elevation
 
         currentAction = intent.getIntExtra(EXTRA_CURRENT_ACTION, 0)
