@@ -600,7 +600,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             defaultErrorMessage
         }
 
-        return bodyString!!
+        return bodyString
     }
 
     fun moveToTrash() {

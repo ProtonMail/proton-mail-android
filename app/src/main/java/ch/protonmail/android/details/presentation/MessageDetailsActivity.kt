@@ -736,9 +736,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 Snackbar.LENGTH_INDEFINITE
             )
             val view = cannotEditSnack.view
-            view.setBackgroundColor(getColor(R.color.red))
+            view.setBackgroundColor(getColor(R.attr.colorError))
             val tv = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-            tv.setTextColor(Color.WHITE)
+            tv.setTextColor(getColor(R.attr.colorOnError))
             cannotEditSnack.show()
             messageDetailsActionsView.visibility = View.INVISIBLE
         }
