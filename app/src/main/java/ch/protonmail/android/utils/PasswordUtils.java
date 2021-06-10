@@ -62,7 +62,7 @@ public class PasswordUtils {
     public static byte[] hashPassword(final int authVersion, final byte[] password, final String username, final byte[] salt, final byte[] modulus) {
 
         try {
-            return Srp.hashPassword(authVersion, new String(password), username, salt, modulus);
+            return Srp.hashPassword(authVersion, password, username, salt, modulus);
         } catch (Exception e) {
             Timber.e(e, "Hashing password failed");
         }
