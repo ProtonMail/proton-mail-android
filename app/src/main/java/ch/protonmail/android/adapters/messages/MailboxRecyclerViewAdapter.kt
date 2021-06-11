@@ -60,7 +60,6 @@ class MailboxRecyclerViewAdapter(
             } else {
                 notifyItemRemoved(mailboxItems.size)
             }
-
         }
 
     val checkedMailboxItems get() =

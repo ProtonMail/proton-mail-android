@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2020 Proton Technologies AG
   ~
   ~ This file is part of ProtonMail.
@@ -18,10 +17,9 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -33,8 +31,8 @@
         android:layout_height="match_parent">
 
         <include
-            layout="@layout/toolbar_mailbox"
             android:id="@+id/toolbar"
+            layout="@layout/toolbar_mailbox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -42,24 +40,24 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <include
-            layout="@layout/layout_mailbox_status_view"
             android:id="@+id/mailboxStatusLayout"
+            layout="@layout/layout_mailbox_status_view"
             android:layout_width="0dp"
             android:layout_height="@dimen/mailbox_status_view_height"
+            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar"
-            android:visibility="gone" />
+            app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
         <!-- TODO: Should be removed and replaced with MAILAND-1503 -->
         <ch.protonmail.android.views.alerts.StorageLimitAlert
             android:id="@+id/storageLimitAlert"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/mailboxStatusLayout"
-            android:visibility="gone" />
+            app:layout_constraintTop_toBottomOf="@id/mailboxStatusLayout" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/mailboxSwipeRefreshLayout"
@@ -78,29 +76,17 @@
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <!-- TODO: Should be removed and replaced with MAILAND-1549 -->
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/noMessagesSwipeRefreshLayout"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/mailboxActionsView"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/storageLimitAlert"
-            android:visibility="gone">
+            app:layout_constraintTop_toBottomOf="@id/storageLimitAlert">
 
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/no_messages"
-                    style="@style/Proton.Text.Caption.Hint" />
-
-            </ScrollView>
+            <include layout="@layout/layout_mailbox_no_messages" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -109,43 +95,43 @@
             android:id="@+id/layout_no_connectivity_info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/mailboxActionsView"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/mailboxActionsView" />
+            app:layout_constraintRight_toRightOf="parent" />
 
         <ch.protonmail.android.views.messageDetails.BottomActionsView
             android:id="@+id/mailboxActionsView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:visibility="gone" />
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
         <View
             android:id="@+id/screenProtectorView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintLeft_toLeftOf="@id/mailboxSwipeRefreshLayout"
-            app:layout_constraintRight_toRightOf="@id/mailboxSwipeRefreshLayout"
-            app:layout_constraintTop_toTopOf="@id/mailboxSwipeRefreshLayout"
-            app:layout_constraintBottom_toBottomOf="@id/mailboxSwipeRefreshLayout"
             android:background="@android:color/transparent"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            app:layout_constraintBottom_toBottomOf="@id/mailboxSwipeRefreshLayout"
+            app:layout_constraintLeft_toLeftOf="@id/mailboxSwipeRefreshLayout"
+            app:layout_constraintRight_toRightOf="@id/mailboxSwipeRefreshLayout"
+            app:layout_constraintTop_toTopOf="@id/mailboxSwipeRefreshLayout" />
 
         <View
             android:id="@+id/screenShotPreventerView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:background="@color/background_norm"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
