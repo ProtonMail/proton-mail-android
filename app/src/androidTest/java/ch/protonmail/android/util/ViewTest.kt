@@ -23,6 +23,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -33,18 +34,22 @@ import org.junit.Rule
 import kotlin.test.BeforeTest
 
 open class ViewTest<V : View>(
-    private val buildView: (Context) -> V
+    private val buildView: (Context) -> V,
+    private val width: Int = FrameLayout.LayoutParams.WRAP_CONTENT,
+    private val height: Int = FrameLayout.LayoutParams.WRAP_CONTENT
 ) {
 
     @get:Rule
     val activityScenarioRule = viewScenarioRule()
 
-    lateinit var testView: V
+    protected lateinit var testView: V
+    protected val context: Context get() = testView.context
 
     @BeforeTest
-    fun setupView() {
+    open fun setupView() {
         activityScenarioRule.scenario.onActivity { activity ->
-            testView = activity.setView(buildView)
+            val params = FrameLayout.LayoutParams(width, height)
+            testView = activity.setView(buildView, params)
             testView.id = TEST_VIEW_ID
         }
     }

@@ -34,9 +34,9 @@ class ViewTestActivity : AppCompatActivity() {
         setContentView(frameLayout)
     }
 
-    fun <V : View> setView(buildView: (Context) -> V): V {
+    fun <V : View> setView(buildView: (Context) -> V, params: FrameLayout.LayoutParams): V {
         val view = buildView(this)
-        frameLayout.addView(view)
+        frameLayout.addView(view, params)
         return view
     }
 }
