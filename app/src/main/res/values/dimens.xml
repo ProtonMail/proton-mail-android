@@ -25,6 +25,7 @@
     <dimen name="size_button_xs">24dp</dimen>
     <dimen name="size_button_m">48dp</dimen>
     <dimen name="size_divider">2px</dimen>
+    <dimen name="size_icon_s">16dp</dimen>
     <dimen name="size_icon_m">24dp</dimen>
     <dimen name="size_icon_l">32dp</dimen>
     <dimen name="size_corner_xs">8dp</dimen>

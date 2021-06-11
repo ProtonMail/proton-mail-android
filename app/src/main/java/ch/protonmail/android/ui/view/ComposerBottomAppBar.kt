@@ -22,9 +22,9 @@ package ch.protonmail.android.ui.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import ch.protonmail.android.databinding.LayoutComposerBottomAppBarBinding
 import ch.protonmail.libs.core.utils.onClick
@@ -33,7 +33,7 @@ class ComposerBottomAppBar @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val passwordButton: CheckableButton
     private val expirationButton: CheckableButton
@@ -43,8 +43,7 @@ class ComposerBottomAppBar @JvmOverloads constructor(
     init {
         val binding = LayoutComposerBottomAppBarBinding.inflate(
             LayoutInflater.from(context),
-            this,
-            true
+            this
         )
 
         passwordButton = binding.composerPasswordButton

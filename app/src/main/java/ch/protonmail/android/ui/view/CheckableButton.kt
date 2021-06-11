@@ -23,8 +23,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.ImageButton
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.withStyledAttributes
 import androidx.core.view.isVisible
 import ch.protonmail.android.R
@@ -39,7 +39,7 @@ class CheckableButton @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val button: ImageButton
     private val checkView: View
@@ -47,8 +47,7 @@ class CheckableButton @JvmOverloads constructor(
     init {
         val binding = ViewCheckableButtonBinding.inflate(
             LayoutInflater.from(context),
-            this,
-            true
+            this
         )
         button = binding.checkableButtonButton
         checkView = binding.checkableButtonCheck

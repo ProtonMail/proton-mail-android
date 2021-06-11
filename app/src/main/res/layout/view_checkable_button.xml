@@ -17,12 +17,13 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout
+<merge
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/size_button_m"
-    android:layout_height="@dimen/size_button_m">
+    android:layout_height="@dimen/size_button_m"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <ImageButton
         android:id="@+id/checkable_button_button"
@@ -37,8 +38,8 @@
 
     <ImageView
         android:id="@+id/checkable_button_check"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
+        android:layout_width="@dimen/size_icon_s"
+        android:layout_height="@dimen/size_icon_s"
         app:layout_constraintStart_toStartOf="@id/checkable_button_button"
         app:layout_constraintEnd_toEndOf="@id/checkable_button_button"
         app:layout_constraintTop_toTopOf="@id/checkable_button_button"
@@ -51,4 +52,4 @@
         android:visibility="gone"
         tools:visibility="visible"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</merge>

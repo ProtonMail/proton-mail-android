@@ -58,7 +58,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="@dimen/padding_l"
         android:src="@drawable/ic_check"
-        app:tint="@color/interaction_norm"
+        app:tint="?proton_interaction_norm"
         android:contentDescription="@string/set_msg_expiration_check_description"
         android:visibility="gone"/>
 
@@ -85,7 +85,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="@dimen/padding_l"
         android:src="@drawable/ic_check"
-        app:tint="@color/interaction_norm"
+        app:tint="?proton_interaction_norm"
         android:contentDescription="@string/set_msg_expiration_check_description"
         android:visibility="gone"/>
 
@@ -112,7 +112,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="@dimen/padding_l"
         android:src="@drawable/ic_check"
-        app:tint="@color/interaction_norm"
+        app:tint="?proton_interaction_norm"
         android:contentDescription="@string/set_msg_expiration_check_description"
         android:visibility="gone"/>
 
@@ -139,7 +139,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="@dimen/padding_l"
         android:src="@drawable/ic_check"
-        app:tint="@color/interaction_norm"
+        app:tint="?proton_interaction_norm"
         android:contentDescription="@string/set_msg_expiration_check_description"
         android:visibility="gone"/>
 
@@ -166,7 +166,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="@dimen/padding_l"
         android:src="@drawable/ic_check"
-        app:tint="@color/interaction_norm"
+        app:tint="?proton_interaction_norm"
         android:contentDescription="@string/set_msg_expiration_check_description"
         android:visibility="gone"/>
 
@@ -193,7 +193,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="@dimen/padding_l"
         android:src="@drawable/ic_check"
-        app:tint="@color/interaction_norm"
+        app:tint="?proton_interaction_norm"
         android:contentDescription="@string/set_msg_expiration_check_description"
         android:visibility="gone"
         tools:visibility="visible"/>
