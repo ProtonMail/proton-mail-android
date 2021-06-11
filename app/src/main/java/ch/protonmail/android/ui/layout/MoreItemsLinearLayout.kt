@@ -76,9 +76,48 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
         setTextAppearance(R.style.Proton_Text_Caption)
     }
 
+    private val layoutChangeListener = object : OnLayoutChangeListener {
+        override fun onLayoutChange(
+            v: View,
+            left: Int,
+            top: Int,
+            right: Int,
+            bottom: Int,
+            oldLeft: Int,
+            oldTop: Int,
+            oldRight: Int,
+            oldBottom: Int
+        ) {
+            if (orientation == VERTICAL || hiddenChildCount == 0) return
+
+            val lastVisibleTextView = getChildAt(visibleChildCount - 1)?.asOrGetTextViewOrNull()
+            if (lastVisibleTextView != null) {
+                val viewWidth = lastVisibleTextView.width
+                val allOthersVisibleChildrenWidth =
+                    allChildren.filter { it.isVisible }.sumOf { it.width } - viewWidth
+                val availableSize = width - allOthersVisibleChildrenWidth - moreTextView.width
+                if (viewWidth >= availableSize) {
+                    lastVisibleTextView.layoutParams.width = availableSize
+                    lastVisibleTextView.requestLayout()
+                }
+            }
+        }
+
+    }
+
     init {
         @Suppress("LeakingThis")
         addView(moreTextView)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        addOnLayoutChangeListener(layoutChangeListener)
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        removeOnLayoutChangeListener(layoutChangeListener)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -129,6 +168,9 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
         return view is TextView ||
             view is ViewGroup && view.childCount == 1 && view.getChildAt(0) is TextView
     }
+
+    private fun View.asOrGetTextViewOrNull(): TextView? =
+        (this as? TextView) ?: (this as? ViewGroup)?.getChildAt(0) as? TextView
 
     // region add
     override fun addView(child: View, index: Int, params: ViewGroup.LayoutParams?) {
@@ -192,4 +234,5 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
         return if (orientation == HORIZONTAL) measuredView.measuredWidth
         else measuredView.measuredHeight
     }
+
 }
