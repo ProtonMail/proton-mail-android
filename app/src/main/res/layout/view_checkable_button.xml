@@ -46,7 +46,7 @@
         app:layout_constraintHorizontal_bias="0.87"
         app:layout_constraintVertical_bias="0.75"
         android:background="@drawable/shape_ellipse"
-        android:backgroundTint="@color/brand"
+        android:backgroundTint="?brand_norm"
         android:src="@drawable/shape_check"
         android:visibility="gone"
         tools:visibility="visible"/>

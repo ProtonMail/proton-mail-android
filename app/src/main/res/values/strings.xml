@@ -21,10 +21,14 @@
 
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">Days</string>
     <string name="x_folders">Folders</string>
+    <string name="x_hours">Hours</string>
     <string name="x_labels">Labels</string>
     <string name="x_more">More</string>
     <string name="x_search">Search</string>
+    <string name="x_set">Set</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
 
     <!-- region Drawer -->

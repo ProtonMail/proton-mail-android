@@ -54,7 +54,7 @@ class CheckableButton @JvmOverloads constructor(
         checkView = binding.checkableButtonCheck
 
         context.withStyledAttributes(attrs, R.styleable.CheckableButton, defStyleAttr) {
-            val iconDrawable = getDrawable(R.styleable.CheckableButton_icon)
+            val iconDrawable = getDrawable(R.styleable.CheckableButton_checkableButtonIcon)
             button.setImageDrawable(iconDrawable)
         }
     }
