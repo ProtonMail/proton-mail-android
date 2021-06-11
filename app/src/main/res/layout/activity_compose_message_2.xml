@@ -91,7 +91,7 @@
         app:layout_constraintVertical_bias="0"
         app:layout_constrainedHeight="true"
         app:layout_constraintTop_toBottomOf="@id/layout_no_connectivity_info"
-        app:layout_constraintBottom_toTopOf="@id/composer_buttons_layout"
+        app:layout_constraintBottom_toTopOf="@id/composer_bottom_app_bar"
         android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -395,12 +395,12 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_divider"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/composer_buttons_layout"
+        app:layout_constraintBottom_toTopOf="@id/composer_bottom_app_bar"
         android:background="@color/message_divider_gray"/>
 
     <!-- Buttons -->
     <ch.protonmail.android.ui.view.ComposerBottomAppBar
-        android:id="@+id/composer_buttons_layout"
+        android:id="@+id/composer_bottom_app_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_composer_field"
         app:layout_constraintStart_toStartOf="parent"

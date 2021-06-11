@@ -25,7 +25,6 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.activities.BaseContactsActivity
 import ch.protonmail.android.attachments.domain.model.UriPair
@@ -41,7 +40,6 @@ import ch.protonmail.android.utils.UiUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import me.proton.core.presentation.utils.onClick
 import me.proton.core.util.kotlin.exhaustive
 import timber.log.Timber
 
@@ -79,7 +77,7 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
         super.onCreate(savedInstanceState)
 
         // region setup UI
-        binding.addAttachments.onClick {
+        binding.composerBottomAppBar.onAttachmentsClick {
             UiUtil.hideKeyboard(this)
             AddAttachmentsActionSheet.show(supportFragmentManager)
         }
@@ -121,11 +119,11 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
     private fun onAttachmentsChanged(newAttachments: List<ComposerAttachmentUiModel>) {
         composeViewModel.autoSaveDraft()
 
-        binding.composerAttachmentsView
-            .setAttachments(newAttachments, onRemoveClicked = composeViewModel::removeAttachment)
-        binding.attachmentCount.apply {
-            isVisible = newAttachments.isNotEmpty()
-            text = "${newAttachments.size}"
+        binding.apply {
+            composerAttachmentsView
+                .setAttachments(newAttachments, onRemoveClicked = composeViewModel::removeAttachment)
+            composerBottomAppBar
+                .setAttachmentsCount(newAttachments.size)
         }
     }
     // endregion

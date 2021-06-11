@@ -67,7 +67,7 @@
         <item name="android:minWidth">@dimen/size_badge</item>
         <item name="android:ellipsize">end</item>
         <item name="android:background">@drawable/shape_ellipse</item>
-        <item name="backgroundTint">@color/brand</item>
+        <item name="backgroundTint">?brand_norm</item>
     </style>
 
     <!-- region Mailbox -->

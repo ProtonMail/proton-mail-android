@@ -18,6 +18,9 @@
  */
 package ch.protonmail.android.activities.composeMessage;
 
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -125,7 +128,6 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.contacts.SendPreferencesEvent;
 import ch.protonmail.android.feature.account.AccountManagerKt;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
-import ch.protonmail.android.mailbox.presentation.MailboxActivity;
 import ch.protonmail.android.tasks.EmbeddedImagesThread;
 import ch.protonmail.android.ui.view.ComposerBottomAppBar;
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest;
@@ -155,9 +157,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import me.proton.core.accountmanager.domain.AccountManager;
 import timber.log.Timber;
-
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
 
 @AndroidEntryPoint
 public class ComposeMessageActivity
@@ -270,7 +269,7 @@ public class ComposeMessageActivity
         subjectEditText = binding.composerSubjectEditText;
         messageBodyEditText = binding.composerMessageBodyEditText;
         respondInlineButton = binding.composerRespondInlineButton;
-        bottomAppBar = binding.composerButtonsLayout;
+        bottomAppBar = binding.composerBottomAppBar;
 
         // region setup click listeners
         binding.composerExpandRecipientsButton.setOnClickListener((View view) -> {
