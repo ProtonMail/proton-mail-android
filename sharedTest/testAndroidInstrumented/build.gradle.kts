@@ -77,6 +77,7 @@ dependencies {
         `android-work-testing`,
         `espresso`,
         `espresso-contrib`,
+        `espresso-intents`,
         `hamcrest`,
         `json-simple`
     )

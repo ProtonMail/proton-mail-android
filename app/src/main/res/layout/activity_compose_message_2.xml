@@ -91,7 +91,7 @@
         app:layout_constraintVertical_bias="0"
         app:layout_constrainedHeight="true"
         app:layout_constraintTop_toBottomOf="@id/layout_no_connectivity_info"
-        app:layout_constraintBottom_toTopOf="@id/composer_buttons_layout"
+        app:layout_constraintBottom_toTopOf="@id/composer_bottom_app_bar"
         android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -395,99 +395,15 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_divider"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/composer_buttons_layout"
+        app:layout_constraintBottom_toTopOf="@id/composer_bottom_app_bar"
         android:background="@color/message_divider_gray"/>
 
-    <!-- Buttons TODO -->
-    <RelativeLayout
-        android:id="@+id/composer_buttons_layout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+    <!-- Buttons -->
+    <ch.protonmail.android.ui.view.ComposerBottomAppBar
+        android:id="@+id/composer_bottom_app_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_composer_field">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ch.protonmail.android.views.MessagePasswordButton
-                android:id="@+id/set_message_password"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/compose_message_button_selector"
-                android:contentDescription="@null"
-                android:scaleType="center"
-                android:src="@drawable/ic_lock_wide" />
-
-            <View
-                android:layout_width="@dimen/divider_width"
-                android:layout_height="match_parent"
-                android:background="@color/fog_gray" />
-
-            <ImageButton
-                android:id="@+id/set_message_expiration"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/compose_message_button_selector"
-                android:contentDescription="@null"
-                android:scaleType="center"
-                android:src="@drawable/ic_hourglass" />
-
-            <View
-                android:layout_width="@dimen/divider_width"
-                android:layout_height="match_parent"
-                android:background="@color/fog_gray" />
-
-            <LinearLayout
-                android:id="@+id/add_attachments"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/compose_message_button_selector"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@null"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_paper_clip" />
-
-                <TextView
-                    android:id="@+id/attachment_count"
-                    style="@style/ComposeMessageAttachmentCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginStart="5dp" />
-
-                <TextView
-                    android:id="@+id/attachment_sync"
-                    style="@style/ComposeMessageAttachmentCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginStart="5dp"
-                    android:text="@string/sync_short"
-                    android:textSize="@dimen/h6"
-                    android:visibility="gone" />
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <ch.protonmail.android.views.MessageExpirationView
-            android:id="@+id/message_expiration_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:visibility="gone" />
-
-    </RelativeLayout>
-
+        android:layout_height="@dimen/height_composer_field"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

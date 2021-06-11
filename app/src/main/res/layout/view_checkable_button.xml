@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/size_button_m"
+    android:layout_height="@dimen/size_button_m"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <ImageButton
+        android:id="@+id/checkable_button_button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="?attr/selectableItemBackground"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1"
+        tools:src="@drawable/ic_lock_wide"/>
+
+    <ImageView
+        android:id="@+id/checkable_button_check"
+        android:layout_width="@dimen/size_icon_s"
+        android:layout_height="@dimen/size_icon_s"
+        app:layout_constraintStart_toStartOf="@id/checkable_button_button"
+        app:layout_constraintEnd_toEndOf="@id/checkable_button_button"
+        app:layout_constraintTop_toTopOf="@id/checkable_button_button"
+        app:layout_constraintBottom_toBottomOf="@id/checkable_button_button"
+        app:layout_constraintHorizontal_bias="0.87"
+        app:layout_constraintVertical_bias="0.75"
+        android:background="@drawable/shape_ellipse"
+        android:backgroundTint="?brand_norm"
+        android:src="@drawable/shape_check"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+</merge>

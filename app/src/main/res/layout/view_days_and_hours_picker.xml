@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<!-- This is a temporary replacement of the final design -->
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
+    tools:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/days_and_hours_picker_start_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintGuide_percent="0.1"
+        android:orientation="vertical"/>
+
+    <me.proton.core.presentation.ui.view.ProtonInput
+        android:id="@+id/days_and_hours_picker_days_input"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/days_and_hours_picker_start_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/days_and_hours_picker_days_text_view"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginTop="@dimen/padding_l"
+        android:inputType="number"
+        android:textAppearance="@style/Proton.Text.Default"
+        tools:ignore="LabelFor"
+        android:text="@string/x_0"
+        tools:text="5" />
+
+    <TextView
+        android:id="@+id/days_and_hours_picker_days_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/days_and_hours_picker_days_input"
+        app:layout_constraintEnd_toStartOf="@id/days_and_hours_picker_mid_guideline"
+        android:layout_marginStart="@dimen/padding_l"
+        android:text="@string/x_days"
+        android:textAppearance="@style/Proton.Text.Default"
+        tools:layout_editor_absoluteY="11dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/days_and_hours_picker_mid_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintGuide_percent="0.47"
+        android:orientation="vertical"/>
+
+    <me.proton.core.presentation.ui.view.ProtonInput
+        android:id="@+id/days_and_hours_picker_hours_input"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/days_and_hours_picker_mid_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/days_and_hours_picker_hours_text_view"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginTop="@dimen/padding_l"
+        android:inputType="number"
+        android:textAppearance="@style/Proton.Text.Default"
+        tools:ignore="LabelFor"
+        android:text="@string/x_0"
+        tools:text="5" />
+
+    <TextView
+        android:id="@+id/days_and_hours_picker_hours_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/days_and_hours_picker_hours_input"
+        app:layout_constraintEnd_toEndOf="@id/days_and_hours_picker_end_guideline"
+        android:layout_marginStart="@dimen/padding_l"
+        android:text="@string/x_hours"
+        android:textAppearance="@style/Proton.Text.Default"
+        tools:layout_editor_absoluteY="11dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/days_and_hours_picker_end_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintGuide_percent="0.9"
+        android:orientation="vertical"/>
+
+</merge>

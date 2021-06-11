@@ -441,11 +441,11 @@
         android:background="@drawable/actionbar_shadow" />
 
     <View
-        android:orientation="vertical"
         android:id="@+id/screenProtectorView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
         android:clickable="true"
-        android:focusable="true" />
+        android:focusable="true"
+        android:orientation="vertical" />
 </RelativeLayout>

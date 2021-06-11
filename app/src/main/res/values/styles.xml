@@ -60,15 +60,15 @@
         <item name="android:inputType">text|textNoSuggestions|textMultiLine</item>
     </style>
 
-    <!-- region Drawer -->
-    <style name="DrawerItemNotification">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/h4</item>
+    <style name="ProtonBadge">
+        <item name="android:textAppearance">@style/Proton.Text.Default.Inverted</item>
+        <item name="android:textColor">@color/text_inverted</item>
         <item name="android:singleLine">true</item>
+        <item name="android:minWidth">@dimen/size_badge</item>
         <item name="android:ellipsize">end</item>
-        <item name="android:background">@drawable/nav_drawer_notification_background</item>
+        <item name="android:background">@drawable/shape_ellipse</item>
+        <item name="backgroundTint">?brand_norm</item>
     </style>
-    <!-- endregion -->
 
     <!-- region Mailbox -->
     <style name="UnreadMessagesStatusChip" parent="Widget.MaterialComponents.Chip.Choice">

@@ -212,6 +212,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
+        <activity android:name=".compose.presentation.ui.SetMessageExpirationActivity"/>
+        <activity android:name=".compose.presentation.ui.SetMessagePasswordActivity"/>
         <activity
             android:name=".activities.SearchActivity"
             android:exported="false"

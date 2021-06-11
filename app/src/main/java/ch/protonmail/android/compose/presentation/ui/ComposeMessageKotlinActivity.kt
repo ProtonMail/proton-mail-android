@@ -25,23 +25,28 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.activities.BaseContactsActivity
 import ch.protonmail.android.attachments.domain.model.UriPair
 import ch.protonmail.android.attachments.presentation.model.FilePickerMask
 import ch.protonmail.android.compose.ComposeMessageViewModel
-import ch.protonmail.android.compose.presentation.model.AttachmentsEventUiModel
+import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnAttachmentsChange
+import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnExpirationChange
+import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnExpirationChangeRequest
+import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPasswordChange
+import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPasswordChangeRequest
+import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPhotoUriReady
 import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel
+import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
 import ch.protonmail.android.databinding.ActivityComposeMessage2Binding
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheet
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheet.Action
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheetViewModel
+import ch.protonmail.android.ui.view.DaysHoursPair
 import ch.protonmail.android.utils.UiUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import me.proton.core.presentation.utils.onClick
 import me.proton.core.util.kotlin.exhaustive
 import timber.log.Timber
 
@@ -52,7 +57,22 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
     private val addAttachmentsViewModel: AddAttachmentsActionSheetViewModel by viewModels()
     protected lateinit var binding: ActivityComposeMessage2Binding
 
-    // region Attachments activity results
+    // region activity results
+    // region password
+    private val setPasswordLauncher =
+        registerForActivityResult(SetMessagePasswordActivity.ResultContract()) {
+            composeViewModel.setPassword(it)
+        }
+    // endregion
+
+    // region expiration
+    private val setExpirationLauncher =
+        registerForActivityResult(SetMessageExpirationActivity.ResultContract()) {
+            composeViewModel.setExpiration(it)
+        }
+    // endregion
+
+    // region attachments
     private var takePhotoFromCameraUri: UriPair? = null
     private val takePhotoFromCameraLauncher: ActivityResultLauncher<Uri> =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
@@ -69,6 +89,7 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
             composeViewModel.addAttachments(uris, deleteOriginalFiles = false)
         }
     // endregion
+    // endregion
 
     override fun getRootView(): View {
         binding = ActivityComposeMessage2Binding.inflate(layoutInflater)
@@ -79,17 +100,29 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
         super.onCreate(savedInstanceState)
 
         // region setup UI
-        binding.addAttachments.onClick {
-            UiUtil.hideKeyboard(this)
-            AddAttachmentsActionSheet.show(supportFragmentManager)
+        binding.composerBottomAppBar.apply {
+            onPasswordClick {
+                composeViewModel.requestCurrentPasswordForUpdate()
+            }
+            onExpirationClick {
+                composeViewModel.requestCurrentExpirationForUpdate()
+            }
+            onAttachmentsClick {
+                UiUtil.hideKeyboard(this@ComposeMessageKotlinActivity)
+                AddAttachmentsActionSheet.show(supportFragmentManager)
+            }
         }
         // endregion
         // region observe
-        composeViewModel.attachmentsEvent
+        composeViewModel.events
             .onEach { event ->
                 when (event) {
-                    is AttachmentsEventUiModel.OnAttachmentsChange -> onAttachmentsChanged(event.attachments)
-                    is AttachmentsEventUiModel.OnPhotoUriReady -> takePhotoFromCamera(event.uri)
+                    is OnAttachmentsChange -> onAttachmentsChanged(event.attachments)
+                    is OnExpirationChange -> binding.composerBottomAppBar.setHasExpiration(event.hasExpiration)
+                    is OnExpirationChangeRequest -> openSetExpiration(event.currentExpiration)
+                    is OnPasswordChange -> binding.composerBottomAppBar.setHasPassword(event.hasPassword)
+                    is OnPasswordChangeRequest -> openSetPassword(event.currentPassword)
+                    is OnPhotoUriReady -> takePhotoFromCamera(event.uri)
                 }
             }.launchIn(lifecycleScope)
 
@@ -103,6 +136,18 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
             }.launchIn(lifecycleScope)
         // endregion
     }
+
+    // region password
+    private fun openSetPassword(currentPassword: MessagePasswordUiModel) {
+        setPasswordLauncher.launch(currentPassword)
+    }
+    // endregion
+
+    // region expiration
+    private fun openSetExpiration(currentExpiration: DaysHoursPair) {
+        setExpirationLauncher.launch(currentExpiration)
+    }
+    // endregion
 
     // region attachments
     private fun openGallery() {
@@ -121,11 +166,11 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
     private fun onAttachmentsChanged(newAttachments: List<ComposerAttachmentUiModel>) {
         composeViewModel.autoSaveDraft()
 
-        binding.composerAttachmentsView
-            .setAttachments(newAttachments, onRemoveClicked = composeViewModel::removeAttachment)
-        binding.attachmentCount.apply {
-            isVisible = newAttachments.isNotEmpty()
-            text = "${newAttachments.size}"
+        binding.apply {
+            composerAttachmentsView
+                .setAttachments(newAttachments, onRemoveClicked = composeViewModel::removeAttachment)
+            composerBottomAppBar
+                .setAttachmentsCount(newAttachments.size)
         }
     }
     // endregion

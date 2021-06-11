@@ -58,7 +58,7 @@
     <!-- Badge -->
     <TextView
         android:id="@+id/drawer_item_notifications_text_view"
-        style="@style/DrawerItemNotification"
+        style="@style/ProtonBadge"
         android:layout_width="wrap_content"
         android:minWidth="@dimen/height_drawer_badge"
         android:layout_height="@dimen/height_drawer_badge"

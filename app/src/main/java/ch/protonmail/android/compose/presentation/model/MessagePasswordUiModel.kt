@@ -19,20 +19,19 @@
 
 package ch.protonmail.android.compose.presentation.model
 
-import ch.protonmail.android.attachments.domain.model.UriPair
+sealed class MessagePasswordUiModel {
 
-/**
- * Describes an action on Attachment
- */
-sealed class AttachmentsEventUiModel {
+    data class Set(
+        val password: String,
+        val hint: String?
+    ) : MessagePasswordUiModel()
 
-    /**
-     * Attachments for Composer has been changed
-     */
-    data class OnAttachmentsChange(val attachments: List<ComposerAttachmentUiModel>) : AttachmentsEventUiModel()
+    object Unset : MessagePasswordUiModel()
 
-    /**
-     * Uri has been created for a photo to be taken from camera
-     */
-    data class OnPhotoUriReady(val uri: UriPair) : AttachmentsEventUiModel()
+    companion object {
+
+        fun from(password: String?, hint: String?): MessagePasswordUiModel =
+            if (!password.isNullOrBlank()) Set(password, hint)
+            else Unset
+    }
 }
