@@ -623,15 +623,14 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Bæta við mynd</string>
-    <string name="contact_display_name">\ue91c Birtingarnafn</string>
-    <string name="add_new_email">\ue914 Bæta við tölvupóstfangi</string>
+    <string name="contact_display_name">Birtingarnafn</string>
+    <string name="add_new_email">Bæta við tölvupóstfangi</string>
     <string name="no_groups">Engir hópar</string>
     <string name="contact_vcard_note">Athugasemd</string>
     <string name="edit_contact">Breyta tengilið</string>
     <string name="create_contact_group">Búa til tengiliðahóp</string>
     <string name="edit_contact_group">Breyta tengiliðahóp</string>
-    <string name="contact_groups_manage_addresses">Sýsla með vistföng</string>
-    <string name="contact_group_display_name">\ue91a Birtingarnafn</string>
+    <string name="contact_group_display_name">Birtingarnafn</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Bæta vistfangi við hópa</string>
     <string name="title_activity_address_chooser">Sýsla með vistföng</string>

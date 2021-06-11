@@ -617,15 +617,14 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Tambah Foto</string>
-    <string name="contact_display_name">\ue91c Nama Tampilan</string>
-    <string name="add_new_email">\ue914 Tambahkan Alamat Email</string>
+    <string name="contact_display_name">Nama Tampilan</string>
+    <string name="add_new_email">Tambahkan Alamat Email</string>
     <string name="no_groups">Tidak ada grup</string>
     <string name="contact_vcard_note">Catatan</string>
     <string name="edit_contact">Ubah Kontak</string>
     <string name="create_contact_group">Buat Grup Kontak</string>
     <string name="edit_contact_group">Edit Grup Kontak</string>
-    <string name="contact_groups_manage_addresses">Kelola Alamat</string>
-    <string name="contact_group_display_name">\ue91a Nama Tampilan</string>
+    <string name="contact_group_display_name">Nama Tampilan</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Tambahkan alamat ke grup</string>
     <string name="title_activity_address_chooser">Kelola Alamat</string>

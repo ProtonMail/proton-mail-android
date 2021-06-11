@@ -25,7 +25,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,21 +40,22 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.cardview.widget.CardView;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -82,8 +82,7 @@ import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.views.ContactAddressView;
 import ch.protonmail.android.views.ContactBirthdayClickListener;
 import ch.protonmail.android.views.ContactOptionTypeClickListener;
-import ch.protonmail.android.views.CustomFontButton;
-import ch.protonmail.android.views.CustomFontTextView;
+import ch.protonmail.android.views.ListItemThumbnail;
 import ch.protonmail.android.views.VCardLinearLayout;
 import ch.protonmail.android.views.models.LocalContact;
 import ch.protonmail.android.views.models.LocalContactAddress;
@@ -97,7 +96,6 @@ import ezvcard.property.Address;
 import ezvcard.property.Anniversary;
 import ezvcard.property.Birthday;
 import ezvcard.property.Email;
-import ezvcard.property.FormattedName;
 import ezvcard.property.Gender;
 import ezvcard.property.Key;
 import ezvcard.property.Nickname;
@@ -111,6 +109,7 @@ import ezvcard.property.Title;
 import ezvcard.property.Url;
 import ezvcard.util.PartialDate;
 import kotlin.Unit;
+import me.proton.core.presentation.ui.view.ProtonInput;
 import timber.log.Timber;
 
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT;
@@ -134,13 +133,12 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     private static final int REQUEST_CODE_OPEN_CAMERA = 1001;
 
     @BindView(R.id.contact_display_name)
-    EditText mDisplayNameView;
+    ProtonInput mDisplayNameView;
     @BindView(R.id.emailAddressesContainer)
     VCardLinearLayout mEmailAddressesContainer;
     @BindView(R.id.progress_bar)
     View mProgressBar;
-    @BindView(R.id.encryptedDataContainer)
-    LinearLayout mEncryptedDataContainer;
+
     @BindView(R.id.encrypted_data_address)
     VCardLinearLayout mEncryptedDataAddress;
     @BindView(R.id.encrypted_data_phone)
@@ -152,15 +150,12 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     @BindView(R.id.scroll_parent)
     ScrollView mScrollParentView;
     @BindView(R.id.addPhotoBtn)
-    CustomFontButton addPhotoBtn;
+    Button addPhotoBtn;
     @BindView(R.id.contactPhoto)
     ImageView contactPhoto;
-    @BindView(R.id.photoCardViewWrapper)
-    CardView photoCardViewWrapper;
     @BindView(R.id.contactInitials)
-    CustomFontTextView contactInitials;
+    ListItemThumbnail contactInitials;
 
-    private LayoutInflater inflater;
     private final AtomicBoolean mSavingInProgress = new AtomicBoolean(false);
 
     private EditContactDetailsViewModel viewModel;
@@ -212,12 +207,11 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(EditContactDetailsViewModel.class);
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        inflater = LayoutInflater.from(this);
+
         mEmailAddressesContainer.removeAllViews();
         mDisplayNameView.addTextChangedListener(new DirtyWatcher());
 
@@ -286,7 +280,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 Uri contentURI = data.getData();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                    photoCardViewWrapper.setVisibility(View.VISIBLE);
+                    contactPhoto.setVisibility(View.VISIBLE);
                     contactInitials.setVisibility(View.GONE);
                     // resize bitmap to prevent problems with too big images
                     contactPhoto.setImageBitmap(resizeBitmap(bitmap));
@@ -298,7 +292,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
 
         } else if (requestCode == REQUEST_CODE_OPEN_CAMERA) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            photoCardViewWrapper.setVisibility(View.VISIBLE);
+            contactPhoto.setVisibility(View.VISIBLE);
             contactInitials.setVisibility(View.GONE);
             contactPhoto.setImageBitmap(resizeBitmap(thumbnail));
         }
@@ -371,7 +365,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         VCard vCardSigned = viewModel.buildSignedCard(contactName);
 
         if (contactPhoto.getVisibility() == View.VISIBLE && contactPhoto.getDrawable() != null) {
-            Bitmap bitmap = ((BitmapDrawable) contactPhoto.getDrawable()).getBitmap();
+            Bitmap bitmap = ((RoundedBitmapDrawable) contactPhoto.getDrawable()).getBitmap();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 40, stream);
             byte[] bytemapdata = stream.toByteArray();
@@ -389,7 +383,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             TextView optionTypeView = rowView.findViewById(R.id.optionTitle);
             Object optionTypeTag = optionTypeView.getTag();
             optionType = (String) optionTypeTag;
-            EditText optionEditText = rowView.findViewById(R.id.option);
+            ProtonInput optionEditText = rowView.findViewById(R.id.option);
             optionValue = optionEditText.getText().toString();
             Object groupTag = rowView.getTag();
             String groupId = null;
@@ -397,7 +391,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 groupId = (String) groupTag;
             }
             if (!TextUtils.isEmpty(optionValue) && !CommonExtensionsKt.isValidEmail(optionValue)) {
-                optionEditText.setError(getString(R.string.invalid_email));
+                optionEditText.setInputError(getString(R.string.invalid_email));
                 mScrollParentView.requestChildFocus(optionEditText, optionEditText);
                 mSavingInProgress.set(false);
                 return;
@@ -432,7 +426,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             TextView optionTypeView = rowView.findViewById(R.id.optionTitle);
             optionType = (String) optionTypeView.getTag();
             optionType = optionType == null ? "" : optionType;
-            optionValue = ((TextView) rowView.findViewById(R.id.option)).getText().toString();
+            optionValue = ((ProtonInput) rowView.findViewById(R.id.option)).getText().toString();
             if (TextUtils.isEmpty(optionValue)) {
                 continue;
             }
@@ -453,11 +447,11 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             View rowView = mEncryptedDataAddress.findViewById(id);
             TextView optionTypeView = rowView.findViewById(R.id.optionTitle);
             optionType = (String) optionTypeView.getTag();
-            EditText addressStreetView = rowView.findViewById(R.id.address_street);
-            EditText addressCityView = rowView.findViewById(R.id.address_city);
-            EditText addressRegionView = rowView.findViewById(R.id.address_region);
-            EditText addressPostcodeView = rowView.findViewById(R.id.address_postcode);
-            EditText addressCountryView = rowView.findViewById(R.id.address_country);
+            ProtonInput addressStreetView = rowView.findViewById(R.id.address_street);
+            ProtonInput addressCityView = rowView.findViewById(R.id.address_city);
+            ProtonInput addressRegionView = rowView.findViewById(R.id.address_region);
+            ProtonInput addressPostcodeView = rowView.findViewById(R.id.address_postcode);
+            ProtonInput addressCountryView = rowView.findViewById(R.id.address_country);
 
             String streetAddress = addressStreetView.getText().toString();
             String localityAddress = addressCityView.getText().toString();
@@ -485,7 +479,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             View rowView = mEncryptedDataOther.findViewById(id);
             TextView optionTypeView = rowView.findViewById(R.id.optionTitle);
             optionType = optionTypeView.getText().toString();
-            TextView optionValueView = rowView.findViewById(R.id.option);
+            ProtonInput optionValueView = rowView.findViewById(R.id.option);
             optionValue = optionValueView.getText().toString();
             Constants.VCardOtherInfoType otherInfoType = (Constants.VCardOtherInfoType) rowView.getTag();
             if (otherInfoType != null && !TextUtils.isEmpty(optionType) && !TextUtils.isEmpty(
@@ -535,7 +529,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         childIds = mEncryptedDataNote.getChildIds();
         for (Integer id : childIds) {
             View rowView = mEncryptedDataNote.findViewById(id);
-            TextView optionValueView = rowView.findViewById(R.id.option);
+            ProtonInput optionValueView = rowView.findViewById(R.id.option);
             optionValue = optionValueView.getText().toString();
             if (!TextUtils.isEmpty(optionValue)) {
                 Note note = new Note(optionValue);
@@ -600,12 +594,9 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             View view = createEmailAddressView(emailType, emailUIType, email.getValue());
             view.setTag(email.getGroup());
         }
-        FormattedName formattedName = vCard.getFormattedName();
-        if (formattedName != null && !TextUtils.isEmpty(formattedName.getValue())) {
-            mDisplayNameView.setText(formattedName.getValue());
-            contactInitials.setText(UiUtil.extractInitials(formattedName.getValue()));
+        if (vCard.getFormattedName() != null) {
+            mDisplayNameView.setText(vCard.getFormattedName().getValue());
         }
-
         return vCardEmails.size() > 0;
     }
 
@@ -634,19 +625,17 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                                               final List<String> standardOptionValues,
                                               ViewGroup rootView, boolean singleLine, int maxLines,
                                               int inputType) {
-        final View emailRowView = inflater.inflate((singleLine) ?
+        final View emailRowView = getLayoutInflater().inflate((singleLine) ?
                 R.layout.contact_vcard_item_editable :
                 R.layout.contact_vcard_item_note, rootView, false);
         UiUtil.generateViewId(emailRowView);
-        final TextView optionIcon = emailRowView.findViewById(R.id.optionIcon);
+
         final TextView titleView = emailRowView.findViewById(R.id.optionTitle);
-        final EditText optionValueView = emailRowView.findViewById(R.id.option);
+        final ProtonInput optionValueView = emailRowView.findViewById(R.id.option);
         optionValueView.setVisibility(View.VISIBLE);
         if (singleLine) {
             optionValueView.setInputType(inputType);
         } else {
-            optionValueView.setLines(maxLines);
-            optionValueView.setMaxLines(maxLines);
             optionValueView.setOnTouchListener((v, event) -> {
                 if (optionValueView.hasFocus()) {
                     v.getParent().requestDisallowInterceptTouchEvent(true);
@@ -662,7 +651,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         final ImageButton btnMinus = emailRowView.findViewById(R.id.btn_minus);
         btnMinus.setVisibility(View.VISIBLE);
         optionValueView.addTextChangedListener(new DirtyWatcher());
-        optionValueView.setHint(optionHint);
+        optionValueView.setHintText(optionHint);
         ImageButton btnEmailType = emailRowView.findViewById(R.id.btnOptionType);
         if (standardOptionUIValues == null || standardOptionUIValues.size() == 0) {
             btnEmailType.setVisibility(View.GONE);
@@ -675,7 +664,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             } else {
                 optionUITypeText = standardOptionUIValues.get(0);
             }
-            optionIcon.setText(optionUITypeTextSplit[0]);
+
         } else {
             optionUITypeText = optionUIType;
         }
@@ -707,35 +696,40 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         return emailRowView;
     }
 
-    private View createNewVCardOptionRow(final String optionTitleText, final String editTextHint, final String addOptionTitleText,
+    private View createNewVCardOptionRow(final String optionTitleText,
+                                         final String editTextHint,
+                                         final String addOptionTitleText,
                                          final List<String> standardOptionUIValues,
                                          final List<String> standardOptionValues,
-                                         final ViewGroup rootView, boolean singleLine, final int inputType) {
+                                         final ViewGroup rootView,
+                                         boolean singleLine,
+                                         final int inputType) {
         View newOptionRowView;
+        LayoutInflater layoutInflater = getLayoutInflater();
         if (singleLine) {
-            newOptionRowView = inflater.inflate(R.layout.contact_new_vcard_item_email_address, rootView, false);
+            newOptionRowView = layoutInflater.inflate(R.layout.contact_new_vcard_item_email_address, rootView, false);
         } else {
-            newOptionRowView = inflater.inflate(R.layout.contact_vcard_item_note, rootView, false);
+            newOptionRowView = layoutInflater.inflate(R.layout.contact_vcard_item_note, rootView, false);
         }
         UiUtil.generateViewId(newOptionRowView);
-        final Button btnAddNewRow = newOptionRowView.findViewById(R.id.btnAddNewRow);
-        final EditText option = newOptionRowView.findViewById(R.id.option);
+        final TextView btnAddNewRow = newOptionRowView.findViewById(R.id.btnAddNewRow);
+        final ProtonInput option = newOptionRowView.findViewById(R.id.option);
         final View inputFields = newOptionRowView.findViewById(R.id.fields_parent);
         final ImageButton btnOptionType = newOptionRowView.findViewById(R.id.btnOptionType);
         final ImageButton btnMinus = newOptionRowView.findViewById(R.id.btn_minus);
         final TextView optionTitle = newOptionRowView.findViewById(R.id.optionTitle);
-        final TextView optionIcon = newOptionRowView.findViewById(R.id.optionIcon);
+
         String optionUITypeText;
         if (optionTitleText.contains(" ")) {
-            optionIcon.setText(optionTitleText.split(" ")[0]);
             optionUITypeText = optionTitleText.split(" ")[1];
         } else {
             optionUITypeText = optionTitleText;
         }
 
-        option.setHint(editTextHint);
+        option.setHintText(editTextHint);
         option.addTextChangedListener(new DirtyWatcher());
         option.setInputType(inputType);
+        option.setLabelText(optionUITypeText);
         optionTitle.setText(optionUITypeText);
 
         btnAddNewRow.setVisibility(View.VISIBLE);
@@ -754,7 +748,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             option.setVisibility(View.VISIBLE);
             btnMinus.setVisibility(View.VISIBLE);
             option.requestFocus();
-            UiUtil.toggleKeyboard(this, option);
+
             ContactOptionTypeClickListener optionTypeClickListener = new ContactOptionTypeClickListener(
                     EditContactDetailsActivity.this, getSupportFragmentManager(),
                     newOptionRowView, optionTitleText,
@@ -918,13 +912,13 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         viewModel.getSetupConvertContactFlow().observe(this, setupConvertContactObserver);
         viewModel.getProfilePicture().observe(this, observer -> {
             observer.doOnData(bitmap -> {
-                photoCardViewWrapper.setVisibility(View.VISIBLE);
                 contactInitials.setVisibility(View.GONE);
-                contactPhoto.setImageBitmap(bitmap);
+                contactPhoto.setImageDrawable(getRoundedDrawable(bitmap));
+                contactPhoto.setVisibility(View.VISIBLE);
                 return Unit.INSTANCE;
             });
             observer.doOnError(error -> {
-                photoCardViewWrapper.setVisibility(View.GONE);
+                contactPhoto.setVisibility(View.GONE);
                 contactInitials.setVisibility(View.VISIBLE);
                 TextExtensions.showToast(this, error);
                 return Unit.INSTANCE;
@@ -933,6 +927,14 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             return Unit.INSTANCE;
         });
         viewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
+    }
+
+    @NotNull
+    private RoundedBitmapDrawable getRoundedDrawable(Bitmap bitmap) {
+        RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+        roundedDrawable.setAntiAlias(true);
+        roundedDrawable.setCornerRadius(getResources().getDimensionPixelSize(R.dimen.avatar_size) / 2f);
+        return roundedDrawable;
     }
 
     private Observer setupNewContactObserver = (Observer<String>) email -> {
@@ -987,13 +989,13 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         List<RawProperty> vCardCustomFields = viewModel.getExtendedPropertiesType3();
 
         if (vCardPhotos != null && vCardPhotos.size() > 0) {
-            photoCardViewWrapper.setVisibility(View.VISIBLE);
+            contactPhoto.setVisibility(View.VISIBLE);
             contactInitials.setVisibility(View.GONE);
             if (vCardPhotos.get(0).getData() != null) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(vCardPhotos.get(0).getData(), 0, vCardPhotos.get(0).getData().length);
-                contactPhoto.setImageBitmap(bmp);
+                contactPhoto.setImageDrawable(getRoundedDrawable(bmp));
             } else if (!vCardPhotos.get(0).getUrl().isEmpty()) {
-                photoCardViewWrapper.setVisibility(View.GONE);
+                contactPhoto.setVisibility(View.GONE);
                 contactInitials.setVisibility(View.VISIBLE);
                 if (mNetworkUtil.isConnected()) {
                     viewModel.getBitmapFromURL(vCardPhotos.get(0).getUrl());
@@ -1044,7 +1046,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
 
                     if (!TextUtils.isEmpty(value)) {
                         View view = createOtherView(getString(R.string.vcard_other_option_birthday), value, Constants.VCardOtherInfoType.BIRTHDAY);
-                        final TextView birthdayValue = view.findViewById(R.id.option);
+                        final ProtonInput birthdayValue = view.findViewById(R.id.option);
                         birthdayValue.setFocusable(false);
                         birthdayValue.setFocusableInTouchMode(false);
                         birthdayValue.setOnClickListener(new ContactBirthdayClickListener(this, getSupportFragmentManager()));
@@ -1124,7 +1126,11 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         getSupportActionBar().setTitle(R.string.convert_contact);
         LocalContact localContact = viewModel.getLocalContact();
         mDisplayNameView.setText(localContact.getName());
-        contactInitials.setText(UiUtil.extractInitials(localContact.getName()));
+        contactInitials.bind(
+                false,
+                false,
+                UiUtil.extractInitials(localContact.getName()),
+                null);
 
         List<String> emails = localContact.getEmails();
         List<String> phones = localContact.getPhones();
@@ -1167,7 +1173,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     // region helper methods
     private void initPhone() {
         mEncryptedDataPhone.addView(
-                createNewVCardOptionRow("\ue913 " + viewModel.getDefaultPhoneUIOption(), getString(R.string.contact_vcard_hint_phone), getString(R.string.contact_vcard_new_row_phone),
+                createNewVCardOptionRow(viewModel.getDefaultPhoneUIOption(), getString(R.string.contact_vcard_hint_phone), getString(R.string.contact_vcard_new_row_phone),
                         viewModel.getPhoneUIOptions(), viewModel.getPhoneOptions(),
                         mEncryptedDataPhone, false, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_CLASS_PHONE));
     }
@@ -1199,7 +1205,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     }
 
     private void initNewOptionRow() {
-        mEncryptedDataOther.addView(createNewVCardOptionRow("\ue905 " + viewModel.getDefaultOtherOption(), getString(R.string.contact_vcard_hint_other), getString(R.string.contact_vcard_new_row_other),
+        mEncryptedDataOther.addView(createNewVCardOptionRow(viewModel.getDefaultOtherOption(), getString(R.string.contact_vcard_hint_other), getString(R.string.contact_vcard_new_row_other),
                 viewModel.getOtherOptions(), viewModel.getOtherOptions(),
                 mEncryptedDataOther, false, InputType.TYPE_CLASS_TEXT));
     }
@@ -1212,7 +1218,8 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     }
 
     private void initEmptyEmailView() {
-        mEmailAddressesContainer.addView(createNewVCardOptionRow("\ue914 " + viewModel.getDefaultEmailUIOption(), getString(R.string.contact_vcard_hint_email), getString(R.string.contact_vcard_new_row_email),
+        mEmailAddressesContainer.addView(
+                createNewVCardOptionRow(viewModel.getDefaultEmailUIOption(), getString(R.string.contact_vcard_hint_email), getString(R.string.contact_vcard_new_row_email),
                 viewModel.getEmailUIOptions(), viewModel.getEmailOptions(),
                 mEmailAddressesContainer, true, InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS));
     }
@@ -1220,7 +1227,8 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     private void initNewPhone() {
         mEncryptedDataPhone.addView(
                 createNewVCardOptionRow(getString(R.string.contact_vcard_new_row_phone),
-                        "\ue913 " + viewModel.getDefaultPhoneUIOption(), getString(R.string.contact_vcard_new_row_phone),
+                        viewModel.getDefaultPhoneUIOption(),
+                        getString(R.string.contact_vcard_new_row_phone),
                         viewModel.getPhoneUIOptions(),
                         viewModel.getPhoneOptions(), mEncryptedDataPhone, false,
                         InputType.TYPE_CLASS_NUMBER | InputType.TYPE_CLASS_PHONE));

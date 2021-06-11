@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright (c) 2020 Proton Technologies AG
 
 This file is part of ProtonMail.
@@ -17,79 +16,75 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
-    android:background="?android:attr/selectableItemBackground"
-    android:descendantFocusability="blocksDescendants"
-    android:orientation="horizontal"
-    android:paddingEnd="@dimen/fields_default_space"
-    android:paddingStart="@dimen/fields_default_space">
+    android:layout_height="@dimen/contact_list_item_height"
+    android:background="?selectableItemBackground"
+    android:descendantFocusability="blocksDescendants">
 
-    <ch.protonmail.android.views.contactsList.ContactGroupEmailAvatarView
+    <ch.protonmail.android.views.ListItemThumbnail
         android:id="@+id/mailAvatar"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_centerVertical="true"
-        android:layout_margin="10dp"
-        android:gravity="center" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_l"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatCheckBox
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_l"
+        android:layout_marginTop="@dimen/padding_l"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_norm"
+        android:textSize="@dimen/h4"
+        app:layout_constraintBottom_toTopOf="@+id/email"
+        app:layout_constraintStart_toEndOf="@+id/mailAvatar"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@tools:sample/full_names" />
+
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_l"
+        android:layout_marginTop="@dimen/padding_m"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_weak"
+        android:textSize="@dimen/h6"
+        app:layout_constraintStart_toEndOf="@+id/mailAvatar"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        tools:text="@tools:sample/cities" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/check"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:clickable="false"
         android:focusable="false"
         android:padding="0dp"
-        app:buttonTint="@color/lead_gray" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/contactEmailDataParent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_toEndOf="@id/mailAvatar"
-        android:layout_toLeftOf="@id/check"
-        android:layout_toRightOf="@id/mailAvatar"
-        android:layout_toStartOf="@id/check"
+    <ImageView
+        android:id="@+id/delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="?selectableItemBackground"
+        android:contentDescription="@string/close"
         android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/fields_default_space"
-        android:paddingEnd="@dimen/fields_default_space_small"
-        android:paddingLeft="@dimen/fields_default_space_small"
-        android:paddingRight="@dimen/fields_default_space_small"
-        android:paddingStart="@dimen/fields_default_space_small"
-        android:paddingTop="@dimen/fields_default_space">
+        android:padding="@dimen/padding_l"
+        android:src="@drawable/ic_cross_close"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/fields_default_space_small"
-            android:layout_marginRight="@dimen/fields_default_space_small"
-            android:gravity="center_vertical"
-            android:textColor="@color/rain_gray"
-            android:textSize="@dimen/h4"
-            tools:text="@tools:sample/full_names" />
-
-        <TextView
-            android:id="@+id/email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="@dimen/fields_default_space_small"
-            android:gravity="center_vertical"
-            android:textColor="@color/iron_gray"
-            android:textSize="@dimen/h6" />
-
-    </LinearLayout>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

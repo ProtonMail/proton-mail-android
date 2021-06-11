@@ -689,18 +689,18 @@
 
     <!-- Contact Groups Strings -->
     <string name="add_photo">Add Photo</string>
-    <string name="contact_display_name">\ue91c Display Name</string>
-    <string name="add_new_email">\ue914 Add Email Address</string>
+    <string name="contact_display_name">Display Name</string>
+    <string name="add_new_email">Add Email Address</string>
     <string name="no_groups">No Groups</string>
     <string name="contact_vcard_note">Note</string>
     <string name="edit_contact">Edit Contact</string>
     <string name="create_contact_group">Create Contact Group</string>
     <string name="edit_contact_group">Edit Contact Group</string>
-    <string name="contact_groups_manage_addresses">Manage Addresses</string>
-    <string name="contact_group_display_name">\ue91a Display Name</string>
+    <string name="contact_groups_manage_members">Manage Members</string>
+    <string name="contact_group_display_name">Display Name</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Add address to groups</string>
-    <string name="title_activity_address_chooser">Manage Addresses</string>
+    <string name="title_activity_address_chooser">Manage Members</string>
     <string name="title_activity_account_manager">Manage Accounts</string>
     <string name="account_manager_add_account">Add Account</string>
     <string name="account_manager_remove_all_accounts">Removing all accounts</string>
@@ -713,7 +713,7 @@
     <string name="account_manager_remove">Remove</string>
     <string name="default_error_message">Error occurred</string>
     <string name="no_contact_groups">No contact groups</string>
-    <string name="search_contacts_inside_group">Search for contacts inside group</string>
+    <string name="search_contacts_inside_group">Search for contacts</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d Member</item>
@@ -1023,4 +1023,5 @@
     </plurals>
 
     <string name="contacts_call">Call</string>
+    <string name="contacts_send_group_message">Send group message</string>
 </resources>

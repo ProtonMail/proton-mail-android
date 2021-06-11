@@ -620,15 +620,14 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Foto hinzufügen</string>
-    <string name="contact_display_name">\ue91c Name anzeigen</string>
-    <string name="add_new_email">\ue914 E-Mail-Adresse hinzufügen</string>
+    <string name="contact_display_name">Name anzeigen</string>
+    <string name="add_new_email">E-Mail-Adresse hinzufügen</string>
     <string name="no_groups">Keine Gruppen</string>
     <string name="contact_vcard_note">Notiz</string>
     <string name="edit_contact">Kontakt bearbeiten</string>
     <string name="create_contact_group">Kontaktgruppe erstellen</string>
     <string name="edit_contact_group">Kontaktgruppe bearbeiten</string>
-    <string name="contact_groups_manage_addresses">E-Mail-Adressen verwalten</string>
-    <string name="contact_group_display_name">\ue91a Name anzeigen</string>
+    <string name="contact_group_display_name">Name anzeigen</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Adresse zu Gruppen hinzufügen</string>
     <string name="title_activity_address_chooser">E-Mail-Adressen verwalten</string>

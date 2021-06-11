@@ -624,15 +624,14 @@ Svájci székhellyel</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Fénykép hozzáadása</string>
-    <string name="contact_display_name">\ue91c Megjelenített név</string>
-    <string name="add_new_email">\ue914 Email cím hozzáadása</string>
+    <string name="contact_display_name">Megjelenített név</string>
+    <string name="add_new_email">Email cím hozzáadása</string>
     <string name="no_groups">Nincs csoport</string>
     <string name="contact_vcard_note">Megjegyzés</string>
     <string name="edit_contact">Névjegy szerkesztése</string>
     <string name="create_contact_group">Új névjegy csoport</string>
     <string name="edit_contact_group">Névjegy csoport szerkesztése</string>
-    <string name="contact_groups_manage_addresses">Tagok kezelése</string>
-    <string name="contact_group_display_name">\ue91a Megjelenített név</string>
+    <string name="contact_group_display_name">Megjelenített név</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Címek hozzáadása a csoporthoz</string>
     <string name="title_activity_address_chooser">Tagok kezelése</string>

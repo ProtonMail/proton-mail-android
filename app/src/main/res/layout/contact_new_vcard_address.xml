@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright (c) 2020 Proton Technologies AG
 
 This file is part of ProtonMail.
@@ -22,42 +21,23 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/fields_default_space"
     android:layout_marginBottom="@dimen/fields_default_space"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/new_row_parent"
+    <TextView
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/btn_plus"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="@dimen/fields_default_space"
-            android:layout_marginRight="@dimen/fields_default_space"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:focusable="false"
-            android:src="@drawable/ic_circle_plus" />
-
-        <ch.protonmail.android.views.CustomFontTextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
-            android:paddingStart="0dp"
-            android:paddingLeft="0dp"
-            android:paddingEnd="0dp"
-            android:paddingRight="0dp"
-            android:textAllCaps="true"
-            android:textColor="@color/contact_action"
-            app:fontName="Roboto-Regular.ttf" />
-    </LinearLayout>
+        android:background="?selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="@dimen/padding_m"
+        android:focusable="true"
+        android:gravity="start|center_vertical"
+        android:padding="@dimen/padding_m"
+        android:textAllCaps="true"
+        android:textColor="@color/cornflower_blue"
+        app:drawableStartCompat="@drawable/ic_plus"
+        tools:text="Option title" />
 
     <LinearLayout
         android:id="@+id/fields_parent"
@@ -65,75 +45,57 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/fields_default_space"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:paddingEnd="@dimen/fields_default_space_small"
-            android:paddingRight="@dimen/fields_default_space_small"
-            tools:ignore="RtlSymmetry">
+            android:layout_height="wrap_content">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/optionTitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/btnOptionType"
-                android:layout_toLeftOf="@id/btnOptionType"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true">
-                <ch.protonmail.android.views.CustomFontTextView
-                    android:id="@+id/optionIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
-                    android:paddingEnd="@dimen/fields_default_space_small_minus"
-                    android:paddingRight="@dimen/fields_default_space_small_minus"
-                    android:textColor="@color/contact_heading"
-                    android:textSize="16sp"
-                    app:fontName="contacts_icons.ttf" />
-
-                <TextView
-                    android:id="@+id/optionTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/contact_heading"
-                    android:textSize="16sp" />
-            </LinearLayout>
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/padding_m"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:padding="@dimen/padding_s"
+                android:textColor="@color/contact_heading"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="option title" />
 
             <ImageButton
                 android:id="@+id/btnOptionType"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="center_vertical"
-                android:background="@android:color/transparent"
+                android:layout_width="@dimen/padding_xl"
+                android:layout_height="@dimen/padding_xl"
+                android:background="?android:selectableItemBackground"
                 android:src="@drawable/triangle_down"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 tools:ignore="ContentDescription" />
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/fields_default_space_medium">
+            android:layout_marginTop="@dimen/padding_l">
 
             <ImageButton
                 android:id="@+id/btn_minus"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_circle_minus" />
+                android:src="@drawable/ic_minus" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -141,7 +103,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_toStartOf="@id/btn_minus"
                 android:layout_toLeftOf="@id/btn_minus">
 
-                <ch.protonmail.android.views.CustomFontEditText
+                <TextView
                     android:id="@+id/address_full_combined"
                     style="@style/V3EditText.Inverted"
                     android:layout_width="match_parent"
@@ -152,12 +114,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:focusable="false"
                     android:gravity="center_vertical"
                     android:hint="@string/address"
-                    android:paddingBottom="@dimen/fields_default_space_small"
+                    android:paddingBottom="@dimen/padding_s"
                     android:singleLine="true"
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     android:visibility="gone"
-                    app:fontName="Roboto-Regular.ttf" />
+                    tools:visibility="visible" />
 
                 <include layout="@layout/contact_address_detailed" />
             </FrameLayout>

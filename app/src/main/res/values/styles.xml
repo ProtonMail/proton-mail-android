@@ -706,14 +706,6 @@
         <item name="android:layout_marginBottom">5dp</item>
     </style>
 
-    <style name="ContactOptionButton" parent="android:Widget.Button">
-        <item name="android:textColor">@color/new_purple</item>
-        <item name="android:textColorHint">@color/name_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:background">@color/white</item>
-    </style>
-
     <style name="Widget.Support.CoordinatorLayout" parent="android:Widget">
         <item name="statusBarBackground">@android:color/transparent</item>
     </style>

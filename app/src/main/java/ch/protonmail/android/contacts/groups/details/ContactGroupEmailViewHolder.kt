@@ -23,10 +23,9 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.contacts.groups.GroupsItemAdapterMode
 import ch.protonmail.android.data.local.model.ContactEmail
-import kotlinx.android.synthetic.main.contact_groups_email_list_item.view.*
+import kotlinx.android.synthetic.main.contact_groups_email_list_item_selectable.view.*
+import java.util.Locale
 
-/**
- * Created by kadrikj on 9/3/18. */
 class ContactGroupEmailViewHolder(view: View, private val mode: GroupsItemAdapterMode): RecyclerView.ViewHolder(view) {
 
     fun bind(contactEmail: ContactEmail) {
@@ -38,7 +37,11 @@ class ContactGroupEmailViewHolder(view: View, private val mode: GroupsItemAdapte
             name = contactEmail.email
         }
         if (null != name && !TextUtils.isEmpty(name) && name.length >= 2) {
-            itemView.mailAvatar.setLetters(name.substring(0, 2))
+            itemView.mailAvatar.bind(
+                isSelectedActive = false,
+                isMultiselectActive = false,
+                initials = name.substring(0, 2).toUpperCase(Locale.getDefault())
+            )
         }
         itemView.apply {
             if (mode == GroupsItemAdapterMode.CHECKBOXES) {

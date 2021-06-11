@@ -641,15 +641,14 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Додати світлину</string>
-    <string name="contact_display_name">\ue91c Показуване ім\'я</string>
-    <string name="add_new_email">\ue914 Додати адресу е-пошти</string>
+    <string name="contact_display_name">Показуване ім\'я</string>
+    <string name="add_new_email">Додати адресу е-пошти</string>
     <string name="no_groups">Немає груп</string>
     <string name="contact_vcard_note">Нотатка</string>
     <string name="edit_contact">Редагувати контакт</string>
     <string name="create_contact_group">Створити групу контактів</string>
     <string name="edit_contact_group">Редагувати групу контактів</string>
-    <string name="contact_groups_manage_addresses">Керування адресами</string>
-    <string name="contact_group_display_name">\ue91a Показуване ім\'я</string>
+    <string name="contact_group_display_name">Показуване ім\'я</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Додати адресу до груп</string>
     <string name="title_activity_address_chooser">Керувати адресами</string>

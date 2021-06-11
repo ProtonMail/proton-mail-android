@@ -623,15 +623,14 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Afegir foto</string>
-    <string name="contact_display_name">\ue91c Nom de Visualització</string>
-    <string name="add_new_email">\ue914 Afegir Adreça de Correu Electrònic</string>
+    <string name="contact_display_name">Nom de Visualització</string>
+    <string name="add_new_email">Afegir Adreça de Correu Electrònic</string>
     <string name="no_groups">No hi ha grups</string>
     <string name="contact_vcard_note">Nota</string>
     <string name="edit_contact">Editar Contacte</string>
     <string name="create_contact_group">Crear Grup de Contactes</string>
     <string name="edit_contact_group">Edita Grup de Contactes</string>
-    <string name="contact_groups_manage_addresses">Gestionar les adreces</string>
-    <string name="contact_group_display_name">\ue91a Nom de Visualització</string>
+    <string name="contact_group_display_name">Nom de Visualització</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Afegiu adreces a grups</string>
     <string name="title_activity_address_chooser">Gestiona les adreces</string>

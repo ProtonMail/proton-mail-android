@@ -41,24 +41,26 @@ import javax.inject.Inject
 
 // region constants
 private const val ARGUMENT_RECIPIENTS = "extra_contact_group_recipients"
-private const val ARGUMENT_LOCATION = "extra_recipient_view_location" // should be one of To/CC/BCC, please use one of Constants.RecipientLocation
+private const val ARGUMENT_LOCATION =
+    "extra_recipient_view_location" // should be one of To/CC/BCC, please use one of Constants.RecipientLocation
 // endregion
-
-/*
- * Created by kadrikj on 9/18/18.
- */
 
 @AndroidEntryPoint
 class GroupRecipientsDialogFragment : AbstractDialogFragment() {
+
     override fun onBackPressed() {
         CANCELED = true
         dismiss()
     }
 
     companion object {
+
         private var CANCELED = false
 
-        fun newInstance(recipients: ArrayList<MessageRecipient>, location: Constants.RecipientLocationType): GroupRecipientsDialogFragment {
+        fun newInstance(
+            recipients: ArrayList<MessageRecipient>,
+            location: Constants.RecipientLocationType
+        ): GroupRecipientsDialogFragment {
             val fragment = GroupRecipientsDialogFragment()
             val extras = Bundle()
             extras.putSerializable(ARGUMENT_RECIPIENTS, recipients)
@@ -84,13 +86,12 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         groupRecipientsViewModel = ViewModelProviders.of(this, groupRecipientsViewModelFactory)
-                .get(GroupRecipientsViewModel::class.java)
+            .get(GroupRecipientsViewModel::class.java)
 
-        groupRecipientsViewModel.contactGroupResult.observe(this, Observer {
-
+        groupRecipientsViewModel.contactGroupResult.observe(this, {
         })
 
-        groupRecipientsViewModel.contactGroupError.observe(this, Observer { event ->
+        groupRecipientsViewModel.contactGroupError.observe(this, { event ->
             var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
             if (event != null) {
                 error = event.getContentIfNotHandled()
@@ -103,8 +104,9 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
         val args = arguments
         args?.let {
             groupRecipientsViewModel.setData(
-                    args.getSerializable(ARGUMENT_RECIPIENTS) as ArrayList<MessageRecipient>,
-                    args.getSerializable(ARGUMENT_LOCATION) as Constants.RecipientLocationType)
+                args.getSerializable(ARGUMENT_RECIPIENTS) as ArrayList<MessageRecipient>,
+                args.getSerializable(ARGUMENT_LOCATION) as Constants.RecipientLocationType
+            )
         }
     }
 
@@ -115,12 +117,13 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         val params = dialog!!.window!!.attributes
-        params.height = 2*(displayMetrics.heightPixels/3)
-        dialog!!.window!!.setLayout(  params.width,  params.height)
+        params.height = 2 * (displayMetrics.heightPixels / 3)
+        dialog!!.window!!.setLayout(params.width, params.height)
     }
 
     override fun initUi(rootView: View?) {
-        groupRecipientsAdapter = GroupRecipientsAdapter(context!!, groupRecipientsViewModel.getData(), this::onMembersSelectChanged)
+        groupRecipientsAdapter =
+            GroupRecipientsAdapter(context!!, groupRecipientsViewModel.getData(), this::onMembersSelectChanged)
         groupRecipientsViewModel.contactGroupResult.observe(this, Observer {
             val allMessageRecipients = ArrayList<MessageRecipient>()
             it?.let {
@@ -141,7 +144,7 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
             }
         })
 
-        groupRecipientsViewModel.contactGroupError.observe(this, Observer {event ->
+        groupRecipientsViewModel.contactGroupError.observe(this, Observer { event ->
             var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
             if (event != null) {
                 error = event.getContentIfNotHandled()
@@ -166,7 +169,7 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
 
         check.setOnClickListener {
             val allMessageRecipients = ArrayList<MessageRecipient>()
-            if(check.isChecked){
+            if (check.isChecked) {
                 for (email in groupRecipientsAdapter.getData()) {
                     email.isSelected = true
                     allMessageRecipients.add(email)
@@ -195,11 +198,12 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
     override fun getFragmentKey(): String = "ProtonMail.GroupRecipientsFragment"
 
     interface IGroupRecipientsListener {
+
         fun recipientsSelected(recipients: ArrayList<MessageRecipient>, location: Constants.RecipientLocationType)
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        val selected : ArrayList<MessageRecipient> = if (!CANCELED) {
+        val selected: ArrayList<MessageRecipient> = if (!CANCELED) {
             groupRecipientsAdapter.getSelected()
         } else {
             groupRecipientsViewModel.getData()

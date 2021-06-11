@@ -19,23 +19,23 @@
 package ch.protonmail.android.compose.recipients
 
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.api.models.MessageRecipient
-import ch.protonmail.android.utils.extensions.listen
 
-/**
- * Created by kadrikj on 9/18/18. */
 class GroupRecipientsAdapter(
-        private val context: Context,
-        private var items: List<MessageRecipient>,
-        private val clickListener: () -> Unit) : RecyclerView.Adapter<GroupRecipientViewHolder>() {
+    private val context: Context,
+    private var items: List<MessageRecipient>,
+    private val clickListener: () -> Unit
+) : RecyclerView.Adapter<GroupRecipientViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupRecipientViewHolder {
-        val viewHolder = GroupRecipientViewHolder(LayoutInflater.from(context).inflate(R.layout.group_recipient_list_item, parent, false))
-        viewHolder.listen { _ ->
+        val viewHolder = GroupRecipientViewHolder(
+            LayoutInflater.from(context).inflate(R.layout.group_recipient_list_item, parent, false)
+        )
+        viewHolder.itemView.setOnClickListener {
             viewHolder.toggle()
             clickListener()
         }
@@ -44,7 +44,7 @@ class GroupRecipientsAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    fun getData() : List<MessageRecipient> = this.items
+    fun getData(): List<MessageRecipient> = this.items
 
     override fun onBindViewHolder(holder: GroupRecipientViewHolder, position: Int) {
         holder.bind(items[position], clickListener)

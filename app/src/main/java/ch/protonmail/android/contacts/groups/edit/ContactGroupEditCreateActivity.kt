@@ -87,7 +87,7 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
                     ContactGroupMode.EDIT -> setupEditContactGroupLayout()
                     ContactGroupMode.CREATE -> setupNewContactGroupLayout()
                 }
-                manageAddresses.setOnClickListener {
+                manageMembers.setOnClickListener {
                     val intent = Intent(this@ContactGroupEditCreateActivity, AddressChooserActivity::class.java)
                     intent.putExtra(EXTRA_CONTACT_EMAILS, contactGroupEmailsAdapter.getData())
                     val addressChooserIntent = AppUtil.decorInAppIntent(intent)
@@ -174,12 +174,10 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
     }
 
     private fun setupNewContactGroupLayout() {
-        manageAddresses.text = getString(R.string.contact_groups_manage_addresses)
         setupToolbar(R.string.create_contact_group)
     }
 
     private fun setupEditContactGroupLayout() {
-        manageAddresses.text = getString(R.string.contact_groups_manage_addresses)
         setupToolbar(R.string.edit_contact_group)
     }
 
@@ -236,7 +234,7 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
     }
 
     private fun setName() {
-        contactGroupName.setText(contactGroupEditCreateViewModel.getGroupName())
+        contactGroupName.text = contactGroupEditCreateViewModel.getGroupName()
         contactGroupName.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 contactGroupEditCreateViewModel.setChanged()
@@ -259,7 +257,11 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
             contactGroupEditCreateViewModel.setGroupColor(randomColor)
             randomColor
         }
-        groupColor.background.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
+        thumbnail_contact_group_details.bind(
+            isSelectedActive = false,
+            isMultiselectActive = false,
+            circleColor = color
+        )
     }
 
     private fun buildAndShowUnsavedEditDialog() {

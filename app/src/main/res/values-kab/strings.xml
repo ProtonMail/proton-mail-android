@@ -623,15 +623,14 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Rnu Tawlaft</string>
-    <string name="contact_display_name">\ue91c Sken Isem</string>
-    <string name="add_new_email">\ue914 Rnu Tansa Imayl</string>
+    <string name="contact_display_name">Sken Isem</string>
+    <string name="add_new_email">Rnu Tansa Imayl</string>
     <string name="no_groups">Ulac Igrawen</string>
     <string name="contact_vcard_note">Tazmilt</string>
     <string name="edit_contact">Ẓreg anermis</string>
     <string name="create_contact_group">Rnu Agraw n Unermes</string>
     <string name="edit_contact_group">Ẓreg Agraw n Unermes</string>
-    <string name="contact_groups_manage_addresses">Sefrek Tansiwin</string>
-    <string name="contact_group_display_name">\ue91a Sken Isem</string>
+    <string name="contact_group_display_name">Sken Isem</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Rnu tansa ɣer igrawen</string>
     <string name="title_activity_address_chooser">Sefrek Tansiwin</string>

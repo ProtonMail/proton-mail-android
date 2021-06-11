@@ -623,14 +623,13 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Tilføj foto</string>
-    <string name="contact_display_name">\ue91c Visningsnavn</string>
+    <string name="contact_display_name">Visningsnavn</string>
     <string name="add_new_email">Tilføj e-mail</string>
     <string name="no_groups">Ingen grupper</string>
     <string name="contact_vcard_note">Notat</string>
     <string name="edit_contact">Redigér kontakt</string>
     <string name="create_contact_group">Opret kontaktgruppe</string>
     <string name="edit_contact_group">Redigér kontaktgruppe</string>
-    <string name="contact_groups_manage_addresses">Håndtere adresser</string>
     <string name="contact_group_display_name">\ue91c Visningsnavn</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Føj adresse til grupper</string>

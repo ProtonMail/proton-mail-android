@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright (c) 2020 Proton Technologies AG
 
 This file is part of ProtonMail.
@@ -28,117 +27,25 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:id="@+id/fields_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/fields_default_space"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:paddingEnd="@dimen/fields_default_space_small"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/fields_default_space_small"
-            android:paddingBottom="@dimen/fields_default_space">
+        <include layout="@layout/layout_contacts_edit_filed_type_selector" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@id/btnOptionType">
-
-                <!-- Option icon -->
-                <ch.protonmail.android.views.CustomFontTextView
-                    android:id="@+id/optionIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
-                    android:paddingStart="@dimen/fields_default_space_small_minus"
-                    android:paddingEnd="@dimen/fields_default_space_small_minus"
-                    android:textColor="@color/contact_heading"
-                    android:textSize="16sp"
-                    app:fontName="contacts_icons.ttf" />
-
-                <!-- Option Name -->
-                <TextView
-                    android:id="@+id/optionTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:textColor="@color/contact_heading"
-                    android:textSize="16sp"
-                    android:textAlignment="viewStart"
-                    tools:text="Email Address"/>
-            </LinearLayout>
-
-            <ImageButton
-                android:id="@+id/btnOptionType"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="center"
-                android:background="@android:color/transparent"
-                android:src="@drawable/triangle_down"
-                tools:ignore="ContentDescription" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/fields_default_space_medium"
-            android:layout_marginEnd="@dimen/fields_default_space_small"
-            android:layout_marginBottom="@dimen/fields_default_space">
-
-            <ImageButton
-                android:id="@+id/btn_minus"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_circle_minus"
-                tools:ignore="ContentDescription" />
-
-            <ch.protonmail.android.views.CustomFontEditText
-                android:id="@+id/option"
-                style="@style/V3EditText.NoBg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/btn_minus"
-                android:gravity="start|top"
-                android:inputType="textMultiLine"
-                android:overScrollMode="always"
-                android:paddingStart="@dimen/fields_default_space_small"
-                android:paddingLeft="@dimen/fields_default_space_small"
-                android:paddingEnd="@dimen/fields_default_space_small"
-                android:paddingRight="@dimen/fields_default_space_small"
-                android:paddingBottom="@dimen/fields_default_space_small"
-                android:scrollbarStyle="insideInset"
-                android:scrollbars="vertical"
-                android:textColor="@color/contact_data"
-                android:textColorHint="@color/iron_gray"
-                android:textCursorDrawable="@null"
-                android:textAlignment="viewStart"
-                app:fontName="Roboto-Bold.ttf" />
-
-        </RelativeLayout>
+        <include layout="@layout/layout_contacts_edit_filed_with_delete" />
     </LinearLayout>
 
-    <ch.protonmail.android.views.CustomFontButton
+    <TextView
         android:id="@+id/btnAddNewRow"
-        style="@style/ContactOptionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_circle_plus"
-        android:drawablePadding="@dimen/fields_default_space_small_plus"
-        android:paddingLeft="0dp"
-        android:paddingRight="0dp"
-        android:text=""
+        android:background="?selectableItemBackground"
+        android:drawablePadding="@dimen/padding_m"
+        android:gravity="center_vertical"
+        android:padding="@dimen/padding_m"
         android:textAllCaps="true"
-        android:textColor="@color/contact_action"
+        android:textColor="@color/cornflower_blue"
         android:visibility="gone"
-        android:textAlignment="viewStart"
-        app:fontName="Roboto-Regular.ttf" />
+        app:drawableStartCompat="@drawable/ic_plus"
+        tools:text="Add new x"
+        tools:visibility="visible" />
 </LinearLayout>

@@ -18,20 +18,19 @@
  */
 package ch.protonmail.android.views;
 
-import android.app.Activity;
 import android.content.Context;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,29 +41,25 @@ import butterknife.OnClick;
 import ch.protonmail.android.R;
 import ch.protonmail.android.utils.UiUtil;
 import ezvcard.property.Address;
+import me.proton.core.presentation.ui.view.ProtonInput;
 
-/**
- * Created by dino on 12/16/17.
- */
 public class ContactAddressView extends LinearLayout {
 
     //region common address UI elements
-    @BindView(R.id.optionIcon)
-    TextView optionIcon;
     @BindView(R.id.optionTitle)
     TextView mOptionTitleView;
     @BindView(R.id.btnOptionType)
     ImageButton mBtnOptionTypeView;
     @BindView(R.id.address_street)
-    EditText mAddressStreetView;
+    ProtonInput mAddressStreetView;
     @BindView(R.id.address_city)
-    EditText mAddressCityView;
+    ProtonInput mAddressCityView;
     @BindView(R.id.address_region)
-    EditText mAddressRegionView;
+    ProtonInput mAddressRegionView;
     @BindView(R.id.address_postcode)
-    EditText mAddressPostcodeView;
+    ProtonInput mAddressPostcodeView;
     @BindView(R.id.address_country)
-    EditText mAddressCountryView;
+    ProtonInput mAddressCountryView;
     @BindView(R.id.address_full_combined)
     TextView mAddressFullCombinedView;
     @BindView(R.id.address_detailed_parent)
@@ -73,8 +68,6 @@ public class ContactAddressView extends LinearLayout {
     //endregion
 
     //region new address UI elements
-    @Nullable @BindView(R.id.new_row_parent)
-    View mNewRowParent;
     @Nullable @BindView(R.id.title)
     TextView mRowTitleView;
     @Nullable @BindView(R.id.fields_parent)
@@ -83,7 +76,6 @@ public class ContactAddressView extends LinearLayout {
 
     private boolean mIsDirty = false;
     private boolean mHasFocus = false;
-    private boolean mIsNew;
 
     //region common values
     private final List<String> mStandardOptionUIValues;
@@ -96,7 +88,6 @@ public class ContactAddressView extends LinearLayout {
 
     public ContactAddressView(final Context context, final String titleText, final String optionTitleText, final List<String> standardOptionUIValues, final List<String> standardOptionValues, final VCardLinearLayout rootView) {
         super(context, null, 0);
-        mIsNew = true;
         mStandardOptionUIValues = standardOptionUIValues;
         mStandardOptionValues = standardOptionValues;
         mLinearLayoutParent = rootView;
@@ -106,17 +97,16 @@ public class ContactAddressView extends LinearLayout {
         UiUtil.generateViewId(view);
 
         setHandlers();
-        optionIcon.setText("\ue910");
+
         mAddressDetailsParentView.setVisibility(View.VISIBLE);
         mAddressFullCombinedView.setVisibility(GONE);
         mAddressFullCombinedView.setOnClickListener(new AddressClickListener(mAddressFullCombinedView, mAddressDetailsParentView, mAddressStreetView, mAddressCityView, mAddressRegionView, mAddressPostcodeView, mAddressCountryView));
         final FragmentManager fragmentManager = ((FragmentActivity) getContext()).getSupportFragmentManager();
         mOptionTitleView.setText(optionTitleText);
-        mNewRowParent.setClickable(true);
-        mNewRowParent.setOnClickListener(v -> {
+        mRowTitleView.setOnClickListener(v -> {
             mRowTitleView.setVisibility(View.GONE);
             mInputFieldsView.setVisibility(View.VISIBLE);
-            mNewRowParent.setVisibility(View.GONE);
+            mRowTitleView.setVisibility(View.GONE);
             ContactOptionTypeClickListener optionTypeClickListener =
                     new ContactOptionTypeClickListener(getContext(), fragmentManager, view, "\ue910 "+standardOptionUIValues.get(0), standardOptionUIValues, standardOptionValues);
             mBtnOptionTypeView.setOnClickListener(optionTypeClickListener);
@@ -127,13 +117,11 @@ public class ContactAddressView extends LinearLayout {
 
         mRowTitleView.setText(titleText);
 
-
     }
 
     public ContactAddressView(final Context context, final String optionType, final String optionUIType, final Address address,
                               final String optionHint, final List<String> standardOptionUIValues, final List<String> standardOptionValues, final VCardLinearLayout rootView) {
         super(context, null, 0);
-        mIsNew = false;
         mStandardOptionUIValues = standardOptionUIValues;
         mStandardOptionValues = standardOptionValues;
         mLinearLayoutParent = rootView;
@@ -146,7 +134,6 @@ public class ContactAddressView extends LinearLayout {
         UiUtil.generateViewId(view);
         setHandlers();
 
-        optionIcon.setText("\ue910");
         if (standardOptionUIValues == null || standardOptionUIValues.size() == 0) {
             mBtnOptionTypeView.setVisibility(View.GONE);
         }
@@ -290,15 +277,19 @@ public class ContactAddressView extends LinearLayout {
         private final TextView addressFullCombined;
         private final View addressDetailsParent;
 
-        private final EditText addressStreetView;
-        private final EditText addressCityView;
-        private final EditText addressRegionView;
-        private final EditText addressPostcodeView;
-        private final EditText addressCountryView;
+        private final ProtonInput addressStreetView;
+        private final ProtonInput addressCityView;
+        private final ProtonInput addressRegionView;
+        private final ProtonInput addressPostcodeView;
+        private final ProtonInput addressCountryView;
 
-        public AddressClickListener(TextView addressFullCombined, View addressDetailsParent,
-                                    EditText addressStreetView, EditText addressCityView, EditText addressRegionView,
-                                    EditText addressPostcodeView, EditText addressCountryView) {
+        public AddressClickListener(TextView addressFullCombined,
+                                    View addressDetailsParent,
+                                    ProtonInput addressStreetView,
+                                    ProtonInput addressCityView,
+                                    ProtonInput addressRegionView,
+                                    ProtonInput addressPostcodeView,
+                                    ProtonInput addressCountryView) {
             this.addressFullCombined = addressFullCombined;
             this.addressDetailsParent = addressDetailsParent;
             this.addressStreetView = addressStreetView;
@@ -316,7 +307,7 @@ public class ContactAddressView extends LinearLayout {
                 addressFullCombined.setVisibility(View.GONE);
                 mAddressStreetView.post(() -> {
                     mAddressStreetView.requestFocusFromTouch();
-                    UiUtil.showKeyboard((Activity) getContext(), mAddressStreetView);
+
                 });
             } else {
                 addressDetailsParent.setVisibility(View.GONE);

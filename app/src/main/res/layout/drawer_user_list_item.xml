@@ -42,12 +42,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:paddingBottom="@dimen/fields_default_space_small">
 
         <!-- Icon -->
-        <ch.protonmail.android.views.contactsList.ContactGroupEmailAvatarView
+        <ch.protonmail.android.views.ListItemThumbnail
             android:id="@+id/userAvatar"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:gravity="center" />
+            android:layout_margin="@dimen/padding_m" />
 
         <FrameLayout
             android:id="@+id/userLoginStatusParent"

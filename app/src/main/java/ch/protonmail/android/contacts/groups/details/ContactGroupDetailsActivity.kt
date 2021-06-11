@@ -27,12 +27,16 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.viewModels
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
+import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
+import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
 import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateActivity
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
@@ -41,13 +45,20 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contact_group_details.*
 import kotlinx.android.synthetic.main.content_contact_group_details.*
+import kotlinx.android.synthetic.main.content_contact_group_details.contactEmailsRecyclerView
+import kotlinx.android.synthetic.main.content_contact_group_details.noResults
+import kotlinx.android.synthetic.main.content_edit_create_contact_group_header.*
 import timber.log.Timber
+import java.io.Serializable
 import javax.inject.Inject
 
 const val EXTRA_CONTACT_GROUP = "extra_contact_group"
 
 @AndroidEntryPoint
 class ContactGroupDetailsActivity : BaseActivity() {
+
+    private lateinit var groupName: String
+    private var groups: List<ContactEmail> = emptyList()
 
     @Inject
     lateinit var app: ProtonMailApplication
@@ -74,6 +85,10 @@ class ContactGroupDetailsActivity : BaseActivity() {
             intent.putExtra(EXTRA_CONTACT_GROUP, contactGroupDetailsViewModel.getData() as Parcelable)
             startActivity(AppUtil.decorInAppIntent(intent))
         }
+
+        contact_group_details_send_message.setOnClickListener {
+            onWriteToContacts()
+        }
     }
 
     override fun onStart() {
@@ -89,6 +104,21 @@ class ContactGroupDetailsActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.delete_menu, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun onWriteToContacts() {
+        if (groups.isNotEmpty()) {
+            val intent = Intent(this, ComposeMessageActivity::class.java)
+            intent.putExtra(
+                ComposeMessageActivity.EXTRA_TO_RECIPIENT_GROUPS,
+                groups.asSequence().map { email ->
+                    MessageRecipient(email.name, email.email, groupName)
+                }.toList() as Serializable
+            )
+            startActivity(intent)
+        } else {
+            showToast(R.string.email_empty, Toast.LENGTH_SHORT)
+        }
     }
 
     private fun initAdapter() {
@@ -112,17 +142,16 @@ class ContactGroupDetailsActivity : BaseActivity() {
         name: String,
         membersCount: Int
     ) {
-        collapsingToolbar.apply {
-            setBackgroundColor(color)
-            setContentScrimColor(color)
-            setStatusBarScrimColor(color)
-            title = name
-            setTitle(name, membersCount)
-        }
+
+        groupColor.bind(
+            isSelectedActive = false,
+            isMultiselectActive = false,
+            circleColor = color
+        )
     }
 
     private fun setTitle(name: String?, membersCount: Int) {
-        collapsingToolbar.title = name?.let {
+        supportActionBar?.title = name?.let {
             formatTitle(name, membersCount)
         } ?: ""
     }
@@ -145,6 +174,8 @@ class ContactGroupDetailsActivity : BaseActivity() {
             if (list != null && TextUtils.isEmpty(filterView.text.toString())) {
                 setTitle(contactGroupDetailsViewModel.getData()?.name, list.size)
             }
+            groups = list
+            groupName = contactGroupDetailsViewModel.getData()?.name
         }
 
         contactGroupDetailsViewModel.contactGroupEmailsEmpty.observe(this) {
@@ -167,7 +198,6 @@ class ContactGroupDetailsActivity : BaseActivity() {
                     ContactGroupDetailsViewModel.Status.ERROR ->
                         showToast(status.message ?: getString(R.string.error))
                 }
-
             }
         }
     }

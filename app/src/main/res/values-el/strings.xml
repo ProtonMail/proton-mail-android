@@ -623,15 +623,14 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Προσθήκη Φωτογραφίας</string>
-    <string name="contact_display_name">\ue91c Εμφανιζόμενο όνομα</string>
-    <string name="add_new_email">\ue914 Προσθήκη Διεύθυνσης E-mail</string>
+    <string name="contact_display_name">Εμφανιζόμενο όνομα</string>
+    <string name="add_new_email">Προσθήκη Διεύθυνσης E-mail</string>
     <string name="no_groups">Καμία Ομάδα</string>
     <string name="contact_vcard_note">Σημείωση</string>
     <string name="edit_contact">Επεξεργασία επαφής</string>
     <string name="create_contact_group">Δημιουργία Ομάδας Επαφών</string>
     <string name="edit_contact_group">Επεξεργασία Ομάδας Επαφών</string>
-    <string name="contact_groups_manage_addresses">Διαχείριση Διευθύνσεων</string>
-    <string name="contact_group_display_name">\ue91a Εμφανιζόμενο όνομα</string>
+    <string name="contact_group_display_name">Εμφανιζόμενο όνομα</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Προσθήκη διεύθυνσης σε ομάδες</string>
     <string name="title_activity_address_chooser">Διαχείριση Διευθύνσεων</string>

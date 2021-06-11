@@ -622,15 +622,14 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Adicionar fotografia</string>
-    <string name="contact_display_name">\ue91c Nome a mostrar</string>
-    <string name="add_new_email">\ue914 Adicionar endereço de email</string>
+    <string name="contact_display_name">Nome a mostrar</string>
+    <string name="add_new_email">Adicionar endereço de email</string>
     <string name="no_groups">Sem grupos</string>
     <string name="contact_vcard_note">Nota</string>
     <string name="edit_contact">Editar contacto</string>
     <string name="create_contact_group">Criar grupo de contactos</string>
     <string name="edit_contact_group">Editar grupo de contactos</string>
-    <string name="contact_groups_manage_addresses">Gerir endereços</string>
-    <string name="contact_group_display_name">\ue91a Nome a mostrar</string>
+    <string name="contact_group_display_name">Nome a mostrar</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Adicionar endereço aos grupos</string>
     <string name="title_activity_address_chooser">Gerir endereços</string>

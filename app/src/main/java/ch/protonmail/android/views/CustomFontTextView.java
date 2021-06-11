@@ -29,9 +29,7 @@ import ch.protonmail.android.R;
 
 import static ch.protonmail.android.core.Constants.FONTS_FOLDER;
 
-/**
- * Created by dkadrikj on 11/12/15.
- */
+@Deprecated
 public class CustomFontTextView extends TextView {
 
     /**

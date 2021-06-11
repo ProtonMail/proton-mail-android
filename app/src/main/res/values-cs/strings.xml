@@ -641,15 +641,14 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Přidat fotku</string>
-    <string name="contact_display_name">\ue91c Zobrazit jméno</string>
-    <string name="add_new_email">\ue914 Přidat e-mailovou adresu</string>
+    <string name="contact_display_name">Zobrazit jméno</string>
+    <string name="add_new_email">Přidat e-mailovou adresu</string>
     <string name="no_groups">Žádné skupiny</string>
     <string name="contact_vcard_note">Poznámka</string>
     <string name="edit_contact">Upravit kontakt</string>
     <string name="create_contact_group">Vytvoření skupinu kontaktů</string>
     <string name="edit_contact_group">Upravit Skupinu Kontaktů</string>
-    <string name="contact_groups_manage_addresses">Upravit Adresy</string>
-    <string name="contact_group_display_name">\ue91a Zobrazit název</string>
+    <string name="contact_group_display_name">Zobrazit název</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Přidat adresu do skupin</string>
     <string name="title_activity_address_chooser">Upravit Adresy</string>

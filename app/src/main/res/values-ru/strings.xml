@@ -641,15 +641,14 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Добавить фото</string>
-    <string name="contact_display_name">\ue91c Отображаемое имя</string>
-    <string name="add_new_email">\ue914 Добавить адрес электронной почты</string>
+    <string name="contact_display_name">Отображаемое имя</string>
+    <string name="add_new_email">Добавить адрес электронной почты</string>
     <string name="no_groups">Нет групп</string>
     <string name="contact_vcard_note">Примечание</string>
     <string name="edit_contact">Изменить контакт</string>
     <string name="create_contact_group">Создать группу контактов</string>
     <string name="edit_contact_group">Изменить группу контактов</string>
-    <string name="contact_groups_manage_addresses">Управление адресами</string>
-    <string name="contact_group_display_name">\ue91a Отображаемое имя</string>
+    <string name="contact_group_display_name">Отображаемое имя</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Добавить адрес в группы</string>
     <string name="title_activity_address_chooser">Управление адресами</string>
