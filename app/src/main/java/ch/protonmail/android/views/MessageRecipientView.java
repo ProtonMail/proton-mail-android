@@ -107,6 +107,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
             if (groupIcon != 0) {
                 tokenPgpView.setVisibility(VISIBLE);
                 tokenPgpView.setText(getContext().getString(groupIcon));
+                tokenPgpView.setTextColor(groupColor);
             }
             if (groupColor != 0) {
                 // tokenPgpView.setTextColor(messageRecipient.getGroupColor());
