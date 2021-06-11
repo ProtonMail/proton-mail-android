@@ -22,8 +22,8 @@
  * @author Davide Farella
  */
 object ProtonMail {
-    const val versionName = "1.14.1"
-    const val versionCode = 771
+    const val versionName = "1.14.2"
+    const val versionCode = 772
 
     const val targetSdk = 30
     const val minSdk = 23
