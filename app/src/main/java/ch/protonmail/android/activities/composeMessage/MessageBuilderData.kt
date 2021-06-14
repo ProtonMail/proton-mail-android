@@ -48,7 +48,7 @@ class MessageBuilderData(
     val messagePassword: String?,
     val passwordHint: String?,
     val isPasswordValid: Boolean,
-    val expirationTime: Long?,
+    val expirationTime: Long = 0,
     val sendPreferences: Map<String, SendPreference>,
     val isRespondInlineButtonVisible: Boolean,
     val isRespondInlineChecked: Boolean,
@@ -82,7 +82,7 @@ class MessageBuilderData(
         private var messagePassword: String? = null
         private var passwordHint: String? = ""
         private var isPasswordValid: Boolean = true
-        private var expirationTime: Long? = 0L
+        private var expirationTime: Long = 0
         private var sendPreferences: Map<String, SendPreference> = emptyMap()
         private var isRespondInlineButtonVisible: Boolean = true
         private var isRespondInlineChecked: Boolean = false
@@ -195,7 +195,7 @@ class MessageBuilderData(
         fun isPasswordValid(isPasswordValid: Boolean) =
             apply { this.isPasswordValid = isPasswordValid }
 
-        fun expirationTime(expirationTime: Long?) = apply { this.expirationTime = expirationTime }
+        fun expirationTime(expirationTime: Long) = apply { this.expirationTime = expirationTime }
 
         fun sendPreferences(sendPreferences: Map<String, SendPreference>) =
             apply { this.sendPreferences = sendPreferences }
@@ -224,7 +224,7 @@ class MessageBuilderData(
         fun uploadAttachments(uploadAttachments: Boolean) =
             apply { this.uploadAttachments = uploadAttachments }
 
-        fun build() : MessageBuilderData {
+        fun build(): MessageBuilderData {
             return MessageBuilderData(
                 message,
                 senderEmailAddress,
