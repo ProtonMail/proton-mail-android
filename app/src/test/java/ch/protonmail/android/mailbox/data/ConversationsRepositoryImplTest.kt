@@ -622,6 +622,89 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         }
     }
 
+    @Test
+    fun verifyConversationsAndMessagesAreStarred() {
+        runBlockingTest {
+            // given
+            val conversationId1 = "conversationId1"
+            val conversationId2 = "conversationId2"
+            val conversationIds = listOf(conversationId1, conversationId2)
+            val userId = "userId"
+            val conversationLabels = listOf(
+                LabelContextDatabaseModel("10", 2, 4, 123, 123, 1),
+                LabelContextDatabaseModel("2", 0, 3, 123, 123, 0)
+            )
+            val message = mockk<Message> {
+                every { messageId } returns "messageId"
+                every { time } returns 123
+            }
+            every { conversationDao.getConversation(any(), any()) } returns flowOf(
+                mockk {
+                    every { labels } returns conversationLabels
+                    every { numUnread } returns 2
+                    every { numMessages } returns 7
+                    every { size } returns 123
+                    every { numAttachments } returns 1
+                }
+            )
+            coEvery { conversationDao.updateLabels(any(), any()) } just runs
+            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
+            coEvery { messageDao.updateStarred("messageId", true) } just runs
+
+            // when
+            conversationsRepository.star(conversationIds, UserId(userId))
+
+            // then
+            coVerify(exactly = 2) {
+                conversationDao.updateLabels(any(), any())
+            }
+            coVerify(exactly = 4) {
+                messageDao.updateStarred(any(), true)
+            }
+        }
+    }
+
+    @Test
+    fun verifyConversationsAndMessagesAreUnstarred() {
+        runBlockingTest {
+            // given
+            val conversationId1 = "conversationId1"
+            val conversationId2 = "conversationId2"
+            val conversationIds = listOf(conversationId1, conversationId2)
+            val userId = "userId"
+            val conversationLabels = listOf(
+                LabelContextDatabaseModel("10", 2, 4, 123, 123, 1),
+                LabelContextDatabaseModel("2", 0, 3, 123, 123, 0)
+            )
+            val message = mockk<Message> {
+                every { messageId } returns "messageId"
+            }
+            every { conversationDao.getConversation(any(), any()) } returns flowOf(
+                mockk {
+                    every { labels } returns conversationLabels
+                    every { numUnread } returns 2
+                    every { numMessages } returns 7
+                    every { size } returns 123
+                    every { numAttachments } returns 1
+                }
+            )
+            coEvery { conversationDao.updateLabels(any(), any()) } just runs
+            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
+            coEvery { messageDao.updateStarred("messageId", false) } just runs
+
+            // when
+            conversationsRepository.unstar(conversationIds, UserId(userId))
+
+            // then
+            coVerify(exactly = 2) {
+                conversationDao.updateLabels(any(), any())
+            }
+            coVerify(exactly = 4) {
+                messageDao.updateStarred("messageId", false)
+            }
+        }
+    }
+
     private fun getConversation(
         id: String,
         subject: String,
@@ -657,5 +740,4 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         0,
         labels = labels
     )
-
 }

@@ -275,7 +275,7 @@ class MessageDetailsRepository @Inject constructor(
     fun deleteMessagesByLabel(labelId: String) =
         messagesDao.deleteMessagesByLabel(labelId)
 
-    fun updateStarred(messageId: String, starred: Boolean) = messagesDao.updateStarred(messageId, starred)
+    fun updateStarred(messageId: String, starred: Boolean) = messagesDao.updateStarredBlocking(messageId, starred)
 
     fun findAttachmentById(attachmentId: String) = messagesDao.findAttachmentById(attachmentId)
 

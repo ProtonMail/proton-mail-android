@@ -27,8 +27,11 @@ import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
+import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
+import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsUnreadRemoteWorker
+import ch.protonmail.android.mailbox.data.remote.worker.UnlabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
@@ -52,6 +55,7 @@ import me.proton.core.domain.arch.DataResult.Success
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
+import kotlin.math.max
 
 const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
 
@@ -61,7 +65,9 @@ class ConversationsRepositoryImpl @Inject constructor(
     private val api: ProtonMailApiManager,
     private val messageFactory: MessageFactory,
     private val markConversationsReadWorker: MarkConversationsReadRemoteWorker.Enqueuer,
-    private val markConversationsUnreadWorker: MarkConversationsUnreadRemoteWorker.Enqueuer
+    private val markConversationsUnreadWorker: MarkConversationsUnreadRemoteWorker.Enqueuer,
+    private val labelConversationsRemoteWorker: LabelConversationsRemoteWorker.Enqueuer,
+    private val unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer
 ) : ConversationsRepository {
 
     private val paramFlow = MutableSharedFlow<GetConversationsParameters>(replay = 1)
@@ -156,6 +162,51 @@ class ConversationsRepositoryImpl @Inject constructor(
                     messageDao.saveMessage(message.apply { setIsRead(false) })
                     return@forEachConversation
                 }
+            }
+        }
+    }
+
+    override suspend fun star(conversationIds: List<String>, userId: UserId) {
+        val starredLabelId = Constants.MessageLocationType.STARRED.messageLocationTypeValue.toString()
+
+        labelConversationsRemoteWorker.enqueue(conversationIds, starredLabelId, userId)
+
+        conversationIds.forEach { conversationId ->
+            var lastMessageTimeMs = 0L
+            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+                messageDao.updateStarred(message.messageId!!, true)
+                lastMessageTimeMs = max(lastMessageTimeMs, message.time)
+            }
+
+            val conversation = conversationDao.getConversation(conversationId, userId.id).first()
+            val newLabel = LabelContextDatabaseModel(
+                starredLabelId,
+                conversation.numUnread,
+                conversation.numMessages,
+                lastMessageTimeMs,
+                conversation.size.toInt(),
+                conversation.numAttachments
+            )
+            val labels = conversation.labels.toMutableList()
+            labels.removeIf { it.id == starredLabelId }
+            labels.add(newLabel)
+            conversationDao.updateLabels(labels, conversationId)
+        }
+    }
+
+    override suspend fun unstar(conversationIds: List<String>, userId: UserId) {
+        val starredLabelId = Constants.MessageLocationType.STARRED.messageLocationTypeValue.toString()
+
+        unlabelConversationsRemoteWorker.enqueue(conversationIds, starredLabelId, userId)
+
+        conversationIds.forEach { conversationId ->
+            val conversation = conversationDao.getConversation(conversationId, userId.id).first()
+            val labels = conversation.labels.toMutableList()
+            labels.removeIf { it.id == starredLabelId }
+            conversationDao.updateLabels(labels, conversationId)
+
+            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+                messageDao.updateStarred(message.messageId!!, false)
             }
         }
     }
