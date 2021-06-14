@@ -228,10 +228,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 )
 
                 val messageId = loadedMessage.messageId ?: return@mapLatest
-                messageExpandableAdapter.showMessageBody(
+                messageExpandableAdapter.showMessageDetails(
                     parsedBody,
                     messageId,
-                    shouldShowLoadEmbeddedImagesButton(message)
+                    shouldShowLoadEmbeddedImagesButton(message),
+                    loadedMessage.attachments
                 )
             }.launchIn(lifecycleScope)
         }
