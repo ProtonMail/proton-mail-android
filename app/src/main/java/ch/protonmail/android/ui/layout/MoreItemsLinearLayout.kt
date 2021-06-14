@@ -50,13 +50,6 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
      */
     open val minTextViewWidth = 0
 
-    operator fun ViewGroup.iterator(): MutableIterator<View> = object : MutableIterator<View> {
-        private var index = 0
-        override fun hasNext() = index < allChildCount
-        override fun next() = getChildAt(index++) ?: throw IndexOutOfBoundsException()
-        override fun remove() = removeViewAt(--index)
-    }
-
     val allChildren: Sequence<View> get() = object : Sequence<View> {
         override fun iterator() = this@MoreItemsLinearLayout.iterator()
     }
@@ -108,6 +101,13 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
     init {
         @Suppress("LeakingThis")
         addView(moreTextView)
+    }
+
+    operator fun ViewGroup.iterator(): MutableIterator<View> = object : MutableIterator<View> {
+        private var index = 0
+        override fun hasNext() = index < allChildCount
+        override fun next() = getChildAt(index++) ?: throw IndexOutOfBoundsException()
+        override fun remove() = removeViewAt(--index)
     }
 
     override fun onAttachedToWindow() {
@@ -170,13 +170,16 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
     }
 
     private fun View.asOrGetTextViewOrNull(): TextView? =
-        (this as? TextView) ?: (this as? ViewGroup)?.getChildAt(0) as? TextView
+        this as? TextView ?: (this as? ViewGroup)?.getChildAt(0) as? TextView
 
     // region add
     override fun addView(child: View, index: Int, params: ViewGroup.LayoutParams?) {
         val fixedIndex = if (index in itemsRange()) index else allChildCount
         super.addView(child, fixedIndex, params)
     }
+
+    fun addViewInLayout(child: View, params: ViewGroup.LayoutParams = generateDefaultLayoutParams()): Boolean =
+        addViewInLayout(child, allChildCount, params)
 
     override fun addViewInLayout(
         child: View,

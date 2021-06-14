@@ -71,8 +71,9 @@ class SingleLineLabelChipGroupView @JvmOverloads constructor (
         if (labels.isNotEmpty() && labels == allLabels) return
         allLabels = labels
 
-        removeAllViews()
-        labels.map(::buildLabelChipView).forEach(::addView)
+        removeAllViewsInLayout()
+        labels.map(::buildLabelChipView).forEach(::addViewInLayout)
+        requestLayout()
     }
 
     private fun buildLabelChipView(label: LabelChipUiModel): View {
