@@ -41,7 +41,7 @@ class AttachmentMetadataDaoTest {
     private val third = AttachmentMetadata("i", "j", 7, "k", "l", 8, Uri.parse("i"))
     private val standardTest = listOf(first, second, third)
     private fun AttachmentMetadataDao.insert(attachments: Iterable<AttachmentMetadata>) {
-        attachments.forEach(::insertAttachmentMetadata)
+        attachments.forEach(::insertAttachmentMetadataBlocking)
     }
 
     @Test
@@ -98,7 +98,7 @@ class AttachmentMetadataDaoTest {
         val replacement = AttachmentMetadata("e", "eee", 18, "eee", "eee", 123, Uri.parse("e"))
         val expected = listOf(first, replacement, third).map { ReflectivePropertiesMatcher(it) }
         database.insert(inserted)
-        database.insertAttachmentMetadata(replacement)
+        database.insertAttachmentMetadataBlocking(replacement)
         val actual = database.getAllAttachmentsMetadata().sortedBy(AttachmentMetadata::id)
         Assert.assertThat(actual, containsInAnyOrder(expected))
     }

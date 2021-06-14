@@ -53,6 +53,8 @@ import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
@@ -110,6 +112,17 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         networkConfigurator,
         deleteAttachmentWorker
     )
+
+    @BeforeTest
+    fun setUp() {
+        mockkStatic(UiUtil::class)
+        every { UiUtil.fromHtml(any()) } returns mockk(relaxed = true)
+    }
+
+    @AfterTest
+    fun tearDown() {
+        unmockkStatic(UiUtil::class)
+    }
 
     @Test
     fun saveDraftCallsSaveDraftUseCaseWithUserRequestedTriggerWhenTheDraftIsNewAndTheUserDidRequestSaving() {
@@ -308,9 +321,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             givenViewModelPropertiesAreInitialised()
             // message was already saved once (we're updating)
             viewModel.draftId = messageId
-            mockkStatic(UiUtil::class)
             every { UiUtil.toHtml(messageBody) } returns "<html> $messageBody <html>"
-            every { UiUtil.fromHtml(any()) } returns mockk(relaxed = true)
             coEvery { composeMessageRepository.findMessage(messageId) } returns message
             coEvery { composeMessageRepository.createAttachmentList(any(), dispatchers.Io) } returns emptyList()
 
@@ -323,7 +334,6 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             assertEquals(expectedMessage, buildMessageObserver.observedValues[0]?.peekContent())
             assertEquals("&lt;html&gt; Message body being edited... &lt;html&gt;", viewModel.messageDataResult.content)
             assertEquals(false, viewModel.messageDataResult.uploadAttachments)
-            unmockkStatic(UiUtil::class)
         }
     }
 
@@ -338,9 +348,7 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             givenViewModelPropertiesAreInitialised()
             // message was already saved once (we're updating)
             viewModel.draftId = messageId
-            mockkStatic(UiUtil::class)
             every { UiUtil.toHtml(messageBody) } returns "<html> $messageBody <html>"
-            every { UiUtil.fromHtml(any()) } returns mockk(relaxed = true)
             coEvery { composeMessageRepository.findMessage(messageId) } returns message
             coEvery { composeMessageRepository.createAttachmentList(any(), dispatchers.Io) } returns emptyList()
 
@@ -354,7 +362,6 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
             assertTrue(firstScheduledJob?.isCancelled ?: false)
             assertTrue(viewModel.autoSaveJob?.isActive ?: false)
             assertEquals(false, viewModel.messageDataResult.uploadAttachments)
-            unmockkStatic(UiUtil::class)
         }
     }
 
