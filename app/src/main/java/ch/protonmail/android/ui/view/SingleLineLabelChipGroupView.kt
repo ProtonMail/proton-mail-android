@@ -20,13 +20,16 @@
 package ch.protonmail.android.ui.view
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.view.View
+import android.widget.FrameLayout
 import androidx.annotation.StyleRes
-import androidx.core.view.isVisible
-import ch.protonmail.android.databinding.LayoutSingleLineLabelChipGroupBinding
+import ch.protonmail.android.R
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.ui.layout.MoreItemsLinearLayout
+import ch.protonmail.android.utils.extensions.isInPreviewMode
 
 /**
  * Displays, on a single line, the labels that can fit, plus "+N" for the missing labels.
@@ -35,37 +38,54 @@ import ch.protonmail.android.databinding.LayoutSingleLineLabelChipGroupBinding
  * This View is supposed to be "static", in a way that it won't change form, for cases where the View can be expanded,
  *  like for message details, an ExpandableLabelChipGroupView ( not implemented yet ) must be used instead.
  *
- * Due to time limitations, the current behaviour is to show only one label ( full or truncated ), plus the "+N" if
- *  there are more labels
+ * Due to time limitations, the current behaviour is to show only one or two labels ( full or truncated ), plus the
+ *  "+N" if there are more labels
  */
 class SingleLineLabelChipGroupView @JvmOverloads constructor (
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     @StyleRes defStyleRes: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr, defStyleRes) {
+) : MoreItemsLinearLayout(context, attrs, defStyleAttr, defStyleRes) {
 
-    private val labelView: LabelChipView
-    private val moreView: TextView
+    private var allLabels = emptyList<LabelChipUiModel>()
+
+    override val minTextViewWidth = resources.getDimensionPixelSize(R.dimen.min_width_label)
 
     init {
-        val binding = LayoutSingleLineLabelChipGroupBinding.inflate(
-            LayoutInflater.from(context),
-            this
-        )
-        labelView = binding.singleLineLabelChipGroupLabel
-        moreView = binding.singleLineLabelChipGroupMore
+        orientation = HORIZONTAL
+
+        if (isInPreviewMode()) {
+            val previewLabels = listOf(
+                LabelChipUiModel(Id("1"), Name("first very long label"), Color.BLUE),
+                LabelChipUiModel(Id("2"), Name("second very long label"), Color.GREEN),
+                LabelChipUiModel(Id("3"), Name("third very long label"), Color.RED),
+                LabelChipUiModel(Id("4"), Name("forth very long label"), Color.MAGENTA),
+                LabelChipUiModel(Id("5"), Name("fifth very long label"), Color.BLACK),
+            )
+            setLabels(previewLabels)
+        }
     }
 
     fun setLabels(labels: List<LabelChipUiModel>) {
-        labelView.isVisible = labels.isNotEmpty()
-        moreView.isVisible = labels.size >= 2
+        if (labels.isNotEmpty() && labels == allLabels) return
+        allLabels = labels
 
-        labels.firstOrNull()?.let(labelView::setLabel)
-        moreView.text = getMoreLabelsText(labels.size)
-        labelView.requestLayout()
+        removeAllViewsInLayout()
+        labels.map(::buildLabelChipView).forEach(::addViewInLayout)
+        requestLayout()
     }
 
-    private fun getMoreLabelsText(labelsCount: Int): String =
-        "+${labelsCount - 1}"
+    private fun buildLabelChipView(label: LabelChipUiModel): View {
+        val chipView = LabelChipView(context).apply {
+            layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+                marginEnd = resources.getDimensionPixelSize(R.dimen.padding_s)
+            }
+            setLabel(label)
+        }
+        // Wrap in Frame Layout for avoid margin's problems on MoreItemsLinearLayout
+        return FrameLayout(context).apply {
+            addView(chipView)
+        }
+    }
 }

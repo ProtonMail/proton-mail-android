@@ -20,6 +20,7 @@
 package ch.protonmail.android.ui.view
 
 import android.graphics.Color
+import android.view.View
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -29,10 +30,12 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import ch.protonmail.android.R
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.testAndroidInstrumented.assertion.isGone
-import ch.protonmail.android.testAndroidInstrumented.assertion.isVisible
+import ch.protonmail.android.testAndroidInstrumented.assertion.isInvisible
 import ch.protonmail.android.testAndroidInstrumented.withBackgroundColor
 import ch.protonmail.android.util.ViewTest
+import org.hamcrest.Description
+import org.hamcrest.Matcher
+import org.hamcrest.TypeSafeDiagnosingMatcher
 import org.junit.runner.RunWith
 import kotlin.test.Test
 
@@ -49,7 +52,7 @@ class SingleLineLabelChipGroupViewTest : ViewTest<SingleLineLabelChipGroupView>(
     )
 
     @Test
-    fun labelsAndMoreAreGoneWhenLabelsListIsEmpty() {
+    fun moreIsInvisibleWhenLabelsListIsEmpty() {
         val chipGroupView = testView
 
         // given
@@ -59,76 +62,42 @@ class SingleLineLabelChipGroupViewTest : ViewTest<SingleLineLabelChipGroupView>(
         chipGroupView.setLabels(labels)
 
         // then
-        onLabelView().check(isGone())
-        onMoreView().check(isGone())
+        Thread.sleep(500)
+        onMoreView().check(isInvisible())
     }
 
     @Test
-    fun labelIsShownButMoreIsGoneWhenLabelsListHasOneElement() {
-        val chipGroupView = testView
-
-        // given
-        val labels = listOf(testLabelsList.first())
-
-        // when
-        chipGroupView.setLabels(labels)
-
-        // then
-        onLabelView().check(isVisible())
-        onMoreView().check(isGone())
-    }
-
-    @Test
-    fun labelsAndMoreAreVisibleWhenLabelsListHasMoreThanOneElement() {
+    fun firstLabelShowsTheCorrectNameAndColor() {
         val chipGroupView = testView
 
         // given
         val labels = testLabelsList
-
-        // when
-        chipGroupView.setLabels(labels)
-
-        // then
-        onLabelView().check(isVisible())
-        onMoreView().check(isVisible())
-    }
-
-    @Test
-    fun labelShowsTheCorrectNameAndColor() {
-        val chipGroupView = testView
-
-        // given
-        val labels = testLabelsList
-
-        // when
-        chipGroupView.setLabels(labels)
-
-        // then
-        val (expectedLabelName, expectedLabelColor) = with(labels.first()) {
-            name.s to checkNotNull(color)
+        val (expectedLabelId, expectedLabelName, expectedLabelColor) = with(labels.first()) {
+            Triple(id, name.s, checkNotNull(color))
         }
-        onLabelView()
+
+        // when
+        chipGroupView.setLabels(labels)
+
+        // then
+        Thread.sleep(500)
+        onView(withLabelId(expectedLabelId))
             .check(matches(withText(expectedLabelName)))
             .check(matches(withBackgroundColor(expectedLabelColor)))
     }
 
-    @Test
-    fun moreShowsTheCorrectNumber() {
-        val chipGroupView = testView
-
-        // given
-        val labels = testLabelsList
-
-        // when
-        chipGroupView.setLabels(labels)
-
-        // then
-        onMoreView().check(matches(withText("+${labels.size - 1}")))
-    }
-
-    private fun onLabelView(): ViewInteraction =
-        onView(withId(R.id.single_line_label_chip_group_label))
-
     private fun onMoreView(): ViewInteraction =
-        onView(withId(R.id.single_line_label_chip_group_more))
+        onView(withId(R.id.single_line_label_more_text_view))
+
+    private fun withLabelId(labelId: Id): Matcher<View> {
+        return object : TypeSafeDiagnosingMatcher<View>() {
+
+            override fun matchesSafely(item: View, mismatchDescription: Description) =
+                (item as? LabelChipView)?.labelId == labelId
+
+            override fun describeTo(description: Description) {
+                description.appendText("Label id: ${labelId.s}")
+            }
+        }
+    }
 }

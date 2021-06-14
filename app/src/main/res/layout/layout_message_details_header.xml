@@ -213,14 +213,12 @@
 
     <ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
         android:id="@+id/labelsCollapsedGroupView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constrainedWidth="true"
         android:layout_marginTop="@dimen/message_details_header_margin_normal"
         app:layout_constraintStart_toEndOf="@id/senderInitialBarrier"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recipientsCollapsedTextView"
-        app:layout_constraintHorizontal_bias="0"/>
+        app:layout_constraintEnd_toStartOf="@id/expandCollapseChevronImageView"
+        app:layout_constraintTop_toBottomOf="@id/recipientsCollapsedTextView"/>
 
     <ch.protonmail.android.ui.view.MultiLineLabelChipGroupView
         android:id="@+id/labelsExpandedGroupView"

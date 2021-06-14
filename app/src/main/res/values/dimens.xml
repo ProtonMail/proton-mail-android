@@ -122,6 +122,9 @@
     <!-- Attachments -->
     <dimen name="height_add_attachments_action_sheet_item">56dp</dimen>
 
+    <!-- Labels -->
+    <dimen name="min_width_label">56dp</dimen>
+
     <!-- endregion -->
 
     <!-- region V3 -->
