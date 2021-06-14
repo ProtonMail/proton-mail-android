@@ -52,7 +52,6 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.details.data.toConversationUiModel
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
@@ -209,10 +208,6 @@ internal class MessageDetailsViewModel @Inject constructor(
                 LabelChipUiModel(Id(label.id), Name(label.name), labelColor)
             }
         }
-
-    val pendingSend: LiveData<PendingSend?> by lazy {
-        messageDetailsRepository.findPendingSendByOfflineMessageIdAsync(messageOrConversationId)
-    }
 
     val checkStoragePermission: LiveData<Event<Boolean>>
         get() = _checkStoragePermission

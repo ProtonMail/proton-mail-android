@@ -25,7 +25,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.ContextMenu
@@ -35,7 +34,6 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import android.webkit.WebView
 import android.webkit.WebView.HitTestResult
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.getSystemService
@@ -52,7 +50,6 @@ import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListe
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
@@ -72,7 +69,6 @@ import ch.protonmail.android.utils.ui.MODE_ACCORDION
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.messageDetails.BottomActionsView
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
@@ -202,7 +198,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             .launchIn(lifecycleScope)
 
         viewModel.messageDetailsError.observe(this, MessageDetailsErrorObserver())
-        viewModel.pendingSend.observe(this, PendingSendObserver())
         listenForConnectivityEvent()
         observeEditMessageEvents()
     }
@@ -720,27 +715,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     progress.visibility = View.GONE
                 }
             }
-        }
-    }
-
-    private inner class PendingSendObserver : Observer<PendingSend?> {
-
-        override fun onChanged(pendingSend: PendingSend?) {
-            if (pendingSend == null) {
-                return
-            }
-
-            val cannotEditSnack = Snackbar.make(
-                findViewById(R.id.root_layout),
-                R.string.message_can_not_edit,
-                Snackbar.LENGTH_INDEFINITE
-            )
-            val view = cannotEditSnack.view
-            view.setBackgroundColor(getColor(R.attr.colorError))
-            val tv = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-            tv.setTextColor(getColor(R.attr.colorOnError))
-            cannotEditSnack.show()
-            messageDetailsActionsView.visibility = View.INVISIBLE
         }
     }
 
