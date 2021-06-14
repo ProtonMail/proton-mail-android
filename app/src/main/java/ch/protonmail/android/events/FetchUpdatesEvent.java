@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.events;
 
+@Deprecated // unused, no subscribers
 public class FetchUpdatesEvent {
     public final Status status;
 

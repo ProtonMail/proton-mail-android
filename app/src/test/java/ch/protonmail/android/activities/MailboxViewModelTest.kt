@@ -44,10 +44,10 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchMessageCountsJob
+import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetConversationsResult
-import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
@@ -55,7 +55,6 @@ import ch.protonmail.android.mailbox.presentation.MailboxState
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
-import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -202,7 +201,7 @@ class MailboxViewModelTest : CoroutinesTest {
             false,
             "",
             false
-        ).testObserver()
+        )
 
         // Then
         val expected = MailboxUiItem(
@@ -525,7 +524,6 @@ class MailboxViewModelTest : CoroutinesTest {
         every { userManager.currentUserId } returns userId
 
         viewModel.loadMailboxItems(
-            location,
             labelId,
             includeLabels,
             uuid,
@@ -550,7 +548,6 @@ class MailboxViewModelTest : CoroutinesTest {
         every { userManager.currentUserId } returns userId
 
         viewModel.loadMailboxItems(
-            location,
             labelId,
             includeLabels,
             uuid,
@@ -577,7 +574,6 @@ class MailboxViewModelTest : CoroutinesTest {
         every { userManager.currentUserId } returns userId
 
         viewModel.loadMailboxItems(
-            ARCHIVE,
             null,
             false,
             "9238423bbe2h3283742h3hh2bjsd",
@@ -600,7 +596,6 @@ class MailboxViewModelTest : CoroutinesTest {
         every { conversationModeEnabled(location) } returns true
 
         viewModel.loadMailboxItems(
-            location,
             labelId,
             false,
             uuid,
@@ -1006,7 +1001,7 @@ class MailboxViewModelTest : CoroutinesTest {
             val location = LABEL
             val labelId = "labelId923844"
             every { conversationModeEnabled(location) } returns true
-            coEvery { getConversations(currentUserId, labelId) } returns flowOf(GetConversationsResult.Error)
+            coEvery { getConversations(currentUserId, labelId) } returns flowOf(GetConversationsResult.Error())
 
             val actual = viewModel.getMailboxItems(
                 location,

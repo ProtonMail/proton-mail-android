@@ -90,7 +90,7 @@ class GetConversationsTest : CoroutinesTest {
 
         val actual = getConversations.invoke(userId, MessageLocationType.INBOX.messageLocationTypeValue.toString())
 
-        val error = GetConversationsResult.Error
+        val error = GetConversationsResult.Error()
         assertEquals(error, actual.first())
     }
 
