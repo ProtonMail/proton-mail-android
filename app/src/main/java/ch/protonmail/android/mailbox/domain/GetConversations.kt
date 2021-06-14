@@ -62,10 +62,12 @@ class GetConversations @Inject constructor(
                         if (result.protonCode == NO_MORE_CONVERSATIONS_ERROR_CODE) {
                             return@map GetConversationsResult.NoConversationsFound
                         }
-                        return@map GetConversationsResult.Error
+                        return@map GetConversationsResult.Error(result.cause)
                     }
+                    is DataResult.Error ->
+                        GetConversationsResult.Error(result.cause)
                     else -> {
-                        GetConversationsResult.Error
+                        GetConversationsResult.Error()
                     }
                 }
             }

@@ -54,10 +54,10 @@ import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetConversationsResult
-import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
@@ -78,6 +78,7 @@ import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.takeIfNotBlank
+import timber.log.Timber
 import java.util.ArrayList
 import java.util.HashMap
 import javax.inject.Inject
@@ -344,7 +345,8 @@ class MailboxViewModel @Inject constructor(
                 is GetConversationsResult.NoConversationsFound -> {
                     return@map MailboxState(noMoreItems = true)
                 }
-                else -> {
+                is GetConversationsResult.Error -> {
+                    Timber.e(result.throwable, "Failed getting conversations")
                     return@map MailboxState(error = "Failed getting conversations")
                 }
             }

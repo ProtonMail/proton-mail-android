@@ -44,6 +44,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.os.postDelayed
+import androidx.core.view.isVisible
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.distinctUntilChanged
@@ -311,7 +312,6 @@ class MailboxActivity :
 
         buildSwipeProcessor()
         initializeSwipeRefreshLayout(mailboxSwipeRefreshLayout)
-        initializeSwipeRefreshLayout(noMessagesSwipeRefreshLayout)
 
         if (userManager.isFirstMailboxLoad) {
             swipeCustomizeSnack = Snackbar.make(
@@ -493,7 +493,6 @@ class MailboxActivity :
                     startActivity(browserIntent)
                 }
             )
-
         } else {
             val intent = AppUtil.decorInAppIntent(
                 Intent(
@@ -518,7 +517,6 @@ class MailboxActivity :
             reloadDependenciesForUser()
             pendingSendsLiveData.observe(owner) { mailboxAdapter.setPendingForSendingList(it) }
             pendingUploadsLiveData.observe(owner) { mailboxAdapter.setPendingUploadsList(it) }
-
         }
     }
 
@@ -581,11 +579,17 @@ class MailboxActivity :
         }
             .distinctUntilChanged()
             .observe(this) { state ->
+                Timber.v("New mailbox state: $state")
                 setLoadingMore(false)
                 setRefreshing(false)
                 if (state.error.isNotEmpty()) {
+                    Timber.e("Mailbox error ${state.error}")
                     Toast.makeText(this, getString(R.string.error_loading_conversations), Toast.LENGTH_SHORT).show()
                 }
+
+                include_mailbox_no_messages.isVisible = state.items.isEmpty()
+                mailboxRecyclerView.isVisible != state.items.isEmpty()
+
                 mailboxAdapter.clear()
                 mailboxAdapter.addAll(state.items)
             }
@@ -724,7 +728,6 @@ class MailboxActivity :
             !prefs.getBoolean(PREF_SWIPE_GESTURES_DIALOG_SHOWN, false)
     }
 
-
     private fun showSwipeGesturesChangedDialog() {
         val prefs: SharedPreferences = (applicationContext as ProtonMailApplication).defaultSharedPreferences
         showTwoButtonInfoDialog(
@@ -752,7 +755,6 @@ class MailboxActivity :
         mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
         registerFcmReceiver()
         checkDelinquency()
-        noMessagesSwipeRefreshLayout.visibility = View.GONE
         mailboxViewModel.checkConnectivity()
         swipeController.loadCurrentMailSetting()
         val mailboxLocation = mailboxLocationMain.value
@@ -820,12 +822,12 @@ class MailboxActivity :
         val mailboxLocation = mailboxLocationMain.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
-            MessageLocationType.DRAFT,
-            MessageLocationType.SPAM,
-            MessageLocationType.TRASH,
-            MessageLocationType.LABEL,
-            MessageLocationType.LABEL_FOLDER
-        )
+                MessageLocationType.DRAFT,
+                MessageLocationType.SPAM,
+                MessageLocationType.TRASH,
+                MessageLocationType.LABEL,
+                MessageLocationType.LABEL_FOLDER
+            )
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -867,7 +869,6 @@ class MailboxActivity :
     fun setRefreshing(shouldRefresh: Boolean) {
         Timber.v("setRefreshing shouldRefresh:$shouldRefresh")
         mailboxSwipeRefreshLayout.isRefreshing = shouldRefresh
-        noMessagesSwipeRefreshLayout.isRefreshing = shouldRefresh
     }
 
     private fun setLoadingMore(loadingMore: Boolean): Boolean {
@@ -950,6 +951,7 @@ class MailboxActivity :
         }
         refreshMailboxJobRunning = false
         setLoadingMore(false)
+        setRefreshing(false)
         if (!isDohOngoing) {
             showToast(event.status)
         }
@@ -964,7 +966,6 @@ class MailboxActivity :
             mailboxLocationMain.value = MessageLocationType.LABEL_OFFLINE
         }
         mNetworkResults.setMailboxLoaded(MailboxLoadedEvent(Status.SUCCESS, null))
-        setRefreshing(false)
     }
 
     private fun onConnectivityEvent(connectivity: Constants.ConnectionState) {
@@ -993,7 +994,8 @@ class MailboxActivity :
     }
 
     @Subscribe
-    fun onUpdatesLoaded(event: FetchUpdatesEvent?) { }
+    fun onUpdatesLoaded(event: FetchUpdatesEvent?) {
+    }
 
     private fun showToast(status: Status) {
         when (status) {
@@ -1034,13 +1036,7 @@ class MailboxActivity :
     }
 
     fun refreshEmptyView(count: Int) {
-        if (count == 0) {
-            mailboxSwipeRefreshLayout.visibility = View.GONE
-            noMessagesSwipeRefreshLayout.visibility = View.VISIBLE
-        } else {
-            mailboxSwipeRefreshLayout.visibility = View.VISIBLE
-            noMessagesSwipeRefreshLayout.visibility = View.GONE
-        }
+        // TODO: Remove that!
     }
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
@@ -1082,8 +1078,10 @@ class MailboxActivity :
                     )
                     mode.finish()
                 }
-            R.id.mark_read -> {}
-            R.id.mark_unread -> {}
+            R.id.mark_read -> {
+            }
+            R.id.mark_unread -> {
+            }
             R.id.add_star -> job = PostStarJob(messageIds)
             R.id.add_label -> {
             }
@@ -1274,7 +1272,6 @@ class MailboxActivity :
         val newMessageLocationType = fromInt(newLocation)
         mailboxSwipeRefreshLayout.visibility = View.VISIBLE
         mailboxSwipeRefreshLayout.isRefreshing = true
-        noMessagesSwipeRefreshLayout.visibility = View.GONE
         setElevationOnToolbarAndStatusView(false)
         LoaderManager.getInstance(this).destroyLoader(LOADER_ID_LABELS_OFFLINE)
         if (actionMode != null) {
@@ -1444,7 +1441,6 @@ class MailboxActivity :
             return pendingForSending == null ||
                 pendingForSending.sent != null &&
                 !pendingForSending.sent!!
-
         }
 
         override fun onPostExecute(openMessage: Boolean) {
@@ -1479,7 +1475,6 @@ class MailboxActivity :
             val mailboxActivity = mailboxActivity.get() ?: return
             mailboxActivity.mailboxSwipeRefreshLayout.visibility = View.VISIBLE
             mailboxActivity.mailboxSwipeRefreshLayout.isRefreshing = true
-            mailboxActivity.noMessagesSwipeRefreshLayout.visibility = View.GONE
             mailboxActivity.setElevationOnToolbarAndStatusView(false)
             if (mailboxActivity.actionMode != null) {
                 mailboxActivity.actionMode!!.finish()
@@ -1629,7 +1624,6 @@ class MailboxActivity :
                     swipeCustomizeSnack!!.show()
                     customizeSwipeSnackShown = true
                 }
-
             }
             mailboxAdapter.notifyDataSetChanged()
         }

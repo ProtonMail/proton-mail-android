@@ -68,25 +68,26 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/storageLimitAlert">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/mailboxRecyclerView"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/list_item_mailbox" />
+                android:layout_height="match_parent">
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                <include
+                    android:id="@+id/include_mailbox_no_messages"
+                    layout="@layout/layout_mailbox_no_messages"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/mailboxActionsView"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/storageLimitAlert" />
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/noMessagesSwipeRefreshLayout"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/mailboxActionsView"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/storageLimitAlert">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/mailboxRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/list_item_mailbox" />
 
-            <include layout="@layout/layout_mailbox_no_messages" />
+            </FrameLayout>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

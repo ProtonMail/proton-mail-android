@@ -20,9 +20,10 @@
 package ch.protonmail.android.mailbox.presentation
 
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
+import me.proton.core.util.kotlin.EMPTY_STRING
 
 data class MailboxState(
     val items: List<MailboxUiItem> = emptyList(),
-    val error: String = "",
+    val error: String = EMPTY_STRING,
     val noMoreItems: Boolean = false
 )

@@ -156,7 +156,7 @@ class MessagesService : JobIntentService() {
             val event = MailboxLoadedEvent(Status.FAILED, uuid)
             AppUtil.postEventOnUi(event)
             mNetworkResults.setMailboxLoaded(event)
-            Timber.e("Error while fetching messages", error)
+            Timber.e(error, "Error while fetching messages")
         }
     }
 
@@ -166,7 +166,7 @@ class MessagesService : JobIntentService() {
             handleResult(messages, location, false, null, currentUserId)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Timber.e("Error while fetching messages", error)
+            Timber.e(error, "Error while fetching messages")
         }
     }
 
@@ -181,7 +181,7 @@ class MessagesService : JobIntentService() {
             handleResult(messagesResponse, location, labelId, currentUserId, refreshMessages)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Timber.e("Error while fetching messages", error)
+            Timber.e(error,"Error while fetching messages")
         }
     }
 
@@ -196,7 +196,7 @@ class MessagesService : JobIntentService() {
             handleResult(messages, location, labelId, currentUserId)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Timber.e("Error while fetching messages", error)
+            Timber.e(error, "Error while fetching messages")
         }
     }
 
@@ -211,7 +211,7 @@ class MessagesService : JobIntentService() {
         try {
             contactEmailsManagerFactory.create(userId).refreshBlocking()
         } catch (e: Exception) {
-            Timber.i(e, "handleFetchContactGroups has failed")
+            Timber.w(e, "handleFetchContactGroups has failed")
         }
     }
 
@@ -223,6 +223,7 @@ class MessagesService : JobIntentService() {
             db.saveAllLabels(labelList)
             AppUtil.postEventOnUi(FetchLabelsEvent(Status.SUCCESS))
         } catch (error: Exception) {
+            Timber.w(error, "handleFetchLabels has failed")
             AppUtil.postEventOnUi(FetchLabelsEvent(Status.FAILED))
         }
     }
@@ -296,7 +297,7 @@ class MessagesService : JobIntentService() {
         } catch (e: Exception) {
             val event = MailboxLoadedEvent(Status.FAILED, uuid)
             AppUtil.postEventOnUi(event)
-            Timber.e("Fetch messages error", e)
+            Timber.e(e, "Fetch messages error")
         }
     }
 
@@ -362,7 +363,7 @@ class MessagesService : JobIntentService() {
 
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.SUCCESS, null))
         } catch (e: Exception) {
-            Timber.e("Fetch messages error", e)
+            Timber.e(e, "Fetch messages error")
         }
     }
 
@@ -427,7 +428,6 @@ class MessagesService : JobIntentService() {
                 .putExtra(EXTRA_REFRESH_MESSAGES, refreshMessages)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
-
     }
 
     class Scheduler @Inject constructor() {
@@ -457,6 +457,5 @@ class MessagesService : JobIntentService() {
             intent.putExtra(EXTRA_LABEL_ID, labelId)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
-
     }
 }
