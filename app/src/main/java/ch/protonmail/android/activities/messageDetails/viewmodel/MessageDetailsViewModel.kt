@@ -445,7 +445,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun lastMessage() = conversationUiModel.value?.messages?.last()
+    private fun lastMessage() = conversationUiModel.value?.messages?.maxByOrNull { it.time }
 
     /**
      * Explicitly make a copy of embedded attachment to downloads and display it (product requirement)
