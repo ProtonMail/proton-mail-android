@@ -36,6 +36,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 const val KEY_UNLABEL_WORKER_CONVERSATION_IDS = "ConversationIds"
 const val KEY_UNLABEL_WORKER_LABEL_ID = "LabelId"
@@ -71,8 +72,12 @@ class UnlabelConversationsRemoteWorker @AssistedInject constructor(
             onSuccess = {
                 Result.success()
             },
-            onFailure = {
-                Result.retry()
+            onFailure = { throwable ->
+                if (throwable is CancellationException) {
+                    throw throwable
+                } else {
+                    Result.retry()
+                }
             }
         )
     }

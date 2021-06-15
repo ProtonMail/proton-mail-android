@@ -34,6 +34,7 @@ import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBod
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 const val KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS = "ConversationIds"
 const val KEY_MARK_UNREAD_WORKER_UNDO_TOKEN = "UndoToken"
@@ -69,8 +70,12 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
                     )
                 )
             },
-            onFailure = {
-                Result.retry()
+            onFailure = { throwable ->
+                if (throwable is CancellationException) {
+                    throw throwable
+                } else {
+                    Result.retry()
+                }
             }
         )
     }

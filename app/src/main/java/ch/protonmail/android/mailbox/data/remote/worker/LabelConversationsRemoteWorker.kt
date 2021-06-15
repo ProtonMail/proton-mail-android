@@ -32,11 +32,11 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
-import ch.protonmail.android.utils.Logger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 const val KEY_LABEL_WORKER_CONVERSATION_IDS = "ConversationIds"
 const val KEY_LABEL_WORKER_LABEL_ID = "LabelId"
@@ -72,8 +72,12 @@ class LabelConversationsRemoteWorker @AssistedInject constructor(
             onSuccess = {
                 Result.success()
             },
-            onFailure = {
-                Result.retry()
+            onFailure = { throwable ->
+                if (throwable is CancellationException) {
+                    throw throwable
+                } else {
+                    Result.retry()
+                }
             }
         )
     }
