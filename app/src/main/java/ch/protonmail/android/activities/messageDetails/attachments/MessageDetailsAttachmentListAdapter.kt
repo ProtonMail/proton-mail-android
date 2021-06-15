@@ -29,7 +29,7 @@ import ch.protonmail.android.views.messageDetails.AttachmentDetailView
 
 class MessageDetailsAttachmentListAdapter(
     context: Context,
-    private val downloadListener: (String) -> Unit
+    private val downloadListener: (Attachment) -> Unit
 ) : ArrayAdapter<Attachment>(context, R.layout.layout_message_details_attachments_details) {
     private val downloadingIds = mutableSetOf<String>()
     private var pgpEncrypted: Boolean = false
@@ -62,10 +62,6 @@ class MessageDetailsAttachmentListAdapter(
         notifyDataSetChanged()
     }
 
-    fun setIsPgpEncrypted(isPgpEncrypted: Boolean) {
-        pgpEncrypted = isPgpEncrypted
-    }
-
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 
         val view = convertView as? AttachmentDetailView ?: AttachmentDetailView(context)
@@ -81,7 +77,7 @@ class MessageDetailsAttachmentListAdapter(
         val isDownloading = downloadingIds.contains(attachmentId)
         view.bind(fileName, fileSize, attachmentSpecificIcon, showWarningIcon, isDownloading)
 
-        val onClickListener = View.OnClickListener { downloadListener(attachmentId!!) }
+        val onClickListener = View.OnClickListener { downloadListener(attachment) }
         view.setOnClickListener(onClickListener)
 
         return view

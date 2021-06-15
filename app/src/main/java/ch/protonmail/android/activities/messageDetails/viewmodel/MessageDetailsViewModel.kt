@@ -424,12 +424,12 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    fun viewOrDownloadAttachment(context: Context, attachmentToDownloadId: String) {
+    fun viewOrDownloadAttachment(context: Context, attachment: Attachment) {
         viewModelScope.launch(dispatchers.Io) {
-            val messageId = lastMessage()?.messageId ?: return@launch
-            val metadata = attachmentMetadataDao
-                .getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
-            Timber.v("viewOrDownloadAttachment Id: $attachmentToDownloadId metadataId: ${metadata?.id}")
+            val attachmentId = requireNotNull(attachment.attachmentId)
+            val messageId = attachment.messageId
+            val metadata = attachmentMetadataDao.getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentId)
+            Timber.v("viewOrDownloadAttachment Id: $attachmentId metadataId: ${metadata?.id}")
             val uri = metadata?.uri
             // extra check if user has not deleted the file
             if (uri != null && attachmentsHelper.isFileAvailable(context, uri)) {
@@ -439,8 +439,8 @@ internal class MessageDetailsViewModel @Inject constructor(
                     viewAttachment(context, metadata.name, uri)
                 }
             } else {
-                Timber.d("Attachment id: $attachmentToDownloadId file not available, uri: $uri ")
-                attachmentsWorker.enqueue(messageId, userManager.requireCurrentUserId(), attachmentToDownloadId)
+                Timber.d("Attachment id: $attachmentId file not available, uri: $uri ")
+                attachmentsWorker.enqueue(messageId, userManager.requireCurrentUserId(), attachmentId)
             }
         }
     }

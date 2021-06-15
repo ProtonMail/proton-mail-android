@@ -38,7 +38,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
-import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyScaleListener
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyTouchListener
 import ch.protonmail.android.core.Constants
@@ -47,7 +46,6 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
-import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
@@ -59,7 +57,6 @@ import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
 import java.util.ArrayList
-import java.util.concurrent.atomic.AtomicReference
 
 private const val TYPE_ITEM = 1001
 private const val TYPE_HEADER = 1000
@@ -70,10 +67,9 @@ internal class MessageDetailsAdapter(
     private val messageDetailsRecyclerView: RecyclerView,
     private val onLoadEmbeddedImagesClicked: (() -> Unit)?,
     private val onDisplayRemoteContentClicked: ((Message) -> Unit)?,
-    private val storagePermissionHelper: PermissionHelper,
-    private val attachmentToDownloadId: AtomicReference<String?>,
     private val userManager: UserManager,
-    private val onLoadMessage: (Message) -> Unit
+    private val onLoadMessage: (Message) -> Unit,
+    private val onAttachmentDownloadCallback: (Attachment) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
 
     private var allLabelsList: List<Label>? = listOf()
@@ -304,7 +300,7 @@ internal class MessageDetailsAdapter(
 
         val attachmentsListAdapter = MessageDetailsAttachmentListAdapter(
             context,
-            OnAttachmentDownloadCallback(storagePermissionHelper, attachmentToDownloadId)
+            onAttachmentDownloadCallback
         )
         attachmentsListAdapter.setList(attachments)
         attachmentsView.bind(attachmentsCount, totalAttachmentSize, attachmentsListAdapter)

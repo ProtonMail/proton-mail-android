@@ -49,6 +49,7 @@ import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
@@ -95,7 +96,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private var messageRecipientUserId: Id? = null
     private var messageRecipientUsername: String? = null
-    private val attachmentToDownloadId = AtomicReference<String?>(null)
+    private val attachmentToDownload = AtomicReference<Attachment?>(null)
     private var showPhishingReportButton = true
     private var shouldTitleFadeOut = false
     private var shouldTitleFadeIn = true
@@ -137,9 +138,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     override fun getLayoutId(): Int = R.layout.activity_message_details
 
     override fun storagePermissionGranted() {
-        val attachmentToDownloadIdAux = attachmentToDownloadId.getAndSet(null)
-        if (!attachmentToDownloadIdAux.isNullOrEmpty()) {
-            viewModel.viewOrDownloadAttachment(this, attachmentToDownloadIdAux)
+        val attachmentToDownload = attachmentToDownload.getAndSet(null)
+        if (attachmentToDownload?.attachmentId?.isNotEmpty() == true) {
+            viewModel.viewOrDownloadAttachment(this, attachmentToDownload)
         }
     }
 
@@ -209,10 +210,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             messageDetailsRecyclerView,
             { onLoadEmbeddedImagesClicked() },
             onDisplayRemoteContentClicked(),
-            storagePermissionHelper,
-            attachmentToDownloadId,
             mUserManager,
-            onLoadMessageBody()
+            onLoadMessageBody(),
+            onDownloadAttachment()
         )
     }
 
@@ -731,6 +731,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private fun onDisplayRemoteContentClicked() = { message: Message ->
         viewModel.displayRemoteContent(message)
         viewModel.checkStoragePermission.observe(this, { storagePermissionHelper.checkPermission() })
+    }
+
+    private fun onDownloadAttachment() = { attachment: Attachment ->
+        attachmentToDownload.set(attachment)
+        storagePermissionHelper.checkPermission()
     }
 
     fun printMessage() {
