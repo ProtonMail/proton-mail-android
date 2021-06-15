@@ -152,19 +152,22 @@ class MailboxViewModel @Inject constructor(
         combine(_mailboxLocation, _mailboxLabelId) { location, label ->
             location to label
         }
-            .onEach { _mailboxState.value = MailboxState.Loading }
+            .onEach {
+                Timber.v("New location/label $it")
+                _mailboxState.value = MailboxState.Loading
+            }
             .flatMapLatest { pair ->
                 val location = pair.first
                 val labelId = pair.second
 
                 if (conversationModeEnabled(location)) {
-                    Timber.v("Getting conversations for $location/$labelId")
+                    Timber.v("Getting conversations for $location label: $labelId")
                     conversationsAsMailboxItems(location, labelId)
                         .onEach {
                             _mailboxState.value = it
                         }
                 } else {
-                    Timber.v("Getting messages for $location/$labelId")
+                    Timber.v("Getting messages for $location label: $labelId")
                     getMessagesByLocation(location, labelId)
                         .asFlow()
                         .map {

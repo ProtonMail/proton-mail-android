@@ -700,9 +700,7 @@ class MailboxActivity :
 
     private fun checkUserAndFetchNews(): Boolean {
         syncUUID = UUID.randomUUID().toString()
-        if (userManager.isBackgroundSyncEnabled) {
-            setRefreshing(true)
-        }
+
         if (firstLogin == null) {
             firstLogin = intent.getBooleanExtra(EXTRA_FIRST_LOGIN, false)
         }
@@ -871,7 +869,7 @@ class MailboxActivity :
         swipeRefreshLayoutAux.setOnRefreshListener(this)
     }
 
-    fun setRefreshing(shouldRefresh: Boolean) {
+    private fun setRefreshing(shouldRefresh: Boolean) {
         Timber.v("setRefreshing shouldRefresh:$shouldRefresh")
         mailboxSwipeRefreshLayout.isRefreshing = shouldRefresh
     }
@@ -1029,10 +1027,6 @@ class MailboxActivity :
             .getInstance(applicationContext, userManager.requireCurrentUserId()).getDao()
         OnMessageCountsListTask(WeakReference(this), counterDao, messageCountsList).execute()
         //endregion
-    }
-
-    fun refreshEmptyView(count: Int) {
-        // TODO: Remove that!
     }
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
@@ -1688,7 +1682,6 @@ class MailboxActivity :
 
         override fun onPostExecute(inboxMessagesCount: Int) {
             val mailboxActivity = mailboxActivity.get() ?: return
-            var foundMailbox = false
             val locationCounters: MutableList<TotalLocationCounter> = ArrayList()
             val labelCounters: MutableList<TotalLabelCounter> = ArrayList()
             for (messageCount in messageCountsList) {
@@ -1702,24 +1695,12 @@ class MailboxActivity :
                     ) {
                         mailboxActivity.checkUserAndFetchNews()
                     }
-                    if (mailboxActivity.currentMailboxLocation == location) {
-                        mailboxActivity.refreshEmptyView(total)
-                        foundMailbox = true
-                    }
                     locationCounters.add(TotalLocationCounter(location.messageLocationTypeValue, total))
                 } else {
                     // label
-                    if (labelId == mailboxActivity.mailboxLabelId) {
-                        mailboxActivity.refreshEmptyView(total)
-                        foundMailbox = true
-                    }
-                    if (!foundMailbox) {
-                        mailboxActivity.refreshEmptyView(0)
-                    }
                     labelCounters.add(TotalLabelCounter(labelId, total))
                 }
             }
-            mailboxActivity.setRefreshing(false)
             RefreshTotalCountersTask(counterDao, locationCounters, labelCounters).execute()
         }
     }
