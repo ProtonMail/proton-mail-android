@@ -155,6 +155,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
+import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -205,6 +206,11 @@ class MailboxActivity :
     private var actionMode: ActionMode? = null
     private var swipeCustomizeSnack: Snackbar? = null
     private var mailboxLabelId: String? = null
+        set(value) {
+            field = value
+            // we need to set it on view model for filtering by label
+            setNewLabel(value ?: EMPTY_STRING)
+        }
     private var mailboxLabelName: String? = null
     private var refreshMailboxJobRunning = false
     private lateinit var syncUUID: String
@@ -364,7 +370,11 @@ class MailboxActivity :
 
         fetchOrganizationData()
 
-        observeMailboxItemsByLocation(syncId = syncUUID, includeLabels = true)
+        mailboxViewModel.mailboxState
+            .onEach { renderState(it) }
+            .launchIn(lifecycleScope)
+
+        fetchMailboxItemsByLocation(syncId = syncUUID, includeLabels = true)
 
         mailboxViewModel.mailboxLocation
             .onEach { mailboxAdapter.setNewLocation(it) }
@@ -560,22 +570,16 @@ class MailboxActivity :
     /**
      * @param refreshMessages whether the existing local messages should be deleted and re-fetched from network
      */
-    private fun observeMailboxItemsByLocation(
+    private fun fetchMailboxItemsByLocation(
         includeLabels: Boolean = true,
         refreshMessages: Boolean = false,
         syncId: String
     ) {
-
         mailboxViewModel.getMailboxItems(
-            mailboxLabelId,
             includeLabels,
             syncId,
             refreshMessages
         )
-
-        mailboxViewModel.mailboxState
-            .onEach { renderState(it) }
-            .launchIn(lifecycleScope)
     }
 
     private fun renderState(state: MailboxState) {
@@ -840,7 +844,9 @@ class MailboxActivity :
                         leftStringId = R.string.no
                     ) {
                         setRefreshing(true)
-                        mJobManager.addJobInBackground(EmptyFolderJob(mailboxViewModel.mailboxLocation.value, this.mailboxLabelId))
+                        mJobManager.addJobInBackground(
+                            EmptyFolderJob(mailboxViewModel.mailboxLocation.value, this.mailboxLabelId)
+                        )
                         setLoadingMore(false)
                     }
                 }
@@ -1382,6 +1388,11 @@ class MailboxActivity :
     private fun setMailboxLocation(locationToSet: MessageLocationType) {
         mailboxViewModel.setNewMailboxLocation(locationToSet)
     }
+
+    private fun setNewLabel(labelId: String) {
+        mailboxViewModel.setNewMailboxLabel(labelId)
+    }
+
 
     private val fcmBroadcastReceiver: BroadcastReceiver = FcmBroadcastReceiver()
 

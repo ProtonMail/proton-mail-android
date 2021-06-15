@@ -72,6 +72,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -83,6 +84,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import java.util.ArrayList
@@ -124,6 +126,7 @@ class MailboxViewModel @Inject constructor(
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
     private val _mailboxState = MutableStateFlow<MailboxState>(MailboxState.Loading)
     private val _mailboxLocation = MutableStateFlow(INBOX)
+    private val _mailboxLabelId = MutableStateFlow(EMPTY_STRING)
 
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning
@@ -144,6 +147,45 @@ class MailboxViewModel @Inject constructor(
 
     val mailboxLocation: StateFlow<Constants.MessageLocationType>
         get() = _mailboxLocation
+
+    init {
+        combine(_mailboxLocation, _mailboxLabelId) { location, label ->
+            location to label
+        }
+            .onEach { _mailboxState.value = MailboxState.Loading }
+            .flatMapLatest { pair ->
+                val location = pair.first
+                val labelId = pair.second
+
+                if (conversationModeEnabled(location)) {
+                    Timber.v("Getting conversations for $location/$labelId")
+                    conversationsAsMailboxItems(location, labelId)
+                        .onEach {
+                            _mailboxState.value = it
+                        }
+                } else {
+                    Timber.v("Getting messages for $location/$labelId")
+                    getMessagesByLocation(location, labelId)
+                        .asFlow()
+                        .map {
+                            messagesToMailboxItems(it)
+                        }
+                        .onEach {
+                            _mailboxState.value = MailboxState.Data(
+                                it,
+                                false
+                            )
+                        }
+                }
+            }
+            .catch {
+                _mailboxState.value = MailboxState.Error(
+                    "Failed getting messages",
+                    it
+                )
+            }
+            .launchIn(viewModelScope)
+    }
 
     fun reloadDependenciesForUser() {
         pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -242,53 +284,20 @@ class MailboxViewModel @Inject constructor(
     }
 
     fun getMailboxItems(
-        labelId: String?,
         includeLabels: Boolean,
         uuid: String,
         refreshMessages: Boolean
     ) {
 
-        mailboxLocation
-            .onEach { location ->
-                // refresh messages
-                if (!conversationModeEnabled(location)) {
-                    fetchMessages(
-                        null,
-                        location,
-                        labelId,
-                        includeLabels,
-                        uuid,
-                        refreshMessages
-                    )
-                }
-            }
-            .flatMapLatest { location ->
-                if (conversationModeEnabled(location)) {
-                    conversationsAsMailboxItems(location, labelId)
-                        .onEach {
-                            _mailboxState.value = it
-                        }
-                } else {
-                    getMessagesByLocation(location, labelId)
-                        .asFlow()
-                        .map {
-                            messagesToMailboxItems(it)
-                        }
-                        .onEach {
-                            _mailboxState.value = MailboxState.Data(
-                                it,
-                                false
-                            )
-                        }
-                }
-            }
-            .catch {
-                _mailboxState.value = MailboxState.Error(
-                    "Failed getting messages",
-                    it
-                )
-            }
-            .launchIn(viewModelScope)
+        // refresh messages
+        fetchMessages(
+            null,
+            _mailboxLocation.value,
+            _mailboxLabelId.value,
+            includeLabels,
+            uuid,
+            refreshMessages
+        )
     }
 
     fun loadMailboxItems(
@@ -615,6 +624,10 @@ class MailboxViewModel @Inject constructor(
 
     fun setNewMailboxLocation(newLocation: Constants.MessageLocationType) {
         _mailboxLocation.value = newLocation
+    }
+
+    fun setNewMailboxLabel(labelId: String) {
+        _mailboxLabelId.value = labelId
     }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)
