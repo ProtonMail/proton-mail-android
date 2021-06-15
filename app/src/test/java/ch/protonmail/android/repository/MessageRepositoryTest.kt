@@ -22,12 +22,17 @@ package ch.protonmail.android.repository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.api.models.messages.receive.MessagesResponse
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
+import io.mockk.Called
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -36,6 +41,10 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
 import io.mockk.spyk
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Test
@@ -46,10 +55,7 @@ import kotlin.test.assertNull
 /**
  * Tests the functionality of [MessageRepository].
  */
-
 class MessageRepositoryTest {
-
-    private val testUserId = Id("id")
 
     private val messageDao: MessageDao = mockk()
     private val databaseProvider: DatabaseProvider = mockk {
@@ -60,9 +66,20 @@ class MessageRepositoryTest {
 
     private val protonMailApiManager: ProtonMailApiManager = mockk()
 
-    private val userManager: UserManager = mockk()
-    
+    private val newUser = mockk<User> {
+        every { id } returns testUserId
+    }
+    private val userManager: UserManager = mockk {
+        every { currentUser } returns newUser
+    }
     private val jobManager: JobManager = mockk()
+
+    private val testUserName = "userName1"
+    private val testUserId = Id(testUserName)
+    private val message1 = mockk<Message>(relaxed = true)
+    private val message2 = mockk<Message>(relaxed = true)
+    private val message3 = mockk<Message>(relaxed = true)
+    private val message4 = mockk<Message>(relaxed = true)
 
     private val messageRepository = MessageRepository(
         TestDispatcherProvider,
@@ -327,4 +344,169 @@ class MessageRepositoryTest {
             assertEquals("Any message body returned by the API", result!!.messageBody)
         }
     }
+
+    @Test
+    fun verifyThatInboxMessagesFromDbAndNetAreFetched() = runBlockingTest {
+        // given
+        val mailboxLocation = Constants.MessageLocationType.INBOX
+        val dbMessages = listOf(message1, message2)
+        val dbMessagesFlow = MutableStateFlow(dbMessages)
+        val netMessages = listOf(message1, message2, message3, message4)
+        val netResponse = mockk<MessagesResponse> {
+            every { messages } returns netMessages
+            every { code } returns Constants.RESPONSE_CODE_OK
+        }
+        coEvery {
+            messageDao.observeMessagesByLocation(
+                mailboxLocation.messageLocationTypeValue
+            )
+        } returns dbMessagesFlow
+        coEvery {
+            protonMailApiManager.getMessages(
+                mailboxLocation.messageLocationTypeValue,
+                UserIdTag(testUserId)
+            )
+        } returns netResponse
+        coEvery { messageDao.saveMessages(netMessages) } just Runs
+
+        // when
+        val resultsList = messageRepository.observeMessagesByLocation(mailboxLocation, testUserId).take(1).toList()
+
+        // then
+        coVerify { protonMailApiManager.getMessages(mailboxLocation.messageLocationTypeValue, UserIdTag(testUserId)) }
+        coVerify { messageDao.saveMessages(netMessages) }
+        assertEquals(netMessages, resultsList[0])
+    }
+
+    @Test
+    fun verifyThatInboxMessagesFromDbAndNetAreFetchedWithMoreThanOneScreenOfDbMessages() = runBlockingTest {
+        // given
+        val mailboxLocation = Constants.MessageLocationType.INBOX
+        val message5 = mockk<Message>(relaxed = true)
+        val message6 = mockk<Message>(relaxed = true)
+        val message7 = mockk<Message>(relaxed = true)
+        val message8 = mockk<Message>(relaxed = true)
+        val message9 = mockk<Message>(relaxed = true)
+        val message10 = mockk<Message>(relaxed = true)
+        val message11 = mockk<Message>(relaxed = true)
+        val message12 = mockk<Message>(relaxed = true)
+        val message13 = mockk<Message>(relaxed = true)
+        val message14 = mockk<Message>(relaxed = true)
+        val dbMessages = listOf(
+            message1, message2, message3, message4, message5, message6, message7, message8, message9, message10,
+            message11, message12
+        )
+        val dbMessagesFlow = MutableStateFlow(dbMessages)
+        val netMessages = listOf(message13, message14)
+        val netResponse = mockk<MessagesResponse> {
+            every { messages } returns netMessages
+            every { code } returns Constants.RESPONSE_CODE_OK
+        }
+        coEvery {
+            messageDao.observeMessagesByLocation(
+                mailboxLocation.messageLocationTypeValue
+            )
+        } returns dbMessagesFlow
+        coEvery {
+            protonMailApiManager.getMessages(
+                mailboxLocation.messageLocationTypeValue,
+                UserIdTag(testUserId)
+            )
+        } returns netResponse
+        coEvery { messageDao.saveMessages(netMessages) } just Runs
+
+        // when
+        val resultsList = messageRepository.observeMessagesByLocation(mailboxLocation, testUserId).take(1).toList()
+
+        // then
+        coVerify { protonMailApiManager wasNot Called }
+        assertEquals(dbMessages, resultsList[0])
+    }
+
+    @Test
+    fun verifyThatLabeledMessagesFromDbAndNetAreFetched() = runBlockingTest {
+        // given
+        val label1 = "label1"
+        val dbMessages = listOf(message1, message2)
+        val netMessages = listOf(message1, message2, message3, message4)
+        val netResponse = mockk<MessagesResponse> {
+            every { messages } returns netMessages
+            every { code } returns Constants.RESPONSE_CODE_OK
+        }
+        coEvery { messageDao.observeMessagesByLabelId(label1) } returns flowOf(dbMessages)
+        coEvery {
+            protonMailApiManager.searchByLabelAndPage(
+                label1,
+                0
+            )
+        } returns netResponse
+        coEvery { messageDao.saveMessages(netMessages) } just Runs
+
+        // when
+        val resultsList = messageRepository.observeMessagesByLabelId(label1, testUserId).take(1).toList()
+
+        // then
+        assertEquals(dbMessages, resultsList[0])
+    }
+
+    @Test
+    fun verifyThatAllMessagesFromDbAndNetworkAreFetched() = runBlockingTest {
+        // given
+        val dbMessages = listOf(message1, message2)
+        val netMessages = listOf(message1, message2, message3, message4)
+        val netResponse = mockk<MessagesResponse> {
+            every { messages } returns netMessages
+            every { code } returns Constants.RESPONSE_CODE_OK
+        }
+        coEvery { messageDao.observeAllMessages() } returns flowOf(dbMessages)
+        coEvery {
+            protonMailApiManager.getMessages(
+                Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
+                UserIdTag(testUserId)
+            )
+        } returns netResponse
+        coEvery { messageDao.saveMessages(netMessages) } just Runs
+
+        // when
+        val resultsList = messageRepository.observeAllMessages(testUserId).take(2).toList()
+
+        // then
+        coVerify { messageDao.saveMessages(netMessages) }
+        assertEquals(dbMessages, resultsList[0])
+    }
+
+    @Test
+    fun verifyThatAllStaredFromDbAndNetAreFetched() = runBlockingTest {
+        // given
+        val mailboxLocation = Constants.MessageLocationType.STARRED
+        val dbMessages = listOf(message1, message2)
+        val netMessages = listOf(message1, message2, message3, message4)
+        val netResponse = mockk<MessagesResponse> {
+            every { messages } returns netMessages
+            every { code } returns Constants.RESPONSE_CODE_OK
+        }
+        coEvery { messageDao.observeStarredMessages() } returns flowOf(dbMessages)
+        coEvery {
+            protonMailApiManager.getMessages(
+                Constants.MessageLocationType.STARRED.messageLocationTypeValue,
+                UserIdTag(testUserId)
+            )
+        } returns netResponse
+        coEvery { messageDao.saveMessages(netMessages) } just Runs
+
+        // when
+        val resultsList =
+            messageRepository.observeMessagesByLocation(mailboxLocation, Id(testUserName)).take(1).toList()
+
+        // then
+        coVerify {
+            protonMailApiManager.getMessages(
+                Constants.MessageLocationType.STARRED.messageLocationTypeValue, UserIdTag(testUserId)
+            )
+        }
+        coVerify { messageDao.saveMessages(netMessages) }
+        assertEquals(netMessages, resultsList[0])
+    }
+
+
 }

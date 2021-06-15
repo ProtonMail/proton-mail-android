@@ -39,7 +39,7 @@ class GetMessagesByLocation @Inject constructor(
             Constants.MessageLocationType.LABEL,
             Constants.MessageLocationType.LABEL_OFFLINE,
             Constants.MessageLocationType.LABEL_FOLDER ->
-                messageRepository.fetchMessagesByLabelId(requireNotNull(labelId), userId)
+                messageRepository.observeMessagesByLabelId(requireNotNull(labelId), userId)
             Constants.MessageLocationType.STARRED,
             Constants.MessageLocationType.DRAFT,
             Constants.MessageLocationType.SENT,
@@ -48,7 +48,7 @@ class GetMessagesByLocation @Inject constructor(
             Constants.MessageLocationType.SEARCH,
             Constants.MessageLocationType.SPAM,
             Constants.MessageLocationType.TRASH ->
-                messageRepository.fetchMessagesByLocation(
+                messageRepository.observeMessagesByLocation(
                     mailboxLocation,
                     userId
                 )

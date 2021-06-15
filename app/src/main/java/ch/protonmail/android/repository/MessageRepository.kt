@@ -216,7 +216,7 @@ class MessageRepository @Inject constructor(
         jobManager.addJobInBackground(PostUnreadJob(messageIds))
     }
 
-    fun fetchMessagesByLocation(
+    fun observeMessagesByLocation(
         location: Constants.MessageLocationType,
         userId: Id
     ): Flow<List<Message>> {
@@ -245,7 +245,7 @@ class MessageRepository @Inject constructor(
             }
     }
 
-    fun fetchMessagesByLabelId(
+    fun observeMessagesByLabelId(
         labelId: String,
         userId: Id
     ): Flow<List<Message>> {
