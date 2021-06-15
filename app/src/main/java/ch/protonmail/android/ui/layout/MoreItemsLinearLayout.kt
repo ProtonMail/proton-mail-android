@@ -126,7 +126,7 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
         measureChildren(widthMeasureSpec, heightMeasureSpec)
 
         // Measure this layout
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        super.onMeasure(getWidthMeasureSpec(widthMeasureSpec), getHeightMeasureSpec(heightMeasureSpec))
         var availableRelevantSize = getRelevantSizeFor(this)
 
         // show or hide children
@@ -159,6 +159,24 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
             }
         }
         moreTextView.isVisible = limitReached
+    }
+
+    private fun getWidthMeasureSpec(widthMeasureSpec: Int): Int {
+        return if (orientation == VERTICAL) {
+            val maxChildrenWidth = allChildren.maxOfOrNull { it.measuredWidth } ?: 0
+            MeasureSpec.makeMeasureSpec(maxChildrenWidth, MeasureSpec.EXACTLY)
+        } else {
+            widthMeasureSpec
+        }
+    }
+
+    private fun getHeightMeasureSpec(heightMeasureSpec: Int): Int {
+        return if (orientation == HORIZONTAL) {
+            val maxChildrenHeight = allChildren.maxOfOrNull { it.measuredHeight } ?: 0
+            MeasureSpec.makeMeasureSpec(maxChildrenHeight, MeasureSpec.EXACTLY)
+        } else {
+            heightMeasureSpec
+        }
     }
 
     private fun canBeStretchedToFit(view: View, effectiveAvailableSize: Int): Boolean =
