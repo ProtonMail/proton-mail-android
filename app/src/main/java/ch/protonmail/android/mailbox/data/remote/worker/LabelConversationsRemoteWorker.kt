@@ -42,6 +42,7 @@ const val KEY_LABEL_WORKER_CONVERSATION_IDS = "ConversationIds"
 const val KEY_LABEL_WORKER_LABEL_ID = "LabelId"
 const val KEY_LABEL_WORKER_USER_ID = "UserId"
 const val KEY_LABEL_WORKER_ERROR_DESCRIPTION = "ErrorDescription"
+private const val MAX_RUN_ATTEMPTS = 5
 
 /**
  * A worker that handles labeling conversations
@@ -75,6 +76,11 @@ class LabelConversationsRemoteWorker @AssistedInject constructor(
             onFailure = { throwable ->
                 if (throwable is CancellationException) {
                     throw throwable
+                }
+                if (runAttemptCount > MAX_RUN_ATTEMPTS) {
+                    Result.failure(
+                        workDataOf(KEY_LABEL_WORKER_ERROR_DESCRIPTION to "Run attempts exceeded the limit")
+                    )
                 } else {
                     Result.retry()
                 }

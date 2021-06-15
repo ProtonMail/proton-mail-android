@@ -136,7 +136,7 @@ class LabelConversationsRemoteWorkerTest {
     }
 
     @Test
-    fun shouldReturnRetryIfApiCallFails() {
+    fun shouldReturnRetryIfApiCallFailsAndRunAttemptsDoNotExceedTheLimit() {
         runBlockingTest {
             // given
             val conversationIdsArray = arrayOf("conversationId1", "conversationId2")
@@ -154,6 +154,41 @@ class LabelConversationsRemoteWorkerTest {
             coEvery { protonMailApiManager.labelConversations(any(), any()) } throws IOException()
 
             val expectedResult = ListenableWorker.Result.retry()
+
+            // when
+            val result = labelConversationsRemoteWorker.doWork()
+
+            // then
+            assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun shouldReturnFailureIfApiCallFailsAndRunAttemptsExceedTheLimit() {
+        runBlockingTest {
+            // given
+            val conversationIdsArray = arrayOf("conversationId1", "conversationId2")
+            val labelId = "labelId"
+            val userId = "userId"
+            every {
+                workerParameters.inputData.getStringArray(KEY_LABEL_WORKER_CONVERSATION_IDS)
+            } returns conversationIdsArray
+            every {
+                workerParameters.inputData.getString(KEY_LABEL_WORKER_LABEL_ID)
+            } returns labelId
+            every {
+                workerParameters.inputData.getString(KEY_LABEL_WORKER_USER_ID)
+            } returns userId
+            every {
+                workerParameters.runAttemptCount
+            } returns 6
+            coEvery {
+                protonMailApiManager.labelConversations(any(), any())
+            } throws IOException()
+
+            val expectedResult = ListenableWorker.Result.failure(
+                workDataOf(KEY_LABEL_WORKER_ERROR_DESCRIPTION to "Run attempts exceeded the limit")
+            )
 
             // when
             val result = labelConversationsRemoteWorker.doWork()

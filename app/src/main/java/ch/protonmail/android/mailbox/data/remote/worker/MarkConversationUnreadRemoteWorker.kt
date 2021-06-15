@@ -40,6 +40,7 @@ const val KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS = "ConversationIds"
 const val KEY_MARK_UNREAD_WORKER_UNDO_TOKEN = "UndoToken"
 const val KEY_MARK_UNREAD_WORKER_VALID_UNTIL = "ValidUntil"
 const val KEY_MARK_UNREAD_WORKER_ERROR_DESCRIPTION = "ErrorDescription"
+private const val MAX_RUN_ATTEMPTS = 5
 
 /**
  * A worker that handles marking a conversation as unread
@@ -73,6 +74,11 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
             onFailure = { throwable ->
                 if (throwable is CancellationException) {
                     throw throwable
+                }
+                if (runAttemptCount > MAX_RUN_ATTEMPTS) {
+                    Result.failure(
+                        workDataOf(KEY_MARK_UNREAD_WORKER_ERROR_DESCRIPTION to "Run attempts exceeded the limit")
+                    )
                 } else {
                     Result.retry()
                 }

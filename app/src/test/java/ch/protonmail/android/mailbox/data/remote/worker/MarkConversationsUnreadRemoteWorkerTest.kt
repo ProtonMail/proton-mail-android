@@ -127,14 +127,41 @@ class MarkConversationsUnreadRemoteWorkerTest {
     }
 
     @Test
-    fun shouldReturnRetryIfApiCallFails() {
+    fun shouldReturnRetryIfApiCallFailsAndRunAttemptsDoNotExceedTheLimit() {
         runBlockingTest {
             // given
             val conversationIdsArray = arrayOf("conversationId1", "conversationId2")
-            every { workerParameters.inputData.getStringArray(KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS) } returns conversationIdsArray
+            every {
+                workerParameters.inputData.getStringArray(KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS)
+            } returns conversationIdsArray
             coEvery { protonMailApiManager.markConversationsUnread(any()) } throws IOException()
 
             val expectedResult = ListenableWorker.Result.retry()
+
+            // when
+            val result = markConversationsUnreadRemoteWorker.doWork()
+
+            // then
+            assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun shouldReturnFailureIfApiCallFailsAndRunAttemptsExceedTheLimit() {
+        runBlockingTest {
+            // given
+            val conversationIdsArray = arrayOf("conversationId1", "conversationId2")
+            every {
+                workerParameters.inputData.getStringArray(KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS)
+            } returns conversationIdsArray
+            every {
+                workerParameters.runAttemptCount
+            } returns 6
+            coEvery { protonMailApiManager.markConversationsUnread(any()) } throws IOException()
+
+            val expectedResult = ListenableWorker.Result.failure(
+                workDataOf(KEY_MARK_UNREAD_WORKER_ERROR_DESCRIPTION to "Run attempts exceeded the limit")
+            )
 
             // when
             val result = markConversationsUnreadRemoteWorker.doWork()
