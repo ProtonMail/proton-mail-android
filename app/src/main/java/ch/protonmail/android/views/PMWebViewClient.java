@@ -18,6 +18,10 @@
  */
 package ch.protonmail.android.views;
 
+import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MAIL_TO;
+import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MESSAGE_BODY;
+import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MESSAGE_TITLE;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -48,10 +52,6 @@ import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.MessageUtils;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
-
-import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MAIL_TO;
-import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MESSAGE_BODY;
-import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MESSAGE_TITLE;
 
 public class PMWebViewClient extends WebViewClient {
 
@@ -195,7 +195,7 @@ public class PMWebViewClient extends WebViewClient {
         mLoadRemote = !block;
     }
 
-    public void loadRemoteResources() {
+    public void allowLoadingRemoteResources() {
         blockRemoteResources(false);
     }
 

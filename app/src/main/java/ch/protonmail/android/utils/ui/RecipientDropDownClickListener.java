@@ -125,7 +125,7 @@ public class RecipientDropDownClickListener implements View.OnClickListener {
 
         @Override
         protected ContactEmail doInBackground(Void... voids) {
-            return contactDao.findContactEmailByEmail(recipientEmail);
+            return contactDao.findContactEmailByEmailBlocking(recipientEmail);
         }
 
         @Override

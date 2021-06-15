@@ -95,7 +95,10 @@ interface ContactDao {
     fun findContactEmailById(id: String): ContactEmail?
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_EMAIL = :email")
-    fun findContactEmailByEmail(email: String): ContactEmail?
+    suspend fun findContactEmailByEmail(email: String): ContactEmail?
+
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_EMAIL = :email")
+    fun findContactEmailByEmailBlocking(email: String): ContactEmail?
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_EMAIL = :email")
     fun findContactEmailByEmailLiveData(email: String): LiveData<ContactEmail>

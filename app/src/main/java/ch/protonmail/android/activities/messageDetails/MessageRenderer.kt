@@ -23,6 +23,7 @@ package ch.protonmail.android.activities.messageDetails
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import ch.protonmail.android.details.presentation.model.RenderedMessage
 import ch.protonmail.android.di.AttachmentsDirectory
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.utils.extensions.forEachAsync
@@ -58,9 +59,9 @@ private const val DEBOUNCE_DELAY_MILLIS = 500L
  */
 internal class MessageRenderer(
     private val dispatchers: DispatcherProvider,
-    private val directory: File,
     private val documentParser: DocumentParser,
     private val bitmapImageDecoder: ImageDecoder,
+    private val attachmentsDirectory: File,
     scope: CoroutineScope
 ) : CoroutineScope by scope + dispatchers.Comp {
 
@@ -88,7 +89,7 @@ internal class MessageRenderer(
     }
 
     /** A [Channel] that will emits message body [String] with inlined images */
-    val renderedBody = Channel<String>()
+    val renderedMessage = Channel<RenderedMessage>()
 
     /** [List] for keep track of ids of the already inlined images across the threads */
     private val inlinedImageIds = mutableListOf<String>()
@@ -125,7 +126,8 @@ internal class MessageRenderer(
                     val embeddedImage = imageSelector.receive()
 
                     // Process the image
-                    val file = File(directory, embeddedImage.localFileName)
+                    val child = embeddedImage.localFileName ?: continue
+                    val file = File(messageDirectory(embeddedImage.messageId), child)
                     // Skip if file does not exist
                     if (!file.exists() || file.length() == 0L) continue
 
@@ -188,14 +190,18 @@ internal class MessageRenderer(
                 document.findImageElements(contentId)
                     ?.attr("src", "data:$contentType;$encoding,$image64")
             }
-            documentStringifier.send(Unit) // Deliver after all the elements for now
+
+            // Extract the message ID for which embedded images are being loaded
+            // to pass it back to the caller along with the rendered body
+            val messageId = imageStrings.firstOrNull()?.first?.messageId ?: continue
+            documentStringifier.send(messageId)
         }
     }
 
     /** Actor that will stringify the [document] */
-    private val documentStringifier = actor<Unit> {
-        for (unit in channel)
-            renderedBody.send(document.toString())
+    private val documentStringifier = actor<String> {
+        for (messageId in channel)
+            renderedMessage.send(RenderedMessage(messageId, document.toString()))
     }
 
     /** `CoroutineContext` for [idsListUpdater] for update [inlinedImageIds] of a single thread */
@@ -205,6 +211,9 @@ internal class MessageRenderer(
     private val idsListUpdater = actor<String>(idsListContext) {
         for (id in channel) inlinedImageIds += id
     }
+
+    /** @return [File] directory for the current message */
+    private fun messageDirectory(messageId: String) = File(attachmentsDirectory, messageId)
 
     /**
      * A Factory for create [MessageRenderer]
@@ -219,12 +228,10 @@ internal class MessageRenderer(
         private val documentParser: DocumentParser = DefaultDocumentParser(),
         private val imageDecoder: ImageDecoder = DefaultImageDecoder()
     ) {
-        /** @return [File] directory for the current message */
-        private fun messageDirectory(messageId: String) = File(attachmentsDirectory, messageId)
 
         /** @return new instance of [MessageRenderer] with the given [messageBody] */
-        fun create(scope: CoroutineScope, messageId: String) =
-            MessageRenderer(dispatchers, messageDirectory(messageId), documentParser, imageDecoder, scope)
+        fun create(scope: CoroutineScope) =
+            MessageRenderer(dispatchers, documentParser, imageDecoder, attachmentsDirectory, scope)
     }
 
 }

@@ -20,7 +20,9 @@
 package ch.protonmail.android.details.data
 
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.mailbox.data.recipientToCorespondent
+import ch.protonmail.android.mailbox.data.toMessageRecipients
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
 
@@ -42,10 +44,30 @@ internal fun Message.toDomainModel() = MessageDomainModel(
     labelsIds = allLabelIDs
 )
 
+internal fun MessageDomainModel.toDbModel() = Message(
+    messageId = id,
+    conversationId = conversationId,
+    subject = subject,
+    Unread = isUnread,
+    sender = MessageSender(sender.name, sender.address),
+    toList = receivers.toMessageRecipients(),
+    time = time,
+    numAttachments = attachmentsCount,
+    expirationTime = expirationTime,
+    isReplied = isReplied,
+    isRepliedAll = isRepliedAll,
+    isForwarded = isForwarded,
+    ccList = ccReceivers.toMessageRecipients(),
+    bccList = bccReceivers.toMessageRecipients(),
+    allLabelIDs = labelsIds
+)
+
 /**
  * Converts a list of messages from db to a list of domain message model
  */
 internal fun List<Message>.toDomainModelList() =
     map { message -> message.toDomainModel() }
 
+internal fun List<MessageDomainModel>.toDbModelList() =
+    map { message -> message.toDbModel() }
 

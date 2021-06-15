@@ -34,6 +34,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
+import io.mockk.slot
 import io.mockk.spyk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
@@ -77,25 +78,23 @@ class MessageRepositoryTest {
         runBlockingTest {
             // given
             val messageId = "messageId"
-            val mockMessage = mockk<Message> {
-                every { this@mockk getProperty "messageBody" } returns "messageBody"
-                every { this@mockk setProperty "messageBody" value any<String>() } just runs
-            }
+            val messageInDb = Message(messageId)
+            messageInDb.messageBody = "messageBody"
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
             coEvery { messageDao.findMessageByIdOnce(messageId) } returns null
-            coEvery { messageDao.saveMessage(mockMessage) } returns 123
+            coEvery { messageDao.saveMessage(messageInDb) } returns 123
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, any()) } returns mockk {
-                every { message } returns mockMessage
+                every { message } returns messageInDb
             }
 
             // when
             val result = messageRepository.getMessage(testUserId, messageId)
 
             // then
-            assertEquals(mockMessage, result)
-            coVerify { messageDao.saveMessage(mockMessage) }
+            assertEquals(messageInDb, result)
+            coVerify { messageDao.saveMessage(messageInDb) }
         }
     }
 
@@ -104,29 +103,25 @@ class MessageRepositoryTest {
         runBlockingTest {
             // given
             val messageId = "messageId"
-            val mockMessageInDb = mockk<Message> {
-                every { this@mockk getProperty "messageBody" } returns null
-                every { this@mockk setProperty "messageBody" value any<String>() } just runs
-            }
-            val mockMessageFetched = mockk<Message> {
-                every { this@mockk getProperty "messageBody" } returns "messageBody"
-                every { this@mockk setProperty "messageBody" value any<String>() } just runs
-            }
+            val messageInDb = Message(messageId)
+            messageInDb.messageBody = null
+            val messageFetched = Message(messageId)
+            messageFetched.messageBody = "messageBody"
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
-            coEvery { messageDao.findMessageByIdOnce(messageId) } returns mockMessageInDb
-            coEvery { messageDao.saveMessage(mockMessageFetched) } returns 123
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns messageInDb
+            coEvery { messageDao.saveMessage(messageFetched) } returns 123
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, any()) } returns mockk {
-                every { message } returns mockMessageFetched
+                every { message } returns messageFetched
             }
 
             // when
             val result = messageRepository.getMessage(testUserId, messageId)
 
             // then
-            assertEquals(mockMessageFetched, result)
-            coVerify { messageDao.saveMessage(mockMessageFetched) }
+            assertEquals(messageFetched, result)
+            coVerify { messageDao.saveMessage(messageFetched) }
         }
     }
 
@@ -135,25 +130,23 @@ class MessageRepositoryTest {
         runBlockingTest {
             // given
             val messageId = "messageId"
-            val mockMessage = mockk<Message> {
-                every { this@mockk getProperty "messageBody" } returns "messageBody"
-                every { this@mockk setProperty "messageBody" value any<String>() } just runs
-            }
+            val message = Message(messageId)
+            message.messageBody = "messageBody"
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns false
             }
             coEvery { messageDao.findMessageByIdOnce(messageId) } returns null
-            coEvery { messageDao.saveMessage(mockMessage) } returns 123
+            coEvery { messageDao.saveMessage(message) } returns 123
             coEvery { protonMailApiManager.fetchMessageMetadata(messageId, any()) } returns mockk {
-                every { messages } returns listOf(mockMessage)
+                every { messages } returns listOf(message)
             }
 
             // when
             val result = messageRepository.getMessage(testUserId, messageId)
 
             // then
-            assertEquals(mockMessage, result)
-            coVerify { messageDao.saveMessage(mockMessage) }
+            assertEquals(message, result)
+            coVerify { messageDao.saveMessage(message) }
         }
     }
 
@@ -231,7 +224,7 @@ class MessageRepositoryTest {
                 every { isGcmDownloadMessageDetails } returns true
             }
             coEvery { messageDao.findMessageByIdOnce(messageId) } returns null
-            coEvery { messageDao.saveMessage(mockMessage) } returns 123
+            coEvery { messageDao.saveMessage(any()) } returns 123
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, any()) } returns mockk {
                 every { message } returns mockMessage
             }
@@ -241,8 +234,11 @@ class MessageRepositoryTest {
             val result = messageRepository.getMessage(testUserId, messageId)
 
             // then
-            assertEquals("file://messageBody", result?.messageBody)
+            val savedMessageCaptor = slot<Message>()
+            assertEquals("file://messageBody", result!!.messageBody)
             coVerify { messageBodyFileManager.saveMessageBodyToFile(mockMessage) }
+            coVerify { messageDao.saveMessage(capture(savedMessageCaptor)) }
+            assertEquals("file://messageBody", savedMessageCaptor.captured.messageBody)
         }
     }
 
@@ -289,24 +285,46 @@ class MessageRepositoryTest {
         runBlockingTest {
             // given
             val messageId = "messageId"
-            val mockMessage = mockk<Message> {
-                every { this@mockk getProperty "messageBody" } returns "messageBody"
-                every { this@mockk setProperty "messageBody" value any<String>() } just runs
-            }
+            val message = Message(messageId)
+            message.messageBody = "messageBody"
             coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns false
             }
             coEvery { messageDao.findMessageByIdOnce(messageId) } returns null
-            coEvery { messageDao.saveMessage(mockMessage) } returns 123
+            coEvery { messageDao.saveMessage(message) } returns 123
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, any()) } returns mockk {
-                every { message } returns mockMessage
+                every { this@mockk.message } returns message
             }
 
             // when
             val result = messageRepository.getMessage(testUserId, messageId, shouldFetchMessageDetails = true)
 
             // then
-            assertEquals(mockMessage, result)
+            assertEquals(message, result)
+        }
+    }
+
+    @Test
+    fun verifyGetMessageSavesAndReturnMessageWithMessageBodyWhenMessageBodyIsNotTooBigToBeSavedInTheDatabase() {
+        runBlockingTest {
+            // given
+            val messageId = "messageId1"
+            val apiMessage = Message(messageId = messageId)
+            apiMessage.messageBody = "Any message body returned by the API"
+            coEvery { userManager.getLegacyUser(testUserId) } returns mockk {
+                every { isGcmDownloadMessageDetails } returns false
+            }
+            coEvery { messageDao.findMessageByIdOnce(messageId) } returns null
+            coEvery { messageDao.saveMessage(any()) } returns 1234
+            coEvery { protonMailApiManager.fetchMessageDetails(messageId, any()) } returns mockk {
+                every { message } returns apiMessage
+            }
+            // when
+            val result = messageRepository.getMessage(testUserId, messageId, shouldFetchMessageDetails = true)
+
+            // then
+            coVerify { messageDao.saveMessage(apiMessage) }
+            assertEquals("Any message body returned by the API", result!!.messageBody)
         }
     }
 }

@@ -152,7 +152,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
     }
     //TODO move database to receiver after kotlin
     private String getContactId(ContactDao contactDao, String contactEmailText) {
-        ContactEmail contactEmail =  contactDao.findContactEmailByEmail(contactEmailText);
+        ContactEmail contactEmail = contactDao.findContactEmailByEmailBlocking(contactEmailText);
         if (contactEmail == null) {
             return null;
         }

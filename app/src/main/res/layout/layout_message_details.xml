@@ -18,13 +18,21 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/messageDetailsView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/messagesDividerView"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:background="@drawable/list_divider"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="visible" />
+
 
     <ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
         android:id="@+id/headerView"
@@ -32,94 +40,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/headerDividerView"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/size_divider"
-        android:background="@drawable/list_divider"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/headerView" />
-
-    <ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
-        android:id="@+id/attachmentsView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerView"
-        android:visibility="gone"
-        tools:visibility="visible" />
-
-    <View
-        android:id="@+id/attachmentsDividerView"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/size_divider"
-        android:background="@drawable/list_divider"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/attachmentsView"
-        android:visibility="gone"
-        tools:visibility="visible" />
-
-    <ch.protonmail.android.views.messageDetails.MessageDetailsExpirationInfoView
-        android:id="@+id/expirationInfoView"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/message_details_banner_height"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/attachmentsView" />
-
-    <!-- TODO: To be replaced in another ticket for banners -->
-    <ch.protonmail.android.views.messageDetails.LoadContentButton
-        android:id="@+id/containerDisplayImages"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/message_spacing"
-        android:layout_marginTop="@dimen/message_spacing_small"
-        android:layout_marginRight="@dimen/message_spacing"
-        android:layout_marginBottom="@dimen/message_spacing_small"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/expirationInfoView"
-        android:visibility="gone"
-        app:text="@string/display_images"
-        tools:visibility="visible" />
-
-    <!-- TODO: To be replaced in another ticket for banners -->
-    <ch.protonmail.android.views.messageDetails.LoadContentButton
-        android:id="@+id/containerLoadEmbeddedImagesContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/message_spacing"
-        android:layout_marginTop="@dimen/message_spacing_small"
-        android:layout_marginRight="@dimen/message_spacing"
-        android:layout_marginBottom="@dimen/message_spacing_small"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/containerDisplayImages"
-        android:visibility="gone"
-        app:text="@string/load_embedded_images"
-        tools:visibility="visible" />
-
-    <!-- TODO: To be replaced in another ticket for banners -->
-    <TextView
-        android:id="@+id/spamScoreView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fields_default_space_small"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/containerLoadEmbeddedImagesContainer"
-        android:background="@color/warning"
-        android:padding="@dimen/fields_default_space"
-        android:textColor="@color/white"
-        android:visibility="visible"
-        tools:text="@string/spam_score_101" />
-
-    <!-- TODO: The web view should be moved here, but that requires changes in the adapter
-          that will probably be made with MAILAND-1535 -->
+        app:layout_constraintTop_toBottomOf="@id/messagesDividerView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

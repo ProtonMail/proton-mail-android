@@ -143,7 +143,7 @@ public class SendPreferencesFactory {
         Map<String, String> contactIDs = new HashMap<>();
         for (String email : emails) {
             Address address = getAddress(email);
-            ContactEmail contactEmail = contactDao.findContactEmailByEmail(email);
+            ContactEmail contactEmail = contactDao.findContactEmailByEmailBlocking(email);
             if (address != null || contactEmail == null ) {
                 continue;
             }

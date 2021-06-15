@@ -25,11 +25,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
 import android.view.MenuItem
@@ -37,10 +34,10 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import android.webkit.WebView
 import android.webkit.WebView.HitTestResult
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.getSystemService
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -49,15 +46,11 @@ import ch.protonmail.android.activities.BaseStoragePermissionActivity
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
-import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
-import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.data.local.model.PendingSend
+import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
@@ -74,15 +67,14 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.MODE_ACCORDION
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
-import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.BottomActionsView
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
 import kotlinx.android.synthetic.main.layout_message_details_activity_toolbar.*
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
@@ -97,15 +89,12 @@ private const val ONE_HUNDRED_PERCENT = 1.0
 @AndroidEntryPoint
 internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
-    private lateinit var messageId: String
-    private lateinit var pmWebViewClient: PMWebViewClient
+    private lateinit var messageOrConversationId: String
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
-    private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
     private lateinit var primaryBaseActivity: Context
 
     private var messageRecipientUserId: Id? = null
     private var messageRecipientUsername: String? = null
-    private val buttonsVisibilityHandler = Handler(Looper.getMainLooper())
     private val attachmentToDownloadId = AtomicReference<String?>(null)
     private var showPhishingReportButton = true
     private var shouldTitleFadeOut = false
@@ -114,9 +103,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     /** Lazy instance of [ClipboardManager] that will be used for copy content into the Clipboard */
     private val clipboardManager by lazy { getSystemService<ClipboardManager>() }
-
-    private var showActionButtons = false
-    private var buttonsVisibilityRunnable = Runnable { messageDetailsActionsView.visibility = View.VISIBLE }
 
     private val onOffsetChangedListener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
         val scrolledPercentage = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange.toFloat()
@@ -153,7 +139,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     override fun storagePermissionGranted() {
         val attachmentToDownloadIdAux = attachmentToDownloadId.getAndSet(null)
         if (!attachmentToDownloadIdAux.isNullOrEmpty()) {
-            viewModel.viewOrDownloadAttachment(this, attachmentToDownloadIdAux, messageId)
+            viewModel.viewOrDownloadAttachment(this, attachmentToDownloadIdAux)
         }
     }
 
@@ -166,7 +152,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        messageId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_ID))
+        messageOrConversationId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_OR_CONVERSATION_ID))
         messageRecipientUserId = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USER_ID)?.let(::Id)
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
         val currentUser = mUserManager.requireCurrentUser()
@@ -197,12 +183,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
         appBarLayout.addOnOffsetChangedListener(onOffsetChangedListener)
 
-        starToggleButton.setOnCheckedChangeListener(OnStarToggleListener(mJobManager, messageId))
+        starToggleButton.setOnCheckedChangeListener(OnStarToggleListener(mJobManager, messageOrConversationId))
     }
 
     private fun continueSetup() {
-        viewModel.message.observe(this, MessageObserver())
-        viewModel.decryptedMessageData.observe(this, DecryptedMessageObserver())
+        viewModel.conversationUiModel.observe(this) { viewModel.loadMailboxItemDetails() }
+        viewModel.decryptedConversationUiModel.observe(this, ConversationUiModelObserver())
 
         viewModel.labels
             .onEach(messageExpandableAdapter::setAllLabels)
@@ -211,27 +197,57 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             .onEach(messageExpandableAdapter::setNonInclusiveLabels)
             .launchIn(lifecycleScope)
 
-        viewModel.webViewContent.observe(this, WebViewContentObserver())
         viewModel.messageDetailsError.observe(this, MessageDetailsErrorObserver())
-        viewModel.pendingSend.observe(this, PendingSendObserver())
         listenForConnectivityEvent()
         observeEditMessageEvents()
     }
 
     private fun initAdapters() {
-        attachmentsListAdapter = MessageDetailsAttachmentListAdapter(
-            this,
-            OnAttachmentDownloadCallback(storagePermissionHelper, attachmentToDownloadId)
-        )
-        pmWebViewClient = MessageDetailsPmWebViewClient(mUserManager, this)
         messageExpandableAdapter = MessageDetailsAdapter(
             this,
-            Message(),
-            "",
+            listOf(),
             messageDetailsRecyclerView,
-            pmWebViewClient,
-            { onLoadEmbeddedImagesCLick() }
-        ) { onDisplayImagesCLick() }
+            { onLoadEmbeddedImagesClicked() },
+            onDisplayRemoteContentClicked(),
+            storagePermissionHelper,
+            attachmentToDownloadId,
+            mUserManager,
+            onLoadMessageBody()
+        )
+    }
+
+    private fun onLoadMessageBody() = { message: Message ->
+        if (message.messageId != null) {
+            viewModel.loadMessageBody(message).mapLatest { loadedMessage ->
+
+                val parsedBody = viewModel.getParsedMessage(
+                    loadedMessage.decryptedHTML,
+                    UiUtil.getRenderWidth(this.windowManager),
+                    AppUtil.readTxt(this, R.raw.editor),
+                    this.getString(R.string.request_timeout)
+                )
+
+                val messageId = loadedMessage.messageId ?: return@mapLatest
+                messageExpandableAdapter.showMessageBody(
+                    parsedBody,
+                    messageId,
+                    shouldShowLoadEmbeddedImagesButton(message)
+                )
+            }.launchIn(lifecycleScope)
+        }
+    }
+
+    private fun shouldShowLoadEmbeddedImagesButton(message: Message): Boolean {
+        val hasEmbeddedImages = viewModel.prepareEmbeddedImages(message)
+        if (!hasEmbeddedImages) {
+            return false
+        }
+
+        val displayEmbeddedImages = viewModel.isAutoShowEmbeddedImages() || viewModel.isEmbeddedImagesDisplayed()
+        if (displayEmbeddedImages) {
+            viewModel.displayEmbeddedImages()
+        }
+        return !displayEmbeddedImages
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenuInfo?) {
@@ -282,7 +298,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         return true
     }
 
-    fun showReportPhishingDialog(message: Message? = viewModel.decryptedMessageData.value) {
+    fun showReportPhishingDialog(message: Message? = viewModel.decryptedConversationUiModel.value?.messages?.last()) {
         AlertDialog.Builder(this)
             .setTitle(R.string.phishing_dialog_title)
             .setMessage(R.string.phishing_dialog_message)
@@ -291,11 +307,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 mJobManager.addJobInBackground(ReportPhishingJob(message))
             }
             .setNegativeButton(R.string.cancel, null).show()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        buttonsVisibilityHandler.removeCallbacks(buttonsVisibilityRunnable)
     }
 
     private fun showNoConnSnackExtended(connectivity: Constants.ConnectionState) {
@@ -312,7 +323,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun onConnectivityCheckRetry() {
-        viewModel.fetchMessageDetails(false)
+        viewModel.loadMailboxItemDetails()
         networkSnackBarUtil.getCheckingConnectionSnackBar(
             mSnackLayout,
             R.id.messageDetailsActionsView
@@ -332,24 +343,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 Timber.v("isConnectionActive:${isConnectionActive.name}")
                 if (isConnectionActive == Constants.ConnectionState.CONNECTED) {
                     hideNoConnSnackExtended()
-                    viewModel.fetchMessageDetails(false)
+                    viewModel.loadMailboxItemDetails()
                 } else {
                     showNoConnSnackExtended(isConnectionActive)
-                }
-            }
-        )
-    }
-
-    fun listenForRecipientsKeys() {
-        viewModel.reloadRecipientsEvent.observe(
-            this,
-            Observer { event: Event<Boolean?>? ->
-                if (event == null) {
-                    return@Observer
-                }
-                val content = event.getContentIfNotHandled() ?: return@Observer
-                if (content) {
-                    messageExpandableAdapter.refreshRecipientsLayout()
                 }
             }
         )
@@ -362,7 +358,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         val toastMessageId: Int
         when (status) {
             Status.SUCCESS -> {
-                mJobManager.addJobInBackground(PostSpamJob(listOf(messageId)))
+                mJobManager.addJobInBackground(PostSpamJob(listOf(messageOrConversationId)))
                 toastMessageId = R.string.phishing_report_send_message_moved_to_spam
                 finish()
             }
@@ -389,55 +385,25 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         return decryptedBody
     }
 
-    private fun filterAndLoad(decryptedMessage: String) {
-
-        val parsedMessage = viewModel.getParsedMessage(
-            decryptedMessage,
-            UiUtil.getRenderWidth(windowManager),
-            AppUtil.readTxt(this, R.raw.editor),
-            resources.getString(R.string.request_timeout)
-        )
-
-        if (isAutoShowRemoteImages) {
-            viewModel.remoteContentDisplayed()
-        }
-        messageExpandableAdapter.displayContainerDisplayImages(View.GONE)
-        pmWebViewClient.blockRemoteResources(!isAutoShowRemoteImages)
-        viewModel.webViewContentWithoutImages.value = parsedMessage
-    }
-
     override fun onBackPressed() {
         saveLastInteraction()
         finish()
     }
 
-    // TODO should be moved inside view model
     @Subscribe
     @Suppress("unused")
     fun onDownloadEmbeddedImagesEvent(event: DownloadEmbeddedImagesEvent) {
         when (event.status) {
             Status.SUCCESS -> {
-                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
-                viewModel.downloadEmbeddedImagesResult.observe(this) { content ->
-                    Timber.v("downloadEmbeddedImagesResult content size: ${content.length}")
-                    if (content.isNullOrEmpty()) {
-                        return@observe
-                    }
-                    viewModel.webViewContentWithImages.setValue(content)
-                }
-
                 viewModel.onEmbeddedImagesDownloaded(event)
             }
             Status.NO_NETWORK -> {
-                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.VISIBLE)
                 showToast(R.string.load_embedded_images_failed_no_network)
             }
             Status.FAILED -> {
-                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.VISIBLE)
                 showToast(R.string.load_embedded_images_failed)
             }
             Status.STARTED -> {
-                messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
                 viewModel.hasEmbeddedImages = false
             }
             Status.UNAUTHORIZED -> {
@@ -454,10 +420,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     fun onDownloadAttachmentEvent(event: DownloadedAttachmentEvent) {
         when (val status = event.status) {
             Status.STARTED, Status.SUCCESS -> {
-                val eventAttachmentId = event.attachmentId
                 val isDownloaded = Status.SUCCESS == status
-                attachmentsListAdapter.setIsPgpEncrypted(viewModel.isPgpEncrypted())
-                attachmentsListAdapter.setDownloaded(eventAttachmentId, isDownloaded)
                 if (isDownloaded) {
                     viewModel.viewAttachment(this, event.filename, event.attachmentUri)
                 } else {
@@ -497,125 +460,15 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private inner class MessageObserver : Observer<Message?> {
+    private inner class ConversationUiModelObserver : Observer<ConversationUiModel> {
 
-        override fun onChanged(message: Message?) {
-            Timber.v("Message changed isDownloaded: ${message?.isDownloaded} rendered: ${viewModel.renderingPassed}")
-            if (message != null) {
-                onMessageFound(message)
-            } else {
-                onMessageNotFound()
-            }
-        }
+        override fun onChanged(conversation: ConversationUiModel) {
+            val message = lastMessage(conversation)
 
-        private fun onMessageFound(message: Message) {
-            starToggleButton.isChecked = message.isStarred ?: false
-            viewModel.addressId = message.addressID!!
-            if (message.isDownloaded) {
-                if (!viewModel.renderingPassed) {
-                    viewModel.fetchMessageDetails(true)
-                }
-                // we need to update the details, when e.g. message has been moved to another folder
-                messageExpandableAdapter.setMessageData(message)
-                messageDetailsActionsView.setOnMoreActionClickListener {
-                    MessageActionSheet.newInstance(
-                        originatorLocationId = MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
-                        messagesIds = listOf(message.messageId ?: messageId),
-                        currentFolderLocationId = message.location,
-                        title = getCurrentSubject(),
-                        subTitle = getMessagesFrom(message.sender?.name),
-                        isStarred = message.isStarred ?: false
-                    )
-                        .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
-                }
-            } else {
-                viewModel.fetchMessageDetails(false)
-            }
-        }
+            displayToolbarData(conversation)
+            setupLastMessageActionsListener(message)
 
-        private fun onMessageNotFound() {
-            if (messageRecipientUsername != null && mNetworkUtil.isConnected()) {
-                // request to fetch message if didn't find in local database
-                viewModel.fetchMessageDetails(false)
-            }
-        }
-    }
-
-    private inner class MessageDetailsPmWebViewClient(
-        userManager: UserManager,
-        activity: MessageDetailsActivity
-    ) : PMWebViewClient(userManager, activity, false) {
-
-        override fun onPageFinished(view: WebView, url: String) {
-            if (amountOfRemoteResourcesBlocked() > 0) {
-                messageExpandableAdapter.displayContainerDisplayImages(View.VISIBLE)
-            }
-            if (showActionButtons) {
-                // workaround on some devices, the buttons appear quicker than the webview renders
-                // the data
-                buttonsVisibilityHandler.postDelayed(buttonsVisibilityRunnable, 500)
-            }
-            super.onPageFinished(view, url)
-        }
-    }
-
-    private var prevAttachments: List<Attachment>? = null
-
-    private inner class AttachmentsObserver : Observer<List<Attachment>?> {
-
-        override fun onChanged(newAttachments: List<Attachment>?) {
-            /* Workaround for don't let it loop. TODO: Find the cause of the infinite loop after
-            Attachments are downloaded and screen has been locked / unlocked */
-            val attachments: List<Attachment>?
-            var loadImages = false
-            if (newAttachments != null && newAttachments == prevAttachments) {
-                attachments = prevAttachments
-            } else {
-                // load images only if there is a difference in attachments from the previous load
-                loadImages = true
-                prevAttachments = newAttachments
-                attachments = prevAttachments
-            }
-            if (attachments != null) {
-                viewModel.setAttachmentsList(attachments)
-                val hasEmbeddedImages = viewModel.prepareEmbeddedImages()
-                if (hasEmbeddedImages) {
-                    if (isAutoShowEmbeddedImages || viewModel.isEmbeddedImagesDisplayed()) {
-                        if (loadImages) {
-                            viewModel.displayEmbeddedImages()
-                        }
-                        messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
-                    } else {
-                        messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.VISIBLE)
-                    }
-                } else {
-                    messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
-                }
-                displayAttachmentInfo(attachments)
-            } else {
-                messageExpandableAdapter.displayAttachmentsViews(View.GONE)
-            }
-        }
-    }
-
-    private fun displayAttachmentInfo(attachments: List<Attachment>) {
-        val attachmentsCount = attachments.size
-        val totalAttachmentSize = attachments.map { it.fileSize }.sum()
-
-        attachmentsListAdapter.setList(attachments)
-        messageExpandableAdapter.attachmentsView.bind(attachmentsCount, totalAttachmentSize, attachmentsListAdapter)
-        val attachmentsVisibility = if (attachmentsCount > 0) View.VISIBLE else View.GONE
-        messageExpandableAdapter.displayAttachmentsViews(attachmentsVisibility)
-    }
-
-    private inner class DecryptedMessageObserver : Observer<Message?> {
-
-        override fun onChanged(message: Message?) {
-            if (message == null) {
-                return
-            }
             Timber.v("New decrypted message ${message.messageId}")
-            viewModel.messageAttachments.observe(this@MessageDetailsActivity, AttachmentsObserver())
             viewModel.renderedFromCache = AtomicBoolean(true)
             val decryptedBody = getDecryptedBody(message.decryptedHTML)
             if (decryptedBody.isEmpty() || message.messageBody.isNullOrEmpty()) {
@@ -623,45 +476,16 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 return
             }
 
-            val subject = if (message.subject.isNullOrEmpty()) getString(R.string.empty_subject) else message.subject
-            collapsedToolbarTitleTextView.text = subject
-            collapsedToolbarTitleTextView.visibility = View.INVISIBLE
-            expandedToolbarTitleTextView.text = subject
-
-            messageExpandableAdapter.setMessageData(message)
-            messageExpandableAdapter.refreshRecipientsLayout()
+            messageExpandableAdapter.setMessageData(conversation.messages)
             if (viewModel.refreshedKeys) {
-                filterAndLoad(decryptedBody)
+                if (isAutoShowRemoteImages) {
+                    viewModel.remoteContentDisplayed()
+                }
                 messageExpandableAdapter.mode = MODE_ACCORDION
                 messageDetailsRecyclerView.layoutManager = LinearLayoutManager(this@MessageDetailsActivity)
-                listenForRecipientsKeys()
                 messageDetailsRecyclerView.adapter = messageExpandableAdapter
             }
             viewModel.triggerVerificationKeyLoading()
-
-            val actionsUiModel = BottomActionsView.UiModel(
-                if (message.toList.size + message.ccList.size > 1) R.drawable.ic_reply_all else R.drawable.ic_reply,
-                R.drawable.ic_envelope_dot,
-                R.drawable.ic_trash
-            )
-            messageDetailsActionsView.bind(actionsUiModel)
-            messageDetailsActionsView.setOnThirdActionClickListener {
-                viewModel.moveToTrash()
-                onBackPressed()
-            }
-            messageDetailsActionsView.setOnSecondActionClickListener {
-                viewModel.markUnread()
-                onBackPressed()
-            }
-            messageDetailsActionsView.setOnFirstActionClickListener {
-                val messageAction = if (message.toList.size + message.ccList.size > 1) {
-                    Constants.MessageActionType.REPLY_ALL
-                } else {
-                    Constants.MessageActionType.REPLY
-                }
-                executeMessageAction(messageAction, message)
-            }
-
 
             progress.visibility = View.GONE
             invalidateOptionsMenu()
@@ -669,10 +493,65 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    // TODO: Move as much as possible of this method to ViewModel
+    private fun setupLastMessageActionsListener(message: Message) {
+        messageDetailsActionsView.setOnMoreActionClickListener {
+            MessageActionSheet.newInstance(
+                MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
+                listOf(message.messageId ?: messageOrConversationId),
+                message.location,
+                getCurrentSubject(),
+                getMessagesFrom(message.sender?.name),
+                message.isStarred ?: false
+            )
+                .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
+        }
+
+        val actionsUiModel = BottomActionsView.UiModel(
+            if (message.toList.size + message.ccList.size > 1) R.drawable.ic_reply_all else R.drawable.ic_reply,
+            R.drawable.ic_envelope_dot,
+            R.drawable.ic_trash
+        )
+        messageDetailsActionsView.bind(actionsUiModel)
+        messageDetailsActionsView.setOnThirdActionClickListener {
+            viewModel.moveToTrash()
+            onBackPressed()
+        }
+        messageDetailsActionsView.setOnSecondActionClickListener {
+            viewModel.markUnread()
+            onBackPressed()
+        }
+        messageDetailsActionsView.setOnFirstActionClickListener {
+            val messageAction = if (message.toList.size + message.ccList.size > 1) {
+                Constants.MessageActionType.REPLY_ALL
+            } else {
+                Constants.MessageActionType.REPLY
+            }
+            executeMessageAction(messageAction, message)
+        }
+
+    }
+
+    private fun displayToolbarData(conversation: ConversationUiModel) {
+        starToggleButton.isChecked = conversation.isStarred
+        val isInvalidSubject = conversation.subject.isNullOrEmpty()
+        val subject = if (isInvalidSubject) getString(R.string.empty_subject) else conversation.subject
+        val messagesInConversation = conversation.messages.count()
+        toolbarMessagesCountTextView.text = resources.getQuantityString(
+            R.plurals.x_messages_count,
+            messagesInConversation,
+            messagesInConversation
+        )
+        toolbarMessagesCountTextView.isVisible = messagesInConversation > 1
+        collapsedToolbarTitleTextView.text = subject
+        collapsedToolbarTitleTextView.visibility = View.INVISIBLE
+        expandedToolbarTitleTextView.text = subject
+    }
+
+    private fun lastMessage(conversation: ConversationUiModel): Message = conversation.messages.last()
+
     fun executeMessageAction(
         messageAction: Constants.MessageActionType,
-        message: Message = requireNotNull(viewModel.decryptedMessageData.value)
+        message: Message = requireNotNull(viewModel.decryptedConversationUiModel.value?.messages?.last())
     ) {
         try {
             val user = mUserManager.requireCurrentLegacyUser()
@@ -839,35 +718,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private inner class WebViewContentObserver : Observer<String?> {
-
-        override fun onChanged(content: String?) {
-            messageExpandableAdapter.loadDataFromUrlToMessageView(content!!)
-        }
-    }
-
-    private inner class PendingSendObserver : Observer<PendingSend?> {
-
-        override fun onChanged(pendingSend: PendingSend?) {
-            if (pendingSend != null) {
-                val cannotEditSnack = Snackbar.make(
-                    findViewById(R.id.root_layout),
-                    R.string.message_can_not_edit,
-                    Snackbar.LENGTH_INDEFINITE
-                )
-                val view = cannotEditSnack.view
-                view.setBackgroundColor(getColor(R.color.red))
-                val tv = view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-                tv.setTextColor(Color.WHITE)
-                cannotEditSnack.show()
-                messageDetailsActionsView.visibility = View.INVISIBLE
-            } else {
-                showActionButtons = true
-            }
-        }
-    }
-
-    private fun onLoadEmbeddedImagesCLick() {
+    private fun onLoadEmbeddedImagesClicked() {
         // this will ensure that the message has been loaded
         // and will protect from premature clicking on download attachments button
         if (viewModel.renderingPassed) {
@@ -876,10 +727,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         return
     }
 
-    private fun onDisplayImagesCLick() {
-        viewModel.displayRemoteContentClicked()
+    private fun onDisplayRemoteContentClicked() = { message: Message ->
+        viewModel.displayRemoteContent(message)
         viewModel.checkStoragePermission.observe(this, { storagePermissionHelper.checkPermission() })
-        return
     }
 
     fun printMessage() {
@@ -888,7 +738,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     companion object {
 
-        const val EXTRA_MESSAGE_ID = "messageId"
+        const val EXTRA_MESSAGE_OR_CONVERSATION_ID = "messageOrConversationId"
+        const val EXTRA_MESSAGE_LOCATION_ID = "messageOrConversationLocation"
 
         const val EXTRA_MESSAGE_RECIPIENT_USER_ID = "message_recipient_user_id"
         const val EXTRA_MESSAGE_RECIPIENT_USERNAME = "message_recipient_username"

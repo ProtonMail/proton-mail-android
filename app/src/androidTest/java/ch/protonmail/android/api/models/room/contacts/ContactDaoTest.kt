@@ -287,7 +287,7 @@ internal class ContactDaoTest {
     @Test
     fun findContactEmailByEmail() {
         val expected = contactEmails[2]
-        val actual = database.findContactEmailByEmail(expected.email)
+        val actual = database.findContactEmailByEmailBlocking(expected.email)
         Assert.assertEquals(expected, actual)
         assertDatabaseState()
     }

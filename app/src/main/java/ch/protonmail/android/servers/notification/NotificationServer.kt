@@ -350,7 +350,8 @@ class NotificationServer @Inject constructor(
     ) {
         // Create content Intent for open MessageDetailsActivity
         val contentIntent = Intent(context, MessageDetailsActivity::class.java)
-            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, messageId)
+            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_OR_CONVERSATION_ID, messageId)
+            .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID, message?.location)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USER_ID, user.id.s)
             .putExtra(MessageDetailsActivity.EXTRA_MESSAGE_RECIPIENT_USERNAME, user.name.s)
 
@@ -423,20 +424,21 @@ class NotificationServer @Inject constructor(
      * @param sender [String] name of the sender of the email
      */
     @Deprecated(
-        "Use with new User model", ReplaceWith(
-        "notifySingleNewEmail(\n" +
-            "    userManager,\n" +
-            "    user.toNewUser(),\n" +
-            "    user.notificationSetting,\n" +
-            "    user.ringtone,\n" +
-            "    user.isNotificationVisibilityLockScreen,\n" +
-            "    message,\n" +
-            "    messageId,\n" +
-            "    notificationBody,\n" +
-            "    sender,\n" +
-            "    primaryUser\n" +
-            ")"
-    )
+        "Use with new User model",
+        ReplaceWith(
+            "notifySingleNewEmail(\n" +
+                "    userManager,\n" +
+                "    user.toNewUser(),\n" +
+                "    user.notificationSetting,\n" +
+                "    user.ringtone,\n" +
+                "    user.isNotificationVisibilityLockScreen,\n" +
+                "    message,\n" +
+                "    messageId,\n" +
+                "    notificationBody,\n" +
+                "    sender,\n" +
+                "    primaryUser\n" +
+                ")"
+        )
     )
     fun notifySingleNewEmail(
         userManager: UserManager,
@@ -515,16 +517,17 @@ class NotificationServer @Inject constructor(
      * @param unreadNotifications [List] of [RoomNotification] to show to the user
      */
     @Deprecated(
-        "Use with new User model", ReplaceWith(
-        "notifyMultipleUnreadEmail(\n" +
-            "    userManager,\n" +
-            "    user.toNewUser(),\n" +
-            "    user.notificationSetting,\n" +
-            "    user.ringtone,\n" +
-            "    user.isNotificationVisibilityLockScreen,\n" +
-            "    unreadNotifications\n" +
-            ")"
-    )
+        "Use with new User model",
+        ReplaceWith(
+            "notifyMultipleUnreadEmail(\n" +
+                "    userManager,\n" +
+                "    user.toNewUser(),\n" +
+                "    user.notificationSetting,\n" +
+                "    user.ringtone,\n" +
+                "    user.isNotificationVisibilityLockScreen,\n" +
+                "    unreadNotifications\n" +
+                ")"
+        )
     )
     fun notifyMultipleUnreadEmail(
         userManager: UserManager,
