@@ -159,9 +159,11 @@ import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.time.seconds
+import kotlin.time.toDuration
 
 private const val TAG_MAILBOX_ACTIVITY = "MailboxActivity"
 private const val PLAY_SERVICES_RESOLUTION_REQUEST = 9000
@@ -1102,11 +1104,6 @@ class MailboxActivity :
             }
         }
         if (job != null) {
-            // show progress bar for visual representation of work in background,
-            // if all the messages inside the folder are impacted by the action
-            if (mailboxAdapter.itemCount == messageIds.size) {
-                setRefreshing(true)
-            }
             mJobManager.addJobInBackground(job)
         }
 
@@ -1151,11 +1148,6 @@ class MailboxActivity :
                     false
                 )
                 undoSnack!!.show()
-                // show progress bar for visual representation of work in background,
-                // if all the messages inside the folder are impacted by the action
-                if (mailboxAdapter.itemCount == messageIds.size) {
-                    setRefreshing(true)
-                }
                 mJobManager.addJobInBackground(PostTrashJobV2(messageIds, mailboxLabelId))
             }
             actionMode?.finish()
@@ -1223,12 +1215,6 @@ class MailboxActivity :
     }
 
     private fun showFoldersManager(messageIds: List<String>) {
-        // show progress bar for visual representation of work in background,
-        // if all the messages inside the folder are impacted by the action
-        if (mailboxAdapter.itemCount == messageIds.size) {
-            setRefreshing(true)
-        }
-
         LabelsActionSheet.newInstance(
             messageIds,
             currentMailboxLocation.messageLocationTypeValue,
@@ -1247,13 +1233,17 @@ class MailboxActivity :
 
     /* SwipeRefreshLayout.OnRefreshListener */
     override fun onRefresh() {
-        setRefreshing(true)
         syncUUID = UUID.randomUUID().toString()
         mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
         loadMailboxItems(
             includeLabels = true,
             refreshMessages = true
         )
+        // this is just to stop the progress to prevent it being shown "forever"
+        lifecycleScope.launch {
+            delay(3.toDuration(TimeUnit.SECONDS))
+            setRefreshing(false)
+        }
     }
 
     private fun now() = System.currentTimeMillis() / 1000
