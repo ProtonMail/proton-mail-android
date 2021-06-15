@@ -22,6 +22,7 @@ package ch.protonmail.android.repository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
@@ -37,6 +38,7 @@ import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
@@ -45,13 +47,12 @@ import timber.log.Timber
 import javax.inject.Inject
 
 const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
-
+private const val VISIBLE_PAGE_ITEMS_SIZE_ESTIMATION = 12 // rough number of items on fulls scree
 private const val FILE_PREFIX = "file://"
 
 /**
  * A repository for getting and saving messages.
  */
-
 class MessageRepository @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val databaseProvider: DatabaseProvider,
@@ -213,6 +214,80 @@ class MessageRepository @Inject constructor(
     fun markUnRead(messageIds: List<String>) {
         Timber.d("markUnRead $messageIds")
         jobManager.addJobInBackground(PostUnreadJob(messageIds))
+    }
+
+    fun fetchMessagesByLocation(
+        location: Constants.MessageLocationType,
+        userId: Id
+    ): Flow<List<Message>> {
+        val messagesDao = databaseProvider.provideMessageDao(userId)
+        return if (location != Constants.MessageLocationType.STARRED) {
+            messagesDao.observeMessagesByLocation(location.messageLocationTypeValue)
+        } else {
+            messagesDao.observeStarredMessages()
+        }
+            .map { dbData ->
+                val currentUser = userManager.currentUser
+                Timber.v("messages DB for location(id=${location.messageLocationTypeValue}): $location")
+                Timber.v("dbData size: ${dbData.size} user: $currentUser, trying fetching from remote")
+                if (dbData.size < VISIBLE_PAGE_ITEMS_SIZE_ESTIMATION) {
+                    val messagesResponse =
+                        protonMailApiManager.getMessages(location.messageLocationTypeValue, UserIdTag(userId))
+                    if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
+                        persistMessages(messagesResponse.messages, userId, location.messageLocationTypeValue)
+                        messagesResponse.messages
+                    } else {
+                        dbData
+                    }
+                } else {
+                    dbData
+                }
+            }
+    }
+
+    fun fetchMessagesByLabelId(
+        labelId: String,
+        userId: Id
+    ): Flow<List<Message>> {
+        val messagesDao = databaseProvider.provideMessageDao(userId)
+        return messagesDao.observeMessagesByLabelId(labelId)
+            .onEach { dbData ->
+                Timber.v("Messages DB for labelId: $labelId, db data size: ${dbData.size}, trying fetching from remote")
+                val labelsResponse = protonMailApiManager.searchByLabelAndPage(labelId, 0)
+                if (labelsResponse.code == Constants.RESPONSE_CODE_OK) {
+                    persistMessages(labelsResponse.messages, userId)
+                }
+            }
+    }
+
+    fun observeAllMessages(userId: Id): Flow<List<Message>> {
+        val messagesDao = databaseProvider.provideMessageDao(userId)
+        return messagesDao.observeAllMessages()
+            .onEach {
+                Timber.v("re-fetching messages all from remote")
+                val messagesResponse = protonMailApiManager.getMessages(
+                    Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
+                    UserIdTag(userId)
+                )
+                if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
+                    persistMessages(messagesResponse.messages, userId)
+                }
+            }
+    }
+
+    private suspend fun persistMessages(
+        messages: List<Message>,
+        userId: Id,
+        messageLocationTypeValue: Int? = null
+    ) = withContext(dispatcherProvider.Io) {
+        val messagesDao = databaseProvider.provideMessageDao(userId)
+        messages.forEach { message ->
+            if (messageLocationTypeValue != null && messageLocationTypeValue > 0) {
+                message.location = messageLocationTypeValue
+            }
+            message.setFolderLocation(messagesDao)
+        }
+        messagesDao.saveMessages(messages)
     }
 
 }

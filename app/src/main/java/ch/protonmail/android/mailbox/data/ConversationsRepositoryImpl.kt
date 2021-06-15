@@ -82,7 +82,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             writer = { key: ConversationStoreKey, output: ConversationResponse ->
                 val conversation = output.conversation.toLocal(userId = key.userId.s)
                 val messages = output.messages.map(messageFactory::createMessage)
-                messageDao.saveMessages(*messages.toTypedArray())
+                messageDao.saveMessages(messages)
                 conversationDao.insertOrUpdate(conversation)
             },
             delete = { key -> conversationDao.deleteConversation(key.conversationId, key.userId.s) }

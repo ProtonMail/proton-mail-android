@@ -107,6 +107,14 @@ abstract class MessageDao {
     abstract fun getMessagesCountByLocation(location: Int): Int
 
     @Query(
+        """SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location  ORDER BY $COLUMN_MESSAGE_TIME DESC"""
+    )
+    abstract fun observeMessagesByLocation(location: Int): Flow<List<Message>>
+
+    @Query("""SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_IS_STARRED=1""")
+    abstract fun observeStarredMessages(): Flow<List<Message>>
+
+    @Query(
         """
         SELECT COUNT($COLUMN_MESSAGE_ID)
         FROM $TABLE_MESSAGES 
@@ -118,6 +126,9 @@ abstract class MessageDao {
     @Query("SELECT * FROM $TABLE_MESSAGES ORDER BY $COLUMN_MESSAGE_TIME DESC")
     abstract fun getAllMessages(): LiveData<List<Message>>
 
+    @Query("SELECT * FROM $TABLE_MESSAGES ORDER BY $COLUMN_MESSAGE_TIME DESC")
+    abstract fun observeAllMessages(): Flow<List<Message>>
+
     @Query(
         """
         SELECT *
@@ -127,6 +138,16 @@ abstract class MessageDao {
     """
     )
     abstract fun getMessagesByLabelId(label: String): List<Message>
+
+    @Query(
+        """
+        SELECT *
+        FROM $TABLE_MESSAGES
+        WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'  
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+    """
+    )
+    abstract fun observeMessagesByLabelId(label: String): Flow<List<Message>>
 
     fun findMessageById(messageId: String): Flow<Message?> = findMessageInfoById(messageId)
         .onEach { message ->
@@ -303,12 +324,12 @@ abstract class MessageDao {
         message.attachments = preservedAttachments
     }
 
-    open suspend fun saveMessages(vararg messages: Message) {
+    open suspend fun saveMessages(messages: List<Message>) {
         Timber.d("saveMessages ${messages.map { it.messageId }}")
         messages.forEach {
             processMessageAttachments(it)
         }
-        return saveMessagesInfo(*messages)
+        return saveMessagesInfo(messages)
     }
 
     @Deprecated("Use MessageDetailsRepository's methods that contain logic for large Message bodies")
@@ -336,7 +357,7 @@ abstract class MessageDao {
     abstract suspend fun saveMessageInfo(message: Message): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveMessagesInfo(vararg messages: Message)
+    abstract fun saveMessagesInfo(messages: List<Message>)
 
     @Query("DELETE FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID} = :dbId")
     abstract fun deleteByDbId(dbId: Long)

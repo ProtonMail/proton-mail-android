@@ -177,7 +177,7 @@ class MessagesService : JobIntentService() {
         refreshMessages: Boolean
     ) {
         try {
-            val messagesResponse = mApi.searchByLabelAndPage(labelId, 0)
+            val messagesResponse = mApi.searchByLabelAndPageBlocking(labelId, 0)
             handleResult(messagesResponse, location, labelId, currentUserId, refreshMessages)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))

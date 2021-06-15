@@ -255,6 +255,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun messages(location: Int, userIdTag: UserIdTag): MessagesResponse? = api.messages(location, userIdTag)
 
+    override suspend fun getMessages(location: Int, userIdTag: UserIdTag): MessagesResponse =
+        api.getMessages(location, userIdTag)
+
     override fun fetchMessages(location: Int, time: Long): MessagesResponse? = api.fetchMessages(location, time)
 
     override suspend fun fetchMessageMetadata(messageId: String, userIdTag: UserIdTag): MessagesResponse =
@@ -290,7 +293,12 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun search(query: String, page: Int): MessagesResponse = api.search(query, page)
 
-    override fun searchByLabelAndPage(
+    override fun searchByLabelAndPageBlocking(
+        query: String,
+        page: Int
+    ): MessagesResponse = api.searchByLabelAndPageBlocking(query, page)
+
+    override suspend fun searchByLabelAndPage(
         query: String,
         page: Int
     ): MessagesResponse = api.searchByLabelAndPage(query, page)

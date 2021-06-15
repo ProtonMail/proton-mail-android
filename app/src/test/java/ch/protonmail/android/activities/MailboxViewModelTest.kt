@@ -150,7 +150,7 @@ class MailboxViewModelTest : CoroutinesTest {
             messageServiceScheduler,
             conversationModeEnabled,
             getConversations,
-            changeConversationsReadStatus
+            changeConversationsReadStatus,
         )
 
         val jobEntryPoint = mockk<JobEntryPoint>()

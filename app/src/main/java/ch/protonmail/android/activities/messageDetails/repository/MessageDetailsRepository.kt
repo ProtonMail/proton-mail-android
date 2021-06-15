@@ -216,7 +216,7 @@ class MessageDetailsRepository @Inject constructor(
         messages.forEach { message ->
             saveFile(message)
         }
-        messagesDao.saveMessages(*messages.toTypedArray())
+        messagesDao.saveMessages(messages)
     }
 
     private fun saveFile(message: Message) {

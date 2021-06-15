@@ -44,6 +44,8 @@ interface MessageApiSpec {
     @Throws(IOException::class)
     fun messages(location: Int, userIdTag: UserIdTag): MessagesResponse?
 
+    suspend fun getMessages(location: Int, userIdTag: UserIdTag): MessagesResponse
+
     @Throws(IOException::class)
     fun fetchMessages(location: Int, time: Long): MessagesResponse?
 
@@ -87,7 +89,9 @@ interface MessageApiSpec {
     fun search(query: String, page: Int): MessagesResponse
 
     @Throws(IOException::class)
-    fun searchByLabelAndPage(query: String, page: Int): MessagesResponse
+    fun searchByLabelAndPageBlocking(query: String, page: Int): MessagesResponse
+
+    suspend fun searchByLabelAndPage(query: String, page: Int): MessagesResponse
 
     @Throws(IOException::class)
     fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse

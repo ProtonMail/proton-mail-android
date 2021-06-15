@@ -83,6 +83,16 @@ interface MessageService {
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun getMessages(
+        @Query("LabelID") location: Int,
+        @Query("Order") order: String,
+        @Query("Begin") begin: String,
+        @Query("End") end: String,
+        @Tag userIdTag: UserIdTag
+    ): MessagesResponse
+
+    @GET("mail/v4/messages")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun fetchMessages(
         @Query("LabelID") location: Int,
         @Query("End") unixTime: Long
@@ -101,6 +111,13 @@ interface MessageService {
         @Query("LabelID") query: String,
         @Query("Page") page: Int
     ): Call<MessagesResponse>
+
+    @GET("mail/v4/messages")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun getMessagesByLabel(
+        @Query("LabelID") query: String,
+        @Query("Page") page: Int
+    ): MessagesResponse
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

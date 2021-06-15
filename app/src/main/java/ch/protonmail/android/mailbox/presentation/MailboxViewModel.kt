@@ -21,25 +21,15 @@ package ch.protonmail.android.mailbox.presentation
 import android.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.services.MessagesService
 import ch.protonmail.android.api.utils.ApplyRemoveLabels
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
-import ch.protonmail.android.core.Constants.MessageLocationType.ARCHIVE
-import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
 import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
-import ch.protonmail.android.core.Constants.MessageLocationType.INVALID
 import ch.protonmail.android.core.Constants.MessageLocationType.LABEL
 import ch.protonmail.android.core.Constants.MessageLocationType.LABEL_FOLDER
-import ch.protonmail.android.core.Constants.MessageLocationType.LABEL_OFFLINE
-import ch.protonmail.android.core.Constants.MessageLocationType.SENT
-import ch.protonmail.android.core.Constants.MessageLocationType.SPAM
-import ch.protonmail.android.core.Constants.MessageLocationType.STARRED
-import ch.protonmail.android.core.Constants.MessageLocationType.TRASH
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.LabelRepository
@@ -56,6 +46,7 @@ import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetConversationsResult
+import ch.protonmail.android.mailbox.domain.GetMessagesByLocation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
@@ -112,7 +103,8 @@ class MailboxViewModel @Inject constructor(
     private val messageServiceScheduler: MessagesService.Scheduler,
     private val conversationModeEnabled: ConversationModeEnabled,
     private val getConversations: GetConversations,
-    private val changeConversationsReadStatus: ChangeConversationsReadStatus
+    private val changeConversationsReadStatus: ChangeConversationsReadStatus,
+    private val getMessagesByLocation: GetMessagesByLocation
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -167,9 +159,9 @@ class MailboxViewModel @Inject constructor(
                             _mailboxState.value = it
                         }
                 } else {
-                    Timber.v("Getting messages for $location label: $labelId")
-                    getMessagesByLocation(location, labelId)
-                        .asFlow()
+                    val userId = requireNotNull(userManager.currentUserId)
+                    Timber.v("Getting messages for $location label: $labelId user: $userId")
+                    getMessagesByLocation(location, labelId, userId)
                         .map {
                             messagesToMailboxItems(it)
                         }
@@ -399,7 +391,7 @@ class MailboxViewModel @Inject constructor(
                 }
                 is GetConversationsResult.Error -> {
                     Timber.e(result.throwable, "Failed getting conversations")
-                    MailboxState.Error(error = "Failed getting conversations", result.throwable)
+                    MailboxState.Error(error = "Failed getting conversations", throwable = result.throwable)
                 }
             }
         }
@@ -550,27 +542,6 @@ class MailboxViewModel @Inject constructor(
         }
 
         return ApplyRemoveLabels(checkedLabelIds, labelsToRemove)
-    }
-
-    private fun getMessagesByLocation(
-        mailboxLocation: Constants.MessageLocationType,
-        labelId: String?
-    ): LiveData<List<Message>> {
-        return when (mailboxLocation) {
-            STARRED -> messageDetailsRepository.getStarredMessagesAsync()
-            LABEL,
-            LABEL_OFFLINE,
-            LABEL_FOLDER -> messageDetailsRepository.getMessagesByLabelIdAsync(labelId!!)
-            DRAFT,
-            SENT,
-            ARCHIVE,
-            INBOX,
-            SPAM,
-            TRASH -> messageDetailsRepository.getMessagesByLocationAsync(mailboxLocation.messageLocationTypeValue)
-            ALL_MAIL -> messageDetailsRepository.getAllMessages()
-            INVALID -> throw IllegalArgumentException("Invalid location.")
-            else -> throw IllegalArgumentException("Unknown location: $mailboxLocation")
-        }
     }
 
     fun deleteMessages(messageIds: List<String>, currentLabelId: String?) =
