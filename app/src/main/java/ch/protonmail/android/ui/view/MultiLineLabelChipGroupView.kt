@@ -25,6 +25,7 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.domain.entity.Id
@@ -74,6 +75,7 @@ class MultiLineLabelChipGroupView @JvmOverloads constructor(
     }
 
     fun setLabels(labels: List<LabelChipUiModel>) {
+        isVisible = labels.isNotEmpty()
         labelsAdapter.submitList(labels)
     }
 

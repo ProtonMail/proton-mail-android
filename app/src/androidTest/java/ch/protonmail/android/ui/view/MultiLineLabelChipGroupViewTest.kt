@@ -30,6 +30,8 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import ch.protonmail.android.R
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.testAndroidInstrumented.assertion.isGone
+import ch.protonmail.android.testAndroidInstrumented.assertion.isVisible
 import ch.protonmail.android.testAndroidInstrumented.withBackgroundColor
 import ch.protonmail.android.util.ViewTest
 import org.junit.runner.RunWith
@@ -50,6 +52,26 @@ class MultiLineLabelChipGroupViewTest : ViewTest<MultiLineLabelChipGroupView>(::
         LabelChipUiModel(Id("f"), Name("sixth"), Color.GRAY),
         LabelChipUiModel(Id("g"), Name("long name for seventh label"), Color.BLACK),
     )
+
+    @Test
+    fun viewIsGoneWhenNoLabels() {
+
+        // given - when
+        testView.setLabels(emptyList())
+
+        // then
+        onTestView().check(isGone())
+    }
+
+    @Test
+    fun viewIsVisibleWhenHasLabels() {
+
+        // given - when
+        testView.setLabels(testLabelsList)
+
+        // then
+        onTestView().check(isVisible())
+    }
 
     @Test
     fun listIsEmptyWhenLabelsListIsEmpty() {

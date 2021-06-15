@@ -22,15 +22,13 @@ package ch.protonmail.android.ui.view
 import android.graphics.Color
 import android.view.View
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
-import ch.protonmail.android.R
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.testAndroidInstrumented.assertion.isInvisible
+import ch.protonmail.android.testAndroidInstrumented.assertion.isGone
+import ch.protonmail.android.testAndroidInstrumented.assertion.isVisible
 import ch.protonmail.android.testAndroidInstrumented.withBackgroundColor
 import ch.protonmail.android.util.ViewTest
 import org.hamcrest.Description
@@ -52,18 +50,23 @@ class SingleLineLabelChipGroupViewTest : ViewTest<SingleLineLabelChipGroupView>(
     )
 
     @Test
-    fun moreIsInvisibleWhenLabelsListIsEmpty() {
-        val chipGroupView = testView
+    fun viewIsGoneWhenNoLabels() {
 
-        // given
-        val labels = emptyList<LabelChipUiModel>()
-
-        // when
-        chipGroupView.setLabels(labels)
+        // given - when
+        testView.setLabels(emptyList())
 
         // then
-        Thread.sleep(500)
-        onMoreView().check(isInvisible())
+        onTestView().check(isGone())
+    }
+
+    @Test
+    fun viewIsVisibleWhenHasLabels() {
+
+        // given - when
+        testView.setLabels(testLabelsList)
+
+        // then
+        onTestView().check(isVisible())
     }
 
     @Test
@@ -80,14 +83,10 @@ class SingleLineLabelChipGroupViewTest : ViewTest<SingleLineLabelChipGroupView>(
         chipGroupView.setLabels(labels)
 
         // then
-        Thread.sleep(500)
         onView(withLabelId(expectedLabelId))
             .check(matches(withText(expectedLabelName)))
             .check(matches(withBackgroundColor(expectedLabelColor)))
     }
-
-    private fun onMoreView(): ViewInteraction =
-        onView(withId(R.id.single_line_label_more_text_view))
 
     private fun withLabelId(labelId: Id): Matcher<View> {
         return object : TypeSafeDiagnosingMatcher<View>() {
