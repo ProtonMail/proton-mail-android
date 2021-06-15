@@ -19,7 +19,6 @@
 package ch.protonmail.android.activities.messageDetails.body
 
 import android.view.ScaleGestureDetector
-import android.view.View
 import android.view.animation.AnimationSet
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.ScaleAnimation
@@ -27,30 +26,29 @@ import android.view.animation.TranslateAnimation
 import android.webkit.WebView
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.max
+import kotlin.math.min
 
 
-/**
- * Created by Kamil Rajtar on 10.08.18.
- */
-internal class MessageBodyScaleListener(private val wvScrollView:RecyclerView,
-										private val messageInfoView:View,
-										private val messageBodyWebView: WebView,
-										private val directParent : LinearLayout):ScaleGestureDetector.SimpleOnScaleGestureListener() {
-	private var scaleFactor=1f
-	private var preSF=1f
+internal class MessageBodyScaleListener(
+	private val wvScrollView: RecyclerView,
+	private val messageBodyWebView: WebView,
+	private val directParent: LinearLayout
+) : ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
+	private var scaleFactor = 1f
+	private var preSF = 1f
 
-	override fun onScale(detector:ScaleGestureDetector):Boolean {
+	override fun onScale(detector: ScaleGestureDetector): Boolean {
 		wvScrollView.requestDisallowInterceptTouchEvent(true)
-		scaleFactor*=detector.scaleFactor
+		scaleFactor *= detector.scaleFactor
 
 		// Don't let the object get too small or too large.
-		scaleFactor=Math.max(0.1f,Math.min(scaleFactor,10.0f))
+		scaleFactor = max(0.1f, min(scaleFactor, 10.0f))
 
-		val a=messageBodyWebView.scrollY
-		messageBodyWebView.scrollTo(0,0)
-		directParent.scrollTo(0,0)
-		messageInfoView.translationY=scaleFactor
+		val a = messageBodyWebView.scrollY
+		messageBodyWebView.scrollTo(0, 0)
+		directParent.scrollTo(0, 0)
 
 		val animSet = AnimationSet(true)
 		animSet.fillAfter = true
@@ -58,9 +56,11 @@ internal class MessageBodyScaleListener(private val wvScrollView:RecyclerView,
 		animSet.interpolator = DecelerateInterpolator()
 		val translate = TranslateAnimation(0f, 0f, 0f, (-a).toFloat())
 		animSet.addAnimation(translate)
-        val scale = ScaleAnimation(preSF, scaleFactor, preSF, scaleFactor, ScaleAnimation.RELATIVE_TO_PARENT, 0.5f, ScaleAnimation.RELATIVE_TO_PARENT, 0.5f)
-        animSet.addAnimation(scale)
-//		messageBodyWebView.startAnimation(animSet)
+		val scale = ScaleAnimation(
+			preSF, scaleFactor, preSF, scaleFactor, ScaleAnimation.RELATIVE_TO_PARENT, 0.5f,
+			ScaleAnimation.RELATIVE_TO_PARENT, 0.5f
+		)
+		animSet.addAnimation(scale)
 
 
 		val animSet3 = AnimationSet(true)
@@ -69,13 +69,13 @@ internal class MessageBodyScaleListener(private val wvScrollView:RecyclerView,
 		animSet3.interpolator = DecelerateInterpolator()
 		val translate3 = TranslateAnimation(0f, 0f, 0f, (-a).toFloat())
 		animSet3.addAnimation(translate3)
-		val scale3 = ScaleAnimation(preSF, preSF, preSF, scaleFactor, ScaleAnimation.RELATIVE_TO_PARENT, 0f, ScaleAnimation.RELATIVE_TO_PARENT, 0f)
+		val scale3 = ScaleAnimation(
+			preSF, preSF, preSF, scaleFactor, ScaleAnimation.RELATIVE_TO_PARENT, 0f, ScaleAnimation.RELATIVE_TO_PARENT,
+			0f
+		)
 		animSet3.addAnimation(scale3)
-//		directParent.startAnimation(animSet3)
-		preSF=scaleFactor
+		preSF = scaleFactor
 		return true
 	}
 
-	override fun onScaleEnd(detector:ScaleGestureDetector) {
-	}
 }

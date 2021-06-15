@@ -288,14 +288,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             return false;
     }
 
-    protected boolean isAutoShowEmbeddedImages() {
-        MailSettings mailSettings = mUserManager.getCurrentUserMailSettingsBlocking();
-        if (mailSettings != null)
-            return mailSettings.getShowImagesFrom().includesEmbedded();
-        else
-            return false;
-    }
-
     private void shouldLock() {
         User user = mUserManager.getCurrentLegacyUser();
         if (user == null)

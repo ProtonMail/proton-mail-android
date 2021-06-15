@@ -35,6 +35,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.details.RecipientContextMenuFactory
@@ -45,6 +46,7 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.databinding.LayoutMessageDetailsHeaderBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.MessageDetailsHeaderIcons
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.ui.view.MultiLineLabelChipGroupView
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
@@ -67,6 +69,8 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     private val collapsedHeaderGroup: Group
     private val expandedHeaderGroup: Group
     private val expandCollapseChevronImageView: ImageView
+
+    private val draftInitialView: ImageView
 
     private val senderInitialView: SenderInitialView
     private val senderNameTextView: TextView
@@ -100,6 +104,12 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
     private val encryptionInfoTextView: TextView
     private val learnMoreTextView: TextView
 
+    private val repliedImageView: ImageView
+    private val repliedAllImageView: ImageView
+    private val forwardedImageView: ImageView
+
+    private val messageDetailsIcons: MessageDetailsHeaderIcons
+
     init {
         val binding = LayoutMessageDetailsHeaderBinding.inflate(
             LayoutInflater.from(context),
@@ -110,6 +120,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         expandedHeaderGroup = binding.expandedHeaderGroup
         expandCollapseChevronImageView = binding.expandCollapseChevronImageView
 
+        draftInitialView = binding.draftInitialView
         senderInitialView = binding.senderInitialView
         senderNameTextView = binding.senderNameTextView
         senderEmailTextView = binding.senderEmailTextView
@@ -140,6 +151,12 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         lockIconExtendedTextView = binding.lockIconExtendedTextView
         encryptionInfoTextView = binding.encryptionInfoTextView
         learnMoreTextView = binding.learnMoreTextView
+
+        repliedImageView = binding.repliedImageView
+        repliedAllImageView = binding.repliedAllImageView
+        forwardedImageView = binding.forwardedImageView
+
+        messageDetailsIcons = binding.messageDetailsIcons
         // endregion
 
         // animated layout changes looks buggy on Android 27, so we enable only on 28 +
@@ -302,11 +319,14 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
 
     fun bind(message: Message, allLabels: List<Label>, nonInclusiveLabels: List<LabelChipUiModel>) {
         val senderText = getSenderText(message)
-        val initials = if (senderText.isEmpty())
-            HYPHEN
-        else
-            senderText.substring(0, 1)
+        val initials = if (senderText.isEmpty()) HYPHEN else senderText.substring(0, 1)
         senderInitialView.bind(initials)
+
+        val isDraft = message.location == Constants.MessageLocationType.DRAFT.messageLocationTypeValue
+        senderInitialView.visibility = if (isDraft) View.INVISIBLE else View.VISIBLE
+        draftInitialView.isVisible = isDraft
+
+
         senderNameTextView.text = senderText
         senderEmailTextView.text = context.getString(R.string.recipient_email_format, message.senderEmail)
         senderEmailTextView.setOnClickListener(getOnSenderClickListener(message.senderEmail))
@@ -356,5 +376,11 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         expandCollapseChevronImageView.setOnClickListener(onChevronClickListener)
         expandedHeaderGroup.visibility = View.GONE
         collapsedHeaderGroup.visibility = View.VISIBLE
+
+        repliedImageView.isVisible = message.isReplied == true && message.isRepliedAll == false
+        repliedAllImageView.isVisible = message.isRepliedAll ?: false
+        forwardedImageView.isVisible = message.isForwarded ?: false
+
+        messageDetailsIcons.bind(message)
     }
 }
