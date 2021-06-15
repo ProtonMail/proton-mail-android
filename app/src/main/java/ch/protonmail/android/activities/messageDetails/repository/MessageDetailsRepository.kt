@@ -119,7 +119,7 @@ class MessageDetailsRepository @Inject constructor(
             findMessageByDatabaseId(messageDbId).first()
         }
 
-    fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =
+    private fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =
         messagesDao.findAllMessageByLastMessageAccessTime(laterThan)
             .map { list ->
                 list.mapNotNull { readMessageBodyFromFileIfNeeded(it) }
@@ -161,10 +161,6 @@ class MessageDetailsRepository @Inject constructor(
     fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message> =
         messagesDao.searchMessages(subject, senderName, senderEmail).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
 
-    fun setFolderLocation(message: Message) = message.setFolderLocation(messagesDao)
-
-    fun findAttachments(message: Message): LiveData<List<Attachment>> = message.getAttachmentsAsync(messagesDao)
-
     suspend fun findAttachmentsByMessageId(messageId: String): List<Attachment> =
         messagesDao.findAttachmentsByMessageId(messageId).first()
 
@@ -172,9 +168,6 @@ class MessageDetailsRepository @Inject constructor(
 
     @Deprecated("Use suspend function", ReplaceWith("saveAttachment(attachment)"))
     fun saveAttachmentBlocking(attachment: Attachment) = messagesDao.saveAttachmentBlocking(attachment)
-
-    fun findPendingSendByOfflineMessageIdAsync(messageId: String) =
-        pendingActionDao.findPendingSendByOfflineMessageIdAsync(messageId)
 
     fun findPendingSendByMessageId(messageId: String) = pendingActionDao.findPendingSendByMessageId(messageId)
 
