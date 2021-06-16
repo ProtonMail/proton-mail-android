@@ -358,17 +358,15 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    fun startDownloadEmbeddedImagesJob() {
+    fun startDownloadEmbeddedImagesJob(message: Message) {
         hasEmbeddedImages = false
 
         viewModelScope.launch(dispatchers.Io) {
 
-            val lastMessageId = lastMessage()?.messageId ?: return@launch
-            val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(lastMessageId)
-            val embeddedImages = embeddedImagesAttachments.mapNotNull {
-                attachmentsHelper.fromAttachmentToEmbeddedImage(
-                    it, lastMessage()?.embeddedImageIds?.toList().orEmpty()
-                )
+            val messageId = message.messageId ?: return@launch
+            val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(messageId)
+            val embeddedImages = embeddedImagesAttachments.mapNotNull { embeddedImage ->
+                attachmentsHelper.fromAttachmentToEmbeddedImage(embeddedImage, message.embeddedImageIds.toList())
             }
             val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
             embeddedImages.forEach { embeddedImage ->
@@ -387,7 +385,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImagesWithLocalFiles))
             } else {
                 messageDetailsRepository.startDownloadEmbeddedImages(
-                    lastMessageId, userManager.requireCurrentUserId()
+                    messageId, userManager.requireCurrentUserId()
                 )
             }
         }
@@ -507,9 +505,9 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun isEmbeddedImagesDisplayed() = areImagesDisplayed
 
-    fun displayEmbeddedImages() {
+    fun displayEmbeddedImages(message: Message) {
         areImagesDisplayed = true // this will be passed to edit intent
-        startDownloadEmbeddedImagesJob()
+        startDownloadEmbeddedImagesJob(message)
     }
 
     fun isAutoShowEmbeddedImages(): Boolean {

@@ -208,7 +208,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             this,
             listOf(),
             messageDetailsRecyclerView,
-            { onLoadEmbeddedImagesClicked() },
+            onLoadEmbeddedImagesClicked(),
             onDisplayRemoteContentClicked(),
             mUserManager,
             onLoadMessageBody(),
@@ -246,7 +246,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
         val displayEmbeddedImages = viewModel.isAutoShowEmbeddedImages() || viewModel.isEmbeddedImagesDisplayed()
         if (displayEmbeddedImages) {
-            viewModel.displayEmbeddedImages()
+            viewModel.displayEmbeddedImages(message)
         }
         return !displayEmbeddedImages
     }
@@ -719,13 +719,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private fun onLoadEmbeddedImagesClicked() {
+    private fun onLoadEmbeddedImagesClicked() = { message: Message ->
         // this will ensure that the message has been loaded
         // and will protect from premature clicking on download attachments button
         if (viewModel.renderingPassed) {
-            viewModel.startDownloadEmbeddedImagesJob()
+            viewModel.startDownloadEmbeddedImagesJob(message)
         }
-        return
     }
 
     private fun onDisplayRemoteContentClicked() = { message: Message ->

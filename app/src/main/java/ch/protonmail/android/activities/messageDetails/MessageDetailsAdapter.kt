@@ -65,7 +65,7 @@ internal class MessageDetailsAdapter(
     private val context: Context,
     private var messages: List<Message>,
     private val messageDetailsRecyclerView: RecyclerView,
-    private val onLoadEmbeddedImagesClicked: (() -> Unit)?,
+    private val onLoadEmbeddedImagesClicked: ((Message) -> Unit)?,
     private val onDisplayRemoteContentClicked: ((Message) -> Unit)?,
     private val userManager: UserManager,
     private val onLoadMessage: (Message) -> Unit,
@@ -209,7 +209,8 @@ internal class MessageDetailsAdapter(
         ) {
             loadEmbeddedImagesContainer.setOnClickListener {
                 it.visibility = View.GONE
-                onLoadEmbeddedImagesClicked?.invoke()
+                val item = visibleItems!![position]
+                onLoadEmbeddedImagesClicked?.invoke(item.message)
             }
 
             displayRemoteContentButton.setOnClickListener {
