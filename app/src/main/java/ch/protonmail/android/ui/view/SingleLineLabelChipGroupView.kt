@@ -25,6 +25,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.StyleRes
+import androidx.core.view.isVisible
 import ch.protonmail.android.R
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
@@ -68,6 +69,7 @@ class SingleLineLabelChipGroupView @JvmOverloads constructor (
     }
 
     fun setLabels(labels: List<LabelChipUiModel>) {
+        isVisible = labels.isNotEmpty()
         if (labels.isNotEmpty() && labels == allLabels) return
         allLabels = labels
 

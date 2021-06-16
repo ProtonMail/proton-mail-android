@@ -69,35 +69,6 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
         setTextAppearance(R.style.Proton_Text_Caption)
     }
 
-    private val layoutChangeListener = object : OnLayoutChangeListener {
-        override fun onLayoutChange(
-            v: View,
-            left: Int,
-            top: Int,
-            right: Int,
-            bottom: Int,
-            oldLeft: Int,
-            oldTop: Int,
-            oldRight: Int,
-            oldBottom: Int
-        ) {
-            if (orientation == VERTICAL || hiddenChildCount == 0) return
-
-            val lastVisibleTextView = getChildAt(visibleChildCount - 1)?.asOrGetTextViewOrNull()
-            if (lastVisibleTextView != null) {
-                val viewWidth = lastVisibleTextView.width
-                val allOthersVisibleChildrenWidth =
-                    allChildren.filter { it.isVisible }.sumOf { it.width } - viewWidth
-                val availableSize = width - allOthersVisibleChildrenWidth - moreTextView.width
-                if (viewWidth >= availableSize) {
-                    lastVisibleTextView.layoutParams.width = availableSize
-                    lastVisibleTextView.requestLayout()
-                }
-            }
-        }
-
-    }
-
     init {
         @Suppress("LeakingThis")
         addView(moreTextView)
@@ -110,26 +81,14 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
         override fun remove() = removeViewAt(--index)
     }
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        addOnLayoutChangeListener(layoutChangeListener)
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        removeOnLayoutChangeListener(layoutChangeListener)
-    }
-
+    // region Measurements
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-
-        // Find out how big everyone wants to be
-        measureChildren(widthMeasureSpec, heightMeasureSpec)
 
         // Measure this layout
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         var availableRelevantSize = getRelevantSizeFor(this)
 
-        // show or hide children
+        // Measure children
         var limitReached = false
         for ((index, child) in allChildren.toList().withIndex()) {
 
@@ -139,35 +98,72 @@ open class MoreItemsLinearLayout @JvmOverloads constructor (
                 continue
             }
 
-            // Update "more" text and calculate spaces
+            // Update "more" text for mere measurement purpose
             moreTextView.apply {
                 text = "+${allChildCount - index}"
-                isVisible = true
+                visibility = INVISIBLE
             }
             measureChild(moreTextView, widthMeasureSpec, heightMeasureSpec)
             val effectiveAvailableSize = availableRelevantSize - getRelevantSizeFor(moreTextView)
+
+            // measure child
+            measureChild(
+                child,
+                getChildWidthMeasureSpec(effectiveAvailableSize, widthMeasureSpec),
+                getChildHeightMeasureSpec(effectiveAvailableSize, heightMeasureSpec)
+            )
             val relevantSize = getRelevantSizeFor(child)
 
-            if (relevantSize > effectiveAvailableSize) {
-                // Children can't fit in its totality
-                child.isVisible = canBeStretchedToFit(child, effectiveAvailableSize)
-                limitReached = true
-            } else {
-                // We can fit this child
-                child.isVisible = true
+            child.isVisible = relevantSize <= effectiveAvailableSize
+            limitReached = relevantSize > effectiveAvailableSize
+            if (relevantSize <= effectiveAvailableSize) {
                 availableRelevantSize -= relevantSize
             }
         }
-        moreTextView.isVisible = limitReached
+
+        // Update "more" text for final result
+        moreTextView.apply {
+            text = "+$hiddenChildCount"
+            isVisible = limitReached
+        }
+
+        setMeasuredDimension(getWidthMeasureSpec(widthMeasureSpec), getHeightMeasureSpec(heightMeasureSpec))
     }
 
-    private fun canBeStretchedToFit(view: View, effectiveAvailableSize: Int): Boolean =
-        orientation == HORIZONTAL && isOrWrapTextView(view) && effectiveAvailableSize > minTextViewWidth
-
-    private fun isOrWrapTextView(view: View): Boolean {
-        return view is TextView ||
-            view is ViewGroup && view.childCount == 1 && view.getChildAt(0) is TextView
+    private fun getWidthMeasureSpec(widthMeasureSpec: Int): Int {
+        return if (orientation == VERTICAL) {
+            val maxChildrenWidth = allChildren.maxOfOrNull { it.measuredWidth } ?: 0
+            MeasureSpec.makeMeasureSpec(maxChildrenWidth, MeasureSpec.EXACTLY)
+        } else {
+            widthMeasureSpec
+        }
     }
+
+    private fun getHeightMeasureSpec(heightMeasureSpec: Int): Int {
+        return if (orientation == HORIZONTAL) {
+            val maxChildrenHeight = allChildren.maxOfOrNull { it.measuredHeight } ?: 0
+            MeasureSpec.makeMeasureSpec(maxChildrenHeight, MeasureSpec.EXACTLY)
+        } else {
+            heightMeasureSpec
+        }
+    }
+
+    private fun getChildWidthMeasureSpec(availableRelevantSize: Int, widthMeasureSpec: Int): Int {
+        return if (orientation == HORIZONTAL) {
+            MeasureSpec.makeMeasureSpec(availableRelevantSize.coerceAtLeast(minTextViewWidth), MeasureSpec.AT_MOST)
+        } else {
+            widthMeasureSpec
+        }
+    }
+
+    private fun getChildHeightMeasureSpec(availableRelevantSize: Int, heightMeasureSpec: Int): Int {
+        return if (orientation == VERTICAL) {
+            MeasureSpec.makeMeasureSpec(availableRelevantSize, MeasureSpec.AT_MOST)
+        } else {
+            heightMeasureSpec
+        }
+    }
+    // endregion
 
     private fun View.asOrGetTextViewOrNull(): TextView? =
         this as? TextView ?: (this as? ViewGroup)?.getChildAt(0) as? TextView
