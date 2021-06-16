@@ -76,8 +76,8 @@ enum class SettingsEnum {
     },
     MOBILE_SIGNATURE {
 
-        override fun getHint(context: Context): String = context.resources.getString(R.string.edit_mobile_signature)
-        override fun getHeader(context: Context): String = context.resources.getString(R.string.mobile_signature)
+        override fun getHint(context: Context): String = context.resources.getString(R.string.edit_mobile_footer)
+        override fun getHeader(context: Context): String = context.resources.getString(R.string.mobile_footer)
     },
     NOTIFICATION_SNOOZE {
 
@@ -100,11 +100,6 @@ enum class SettingsEnum {
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String =
             context.resources.getString(R.string.settings_background_sync)
-    },
-    SEARCH {
-
-        override fun getHint(context: Context): String = ""
-        override fun getHeader(context: Context): String = context.resources.getString(R.string.x_search)
     },
     LABELS_N_FOLDERS {
 

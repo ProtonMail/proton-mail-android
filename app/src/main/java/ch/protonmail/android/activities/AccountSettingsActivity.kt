@@ -20,7 +20,6 @@ package ch.protonmail.android.activities
 
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
-import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
@@ -64,12 +63,18 @@ class AccountSettingsActivity : BaseSettingsActivity() {
 
     override fun onResume() {
         super.onResume()
-        setUpSettingsItems(getSettingsItems())
+        setUpSettingsItems(R.raw.acc_settings_structure)
         renderViews()
     }
 
     override fun renderViews() {
-        refreshSettings(settingsUiList.filterNot { it.settingId equalsNoCase SettingsEnum.SEARCH.name })
+        refreshSettings(
+            if (featureFlags.isChangeViewModeFeatureEnabled()) {
+                settingsUiList
+            } else {
+                settingsUiList.filterNot { it.settingId equalsNoCase SettingsEnum.CONVERSATION_MODE.name }
+            }
+        )
 
         val plan = app.organization?.planName
         val planType = Constants.PlanType.fromString(plan ?: "")
@@ -110,19 +115,6 @@ class AccountSettingsActivity : BaseSettingsActivity() {
             notifySettingsChanged()
         }
 
-        mPinValue = legacyUser.isUsePin && userManager.getMailboxPin().isNullOrEmpty().not()
-        val autoLockSettingValue = if (mPinValue) getString(R.string.enabled) else getString(R.string.disabled)
-        setValue(SettingsEnum.AUTO_LOCK, autoLockSettingValue)
-
-        setValue(
-            SettingsEnum.APP_VERSION,
-            String.format(
-                getString(R.string.app_version_code),
-                BuildConfig.VERSION_NAME,
-                BuildConfig.VERSION_CODE
-            )
-        )
-
         setupViewMode()
     }
 
@@ -146,14 +138,6 @@ class AccountSettingsActivity : BaseSettingsActivity() {
                 SecureSharedPreferences.getPrefsForUser(this@AccountSettingsActivity, user.id)
             )
             mJobManager.addJobInBackground(UpdateSettingsJob())
-        }
-    }
-
-    private fun getSettingsItems(): Int {
-        return if (featureFlags.isChangeViewModeFeatureEnabled()) {
-            R.raw.acc_settings_structure_with_conversation_mode_toggle
-        } else {
-            R.raw.acc_settings_structure
         }
     }
 }

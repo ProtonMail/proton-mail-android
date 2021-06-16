@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.settings.presentation
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.TextUtils
@@ -32,6 +31,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import butterknife.OnClick
+import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.api.models.Organization
@@ -47,8 +47,6 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDial
 import ch.protonmail.android.viewmodel.AccountTypeViewModel
 import com.squareup.otto.Subscribe
 import timber.log.Timber
-
-private const val REQUEST_CODE_UPGRADE = 1
 
 class AccountTypeActivity : BaseActivity() {
 
@@ -90,12 +88,12 @@ class AccountTypeActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        ProtonMailApplication.getApplication().bus.register(this)
+        app.bus.register(this)
     }
 
     override fun onStop() {
         super.onStop()
-        ProtonMailApplication.getApplication().bus.unregister(this)
+        app.bus.unregister(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -229,25 +227,5 @@ class AccountTypeActivity : BaseActivity() {
         startActivityForResult(AppUtil.decorInAppIntent(upgradeIntent), REQUEST_CODE_UPGRADE);
         TODO("startUpgradePlanWorkflow")
         */
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_UPGRADE) {
-            val extras = data?.extras
-            if (extras != null) {
-                val success = false // TODO: extras.getBoolean(BillingActivity.EXTRA_SUCCESS);
-                if (success) {
-                    accountTypeProgress.visibility = View.VISIBLE
-                    val user = mUserManager.currentLegacyUser
-                    if (!user?.isPaidUser!!) {
-                        setAccountType(0)
-                    } else {
-                        setAndCheckOrganization()
-                    }
-                }
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
     }
 }

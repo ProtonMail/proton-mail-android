@@ -23,7 +23,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS
 import android.provider.Settings.EXTRA_APP_PACKAGE
 import android.provider.Settings.EXTRA_CHANNEL_ID
@@ -87,9 +86,6 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.settings_item_layout.view.*
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import me.proton.core.util.android.sharedpreferences.observe
 import timber.log.Timber
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
@@ -259,17 +255,17 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     private fun showSortAliasDialog() {
         val defaultAddressIntent = AppUtil.decorInAppIntent(Intent(this, DefaultAddressActivity::class.java))
-        startActivityForResult(defaultAddressIntent, DEFAULT_EMAIL.ordinal)
+        startActivity(defaultAddressIntent)
     }
 
     private fun selectItem(settingsId: String) {
         legacyUser = userManager.requireCurrentLegacyUser()
         user = legacyUser.toNewUser()
-        when (valueOf(settingsId.toUpperCase(Locale.ENGLISH))) {
+        when (valueOf(settingsId.toUpperCase())) {
             ACCOUNT -> {
                 val accountSettingsIntent =
                     AppUtil.decorInAppIntent(Intent(this, AccountSettingsActivity::class.java))
-                startActivityForResult(accountSettingsIntent, ACCOUNT.ordinal)
+                startActivity(accountSettingsIntent)
             }
             SUBSCRIPTION -> {
                 val accountTypeIntent =
@@ -299,33 +295,29 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
             NOTIFICATION_SNOOZE -> {
                 val notificationSnoozeIntent =
                     AppUtil.decorInAppIntent(Intent(this, SnoozeNotificationsActivity::class.java))
-                startActivityForResult(notificationSnoozeIntent, NOTIFICATION_SNOOZE.ordinal)
+                startActivity(notificationSnoozeIntent)
             }
             PRIVACY -> {
                 val privacyIntent =
                     AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
                 privacyIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.PRIVACY)
-                startActivityForResult(privacyIntent, PRIVACY.ordinal)
+                startActivity(privacyIntent)
             }
             AUTO_DOWNLOAD_MESSAGES -> {
                 val gcmAutoDownloadIntent = Intent(this, EditSettingsItemActivity::class.java)
                 gcmAutoDownloadIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.AUTO_DOWNLOAD_MESSAGES)
-                startActivityForResult(
-                    AppUtil.decorInAppIntent(gcmAutoDownloadIntent), AUTO_DOWNLOAD_MESSAGES.ordinal
-                )
+                startActivity(AppUtil.decorInAppIntent(gcmAutoDownloadIntent))
             }
             BACKGROUND_REFRESH -> {
                 val backgroundSyncIntent = Intent(this, EditSettingsItemActivity::class.java)
                 backgroundSyncIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.BACKGROUND_SYNC)
-                startActivityForResult(
-                    AppUtil.decorInAppIntent(backgroundSyncIntent), BACKGROUND_REFRESH.ordinal
-                )
+                startActivity(AppUtil.decorInAppIntent(backgroundSyncIntent))
             }
             LABELS_N_FOLDERS -> {
                 val labelsNFoldersIntent =
                     AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
                 labelsNFoldersIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.LABELS_AND_FOLDERS)
-                startActivityForResult(labelsNFoldersIntent, LABELS_N_FOLDERS.ordinal)
+                startActivity(labelsNFoldersIntent)
             }
             LABELS_MANAGER -> {
                 val labelsManagerIntent =
@@ -356,15 +348,13 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                     EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE,
                     mAttachmentStorageValue
                 )
-                startActivityForResult(
-                    AppUtil.decorInAppIntent(attachmentStorageIntent), LOCAL_STORAGE_LIMIT.ordinal
-                )
+                startActivity(AppUtil.decorInAppIntent(attachmentStorageIntent))
             }
             PUSH_NOTIFICATION -> {
                 val privateNotificationsIntent =
                     AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
                 privateNotificationsIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.PUSH_NOTIFICATIONS)
-                startActivityForResult(privateNotificationsIntent, PUSH_NOTIFICATION.ordinal)
+                startActivity(privateNotificationsIntent)
             }
             NOTIFICATION_SETTINGS -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -376,9 +366,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                     mNotificationOptionValue = legacyUser.notificationSetting
                     val notificationSettingsIntent = Intent(this, NotificationSettingsActivity::class.java)
                     notificationSettingsIntent.putExtra(EXTRA_CURRENT_ACTION, mNotificationOptionValue)
-                    startActivityForResult(
-                        AppUtil.decorInAppIntent(notificationSettingsIntent), NOTIFICATION_SETTINGS.ordinal
-                    )
+                    startActivity(AppUtil.decorInAppIntent(notificationSettingsIntent))
                 }
             }
             AUTO_LOCK -> {
@@ -428,25 +416,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                     )
                 }
             }
-            ACCOUNT_SECTION,
-            ACCOUNT_SETTINGS,
-            ADDRESSES,
-            ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES,
-            APP_INFORMATION,
-            APP_SETTINGS,
-            APP_VERSION,
-            DISPLAY_NAME,
-            EXTENDED_NOTIFICATION,
-            LINK_CONFIRMATION,
-            MAILBOX,
-            MAILBOX_SIZE,
-            MOBILE_SIGNATURE,
-            PREVENT_SCREENSHOTS,
-            SEARCH,
-            SHOW_EMBEDDED_IMAGES,
-            SHOW_REMOTE_IMAGES,
-            SIGNATURE,
-            SNOOZE -> { /* ignored */
+            else -> { /* ignored */
             }
         }
     }

@@ -29,7 +29,6 @@ import ch.protonmail.android.views.SettingsDefaultItemView
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
 import me.proton.core.presentation.utils.inflate
-import java.util.Locale
 
 // region constants
 const val VIEW_TYPE_SECTION = 0
@@ -62,11 +61,11 @@ internal class SettingsAdapter :
 
         override fun onBind(item: SettingsItemUiModel) = with(itemView as TextView) {
             super.onBind(item)
-            // TODO after we receive translations for TURKISH remove excess toUpperCase methods
-            text = if (item.settingHeader.isNullOrEmpty())
-                getHeader(item.settingId.toUpperCase(Locale.ENGLISH), context)
-            else
+            text = if (item.settingHeader.isNullOrEmpty()) {
+                getHeader(item.settingId.toUpperCase(), context)
+            } else {
                 item.settingHeader
+            }
         }
     }
 
@@ -78,9 +77,9 @@ internal class SettingsAdapter :
             super.onBind(item)
 
             header = if (item.settingHeader.isNullOrEmpty()) {
-                getHeader(item.settingId.toUpperCase(Locale.ENGLISH), context)
+                getHeader(item.settingId.toUpperCase(), context)
             } else {
-                item.settingHeader!!
+                item.settingHeader ?: ""
             }
 
             setSettingHeading(header)
