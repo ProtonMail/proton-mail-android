@@ -47,6 +47,7 @@ class GetConversations @Inject constructor(
             oldestConversationTimestamp = null
         )
 
+        Timber.v("GetConversations with params: $params, locationId: $locationId")
         return conversationRepository.getConversations(params)
             .map { result ->
                 return@map when (result) {

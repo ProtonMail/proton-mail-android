@@ -143,7 +143,7 @@ class MailboxViewModel @Inject constructor(
             Triple(location, label, userId)
         }
             .onEach {
-                Timber.v("New location,label,user $it")
+                Timber.v("New location,label,user: $it")
                 mutableMailboxState.value = MailboxState.Loading
             }
             .flatMapLatest { pair ->
@@ -152,7 +152,7 @@ class MailboxViewModel @Inject constructor(
                 val userId = pair.third
 
                 if (conversationModeEnabled(location)) {
-                    Timber.v("Getting conversations for $location label: $labelId user: $userId")
+                    Timber.v("Getting conversations for $location, label: $labelId, user: $userId")
                     conversationsAsMailboxItems(location, labelId, userId)
                         .onEach {
                             mutableMailboxState.value = it
@@ -376,9 +376,15 @@ class MailboxViewModel @Inject constructor(
         labelId: String?,
         userId: Id
     ): Flow<MailboxState> {
-        val locationId = labelId ?: location.messageLocationTypeValue.toString()
+        val locationId = if (!labelId.isNullOrEmpty()) {
+            labelId
+        } else {
+            location.messageLocationTypeValue.toString()
+        }
+        Timber.v("conversationsAsMailboxItems locationId: $locationId")
         return getConversations(
-            userId, locationId
+            userId,
+            locationId
         ).map { result ->
             when (result) {
                 is GetConversationsResult.Success -> {
