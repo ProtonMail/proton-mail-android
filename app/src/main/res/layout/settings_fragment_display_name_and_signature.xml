@@ -99,15 +99,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/settings_text_view_signature_section" />
 
-    <View style="@style/ViewSeparatorHorizontal"
-        android:id="@+id/settings_section_mobile_signature_divider"
+    <View
+        android:id="@+id/settings_section_mobile_footer_divider"
+        style="@style/ViewSeparatorHorizontal"
         android:layout_marginTop="@dimen/padding_xl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/settings_input_signature" />
 
     <TextView
-        android:id="@+id/settings_text_view_mobile_signature_section"
+        android:id="@+id/settings_text_view_mobile_footer_section"
         style="@style/Proton.Text.Default"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -115,12 +116,12 @@
         android:layout_marginEnd="@dimen/padding_l"
         android:paddingTop="@dimen/padding_l"
         android:paddingBottom="@dimen/padding_l"
-        android:text="@string/mobile_signature"
+        android:text="@string/mobile_footer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_section_mobile_signature_divider" />
+        app:layout_constraintTop_toBottomOf="@id/settings_section_mobile_footer_divider" />
 
     <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/settings_toggle_mobile_signature"
+        android:id="@+id/settings_toggle_mobile_footer"
         style="@style/ProtonSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -128,20 +129,34 @@
         android:layout_marginEnd="@dimen/padding_l"
         android:paddingTop="@dimen/padding_l"
         android:paddingBottom="@dimen/padding_l"
-        app:layout_constraintBottom_toBottomOf="@id/settings_text_view_mobile_signature_section"
+        app:layout_constraintBottom_toBottomOf="@id/settings_text_view_mobile_footer_section"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_section_mobile_signature_divider" />
+        app:layout_constraintTop_toBottomOf="@id/settings_section_mobile_footer_divider" />
+
+    <TextView
+        android:id="@+id/mobile_footer_disabled_text_view"
+        style="@style/Proton.Text.Caption.Weak"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_l"
+        android:layout_marginEnd="@dimen/padding_l"
+        android:paddingBottom="@dimen/padding_l"
+        android:visibility="gone"
+        android:text="@string/mobile_footer_is_premium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_text_view_mobile_footer_section" />
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/settings_input_mobile_signature"
+        android:id="@+id/settings_input_mobile_footer"
         style="@style/ProtonInput.Mail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/padding_l"
         android:layout_marginEnd="@dimen/padding_l"
+        android:hint="@string/default_mobile_signature"
         android:minHeight="@dimen/settings_min_height_input_field"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_text_view_mobile_signature_section" />
+        app:layout_constraintTop_toBottomOf="@id/mobile_footer_disabled_text_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

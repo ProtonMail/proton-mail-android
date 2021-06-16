@@ -727,10 +727,10 @@
     <string name="display_name">Nome a mostrar</string>
     <string name="edit_display_name">Editar nome a mostrar</string>
     <string name="signature">Assinatura</string>
-    <string name="mobile_signature">Assinatura móvel</string>
-    <string name="edit_mobile_signature">Activar assinatura móvel</string>
+    <string name="mobile_footer">Assinatura móvel</string>
+    <string name="edit_mobile_footer">Activar assinatura móvel</string>
     <string name="default_mobile_signature">Enviado através do ProtonMail móvel</string>
-    <string name="mobile_signature_is_premium">A alteração da assinatura móvel só é permitida a utilizadores pagantes</string>
+    <string name="mobile_footer_is_premium">A alteração da assinatura móvel só é permitida a utilizadores pagantes</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Adiar</string>
     <string name="notifications_snooze">Adiamento de notificações</string>

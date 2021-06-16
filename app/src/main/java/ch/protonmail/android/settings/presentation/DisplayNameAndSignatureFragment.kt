@@ -20,36 +20,37 @@
 package ch.protonmail.android.settings.presentation
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.Spannable
-import android.text.TextWatcher
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.widget.SwitchCompat
-import androidx.core.widget.addTextChangedListener
+import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.Fragment
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.fragments.BaseFragment
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
+import ch.protonmail.android.databinding.SettingsFragmentDisplayNameAndSignatureBinding
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.libs.core.utils.onTextChange
 import com.birbit.android.jobqueue.JobManager
-import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.content_contact_group_details.*
 
 @AndroidEntryPoint
-class DisplayAndSignatureFragment : BaseFragment() {
-
-    override fun getLayoutResourceId() = R.layout.settings_fragment_display_name_and_signature
-
-    override fun getFragmentKey() = "ProtonMail.DisplayAndSignatureFragment"
+class DisplayNameAndSignatureFragment : Fragment() {
 
     var user: User? = null
     var jobManager: JobManager? = null
+
+    private var _binding: SettingsFragmentDisplayNameAndSignatureBinding? = null
+
+    private val binding get() = requireNotNull(_binding)
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = SettingsFragmentDisplayNameAndSignatureBinding.inflate(inflater)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,10 +60,9 @@ class DisplayAndSignatureFragment : BaseFragment() {
         val (newAddressId, signature) = selectedAddress.id to selectedAddress.signature?.s
 
         var displayName = selectedAddress.displayName?.s ?: selectedAddress.email.s
-        val inputDisplayName = view.findViewById<TextInputEditText>(R.id.settings_input_display_name)
-        inputDisplayName.setText(displayName)
+        binding.settingsInputDisplayName.setText(displayName)
 
-        inputDisplayName.doAfterTextChanged {
+        binding.settingsInputDisplayName.doAfterTextChanged {
             var newDisplayName = it.toString()
 
             val containsBannedChars = newDisplayName.matches(".*[<>].*".toRegex())
@@ -84,10 +84,9 @@ class DisplayAndSignatureFragment : BaseFragment() {
             }
         }
 
-        val inputSignature = view.findViewById<TextInputEditText>(R.id.settings_input_signature)
-        inputSignature.setText(signature)
+        binding.settingsInputSignature.setText(signature)
 
-        inputSignature.doAfterTextChanged {
+        binding.settingsInputSignature.doAfterTextChanged {
             val newSignature = it.toString()
             val isSignatureChanged = newSignature != signature
             if (isSignatureChanged) {
@@ -98,17 +97,15 @@ class DisplayAndSignatureFragment : BaseFragment() {
                 jobManager?.addJobInBackground(job)
             }
         }
-        val toggleSignature = view.findViewById<SwitchCompat>(R.id.settings_toggle_signature)
-        toggleSignature.isChecked = legacyUser.isShowSignature
-        toggleSignature.setOnCheckedChangeListener { _, isChecked ->
+        binding.settingsToggleSignature.isChecked = legacyUser.isShowSignature
+        binding.settingsToggleSignature.setOnCheckedChangeListener { _, isChecked ->
             legacyUser.isShowSignature = isChecked
         }
 
         val mobileSignature = legacyUser.mobileSignature
-        val inputMobileSignature = view.findViewById<TextInputEditText>(R.id.settings_input_mobile_signature)
-        inputMobileSignature.setText(mobileSignature)
+        binding.settingsInputMobileFooter.setText(mobileSignature)
 
-        inputMobileSignature.doAfterTextChanged {
+        binding.settingsInputMobileFooter.doAfterTextChanged {
             val newMobileSignature = it.toString()
             val isMobileSignatureChanged = newMobileSignature != mobileSignature
 
@@ -116,17 +113,24 @@ class DisplayAndSignatureFragment : BaseFragment() {
                 legacyUser.mobileSignature = newMobileSignature
             }
         }
-        val toggleMobileSignature = view.findViewById<SwitchCompat>(R.id.settings_toggle_mobile_signature)
-        toggleMobileSignature.isChecked = legacyUser.isShowMobileSignature
-        toggleMobileSignature.setOnCheckedChangeListener { _, isChecked ->
+
+        legacyUser.isPaidUserSignatureEdit.apply {
+            binding.mobileFooterDisabledTextView.isVisible = !this
+            binding.settingsTextViewMobileFooterSection.isEnabled = this
+            binding.settingsToggleMobileFooter.isEnabled = this
+            binding.mobileFooterDisabledTextView.isEnabled = this
+            binding.settingsInputMobileFooter.isEnabled = this
+        }
+        binding.settingsToggleMobileFooter.isChecked = legacyUser.isShowMobileSignature
+        binding.settingsToggleMobileFooter.setOnCheckedChangeListener { _, isChecked ->
             legacyUser.isShowMobileSignature = isChecked
         }
     }
 
     companion object {
 
-        fun newInstance(user: User, jobManager: JobManager): DisplayAndSignatureFragment {
-            return DisplayAndSignatureFragment().apply {
+        fun newInstance(user: User, jobManager: JobManager): DisplayNameAndSignatureFragment {
+            return DisplayNameAndSignatureFragment().apply {
                 this.user = user
                 this.jobManager = jobManager
             }

@@ -729,10 +729,10 @@ compre más
     <string name="display_name">Nombre a mostrar</string>
     <string name="edit_display_name">Editar el nombre a mostrar</string>
     <string name="signature">Firma</string>
-    <string name="mobile_signature">Firma móvil</string>
-    <string name="edit_mobile_signature">Habilitar firma de móvil</string>
+    <string name="mobile_footer">Firma móvil</string>
+    <string name="edit_mobile_footer">Habilitar firma de móvil</string>
     <string name="default_mobile_signature">Enviado desde ProtonMail móvil</string>
-    <string name="mobile_signature_is_premium">Cambiar la firma móvil solo se permite a los usuarios de pago</string>
+    <string name="mobile_footer_is_premium">Cambiar la firma móvil solo se permite a los usuarios de pago</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Silenciar</string>
     <string name="notifications_snooze">Silenciar notificaciones</string>

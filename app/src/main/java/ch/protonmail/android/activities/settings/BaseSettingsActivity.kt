@@ -70,7 +70,7 @@ import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.settings.presentation.AttachmentStorageActivity
 import ch.protonmail.android.settings.presentation.SettingsDividerItemDecoration
-import ch.protonmail.android.settings.presentation.DisplayAndSignatureFragment
+import ch.protonmail.android.settings.presentation.DisplayNameAndSignatureFragment
 import ch.protonmail.android.settings.presentation.EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE
 import ch.protonmail.android.settings.presentation.SnoozeNotificationsActivity
 import ch.protonmail.android.settings.presentation.SwipeSettingFragment
@@ -290,10 +290,10 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 showSortAliasDialog()
             }
             DISPLAY_NAME_N_SIGNATURE -> {
-                val displayAndSignatureFragment = DisplayAndSignatureFragment.newInstance(user, mJobManager)
+                val displayAndSignatureFragment = DisplayNameAndSignatureFragment.newInstance(user, mJobManager)
                 supportFragmentManager.beginTransaction()
                     .add(R.id.settings_fragment_container, displayAndSignatureFragment)
-                    .addToBackStack(displayAndSignatureFragment.fragmentKey)
+                    .addToBackStack(displayAndSignatureFragment.tag)
                     .commitAllowingStateLoss()
             }
             NOTIFICATION_SNOOZE -> {

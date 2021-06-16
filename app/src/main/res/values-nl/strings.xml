@@ -728,10 +728,10 @@
     <string name="display_name">Weergavenaam</string>
     <string name="edit_display_name">Weergavenaam bewerken</string>
     <string name="signature">Handtekening</string>
-    <string name="mobile_signature">Mobiele handtekening</string>
-    <string name="edit_mobile_signature">Mobiele handtekening inschakelen</string>
+    <string name="mobile_footer">Mobiele handtekening</string>
+    <string name="edit_mobile_footer">Mobiele handtekening inschakelen</string>
     <string name="default_mobile_signature">Verzonden met ProtonMail Mobile</string>
-    <string name="mobile_signature_is_premium">Alleen betalende gebruikers kunnen de mobiele handtekening aanpassen</string>
+    <string name="mobile_footer_is_premium">Alleen betalende gebruikers kunnen de mobiele handtekening aanpassen</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Uitstellen</string>
     <string name="notifications_snooze">Notificaties uitstellen</string>

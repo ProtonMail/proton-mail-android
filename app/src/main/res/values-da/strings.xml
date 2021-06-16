@@ -728,10 +728,10 @@
     <string name="display_name">Vis navn</string>
     <string name="edit_display_name">Redigér vist navn</string>
     <string name="signature">Signatur</string>
-    <string name="mobile_signature">Mobilsignatur</string>
-    <string name="edit_mobile_signature">Aktivér mobilsignatur</string>
+    <string name="mobile_footer">Mobilsignatur</string>
+    <string name="edit_mobile_footer">Aktivér mobilsignatur</string>
     <string name="default_mobile_signature">Sendt fra ProtonMail-mobil</string>
-    <string name="mobile_signature_is_premium">Ændring af Mobilsignaturen er kun tilladt for betalende brugere</string>
+    <string name="mobile_footer_is_premium">Ændring af Mobilsignaturen er kun tilladt for betalende brugere</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Udsæt</string>
     <string name="notifications_snooze">Notifikationsudsættelse</string>

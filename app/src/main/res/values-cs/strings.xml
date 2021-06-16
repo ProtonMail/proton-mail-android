@@ -754,10 +754,10 @@
     <string name="display_name">Zobrazované jméno</string>
     <string name="edit_display_name">Upravit zobrazované jméno</string>
     <string name="signature">Podpis</string>
-    <string name="mobile_signature">Mobile signature</string>
-    <string name="edit_mobile_signature">Enable mobile signature</string>
+    <string name="mobile_footer">Mobile signature</string>
+    <string name="edit_mobile_footer">Enable mobile signature</string>
     <string name="default_mobile_signature">Odesláno z mobilní verze ProtonMail</string>
-    <string name="mobile_signature_is_premium">Změna podpisu na mobilním zařízení je dostupná pouze pro platící uživatele</string>
+    <string name="mobile_footer_is_premium">Změna podpisu na mobilním zařízení je dostupná pouze pro platící uživatele</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Snooze</string>
     <string name="notifications_snooze">Oznámení odložení</string>

@@ -728,10 +728,10 @@
     <string name="display_name">Nome de exibição</string>
     <string name="edit_display_name">Editar nome de exibição</string>
     <string name="signature">Assinatura</string>
-    <string name="mobile_signature">Assinatura móvel</string>
-    <string name="edit_mobile_signature">Ativar assinatura móvel</string>
+    <string name="mobile_footer">Assinatura móvel</string>
+    <string name="edit_mobile_footer">Ativar assinatura móvel</string>
     <string name="default_mobile_signature">Enviado via ProtonMail móvel</string>
-    <string name="mobile_signature_is_premium">A alteração de assinatura móvel é permitido apenas para usuários pagos</string>
+    <string name="mobile_footer_is_premium">A alteração de assinatura móvel é permitido apenas para usuários pagos</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Soneca</string>
     <string name="notifications_snooze">Notificações adiadas</string>

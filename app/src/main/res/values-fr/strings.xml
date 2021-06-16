@@ -728,10 +728,10 @@
     <string name="display_name">Nom d\'affichage</string>
     <string name="edit_display_name">Modifier le nom d’affichage</string>
     <string name="signature">Signature</string>
-    <string name="mobile_signature">Signature mobile</string>
-    <string name="edit_mobile_signature">Activer la signature mobile</string>
+    <string name="mobile_footer">Signature mobile</string>
+    <string name="edit_mobile_footer">Activer la signature mobile</string>
     <string name="default_mobile_signature">Envoyé depuis ProtonMail mobile</string>
-    <string name="mobile_signature_is_premium">Seules les offres payantes permettent de modifier la signature mobile</string>
+    <string name="mobile_footer_is_premium">Seules les offres payantes permettent de modifier la signature mobile</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Interruption des notifications</string>
     <string name="notifications_snooze">Ne pas déranger</string>

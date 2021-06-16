@@ -723,10 +723,10 @@
     <string name="display_name">Görünen ad</string>
     <string name="edit_display_name">Görünen adı düzenle</string>
     <string name="signature">İmza</string>
-    <string name="mobile_signature">Mobil imza</string>
-    <string name="edit_mobile_signature">Mobil imzayı etkinleştir</string>
+    <string name="mobile_footer">Mobil imza</string>
+    <string name="edit_mobile_footer">Mobil imzayı etkinleştir</string>
     <string name="default_mobile_signature">ProtonMail mobil ile gönderildi</string>
-    <string name="mobile_signature_is_premium">Mobil imza, yalnızca ücretli kullanıcılar tarafından değiştirilebilir</string>
+    <string name="mobile_footer_is_premium">Mobil imza, yalnızca ücretli kullanıcılar tarafından değiştirilebilir</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Ertele</string>
     <string name="notifications_snooze">Bildirimleri Ertele</string>

@@ -708,10 +708,10 @@
     <string name="display_name">表示名</string>
     <string name="edit_display_name">表示名の編集</string>
     <string name="signature">署名</string>
-    <string name="mobile_signature">モバイル署名</string>
-    <string name="edit_mobile_signature">モバイル署名を有効にする</string>
+    <string name="mobile_footer">モバイル署名</string>
+    <string name="edit_mobile_footer">モバイル署名を有効にする</string>
     <string name="default_mobile_signature">ProtonMailモバイルから送信</string>
-    <string name="mobile_signature_is_premium">モバイル署名の変更は有料ユーザーのみが可能です。</string>
+    <string name="mobile_footer_is_premium">モバイル署名の変更は有料ユーザーのみが可能です。</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">通知の停止</string>
     <string name="notifications_snooze">通知の停止計画</string>

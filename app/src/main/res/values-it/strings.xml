@@ -728,10 +728,10 @@
     <string name="display_name">Nome visualizzato</string>
     <string name="edit_display_name">Modifica nome visualizzato</string>
     <string name="signature">Firma</string>
-    <string name="mobile_signature">Firma mobile</string>
-    <string name="edit_mobile_signature">Abilita firma mobile</string>
+    <string name="mobile_footer">Firma mobile</string>
+    <string name="edit_mobile_footer">Abilita firma mobile</string>
     <string name="default_mobile_signature">Inviato da ProtonMail mobile</string>
-    <string name="mobile_signature_is_premium">La modifica della firma mobile è permessa solo agli utenti premium</string>
+    <string name="mobile_footer_is_premium">La modifica della firma mobile è permessa solo agli utenti premium</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Posticipa</string>
     <string name="notifications_snooze">Silenzia notifiche</string>

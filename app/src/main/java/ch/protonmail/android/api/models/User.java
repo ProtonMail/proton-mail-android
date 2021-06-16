@@ -428,8 +428,7 @@ public class User {
     }
 
     public boolean isPaidUserSignatureEdit() {
-        boolean allowMobileSignatureEdit = ProtonMailApplication.getApplication().getResources().getBoolean(R.bool.allow_mobile_signature_edit);
-        return allowMobileSignatureEdit || role > 0;
+        return isPaidUser() || role > 0;
     }
 
     public int getPrivate() {

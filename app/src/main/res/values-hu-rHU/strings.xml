@@ -729,10 +729,10 @@ Svájci székhellyel</string>
     <string name="display_name">Megjelenített név</string>
     <string name="edit_display_name">Megjelenített név szerkesztése</string>
     <string name="signature">Aláírás</string>
-    <string name="mobile_signature">Mobil aláírás</string>
-    <string name="edit_mobile_signature">Mobil aláírás bekapcsolása</string>
+    <string name="mobile_footer">Mobil aláírás</string>
+    <string name="edit_mobile_footer">Mobil aláírás bekapcsolása</string>
     <string name="default_mobile_signature">ProtonMail alkalmazásból küldve</string>
-    <string name="mobile_signature_is_premium">A mobil aláírást csak elfőzető felhasználók módosíthatják</string>
+    <string name="mobile_footer_is_premium">A mobil aláírást csak elfőzető felhasználók módosíthatják</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Szüneteltetés</string>
     <string name="notifications_snooze">Értesítések szüneteltetése</string>

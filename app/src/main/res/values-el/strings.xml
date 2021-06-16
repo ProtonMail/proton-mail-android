@@ -728,10 +728,10 @@
     <string name="display_name">Εμφανιζόμενο Όνομα</string>
     <string name="edit_display_name">Επεξεργασία εμφανιζόμενου ονόματος</string>
     <string name="signature">Υπογραφή</string>
-    <string name="mobile_signature">Υπογραφή κινητού</string>
-    <string name="edit_mobile_signature">Ενεργοποίηση υπογραφής κινητού</string>
+    <string name="mobile_footer">Υπογραφή κινητού</string>
+    <string name="edit_mobile_footer">Ενεργοποίηση υπογραφής κινητού</string>
     <string name="default_mobile_signature">Στάλθηκε από ProtonMail mobile</string>
-    <string name="mobile_signature_is_premium">Η αλλαγή της υπογραφής σε συσκευή κινητού επιτρέπεται μόνο σε χρήστες επί πληρωμής</string>
+    <string name="mobile_footer_is_premium">Η αλλαγή της υπογραφής σε συσκευή κινητού επιτρέπεται μόνο σε χρήστες επί πληρωμής</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Αναβολή</string>
     <string name="notifications_snooze">Αναβολή Ειδοποίησης</string>

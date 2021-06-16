@@ -752,10 +752,10 @@
     <string name="display_name">Nazwa wyświetlana</string>
     <string name="edit_display_name">Edytuj nazwę wyświetlaną</string>
     <string name="signature">Podpis</string>
-    <string name="mobile_signature">Podpis mobilny</string>
-    <string name="edit_mobile_signature">Włącz podpis mobilny</string>
+    <string name="mobile_footer">Podpis mobilny</string>
+    <string name="edit_mobile_footer">Włącz podpis mobilny</string>
     <string name="default_mobile_signature">Wysłano z aplikacji ProtonMail</string>
-    <string name="mobile_signature_is_premium">Zmiana podpisu mobilnego jest dostępna tylko dla użytkowników płatnego planu</string>
+    <string name="mobile_footer_is_premium">Zmiana podpisu mobilnego jest dostępna tylko dla użytkowników płatnego planu</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Usypianie powiadomień</string>
     <string name="notifications_snooze">Usypianie powiadomień</string>

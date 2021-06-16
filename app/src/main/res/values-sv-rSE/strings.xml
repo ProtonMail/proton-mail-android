@@ -723,10 +723,10 @@
     <string name="display_name">Visningsnamn</string>
     <string name="edit_display_name">Redigera visningsnamn</string>
     <string name="signature">Signatur</string>
-    <string name="mobile_signature">Mobilsignatur</string>
-    <string name="edit_mobile_signature">Aktivera mobil signatur</string>
+    <string name="mobile_footer">Mobilsignatur</string>
+    <string name="edit_mobile_footer">Aktivera mobil signatur</string>
     <string name="default_mobile_signature">Skickat från ProtonMail mobile</string>
-    <string name="mobile_signature_is_premium">Ändring av mobilsignatur är endast möjligt för betalande användare</string>
+    <string name="mobile_footer_is_premium">Ändring av mobilsignatur är endast möjligt för betalande användare</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Snooza</string>
     <string name="notifications_snooze">Snooza notifieringar</string>
