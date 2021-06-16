@@ -118,6 +118,7 @@ class MailboxViewModel @Inject constructor(
     private val mutableMailboxState = MutableStateFlow<MailboxState>(MailboxState.Loading)
     private val mutableMailboxLocation = MutableStateFlow(INBOX)
     private val mutableMailboxLabelId = MutableStateFlow(EMPTY_STRING)
+    private val mutableUserId = MutableStateFlow(requireNotNull(userManager.currentUserId))
 
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning
@@ -138,17 +139,17 @@ class MailboxViewModel @Inject constructor(
     val mailboxLocation = mutableMailboxLocation.asStateFlow()
 
     init {
-        combine(mutableMailboxLocation, mutableMailboxLabelId) { location, label ->
-            location to label
+        combine(mutableMailboxLocation, mutableMailboxLabelId, mutableUserId) { location, label, userId ->
+            Triple(location, label, userId)
         }
             .onEach {
-                Timber.v("New location/label $it")
+                Timber.v("New location,label,user $it")
                 mutableMailboxState.value = MailboxState.Loading
             }
             .flatMapLatest { pair ->
                 val location = pair.first
                 val labelId = pair.second
-                val userId = requireNotNull(userManager.currentUserId)
+                val userId = pair.third
 
                 if (conversationModeEnabled(location)) {
                     Timber.v("Getting conversations for $location label: $labelId user: $userId")
@@ -301,6 +302,7 @@ class MailboxViewModel @Inject constructor(
     ) {
 
         val location = mailboxLocation.value
+        Timber.v("loadMailboxItems location: $location")
         if (conversationModeEnabled(location)) {
             val userId = userManager.currentUserId ?: return
             val locationId = labelId ?: location.messageLocationTypeValue.toString()
@@ -331,6 +333,7 @@ class MailboxViewModel @Inject constructor(
     ) {
         // UserId is needed. We currently don't support merged inbox.
         val userId = userManager.currentUserId ?: return
+        Timber.v("fetchMessages userId: $userId")
 
         // When oldestMessageTimestamp is valid the request is about paginated messages (page > 1)
 
@@ -599,6 +602,10 @@ class MailboxViewModel @Inject constructor(
 
     fun setNewMailboxLabel(labelId: String) {
         mutableMailboxLabelId.value = labelId
+    }
+
+    fun setNewUserId(currentUserId: Id) {
+        mutableUserId.value = currentUserId
     }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)

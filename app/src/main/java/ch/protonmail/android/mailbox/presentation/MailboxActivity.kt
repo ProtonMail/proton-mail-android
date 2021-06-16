@@ -533,8 +533,8 @@ class MailboxActivity :
         super.onAccountSwitched(switch)
 
         val currentUserId = userManager.currentUserId ?: return
+        Timber.v("onAccountSwitched, new userId: $currentUserId")
 
-        setRefreshing(true)
         mJobManager.start()
         counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()
         pendingActionDao = PendingActionDatabase.getInstance(this, currentUserId).getDao()
@@ -547,10 +547,10 @@ class MailboxActivity :
         lazyManager.reset()
         setUpDrawer()
         checkRegistration()
-        // Loading mailbox items for the newly switched account.
+        // This should trigger loading mailbox items for the newly switched account.
         // This method also "reloads dependencies" for the instance of `messageDetailsRepo` held by
         // MailboxVM. This should be done before triggering an "update" of the Mailbox for the new user
-        loadMailboxItems(refreshMessages = true)
+        mailboxViewModel.setNewUserId(currentUserId)
         switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
 
         messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
@@ -588,11 +588,11 @@ class MailboxActivity :
     private fun renderState(state: MailboxState) {
         Timber.v("New mailbox state: $state")
         setLoadingMore(false)
-        setRefreshing(false)
 
         when (state) {
             is MailboxState.Loading -> setRefreshing(true)
             is MailboxState.Data -> {
+                setRefreshing(false)
                 include_mailbox_no_messages.isVisible = state.items.isEmpty()
                 mailboxRecyclerView.isVisible != state.items.isEmpty()
 
@@ -600,6 +600,7 @@ class MailboxActivity :
                 mailboxAdapter.addAll(state.items)
             }
             is MailboxState.Error -> {
+                setRefreshing(false)
                 Timber.e(state.throwable, "Mailbox error ${state.error}")
                 Toast.makeText(this, getString(R.string.error_loading_conversations), Toast.LENGTH_SHORT).show()
             }
@@ -1373,7 +1374,6 @@ class MailboxActivity :
     private fun setNewLabel(labelId: String) {
         mailboxViewModel.setNewMailboxLabel(labelId)
     }
-
 
     private val fcmBroadcastReceiver: BroadcastReceiver = FcmBroadcastReceiver()
 
