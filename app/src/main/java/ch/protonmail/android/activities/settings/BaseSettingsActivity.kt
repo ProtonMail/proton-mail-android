@@ -87,6 +87,9 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.settings_item_layout.view.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import me.proton.core.util.android.sharedpreferences.observe
 import timber.log.Timber
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
@@ -127,7 +130,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     private var notificationDao: NotificationDao? = null
     var counterDao: CounterDao? = null
     var pendingActionDao: PendingActionDao? = null
-    var sharedPreferences: SharedPreferences? = null
+    var preferences: SharedPreferences? = null
 
     private var mMailboxLocation: Constants.MessageLocationType = Constants.MessageLocationType.INBOX
     private var mLabelId: String? = null
@@ -173,7 +176,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         notificationDao = NotificationDatabase.getInstance(applicationContext, userId).getDao()
         counterDao = CounterDatabase.getInstance(applicationContext, userId).getDao()
         pendingActionDao = PendingActionDatabase.getInstance(applicationContext, userId).getDao()
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this@BaseSettingsActivity)
+        preferences = userManager.preferencesFor(userId)
 
         mMailboxLocation = Constants.MessageLocationType
             .fromInt(intent.getIntExtra(EXTRA_CURRENT_MAILBOX_LOCATION, 0))
@@ -232,7 +235,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     abstract fun renderViews()
 
     private fun showCustomLocaleDialog() {
-        val selectedLanguage = sharedPreferences!!.getString(PREF_CUSTOM_APP_LANGUAGE, "")
+        val selectedLanguage = preferences!!.getString(PREF_CUSTOM_APP_LANGUAGE, "")
         val languageValues = resources.getStringArray(R.array.custom_language_values)
         val selectedLanguageIndex = languageValues.indexOfFirst { it == selectedLanguage }
 
@@ -344,7 +347,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 val swipeFragment = SwipeSettingFragment.newInstance(mailSettings)
                 supportFragmentManager.beginTransaction()
                     .add(R.id.settings_fragment_container, swipeFragment)
-                    .addToBackStack(swipeFragment.fragmentKey)
+                    .addToBackStack(swipeFragment.tag)
                     .commitAllowingStateLoss()
             }
             LOCAL_STORAGE_LIMIT -> {

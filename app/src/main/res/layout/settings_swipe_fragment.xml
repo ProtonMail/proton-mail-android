@@ -19,86 +19,68 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_norm"
     android:clickable="true"
+    android:paddingTop="@dimen/padding_l"
     android:focusable="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/info"
+    <ImageView
+        android:id="@+id/info_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:padding="@dimen/padding_l"
+        android:src="@drawable/ic_info_circle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/icon_hint"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/info_text_view"
+        style="@style/Proton.Text.Caption.Hint"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/padding_l"
+        android:paddingTop="@dimen/padding_l"
+        android:paddingEnd="@dimen/padding_l"
+        android:paddingBottom="@dimen/padding_l"
+        android:text="@string/settings_swipe_settings_info"
+        app:layout_constraintBottom_toBottomOf="@id/info_icon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toEndOf="@id/info_icon"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/info_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="@dimen/padding_m"
-            android:src="@drawable/ic_info_circle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/info_text_view"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/icon_hint" />
-
-        <TextView
-            android:id="@+id/info_text_view"
-            style="@style/Proton.Text.Caption.Hint"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:text="@string/settings_swipe_settings_info"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/info_icon"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/left_to_right"
+    <TextView
+        android:id="@+id/left_to_right_text_view"
+        style="@style/Proton.Text.DefaultSmall"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:padding="@dimen/padding_l"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/settings_swipe_left_to_right"
+        app:layout_constraintBottom_toBottomOf="@id/left_to_right_swipe_action_text_view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/info">
+        app:layout_constraintTop_toBottomOf="@id/info_icon" />
 
-        <TextView
-            android:id="@+id/left_to_right_text_view"
-            style="@style/Proton.Text.DefaultSmall"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:text="@string/settings_swipe_left_to_right"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/left_to_right_swipe_action_text_view"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/left_to_right_swipe_action_text_view"
-            style="@style/Proton.Text.DefaultSmall.Weak"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:drawablePadding="@dimen/padding_m"
-            android:gravity="end|center_vertical"
-            android:textAlignment="gravity"
-            app:drawableEndCompat="@drawable/ic_chevron_right"
-            app:drawableTint="@color/icon_hint"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/left_to_right_text_view"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/left_to_right_swipe_action_text_view"
+        style="@style/Proton.Text.DefaultSmall.Weak"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:drawablePadding="@dimen/padding_m"
+        android:gravity="end|center_vertical"
+        android:padding="@dimen/padding_l"
+        android:textAlignment="gravity"
+        app:drawableEndCompat="@drawable/ic_chevron_right"
+        app:drawableTint="@color/icon_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/left_to_right_text_view"
+        app:layout_constraintTop_toBottomOf="@id/info_icon" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/left_to_right_preview"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/padding_3xl"
         android:background="@color/background_secondary"
@@ -106,25 +88,35 @@
         android:paddingStart="@dimen/padding_xl"
         android:paddingTop="@dimen/padding_xl"
         android:paddingBottom="@dimen/padding_xl"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/left_to_right">
+        app:layout_constraintTop_toBottomOf="@id/left_to_right_swipe_action_text_view">
 
-        <ViewStub
-            android:id="@+id/left_to_right_placeholder"
+        <LinearLayout
+            android:id="@+id/left_to_right_placeholder_wrapper"
             android:layout_width="@dimen/settings_swipe_placeholder_width"
             android:layout_height="@dimen/settings_swipe_placeholder_height"
-            app:layout_constraintEnd_toStartOf="@id/left_to_right_image"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+            <ViewStub
+                android:id="@+id/left_to_right_placeholder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/left_to_right_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_swipe_action_preview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/background_norm"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/left_to_right_placeholder_wrapper"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/left_to_right_placeholder"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+            <include layout="@layout/settings_right_swipe_action_preview" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
@@ -138,46 +130,36 @@
         android:layout_width="match_parent"
         app:layout_constraintTop_toBottomOf="@id/divider" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/right_to_left"
+
+    <TextView
+        android:id="@+id/right_to_left_text_view"
+        style="@style/Proton.Text.DefaultSmall"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:padding="@dimen/padding_l"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/settings_swipe_right_to_left"
+        app:layout_constraintBottom_toBottomOf="@id/right_to_left_swipe_action_text_view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider">
+        app:layout_constraintTop_toBottomOf="@id/divider" />
 
-        <TextView
-            android:id="@+id/right_to_left_text_view"
-            style="@style/Proton.Text.DefaultSmall"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:text="@string/settings_swipe_right_to_left"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/right_to_left_swipe_action_text_view"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/right_to_left_swipe_action_text_view"
-            style="@style/Proton.Text.DefaultSmall.Weak"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:drawablePadding="@dimen/padding_m"
-            android:gravity="end|center_vertical"
-            android:textAlignment="gravity"
-            app:drawableEndCompat="@drawable/ic_chevron_right"
-            app:drawableTint="@color/icon_hint"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/right_to_left_text_view"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/right_to_left_swipe_action_text_view"
+        style="@style/Proton.Text.DefaultSmall.Weak"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:drawablePadding="@dimen/padding_m"
+        android:gravity="end|center_vertical"
+        android:padding="@dimen/padding_l"
+        android:textAlignment="gravity"
+        app:drawableEndCompat="@drawable/ic_chevron_right"
+        app:drawableTint="@color/icon_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/right_to_left_text_view"
+        app:layout_constraintTop_toBottomOf="@id/divider" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/right_to_left_preview"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/padding_3xl"
         android:background="@color/background_secondary"
@@ -186,22 +168,36 @@
         android:paddingEnd="@dimen/padding_xl"
         android:paddingBottom="@dimen/padding_xl"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/right_to_left">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/right_to_left_swipe_action_text_view">
 
-        <ViewStub
-            android:id="@+id/right_to_left_placeholder"
+        <LinearLayout
+            android:id="@+id/right_to_left_placeholder_wrapper"
             android:layout_width="@dimen/settings_swipe_placeholder_width"
             android:layout_height="@dimen/settings_swipe_placeholder_height"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/right_to_left_image"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+            <ViewStub
+                android:id="@+id/right_to_left_placeholder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/right_to_left_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_swipe_action_preview"
-            app:layout_constraintEnd_toStartOf="@+id/right_to_left_placeholder"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/background_norm"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/right_to_left_placeholder_wrapper"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <include layout="@layout/settings_left_swipe_action_preview" />
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

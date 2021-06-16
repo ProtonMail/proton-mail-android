@@ -132,24 +132,14 @@ class SwipeChooserActivity : BaseActivity() {
                 (swipeRadioGroup.getChildAt(index) as RadioButton).isChecked = true
             }
         }
-
-        swipeRadioGroup!!.setOnCheckedChangeListener { _, _ ->
-            when (swipeRadioGroup!!.checkedRadioButtonId) {
-                R.id.read_unread -> {
-                    currentAction = SwipeAction.MARK_READ.ordinal
-                }
-                R.id.star_unstar -> {
-                    currentAction = SwipeAction.STAR.ordinal
-                }
-                R.id.trash -> {
-                    currentAction = SwipeAction.TRASH.ordinal
-                }
-                R.id.move_to_archive -> {
-                    currentAction = SwipeAction.ARCHIVE.ordinal
-                }
-                R.id.move_to_spam -> {
-                    currentAction = SwipeAction.SPAM.ordinal
-                }
+        swipeRadioGroup?.setOnCheckedChangeListener { _, _ ->
+            currentAction = when (swipeRadioGroup.checkedRadioButtonId) {
+                R.id.read_unread -> SwipeAction.MARK_READ.ordinal
+                R.id.star_unstar -> SwipeAction.STAR.ordinal
+                R.id.trash -> SwipeAction.TRASH.ordinal
+                R.id.move_to_archive -> SwipeAction.ARCHIVE.ordinal
+                R.id.move_to_spam -> SwipeAction.SPAM.ordinal
+                else -> throw IllegalArgumentException("Unknown button id")
             }
 
             if (swipeId == SwipeType.LEFT) {

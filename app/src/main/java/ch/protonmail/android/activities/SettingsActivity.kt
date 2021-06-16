@@ -74,7 +74,7 @@ class SettingsActivity : BaseSettingsActivity() {
 
         val languageValues = resources.getStringArray(R.array.custom_language_values)
         val languageLabels = resources.getStringArray(R.array.custom_language_labels)
-        val appLanguage = sharedPreferences!!.getString(PREF_CUSTOM_APP_LANGUAGE, "")
+        val appLanguage = preferences!!.getString(PREF_CUSTOM_APP_LANGUAGE, "")
         if (appLanguage.isNullOrEmpty()) {
             setValue(SettingsEnum.APP_LANGUAGE, getString(R.string.auto_detect))
         } else {

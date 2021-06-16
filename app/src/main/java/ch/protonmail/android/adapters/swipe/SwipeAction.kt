@@ -22,6 +22,7 @@ import ch.protonmail.android.R
 
 enum class SwipeAction {
     TRASH {
+
         override val actionName: Int
             get() = R.string.swipe_action_trash_short
 
@@ -30,8 +31,12 @@ enum class SwipeAction {
 
         override fun getActionBackgroundResource(right: Boolean): Int =
             if (right) R.layout.mailbox_right_swipe_action_trash else R.layout.mailbox_left_swipe_action_trash
+
+        override fun getActionPreviewBackgroundResource(right: Boolean): Int =
+            if (right) R.layout.settings_right_swipe_action_trash else R.layout.settings_left_swipe_action_trash
     },
     SPAM {
+
         override val actionName: Int
             get() = R.string.swipe_action_spam_short
 
@@ -40,6 +45,9 @@ enum class SwipeAction {
 
         override fun getActionBackgroundResource(right: Boolean): Int =
             if (right) R.layout.mailbox_right_swipe_action_spam else R.layout.mailbox_left_swipe_action_spam
+
+        override fun getActionPreviewBackgroundResource(right: Boolean): Int =
+            if (right) R.layout.settings_right_swipe_action_spam else R.layout.settings_left_swipe_action_spam
     },
     STAR {
 
@@ -51,6 +59,9 @@ enum class SwipeAction {
 
         override fun getActionBackgroundResource(right: Boolean): Int =
             if (right) R.layout.mailbox_right_swipe_action_star else R.layout.mailbox_left_swipe_action_star
+
+        override fun getActionPreviewBackgroundResource(right: Boolean): Int =
+            if (right) R.layout.settings_right_swipe_action_star else R.layout.settings_left_swipe_action_star
     },
     ARCHIVE {
 
@@ -62,6 +73,9 @@ enum class SwipeAction {
 
         override fun getActionBackgroundResource(right: Boolean): Int =
             if (right) R.layout.mailbox_right_swipe_action_archive else R.layout.mailbox_left_swipe_action_archive
+
+        override fun getActionPreviewBackgroundResource(right: Boolean): Int =
+            if (right) R.layout.settings_right_swipe_action_archive else R.layout.settings_left_swipe_action_archive
     },
     MARK_READ {
 
@@ -73,9 +87,13 @@ enum class SwipeAction {
 
         override fun getActionBackgroundResource(right: Boolean): Int =
             if (right) R.layout.mailbox_right_swipe_action_mark_read else R.layout.mailbox_left_swipe_action_mark_read
+
+        override fun getActionPreviewBackgroundResource(right: Boolean): Int =
+            if (right) R.layout.settings_right_swipe_action_mark_read else R.layout.settings_left_swipe_action_mark_read
     };
 
     abstract val actionName: Int
     abstract val actionDescription: Int
     abstract fun getActionBackgroundResource(right: Boolean): Int
+    abstract fun getActionPreviewBackgroundResource(right: Boolean): Int
 }

@@ -29,6 +29,7 @@
     <dimen name="size_icon_m">24dp</dimen>
     <dimen name="size_icon_l">32dp</dimen>
     <dimen name="size_corner_xs">8dp</dimen>
+    <dimen name="size_corner_xxs">4dp</dimen>
     <dimen name="size_badge">24dp</dimen>
     <dimen name="size_corner_s">16dp</dimen>
     <dimen name="size_outline">1dp</dimen>
@@ -138,6 +139,11 @@
     <dimen name="settings_min_height_input_field">96dp</dimen>
     <dimen name="settings_color_indicator_size">16dp</dimen>
     <dimen name="settings_color_item_size">40dp</dimen>
+    <!-- Settings Swipe Preview Mock -->
+    <dimen name="settings_swipe_preview_avatar_mock_size">32dp</dimen>
+    <dimen name="settings_swipe_preview_line_mock_height">10dp</dimen>
+    <dimen name="settings_swipe_preview_line_mock_margin">12dp</dimen>
+
     <!-- endregion -->
 
     <!-- region V3 -->

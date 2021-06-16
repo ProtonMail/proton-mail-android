@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_norm"
+    android:paddingTop="@dimen/padding_l"
+    android:paddingEnd="@dimen/padding_xl"
+    android:paddingBottom="@dimen/padding_l">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="-0.05" />
+
+    <View
+        android:id="@+id/avatar_mock"
+        android:layout_width="@dimen/settings_swipe_preview_avatar_mock_size"
+        android:layout_height="@dimen/settings_swipe_preview_avatar_mock_size"
+        android:layout_marginEnd="@dimen/padding_l"
+        android:background="@drawable/shape_rectangle_xxsmall_corners_weak_fill"
+        app:layout_constraintStart_toEndOf="@id/guideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/fist_line_mock"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/settings_swipe_preview_line_mock_height"
+        android:layout_marginStart="@dimen/padding_l"
+        android:background="@drawable/shape_rectangle_xxsmall_corners_weak_fill"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/avatar_mock"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/second_line_mock"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/settings_swipe_preview_line_mock_height"
+        android:layout_marginTop="@dimen/settings_swipe_preview_line_mock_margin"
+        android:background="@drawable/shape_rectangle_xxsmall_corners_weak_fill"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/fist_line_mock"
+        app:layout_constraintTop_toBottomOf="@id/fist_line_mock" />
+
+
+    <View
+        android:id="@+id/third_line_mock"
+        android:layout_width="48dp"
+        android:layout_height="@dimen/settings_swipe_preview_line_mock_height"
+        android:layout_marginTop="@dimen/settings_swipe_preview_line_mock_margin"
+        android:background="@drawable/shape_rectangle_xxsmall_corners_weak_fill"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/second_line_mock"
+        app:layout_constraintTop_toBottomOf="@id/second_line_mock" />
+</androidx.constraintlayout.widget.ConstraintLayout>

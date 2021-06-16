@@ -21,11 +21,9 @@ package ch.protonmail.android.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.children
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
@@ -135,11 +133,11 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 )
                 setEnabled(
                     SettingsEnum.LINK_CONFIRMATION,
-                    sharedPreferences!!.getBoolean(PREF_HYPERLINK_CONFIRM, true)
+                    preferences!!.getBoolean(PREF_HYPERLINK_CONFIRM, true)
                 )
 
                 setToggleListener(SettingsEnum.LINK_CONFIRMATION) { view: View, isChecked: Boolean ->
-                    val prefs = checkNotNull(sharedPreferences)
+                    val prefs = checkNotNull(preferences)
                     if (view.isPressed && isChecked != prefs.getBoolean(PREF_HYPERLINK_CONFIRM, true)) {
                         prefs[PREF_HYPERLINK_CONFIRM] = isChecked
                     }
