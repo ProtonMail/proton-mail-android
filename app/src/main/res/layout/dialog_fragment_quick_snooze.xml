@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/labels_dialog_bg"
+    android:minWidth="@dimen/manage_labels_min_width"
+    android:orientation="vertical"
+    android:paddingBottom="0dp"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="@dimen/manage_labels_min_width"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dialog_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:padding="0dp"
+            android:text="@string/notifications_snooze"
+            android:textColor="#505061"
+            android:textSize="20sp" />
+
+        <ch.protonmail.android.views.CustomFontTextView
+            android:id="@+id/notifications_resume_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/fields_default_space"
+            android:padding="0dp"
+            android:textColor="#505061"
+            android:textSize="14sp"
+            android:visibility="gone"
+            app:fontName="Roboto-Thin.ttf" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/quick_snooze_turn_off_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/fields_default_space_large"
+                android:clickable="true"
+                android:paddingTop="@dimen/fields_default_space_small_plus">
+
+                <TextView
+                    android:id="@+id/quick_snooze_turn_off"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:paddingEnd="@dimen/fields_default_space_medium"
+                    android:paddingLeft="@dimen/fields_default_space_small_plus"
+                    android:paddingRight="@dimen/fields_default_space_medium"
+                    android:paddingStart="@dimen/fields_default_space_small_plus"
+                    android:singleLine="true"
+                    android:text="@string/turn_off"
+                    android:textAllCaps="true"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/h5" />
+
+            </FrameLayout>
+
+            <ListView
+                android:id="@+id/snooze_options_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/fields_default_space"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                android:paddingBottom="@dimen/fields_default_space"
+                android:paddingTop="0dp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
