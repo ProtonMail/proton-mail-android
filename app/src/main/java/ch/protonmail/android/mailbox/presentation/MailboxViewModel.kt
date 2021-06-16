@@ -61,12 +61,11 @@ import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -116,9 +115,9 @@ class MailboxViewModel @Inject constructor(
     private val _manageLimitReachedWarningOnTryCompose = MutableLiveData<Event<Boolean>>()
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
-    private val _mailboxState = MutableStateFlow<MailboxState>(MailboxState.Loading)
-    private val _mailboxLocation = MutableStateFlow(INBOX)
-    private val _mailboxLabelId = MutableStateFlow(EMPTY_STRING)
+    private val mutableMailboxState = MutableStateFlow<MailboxState>(MailboxState.Loading)
+    private val mutableMailboxLocation = MutableStateFlow(INBOX)
+    private val mutableMailboxLabelId = MutableStateFlow(EMPTY_STRING)
 
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning
@@ -134,39 +133,37 @@ class MailboxViewModel @Inject constructor(
     val hasSuccessfullyDeletedMessages: LiveData<Boolean>
         get() = _hasSuccessfullyDeletedMessages
 
-    val mailboxState: StateFlow<MailboxState>
-        get() = _mailboxState
+    val mailboxState = mutableMailboxState.asStateFlow()
 
-    val mailboxLocation: StateFlow<Constants.MessageLocationType>
-        get() = _mailboxLocation
+    val mailboxLocation = mutableMailboxLocation.asStateFlow()
 
     init {
-        combine(_mailboxLocation, _mailboxLabelId) { location, label ->
+        combine(mutableMailboxLocation, mutableMailboxLabelId) { location, label ->
             location to label
         }
             .onEach {
                 Timber.v("New location/label $it")
-                _mailboxState.value = MailboxState.Loading
+                mutableMailboxState.value = MailboxState.Loading
             }
             .flatMapLatest { pair ->
                 val location = pair.first
                 val labelId = pair.second
+                val userId = requireNotNull(userManager.currentUserId)
 
                 if (conversationModeEnabled(location)) {
-                    Timber.v("Getting conversations for $location label: $labelId")
-                    conversationsAsMailboxItems(location, labelId)
+                    Timber.v("Getting conversations for $location label: $labelId user: $userId")
+                    conversationsAsMailboxItems(location, labelId, userId)
                         .onEach {
-                            _mailboxState.value = it
+                            mutableMailboxState.value = it
                         }
                 } else {
-                    val userId = requireNotNull(userManager.currentUserId)
                     Timber.v("Getting messages for $location label: $labelId user: $userId")
                     getMessagesByLocation(location, labelId, userId)
                         .map {
                             messagesToMailboxItems(it)
                         }
                         .onEach {
-                            _mailboxState.value = MailboxState.Data(
+                            mutableMailboxState.value = MailboxState.Data(
                                 it,
                                 false
                             )
@@ -174,7 +171,7 @@ class MailboxViewModel @Inject constructor(
                 }
             }
             .catch {
-                _mailboxState.value = MailboxState.Error(
+                mutableMailboxState.value = MailboxState.Error(
                     "Failed getting messages",
                     it
                 )
@@ -287,8 +284,8 @@ class MailboxViewModel @Inject constructor(
         // refresh messages
         fetchMessages(
             null,
-            _mailboxLocation.value,
-            _mailboxLabelId.value,
+            mutableMailboxLocation.value,
+            mutableMailboxLabelId.value,
             includeLabels,
             uuid,
             refreshMessages
@@ -373,9 +370,9 @@ class MailboxViewModel @Inject constructor(
 
     private fun conversationsAsMailboxItems(
         location: Constants.MessageLocationType,
-        labelId: String?
+        labelId: String?,
+        userId: Id
     ): Flow<MailboxState> {
-        val userId = userManager.currentUserId ?: return flowOf(MailboxState.Data(noMoreItems = true))
         val locationId = labelId ?: location.messageLocationTypeValue.toString()
         return getConversations(
             userId, locationId
@@ -597,11 +594,11 @@ class MailboxViewModel @Inject constructor(
     }
 
     fun setNewMailboxLocation(newLocation: Constants.MessageLocationType) {
-        _mailboxLocation.value = newLocation
+        mutableMailboxLocation.value = newLocation
     }
 
     fun setNewMailboxLabel(labelId: String) {
-        _mailboxLabelId.value = labelId
+        mutableMailboxLabelId.value = labelId
     }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)

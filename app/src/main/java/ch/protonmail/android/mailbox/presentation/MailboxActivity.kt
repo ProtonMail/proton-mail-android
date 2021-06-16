@@ -534,6 +534,7 @@ class MailboxActivity :
 
         val currentUserId = userManager.currentUserId ?: return
 
+        setRefreshing(true)
         mJobManager.start()
         counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()
         pendingActionDao = PendingActionDatabase.getInstance(this, currentUserId).getDao()
@@ -843,7 +844,6 @@ class MailboxActivity :
                         messageStringId = R.string.are_you_sure_empty,
                         leftStringId = R.string.no
                     ) {
-                        setRefreshing(true)
                         mJobManager.addJobInBackground(
                             EmptyFolderJob(mailboxViewModel.mailboxLocation.value, this.mailboxLabelId)
                         )
@@ -973,7 +973,6 @@ class MailboxActivity :
         if (!isDohOngoing) {
             Timber.d("DoH NOT ongoing showing UI")
             if (connectivity != Constants.ConnectionState.CONNECTED) {
-                setRefreshing(false)
                 showNoConnSnackAndScheduleRetry(connectivity)
             } else {
                 hideNoConnSnack()
@@ -1250,8 +1249,6 @@ class MailboxActivity :
 
     private fun switchToMailboxLocation(newLocation: Int) {
         val newMessageLocationType = fromInt(newLocation)
-        mailboxSwipeRefreshLayout.visibility = View.VISIBLE
-        mailboxSwipeRefreshLayout.isRefreshing = true
         setElevationOnToolbarAndStatusView(false)
         LoaderManager.getInstance(this).destroyLoader(LOADER_ID_LABELS_OFFLINE)
         if (actionMode != null) {
@@ -1462,8 +1459,6 @@ class MailboxActivity :
 
         override fun onPostExecute(label: Label?) {
             val mailboxActivity = mailboxActivity.get() ?: return
-            mailboxActivity.mailboxSwipeRefreshLayout.visibility = View.VISIBLE
-            mailboxActivity.mailboxSwipeRefreshLayout.isRefreshing = true
             mailboxActivity.setElevationOnToolbarAndStatusView(false)
             if (mailboxActivity.actionMode != null) {
                 mailboxActivity.actionMode!!.finish()
