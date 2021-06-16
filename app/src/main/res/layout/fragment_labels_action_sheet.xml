@@ -47,6 +47,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_labels_sheet_archive_switch"
+                style="@style/ListStandardItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?selectableItemBackground"
@@ -87,8 +88,8 @@
                 android:enabled="false"
                 android:focusable="true"
                 android:text="@string/new_label"
-                app:drawableStartCompat="@drawable/ic_add"
                 android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_add"
                 tools:visibility="visible" />
 
             <TextView
@@ -101,8 +102,8 @@
                 android:enabled="false"
                 android:focusable="true"
                 android:text="@string/new_folder"
-                app:drawableStartCompat="@drawable/ic_add"
                 android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_add"
                 tools:visibility="visible" />
 
             <androidx.recyclerview.widget.RecyclerView
