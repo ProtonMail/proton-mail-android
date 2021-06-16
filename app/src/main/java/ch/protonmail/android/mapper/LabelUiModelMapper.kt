@@ -39,19 +39,24 @@ internal class LabelUiModelMapper(private val isLabelEditable: Boolean) : UiMode
     /** @return [LabelUiModel] from receiver [Label] Entity */
     override fun Label.toUiModel(): LabelUiModel {
 
-        val type = if (exclusive)
-            LabelUiModel.Type.FOLDERS else LabelUiModel.Type.LABELS
+        val type = if (exclusive) {
+            LabelUiModel.Type.FOLDERS
+        } else LabelUiModel.Type.LABELS
 
         val image = when (type) {
             LabelUiModel.Type.LABELS -> R.drawable.shape_ellipse
             LabelUiModel.Type.FOLDERS -> R.drawable.ic_folder
         }
 
+        var newColor = color
+        if (color == "#5ec7b7") newColor = "#79C4B7"
+        if (color == "#97c9c1") newColor = "#A1C8C1"
+
         return LabelUiModel(
             labelId = id,
             name = name,
             image = image,
-            color = normalizeColor(color),
+            color = normalizeColor(newColor),
             isChecked = false,
             display = display,
             type = type
