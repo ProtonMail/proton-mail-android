@@ -46,4 +46,14 @@ class ConversationApi(private val service: ConversationService) : BaseApi(), Con
     override suspend fun markConversationsUnread(
         conversationIds: ConversationIdsRequestBody
     ) = service.markConversationsUnread(conversationIds)
+
+    override suspend fun labelConversations(
+        conversationIds: ConversationIdsRequestBody,
+        userId: Id
+    ) = service.labelConversations(conversationIds, userIdTag = UserIdTag(userId))
+
+    override suspend fun unlabelConversations(
+        conversationIds: ConversationIdsRequestBody,
+        userId: Id
+    ) = service.unlabelConversations(conversationIds, userIdTag = UserIdTag(userId))
 }

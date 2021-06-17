@@ -17,19 +17,32 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.data.remote.model
+package ch.protonmail.android.mailbox.domain
 
-import com.google.gson.annotations.SerializedName
-
-private const val IDS = "IDs"
-private const val LABEL_ID = "LabelID"
+import me.proton.core.domain.entity.UserId
+import javax.inject.Inject
 
 /**
- * Request body that should be used when performing an action on conversations.
+ * A use case that handles changing the starred status of a conversation
  */
-data class ConversationIdsRequestBody(
-    @SerializedName(LABEL_ID)
-    val labelId: String? = null,
-    @SerializedName(IDS)
-    val ids: List<String>
-)
+class ChangeConversationsStarredStatus @Inject constructor(
+    private val conversationsRepository: ConversationsRepository
+) {
+
+    suspend operator fun invoke(
+        conversationIds: List<String>,
+        userId: UserId,
+        action: Action
+    ) {
+        if (action == Action.ACTION_STAR) {
+            conversationsRepository.star(conversationIds, userId)
+        } else {
+            conversationsRepository.unstar(conversationIds, userId)
+        }
+    }
+
+    enum class Action {
+        ACTION_STAR,
+        ACTION_UNSTAR
+    }
+}

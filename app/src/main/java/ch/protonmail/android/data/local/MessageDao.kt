@@ -360,7 +360,16 @@ abstract class MessageDao {
         WHERE $COLUMN_MESSAGE_ID = :messageId
     """
     )
-    abstract fun updateStarred(messageId: String, starred: Boolean)
+    abstract fun updateStarredBlocking(messageId: String, starred: Boolean)
+
+    @Query(
+        """
+        UPDATE $TABLE_MESSAGES 
+        SET $COLUMN_MESSAGE_IS_STARRED = :starred
+        WHERE $COLUMN_MESSAGE_ID = :messageId
+    """
+    )
+    abstract suspend fun updateStarred(messageId: String, starred: Boolean)
     //endregion Messages
 
     //region Attachments

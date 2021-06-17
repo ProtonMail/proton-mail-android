@@ -179,16 +179,14 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             textViewDetailsActionsUnstar.apply {
                 isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID || isStarred
                 setOnClickListener {
-                    viewModel.unStarMessage(messageIds)
-                    dismiss()
+                    viewModel.unStarMessage(messageIds, messageLocation)
                 }
             }
 
             textViewDetailsActionsStar.apply {
                 isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID || !isStarred
                 setOnClickListener {
-                    viewModel.starMessage(messageIds)
-                    dismiss()
+                    viewModel.starMessage(messageIds, messageLocation)
                 }
             }
 
@@ -325,6 +323,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             )
             is MessageActionSheetAction.ShowMessageHeaders -> showMessageHeaders(sheetAction.messageHeaders)
             is MessageActionSheetAction.ChangeReadStatus -> dismissActionSheetAndGoToMailbox()
+            is MessageActionSheetAction.ChangeStarredStatus -> dismiss()
             else -> Timber.v("unhandled action $sheetAction")
         }
     }

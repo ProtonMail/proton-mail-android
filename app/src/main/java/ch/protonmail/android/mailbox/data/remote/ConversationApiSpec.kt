@@ -44,4 +44,14 @@ interface ConversationApiSpec {
     suspend fun markConversationsUnread(
         conversationIds: ConversationIdsRequestBody
     ): ConversationsActionResponses
+
+    suspend fun labelConversations(
+        conversationIds: ConversationIdsRequestBody,
+        userId: Id
+    ): ConversationsActionResponses
+
+    suspend fun unlabelConversations(
+        conversationIds: ConversationIdsRequestBody,
+        userId: Id
+    ): ConversationsActionResponses
 }

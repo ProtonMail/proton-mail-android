@@ -65,4 +65,17 @@ interface ConversationService {
         @Body conversationIds: ConversationIdsRequestBody
     ): ConversationsActionResponses
 
+    @PUT("mail/v4/conversations/label")
+    @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
+    suspend fun labelConversations(
+        @Body conversationIds: ConversationIdsRequestBody,
+        @Tag userIdTag: UserIdTag? = null
+    ): ConversationsActionResponses
+
+    @PUT("mail/v4/conversations/unlabel")
+    @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
+    suspend fun unlabelConversations(
+        @Body conversationIds: ConversationIdsRequestBody,
+        @Tag userIdTag: UserIdTag? = null
+    ): ConversationsActionResponses
 }

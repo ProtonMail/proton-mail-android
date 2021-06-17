@@ -34,11 +34,13 @@ import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBod
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 const val KEY_MARK_READ_WORKER_CONVERSATION_IDS = "ConversationIds"
 const val KEY_MARK_READ_WORKER_UNDO_TOKEN = "UndoToken"
 const val KEY_MARK_READ_WORKER_VALID_UNTIL = "ValidUntil"
 const val KEY_MARK_READ_WORKER_ERROR_DESCRIPTION = "ErrorDescription"
+private const val MAX_RUN_ATTEMPTS = 5
 
 /**
  * A worker that handles marking a conversation as read
@@ -56,7 +58,7 @@ class MarkConversationsReadRemoteWorker @AssistedInject constructor(
                 workDataOf(KEY_MARK_READ_WORKER_ERROR_DESCRIPTION to "Conversation ids list is null")
             )
 
-        val requestBody = ConversationIdsRequestBody(conversationIds.asList())
+        val requestBody = ConversationIdsRequestBody(ids = conversationIds.asList())
 
         return runCatching {
             protonMailApiManager.markConversationsRead(requestBody)
@@ -69,8 +71,17 @@ class MarkConversationsReadRemoteWorker @AssistedInject constructor(
                     )
                 )
             },
-            onFailure = {
-                Result.retry()
+            onFailure = { throwable ->
+                if (throwable is CancellationException) {
+                    throw throwable
+                }
+                if (runAttemptCount > MAX_RUN_ATTEMPTS) {
+                    Result.failure(
+                        workDataOf(KEY_MARK_READ_WORKER_ERROR_DESCRIPTION to "Run attempts exceeded the limit")
+                    )
+                } else {
+                    Result.retry()
+                }
             }
         )
     }

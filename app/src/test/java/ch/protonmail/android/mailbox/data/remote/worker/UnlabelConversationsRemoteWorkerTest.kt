@@ -27,20 +27,20 @@ import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.core.Constants
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import java.io.IOException
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Tests the behaviour of [MarkConversationsUnreadRemoteWorker].
+ * Tests the behaviour of [UnlabelConversationsRemoteWorker]
  */
-class MarkConversationsUnreadRemoteWorkerTest {
+class UnlabelConversationsRemoteWorkerTest {
 
     private val context = mockk<Context>(relaxed = true)
     private val workerParameters = mockk<WorkerParameters>(relaxed = true)
@@ -48,17 +48,17 @@ class MarkConversationsUnreadRemoteWorkerTest {
 
     private val protonMailApiManager = mockk<ProtonMailApiManager>()
 
-    private lateinit var markConversationsUnreadRemoteWorker: MarkConversationsUnreadRemoteWorker
-    private lateinit var markConversationsUnreadRemoteWorkerEnqueuer: MarkConversationsUnreadRemoteWorker.Enqueuer
+    private lateinit var unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker
+    private lateinit var unlabelConversationsRemoteWorkerEnqueuer: UnlabelConversationsRemoteWorker.Enqueuer
 
     @BeforeTest
     fun setUp() {
-        markConversationsUnreadRemoteWorker = MarkConversationsUnreadRemoteWorker(
+        unlabelConversationsRemoteWorker = UnlabelConversationsRemoteWorker(
             context,
             workerParameters,
             protonMailApiManager
         )
-        markConversationsUnreadRemoteWorkerEnqueuer = MarkConversationsUnreadRemoteWorker.Enqueuer(
+        unlabelConversationsRemoteWorkerEnqueuer = UnlabelConversationsRemoteWorker.Enqueuer(
             workManager
         )
     }
@@ -67,11 +67,13 @@ class MarkConversationsUnreadRemoteWorkerTest {
     fun shouldEnqueueWorkerSuccessfullyWhenEnqueuerIsCalled() {
         // given
         val conversationIds = listOf("conversationId1", "conversationId2")
+        val labelId = "labelId"
+        val userId = UserId("userId")
         val operationMock = mockk<Operation>()
         every { workManager.enqueue(any<WorkRequest>()) } returns operationMock
 
         // when
-        val operationResult = markConversationsUnreadRemoteWorkerEnqueuer.enqueue(conversationIds)
+        val operationResult = unlabelConversationsRemoteWorkerEnqueuer.enqueue(conversationIds, labelId, userId)
 
         // then
         assertEquals(operationMock, operationResult)
@@ -82,26 +84,23 @@ class MarkConversationsUnreadRemoteWorkerTest {
         runBlockingTest {
             // given
             val conversationIdsArray = arrayOf("conversationId1", "conversationId2")
-            val tokenString = "token"
-            val validUntilLong: Long = 123
-            every { workerParameters.inputData.getStringArray(KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS) } returns conversationIdsArray
-            coEvery { protonMailApiManager.markConversationsUnread(any()) } returns mockk {
-                every { code } returns Constants.RESPONSE_CODE_MULTIPLE_OK
-                every { undoToken } returns mockk {
-                    every { token } returns tokenString
-                    every { validUntil } returns validUntilLong
-                }
-            }
+            val labelId = "labelId"
+            val userId = "userId"
+            every {
+                workerParameters.inputData.getStringArray(KEY_UNLABEL_WORKER_CONVERSATION_IDS)
+            } returns conversationIdsArray
+            every {
+                workerParameters.inputData.getString(KEY_UNLABEL_WORKER_LABEL_ID)
+            } returns labelId
+            every {
+                workerParameters.inputData.getString(KEY_UNLABEL_WORKER_USER_ID)
+            } returns userId
+            coEvery { protonMailApiManager.unlabelConversations(any(), any()) } returns mockk()
 
-            val expectedResult = ListenableWorker.Result.success(
-                workDataOf(
-                    KEY_MARK_READ_WORKER_UNDO_TOKEN to tokenString,
-                    KEY_MARK_READ_WORKER_VALID_UNTIL to validUntilLong
-                )
-            )
+            val expectedResult = ListenableWorker.Result.success()
 
             // when
-            val result = markConversationsUnreadRemoteWorker.doWork()
+            val result = unlabelConversationsRemoteWorker.doWork()
 
             // then
             assertEquals(expectedResult, result)
@@ -112,14 +111,24 @@ class MarkConversationsUnreadRemoteWorkerTest {
     fun shouldReturnFailureIfConversationIdsListIsNull() {
         runBlockingTest {
             // given
-            every { workerParameters.inputData.getStringArray(KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS) } returns null
+            val labelId = "labelId"
+            val userId = "userId"
+            every {
+                workerParameters.inputData.getStringArray(KEY_UNLABEL_WORKER_CONVERSATION_IDS)
+            } returns null
+            every {
+                workerParameters.inputData.getString(KEY_UNLABEL_WORKER_LABEL_ID)
+            } returns labelId
+            every {
+                workerParameters.inputData.getString(KEY_UNLABEL_WORKER_USER_ID)
+            } returns userId
 
             val expectedResult = ListenableWorker.Result.failure(
-                workDataOf(KEY_MARK_READ_WORKER_ERROR_DESCRIPTION to "Conversation ids list is null")
+                workDataOf(KEY_UNLABEL_WORKER_ERROR_DESCRIPTION to "Input data is not complete")
             )
 
             // when
-            val result = markConversationsUnreadRemoteWorker.doWork()
+            val result = unlabelConversationsRemoteWorker.doWork()
 
             // then
             assertEquals(expectedResult, result)
@@ -131,15 +140,23 @@ class MarkConversationsUnreadRemoteWorkerTest {
         runBlockingTest {
             // given
             val conversationIdsArray = arrayOf("conversationId1", "conversationId2")
+            val labelId = "labelId"
+            val userId = "userId"
             every {
-                workerParameters.inputData.getStringArray(KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS)
+                workerParameters.inputData.getStringArray(KEY_UNLABEL_WORKER_CONVERSATION_IDS)
             } returns conversationIdsArray
-            coEvery { protonMailApiManager.markConversationsUnread(any()) } throws IOException()
+            every {
+                workerParameters.inputData.getString(KEY_UNLABEL_WORKER_LABEL_ID)
+            } returns labelId
+            every {
+                workerParameters.inputData.getString(KEY_UNLABEL_WORKER_USER_ID)
+            } returns userId
+            coEvery { protonMailApiManager.unlabelConversations(any(), any()) } throws IOException()
 
             val expectedResult = ListenableWorker.Result.retry()
 
             // when
-            val result = markConversationsUnreadRemoteWorker.doWork()
+            val result = unlabelConversationsRemoteWorker.doWork()
 
             // then
             assertEquals(expectedResult, result)
@@ -151,20 +168,30 @@ class MarkConversationsUnreadRemoteWorkerTest {
         runBlockingTest {
             // given
             val conversationIdsArray = arrayOf("conversationId1", "conversationId2")
+            val labelId = "labelId"
+            val userId = "userId"
             every {
-                workerParameters.inputData.getStringArray(KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS)
+                workerParameters.inputData.getStringArray(KEY_UNLABEL_WORKER_CONVERSATION_IDS)
             } returns conversationIdsArray
+            every {
+                workerParameters.inputData.getString(KEY_UNLABEL_WORKER_LABEL_ID)
+            } returns labelId
+            every {
+                workerParameters.inputData.getString(KEY_UNLABEL_WORKER_USER_ID)
+            } returns userId
             every {
                 workerParameters.runAttemptCount
             } returns 6
-            coEvery { protonMailApiManager.markConversationsUnread(any()) } throws IOException()
+            coEvery {
+                protonMailApiManager.unlabelConversations(any(), any())
+            } throws IOException()
 
             val expectedResult = ListenableWorker.Result.failure(
-                workDataOf(KEY_MARK_UNREAD_WORKER_ERROR_DESCRIPTION to "Run attempts exceeded the limit")
+                workDataOf(KEY_UNLABEL_WORKER_ERROR_DESCRIPTION to "Run attempts exceeded the limit")
             )
 
             // when
-            val result = markConversationsUnreadRemoteWorker.doWork()
+            val result = unlabelConversationsRemoteWorker.doWork()
 
             // then
             assertEquals(expectedResult, result)

@@ -25,6 +25,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
+import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -43,6 +44,7 @@ class MessageActionSheetViewModel @Inject constructor(
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val messageRepository: MessageRepository,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
+    private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     private val conversationModeEnabled: ConversationModeEnabled,
     private val accountManager: AccountManager
 ) : ViewModel() {
@@ -106,9 +108,39 @@ class MessageActionSheetViewModel @Inject constructor(
         currentFolder.messageLocationTypeValue.toString()
     )
 
-    fun starMessage(messageId: List<String>) = messageRepository.starMessages(messageId)
+    fun starMessage(
+        ids: List<String>,
+        location: Constants.MessageLocationType
+    ) {
+        viewModelScope.launch {
+            if (conversationModeEnabled(location)) {
+                accountManager.getPrimaryUserId().first()?.let {
+                    changeConversationsStarredStatus(ids, it, ChangeConversationsStarredStatus.Action.ACTION_STAR)
+                }
+            } else {
+                messageRepository.starMessages(ids)
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(true)
+        }
+    }
 
-    fun unStarMessage(messageId: List<String>) = messageRepository.unStarMessages(messageId)
+    fun unStarMessage(
+        ids: List<String>,
+        location: Constants.MessageLocationType
+    ) {
+        viewModelScope.launch {
+            if (conversationModeEnabled(location)) {
+                accountManager.getPrimaryUserId().first()?.let {
+                    changeConversationsStarredStatus(ids, it, ChangeConversationsStarredStatus.Action.ACTION_UNSTAR)
+                }
+            } else {
+                messageRepository.unStarMessages(ids)
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(false)
+        }
+    }
 
     fun markUnread(
         ids: List<String>,
