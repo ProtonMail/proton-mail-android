@@ -27,12 +27,15 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
+import ch.protonmail.android.utils.AppUtil
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.justRun
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
@@ -129,6 +132,8 @@ class PingWorkerTest {
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $exceptionMessage")
             )
+            mockkStatic(AppUtil::class)
+            justRun { AppUtil.postEventOnUi(any()) }
             coEvery { api.pingAsync() } throws ioException
 
             // when
