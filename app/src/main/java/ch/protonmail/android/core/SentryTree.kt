@@ -41,7 +41,7 @@ internal class SentryTree : Timber.Tree() {
             val event = EventBuilder().apply {
                 tag?.let { withTag(TAG_LOG, it) }
                 t?.message?.let { withExtra(EXTRA_THROWABLE_MESSAGE, it) }
-                withMessage(message)
+                withMessage(obfuscateEmails(message))
                 withTag(TAG_APP_VERSION, AppUtil.getAppVersion())
                 withTag(TAG_SDK_VERSION, "${Build.VERSION.SDK_INT}")
                 withTag(TAG_DEVICE_MODEL, Build.MODEL)
