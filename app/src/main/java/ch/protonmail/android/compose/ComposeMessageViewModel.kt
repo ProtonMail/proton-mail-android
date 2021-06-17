@@ -744,7 +744,7 @@ class ComposeMessageViewModel @Inject constructor(
                         MessageSecurityOptions(
                             messageDataResult.messagePassword,
                             messageDataResult.passwordHint,
-                            messageDataResult.expirationTime!!
+                            messageDataResult.expirationTime
                         )
                     )
                 )
@@ -1309,12 +1309,12 @@ class ComposeMessageViewModel @Inject constructor(
     fun setExpiration(expiration: DaysHoursPair) {
         viewModelScope.launch {
             val newExpiration = expiration.days.days + expiration.hours.hours
-            val newExpirationInSeconds = newExpiration.inSeconds.toLong().takeIf { it > 0 }
+            val newExpirationInSeconds = newExpiration.inSeconds.toLong()
             _messageDataResult = MessageBuilderData.Builder()
                 .fromOld(_messageDataResult)
                 .expirationTime(newExpirationInSeconds)
                 .build()
-            _events.emit(ComposeMessageEventUiModel.OnExpirationChange(hasExpiration = newExpirationInSeconds != null))
+            _events.emit(ComposeMessageEventUiModel.OnExpirationChange(hasExpiration = newExpirationInSeconds > 0))
         }
     }
     // endregion
