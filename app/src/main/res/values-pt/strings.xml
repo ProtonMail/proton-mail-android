@@ -729,7 +729,7 @@
     <string name="signature">Assinatura</string>
     <string name="mobile_footer">Assinatura móvel</string>
     <string name="edit_mobile_footer">Activar assinatura móvel</string>
-    <string name="default_mobile_signature">Enviado através do ProtonMail móvel</string>
+    <string name="default_mobile_footer">Enviado através do ProtonMail móvel</string>
     <string name="mobile_footer_is_premium">A alteração da assinatura móvel só é permitida a utilizadores pagantes</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Adiar</string>

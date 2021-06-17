@@ -709,7 +709,7 @@
     <string name="signature">落款</string>
     <string name="mobile_footer">移动端落款</string>
     <string name="edit_mobile_footer">使用移动端落款</string>
-    <string name="default_mobile_signature">来自 ProtonMail 移动端</string>
+    <string name="default_mobile_footer">来自 ProtonMail 移动端</string>
     <string name="mobile_footer_is_premium">开通付费账户方可更改移动设备落款</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">免打扰</string>

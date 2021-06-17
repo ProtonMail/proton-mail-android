@@ -730,7 +730,7 @@
     <string name="signature">Handtekening</string>
     <string name="mobile_footer">Mobiele handtekening</string>
     <string name="edit_mobile_footer">Mobiele handtekening inschakelen</string>
-    <string name="default_mobile_signature">Verzonden met ProtonMail Mobile</string>
+    <string name="default_mobile_footer">Verzonden met ProtonMail Mobile</string>
     <string name="mobile_footer_is_premium">Alleen betalende gebruikers kunnen de mobiele handtekening aanpassen</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Uitstellen</string>

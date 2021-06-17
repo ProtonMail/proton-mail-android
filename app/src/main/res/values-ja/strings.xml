@@ -710,7 +710,7 @@
     <string name="signature">署名</string>
     <string name="mobile_footer">モバイル署名</string>
     <string name="edit_mobile_footer">モバイル署名を有効にする</string>
-    <string name="default_mobile_signature">ProtonMailモバイルから送信</string>
+    <string name="default_mobile_footer">ProtonMailモバイルから送信</string>
     <string name="mobile_footer_is_premium">モバイル署名の変更は有料ユーザーのみが可能です。</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">通知の停止</string>

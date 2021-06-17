@@ -16,147 +16,168 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_norm"
     android:clickable="true"
-    android:focusable="true"
-    android:background="@color/background_norm">
+    android:focusable="true">
 
-    <TextView
-        android:id="@+id/settings_text_view_display_name_section"
-        style="@style/Proton.Text.DefaultSmall.Interaction"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_l"
-        android:layout_marginEnd="@dimen/padding_l"
-        android:paddingTop="@dimen/padding_xl"
-        android:paddingBottom="@dimen/padding_l"
-        android:text="@string/display_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/settings_input_display_name"
-        style="@style/ProtonInput.Mail"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_l"
-        android:layout_marginEnd="@dimen/padding_l"
-        android:maxLines="1"
-        android:paddingStart="@dimen/padding_l"
-        android:paddingEnd="@dimen/padding_l"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_text_view_display_name_section" />
+        android:paddingBottom="@dimen/padding_xl">
 
-    <View style="@style/ViewSeparatorHorizontal"
-        android:id="@+id/settings_section_signature_divider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="@dimen/padding_xl"
-        app:layout_constraintTop_toBottomOf="@id/settings_input_display_name" />
+        <TextView
+            android:id="@+id/settings_text_view_display_name_section"
+            style="@style/Proton.Text.DefaultSmall.Interaction"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_l"
+            android:layout_marginEnd="@dimen/padding_l"
+            android:paddingTop="@dimen/padding_xl"
+            android:paddingBottom="@dimen/padding_l"
+            android:text="@string/display_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/settings_text_view_signature_section"
-        style="@style/Proton.Text.Default"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_l"
-        android:layout_marginEnd="@dimen/padding_l"
-        android:paddingTop="@dimen/padding_l"
-        android:paddingBottom="@dimen/padding_l"
-        android:text="@string/signature"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_section_signature_divider" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/settings_input_display_name"
+            style="@style/ProtonInput.Mail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_l"
+            android:layout_marginEnd="@dimen/padding_l"
+            android:imeOptions="actionDone"
+            android:inputType="textPersonName"
+            android:maxLines="1"
+            android:paddingStart="@dimen/padding_l"
+            android:paddingEnd="@dimen/padding_l"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settings_text_view_display_name_section" />
+
+        <View
+            android:id="@+id/settings_section_signature_divider"
+            style="@style/ViewSeparatorHorizontal"
+            android:layout_marginTop="@dimen/padding_xl"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settings_input_display_name" />
+
+        <TextView
+            android:id="@+id/settings_text_view_signature_section"
+            style="@style/Proton.Text.Default"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_l"
+            android:layout_marginEnd="@dimen/padding_l"
+            android:paddingTop="@dimen/padding_l"
+            android:paddingBottom="@dimen/padding_l"
+            android:text="@string/signature"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settings_section_signature_divider" />
 
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/settings_toggle_signature"
-        style="@style/ProtonSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_l"
-        android:layout_marginEnd="@dimen/padding_l"
-        android:paddingTop="@dimen/padding_l"
-        android:paddingBottom="@dimen/padding_l"
-        app:layout_constraintBottom_toBottomOf="@id/settings_text_view_signature_section"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_section_signature_divider" />
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/settings_toggle_signature"
+            style="@style/ProtonSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_l"
+            android:layout_marginEnd="@dimen/padding_l"
+            android:paddingTop="@dimen/padding_l"
+            android:paddingBottom="@dimen/padding_l"
+            app:layout_constraintBottom_toBottomOf="@id/settings_text_view_signature_section"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settings_section_signature_divider" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/settings_input_signature"
-        style="@style/ProtonInput.Mail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_l"
-        android:layout_marginEnd="@dimen/padding_l"
-        android:hint="@string/signature"
-        android:minHeight="@dimen/settings_min_height_input_field"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_text_view_signature_section" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/settings_input_signature"
+            style="@style/ProtonInput.Mail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_l"
+            android:layout_marginEnd="@dimen/padding_l"
+            android:hint="@string/signature"
+            android:minHeight="@dimen/settings_min_height_input_field"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settings_text_view_signature_section" />
 
-    <View
-        android:id="@+id/settings_section_mobile_footer_divider"
-        style="@style/ViewSeparatorHorizontal"
-        android:layout_marginTop="@dimen/padding_xl"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_input_signature" />
+        <View
+            android:id="@+id/settings_section_mobile_footer_divider"
+            style="@style/ViewSeparatorHorizontal"
+            android:layout_marginTop="@dimen/padding_xl"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settings_input_signature" />
 
-    <TextView
-        android:id="@+id/settings_text_view_mobile_footer_section"
-        style="@style/Proton.Text.Default"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_l"
-        android:layout_marginEnd="@dimen/padding_l"
-        android:paddingTop="@dimen/padding_l"
-        android:paddingBottom="@dimen/padding_l"
-        android:text="@string/mobile_footer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_section_mobile_footer_divider" />
+        <TextView
+            android:id="@+id/settings_text_view_mobile_footer_section"
+            style="@style/Proton.Text.Default"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_l"
+            android:layout_marginEnd="@dimen/padding_l"
+            android:paddingTop="@dimen/padding_l"
+            android:paddingBottom="@dimen/padding_l"
+            android:text="@string/mobile_footer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settings_section_mobile_footer_divider" />
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/settings_toggle_mobile_footer"
-        style="@style/ProtonSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_l"
-        android:layout_marginEnd="@dimen/padding_l"
-        android:paddingTop="@dimen/padding_l"
-        android:paddingBottom="@dimen/padding_l"
-        app:layout_constraintBottom_toBottomOf="@id/settings_text_view_mobile_footer_section"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_section_mobile_footer_divider" />
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/settings_toggle_mobile_footer"
+            style="@style/ProtonSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_l"
+            android:layout_marginEnd="@dimen/padding_l"
+            android:paddingTop="@dimen/padding_l"
+            android:paddingBottom="@dimen/padding_l"
+            app:layout_constraintBottom_toBottomOf="@id/settings_text_view_mobile_footer_section"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settings_section_mobile_footer_divider" />
 
-    <TextView
-        android:id="@+id/mobile_footer_disabled_text_view"
-        style="@style/Proton.Text.Caption.Weak"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_l"
-        android:layout_marginEnd="@dimen/padding_l"
-        android:paddingBottom="@dimen/padding_l"
-        android:visibility="gone"
-        android:text="@string/mobile_footer_is_premium"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/settings_text_view_mobile_footer_section" />
+        <TextView
+            android:id="@+id/mobile_footer_info_text_view"
+            style="@style/Proton.Text.DefaultSmall.Weak"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_l"
+            android:layout_marginEnd="@dimen/padding_l"
+            android:paddingBottom="@dimen/padding_l"
+            android:text="@string/mobile_footer_info"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settings_text_view_mobile_footer_section" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/settings_input_mobile_footer"
-        style="@style/ProtonInput.Mail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_l"
-        android:layout_marginEnd="@dimen/padding_l"
-        android:hint="@string/default_mobile_signature"
-        android:minHeight="@dimen/settings_min_height_input_field"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mobile_footer_disabled_text_view" />
+        <TextView
+            android:id="@+id/mobile_footer_disabled_text_view"
+            style="@style/Proton.Text.Caption.Weak"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_l"
+            android:layout_marginEnd="@dimen/padding_l"
+            android:paddingBottom="@dimen/padding_l"
+            android:text="@string/mobile_footer_is_premium"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mobile_footer_info_text_view" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/settings_input_mobile_footer"
+            style="@style/ProtonInput.Mail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_l"
+            android:layout_marginEnd="@dimen/padding_l"
+            android:hint="@string/default_mobile_footer"
+            android:minHeight="@dimen/settings_min_height_input_field"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mobile_footer_disabled_text_view" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

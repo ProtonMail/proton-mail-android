@@ -728,7 +728,7 @@
     <string name="signature">Undirskrift</string>
     <string name="mobile_footer">Farsímaundirskrift</string>
     <string name="edit_mobile_footer">Virkja farsímaundirskrift</string>
-    <string name="default_mobile_signature">Sent úr ProtonMail-farsíma</string>
+    <string name="default_mobile_footer">Sent úr ProtonMail-farsíma</string>
     <string name="mobile_footer_is_premium">Einungis notendur með greidda áskrift geta breytt farsímaundirskrift</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Fresta</string>

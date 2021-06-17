@@ -770,7 +770,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun initSignatures(): StringBuilder {
         var signature = ""
-        var mobileSignature = ""
+        var mobileFooter = ""
         val signatureBuilder = StringBuilder()
         signatureBuilder.append(NEW_LINE)
         signatureBuilder.append(NEW_LINE)
@@ -787,12 +787,12 @@ class ComposeMessageViewModel @Inject constructor(
                 user.getSignatureForAddress(user.getSenderAddressIdByEmail(selectedEmail))
             }
         }
-        mobileSignature = user.mobileSignature
+        mobileFooter = user.mobileFooter
 
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)
             .signature(signature)
-            .mobileSignature(mobileSignature)
+            .mobileFooter(mobileFooter)
             .build()
 
         return signatureBuilder
@@ -998,8 +998,8 @@ class ComposeMessageViewModel @Inject constructor(
                     signatureBuilder.append(NEW_LINE)
                     signatureBuilder.append(NEW_LINE)
                 }
-                if (user.isShowMobileSignature) {
-                    signatureBuilder.append(messageDataResult.mobileSignature.replace("\n", NEW_LINE))
+                if (user.isShowMobileFooter) {
+                    signatureBuilder.append(messageDataResult.mobileFooter.replace("\n", NEW_LINE))
                 }
                 signatureBuilder.append(NEW_LINE)
                 signatureBuilder.append(NEW_LINE)
@@ -1160,9 +1160,9 @@ class ComposeMessageViewModel @Inject constructor(
             }
         }
 
-        val fromHtmlMobileSignature = UiUtil.fromHtml(_messageDataResult.mobileSignature)
-        if (fromHtmlMobileSignature.isNotEmpty()) {
-            content = content.replace(fromHtmlMobileSignature.toString(), _messageDataResult.mobileSignature)
+        val fromHtmlMobileFooter = UiUtil.fromHtml(_messageDataResult.mobileFooter)
+        if (fromHtmlMobileFooter.isNotEmpty()) {
+            content = content.replace(fromHtmlMobileFooter.toString(), _messageDataResult.mobileFooter)
         }
 
         return if (isRespondInline()) {
@@ -1197,9 +1197,9 @@ class ComposeMessageViewModel @Inject constructor(
             }
         }
 
-        val fromHtmlMobileSignature = UiUtil.fromHtml(_messageDataResult.mobileSignature)
-        if (!TextUtils.isEmpty(fromHtmlMobileSignature)) {
-            content = content.replace(fromHtmlMobileSignature.toString(), _messageDataResult.mobileSignature)
+        val fromHtmlMobileFooter = UiUtil.fromHtml(_messageDataResult.mobileFooter)
+        if (!TextUtils.isEmpty(fromHtmlMobileFooter)) {
+            content = content.replace(fromHtmlMobileFooter.toString(), _messageDataResult.mobileFooter)
         }
 
         if (_messageDataResult.isRespondInlineChecked || _messageDataResult.isRespondInlineButtonVisible.not()) {

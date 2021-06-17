@@ -222,8 +222,12 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                onBackPressed()
-                true
+                if (supportFragmentManager.fragments.filterIsInstance<DisplayNameAndSignatureFragment>().isNotEmpty()) {
+                    false
+                } else {
+                    onBackPressed()
+                    true
+                }
             }
             else -> super.onOptionsItemSelected(item)
         }

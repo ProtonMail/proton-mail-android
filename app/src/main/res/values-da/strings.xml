@@ -730,7 +730,7 @@
     <string name="signature">Signatur</string>
     <string name="mobile_footer">Mobilsignatur</string>
     <string name="edit_mobile_footer">Aktivér mobilsignatur</string>
-    <string name="default_mobile_signature">Sendt fra ProtonMail-mobil</string>
+    <string name="default_mobile_footer">Sendt fra ProtonMail-mobil</string>
     <string name="mobile_footer_is_premium">Ændring af Mobilsignaturen er kun tilladt for betalende brugere</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Udsæt</string>

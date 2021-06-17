@@ -722,7 +722,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="signature">Signatur</string>
     <string name="mobile_footer">Signatur auf Mobilgeräten</string>
     <string name="edit_mobile_footer">Signatur auf Mobilgerät aktivieren</string>
-    <string name="default_mobile_signature">Gesendet von ProtonMail mobile</string>
+    <string name="default_mobile_footer">Gesendet von ProtonMail mobile</string>
     <string name="mobile_footer_is_premium">Das Ändern der mobilen Signatur ist nur in der kostenpflichtigen Version möglich</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Zurückstellen</string>

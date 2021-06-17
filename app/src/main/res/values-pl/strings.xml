@@ -754,7 +754,7 @@
     <string name="signature">Podpis</string>
     <string name="mobile_footer">Podpis mobilny</string>
     <string name="edit_mobile_footer">Włącz podpis mobilny</string>
-    <string name="default_mobile_signature">Wysłano z aplikacji ProtonMail</string>
+    <string name="default_mobile_footer">Wysłano z aplikacji ProtonMail</string>
     <string name="mobile_footer_is_premium">Zmiana podpisu mobilnego jest dostępna tylko dla użytkowników płatnego planu</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Usypianie powiadomień</string>

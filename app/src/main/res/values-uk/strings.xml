@@ -756,7 +756,7 @@
     <string name="signature">Підпис</string>
     <string name="mobile_footer">Мобільні підпис</string>
     <string name="edit_mobile_footer">Додавати мобільний підпис</string>
-    <string name="default_mobile_signature">Надіслано з ProtonMail mobile</string>
+    <string name="default_mobile_footer">Надіслано з ProtonMail mobile</string>
     <string name="mobile_footer_is_premium">Змінення мобільного підпису дозволено лише передплаченим користувачам</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Відкласти</string>

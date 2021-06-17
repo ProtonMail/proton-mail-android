@@ -730,7 +730,7 @@
     <string name="signature">Signature</string>
     <string name="mobile_footer">Signature mobile</string>
     <string name="edit_mobile_footer">Activer la signature mobile</string>
-    <string name="default_mobile_signature">Envoyé depuis ProtonMail mobile</string>
+    <string name="default_mobile_footer">Envoyé depuis ProtonMail mobile</string>
     <string name="mobile_footer_is_premium">Seules les offres payantes permettent de modifier la signature mobile</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Interruption des notifications</string>

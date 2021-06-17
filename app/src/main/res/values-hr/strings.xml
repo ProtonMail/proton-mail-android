@@ -743,7 +743,7 @@
     <string name="signature">Potpis</string>
     <string name="mobile_footer">Potpis na mobilnim uređajima</string>
     <string name="edit_mobile_footer">Omogući potpis na mobilnim uređajima</string>
-    <string name="default_mobile_signature">Poslano sa ProtonMaila</string>
+    <string name="default_mobile_footer">Poslano sa ProtonMaila</string>
     <string name="mobile_footer_is_premium">Promjena potpisa za mobilne uređaje je dopuštena samo plaćenim korisnicima</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Utišaj</string>

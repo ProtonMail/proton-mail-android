@@ -730,7 +730,7 @@
     <string name="signature">Υπογραφή</string>
     <string name="mobile_footer">Υπογραφή κινητού</string>
     <string name="edit_mobile_footer">Ενεργοποίηση υπογραφής κινητού</string>
-    <string name="default_mobile_signature">Στάλθηκε από ProtonMail mobile</string>
+    <string name="default_mobile_footer">Στάλθηκε από ProtonMail mobile</string>
     <string name="mobile_footer_is_premium">Η αλλαγή της υπογραφής σε συσκευή κινητού επιτρέπεται μόνο σε χρήστες επί πληρωμής</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Αναβολή</string>

@@ -742,7 +742,7 @@
     <string name="signature">Semnătura</string>
     <string name="mobile_footer">Semnătură mobil</string>
     <string name="edit_mobile_footer">Activare semnătură mobil</string>
-    <string name="default_mobile_signature">Trimis cu ProtonMail pentru mobil</string>
+    <string name="default_mobile_footer">Trimis cu ProtonMail pentru mobil</string>
     <string name="mobile_footer_is_premium">Modificarea semnăturii pentru mobil este permisă doar celor cu un cont plătit</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Amânare</string>

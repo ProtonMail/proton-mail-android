@@ -149,7 +149,7 @@ object Constants {
         const val PREF_MAX_ATTACHMENT_STORAGE = "max_attachment_storage"
         const val PREF_MAX_SPACE = "ui_max_space"
         const val PREF_MAX_UPLOAD_FILE_SIZE = "ui_max_upload_file_size"
-        const val PREF_MOBILE_SIGNATURE = "ui_mobile_signature"
+        const val PREF_MOBILE_FOOTER = "ui_mobile_signature"
         const val PREF_NOTIFICATION = "notification"
         const val PREF_NOTIFICATION_EMAIL = "ui_notification_email"
         const val PREF_NOTIFICATION_VISIBILITY_LOCK_SCREEN = "notification_lock_screen_int"

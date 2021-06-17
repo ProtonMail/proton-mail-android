@@ -22,18 +22,23 @@ package ch.protonmail.android.settings.presentation
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.databinding.SettingsFragmentDisplayNameAndSignatureBinding
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,6 +52,56 @@ class DisplayNameAndSignatureFragment : Fragment() {
 
     private val binding get() = requireNotNull(_binding)
 
+    private var hasChanges = false
+    var newDisplayName = ""
+    var newSignature: String? = null
+    var newAddressId: Id? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+        (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.display_name_n_signature)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.findItem(R.id.save).isVisible = true
+        super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        return when (menuItem.itemId) {
+            android.R.id.home -> {
+                if (hasChanges) {
+                    context?.showTwoButtonInfoDialog(
+                        titleStringId = R.string.dialog_discard_changes_title,
+                        messageStringId = R.string.dialog_discard_changes_message,
+                        rightStringId = R.string.discard,
+                        onPositiveButtonClicked = {
+                            activity?.onBackPressed()
+                        }
+                    )
+                } else {
+                    activity?.onBackPressed()
+                }
+                true
+            }
+            R.id.save -> {
+                if (hasChanges) {
+
+                    val job = UpdateSettingsJob(
+                        newDisplayName = newDisplayName,
+                        newSignature = newSignature,
+                        addressId = newAddressId
+                    )
+                    jobManager?.addJobInBackground(job)
+                }
+                activity?.onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(menuItem)
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = SettingsFragmentDisplayNameAndSignatureBinding.inflate(inflater)
         return binding.root
@@ -57,13 +112,15 @@ class DisplayNameAndSignatureFragment : Fragment() {
 
         val legacyUser = (activity as BaseSettingsActivity).legacyUser
         val selectedAddress = checkNotNull(user?.addresses?.primary)
-        val (newAddressId, signature) = selectedAddress.id to selectedAddress.signature?.s
+        val signature = selectedAddress.signature?.s
+        newAddressId = selectedAddress.id
 
-        var displayName = selectedAddress.displayName?.s ?: selectedAddress.email.s
+        val displayName = selectedAddress.displayName?.s ?: selectedAddress.email.s
         binding.settingsInputDisplayName.setText(displayName)
+        newDisplayName = displayName
 
         binding.settingsInputDisplayName.doAfterTextChanged {
-            var newDisplayName = it.toString()
+            newDisplayName = it.toString()
 
             val containsBannedChars = newDisplayName.matches(".*[<>].*".toRegex())
             if (containsBannedChars) {
@@ -72,45 +129,30 @@ class DisplayNameAndSignatureFragment : Fragment() {
                 newDisplayName = primaryAddress.displayName?.s ?: primaryAddress.email.s
             }
 
-            val displayChanged = newDisplayName != displayName
-            if (displayChanged) {
-                displayName = newDisplayName
-
-                val job = UpdateSettingsJob(
-                    newDisplayName = newDisplayName,
-                    addressId = newAddressId
-                )
-                jobManager?.addJobInBackground(job)
-            }
+            hasChanges = newDisplayName != displayName
         }
 
         binding.settingsInputSignature.setText(signature)
+        newSignature = signature
 
         binding.settingsInputSignature.doAfterTextChanged {
-            val newSignature = it.toString()
-            val isSignatureChanged = newSignature != signature
-            if (isSignatureChanged) {
-                val job = UpdateSettingsJob(
-                    newSignature = newSignature,
-                    addressId = newAddressId
-                )
-                jobManager?.addJobInBackground(job)
-            }
+            newSignature = it.toString()
+            hasChanges = newSignature != signature
         }
         binding.settingsToggleSignature.isChecked = legacyUser.isShowSignature
         binding.settingsToggleSignature.setOnCheckedChangeListener { _, isChecked ->
             legacyUser.isShowSignature = isChecked
         }
 
-        val mobileSignature = legacyUser.mobileSignature
-        binding.settingsInputMobileFooter.setText(mobileSignature)
+        val mobileFooter = legacyUser.mobileFooter
+        binding.settingsInputMobileFooter.setText(mobileFooter)
 
         binding.settingsInputMobileFooter.doAfterTextChanged {
-            val newMobileSignature = it.toString()
-            val isMobileSignatureChanged = newMobileSignature != mobileSignature
+            val newMobileFooter = it.toString()
+            val isMobileFooterChanged = newMobileFooter != mobileFooter
 
-            if (isMobileSignatureChanged) {
-                legacyUser.mobileSignature = newMobileSignature
+            if (isMobileFooterChanged) {
+                legacyUser.mobileFooter = newMobileFooter
             }
         }
 
@@ -118,12 +160,13 @@ class DisplayNameAndSignatureFragment : Fragment() {
             binding.mobileFooterDisabledTextView.isVisible = !this
             binding.settingsTextViewMobileFooterSection.isEnabled = this
             binding.settingsToggleMobileFooter.isEnabled = this
+            binding.mobileFooterInfoTextView.isEnabled = this
             binding.mobileFooterDisabledTextView.isEnabled = this
             binding.settingsInputMobileFooter.isEnabled = this
         }
-        binding.settingsToggleMobileFooter.isChecked = legacyUser.isShowMobileSignature
+        binding.settingsToggleMobileFooter.isChecked = legacyUser.isShowMobileFooter
         binding.settingsToggleMobileFooter.setOnCheckedChangeListener { _, isChecked ->
-            legacyUser.isShowMobileSignature = isChecked
+            legacyUser.isShowMobileFooter = isChecked
         }
     }
 
