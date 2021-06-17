@@ -46,31 +46,31 @@ data class DetailedException(
         for (extra in extras) eventBuilder.withExtra(extra.name, extra.value)
     }
 
-    data class Extra(val name: String, val value: Any)
+    data class Extra(val name: String, val value: Any?)
 }
 
-fun Throwable.apiError(code: Int, message: String): DetailedException =
+fun Throwable?.apiError(code: Int, message: String): DetailedException =
     apiErrorCode(code).apiErrorMessage(message)
 
-fun Throwable.apiErrorCode(code: Int): DetailedException =
+fun Throwable?.apiErrorCode(code: Int): DetailedException =
     copyWithExtra(Extra(EXTRA_API_ERROR_CODE, code))
 
-fun Throwable.apiErrorMessage(message: String): DetailedException =
+fun Throwable?.apiErrorMessage(message: String): DetailedException =
     copyWithExtra(Extra(EXTRA_API_ERROR_MESSAGE, message))
 
-fun Throwable.messageId(id: String): DetailedException =
+fun Throwable?.messageId(id: String?): DetailedException =
     copyWithExtra(Extra(EXTRA_MESSAGE_ID, id))
 
-fun Throwable.userId(userId: UserId): DetailedException =
+fun Throwable?.userId(userId: UserId): DetailedException =
     copyWithExtra(Extra(EXTRA_USER_ID, userId.id))
 
 // region private functions
-private fun Throwable.copyWithExtra(newExtra: Extra): DetailedException {
+private fun Throwable?.copyWithExtra(newExtra: Extra): DetailedException {
     val extras = (this as? DetailedException)?.extras ?: emptySet()
     return toDetailedException().copy(extras = extras + newExtra)
 }
 
-private fun Throwable.toDetailedException(): DetailedException =
+private fun Throwable?.toDetailedException(): DetailedException =
     if (this is DetailedException) this
-    else DetailedException(message, cause = this)
+    else DetailedException(this?.message, cause = this)
 // endregion
