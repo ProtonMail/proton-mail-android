@@ -42,7 +42,9 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY_ALL
+import ch.protonmail.android.core.DetailedException
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.core.apiError
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.Id
@@ -134,7 +136,10 @@ class CreateDraftWorker @AssistedInject constructor(
         }.fold(
             onSuccess = { response ->
                 if (response.code != Constants.RESPONSE_CODE_OK) {
-                    Timber.e("Create Draft Worker Failed with bad response code: $response")
+                    Timber.e(
+                        DetailedException().apiError(response.code, response.error),
+                        "Create Draft Worker Failed with bad response"
+                    )
                     userNotifier.showPersistentError(response.error, createDraftRequest.message.subject)
                     return failureWithError(CreateDraftWorkerErrors.BadResponseCodeError)
                 }
@@ -147,7 +152,7 @@ class CreateDraftWorker @AssistedInject constructor(
                 )
             },
             onFailure = {
-                retryOrFail(it.message, createDraftRequest.message.subject)
+                retryOrFail(it, createDraftRequest.message.subject)
             }
         )
     }
@@ -196,13 +201,13 @@ class CreateDraftWorker @AssistedInject constructor(
         messageDetailsRepository.saveMessage(apiDraft)
     }
 
-    private fun retryOrFail(error: String?, messageSubject: String?): Result {
+    private fun retryOrFail(throwable: Throwable, messageSubject: String?): Result {
         if (runAttemptCount < SAVE_DRAFT_MAX_RETRIES) {
-            Timber.d("Create Draft Worker API call FAILED with error = $error. Retrying...")
+            Timber.d(throwable, "Create Draft Worker API call FAILED with error. Retrying...")
             return Result.retry()
         }
-        Timber.e("Create Draft Worker API call failed all the retries. error = $error. FAILING")
-        userNotifier.showPersistentError(error.orEmpty(), messageSubject)
+        Timber.e(throwable, "Create Draft Worker API call failed all the retries. error. FAILING")
+        userNotifier.showPersistentError(throwable.message.orEmpty(), messageSubject)
         return failureWithError(CreateDraftWorkerErrors.ServerError)
     }
 
