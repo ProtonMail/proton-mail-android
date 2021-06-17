@@ -26,6 +26,8 @@ import androidx.work.WorkInfo
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.QueueNetworkUtil
+import ch.protonmail.android.events.ConnectivityEvent
+import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.worker.PingWorker
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
