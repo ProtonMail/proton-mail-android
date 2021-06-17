@@ -778,7 +778,7 @@
     <string name="labels">標籤</string>
     <string name="labels_manage">標籤管理員</string>
     <string name="folders_manage">資料夾管理員</string>
-    <string name="swiping_gesture">滑動手勢</string>
+    <string name="swipe_actions">滑動手勢</string>
     <string name="swipe_action_right">向右滑動</string>
     <string name="swipe_action_left">向左滑動</string>
     <!-- region Swipe Actions -->

@@ -822,7 +822,7 @@
     <string name="labels">Štítky</string>
     <string name="labels_manage">Správce štítků</string>
     <string name="folders_manage">Správce složek</string>
-    <string name="swiping_gesture">Swiping gesture</string>
+    <string name="swipe_actions">Swiping gesture</string>
     <string name="swipe_action_right">Odsunutí doprava</string>
     <string name="swipe_action_left">Odsunutí doleva</string>
     <!-- region Swipe Actions -->

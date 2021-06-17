@@ -794,7 +794,7 @@
     <string name="labels">Etichette</string>
     <string name="labels_manage">Gestione etichette</string>
     <string name="folders_manage">Gestore cartelle</string>
-    <string name="swiping_gesture">Gesto di scorrimento</string>
+    <string name="swipe_actions">Gesto di scorrimento</string>
     <string name="swipe_action_right">Scorri a destra</string>
     <string name="swipe_action_left">Scorri a sinistra</string>
     <!-- region Swipe Actions -->

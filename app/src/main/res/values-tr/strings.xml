@@ -789,7 +789,7 @@
     <string name="labels">Etiketler</string>
     <string name="labels_manage">Etiket yöneticisi</string>
     <string name="folders_manage">Klasör yöneticisi</string>
-    <string name="swiping_gesture">Kaydırma hareketi</string>
+    <string name="swipe_actions">Kaydırma hareketi</string>
     <string name="swipe_action_right">Sağa kaydır</string>
     <string name="swipe_action_left">Sola kaydır</string>
     <!-- region Swipe Actions -->

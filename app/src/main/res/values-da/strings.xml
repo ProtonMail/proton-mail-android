@@ -794,7 +794,7 @@
     <string name="labels">Etiketter</string>
     <string name="labels_manage">Etikethåndtering</string>
     <string name="folders_manage">Mappehåndtering</string>
-    <string name="swiping_gesture">Strygebevægelser</string>
+    <string name="swipe_actions">Strygebevægelser</string>
     <string name="swipe_action_right">Stryg til højre</string>
     <string name="swipe_action_left">Stryg til venstre</string>
     <!-- region Swipe Actions -->

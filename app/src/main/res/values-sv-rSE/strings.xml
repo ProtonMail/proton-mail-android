@@ -789,7 +789,7 @@
     <string name="labels">Etiketter</string>
     <string name="labels_manage">Etiketthanterare</string>
     <string name="folders_manage">Mapphantering</string>
-    <string name="swiping_gesture">Svepgester</string>
+    <string name="swipe_actions">Svepgester</string>
     <string name="swipe_action_right">Svep höger</string>
     <string name="swipe_action_left">Svep vänster</string>
     <!-- region Swipe Actions -->

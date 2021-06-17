@@ -793,7 +793,7 @@
     <string name="labels">Etiquetas</string>
     <string name="labels_manage">Gestor de etiquetas</string>
     <string name="folders_manage">Gestor de pastas</string>
-    <string name="swiping_gesture">Gestos de deslize</string>
+    <string name="swipe_actions">Gestos de deslize</string>
     <string name="swipe_action_right">Deslizar à direita</string>
     <string name="swipe_action_left">Deslizar à esquerda</string>
     <!-- region Swipe Actions -->

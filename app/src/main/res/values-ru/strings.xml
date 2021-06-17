@@ -822,7 +822,7 @@
     <string name="labels">Ярлыки</string>
     <string name="labels_manage">Управление ярлыками</string>
     <string name="folders_manage">Управление папками</string>
-    <string name="swiping_gesture">Жесты смахиванием</string>
+    <string name="swipe_actions">Жесты смахиванием</string>
     <string name="swipe_action_right">Свайп вправо</string>
     <string name="swipe_action_left">Свайп влево</string>
     <!-- region Swipe Actions -->

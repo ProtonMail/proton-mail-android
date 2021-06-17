@@ -27,6 +27,7 @@ import android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS
 import android.provider.Settings.EXTRA_APP_PACKAGE
 import android.provider.Settings.EXTRA_CHANNEL_ID
 import android.view.Gravity
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
@@ -37,7 +38,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.AccountSettingsActivity
-import ch.protonmail.android.settings.presentation.AccountTypeActivity
 import ch.protonmail.android.activities.BaseConnectivityActivity
 import ch.protonmail.android.activities.DefaultAddressActivity
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
@@ -67,10 +67,11 @@ import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
+import ch.protonmail.android.settings.presentation.AccountTypeActivity
 import ch.protonmail.android.settings.presentation.AttachmentStorageActivity
-import ch.protonmail.android.settings.presentation.SettingsDividerItemDecoration
 import ch.protonmail.android.settings.presentation.DisplayNameAndSignatureFragment
 import ch.protonmail.android.settings.presentation.EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE
+import ch.protonmail.android.settings.presentation.SettingsDividerItemDecoration
 import ch.protonmail.android.settings.presentation.SnoozeNotificationsActivity
 import ch.protonmail.android.settings.presentation.SwipeSettingFragment
 import ch.protonmail.android.uiModel.SettingsItemUiModel
@@ -78,6 +79,7 @@ import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
+import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.startMailboxActivity
@@ -205,17 +207,34 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         app.bus.unregister(this)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.save_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        menu.clear()
+        menuInflater.inflate(R.menu.save_menu, menu)
+        menu.findItem(R.id.save).isVisible = false
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            onBackPressed()
-            return true
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
+            toolbar?.title = title
+            setSupportActionBar(toolbar)
+            UiUtil.hideKeyboard(this)
         } else {
             saveLastInteraction()
             setResult(Activity.RESULT_OK)

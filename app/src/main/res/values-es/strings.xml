@@ -795,7 +795,7 @@ compre más
     <string name="labels">Etiquetas</string>
     <string name="labels_manage">Gestionar etiquetas</string>
     <string name="folders_manage">Gestionar carpetas</string>
-    <string name="swiping_gesture">Gestos de deslizamiento</string>
+    <string name="swipe_actions">Gestos de deslizamiento</string>
     <string name="swipe_action_right">Deslizar hacia la derecha</string>
     <string name="swipe_action_left">Deslizar hacia la izquierda</string>
     <!-- region Swipe Actions -->

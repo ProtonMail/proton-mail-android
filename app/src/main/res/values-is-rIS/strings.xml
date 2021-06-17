@@ -792,7 +792,7 @@
     <string name="labels">Labels</string>
     <string name="labels_manage">Sýsla með merkingar</string>
     <string name="folders_manage">Sýsla með möppur</string>
-    <string name="swiping_gesture">Strokubending</string>
+    <string name="swipe_actions">Strokubending</string>
     <string name="swipe_action_right">Strjúka til hægri</string>
     <string name="swipe_action_left">Strjúka til vinstri</string>
     <!-- region Swipe Actions -->

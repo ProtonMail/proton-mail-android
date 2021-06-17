@@ -783,7 +783,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="labels">Label</string>
     <string name="labels_manage">Pengelola Label</string>
     <string name="folders_manage">Pengelola Folder</string>
-    <string name="swiping_gesture">Gerakan usap</string>
+    <string name="swipe_actions">Gerakan usap</string>
     <string name="swipe_action_right">Geser kanan</string>
     <string name="swipe_action_left">Geser kiri</string>
     <!-- region Swipe Actions -->

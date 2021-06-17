@@ -822,7 +822,7 @@
     <string name="labels">Мітки</string>
     <string name="labels_manage">Менеджер міток</string>
     <string name="folders_manage">Менеджер тек</string>
-    <string name="swiping_gesture">Жест проведення</string>
+    <string name="swipe_actions">Жест проведення</string>
     <string name="swipe_action_right">Провести праворуч</string>
     <string name="swipe_action_left">Провести ліворуч</string>
     <!-- region Swipe Actions -->

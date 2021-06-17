@@ -808,7 +808,7 @@
     <string name="labels">Oznake</string>
     <string name="labels_manage">Upravljanje oznakama</string>
     <string name="folders_manage">Upravljanje mapama</string>
-    <string name="swiping_gesture">Povlačenje prstom</string>
+    <string name="swipe_actions">Povlačenje prstom</string>
     <string name="swipe_action_right">Prelazak prstom udesno</string>
     <string name="swipe_action_left">Prelazak prstom ulijevo</string>
     <!-- region Swipe Actions -->

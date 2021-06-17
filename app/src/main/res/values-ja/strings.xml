@@ -773,7 +773,7 @@
     <string name="labels">ラベル</string>
     <string name="labels_manage">ラベルの管理</string>
     <string name="folders_manage">フォルダーの管理</string>
-    <string name="swiping_gesture">スワイプ操作</string>
+    <string name="swipe_actions">スワイプ操作</string>
     <string name="swipe_action_right">右にスワイプ</string>
     <string name="swipe_action_left">左にスワイプ</string>
     <!-- region Swipe Actions -->

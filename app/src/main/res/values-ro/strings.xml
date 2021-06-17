@@ -807,7 +807,7 @@
     <string name="labels">Etichete</string>
     <string name="labels_manage">Gestionare etichete</string>
     <string name="folders_manage">Gestionare foldere</string>
-    <string name="swiping_gesture">Gesturi glisare</string>
+    <string name="swipe_actions">Gesturi glisare</string>
     <string name="swipe_action_right">Glisare la dreapta</string>
     <string name="swipe_action_left">Glisare la stânga</string>
     <!-- region Swipe Actions -->

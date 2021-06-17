@@ -794,7 +794,7 @@
     <string name="labels">Labels</string>
     <string name="labels_manage">Labels beheren</string>
     <string name="folders_manage">Mappen beheren</string>
-    <string name="swiping_gesture">Swipe gebaren</string>
+    <string name="swipe_actions">Swipe gebaren</string>
     <string name="swipe_action_right">Naar rechts vegen</string>
     <string name="swipe_action_left">Naar links vegen</string>
     <!-- region Swipe Actions -->

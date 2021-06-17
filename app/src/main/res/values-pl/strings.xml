@@ -820,7 +820,7 @@
     <string name="labels">Etykiety</string>
     <string name="labels_manage">Menedżer etykiet</string>
     <string name="folders_manage">Menedżer folderów</string>
-    <string name="swiping_gesture">Gesty przeciągania</string>
+    <string name="swipe_actions">Gesty przeciągania</string>
     <string name="swipe_action_right">Przesuń palcem w prawo</string>
     <string name="swipe_action_left">Przesuń palcem w lewo</string>
     <!-- region Swipe Actions -->

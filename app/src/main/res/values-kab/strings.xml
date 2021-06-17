@@ -794,7 +794,7 @@
     <string name="labels">Tibzimin</string>
     <string name="labels_manage">Labels manager</string>
     <string name="folders_manage">Folders manager</string>
-    <string name="swiping_gesture">Swiping gesture</string>
+    <string name="swipe_actions">Swiping gesture</string>
     <string name="swipe_action_right">Zuɣer ar tama tayeffust</string>
     <string name="swipe_action_left">Zuɣer s azelmaḍ</string>
     <!-- region Swipe Actions -->

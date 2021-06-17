@@ -786,7 +786,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="labels">Kategorien</string>
     <string name="labels_manage">Kategorien verwalten</string>
     <string name="folders_manage">Ordnerverwaltung</string>
-    <string name="swiping_gesture">Wischgesten</string>
+    <string name="swipe_actions">Wischgesten</string>
     <string name="swipe_action_right">Nach rechts wischen</string>
     <string name="swipe_action_left">Nach links wischen</string>
     <!-- region Swipe Actions -->

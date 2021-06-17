@@ -119,7 +119,7 @@ enum class SettingsEnum {
     SWIPING_GESTURE {
 
         override fun getHint(context: Context): String = ""
-        override fun getHeader(context: Context): String = context.resources.getString(R.string.swiping_gesture)
+        override fun getHeader(context: Context): String = context.resources.getString(R.string.swipe_actions)
     },
     SWIPE_LEFT {
 

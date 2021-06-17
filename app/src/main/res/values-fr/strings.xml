@@ -794,7 +794,7 @@
     <string name="labels">Labels</string>
     <string name="labels_manage">Gestionnaire de labels</string>
     <string name="folders_manage">Gestionnaire de dossiers</string>
-    <string name="swiping_gesture">Geste de balayage</string>
+    <string name="swipe_actions">Geste de balayage</string>
     <string name="swipe_action_right">Balayer vers la droite</string>
     <string name="swipe_action_left">Balayer vers la gauche</string>
     <!-- region Swipe Actions -->

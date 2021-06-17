@@ -772,7 +772,7 @@
     <string name="labels">Labels</string>
     <string name="labels_manage">标签管理</string>
     <string name="folders_manage">文件夹管理</string>
-    <string name="swiping_gesture">滑动手势</string>
+    <string name="swipe_actions">滑动手势</string>
     <string name="swipe_action_right">向右滑动</string>
     <string name="swipe_action_left">向左滑动</string>
     <!-- region Swipe Actions -->

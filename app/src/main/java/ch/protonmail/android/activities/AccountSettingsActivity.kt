@@ -50,10 +50,7 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         super.onCreate(savedInstanceState)
 
         val actionBar = supportActionBar
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true)
-            actionBar.setTitle(R.string.account_settings)
-        }
+        actionBar?.setDisplayHomeAsUpEnabled(true)
 
         val elevation = resources.getDimension(R.dimen.action_bar_elevation)
         actionBar?.elevation = elevation

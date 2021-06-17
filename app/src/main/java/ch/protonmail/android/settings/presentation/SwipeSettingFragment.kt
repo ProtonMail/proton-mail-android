@@ -25,8 +25,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewStub
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.api.models.MailSettings
@@ -43,6 +45,12 @@ class SwipeSettingFragment : Fragment() {
     private var _binding: SettingsSwipeFragmentBinding? = null
 
     private val binding get() = requireNotNull(_binding)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+        (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.swipe_actions)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = SettingsSwipeFragmentBinding.inflate(inflater)

@@ -794,7 +794,7 @@
     <string name="labels">Ετικέτες</string>
     <string name="labels_manage">Διαχειριστής ετικετών</string>
     <string name="folders_manage">Διαχειριστής Φακέλων</string>
-    <string name="swiping_gesture">Ολίσθηση gesture</string>
+    <string name="swipe_actions">Ολίσθηση gesture</string>
     <string name="swipe_action_right">Σύρσιμο δεξιά</string>
     <string name="swipe_action_left">Σύρετε αριστερά</string>
     <!-- region Swipe Actions -->

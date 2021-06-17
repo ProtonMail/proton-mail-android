@@ -28,7 +28,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.api.models.MailSettings
-import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
 
@@ -38,7 +38,6 @@ const val EXTRA_SWIPE_ID = "EXTRA_SWIPE_ID"
 // endregion
 
 enum class SwipeType {
-
     RIGHT,
     LEFT
 }
@@ -79,12 +78,12 @@ class SwipeChooserActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        ProtonMailApplication.getApplication().bus.register(this)
+        app.bus.register(this)
     }
 
     override fun onStop() {
         super.onStop()
-        ProtonMailApplication.getApplication().bus.unregister(this)
+        app.bus.unregister(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
