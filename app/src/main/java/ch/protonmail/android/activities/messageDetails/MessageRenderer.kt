@@ -68,15 +68,11 @@ internal class MessageRenderer(
     /** The [String] html of the message body */
     var messageBody: String? = null
         set(value) {
-            // Return if body is already set
-            if (field != null) return
-
-            // Update if value is not null
-            if (value != null) field = value
+            field = value
+            // Clear inlined images to ensure when messageBody changes the loading of images doesn't get blocked
+            // (messageBody changing means we're loading images for another message in the same conversation)
+            inlinedImageIds.clear()
         }
-
-    /** reference to the [Document] */
-    private val document by lazy { documentParser(messageBody!!) }
 
     /** A [Channel] for receive new [EmbeddedImage] images to inline in [document] */
     val images = actor<List<EmbeddedImage>> {
@@ -175,6 +171,10 @@ internal class MessageRenderer(
     private val imageInliner = actor<List<ImageString>> {
         for (imageStrings in channel) {
 
+            // Document is parsed for each emission because `messageBody`
+            // field can change when switching messages in a conversation
+            val document = documentParser(messageBody!!)
+
             for (imageString in imageStrings) {
 
                 val (embeddedImage, image64) = imageString
@@ -194,14 +194,8 @@ internal class MessageRenderer(
             // Extract the message ID for which embedded images are being loaded
             // to pass it back to the caller along with the rendered body
             val messageId = imageStrings.firstOrNull()?.first?.messageId ?: continue
-            documentStringifier.send(messageId)
-        }
-    }
-
-    /** Actor that will stringify the [document] */
-    private val documentStringifier = actor<String> {
-        for (messageId in channel)
             renderedMessage.send(RenderedMessage(messageId, document.toString()))
+        }
     }
 
     /** `CoroutineContext` for [idsListUpdater] for update [inlinedImageIds] of a single thread */
@@ -229,7 +223,7 @@ internal class MessageRenderer(
         private val imageDecoder: ImageDecoder = DefaultImageDecoder()
     ) {
 
-        /** @return new instance of [MessageRenderer] with the given [messageBody] */
+        /** @return new instance of [MessageRenderer] */
         fun create(scope: CoroutineScope) =
             MessageRenderer(dispatchers, documentParser, imageDecoder, attachmentsDirectory, scope)
     }

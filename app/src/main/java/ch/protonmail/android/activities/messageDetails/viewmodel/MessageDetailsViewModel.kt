@@ -183,6 +183,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
     private val _decryptedConversationUiModel: MutableLiveData<ConversationUiModel> = MutableLiveData()
+    private val _messageRenderedWithImages: MutableLiveData<Message> = MutableLiveData()
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
 
@@ -222,6 +223,9 @@ internal class MessageDetailsViewModel @Inject constructor(
     val decryptedConversationUiModel: LiveData<ConversationUiModel>
         get() = _decryptedConversationUiModel
 
+    val messageRenderedWithImages: LiveData<Message>
+        get() = _messageRenderedWithImages
+
     private var areImagesDisplayed: Boolean = false
 
     init {
@@ -230,7 +234,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 val currentUiModel = _decryptedConversationUiModel.value
                 val message = currentUiModel?.messages?.find { it.messageId == renderedMessage.messageId }
                 message?.decryptedHTML = renderedMessage.renderedHtmlBody
-                _decryptedConversationUiModel.value = currentUiModel
+                _messageRenderedWithImages.value = message
                 areImagesDisplayed = true
             }
         }

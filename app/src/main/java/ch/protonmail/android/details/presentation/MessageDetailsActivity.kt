@@ -190,6 +190,15 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private fun continueSetup() {
         viewModel.conversationUiModel.observe(this) { viewModel.loadMailboxItemDetails() }
         viewModel.decryptedConversationUiModel.observe(this, ConversationUiModelObserver())
+        viewModel.messageRenderedWithImages.observe(this) { message ->
+            val messageId = message.messageId ?: return@observe
+            messageExpandableAdapter.showMessageDetails(
+                message.decryptedHTML,
+                messageId,
+                false,
+                message.attachments
+            )
+        }
 
         viewModel.labels
             .onEach(messageExpandableAdapter::setAllLabels)
@@ -463,15 +472,15 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private inner class ConversationUiModelObserver : Observer<ConversationUiModel> {
 
         override fun onChanged(conversation: ConversationUiModel) {
-            val message = lastMessage(conversation)
+            val lastMessage = conversation.messages.last()
 
             displayToolbarData(conversation)
-            setupLastMessageActionsListener(message)
+            setupLastMessageActionsListener(lastMessage)
 
-            Timber.v("New decrypted message ${message.messageId}")
+            Timber.v("New decrypted message ${lastMessage.messageId}")
             viewModel.renderedFromCache = AtomicBoolean(true)
-            val decryptedBody = getDecryptedBody(message.decryptedHTML)
-            if (decryptedBody.isEmpty() || message.messageBody.isNullOrEmpty()) {
+            val decryptedBody = getDecryptedBody(lastMessage.decryptedHTML)
+            if (decryptedBody.isEmpty() || lastMessage.messageBody.isNullOrEmpty()) {
                 UiUtil.showInfoSnack(mSnackLayout, this@MessageDetailsActivity, R.string.decryption_error_desc).show()
                 return
             }
@@ -547,8 +556,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         collapsedToolbarTitleTextView.visibility = View.INVISIBLE
         expandedToolbarTitleTextView.text = subject
     }
-
-    private fun lastMessage(conversation: ConversationUiModel): Message = conversation.messages.last()
 
     fun executeMessageAction(
         messageAction: Constants.MessageActionType,

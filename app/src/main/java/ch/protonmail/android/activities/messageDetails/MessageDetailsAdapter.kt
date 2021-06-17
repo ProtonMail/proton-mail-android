@@ -68,7 +68,7 @@ internal class MessageDetailsAdapter(
     private val onLoadEmbeddedImagesClicked: ((Message) -> Unit)?,
     private val onDisplayRemoteContentClicked: ((Message) -> Unit)?,
     private val userManager: UserManager,
-    private val onLoadMessage: (Message) -> Unit,
+    private val onLoadMessageBody: (Message) -> Unit,
     private val onAttachmentDownloadCallback: (Attachment) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
 
@@ -179,7 +179,7 @@ internal class MessageDetailsAdapter(
 
             Timber.v("Load data for message: ${message.messageId} at position $position")
             if (listItem.messageFormattedHtml == null) {
-                onLoadMessage(message)
+                onLoadMessageBody(message)
             }
 
             val webView = itemView.messageWebViewContainer.getChildAt(0) as? WebView ?: return
