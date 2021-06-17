@@ -58,20 +58,20 @@ import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 
 @Dao
-abstract class MessageDao {
+interface MessageDao {
 
     //region Messages
     @Query(
         """
         SELECT *
-		FROM $TABLE_MESSAGES
-		WHERE $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
-		  OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_NAME} LIKE '%'||:senderName||'%'
-		  OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_EMAIL} LIKE '%'||:senderEmail||'%'
-	    ORDER BY $COLUMN_MESSAGE_TIME DESC
+        FROM $TABLE_MESSAGES
+        WHERE $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
+          OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_NAME} LIKE '%'||:senderName||'%'
+          OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_EMAIL} LIKE '%'||:senderEmail||'%'
+            ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
-    abstract fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message>
+    fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message>
 
     @Query(
         """
@@ -81,7 +81,7 @@ abstract class MessageDao {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
-    abstract fun getStarredMessagesAsync(): LiveData<List<Message>>
+    fun getStarredMessagesAsync(): LiveData<List<Message>>
 
     @Query(
         """
@@ -91,7 +91,7 @@ abstract class MessageDao {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
-    abstract fun getMessagesByLabelIdAsync(label: String): LiveData<List<Message>>
+    fun getMessagesByLabelIdAsync(label: String): LiveData<List<Message>>
 
     @Query(
         """
@@ -101,33 +101,33 @@ abstract class MessageDao {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
-    abstract fun getMessagesByLocationAsync(location: Int): LiveData<List<Message>>
+    fun getMessagesByLocationAsync(location: Int): LiveData<List<Message>>
 
     @Query("SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location ")
-    abstract fun getMessagesCountByLocation(location: Int): Int
+    fun getMessagesCountByLocation(location: Int): Int
 
     @Query(
         """SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location  ORDER BY $COLUMN_MESSAGE_TIME DESC"""
     )
-    abstract fun observeMessagesByLocation(location: Int): Flow<List<Message>>
+    fun observeMessagesByLocation(location: Int): Flow<List<Message>>
 
     @Query("""SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_IS_STARRED=1""")
-    abstract fun observeStarredMessages(): Flow<List<Message>>
+    fun observeStarredMessages(): Flow<List<Message>>
 
     @Query(
         """
         SELECT COUNT($COLUMN_MESSAGE_ID)
         FROM $TABLE_MESSAGES 
-		WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :labelId || '%'  
+        WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :labelId || '%'  
     """
     )
-    abstract fun getMessagesCountByByLabelId(labelId: String): Int
+    fun getMessagesCountByByLabelId(labelId: String): Int
 
     @Query("SELECT * FROM $TABLE_MESSAGES ORDER BY $COLUMN_MESSAGE_TIME DESC")
-    abstract fun getAllMessages(): LiveData<List<Message>>
+    fun getAllMessages(): LiveData<List<Message>>
 
     @Query("SELECT * FROM $TABLE_MESSAGES ORDER BY $COLUMN_MESSAGE_TIME DESC")
-    abstract fun observeAllMessages(): Flow<List<Message>>
+    fun observeAllMessages(): Flow<List<Message>>
 
     @Query(
         """
@@ -137,7 +137,7 @@ abstract class MessageDao {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
-    abstract fun getMessagesByLabelId(label: String): List<Message>
+    fun getMessagesByLabelId(label: String): List<Message>
 
     @Query(
         """
@@ -147,7 +147,7 @@ abstract class MessageDao {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
-    abstract fun observeMessagesByLabelId(label: String): Flow<List<Message>>
+    fun observeMessagesByLabelId(label: String): Flow<List<Message>>
 
     fun findMessageById(messageId: String): Flow<Message?> = findMessageInfoById(messageId)
         .onEach { message ->
@@ -190,7 +190,6 @@ abstract class MessageDao {
             }
         }
 
-    @JvmOverloads
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =
         findAllMessageInfoByLastMessageAccessTime(laterThan)
             .map { messages ->
@@ -208,29 +207,29 @@ abstract class MessageDao {
             }
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    protected abstract fun findMessageInfoById(messageId: String): Flow<Message?>
+    fun findMessageInfoById(messageId: String): Flow<Message?>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    protected abstract suspend fun findMessageInfoByIdOnce(messageId: String): Message?
+    suspend fun findMessageInfoByIdOnce(messageId: String): Message?
 
     @Deprecated("Use Flow variant", ReplaceWith("findMessageInfoById(messageId).first()"))
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    protected abstract fun findMessageInfoByIdBlocking(messageId: String): Message?
+    fun findMessageInfoByIdBlocking(messageId: String): Message?
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    protected abstract fun findMessageInfoByIdSingle(messageId: String): Single<Message>
+    fun findMessageInfoByIdSingle(messageId: String): Single<Message>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    protected abstract fun findMessageInfoByIdObservable(messageId: String): Flowable<Message>
+    fun findMessageInfoByIdObservable(messageId: String): Flowable<Message>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    protected abstract fun findMessageInfoByIdAsync(messageId: String): LiveData<Message>
+    fun findMessageInfoByIdAsync(messageId: String): LiveData<Message>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID} = :messageDbId")
-    protected abstract fun findMessageInfoByDbIdBlocking(messageDbId: Long): Message?
+    fun findMessageInfoByDbIdBlocking(messageDbId: Long): Message?
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
-    protected abstract fun findMessageInfoByDbId(messageDbId: Long): Flow<Message?>
+    fun findMessageInfoByDbId(messageDbId: Long): Flow<Message?>
 
     @Query(
         """
@@ -240,7 +239,7 @@ abstract class MessageDao {
         ORDER BY $COLUMN_MESSAGE_ACCESS_TIME
     """
     )
-    protected abstract fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>>
+    fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>>
 
     @Query(
         """
@@ -250,9 +249,9 @@ abstract class MessageDao {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
-    abstract fun findAllMessageInfoFromAConversation(conversationId: String): Flow<List<Message>>
+    fun findAllMessageInfoFromAConversation(conversationId: String): Flow<List<Message>>
 
-    open suspend fun saveMessage(message: Message): Long {
+    suspend fun saveMessage(message: Message): Long {
         Timber.d("saveMessage ${message.messageId}")
         processMessageAttachments(message)
         return saveMessageInfo(message)
@@ -265,20 +264,20 @@ abstract class MessageDao {
             localAttachments = findAttachmentsByMessageId(messageId).first()
         }
 
-        var preservedAttachments = message.attachments.map {
+        var preservedAttachments = message.attachments.map { attachment ->
             Attachment(
-                fileName = it.fileName,
-                mimeType = it.mimeType,
-                fileSize = it.fileSize,
-                keyPackets = it.keyPackets,
+                fileName = attachment.fileName,
+                mimeType = attachment.mimeType,
+                fileSize = attachment.fileSize,
+                keyPackets = attachment.keyPackets,
                 messageId = message.messageId ?: "",
-                isUploaded = it.isUploaded,
-                isUploading = it.isUploading,
-                isNew = it.isNew,
-                filePath = it.filePath,
-                attachmentId = it.attachmentId,
-                headers = it.headers,
-                inline = it.inline
+                isUploaded = attachment.isUploaded,
+                isUploading = attachment.isUploading,
+                isNew = attachment.isNew,
+                filePath = attachment.filePath,
+                attachmentId = attachment.attachmentId,
+                headers = attachment.headers,
+                inline = attachment.inline
             )
         }
 
@@ -292,16 +291,16 @@ abstract class MessageDao {
         } else {
             preservedAttachments.forEach { preservedAtt ->
                 if (localAttachments.isNotEmpty()) {
-                    localAttachments.find { it.attachmentId == preservedAtt.attachmentId }?.let {
-                        if (it.inline) {
-                            preservedAtt.inline = it.inline
+                    localAttachments.find { it.attachmentId == preservedAtt.attachmentId }?.let { attachment ->
+                        if (attachment.inline) {
+                            preservedAtt.inline = attachment.inline
                         } else {
                             if (message.embeddedImageIds.isNotEmpty()) {
                                 preservedAtt.setMessage(message)
                             }
                         }
-                        preservedAtt.isUploaded = it.isUploaded
-                        preservedAtt.isUploading = it.isUploading
+                        preservedAtt.isUploaded = attachment.isUploaded
+                        preservedAtt.isUploading = attachment.isUploading
                     }
                 } else {
                     if (message.embeddedImageIds.isNotEmpty()) {
@@ -324,7 +323,7 @@ abstract class MessageDao {
         message.attachments = preservedAttachments
     }
 
-    open suspend fun saveMessages(messages: List<Message>) {
+    suspend fun saveMessages(messages: List<Message>) {
         Timber.d("saveMessages ${messages.map { it.messageId }}")
         messages.forEach {
             processMessageAttachments(it)
@@ -333,15 +332,15 @@ abstract class MessageDao {
     }
 
     @Deprecated("Use MessageDetailsRepository's methods that contain logic for large Message bodies")
-    open suspend fun saveAllMessages(messages: List<Message>) {
+    suspend fun saveAllMessages(messages: List<Message>) {
         messages.map { saveMessage(it) }
     }
 
     @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location")
-    abstract fun deleteMessagesByLocation(location: Int)
+    fun deleteMessagesByLocation(location: Int)
 
     @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%'||:labelId||'%'")
-    abstract fun deleteMessagesByLabel(labelId: String)
+    fun deleteMessagesByLabel(labelId: String)
 
     @Query(
         """
@@ -351,28 +350,28 @@ abstract class MessageDao {
           AND $COLUMN_MESSAGE_EXPIRATION_TIME < :currentTime
     """
     )
-    abstract fun deleteExpiredMessages(currentTime: Long)
+    fun deleteExpiredMessages(currentTime: Long)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun saveMessageInfo(message: Message): Long
+    suspend fun saveMessageInfo(message: Message): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveMessagesInfo(messages: List<Message>)
+    fun saveMessagesInfo(messages: List<Message>)
 
     @Query("DELETE FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID} = :dbId")
-    abstract fun deleteByDbId(dbId: Long)
+    fun deleteByDbId(dbId: Long)
 
     @Query("DELETE FROM $TABLE_MESSAGES")
-    abstract fun clearMessagesCache()
+    fun clearMessagesCache()
 
     @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    abstract fun deleteMessageById(messageId: String)
+    fun deleteMessageById(messageId: String)
 
     @Delete
-    abstract fun deleteMessage(message: Message)
+    fun deleteMessage(message: Message)
 
     @Delete
-    abstract fun deleteMessages(message: List<Message>)
+    fun deleteMessages(message: List<Message>)
 
     @Query(
         """
@@ -381,7 +380,7 @@ abstract class MessageDao {
         WHERE $COLUMN_MESSAGE_ID = :messageId
     """
     )
-    abstract fun updateStarredBlocking(messageId: String, starred: Boolean)
+    fun updateStarredBlocking(messageId: String, starred: Boolean)
 
     @Query(
         """
@@ -390,16 +389,16 @@ abstract class MessageDao {
         WHERE $COLUMN_MESSAGE_ID = :messageId
     """
     )
-    abstract suspend fun updateStarred(messageId: String, starred: Boolean)
+    suspend fun updateStarred(messageId: String, starred: Boolean)
     //endregion Messages
 
     //region Attachments
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
-    abstract fun findAttachmentsByMessageIdAsync(messageId: String): LiveData<List<Attachment>>
+    fun findAttachmentsByMessageIdAsync(messageId: String): LiveData<List<Attachment>>
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
-    abstract fun findAttachmentsByMessageId(messageId: String): Flow<List<Attachment>>
+    fun findAttachmentsByMessageId(messageId: String): Flow<List<Attachment>>
 
     @Query(
         """
@@ -410,36 +409,36 @@ abstract class MessageDao {
           AND $COLUMN_ATTACHMENT_FILE_PATH = :filePath
     """
     )
-    abstract fun findAttachmentsByMessageIdFileNameAndPath(
+    fun findAttachmentsByMessageIdFileNameAndPath(
         messageId: String,
         fileName: String,
         filePath: String
     ): Attachment
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun saveAttachment(attachment: Attachment): Long
+    suspend fun saveAttachment(attachment: Attachment): Long
 
     @Deprecated("Use suspend function", ReplaceWith("saveAttachment(attachment)"))
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveAttachmentBlocking(attachment: Attachment): Long
+    fun saveAttachmentBlocking(attachment: Attachment): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveAttachment(vararg attachments: Attachment): List<Long>
+    fun saveAttachment(vararg attachments: Attachment): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun saveAllAttachments(attachments: List<Attachment>): List<Long>
+    suspend fun saveAllAttachments(attachments: List<Attachment>): List<Long>
 
     @Delete
-    abstract suspend fun deleteAllAttachments(attachments: List<Attachment>)
+    suspend fun deleteAllAttachments(attachments: List<Attachment>)
 
     @Delete
-    abstract fun deleteAttachment(vararg attachment: Attachment)
+    fun deleteAttachment(vararg attachment: Attachment)
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_ID=:correctId ")
-    abstract fun findAttachmentByIdCorrectId(correctId: String): Attachment?
+    fun findAttachmentByIdCorrectId(correctId: String): Attachment?
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_ID=:correctId ")
-    abstract fun findAttachmentByIdCorrectIdSingle(correctId: String): Single<Attachment>
+    fun findAttachmentByIdCorrectIdSingle(correctId: String): Single<Attachment>
 
     fun findAttachmentById(attachmentId: String): Attachment? {
         if (attachmentId.startsWith("PGPAttachment")) {
@@ -453,47 +452,47 @@ abstract class MessageDao {
     }
 
     @Query("DELETE FROM $TABLE_ATTACHMENTS")
-    abstract fun clearAttachmentsCache()
+    fun clearAttachmentsCache()
     //endregion
 
     //region Labels
     @Query("SELECT * FROM $TABLE_LABELS")
     @Deprecated("Use with Flow", ReplaceWith("this.getAllLabels()"))
-    abstract fun getAllLabelsLiveData(): LiveData<List<Label>>
+    fun getAllLabelsLiveData(): LiveData<List<Label>>
 
     @Query("SELECT * FROM $TABLE_LABELS ORDER BY LabelOrder")
-    abstract fun getAllLabels(): Flow<List<Label>>
+    fun getAllLabels(): Flow<List<Label>>
 
     // Folders
     @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 1 ORDER BY `LabelOrder`")
-    abstract fun getAllLabelsExclusivePaged(): DataSource.Factory<Int, Label>
+    fun getAllLabelsExclusivePaged(): DataSource.Factory<Int, Label>
 
     // Labels
     @Query("SELECT * FROM $TABLE_LABELS WHERE `Exclusive` = 0 ORDER BY `LabelOrder`")
-    abstract fun getAllLabelsNotExclusivePaged(): DataSource.Factory<Int, Label>
+    fun getAllLabelsNotExclusivePaged(): DataSource.Factory<Int, Label>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds) ORDER BY LabelOrder")
-    abstract fun findLabelsById(labelIds: List<String>): Flow<List<Label>>
+    fun findLabelsById(labelIds: List<String>): Flow<List<Label>>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
-    abstract fun findLabelsByIdBlocking(labelIds: List<String>): List<Label>
+    fun findLabelsByIdBlocking(labelIds: List<String>): List<Label>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
-    abstract fun findAllLabelsWithIdsAsync(labelIds: List<String>): LiveData<List<Label>>
+    fun findAllLabelsWithIdsAsync(labelIds: List<String>): LiveData<List<Label>>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    abstract fun findLabelById(labelId: String): Label?
+    fun findLabelById(labelId: String): Label?
 
     @Query("DELETE FROM $TABLE_LABELS")
-    abstract fun clearLabelsCache()
+    fun clearLabelsCache()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveLabel(label: Label): Long
+    fun saveLabel(label: Label): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveAllLabels(labels: List<Label>): List<Long>
+    fun saveAllLabels(labels: List<Label>): List<Long>
 
     @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    abstract fun deleteLabelById(labelId: String)
+    fun deleteLabelById(labelId: String)
     //endregion
 }
