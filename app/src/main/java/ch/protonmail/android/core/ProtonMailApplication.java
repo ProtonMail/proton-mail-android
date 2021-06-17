@@ -184,7 +184,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         mBus.register(this);
 
         if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
+            Timber.plant(new ProtonDebugTree());
             enableStrictMode();
         } else {
             Sentry.init(
