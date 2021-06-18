@@ -43,7 +43,10 @@ import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendKey
 import ch.protonmail.android.api.models.messages.send.MessageSendPackage
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.DetailedException
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.core.apiError
+import ch.protonmail.android.core.messageId
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
@@ -662,7 +665,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         assertEquals(ListenableWorker.Result.Retry(), result)
         verify(exactly = 0) { userNotifier.showSendMessageError(any(), any()) }
         verify(exactly = 0) { pendingActionDao.deletePendingSendByMessageId(any()) }
-        verify { Timber.w(exception, "Failed building MessageSendBody for API request") }
+        verify { Timber.d(exception, "Send Message Worker failed with error = FailureBuildingApiRequest. Retrying...") }
         unmockkStatic(Timber::class)
     }
 
@@ -890,7 +893,12 @@ class SendMessageWorkerTest : CoroutinesTest {
         verify { userNotifier.showSendMessageError(userErrorMessage, subject) }
         verify { pendingActionDao.deletePendingSendByMessageId(savedDraftMessageId) }
         verify {
-            Timber.e("Send Message API call failed for messageId $savedDraftMessageId with error $apiError")
+            Timber.e(
+                DetailedException()
+                    .apiError(8237, "Detailed API error explanation")
+                    .messageId("923842"),
+                "Send Message API call failed for messageId $savedDraftMessageId with error $apiError"
+            )
         }
         unmockkStatic(Timber::class)
     }
