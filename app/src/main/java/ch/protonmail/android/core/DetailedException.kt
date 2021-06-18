@@ -19,15 +19,12 @@
 
 package ch.protonmail.android.core
 
-import io.sentry.event.EventBuilder
+import ch.protonmail.android.api.exceptions.ApiException
 import me.proton.core.domain.entity.UserId
-import me.proton.core.network.domain.ApiException
-import me.proton.core.network.domain.ApiResult
 
 private const val EXTRA_API_ERROR_CODE = "API error code"
 private const val EXTRA_API_ERROR_MESSAGE = "API error message"
 private const val EXTRA_MESSAGE_ID = "Message id"
-private const val EXTRA_THROWABLE_MESSAGE = "Throwable message"
 private const val EXTRA_USER_ID = "User id"
 
 /**
@@ -41,13 +38,7 @@ data class DetailedException(
     override val message: String? = null,
     override val cause: Throwable? = null,
     val extras: Map<String, Any?> = emptyMap()
-) : Throwable() {
-
-    fun addToSentryEventBuilder(eventBuilder: EventBuilder) {
-        message?.let { eventBuilder.withExtra(EXTRA_THROWABLE_MESSAGE, message) }
-        for (extra in extras) eventBuilder.withExtra(extra.key, extra.value)
-    }
-}
+) : Throwable()
 
 fun Throwable?.apiError(code: Int, message: String): DetailedException =
     apiErrorCode(code).apiErrorMessage(message)
@@ -73,10 +64,6 @@ fun Throwable?.toDetailedException(): DetailedException =
     when (this) {
         is DetailedException -> this
         is ApiException -> {
-            val apiProtonData = (error as? ApiResult.Error.Http)?.proton
-            apiProtonData?.let { apiError(it.code, it.error) } ?: DetailedException(message, cause = this)
-        }
-        is ch.protonmail.android.api.exceptions.ApiException -> {
             apiError(response.code, response.error)
         }
         else -> DetailedException(this?.message, cause = this)
