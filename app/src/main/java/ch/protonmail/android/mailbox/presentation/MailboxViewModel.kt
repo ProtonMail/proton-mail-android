@@ -172,7 +172,6 @@ class MailboxViewModel @Inject constructor(
                 )
             }
             .onEach {
-                Timber.v("New state: $it")
                 mutableMailboxState.value = it
             }
             .launchIn(viewModelScope)

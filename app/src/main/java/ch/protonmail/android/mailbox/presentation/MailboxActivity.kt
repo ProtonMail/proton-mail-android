@@ -586,7 +586,7 @@ class MailboxActivity :
     }
 
     private fun renderState(state: MailboxState) {
-        Timber.v("New mailbox state: $state")
+        Timber.v("New mailbox state: ${state.javaClass.canonicalName}")
         setLoadingMore(false)
 
         when (state) {

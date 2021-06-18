@@ -31,26 +31,22 @@ import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ConnectivityEvent;
-import ch.protonmail.android.events.FetchUpdatesEvent;
-import ch.protonmail.android.events.Status;
 import ch.protonmail.android.feature.account.AccountManagerKt;
 import ch.protonmail.android.jobs.Priority;
 import ch.protonmail.android.jobs.ProtonMailBaseJob;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.Logger;
 import timber.log.Timber;
 
 public class FetchUpdatesJob extends ProtonMailBaseJob {
 
-    private static final String TAG_FETCH_UPDATES_JOB = "FetchUpdatesJob";
     private EventManager eventManager;
 
     FetchUpdatesJob(EventManager eventManager) {
         super(new Params(Priority.HIGH).requireNetwork());
         this.eventManager = eventManager;
-	}
+    }
 
-	public FetchUpdatesJob() {
+    public FetchUpdatesJob() {
         this(ProtonMailApplication.getApplication().getEventManager());
     }
 
@@ -58,8 +54,7 @@ public class FetchUpdatesJob extends ProtonMailBaseJob {
     public void onRun() throws Throwable {
         MessageDao messageDao = MessageDatabase.Factory.getInstance(getApplicationContext(), getUserId()).getDao();
         if (!getQueueNetworkUtil().isConnected()) {
-            Logger.doLog(TAG_FETCH_UPDATES_JOB, "no network cannot fetch updates");
-            AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.NO_NETWORK));
+            Timber.i("no network cannot fetch updates");
             return;
         }
 
@@ -69,18 +64,15 @@ public class FetchUpdatesJob extends ProtonMailBaseJob {
         try {
             Set<Id> loggedInUsers = AccountManagerKt.allLoggedInBlocking(getAccountManager());
             eventManager.consumeEventsForBlocking(loggedInUsers);
-            AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.SUCCESS));
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.e(e, "FetchUpdatesJob has failed");
             if (e.getCause() instanceof ConnectException) {
                 AppUtil.postEventOnUi(new ConnectivityEvent(false));
             }
-            AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.FAILED));
         }
     }
 
     @Override
     protected void onProtonCancel(int cancelReason, @Nullable Throwable throwable) {
-        AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.FAILED));
     }
 }
