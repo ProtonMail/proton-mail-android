@@ -34,10 +34,7 @@ import javax.inject.Inject
 
 class DownloadUtils @Inject constructor() {
 
-    /**
-     * @param [explicitPackageName] allows for using explicit Intent to view Attachment
-     */
-    fun viewAttachment(context: Context, filename: String?, uri: Uri?, explicitPackageName: String? = null) {
+    fun viewAttachment(context: Context, filename: String?, uri: Uri?) {
         if (uri != null) {
             val mimeType = getMimeType(uri, context, filename)
             Timber.d("viewAttachment mimeType: $mimeType uri: $uri uriScheme: ${uri.scheme}")
@@ -48,12 +45,43 @@ class DownloadUtils @Inject constructor() {
                     Intent.FLAG_ACTIVITY_NEW_TASK or
                     Intent.FLAG_GRANT_READ_URI_PERMISSION
                 setDataAndType(uri, mimeType)
-                if (explicitPackageName != null) setPackage(explicitPackageName)
             }
             try {
                 context.startActivity(intent)
             } catch (notFoundException: ActivityNotFoundException) {
                 Timber.i(notFoundException, "Unable to view attachment")
+            }
+        }
+    }
+
+    /**
+     * View attachment with ProtonCalendar and pass [senderEmail] and [recipientEmail] in intent.
+     */
+    fun viewAttachmentWithProtonCalendar(
+        context: Context,
+        filename: String?,
+        uri: Uri?,
+        senderEmail: String,
+        recipientEmail: String
+    ) {
+        if (uri != null) {
+            val mimeType = getMimeType(uri, context, filename)
+            Timber.d("viewAttachment mimeType: $mimeType uri: $uri uriScheme: ${uri.scheme}")
+
+            val intent = Intent(ProtonCalendarUtils.actionOpenIcs).apply {
+                type = mimeType
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                    Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                setDataAndType(uri, mimeType)
+                setPackage(ProtonCalendarUtils.packageName)
+                putExtra(ProtonCalendarUtils.intentExtraSenderEmail, senderEmail)
+                putExtra(ProtonCalendarUtils.intentExtraRecipientEmail, recipientEmail)
+            }
+            try {
+                context.startActivity(intent)
+            } catch (notFoundException: ActivityNotFoundException) {
+                Timber.i(notFoundException, "Unable to view attachment with ProtonCalendar")
             }
         }
     }

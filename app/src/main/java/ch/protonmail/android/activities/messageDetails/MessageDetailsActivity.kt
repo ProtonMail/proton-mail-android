@@ -87,6 +87,7 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
+import ch.protonmail.android.utils.ProtonCalendarUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.utils.extensions.app
@@ -825,10 +826,12 @@ internal class MessageDetailsActivity :
     }
 
     private fun displayProtonCalendarButton(attachments: List<Attachment>) {
-        val ics = attachments.firstOrNull { it.mimeTypeFirstValue?.toLowerCase(Locale.ENGLISH) == "text/calendar" }
-        val attachmentId = ics?.attachmentId
+        val icsAttachment = attachments.firstOrNull {
+            it.mimeTypeFirstValue?.toLowerCase(Locale.ENGLISH) == ProtonCalendarUtils.mimeType
+        }
+        val attachmentId = icsAttachment?.attachmentId
 
-        if (ics != null && attachmentId != null) {
+        if (icsAttachment != null && attachmentId != null) {
             findViewById<ConstraintLayout>(R.id.includeOpenInProtonCalendar)?.apply {
                 visibility = View.VISIBLE
 

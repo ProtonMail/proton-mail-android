@@ -20,7 +20,6 @@ package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.annotation.TargetApi
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -571,39 +570,25 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     }
 
     fun viewAttachment(context: Context, filename: String?, uri: Uri?, attachmentId: String) {
-        downloadUtils.viewAttachment(context, filename, uri, getAndResetPackageNameForAttachment(attachmentId))
-    }
 
-    /**
-     * Determines the custom App package to open the Attachment with. Only supports ProtonCalendar for now.
-     */
-    private fun getAndResetPackageNameForAttachment(attachmentId: String): String? {
-        val packageName = if (protonCalendarAttachmentId == attachmentId) {
-            ProtonCalendarUtils.protonCalendarPackageName
-        } else null
+        val senderEmail = message.value?.senderEmail
+        val recipientEmail = protonCalendarUtils.extractRecipientEmail(message.value?.header ?: "")
 
-        protonCalendarAttachmentId = null // always reset temporary AttachmentID
-
-        return packageName
-    }
-
-    /**
-     * If ProtonCalendar is installed but outdated (can't handle ICS files) we shouldn't show the button.
-     */
-    fun shouldShowProtonCalendarButton(packageManager: PackageManager): Boolean {
-
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(
-                Uri.parse("content://proton/calendar/intent/check/invite.ics"),
-                "text/calendar"
-            )
-            setPackage(ProtonCalendarUtils.protonCalendarPackageName)
+        if (senderEmail != null && recipientEmail != null && shouldViewInProtonCalendar(attachmentId)) {
+            downloadUtils.viewAttachmentWithProtonCalendar(context, filename, uri, senderEmail, recipientEmail)
+        } else {
+            downloadUtils.viewAttachment(context, filename, uri)
         }
-
-        val protonCalendarCanHandleIcs = intent.resolveActivity(packageManager) != null
-
-        return protonCalendarCanHandleIcs && Constants.FeatureFlags.DISPLAY_PROTON_CALENDAR_BUTTON
     }
+
+    private fun shouldViewInProtonCalendar(attachmentId: String): Boolean {
+        return (protonCalendarAttachmentId == attachmentId).also {
+            protonCalendarAttachmentId = null // always reset temporary AttachmentID
+        }
+    }
+
+    fun shouldShowProtonCalendarButton(packageManager: PackageManager): Boolean =
+        protonCalendarUtils.shouldShowProtonCalendarButton(packageManager)
 
     fun handleProtonCalendarButtonClick(context: Context, attachmentId: String, messageId: String) {
         if (protonCalendarUtils.openPlayStoreIfNotInstalled()) {

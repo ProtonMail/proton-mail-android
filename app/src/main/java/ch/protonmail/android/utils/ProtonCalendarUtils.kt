@@ -22,6 +22,7 @@ package ch.protonmail.android.utils
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,16 +30,39 @@ import javax.inject.Inject
 class ProtonCalendarUtils @Inject constructor(private val context: Context) {
 
     /**
+     * If ProtonCalendar is installed but outdated (can't handle ICS files) we shouldn't show the button.
+     */
+    fun shouldShowProtonCalendarButton(packageManager: PackageManager): Boolean {
+
+        val protonCalendarIsInstalled = packageManager
+            .getLaunchIntentForPackage(packageName) != null
+
+        val protonCalendarIntent = Intent(actionOpenIcs).apply {
+            setDataAndType(
+                Uri.parse(intentContentUri),
+                mimeType
+            )
+            setPackage(packageName)
+        }
+
+        val protonCalendarCanHandleIcs = packageManager.resolveActivity(protonCalendarIntent, 0) != null
+
+        return if (protonCalendarIsInstalled) {
+            protonCalendarCanHandleIcs
+        } else true
+    }
+
+    /**
      * @return [true] if Proton Calendar is installed, [false] otherwise and tries to open Play Store
      */
     fun openPlayStoreIfNotInstalled(): Boolean {
 
-        val protonCalendarIntent = context.packageManager.getLaunchIntentForPackage(protonCalendarPackageName)
+        val protonCalendarIsInstalled = context.packageManager.getLaunchIntentForPackage(packageName) != null
 
-        return if (protonCalendarIntent == null) {
+        return if (!protonCalendarIsInstalled) {
             val playStoreIntent = Intent(Intent.ACTION_VIEW).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                data = Uri.parse("market://details?id=${protonCalendarPackageName}")
+                data = Uri.parse("market://details?id=$packageName")
             }
 
             try {
@@ -52,8 +76,23 @@ class ProtonCalendarUtils @Inject constructor(private val context: Context) {
         } else true
     }
 
+    /**
+     * @return original recipient email extracted from message headers
+     */
+    fun extractRecipientEmail(headers: String): String? {
+        return headers.split("\n").firstOrNull {
+            it.startsWith("$recipientEmailHeader:")
+        }?.substringAfter("$recipientEmailHeader:")?.trim()
+    }
+
     companion object {
-        const val protonCalendarPackageName = "me.proton.android.calendar"
+        const val packageName = "me.proton.android.calendar"
+        const val actionOpenIcs = "me.proton.android.calendar.intent.action.CTA_OPEN_ICS"
+        const val mimeType = "text/calendar"
+        const val recipientEmailHeader = "X-Original-To"
+        const val intentContentUri = "content://proton/calendar/intent/check/invite.ics"
+        const val intentExtraSenderEmail = "me.proton.android.calendar.intent.extra.ICS_SENDER_EMAIL"
+        const val intentExtraRecipientEmail = "me.proton.android.calendar.intent.extra.ICS_RECIPIENT_EMAIL"
     }
 
 }
