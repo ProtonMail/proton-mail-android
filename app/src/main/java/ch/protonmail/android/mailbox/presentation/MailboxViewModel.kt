@@ -66,6 +66,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -166,9 +167,11 @@ class MailboxViewModel @Inject constructor(
                 }
             }
             .catch {
-                mutableMailboxState.value = MailboxState.Error(
-                    "Failed getting messages",
-                    it
+                emit(
+                    MailboxState.Error(
+                        "Failed getting messages, catch",
+                        it
+                    )
                 )
             }
             .onEach {

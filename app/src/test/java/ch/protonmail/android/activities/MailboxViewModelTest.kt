@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.activities
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
@@ -78,10 +77,10 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.EMPTY_STRING
 import org.junit.After
-import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -89,10 +88,7 @@ import kotlin.test.assertNotNull
 
 private const val STARRED_LABEL_ID = "10"
 
-class MailboxViewModelTest : CoroutinesTest {
-
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
+class MailboxViewModelTest : ArchTest, CoroutinesTest {
 
     @RelaxedMockK
     private lateinit var contactsRepository: ContactsRepository

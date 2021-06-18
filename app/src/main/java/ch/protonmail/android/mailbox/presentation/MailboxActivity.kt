@@ -593,6 +593,7 @@ class MailboxActivity :
             is MailboxState.Loading -> setRefreshing(true)
             is MailboxState.Data -> {
                 setRefreshing(false)
+                Timber.v("Data state items count: ${state.items.size}")
                 include_mailbox_no_messages.isVisible = state.items.isEmpty()
                 mailboxRecyclerView.isVisible != state.items.isEmpty()
 
