@@ -45,7 +45,10 @@ import ch.protonmail.android.api.models.messages.send.MessageSendPackage
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.DetailedException
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.core.apiError
+import ch.protonmail.android.core.messageId
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
@@ -663,7 +666,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         assertEquals(ListenableWorker.Result.Retry(), result)
         verify(exactly = 0) { userNotifier.showSendMessageError(any(), any()) }
         verify(exactly = 0) { pendingActionsDao.deletePendingSendByMessageId(any()) }
-        verify { Timber.w("Failed building MessageSendBody for API request, exception $exception") }
+        verify { Timber.d(exception, "Send Message Worker failed with error = FailureBuildingApiRequest. Retrying...") }
         unmockkStatic(Timber::class)
     }
 
@@ -930,14 +933,13 @@ class SendMessageWorkerTest : CoroutinesTest {
         verify { userNotifier.showSendMessageError(userErrorMessage, subject) }
         verify { pendingActionsDao.deletePendingSendByMessageId(savedDraftMessageId) }
         verify {
-            Timber.e("Send Message API call failed for messageId $savedDraftMessageId with error $apiError")
+            Timber.e(
+                DetailedException()
+                    .apiError(8237, "Detailed API error explanation")
+                    .messageId("923842"),
+                "Send Message API call failed for messageId $savedDraftMessageId with error $apiError"
+            )
         }
-        assertEquals(
-            ListenableWorker.Result.failure(
-                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "ApiRequestReturnedBadBodyCode")
-            ),
-            result
-        )
         unmockkStatic(Timber::class)
     }
 
