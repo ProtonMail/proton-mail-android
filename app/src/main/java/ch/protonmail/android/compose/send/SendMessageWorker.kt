@@ -203,7 +203,7 @@ class SendMessageWorker @AssistedInject constructor(
         return Result.success()
     }
 
-    // TODO what exception can throw?
+    // TODO improve error handling for generic exception MAILAND-2003
     private suspend fun buildSendMessageRequest(
         savedDraftMessage: Message,
         sendPreferences: List<SendPreference>,
