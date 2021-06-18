@@ -146,26 +146,20 @@ class MailboxViewModel @Inject constructor(
                 Timber.v("New location,label,user: $it")
                 mutableMailboxState.value = MailboxState.Loading
             }
-            .flatMapLatest { pair ->
-                val location = pair.first
-                val labelId = pair.second
-                val userId = pair.third
+            .flatMapLatest { triple ->
+                val location = triple.first
+                val labelId = triple.second
+                val userId = triple.third
 
                 if (conversationModeEnabled(location)) {
                     Timber.v("Getting conversations for $location, label: $labelId, user: $userId")
                     conversationsAsMailboxItems(location, labelId, userId)
-                        .onEach {
-                            mutableMailboxState.value = it
-                        }
                 } else {
                     Timber.v("Getting messages for $location label: $labelId user: $userId")
                     getMessagesByLocation(location, labelId, userId)
                         .map {
-                            messagesToMailboxItems(it)
-                        }
-                        .onEach {
-                            mutableMailboxState.value = MailboxState.Data(
-                                it,
+                            MailboxState.Data(
+                                messagesToMailboxItems(it),
                                 false
                             )
                         }
@@ -176,6 +170,10 @@ class MailboxViewModel @Inject constructor(
                     "Failed getting messages",
                     it
                 )
+            }
+            .onEach {
+                Timber.v("New state: $it")
+                mutableMailboxState.value = it
             }
             .launchIn(viewModelScope)
     }
@@ -451,6 +449,7 @@ class MailboxViewModel @Inject constructor(
         }
 
     private suspend fun messagesToMailboxItems(messages: List<Message>): List<MailboxUiItem> {
+        Timber.v("messagesToMailboxItems size: ${messages.size}")
         // Note for future: Get userId from Message (should contain it).
         val userId = userManager.currentUserId ?: return emptyList()
 
