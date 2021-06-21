@@ -45,7 +45,6 @@ import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 
 const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
@@ -233,17 +232,12 @@ class MessageRepository @Inject constructor(
                 Timber.v("messages DB for location(id=${location.messageLocationTypeValue}): $location")
                 Timber.v("dbData size: ${dbData.size} user: $currentUser, trying fetching from remote")
                 if (dbData.size < VISIBLE_PAGE_ITEMS_SIZE_ESTIMATION) {
-                    try {
-                        val messagesResponse =
-                            protonMailApiManager.getMessages(location.messageLocationTypeValue, UserIdTag(userId))
-                        if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
-                            persistMessages(messagesResponse.messages, userId, location.messageLocationTypeValue)
-                            messagesResponse.messages
-                        } else {
-                            dbData
-                        }
-                    } catch (ioException: IOException) {
-                        Timber.w(ioException, "Fetching Messages By Location has failed")
+                    val messagesResponse =
+                        protonMailApiManager.getMessages(location.messageLocationTypeValue, UserIdTag(userId))
+                    if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
+                        persistMessages(messagesResponse.messages, userId, location.messageLocationTypeValue)
+                        messagesResponse.messages
+                    } else {
                         dbData
                     }
                 } else {
@@ -260,13 +254,9 @@ class MessageRepository @Inject constructor(
         return messagesDao.observeMessagesByLabelId(labelId)
             .onStart {
                 Timber.v("Messages DB for labelId: $labelId, trying fetching from remote")
-                try {
-                    val labelsResponse = protonMailApiManager.searchByLabelAndPage(labelId, 0)
-                    if (labelsResponse.code == Constants.RESPONSE_CODE_OK) {
-                        persistMessages(labelsResponse.messages, userId)
-                    }
-                } catch (ioException: IOException) {
-                    Timber.w(ioException, "Fetching Messages By Label has failed")
+                val labelsResponse = protonMailApiManager.searchByLabelAndPage(labelId, 0)
+                if (labelsResponse.code == Constants.RESPONSE_CODE_OK) {
+                    persistMessages(labelsResponse.messages, userId)
                 }
             }
     }
@@ -276,16 +266,12 @@ class MessageRepository @Inject constructor(
         return messagesDao.observeAllMessages()
             .onStart {
                 Timber.v("re-fetching messages all from remote")
-                try {
-                    val messagesResponse = protonMailApiManager.getMessages(
-                        Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
-                        UserIdTag(userId)
-                    )
-                    if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
-                        persistMessages(messagesResponse.messages, userId)
-                    }
-                } catch (ioException: IOException) {
-                    Timber.w(ioException, "Fetching all messages has failed")
+                val messagesResponse = protonMailApiManager.getMessages(
+                    Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
+                    UserIdTag(userId)
+                )
+                if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
+                    persistMessages(messagesResponse.messages, userId)
                 }
             }
     }

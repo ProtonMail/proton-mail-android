@@ -642,6 +642,7 @@ class MailboxActivity :
         oldestItemTimestamp: Long = now()
     ) {
 
+        Timber.v("loadMailboxItems last: $oldestItemTimestamp")
         mailboxViewModel.loadMailboxItems(
             mailboxLabelId,
             includeLabels,

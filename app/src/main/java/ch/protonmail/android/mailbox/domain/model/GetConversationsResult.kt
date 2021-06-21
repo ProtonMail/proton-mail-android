@@ -17,7 +17,9 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain
+package ch.protonmail.android.mailbox.domain.model
+
+import ch.protonmail.android.mailbox.domain.Conversation
 
 sealed class GetConversationsResult {
     data class Success(val conversations: List<Conversation>) : GetConversationsResult()

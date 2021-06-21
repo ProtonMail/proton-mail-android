@@ -45,9 +45,10 @@ import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.GetConversations
-import ch.protonmail.android.mailbox.domain.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.GetMessagesByLocation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
+import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
+import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
 import ch.protonmail.android.ui.view.LabelChipUiModel
@@ -66,7 +67,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -158,11 +158,21 @@ class MailboxViewModel @Inject constructor(
                 } else {
                     Timber.v("Getting messages for $location label: $labelId user: $userId")
                     getMessagesByLocation(location, labelId, userId)
-                        .map {
-                            MailboxState.Data(
-                                messagesToMailboxItems(it),
-                                false
-                            )
+                        .map { result ->
+                            when (result) {
+                                is GetMessagesResult.Success -> {
+                                    MailboxState.Data(
+                                        messagesToMailboxItems(result.messages),
+                                        false
+                                    )
+                                }
+                                is GetMessagesResult.Error -> {
+                                    MailboxState.Error(
+                                        "GetMessagesResult Error",
+                                        result.throwable
+                                    )
+                                }
+                            }
                         }
                 }
             }

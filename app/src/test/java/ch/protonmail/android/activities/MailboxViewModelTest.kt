@@ -44,9 +44,10 @@ import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.GetConversations
-import ch.protonmail.android.mailbox.domain.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.GetMessagesByLocation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
+import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
+import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxState
@@ -132,7 +133,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private lateinit var viewModel: MailboxViewModel
 
     private val loadingState = MailboxState.Loading
-    private val messagesResponseChannel = Channel<List<Message>>()
+    private val messagesResponseChannel = Channel<GetMessagesResult>()
     private val conversationsResponseFlow = Channel<GetConversationsResult>()
 
     private val currentUserId = Id("8237462347237428")
@@ -196,7 +197,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         viewModel.mailboxState.test {
             // Then
             assertEquals(loadingState, expectItem())
-            messagesResponseChannel.send(messages)
+            messagesResponseChannel.send(GetMessagesResult.Success(messages))
             assertEquals(expected, expectItem())
         }
     }
@@ -266,7 +267,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             viewModel.mailboxState.test {
                 // Then
                 assertEquals(loadingState, expectItem())
-                messagesResponseChannel.send(messages)
+                messagesResponseChannel.send(GetMessagesResult.Success(messages))
                 assertEquals(expected, expectItem())
             }
         }
@@ -321,7 +322,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         viewModel.mailboxState.test {
             // Then
             assertEquals(loadingState, expectItem())
-            messagesResponseChannel.send(messages)
+            messagesResponseChannel.send(GetMessagesResult.Success(messages))
             assertEquals(expected, expectItem())
             coVerify { contactsRepository.findAllContactEmails() }
         }
@@ -374,7 +375,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             viewModel.mailboxState.test {
                 // Then
                 assertEquals(loadingState, expectItem())
-                messagesResponseChannel.send(messages)
+                messagesResponseChannel.send(GetMessagesResult.Success(messages))
                 assertEquals(expected, expectItem())
             }
         }
@@ -426,7 +427,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             viewModel.mailboxState.test {
                 // Then
                 assertEquals(loadingState, expectItem())
-                messagesResponseChannel.send(messages)
+                messagesResponseChannel.send(GetMessagesResult.Success(messages))
                 assertEquals(expected, expectItem())
             }
         }
@@ -496,7 +497,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         viewModel.mailboxState.test {
             // Then
             assertEquals(loadingState, expectItem())
-            messagesResponseChannel.send(messages)
+            messagesResponseChannel.send(GetMessagesResult.Success(messages))
             assertEquals(expected, expectItem())
         }
     }
@@ -521,7 +522,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             viewModel.mailboxState.test {
                 // Then
                 assertEquals(loadingState, expectItem())
-                messagesResponseChannel.send(messages)
+                messagesResponseChannel.send(GetMessagesResult.Success(messages))
                 assertEquals(expectedState, expectItem())
             }
         }

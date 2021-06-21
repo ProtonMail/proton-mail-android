@@ -20,10 +20,13 @@
 package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.repository.MessageRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import javax.inject.Inject
 
 class GetMessagesByLocation @Inject constructor(
@@ -34,7 +37,7 @@ class GetMessagesByLocation @Inject constructor(
         mailboxLocation: Constants.MessageLocationType,
         labelId: String?,
         userId: Id
-    ): Flow<List<Message>> =
+    ): Flow<GetMessagesResult> =
         when (mailboxLocation) {
             Constants.MessageLocationType.LABEL,
             Constants.MessageLocationType.LABEL_OFFLINE,
@@ -56,4 +59,11 @@ class GetMessagesByLocation @Inject constructor(
             Constants.MessageLocationType.INVALID -> throw IllegalArgumentException("Invalid location.")
             else -> throw IllegalArgumentException("Unknown location: $mailboxLocation")
         }
+            .map {
+                Timber.v("GetMessagesByLocation new messages size: ${it.size}, location: $mailboxLocation")
+                GetMessagesResult.Success(it) as GetMessagesResult
+            }
+            .catch {
+                emit(GetMessagesResult.Error(it))
+            }
 }
