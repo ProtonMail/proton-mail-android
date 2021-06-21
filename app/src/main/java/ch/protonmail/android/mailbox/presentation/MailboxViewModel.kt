@@ -286,23 +286,6 @@ class MailboxViewModel @Inject constructor(
         }
     }
 
-    fun getMailboxItems(
-        includeLabels: Boolean,
-        uuid: String,
-        refreshMessages: Boolean
-    ) {
-
-        // refresh messages
-        fetchMessages(
-            null,
-            mutableMailboxLocation.value,
-            mutableMailboxLabelId.value,
-            includeLabels,
-            uuid,
-            refreshMessages
-        )
-    }
-
     fun loadMailboxItems(
         labelId: String?,
         includeLabels: Boolean,

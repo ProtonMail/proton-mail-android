@@ -162,7 +162,6 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
-import kotlin.time.seconds
 import kotlin.time.toDuration
 
 private const val TAG_MAILBOX_ACTIVITY = "MailboxActivity"
@@ -376,8 +375,6 @@ class MailboxActivity :
             .onEach { renderState(it) }
             .launchIn(lifecycleScope)
 
-        fetchMailboxItemsByLocation(syncId = syncUUID, includeLabels = true)
-
         mailboxViewModel.mailboxLocation
             .onEach { mailboxAdapter.setNewLocation(it) }
             .launchIn(lifecycleScope)
@@ -570,21 +567,6 @@ class MailboxActivity :
         setElevationOnToolbarAndStatusView(false)
     }
 
-    /**
-     * @param refreshMessages whether the existing local messages should be deleted and re-fetched from network
-     */
-    private fun fetchMailboxItemsByLocation(
-        includeLabels: Boolean = true,
-        refreshMessages: Boolean = false,
-        syncId: String
-    ) {
-        mailboxViewModel.getMailboxItems(
-            includeLabels,
-            syncId,
-            refreshMessages
-        )
-    }
-
     private fun renderState(state: MailboxState) {
         Timber.v("New mailbox state: ${state.javaClass.canonicalName}")
         setLoadingMore(false)
@@ -674,7 +656,7 @@ class MailboxActivity :
         }
         syncUUID = UUID.randomUUID().toString()
         lifecycleScope.launch {
-            delay(3.seconds.toLongMilliseconds())
+            delay(3.toDuration(TimeUnit.SECONDS))
             loadMailboxItems(includeLabels = true)
         }
         mailboxViewModel.checkConnectivityDelayed()
