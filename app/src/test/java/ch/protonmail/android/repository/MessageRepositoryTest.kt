@@ -370,12 +370,13 @@ class MessageRepositoryTest {
         coEvery { messageDao.saveMessages(netMessages) } just Runs
 
         // when
-        val resultsList = messageRepository.observeMessagesByLocation(mailboxLocation, testUserId).take(1).toList()
+        val resultsList = messageRepository.observeMessagesByLocation(mailboxLocation, testUserId).take(2).toList()
 
         // then
         coVerify { protonMailApiManager.getMessages(mailboxLocation.messageLocationTypeValue, UserIdTag(testUserId)) }
         coVerify { messageDao.saveMessages(netMessages) }
-        assertEquals(netMessages, resultsList[0])
+        assertEquals(dbMessages, resultsList[0])
+        assertEquals(netMessages, resultsList[1])
     }
 
     @Test
@@ -496,7 +497,7 @@ class MessageRepositoryTest {
 
         // when
         val resultsList =
-            messageRepository.observeMessagesByLocation(mailboxLocation, Id(testUserName)).take(1).toList()
+            messageRepository.observeMessagesByLocation(mailboxLocation, Id(testUserName)).take(2).toList()
 
         // then
         coVerify {
@@ -505,7 +506,8 @@ class MessageRepositoryTest {
             )
         }
         coVerify { messageDao.saveMessages(netMessages) }
-        assertEquals(netMessages, resultsList[0])
+        assertEquals(dbMessages, resultsList[0])
+        assertEquals(netMessages, resultsList[1])
     }
 
 

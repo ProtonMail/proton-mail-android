@@ -24,6 +24,7 @@ import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.MoveToFolderJob
@@ -38,7 +39,7 @@ import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
@@ -222,28 +223,33 @@ class MessageRepository @Inject constructor(
         userId: Id
     ): Flow<List<Message>> {
         val messagesDao = databaseProvider.provideMessageDao(userId)
-        return if (location != Constants.MessageLocationType.STARRED) {
-            messagesDao.observeMessagesByLocation(location.messageLocationTypeValue)
-        } else {
-            messagesDao.observeStarredMessages()
-        }
-            .map { dbData ->
+        return observeLocationDbDataFlow(location, messagesDao)
+            .onStart {
+                val dbData = observeLocationDbDataFlow(location, messagesDao).first()
                 val currentUser = userManager.currentUser
                 Timber.v("messages DB for location(id=${location.messageLocationTypeValue}): $location")
                 Timber.v("dbData size: ${dbData.size} user: $currentUser, trying fetching from remote")
                 if (dbData.size < VISIBLE_PAGE_ITEMS_SIZE_ESTIMATION) {
+                    if (dbData.isNotEmpty()) { // if there is anything in the db emit it now
+                        emit(dbData)
+                    }
                     val messagesResponse =
                         protonMailApiManager.getMessages(location.messageLocationTypeValue, UserIdTag(userId))
                     if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
                         persistMessages(messagesResponse.messages, userId, location.messageLocationTypeValue)
-                        messagesResponse.messages
-                    } else {
-                        dbData
+                        emit(messagesResponse.messages)
                     }
-                } else {
-                    dbData
                 }
             }
+    }
+
+    private fun observeLocationDbDataFlow(
+        location: Constants.MessageLocationType,
+        messagesDao: MessageDao
+    ) = if (location != Constants.MessageLocationType.STARRED) {
+        messagesDao.observeMessagesByLocation(location.messageLocationTypeValue)
+    } else {
+        messagesDao.observeStarredMessages()
     }
 
     fun observeMessagesByLabelId(
