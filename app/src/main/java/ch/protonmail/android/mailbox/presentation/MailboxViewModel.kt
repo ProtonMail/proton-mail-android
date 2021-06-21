@@ -467,9 +467,9 @@ class MailboxViewModel @Inject constructor(
                 .toLabelChipUiModels()
 
             MailboxUiItem(
-                message.messageId!!,
+                requireNotNull(message.messageId),
                 senderName,
-                message.subject!!,
+                requireNotNull(message.subject),
                 message.timeMs,
                 message.numAttachments > 0,
                 message.isStarred ?: false,
