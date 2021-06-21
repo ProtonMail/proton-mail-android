@@ -40,6 +40,7 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -81,6 +82,7 @@ class MessagesService : JobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
 
+        Timber.v("onHandleWork $intent")
         val userId = Id(requireNotNull(intent.getStringExtra(EXTRA_USER_ID)))
         messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
 
@@ -163,6 +165,7 @@ class MessagesService : JobIntentService() {
     private fun handleFetchMessages(location: Constants.MessageLocationType, time: Long, currentUserId: Id) {
         try {
             val messages = mApi.fetchMessages(location.messageLocationTypeValue, time)
+            Timber.v("handleFetchMessages location: $location, time: $time")
             handleResult(messages, location, false, null, currentUserId)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
@@ -287,8 +290,10 @@ class MessagesService : JobIntentService() {
                 msg
             }.filterNotNull()
                 .toList()
-                .let {
-                    messageDetailsRepository.saveAllMessagesBlocking(it)
+                .let { list ->
+                    runBlocking {
+                        messageDetailsRepository.saveMessagesInOneTransaction(list)
+                    }
                 }
             val event = MailboxLoadedEvent(Status.SUCCESS, uuid)
             AppUtil.postEventOnUi(event)
@@ -357,8 +362,10 @@ class MessagesService : JobIntentService() {
                 msg
             }.filterNotNull()
                 .toList()
-                .let {
-                    messageDetailsRepository.saveAllMessagesBlocking(it)
+                .let { list ->
+                    runBlocking {
+                        messageDetailsRepository.saveMessagesInOneTransaction(list)
+                    }
                 }
 
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.SUCCESS, null))
@@ -433,6 +440,7 @@ class MessagesService : JobIntentService() {
     class Scheduler @Inject constructor() {
 
         fun fetchMessagesOlderThanTime(location: Constants.MessageLocationType, userId: Id, time: Long) {
+            Timber.v("fetchMessagesOlderThanTime location: $location, time: $time")
             val context = ProtonMailApplication.getApplication()
             val intent = Intent(context, MessagesService::class.java)
             intent.action = ACTION_FETCH_MESSAGES_BY_TIME
