@@ -18,9 +18,6 @@
  */
 package ch.protonmail.android.activities.composeMessage;
 
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -103,8 +100,8 @@ import ch.protonmail.android.api.models.enumerations.MessageEncryption;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker;
 import ch.protonmail.android.compose.ComposeMessageViewModel;
-import ch.protonmail.android.compose.presentation.ui.MessageRecipientArrayAdapter;
 import ch.protonmail.android.compose.presentation.ui.ComposeMessageKotlinActivity;
+import ch.protonmail.android.compose.presentation.ui.MessageRecipientArrayAdapter;
 import ch.protonmail.android.compose.recipients.GroupRecipientsDialogFragment;
 import ch.protonmail.android.contacts.PostResult;
 import ch.protonmail.android.core.Constants;
@@ -156,6 +153,9 @@ import ch.protonmail.android.views.PMWebViewClient;
 import dagger.hilt.android.AndroidEntryPoint;
 import me.proton.core.accountmanager.domain.AccountManager;
 import timber.log.Timber;
+
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
 
 @AndroidEntryPoint
 public class ComposeMessageActivity

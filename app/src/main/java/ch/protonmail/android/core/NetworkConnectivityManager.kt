@@ -24,16 +24,15 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
 import android.net.NetworkRequest
-import android.os.Build
-import androidx.annotation.RequiresApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.time.seconds
+import kotlin.time.toDuration
 
 /**
  * Monitors active network connection using [NetworkConnectivityManager].
@@ -42,14 +41,7 @@ class NetworkConnectivityManager @Inject constructor(
     private val connectivityManager: ConnectivityManager
 ) {
 
-    fun isInternetConnectionPossible(): Boolean =
-        isActiveNetworkInternetCapable()
-
-    private fun isCurrentlyConnected(): Boolean =
-        connectivityManager.activeNetworkInfo?.isConnectedOrConnecting == true
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun isActiveNetworkInternetCapable(): Boolean {
+    fun isInternetConnectionPossible(): Boolean {
         val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
         return capabilities?.hasCapability(NET_CAPABILITY_INTERNET) == true
     }
@@ -65,10 +57,10 @@ class NetworkConnectivityManager @Inject constructor(
 
             override fun onLost(network: Network) {
                 launch {
-                    delay(2.seconds)
+                    delay(2.toDuration(TimeUnit.SECONDS))
                     Timber.d("Network $network lost isInternetPossible: ${isInternetConnectionPossible()}")
                     if (!isInternetConnectionPossible()) {
-                        offer(Constants.ConnectionState.NO_INTERNET)
+                        trySend(Constants.ConnectionState.NO_INTERNET)
                     }
                 }
             }
@@ -80,7 +72,7 @@ class NetworkConnectivityManager @Inject constructor(
             override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
                 if (networkCapabilities.hasCapability(NET_CAPABILITY_INTERNET)) {
                     Timber.v("Network $network has internet capability")
-                    offer(Constants.ConnectionState.CONNECTED)
+                    trySend(Constants.ConnectionState.CONNECTED)
                 }
             }
         }

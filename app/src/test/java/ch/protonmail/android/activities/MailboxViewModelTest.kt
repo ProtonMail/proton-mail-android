@@ -24,6 +24,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.services.MessagesService
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ARCHIVE
 import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
 import ch.protonmail.android.core.Constants.MessageLocationType.INVALID
@@ -109,7 +110,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     @RelaxedMockK
     private lateinit var deleteMessage: DeleteMessage
 
-    @RelaxedMockK
+    @MockK
     private lateinit var verifyConnection: VerifyConnection
 
     @RelaxedMockK
@@ -147,6 +148,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(ARCHIVE) } returns true // ARCHIVE type to use with conversations
         every { conversationModeEnabled(LABEL) } returns true // LABEL type to use with conversations
         every { conversationModeEnabled(LABEL_FOLDER) } returns true // LABEL_FOLDER type to use with conversations
+        every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
         coEvery { getConversations(any(), any()) } returns conversationsResponseFlow.receiveAsFlow()
         coEvery { getMessagesByLocation(any(), any(), any()) } returns messagesResponseChannel.receiveAsFlow()
         viewModel = MailboxViewModel(

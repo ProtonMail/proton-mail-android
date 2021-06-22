@@ -35,6 +35,7 @@ import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
+import timber.log.Timber
 
 private const val HYPHEN = "-"
 
@@ -175,6 +176,7 @@ class MailboxItemView @JvmOverloads constructor(
             if (icon != null) {
                 first_location_image_view.setImageDrawable(ContextCompat.getDrawable(context, icon))
             }
+            Timber.v("Message location: $messageLocation, icon: $icon, subject: ${mailboxUiItem.subject}")
             first_location_image_view.isVisible = icon != null
         } else {
             first_location_image_view.visibility = View.GONE

@@ -23,6 +23,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
@@ -61,7 +62,8 @@ class MessageRepository @Inject constructor(
     private val protonMailApiManager: ProtonMailApiManager,
     private val messageBodyFileManager: MessageBodyFileManager,
     private val userManager: UserManager,
-    private val jobManager: JobManager
+    private val jobManager: JobManager,
+    private val connectivityManager: NetworkConnectivityManager
 ) {
 
     fun findMessage(userId: UserId, messageId: String): Flow<Message?> {
@@ -233,6 +235,10 @@ class MessageRepository @Inject constructor(
                     if (dbData.isNotEmpty()) { // if there is anything in the db emit it now
                         emit(dbData)
                     }
+                    if (!connectivityManager.isInternetConnectionPossible()) {
+                        Timber.d("Skipping network refresh as connectivity is not available")
+                        return@onStart
+                    }
                     val messagesResponse =
                         protonMailApiManager.getMessages(location.messageLocationTypeValue, UserIdTag(userId))
                     if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
@@ -259,6 +265,10 @@ class MessageRepository @Inject constructor(
         val messagesDao = databaseProvider.provideMessageDao(userId)
         return messagesDao.observeMessagesByLabelId(labelId)
             .onStart {
+                if (!connectivityManager.isInternetConnectionPossible()) {
+                    Timber.d("Skipping network refresh as connectivity is not available")
+                    return@onStart
+                }
                 Timber.v("Messages DB for labelId: $labelId, trying fetching from remote")
                 val labelsResponse = protonMailApiManager.searchByLabelAndPage(labelId, 0)
                 if (labelsResponse.code == Constants.RESPONSE_CODE_OK) {
@@ -271,6 +281,11 @@ class MessageRepository @Inject constructor(
         val messagesDao = databaseProvider.provideMessageDao(userId)
         return messagesDao.observeAllMessages()
             .onStart {
+                // only continue when we have connectivity available
+                if (!connectivityManager.isInternetConnectionPossible()) {
+                    Timber.d("Skipping network refresh as connectivity is not available")
+                    return@onStart
+                }
                 Timber.v("re-fetching messages all from remote")
                 val messagesResponse = protonMailApiManager.getMessages(
                     Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,

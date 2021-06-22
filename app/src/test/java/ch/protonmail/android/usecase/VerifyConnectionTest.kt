@@ -83,7 +83,6 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
         every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
         val expected = listOf(Constants.ConnectionState.CONNECTED, Constants.ConnectionState.CONNECTED)
 
-
         // when
         val resultList = verifyConnectionUseCase().take(2).toList()
 
@@ -112,7 +111,6 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
 
         // when
         val resultList = verifyConnectionUseCase().take(2).toList()
-
 
         // then
         assertEquals(expected, resultList)
