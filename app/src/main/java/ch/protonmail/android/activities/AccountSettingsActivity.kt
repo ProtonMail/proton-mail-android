@@ -109,7 +109,6 @@ class AccountSettingsActivity : BaseSettingsActivity() {
                 SettingsEnum.LOCAL_STORAGE_LIMIT,
                 String.format(getString(R.string.storage_value), mAttachmentStorageValue, attachmentSizeUsed)
             )
-            notifySettingsChanged()
         }
 
         setupViewMode()

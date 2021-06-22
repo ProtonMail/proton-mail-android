@@ -471,10 +471,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         settingsAdapter.items = settingsList
     }
 
-    protected fun notifySettingsChanged() {
-        settingsAdapter.notifyDataSetChanged()
-    }
-
     protected fun setToggleListener(settingType: SettingsEnum, listener: ((View, Boolean) -> Unit)?) {
         settingsAdapter.items
             .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
