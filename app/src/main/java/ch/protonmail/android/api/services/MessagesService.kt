@@ -264,6 +264,7 @@ class MessagesService : JobIntentService() {
                     if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
                         return@map null
                     }
+                    msg.location = savedMessage.location
                     msg.mimeType = savedMessage.mimeType
                     msg.toList = savedMessage.toList
                     msg.ccList = savedMessage.ccList
