@@ -33,6 +33,8 @@ import ch.protonmail.android.databinding.ListItemContactsBinding
 import ch.protonmail.android.views.ListItemThumbnail
 import timber.log.Timber
 
+private const val HYPHEN = "-"
+
 class ContactsListAdapter(
     private val onContactGroupClickListener: (ContactItem) -> Unit,
     private val onContactGroupSelect: (ContactItem) -> Unit,
@@ -103,38 +105,42 @@ class ContactsListAdapter(
             Timber.v("Bind contact item: $item")
             contactName.text = item.name
 
+            itemThumbnail.apply {
+                bind(
+                    item.isSelected,
+                    item.isMultiselectActive,
+                    if (item.initials.isNotEmpty()) {
+                        item.initials
+                    } else {
+                        HYPHEN
+                    }
+                )
+                isVisible = true
+            }
+
             // special case for header items, where the text is in the string res
             if (item.headerStringRes != null) {
                 contactName.text = itemView.resources.getString(item.headerStringRes)
                 itemView.isClickable = false
+                itemThumbnail.isVisible = false
             } else {
                 itemView.isClickable = true
             }
 
             itemView.isSelected = item.isSelected
 
-            if (item.initials.isNotEmpty()) {
-                itemThumbnail.apply {
-                    bind(
-                        item.isSelected,
-                        item.isMultiselectActive,
-                        item.initials
-                    )
-                    isVisible = true
-                }
-            } else {
-                itemThumbnail.isVisible = false
-            }
+
 
             if (item.contactEmails == null) {
                 contactSubtitle.isVisible = false
                 editButton.isVisible = false
             } else {
                 contactSubtitle.apply {
-                    text = if (item.contactEmails.isNotEmpty())
+                    text = if (item.contactEmails.isNotEmpty()) {
                         item.contactEmails
-                    else
+                    } else {
                         itemView.resources.getString(R.string.empty_email_list)
+                    }
                     isVisible = true
                 }
                 editButton.isVisible = true
