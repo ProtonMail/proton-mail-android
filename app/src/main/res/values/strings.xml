@@ -515,6 +515,8 @@
     <string name="vcard_other_option_url">URL</string>
 
     <string name="convert_contact">Convert Contact</string>
+    <string name="contacts_import_contact">Import Contact</string>
+    <string name="contacts_import">Import</string>
     <string name="upload_contacts">Upload Contacts</string>
     <string name="upgrade_encrypted_contact">Please upgrade to use encrypted contact information.</string>
     <string name="uploading_contacts">Uploading contacts&#8230;</string>
