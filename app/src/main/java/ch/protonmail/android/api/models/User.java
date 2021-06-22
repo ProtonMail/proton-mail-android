@@ -106,7 +106,7 @@ public class User {
     private String defaultAddressId;
     private String defaultAddressEmail;
 
-    private String MobileFooter;
+    private String mobileFooter;
     private boolean ShowMobileFooter = true;
     private boolean ShowSignature = false;
 
@@ -227,9 +227,9 @@ public class User {
 
     private static void loadLocalSettings(User user, SharedPreferences securePrefs) {
         if (!user.isPaidUserSignatureEdit()) {
-            user.MobileFooter = ProtonMailApplication.getApplication().getString(R.string.default_mobile_footer);
+            user.mobileFooter = ProtonMailApplication.getApplication().getString(R.string.default_mobile_footer);
         } else {
-            user.MobileFooter = securePrefs.getString(PREF_MOBILE_FOOTER, ProtonMailApplication.getApplication().getString(R.string.default_mobile_footer));
+            user.mobileFooter = securePrefs.getString(PREF_MOBILE_FOOTER, ProtonMailApplication.getApplication().getString(R.string.default_mobile_footer));
         }
         user.ShowMobileFooter = securePrefs.getBoolean(PREF_DISPLAY_MOBILE, true);
         if (!user.ShowMobileFooter && !user.isPaidUserSignatureEdit()) {
@@ -280,7 +280,7 @@ public class User {
     }
 
     private void saveMobileFooterSetting() {
-        getPreferences().edit().putString(PREF_MOBILE_FOOTER, MobileFooter).apply();
+        getPreferences().edit().putString(PREF_MOBILE_FOOTER, mobileFooter).apply();
     }
 
     private boolean loadShowMobileFooterSetting() {
@@ -504,11 +504,11 @@ public class User {
     }
 
     public String getMobileFooter() {
-        return MobileFooter == null ? "" : MobileFooter;
+        return mobileFooter == null ? "" : mobileFooter;
     }
 
     public void setMobileFooter(String mobileFooter) {
-        MobileFooter = mobileFooter;
+        this.mobileFooter = mobileFooter;
         saveMobileFooterSetting();
     }
 

@@ -41,12 +41,14 @@ import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
+import ch.protonmail.android.api.models.User as LegacyUser
 
 @AndroidEntryPoint
 class DisplayNameAndSignatureFragment : Fragment() {
 
     var user: User? = null
     var jobManager: JobManager? = null
+    lateinit var legacyUser: LegacyUser
 
     private var _binding: SettingsFragmentDisplayNameAndSignatureBinding? = null
 
@@ -56,6 +58,7 @@ class DisplayNameAndSignatureFragment : Fragment() {
     var newDisplayName = ""
     var newSignature: String? = null
     var newAddressId: Id? = null
+    var newMobileFooter: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +89,7 @@ class DisplayNameAndSignatureFragment : Fragment() {
                 true
             }
             R.id.save -> {
-                if (hasChanges) {
+                if (displayNameOrSignatureChanged()) {
 
                     val job = UpdateSettingsJob(
                         newDisplayName = newDisplayName,
@@ -94,6 +97,9 @@ class DisplayNameAndSignatureFragment : Fragment() {
                         addressId = newAddressId
                     )
                     jobManager?.addJobInBackground(job)
+                }
+                if (newMobileFooter != legacyUser.mobileFooter) {
+                    legacyUser.mobileFooter = newMobileFooter
                 }
                 activity?.onBackPressed()
                 true
@@ -110,14 +116,12 @@ class DisplayNameAndSignatureFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val legacyUser = (activity as BaseSettingsActivity).legacyUser
+        legacyUser = (activity as BaseSettingsActivity).legacyUser
         val selectedAddress = checkNotNull(user?.addresses?.primary)
-        val signature = selectedAddress.signature?.s
         newAddressId = selectedAddress.id
 
-        val displayName = selectedAddress.displayName?.s ?: selectedAddress.email.s
-        binding.settingsInputDisplayName.setText(displayName)
-        newDisplayName = displayName
+        binding.settingsInputDisplayName.setText(selectedAddress.displayName?.s ?: selectedAddress.email.s)
+        newDisplayName = (selectedAddress.displayName?.s ?: selectedAddress.email.s)
 
         binding.settingsInputDisplayName.doAfterTextChanged {
             newDisplayName = it.toString()
@@ -128,32 +132,23 @@ class DisplayNameAndSignatureFragment : Fragment() {
                 val primaryAddress = checkNotNull(user?.addresses?.primary)
                 newDisplayName = primaryAddress.displayName?.s ?: primaryAddress.email.s
             }
-
-            hasChanges = newDisplayName != displayName
         }
 
-        binding.settingsInputSignature.setText(signature)
-        newSignature = signature
+        binding.settingsInputSignature.setText(selectedAddress.signature?.s)
+        newSignature = selectedAddress.signature?.s
 
         binding.settingsInputSignature.doAfterTextChanged {
             newSignature = it.toString()
-            hasChanges = newSignature != signature
         }
         binding.settingsToggleSignature.isChecked = legacyUser.isShowSignature
         binding.settingsToggleSignature.setOnCheckedChangeListener { _, isChecked ->
             legacyUser.isShowSignature = isChecked
         }
 
-        val mobileFooter = legacyUser.mobileFooter
-        binding.settingsInputMobileFooter.setText(mobileFooter)
+        binding.settingsInputMobileFooter.setText(legacyUser.mobileFooter)
 
         binding.settingsInputMobileFooter.doAfterTextChanged {
-            val newMobileFooter = it.toString()
-            val isMobileFooterChanged = newMobileFooter != mobileFooter
-
-            if (isMobileFooterChanged) {
-                legacyUser.mobileFooter = newMobileFooter
-            }
+            newMobileFooter = it.toString()
         }
 
         legacyUser.isPaidUserSignatureEdit.apply {
@@ -168,6 +163,12 @@ class DisplayNameAndSignatureFragment : Fragment() {
         binding.settingsToggleMobileFooter.setOnCheckedChangeListener { _, isChecked ->
             legacyUser.isShowMobileFooter = isChecked
         }
+    }
+
+    var displayNameOrSignatureChanged = {
+        val displayName = user?.addresses?.primary?.displayName?.s ?: user?.addresses?.primary?.email?.s
+        val signature = user?.addresses?.primary?.signature?.s
+        newDisplayName != displayName || newSignature != signature
     }
 
     companion object {
