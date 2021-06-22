@@ -76,6 +76,7 @@ class ValidatePinActivity : BaseActivity(),
             PinFragment.newInstance(titleRes, PinAction.VALIDATE, null, useFingerprint = user.isUseFingerprint)
         supportFragmentManager
             .beginTransaction()
+            .setCustomAnimations(R.anim.zoom_in, 0, 0, R.anim.zoom_out)
             .add(R.id.fragmentContainer, validatePinFragment, validatePinFragment.fragmentKey)
             .commitAllowingStateLoss()
 

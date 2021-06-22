@@ -63,6 +63,7 @@ class ChangePinActivity : BaseActivity(),
             val validatePinFragment =
                 PinFragment.newInstance(R.string.settings_enter_pin_code_title, PinAction.VALIDATE, null, false, false)
             supportFragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.zoom_in, 0, 0, R.anim.zoom_out)
                 .add(R.id.fragmentContainer, validatePinFragment, validatePinFragment.fragmentKey)
                 .commitAllowingStateLoss()
         }

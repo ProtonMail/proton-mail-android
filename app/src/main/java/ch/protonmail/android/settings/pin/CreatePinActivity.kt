@@ -66,6 +66,7 @@ class CreatePinActivity : BaseActivity(),
             val createPinFragment =
                 PinFragment.newInstance(R.string.settings_create_pin_code_title, PinAction.CREATE, null, false, false)
             supportFragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.zoom_in, 0, 0, R.anim.zoom_out)
                 .add(R.id.fragmentContainer, createPinFragment, createPinFragment.fragmentKey)
                 .commitAllowingStateLoss()
         }

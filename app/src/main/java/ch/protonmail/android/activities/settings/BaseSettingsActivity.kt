@@ -311,6 +311,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
             DISPLAY_NAME_N_SIGNATURE -> {
                 val displayAndSignatureFragment = DisplayNameAndSignatureFragment.newInstance(user, mJobManager)
                 supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.zoom_in, 0, 0, R.anim.zoom_out)
                     .add(R.id.settings_fragment_container, displayAndSignatureFragment)
                     .addToBackStack(displayAndSignatureFragment.tag)
                     .commitAllowingStateLoss()
@@ -361,6 +362,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 val mailSettings = checkNotNull(userManager.getCurrentUserMailSettingsBlocking())
                 val swipeFragment = SwipeSettingFragment.newInstance(mailSettings)
                 supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.zoom_in, 0, 0, R.anim.zoom_out)
                     .add(R.id.settings_fragment_container, swipeFragment)
                     .addToBackStack(swipeFragment.tag)
                     .commitAllowingStateLoss()
