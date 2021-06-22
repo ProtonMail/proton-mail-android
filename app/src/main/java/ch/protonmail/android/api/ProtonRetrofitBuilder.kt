@@ -37,6 +37,7 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import me.proton.core.accountmanager.domain.SessionManager
+import me.proton.core.network.domain.server.ServerTimeListener
 import okhttp3.CipherSuite
 import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
@@ -57,6 +58,7 @@ enum class RetrofitType {
 class ProtonRetrofitBuilder @Inject constructor(
     val userManager: UserManager,
     val jobManager: JobManager,
+    private val serverTimeListener: ServerTimeListener,
     private val networkUtil: QueueNetworkUtil,
     private val cookieStore: ProtonCookieStore?,
     private val userNotifier: UserNotifier,
@@ -75,6 +77,7 @@ class ProtonRetrofitBuilder @Inject constructor(
                         okHttpProvider,
                         userManager,
                         jobManager,
+                        serverTimeListener,
                         networkUtil,
                         cookieStore,
                         userNotifier,
@@ -86,6 +89,7 @@ class ProtonRetrofitBuilder @Inject constructor(
                         okHttpProvider,
                         userManager,
                         jobManager,
+                        serverTimeListener,
                         networkUtil,
                         cookieStore,
                         userNotifier,
@@ -97,6 +101,7 @@ class ProtonRetrofitBuilder @Inject constructor(
                         okHttpProvider,
                         userManager,
                         jobManager,
+                        serverTimeListener,
                         networkUtil,
                         cookieStore,
                         userNotifier,
@@ -108,6 +113,7 @@ class ProtonRetrofitBuilder @Inject constructor(
                         okHttpProvider,
                         userManager,
                         jobManager,
+                        serverTimeListener,
                         networkUtil,
                         cookieStore,
                         userNotifier,
@@ -119,6 +125,7 @@ class ProtonRetrofitBuilder @Inject constructor(
                         okHttpProvider,
                         userManager,
                         jobManager,
+                        serverTimeListener,
                         networkUtil,
                         cookieStore,
                         userNotifier,
@@ -144,6 +151,7 @@ class ProtonRetrofitBuilder @Inject constructor(
 sealed class ProtonRetrofit(
     val userManager: UserManager,
     val jobManager: JobManager,
+    serverTimeListener: ServerTimeListener,
     networkUtil: QueueNetworkUtil,
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
@@ -160,7 +168,7 @@ sealed class ProtonRetrofit(
                 CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
             ).build()
     )
-    val serverTimeInterceptor = ServerTimeInterceptor(userManager.openPgp, networkUtil)
+    val serverTimeInterceptor = ServerTimeInterceptor(serverTimeListener, networkUtil)
 
     // region gson specs
     private val gsonUcc: Gson = GsonBuilder()
@@ -203,11 +211,12 @@ class ProtonRetrofitPublic(
     private val okHttpProvider: OkHttpProvider,
     userManager: UserManager,
     jobManager: JobManager,
+    serverTimeListener: ServerTimeListener,
     networkUtil: QueueNetworkUtil,
     private val cookieStore: ProtonCookieStore?,
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
-) : ProtonRetrofit(userManager, jobManager, networkUtil, userNotifier, sessionManager) {
+) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
     override fun configureOkHttp(
         endpointUri: String,
         interceptor: ProtonMailRequestInterceptor
@@ -230,11 +239,12 @@ class ProtonRetrofitPing(
     private val okHttpProvider: OkHttpProvider,
     userManager: UserManager,
     jobManager: JobManager,
+    serverTimeListener: ServerTimeListener,
     networkUtil: QueueNetworkUtil,
     private val cookieStore: ProtonCookieStore?,
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
-) : ProtonRetrofit(userManager, jobManager, networkUtil, userNotifier, sessionManager) {
+) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
     override fun configureOkHttp(
         endpointUri: String,
         interceptor: ProtonMailRequestInterceptor
@@ -257,11 +267,12 @@ class ProtonRetrofitExtended(
     private val okHttpProvider: OkHttpProvider,
     userManager: UserManager,
     jobManager: JobManager,
+    serverTimeListener: ServerTimeListener,
     networkUtil: QueueNetworkUtil,
     private val cookieStore: ProtonCookieStore?,
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
-) : ProtonRetrofit(userManager, jobManager, networkUtil, userNotifier, sessionManager) {
+) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
     override fun configureOkHttp(
         endpointUri: String,
         interceptor: ProtonMailRequestInterceptor
@@ -284,11 +295,12 @@ class ProtonRetrofitAttachments(
     private val okHttpProvider: OkHttpProvider,
     userManager: UserManager,
     jobManager: JobManager,
+    serverTimeListener: ServerTimeListener,
     networkUtil: QueueNetworkUtil,
     private val cookieStore: ProtonCookieStore?,
     userNotifier: UserNotifier,
     sessionManager: SessionManager
-) : ProtonRetrofit(userManager, jobManager, networkUtil, userNotifier, sessionManager) {
+) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
     override fun configureOkHttp(
         endpointUri: String,
         interceptor: ProtonMailRequestInterceptor
@@ -311,11 +323,12 @@ class ProtonRetrofitSecure(
     private val okHttpProvider: OkHttpProvider,
     userManager: UserManager,
     jobManager: JobManager,
+    serverTimeListener: ServerTimeListener,
     networkUtil: QueueNetworkUtil,
     private val cookieStore: ProtonCookieStore?,
     userNotifier: UserNotifier,
     sessionManager: SessionManager,
-) : ProtonRetrofit(userManager, jobManager, networkUtil, userNotifier, sessionManager) {
+) : ProtonRetrofit(userManager, jobManager, serverTimeListener, networkUtil, userNotifier, sessionManager) {
     override fun configureOkHttp(
         endpointUri: String,
         interceptor: ProtonMailRequestInterceptor
@@ -333,4 +346,3 @@ class ProtonRetrofitSecure(
         return okHttpClient.okClientBuilder.build()
     }
 }
-

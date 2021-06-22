@@ -37,8 +37,10 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import kotlin.Deprecated;
 import timber.log.Timber;
 
+@Deprecated(message = "Please use Core Crypto functions.")
 @Singleton
 public class OpenPGP {
 
