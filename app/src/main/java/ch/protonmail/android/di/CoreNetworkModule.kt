@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import me.proton.core.auth.domain.ClientSecret
+import me.proton.core.crypto.common.context.CryptoContext
 import me.proton.core.network.data.ApiManagerFactory
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.data.NetworkManager
@@ -26,6 +27,7 @@ import me.proton.core.network.domain.NetworkPrefs
 import me.proton.core.network.domain.client.ClientIdProvider
 import me.proton.core.network.domain.humanverification.HumanVerificationListener
 import me.proton.core.network.domain.humanverification.HumanVerificationProvider
+import me.proton.core.network.domain.server.ServerTimeListener
 import me.proton.core.network.domain.session.SessionListener
 import me.proton.core.network.domain.session.SessionProvider
 import me.proton.core.util.kotlin.Logger
@@ -59,6 +61,7 @@ object NetworkModule {
         logger: Logger,
         apiClient: ApiClient,
         clientIdProvider: ClientIdProvider,
+        serverTimeListener: ServerTimeListener,
         networkManager: NetworkManager,
         networkPrefs: NetworkPrefs,
         protonCookieStore: ProtonCookieStore,
@@ -70,6 +73,7 @@ object NetworkModule {
         Constants.ENDPOINT_URI,
         apiClient,
         clientIdProvider,
+        serverTimeListener,
         logger,
         networkManager,
         networkPrefs,
@@ -95,6 +99,21 @@ object NetworkModule {
     @Singleton
     fun provideClientIdProvider(protonCookieStore: ProtonCookieStore): ClientIdProvider =
         ClientIdProviderImpl(Constants.ENDPOINT_URI, protonCookieStore)
+
+    @Provides
+    @Singleton
+    fun provideServerTimeListener(
+        context: CryptoContext
+    ) = object : ServerTimeListener {
+        override fun onServerTimeUpdated(epochSeconds: Long) {
+            // Update Core PGPCrypto time.
+            context.pgpCrypto.updateTime(epochSeconds)
+            // Updating deprecated openPGP time is not needed as the underlining call,
+            // com.proton.gopenpgp.crypto.Crypto.updateTime() is the same
+            // for both Core PGPCrypto and deprecated OpenPGP.
+            // openPGP.updateTime(epochSeconds)
+        }
+    }
 }
 
 @Module

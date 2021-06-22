@@ -71,6 +71,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import me.proton.core.accountmanager.domain.SessionManager
+import me.proton.core.network.domain.server.ServerTimeListener
 import me.proton.core.util.kotlin.DispatcherProvider
 import java.io.File
 import java.io.InputStream
@@ -206,6 +207,7 @@ object ApplicationModule {
         context: Context,
         userManager: UserManager,
         jobManager: JobManager,
+        serverTimeListener: ServerTimeListener,
         networkUtil: QueueNetworkUtil,
         okHttpProvider: OkHttpProvider,
         @DefaultSharedPreferences prefs: SharedPreferences,
@@ -223,6 +225,7 @@ object ApplicationModule {
         return ProtonRetrofitBuilder(
             userManager,
             jobManager,
+            serverTimeListener,
             networkUtil,
             ProtonCookieStore(context),
             userNotifier,
