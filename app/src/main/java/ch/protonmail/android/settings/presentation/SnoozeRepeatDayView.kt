@@ -79,7 +79,7 @@ class SnoozeRepeatDayView @JvmOverloads constructor(
     fun setSelected(selectedValues: List<String>) {
         for (value in selectedValues) {
             if (value == this.code) {
-                isSelected = true
+                setSelected(true)
             }
         }
     }
