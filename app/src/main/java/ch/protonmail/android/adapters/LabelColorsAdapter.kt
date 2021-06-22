@@ -19,7 +19,7 @@
 package ch.protonmail.android.adapters
 
 import android.content.Context
-import android.graphics.PorterDuff
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,7 +52,7 @@ class LabelColorsAdapter(context: Context, colors: IntArray, private val mLayout
 
     private fun selectItem(view: View, item: LabelColorItem) {
         val circle = view.findViewById<View>(R.id.color_item)
-        circle.background.setColorFilter(item.colorId, PorterDuff.Mode.SRC_IN)
+        circle.backgroundTintList = ColorStateList.valueOf(item.colorId)
         val checkView = view.findViewById<View>(R.id.is_checked_indicator)
         if (item.isChecked) {
             checkView.visibility = View.VISIBLE
