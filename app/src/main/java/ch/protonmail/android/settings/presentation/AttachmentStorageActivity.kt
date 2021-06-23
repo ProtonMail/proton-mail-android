@@ -51,6 +51,9 @@ class AttachmentStorageActivity : BaseActivity() {
         val elevation = resources.getDimension(R.dimen.action_bar_elevation)
         actionBar?.elevation = elevation
 
+        slider.setLabelFormatter { value ->
+            if (value != MAX_STORAGE_VALUE.toFloat()) value.toInt().toString() else getString(R.string.unlimited)
+        }
         mAttachmentStorageCurrentValue =
             intent.getIntExtra(EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE, Constants.MAX_ATTACHMENT_STORAGE_IN_MB)
         if (mAttachmentStorageCurrentValue == -1) {
