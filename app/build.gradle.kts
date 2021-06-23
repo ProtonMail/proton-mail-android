@@ -304,6 +304,8 @@ dependencies {
         `Proton-payment`,
         `Proton-plan`,
         `Proton-country`,
+        `Proton-payment`,
+        `Proton-plan`,
 
         // Modules
         project(Module.domain),

@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.viewmodel
 
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,23 +27,64 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.usecase.fetch.FetchPaymentMethods
 import ch.protonmail.android.usecase.model.FetchPaymentMethodsResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.plan.presentation.PlansOrchestrator
+import me.proton.core.plan.presentation.entity.UpgradeResult
+import me.proton.core.plan.presentation.onUpgradeResult
 import javax.inject.Inject
 
 @HiltViewModel
 class AccountTypeViewModel @Inject constructor(
-    val fetchPaymentMethodsUseCase: FetchPaymentMethods
+    val fetchPaymentMethodsUseCase: FetchPaymentMethods,
+    private val plansOrchestrator: PlansOrchestrator,
+    private val accountManager: AccountManager
 ) : ViewModel() {
 
     private val fetchPaymentMethodsData = MutableLiveData<FetchPaymentMethodsResult>()
+    private val _upgradeState = MutableLiveData<State>()
+
+    val upgradeState: LiveData<State>
+        get() = _upgradeState
 
     val fetchPaymentMethodsResult: LiveData<FetchPaymentMethodsResult>
         get() = fetchPaymentMethodsData
+
+
+    sealed class State {
+        data class Success(val result: UpgradeResult) : State()
+        sealed class Error : State() {
+            data class Message(val message: String?) : Error()
+        }
+    }
+
+    fun register(context: ComponentActivity) {
+        plansOrchestrator.register(context)
+    }
 
     fun fetchPaymentMethods() {
         viewModelScope.launch {
             val result = fetchPaymentMethodsUseCase()
             fetchPaymentMethodsData.value = result
+        }
+    }
+
+    fun onUpgradeClicked() {
+        viewModelScope.launch {
+            accountManager.getPrimaryUserId().first()?.let {
+                val account = accountManager.getAccount(it).first() ?: return@launch
+                with(plansOrchestrator) {
+                    onUpgradeResult { upgradeResult ->
+                        // do something with the upgrade result
+                        if (upgradeResult != null) {
+                            _upgradeState.value = State.Success(upgradeResult)
+                        }
+                    }
+
+                    plansOrchestrator.startUpgradeWorkflow(account.userId)
+                }
+            }
         }
     }
 }

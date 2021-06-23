@@ -373,8 +373,9 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="me.proton.core.auth.presentation.ui.AddAccountActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/ProtonTheme.Mail.AddAccount"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/ProtonTheme.AddAccount"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="me.proton.core.auth.presentation.ui.LoginActivity"
             android:windowSoftInputMode="adjustResize" />
