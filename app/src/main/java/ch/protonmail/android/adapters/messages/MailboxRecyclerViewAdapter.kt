@@ -37,7 +37,7 @@ class MailboxRecyclerViewAdapter(
     private val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?
 ) : RecyclerView.Adapter<MailboxItemViewHolder>() {
 
-    private var mMailboxLocation = Constants.MessageLocationType.INVALID
+    private var mailboxLocation = Constants.MessageLocationType.INVALID
 
     private var labels = mapOf<String, Label>()
     private val mailboxItems = mutableListOf<MailboxUiItem>()
@@ -60,7 +60,6 @@ class MailboxRecyclerViewAdapter(
             } else {
                 notifyItemRemoved(mailboxItems.size)
             }
-
         }
 
     val checkedMailboxItems get() =
@@ -161,7 +160,7 @@ class MailboxRecyclerViewAdapter(
         this.view.bind(
             mailboxItem,
             selectedMailboxItemsIds.isNotEmpty(),
-            mMailboxLocation,
+            mailboxLocation,
             isBeingSent,
             isAttachmentsBeingUploaded
         )
@@ -213,8 +212,8 @@ class MailboxRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 
-    fun setNewLocation(mailboxLocation: Constants.MessageLocationType) {
-        mMailboxLocation = mailboxLocation
+    fun setNewLocation(locationType: Constants.MessageLocationType) {
+        mailboxLocation = locationType
     }
 
     fun getOldestMailboxItemTimestamp(): Long {

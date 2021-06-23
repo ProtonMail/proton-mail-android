@@ -22,6 +22,7 @@ package ch.protonmail.android.mailbox.domain
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.NO_MORE_CONVERSATIONS_ERROR_CODE
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.arch.DataResult
@@ -47,6 +48,7 @@ class GetConversations @Inject constructor(
             oldestConversationTimestamp = null
         )
 
+        Timber.v("GetConversations with params: $params, locationId: $locationId")
         return conversationRepository.getConversations(params)
             .map { result ->
                 return@map when (result) {
@@ -62,10 +64,12 @@ class GetConversations @Inject constructor(
                         if (result.protonCode == NO_MORE_CONVERSATIONS_ERROR_CODE) {
                             return@map GetConversationsResult.NoConversationsFound
                         }
-                        return@map GetConversationsResult.Error
+                        return@map GetConversationsResult.Error(result.cause)
                     }
+                    is DataResult.Error ->
+                        GetConversationsResult.Error(result.cause)
                     else -> {
-                        GetConversationsResult.Error
+                        GetConversationsResult.Error()
                     }
                 }
             }

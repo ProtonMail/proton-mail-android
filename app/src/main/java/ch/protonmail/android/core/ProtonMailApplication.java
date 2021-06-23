@@ -522,13 +522,13 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     @Override
     protected void attachBaseContext(Context base) {
-        super.attachBaseContext(CustomLocale.Companion.apply(base));
+        super.attachBaseContext(CustomLocale.INSTANCE.apply(base));
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        CustomLocale.Companion.apply(this);
+        CustomLocale.INSTANCE.apply(this);
     }
 
     public void changeApiProviders() {

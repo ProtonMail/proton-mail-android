@@ -49,6 +49,9 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     override fun messages(location: Int, userIdTag: UserIdTag): MessagesResponse =
         ParseUtils.parse(service.messages(location, "time", "", "", userIdTag).execute())
 
+    override suspend fun getMessages(location: Int, userIdTag: UserIdTag): MessagesResponse =
+        service.getMessages(location, "time", "", "", userIdTag)
+
     override fun fetchMessages(location: Int, time: Long): MessagesResponse? =
         ParseUtils.parse(service.fetchMessages(location, time).execute())
 
@@ -116,8 +119,11 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
         ParseUtils.parse(service.search(query, page).execute())
 
     @Throws(IOException::class)
-    override fun searchByLabelAndPage(query: String, page: Int): MessagesResponse =
+    override fun searchByLabelAndPageBlocking(query: String, page: Int): MessagesResponse =
         ParseUtils.parse(service.searchByLabel(query, page).execute())
+
+    override suspend fun searchByLabelAndPage(query: String, page: Int): MessagesResponse =
+        service.getMessagesByLabel(query, page)
 
     @Throws(IOException::class)
     override fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse =

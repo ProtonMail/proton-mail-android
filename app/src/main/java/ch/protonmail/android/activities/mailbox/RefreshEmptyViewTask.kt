@@ -58,9 +58,5 @@ internal class RefreshEmptyViewTask(
 
     override fun onPostExecute(messageCount: Int?) {
         messageCount ?: return
-
-        val mailboxActivity = mailboxActivityWeakReference.get()
-        mailboxActivity?.refreshEmptyView(messageCount)
-        mailboxActivity?.setRefreshing(false)
     }
 }

@@ -97,7 +97,7 @@ class EventManager @Inject constructor(
         }
     }
 
-    suspend fun consumeEventsFor(loggedInUsers: Collection<Id>) = withContext(dispatchers.Io) {
+    private suspend fun consumeEventsFor(loggedInUsers: Collection<Id>) = withContext(dispatchers.Io) {
         for (user in loggedInUsers) {
             eventHandlers.putIfAbsentApi23(user, eventHandlerFactory.create(user))
         }

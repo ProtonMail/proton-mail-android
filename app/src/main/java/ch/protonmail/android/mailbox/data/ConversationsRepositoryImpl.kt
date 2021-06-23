@@ -54,6 +54,7 @@ import me.proton.core.domain.arch.DataResult.Error
 import me.proton.core.domain.arch.DataResult.Success
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.math.max
 
@@ -82,7 +83,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             writer = { key: ConversationStoreKey, output: ConversationResponse ->
                 val conversation = output.conversation.toLocal(userId = key.userId.s)
                 val messages = output.messages.map(messageFactory::createMessage)
-                messageDao.saveMessages(*messages.toTypedArray())
+                messageDao.saveMessages(messages)
                 conversationDao.insertOrUpdate(conversation)
             },
             delete = { key -> conversationDao.deleteConversation(key.conversationId, key.userId.s) }
@@ -104,11 +105,12 @@ class ConversationsRepositoryImpl @Inject constructor(
                         emit(Error.Remote("No conversations", null, NO_MORE_CONVERSATIONS_ERROR_CODE))
                     }
                 },
-                onFailure = {
-                    if (it is CancellationException) {
-                        throw it
+                onFailure = { throwable ->
+                    Timber.i(throwable, "fetchConversations error")
+                    if (throwable is CancellationException) {
+                        throw throwable
                     }
-                    emit(Error.Remote(it.message, it))
+                    emit(Error.Remote(throwable.message, throwable))
                 }
             )
 

@@ -232,8 +232,6 @@ class AccountStateManager @Inject constructor(
         accountManager.removeAccount(userId)
     }
 
-    data class AccountSwitch(val previous: Account? = null, val current: Account? = null)
-
     fun onAccountSwitched() = getPrimaryUserId().scan(AccountSwitch()) { previous, currentUserId ->
         AccountSwitch(
             previous = previous.current?.userId?.let { getAccountOrNull(it) },
@@ -319,4 +317,6 @@ class AccountStateManager @Inject constructor(
     }
 
     // endregion
+
+    data class AccountSwitch(val previous: Account? = null, val current: Account? = null)
 }

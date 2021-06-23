@@ -63,23 +63,10 @@ open class DatabaseFactory<T : RoomDatabase>(
         val username = usernameForUserId(context, userId)
 
         val baseFileName = databaseName(username)
-        migrateDatabase(context, baseFileName)
 
         return Room.databaseBuilder(context.applicationContext, databaseClass.java, baseFileName)
             .fallbackToDestructiveMigration()
             .build()
-    }
-
-    private fun migrateDatabase(context: Context, baseFileName: String) {
-
-        context.getDatabasePath(baseFileName)
-            .renameTo(context.getDatabasePath(baseFileName))
-
-        context.getDatabasePath("$baseFileName-shm")
-            .renameTo(context.getDatabasePath("$baseFileName-shm"))
-
-        context.getDatabasePath("$baseFileName-wal")
-            .renameTo(context.getDatabasePath("$baseFileName-wal"))
     }
 
     protected fun usernameForUserId(context: Context, userId: Id): String {

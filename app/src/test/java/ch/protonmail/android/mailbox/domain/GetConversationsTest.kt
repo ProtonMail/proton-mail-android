@@ -22,6 +22,7 @@ package ch.protonmail.android.mailbox.domain
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
+import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -90,7 +91,7 @@ class GetConversationsTest : CoroutinesTest {
 
         val actual = getConversations.invoke(userId, MessageLocationType.INBOX.messageLocationTypeValue.toString())
 
-        val error = GetConversationsResult.Error
+        val error = GetConversationsResult.Error()
         assertEquals(error, actual.first())
     }
 

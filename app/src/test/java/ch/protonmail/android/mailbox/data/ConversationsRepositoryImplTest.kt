@@ -530,7 +530,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val actualLocalError = result[0] as DataResult.Error.Local
             assertEquals(errorMessage, actualLocalError.message)
             assertEquals(DataResult.Processing(ResponseSource.Remote), result[1])
-            coVerify { messageDao.saveMessages(expectedMessage) }
+            coVerify { messageDao.saveMessages(listOf(expectedMessage)) }
             coVerify { conversationDao.insertOrUpdate(expectedConversationDbModel) }
         }
     }

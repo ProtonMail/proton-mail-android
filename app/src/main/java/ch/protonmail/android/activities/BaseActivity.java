@@ -480,7 +480,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
 
     @Override
     protected void attachBaseContext(Context base) {
-        super.attachBaseContext(CustomLocale.Companion.apply(base));
+        super.attachBaseContext(CustomLocale.INSTANCE.apply(base));
     }
 
     private void buildHtmlProcessor() {

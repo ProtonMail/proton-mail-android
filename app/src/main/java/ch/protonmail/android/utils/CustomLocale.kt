@@ -29,45 +29,41 @@ import java.util.Locale
 const val PREF_CUSTOM_APP_LANGUAGE = "customAppLanguage"
 // endregion
 
-class CustomLocale {
+object CustomLocale {
 
-    companion object {
-
-        fun setLanguage(context: Context, language: String) {
-            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            preferences.edit().putString(PREF_CUSTOM_APP_LANGUAGE, language).apply()
-        }
-
-        fun apply(context: Context): Context {
-            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            return updateResources(context, preferences.getString(PREF_CUSTOM_APP_LANGUAGE, null) ?: "")
-        }
-
-        private fun updateResources(context: Context, locale: String): Context {
-
-            var languageToSet = locale.substringBefore("_")
-            var countryToSet = locale.substringAfter("_", "")
-
-            if (locale == "") { // go back to default
-                if (Build.VERSION.SDK_INT >= 24) {
-                    Resources.getSystem().configuration.locales.get(0)
-                } else {
-                    Resources.getSystem().configuration.locale
-                }.apply {
-                    languageToSet = language ?: "en"
-                    countryToSet = country ?: ""
-                }
-            }
-
-            val localeToSet = Locale(languageToSet, countryToSet)
-            Locale.setDefault(localeToSet)
-
-            val resources = context.resources
-            val configuration = Configuration(resources.configuration)
-            configuration.setLocale(localeToSet)
-            val updatedContext = context.createConfigurationContext(configuration)
-            return updatedContext ?: context
-        }
+    fun setLanguage(context: Context, language: String) {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        preferences.edit().putString(PREF_CUSTOM_APP_LANGUAGE, language).apply()
     }
 
+    fun apply(context: Context): Context {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        return updateResources(context, preferences.getString(PREF_CUSTOM_APP_LANGUAGE, null) ?: "")
+    }
+
+    private fun updateResources(context: Context, locale: String): Context {
+
+        var languageToSet = locale.substringBefore("_")
+        var countryToSet = locale.substringAfter("_", "")
+
+        if (locale == "") { // go back to default
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Resources.getSystem().configuration.locales.get(0)
+            } else {
+                Resources.getSystem().configuration.locale
+            }.apply {
+                languageToSet = language ?: "en"
+                countryToSet = country ?: ""
+            }
+        }
+
+        val localeToSet = Locale(languageToSet, countryToSet)
+        Locale.setDefault(localeToSet)
+
+        val resources = context.resources
+        val configuration = Configuration(resources.configuration)
+        configuration.setLocale(localeToSet)
+        val updatedContext = context.createConfigurationContext(configuration)
+        return updatedContext ?: context
+    }
 }

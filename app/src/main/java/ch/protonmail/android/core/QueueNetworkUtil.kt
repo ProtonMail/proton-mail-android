@@ -82,6 +82,7 @@ class QueueNetworkUtil @Inject constructor(
         isServerAccessible = serverAccessible
 
         if (serverAccessible) {
+            Timber.v("Server is connected")
             backendExceptionFlow.value = Constants.ConnectionState.CONNECTED
         } else {
             // to prevent consecutive series of disconnection emissions we introduce a disconnection

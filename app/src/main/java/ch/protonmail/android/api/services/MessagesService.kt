@@ -40,6 +40,7 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -81,6 +82,7 @@ class MessagesService : JobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
 
+        Timber.v("onHandleWork $intent")
         val userId = Id(requireNotNull(intent.getStringExtra(EXTRA_USER_ID)))
         messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
 
@@ -156,17 +158,18 @@ class MessagesService : JobIntentService() {
             val event = MailboxLoadedEvent(Status.FAILED, uuid)
             AppUtil.postEventOnUi(event)
             mNetworkResults.setMailboxLoaded(event)
-            Timber.e("Error while fetching messages", error)
+            Timber.e(error, "Error while fetching messages")
         }
     }
 
     private fun handleFetchMessages(location: Constants.MessageLocationType, time: Long, currentUserId: Id) {
         try {
             val messages = mApi.fetchMessages(location.messageLocationTypeValue, time)
+            Timber.v("handleFetchMessages location: $location, time: $time")
             handleResult(messages, location, false, null, currentUserId)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Timber.e("Error while fetching messages", error)
+            Timber.e(error, "Error while fetching messages")
         }
     }
 
@@ -177,11 +180,11 @@ class MessagesService : JobIntentService() {
         refreshMessages: Boolean
     ) {
         try {
-            val messagesResponse = mApi.searchByLabelAndPage(labelId, 0)
+            val messagesResponse = mApi.searchByLabelAndPageBlocking(labelId, 0)
             handleResult(messagesResponse, location, labelId, currentUserId, refreshMessages)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Timber.e("Error while fetching messages", error)
+            Timber.e(error,"Error while fetching messages")
         }
     }
 
@@ -196,7 +199,7 @@ class MessagesService : JobIntentService() {
             handleResult(messages, location, labelId, currentUserId)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Timber.e("Error while fetching messages", error)
+            Timber.e(error, "Error while fetching messages")
         }
     }
 
@@ -211,7 +214,7 @@ class MessagesService : JobIntentService() {
         try {
             contactEmailsManagerFactory.create(userId).refreshBlocking()
         } catch (e: Exception) {
-            Timber.i(e, "handleFetchContactGroups has failed")
+            Timber.w(e, "handleFetchContactGroups has failed")
         }
     }
 
@@ -223,6 +226,7 @@ class MessagesService : JobIntentService() {
             db.saveAllLabels(labelList)
             AppUtil.postEventOnUi(FetchLabelsEvent(Status.SUCCESS))
         } catch (error: Exception) {
+            Timber.w(error, "handleFetchLabels has failed")
             AppUtil.postEventOnUi(FetchLabelsEvent(Status.FAILED))
         }
     }
@@ -260,6 +264,7 @@ class MessagesService : JobIntentService() {
                     if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
                         return@map null
                     }
+                    msg.location = savedMessage.location
                     msg.mimeType = savedMessage.mimeType
                     msg.toList = savedMessage.toList
                     msg.ccList = savedMessage.ccList
@@ -286,8 +291,10 @@ class MessagesService : JobIntentService() {
                 msg
             }.filterNotNull()
                 .toList()
-                .let {
-                    messageDetailsRepository.saveAllMessagesBlocking(it)
+                .let { list ->
+                    runBlocking {
+                        messageDetailsRepository.saveMessagesInOneTransaction(list)
+                    }
                 }
             val event = MailboxLoadedEvent(Status.SUCCESS, uuid)
             AppUtil.postEventOnUi(event)
@@ -296,7 +303,7 @@ class MessagesService : JobIntentService() {
         } catch (e: Exception) {
             val event = MailboxLoadedEvent(Status.FAILED, uuid)
             AppUtil.postEventOnUi(event)
-            Timber.e("Fetch messages error", e)
+            Timber.e(e, "Fetch messages error")
         }
     }
 
@@ -356,13 +363,15 @@ class MessagesService : JobIntentService() {
                 msg
             }.filterNotNull()
                 .toList()
-                .let {
-                    messageDetailsRepository.saveAllMessagesBlocking(it)
+                .let { list ->
+                    runBlocking {
+                        messageDetailsRepository.saveMessagesInOneTransaction(list)
+                    }
                 }
 
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.SUCCESS, null))
         } catch (e: Exception) {
-            Timber.e("Fetch messages error", e)
+            Timber.e(e, "Fetch messages error")
         }
     }
 
@@ -427,12 +436,12 @@ class MessagesService : JobIntentService() {
                 .putExtra(EXTRA_REFRESH_MESSAGES, refreshMessages)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
-
     }
 
     class Scheduler @Inject constructor() {
 
         fun fetchMessagesOlderThanTime(location: Constants.MessageLocationType, userId: Id, time: Long) {
+            Timber.v("fetchMessagesOlderThanTime location: $location, time: $time")
             val context = ProtonMailApplication.getApplication()
             val intent = Intent(context, MessagesService::class.java)
             intent.action = ACTION_FETCH_MESSAGES_BY_TIME
@@ -457,6 +466,5 @@ class MessagesService : JobIntentService() {
             intent.putExtra(EXTRA_LABEL_ID, labelId)
             enqueueWork(context, MessagesService::class.java, Constants.JOB_INTENT_SERVICE_ID_MESSAGES, intent)
         }
-
     }
 }

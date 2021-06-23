@@ -77,8 +77,11 @@ class VerifyConnection @Inject constructor(
             .onStart {
                 pingWorkerEnqueuer.enqueue()
                 emit(
-                    if (connectivityManager.isInternetConnectionPossible())
-                        Constants.ConnectionState.CONNECTED else Constants.ConnectionState.NO_INTERNET
+                    if (connectivityManager.isInternetConnectionPossible()) {
+                        Constants.ConnectionState.CONNECTED
+                    } else {
+                        Constants.ConnectionState.NO_INTERNET
+                    }
                 ) // start with current net state
             }
     }

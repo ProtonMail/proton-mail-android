@@ -44,11 +44,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.os.postDelayed
-import androidx.lifecycle.MutableLiveData
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
-import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.switchMap
 import androidx.loader.app.LoaderManager
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -104,7 +102,6 @@ import ch.protonmail.android.data.local.model.TotalLabelCounter
 import ch.protonmail.android.data.local.model.TotalLocationCounter
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.events.FetchLabelsEvent
-import ch.protonmail.android.events.FetchUpdatesEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.MessageCountsEvent
@@ -158,12 +155,14 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
+import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
-import kotlin.time.seconds
+import kotlin.time.toDuration
 
 private const val TAG_MAILBOX_ACTIVITY = "MailboxActivity"
 private const val PLAY_SERVICES_RESOLUTION_REQUEST = 9000
@@ -202,12 +201,17 @@ class MailboxActivity :
 
     private lateinit var mailboxAdapter: MailboxRecyclerViewAdapter
     private var swipeController: SwipeController = SwipeController()
-    private val mailboxLocationMain = MutableLiveData<MessageLocationType>()
+
     private val isLoadingMore = AtomicBoolean(false)
     private var scrollStateChanged = false
     private var actionMode: ActionMode? = null
     private var swipeCustomizeSnack: Snackbar? = null
     private var mailboxLabelId: String? = null
+        set(value) {
+            field = value
+            // we need to set it on view model for filtering by label
+            setNewLabel(value ?: EMPTY_STRING)
+        }
     private var mailboxLabelName: String? = null
     private var refreshMailboxJobRunning = false
     private lateinit var syncUUID: String
@@ -241,13 +245,12 @@ class MailboxActivity :
         if (!userManager.isEngagementShown) {
             startActivity(AppUtil.decorInAppIntent(Intent(this, EngagementActivity::class.java)))
         }
-        mailboxLocationMain.value = MessageLocationType.INBOX
         // Set the padding to match the Status Bar height
         if (savedInstanceState != null) {
             val locationInt = savedInstanceState.getInt(STATE_MAILBOX_LOCATION)
             mailboxLabelId = savedInstanceState.getString(STATE_MAILBOX_LABEL_LOCATION)
             mailboxLabelName = savedInstanceState.getString(STATE_MAILBOX_LABEL_LOCATION_NAME)
-            mailboxLocationMain.value = fromInt(locationInt)
+            setMailboxLocation(fromInt(locationInt))
         }
         if (extras != null && extras.containsKey(EXTRA_MAILBOX_LOCATION)) {
             switchToMailboxLocation(extras.getInt(EXTRA_MAILBOX_LOCATION))
@@ -311,7 +314,6 @@ class MailboxActivity :
 
         buildSwipeProcessor()
         initializeSwipeRefreshLayout(mailboxSwipeRefreshLayout)
-        initializeSwipeRefreshLayout(noMessagesSwipeRefreshLayout)
 
         if (userManager.isFirstMailboxLoad) {
             swipeCustomizeSnack = Snackbar.make(
@@ -330,8 +332,7 @@ class MailboxActivity :
                     )
                     settingsIntent.putExtra(
                         EXTRA_CURRENT_MAILBOX_LOCATION,
-                        if (mailboxLocationMain.value != null) mailboxLocationMain.value!!.messageLocationTypeValue
-                        else MessageLocationType.INBOX.messageLocationTypeValue
+                        mailboxViewModel.mailboxLocation.value.messageLocationTypeValue
                     )
                     settingsIntent.putExtra(EXTRA_CURRENT_MAILBOX_LABEL_ID, mailboxLabelId)
                     startActivity(settingsIntent)
@@ -370,9 +371,14 @@ class MailboxActivity :
 
         fetchOrganizationData()
 
-        observeMailboxItemsByLocation(syncId = syncUUID, includeLabels = true)
+        mailboxViewModel.mailboxState
+            .onEach { renderState(it) }
+            .launchIn(lifecycleScope)
 
-        mailboxLocationMain.observe(this, mailboxAdapter::setNewLocation)
+        mailboxViewModel.mailboxLocation
+            .onEach { mailboxAdapter.setNewLocation(it) }
+            .launchIn(lifecycleScope)
+
         ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
 
         setUpMailboxActionsView()
@@ -493,7 +499,6 @@ class MailboxActivity :
                     startActivity(browserIntent)
                 }
             )
-
         } else {
             val intent = AppUtil.decorInAppIntent(
                 Intent(
@@ -518,7 +523,6 @@ class MailboxActivity :
             reloadDependenciesForUser()
             pendingSendsLiveData.observe(owner) { mailboxAdapter.setPendingForSendingList(it) }
             pendingUploadsLiveData.observe(owner) { mailboxAdapter.setPendingUploadsList(it) }
-
         }
     }
 
@@ -526,6 +530,7 @@ class MailboxActivity :
         super.onAccountSwitched(switch)
 
         val currentUserId = userManager.currentUserId ?: return
+        Timber.v("onAccountSwitched, new userId: $currentUserId")
 
         mJobManager.start()
         counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()
@@ -539,10 +544,10 @@ class MailboxActivity :
         lazyManager.reset()
         setUpDrawer()
         checkRegistration()
-        // Loading mailbox items for the newly switched account.
+        // This should trigger loading mailbox items for the newly switched account.
         // This method also "reloads dependencies" for the instance of `messageDetailsRepo` held by
         // MailboxVM. This should be done before triggering an "update" of the Mailbox for the new user
-        loadMailboxItems(refreshMessages = true)
+        mailboxViewModel.setNewUserId(currentUserId)
         switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
 
         messageDetailsRepository.getAllLabelsLiveData().observe(this, mailboxAdapter::setLabels)
@@ -562,33 +567,27 @@ class MailboxActivity :
         setElevationOnToolbarAndStatusView(false)
     }
 
-    /**
-     * @param refreshMessages whether the existing local messages should be deleted and re-fetched from network
-     */
-    private fun observeMailboxItemsByLocation(
-        includeLabels: Boolean = true,
-        refreshMessages: Boolean = false,
-        syncId: String
-    ) {
-        mailboxLocationMain.switchMap { location ->
-            mailboxViewModel.getMailboxItems(
-                location,
-                mailboxLabelId,
-                includeLabels,
-                syncId,
-                refreshMessages
-            )
-        }
-            .distinctUntilChanged()
-            .observe(this) { state ->
-                setLoadingMore(false)
+    private fun renderState(state: MailboxState) {
+        Timber.v("New mailbox state: ${state.javaClass.canonicalName}")
+        setLoadingMore(false)
+
+        when (state) {
+            is MailboxState.Loading -> setRefreshing(true)
+            is MailboxState.Data -> {
                 setRefreshing(false)
-                if (state.error.isNotEmpty()) {
-                    Toast.makeText(this, getString(R.string.error_loading_conversations), Toast.LENGTH_SHORT).show()
-                }
+                Timber.v("Data state items count: ${state.items.size}")
+                include_mailbox_no_messages.isVisible = state.items.isEmpty()
+                mailboxRecyclerView.isVisible != state.items.isEmpty()
+
                 mailboxAdapter.clear()
                 mailboxAdapter.addAll(state.items)
             }
+            is MailboxState.Error -> {
+                setRefreshing(false)
+                Timber.e(state.throwable, "Mailbox error ${state.error}")
+                Toast.makeText(this, getString(R.string.error_loading_conversations), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private val listScrollListener: RecyclerView.OnScrollListener = object : RecyclerView.OnScrollListener() {
@@ -624,9 +623,9 @@ class MailboxActivity :
         refreshMessages: Boolean = false,
         oldestItemTimestamp: Long = now()
     ) {
-        val mailboxLocation = mailboxLocationMain.value ?: MessageLocationType.INBOX
+
+        Timber.v("loadMailboxItems last: $oldestItemTimestamp")
         mailboxViewModel.loadMailboxItems(
-            mailboxLocation,
             mailboxLabelId,
             includeLabels,
             syncUUID,
@@ -657,7 +656,7 @@ class MailboxActivity :
         }
         syncUUID = UUID.randomUUID().toString()
         lifecycleScope.launch {
-            delay(3.seconds.toLongMilliseconds())
+            delay(3.toDuration(TimeUnit.SECONDS))
             loadMailboxItems(includeLabels = true)
         }
         mailboxViewModel.checkConnectivityDelayed()
@@ -689,9 +688,7 @@ class MailboxActivity :
 
     private fun checkUserAndFetchNews(): Boolean {
         syncUUID = UUID.randomUUID().toString()
-        if (userManager.isBackgroundSyncEnabled) {
-            setRefreshing(true)
-        }
+
         if (firstLogin == null) {
             firstLogin = intent.getBooleanExtra(EXTRA_FIRST_LOGIN, false)
         }
@@ -724,7 +721,6 @@ class MailboxActivity :
             !prefs.getBoolean(PREF_SWIPE_GESTURES_DIALOG_SHOWN, false)
     }
 
-
     private fun showSwipeGesturesChangedDialog() {
         val prefs: SharedPreferences = (applicationContext as ProtonMailApplication).defaultSharedPreferences
         showTwoButtonInfoDialog(
@@ -752,10 +748,9 @@ class MailboxActivity :
         mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
         registerFcmReceiver()
         checkDelinquency()
-        noMessagesSwipeRefreshLayout.visibility = View.GONE
         mailboxViewModel.checkConnectivity()
         swipeController.loadCurrentMailSetting()
-        val mailboxLocation = mailboxLocationMain.value
+        val mailboxLocation = mailboxViewModel.mailboxLocation.value
         if (mailboxLocation == MessageLocationType.INBOX) {
             AppUtil.clearNotifications(this, userManager.requireCurrentUserId())
         }
@@ -776,11 +771,7 @@ class MailboxActivity :
     public override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(
             STATE_MAILBOX_LOCATION,
-            if (mailboxLocationMain.value != null) {
-                mailboxLocationMain.value!!.messageLocationTypeValue
-            } else {
-                MessageLocationType.INBOX.messageLocationTypeValue
-            }
+            mailboxViewModel.mailboxLocation.value.messageLocationTypeValue
         )
         outState.putString(STATE_MAILBOX_LABEL_LOCATION, mailboxLabelId)
         outState.putString(STATE_MAILBOX_LABEL_LOCATION_NAME, mailboxLabelName)
@@ -807,7 +798,7 @@ class MailboxActivity :
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_mailbox_options, menu)
         setUpMenuItems(menu.findItem(R.id.compose), menu.findItem(R.id.search))
-        val mailboxLocation = mailboxLocationMain.value
+        val mailboxLocation = mailboxViewModel.mailboxLocation.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(MessageLocationType.DRAFT, MessageLocationType.SPAM, MessageLocationType.TRASH)
         return true
@@ -817,15 +808,15 @@ class MailboxActivity :
         menu.clear()
         menuInflater.inflate(R.menu.menu_mailbox_options, menu)
         setUpMenuItems(menu.findItem(R.id.compose), menu.findItem(R.id.search))
-        val mailboxLocation = mailboxLocationMain.value
+        val mailboxLocation = mailboxViewModel.mailboxLocation.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
-            MessageLocationType.DRAFT,
-            MessageLocationType.SPAM,
-            MessageLocationType.TRASH,
-            MessageLocationType.LABEL,
-            MessageLocationType.LABEL_FOLDER
-        )
+                MessageLocationType.DRAFT,
+                MessageLocationType.SPAM,
+                MessageLocationType.TRASH,
+                MessageLocationType.LABEL,
+                MessageLocationType.LABEL_FOLDER
+            )
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -838,8 +829,9 @@ class MailboxActivity :
                         messageStringId = R.string.are_you_sure_empty,
                         leftStringId = R.string.no
                     ) {
-                        setRefreshing(true)
-                        mJobManager.addJobInBackground(EmptyFolderJob(mailboxLocationMain.value, this.mailboxLabelId))
+                        mJobManager.addJobInBackground(
+                            EmptyFolderJob(mailboxViewModel.mailboxLocation.value, this.mailboxLabelId)
+                        )
                         setLoadingMore(false)
                     }
                 }
@@ -852,7 +844,7 @@ class MailboxActivity :
     override fun onBackPressed() {
         saveLastInteraction()
         val drawerClosed = closeDrawer()
-        if (!drawerClosed && mailboxLocationMain.value != MessageLocationType.INBOX) {
+        if (!drawerClosed && mailboxViewModel.mailboxLocation.value != MessageLocationType.INBOX) {
             switchToMailboxLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
         } else if (!drawerClosed) {
             moveTaskToBack(true)
@@ -864,10 +856,9 @@ class MailboxActivity :
         swipeRefreshLayoutAux.setOnRefreshListener(this)
     }
 
-    fun setRefreshing(shouldRefresh: Boolean) {
+    private fun setRefreshing(shouldRefresh: Boolean) {
         Timber.v("setRefreshing shouldRefresh:$shouldRefresh")
         mailboxSwipeRefreshLayout.isRefreshing = shouldRefresh
-        noMessagesSwipeRefreshLayout.isRefreshing = shouldRefresh
     }
 
     private fun setLoadingMore(loadingMore: Boolean): Boolean {
@@ -890,14 +881,10 @@ class MailboxActivity :
     }
 
     override val currentMailboxLocation: MessageLocationType
-        get() = if (mailboxLocationMain.value != null) {
-            mailboxLocationMain.value!!
-        } else {
-            MessageLocationType.INBOX
-        }
+        get() = mailboxViewModel.mailboxLocation.value
 
     private fun setTitle() {
-        val titleRes: Int = when (mailboxLocationMain.value) {
+        val titleRes: Int = when (mailboxViewModel.mailboxLocation.value) {
             MessageLocationType.INBOX -> R.string.inbox_option
             MessageLocationType.STARRED -> R.string.starred_option
             MessageLocationType.DRAFT -> R.string.drafts_option
@@ -924,7 +911,6 @@ class MailboxActivity :
                     onRetryClick = ::onConnectivityCheckRetry,
                     isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
                 ).show()
-
             }
         }
     }
@@ -950,10 +936,11 @@ class MailboxActivity :
         }
         refreshMailboxJobRunning = false
         setLoadingMore(false)
+        setRefreshing(false)
         if (!isDohOngoing) {
             showToast(event.status)
         }
-        val mailboxLocation = mailboxLocationMain.value
+        val mailboxLocation = mailboxViewModel.mailboxLocation.value
         val setOfLabels =
             setOf(
                 MessageLocationType.LABEL,
@@ -961,10 +948,9 @@ class MailboxActivity :
                 MessageLocationType.LABEL_OFFLINE
             )
         if (event.status == Status.NO_NETWORK && setOfLabels.any { it == mailboxLocation }) {
-            mailboxLocationMain.value = MessageLocationType.LABEL_OFFLINE
+            setMailboxLocation(MessageLocationType.LABEL_OFFLINE)
         }
         mNetworkResults.setMailboxLoaded(MailboxLoadedEvent(Status.SUCCESS, null))
-        setRefreshing(false)
     }
 
     private fun onConnectivityEvent(connectivity: Constants.ConnectionState) {
@@ -972,7 +958,6 @@ class MailboxActivity :
         if (!isDohOngoing) {
             Timber.d("DoH NOT ongoing showing UI")
             if (connectivity != Constants.ConnectionState.CONNECTED) {
-                setRefreshing(false)
                 showNoConnSnackAndScheduleRetry(connectivity)
             } else {
                 hideNoConnSnack()
@@ -991,9 +976,6 @@ class MailboxActivity :
         }
         setLoadingMore(false)
     }
-
-    @Subscribe
-    fun onUpdatesLoaded(event: FetchUpdatesEvent?) { }
 
     private fun showToast(status: Status) {
         when (status) {
@@ -1031,16 +1013,6 @@ class MailboxActivity :
             .getInstance(applicationContext, userManager.requireCurrentUserId()).getDao()
         OnMessageCountsListTask(WeakReference(this), counterDao, messageCountsList).execute()
         //endregion
-    }
-
-    fun refreshEmptyView(count: Int) {
-        if (count == 0) {
-            mailboxSwipeRefreshLayout.visibility = View.GONE
-            noMessagesSwipeRefreshLayout.visibility = View.VISIBLE
-        } else {
-            mailboxSwipeRefreshLayout.visibility = View.VISIBLE
-            noMessagesSwipeRefreshLayout.visibility = View.GONE
-        }
     }
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
@@ -1082,8 +1054,10 @@ class MailboxActivity :
                     )
                     mode.finish()
                 }
-            R.id.mark_read -> {}
-            R.id.mark_unread -> {}
+            R.id.mark_read -> {
+            }
+            R.id.mark_unread -> {
+            }
             R.id.add_star -> job = PostStarJob(messageIds)
             R.id.add_label -> {
             }
@@ -1114,11 +1088,6 @@ class MailboxActivity :
             }
         }
         if (job != null) {
-            // show progress bar for visual representation of work in background,
-            // if all the messages inside the folder are impacted by the action
-            if (mailboxAdapter.itemCount == messageIds.size) {
-                setRefreshing(true)
-            }
             mJobManager.addJobInBackground(job)
         }
 
@@ -1163,11 +1132,6 @@ class MailboxActivity :
                     false
                 )
                 undoSnack!!.show()
-                // show progress bar for visual representation of work in background,
-                // if all the messages inside the folder are impacted by the action
-                if (mailboxAdapter.itemCount == messageIds.size) {
-                    setRefreshing(true)
-                }
                 mJobManager.addJobInBackground(PostTrashJobV2(messageIds, mailboxLabelId))
             }
             actionMode?.finish()
@@ -1235,12 +1199,6 @@ class MailboxActivity :
     }
 
     private fun showFoldersManager(messageIds: List<String>) {
-        // show progress bar for visual representation of work in background,
-        // if all the messages inside the folder are impacted by the action
-        if (mailboxAdapter.itemCount == messageIds.size) {
-            setRefreshing(true)
-        }
-
         LabelsActionSheet.newInstance(
             messageIds,
             currentMailboxLocation.messageLocationTypeValue,
@@ -1259,22 +1217,23 @@ class MailboxActivity :
 
     /* SwipeRefreshLayout.OnRefreshListener */
     override fun onRefresh() {
-        setRefreshing(true)
         syncUUID = UUID.randomUUID().toString()
         mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
         loadMailboxItems(
             includeLabels = true,
             refreshMessages = true
         )
+        // this is just to stop the progress to prevent it being shown "forever"
+        lifecycleScope.launch {
+            delay(3.toDuration(TimeUnit.SECONDS))
+            setRefreshing(false)
+        }
     }
 
     private fun now() = System.currentTimeMillis() / 1000
 
     private fun switchToMailboxLocation(newLocation: Int) {
         val newMessageLocationType = fromInt(newLocation)
-        mailboxSwipeRefreshLayout.visibility = View.VISIBLE
-        mailboxSwipeRefreshLayout.isRefreshing = true
-        noMessagesSwipeRefreshLayout.visibility = View.GONE
         setElevationOnToolbarAndStatusView(false)
         LoaderManager.getInstance(this).destroyLoader(LOADER_ID_LABELS_OFFLINE)
         if (actionMode != null) {
@@ -1283,7 +1242,7 @@ class MailboxActivity :
         mailboxLabelId = null
         invalidateOptionsMenu()
         syncUUID = UUID.randomUUID().toString()
-        mailboxLocationMain.value = newMessageLocationType
+        setMailboxLocation(newMessageLocationType)
         setTitle()
         closeDrawer(animate = false)
         mailboxRecyclerView.clearFocus()
@@ -1392,6 +1351,14 @@ class MailboxActivity :
         return true
     }
 
+    private fun setMailboxLocation(locationToSet: MessageLocationType) {
+        mailboxViewModel.setNewMailboxLocation(locationToSet)
+    }
+
+    private fun setNewLabel(labelId: String) {
+        mailboxViewModel.setNewMailboxLabel(labelId)
+    }
+
     private val fcmBroadcastReceiver: BroadcastReceiver = FcmBroadcastReceiver()
 
     private class OnMessageClickTask internal constructor(
@@ -1444,7 +1411,6 @@ class MailboxActivity :
             return pendingForSending == null ||
                 pendingForSending.sent != null &&
                 !pendingForSending.sent!!
-
         }
 
         override fun onPostExecute(openMessage: Boolean) {
@@ -1477,9 +1443,6 @@ class MailboxActivity :
 
         override fun onPostExecute(label: Label?) {
             val mailboxActivity = mailboxActivity.get() ?: return
-            mailboxActivity.mailboxSwipeRefreshLayout.visibility = View.VISIBLE
-            mailboxActivity.mailboxSwipeRefreshLayout.isRefreshing = true
-            mailboxActivity.noMessagesSwipeRefreshLayout.visibility = View.GONE
             mailboxActivity.setElevationOnToolbarAndStatusView(false)
             if (mailboxActivity.actionMode != null) {
                 mailboxActivity.actionMode!!.finish()
@@ -1492,7 +1455,7 @@ class MailboxActivity :
             }
             mailboxActivity.mailboxLabelId = labelId
             mailboxActivity.mailboxLabelName = labelName
-            mailboxActivity.mailboxLocationMain.value = locationToSet
+            mailboxActivity.setMailboxLocation(locationToSet)
             if (label != null) {
                 val actionBar = mailboxActivity.supportActionBar
                 if (actionBar != null) {
@@ -1559,8 +1522,8 @@ class MailboxActivity :
             viewHolder: RecyclerView.ViewHolder
         ): Int {
             if (viewHolder is MessageViewHolder) {
-                val mailboxLocation = mailboxLocationMain.value
-                return if (mailboxLocationMain.value != null && mailboxLocation == MessageLocationType.DRAFT ||
+                val mailboxLocation = currentMailboxLocation
+                return if (mailboxLocation == MessageLocationType.DRAFT ||
                     mailboxLocation == MessageLocationType.ALL_DRAFT
                 ) {
                     makeMovementFlags(0, 0)
@@ -1599,14 +1562,14 @@ class MailboxActivity :
             val position = viewHolder.adapterPosition
             val mailboxItem = mailboxAdapter.getItem(position)
             val messageSwiped = SimpleMessage(mailboxItem)
-            val mailboxLocation = mailboxLocationMain.value
+            val mailboxLocation = currentMailboxLocation
             val settings = mailSettings ?: return
             val swipeActionOrdinal: Int = when (direction) {
                 ItemTouchHelper.RIGHT -> settings.rightSwipeAction
                 ItemTouchHelper.LEFT -> settings.leftSwipeAction
                 else -> throw IllegalArgumentException("Unrecognised direction: $direction")
             }
-            val swipeAction = normalise(SwipeAction.values()[swipeActionOrdinal], mailboxLocationMain.value)
+            val swipeAction = normalise(SwipeAction.values()[swipeActionOrdinal], currentMailboxLocation)
             mSwipeProcessor.handleSwipe(swipeAction, messageSwiped, mJobManager, mailboxLabelId)
             if (undoSnack != null && undoSnack!!.isShownOrQueued) {
                 undoSnack!!.dismiss()
@@ -1621,7 +1584,7 @@ class MailboxActivity :
                 },
                 true
             )
-            if (!(swipeAction == SwipeAction.TRASH && mailboxLocationMain.value == MessageLocationType.DRAFT)) {
+            if (!(swipeAction == SwipeAction.TRASH && currentMailboxLocation == MessageLocationType.DRAFT)) {
                 undoSnack!!.show()
             }
             if (swipeCustomizeSnack != null && !customizeSwipeSnackShown) {
@@ -1629,7 +1592,6 @@ class MailboxActivity :
                     swipeCustomizeSnack!!.show()
                     customizeSwipeSnackShown = true
                 }
-
             }
             mailboxAdapter.notifyDataSetChanged()
         }
@@ -1648,7 +1610,7 @@ class MailboxActivity :
                 val height = itemView.bottom - itemView.top
                 val width = itemView.right - itemView.left
                 val layoutId: Int = when {
-                    mailboxLocationMain.value == MessageLocationType.DRAFT -> {
+                    currentMailboxLocation == MessageLocationType.DRAFT -> {
                         SwipeAction.TRASH.getActionBackgroundResource(deltaX < 0)
                     }
                     deltaX < 0 -> {
@@ -1689,7 +1651,6 @@ class MailboxActivity :
 
         override fun onPostExecute(inboxMessagesCount: Int) {
             val mailboxActivity = mailboxActivity.get() ?: return
-            var foundMailbox = false
             val locationCounters: MutableList<TotalLocationCounter> = ArrayList()
             val labelCounters: MutableList<TotalLabelCounter> = ArrayList()
             for (messageCount in messageCountsList) {
@@ -1703,24 +1664,12 @@ class MailboxActivity :
                     ) {
                         mailboxActivity.checkUserAndFetchNews()
                     }
-                    if (mailboxActivity.mailboxLocationMain.value == location) {
-                        mailboxActivity.refreshEmptyView(total)
-                        foundMailbox = true
-                    }
                     locationCounters.add(TotalLocationCounter(location.messageLocationTypeValue, total))
                 } else {
                     // label
-                    if (labelId == mailboxActivity.mailboxLabelId) {
-                        mailboxActivity.refreshEmptyView(total)
-                        foundMailbox = true
-                    }
-                    if (!foundMailbox) {
-                        mailboxActivity.refreshEmptyView(0)
-                    }
                     labelCounters.add(TotalLabelCounter(labelId, total))
                 }
             }
-            mailboxActivity.setRefreshing(false)
             RefreshTotalCountersTask(counterDao, locationCounters, labelCounters).execute()
         }
     }

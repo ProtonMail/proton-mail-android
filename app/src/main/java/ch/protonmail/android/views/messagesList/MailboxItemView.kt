@@ -35,6 +35,7 @@ import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView
 import ch.protonmail.android.utils.DateUtil
 import kotlinx.android.synthetic.main.list_item_mailbox.view.*
+import timber.log.Timber
 
 private const val HYPHEN = "-"
 
@@ -109,6 +110,7 @@ class MailboxItemView @JvmOverloads constructor(
         Constants.MessageLocationType.SENT -> R.drawable.ic_paper_plane
         Constants.MessageLocationType.DRAFT -> R.drawable.ic_pencil
         Constants.MessageLocationType.ALL_DRAFT -> R.drawable.ic_pencil
+        Constants.MessageLocationType.ALL_MAIL -> R.drawable.ic_folder
         Constants.MessageLocationType.ALL_SENT -> R.drawable.ic_paper_plane
         Constants.MessageLocationType.ARCHIVE -> R.drawable.ic_archive
         Constants.MessageLocationType.TRASH -> R.drawable.ic_trash
@@ -172,9 +174,12 @@ class MailboxItemView @JvmOverloads constructor(
         ) {
             val icon = getIconForMessageLocation(messageLocation)
             if (icon != null) {
-                first_location_image_view.visibility = View.VISIBLE
                 first_location_image_view.setImageDrawable(ContextCompat.getDrawable(context, icon))
             }
+            Timber.v("Message location: $messageLocation, icon: $icon, subject: ${mailboxUiItem.subject}")
+            first_location_image_view.isVisible = icon != null
+        } else {
+            first_location_image_view.visibility = View.GONE
         }
 
         messages_number_text_view.isVisible = mailboxUiItem.messagesCount != null

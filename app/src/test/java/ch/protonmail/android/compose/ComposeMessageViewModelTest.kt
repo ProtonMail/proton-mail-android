@@ -94,29 +94,32 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     private val deleteAttachmentWorker: DeleteAttachmentWorker.Enqueuer = mockk()
 
-    private val viewModel = ComposeMessageViewModel(
-        composeMessageRepository,
-        userManager,
-        accountManager,
-        messageDetailsRepository,
-        deleteMessage,
-        fetchPublicKeys,
-        mockk(),
-        saveDraft,
-        dispatchers,
-        mockk(),
-        stringResourceResolver,
-        sendMessage,
-        mockk(),
-        verifyConnection,
-        networkConfigurator,
-        deleteAttachmentWorker
-    )
+    private lateinit var viewModel: ComposeMessageViewModel
 
     @BeforeTest
     fun setUp() {
         mockkStatic(UiUtil::class)
         every { UiUtil.fromHtml(any()) } returns mockk(relaxed = true)
+        every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
+
+        viewModel = ComposeMessageViewModel(
+            composeMessageRepository,
+            userManager,
+            accountManager,
+            messageDetailsRepository,
+            deleteMessage,
+            fetchPublicKeys,
+            mockk(),
+            saveDraft,
+            dispatchers,
+            mockk(),
+            stringResourceResolver,
+            sendMessage,
+            mockk(),
+            verifyConnection,
+            networkConfigurator,
+            deleteAttachmentWorker
+        )
     }
 
     @AfterTest
