@@ -464,7 +464,9 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun loadMessageBodyEmitsInputMessageWhenBodyIsAlreadyDecrypted() = runBlockingTest {
-        val message = mockk<Message>()
+        val message = mockk<Message> {
+            every { messageId } returns "id1"
+        }
         val decryptedMessageHtml = "<html>Decrypted message body HTML</html>"
         every { message.decryptedHTML } returns decryptedMessageHtml
 
@@ -484,6 +486,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         val message = mockk<Message>()
         every { message.messageId } returns messageId
         every { message.decryptedHTML } returns null
+        every { message.isRead } returns false
 
         val fetchedMessage = mockk<Message>()
         every { fetchedMessage.messageBody } returns "encrypted message body"

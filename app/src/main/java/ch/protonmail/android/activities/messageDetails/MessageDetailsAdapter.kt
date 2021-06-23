@@ -79,15 +79,6 @@ internal class MessageDetailsAdapter(
     private var allLabelsList: List<Label>? = listOf()
     private var nonInclusiveLabelsList: List<LabelChipUiModel> = emptyList()
 
-    init {
-        val items = ArrayList<MessageDetailsListItem>()
-        messages.forEach { message ->
-            items.add(MessageDetailsListItem(message))
-            items.add(MessageDetailsListItem(message, message.decryptedHTML))
-        }
-        setItems(items)
-    }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (getItemViewType(position) == TYPE_HEADER) {
             (holder as HeaderViewHolder).bind(
@@ -179,6 +170,7 @@ internal class MessageDetailsAdapter(
 
         fun bind(position: Int, listItem: MessageDetailsListItem) {
             val message = listItem.message
+            Timber.v("Bind item: ${message.messageId}")
             val attachmentsView = itemView.attachmentsView
             attachmentsView.visibility = View.GONE
 
@@ -261,6 +253,7 @@ internal class MessageDetailsAdapter(
     }
 
     fun setMessageData(messageData: List<Message>) {
+        Timber.v("setMessageData size: ${messageData.size} ")
         messages = messageData
         val items = ArrayList<MessageDetailsListItem>()
         messages.forEach { message ->
@@ -272,12 +265,10 @@ internal class MessageDetailsAdapter(
 
     fun setAllLabels(labels: List<Label>) {
         allLabelsList = labels
-        setMessageData(messages)
     }
 
     fun setNonInclusiveLabels(labels: List<LabelChipUiModel>) {
         nonInclusiveLabelsList = labels
-        setMessageData(messages)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -379,8 +370,8 @@ internal class MessageDetailsAdapter(
         }
     }
 
-    private inner class MessageDetailsPmWebViewClient(
-        userManager: UserManager,
+    private class MessageDetailsPmWebViewClient(
+        private val userManager: UserManager,
         activity: Activity,
         private val itemView: View
     ) : PMWebViewClient(userManager, activity, false) {

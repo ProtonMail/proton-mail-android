@@ -221,7 +221,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             viewModel.loadMessageBody(message).mapLatest { loadedMessage ->
 
                 val parsedBody = viewModel.getParsedMessage(
-                    loadedMessage.decryptedHTML,
+                    requireNotNull(loadedMessage.decryptedHTML),
                     UiUtil.getRenderWidth(this.windowManager),
                     AppUtil.readTxt(this, R.raw.editor),
                     this.getString(R.string.request_timeout)
@@ -343,7 +343,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 Timber.v("isConnectionActive:${isConnectionActive.name}")
                 if (isConnectionActive == Constants.ConnectionState.CONNECTED) {
                     hideNoConnSnackExtended()
-                    viewModel.loadMailboxItemDetails()
                 } else {
                     showNoConnSnackExtended(isConnectionActive)
                 }
@@ -476,6 +475,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 return
             }
 
+            Timber.v("setMessage conversations size: ${conversation.messages.size}")
             messageExpandableAdapter.setMessageData(conversation.messages)
             if (viewModel.refreshedKeys) {
                 if (isAutoShowRemoteImages) {

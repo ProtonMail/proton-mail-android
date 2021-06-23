@@ -24,7 +24,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import ch.protonmail.android.utils.Logger
+import timber.log.Timber
 
 // region constants
 private const val TYPE_HEADER = 1000
@@ -53,7 +53,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
         return try {
             visibleItems!![i]
         } catch (e: Exception) {
-            Logger.doLog(e.localizedMessage)
+            Timber.w(e, e.localizedMessage)
             null
         }
     }
@@ -176,7 +176,6 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
         }
         notifyDataSetChanged()
     }
-
 
     protected fun removeItemAt(visiblePosition: Int) {
         val allItemsPosition = indexList[visiblePosition]
