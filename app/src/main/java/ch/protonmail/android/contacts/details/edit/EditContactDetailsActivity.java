@@ -1123,7 +1123,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     };
 
     private Observer setupConvertContactObserver = o -> {
-        getSupportActionBar().setTitle(R.string.convert_contact);
+        getSupportActionBar().setTitle(R.string.contacts_import_contact);
         LocalContact localContact = viewModel.getLocalContact();
         mDisplayNameView.setText(localContact.getName());
         contactInitials.bind(

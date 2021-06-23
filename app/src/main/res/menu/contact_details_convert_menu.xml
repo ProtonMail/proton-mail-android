@@ -23,6 +23,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <item
         android:id="@+id/action_save"
-        android:title="@string/upload"
+        android:title="@string/contacts_import"
         app:showAsAction="always" />
 </menu>
