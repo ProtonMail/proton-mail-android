@@ -21,6 +21,7 @@ package ch.protonmail.android.activities.messageDetails
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
 import android.view.LayoutInflater
@@ -380,11 +381,16 @@ internal class MessageDetailsAdapter(
     ) : PMWebViewClient(userManager, activity, false) {
 
         override fun onPageFinished(view: WebView, url: String) {
-            if (amountOfRemoteResourcesBlocked() > 0) {
+            // Do not display the 'displayRemoteContent' button when API is lower than 26 as in that case remote
+            // images will be loaded automatically for the reason mentioned below
+            if (amountOfRemoteResourcesBlocked() > 0 && !isAndroidAPILevelLowerThan26()) {
                 itemView.displayRemoteContentButton.isVisible = true
             }
 
-            this.blockRemoteResources(!isAutoShowRemoteImages())
+            // When android API < 26 we automatically show remote images because the `getWebViewClient` method
+            // that we use to access the webView and load them later on was only introduced with API 26
+            val showRemoteImages = isAutoShowRemoteImages() || isAndroidAPILevelLowerThan26()
+            this.blockRemoteResources(!showRemoteImages)
 
             super.onPageFinished(view, url)
         }
@@ -394,4 +400,6 @@ internal class MessageDetailsAdapter(
             return mailSettings?.showImagesFrom?.includesRemote() ?: false
         }
     }
+
+    private fun isAndroidAPILevelLowerThan26() = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
 }
