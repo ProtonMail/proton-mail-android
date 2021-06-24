@@ -34,16 +34,23 @@ enum class StandardFolderLocation(
 ) {
 
     ARCHIVE(
-        Constants.MessageLocationType.ARCHIVE.toString(), R.drawable.ic_archive, R.string.archive
+        Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString(),
+        R.drawable.ic_archive,
+        R.string.archive
     ),
     INBOX(
-        Constants.MessageLocationType.INBOX.toString(), R.drawable.ic_inbox, R.string.inbox
+        Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString(),
+        R.drawable.ic_inbox,
+        R.string.inbox
     ),
     SPAM(
-        Constants.MessageLocationType.SPAM.toString(), R.drawable.ic_fire, R.string.spam
+        Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString(),
+        R.drawable.ic_fire,
+        R.string.spam
     ),
     TRASH(
-        Constants.MessageLocationType.TRASH.toString(), R.drawable.ic_trash, R.string.trash
+        Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
+        R.drawable.ic_trash,
+        R.string.trash
     )
-
 }
