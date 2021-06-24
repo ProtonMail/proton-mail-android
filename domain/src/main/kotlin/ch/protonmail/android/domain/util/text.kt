@@ -19,6 +19,30 @@
 
 package ch.protonmail.android.domain.util
 
+fun <T : CharSequence> checkNotEmpty(text: T?): T = text.let {
+    checkNotNull(text)
+    check(text.isNotEmpty())
+    return text
+}
+
+inline fun <T : CharSequence> checkNotEmpty(text: T?, lazyMessage: () -> Any): T = text.let {
+    checkNotNull(text, lazyMessage)
+    check(text.isNotEmpty(), lazyMessage)
+    return text
+}
+
+fun <T : CharSequence> checkNotBlank(text: T?): T = text.let {
+    checkNotNull(text)
+    check(text.isNotBlank())
+    return text
+}
+
+inline fun <T : CharSequence> checkNotBlank(text: T?, lazyMessage: () -> Any): T = text.let {
+    checkNotNull(text, lazyMessage)
+    check(text.isNotBlank(), lazyMessage)
+    return text
+}
+
 fun <T : CharSequence> requireNotEmpty(text: T?): T = text.let {
     requireNotNull(text)
     require(text.isNotEmpty())
