@@ -24,13 +24,15 @@ import javax.inject.Inject
 class MessageSenderFactory @Inject constructor() {
 
     fun createServerMessageSender(messageSender: MessageSender): ServerMessageSender {
-        val (name, emailAddress) = messageSender
+        val (name, emailAddress) = with(messageSender) {
+            name to checkNotNull(emailAddress) { "Email address cannot be null" }
+        }
         return ServerMessageSender(name, emailAddress)
     }
 
     fun createMessageSender(serverMessageSender: ServerMessageSender): MessageSender {
-        val name = serverMessageSender.Name
-        val emailAddress = requireNotNull(serverMessageSender.Address)
+        val name = serverMessageSender.name
+        val emailAddress = requireNotNull(serverMessageSender.address)
         return MessageSender(name, emailAddress)
     }
 }

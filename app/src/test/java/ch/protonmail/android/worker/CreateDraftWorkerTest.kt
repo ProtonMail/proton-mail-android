@@ -81,6 +81,10 @@ import kotlin.test.*
 class CreateDraftWorkerTest : CoroutinesTest {
 
     private val testUserId = Id("id")
+    private val testMessagePayload = MessagePayload(
+        sender = ServerMessageSender(address = "some@pm.me"),
+        body = "some message body"
+    )
 
     private val userNotifier: UserNotifier = mockk(relaxed = true)
 
@@ -250,7 +254,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 addressID = addressId
                 messageBody = "messageBody"
             }
-            val apiDraftMessage = DraftBody(message = MessagePayload())
+            val apiDraftMessage = DraftBody(message = testMessagePayload)
             val address = Address(
                 Id(addressId),
                 null,
@@ -302,7 +306,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 messageBody = "messageBody2341"
                 sender = MessageSender("sender by alias", "sender+alias@pm.me")
             }
-            val apiDraftMessage = DraftBody(message = MessagePayload())
+            val apiDraftMessage = DraftBody(message = testMessagePayload)
             givenMessageIdInput(messageDbId)
             givenActionTypeInput()
             every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
@@ -782,7 +786,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 attachments = emptyList()
             }
 
-            val apiDraftRequest = DraftBody(message = MessagePayload())
+            val apiDraftRequest = DraftBody(message = testMessagePayload)
             val responseMessage = Message(messageId = "created_draft_id").apply {
                 attachments = listOf(Attachment("235423"), Attachment("823421"))
             }
@@ -850,7 +854,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 numAttachments = 3
             }
 
-            val apiDraftRequest = DraftBody(message = MessagePayload())
+            val apiDraftRequest = DraftBody(message = testMessagePayload)
             val responseMessage = message.copy(
                 messageId = "response_message_id",
                 isDownloaded = true,
@@ -913,7 +917,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenPreviousSenderAddress("")
             every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
             every { messageFactory.createDraftApiRequest(message) } returns
-                DraftBody(message = MessagePayload(subject = "Subject002"))
+                DraftBody(message = testMessagePayload.copy(subject = "Subject002"))
             coEvery { apiManager.createDraft(any()) } returns errorAPIResponse
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
             val parentMessage = mockk<Message> {
@@ -995,7 +999,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenPreviousSenderAddress("")
             every { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
             every { messageFactory.createDraftApiRequest(message) } returns
-                DraftBody(message = MessagePayload(subject = "Subject001"))
+                DraftBody(message = testMessagePayload.copy(subject = "Subject001"))
             coEvery { apiManager.createDraft(any()) } throws IOException(errorMessage)
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
             val parentMessage = mockk<Message> {
@@ -1038,7 +1042,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 attachments = listOf(Attachment(attachmentId = "12749"))
             }
 
-            val apiDraftRequest = DraftBody(message = MessagePayload())
+            val apiDraftRequest = DraftBody(message = testMessagePayload)
             val responseMessage = Message(messageId = "created_draft_id").apply {
                 attachments = listOf(Attachment(attachmentId = "82374"))
             }

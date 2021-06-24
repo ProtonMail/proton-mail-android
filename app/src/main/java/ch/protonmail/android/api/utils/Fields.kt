@@ -161,6 +161,11 @@ object Fields {
             const val PASSWORD_HINT = "PasswordHint"
         }
 
+        object Sender {
+            const val NAME = "Name"
+            const val ADDRESS = "Address"
+        }
+
         object ParsedHeaders {
             const val RECIPIENT_AUTHENTICATION = "X-Pm-Recipient-Authentication"
             const val RECIPIENT_ENCRYPTION = "X-Pm-Recipient-Encryption"

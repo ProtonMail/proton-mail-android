@@ -168,10 +168,12 @@ class CreateDraftWorker @AssistedInject constructor(
 
         val encryptedMessage = requireNotNull(message.messageBody)
         val messageSender = buildMessageSender(message, senderAddress)
+        val messageSenderAddress =
+            checkNotNull(messageSender.emailAddress) { "Sender address is required to create a Payload" }
         return withParentDraftBody.copy(
             message = withParentDraftBody.message.copy(
                 body = encryptedMessage,
-                sender = ServerMessageSender(messageSender.name, messageSender.emailAddress)
+                sender = ServerMessageSender(messageSender.name, messageSenderAddress)
             ),
             attachmentKeyPackets = messageAttachmentsKeyPackets + withParentDraftBody.attachmentKeyPackets
         )

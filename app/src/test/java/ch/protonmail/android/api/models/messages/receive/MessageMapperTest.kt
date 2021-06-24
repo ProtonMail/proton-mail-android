@@ -49,19 +49,19 @@ class MessageMapperTest {
         val actual = message.toApiPayload()
 
         val expected = MessagePayload(
-            "ID",
-            "Subject",
-            ServerMessageSender("Name", "Address"),
-            "Body",
-            listOf(
+            sender = ServerMessageSender("Name", "Address"),
+            body = "Body",
+            id = "ID",
+            subject = "Subject",
+            toList = listOf(
                 MessageRecipient("User1", "user1@protonmail.com"),
                 MessageRecipient("User2", "user2@pm.me")
             ),
-            listOf(
+            ccList = listOf(
                 MessageRecipient("User3", "user3@protonmail.com")
             ),
-            listOf(),
-            1
+            bccList = listOf(),
+            unread = 1
         )
 
         assertEquals(expected, actual)

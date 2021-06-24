@@ -25,17 +25,17 @@ import com.google.gson.annotations.SerializedName
 
 data class MessagePayload(
 
+    @SerializedName(Fields.Message.SENDER)
+    val sender: ServerMessageSender,
+
+    @SerializedName(Fields.Message.MESSAGE_BODY)
+    val body: String,
+
     @SerializedName(Fields.Message.ID)
     val id: String? = null,
 
     @SerializedName(Fields.Message.SUBJECT)
     val subject: String? = null,
-
-    @SerializedName(Fields.Message.SENDER)
-    val sender: ServerMessageSender? = null,
-
-    @SerializedName(Fields.Message.MESSAGE_BODY)
-    val body: String? = null,
 
     @SerializedName(Fields.Message.TO_LIST)
     val toList: List<MessageRecipient>? = null,
