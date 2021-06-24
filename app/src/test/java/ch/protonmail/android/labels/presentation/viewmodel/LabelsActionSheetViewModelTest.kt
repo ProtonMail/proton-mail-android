@@ -30,6 +30,8 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
+import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -65,6 +67,12 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
     @MockK
     private lateinit var messageRepository: MessageRepository
+
+    @MockK
+    private lateinit var moveConversationsToFolder: MoveConversationsToFolder
+
+    @MockK
+    private lateinit var conversationModeEnabled: ConversationModeEnabled
 
     private lateinit var viewModel: LabelsActionSheetViewModel
 
@@ -123,6 +131,8 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             userManager,
             updateLabels,
             moveMessagesToFolder,
+            moveConversationsToFolder,
+            conversationModeEnabled,
             messageRepository
         )
     }
@@ -161,7 +171,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         coEvery { userManager.didReachLabelsThreshold(any()) } returns false
 
         // when
-        viewModel.onLabelClicked(model1label)
+        viewModel.onLabelClicked(model1label, 0)
 
         // then
         assertEquals(listOf(model1label.copy(isChecked = false)), viewModel.labels.value)
@@ -174,9 +184,10 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // given
         coEvery { userManager.didReachLabelsThreshold(any()) } returns false
         coEvery { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
+        coEvery { conversationModeEnabled(any()) } returns false
 
         // when
-        viewModel.onLabelClicked(model2folder)
+        viewModel.onLabelClicked(model2folder, 0)
 
         // then
         coVerify { moveMessagesToFolder.invoke(any(), any(), any()) }

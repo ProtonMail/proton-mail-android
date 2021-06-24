@@ -30,11 +30,14 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
+import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -45,6 +48,8 @@ class LabelsActionSheetViewModel @Inject constructor(
     private val userManager: UserManager,
     private val updateLabels: UpdateLabels,
     private val moveMessagesToFolder: MoveMessagesToFolder,
+    private val moveConversationsToFolder: MoveConversationsToFolder,
+    private val conversationModeEnabled: ConversationModeEnabled,
     private val messageRepository: MessageRepository
 ) : ViewModel() {
 
@@ -79,10 +84,10 @@ class LabelsActionSheetViewModel @Inject constructor(
         }
     }
 
-    fun onLabelClicked(model: LabelActonItemUiModel) {
+    fun onLabelClicked(model: LabelActonItemUiModel, currentFolderLocationId: Int) {
 
         if (model.labelType == LabelsActionSheet.Type.FOLDER.typeInt) {
-            onFolderClicked(model.labelId)
+            onFolderClicked(model.labelId, currentFolderLocationId)
         } else {
             // label type clicked
             val updatedLabels = labels.value
@@ -146,9 +151,20 @@ class LabelsActionSheetViewModel @Inject constructor(
         }
     }
 
-    private fun onFolderClicked(selectedFolderId: String) {
-        moveMessagesToFolder(messageIds, selectedFolderId, currentMessageFolder.messageLocationTypeValue.toString())
-        actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved
+    private fun onFolderClicked(selectedFolderId: String, currentFolderLocationId: Int) {
+        viewModelScope.launch {
+            if (conversationModeEnabled(Constants.MessageLocationType.fromInt(currentFolderLocationId))) {
+                userManager.currentUserId?.let {
+                    moveConversationsToFolder(messageIds, UserId(it.s), selectedFolderId)
+                }
+            } else {
+                moveMessagesToFolder(
+                    messageIds, selectedFolderId, currentMessageFolder.messageLocationTypeValue.toString()
+                )
+            }
+        }.invokeOnCompletion {
+            actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved
+        }
     }
 
     private suspend fun getCheckedLabelsForAllMessages(
