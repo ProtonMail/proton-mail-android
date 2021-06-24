@@ -325,11 +325,11 @@
     <string name="label_deleted_error">Error while deleting label</string>
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Respond in-line</string>
-    <string name="no_connectivity_detected">No connectivity detected...</string>
+    <string name="no_connectivity_detected">No connectivity detected…</string>
     <string name="server_not_reachable_troubleshoot">Server not reachable&#8230; (<u>Troubleshoot</u>)</string>
-    <string name="connectivity_checking">Checking for connection...</string>
+    <string name="connectivity_checking">Checking for connection…</string>
     <string name="sync_short">sync</string>
-    <string name="draft_attachments_uploading">Draft is still uploading...</string>
+    <string name="draft_attachments_uploading">Draft is still uploading…</string>
     <string name="draft_label_attachments_uploading">uploading attachments…</string>
     <string name="draft_label_message_uploading">sending message…</string>
     <string name="attachment_failed">Attachment Upload Failed for message </string>
@@ -1070,4 +1070,5 @@
     <string name="inbox_nothing_to_see_here">Nothing to see here</string>
     <string name="inbox_could_not_retrieve_messages">Couldn\'t retrieve your messages</string>
     <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
+    <string name="edit_draft">Edit draft</string>
 </resources>

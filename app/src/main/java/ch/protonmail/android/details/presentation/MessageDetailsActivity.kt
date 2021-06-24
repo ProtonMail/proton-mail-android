@@ -221,7 +221,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             onDisplayRemoteContentClicked(),
             mUserManager,
             onLoadMessageBody(),
-            onDownloadAttachment()
+            onDownloadAttachment(),
+            onEditDraftClicked()
         )
     }
 
@@ -741,6 +742,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private fun onDisplayRemoteContentClicked() = { message: Message ->
         viewModel.displayRemoteContent(message)
         viewModel.checkStoragePermission.observe(this, { storagePermissionHelper.checkPermission() })
+    }
+
+    private fun onEditDraftClicked() = { message: Message ->
+        val intent = AppUtil.decorInAppIntent(Intent(this, ComposeMessageActivity::class.java))
+        intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, message.messageId)
+        intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, message.isInline)
+        intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID, message.addressID)
+        startActivity(intent)
     }
 
     private fun onDownloadAttachment() = { attachment: Attachment ->

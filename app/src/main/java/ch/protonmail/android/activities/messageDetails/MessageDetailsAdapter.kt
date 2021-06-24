@@ -70,7 +70,8 @@ internal class MessageDetailsAdapter(
     private val onDisplayRemoteContentClicked: (Message) -> Unit,
     private val userManager: UserManager,
     private val onLoadMessageBody: (Message) -> Unit,
-    private val onAttachmentDownloadCallback: (Attachment) -> Unit
+    private val onAttachmentDownloadCallback: (Attachment) -> Unit,
+    private val onEditDraftClicked: (Message) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
 
     private var allLabelsList: List<Label>? = emptyList()
@@ -174,7 +175,10 @@ internal class MessageDetailsAdapter(
             val expirationInfoView = itemView.expirationInfoView
             val displayRemoteContentButton = itemView.displayRemoteContentButton
             val loadEmbeddedImagesButton = itemView.loadEmbeddedImagesButton
+            val editDraftButton = itemView.editDraftButton
 
+            val isDraft = message.location == Constants.MessageLocationType.DRAFT.messageLocationTypeValue
+            editDraftButton.isVisible = isDraft
             expirationInfoView.bind(message.expirationTime)
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
 
@@ -200,13 +204,14 @@ internal class MessageDetailsAdapter(
             loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
             setUpViewDividers()
 
-            setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton)
+            setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
         }
 
         private fun setupMessageContentActions(
             position: Int,
             loadEmbeddedImagesContainer: LoadContentButton,
-            displayRemoteContentButton: LoadContentButton
+            displayRemoteContentButton: LoadContentButton,
+            editDraftButton: LoadContentButton
         ) {
             loadEmbeddedImagesContainer.setOnClickListener { view ->
                 view.visibility = View.GONE
@@ -233,6 +238,11 @@ internal class MessageDetailsAdapter(
                     webView.reload()
                     onDisplayRemoteContentClicked(item.message)
                 }
+            }
+
+            editDraftButton.setOnClickListener {
+                val item = visibleItems!![position]
+                onEditDraftClicked(item.message)
             }
         }
 
