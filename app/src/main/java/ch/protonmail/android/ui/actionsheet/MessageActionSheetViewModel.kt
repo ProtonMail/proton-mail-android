@@ -26,6 +26,7 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
+import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -42,6 +43,7 @@ import javax.inject.Inject
 class MessageActionSheetViewModel @Inject constructor(
     private val deleteMessage: DeleteMessage,
     private val moveMessagesToFolder: MoveMessagesToFolder,
+    private val moveConversationsToFolder: MoveConversationsToFolder,
     private val messageRepository: MessageRepository,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
@@ -77,36 +79,108 @@ class MessageActionSheetViewModel @Inject constructor(
     }
 
     fun moveToInbox(
-        messageIds: List<String>,
+        ids: List<String>,
         currentFolder: Constants.MessageLocationType
-    ) = moveMessagesToFolder(
-        messageIds, Constants.MessageLocationType.INBOX.toString(),
-        currentFolder.messageLocationTypeValue.toString()
-    )
+    ) {
+        viewModelScope.launch {
+            if (conversationModeEnabled(currentFolder)) {
+                accountManager.getPrimaryUserId().first()?.let {
+                    moveConversationsToFolder(
+                        ids,
+                        it,
+                        Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
+                    )
+                }
+            } else {
+                moveMessagesToFolder(
+                    ids, Constants.MessageLocationType.INBOX.toString(),
+                    currentFolder.messageLocationTypeValue.toString()
+                )
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.MoveToFolder(
+                Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
+            )
+        }
+    }
 
     fun moveToArchive(
-        messageIds: List<String>,
+        ids: List<String>,
         currentFolder: Constants.MessageLocationType
-    ) = moveMessagesToFolder(
-        messageIds, Constants.MessageLocationType.ARCHIVE.toString(),
-        currentFolder.messageLocationTypeValue.toString()
-    )
+    ) {
+        viewModelScope.launch {
+            if (conversationModeEnabled(currentFolder)) {
+                accountManager.getPrimaryUserId().first()?.let {
+                    moveConversationsToFolder(
+                        ids,
+                        it,
+                        Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+                    )
+                }
+            } else {
+                moveMessagesToFolder(
+                    ids, Constants.MessageLocationType.ARCHIVE.toString(),
+                    currentFolder.messageLocationTypeValue.toString()
+                )
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.MoveToFolder(
+                Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+            )
+        }
+    }
 
     fun moveToSpam(
-        messageIds: List<String>,
+        ids: List<String>,
         currentFolder: Constants.MessageLocationType
-    ) = moveMessagesToFolder(
-        messageIds, Constants.MessageLocationType.SPAM.toString(),
-        currentFolder.messageLocationTypeValue.toString()
-    )
+    ) {
+        viewModelScope.launch {
+            if (conversationModeEnabled(currentFolder)) {
+                accountManager.getPrimaryUserId().first()?.let {
+                    moveConversationsToFolder(
+                        ids,
+                        it,
+                        Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString()
+                    )
+                }
+            } else {
+                moveMessagesToFolder(
+                    ids, Constants.MessageLocationType.SPAM.toString(),
+                    currentFolder.messageLocationTypeValue.toString()
+                )
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.MoveToFolder(
+                Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString()
+            )
+        }
+    }
 
     fun moveToTrash(
-        messageIds: List<String>,
+        ids: List<String>,
         currentFolder: Constants.MessageLocationType
-    ) = moveMessagesToFolder(
-        messageIds, Constants.MessageLocationType.TRASH.toString(),
-        currentFolder.messageLocationTypeValue.toString()
-    )
+    ) {
+        viewModelScope.launch {
+            if (conversationModeEnabled(currentFolder)) {
+                accountManager.getPrimaryUserId().first()?.let {
+                    moveConversationsToFolder(
+                        ids,
+                        it,
+                        Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
+                    )
+                }
+            } else {
+                moveMessagesToFolder(
+                    ids, Constants.MessageLocationType.TRASH.toString(),
+                    currentFolder.messageLocationTypeValue.toString()
+                )
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.MoveToFolder(
+                Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
+            )
+        }
+    }
 
     fun starMessage(
         ids: List<String>,

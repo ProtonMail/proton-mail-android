@@ -222,7 +222,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 }
                 setOnClickListener {
                     viewModel.moveToInbox(messageIds, messageLocation)
-                    dismissActionSheetAndGoToMailbox()
                 }
             }
             textViewDetailsActionsTrash.apply {
@@ -230,7 +229,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     .filter { it != Constants.MessageLocationType.TRASH }
                 setOnClickListener {
                     viewModel.moveToTrash(messageIds, messageLocation)
-                    dismissActionSheetAndGoToMailbox()
                 }
             }
             textViewDetailsActionsMoveToArchive.apply {
@@ -238,7 +236,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     .filter { it != Constants.MessageLocationType.ARCHIVE }
                 setOnClickListener {
                     viewModel.moveToArchive(messageIds, messageLocation)
-                    dismissActionSheetAndGoToMailbox()
                 }
             }
             textViewDetailsActionsMoveToSpam.apply {
@@ -246,7 +243,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     .filter { it != Constants.MessageLocationType.SPAM }
                 setOnClickListener {
                     viewModel.moveToSpam(messageIds, messageLocation)
-                    dismissActionSheetAndGoToMailbox()
                 }
             }
             textViewDetailsActionsDelete.apply {
@@ -324,6 +320,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             is MessageActionSheetAction.ShowMessageHeaders -> showMessageHeaders(sheetAction.messageHeaders)
             is MessageActionSheetAction.ChangeReadStatus -> dismissActionSheetAndGoToMailbox()
             is MessageActionSheetAction.ChangeStarredStatus -> dismiss()
+            is MessageActionSheetAction.MoveToFolder -> dismissActionSheetAndGoToMailbox()
             else -> Timber.v("unhandled action $sheetAction")
         }
     }
