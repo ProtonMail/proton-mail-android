@@ -173,7 +173,7 @@ internal class MessageDetailsAdapter(
 
             val expirationInfoView = itemView.expirationInfoView
             val displayRemoteContentButton = itemView.displayRemoteContentButton
-            val loadEmbeddedImagesContainer = itemView.containerLoadEmbeddedImagesContainer
+            val loadEmbeddedImagesButton = itemView.loadEmbeddedImagesButton
 
             expirationInfoView.bind(message.expirationTime)
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
@@ -197,10 +197,10 @@ internal class MessageDetailsAdapter(
                 messageBodyProgress.visibility = View.INVISIBLE
             }
             displayAttachmentInfo(listItem.message.attachments, attachmentsView)
-            loadEmbeddedImagesContainer.isVisible = listItem.showLoadEmbeddedImagesButton
+            loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
             setUpViewDividers()
 
-            setupMessageContentActions(position, loadEmbeddedImagesContainer, displayRemoteContentButton)
+            setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton)
         }
 
         private fun setupMessageContentActions(

@@ -80,7 +80,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         tools:visibility="visible" />
 
     <ch.protonmail.android.views.messageDetails.LoadContentButton
-        android:id="@+id/containerLoadEmbeddedImagesContainer"
+        android:id="@+id/loadEmbeddedImagesButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/message_spacing"
@@ -101,7 +101,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_margin="@dimen/fields_default_space_small"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/containerLoadEmbeddedImagesContainer"
+        app:layout_constraintTop_toBottomOf="@id/loadEmbeddedImagesButton"
         android:background="@color/warning"
         android:padding="@dimen/fields_default_space"
         android:textColor="@color/white"
