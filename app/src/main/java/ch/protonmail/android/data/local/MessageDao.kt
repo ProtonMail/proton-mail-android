@@ -27,8 +27,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ch.protonmail.android.data.local.model.Attachment
-import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_FILE_NAME
-import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_FILE_PATH
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_ID
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_MESSAGE_ID
 import ch.protonmail.android.data.local.model.COLUMN_CONVERSATION_ID
@@ -60,7 +58,6 @@ import timber.log.Timber
 @Dao
 interface MessageDao {
 
-    //region Messages
     @Query(
         """
         SELECT *
@@ -72,36 +69,6 @@ interface MessageDao {
     """
     )
     fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message>
-
-    @Query(
-        """
-        SELECT *
-        FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_IS_STARRED = 1
-        ORDER BY $COLUMN_MESSAGE_TIME DESC
-    """
-    )
-    fun getStarredMessagesAsync(): LiveData<List<Message>>
-
-    @Query(
-        """
-        SELECT *
-        FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'
-        ORDER BY $COLUMN_MESSAGE_TIME DESC
-    """
-    )
-    fun getMessagesByLabelIdAsync(label: String): LiveData<List<Message>>
-
-    @Query(
-        """
-        SELECT *
-        FROM $TABLE_MESSAGES
-        WHERE $COLUMN_MESSAGE_LOCATION = :location
-        ORDER BY $COLUMN_MESSAGE_TIME DESC
-    """
-    )
-    fun getMessagesByLocationAsync(location: Int): LiveData<List<Message>>
 
     @Query("SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location ")
     fun getMessagesCountByLocation(location: Int): Int
@@ -165,8 +132,6 @@ interface MessageDao {
             message.attachments = message.attachmentsBlocking(this)
         }
 
-    fun findMessageByIdAsync(messageId: String) = findMessageInfoByIdAsync(messageId)
-
     fun findMessageByIdSingle(messageId: String) = findMessageInfoByIdSingle(messageId)
 
     fun findMessageByIdObservable(messageId: String) = findMessageInfoByIdObservable(messageId)
@@ -175,19 +140,6 @@ interface MessageDao {
         .onEach { message ->
             message ?: return@onEach
             message.attachments = message.attachmentsBlocking(this)
-        }
-
-    fun findMessageByMessageDbIdBlocking(messageDbId: Long) = findMessageInfoByDbIdBlocking(messageDbId)
-        ?.also { message ->
-            message.attachments = message.attachmentsBlocking(this)
-        }
-
-    fun findMessageByDbId(dbId: Long): Flow<Message?> =
-        findMessageInfoByDbId(dbId).map { message ->
-            return@map message?.let {
-                it.attachments = it.attachmentsBlocking(this)
-                it
-            }
         }
 
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =
@@ -221,12 +173,6 @@ interface MessageDao {
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
     fun findMessageInfoByIdObservable(messageId: String): Flowable<Message>
-
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    fun findMessageInfoByIdAsync(messageId: String): LiveData<Message>
-
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID} = :messageDbId")
-    fun findMessageInfoByDbIdBlocking(messageDbId: Long): Message?
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
     fun findMessageInfoByDbId(messageDbId: Long): Flow<Message?>
@@ -331,11 +277,6 @@ interface MessageDao {
         return saveMessagesInfo(messages)
     }
 
-    @Deprecated("Use MessageDetailsRepository's methods that contain logic for large Message bodies")
-    suspend fun saveAllMessages(messages: List<Message>) {
-        messages.map { saveMessage(it) }
-    }
-
     @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location")
     fun deleteMessagesByLocation(location: Int)
 
@@ -358,20 +299,11 @@ interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveMessagesInfo(messages: List<Message>)
 
-    @Query("DELETE FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID} = :dbId")
-    fun deleteByDbId(dbId: Long)
-
     @Query("DELETE FROM $TABLE_MESSAGES")
     fun clearMessagesCache()
 
-    @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
-    fun deleteMessageById(messageId: String)
-
     @Delete
     fun deleteMessage(message: Message)
-
-    @Delete
-    fun deleteMessages(message: List<Message>)
 
     @Query(
         """
@@ -390,9 +322,7 @@ interface MessageDao {
     """
     )
     suspend fun updateStarred(messageId: String, starred: Boolean)
-    //endregion Messages
 
-    //region Attachments
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
     fun findAttachmentsByMessageIdAsync(messageId: String): LiveData<List<Attachment>>
@@ -400,30 +330,12 @@ interface MessageDao {
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
     fun findAttachmentsByMessageId(messageId: String): Flow<List<Attachment>>
 
-    @Query(
-        """
-        SELECT * 
-        FROM $TABLE_ATTACHMENTS
-        WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId
-          AND $COLUMN_ATTACHMENT_FILE_NAME = :fileName
-          AND $COLUMN_ATTACHMENT_FILE_PATH = :filePath
-    """
-    )
-    fun findAttachmentsByMessageIdFileNameAndPath(
-        messageId: String,
-        fileName: String,
-        filePath: String
-    ): Attachment
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAttachment(attachment: Attachment): Long
 
     @Deprecated("Use suspend function", ReplaceWith("saveAttachment(attachment)"))
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveAttachmentBlocking(attachment: Attachment): Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveAttachment(vararg attachments: Attachment): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAllAttachments(attachments: List<Attachment>): List<Long>
@@ -436,9 +348,6 @@ interface MessageDao {
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_ID=:correctId ")
     fun findAttachmentByIdCorrectId(correctId: String): Attachment?
-
-    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_ID=:correctId ")
-    fun findAttachmentByIdCorrectIdSingle(correctId: String): Single<Attachment>
 
     fun findAttachmentById(attachmentId: String): Attachment? {
         if (attachmentId.startsWith("PGPAttachment")) {
@@ -453,9 +362,8 @@ interface MessageDao {
 
     @Query("DELETE FROM $TABLE_ATTACHMENTS")
     fun clearAttachmentsCache()
-    //endregion
 
-    //region Labels
+
     @Query("SELECT * FROM $TABLE_LABELS")
     @Deprecated("Use with Flow", ReplaceWith("this.getAllLabels()"))
     fun getAllLabelsLiveData(): LiveData<List<Label>>
@@ -477,9 +385,6 @@ interface MessageDao {
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
     fun findLabelsByIdBlocking(labelIds: List<String>): List<Label>
 
-    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
-    fun findAllLabelsWithIdsAsync(labelIds: List<String>): LiveData<List<Label>>
-
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
     fun findLabelById(labelId: String): Label?
 
@@ -494,5 +399,4 @@ interface MessageDao {
 
     @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
     fun deleteLabelById(labelId: String)
-    //endregion
 }

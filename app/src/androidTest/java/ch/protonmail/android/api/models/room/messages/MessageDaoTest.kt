@@ -24,6 +24,8 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert
 import kotlin.test.Test
@@ -42,7 +44,7 @@ class MessageDaoTest : CoroutinesTest {
     }
 
     @Test
-    fun insertFindByIdShouldReturnTheSame() = coroutinesTest {
+    fun insertFindByIdShouldReturnTheSame() = runBlocking {
         val expected = createBaseMessage()
         val id = "testId"
         expected.messageId = id
@@ -52,17 +54,17 @@ class MessageDaoTest : CoroutinesTest {
     }
 
     @Test
-    fun insertFindByMessageDbIdShouldReturnTheSame() = coroutinesTest {
+    fun insertFindByMessageDbIdShouldReturnTheSame() = runBlocking {
         val expected = createBaseMessage()
         val id = "testId"
         expected.messageId = id
         val dbId = initiallyEmptyDatabase.saveMessage(expected)
-        val actual = initiallyEmptyDatabase.findMessageByMessageDbIdBlocking(dbId)
+        val actual = initiallyEmptyDatabase.findMessageByMessageDbId(dbId).first()
         Assert.assertEquals(expected, actual)
     }
 
     @Test
-    fun insertFindMessageLabelIdShouldReturnTheAppropriate() = coroutinesTest {
+    fun insertFindMessageLabelIdShouldReturnTheAppropriate() = runBlocking {
         val message1 = createBaseMessage()
         message1.messageId = "1"
         message1.allLabelIDs = listOf("1", "5", "10")
@@ -73,7 +75,7 @@ class MessageDaoTest : CoroutinesTest {
         message3.messageId = "3"
         message3.allLabelIDs = listOf("1", "5")
 
-        initiallyEmptyDatabase.saveAllMessages(listOf(message1, message2, message3))
+        initiallyEmptyDatabase.saveMessages(listOf(message1, message2, message3))
 
         val expected = listOf(message1, message3)
         val actual = initiallyEmptyDatabase.getMessagesByLabelId("5").sortedBy(Message::messageId)
@@ -81,7 +83,7 @@ class MessageDaoTest : CoroutinesTest {
     }
 
     @Test
-    fun insertFindMessageLabelIdShouldReturnTheAppropriateSecond() = coroutinesTest {
+    fun insertFindMessageLabelIdShouldReturnTheAppropriateSecond() = runBlocking {
         val message1 = createBaseMessage()
         message1.messageId = "1"
         message1.allLabelIDs = listOf("1", "abcdef50abcdef", "10")
@@ -101,7 +103,7 @@ class MessageDaoTest : CoroutinesTest {
         message6.messageId = "6"
         message6.allLabelIDs = listOf("1", "aaaa5oaaaaaaa")
 
-        initiallyEmptyDatabase.saveAllMessages(listOf(message1, message2, message3, message4, message5))
+        initiallyEmptyDatabase.saveMessages(listOf(message1, message2, message3, message4, message5))
 
         val expected = listOf(message1, message3, message4, message5)
         val actual = initiallyEmptyDatabase.getMessagesByLabelId("50").sortedBy(Message::messageId)
@@ -109,7 +111,7 @@ class MessageDaoTest : CoroutinesTest {
     }
 
     @Test
-    fun testUpdateGoesFine() = coroutinesTest {
+    fun testUpdateGoesFine() = runBlocking {
         val message1 = createBaseMessage()
         message1.messageId = "1"
         message1.allLabelIDs = listOf("1", "5", "10")
@@ -120,7 +122,7 @@ class MessageDaoTest : CoroutinesTest {
         message3.messageId = "3"
         message3.allLabelIDs = listOf("1", "5")
 
-        initiallyEmptyDatabase.saveAllMessages(listOf(message1, message2, message3))
+        initiallyEmptyDatabase.saveMessages(listOf(message1, message2, message3))
         val savedMessage = initiallyEmptyDatabase.findMessageByIdBlocking("2")
         savedMessage?.Unread = true
         initiallyEmptyDatabase.saveMessage(savedMessage!!)

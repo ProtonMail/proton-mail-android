@@ -43,7 +43,6 @@ import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.utils.MessageUtils
-import ch.protonmail.android.utils.extensions.asyncMap
 import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.JobManager
 import com.squareup.inject.assisted.Assisted
@@ -99,9 +98,6 @@ class MessageDetailsRepository @Inject constructor(
         messagesDao = databaseProvider.provideMessageDao(userId)
     }
 
-    fun findMessageByIdAsync(messageId: String): LiveData<Message> =
-        messagesDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
-
     fun findMessageByIdBlocking(messageId: String): Message? =
         messagesDao.findMessageByIdBlocking(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
@@ -122,9 +118,6 @@ class MessageDetailsRepository @Inject constructor(
         runBlocking {
             findMessageByMessageDbId(messageDbId).first()
         }
-
-    fun findMessageByDbId(messageDbId: Long): Flow<Message?> =
-        messagesDao.findMessageByDbId(messageDbId)
 
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =
         messagesDao.findAllMessageByLastMessageAccessTime(laterThan)
@@ -162,13 +155,6 @@ class MessageDetailsRepository @Inject constructor(
             }
         }
     }
-
-    fun getStarredMessagesAsync(): LiveData<List<Message>> = messagesDao.getStarredMessagesAsync()
-
-    fun getMessagesByLabelIdAsync(label: String): LiveData<List<Message>> = messagesDao.getMessagesByLabelIdAsync(label)
-
-    fun getMessagesByLocationAsync(location: Int): LiveData<List<Message>> =
-        messagesDao.getMessagesByLocationAsync(location)
 
     fun getAllMessages(): LiveData<List<Message>> = messagesDao.getAllMessages()
 
