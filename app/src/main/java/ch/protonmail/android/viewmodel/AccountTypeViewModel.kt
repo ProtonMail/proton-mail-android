@@ -43,21 +43,13 @@ class AccountTypeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val fetchPaymentMethodsData = MutableLiveData<FetchPaymentMethodsResult>()
-    private val _upgradeState = MutableLiveData<State>()
+    private val upgradeState = MutableLiveData<State>()
 
-    val upgradeState: LiveData<State>
-        get() = _upgradeState
+    val upgradeStateResult: LiveData<State>
+        get() = upgradeState
 
     val fetchPaymentMethodsResult: LiveData<FetchPaymentMethodsResult>
         get() = fetchPaymentMethodsData
-
-
-    sealed class State {
-        data class Success(val result: UpgradeResult) : State()
-        sealed class Error : State() {
-            data class Message(val message: String?) : Error()
-        }
-    }
 
     fun register(context: ComponentActivity) {
         plansOrchestrator.register(context)
@@ -73,18 +65,32 @@ class AccountTypeViewModel @Inject constructor(
     fun onUpgradeClicked() {
         viewModelScope.launch {
             accountManager.getPrimaryUserId().first()?.let {
-                val account = accountManager.getAccount(it).first() ?: return@launch
+                val account = accountManager.getAccount(it).first()
+                if (account == null) {
+                    upgradeState.value = State.Error.PrimaryUser
+                    return@launch
+                }
                 with(plansOrchestrator) {
                     onUpgradeResult { upgradeResult ->
                         // do something with the upgrade result
                         if (upgradeResult != null) {
-                            _upgradeState.value = State.Success(upgradeResult)
+                            upgradeState.value = State.Success(upgradeResult)
                         }
                     }
 
                     plansOrchestrator.startUpgradeWorkflow(account.userId)
                 }
+            } ?: run {
+                upgradeState.value = State.Error.PrimaryUser
             }
+        }
+    }
+
+    sealed class State {
+        data class Success(val result: UpgradeResult) : State()
+        sealed class Error : State() {
+            object PrimaryUser : Error()
+            data class Message(val message: String?) : Error()
         }
     }
 }
