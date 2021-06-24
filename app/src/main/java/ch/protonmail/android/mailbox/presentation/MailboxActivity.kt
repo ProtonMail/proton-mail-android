@@ -169,9 +169,7 @@ private const val PLAY_SERVICES_RESOLUTION_REQUEST = 9000
 private const val STATE_MAILBOX_LOCATION = "mailbox_location"
 private const val STATE_MAILBOX_LABEL_LOCATION = "mailbox_label_location"
 private const val STATE_MAILBOX_LABEL_LOCATION_NAME = "mailbox_label_location_name"
-const val LOADER_ID = 0
 const val LOADER_ID_LABELS_OFFLINE = 32
-private const val REQUEST_CODE_TRASH_MESSAGE_DETAILS = 1
 private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
 
 @AndroidEntryPoint
@@ -1288,10 +1286,6 @@ class MailboxActivity :
         if (resultCode == Activity.RESULT_OK) {
 
             when (requestCode) {
-                REQUEST_CODE_TRASH_MESSAGE_DETAILS -> {
-//                    move_to_trash.visibility = View.VISIBLE
-//                    handler.postDelayed({ move_to_trash.visibility = View.GONE }, 1000)
-                }
                 REQUEST_CODE_VALIDATE_PIN -> {
                     requireNotNull(data) { "No data for request $requestCode" }
                     if (EXTRA_TOTAL_COUNT_EVENT in data) {
@@ -1392,7 +1386,7 @@ class MailboxActivity :
                     MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID,
                     messageLocation?.messageLocationTypeValue
                 )
-                mailboxActivity?.startActivityForResult(intent, REQUEST_CODE_TRASH_MESSAGE_DETAILS)
+                mailboxActivity?.startActivity(intent)
             }
         }
     }
