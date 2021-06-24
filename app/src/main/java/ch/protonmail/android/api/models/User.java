@@ -108,7 +108,7 @@ public class User {
 
     private String mobileFooter;
     private boolean ShowMobileFooter = true;
-    private boolean ShowSignature = false;
+    private boolean ShowSignature = true;
 
     // new
 
@@ -236,7 +236,7 @@ public class User {
             user.ShowMobileFooter = true;
             user.setShowMobileFooter(true);
         }
-        user.ShowSignature = securePrefs.getBoolean(PREF_DISPLAY_SIGNATURE, false);
+        user.ShowSignature = securePrefs.getBoolean(PREF_DISPLAY_SIGNATURE, true);
         user.NotificationSetting = user.loadNotificationSettingsFromBackup();
         user.BackgroundSync = securePrefs.getBoolean(PREF_BACKGROUND_SYNC, true);
         user.PreventTakingScreenshots = securePrefs.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
