@@ -412,7 +412,10 @@ interface MessageDao {
     fun findLabelsByIdBlocking(labelIds: List<String>): List<Label>
 
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
-    fun findLabelById(labelId: String): Label?
+    fun findLabelByIdBlocking(labelId: String): Label?
+
+    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
+    suspend fun findLabelById(labelId: String): Label?
 
     @Query("DELETE FROM $TABLE_LABELS")
     fun clearLabelsCache()

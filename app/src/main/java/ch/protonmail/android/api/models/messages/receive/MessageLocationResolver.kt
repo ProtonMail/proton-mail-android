@@ -71,7 +71,7 @@ class MessageLocationResolver @Inject constructor(
     }
 
     private fun resolveLabelType(labelId: String): Constants.MessageLocationType {
-        val label = messageDao?.findLabelById(labelId)
+        val label = messageDao?.findLabelByIdBlocking(labelId)
         return if (label != null && label.exclusive) {
             Constants.MessageLocationType.LABEL_FOLDER
         } else {

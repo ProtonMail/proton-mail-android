@@ -61,6 +61,7 @@ import kotlin.math.max
 import kotlin.time.toDuration
 
 const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
+private const val MAX_LOCATION_ID_LENGTH = 2 // For non-custom locations such as: Inbox, Sent, Archive etc.
 
 class ConversationsRepositoryImpl @Inject constructor(
     private val conversationDao: ConversationDao,
@@ -176,25 +177,13 @@ class ConversationsRepositoryImpl @Inject constructor(
         labelConversationsRemoteWorker.enqueue(conversationIds, starredLabelId, userId)
 
         conversationIds.forEach { conversationId ->
-            var lastMessageTimeMs = 0L
+            var lastMessageTime = 0L
             messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
                 messageDao.updateStarred(message.messageId!!, true)
-                lastMessageTimeMs = max(lastMessageTimeMs, message.time)
+                lastMessageTime = max(lastMessageTime, message.time)
             }
 
-            val conversation = conversationDao.getConversation(conversationId, userId.id).first()
-            val newLabel = LabelContextDatabaseModel(
-                starredLabelId,
-                conversation.numUnread,
-                conversation.numMessages,
-                lastMessageTimeMs,
-                conversation.size.toInt(),
-                conversation.numAttachments
-            )
-            val labels = conversation.labels.toMutableList()
-            labels.removeIf { it.id == starredLabelId }
-            labels.add(newLabel)
-            conversationDao.updateLabels(labels, conversationId)
+            addLabelsToConversation(conversationId, userId, listOf(starredLabelId), lastMessageTime)
         }
     }
 
@@ -204,15 +193,118 @@ class ConversationsRepositoryImpl @Inject constructor(
         unlabelConversationsRemoteWorker.enqueue(conversationIds, starredLabelId, userId)
 
         conversationIds.forEach { conversationId ->
-            val conversation = conversationDao.getConversation(conversationId, userId.id).first()
-            val labels = conversation.labels.toMutableList()
-            labels.removeIf { it.id == starredLabelId }
-            conversationDao.updateLabels(labels, conversationId)
+            removeLabelsFromConversation(conversationId, userId, listOf(starredLabelId))
 
             messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
                 messageDao.updateStarred(message.messageId!!, false)
             }
         }
+    }
+
+    override suspend fun moveToFolder(
+        conversationIds: List<String>,
+        userId: UserId,
+        folderId: String
+    ) {
+        labelConversationsRemoteWorker.enqueue(conversationIds, folderId, userId)
+
+        conversationIds.forEach { conversationId ->
+            var lastMessageTime = 0L
+            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+                val labelsToRemoveFromMessage = getLabelIdsForRemovingWhenMovingToFolder(message.allLabelIDs)
+                val labelsToAddToMessage = getLabelIdsForAddingWhenMovingToFolder(folderId, message.allLabelIDs)
+                message.removeLabels(labelsToRemoveFromMessage.toList())
+                message.addLabels(labelsToAddToMessage.toList())
+                messageDao.saveMessage(message)
+                lastMessageTime = max(lastMessageTime, message.time)
+            }
+
+            val conversation = conversationDao.getConversation(conversationId, userId.id).first()
+            val labelsToRemoveFromConversation = getLabelIdsForRemovingWhenMovingToFolder(
+                conversation.labels.map { it.id }
+            )
+            removeLabelsFromConversation(conversationId, userId, labelsToRemoveFromConversation)
+            addLabelsToConversation(conversationId, userId, listOf(folderId), lastMessageTime)
+        }
+    }
+
+    /**
+     * When we move a conversation to Inbox, the destination folder is not always the only destination
+     * that needs to be added to the list of label ids. When the conversation contains messages that are
+     * drafts or sent messages, the DRAFT and SENT locations need to be added to the list of label ids as well.
+     */
+    private fun getLabelIdsForAddingWhenMovingToFolder(
+        destinationFolderId: String,
+        labelIds: Collection<String>
+    ): Collection<String> {
+        val labelsToBeAdded = mutableListOf(destinationFolderId)
+        if (destinationFolderId == Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()) {
+            if (labelIds.contains(Constants.MessageLocationType.ALL_SENT.messageLocationTypeValue.toString())) {
+                labelsToBeAdded.add(Constants.MessageLocationType.SENT.messageLocationTypeValue.toString())
+            }
+            if (labelIds.contains(Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue.toString())) {
+                labelsToBeAdded.add(Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString())
+            }
+        }
+        return labelsToBeAdded
+    }
+
+    /**
+     * Filter out the non-exclusive labels and locations like: ALL_DRAFT, ALL_SENT, ALL_MAIL, that shouldn't be
+     * removed when moving a conversation to folder.
+     */
+    private suspend fun getLabelIdsForRemovingWhenMovingToFolder(labelIds: Collection<String>): Collection<String> {
+        return labelIds.filter { labelId ->
+            val isLabelExclusive = if (labelId.length > MAX_LOCATION_ID_LENGTH) {
+                messageDao.findLabelById(labelId)?.exclusive ?: false
+            } else {
+                true
+            }
+
+            return@filter isLabelExclusive &&
+                labelId !in arrayOf(
+                Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue.toString(),
+                Constants.MessageLocationType.ALL_SENT.messageLocationTypeValue.toString(),
+                Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue.toString(),
+                Constants.MessageLocationType.STARRED.messageLocationTypeValue.toString()
+            )
+        }
+    }
+
+    private suspend fun addLabelsToConversation(
+        conversationId: String,
+        userId: UserId,
+        labelIds: Collection<String>,
+        lastMessageTime: Long
+    ) {
+        val conversation = conversationDao.getConversation(conversationId, userId.id).first()
+        val newLabels = mutableListOf<LabelContextDatabaseModel>()
+        labelIds.forEach { labelId ->
+            val newLabel = LabelContextDatabaseModel(
+                labelId,
+                conversation.numUnread,
+                conversation.numMessages,
+                lastMessageTime,
+                conversation.size.toInt(),
+                conversation.numAttachments
+            )
+            newLabels.add(newLabel)
+        }
+        val labels = conversation.labels.toMutableList()
+        labels.removeIf { it.id in labelIds }
+        labels.addAll(newLabels)
+        conversationDao.updateLabels(labels, conversationId)
+    }
+
+    private suspend fun removeLabelsFromConversation(
+        conversationId: String,
+        userId: UserId,
+        labelIds: Collection<String>
+    ) {
+        val conversation = conversationDao.getConversation(conversationId, userId.id).first()
+        val labels = conversation.labels.toMutableList()
+        labels.removeIf { it.id in labelIds }
+        conversationDao.updateLabels(labels, conversationId)
     }
 
     private fun getConversationsLocal(params: GetConversationsParameters): Flow<List<Conversation>> =

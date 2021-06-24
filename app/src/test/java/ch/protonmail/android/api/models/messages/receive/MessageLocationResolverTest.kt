@@ -122,7 +122,7 @@ class MessageLocationResolverTest {
         val testLabel = mockk<Label> {
             every { exclusive } returns true
         }
-        every { messageDao.findLabelById(any()) } returns testLabel
+        every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
 
         // when
         val result = messageFactory.resolveLocationFromLabels(testLabelIds)
@@ -142,7 +142,7 @@ class MessageLocationResolverTest {
         val testLabel = mockk<Label> {
             every { exclusive } returns false
         }
-        every { messageDao.findLabelById(any()) } returns testLabel
+        every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
 
         // when
         val result = messageFactory.resolveLocationFromLabels(testLabelIds)
@@ -163,7 +163,7 @@ class MessageLocationResolverTest {
         val testLabel = mockk<Label> {
             every { exclusive } returns true
         }
-        every { messageDao.findLabelById(any()) } returns testLabel
+        every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
 
         // when
         val result = messageFactory.resolveLocationFromLabels(testLabelIds)
@@ -186,7 +186,7 @@ class MessageLocationResolverTest {
         val testLabel = mockk<Label> {
             every { exclusive } returns true
         }
-        every { messageDao.findLabelById(any()) } returns testLabel
+        every { messageDao.findLabelByIdBlocking(any()) } returns testLabel
 
         // when
         val result = messageFactory.resolveLocationFromLabels(testLabelIds)

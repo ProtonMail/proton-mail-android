@@ -60,4 +60,6 @@ interface ConversationsRepository {
     suspend fun star(conversationIds: List<String>, userId: UserId)
 
     suspend fun unstar(conversationIds: List<String>, userId: UserId)
+
+    suspend fun moveToFolder(conversationIds: List<String>, userId: UserId, folderId: String)
 }
