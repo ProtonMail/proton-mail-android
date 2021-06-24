@@ -27,6 +27,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
@@ -437,6 +438,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             // Then
             withCapturedDraftBody { draftBody ->
                 assertEquals(1, draftBody.attachmentKeyPackets.size)
+                assertEquals("attachment1", draftBody.attachmentKeyPackets.keys.first())
             }
         }
     }
@@ -1165,6 +1167,74 @@ class CreateDraftWorkerTest : CoroutinesTest {
             assertEquals(expectedMessage, actualMessage.captured)
             assertEquals(expectedMessage.attachments, actualMessage.captured.attachments)
         }
+    }
+
+    @Test
+    fun failsIfMessageHasNullMessageId() = runBlockingTest {
+        val message = Message().apply {
+            addressID = "addressId"
+        }
+        every { messageDetailsRepository.findMessageByMessageDbId(any()) } returns flowOf(message)
+        val expectedErrorData = workDataOf(
+            Pair(
+                KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
+                CreateDraftWorkerErrors.MessageHasNullId.name
+            )
+        )
+        val expectedResult = ListenableWorker.Result.failure(expectedErrorData)
+
+        // when
+        val result = worker.doWork()
+
+        // then
+        assertEquals(expectedResult, result)
+    }
+
+    @Test
+    fun failsIfMessageHasNullBody() = runBlockingTest {
+        // given
+        val message = Message().apply {
+            messageId = "messageId"
+            addressID = "addressId"
+        }
+        every { messageDetailsRepository.findMessageByMessageDbId(any()) } returns flowOf(message)
+        val expectedErrorData = workDataOf(
+            Pair(
+                KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
+                CreateDraftWorkerErrors.MessageHasNullBody.name
+            )
+        )
+        val expectedResult = ListenableWorker.Result.failure(expectedErrorData)
+
+        // when
+        val result = worker.doWork()
+
+        // then
+        assertEquals(expectedResult, result)
+    }
+
+    @Test
+    fun failsIfMessageHasBlankBody() = runBlockingTest {
+        // given
+        val message = Message().apply {
+            messageId = "messageId"
+            addressID = "addressId"
+            messageBody = "  "
+        }
+        every { messageDetailsRepository.findMessageByMessageDbId(any()) } returns flowOf(message)
+        val expectedErrorData = workDataOf(
+            Pair(
+                KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
+                CreateDraftWorkerErrors.MessageHasBlankBody.name
+            )
+        )
+        val expectedResult = ListenableWorker.Result.failure(expectedErrorData)
+
+        // when
+        val result = worker.doWork()
+
+        // then
+        assertEquals(expectedResult, result)
     }
 
     /**

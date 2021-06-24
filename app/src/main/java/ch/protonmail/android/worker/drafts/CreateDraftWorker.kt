@@ -32,6 +32,9 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import arrow.core.Either
+import arrow.core.Left
+import arrow.core.right
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
@@ -52,6 +55,7 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.Address
+import ch.protonmail.android.domain.util.orThrow
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.notifier.UserNotifier
@@ -102,9 +106,12 @@ class CreateDraftWorker @AssistedInject constructor(
         val senderAddressId = requireNotNull(message.addressID)
         val senderAddress = requireNotNull(getSenderAddress(senderAddressId))
         val parentId = getInputParentId()
-        val messageId = requireNotNull(message.messageId)
+        val messageId = message.messageId
+            ?: return failureWithError(CreateDraftWorkerErrors.MessageHasNullId)
 
-        val draftBody = buildDraftBody(userId, senderAddress, message, parentId)
+        val draftBody = buildDraftBody(userId, senderAddress, Id(messageId), message, parentId)
+            .mapLeft { return failureWithError(it) }
+            .orThrow()
 
         return runCatching {
             if (isDraftBeingCreated(message)) {
@@ -143,9 +150,10 @@ class CreateDraftWorker @AssistedInject constructor(
     private suspend fun buildDraftBody(
         userId: Id,
         senderAddress: Address,
+        messageId: Id,
         message: Message,
         parentId: String?
-    ): DraftBody {
+    ): Either<CreateDraftWorkerErrors, DraftBody> {
         val initialDraftBody = messageFactory.createDraftApiRequest(message)
 
         val withParentDraftBody = if (parentId != null && isDraftBeingCreated(message)) {
@@ -162,21 +170,26 @@ class CreateDraftWorker @AssistedInject constructor(
             initialDraftBody
         }
 
-        val messageId = requireNotNull(message.messageId)
-        val attachments = messageDetailsRepository.findAttachmentsByMessageId(messageId)
+        val attachments = messageDetailsRepository.findAttachmentsByMessageId(messageId.s)
         val messageAttachmentsKeyPackets = buildMessageAttachmentsKeyPacketsMap(attachments, senderAddress)
 
-        val encryptedMessage = requireNotNull(message.messageBody)
+        val messageBody = message.messageBody
+            ?: return Left(CreateDraftWorkerErrors.MessageHasNullBody)
+        if (messageBody.isBlank()) {
+            return Left(CreateDraftWorkerErrors.MessageHasBlankBody)
+        }
+
         val messageSender = buildMessageSender(message, senderAddress)
-        val messageSenderAddress =
-            checkNotNull(messageSender.emailAddress) { "Sender address is required to create a Payload" }
+        val messageSenderAddress = messageSender.emailAddress
+            ?: return Left(CreateDraftWorkerErrors.MessageHasNullSenderAddress)
+
         return withParentDraftBody.copy(
             message = withParentDraftBody.message.copy(
-                body = encryptedMessage,
+                body = messageBody,
                 sender = ServerMessageSender(messageSender.name, messageSenderAddress)
             ),
             attachmentKeyPackets = messageAttachmentsKeyPackets + withParentDraftBody.attachmentKeyPackets
-        )
+        ).right()
     }
 
     private fun buildMessageAttachmentsKeyPacketsMap(
