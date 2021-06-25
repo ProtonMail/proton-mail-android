@@ -31,6 +31,7 @@ import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -51,7 +52,6 @@ import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
 import ch.protonmail.android.views.PMWebViewClient
-import ch.protonmail.android.views.messageDetails.LoadContentButton
 import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
@@ -209,9 +209,9 @@ internal class MessageDetailsAdapter(
 
         private fun setupMessageContentActions(
             position: Int,
-            loadEmbeddedImagesContainer: LoadContentButton,
-            displayRemoteContentButton: LoadContentButton,
-            editDraftButton: LoadContentButton
+            loadEmbeddedImagesContainer: Button,
+            displayRemoteContentButton: Button,
+            editDraftButton: Button
         ) {
             loadEmbeddedImagesContainer.setOnClickListener { view ->
                 view.visibility = View.GONE

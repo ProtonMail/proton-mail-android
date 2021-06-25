@@ -64,7 +64,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/attachmentsView" />
 
-    <ch.protonmail.android.views.messageDetails.LoadContentButton
+    <Button
         android:id="@+id/displayRemoteContentButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -76,10 +76,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/expirationInfoView"
         android:visibility="gone"
-        app:text="@string/display_images"
+        android:text="@string/display_images"
+        app:icon="@drawable/mail_showimages"
+        app:iconGravity="textStart"
+        android:drawableTint="@color/white"
         tools:visibility="visible" />
 
-    <ch.protonmail.android.views.messageDetails.LoadContentButton
+    <Button
         android:id="@+id/loadEmbeddedImagesButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -91,10 +94,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/displayRemoteContentButton"
         android:visibility="gone"
-        app:text="@string/load_embedded_images"
+        android:text="@string/load_embedded_images"
+        app:icon="@drawable/mail_showimages"
+        app:iconGravity="textStart"
+        android:drawableTint="@color/white"
         tools:visibility="visible" />
 
-    <ch.protonmail.android.views.messageDetails.LoadContentButton
+    <Button
         android:id="@+id/editDraftButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -106,7 +112,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/loadEmbeddedImagesButton"
         android:visibility="gone"
-        app:text="@string/edit_draft"
+        android:text="@string/edit_draft"
+        android:gravity="center"
+        app:icon="@drawable/ic_pencil"
+        app:iconGravity="textStart"
+        android:drawableTint="@color/white"
         tools:visibility="visible" />
 
     <TextView
