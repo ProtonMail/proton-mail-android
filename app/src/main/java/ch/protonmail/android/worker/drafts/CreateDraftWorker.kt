@@ -48,6 +48,7 @@ import ch.protonmail.android.core.Constants.MessageActionType.REPLY_ALL
 import ch.protonmail.android.core.DetailedException
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.core.apiError
+import ch.protonmail.android.core.messageId
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
@@ -146,7 +147,7 @@ class CreateDraftWorker @WorkerInject constructor(
                 )
             },
             onFailure = {
-                retryOrFail(it, createDraftRequest.message.subject)
+                retryOrFail(it.messageId(messageId), createDraftRequest.message.subject)
             }
         )
     }
