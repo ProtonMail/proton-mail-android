@@ -31,8 +31,7 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
-import ch.protonmail.android.events.RefreshDrawerEvent;
-import ch.protonmail.android.utils.AppUtil;
+import timber.log.Timber;
 
 public class PostArchiveJob extends ProtonMailCounterJob {
 
@@ -70,6 +69,7 @@ public class PostArchiveJob extends ProtonMailCounterJob {
                         }
                     }
                 }
+                Timber.v("Archive message id: %s, labels: %s", message.getMessageId(), message.getAllLabelIDs());
                 getMessageDetailsRepository().saveMessageBlocking(message);
             }
         }
@@ -80,7 +80,6 @@ public class PostArchiveJob extends ProtonMailCounterJob {
         }
         unreadLocationCounter.increment(totalUnread);
         counterDao.insertUnreadLocation(unreadLocationCounter);
-        AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 
     private boolean markMessageLocally(CounterDao counterDao,
@@ -102,6 +101,7 @@ public class PostArchiveJob extends ProtonMailCounterJob {
         } else {
             message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
         }
+        Timber.d("Archive locally message id: %s, labels: %s", message.getMessageId(), message.getAllLabelIDs());
         getMessageDetailsRepository().saveMessageBlocking(message);
         return unreadIncrease;
     }

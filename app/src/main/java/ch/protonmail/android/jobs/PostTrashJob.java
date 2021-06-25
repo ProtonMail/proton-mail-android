@@ -31,8 +31,6 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
-import ch.protonmail.android.events.RefreshDrawerEvent;
-import ch.protonmail.android.utils.AppUtil;
 
 public class PostTrashJob extends ProtonMailCounterJob {
 
@@ -84,7 +82,6 @@ public class PostTrashJob extends ProtonMailCounterJob {
         }
         unreadLocationCounter.increment(totalUnread);
         counterDao.insertUnreadLocation(unreadLocationCounter);
-        AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 
     @Override

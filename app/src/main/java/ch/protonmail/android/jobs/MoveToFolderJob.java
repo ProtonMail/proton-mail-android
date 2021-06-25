@@ -34,8 +34,6 @@ import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
-import ch.protonmail.android.events.RefreshDrawerEvent;
-import ch.protonmail.android.utils.AppUtil;
 
 public class MoveToFolderJob extends ProtonMailBaseJob {
     private List<String> mMessageIds;
@@ -74,7 +72,6 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
         }
         unreadLocationCounter.increment(totalUnread);
         counterDao.insertUnreadLocation(unreadLocationCounter);
-        AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 
     @Override

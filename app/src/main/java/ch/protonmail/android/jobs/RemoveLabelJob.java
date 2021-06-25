@@ -30,8 +30,6 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLabelCounter;
-import ch.protonmail.android.events.RefreshDrawerEvent;
-import ch.protonmail.android.utils.AppUtil;
 
 public class RemoveLabelJob extends ProtonMailBaseJob {
 
@@ -66,7 +64,6 @@ public class RemoveLabelJob extends ProtonMailBaseJob {
         }
         unreadLabelCounter.increment(totalUnread);
         counterDao.insertUnreadLabel(unreadLabelCounter);
-        AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 
     @Override
@@ -92,7 +89,6 @@ public class RemoveLabelJob extends ProtonMailBaseJob {
         }
         unreadLabelCounter.decrement(totalUnread);
         counterDao.insertUnreadLabel(unreadLabelCounter);
-        AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 
     @Override
