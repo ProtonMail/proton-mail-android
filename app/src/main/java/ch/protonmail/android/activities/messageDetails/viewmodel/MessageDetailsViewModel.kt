@@ -78,12 +78,13 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.proton.core.domain.arch.DataResult
@@ -239,33 +240,32 @@ internal class MessageDetailsViewModel @Inject constructor(
         messageRepository.markUnRead(listOf(messageOrConversationId))
     }
 
-    fun loadMessageBody(message: Message): Flow<Message> {
-        val decryptedMessageFlow = MutableSharedFlow<Message>(1)
+    fun loadMessageBody(message: Message) = flow {
+        Timber.v("loadMessageBody ${message.messageId} isNotDecrypted: ${message.decryptedHTML.isNullOrEmpty()}")
 
-        viewModelScope.launch(dispatchers.Io) {
-            message.decryptedHTML?.let {
-                decryptedMessageFlow.emit(message)
-                return@launch
-            }
-
+        if (!message.decryptedHTML.isNullOrEmpty()) {
+            emit(message)
+        } else {
             val userId = userManager.requireCurrentUserId()
-            val fetchedMessage = messageRepository.getMessage(userId, message.messageId!!, true)
+            val messageId = requireNotNull(message.messageId)
+            val fetchedMessage = messageRepository.getMessage(userId, messageId, true)
             val isDecrypted = fetchedMessage?.tryDecrypt(publicKeys)
             if (isDecrypted == true) {
-                if (!fetchedMessage.isRead) {
-                    messageRepository.markRead(listOf(fetchedMessage.messageId!!))
+                Timber.v("message $messageId isDecrypted, isRead: ${fetchedMessage.isRead}")
+                if (!message.isRead) {
+                    messageRepository.markRead(listOf(messageId))
                 }
-
-                decryptedMessageFlow.emit(fetchedMessage)
+                emit(fetchedMessage)
             }
         }
-        return decryptedMessageFlow
     }
+        .flowOn(dispatchers.Io)
 
     fun loadMailboxItemDetails() {
         viewModelScope.launch(dispatchers.Io) {
             val userId = userManager.requireCurrentUserId()
 
+            Timber.v("loadMailboxItemDetails conversation: ${conversationModeEnabled(location)}, location: $location")
             if (conversationModeEnabled(location)) {
                 loadConversationDetails(userId)
                 return@launch
@@ -301,7 +301,8 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     private suspend fun onConversationLoaded(
-        conversation: Conversation, userId: Id
+        conversation: Conversation,
+        userId: Id
     ) {
         val messages = conversation.messages?.mapNotNull { message ->
             messageRepository.findMessageOnce(userId, message.id)?.let { localMessage ->
@@ -321,7 +322,6 @@ internal class MessageDetailsViewModel @Inject constructor(
             messages = messages.sortedBy { it.time }
         )
         emitConversationUiItem(conversationUiItem)
-
     }
 
     private fun emitConversationUiItem(conversationUiModel: ConversationUiModel) {
@@ -557,7 +557,6 @@ internal class MessageDetailsViewModel @Inject constructor(
 
         publicKeys = pubKeys
         refreshedKeys = false
-        message?.let { emitConversationUiItem(it.toConversationUiModel()) }
 
         fetchingPubKeys = false
         renderedFromCache = AtomicBoolean(false)
@@ -580,7 +579,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun getParsedMessage(
-        decryptedMessageHtml: String?,
+        decryptedMessageHtml: String,
         windowWidth: Int,
         css: String,
         defaultErrorMessage: String

@@ -30,7 +30,11 @@ class MarkReadSwipeHandler : ISwipeHandler {
         return PostReadJob(listOf(message.messageId))
     }
 
-    override fun handleUndo(message: SimpleMessage, messageLocation: Constants.MessageLocationType, currentLocation: String?): Job {
+    override fun handleUndo(
+        message: SimpleMessage,
+        messageLocation: Constants.MessageLocationType,
+        currentLocation: String?
+    ): Job {
         return PostUnreadJob(listOf(message.messageId))
     }
 }
