@@ -18,13 +18,6 @@
  */
 package ch.protonmail.android.utils;
 
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
-import static ch.protonmail.android.core.Constants.RESPONSE_CODE_API_OFFLINE;
-import static ch.protonmail.android.core.ProtonMailApplication.getApplication;
-import static ch.protonmail.android.core.UserManagerKt.PREF_PIN;
-import static ch.protonmail.android.prefs.SecureSharedPreferencesKt.PREF_SYMMETRIC_KEY;
-
 import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -37,6 +30,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 
 import com.birbit.android.jobqueue.JobManager;
 
@@ -74,6 +68,13 @@ import ch.protonmail.android.mailbox.data.local.ConversationDao;
 import ch.protonmail.android.storage.AttachmentClearingService;
 import ch.protonmail.android.storage.MessageBodyClearingService;
 import timber.log.Timber;
+
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
+import static ch.protonmail.android.core.Constants.RESPONSE_CODE_API_OFFLINE;
+import static ch.protonmail.android.core.ProtonMailApplication.getApplication;
+import static ch.protonmail.android.core.UserManagerKt.PREF_PIN;
+import static ch.protonmail.android.prefs.SecureSharedPreferencesKt.PREF_SYMMETRIC_KEY;
 
 public class AppUtil {
 
@@ -381,7 +382,7 @@ public class AppUtil {
      * Deletes global Shared Preferences and preserves some important values.
      */
     public static void deletePrefs() {
-        SharedPreferences defaultSharedPrefs = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+        SharedPreferences defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(ProtonMailApplication.getApplication());
 
         String sekrit = defaultSharedPrefs.getString(PREF_SYMMETRIC_KEY, null);
         defaultSharedPrefs.edit().clear().apply();

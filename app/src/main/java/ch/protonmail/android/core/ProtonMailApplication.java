@@ -27,7 +27,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.StrictMode;
-import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.util.Linkify;
@@ -70,6 +69,7 @@ import ch.protonmail.android.api.models.Organization;
 import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
+import ch.protonmail.android.di.DefaultSharedPreferences;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
@@ -143,6 +143,10 @@ public class ProtonMailApplication extends Application implements androidx.work.
     ch.protonmail.android.api.AccountManager.UsernameToIdMigration accountManagerUserIdMigration;
     @Inject
     CoreAccountManagerMigration coreAccountManagerMigration;
+
+    @Inject
+    @DefaultSharedPreferences
+    SharedPreferences defaultSharedPreferences;
 
     private Bus mBus;
     private boolean appInBackground;
@@ -225,18 +229,12 @@ public class ProtonMailApplication extends Application implements androidx.work.
         try {
             ProviderInstaller.installIfNeeded(this);
         } catch (GooglePlayServicesRepairableException e) {
-            final SharedPreferences prefs = getDefaultSharedPreferences();
-            if (!prefs.getBoolean(Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES, false)) {
+            if (!defaultSharedPreferences.getBoolean(Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES, false)) {
                 GoogleApiAvailability.getInstance().showErrorNotification(this, e.getConnectionStatusCode());
             }
         } catch (GooglePlayServicesNotAvailableException e) {
             // we already handle this by showing prompt about GCM notifications
         }
-    }
-
-    @NonNull
-    public SharedPreferences getDefaultSharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @NonNull
@@ -366,7 +364,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     }
 
     private void checkForUpdateAndClearCache() {
-        final SharedPreferences prefs = getDefaultSharedPreferences();
+        final SharedPreferences prefs = defaultSharedPreferences;
         mNetworkUtil.setCurrentlyHasConnectivity();
         //refresh local cache if new app version
         int previousVersion = prefs.getInt(Constants.Prefs.PREF_APP_VERSION, Integer.MIN_VALUE);
@@ -389,7 +387,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 // or any specific previous version should be logged out
 
                 Id currentUserId = userManager.getCurrentUserId();
-                SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
                 if (currentUserId != null) {
                     SharedPreferences secureSharedPreferences =
                             secureSharedPreferencesFactory.userPreferences(currentUserId);
@@ -532,8 +529,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
     }
 
     public void changeApiProviders() {
-        final SharedPreferences prefs = getDefaultSharedPreferences();
-        networkConfigurator.networkSwitcher.reconfigureProxy(Proxies.Companion.getInstance(null, prefs));
+        networkConfigurator.networkSwitcher
+                .reconfigureProxy(Proxies.Companion.getInstance(null, defaultSharedPreferences));
     }
 
     public boolean isChangedSystemTimeDate() {

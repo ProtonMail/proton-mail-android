@@ -24,13 +24,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
 import androidx.core.app.ActivityCompat;
+import androidx.preference.PreferenceManager;
 
 import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.core.ProtonMailApplication;
 
-/**
- * Created by dkadrikj on 9/18/16.
- */
 public class PermissionHelper {
     private static final int REQUEST_CODE_READ_CONTACTS = 1001;
     private static final int REQUEST_CODE_ACCESS_STORAGE = 1011;
@@ -71,7 +68,7 @@ public class PermissionHelper {
             } else {
                 //TWO CASE:
                 //1. first time - system up - //request window
-                SharedPreferences defaultSharedPrefs = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+                SharedPreferences defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
                 if (!defaultSharedPrefs.getBoolean(mPermissionRequestedPref, false)) {
                     defaultSharedPrefs.edit().putBoolean(mPermissionRequestedPref, true).apply();
                     requestPermission();

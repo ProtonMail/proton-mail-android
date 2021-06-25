@@ -91,7 +91,6 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES
 import ch.protonmail.android.core.Constants.Prefs.PREF_SWIPE_GESTURES_DIALOG_SHOWN
 import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
 import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.PendingActionDao
@@ -101,6 +100,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.TotalLabelCounter
 import ch.protonmail.android.data.local.model.TotalLocationCounter
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
@@ -196,6 +196,10 @@ class MailboxActivity :
 
     @Inject
     lateinit var isConversationModeEnabled: ConversationModeEnabled
+
+    @Inject
+    @DefaultSharedPreferences
+    lateinit var defaultSharedPreferences: SharedPreferences
 
     private lateinit var mailboxAdapter: MailboxRecyclerViewAdapter
     private var swipeController: SwipeController = SwipeController()
@@ -712,7 +716,7 @@ class MailboxActivity :
     }
 
     private fun shouldShowSwipeGesturesChangedDialog(): Boolean {
-        val prefs: SharedPreferences = app.defaultSharedPreferences
+        val prefs: SharedPreferences = defaultSharedPreferences
         val previousVersion: Int = prefs.getInt(Constants.Prefs.PREF_PREVIOUS_APP_VERSION, Int.MIN_VALUE)
         // The dialog should be shown once on the update when swiping gestures are switched
         return previousVersion in 1 until SWIPE_GESTURES_CHANGED_VERSION &&
@@ -720,7 +724,6 @@ class MailboxActivity :
     }
 
     private fun showSwipeGesturesChangedDialog() {
-        val prefs: SharedPreferences = (applicationContext as ProtonMailApplication).defaultSharedPreferences
         showTwoButtonInfoDialog(
             titleStringId = R.string.swipe_gestures_changed,
             messageStringId = R.string.swipe_gestures_changed_message,
@@ -737,7 +740,7 @@ class MailboxActivity :
                 )
             }
         )
-        prefs.edit().putBoolean(PREF_SWIPE_GESTURES_DIALOG_SHOWN, true).apply()
+        defaultSharedPreferences.edit().putBoolean(PREF_SWIPE_GESTURES_DIALOG_SHOWN, true).apply()
     }
 
     override fun onResume() {
@@ -1308,14 +1311,13 @@ class MailboxActivity :
                         ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED
                     )
                 if (setOfConnectionResults.any { it == result }) {
-                    val prefs = app.defaultSharedPreferences
-                    val dontShowPlayServices = prefs[PREF_DONT_SHOW_PLAY_SERVICES] ?: false
+                    val dontShowPlayServices = defaultSharedPreferences[PREF_DONT_SHOW_PLAY_SERVICES] ?: false
                     if (!dontShowPlayServices) {
                         showTwoButtonInfoDialog(
                             titleStringId = R.string.push_notifications_alert_title,
                             messageStringId = R.string.push_notifications_alert_subtitle,
                             leftStringId = R.string.dont_remind_again,
-                            onNegativeButtonClicked = { prefs[PREF_DONT_SHOW_PLAY_SERVICES] = true }
+                            onNegativeButtonClicked = { defaultSharedPreferences[PREF_DONT_SHOW_PLAY_SERVICES] = true }
                         )
                     }
                 } else {

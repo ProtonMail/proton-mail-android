@@ -24,6 +24,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.os.Build
+import androidx.preference.PreferenceManager
 import androidx.work.WorkManager
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
@@ -139,7 +140,7 @@ object ApplicationModule {
     @Singleton
     @DefaultSharedPreferences
     fun defaultSharedPreferences(app: ProtonMailApplication): SharedPreferences =
-        app.defaultSharedPreferences
+        PreferenceManager.getDefaultSharedPreferences(app)
 
     @Provides
     fun dispatcherProvider() = object : DispatcherProvider {
