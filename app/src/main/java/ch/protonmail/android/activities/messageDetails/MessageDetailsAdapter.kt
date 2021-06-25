@@ -399,7 +399,7 @@ internal class MessageDetailsAdapter(
             val mailSettings = userManager.getCurrentUserMailSettingsBlocking()
             return mailSettings?.showImagesFrom?.includesRemote() ?: false
         }
-    }
 
-    private fun isAndroidAPILevelLowerThan26() = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+        private fun isAndroidAPILevelLowerThan26() = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+    }
 }
