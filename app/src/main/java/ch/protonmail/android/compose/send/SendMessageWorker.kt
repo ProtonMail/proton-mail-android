@@ -67,6 +67,7 @@ import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -141,6 +142,7 @@ class SendMessageWorker @AssistedInject constructor(
             val requestBody = try {
                 buildSendMessageRequest(savedDraftMessage, sendPreferences, userId)
             } catch (t: Throwable) {
+                if (t is CancellationException) throw t
                 return retryOrFail(FailureBuildingApiRequest, savedDraftMessage, t)
             }
 
