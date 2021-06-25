@@ -208,8 +208,16 @@ internal class MessageDetailsAdapter(
             loadEmbeddedImagesContainer: LoadContentButton,
             displayRemoteContentButton: LoadContentButton
         ) {
-            loadEmbeddedImagesContainer.setOnClickListener {
-                it.visibility = View.GONE
+            loadEmbeddedImagesContainer.setOnClickListener { view ->
+                view.visibility = View.GONE
+                // Once images were loaded for one message, we automatically load them for all the others, so:
+                // the 'load embedded images' button will be hidden for all messages
+                // the 'formatted html' gets reset so that messages which were already rendered without images
+                // go through the rendering again (through `onLoadMessageBody` callback) and load them
+                allItems.map {
+                    it.showLoadEmbeddedImagesButton = false
+                    it.messageFormattedHtml = null
+                }
                 val item = visibleItems!![position]
                 onLoadEmbeddedImagesClicked?.invoke(item.message)
             }

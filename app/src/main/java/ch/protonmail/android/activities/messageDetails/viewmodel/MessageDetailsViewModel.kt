@@ -262,8 +262,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 emit(fetchedMessage)
             }
         }
-    }
-        .flowOn(dispatchers.Io)
+    }.flowOn(dispatchers.Io)
 
     fun loadMailboxItemDetails() {
         viewModelScope.launch(dispatchers.Io) {
