@@ -713,10 +713,10 @@
     <string name="display_name">顯示名稱</string>
     <string name="edit_display_name">編輯顯示名稱</string>
     <string name="signature">簽名</string>
-    <string name="mobile_signature">行動裝置簽名檔</string>
-    <string name="edit_mobile_signature">啟用行動裝置簽名檔</string>
-    <string name="default_mobile_signature">從 ProtonMail 手機版送出</string>
-    <string name="mobile_signature_is_premium">只有付費使用者可變更行動版簽名</string>
+    <string name="mobile_footer">行動裝置簽名檔</string>
+    <string name="edit_mobile_footer">啟用行動裝置簽名檔</string>
+    <string name="default_mobile_footer">從 ProtonMail 手機版送出</string>
+    <string name="mobile_footer_is_premium">只有付費使用者可變更行動版簽名</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">延遲</string>
     <string name="notifications_snooze">通知延遲</string>
@@ -778,7 +778,7 @@
     <string name="labels">標籤</string>
     <string name="labels_manage">標籤管理員</string>
     <string name="folders_manage">資料夾管理員</string>
-    <string name="swiping_gesture">滑動手勢</string>
+    <string name="swipe_actions">滑動手勢</string>
     <string name="swipe_action_right">向右滑動</string>
     <string name="swipe_action_left">向左滑動</string>
     <!-- region Swipe Actions -->
@@ -825,7 +825,7 @@
     <string name="turn_combined_contacts_on">啟用此功能以使用您所有已登入的帳號中的聯絡人來自動完成電子郵件地址。</string>
     <string name="local_cache_management">本機快取管理</string>
     <string name="cache_cleared">本機快取已重新整理</string>
-    <string name="empty_cache">清空快取</string>
+    <string name="empty_data">清空快取</string>
     <!-- endregion -->
     <string name="enabled">已啟用</string>
     <string name="disabled">已停用</string>

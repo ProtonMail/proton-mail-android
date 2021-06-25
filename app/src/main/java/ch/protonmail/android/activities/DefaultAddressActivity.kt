@@ -23,8 +23,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import butterknife.OnClick
 import ch.protonmail.android.R
 import ch.protonmail.android.api.models.User
@@ -33,12 +37,6 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.extensions.showToast
-import kotlinx.android.synthetic.main.activity_default_address.*
-import java.util.Collections
-
-/**
- * Created by dkadrikj on 10/23/16.
- */
 
 class DefaultAddressActivity : BaseActivity() {
 
@@ -48,8 +46,14 @@ class DefaultAddressActivity : BaseActivity() {
     private var mAvailableAddressesMap: MutableMap<Address, RadioButton>? = null
     private var mSelectedAddress: Address? = null
     private var mUser: User? = null
-    private var mChooserExpanded: Boolean = false
     private var mCurrentSelectedRadioButton: RadioButton? = null
+
+    private val addressChooser by lazy { findViewById<LinearLayout>(R.id.addressChooser) }
+    private val defaultAddress by lazy { findViewById<TextView>(R.id.defaultAddress) }
+    private val availableAddresses by lazy { findViewById<RadioGroup>(R.id.availableAddresses) }
+    private val inactiveAddresses by lazy { findViewById<LinearLayout>(R.id.inactiveAddresses) }
+    private val noAvailableAddresses by lazy { findViewById<TextView>(R.id.noAvailableAddresses) }
+    private val noInactiveAddresses by lazy { findViewById<TextView>(R.id.noInactiveAddresses) }
 
     private val radioButtonClick = View.OnClickListener { v ->
         val selectedAddressRadioButton = v as RadioButton
@@ -89,13 +93,16 @@ class DefaultAddressActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val elevation = resources.getDimension(R.dimen.action_bar_elevation)
+        actionBar?.elevation = elevation
+
         mAvailableAddressesMap = HashMap()
         mAllRadioButtons = ArrayList()
         mUser = mUserManager.currentLegacyUser
         addresses = ArrayList(mUser!!.addresses)
         mInflater = LayoutInflater.from(this)
         renderAddresses()
-        mChooserExpanded = false
     }
 
     override fun onStart() {
@@ -121,14 +128,16 @@ class DefaultAddressActivity : BaseActivity() {
         saveAndFinish()
     }
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_default_address
-    }
+    override fun getLayoutId() = R.layout.activity_default_address
 
-    @OnClick(R.id.defaultAddress, R.id.defaultAddressArrow)
+    @OnClick(R.id.defaultAddress)
     fun onDefaultAddressClicked() {
-        mChooserExpanded = !mChooserExpanded
-        addressChooser.visibility = if (mChooserExpanded) View.VISIBLE else View.GONE
+        val icon = ResourcesCompat.getDrawable(
+            resources, if (!addressChooser.isVisible) R.drawable.ic_chevron_down else R.drawable.ic_chevron_up, null
+        )?.mutate()
+
+        defaultAddress.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, icon, null)
+        addressChooser.isVisible = !addressChooser.isVisible
     }
 
     private fun clearSelection() {
@@ -143,16 +152,18 @@ class DefaultAddressActivity : BaseActivity() {
         val sortedAddresses = addresses.orEmpty()
             .sortedBy { it.order }
             .sortedBy { it.status == 1 && it.receive == 1 }
+
         mSelectedAddress = sortedAddresses[0]
         defaultAddress.text = mSelectedAddress!!.email
         var mNoAvailableAddresses = true
         var mNoInactiveAddresses = true
+
         sortedAddresses.forEachIndexed { index, address ->
             val aliasAvailable = address.status == 1 && address.receive == 1
             var addressRadio: RadioButton? = null
             var inactiveAddress: TextView? = null
             if (aliasAvailable) {
-                addressRadio = mInflater!!.inflate(R.layout.alias_list_item, availableAddresses, false) as RadioButton
+                addressRadio = mInflater!!.inflate(R.layout.radio_button_list_item, availableAddresses, false) as RadioButton
                 addressRadio.text = address.email
                 addressRadio.isChecked = index == 0
                 if (index == 0) {
@@ -164,20 +175,17 @@ class DefaultAddressActivity : BaseActivity() {
 
                 mAvailableAddressesMap!![address] = addressRadio
             } else {
-                inactiveAddress = mInflater!!.inflate(R.layout.alias_list_item_inactive, inactiveAddresses, false) as TextView
+                inactiveAddress =
+                    mInflater!!.inflate(R.layout.alias_list_item_inactive, inactiveAddresses, false) as TextView
                 inactiveAddress.text = address.email
             }
 
             if (aliasAvailable) {
-                val divider = mInflater!!.inflate(R.layout.horizontal_divider, availableAddresses, false)
                 mNoAvailableAddresses = false
                 availableAddresses.addView(addressRadio)
-                availableAddresses.addView(divider)
             } else {
-                val divider = mInflater!!.inflate(R.layout.horizontal_divider, inactiveAddresses, false)
                 mNoInactiveAddresses = false
                 inactiveAddresses!!.addView(inactiveAddress)
-                inactiveAddresses!!.addView(divider)
             }
         }
         if (mNoAvailableAddresses) {

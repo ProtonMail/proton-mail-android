@@ -83,6 +83,22 @@
     <string name="composer_attachment_remove_description">Remove attachment</string>
     <!-- endregion -->
 
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Set PIN code</string>
+    <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
+    <string name="settings_pins_dont_match">The PIN codes must match!</string>
+    <string name="settings_enter_pin_code_title">Enter PIN code</string>
+    <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
+    <string name="settings_swipe_left_to_right">Left to right</string>
+    <string name="settings_swipe_right_to_left">Right to left</string>
+
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Discard changes?</string>
+    <string name="dialog_discard_changes_message">Any unsaved changes will be discarded.</string>
+    <string name="discard">Discard</string>
+
+    <!-- end region -->
+
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">ENCRYPTED EMAIL</string>
@@ -837,10 +853,11 @@
     <string name="display_name">Display name</string>
     <string name="edit_display_name">Edit display name</string>
     <string name="signature">Signature</string>
-    <string name="mobile_signature">Mobile signature</string>
-    <string name="edit_mobile_signature">Enable mobile signature</string>
-    <string name="default_mobile_signature">Sent from ProtonMail mobile</string>
-    <string name="mobile_signature_is_premium">Changing the Mobile Signature is allowed to Paid users only</string>
+    <string name="mobile_footer">Mobile footer</string>
+    <string name="edit_mobile_footer">Enable mobile footer</string>
+    <string name="default_mobile_footer">Sent from ProtonMail mobile</string>
+    <string name="mobile_footer_is_premium">Changing the Mobile Footer is allowed to Paid users only</string>
+    <string name="mobile_footer_info">This footer is added after your signature</string>
 
     <!-- region Snooze Settings -->
     <string name="snooze_header">Snooze</string>
@@ -905,20 +922,23 @@
     <string name="labels_and_folders">Labels &amp; Folders </string>
     <string name="folders">Folders</string>
     <string name="labels">Labels</string>
-    <string name="labels_manage">Labels manager</string>
+    <string name="labels_manager">Labels manager</string>
     <string name="folders_manage">Folders manager</string>
 
-    <string name="swiping_gesture">Swiping gesture</string>
+    <string name="swipe_actions">Swipe actions</string>
     <string name="swipe_action_right">Swipe right</string>
     <string name="swipe_action_left">Swipe left</string>
 
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Choose swipe action</string>
     <string name="swipe_action_trash">Message moved to trash</string>
+    <string name="swipe_action_trash_short">Move to Trash</string>
     <string name="swipe_action_star">Message star updated</string>
     <string name="swipe_action_star_short">Update star</string>
     <string name="swipe_action_spam">Message marked as spam</string>
+    <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Message archived</string>
+    <string name="swipe_action_archive_short">Archive</string>
     <string name="swipe_action_mark_read">Message marked as read</string>
     <string name="swipe_action_mark_read_short">Read</string>
     <plurals name="action_move_to_trash">
@@ -943,12 +963,12 @@
     <!-- region App Settings -->
     <string name="push_notifications">Push Notifications</string>
     <string name="extended_notifications">Extended Notifications</string>
-    <string name="extended_notifications_description">Turn this feature on to see the sender\nof the emails in the push notifications.</string>
+    <string name="extended_notifications_description">Turn this feature on to see the sender of the emails in the push notifications.</string>
     <string name="notification_settings">Notification Settings</string>
 
     <string name="auto_lock">Auto-lock</string>
     <string name="auto_lock_app">Auto-lock app</string>
-    <string name="auto_lock_description">Turn this feature on to auto-lock your\napp and use a PIN code or fingerprint\nto unlock it.</string>
+    <string name="auto_lock_description">Turn this feature on to auto-lock your app and use a PIN code or fingerprint to unlock it.</string>
     <string name="change_pin_code">Change PIN code</string>
     <string name="auto_lock_timer">Auto-lock timer</string>
 
@@ -964,9 +984,9 @@
     <string name="combined_contacts">Combined Contacts</string>
     <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
 
-    <string name="local_cache_management">Local Cache Management</string>
+    <string name="local_cache_management">Local Cache</string>
     <string name="cache_cleared">Local Cache is Refreshed</string>
-    <string name="empty_cache">Empty Cache</string>
+    <string name="empty_data">Empty Data</string>
     <!-- endregion -->
 
     <string name="enabled">Enabled</string>
@@ -1033,12 +1053,14 @@
 
     <string name="star">Star</string>
     <string name="unstar">Unstar</string>
+    <string name="star_unstar">Star/unstar</string>
     <string name="send_to_archive">Send to archive?</string>
     <string name="new_label">New Label</string>
     <string name="new_folder">New Folder</string>
     <string name="label_as">Label as…</string>
     <string name="mark_as_unread">Mark as unread</string>
     <string name="mark_as_read">Mark as read</string>
+    <string name="mark_as_read_unread">Mark as read/unread</string>
     <string name="move_message">Move message</string>
     <string name="manage">Manage</string>
     <string name="message_from">Message from %s</string>

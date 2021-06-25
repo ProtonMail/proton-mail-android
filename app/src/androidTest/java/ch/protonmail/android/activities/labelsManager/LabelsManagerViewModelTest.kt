@@ -24,7 +24,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import ch.protonmail.android.adapters.LabelsCirclesAdapter
+import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.libs.core.utils.EMPTY_STRING
@@ -78,7 +78,7 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
 
     @Test
     fun verifyCheckedStateIsUpdatedCorrectlyForAdapterItems() {
-        val adapter = LabelsCirclesAdapter()
+        val adapter = LabelsAdapter()
         viewModel.labels.observeDataForever(adapter::submitList)
 
         // Assert adapter is empty

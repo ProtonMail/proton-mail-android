@@ -741,10 +741,10 @@
     <string name="display_name">Zaslonski naziv</string>
     <string name="edit_display_name">Uredi zaslonski naziv</string>
     <string name="signature">Potpis</string>
-    <string name="mobile_signature">Potpis na mobilnim uređajima</string>
-    <string name="edit_mobile_signature">Omogući potpis na mobilnim uređajima</string>
-    <string name="default_mobile_signature">Poslano sa ProtonMaila</string>
-    <string name="mobile_signature_is_premium">Promjena potpisa za mobilne uređaje je dopuštena samo plaćenim korisnicima</string>
+    <string name="mobile_footer">Potpis na mobilnim uređajima</string>
+    <string name="edit_mobile_footer">Omogući potpis na mobilnim uređajima</string>
+    <string name="default_mobile_footer">Poslano sa ProtonMaila</string>
+    <string name="mobile_footer_is_premium">Promjena potpisa za mobilne uređaje je dopuštena samo plaćenim korisnicima</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Utišaj</string>
     <string name="notifications_snooze">Utišavanje obavijesti</string>
@@ -808,7 +808,7 @@
     <string name="labels">Oznake</string>
     <string name="labels_manage">Upravljanje oznakama</string>
     <string name="folders_manage">Upravljanje mapama</string>
-    <string name="swiping_gesture">Povlačenje prstom</string>
+    <string name="swipe_actions">Povlačenje prstom</string>
     <string name="swipe_action_right">Prelazak prstom udesno</string>
     <string name="swipe_action_left">Prelazak prstom ulijevo</string>
     <!-- region Swipe Actions -->
@@ -861,7 +861,7 @@
     <string name="turn_combined_contacts_on">Uključite ovu značajku za automatsko dovršavanje adresa e-pošte pomoću kontakata sa svih vaših prijavljenih računa.</string>
     <string name="local_cache_management">Upravitelj predmemorijom</string>
     <string name="cache_cleared">Lokalna predmemorija je osvježena</string>
-    <string name="empty_cache">Očistite predmemoriju</string>
+    <string name="empty_data">Očistite predmemoriju</string>
     <!-- endregion -->
     <string name="enabled">Omogućeno</string>
     <string name="disabled">Onemogućeno</string>

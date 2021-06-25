@@ -1,29 +1,6 @@
 [
   [
     {
-      "setting_id": "display_name",
-      "is_section": false,
-      "setting_value": "",
-      "setting_hasValue": true,
-      "setting_type": "edit"
-    },
-    {
-      "setting_id": "signature",
-      "is_section": false,
-      "setting_value": "",
-      "setting_hasValue": true,
-      "setting_type": "toggle_n_edit"
-    },
-    {
-      "setting_id": "mobile_signature",
-      "is_section": false,
-      "setting_value": "",
-      "setting_hasValue": true,
-      "setting_type": "toggle_n_edit"
-    }
-  ],
-  [
-    {
       "setting_id": "auto_download_messages",
       "is_section": false,
       "setting_value": "",
@@ -126,6 +103,24 @@
   [
     {
       "setting_id": "combined_contacts",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "toggle"
+    }
+  ],
+  [
+    {
+      "setting_id": "auto_download_messages",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "toggle"
+    }
+  ],
+  [
+    {
+      "setting_id": "background_sync",
       "is_section": false,
       "setting_value": "",
       "setting_hasValue": true,

@@ -156,7 +156,7 @@
             android:theme="@style/ProtonTheme.Splash.Mail.Light" />
         <!-- End - Root Activities -->
         <activity
-            android:name=".activities.settings.AttachmentStorageActivity"
+            android:name=".settings.presentation.AttachmentStorageActivity"
             android:exported="false"
             android:label="@string/local_storage"
             android:screenOrientation="portrait" />
@@ -232,11 +232,13 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:label="@string/settings"/>
         <activity
             android:name=".activities.AccountSettingsActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:label="@string/account_settings"/>
         <activity
             android:name=".activities.EngagementActivity"
             android:exported="false"
@@ -258,6 +260,7 @@
         <activity
             android:name=".settings.pin.ChangePinActivity"
             android:exported="false"
+            android:label="@string/settings_confirm_pin_code_title"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
         <activity
@@ -278,7 +281,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".activities.AccountTypeActivity"
+            android:name=".settings.presentation.AccountTypeActivity"
             android:exported="false"
             android:label="@string/subscription"
             android:screenOrientation="portrait"
@@ -290,7 +293,7 @@
             android:label="@string/default_mail_address"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".activities.SwipeChooserActivity"
+            android:name=".settings.presentation.SwipeChooserActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="@string/swipe_action_chooser_title"
@@ -313,7 +316,7 @@
             android:label="@string/notification_settings"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".activities.SnoozeNotificationsActivity"
+            android:name=".settings.presentation.SnoozeNotificationsActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="@string/notifications_snooze"
@@ -365,7 +368,8 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="me.proton.core.auth.presentation.ui.AddAccountActivity"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/ProtonTheme.Mail.AddAccount"/>
         <activity
             android:name="me.proton.core.auth.presentation.ui.LoginActivity"
             android:windowSoftInputMode="adjustResize" />

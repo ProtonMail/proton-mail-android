@@ -16,14 +16,12 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
-
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="16"
     android:viewportHeight="16">
   <path
-      android:pathData="M15,14H1V2H6V4H15V14Z"
       android:fillColor="@color/icon_norm"
-      android:fillType="evenOdd"/>
+      android:pathData="M5.5,2H1V14H15V4H7.5L5.5,2Z" />
 </vector>

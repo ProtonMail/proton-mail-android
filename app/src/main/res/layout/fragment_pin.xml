@@ -1,294 +1,267 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-Copyright (c) 2020 Proton Technologies AG
-
-This file is part of ProtonMail.
-
-ProtonMail is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-ProtonMail is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with ProtonMail. If not, see https://www.gnu.org/licenses/.
--->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_purple"
-    android:orientation="vertical">
+    android:layout_marginStart="@dimen/padding_xl"
+    android:layout_marginEnd="@dimen/padding_xl"
+    android:background="@color/background_norm">
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <ImageView
+        android:id="@+id/lock_icon"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/padding_m"
+        android:src="@drawable/ic_lock_wide"
+        app:layout_constraintBottom_toTopOf="@id/mPinEdit"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ch.protonmail.android.views.SecureEditText
-            android:id="@+id/mPinEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+    <ch.protonmail.android.views.SecureEditText
+        android:id="@+id/mPinEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding_xl"
+        app:layout_constraintBottom_toTopOf="@id/btn_pin_2"
+        app:layout_constraintTop_toBottomOf="@+id/lock_icon" />
+
+    <ch.protonmail.android.views.RoundButton
+        android:id="@+id/btn_pin_1"
+        style="@style/CustomKeyboardButton"
+        android:layout_marginBottom="@dimen/padding_l"
+        android:filterTouchesWhenObscured="true"
+        android:importantForAccessibility="yes"
+        android:text="@string/button_key_1"
+        app:keyValue="@string/button_key_1"
+        app:layout_constraintBottom_toTopOf="@id/btn_pin_4"
+        app:layout_constraintEnd_toStartOf="@id/btn_pin_2"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ch.protonmail.android.views.RoundButton
+        android:id="@+id/btn_pin_2"
+        style="@style/CustomKeyboardButton"
+        android:layout_marginBottom="@dimen/padding_l"
+        android:filterTouchesWhenObscured="true"
+        android:importantForAccessibility="yes"
+        android:text="@string/button_key_2"
+        app:keyValue="@string/button_key_2"
+        app:layout_constraintBottom_toTopOf="@id/btn_pin_5"
+        app:layout_constraintEnd_toStartOf="@id/btn_pin_3"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/btn_pin_1"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ch.protonmail.android.views.RoundButton
+        android:id="@+id/btn_pin_3"
+        style="@style/CustomKeyboardButton"
+        android:layout_marginBottom="@dimen/padding_l"
+        android:filterTouchesWhenObscured="true"
+        android:importantForAccessibility="yes"
+        android:text="@string/button_key_3"
+        app:keyValue="@string/button_key_3"
+        app:layout_constraintBottom_toTopOf="@id/btn_pin_6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/btn_pin_2"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ch.protonmail.android.views.RoundButton
+        android:id="@+id/btn_pin_4"
+        style="@style/CustomKeyboardButton"
+        android:filterTouchesWhenObscured="true"
+        android:importantForAccessibility="yes"
+        android:text="@string/button_key_4"
+        app:keyValue="@string/button_key_4"
+        app:layout_constraintBottom_toTopOf="@id/horizontal"
+        app:layout_constraintEnd_toStartOf="@id/btn_pin_5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ch.protonmail.android.views.RoundButton
+        android:id="@+id/btn_pin_5"
+        style="@style/CustomKeyboardButton"
+        android:filterTouchesWhenObscured="true"
+        android:importantForAccessibility="yes"
+        android:text="@string/button_key_5"
+        app:keyValue="@string/button_key_5"
+        app:layout_constraintBottom_toTopOf="@id/horizontal"
+        app:layout_constraintEnd_toStartOf="@id/btn_pin_6"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/btn_pin_4"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ch.protonmail.android.views.RoundButton
+        android:id="@+id/btn_pin_6"
+        style="@style/CustomKeyboardButton"
+        android:filterTouchesWhenObscured="true"
+        android:importantForAccessibility="yes"
+        android:text="@string/button_key_6"
+        app:keyValue="@string/button_key_6"
+        app:layout_constraintBottom_toTopOf="@id/horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/btn_pin_5"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ch.protonmail.android.views.RoundButton
+        android:id="@+id/btn_pin_7"
+        style="@style/CustomKeyboardButton"
+        android:filterTouchesWhenObscured="true"
+        android:importantForAccessibility="yes"
+        android:text="@string/button_key_7"
+        app:keyValue="@string/button_key_7"
+        app:layout_constraintEnd_toStartOf="@id/btn_pin_8"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/horizontal"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ch.protonmail.android.views.RoundButton
+        android:id="@+id/btn_pin_8"
+        style="@style/CustomKeyboardButton"
+        android:filterTouchesWhenObscured="true"
+        android:importantForAccessibility="yes"
+        android:text="@string/button_key_8"
+        app:keyValue="@string/button_key_8"
+        app:layout_constraintEnd_toStartOf="@id/btn_pin_9"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/btn_pin_7"
+        app:layout_constraintTop_toBottomOf="@id/horizontal"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ch.protonmail.android.views.RoundButton
+        android:id="@+id/btn_pin_9"
+        style="@style/CustomKeyboardButton"
+        android:filterTouchesWhenObscured="true"
+        android:importantForAccessibility="yes"
+        android:text="@string/button_key_9"
+        app:keyValue="@string/button_key_9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/btn_pin_8"
+        app:layout_constraintTop_toBottomOf="@id/horizontal"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <LinearLayout
+        android:id="@+id/fingerprint_wrapper"
+        android:layout_width="@dimen/settings_pin_key_button_size"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/settings_pin_key_button_margin"
+        android:layout_marginTop="@dimen/padding_l"
+        android:layout_marginEnd="@dimen/settings_pin_key_button_margin"
+        android:layout_marginBottom="@dimen/padding_m"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/btn_pin_0"
+        app:layout_constraintEnd_toStartOf="@id/btn_pin_0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_pin_7"
+        app:layout_constraintTop_toTopOf="@id/btn_pin_0"
+        app:layout_constraintVertical_chainStyle="packed">
 
         <ImageButton
-            android:id="@+id/mBtnBackward"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin_small"
-            android:background="@android:color/transparent"
-            android:tint="@color/white"
-            android:visibility="invisible"
-            app:srcCompat="?homeAsUpIndicator"
-            tools:ignore="ContentDescription" />
-    </FrameLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraint_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/openFingerprintPrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_horizontal_margin_xsmall"
-            app:backgroundTint="@color/dark_purple_statusbar"
-            android:textColor="@color/white"
-            android:tint="@color/white"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline1"
-            app:layout_constraintStart_toStartOf="@id/guideline2"
-            app:srcCompat="@drawable/ic_fingerprint" />
+            android:background="@drawable/ic_fingerprint"
+            android:importantForAccessibility="yes"
+            android:visibility="gone" />
+    </LinearLayout>
 
-        <ch.protonmail.android.views.CustomFontTextView
-            android:id="@+id/mForgotPin"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/fields_default_space"
-            android:gravity="center"
-            android:text="@string/sign_out"
-            android:textColor="@color/field_hint_purple"
-            android:textSize="@dimen/h4"
-            android:textStyle="bold"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/guideline3"
-            app:layout_constraintEnd_toStartOf="@id/guideline4"
-            app:layout_constraintTop_toBottomOf="@id/keyboard_container" />
+    <ch.protonmail.android.views.RoundButton
+        android:id="@+id/btn_pin_0"
+        style="@style/CustomKeyboardButton"
+        android:layout_marginTop="@dimen/padding_l"
+        android:filterTouchesWhenObscured="true"
+        android:importantForAccessibility="yes"
+        android:text="@string/button_key_0"
+        app:keyValue="@string/button_key_0"
+        app:layout_constraintEnd_toStartOf="@id/backward_wrapper"
+        app:layout_constraintStart_toEndOf="@id/fingerprint_wrapper"
+        app:layout_constraintTop_toBottomOf="@id/btn_pin_8" />
 
-        <Button
-            android:id="@+id/mBtnForward"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/fields_default_space"
-            android:background="@android:color/transparent"
-            android:drawableEnd="@drawable/ic_chevron_right_white"
-            android:gravity="center"
-            android:text="@string/confirm"
-            android:textColor="@color/white"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/guideline5"
-            app:layout_constraintEnd_toStartOf="@id/guideline6"/>
+    <LinearLayout
+        android:id="@+id/backward_wrapper"
+        android:layout_width="@dimen/settings_pin_key_button_size"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/settings_pin_key_button_margin"
+        android:layout_marginTop="@dimen/padding_l"
+        android:layout_marginEnd="@dimen/settings_pin_key_button_margin"
+        android:layout_marginBottom="@dimen/padding_m"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/btn_pin_0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/btn_pin_0"
+        app:layout_constraintTop_toBottomOf="@id/btn_pin_9"
+        app:layout_constraintTop_toTopOf="@id/btn_pin_0"
+        app:layout_constraintVertical_chainStyle="packed">
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="0dp"
-            android:layout_height="52dp"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline4"
-            app:layout_constraintStart_toStartOf="@id/guideline2" />
-
-        <LinearLayout
-            android:id="@+id/keyboard_container"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            android:paddingStart="@dimen/activity_horizontal_margin_large"
-            android:paddingLeft="@dimen/activity_horizontal_margin_large"
-            android:paddingEnd="@dimen/activity_horizontal_margin_large"
-            android:paddingRight="@dimen/activity_horizontal_margin_large"
-            app:layout_constraintBottom_toTopOf="@id/mBtnForward"
-            app:layout_constraintHeight_default="spread"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <ch.protonmail.android.views.RoundButton
-                    android:id="@+id/btn_pin_1"
-                    style="@style/CustomKeyboardButton"
-                    android:filterTouchesWhenObscured="true"
-                    android:importantForAccessibility="yes"
-                    android:text="@string/button_key_1"
-                    app:keyValue="@string/button_key_1" />
-
-                <ch.protonmail.android.views.RoundButton
-                    android:id="@+id/btn_pin_2"
-                    style="@style/CustomKeyboardButton"
-                    android:filterTouchesWhenObscured="true"
-                    android:importantForAccessibility="yes"
-                    android:text="@string/button_key_2"
-                    app:keyValue="@string/button_key_2" />
-
-                <ch.protonmail.android.views.RoundButton
-                    android:id="@+id/btn_pin_3"
-                    style="@style/CustomKeyboardButton"
-                    android:filterTouchesWhenObscured="true"
-                    android:importantForAccessibility="yes"
-                    android:text="@string/button_key_3"
-                    app:keyValue="@string/button_key_3" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <ch.protonmail.android.views.RoundButton
-                    android:id="@+id/btn_pin_4"
-                    style="@style/CustomKeyboardButton"
-                    android:filterTouchesWhenObscured="true"
-                    android:importantForAccessibility="yes"
-                    android:text="@string/button_key_4"
-                    app:keyValue="@string/button_key_4" />
-
-                <ch.protonmail.android.views.RoundButton
-                    android:id="@+id/btn_pin_5"
-                    style="@style/CustomKeyboardButton"
-                    android:filterTouchesWhenObscured="true"
-                    android:importantForAccessibility="yes"
-                    android:text="@string/button_key_5"
-                    app:keyValue="@string/button_key_5" />
-
-                <ch.protonmail.android.views.RoundButton
-                    android:id="@+id/btn_pin_6"
-                    style="@style/CustomKeyboardButton"
-                    android:filterTouchesWhenObscured="true"
-                    android:importantForAccessibility="yes"
-                    android:text="@string/button_key_6"
-                    app:keyValue="@string/button_key_6" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <ch.protonmail.android.views.RoundButton
-                    android:id="@+id/btn_pin_7"
-                    style="@style/CustomKeyboardButton"
-                    android:filterTouchesWhenObscured="true"
-                    android:importantForAccessibility="yes"
-                    android:text="@string/button_key_7"
-                    app:keyValue="@string/button_key_7" />
-
-                <ch.protonmail.android.views.RoundButton
-                    android:id="@+id/btn_pin_8"
-                    style="@style/CustomKeyboardButton"
-                    android:filterTouchesWhenObscured="true"
-                    android:importantForAccessibility="yes"
-                    android:text="@string/button_key_8"
-                    app:keyValue="@string/button_key_8" />
-
-                <ch.protonmail.android.views.RoundButton
-                    android:id="@+id/btn_pin_9"
-                    style="@style/CustomKeyboardButton"
-                    android:filterTouchesWhenObscured="true"
-                    android:importantForAccessibility="yes"
-                    android:text="@string/button_key_9"
-                    app:keyValue="@string/button_key_9" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:gravity="center_vertical">
-
-                <ch.protonmail.android.views.RoundImageButton
-                    style="@style/CustomKeyboardButton.Arrow.Left"
-                    android:filterTouchesWhenObscured="true"
-                    android:importantForAccessibility="yes"
-                    android:scaleType="centerInside"
-                    android:visibility="invisible" />
-
-                <ch.protonmail.android.views.RoundButton
-                    android:id="@+id/btn_pin_0"
-                    style="@style/CustomKeyboardButton"
-                    android:filterTouchesWhenObscured="true"
-                    android:importantForAccessibility="yes"
-                    android:text="@string/button_key_0"
-                    app:keyValue="@string/button_key_0" />
-
-                <ch.protonmail.android.views.RoundImageButton
-                    style="@style/CustomKeyboardButton.Arrow.Right"
-                    android:filterTouchesWhenObscured="true"
-                    android:importantForAccessibility="yes"
-                    android:scaleType="centerInside"
-                    android:visibility="invisible" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline1"
+        <ImageButton
+            android:id="@+id/backward_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.1" />
+            android:background="@drawable/ic_delete_big"
+            android:importantForAccessibility="yes"
+            android:visibility="visible" />
+    </LinearLayout>
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
+    <Button
+        android:id="@+id/mBtnForward"
+        style="@style/ProtonButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_m"
+        android:layout_marginBottom="@dimen/padding_3xl"
+        android:text="@string/confirm"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-            app:layout_constraintGuide_percent="0.335" />
+    <TextView
+        android:id="@+id/mForgotPin"
+        style="@style/Proton.Text.DefaultSmall.Interaction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_m"
+        android:layout_marginBottom="@dimen/padding_3xl"
+        android:gravity="center"
+        android:text="@string/sign_out"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.385" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.62" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.66" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="1" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

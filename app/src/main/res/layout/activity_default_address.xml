@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright (c) 2020 Proton Technologies AG
 
 This file is part of ProtonMail.
@@ -21,7 +20,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:orientation="vertical">
 
     <include
@@ -36,60 +34,33 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:animateLayoutChanges="true">
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
 
-            <ch.protonmail.android.views.CustomFontTextView
+            <TextView
                 android:id="@+id/titleDefaultAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/fields_default_space_medium"
-                android:layout_marginEnd="@dimen/view_padding"
-                android:layout_marginLeft="@dimen/view_padding"
-                android:layout_marginRight="@dimen/view_padding"
-                android:layout_marginStart="@dimen/view_padding"
-                android:layout_marginTop="@dimen/fields_default_space_medium"
-                android:text="@string/default_address"
-                android:textColor="@color/switch_settings_item"
-                app:fontName="Roboto-Regular.ttf" />
-
-            <LinearLayout
+                style="@style/Proton.Text.DefaultSmall.Interaction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:paddingStart="@dimen/padding_l"
+                android:paddingTop="@dimen/padding_xl"
+                android:paddingEnd="@dimen/padding_l"
+                android:paddingBottom="@dimen/padding_m"
+                android:text="@string/account" />
 
-                <ch.protonmail.android.views.CustomFontTextView
-                    android:id="@+id/defaultAddress"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:paddingBottom="@dimen/fields_default_space_medium"
-                    android:paddingLeft="@dimen/fields_default_space_xlarge"
-                    android:paddingStart="@dimen/fields_default_space_xlarge"
-                    android:paddingEnd="0dp"
-                    android:paddingRight="0dp"
-                    android:paddingTop="@dimen/fields_default_space_medium"
-                    android:textColor="@color/black"
-                    android:clickable="true"
-                    app:fontName="Roboto-Regular.ttf" />
+            <TextView
+                android:id="@+id/defaultAddress"
+                style="@style/Proton.Text.Default"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:padding="@dimen/padding_l"
+                app:drawableEndCompat="@drawable/ic_chevron_down" />
 
-                <ImageView
-                    android:id="@+id/defaultAddressArrow"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="@dimen/fields_default_space_xlarge"
-                    android:layout_marginRight="@dimen/fields_default_space_xlarge"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginStart="0dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_keyboard_arrow_down"
-                    android:tint="@color/black" />
-
-            </LinearLayout>
-
-            <include layout="@layout/horizontal_divider" />
+            <View style="@style/ViewSeparatorHorizontal"/>
 
             <LinearLayout
                 android:id="@+id/addressChooser"
@@ -98,68 +69,60 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <ch.protonmail.android.views.CustomFontTextView
+                <TextView
                     android:id="@+id/titleAvailableAddresses"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/fields_default_space_medium"
-                    android:layout_marginEnd="@dimen/view_padding"
-                    android:layout_marginLeft="@dimen/view_padding"
-                    android:layout_marginRight="@dimen/view_padding"
-                    android:layout_marginStart="@dimen/view_padding"
-                    android:layout_marginTop="@dimen/fields_default_space_large"
-                    android:text="@string/available_addresses"
-                    android:textColor="@color/switch_settings_item"
-                    app:fontName="Roboto-Regular.ttf" />
-
-                <ch.protonmail.android.views.CustomFontTextView
-                    android:id="@+id/noAvailableAddresses"
+                    style="@style/Proton.Text.DefaultSmall.Interaction"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/fields_default_space_xlarge"
-                    android:layout_marginStart="@dimen/fields_default_space_xlarge"
+                    android:paddingStart="@dimen/padding_l"
+                    android:paddingTop="@dimen/padding_xl"
+                    android:paddingEnd="@dimen/padding_l"
+                    android:paddingBottom="@dimen/padding_m"
+                    android:text="@string/available_addresses" />
+
+                <TextView
+                    android:id="@+id/noAvailableAddresses"
+                    style="@style/Proton.Text.Default.Weak"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_l"
                     android:text="@string/no_available_addresses"
-                    android:textColor="@color/iron_gray"
-                    android:textSize="@dimen/h5"
-                    android:visibility="gone"
-                    app:fontName="Roboto-Light.ttf" />
+                    android:visibility="gone" />
 
                 <RadioGroup
                     android:id="@+id/availableAddresses"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <ch.protonmail.android.views.CustomFontTextView
-                    android:id="@+id/titleInactiveAddresses"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/fields_default_space_medium"
-                    android:layout_marginEnd="@dimen/view_padding"
-                    android:layout_marginLeft="@dimen/view_padding"
-                    android:layout_marginRight="@dimen/view_padding"
-                    android:layout_marginStart="@dimen/view_padding"
-                    android:layout_marginTop="@dimen/fields_default_space_large"
-                    android:text="@string/inactive_addresses"
-                    android:textColor="@color/switch_settings_item"
-                    app:fontName="Roboto-Regular.ttf" />
+                <View style="@style/ViewSeparatorHorizontal"/>
 
-                <ch.protonmail.android.views.CustomFontTextView
-                    android:id="@+id/noInactiveAddresses"
+                <TextView
+                    android:id="@+id/titleInactiveAddresses"
+                    style="@style/Proton.Text.DefaultSmall.Interaction"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/fields_default_space_xlarge"
-                    android:layout_marginStart="@dimen/fields_default_space_xlarge"
+                    android:paddingStart="@dimen/padding_l"
+                    android:paddingTop="@dimen/padding_xl"
+                    android:paddingEnd="@dimen/padding_l"
+                    android:paddingBottom="@dimen/padding_m"
+                    android:text="@string/inactive_addresses" />
+
+                <TextView
+                    android:id="@+id/noInactiveAddresses"
+                    style="@style/Proton.Text.Default.Weak"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_l"
                     android:text="@string/no_inactive_addresses"
-                    android:textColor="@color/iron_gray"
-                    android:textSize="@dimen/h5"
-                    android:visibility="gone"
-                    app:fontName="Roboto-Light.ttf" />
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/inactiveAddresses"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
+
+                <View style="@style/ViewSeparatorHorizontal"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -21,33 +21,25 @@ package ch.protonmail.android.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.children
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
-import ch.protonmail.android.adapters.swipe.SwipeAction
-import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants.Prefs.PREF_HYPERLINK_CONFIRM
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.views.CustomFontEditText
 import com.google.gson.Gson
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_edit_settings_item.*
 import me.proton.core.util.android.sharedpreferences.set
-import me.proton.core.util.kotlin.EMPTY_STRING
-import timber.log.Timber
 
 // region constants
 const val EXTRA_SETTINGS_ITEM_TYPE = "EXTRA_SETTINGS_ITEM_TYPE"
@@ -55,7 +47,6 @@ const val EXTRA_SETTINGS_ITEM_VALUE = "EXTRA_SETTINGS_ITEM_VALUE"
 // endregion
 
 enum class SettingsItem {
-    DISPLAY_NAME_AND_SIGNATURE,
     PRIVACY,
     LABELS_AND_FOLDERS,
     SWIPE,
@@ -72,9 +63,8 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
     private val mailSettings by lazy {
         checkNotNull(userManager.getCurrentUserMailSettingsBlocking())
     }
-    private var settingsItemType: SettingsItem = SettingsItem.DISPLAY_NAME_AND_SIGNATURE
+    private var settingsItemType: SettingsItem = SettingsItem.PRIVACY
     private var settingsItemValue: String? = null
-    private var title: String? = null
     private var actionBarTitle: Int = -1
     private var initializedRemote = false
     private var initializedEmbedded = false
@@ -87,14 +77,14 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
+        val elevation = resources.getDimension(R.dimen.action_bar_elevation)
+        actionBar?.elevation = elevation
+
         settingsItemType = intent.getSerializableExtra(EXTRA_SETTINGS_ITEM_TYPE) as SettingsItem
         settingsItemValue = intent.getStringExtra(EXTRA_SETTINGS_ITEM_VALUE)
 
         mSnackLayout = findViewById(R.id.layout_no_connectivity_info)
 
-        val oldSettings = arrayOf(SettingsItem.AUTO_DOWNLOAD_MESSAGES, SettingsItem.BACKGROUND_SYNC)
-
-        if (settingsItemType !in oldSettings) {
             val jsonSettingsListResponse =
                 resources.openRawResource(R.raw.edit_settings_structure).bufferedReader().use { it.readText() }
 
@@ -102,7 +92,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
             val settingsUiList =
                 gson.fromJson(jsonSettingsListResponse, Array<Array<SettingsItemUiModel>>::class.java).asList()
             setUpSettingsItems(settingsUiList[settingsItemType.ordinal].asList())
-        }
 
         renderViews()
 
@@ -110,7 +99,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
             actionBar.setTitle(actionBarTitle)
         }
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -121,7 +109,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         super.onStop()
         initializedRemote = true
         initializedEmbedded = true
-        enableFeatureSwitch.setOnCheckedChangeListener(null)
         setToggleListener(SettingsEnum.LINK_CONFIRMATION, null)
         setToggleListener(SettingsEnum.PREVENT_SCREENSHOTS, null)
         setToggleListener(SettingsEnum.SHOW_REMOTE_IMAGES, null)
@@ -131,95 +118,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
     override fun renderViews() {
 
         when (settingsItemType) {
-            SettingsItem.DISPLAY_NAME_AND_SIGNATURE -> {
-
-                selectedAddress = checkNotNull(user.addresses.primary)
-                val (newAddressId, currentSignature) = selectedAddress.id to selectedAddress.signature?.s
-
-                if (mDisplayName.isNotEmpty()) {
-                    setValue(SettingsEnum.DISPLAY_NAME, mDisplayName)
-                }
-
-                setEditTextListener(SettingsEnum.DISPLAY_NAME) {
-                    var newDisplayName = (it as CustomFontEditText).text.toString()
-
-                    val containsBannedChars = newDisplayName.matches(".*[<>].*".toRegex())
-                    if (containsBannedChars) {
-                        showToast(R.string.display_name_banned_chars, Toast.LENGTH_SHORT, Gravity.CENTER)
-                        val primaryAddress = checkNotNull(user.addresses.primary)
-                        newDisplayName = primaryAddress.displayName?.s ?: primaryAddress.email.s
-                    }
-
-                    val displayChanged = newDisplayName != mDisplayName
-                    if (displayChanged) {
-                        mDisplayName = newDisplayName
-
-                        val job = UpdateSettingsJob(
-                            newDisplayName = newDisplayName,
-                            addressId = newAddressId
-                        )
-                        mJobManager.addJobInBackground(job)
-                    }
-                }
-
-                if (!currentSignature.isNullOrEmpty()) {
-                    setValue(SettingsEnum.SIGNATURE, currentSignature)
-                }
-                setEnabled(SettingsEnum.SIGNATURE, legacyUser.isShowSignature)
-
-
-                val currentMobileSignature = legacyUser.mobileSignature
-                if (!currentMobileSignature.isNullOrEmpty()) {
-                    Timber.v("set mobileSignature $currentMobileSignature")
-                    setValue(SettingsEnum.MOBILE_SIGNATURE, currentMobileSignature)
-                }
-                if (legacyUser.isPaidUserSignatureEdit) {
-                    setEnabled(SettingsEnum.MOBILE_SIGNATURE, legacyUser.isShowMobileSignature)
-                } else {
-                    setEnabled(SettingsEnum.MOBILE_SIGNATURE, true)
-                    setSettingDisabled(
-                        SettingsEnum.MOBILE_SIGNATURE,
-                        true,
-                        getString(R.string.mobile_signature_is_premium)
-                    )
-                }
-
-                setEditTextListener(SettingsEnum.SIGNATURE) {
-                    val newSignature = (it as CustomFontEditText).text.toString()
-                    val isSignatureChanged = newSignature != currentSignature
-                    if (isSignatureChanged) {
-                        val job = UpdateSettingsJob(
-                            newSignature = newSignature,
-                            addressId = newAddressId
-                        )
-                        mJobManager.addJobInBackground(job)
-                    }
-                }
-
-                setToggleListener(SettingsEnum.SIGNATURE) { _: View, isChecked: Boolean ->
-                    legacyUser.isShowSignature = isChecked
-                }
-
-                setEditTextListener(SettingsEnum.MOBILE_SIGNATURE) {
-                    val newMobileSignature = (it as CustomFontEditText).text.toString()
-                    val isMobileSignatureChanged = newMobileSignature != currentMobileSignature
-
-                    if (isMobileSignatureChanged) {
-                        legacyUser.mobileSignature = newMobileSignature
-                    }
-                }
-
-                setEditTextChangeListener(SettingsEnum.MOBILE_SIGNATURE) { newMobileSignature ->
-                    Timber.v("text change save mobileSignature $newMobileSignature")
-                    legacyUser.mobileSignature = newMobileSignature
-                }
-
-                setToggleListener(SettingsEnum.MOBILE_SIGNATURE) { _: View, isChecked: Boolean ->
-                    legacyUser.isShowMobileSignature = isChecked
-                }
-
-                actionBarTitle = R.string.display_name_n_signature
-            }
             SettingsItem.PRIVACY -> {
 
                 mAutoDownloadGcmMessages = legacyUser.isGcmDownloadMessageDetails
@@ -235,13 +133,14 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 )
                 setEnabled(
                     SettingsEnum.LINK_CONFIRMATION,
-                    sharedPreferences!!.getBoolean(PREF_HYPERLINK_CONFIRM, true)
+                    preferences!!.getBoolean(PREF_HYPERLINK_CONFIRM, true)
                 )
 
                 setToggleListener(SettingsEnum.LINK_CONFIRMATION) { view: View, isChecked: Boolean ->
-                    val prefs = checkNotNull(sharedPreferences)
-                    if (view.isPressed && isChecked != prefs.getBoolean(PREF_HYPERLINK_CONFIRM, true))
+                    val prefs = checkNotNull(preferences)
+                    if (view.isPressed && isChecked != prefs.getBoolean(PREF_HYPERLINK_CONFIRM, true)) {
                         prefs[PREF_HYPERLINK_CONFIRM] = isChecked
+                    }
                 }
 
                 setEnabled(SettingsEnum.PREVENT_SCREENSHOTS, legacyUser.isPreventTakingScreenshots)
@@ -284,57 +183,39 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     }
                 }
 
-
                 actionBarTitle = R.string.privacy
             }
             SettingsItem.AUTO_DOWNLOAD_MESSAGES -> {
-                settingsRecyclerViewParent.visibility = View.GONE
-                featureTitle.text = getString(R.string.auto_download_messages_title)
-                enableFeatureSwitch.isChecked = legacyUser.isGcmDownloadMessageDetails
 
-                enableFeatureSwitch.setOnCheckedChangeListener { view, isChecked ->
+                setValue(
+                    SettingsEnum.AUTO_DOWNLOAD_MESSAGES,
+                    getString(R.string.auto_download_messages_subtitle)
+                )
+                setEnabled(SettingsEnum.AUTO_DOWNLOAD_MESSAGES, legacyUser.isGcmDownloadMessageDetails)
 
-                    val gcmDownloadDetailsChanged = legacyUser.isGcmDownloadMessageDetails != isChecked
-                    if (view.isPressed && gcmDownloadDetailsChanged) {
+                setToggleListener(SettingsEnum.AUTO_DOWNLOAD_MESSAGES) { _: View, isChecked: Boolean ->
+                    if (isChecked != legacyUser.isGcmDownloadMessageDetails) {
                         legacyUser.isGcmDownloadMessageDetails = isChecked
                     }
                 }
-                descriptionParent.visibility = View.VISIBLE
-                description.text = getString(R.string.auto_download_messages_subtitle)
+
                 actionBarTitle = R.string.auto_download_messages_title
             }
             SettingsItem.BACKGROUND_SYNC -> {
-                settingsRecyclerViewParent.visibility = View.GONE
-                featureTitle.text = getString(R.string.settings_background_sync)
-                enableFeatureSwitch.isChecked = legacyUser.isBackgroundSync
 
-                enableFeatureSwitch.setOnCheckedChangeListener { view, isChecked ->
+                setValue(
+                    SettingsEnum.BACKGROUND_SYNC,
+                    getString(R.string.background_sync_subtitle)
+                )
+                setEnabled(SettingsEnum.BACKGROUND_SYNC, legacyUser.isBackgroundSync)
 
-                    if (view.isPressed && isChecked != legacyUser.isBackgroundSync) {
+                setToggleListener(SettingsEnum.BACKGROUND_SYNC) { _: View, isChecked: Boolean ->
+                    if (isChecked != legacyUser.isBackgroundSync) {
                         legacyUser.isBackgroundSync = isChecked
-                        if (legacyUser.isBackgroundSync) {
-                            val alarmReceiver = AlarmReceiver()
-                            alarmReceiver.setAlarm(ProtonMailApplication.getApplication())
-
-                        }
                     }
                 }
 
-                descriptionParent.visibility = View.VISIBLE
-                description.text = getString(R.string.background_sync_subtitle)
                 actionBarTitle = R.string.settings_background_sync
-            }
-            SettingsItem.SWIPE -> {
-                val mailSettings = checkNotNull(userManager.getCurrentUserMailSettingsBlocking())
-                setValue(
-                    SettingsEnum.SWIPE_LEFT,
-                    getString(SwipeAction.values()[mailSettings.leftSwipeAction].actionDescription)
-                )
-                setValue(
-                    SettingsEnum.SWIPE_RIGHT,
-                    getString(SwipeAction.values()[mailSettings.rightSwipeAction].actionDescription)
-                )
-                actionBarTitle = R.string.swiping_gesture
             }
             SettingsItem.LABELS_AND_FOLDERS -> {
                 actionBarTitle = R.string.labels_and_folders
@@ -353,6 +234,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 val notificationOption =
                     resources.getStringArray(R.array.notification_options)[mNotificationOptionValue]
                 setValue(SettingsEnum.NOTIFICATION_SETTINGS, notificationOption)
+                setIconVisibility(SettingsEnum.NOTIFICATION_SETTINGS, View.VISIBLE)
 
                 actionBarTitle = R.string.push_notifications
             }

@@ -728,10 +728,10 @@
     <string name="display_name">Vis navn</string>
     <string name="edit_display_name">Redigér vist navn</string>
     <string name="signature">Signatur</string>
-    <string name="mobile_signature">Mobilsignatur</string>
-    <string name="edit_mobile_signature">Aktivér mobilsignatur</string>
-    <string name="default_mobile_signature">Sendt fra ProtonMail-mobil</string>
-    <string name="mobile_signature_is_premium">Ændring af Mobilsignaturen er kun tilladt for betalende brugere</string>
+    <string name="mobile_footer">Mobilsignatur</string>
+    <string name="edit_mobile_footer">Aktivér mobilsignatur</string>
+    <string name="default_mobile_footer">Sendt fra ProtonMail-mobil</string>
+    <string name="mobile_footer_is_premium">Ændring af Mobilsignaturen er kun tilladt for betalende brugere</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Udsæt</string>
     <string name="notifications_snooze">Notifikationsudsættelse</string>
@@ -794,7 +794,7 @@
     <string name="labels">Etiketter</string>
     <string name="labels_manage">Etikethåndtering</string>
     <string name="folders_manage">Mappehåndtering</string>
-    <string name="swiping_gesture">Strygebevægelser</string>
+    <string name="swipe_actions">Strygebevægelser</string>
     <string name="swipe_action_right">Stryg til højre</string>
     <string name="swipe_action_left">Stryg til venstre</string>
     <!-- region Swipe Actions -->
@@ -844,7 +844,7 @@
     <string name="turn_combined_contacts_on">Slå funktionen til for at autoudfylde e-mailadresser vha. kontakter fra alle dine indloggede konti.</string>
     <string name="local_cache_management">Lokal cachehåndtering</string>
     <string name="cache_cleared">Lokale Cache er opfrisket</string>
-    <string name="empty_cache">Tøm cache</string>
+    <string name="empty_data">Tøm cache</string>
     <!-- endregion -->
     <string name="enabled">Aktiv</string>
     <string name="disabled">Inaktiv</string>

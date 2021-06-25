@@ -754,10 +754,10 @@
     <string name="display_name">Ім\'я для показу</string>
     <string name="edit_display_name">Редагувати показуване ім\'я</string>
     <string name="signature">Підпис</string>
-    <string name="mobile_signature">Мобільні підпис</string>
-    <string name="edit_mobile_signature">Додавати мобільний підпис</string>
-    <string name="default_mobile_signature">Надіслано з ProtonMail mobile</string>
-    <string name="mobile_signature_is_premium">Змінення мобільного підпису дозволено лише передплаченим користувачам</string>
+    <string name="mobile_footer">Мобільні підпис</string>
+    <string name="edit_mobile_footer">Додавати мобільний підпис</string>
+    <string name="default_mobile_footer">Надіслано з ProtonMail mobile</string>
+    <string name="mobile_footer_is_premium">Змінення мобільного підпису дозволено лише передплаченим користувачам</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Відкласти</string>
     <string name="notifications_snooze">Затримка сповіщень</string>
@@ -822,7 +822,7 @@
     <string name="labels">Мітки</string>
     <string name="labels_manage">Менеджер міток</string>
     <string name="folders_manage">Менеджер тек</string>
-    <string name="swiping_gesture">Жест проведення</string>
+    <string name="swipe_actions">Жест проведення</string>
     <string name="swipe_action_right">Провести праворуч</string>
     <string name="swipe_action_left">Провести ліворуч</string>
     <!-- region Swipe Actions -->
@@ -878,7 +878,7 @@
     <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
     <string name="local_cache_management">Керування локальним кешем</string>
     <string name="cache_cleared">Локальний кеш оновлено</string>
-    <string name="empty_cache">Очистити кеш</string>
+    <string name="empty_data">Очистити кеш</string>
     <!-- endregion -->
     <string name="enabled">Увімкнено</string>
     <string name="disabled">Вимкнено</string>

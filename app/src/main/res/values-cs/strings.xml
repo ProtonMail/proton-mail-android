@@ -754,10 +754,10 @@
     <string name="display_name">Zobrazované jméno</string>
     <string name="edit_display_name">Upravit zobrazované jméno</string>
     <string name="signature">Podpis</string>
-    <string name="mobile_signature">Mobile signature</string>
-    <string name="edit_mobile_signature">Enable mobile signature</string>
-    <string name="default_mobile_signature">Odesláno z mobilní verze ProtonMail</string>
-    <string name="mobile_signature_is_premium">Změna podpisu na mobilním zařízení je dostupná pouze pro platící uživatele</string>
+    <string name="mobile_footer">Mobile signature</string>
+    <string name="edit_mobile_footer">Enable mobile signature</string>
+    <string name="default_mobile_footer">Odesláno z mobilní verze ProtonMail</string>
+    <string name="mobile_footer_is_premium">Změna podpisu na mobilním zařízení je dostupná pouze pro platící uživatele</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Snooze</string>
     <string name="notifications_snooze">Oznámení odložení</string>
@@ -822,7 +822,7 @@
     <string name="labels">Štítky</string>
     <string name="labels_manage">Správce štítků</string>
     <string name="folders_manage">Správce složek</string>
-    <string name="swiping_gesture">Swiping gesture</string>
+    <string name="swipe_actions">Swiping gesture</string>
     <string name="swipe_action_right">Odsunutí doprava</string>
     <string name="swipe_action_left">Odsunutí doleva</string>
     <!-- region Swipe Actions -->
@@ -878,7 +878,7 @@
     <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
     <string name="local_cache_management">Local Cache Management</string>
     <string name="cache_cleared">Mezipaměť byla obnovena</string>
-    <string name="empty_cache">Vyprázdnit cache</string>
+    <string name="empty_data">Vyprázdnit cache</string>
     <!-- endregion -->
     <string name="enabled">Povoleno</string>
     <string name="disabled">Zakázáno</string>

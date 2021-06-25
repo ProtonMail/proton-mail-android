@@ -83,7 +83,7 @@ fun UserManager.getLegacyAddressesBlocking(userId: Id): List<Address> = getAddre
         requireNotNull(address.type?.value),
         address.order,
         address.displayName,
-        null,
+        address.signature,
         address.keys.isNotEmpty().toInt(),
         address.keys.map { key ->
             Keys(

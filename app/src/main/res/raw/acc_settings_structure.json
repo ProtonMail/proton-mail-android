@@ -32,6 +32,13 @@
     "setting_type": "info"
   },
   {
+    "setting_id": "conversation_mode",
+    "is_section": false,
+    "setting_value": "",
+    "setting_hasValue": false,
+    "setting_type": "toggle"
+  },
+  {
     "setting_id": "addresses",
     "is_section": true
   },
@@ -72,21 +79,7 @@
     "setting_type": "drill"
   },
   {
-    "setting_id": "search",
-    "is_section": false,
-    "setting_value": "",
-    "setting_hasValue": false,
-    "setting_type": "drill"
-  },
-  {
     "setting_id": "labels_n_folders",
-    "is_section": false,
-    "setting_value": "",
-    "setting_hasValue": false,
-    "setting_type": "drill"
-  },
-  {
-    "setting_id": "swiping_gesture",
     "is_section": false,
     "setting_value": "",
     "setting_hasValue": false,

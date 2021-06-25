@@ -754,10 +754,10 @@
     <string name="display_name">Отображаемое имя</string>
     <string name="edit_display_name">Изменить отображаемое имя</string>
     <string name="signature">Подпись</string>
-    <string name="mobile_signature">Подпись для мобильного клиента</string>
-    <string name="edit_mobile_signature">Добавлять мобильную подпись</string>
-    <string name="default_mobile_signature">Отправлено из мобильного клиента ProtonMail</string>
-    <string name="mobile_signature_is_premium">Изменение мобильной подписи разрешено только пользователям на платных тарифах</string>
+    <string name="mobile_footer">Подпись для мобильного клиента</string>
+    <string name="edit_mobile_footer">Добавлять мобильную подпись</string>
+    <string name="default_mobile_footer">Отправлено из мобильного клиента ProtonMail</string>
+    <string name="mobile_footer_is_premium">Изменение мобильной подписи разрешено только пользователям на платных тарифах</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Приглушение</string>
     <string name="notifications_snooze">Приглушение уведомлений</string>
@@ -822,7 +822,7 @@
     <string name="labels">Ярлыки</string>
     <string name="labels_manage">Управление ярлыками</string>
     <string name="folders_manage">Управление папками</string>
-    <string name="swiping_gesture">Жесты смахиванием</string>
+    <string name="swipe_actions">Жесты смахиванием</string>
     <string name="swipe_action_right">Свайп вправо</string>
     <string name="swipe_action_left">Свайп влево</string>
     <!-- region Swipe Actions -->
@@ -878,7 +878,7 @@
     <string name="turn_combined_contacts_on">Включите эту функцию для автозавершения адресов эл. почты путём использования контактов из всех учётных записей, в которые вы вошли.</string>
     <string name="local_cache_management">Управление локальным кэшем</string>
     <string name="cache_cleared">Локальный кэш обновлён</string>
-    <string name="empty_cache">Очистить кэш</string>
+    <string name="empty_data">Очистить кэш</string>
     <!-- endregion -->
     <string name="enabled">Включено</string>
     <string name="disabled">Отключено</string>

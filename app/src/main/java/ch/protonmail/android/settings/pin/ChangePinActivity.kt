@@ -21,6 +21,7 @@ package ch.protonmail.android.settings.pin
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
@@ -29,7 +30,7 @@ import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.views.SecureEditText
+import ch.protonmail.android.views.ISecurePINListener
 
 // region constants
 const val EXTRA_NEW_PIN_SET = "extra_new_pin_set"
@@ -42,7 +43,7 @@ const val EXTRA_NEW_PIN = "extra_pin"
 
 class ChangePinActivity : BaseActivity(),
     PinFragmentViewModel.IPinCreationListener,
-    SecureEditText.ISecurePINListener {
+    ISecurePINListener {
 
     private val fragmentContainer by lazy { findViewById<ViewGroup>(R.id.fragmentContainer) }
 
@@ -59,15 +60,36 @@ class ChangePinActivity : BaseActivity(),
             if (savedInstanceState != null) {
                 return
             }
-            val validatePinFragment = PinFragment.newInstance(R.string.enter_current_pin, PinAction.VALIDATE, null, false, false)
+            val validatePinFragment =
+                PinFragment.newInstance(R.string.settings_enter_pin_code_title, PinAction.VALIDATE, null, false, false)
             supportFragmentManager.beginTransaction()
-                    .add(R.id.fragmentContainer, validatePinFragment, validatePinFragment.fragmentKey)
-                    .commitAllowingStateLoss()
+                .setCustomAnimations(R.anim.zoom_in, 0, 0, R.anim.zoom_out)
+                .add(R.id.fragmentContainer, validatePinFragment, validatePinFragment.fragmentKey)
+                .commitAllowingStateLoss()
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 1) {
+            supportFragmentManager.popBackStack()
+        } else {
+            saveLastInteraction()
+            setResult(Activity.RESULT_OK)
+            finish()
         }
     }
 
     override fun onPinCreated(pin: String) {
-        val confirmPinFragment = PinFragment.newInstance(R.string.pin_subtitle_confirm_new, PinAction.CONFIRM, pin, false, false)
+        val confirmPinFragment =
+            PinFragment.newInstance(R.string.settings_confirm_pin_code_title, PinAction.CONFIRM, pin, false, false)
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.fragmentContainer, confirmPinFragment)
         fragmentTransaction.addToBackStack(confirmPinFragment.fragmentKey)
@@ -76,10 +98,11 @@ class ChangePinActivity : BaseActivity(),
 
     override fun showCreatePin() {
         supportFragmentManager.popBackStack()
-        val validatePinFragment = PinFragment.newInstance(R.string.enter_current_pin, PinAction.VALIDATE, null, false, false)
+        val validatePinFragment =
+            PinFragment.newInstance(R.string.settings_create_pin_code_title, PinAction.VALIDATE, null, false, false)
         supportFragmentManager.beginTransaction()
-                .add(R.id.fragmentContainer, validatePinFragment, validatePinFragment.fragmentKey)
-                .commitAllowingStateLoss()
+            .add(R.id.fragmentContainer, validatePinFragment, validatePinFragment.fragmentKey)
+            .commitAllowingStateLoss()
     }
 
     override fun onPinConfirmed(confirmPin: String?) {
@@ -96,7 +119,8 @@ class ChangePinActivity : BaseActivity(),
     }
 
     override fun onPinSuccess() {
-        val createPinFragment = PinFragment.newInstance(R.string.pin_subtitle_create_new, PinAction.CREATE, null, false, false)
+        val createPinFragment =
+            PinFragment.newInstance(R.string.settings_create_pin_code_title, PinAction.CREATE, null, false, false)
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.fragmentContainer, createPinFragment)
         fragmentTransaction.addToBackStack(createPinFragment.fragmentKey)

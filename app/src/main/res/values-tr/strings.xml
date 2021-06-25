@@ -723,10 +723,10 @@
     <string name="display_name">Görünen ad</string>
     <string name="edit_display_name">Görünen adı düzenle</string>
     <string name="signature">İmza</string>
-    <string name="mobile_signature">Mobil imza</string>
-    <string name="edit_mobile_signature">Mobil imzayı etkinleştir</string>
-    <string name="default_mobile_signature">ProtonMail mobil ile gönderildi</string>
-    <string name="mobile_signature_is_premium">Mobil imza, yalnızca ücretli kullanıcılar tarafından değiştirilebilir</string>
+    <string name="mobile_footer">Mobil imza</string>
+    <string name="edit_mobile_footer">Mobil imzayı etkinleştir</string>
+    <string name="default_mobile_footer">ProtonMail mobil ile gönderildi</string>
+    <string name="mobile_footer_is_premium">Mobil imza, yalnızca ücretli kullanıcılar tarafından değiştirilebilir</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Ertele</string>
     <string name="notifications_snooze">Bildirimleri Ertele</string>
@@ -789,7 +789,7 @@
     <string name="labels">Etiketler</string>
     <string name="labels_manage">Etiket yöneticisi</string>
     <string name="folders_manage">Klasör yöneticisi</string>
-    <string name="swiping_gesture">Kaydırma hareketi</string>
+    <string name="swipe_actions">Kaydırma hareketi</string>
     <string name="swipe_action_right">Sağa kaydır</string>
     <string name="swipe_action_left">Sola kaydır</string>
     <!-- region Swipe Actions -->
@@ -839,7 +839,7 @@
     <string name="turn_combined_contacts_on">Oturum açtığınız tüm hesaplardaki kişileri kullanarak e-posta adreslerini otomatik olarak tamamlamak için bu özelliği açın.</string>
     <string name="local_cache_management">Yerel Önbellek Yönetimi</string>
     <string name="cache_cleared">Yerel önbellek yenilendi</string>
-    <string name="empty_cache">Önbelleği Boşalt</string>
+    <string name="empty_data">Önbelleği Boşalt</string>
     <!-- endregion -->
     <string name="enabled">Etkin</string>
     <string name="disabled">Devre dışı</string>

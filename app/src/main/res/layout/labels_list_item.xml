@@ -18,55 +18,55 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/fields_default_space_small"
-    android:paddingBottom="@dimen/fields_default_space_small">
+    android:background="?attr/selectableItemBackground"
+    android:paddingTop="@dimen/padding_l"
+    android:paddingBottom="@dimen/padding_l">
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/label_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/padding_m"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/label_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/label_color"
+        android:layout_width="@dimen/padding_l"
+        android:layout_height="@dimen/padding_l"
+        android:src="@drawable/circle_labels_selection"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/label_name"
+        app:layout_constraintStart_toEndOf="@id/label_check"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/label_name"
+        style="@style/Proton.Text.Default"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/label_background"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/padding_l"
+        android:layout_marginEnd="@dimen/padding_m"
         android:ellipsize="end"
-        android:gravity="start|center_vertical"
-        android:paddingLeft="@dimen/fields_default_space"
-        android:paddingRight="@dimen/fields_default_space"
-        android:singleLine="true"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="@dimen/h5"
+        android:gravity="start|center"
+        android:maxLines="1"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Label name" />
+        app:layout_constraintStart_toEndOf="@id/label_color"
+        app:layout_constraintTop_toTopOf="parent" />
 
-
-    <TextView
-        android:id="@+id/label_selected_messages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toStartOf="@id/label_check"
-        android:paddingEnd="8dp"
-        android:textColor="@color/icon_purple"
-        android:textSize="@dimen/h2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/label_check"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="22" />
-
-
-    <ch.protonmail.android.views.ThreeStateButton
-        android:id="@+id/label_check"
-        android:layout_width="@dimen/custom_check_box_size"
-        android:layout_height="@dimen/custom_check_box_size"
-        android:layout_marginStart="10dp"
-        android:gravity="end"
-        android:padding="0dp"
+    <ImageView
+        android:id="@+id/label_edit"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="@dimen/padding_m"
+        android:src="@drawable/ic_pencil"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

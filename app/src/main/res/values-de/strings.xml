@@ -720,10 +720,10 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="display_name">Name anzeigen</string>
     <string name="edit_display_name">Anzeigename ändern</string>
     <string name="signature">Signatur</string>
-    <string name="mobile_signature">Signatur auf Mobilgeräten</string>
-    <string name="edit_mobile_signature">Signatur auf Mobilgerät aktivieren</string>
-    <string name="default_mobile_signature">Gesendet von ProtonMail mobile</string>
-    <string name="mobile_signature_is_premium">Das Ändern der mobilen Signatur ist nur in der kostenpflichtigen Version möglich</string>
+    <string name="mobile_footer">Signatur auf Mobilgeräten</string>
+    <string name="edit_mobile_footer">Signatur auf Mobilgerät aktivieren</string>
+    <string name="default_mobile_footer">Gesendet von ProtonMail mobile</string>
+    <string name="mobile_footer_is_premium">Das Ändern der mobilen Signatur ist nur in der kostenpflichtigen Version möglich</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Zurückstellen</string>
     <string name="notifications_snooze">Benachrichtigungen später lesen</string>
@@ -786,7 +786,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="labels">Kategorien</string>
     <string name="labels_manage">Kategorien verwalten</string>
     <string name="folders_manage">Ordnerverwaltung</string>
-    <string name="swiping_gesture">Wischgesten</string>
+    <string name="swipe_actions">Wischgesten</string>
     <string name="swipe_action_right">Nach rechts wischen</string>
     <string name="swipe_action_left">Nach links wischen</string>
     <!-- region Swipe Actions -->
@@ -836,7 +836,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="turn_combined_contacts_on">Aktivieren Sie diese Funktion, um E-Mail-Adressen aus Kontakten all Ihren angemeldeten Konten automatisch zu vervollständigen.</string>
     <string name="local_cache_management">Lokalen Zwischenspeicher verwalten</string>
     <string name="cache_cleared">Lokaler Zwischenspeicher wurde aktualisiert</string>
-    <string name="empty_cache">Zwischenspeicher leeren</string>
+    <string name="empty_data">Zwischenspeicher leeren</string>
     <!-- endregion -->
     <string name="enabled">Aktiviert</string>
     <string name="disabled">Deaktiviert</string>

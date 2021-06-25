@@ -752,10 +752,10 @@
     <string name="display_name">Nazwa wyświetlana</string>
     <string name="edit_display_name">Edytuj nazwę wyświetlaną</string>
     <string name="signature">Podpis</string>
-    <string name="mobile_signature">Podpis mobilny</string>
-    <string name="edit_mobile_signature">Włącz podpis mobilny</string>
-    <string name="default_mobile_signature">Wysłano z aplikacji ProtonMail</string>
-    <string name="mobile_signature_is_premium">Zmiana podpisu mobilnego jest dostępna tylko dla użytkowników płatnego planu</string>
+    <string name="mobile_footer">Podpis mobilny</string>
+    <string name="edit_mobile_footer">Włącz podpis mobilny</string>
+    <string name="default_mobile_footer">Wysłano z aplikacji ProtonMail</string>
+    <string name="mobile_footer_is_premium">Zmiana podpisu mobilnego jest dostępna tylko dla użytkowników płatnego planu</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Usypianie powiadomień</string>
     <string name="notifications_snooze">Usypianie powiadomień</string>
@@ -820,7 +820,7 @@
     <string name="labels">Etykiety</string>
     <string name="labels_manage">Menedżer etykiet</string>
     <string name="folders_manage">Menedżer folderów</string>
-    <string name="swiping_gesture">Gesty przeciągania</string>
+    <string name="swipe_actions">Gesty przeciągania</string>
     <string name="swipe_action_right">Przesuń palcem w prawo</string>
     <string name="swipe_action_left">Przesuń palcem w lewo</string>
     <!-- region Swipe Actions -->
@@ -876,7 +876,7 @@
     <string name="turn_combined_contacts_on">Włączenie tej funkcji spowoduje uzupełnianie adresów e-mail przy użyciu wszystkich kontaktów na Twoich zalogowanych kontach.</string>
     <string name="local_cache_management">Zarządzanie pamięcią podręczną</string>
     <string name="cache_cleared">Lokalna pamięć podręczna została odświeżona</string>
-    <string name="empty_cache">Wyczyść pamięć podręczną</string>
+    <string name="empty_data">Wyczyść pamięć podręczną</string>
     <!-- endregion -->
     <string name="enabled">Włączone</string>
     <string name="disabled">Wyłączone</string>

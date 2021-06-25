@@ -26,7 +26,7 @@ import androidx.annotation.DrawableRes
  *
  * @author Davide Farella
  */
-internal data class LabelUiModel(
+data class LabelUiModel(
     val labelId: String,
     val name: String,
     @DrawableRes val image: Int,

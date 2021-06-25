@@ -60,6 +60,20 @@
         <item name="android:inputType">text|textNoSuggestions|textMultiLine</item>
     </style>
 
+    <style name="ProtonInput.Mail" parent="ProtonInput.TextInputLayout.Border">
+        <item name="android:textAppearance">@style/Proton.Text.Default</item>
+        <item name="android:paddingStart">@dimen/padding_m</item>
+        <item name="android:paddingEnd">@dimen/padding_m</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:background">@drawable/field</item>
+        <item name="android:textColorHint">@color/text_hint</item>
+        <item name="android:textColor">@color/text_norm_selector</item>
+        <item name="android:inputType">textMultiLine</item>
+        <item name="android:gravity">top|left</item>
+    </style>
+
     <style name="ProtonBadge">
         <item name="android:textAppearance">@style/Proton.Text.Default.Inverted</item>
         <item name="android:textColor">@color/text_inverted</item>
@@ -146,41 +160,23 @@
         <item name="backgroundTint">@color/background_norm</item>
     </style>
 
+    <style name="ProtonInput.PIN">
+        <item name="android:textAppearance">@style/Proton.Text.Default</item>
+        <item name="android:letterSpacing">0.4</item>
+        <item name="android:textSize">@dimen/settings_pin_font_size</item>
+        <item name="android:textColor">@color/cornflower_blue</item>
+        <item name="android:background">@color/transparent</item>
+
+<!--        android:layout_marginBottom="-24dp"-->
+    </style>
+    <!-- V4 -->
+
     <!-- end region -->
     <!-- endregion -->
 
     <!-- region V3 -->
-    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/dark_purple</item>
-        <item name="colorPrimaryDark">@color/dark_purple</item>
-        <item name="android:colorAccent">@color/dark_purple</item>
-        <item name="actionModeStyle">@style/ActionModeStyle</item>
-        <item name="searchViewStyle">@style/SearchViewStyle</item>
-        <item name="android:checkboxStyle">@style/CustomCheckBox</item>
-        <item name="android:colorBackground">@color/white</item>
-        <item name="android:textColor">@android:color/black</item>
-        <item name="android:textColorHint">@color/ice_gray</item>
-        <item name="windowActionModeOverlay">true</item>
-        <item name="android:windowActionModeOverlay">true</item>
-        <item name="actionModeBackground">@color/deep_blue</item>
-        <item name="android:actionModeBackground">@color/deep_blue</item>
-        <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
-        <item name="colorControlNormal">@color/dark_purple</item>
-        <item name="colorControlActivated">@color/dark_purple</item>
-        <item name="colorControlHighlight">@color/dark_purple</item>
-        <item name="autoCompleteTextViewStyle">@style/PMAutoCompleteView</item>
-        <item name="android:windowAnimationStyle">@null</item>
-        <item name="android:windowDisablePreview">true</item>
-    </style>
 
     <style name="AppTheme" parent="ProtonTheme" />
-
-    <style name="AppTheme.Immersive" parent="AppTheme.Base">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-    </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
@@ -205,23 +201,6 @@
 
     <style name="SearchViewStyle" parent="Widget.AppCompat.Light.SearchView">
         <item name="searchIcon">@drawable/ic_menu_search</item>
-    </style>
-
-    <style name="SignupButton" parent="android:Widget.Button">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textColorHint">@color/white_85</item>
-        <item name="android:textSize">@dimen/h4</item>
-        <item name="android:background">@android:color/transparent</item>
-    </style>
-
-    <style name="SettingsButton" parent="android:Widget.Button">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:background">@drawable/settings_button_selector</item>
-    </style>
-
-    <style name="SettingsButtonBlue" parent="SettingsButton">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:background">@drawable/settings_button_blue_selector</item>
     </style>
 
     <style name="V3EditText" parent="@android:style/Widget.EditText">
@@ -547,13 +526,6 @@
         <item name="android:textSize">@dimen/h4</item>
     </style>
 
-    <style name="SettingsItem">
-        <item name="android:background">@drawable/settings_item_selector</item>
-        <item name="android:clickable">true</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:padding">@dimen/message_spacing</item>
-    </style>
-
     <style name="SettingsItemPadding">
         <item name="android:background">@drawable/settings_item_selector</item>
         <item name="android:clickable">true</item>
@@ -571,23 +543,6 @@
         <item name="fontName">Roboto-Regular.ttf</item>
     </style>
 
-    <style name="SettingsSubHeaderText">
-        <item name="android:textColor">@color/iron_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-    </style>
-
-    <style name="SettingsText">
-        <item name="android:textColor">@color/chateau_gray</item>
-        <item name="android:textSize">@dimen/h5</item>
-    </style>
-
-    <style name="SettingsTextHeader">
-        <item name="android:layout_marginLeft">@dimen/fields_default_space_medium</item>
-        <item name="android:layout_marginTop">@dimen/fields_default_space_medium</item>
-        <item name="android:layout_marginBottom">@dimen/fields_default_space_medium</item>
-        <item name="fontName">Roboto-Regular.ttf</item>
-    </style>
-
     <style name="CustomCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:button">@drawable/custom_checkbox</item>
         <item name="android:textColor">@color/white</item>
@@ -597,19 +552,9 @@
 
     </style>
 
-    <style name="EditContactTheme" parent="AppTheme">
-        <item name="colorAccent">@color/water_blue</item>
-    </style>
-
     <style name="DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/zoom_in</item>
         <item name="android:windowExitAnimation">@null</item>
-    </style>
-
-    <style name="AppTheme.Dialog" parent="AppTheme">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowIsFloating">false</item>
     </style>
 
     <style name="AppTheme.Dialog.Labels" parent="AppTheme">
@@ -639,16 +584,16 @@
     </style>
 
     <style name="CustomKeyboardButton">
-        <item name="android:textSize">30dp</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textAppearance">@style/Proton.Text.Default</item>
         <item name="android:gravity">center</item>
-        <item name="android:background">@drawable/keyboard_button_selector</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:layout_marginRight">10dp</item>
-        <item name="android:layout_marginLeft">10dp</item>
-        <item name="fontName">Roboto-Light.ttf</item>
+        <item name="android:textSize">@dimen/settings_pin_key_button_font</item>
+        <item name="android:background">@drawable/keyboard_button_background</item>
+        <item name="android:layout_width">@dimen/settings_pin_key_button_size</item>
+        <item name="android:layout_height">@dimen/settings_pin_key_button_size</item>
+        <item name="android:layout_marginStart">@dimen/settings_pin_key_button_margin</item>
+        <item name="android:layout_marginEnd">@dimen/settings_pin_key_button_margin</item>
+        <item name="android:layout_marginBottom">@dimen/padding_m</item>
+        <item name="android:layout_marginTop">@dimen/padding_m</item>
     </style>
 
     <style name="CustomKeyboardButton.Arrow.Right" parent="CustomKeyboardButton">
@@ -659,20 +604,6 @@
     <style name="CustomKeyboardButton.Arrow.Left" parent="CustomKeyboardButton">
         <item name="android:background">@drawable/keyboard_button_arrow_selector</item>
         <item name="android:src">@drawable/ic_arrow_back_white</item>
-    </style>
-
-    <style name="SwitchSettings" parent="Theme.AppCompat.Light">
-        <item name="colorControlActivated">@color/switch_settings_item</item>
-        <item name="colorSwitchThumbNormal">#C3C3C3</item>
-        <item name="android:colorForeground">@color/chateau_gray</item>
-    </style>
-
-    <style name="RepeatDay">
-        <item name="android:textColor">@color/dark_purple_statusbar</item>
-        <item name="android:textSize">@dimen/h4</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:background">@drawable/repeat_day_unselected_background</item>
     </style>
 
     <style name="CustomTabLayout" parent="Widget.Design.TabLayout">

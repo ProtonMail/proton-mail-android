@@ -728,10 +728,10 @@
     <string name="display_name">Nome de exibição</string>
     <string name="edit_display_name">Editar nome de exibição</string>
     <string name="signature">Assinatura</string>
-    <string name="mobile_signature">Assinatura móvel</string>
-    <string name="edit_mobile_signature">Ativar assinatura móvel</string>
-    <string name="default_mobile_signature">Enviado via ProtonMail móvel</string>
-    <string name="mobile_signature_is_premium">A alteração de assinatura móvel é permitido apenas para usuários pagos</string>
+    <string name="mobile_footer">Assinatura móvel</string>
+    <string name="edit_mobile_footer">Ativar assinatura móvel</string>
+    <string name="default_mobile_footer">Enviado via ProtonMail móvel</string>
+    <string name="mobile_footer_is_premium">A alteração de assinatura móvel é permitido apenas para usuários pagos</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Soneca</string>
     <string name="notifications_snooze">Notificações adiadas</string>
@@ -794,7 +794,7 @@
     <string name="labels">Labels</string>
     <string name="labels_manage">Gerenciador de marcadores</string>
     <string name="folders_manage">Gerenciador de pastas</string>
-    <string name="swiping_gesture">Gestos de deslizar</string>
+    <string name="swipe_actions">Gestos de deslizar</string>
     <string name="swipe_action_right">Deslize para direita</string>
     <string name="swipe_action_left">Deslize para esquerda</string>
     <!-- region Swipe Actions -->
@@ -844,7 +844,7 @@
     <string name="turn_combined_contacts_on">Ative este recurso para preencher automaticamente endereços de e-mail usando os contatos de todas as suas contas conectadas.</string>
     <string name="local_cache_management">Gerenciador de cache local</string>
     <string name="cache_cleared">Cache local atualizado</string>
-    <string name="empty_cache">Limpar cache</string>
+    <string name="empty_data">Limpar cache</string>
     <!-- endregion -->
     <string name="enabled">Ativado</string>
     <string name="disabled">Desabilitado</string>

@@ -723,10 +723,10 @@
     <string name="display_name">Visningsnamn</string>
     <string name="edit_display_name">Redigera visningsnamn</string>
     <string name="signature">Signatur</string>
-    <string name="mobile_signature">Mobilsignatur</string>
-    <string name="edit_mobile_signature">Aktivera mobil signatur</string>
-    <string name="default_mobile_signature">Skickat från ProtonMail mobile</string>
-    <string name="mobile_signature_is_premium">Ändring av mobilsignatur är endast möjligt för betalande användare</string>
+    <string name="mobile_footer">Mobilsignatur</string>
+    <string name="edit_mobile_footer">Aktivera mobil signatur</string>
+    <string name="default_mobile_footer">Skickat från ProtonMail mobile</string>
+    <string name="mobile_footer_is_premium">Ändring av mobilsignatur är endast möjligt för betalande användare</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Snooza</string>
     <string name="notifications_snooze">Snooza notifieringar</string>
@@ -789,7 +789,7 @@
     <string name="labels">Etiketter</string>
     <string name="labels_manage">Etiketthanterare</string>
     <string name="folders_manage">Mapphantering</string>
-    <string name="swiping_gesture">Svepgester</string>
+    <string name="swipe_actions">Svepgester</string>
     <string name="swipe_action_right">Svep höger</string>
     <string name="swipe_action_left">Svep vänster</string>
     <!-- region Swipe Actions -->
@@ -839,7 +839,7 @@
     <string name="turn_combined_contacts_on">Aktivera denna funktion för att automatiskt slutföra e-postadresser med hjälp av kontakter från alla dina inloggade konton.</string>
     <string name="local_cache_management">Hantera lokal cache</string>
     <string name="cache_cleared">Den lokala cachen är uppdaterad</string>
-    <string name="empty_cache">Töm cachen</string>
+    <string name="empty_data">Töm cachen</string>
     <!-- endregion -->
     <string name="enabled">Aktiverad</string>
     <string name="disabled">Inaktiverad</string>

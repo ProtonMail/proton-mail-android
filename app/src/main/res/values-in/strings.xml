@@ -718,10 +718,10 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="display_name">Nama tampilan</string>
     <string name="edit_display_name">Edit nama tampilan</string>
     <string name="signature">Tanda tangan</string>
-    <string name="mobile_signature">Tanda tangan mobile</string>
-    <string name="edit_mobile_signature">Aktifkan tanda tangan seluler</string>
-    <string name="default_mobile_signature">Dikirim dari ProtonMail seluler</string>
-    <string name="mobile_signature_is_premium">Mengubah Tanda Tangan Seluler hanya diizinkan hanya untuk pengguna berbayar</string>
+    <string name="mobile_footer">Tanda tangan mobile</string>
+    <string name="edit_mobile_footer">Aktifkan tanda tangan seluler</string>
+    <string name="default_mobile_footer">Dikirim dari ProtonMail seluler</string>
+    <string name="mobile_footer_is_premium">Mengubah Tanda Tangan Seluler hanya diizinkan hanya untuk pengguna berbayar</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Tunda</string>
     <string name="notifications_snooze">Pemberitahuan Tunda</string>
@@ -783,7 +783,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="labels">Label</string>
     <string name="labels_manage">Pengelola Label</string>
     <string name="folders_manage">Pengelola Folder</string>
-    <string name="swiping_gesture">Gerakan usap</string>
+    <string name="swipe_actions">Gerakan usap</string>
     <string name="swipe_action_right">Geser kanan</string>
     <string name="swipe_action_left">Geser kiri</string>
     <!-- region Swipe Actions -->
@@ -830,7 +830,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="turn_combined_contacts_on">Aktifkan fitur ini untuk otomatis melengkapi alamat email menggunakan kontak dari semua akun masuk anda.</string>
     <string name="local_cache_management">Pengelola Cache Lokal</string>
     <string name="cache_cleared">Cache Lokal Disegarkan</string>
-    <string name="empty_cache">Kosongkan Cache</string>
+    <string name="empty_data">Kosongkan Cache</string>
     <!-- endregion -->
     <string name="enabled">Diaktifkan</string>
     <string name="disabled">Dinonaktifkan</string>

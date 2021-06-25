@@ -708,10 +708,10 @@
     <string name="display_name">表示名</string>
     <string name="edit_display_name">表示名の編集</string>
     <string name="signature">署名</string>
-    <string name="mobile_signature">モバイル署名</string>
-    <string name="edit_mobile_signature">モバイル署名を有効にする</string>
-    <string name="default_mobile_signature">ProtonMailモバイルから送信</string>
-    <string name="mobile_signature_is_premium">モバイル署名の変更は有料ユーザーのみが可能です。</string>
+    <string name="mobile_footer">モバイル署名</string>
+    <string name="edit_mobile_footer">モバイル署名を有効にする</string>
+    <string name="default_mobile_footer">ProtonMailモバイルから送信</string>
+    <string name="mobile_footer_is_premium">モバイル署名の変更は有料ユーザーのみが可能です。</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">通知の停止</string>
     <string name="notifications_snooze">通知の停止計画</string>
@@ -773,7 +773,7 @@
     <string name="labels">ラベル</string>
     <string name="labels_manage">ラベルの管理</string>
     <string name="folders_manage">フォルダーの管理</string>
-    <string name="swiping_gesture">スワイプ操作</string>
+    <string name="swipe_actions">スワイプ操作</string>
     <string name="swipe_action_right">右にスワイプ</string>
     <string name="swipe_action_left">左にスワイプ</string>
     <!-- region Swipe Actions -->
@@ -820,7 +820,7 @@
     <string name="turn_combined_contacts_on">この機能を有効化すると、ログイン済みのアカウントの連絡先を、メールアドレスの自動補完に利用可能になります。</string>
     <string name="local_cache_management">端末のキャッシュ管理</string>
     <string name="cache_cleared">端末のキャッシュが更新されました。</string>
-    <string name="empty_cache">キャッシュの削除</string>
+    <string name="empty_data">キャッシュの削除</string>
     <!-- endregion -->
     <string name="enabled">有効</string>
     <string name="disabled">無効</string>

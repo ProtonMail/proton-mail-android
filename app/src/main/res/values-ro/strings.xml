@@ -740,10 +740,10 @@
     <string name="display_name">Afișare nume</string>
     <string name="edit_display_name">Editare nume afișat</string>
     <string name="signature">Semnătura</string>
-    <string name="mobile_signature">Semnătură mobil</string>
-    <string name="edit_mobile_signature">Activare semnătură mobil</string>
-    <string name="default_mobile_signature">Trimis cu ProtonMail pentru mobil</string>
-    <string name="mobile_signature_is_premium">Modificarea semnăturii pentru mobil este permisă doar celor cu un cont plătit</string>
+    <string name="mobile_footer">Semnătură mobil</string>
+    <string name="edit_mobile_footer">Activare semnătură mobil</string>
+    <string name="default_mobile_footer">Trimis cu ProtonMail pentru mobil</string>
+    <string name="mobile_footer_is_premium">Modificarea semnăturii pentru mobil este permisă doar celor cu un cont plătit</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Amânare</string>
     <string name="notifications_snooze">Notificări amânate</string>
@@ -807,7 +807,7 @@
     <string name="labels">Etichete</string>
     <string name="labels_manage">Gestionare etichete</string>
     <string name="folders_manage">Gestionare foldere</string>
-    <string name="swiping_gesture">Gesturi glisare</string>
+    <string name="swipe_actions">Gesturi glisare</string>
     <string name="swipe_action_right">Glisare la dreapta</string>
     <string name="swipe_action_left">Glisare la stânga</string>
     <!-- region Swipe Actions -->
@@ -860,7 +860,7 @@
     <string name="turn_combined_contacts_on">Activați funcția pentru autocompletarea adreselor de e-mail folosind contactele din toate conturile conectate.</string>
     <string name="local_cache_management">Gestionare buffer local</string>
     <string name="cache_cleared">Buffer local actualizat</string>
-    <string name="empty_cache">Golire buffer</string>
+    <string name="empty_data">Golire buffer</string>
     <!-- endregion -->
     <string name="enabled">Activat</string>
     <string name="disabled">Dezactivat</string>

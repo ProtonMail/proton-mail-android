@@ -35,7 +35,7 @@ import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
-import ch.protonmail.android.views.SecureEditText
+import ch.protonmail.android.views.ISecurePINListener
 import com.squareup.otto.Subscribe
 import java.util.concurrent.Executors
 
@@ -49,7 +49,7 @@ const val EXTRA_DRAFT_DETAILS_EVENT = "extra_draft_details_event"
 
 class ValidatePinActivity : BaseActivity(),
     PinFragmentViewModel.IPinCreationListener,
-    SecureEditText.ISecurePINListener,
+    ISecurePINListener,
     PinFragmentViewModel.ReopenFingerprintDialogListener {
 
     private var messageCountsEvent: MessageCountsEvent? = null
@@ -72,9 +72,11 @@ class ValidatePinActivity : BaseActivity(),
         }
         val user = mUserManager.requireCurrentLegacyUser()
         val titleRes = intent.getIntExtra(EXTRA_FRAGMENT_TITLE, 0)
-        val validatePinFragment = PinFragment.newInstance(titleRes, PinAction.VALIDATE, null, useFingerprint = user.isUseFingerprint)
+        val validatePinFragment =
+            PinFragment.newInstance(titleRes, PinAction.VALIDATE, null, useFingerprint = user.isUseFingerprint)
         supportFragmentManager
             .beginTransaction()
+            .setCustomAnimations(R.anim.zoom_in, 0, 0, R.anim.zoom_out)
             .add(R.id.fragmentContainer, validatePinFragment, validatePinFragment.fragmentKey)
             .commitAllowingStateLoss()
 
@@ -169,7 +171,6 @@ class ValidatePinActivity : BaseActivity(),
                     super.onAuthenticationSucceeded(result)
                     onPinSuccess()
                 }
-
             })
         promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(R.string.app_locked))
@@ -213,5 +214,4 @@ class ValidatePinActivity : BaseActivity(),
             }
         }
     }
-
 }

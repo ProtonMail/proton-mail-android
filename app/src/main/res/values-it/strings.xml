@@ -728,10 +728,10 @@
     <string name="display_name">Nome visualizzato</string>
     <string name="edit_display_name">Modifica nome visualizzato</string>
     <string name="signature">Firma</string>
-    <string name="mobile_signature">Firma mobile</string>
-    <string name="edit_mobile_signature">Abilita firma mobile</string>
-    <string name="default_mobile_signature">Inviato da ProtonMail mobile</string>
-    <string name="mobile_signature_is_premium">La modifica della firma mobile è permessa solo agli utenti premium</string>
+    <string name="mobile_footer">Firma mobile</string>
+    <string name="edit_mobile_footer">Abilita firma mobile</string>
+    <string name="default_mobile_footer">Inviato da ProtonMail mobile</string>
+    <string name="mobile_footer_is_premium">La modifica della firma mobile è permessa solo agli utenti premium</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Posticipa</string>
     <string name="notifications_snooze">Silenzia notifiche</string>
@@ -794,7 +794,7 @@
     <string name="labels">Etichette</string>
     <string name="labels_manage">Gestione etichette</string>
     <string name="folders_manage">Gestore cartelle</string>
-    <string name="swiping_gesture">Gesto di scorrimento</string>
+    <string name="swipe_actions">Gesto di scorrimento</string>
     <string name="swipe_action_right">Scorri a destra</string>
     <string name="swipe_action_left">Scorri a sinistra</string>
     <!-- region Swipe Actions -->
@@ -844,7 +844,7 @@
     <string name="turn_combined_contacts_on">Attiva questa funzione per completare automaticamente gli indirizzi email utilizzando i contatti da tutti i tuoi account collegati.</string>
     <string name="local_cache_management">Gestione cache locale</string>
     <string name="cache_cleared">La cache locale è aggiornata</string>
-    <string name="empty_cache">Svuota Cache</string>
+    <string name="empty_data">Svuota Cache</string>
     <!-- endregion -->
     <string name="enabled">Abilitata</string>
     <string name="disabled">Disabilitata</string>

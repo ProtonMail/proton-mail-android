@@ -57,9 +57,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin">
 
-        <ch.protonmail.android.views.CustomFontButton
+        <Button
             android:id="@+id/cancel"
-            style="@style/SettingsButtonBlue"
             android:layout_width="wrap_content"
             android:layout_height="42dp"
             android:layout_alignParentLeft="true"
@@ -67,12 +66,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:maxLines="1"
             android:text="@string/cancel"
             android:textAllCaps="true"
-            android:textSize="@dimen/h3"
-            app:fontName="Roboto-Regular.ttf" />
+            android:textSize="@dimen/h3" />
 
-        <ch.protonmail.android.views.CustomFontButton
+        <Button
             android:id="@+id/ok"
-            style="@style/SettingsButtonBlue"
             android:layout_width="wrap_content"
             android:layout_height="42dp"
             android:layout_alignParentEnd="true"
@@ -81,8 +78,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:paddingEnd="@dimen/fields_default_space_small"
             android:paddingStart="@dimen/fields_default_space_small"
             android:text="@string/send_anyway"
-            android:textSize="@dimen/h3"
-            app:fontName="Roboto-Regular.ttf" />
+            android:textSize="@dimen/h3"/>
 
     </RelativeLayout>
 

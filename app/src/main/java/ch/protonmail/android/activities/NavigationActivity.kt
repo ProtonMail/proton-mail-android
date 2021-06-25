@@ -51,6 +51,7 @@ import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
+import ch.protonmail.android.settings.pin.EXTRA_FRAGMENT_TITLE
 import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.ui.view.ProtonSideDrawer
 import ch.protonmail.android.uiModel.DrawerItemUiModel.*
@@ -431,6 +432,7 @@ abstract class NavigationActivity : BaseActivity() {
                 if (user != null && user.isUsePin && userManager.getMailboxPin() != null) {
                     user.setManuallyLocked(true)
                     val pinIntent = AppUtil.decorInAppIntent(Intent(this, ValidatePinActivity::class.java))
+                    pinIntent.putExtra(EXTRA_FRAGMENT_TITLE, R.string.settings_enter_pin_code_title)
                     startActivityForResult(pinIntent, REQUEST_CODE_VALIDATE_PIN)
                 }
             }

@@ -707,10 +707,10 @@
     <string name="display_name">对外名称</string>
     <string name="edit_display_name">更改对外名称</string>
     <string name="signature">落款</string>
-    <string name="mobile_signature">移动端落款</string>
-    <string name="edit_mobile_signature">使用移动端落款</string>
-    <string name="default_mobile_signature">来自 ProtonMail 移动端</string>
-    <string name="mobile_signature_is_premium">开通付费账户方可更改移动设备落款</string>
+    <string name="mobile_footer">移动端落款</string>
+    <string name="edit_mobile_footer">使用移动端落款</string>
+    <string name="default_mobile_footer">来自 ProtonMail 移动端</string>
+    <string name="mobile_footer_is_premium">开通付费账户方可更改移动设备落款</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">免打扰</string>
     <string name="notifications_snooze">免打扰</string>
@@ -772,7 +772,7 @@
     <string name="labels">Labels</string>
     <string name="labels_manage">标签管理</string>
     <string name="folders_manage">文件夹管理</string>
-    <string name="swiping_gesture">滑动手势</string>
+    <string name="swipe_actions">滑动手势</string>
     <string name="swipe_action_right">向右滑动</string>
     <string name="swipe_action_left">向左滑动</string>
     <!-- region Swipe Actions -->
@@ -819,7 +819,7 @@
     <string name="turn_combined_contacts_on">开启后您登录的所有账户通讯录中的邮箱都可自动补全。</string>
     <string name="local_cache_management">本机缓存管理</string>
     <string name="cache_cleared">本地缓存已清理</string>
-    <string name="empty_cache">清空缓存</string>
+    <string name="empty_data">清空缓存</string>
     <!-- endregion -->
     <string name="enabled">开启</string>
     <string name="disabled">关闭</string>

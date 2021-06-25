@@ -36,7 +36,7 @@ import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.Stat
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.UNDEFINED
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.UPDATE
 import ch.protonmail.android.adapters.LabelColorsAdapter
-import ch.protonmail.android.adapters.LabelsCirclesAdapter
+import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.uiModel.LabelUiModel.Type.FOLDERS
 import ch.protonmail.android.uiModel.LabelUiModel.Type.LABELS
@@ -45,7 +45,6 @@ import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.onTextChange
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
-import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_labels_manager.*
 import studio.forface.viewstatestore.ViewStateActivity
@@ -71,7 +70,10 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     /** Lazy instance of [LabelColorsAdapter] */
     private val colorsAdapter by lazy {
-        LabelColorsAdapter(applicationContext, colorOptions, R.layout.label_color_item_circle)
+        LabelColorsAdapter(
+            applicationContext, colorOptions,
+            if (type == LABELS) R.layout.label_color_item_circle else R.layout.folder_color_item
+        )
     }
 
     /** [IntArray] of the available colors */
@@ -85,8 +87,8 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         intent?.extras?.getBoolean(EXTRA_CREATE_ONLY, false) ?: false
     }
 
-    /** [LabelsCirclesAdapter] for show `Labels` or `Folders` */
-    private val labelsAdapter = LabelsCirclesAdapter().apply {
+    /** [LabelsAdapter] for show `Labels` or `Folders` */
+    private val labelsAdapter = LabelsAdapter().apply {
         onItemClick = ::onLabelClick
         onItemSelect = ::onLabelSelectionChange
     }
@@ -130,15 +132,22 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         supportActionBar?.run {
             if (popupStyle) hide()
             else setDisplayHomeAsUpEnabled(true)
+
+            val elevation = resources.getDimension(R.dimen.action_bar_elevation)
+            this.elevation = elevation
+            title = getString(
+                if (type == LABELS) R.string.labels_manager
+                else R.string.folders_manager
+            )
         }
 
         // Setup Views
         initTexts()
         delete_labels.isEnabled = false
-        labels_grid_view.apply {
+        colors_grid_view.apply {
             val gridLayoutParams = layoutParams as LinearLayout.LayoutParams
-            val itemHeight = resources.getDimensionPixelSize(R.dimen.label_color_item_size) +
-                resources.getDimensionPixelSize(R.dimen.fields_default_space)
+            val itemHeight = resources.getDimensionPixelSize(R.dimen.settings_color_item_size) +
+                resources.getDimensionPixelSize(R.dimen.padding_xl)
             gridLayoutParams.height = colorOptions.size * itemHeight / COLOR_PICKER_COLUMNS
 
             adapter = colorsAdapter
@@ -149,9 +158,8 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         // Set listeners
         delete_labels.setOnClickListener { showDeleteConfirmation() }
         label_name.onTextChange(::onLabelNameChange)
-        save_new_label.setOnClickListener { saveCurrentLabel() }
-        labels_grid_view
-            .setOnItemClickListener { _, _, position, _ -> onLabelColorChange(position) }
+        save_button.setOnClickListener { saveCurrentLabel() }
+        colors_grid_view.setOnItemClickListener { _, _, position, _ -> onLabelColorChange(position) }
 
         // Setup Labels RecyclerView
         labels_recycler_view.apply {
@@ -167,7 +175,8 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
         // Observe deleted labels
         viewModel.hasSuccessfullyDeletedMessages.observe(
-            this, { onLabelDeletedEvent(it) }
+            this,
+            { onLabelDeletedEvent(it) }
         )
     }
 
@@ -242,7 +251,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         }
     }
 
-    /** When Label color is changed in the [labels_grid_view] */
+    /** When Label color is changed in the [colors_grid_view] */
     private fun onLabelColorChange(positionInColorOptions: Int) {
         colorsAdapter.setChecked(positionInColorOptions)
         viewModel.setLabelColor(colorOptions[positionInColorOptions])
@@ -251,7 +260,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     /** When Label name is changed in the [label_name] `EditText` */
     private fun onLabelNameChange(name: CharSequence) {
-        save_new_label.isVisible = name.isNotBlank()
+        save_button.isVisible = name.isNotBlank()
 
         if (name.isNotEmpty() && state == UNDEFINED) {
             state = CREATE
@@ -276,31 +285,19 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
                 toggleColorPicker(false)
                 closeKeyboard()
                 label_name.setText("")
-
-                save_new_label.setText(
-                    when (type) {
-                        LABELS -> R.string.save_new_label
-                        FOLDERS -> R.string.save_new_folder
-                    }
-                )
+                save_button.setText(R.string.done)
             }
 
             CREATE -> {
                 selectRandomColor()
                 toggleColorPicker(true)
-
-                save_new_label.setText(
-                    when (type) {
-                        LABELS -> R.string.save_new_label
-                        FOLDERS -> R.string.save_new_folder
-                    }
-                )
+                save_button.setText(R.string.done)
             }
 
             UPDATE -> {
                 toggleColorPicker(true)
 
-                save_new_label.setText(
+                save_button.setText(
                     when (type) {
                         LABELS -> R.string.update_label
                         FOLDERS -> R.string.update_folder
@@ -343,7 +340,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
         if (success && createOnly) onBackPressed()
 
-        labels_grid_view.isVisible = true
+        colors_grid_view.isVisible = true
 
         val message = when (type) {
             FOLDERS -> {
@@ -381,17 +378,10 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
      * @see [type]
      */
     private fun initTexts() {
-        setTitle(
+        save_button.setText(
             when (type) {
-                LABELS -> R.string.labels_and_folders
-                FOLDERS -> R.string.folders_manager
-            }
-        )
-
-        save_new_label.setText(
-            when (type) {
-                LABELS -> R.string.save_new_label
-                FOLDERS -> R.string.save_new_folder
+                LABELS -> R.string.update_label
+                FOLDERS -> R.string.update_folder
             }
         )
 
@@ -422,13 +412,6 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
                 FOLDERS -> R.string.available_folders
             }
         )
-
-        labels_colors_title.setText(
-            when (type) {
-                LABELS -> R.string.choose_label_color
-                FOLDERS -> R.string.choose_folder_color
-            }
-        )
     }
 
     private fun onLabelDeletedEvent(isSuccessful: Boolean) {
@@ -441,6 +424,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     /** The current state of the `Activity` */
     enum class State {
+
         /** State is not defined */
         UNDEFINED,
 

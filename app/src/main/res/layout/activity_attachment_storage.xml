@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright (c) 2020 Proton Technologies AG
 
 This file is part of ProtonMail.
@@ -18,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -30,34 +28,28 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingEnd="@dimen/view_padding"
-        android:paddingLeft="@dimen/view_padding"
-        android:paddingRight="@dimen/view_padding"
-        android:paddingStart="@dimen/view_padding">
+        android:orientation="vertical">
 
-        <ch.protonmail.android.views.CustomFontTextView
+        <TextView
             android:id="@+id/description"
+            style="@style/Proton.Text.DefaultSmall.Weak"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/fields_default_space"
-            android:layout_marginTop="10dp"
-            android:paddingBottom="5dp"
-            android:text="@string/attachment_offline_max_storage"
-            android:textColor="@color/iron_gray"
-            android:textSize="@dimen/h4"
-            app:fontName="Roboto-Light.ttf" />
+            android:layout_marginTop="@dimen/padding_xl"
+            android:layout_marginBottom="@dimen/padding_xl"
+            android:paddingStart="@dimen/padding_l"
+            android:paddingEnd="@dimen/padding_l"
+            android:text="@string/attachment_offline_max_storage" />
 
 
-        <ch.protonmail.android.views.CustomFontTextView
+        <TextView
+            style="@style/Proton.Text.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/fields_default_space"
-            android:layout_marginTop="10dp"
-            android:paddingBottom="5dp"
-            android:text="@string/storage_limit"
-            android:textSize="@dimen/h2"
-            app:fontName="Roboto-Light.ttf" />
+            android:layout_marginBottom="@dimen/padding_l"
+            android:paddingStart="@dimen/padding_l"
+            android:paddingEnd="@dimen/padding_l"
+            android:text="@string/storage_limit" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -66,89 +58,72 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/padding_l"
+                android:paddingEnd="@dimen/padding_l">
 
-                <ch.protonmail.android.views.CustomFontTextView
+                <TextView
+                    style="@style/Proton.Text.DefaultSmall.Weak"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:text="200MB"
-                    android:textColor="@color/iron_gray"
-                    android:textSize="@dimen/h4"
-                    app:fontName="Roboto-Light.ttf" />
+                    android:text="200MB" />
 
-                <ch.protonmail.android.views.CustomFontTextView
+                <TextView
+                    style="@style/Proton.Text.DefaultSmall.Weak"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/unlimited"
-                    android:textColor="@color/iron_gray"
-                    android:textSize="@dimen/h4"
-                    app:fontName="Roboto-Light.ttf" />
+                    android:text="@string/unlimited" />
             </RelativeLayout>
 
-            <androidx.appcompat.widget.AppCompatSeekBar
+            <com.google.android.material.slider.Slider
                 android:id="@+id/attachment_storage_value"
-                style="@style/Widget.AppCompat.SeekBar.Discrete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:max="5" />
-
+                android:layout_marginStart="@dimen/padding_m"
+                android:layout_marginEnd="@dimen/padding_m"
+                android:stepSize="200"
+                android:valueFrom="200"
+                android:valueTo="1200" />
         </LinearLayout>
 
-        <ch.protonmail.android.views.CustomFontTextView
+        <TextView
             android:id="@+id/storage_text_value"
+            style="@style/Proton.Text.DefaultSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="@dimen/fields_default_space"
-            android:layout_marginBottom="@dimen/fields_default_space_large"
-            android:minWidth="75dp"
-            android:textSize="@dimen/h3"
-            app:fontName="Roboto-Light.ttf" />
+            android:layout_marginBottom="@dimen/padding_l"
+            android:paddingStart="@dimen/padding_l"
+            android:paddingEnd="@dimen/padding_l" />
 
-        <include layout="@layout/horizontal_divider" />
+
+        <View style="@style/ViewSeparatorHorizontal"/>
 
         <RelativeLayout
             android:id="@+id/clear_cache_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/fields_default_space"
-            android:minHeight="50dp">
+            android:padding="@dimen/padding_l">
 
-            <ch.protonmail.android.views.CustomFontButton
+            <Button
                 android:id="@+id/clear_local_cache"
-                style="@style/SettingsButtonBlue"
+                style="@style/ProtonButton"
                 android:layout_width="wrap_content"
-                android:layout_height="44dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_margin="2dp"
-                android:paddingEnd="@dimen/fields_default_space"
-                android:paddingLeft="@dimen/fields_default_space"
-                android:paddingRight="@dimen/fields_default_space"
-                android:paddingStart="@dimen/fields_default_space"
-                android:text="@string/empty_cache"
-                android:textAllCaps="true"
                 android:maxLines="1"
-                app:fontName="Roboto-Regular.ttf" />
+                android:text="@string/empty_data" />
 
-            <ch.protonmail.android.views.CustomFontTextView
-                style="@style/SettingsHeadingText"
+            <TextView
+                style="@style/Proton.Text.Default"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/clear_local_cache"
-                android:layout_toStartOf="@id/clear_local_cache"
                 android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/clear_local_cache"
                 android:text="@string/local_cache_management" />
         </RelativeLayout>
+
+        <View style="@style/ViewSeparatorHorizontal"/>
     </LinearLayout>
 </LinearLayout>

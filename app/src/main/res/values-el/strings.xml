@@ -728,10 +728,10 @@
     <string name="display_name">Εμφανιζόμενο Όνομα</string>
     <string name="edit_display_name">Επεξεργασία εμφανιζόμενου ονόματος</string>
     <string name="signature">Υπογραφή</string>
-    <string name="mobile_signature">Υπογραφή κινητού</string>
-    <string name="edit_mobile_signature">Ενεργοποίηση υπογραφής κινητού</string>
-    <string name="default_mobile_signature">Στάλθηκε από ProtonMail mobile</string>
-    <string name="mobile_signature_is_premium">Η αλλαγή της υπογραφής σε συσκευή κινητού επιτρέπεται μόνο σε χρήστες επί πληρωμής</string>
+    <string name="mobile_footer">Υπογραφή κινητού</string>
+    <string name="edit_mobile_footer">Ενεργοποίηση υπογραφής κινητού</string>
+    <string name="default_mobile_footer">Στάλθηκε από ProtonMail mobile</string>
+    <string name="mobile_footer_is_premium">Η αλλαγή της υπογραφής σε συσκευή κινητού επιτρέπεται μόνο σε χρήστες επί πληρωμής</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Αναβολή</string>
     <string name="notifications_snooze">Αναβολή Ειδοποίησης</string>
@@ -794,7 +794,7 @@
     <string name="labels">Ετικέτες</string>
     <string name="labels_manage">Διαχειριστής ετικετών</string>
     <string name="folders_manage">Διαχειριστής Φακέλων</string>
-    <string name="swiping_gesture">Ολίσθηση gesture</string>
+    <string name="swipe_actions">Ολίσθηση gesture</string>
     <string name="swipe_action_right">Σύρσιμο δεξιά</string>
     <string name="swipe_action_left">Σύρετε αριστερά</string>
     <!-- region Swipe Actions -->
@@ -844,7 +844,7 @@
     <string name="turn_combined_contacts_on">Ενεργοποιήστε αυτή τη λειτουργία για να συμπληρώνετε αυτόματα τα E-mail χρησιμοποιώντας επαφές από όλους τους συνδεδεμένους λογαριασμούς σας.</string>
     <string name="local_cache_management">Διαχείριση τοπικής προσωρινής μνήμης</string>
     <string name="cache_cleared">Η τοπική μνήμη Cache έχει ανανεωθεί</string>
-    <string name="empty_cache">Εκκαθάριση προσωρινής μνήμης</string>
+    <string name="empty_data">Εκκαθάριση προσωρινής μνήμης</string>
     <!-- endregion -->
     <string name="enabled">Ενεργοποιημένο</string>
     <string name="disabled">Απενεργοποιημένο</string>

@@ -68,7 +68,7 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_MANUALLY_LOCKED;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_ATTACHMENT_STORAGE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_SPACE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_MAX_UPLOAD_FILE_SIZE;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_MOBILE_SIGNATURE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_MOBILE_FOOTER;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_NOTIFICATION;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_NOTIFICATION_VISIBILITY_LOCK_SCREEN;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_PREVENT_TAKING_SCREENSHOTS;
@@ -106,9 +106,9 @@ public class User {
     private String defaultAddressId;
     private String defaultAddressEmail;
 
-    private String MobileSignature;
-    private boolean ShowMobileSignature = true;
-    private boolean ShowSignature = false;
+    private String mobileFooter;
+    private boolean ShowMobileFooter = true;
+    private boolean ShowSignature = true;
 
     // new
 
@@ -227,16 +227,16 @@ public class User {
 
     private static void loadLocalSettings(User user, SharedPreferences securePrefs) {
         if (!user.isPaidUserSignatureEdit()) {
-            user.MobileSignature = ProtonMailApplication.getApplication().getString(R.string.default_mobile_signature);
+            user.mobileFooter = ProtonMailApplication.getApplication().getString(R.string.default_mobile_footer);
         } else {
-            user.MobileSignature = securePrefs.getString(PREF_MOBILE_SIGNATURE, ProtonMailApplication.getApplication().getString(R.string.default_mobile_signature));
+            user.mobileFooter = securePrefs.getString(PREF_MOBILE_FOOTER, ProtonMailApplication.getApplication().getString(R.string.default_mobile_footer));
         }
-        user.ShowMobileSignature = securePrefs.getBoolean(PREF_DISPLAY_MOBILE, true);
-        if (!user.ShowMobileSignature && !user.isPaidUserSignatureEdit()) {
-            user.ShowMobileSignature = true;
-            user.setShowMobileSignature(true);
+        user.ShowMobileFooter = securePrefs.getBoolean(PREF_DISPLAY_MOBILE, true);
+        if (!user.ShowMobileFooter && !user.isPaidUserSignatureEdit()) {
+            user.ShowMobileFooter = true;
+            user.setShowMobileFooter(true);
         }
-        user.ShowSignature = securePrefs.getBoolean(PREF_DISPLAY_SIGNATURE, false);
+        user.ShowSignature = securePrefs.getBoolean(PREF_DISPLAY_SIGNATURE, true);
         user.NotificationSetting = user.loadNotificationSettingsFromBackup();
         user.BackgroundSync = securePrefs.getBoolean(PREF_BACKGROUND_SYNC, true);
         user.PreventTakingScreenshots = securePrefs.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
@@ -275,11 +275,15 @@ public class User {
         return getPreferences().getBoolean(PREF_DISPLAY_SIGNATURE, false);
     }
 
-    private void saveShowMobileSignatureSetting() {
-        getPreferences().edit().putBoolean(PREF_DISPLAY_MOBILE, ShowMobileSignature).apply();
+    private void saveShowMobileFooterSetting() {
+        getPreferences().edit().putBoolean(PREF_DISPLAY_MOBILE, ShowMobileFooter).apply();
     }
 
-    private boolean loadShowMobileSignatureSetting() {
+    private void saveMobileFooterSetting() {
+        getPreferences().edit().putString(PREF_MOBILE_FOOTER, mobileFooter).apply();
+    }
+
+    private boolean loadShowMobileFooterSetting() {
         return getPreferences().getBoolean(PREF_DISPLAY_MOBILE, true);
     }
 
@@ -316,7 +320,8 @@ public class User {
     }
 
     public void setAllowSecureConnectionsViaThirdParties(boolean allowSecureConnectionsViaThirdParties) {
-        getPreferences().edit().putBoolean(PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES, allowSecureConnectionsViaThirdParties).apply();
+        SharedPreferences secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences();
+        secureSharedPreferences.edit().putBoolean(PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES, allowSecureConnectionsViaThirdParties).apply();
     }
 
     public boolean getAllowSecureConnectionsViaThirdParties() {
@@ -428,8 +433,7 @@ public class User {
     }
 
     public boolean isPaidUserSignatureEdit() {
-        boolean allowMobileSignatureEdit = ProtonMailApplication.getApplication().getResources().getBoolean(R.bool.allow_mobile_signature_edit);
-        return allowMobileSignatureEdit || role > 0;
+        return isPaidUser() || role > 0;
     }
 
     public int getPrivate() {
@@ -499,12 +503,13 @@ public class User {
         return "";
     }
 
-    public String getMobileSignature() {
-        return MobileSignature == null ? "" : MobileSignature;
+    public String getMobileFooter() {
+        return mobileFooter == null ? "" : mobileFooter;
     }
 
-    public void setMobileSignature(String mobileSignature) {
-        MobileSignature = mobileSignature;
+    public void setMobileFooter(String mobileFooter) {
+        this.mobileFooter = mobileFooter;
+        saveMobileFooterSetting();
     }
 
     public String getDefaultAddressId() {
@@ -656,13 +661,13 @@ public class User {
         return Arrays.asList(out);
     }
 
-    public boolean isShowMobileSignature() {
-        return ShowMobileSignature;
+    public boolean isShowMobileFooter() {
+        return ShowMobileFooter;
     }
 
-    public void setShowMobileSignature(boolean showMobileSignature) {
-        ShowMobileSignature = showMobileSignature;
-        saveShowMobileSignatureSetting();
+    public void setShowMobileFooter(boolean showMobileFooter) {
+        ShowMobileFooter = showMobileFooter;
+        saveShowMobileFooterSetting();
     }
 
     public boolean isShowSignature() {

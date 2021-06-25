@@ -22,16 +22,15 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.appcompat.widget.SwitchCompat
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.doOnPreDraw
-import androidx.core.widget.doAfterTextChanged
 import ch.protonmail.android.R
 import kotlinx.android.synthetic.main.settings_item_layout.view.*
+import me.proton.core.util.kotlin.EMPTY_STRING
 
 // region constants
 private const val TYPE_INFO = 0
@@ -39,24 +38,22 @@ private const val TYPE_DRILL_DOWN = 1
 private const val TYPE_BUTTON = 2
 private const val TYPE_TOGGLE = 3
 private const val TYPE_SPINNER = 4
-private const val TYPE_EDIT_TEXT = 5
-private const val TYPE_TOGGLE_N_EDIT = 6
 // endregion
 
 class SettingsDefaultItemView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+) : LinearLayout(context, attrs, defStyleAttr) {
 
     private var mAttrs: AttributeSet? = attrs
-    private var mHeading: CharSequence? = ""
-    private var mValue: CharSequence? = ""
-    private var mHint: CharSequence? = ""
+    private var mHeading: CharSequence? = EMPTY_STRING
+    private var mValue: CharSequence? = EMPTY_STRING
+    private var mHint: CharSequence? = EMPTY_STRING
     private var mHasValue: Boolean = true
     private var mType: Int = 0
     private var mDisabled: Boolean = false
-    private var mDescription: String = ""
+    private var mDescription: String = EMPTY_STRING
 
     init {
         LayoutInflater.from(context).inflate(R.layout.settings_item_layout, this, true)
@@ -95,15 +92,6 @@ class SettingsDefaultItemView @JvmOverloads constructor(
         valueText.text = value
     }
 
-    fun setEditableValue(value: String?) {
-        mValue = value
-        editText.setText(value)
-    }
-
-    fun setSettingHint(value: String?) {
-        editText.hint = value
-    }
-
     fun setHasValue(hasValue: Boolean) {
         mHasValue = hasValue
         if (mHasValue) {
@@ -116,13 +104,13 @@ class SettingsDefaultItemView @JvmOverloads constructor(
         }
     }
 
-    fun getSpinner(): View {
-        return timeoutSpinner
+    fun setIconVisibility(visibility: Int) {
+        icon.visibility = visibility
     }
 
-    fun getToggle(): SwitchCompat {
-        return actionSwitch
-    }
+    fun getSpinner(): View = timeoutSpinner
+
+    fun getToggle(): SwitchCompat = actionSwitch
 
     fun checkToggle(value: Boolean) {
         actionSwitch.isChecked = value
@@ -156,19 +144,6 @@ class SettingsDefaultItemView @JvmOverloads constructor(
         }
     }
 
-    fun setEditTextOnFocusChangeListener(listener: ((View) -> Unit)?) {
-        editText.setOnFocusChangeListener { view, hasFocus ->
-            if (!hasFocus)
-                listener?.invoke(view)
-        }
-    }
-
-    fun setEditTextOnTextChangeListener(listener: ((String) -> Unit)?) {
-        editText.doAfterTextChanged {
-            listener?.invoke(it.toString())
-        }
-    }
-
     fun setItemType(type: Int) {
         mType = type
         when (mType) {
@@ -177,17 +152,11 @@ class SettingsDefaultItemView @JvmOverloads constructor(
                 buttonsContainer.visibility = View.GONE
             }
             TYPE_DRILL_DOWN -> {
-                openArrow.visibility = View.VISIBLE
                 clearCacheButton.visibility = View.GONE
                 actionSwitch.visibility = View.GONE
-
-                setConstraints(buttonsContainer, true, false, false, false, guideline.id)
-                setConstraints(headingContainer, false, true, false, false, guideline.id)
-                buttonsContainer.gravity = Gravity.CENTER_VERTICAL
             }
             TYPE_BUTTON -> {
                 isEnabled = false
-                openArrow.visibility = View.GONE
                 clearCacheButton.visibility = View.VISIBLE
                 actionSwitch.visibility = View.GONE
 
@@ -200,16 +169,11 @@ class SettingsDefaultItemView @JvmOverloads constructor(
                 }
             }
             TYPE_TOGGLE -> {
-                openArrow.visibility = View.GONE
-                clearCacheButton.visibility = View.GONE
+                buttonsContainer.visibility = View.GONE
                 actionSwitch.visibility = View.VISIBLE
 
-                setConstraints(buttonsContainer, true, false, false, true, guideline_01.id)
-                setConstraints(headingContainer, false, true, false, false, guideline_01.id)
-                buttonsContainer.gravity = Gravity.TOP
             }
             TYPE_SPINNER -> {
-                openArrow.visibility = View.VISIBLE
                 clearCacheButton.visibility = View.GONE
                 actionSwitch.visibility = View.GONE
                 valueText.visibility = View.GONE
@@ -219,52 +183,6 @@ class SettingsDefaultItemView @JvmOverloads constructor(
                 setConstraints(headingContainer, false, true, false, false, guideline.id)
                 buttonsContainer.gravity = Gravity.CENTER_VERTICAL
             }
-            TYPE_EDIT_TEXT -> {
-                openArrow.visibility = View.GONE
-                clearCacheButton.visibility = View.GONE
-                actionSwitch.visibility = View.GONE
-                if (!mDisabled)
-                    valueText.visibility = View.GONE
-                timeoutSpinner.visibility = View.GONE
-                editText.visibility = View.VISIBLE
-                editText.minLines = 1
-
-                setConstraints(buttonsContainer, true, false, false, true, guideline_01.id)
-                setConstraints(headingContainer, false, false, true, false, buttonsContainer.id)
-
-                buttonsContainer.gravity = Gravity.TOP
-            }
-            TYPE_TOGGLE_N_EDIT -> {
-                openArrow.visibility = View.GONE
-                clearCacheButton.visibility = View.GONE
-                actionSwitch.visibility = View.VISIBLE
-                timeoutSpinner.visibility = View.GONE
-                editText.visibility = View.VISIBLE
-                editText.minLines = 8
-                editText.maxLines = 8
-                editText.setOnTouchListener { v, event ->
-                    if (v.id == R.id.editText) {
-                        v.parent.requestDisallowInterceptTouchEvent(true)
-                        when (event.action and MotionEvent.ACTION_MASK) {
-                            MotionEvent.ACTION_UP -> {
-                                v.parent.requestDisallowInterceptTouchEvent(false)
-                                v.performClick()
-                            }
-                        }
-                    }
-                    false
-                }
-                if (!mDisabled) {
-                    valueText.visibility = View.GONE
-                } else {
-                    setSettingDisabled(mDisabled, mDescription)
-                }
-
-                setConstraints(buttonsContainer, true, false, false, true, guideline_01.id)
-                setConstraints(headingContainer, false, false, true, false, buttonsContainer.id)
-
-                buttonsContainer.gravity = Gravity.TOP
-            }
         }
     }
 
@@ -272,7 +190,14 @@ class SettingsDefaultItemView @JvmOverloads constructor(
         this.tag = tag?.toString()
     }
 
-    private fun setConstraints(view: View, startToStart: Boolean, endToStart: Boolean, endToEnd: Boolean, bottomToBottom: Boolean, viewId: Int) {
+    private fun setConstraints(
+        view: View,
+        startToStart: Boolean,
+        endToStart: Boolean,
+        endToEnd: Boolean,
+        bottomToBottom: Boolean,
+        viewId: Int
+    ) {
         val constraintSet = ConstraintSet()
         constraintSet.clone(settingsItemWrapper)
 

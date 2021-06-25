@@ -727,10 +727,10 @@
     <string name="display_name">Nome a mostrar</string>
     <string name="edit_display_name">Editar nome a mostrar</string>
     <string name="signature">Assinatura</string>
-    <string name="mobile_signature">Assinatura móvel</string>
-    <string name="edit_mobile_signature">Activar assinatura móvel</string>
-    <string name="default_mobile_signature">Enviado através do ProtonMail móvel</string>
-    <string name="mobile_signature_is_premium">A alteração da assinatura móvel só é permitida a utilizadores pagantes</string>
+    <string name="mobile_footer">Assinatura móvel</string>
+    <string name="edit_mobile_footer">Activar assinatura móvel</string>
+    <string name="default_mobile_footer">Enviado através do ProtonMail móvel</string>
+    <string name="mobile_footer_is_premium">A alteração da assinatura móvel só é permitida a utilizadores pagantes</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Adiar</string>
     <string name="notifications_snooze">Adiamento de notificações</string>
@@ -793,7 +793,7 @@
     <string name="labels">Etiquetas</string>
     <string name="labels_manage">Gestor de etiquetas</string>
     <string name="folders_manage">Gestor de pastas</string>
-    <string name="swiping_gesture">Gestos de deslize</string>
+    <string name="swipe_actions">Gestos de deslize</string>
     <string name="swipe_action_right">Deslizar à direita</string>
     <string name="swipe_action_left">Deslizar à esquerda</string>
     <!-- region Swipe Actions -->
@@ -843,7 +843,7 @@
     <string name="turn_combined_contacts_on">Active esta funcionalidade para preencher automaticamente endereços de email utilizando contactos de todas as suas contas ligadas.</string>
     <string name="local_cache_management">Gestão da memória local</string>
     <string name="cache_cleared">A memória local foi actualizada</string>
-    <string name="empty_cache">Limpar memória</string>
+    <string name="empty_data">Limpar memória</string>
     <!-- endregion -->
     <string name="enabled">Activado</string>
     <string name="disabled">Desactivado</string>

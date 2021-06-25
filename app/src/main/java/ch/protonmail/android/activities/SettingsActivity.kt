@@ -39,10 +39,10 @@ class SettingsActivity : BaseSettingsActivity() {
         super.onCreate(savedInstanceState)
 
         val actionBar = supportActionBar
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true)
-            actionBar.setTitle(R.string.settings)
-        }
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val elevation = resources.getDimension(R.dimen.action_bar_elevation)
+        actionBar?.elevation = elevation
 
         mSnackLayout = findViewById(R.id.layout_no_connectivity_info)
 
@@ -71,10 +71,9 @@ class SettingsActivity : BaseSettingsActivity() {
 
         val languageValues = resources.getStringArray(R.array.custom_language_values)
         val languageLabels = resources.getStringArray(R.array.custom_language_labels)
-        val appLanguage = sharedPreferences!!.getString(PREF_CUSTOM_APP_LANGUAGE, "")
+        val appLanguage = preferences!!.getString(PREF_CUSTOM_APP_LANGUAGE, "")
         if (appLanguage.isNullOrEmpty()) {
             setValue(SettingsEnum.APP_LANGUAGE, getString(R.string.auto_detect))
-
         } else {
             for (i in languageLabels.indices) {
                 if (languageValues[i] == appLanguage) {
@@ -89,10 +88,15 @@ class SettingsActivity : BaseSettingsActivity() {
         setValue(SettingsEnum.AUTO_LOCK, autoLockSettingValue)
 
         val allowSecureConnectionsViaThirdPartiesSettingValue =
-            if (legacyUser.allowSecureConnectionsViaThirdParties) getString(R.string.allowed) else getString(R.string.denied)
+            if (legacyUser.allowSecureConnectionsViaThirdParties) getString(R.string.allowed) else getString(
+                R.string.denied
+            )
         setValue(SettingsEnum.CONNECTIONS_VIA_THIRD_PARTIES, allowSecureConnectionsViaThirdPartiesSettingValue)
 
-        setValue(SettingsEnum.COMBINED_CONTACTS, if (legacyUser.combinedContacts) getString(R.string.enabled) else getString(R.string.disabled))
+        setValue(
+            SettingsEnum.COMBINED_CONTACTS,
+            if (legacyUser.combinedContacts) getString(R.string.enabled) else getString(R.string.disabled)
+        )
 
         setValue(
             SettingsEnum.APP_VERSION,

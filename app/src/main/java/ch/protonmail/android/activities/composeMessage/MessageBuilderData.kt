@@ -44,7 +44,7 @@ class MessageBuilderData(
     val embeddedAttachmentsList: ArrayList<LocalAttachment>,
     var isDirty: Boolean,
     val signature: String,
-    val mobileSignature: String,
+    val mobileFooter: String,
     val messagePassword: String?,
     val passwordHint: String?,
     val isPasswordValid: Boolean,
@@ -78,7 +78,7 @@ class MessageBuilderData(
         private var embeddedAttachmentsList: ArrayList<LocalAttachment> = ArrayList()
         private var isDirty: Boolean = false
         private var signature: String = ""
-        private var mobileSignature: String = ""
+        private var mobileFooter: String = ""
         private var messagePassword: String? = null
         private var passwordHint: String? = ""
         private var isPasswordValid: Boolean = true
@@ -114,7 +114,7 @@ class MessageBuilderData(
 
             this.isDirty = oldObject.isDirty
             this.signature = oldObject.signature
-            this.mobileSignature = oldObject.mobileSignature
+            this.mobileFooter = oldObject.mobileFooter
 
             this.messagePassword = oldObject.messagePassword
             this.passwordHint = oldObject.passwordHint
@@ -184,8 +184,8 @@ class MessageBuilderData(
 
         fun signature(signature: String) = apply { this.signature = signature }
 
-        fun mobileSignature(mobileSignature: String) =
-            apply { this.mobileSignature = mobileSignature }
+        fun mobileFooter(mobileFooter: String) =
+            apply { this.mobileFooter = mobileFooter }
 
         fun messagePassword(messagePassword: String?) =
             apply { this.messagePassword = messagePassword }
@@ -243,7 +243,7 @@ class MessageBuilderData(
                 embeddedAttachmentsList,
                 isDirty,
                 signature,
-                mobileSignature,
+                mobileFooter,
                 messagePassword,
                 passwordHint,
                 isPasswordValid,

@@ -20,7 +20,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
 
-    <solid android:color="?attr/colorAccent" />
+    <solid android:color="?attr/proton_interaction_norm" />
     <size
         android:width="@dimen/padding_xl"
         android:height="@dimen/padding_xl" />
