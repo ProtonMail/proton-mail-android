@@ -67,6 +67,7 @@ import ch.protonmail.android.core.messageId
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.serialize
@@ -140,6 +141,7 @@ class SendMessageWorker @WorkerInject constructor(
             val requestBody = try {
                 buildSendMessageRequest(savedDraftMessage, sendPreferences, username)
             } catch (t: Throwable) {
+                if (t is CancellationException) throw t
                 return retryOrFail(FailureBuildingApiRequest, savedDraftMessage, t)
             }
 
