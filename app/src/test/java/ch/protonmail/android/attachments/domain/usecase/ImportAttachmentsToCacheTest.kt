@@ -169,7 +169,7 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
         // then
         assertEquals(
             listOf(
-                ImportAttachmentResult.Skipped(uri1, fileInfo1),
+                ImportAttachmentResult.Skipped(uri1),
                 ImportAttachmentResult.Success(testUri2, fileInfo2),
                 ImportAttachmentResult.Success(testUri3, fileInfo3),
             ),

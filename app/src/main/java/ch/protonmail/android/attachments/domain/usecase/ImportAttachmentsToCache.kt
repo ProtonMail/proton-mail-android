@@ -74,24 +74,19 @@ class ImportAttachmentsToCache @Inject constructor(
     ): Flow<List<ImportAttachmentResult>> = channelFlow {
 
         // Emit initial state
-        send(fileUris.map(::toIdle))
-        val toProcess = fileUris.associateWith {
+        val (toSkip, toProcess) = fileUris.partition {
             // Skip files already in app's data directory
             FileScheme.FILE.matches(it) && dataDirectory.path in it.path ?: EMPTY_STRING
         }
+        send(toSkip.map(::toSkipped) + toProcess.map(::toIdle))
 
         // Process
-        var result = toProcess.keys
-        toProcess.toList().forEachAsync { (uri, toSkip) ->
+        var result = toProcess
+        toProcess.forEachAsync { uri ->
 
             // Get File info
             val fileInfo = runCatching { getFileInfo(uri) }.getOrNull()
-            if (toSkip) {
-                fileInfo?.let { send(result.setSkipped(uri, it)) }
-                    ?: send(result.setCantRead(uri))
-                result -= uri
-                return@forEachAsync
-            } else if (fileInfo != null) {
+            if (fileInfo != null) {
                 send(result.setFileInfo(uri, fileInfo))
             }
 
@@ -242,23 +237,22 @@ class ImportAttachmentsToCache @Inject constructor(
 
 private fun toIdle(uri: Uri) = ImportAttachmentResult.Idle(uri)
 
+private fun toSkipped(uri: Uri) = ImportAttachmentResult.Skipped(uri)
 
-private fun Set<Uri>.setSkipped(uri: Uri, fileInfo: ImportAttachmentResult.FileInfo): List<ImportAttachmentResult> =
-    set(uri) { ImportAttachmentResult.Skipped(uri, fileInfo) }
 
-private fun Set<Uri>.setFileInfo(uri: Uri, fileInfo: ImportAttachmentResult.FileInfo): List<ImportAttachmentResult> =
+private fun List<Uri>.setFileInfo(uri: Uri, fileInfo: ImportAttachmentResult.FileInfo): List<ImportAttachmentResult> =
     set(uri) { ImportAttachmentResult.OnInfo(uri, fileInfo) }
 
-private fun Set<Uri>.setCantRead(uri: Uri): List<ImportAttachmentResult> =
+private fun List<Uri>.setCantRead(uri: Uri): List<ImportAttachmentResult> =
     set(uri, ImportAttachmentResult::CantRead)
 
-private fun Set<Uri>.setCantWrite(uri: Uri, fileInfo: ImportAttachmentResult.FileInfo?): List<ImportAttachmentResult> =
+private fun List<Uri>.setCantWrite(uri: Uri, fileInfo: ImportAttachmentResult.FileInfo?): List<ImportAttachmentResult> =
     set(uri) { ImportAttachmentResult.CantWrite(uri, fileInfo) }
 
-private fun Set<Uri>.setSuccess(uri: Uri, success: ImportAttachmentResult.Success): List<ImportAttachmentResult> =
+private fun List<Uri>.setSuccess(uri: Uri, success: ImportAttachmentResult.Success): List<ImportAttachmentResult> =
     set(uri) { success }
 
-private fun Set<Uri>.set(uri: Uri, toResult: (Uri) -> ImportAttachmentResult) =
+private fun List<Uri>.set(uri: Uri, toResult: (Uri) -> ImportAttachmentResult) =
     map {
         if (it == uri)
             toResult(uri)
