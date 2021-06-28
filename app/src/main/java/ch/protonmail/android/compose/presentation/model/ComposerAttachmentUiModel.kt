@@ -69,18 +69,18 @@ sealed class ComposerAttachmentUiModel {
 
     enum class Icon(@DrawableRes val drawableId: Int) {
         Generic(R.drawable.ic_attachments),
-        Archive(R.drawable.ic_file_archive),
-        Audio(R.drawable.ic_file_sound),
-        Doc(R.drawable.ic_file_doc),
-        Image(R.drawable.ic_file_image),
-        Keynote(R.drawable.ic_file_keynote),
-        Numbers(R.drawable.ic_file_numbers),
-        Pages(R.drawable.ic_file_pages),
-        Pdf(R.drawable.ic_file_pdf),
-        Presentation(R.drawable.ic_file_presentation),
-        Video(R.drawable.ic_file_video),
-        Xls(R.drawable.ic_file_xls),
-        Xml(R.drawable.ic_file_xml)
+        Archive(R.drawable.ic_attachments),
+        Audio(R.drawable.ic_attachments),
+        Doc(R.drawable.ic_attachments),
+        Image(R.drawable.ic_attachments),
+        Keynote(R.drawable.ic_attachments),
+        Numbers(R.drawable.ic_attachments),
+        Pages(R.drawable.ic_attachments),
+        Pdf(R.drawable.ic_attachments),
+        Presentation(R.drawable.ic_attachments),
+        Video(R.drawable.ic_attachments),
+        Xls(R.drawable.ic_attachments),
+        Xml(R.drawable.ic_attachments)
     }
 
     companion object {
