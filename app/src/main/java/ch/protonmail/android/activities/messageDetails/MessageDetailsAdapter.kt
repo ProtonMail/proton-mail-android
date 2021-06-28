@@ -253,15 +253,16 @@ internal class MessageDetailsAdapter(
         showLoadEmbeddedImagesButton: Boolean,
         attachments: List<Attachment>
     ) {
-        val item: MessageDetailsListItem = visibleItems!!.first {
+        val item: MessageDetailsListItem? = visibleItems?.firstOrNull {
             it.ItemType == TYPE_ITEM && it.message.messageId == messageId
         }
-        item.messageFormattedHtml = parsedBody
-        item.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton
-        item.message.setAttachmentList(attachments)
+        item?.messageFormattedHtml = parsedBody
+        item?.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton
+        item?.message?.setAttachmentList(attachments)
 
-        val changedItemIndex = visibleItems!!.indexOf(item)
-        notifyItemChanged(changedItemIndex, item)
+        visibleItems?.indexOf(item)?.let { changedItemIndex ->
+            notifyItemChanged(changedItemIndex, item)
+        }
     }
 
     fun setMessageData(messageData: List<Message>) {
