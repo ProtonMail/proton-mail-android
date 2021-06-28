@@ -27,6 +27,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.activities.BaseContactsActivity
+import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
 import ch.protonmail.android.attachments.domain.model.UriPair
 import ch.protonmail.android.compose.ComposeMessageViewModel
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnAttachmentsChange
@@ -35,7 +36,6 @@ import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiMod
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPasswordChange
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPasswordChangeRequest
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPhotoUriReady
-import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel
 import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
 import ch.protonmail.android.databinding.ActivityComposeMessage2Binding
 import ch.protonmail.android.domain.entity.user.MimeType
@@ -47,6 +47,7 @@ import ch.protonmail.android.utils.UiUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import me.proton.core.presentation.utils.onClick
 import me.proton.core.util.kotlin.exhaustive
 import timber.log.Timber
 
@@ -163,8 +164,12 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
         getContentsLauncher.launch(MimeType.ALL.string)
     }
 
-    private fun onAttachmentsChanged(newAttachments: List<ComposerAttachmentUiModel>) {
+    private fun onAttachmentsImported(results: List<ImportAttachmentResult>) {
 
     }
- // endregion
+
+    private fun onAttachmentRemoved(originalAttachmentUri: Uri) {
+
+    }
+    // endregion
 }

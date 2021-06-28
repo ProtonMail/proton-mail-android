@@ -42,11 +42,12 @@ import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
 import ch.protonmail.android.attachments.domain.model.fullName
+import ch.protonmail.android.attachments.domain.model.isValid
 import ch.protonmail.android.attachments.domain.model.requireFileInfo
+import ch.protonmail.android.attachments.domain.model.requireImportedFileUri
 import ch.protonmail.android.attachments.domain.usecase.GetNewPhotoUri
 import ch.protonmail.android.attachments.domain.usecase.ImportAttachmentsToCache
 import ch.protonmail.android.bl.HtmlProcessor
-import ch.protonmail.android.compose.presentation.mapper.ComposerAttachmentUiModelMapper
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel
 import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
 import ch.protonmail.android.compose.send.SendMessage
@@ -87,7 +88,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
-import me.proton.core.domain.arch.map
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
@@ -119,7 +119,6 @@ class ComposeMessageViewModel @Inject constructor(
     private val importAttachmentsToCache: ImportAttachmentsToCache,
     private val stringResourceResolver: StringResourceResolver,
     private val sendMessage: SendMessage,
-    private val composerAttachmentUiModelMapper: ComposerAttachmentUiModelMapper,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -168,7 +167,7 @@ class ComposeMessageViewModel @Inject constructor(
     private lateinit var htmlProcessor: HtmlProcessor
     private var _dbId: Long? = null
 
-    private val imporedAttachments = mutableListOf<ImportAttachmentResult>()
+    private val attachments = mutableListOf<ImportAttachmentResult>()
 
     private var sendingInProcess = false
     private var signatureContainsHtml = false
@@ -1334,38 +1333,26 @@ class ComposeMessageViewModel @Inject constructor(
     fun addAttachments(uris: List<Uri>, deleteOriginalFiles: Boolean) {
         viewModelScope.launch {
             importAttachmentsToCache(uris, deleteOriginalFiles).collect { results ->
-                val newAttachments = (imporedAttachments + results).distinctBy { it.originalFileUri }
-                imporedAttachments.apply {
-                    clear()
-                    addAll(newAttachments)
-                }
-
+                attachments += results.filter { it.isValid }
                 refreshMessageAttachments()
-                notifyAttachmentsChanged()
+                _attachmentsEvent.send(AttachmentsEventUiModel.Import(results))
             }
         }
     }
 
     fun removeAttachment(uri: Uri) {
         viewModelScope.launch {
-            imporedAttachments.removeIf { it.originalFileUri == uri }
-
+            attachments.removeIf { it.originalFileUri == uri }
             refreshMessageAttachments()
-            notifyAttachmentsChanged()
+            _attachmentsEvent.send(AttachmentsEventUiModel.Remove(uri))
         }
     }
 
-    private fun notifyAttachmentsChanged() {
-        val uiModels = imporedAttachments.map(composerAttachmentUiModelMapper) { it.toUiModel() }
-        _attachmentsEvent.offer(AttachmentsEventUiModel.OnAttachmentsChange(uiModels))
-    }
-
     private fun refreshMessageAttachments() {
-        val successfulAttachments = imporedAttachments.filterIsInstance<ImportAttachmentResult.Success>()
-        val newAttachments = successfulAttachments.map { attachmentResult ->
+        val newAttachments = attachments.distinctBy { it.originalFileUri }.map { attachmentResult ->
             val fileInfo = attachmentResult.requireFileInfo()
             LocalAttachment(
-                uri = attachmentResult.importedFileUri,
+                uri = attachmentResult.requireImportedFileUri(),
                 displayName = fileInfo.fullName,
                 size = fileInfo.size.toLong(),
                 mimeType = fileInfo.mimeType.string

@@ -104,7 +104,6 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
         mockk(),
         stringResourceResolver,
         sendMessage,
-        mockk(),
         verifyConnection,
         networkConfigurator,
     )
