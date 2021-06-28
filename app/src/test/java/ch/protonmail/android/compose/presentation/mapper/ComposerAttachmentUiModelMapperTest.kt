@@ -20,7 +20,6 @@
 package ch.protonmail.android.compose.presentation.mapper
 
 import android.net.Uri
-import ch.protonmail.android.attachments.domain.model.AttachmentFileInfo
 import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
 import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel
 import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel.Icon
@@ -48,7 +47,7 @@ class ComposerAttachmentUiModelMapperTest {
     private val testOriginalFileUri = mockUri("file://downloads/$testFileName.$testFileExtension")
     private val testImportedFileUri = mockUri("file://data/$testFileName.$testFileExtension")
 
-    private val testFileInfo = AttachmentFileInfo(
+    private val testFileInfo = ImportAttachmentResult.FileInfo(
         fileName = Name(testFileName),
         extension = testFileExtension,
         size = testFileSize,

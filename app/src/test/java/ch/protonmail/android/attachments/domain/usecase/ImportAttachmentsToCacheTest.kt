@@ -23,7 +23,6 @@ import android.content.ContentResolver
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.core.net.toFile
-import ch.protonmail.android.attachments.domain.model.AttachmentFileInfo
 import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
 import ch.protonmail.android.domain.entity.Bytes
 import ch.protonmail.android.domain.entity.Name
@@ -54,19 +53,19 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
     private val importedUri2 = mockUri("file://cache/photo2.jpg")
     private val importedUri3 = mockUri("file://cache/photo3.jpg")
 
-    private val fileInfo1 = AttachmentFileInfo(
+    private val fileInfo1 = ImportAttachmentResult.FileInfo(
         fileName = Name("photo1"),
         extension = "jpg",
         size = Bytes(0uL),
         mimeType = MimeType.MULTIPART_MIXED
     )
-    private val fileInfo2 = AttachmentFileInfo(
+    private val fileInfo2 = ImportAttachmentResult.FileInfo(
         fileName = Name("photo2"),
         extension = "jpg",
         size = Bytes(0uL),
         mimeType = MimeType.MULTIPART_MIXED
     )
-    private val fileInfo3 = AttachmentFileInfo(
+    private val fileInfo3 = ImportAttachmentResult.FileInfo(
         fileName = Name("photo3"),
         extension = "jpg",
         size = Bytes(0uL),
