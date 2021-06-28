@@ -78,9 +78,6 @@
     <string name="actionsheet_add_attachments_camera">Take new photo</string>
     <string name="actionsheet_add_attachments_import">Import from…</string>
     <string name="actionsheet_add_attachments_import_description">Import file from File Explorer</string>
-
-    <string name="composer_attachment_icon_description">Icon for attachment type</string>
-    <string name="composer_attachment_remove_description">Remove attachment</string>
     <!-- endregion -->
 
     <!-- region Settings -->

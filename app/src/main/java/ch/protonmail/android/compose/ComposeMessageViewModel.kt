@@ -1334,7 +1334,7 @@ class ComposeMessageViewModel @Inject constructor(
     fun addAttachments(uris: List<Uri>, deleteOriginalFiles: Boolean) {
         viewModelScope.launch {
             importAttachmentsToCache(uris, deleteOriginalFiles).collect { results ->
-                val newAttachments = (results + imporedAttachments).distinctBy { it.originalFileUri }
+                val newAttachments = (imporedAttachments + results).distinctBy { it.originalFileUri }
                 imporedAttachments.apply {
                     clear()
                     addAll(newAttachments)

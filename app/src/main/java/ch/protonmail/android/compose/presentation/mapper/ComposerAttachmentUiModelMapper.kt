@@ -21,7 +21,6 @@ package ch.protonmail.android.compose.presentation.mapper
 
 import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
 import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel
-import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel.Icon
 import ch.protonmail.android.compose.presentation.model.ComposerAttachmentUiModel.State
 import ch.protonmail.android.mapper.UiModelMapper
 import javax.inject.Inject
@@ -63,13 +62,7 @@ class ComposerAttachmentUiModelMapper @Inject constructor() :
             displayName = fileInfo.fileName.s,
             extension = fileInfo.extension,
             size = fileInfo.size,
-            icon = iconFor(fileInfo.extension),
+            icon = 0,
             state = state
         )
-
-    // TODO
-    private fun iconFor(extension: String): Icon =
-        when (extension) {
-            else -> Icon.GENERIC
-        }
 }

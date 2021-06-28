@@ -21,8 +21,6 @@ package ch.protonmail.android.compose.presentation.model
 
 import android.net.Uri
 import androidx.annotation.DrawableRes
-import androidx.recyclerview.widget.DiffUtil
-import ch.protonmail.android.R
 import ch.protonmail.android.domain.entity.Bytes
 
 /**
@@ -49,7 +47,7 @@ sealed class ComposerAttachmentUiModel {
         val displayName: String,
         val extension: String,
         val size: Bytes,
-        val icon: Icon,
+        @DrawableRes val icon: Int,
         val state: State
     ) : ComposerAttachmentUiModel()
 
@@ -65,21 +63,5 @@ sealed class ComposerAttachmentUiModel {
         Ready,
         Importing,
         Error
-    }
-
-    enum class Icon(@DrawableRes val drawableId: Int) {
-        GENERIC(R.drawable.ic_attachments)
-    }
-
-    companion object {
-
-        val DiffCallback = object : DiffUtil.ItemCallback<ComposerAttachmentUiModel>() {
-
-            override fun areItemsTheSame(oldItem: ComposerAttachmentUiModel, newItem: ComposerAttachmentUiModel) =
-                oldItem.id == newItem.id
-
-            override fun areContentsTheSame(oldItem: ComposerAttachmentUiModel, newItem: ComposerAttachmentUiModel) =
-                oldItem == newItem
-        }
     }
 }

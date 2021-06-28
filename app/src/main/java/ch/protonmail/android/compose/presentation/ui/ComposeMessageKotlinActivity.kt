@@ -164,8 +164,7 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
     }
 
     private fun onAttachmentsChanged(newAttachments: List<ComposerAttachmentUiModel>) {
-        binding.composerAttachmentsView
-            .setAttachments(newAttachments, onRemoveClicked = composeViewModel::removeAttachment)
+
     }
-    // endregion
+ // endregion
 }
