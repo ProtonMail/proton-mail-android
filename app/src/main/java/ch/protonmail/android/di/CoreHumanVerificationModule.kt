@@ -18,7 +18,6 @@
 
 package ch.protonmail.android.di
 
-import ch.protonmail.android.core.Constants
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -35,7 +34,6 @@ import me.proton.core.humanverification.domain.HumanVerificationManager
 import me.proton.core.humanverification.domain.HumanVerificationWorkflowHandler
 import me.proton.core.humanverification.domain.repository.HumanVerificationRepository
 import me.proton.core.humanverification.domain.repository.UserVerificationRepository
-import me.proton.core.humanverification.presentation.CaptchaBaseUrl
 import me.proton.core.humanverification.presentation.HumanVerificationOrchestrator
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.client.ClientIdProvider
@@ -46,10 +44,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object HumanVerificationModule {
-
-    @Provides
-    @CaptchaBaseUrl
-    fun provideCaptchaBaseUrl(): String = Constants.BASE_URL
 
     @Provides
     fun provideHumanVerificationOrchestrator(): HumanVerificationOrchestrator =

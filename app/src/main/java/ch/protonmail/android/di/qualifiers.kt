@@ -23,8 +23,13 @@ import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
+@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.FIELD])
 annotation class AlternativeApiPins
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
+annotation class DefaultApiPins
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)

@@ -19,12 +19,17 @@
 
 package ch.protonmail.android
 
+import ch.protonmail.android.di.AlternativeApiPins
 import ch.protonmail.android.di.BaseUrl
 import ch.protonmail.android.di.ConfigurableParametersModule
+import ch.protonmail.android.di.DefaultApiPins
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import me.proton.core.humanverification.presentation.CaptchaBaseUrl
+
+private const val LOCAL_HOST_URL = "http://localhost:8080/"
 
 @Module
 @TestInstallIn(
@@ -40,5 +45,17 @@ object TestConfigurableParametersModule {
 
     @BaseUrl
     @Provides
-    fun provideBaseUrl(): String = "http://localhost:8080/"
+    fun provideBaseUrl(): String = LOCAL_HOST_URL
+
+    @Provides
+    @CaptchaBaseUrl
+    fun provideCaptchaBaseUrl(): String = LOCAL_HOST_URL
+
+    @Provides
+    @AlternativeApiPins
+    fun alternativeApiPins() = emptyList<String>()
+
+    @Provides
+    @DefaultApiPins
+    fun defaultApiPins() = emptyArray<String>()
 }
