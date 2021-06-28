@@ -35,7 +35,6 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.MimeType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.flowOn
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.equalsNoCase
@@ -75,18 +74,18 @@ class ImportAttachmentsToCache @Inject constructor(
 
         // Emit initial state
         send(fileUris.map(::toIdle))
-        val urisToProcess: Map<Uri, Boolean> = fileUris.associateWith {
+        val toProcess = fileUris.associateWith {
             // Skip files already in app's data directory
             FileScheme.FILE.matches(it) && dataDirectory.path in it.path ?: EMPTY_STRING
         }
 
         // Process
-        var result = urisToProcess.keys
-        urisToProcess.toList().forEachAsync { (uri, shouldSkip) ->
+        var result = toProcess.keys
+        toProcess.toList().forEachAsync { (uri, toSkip) ->
 
             // Get File info
             val fileInfo = runCatching { getFileInfo(uri) }.getOrNull()
-            if (shouldSkip) {
+            if (toSkip) {
                 fileInfo?.let { send(result.setSkipped(uri, it)) }
                     ?: send(result.setCantRead(uri))
                 result -= uri
