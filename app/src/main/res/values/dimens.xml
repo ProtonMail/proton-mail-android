@@ -120,9 +120,6 @@
     <dimen name="size_contact_icon">40dp</dimen>
     <dimen name="padding_contact_group_icon">10dp</dimen>
 
-    <!-- Attachments -->
-    <dimen name="height_add_attachments_action_sheet_item">56dp</dimen>
-
     <!-- Labels -->
     <dimen name="min_width_label">56dp</dimen>
 
@@ -242,6 +239,7 @@
     <dimen name="fab_menu_item_margin">8dp</dimen>
 
     <!-- CollapsingToolbarLayout Avatar -->
+    <dimen name="image_width">120dp</dimen>
     <dimen name="avatar_size">120dp</dimen>
     <dimen name="small_avatar_size">80dp</dimen>
     <dimen name="image_final_width">42dp</dimen>

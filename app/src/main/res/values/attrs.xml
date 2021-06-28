@@ -19,12 +19,6 @@
 <resources>
 
     <!-- region V4 -->
-    <declare-styleable name="AddAttachmentsActionSheetItem">
-        <attr name="itemText" format="string"/>
-        <attr name="itemIcon" format="reference"/>
-        <attr name="itemIconDescription" format="string"/>
-    </declare-styleable>
-
     <declare-styleable name="CheckableButton">
         <attr name="checkableButtonIcon" format="reference"/>
     </declare-styleable>
