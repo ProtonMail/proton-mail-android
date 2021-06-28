@@ -28,15 +28,17 @@ import me.proton.core.util.kotlin.unsupported
 
 /**
  * Result for [ImportAttachmentsToCache]
+ *
+ * @param isTerminal if `true` means that the given [originalFileUri] won't have any sequential state
  */
-sealed class ImportAttachmentResult {
+sealed class ImportAttachmentResult(val isTerminal: Boolean) {
 
     abstract val originalFileUri: Uri
 
     /**
      * Attachment is about to be imported
      */
-    data class Idle(override val originalFileUri: Uri) : ImportAttachmentResult()
+    data class Idle(override val originalFileUri: Uri) : ImportAttachmentResult(isTerminal = false)
 
     /**
      * Information for file has been loaded
@@ -44,7 +46,7 @@ sealed class ImportAttachmentResult {
     data class OnInfo(
         override val originalFileUri: Uri,
         val fileInfo: FileInfo
-    ) : ImportAttachmentResult()
+    ) : ImportAttachmentResult(isTerminal = false)
 
     /**
      * Attachment has been imported correctly
@@ -57,12 +59,12 @@ sealed class ImportAttachmentResult {
         val importedFileUri: Uri,
         val fileInfo: FileInfo,
         val skipped: Boolean = originalFileUri == importedFileUri
-    ) : ImportAttachmentResult()
+    ) : ImportAttachmentResult(isTerminal = true)
 
     /**
      * File can't be read
      */
-    data class CantRead(override val originalFileUri: Uri) : ImportAttachmentResult()
+    data class CantRead(override val originalFileUri: Uri) : ImportAttachmentResult(isTerminal = true)
 
     /**
      * File can't be written
@@ -73,7 +75,7 @@ sealed class ImportAttachmentResult {
     data class CantWrite(
         override val originalFileUri: Uri,
         val fileInfo: FileInfo?
-    ) : ImportAttachmentResult()
+    ) : ImportAttachmentResult(isTerminal = true)
 
 
     data class FileInfo(
