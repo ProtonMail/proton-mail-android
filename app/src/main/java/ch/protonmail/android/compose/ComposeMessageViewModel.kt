@@ -108,7 +108,6 @@ class ComposeMessageViewModel @Inject constructor(
     private val fetchPublicKeys: FetchPublicKeys,
     private val saveDraft: SaveDraft,
     private val dispatchers: DispatcherProvider,
-    private val importAttachmentsToCache: ImportAttachmentsToCache,
     private val stringResourceResolver: StringResourceResolver,
     private val sendMessage: SendMessage,
     verifyConnection: VerifyConnection,
@@ -146,6 +145,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     val messageDataResult: MessageBuilderData
         get() = _messageDataResult
+
     // endregion
     // region data
     private var _actionType = UserAction.NONE
@@ -208,10 +208,6 @@ class ComposeMessageViewModel @Inject constructor(
             }
         }
 
-    private val _attachmentsEvent: MutableStateFlow<AttachmentsEventUiModel> =
-        MutableStateFlow(AttachmentsEventUiModel.None)
-    val attachmentsEvent: StateFlow<AttachmentsEventUiModel> =
-        _attachmentsEvent.asStateFlow()
     // endregion
     // region getters
     var draftId: String
@@ -871,6 +867,23 @@ class ComposeMessageViewModel @Inject constructor(
             .build()
     }
 
+    fun setMessagePassword(
+        messagePassword: String?,
+        passwordHint: String?,
+        isPasswordValid: Boolean,
+        expiresIn: Long?,
+        isRespondInlineButtonVisible: Boolean
+    ) {
+        _messageDataResult = MessageBuilderData.Builder()
+            .fromOld(_messageDataResult)
+            .messagePassword(messagePassword)
+            .passwordHint(passwordHint)
+            .isPasswordValid(isPasswordValid)
+            .expirationTime(expiresIn)
+            .isRespondInlineButtonVisible(isRespondInlineButtonVisible)
+            .build()
+    }
+
     fun setRespondInline(respondInline: Boolean) {
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)
@@ -1311,24 +1324,6 @@ class ComposeMessageViewModel @Inject constructor(
                 .expirationTime(newExpirationInSeconds)
                 .build()
             _events.emit(ComposeMessageEventUiModel.OnExpirationChange(hasExpiration = newExpirationInSeconds > 0))
-        }
-    }
-    // endregion
-
-    // region attachments
-    fun addAttachments(uris: List<Uri>, deleteOriginalFiles: Boolean) {
-        viewModelScope.launch {
-            importAttachmentsToCache(uris, deleteOriginalFiles).collect {
-                // TODO add attachment
-                _attachmentsEvent.emit(AttachmentsEventUiModel.Import(it))
-            }
-        }
-    }
-
-    fun removeAttachment(uri: Uri) {
-        viewModelScope.launch {
-            // TODO remove attachment"
-            _attachmentsEvent.emit(AttachmentsEventUiModel.Remove(uri))
         }
     }
     // endregion
