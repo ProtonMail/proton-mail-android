@@ -237,19 +237,21 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 )
 
                 val messageId = loadedMessage.messageId ?: return@mapLatest
+                val showLoadEmbeddedImagesButton = handleEmbeddedImagesLoading(loadedMessage)
                 messageExpandableAdapter.showMessageDetails(
                     parsedBody,
                     messageId,
-                    shouldShowLoadEmbeddedImagesButton(message),
+                    showLoadEmbeddedImagesButton,
                     loadedMessage.attachments
                 )
             }.launchIn(lifecycleScope)
         }
     }
 
-    private fun shouldShowLoadEmbeddedImagesButton(message: Message): Boolean {
+    private fun handleEmbeddedImagesLoading(message: Message): Boolean {
         val hasEmbeddedImages = viewModel.prepareEmbeddedImages(message)
         if (!hasEmbeddedImages) {
+            // Let client know the 'load images' button should not be shown
             return false
         }
 
@@ -257,6 +259,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         if (displayEmbeddedImages) {
             viewModel.displayEmbeddedImages(message)
         }
+        // Let client know whether the 'load images' button should be shown
         return !displayEmbeddedImages
     }
 

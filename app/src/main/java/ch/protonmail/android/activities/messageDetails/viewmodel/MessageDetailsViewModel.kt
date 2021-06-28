@@ -256,7 +256,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             val isDecrypted = fetchedMessage?.tryDecrypt(publicKeys)
             if (isDecrypted == true) {
                 Timber.v("message $messageId isDecrypted, isRead: ${fetchedMessage.isRead}")
-                if (!message.isRead) {
+                if (!fetchedMessage.isRead) {
                     messageRepository.markRead(listOf(messageId))
                 }
                 emit(fetchedMessage)
