@@ -40,7 +40,6 @@ import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
@@ -50,7 +49,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
-private const val VISIBLE_PAGE_ITEMS_SIZE_ESTIMATION = 12 // rough number of items on fulls scree
 private const val FILE_PREFIX = "file://"
 
 /**
@@ -227,24 +225,16 @@ class MessageRepository @Inject constructor(
         val messagesDao = databaseProvider.provideMessageDao(userId)
         return observeLocationDbDataFlow(location, messagesDao)
             .onStart {
-                val dbData = observeLocationDbDataFlow(location, messagesDao).first()
-                val currentUser = userManager.currentUser
-                Timber.v("messages DB for location(id=${location.messageLocationTypeValue}): $location")
-                Timber.v("dbData size: ${dbData.size} user: $currentUser, trying fetching from remote")
-                if (dbData.size < VISIBLE_PAGE_ITEMS_SIZE_ESTIMATION) {
-                    if (dbData.isNotEmpty()) { // if there is anything in the db emit it now
-                        emit(dbData)
-                    }
-                    if (!connectivityManager.isInternetConnectionPossible()) {
-                        Timber.d("Skipping network refresh as connectivity is not available")
-                        return@onStart
-                    }
-                    val messagesResponse =
-                        protonMailApiManager.getMessages(location.messageLocationTypeValue, UserIdTag(userId))
-                    if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
-                        persistMessages(messagesResponse.messages, userId, location.messageLocationTypeValue)
-                        emit(messagesResponse.messages)
-                    }
+                if (!connectivityManager.isInternetConnectionPossible()) {
+                    Timber.d("Skipping network refresh as connectivity is not available")
+                    return@onStart
+                }
+                Timber.v("location: $location, trying fetching from remote")
+                val messagesResponse =
+                    protonMailApiManager.getMessages(location.messageLocationTypeValue, UserIdTag(userId))
+                if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
+                    emit(messagesResponse.messages)
+                    persistMessages(messagesResponse.messages, userId, location.messageLocationTypeValue)
                 }
             }
     }
@@ -269,7 +259,7 @@ class MessageRepository @Inject constructor(
                     Timber.d("Skipping network refresh as connectivity is not available")
                     return@onStart
                 }
-                Timber.v("Messages DB for labelId: $labelId, trying fetching from remote")
+                Timber.v("labelId: $labelId, trying fetching from remote")
                 val labelsResponse = protonMailApiManager.searchByLabelAndPage(labelId, 0)
                 if (labelsResponse.code == Constants.RESPONSE_CODE_OK) {
                     persistMessages(labelsResponse.messages, userId)

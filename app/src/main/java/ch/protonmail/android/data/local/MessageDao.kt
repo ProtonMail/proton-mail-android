@@ -74,11 +74,21 @@ interface MessageDao {
     fun getMessagesCountByLocation(location: Int): Int
 
     @Query(
-        """SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location  ORDER BY $COLUMN_MESSAGE_TIME DESC"""
+        """
+            SELECT * FROM $TABLE_MESSAGES 
+            WHERE $COLUMN_MESSAGE_LOCATION = :location  
+            ORDER BY $COLUMN_MESSAGE_TIME DESC
+            """
     )
     fun observeMessagesByLocation(location: Int): Flow<List<Message>>
 
-    @Query("""SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_IS_STARRED=1""")
+    @Query(
+        """
+        SELECT * FROM $TABLE_MESSAGES 
+        WHERE $COLUMN_MESSAGE_IS_STARRED=1
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+        """
+    )
     fun observeStarredMessages(): Flow<List<Message>>
 
     @Query(
