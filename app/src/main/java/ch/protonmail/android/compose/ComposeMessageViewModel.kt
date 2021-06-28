@@ -137,6 +137,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val _deleteResult: MutableLiveData<Event<PostResult>> = MutableLiveData()
     private val _loadingDraftResult: MutableLiveData<Message> = MutableLiveData()
     private val _messageResultError: MutableLiveData<Event<PostResult>> = MutableLiveData()
+    private val _openAttachmentsScreenResult: MutableLiveData<List<LocalAttachment>> = MutableLiveData()
     private val _buildingMessageCompleted: MutableLiveData<Event<Message>> = MutableLiveData()
     private val _dbIdWatcher: MutableLiveData<Long> = MutableLiveData()
     private val _fetchMessageDetailsEvent: MutableLiveData<Event<MessageBuilderData>> = MutableLiveData()
@@ -677,6 +678,35 @@ class ComposeMessageViewModel @Inject constructor(
                     )
                 }
             )
+    }
+
+    fun openAttachmentsScreen() {
+        val oldList = _messageDataResult.attachmentList
+
+        viewModelScope.launch {
+            if (draftId.isNotEmpty()) {
+                val message = composeMessageRepository.findMessage(draftId)
+
+                if (message != null) {
+                    val messageAttachments =
+                        composeMessageRepository.getAttachments(message, dispatchers.Io)
+                    if (oldList.size <= messageAttachments.size) {
+                        val attachments = LocalAttachment.createLocalAttachmentList(messageAttachments)
+                        _messageDataResult = MessageBuilderData.Builder()
+                            .fromOld(_messageDataResult)
+                            .attachmentList(ArrayList(attachments))
+                            .build()
+                        _openAttachmentsScreenResult.postValue(attachments)
+                        return@launch
+                    }
+                }
+            }
+            _messageDataResult = MessageBuilderData.Builder()
+                .fromOld(_messageDataResult)
+                .attachmentList(ArrayList(oldList))
+                .build()
+            _openAttachmentsScreenResult.postValue(oldList)
+        }
     }
 
     fun deleteDraft() {
@@ -1314,10 +1344,6 @@ class ComposeMessageViewModel @Inject constructor(
                 notifyAttachmentsChanged()
             }
         }
-    }
-
-    fun addAttachment(uri: Uri, deleteOriginalFile: Boolean) {
-        addAttachments(listOf(uri), deleteOriginalFile)
     }
 
     fun removeAttachment(uri: Uri) {
