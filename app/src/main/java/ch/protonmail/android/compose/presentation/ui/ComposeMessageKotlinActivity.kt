@@ -164,8 +164,6 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
     }
 
     private fun onAttachmentsChanged(newAttachments: List<ComposerAttachmentUiModel>) {
-        composeViewModel.autoSaveDraft()
-
         binding.apply {
             composerAttachmentsView
                 .setAttachments(newAttachments, onRemoveClicked = composeViewModel::removeAttachment)

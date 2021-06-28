@@ -23,7 +23,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.text.Spanned
 import android.text.TextUtils
-import androidx.annotation.VisibleForTesting
 import androidx.core.net.MailTo
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -250,7 +249,6 @@ class ComposeMessageViewModel @Inject constructor(
     val parentId: String?
         get() = _parentId
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal var autoSaveJob: Job? = null
     // endregion
 
@@ -1126,25 +1124,13 @@ class ComposeMessageViewModel @Inject constructor(
     @JvmOverloads
     fun setBeforeSaveDraft(
         uploadAttachments: Boolean,
-        updatedMessageBody: String? = null,
+        contentFromComposeBodyEditText: String,
         userAction: UserAction = UserAction.SAVE_DRAFT
     ) {
         setUploadAttachments(uploadAttachments)
-        if (updatedMessageBody != null) {
-            setContent(buildMessageContent(updatedMessageBody))
-        }
+
         _actionType = userAction
-
-        if (isRespondInline()) {
-            setRespondInline(true)
-        } else {
-            setRespondInline(false)
-        }
-        buildMessage()
-    }
-
-    private fun buildMessageContent(plainContent: String): String {
-        var content = plainContent
+        var content = contentFromComposeBodyEditText
         content = UiUtil.toHtml(content)
         content.replace("   ", "&nbsp;&nbsp;&nbsp;").replace("  ", "&nbsp;&nbsp;")
         content = content.replace("<", LESS_THAN).replace(">", GREATER_THAN).replace("\n", NEW_LINE)
@@ -1165,17 +1151,16 @@ class ComposeMessageViewModel @Inject constructor(
             content = content.replace(fromHtmlMobileFooter.toString(), _messageDataResult.mobileFooter)
         }
 
-        return if (isRespondInline()) {
-            content
+        if ((_messageDataResult.isRespondInlineChecked || _messageDataResult.isRespondInlineButtonVisible.not()) && _messageDataResult.isMessageBodyVisible.not()) {
+            setContent(content)
+            setRespondInline(true)
         } else {
             val quotedHeader = messageDataResult.quotedHeader.toString().replace("\n", NEW_LINE)
-            content + quotedHeader + _messageDataResult.initialMessageContent
+            setContent(content + quotedHeader + _messageDataResult.initialMessageContent)
+            setRespondInline(false)
         }
+        buildMessage()
     }
-
-    private fun isRespondInline() =
-        (_messageDataResult.isRespondInlineChecked || _messageDataResult.isRespondInlineButtonVisible.not()) &&
-            _messageDataResult.isMessageBodyVisible.not()
 
     fun finishBuildingMessage(contentFromComposeBodyEditText: String) {
         setUploadAttachments(true)
@@ -1403,17 +1388,14 @@ class ComposeMessageViewModel @Inject constructor(
     }
     // endregion
 
-    /**
-     * @param updatedMessageBody is `null` if message body has not changed
-     */
-    fun autoSaveDraft(updatedMessageBody: String? = null) {
+    fun autoSaveDraft(messageBody: String) {
         Timber.v("Draft auto save scheduled!")
 
         autoSaveJob?.cancel()
         autoSaveJob = viewModelScope.launch(dispatchers.Io) {
-            delay(1_000)
+            delay(1000)
             Timber.d("Draft auto save triggered")
-            setBeforeSaveDraft(false, updatedMessageBody)
+            setBeforeSaveDraft(false, messageBody)
         }
     }
 
