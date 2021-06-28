@@ -22,7 +22,6 @@ import ch.protonmail.android.api.models.AttachmentUploadResponse
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.data.local.model.Attachment
 import okhttp3.RequestBody
-import java.io.IOException
 
 interface AttachmentApiSpec {
 
@@ -31,24 +30,6 @@ interface AttachmentApiSpec {
     fun downloadAttachmentBlocking(attachmentId: String): ByteArray
 
     suspend fun downloadAttachment(attachmentId: String): okhttp3.ResponseBody?
-
-    @Throws(IOException::class)
-    fun uploadAttachmentInlineBlocking(
-        attachment: Attachment,
-        MessageID: String,
-        contentID: String,
-        KeyPackage: RequestBody,
-        DataPackage: RequestBody,
-        Signature: RequestBody
-    ): AttachmentUploadResponse
-
-    @Throws(IOException::class)
-    fun uploadAttachmentBlocking(
-        attachment: Attachment,
-        keyPackage: RequestBody,
-        dataPackage: RequestBody,
-        signature: RequestBody
-    ): AttachmentUploadResponse
 
     fun getAttachmentUrl(attachmentId: String): String
 

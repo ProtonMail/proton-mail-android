@@ -119,23 +119,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override suspend fun downloadAttachment(attachmentId: String): okhttp3.ResponseBody? =
         api.downloadAttachment(attachmentId)
 
-    override fun uploadAttachmentInlineBlocking(
-        attachment: Attachment,
-        MessageID: String,
-        contentID: String,
-        KeyPackage: RequestBody,
-        DataPackage: RequestBody,
-        Signature: RequestBody
-    ): AttachmentUploadResponse =
-        api.uploadAttachmentInlineBlocking(attachment, MessageID, contentID, KeyPackage, DataPackage, Signature)
-
-    override fun uploadAttachmentBlocking(
-        attachment: Attachment,
-        keyPackage: RequestBody,
-        dataPackage: RequestBody,
-        signature: RequestBody
-    ): AttachmentUploadResponse = api.uploadAttachmentBlocking(attachment, keyPackage, dataPackage, signature)
-
     override suspend fun uploadAttachmentInline(
         attachment: Attachment,
         messageID: String,
