@@ -22,9 +22,8 @@ package ch.protonmail.android.ui.actionsheet
 import androidx.lifecycle.ViewModel
 import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheet.Action
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 /**
@@ -35,18 +34,18 @@ import javax.inject.Inject
 @HiltViewModel
 class AddAttachmentsActionSheetViewModel @Inject constructor() : ViewModel() {
 
-    private val _result = MutableSharedFlow<Action>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    val result = _result.asSharedFlow()
+    private val _result = Channel<Action>(Channel.BUFFERED)
+    val result = _result.receiveAsFlow()
 
     fun requestOpenGallery() {
-        _result.tryEmit(Action.GALLERY)
+        _result.offer(Action.GALLERY)
     }
 
     fun requestOpenCamera() {
-        _result.tryEmit(Action.CAMERA)
+        _result.offer(Action.CAMERA)
     }
 
     fun requestOpenFileExplorer() {
-        _result.tryEmit(Action.FILE_EXPLORER)
+        _result.offer(Action.FILE_EXPLORER)
     }
 }
