@@ -66,8 +66,8 @@ internal class MessageDetailsAdapter(
     private val context: Context,
     private var messages: List<Message>,
     private val messageDetailsRecyclerView: RecyclerView,
-    private val onLoadEmbeddedImagesClicked: ((Message) -> Unit)?,
-    private val onDisplayRemoteContentClicked: ((Message) -> Unit)?,
+    private val onLoadEmbeddedImagesClicked: (Message) -> Unit,
+    private val onDisplayRemoteContentClicked: (Message) -> Unit,
     private val userManager: UserManager,
     private val onLoadMessageBody: (Message) -> Unit,
     private val onAttachmentDownloadCallback: (Attachment) -> Unit
@@ -219,7 +219,7 @@ internal class MessageDetailsAdapter(
                     it.messageFormattedHtml = null
                 }
                 val item = visibleItems!![position]
-                onLoadEmbeddedImagesClicked?.invoke(item.message)
+                onLoadEmbeddedImagesClicked(item.message)
             }
 
             displayRemoteContentButton.setOnClickListener {
@@ -231,7 +231,7 @@ internal class MessageDetailsAdapter(
                     itemView.displayRemoteContentButton.visibility = View.GONE
                     (webView.webViewClient as MessageDetailsPmWebViewClient).allowLoadingRemoteResources()
                     webView.reload()
-                    onDisplayRemoteContentClicked?.invoke(item.message)
+                    onDisplayRemoteContentClicked(item.message)
                 }
             }
         }
