@@ -59,18 +59,9 @@ public class PostArchiveJob extends ProtonMailCounterJob {
         for (String id : mMessageIds) {
             final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
-                if (markMessageLocally(counterDao, message)) {
+                if (updateMessageLocally(counterDao, message)) {
                     totalUnread++;
                 }
-                if (mFolderIds != null) {
-                    for (String folderId : mFolderIds) {
-                        if (!TextUtils.isEmpty(folderId)) {
-                            message.removeLabels(Collections.singletonList(folderId));
-                        }
-                    }
-                }
-                Timber.v("Archive message id: %s, labels: %s", message.getMessageId(), message.getAllLabelIDs());
-                getMessageDetailsRepository().saveMessageBlocking(message);
             }
         }
 
@@ -82,8 +73,8 @@ public class PostArchiveJob extends ProtonMailCounterJob {
         counterDao.insertUnreadLocation(unreadLocationCounter);
     }
 
-    private boolean markMessageLocally(CounterDao counterDao,
-                                       Message message) {
+    private boolean updateMessageLocally(CounterDao counterDao,
+                                         Message message) {
         boolean unreadIncrease = false;
         if (!message.isRead()) {
             UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
@@ -94,14 +85,20 @@ public class PostArchiveJob extends ProtonMailCounterJob {
             unreadIncrease = true;
         }
         if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.SENT) {
-            message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
             message.removeLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.SENT.getMessageLocationTypeValue())));
             message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.ALL_SENT.getMessageLocationTypeValue())));
 
-        } else {
-            message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
         }
-        Timber.d("Archive locally message id: %s, labels: %s", message.getMessageId(), message.getAllLabelIDs());
+        message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
+
+        if (mFolderIds != null) {
+            for (String folderId : mFolderIds) {
+                if (!TextUtils.isEmpty(folderId)) {
+                    message.removeLabels(Collections.singletonList(folderId));
+                }
+            }
+        }
+        Timber.d("Archive message id: %s, labels: %s", message.getMessageId(), message.getAllLabelIDs());
         getMessageDetailsRepository().saveMessageBlocking(message);
         return unreadIncrease;
     }

@@ -221,7 +221,7 @@ interface MessageDao {
     fun findAllMessageInfoFromAConversation(conversationId: String): Flow<List<Message>>
 
     suspend fun saveMessage(message: Message): Long {
-        Timber.d("saveMessage ${message.messageId}")
+        Timber.d("saveMessage ${message.messageId}, labels: ${message.allLabelIDs}")
         processMessageAttachments(message)
         return saveMessageInfo(message)
     }
