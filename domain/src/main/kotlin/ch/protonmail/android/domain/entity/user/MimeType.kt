@@ -17,12 +17,22 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.attachments.presentation.model
+package ch.protonmail.android.domain.entity.user
 
-/**
- * Set of filters for open a system File Picker
- */
-enum class FilePickerMask(val mimeType: String) {
+import me.proton.core.util.kotlin.equalsNoCase
+
+enum class MimeType(val string: String) {
     ALL("*/*"),
+    HTML("text/html"),
+    PLAIN_TEXT("text/plain"),
     IMAGE("image/*"),
+    UNKNOWN_FILE("application/octet-stream"),
+    MULTIPART_MIXED("multipart/mixed");
+
+    companion object {
+
+        fun fromString(string: String?): MimeType =
+            values().find { it.string equalsNoCase string }
+                ?: UNKNOWN_FILE
+    }
 }

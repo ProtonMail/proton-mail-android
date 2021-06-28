@@ -58,6 +58,7 @@ import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.Bytes
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.entity.user.MimeType
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.feature.account.allLoggedInBlocking
@@ -1342,7 +1343,7 @@ class ComposeMessageViewModel @Inject constructor(
                     fileName = Name(fullName.substringBeforeLast(".")),
                     extension = extension,
                     size = Bytes(attachment.size.toULong()),
-                    mimeType = attachment.mimeType
+                    mimeType = MimeType.fromString(attachment.mimeType)
                 )
                 ImportAttachmentResult.Skipped(uri, fileInfo)
             }
@@ -1369,7 +1370,7 @@ class ComposeMessageViewModel @Inject constructor(
                 uri = attachmentResult.importedFileUri,
                 displayName = fileInfo.fullName,
                 size = fileInfo.size.toLong(),
-                mimeType = fileInfo.mimeType
+                mimeType = fileInfo.mimeType.string
             )
         }
         _messageDataResult = MessageBuilderData.Builder()
