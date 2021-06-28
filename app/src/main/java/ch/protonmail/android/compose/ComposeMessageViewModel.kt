@@ -76,7 +76,6 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
-import ch.protonmail.android.worker.DeleteAttachmentWorker
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
@@ -125,8 +124,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val sendMessage: SendMessage,
     private val composerAttachmentUiModelMapper: ComposerAttachmentUiModelMapper,
     verifyConnection: VerifyConnection,
-    networkConfigurator: NetworkConfigurator,
-    private val deleteAttachmentWorker: DeleteAttachmentWorker.Enqueuer
+    networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     // region events data
@@ -1329,7 +1327,6 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun removeAttachment(uri: Uri) {
         viewModelScope.launch {
-            deleteAttachmentWorker.enqueue(uri.lastPathSegment!!)
             importedAttachments.removeIf { it.originalFileUri == uri }
 
             refreshMessageAttachments()
