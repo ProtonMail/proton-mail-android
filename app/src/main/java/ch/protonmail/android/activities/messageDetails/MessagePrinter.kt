@@ -72,7 +72,7 @@ internal class MessagePrinter(
         messageString.appendRecipientsList(message.bccList, R.string.print_bcc_template)
         messageString.append(String.format(resources.getString(R.string.print_date_template), DateUtil.formatDetailedDateTime(context, message.timeMs)))
         messageString.append("<br/>")
-        val attachmentList = message.attachments
+        val attachmentList = message.Attachments
         val attachmentsCount = attachmentList.size
         messageString.append(
             resources.getQuantityString(

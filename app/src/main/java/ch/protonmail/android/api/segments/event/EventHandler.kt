@@ -51,6 +51,7 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.MessageCountsEvent
+import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
@@ -320,7 +321,7 @@ class EventHandler @AssistedInject constructor(
                     val serverTime = messageUpdate.time
 
                     if (message != null) {
-                        message.attachments = messageUpdate.attachments
+                        message.Attachments = messageUpdate.Attachments
                     }
 
                     if (serverTime > dbTime && message != null && messageUpdate.messageBody != null) {

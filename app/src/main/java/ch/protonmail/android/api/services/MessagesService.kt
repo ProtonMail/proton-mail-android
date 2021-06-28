@@ -283,7 +283,7 @@ class MessagesService : JobIntentService() {
                     msg.isInline = savedMessage.isInline
                     savedMessage.location = location.messageLocationTypeValue
                     savedMessage.setFolderLocation(messagesDb)
-                    val attachments = savedMessage.attachments
+                    val attachments = savedMessage.Attachments
                     if (attachments.isNotEmpty()) {
                         msg.setAttachmentList(attachments)
                     }
@@ -355,7 +355,7 @@ class MessagesService : JobIntentService() {
                     msg.mimeType = savedMessage.mimeType
                     savedMessage.location = location.messageLocationTypeValue
                     savedMessage.setFolderLocation(messagesDb)
-                    val attachments = savedMessage.attachments
+                    val attachments = savedMessage.Attachments
                     if (attachments.isNotEmpty()) {
                         msg.setAttachmentList(attachments)
                     }

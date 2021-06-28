@@ -97,10 +97,10 @@ class MessageFactory @Inject constructor(
             message.replyTos = it.ReplyTos?.toList() ?: listOf()
             message.header = it.Header
             message.parsedHeaders = it.parsedHeaders
-            message.attachments = it.Attachments?.map(attachmentFactory::createAttachment) ?: emptyList()
+            message.Attachments = it.Attachments?.map(attachmentFactory::createAttachment) ?: emptyList()
             message.embeddedImageIds = it.embeddedImagesArray?.toList() ?: emptyList()
             val numOfAttachments = message.numAttachments
-            val attachmentsListSize = message.attachments.size
+            val attachmentsListSize = message.Attachments.size
             if (attachmentsListSize != 0 && attachmentsListSize != numOfAttachments)
                 throw IllegalArgumentException(
                     "Attachments size does not match expected: $numOfAttachments, actual: $attachmentsListSize "

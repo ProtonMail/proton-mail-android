@@ -152,6 +152,20 @@ interface MessageDao {
             message.attachments = message.attachmentsBlocking(this)
         }
 
+    fun findMessageByMessageDbIdBlocking(messageDbId: Long) = findMessageInfoByDbIdBlocking(messageDbId)
+        ?.also { message ->
+            message.attachments = message.attachmentsBlocking(this)
+        }
+
+    fun findMessageByDbId(dbId: Long): Flow<Message?> =
+        findMessageInfoByDbId(dbId).map { message ->
+            return@map message?.let {
+                it.attachments = it.attachmentsBlocking(this)
+                it
+            }
+        }
+
+    @JvmOverloads
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =
         findAllMessageInfoByLastMessageAccessTime(laterThan)
             .map { messages ->
