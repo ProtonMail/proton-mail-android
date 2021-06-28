@@ -22,6 +22,7 @@ import android.text.TextUtils;
 
 import com.birbit.android.jobqueue.Params;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -89,8 +90,6 @@ public class PostArchiveJob extends ProtonMailCounterJob {
             message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.ALL_SENT.getMessageLocationTypeValue())));
 
         }
-        message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
-
         if (mFolderIds != null) {
             for (String folderId : mFolderIds) {
                 if (!TextUtils.isEmpty(folderId)) {
@@ -98,7 +97,9 @@ public class PostArchiveJob extends ProtonMailCounterJob {
                 }
             }
         }
-        Timber.d("Archive message id: %s, labels: %s", message.getMessageId(), message.getAllLabelIDs());
+        message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
+        message.setLabelIDs(Arrays.asList(String.valueOf(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue())));
+        Timber.d("Archive message id: %s, location: %s, labels: %s", message.getMessageId(), message.getLocation(), message.getAllLabelIDs());
         getMessageDetailsRepository().saveMessageBlocking(message);
         return unreadIncrease;
     }

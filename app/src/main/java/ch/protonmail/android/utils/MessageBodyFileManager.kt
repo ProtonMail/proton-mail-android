@@ -48,7 +48,6 @@ class MessageBodyFileManager @Inject constructor(
         return null
     }
 
-
     suspend fun saveMessageBodyToFile(message: Message, shouldOverwrite: Boolean = true): String? =
         withContext(dispatcherProvider.Io) {
             val messageId = message.messageId
