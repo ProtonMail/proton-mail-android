@@ -590,16 +590,15 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     fun shouldShowProtonCalendarButton(packageManager: PackageManager): Boolean =
         protonCalendarUtils.shouldShowProtonCalendarButton(packageManager)
 
-    fun handleProtonCalendarButtonClick(context: Context, attachmentId: String, messageId: String) {
-        if (protonCalendarUtils.openPlayStoreIfNotInstalled()) {
-            // Proton Calendar is installed, open explicit intent
+    /**
+     * @return [true] ProtonCalendar is installed, [false] not installed and we've opened PlayStore
+     */
+    fun handleProtonCalendarButtonClick(attachmentId: String): Boolean {
+        return if (protonCalendarUtils.openPlayStoreIfNotInstalled()) {
+            // Proton Calendar is installed, we should open explicit intent
             protonCalendarAttachmentId = attachmentId
-            viewOrDownloadAttachment(
-                context,
-                attachmentId,
-                messageId
-            )
-        }
+            true
+        } else false
     }
 
     fun remoteContentDisplayed() {

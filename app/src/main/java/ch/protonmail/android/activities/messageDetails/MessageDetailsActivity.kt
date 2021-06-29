@@ -836,7 +836,10 @@ internal class MessageDetailsActivity :
                 visibility = View.VISIBLE
 
                 setOnClickListener {
-                    viewModel.handleProtonCalendarButtonClick(this@MessageDetailsActivity, attachmentId, messageId)
+                    if (viewModel.handleProtonCalendarButtonClick(attachmentId)) {
+                        // Proton Calendar is installed, show the attachment
+                        OnAttachmentDownloadCallback(storagePermissionHelper, attachmentToDownloadId).invoke(attachmentId)
+                    }
                 }
             }
         } else {
