@@ -25,7 +25,6 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import androidx.core.database.getStringOrNull
-import androidx.core.net.toUri
 import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
 import ch.protonmail.android.di.AppCacheDirectory
 import ch.protonmail.android.di.AppDataDirectory
@@ -125,7 +124,6 @@ class ImportAttachmentsToCache @Inject constructor(
             // Get File info
             val success = ImportAttachmentResult.Success(
                 originalFileUri = uri,
-                importedFileUri = importedFile.toUri(),
                 fileInfo = fileInfo ?: getFileInfo(uri, importedFile)
             )
             send(result.setSuccess(uri, success))

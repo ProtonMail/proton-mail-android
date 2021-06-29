@@ -40,12 +40,6 @@ import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.rx.ThreadSchedulers
-import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
-import ch.protonmail.android.attachments.domain.model.fullName
-import ch.protonmail.android.attachments.domain.model.isValid
-import ch.protonmail.android.attachments.domain.model.requireFileInfo
-import ch.protonmail.android.attachments.domain.model.requireImportedFileUri
-import ch.protonmail.android.attachments.domain.usecase.GetNewPhotoUri
 import ch.protonmail.android.attachments.domain.usecase.ImportAttachmentsToCache
 import ch.protonmail.android.bl.HtmlProcessor
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel
@@ -75,17 +69,16 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.squareup.otto.Subscribe
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -105,7 +98,7 @@ const val NEW_LINE = "<br>"
 const val LESS_THAN = "&lt;"
 const val GREATER_THAN = "&gt;"
 
-@HiltViewModel
+
 class ComposeMessageViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository,
     private val userManager: UserManager,
@@ -113,7 +106,6 @@ class ComposeMessageViewModel @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val deleteMessage: DeleteMessage,
     private val fetchPublicKeys: FetchPublicKeys,
-    private val getNewPhotoUri: GetNewPhotoUri,
     private val saveDraft: SaveDraft,
     private val dispatchers: DispatcherProvider,
     private val importAttachmentsToCache: ImportAttachmentsToCache,
@@ -167,8 +159,6 @@ class ComposeMessageViewModel @Inject constructor(
     private lateinit var htmlProcessor: HtmlProcessor
     private var _dbId: Long? = null
 
-    private val attachments = mutableListOf<ImportAttachmentResult>()
-
     private var sendingInProcess = false
     private var signatureContainsHtml = false
 
@@ -198,6 +188,8 @@ class ComposeMessageViewModel @Inject constructor(
         get() = _deleteResult
     val loadingDraftResult: LiveData<Message>
         get() = _loadingDraftResult
+    val openAttachmentsScreenResult: LiveData<List<LocalAttachment>>
+        get() = _openAttachmentsScreenResult
     val buildingMessageCompleted: LiveData<Event<Message>>
         get() = _buildingMessageCompleted
     val dbIdWatcher: LiveData<Long>
@@ -216,9 +208,10 @@ class ComposeMessageViewModel @Inject constructor(
             }
         }
 
-    private val _attachmentsEvent = Channel<AttachmentsEventUiModel>(Channel.BUFFERED)
-    val attachmentsEvent: Flow<AttachmentsEventUiModel> =
-        _attachmentsEvent.receiveAsFlow()
+    private val _attachmentsEvent: MutableStateFlow<AttachmentsEventUiModel> =
+        MutableStateFlow(AttachmentsEventUiModel.None)
+    val attachmentsEvent: StateFlow<AttachmentsEventUiModel> =
+        _attachmentsEvent.asStateFlow()
     // endregion
     // region getters
     var draftId: String
@@ -899,7 +892,7 @@ class ComposeMessageViewModel @Inject constructor(
             .build()
     }
 
-    fun setAttachmentList(attachments: List<LocalAttachment>) {
+    fun setAttachmentList(attachments: ArrayList<LocalAttachment>) {
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)
             .attachmentList(attachments)
@@ -1323,45 +1316,20 @@ class ComposeMessageViewModel @Inject constructor(
     // endregion
 
     // region attachments
-    fun requestNewPhotoUri() {
-        viewModelScope.launch {
-            val uri = getNewPhotoUri()
-            _attachmentsEvent.send(AttachmentsEventUiModel.OnPhotoUriReady(uri))
-        }
-    }
-
     fun addAttachments(uris: List<Uri>, deleteOriginalFiles: Boolean) {
         viewModelScope.launch {
-            importAttachmentsToCache(uris, deleteOriginalFiles).collect { results ->
-                attachments += results.filter { it.isValid }
-                refreshMessageAttachments()
-                _attachmentsEvent.send(AttachmentsEventUiModel.Import(results))
+            importAttachmentsToCache(uris, deleteOriginalFiles).collect {
+                // TODO add attachment
+                _attachmentsEvent.emit(AttachmentsEventUiModel.Import(it))
             }
         }
     }
 
     fun removeAttachment(uri: Uri) {
         viewModelScope.launch {
-            attachments.removeIf { it.originalFileUri == uri }
-            refreshMessageAttachments()
-            _attachmentsEvent.send(AttachmentsEventUiModel.Remove(uri))
+            // TODO remove attachment"
+            _attachmentsEvent.emit(AttachmentsEventUiModel.Remove(uri))
         }
-    }
-
-    private fun refreshMessageAttachments() {
-        val newAttachments = attachments.distinctBy { it.originalFileUri }.map { attachmentResult ->
-            val fileInfo = attachmentResult.requireFileInfo()
-            LocalAttachment(
-                uri = attachmentResult.requireImportedFileUri(),
-                displayName = fileInfo.fullName,
-                size = fileInfo.size.toLong(),
-                mimeType = fileInfo.mimeType.string
-            )
-        }
-        _messageDataResult = MessageBuilderData.Builder()
-            .fromOld(_messageDataResult)
-            .attachmentList(newAttachments)
-            .build()
     }
     // endregion
 

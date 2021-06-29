@@ -30,10 +30,8 @@ import io.mockk.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
 import me.proton.core.test.kotlin.CoroutinesTest
-import me.proton.core.util.kotlin.unsupported
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import java.io.File
 import java.io.IOException
 import kotlin.test.*
 
@@ -48,10 +46,6 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
     private val testUri3 = mockUri("file://folder/photo3.jpg")
 
     private val allTestUris = listOf(testUri1, testUri2, testUri3)
-
-    private val importedUri1 = mockUri("file://cache/photo1.jpg")
-    private val importedUri2 = mockUri("file://cache/photo2.jpg")
-    private val importedUri3 = mockUri("file://cache/photo3.jpg")
 
     private val fileInfo1 = ImportAttachmentResult.FileInfo(
         fileName = Name("photo1"),
@@ -94,22 +88,13 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
 
     @BeforeTest
     fun setup() {
-        mockkStatic(MimeTypeMap::class, Uri::class)
+        mockkStatic(MimeTypeMap::class)
         every { MimeTypeMap.getSingleton().getMimeTypeFromExtension(any()) } returns MimeType.MULTIPART_MIXED.string
-        every { Uri.fromFile(any()) } answers {
-            val name = firstArg<File>().name
-            when (name) {
-                "photo1.jpg" -> importedUri1
-                "photo2.jpg" -> importedUri2
-                "photo3.jpg" -> importedUri3
-                else -> unsupported
-            }
-        }
     }
 
     @AfterTest
     fun tearDown() {
-        unmockkStatic(MimeTypeMap::class, Uri::class)
+        unmockkStatic(MimeTypeMap::class)
     }
 
     @Test
@@ -117,9 +102,9 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
 
         // given
         val expected = listOf(
-            ImportAttachmentResult.Success(testUri1, importedUri1, fileInfo1),
-            ImportAttachmentResult.Success(testUri2, importedUri2, fileInfo2),
-            ImportAttachmentResult.Success(testUri3, importedUri3, fileInfo3)
+            ImportAttachmentResult.Success(testUri1, fileInfo1),
+            ImportAttachmentResult.Success(testUri2, fileInfo2),
+            ImportAttachmentResult.Success(testUri3, fileInfo3)
         )
 
         // when
@@ -136,7 +121,7 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
         val expected = listOf(
             ImportAttachmentResult.Idle(testUri1),
             ImportAttachmentResult.OnInfo(testUri1, fileInfo1),
-            ImportAttachmentResult.Success(testUri1, importedUri1, fileInfo1)
+            ImportAttachmentResult.Success(testUri1, fileInfo1)
         )
 
         // when
@@ -185,8 +170,8 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
         assertEquals(
             listOf(
                 ImportAttachmentResult.Skipped(uri1, fileInfo1),
-                ImportAttachmentResult.Success(testUri2, importedUri2, fileInfo2),
-                ImportAttachmentResult.Success(testUri3, importedUri3, fileInfo3),
+                ImportAttachmentResult.Success(testUri2, fileInfo2),
+                ImportAttachmentResult.Success(testUri3, fileInfo3),
             ),
             result
         )
@@ -204,9 +189,9 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
         // then
         assertEquals(
             listOf(
-                ImportAttachmentResult.Success(testUri1, importedUri1, fileInfo1),
+                ImportAttachmentResult.Success(testUri1, fileInfo1),
                 ImportAttachmentResult.CantRead(testUri2),
-                ImportAttachmentResult.Success(testUri3, importedUri3, fileInfo3),
+                ImportAttachmentResult.Success(testUri3, fileInfo3),
             ),
             result
         )
@@ -229,8 +214,8 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
         // then
         assertEquals(
             listOf(
-                ImportAttachmentResult.Success(testUri1, importedUri1, fileInfo1),
-                ImportAttachmentResult.Success(testUri2, importedUri2, fileInfo2),
+                ImportAttachmentResult.Success(testUri1, fileInfo1),
+                ImportAttachmentResult.Success(testUri2, fileInfo2),
                 ImportAttachmentResult.CantWrite(testUri3, fileInfo3),
             ),
             result

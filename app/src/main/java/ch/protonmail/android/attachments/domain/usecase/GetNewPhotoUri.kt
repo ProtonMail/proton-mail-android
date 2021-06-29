@@ -19,12 +19,9 @@
 
 package ch.protonmail.android.attachments.domain.usecase
 
-import android.content.Context
 import android.net.Uri
-import androidx.core.content.FileProvider
 import androidx.core.net.toUri
-import ch.protonmail.android.attachments.domain.model.UriPair
-import ch.protonmail.android.di.AppCacheDirectory
+import ch.protonmail.android.di.AppDataDirectory
 import ch.protonmail.android.utils.DateUtil
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -35,15 +32,12 @@ import javax.inject.Inject
  * Create an [Uri] for a new photo to be taken from Camera
  */
 class GetNewPhotoUri @Inject constructor(
-    private val context: Context,
-    @AppCacheDirectory private val cacheDirectory: File,
+    @AppDataDirectory private val dataDirectory: File,
     private val dispatchers: DispatcherProvider
 ) {
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    suspend operator fun invoke(): UriPair = withContext(dispatchers.Io) {
-        val file = File.createTempFile(DateUtil.generateTimestamp(), ".jpg", cacheDirectory)
-        val secureUri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-        return@withContext UriPair(secure = secureUri, insecure = file.toUri())
+    suspend operator fun invoke(): Uri = withContext(dispatchers.Io) {
+        File.createTempFile(DateUtil.generateTimestamp(), "jpg", dataDirectory).toUri()
     }
 }

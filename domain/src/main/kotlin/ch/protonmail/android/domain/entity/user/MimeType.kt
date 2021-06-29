@@ -22,10 +22,8 @@ package ch.protonmail.android.domain.entity.user
 import me.proton.core.util.kotlin.equalsNoCase
 
 enum class MimeType(val string: String) {
-    ALL("*/*"),
     HTML("text/html"),
     PLAIN_TEXT("text/plain"),
-    IMAGE("image/*"),
     UNKNOWN_FILE("application/octet-stream"),
     MULTIPART_MIXED("multipart/mixed");
 

@@ -40,7 +40,7 @@ class MessageBuilderData(
     val addressId: String,
     val addressEmailAlias: String?,
     val mBigContentHolder: BigContentHolder,
-    val attachmentList: MutableList<LocalAttachment>,
+    val attachmentList: ArrayList<LocalAttachment>,
     val embeddedAttachmentsList: ArrayList<LocalAttachment>,
     var isDirty: Boolean,
     val signature: String,
@@ -74,7 +74,7 @@ class MessageBuilderData(
         private var addressId: String = ""
         private var addressEmailAlias: String? = null
         private var mBigContentHolder: BigContentHolder = BigContentHolder()
-        private var attachmentList: List<LocalAttachment> = ArrayList()
+        private var attachmentList: ArrayList<LocalAttachment> = ArrayList()
         private var embeddedAttachmentsList: ArrayList<LocalAttachment> = ArrayList()
         private var isDirty: Boolean = false
         private var signature: String = ""
@@ -173,7 +173,7 @@ class MessageBuilderData(
 
         fun addressEmailAlias(addressEmailAlias: String?) = apply { this.addressEmailAlias = addressEmailAlias }
 
-        fun attachmentList(attachments: List<LocalAttachment>) = apply {
+        fun attachmentList(attachments: ArrayList<LocalAttachment>) = apply {
             this.attachmentList = attachments
         }
 
@@ -239,7 +239,7 @@ class MessageBuilderData(
                 addressId,
                 addressEmailAlias,
                 mBigContentHolder,
-                attachmentList.toMutableList(),
+                attachmentList,
                 embeddedAttachmentsList,
                 isDirty,
                 signature,
