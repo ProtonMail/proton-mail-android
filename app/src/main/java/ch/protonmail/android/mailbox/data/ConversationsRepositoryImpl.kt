@@ -25,10 +25,10 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.event.data.remote.model.ConversationsEventResponse
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
+import ch.protonmail.android.mailbox.data.remote.worker.DeleteConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsUnreadRemoteWorker
@@ -72,7 +72,8 @@ class ConversationsRepositoryImpl @Inject constructor(
     private val markConversationsReadWorker: MarkConversationsReadRemoteWorker.Enqueuer,
     private val markConversationsUnreadWorker: MarkConversationsUnreadRemoteWorker.Enqueuer,
     private val labelConversationsRemoteWorker: LabelConversationsRemoteWorker.Enqueuer,
-    private val unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer
+    private val unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer,
+    private val deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer
 ) : ConversationsRepository {
 
     private val paramFlow = MutableSharedFlow<GetConversationsParameters>(replay = 1)
@@ -243,6 +244,34 @@ class ConversationsRepositoryImpl @Inject constructor(
             )
             removeLabelsFromConversation(conversationId, userId, labelsToRemoveFromConversation)
             addLabelsToConversation(conversationId, userId, listOf(folderId), lastMessageTime)
+        }
+    }
+
+    override suspend fun delete(
+        conversationIds: List<String>,
+        userId: UserId,
+        currentFolderId: String
+    ) {
+        deleteConversationsRemoteWorker.enqueue(conversationIds, currentFolderId, userId)
+
+        conversationIds.forEach { conversationId ->
+            val messagesFromConversation = messageDao.findAllMessageFromAConversation(conversationId).first()
+            // The delete action deletes the messages that are in the current mailbox folder
+            val messagesToDelete = messagesFromConversation.filter {
+                currentFolderId in it.allLabelIDs
+            }
+            messagesToDelete.forEach { it.deleted = true }
+            messageDao.saveMessages(messagesToDelete)
+
+            // If all the messages of the conversation are in the current folder, then delete the conversation
+            // Else remove the current location from the conversation's labels list
+            if (messagesFromConversation.size == messagesToDelete.size) {
+                conversationDao.deleteConversation(conversationId, userId.id)
+            } else {
+                val conversation = conversationDao.getConversation(conversationId, userId.id).first()
+                val newLabels = conversation.labels.filter { it.id != currentFolderId }
+                conversationDao.updateLabels(newLabels, conversationId)
+            }
         }
     }
 

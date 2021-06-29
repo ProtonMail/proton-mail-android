@@ -36,6 +36,7 @@ import ch.protonmail.android.mailbox.data.remote.model.ConversationApiModel
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsResponse
 import ch.protonmail.android.mailbox.data.remote.model.CorrespondentApiModel
 import ch.protonmail.android.mailbox.data.remote.model.LabelContextApiModel
+import ch.protonmail.android.mailbox.data.remote.worker.DeleteConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsUnreadRemoteWorker
@@ -171,6 +172,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
     @RelaxedMockK
     private lateinit var unlabelConversationsRemoteWorker: UnlabelConversationsRemoteWorker.Enqueuer
 
+    @RelaxedMockK
+    private lateinit var deleteConversationsRemoteWorker: DeleteConversationsRemoteWorker.Enqueuer
+
     @MockK
     private lateinit var api: ProtonMailApiManager
 
@@ -189,7 +193,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 markConversationsReadRemoteWorker,
                 markConversationsUnreadRemoteWorker,
                 labelConversationsRemoteWorker,
-                unlabelConversationsRemoteWorker
+                unlabelConversationsRemoteWorker,
+                deleteConversationsRemoteWorker
             )
     }
 
@@ -747,6 +752,53 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             }
             coVerify(exactly = 2) {
                 conversationDao.updateLabels(any(), conversationId2)
+            }
+        }
+    }
+
+    @Test
+    fun verifyConversationsAndMessagesAreDeleted() {
+        runBlockingTest {
+            // given
+            val conversationId1 = "conversationId1"
+            val conversationId2 = "conversationId2"
+            val conversationIds = listOf(conversationId1, conversationId2)
+            val userId = UserId("userId")
+            val currentFolderId = "folderId"
+            val message1 = mockk<Message> {
+                every { allLabelIDs } returns listOf("0", "5")
+            }
+            val message2 = mockk<Message> {
+                every { allLabelIDs } returns listOf("3", "5")
+            }
+            val listOfMessages = listOf(message1, message2)
+            val conversationLabels = listOf(
+                LabelContextDatabaseModel("0", 0, 2, 123, 123, 1),
+                LabelContextDatabaseModel("3", 0, 2, 123, 123, 1),
+                LabelContextDatabaseModel("5", 0, 2, 123, 123, 0)
+            )
+            every { message2 setProperty "deleted" value true } just runs
+            coEvery { conversationDao.deleteConversation(any(), userId.id) } just runs
+            coEvery { conversationDao.getConversation(any(), any()) } returns flowOf(
+                mockk {
+                    every { labels } returns conversationLabels
+                }
+            )
+            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOfMessages)
+            coEvery { messageDao.saveMessages(listOfMessages) } just runs
+
+            // when
+            conversationsRepository.delete(conversationIds, userId, currentFolderId)
+
+            // then
+            coVerify {
+                conversationDao.updateLabels(any(), conversationId1)
+            }
+            coVerify {
+                conversationDao.updateLabels(any(), conversationId2)
+            }
+            coVerify(exactly = 2) {
+                messageDao.saveMessages(any())
             }
         }
     }

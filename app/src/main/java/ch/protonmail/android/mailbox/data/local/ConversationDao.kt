@@ -61,6 +61,15 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
     @Query(
         """
             DELETE FROM $TABLE_CONVERSATIONS
+            WHERE $COLUMN_ID = :conversationId 
+            AND $COLUMN_USER_ID = :userId
+            """
+    )
+    abstract suspend fun deleteConversation(conversationId: String, userId: String)
+
+    @Query(
+        """
+            DELETE FROM $TABLE_CONVERSATIONS
             WHERE $COLUMN_ID IN (:conversationIds)  
             AND $COLUMN_USER_ID = :userId
             """
