@@ -299,7 +299,6 @@ class EventHandler @AssistedInject constructor(
                     } else {
                         updateMessageFlags(messageDao, messageId, event)
                     }
-
                 } catch (syntaxException: JsonSyntaxException) {
                     Timber.w(syntaxException, "unable to create Message object")
                 }

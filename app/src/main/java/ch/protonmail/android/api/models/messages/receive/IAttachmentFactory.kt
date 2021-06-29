@@ -20,7 +20,8 @@ package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.data.local.model.Attachment
 
-interface IAttachmentFactory{
-	fun createAttachment(serverAttachment:ServerAttachment):Attachment
-	fun createServerAttachment(attachment:Attachment):ServerAttachment
+interface IAttachmentFactory {
+
+    fun createAttachment(serverAttachment: ServerAttachment): Attachment
+    fun createServerAttachment(attachment: Attachment): ServerAttachment
 }

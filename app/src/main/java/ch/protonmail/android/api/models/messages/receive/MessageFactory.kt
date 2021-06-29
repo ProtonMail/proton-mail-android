@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.api.models.messages.receive
 
+import androidx.annotation.VisibleForTesting
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.enumerations.MessageFlag
 import ch.protonmail.android.api.models.factories.checkIfSet
@@ -49,30 +50,7 @@ class MessageFactory @Inject constructor(
             message.sender = messageSenderFactory.createMessageSender(serverMessageSender)
             message.time = it.Time.checkIfSet("Time")
             message.totalSize = it.Size.checkIfSet("Size")
-            message.location = it.LabelIDs!!
-                .asSequence()
-                .filter { it.length <= 2 }
-                .map { it.toInt() }
-                .fold(Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue) { location, newLocation ->
-                    if (
-                        newLocation !in listOf(
-                            Constants.MessageLocationType.STARRED.messageLocationTypeValue,
-                            Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
-                            Constants.MessageLocationType.INVALID.messageLocationTypeValue
-                        ) &&
-                        newLocation < location
-                    ) {
-                        newLocation
-                    } else if (
-                        newLocation in listOf(
-                            Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
-                            Constants.MessageLocationType.SENT.messageLocationTypeValue
-                        )
-                    ) {
-                        newLocation
-                    } else
-                        location
-                }
+            message.location = resolveLocationFromLabels(it.LabelIDs ?: emptyList())
             message.isStarred = it.LabelIDs!!
                 .asSequence()
                 .filter { it.length <= 2 }
@@ -101,12 +79,43 @@ class MessageFactory @Inject constructor(
             message.embeddedImageIds = it.embeddedImagesArray?.toList() ?: emptyList()
             val numOfAttachments = message.numAttachments
             val attachmentsListSize = message.attachments.size
-            if (attachmentsListSize != 0 && attachmentsListSize != numOfAttachments)
+            if (attachmentsListSize != 0 && attachmentsListSize != numOfAttachments) {
                 throw IllegalArgumentException(
                     "Attachments size does not match expected: $numOfAttachments, actual: $attachmentsListSize "
                 )
+            }
             message
         }
+    }
+
+    @VisibleForTesting
+    fun resolveLocationFromLabels(labelIds: List<String>): Int {
+        if (labelIds.isEmpty()) {
+            return 0 // Inbox
+        }
+
+        val validLocations: List<Int> = listOf(
+            Constants.MessageLocationType.INBOX.messageLocationTypeValue,
+            Constants.MessageLocationType.TRASH.messageLocationTypeValue,
+            Constants.MessageLocationType.SPAM.messageLocationTypeValue,
+            Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue,
+            Constants.MessageLocationType.SENT.messageLocationTypeValue,
+            Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
+        )
+
+        for (i in labelIds.indices) {
+            val item = labelIds[i]
+            if (item.length <= 2) {
+                val locationInt = item.toInt()
+                if (locationInt in validLocations) {
+                    return locationInt
+                }
+            } else {
+                return Constants.MessageLocationType.LABEL_FOLDER.messageLocationTypeValue
+            }
+        }
+
+        throw IllegalArgumentException("No valid location found in IDs: $labelIds ")
     }
 
 }
