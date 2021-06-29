@@ -92,19 +92,31 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
     private val workManager: WorkManager = mockk(relaxed = true)
 
     private val viewModel = ComposeMessageViewModel(
-        composeMessageRepository,
-        userManager,
-        accountManager,
-        messageDetailsRepository,
-        deleteMessage,
-        fetchPublicKeys,
-        saveDraft,
-        dispatchers,
-        stringResourceResolver,
-        sendMessage,
-        verifyConnection,
-        networkConfigurator,
+        composeMessageRepository = composeMessageRepository,
+        userManager = userManager,
+        accountManager = accountManager,
+        messageDetailsRepository = messageDetailsRepository,
+        deleteMessage = deleteMessage,
+        fetchPublicKeys = fetchPublicKeys,
+        saveDraft = saveDraft,
+        dispatchers = dispatchers,
+        stringResourceResolver = stringResourceResolver,
+        sendMessage = sendMessage,
+        verifyConnection = verifyConnection,
+        networkConfigurator = networkConfigurator,
     )
+
+    @BeforeTest
+    fun setUp() {
+        mockkStatic(UiUtil::class)
+        every { UiUtil.fromHtml(any()) } returns mockk(relaxed = true)
+        every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
+    }
+
+    @AfterTest
+    fun tearDown() {
+        unmockkStatic(UiUtil::class)
+    }
 
     @Test
     fun saveDraftCallsSaveDraftUseCaseWithUserRequestedTriggerWhenTheDraftIsNewAndTheUserDidRequestSaving() {

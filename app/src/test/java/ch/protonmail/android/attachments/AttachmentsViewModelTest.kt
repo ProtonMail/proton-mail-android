@@ -43,7 +43,6 @@ import org.junit.Before
 import org.junit.Rule
 import kotlin.test.Test
 
-
 class AttachmentsViewModelTest : CoroutinesTest {
 
     @get:Rule
@@ -97,7 +96,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
 
         viewModel.init()
 
-        coVerify { messageRepository.findMessageByDbId(messageDbId) }
+        coVerify { messageRepository.findMessageByDatabaseId(messageDbId) }
     }
 
     @Test
@@ -110,7 +109,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
             attachments = updatedMessageAttachments
         }
         coEvery { messageRepository.findMessageById(messageId) } returns flowOf(message)
-        coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(remoteMessage)
+        coEvery { messageRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(remoteMessage)
         every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
 
         viewModel.init()
@@ -130,7 +129,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
         }
         val updatedDraftMessage = remoteMessage.copy(messageId = "Updated remote messageID")
         coEvery { messageRepository.findMessageById(messageId) } returns flowOf(message)
-        coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(
+        coEvery { messageRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(
             remoteMessage, updatedDraftMessage
         )
         every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
@@ -151,7 +150,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
             attachments = updatedMessageAttachments
         }
         coEvery { messageRepository.findMessageById(messageId) } returns flowOf(message)
-        coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(remoteMessage)
+        coEvery { messageRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(remoteMessage)
         every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
 
         viewModel.init()
@@ -166,7 +165,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
         val message = Message(messageId = messageId).apply { dbId = messageDbId }
         val updatedLocalMessage = message.copy(messageId = "82ccc723-2bf2-43dd-f834-233a305e69df")
         coEvery { messageRepository.findMessageById(messageId) } returns flowOf(message)
-        coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(updatedLocalMessage)
+        coEvery { messageRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(updatedLocalMessage)
         every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
 
         viewModel.init()
@@ -180,7 +179,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
         val messageDbId = 124L
         val message = Message(messageId = messageId).apply { dbId = messageDbId }
         coEvery { messageRepository.findMessageById(messageId) } returns flowOf(message)
-        coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf()
+        coEvery { messageRepository.findMessageByDatabaseId(messageDbId) } returns flowOf()
         every { networkConnectivityManager.isInternetConnectionPossible() } returns false
         every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
 
@@ -196,7 +195,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
         viewModel.init()
 
         // test warning is logged here
-        coVerify(exactly = 0) { messageRepository.findMessageByDbId(any()) }
+        coVerify(exactly = 0) { messageRepository.findMessageByDatabaseId(any()) }
         coVerify(exactly = 0) { mockObserver.onChanged(any()) }
     }
 
@@ -210,7 +209,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
             attachments = updatedMessageAttachments
         }
         coEvery { messageRepository.findMessageById(messageId) } returns flowOf(message)
-        coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(
+        coEvery { messageRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(
             remoteMessage, null
         )
         every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId

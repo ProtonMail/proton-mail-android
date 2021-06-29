@@ -109,11 +109,11 @@ class DownloadEmbeddedAttachmentsWorkerTest {
             val attachmentId2 = "attachment2"
             val attachment1 = Attachment(attachmentId1, keyPackets = "OriginalAttachmentPackets1", inline = true)
             val attachment2 = Attachment(attachmentId2, keyPackets = "OriginalAttachmentPackets2", inline = true)
-            val attachments = listOf(attachment1, attachment2)
+            val testAttachments = listOf(attachment1, attachment2)
             val message = mockk<Message> {
                 every { messageId } returns testMessageId
                 every { addressID } returns testAddressId
-                every { attachments } returns attachments
+                every { attachments } returns testAttachments
                 every { decrypt(any()) } returns Unit
                 every { isPGPMime } returns isPgpMessage
                 every { embeddedImageIds } returns listOf(attachmentId1, attachmentId2)
@@ -150,7 +150,7 @@ class DownloadEmbeddedAttachmentsWorkerTest {
             every { parameters.inputData.getString(KEY_INPUT_DATA_USER_ID_STRING) } returns userId
             every { messageDetailsRepository.findMessageById(testMessageId) } returns flowOf(message)
             coEvery { messageDetailsRepository.findMessageByIdBlocking(testMessageId) } returns message
-            coEvery { messageDetailsRepository.findAttachmentsByMessageId(testMessageId) } returns attachments
+            coEvery { messageDetailsRepository.findAttachmentsByMessageId(testMessageId) } returns testAttachments
             coEvery { handleEmbeddedImages.invoke(embeddedImages, any(), testMessageId) } returns expected
 
             // when
@@ -176,11 +176,11 @@ class DownloadEmbeddedAttachmentsWorkerTest {
             val attachmentId2 = "attachment2"
             val attachment1 = Attachment(attachmentId1, keyPackets = "OriginalAttachmentPackets1", inline = true)
             val attachment2 = Attachment(attachmentId2, keyPackets = "OriginalAttachmentPackets2", inline = true)
-            val attachments = listOf(attachment1, attachment2)
+            val testAttachments = listOf(attachment1, attachment2)
             val message = mockk<Message> {
                 every { messageId } returns testMessageId
                 every { addressID } returns testAddressId
-                every { attachments } returns attachments
+                every { attachments } returns testAttachments
                 every { decrypt(any()) } returns Unit
                 every { isPGPMime } returns isPgpMessage
                 every { embeddedImageIds } returns listOf(attachmentId1, attachmentId2)
@@ -191,7 +191,7 @@ class DownloadEmbeddedAttachmentsWorkerTest {
             every { parameters.inputData.getString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING) } returns attachmentId1
             every { messageDetailsRepository.findMessageById(testMessageId) } returns flowOf(message)
             coEvery { messageDetailsRepository.findMessageByIdBlocking(testMessageId) } returns message
-            coEvery { messageDetailsRepository.findAttachmentsByMessageId(testMessageId) } returns attachments
+            coEvery { messageDetailsRepository.findAttachmentsByMessageId(testMessageId) } returns testAttachments
             coEvery { handleSingleAttachment.invoke(any(), any(), testMessageId) } returns expected
 
             // when
