@@ -22,7 +22,6 @@ package ch.protonmail.android.attachments.domain.usecase
 import android.content.ContentResolver
 import android.net.Uri
 import android.webkit.MimeTypeMap
-import androidx.core.net.toFile
 import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
 import ch.protonmail.android.domain.entity.Bytes
 import ch.protonmail.android.domain.entity.Name
@@ -31,6 +30,7 @@ import io.mockk.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.util.kotlin.unsupported
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -76,12 +76,8 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
     @get:Rule val cacheFolder = TemporaryFolder().also { it.create() }
     @get:Rule val dataFolder = TemporaryFolder().also { it.create() }
 
+    private val cacheDirectory = cacheFolder.root
     private val dataDirectory = dataFolder.root
-    private val writeTempFileToCache: WriteTempFileToCache = mockk {
-        coEvery { this@mockk(testUri1, any()) } returns importedUri1.toFile()
-        coEvery { this@mockk(testUri2, any()) } returns importedUri2.toFile()
-        coEvery { this@mockk(testUri3, any()) } returns importedUri3.toFile()
-    }
     private val contentResolver: ContentResolver = mockk {
         every { query(any(), any(), any(), any()) } returns null
         every { openInputStream(any()) } returns mockk {
@@ -90,10 +86,10 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
         }
     }
     private val importAttachments = ImportAttachmentsToCache(
+        cacheDirectory = cacheDirectory,
         dataDirectory = dataDirectory,
-        writeTempFileToCache = writeTempFileToCache,
         contentResolver = contentResolver,
-        dispatchers = dispatchers
+        dispatchers
     )
 
     @BeforeTest
@@ -101,11 +97,12 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
         mockkStatic(MimeTypeMap::class, Uri::class)
         every { MimeTypeMap.getSingleton().getMimeTypeFromExtension(any()) } returns MimeType.MULTIPART_MIXED.string
         every { Uri.fromFile(any()) } answers {
-            when (val name = firstArg<File>().name) {
+            val name = firstArg<File>().name
+            when (name) {
                 "photo1.jpg" -> importedUri1
                 "photo2.jpg" -> importedUri2
                 "photo3.jpg" -> importedUri3
-                else -> mockUri(name)
+                else -> unsupported
             }
         }
     }
@@ -159,8 +156,11 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
             ImportAttachmentResult.OnInfo(testUri1, fileInfo1),
             ImportAttachmentResult.CantWrite(testUri1, fileInfo1)
         )
-        coEvery { writeTempFileToCache.invoke(testUri1, any()) } answers {
-            throw IOException()
+        every { contentResolver.openInputStream(any()) } returns mockk {
+            every { read(any()) } answers {
+                throw IOException()
+            }
+            every { close() } returns Unit
         }
 
         // when
@@ -216,8 +216,11 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
     fun emitsCorrectlyCantWrite() = coroutinesTest {
 
         // given
-        coEvery { writeTempFileToCache.invoke(testUri3, any()) } answers {
-            throw IOException()
+        every { contentResolver.openInputStream(testUri3) } returns mockk {
+            every { read(any()) } answers {
+                throw IOException()
+            }
+            every { close() } returns Unit
         }
 
         // when
@@ -245,6 +248,5 @@ class ImportAttachmentsToCacheTest : CoroutinesTest {
         every { scheme } returns path.substringBefore("://")
         every { this@mockk.path } returns path
         every { this@mockk == any() } answers { firstArg<Uri?>()?.path == path }
-        every { this@mockk.toString() } returns path
     }
 }
