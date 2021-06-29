@@ -115,7 +115,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
             LayoutInflater.from(context),
             this
         )
-        // region init views' references
         collapsedHeaderGroup = binding.collapsedHeaderGroup
         expandedHeaderGroup = binding.expandedHeaderGroup
         expandCollapseChevronImageView = binding.expandCollapseChevronImageView
@@ -157,7 +156,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         forwardedImageView = binding.forwardedImageView
 
         messageDetailsIcons = binding.messageDetailsIcons
-        // endregion
 
         // animated layout changes looks buggy on Android 27, so we enable only on 28 +
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -195,6 +193,73 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
                 ContextCompat.getDrawable(context, R.drawable.ic_chevron_up)
             )
         }
+    }
+
+    fun bind(message: Message, allLabels: List<Label>, nonInclusiveLabels: List<LabelChipUiModel>) {
+        val senderText = getSenderText(message)
+        val initials = if (senderText.isEmpty()) HYPHEN else senderText.substring(0, 1)
+        senderInitialView.bind(initials)
+
+        val isDraft = message.location == Constants.MessageLocationType.DRAFT.messageLocationTypeValue
+        senderInitialView.visibility = if (isDraft) View.INVISIBLE else View.VISIBLE
+        draftInitialView.isVisible = isDraft
+
+
+        senderNameTextView.text = senderText
+        senderEmailTextView.text = context.getString(R.string.recipient_email_format, message.senderEmail)
+        senderEmailTextView.setOnClickListener(getOnSenderClickListener(message.senderEmail))
+
+        if (nonInclusiveLabels.isEmpty().not()) {
+            labelsCollapsedGroupView.setLabels(nonInclusiveLabels)
+            labelsExpandedGroupView.setLabels(nonInclusiveLabels)
+            collapsedHeaderGroup.addView(labelsCollapsedGroupView)
+            expandedHeaderGroup.addView(labelsExpandedGroupView)
+            expandedHeaderGroup.addView(labelsImageView)
+        } else {
+            labelsCollapsedGroupView.visibility = View.GONE
+            labelsExpandedGroupView.visibility = View.GONE
+            labelsImageView.visibility = View.GONE
+        }
+
+        val senderLockIcon = SenderLockIcon(message, message.hasValidSignature, message.hasInvalidSignature)
+        lockIconTextView.text = context.getText(senderLockIcon.icon)
+        lockIconTextView.setTextColor(senderLockIcon.color)
+        lockIconExtendedTextView.text = context.getText(senderLockIcon.icon)
+        lockIconExtendedTextView.setTextColor(senderLockIcon.color)
+        encryptionInfoTextView.text = context.getText(senderLockIcon.tooltip)
+        learnMoreTextView.movementMethod = LinkMovementMethod.getInstance()
+
+        getIconForMessageLocation(Constants.MessageLocationType.fromInt(message.location))?.let { icon ->
+            locationImageView.setImageDrawable(ContextCompat.getDrawable(context, icon))
+            locationExtendedImageView.setImageDrawable(ContextCompat.getDrawable(context, icon))
+            if (Constants.MessageLocationType.fromInt(message.location) == Constants.MessageLocationType.LABEL) {
+                getMessageFolder(allLabels)?.let { label ->
+                    val folderColor = Color.parseColor(UiUtil.normalizeColor(label.color))
+                    locationImageView.setColorFilter(folderColor)
+                    locationExtendedImageView.setColorFilter(folderColor)
+                }
+            }
+        }
+        getTextForMessageLocation(Constants.MessageLocationType.fromInt(message.location), allLabels)?.let {
+            locationTextView.text = it
+        }
+
+        timeDateTextView.text = DateUtil.formatDateTime(context, message.timeMs)
+        timeDateExtendedTextView.text = DateUtil.formatDetailedDateTime(context, message.timeMs)
+
+        loadRecipients(message)
+
+        storageTextView.text = Formatter.formatShortFileSize(context, message.totalSize)
+
+        expandCollapseChevronImageView.setOnClickListener(onChevronClickListener)
+        expandedHeaderGroup.visibility = View.GONE
+        collapsedHeaderGroup.visibility = View.VISIBLE
+
+        repliedImageView.isVisible = message.isReplied == true && message.isRepliedAll == false
+        repliedAllImageView.isVisible = message.isRepliedAll ?: false
+        forwardedImageView.isVisible = message.isForwarded ?: false
+
+        messageDetailsIcons.bind(message)
     }
 
     private fun getSenderText(message: Message): String {
@@ -281,7 +346,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         return stringBuilder.toString()
     }
 
-    fun loadRecipients(message: Message) {
+    private fun loadRecipients(message: Message) {
         val toRecipients = message.getList(RecipientType.TO)
         val ccRecipients = message.getList(RecipientType.CC)
         val bccRecipients = message.getList(RecipientType.BCC)
@@ -317,70 +382,4 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         }
     }
 
-    fun bind(message: Message, allLabels: List<Label>, nonInclusiveLabels: List<LabelChipUiModel>) {
-        val senderText = getSenderText(message)
-        val initials = if (senderText.isEmpty()) HYPHEN else senderText.substring(0, 1)
-        senderInitialView.bind(initials)
-
-        val isDraft = message.location == Constants.MessageLocationType.DRAFT.messageLocationTypeValue
-        senderInitialView.visibility = if (isDraft) View.INVISIBLE else View.VISIBLE
-        draftInitialView.isVisible = isDraft
-
-
-        senderNameTextView.text = senderText
-        senderEmailTextView.text = context.getString(R.string.recipient_email_format, message.senderEmail)
-        senderEmailTextView.setOnClickListener(getOnSenderClickListener(message.senderEmail))
-
-        if (nonInclusiveLabels.isEmpty().not()) {
-            labelsCollapsedGroupView.setLabels(nonInclusiveLabels)
-            labelsExpandedGroupView.setLabels(nonInclusiveLabels)
-            collapsedHeaderGroup.addView(labelsCollapsedGroupView)
-            expandedHeaderGroup.addView(labelsExpandedGroupView)
-            expandedHeaderGroup.addView(labelsImageView)
-        } else {
-            labelsCollapsedGroupView.visibility = View.GONE
-            labelsExpandedGroupView.visibility = View.GONE
-            labelsImageView.visibility = View.GONE
-        }
-
-        val senderLockIcon = SenderLockIcon(message, message.hasValidSignature, message.hasInvalidSignature)
-        lockIconTextView.text = context.getText(senderLockIcon.icon)
-        lockIconTextView.setTextColor(senderLockIcon.color)
-        lockIconExtendedTextView.text = context.getText(senderLockIcon.icon)
-        lockIconExtendedTextView.setTextColor(senderLockIcon.color)
-        encryptionInfoTextView.text = context.getText(senderLockIcon.tooltip)
-        learnMoreTextView.movementMethod = LinkMovementMethod.getInstance()
-
-        getIconForMessageLocation(Constants.MessageLocationType.fromInt(message.location))?.let { icon ->
-            locationImageView.setImageDrawable(ContextCompat.getDrawable(context, icon))
-            locationExtendedImageView.setImageDrawable(ContextCompat.getDrawable(context, icon))
-            if (Constants.MessageLocationType.fromInt(message.location) == Constants.MessageLocationType.LABEL) {
-                getMessageFolder(allLabels)?.let { label ->
-                    val folderColor = Color.parseColor(UiUtil.normalizeColor(label.color))
-                    locationImageView.setColorFilter(folderColor)
-                    locationExtendedImageView.setColorFilter(folderColor)
-                }
-            }
-        }
-        getTextForMessageLocation(Constants.MessageLocationType.fromInt(message.location), allLabels)?.let {
-            locationTextView.text = it
-        }
-
-        timeDateTextView.text = DateUtil.formatDateTime(context, message.timeMs)
-        timeDateExtendedTextView.text = DateUtil.formatDetailedDateTime(context, message.timeMs)
-
-        loadRecipients(message)
-
-        storageTextView.text = Formatter.formatShortFileSize(context, message.totalSize)
-
-        expandCollapseChevronImageView.setOnClickListener(onChevronClickListener)
-        expandedHeaderGroup.visibility = View.GONE
-        collapsedHeaderGroup.visibility = View.VISIBLE
-
-        repliedImageView.isVisible = message.isReplied == true && message.isRepliedAll == false
-        repliedAllImageView.isVisible = message.isRepliedAll ?: false
-        forwardedImageView.isVisible = message.isForwarded ?: false
-
-        messageDetailsIcons.bind(message)
-    }
 }
