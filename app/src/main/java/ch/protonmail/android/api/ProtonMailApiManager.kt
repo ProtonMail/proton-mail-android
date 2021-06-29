@@ -388,4 +388,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         conversationIds: ConversationIdsRequestBody,
         userId: Id
     ): ConversationsActionResponses = api.unlabelConversations(conversationIds, userId)
+
+    override suspend fun deleteConversations(
+        conversationIds: ConversationIdsRequestBody,
+        userId: Id
+    ): ConversationsActionResponses = api.deleteConversations(conversationIds, userId)
 }

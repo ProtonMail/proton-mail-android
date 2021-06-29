@@ -56,4 +56,9 @@ class ConversationApi(private val service: ConversationService) : BaseApi(), Con
         conversationIds: ConversationIdsRequestBody,
         userId: Id
     ) = service.unlabelConversations(conversationIds, userIdTag = UserIdTag(userId))
+
+    override suspend fun deleteConversations(
+        conversationIds: ConversationIdsRequestBody,
+        userId: Id
+    ) = service.deleteConversations(conversationIds, userIdTag = UserIdTag(userId))
 }
