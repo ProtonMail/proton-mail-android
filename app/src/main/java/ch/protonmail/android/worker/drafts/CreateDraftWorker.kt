@@ -94,7 +94,7 @@ class CreateDraftWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val userId = getInputUserId()
 
-        val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId()).first()
+        val message = messageDetailsRepository.findMessageByDatabaseId(getInputMessageDbId()).first()
             ?: return failureWithError(CreateDraftWorkerErrors.MessageNotFound)
         val senderAddressId = requireNotNull(message.addressID)
         val senderAddress = requireNotNull(getSenderAddress(senderAddressId))
@@ -182,7 +182,7 @@ class CreateDraftWorker @AssistedInject constructor(
         MessageUtils.isLocalMessageId(message.messageId)
 
     private suspend fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {
-        val localAttachments = localDraft.Attachments.filterNot { it.isUploaded }
+        val localAttachments = localDraft.attachments.filterNot { it.isUploaded }
         apiDraft.apply {
             dbId = localDraft.dbId
             toList = localDraft.toList
@@ -195,7 +195,7 @@ class CreateDraftWorker @AssistedInject constructor(
             isDownloaded = true
             setIsRead(true)
             numAttachments = localDraft.numAttachments
-            Attachments = localAttachments.plus(Attachments)
+            attachments = localAttachments.plus(attachments)
             localId = localDraft.messageId
         }
 

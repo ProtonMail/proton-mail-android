@@ -110,13 +110,13 @@ class MessageDetailsRepository @Inject constructor(
     fun findMessageByIdObservable(messageId: String): Flowable<Message> =
         messagesDao.findMessageByIdObservable(messageId).map(readMessageBodyFromFileIfNeeded)
 
-    fun findMessageByMessageDbId(messageDbId: Long): Flow<Message?> =
-        messagesDao.findMessageByMessageDbId(messageDbId).map { readMessageBodyFromFileIfNeeded(it) }
+    fun findMessageByDatabaseId(messageDbId: Long): Flow<Message?> =
+        messagesDao.findMessageByDatabaseId(messageDbId).map { readMessageBodyFromFileIfNeeded(it) }
 
-    @Deprecated("Use Flow", ReplaceWith("findMessageByMessageDbId(messageDbId).first()"))
-    fun findMessageByMessageDbIdBlocking(messageDbId: Long): Message? =
+    @Deprecated("Use Flow", ReplaceWith("findMessageByDatabaseId(messageDbId).first()"))
+    fun findMessageByDatabaseIdBlocking(messageDbId: Long): Message? =
         runBlocking {
-            findMessageByMessageDbId(messageDbId).first()
+            findMessageByDatabaseId(messageDbId).first()
         }
 
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =

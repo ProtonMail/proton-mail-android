@@ -20,7 +20,6 @@ package ch.protonmail.android.compose
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.net.Uri
 import android.text.Spanned
 import android.text.TextUtils
 import androidx.core.net.MailTo
@@ -40,7 +39,6 @@ import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.rx.ThreadSchedulers
-import ch.protonmail.android.attachments.domain.usecase.ImportAttachmentsToCache
 import ch.protonmail.android.bl.HtmlProcessor
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel
 import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
@@ -69,15 +67,16 @@ import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.squareup.otto.Subscribe
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
@@ -98,7 +97,7 @@ const val NEW_LINE = "<br>"
 const val LESS_THAN = "&lt;"
 const val GREATER_THAN = "&gt;"
 
-
+@HiltViewModel
 class ComposeMessageViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository,
     private val userManager: UserManager,
@@ -208,6 +207,12 @@ class ComposeMessageViewModel @Inject constructor(
             }
         }
 
+    private val _events = MutableSharedFlow<ComposeMessageEventUiModel>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val events: Flow<ComposeMessageEventUiModel> =
+        _events.asSharedFlow()
     // endregion
     // region getters
     var draftId: String
@@ -443,7 +448,7 @@ class ComposeMessageViewModel @Inject constructor(
                     watchForMessageSent()
                 }
                 var newAttachmentIds: List<String> = ArrayList()
-                val listOfAttachments = ArrayList(message.Attachments)
+                val listOfAttachments = ArrayList(message.attachments)
                 if (uploadAttachments && listOfAttachments.isNotEmpty()) {
                     message.numAttachments = listOfAttachments.size
                     saveMessage(message)
@@ -597,7 +602,7 @@ class ComposeMessageViewModel @Inject constructor(
                 _draftId.set(message.messageId)
                 watchForMessageSent()
                 // region here in this block we are updating local view model attachments with the latest data for the attachments filled from the API
-                val savedAttachments = message.Attachments // already saved attachments in DB
+                val savedAttachments = message.attachments // already saved attachments in DB
                 val iterator = _messageDataResult.attachmentList.iterator() // current attachments in view model
                 val listLocalAttachmentsAlreadySavedInDb = ArrayList<LocalAttachment>()
                 while (iterator.hasNext()) {
@@ -726,7 +731,7 @@ class ComposeMessageViewModel @Inject constructor(
             } else {
                 // this will ensure the message get latest message id if it was already saved in a create/update draft job
                 // and also that the message has all the latest edits in between draft saving (creation) and sending the message
-                val savedMessage = messageDetailsRepository.findMessageByMessageDbId(_dbId!!).first()
+                val savedMessage = messageDetailsRepository.findMessageByDatabaseId(_dbId!!).first()
                 message.dbId = _dbId
                 savedMessage?.let {
                     if (!TextUtils.isEmpty(it.localId)) {
@@ -864,23 +869,6 @@ class ComposeMessageViewModel @Inject constructor(
             .fromOld(_messageDataResult)
             .messageSenderName(senderName)
             .senderEmailAddress(senderAddress)
-            .build()
-    }
-
-    fun setMessagePassword(
-        messagePassword: String?,
-        passwordHint: String?,
-        isPasswordValid: Boolean,
-        expiresIn: Long?,
-        isRespondInlineButtonVisible: Boolean
-    ) {
-        _messageDataResult = MessageBuilderData.Builder()
-            .fromOld(_messageDataResult)
-            .messagePassword(messagePassword)
-            .passwordHint(passwordHint)
-            .isPasswordValid(isPasswordValid)
-            .expirationTime(expiresIn)
-            .isRespondInlineButtonVisible(isRespondInlineButtonVisible)
             .build()
     }
 
@@ -1265,7 +1253,7 @@ class ComposeMessageViewModel @Inject constructor(
             viewModelScope.launch {
                 draftId = messageId!!
                 message.isDownloaded = true
-                val attachments = message.Attachments
+                val attachments = message.attachments
                 message.setAttachmentList(attachments)
                 setAttachmentList(ArrayList(LocalAttachment.createLocalAttachmentList(attachments)))
                 _dbId = message.dbId

@@ -54,7 +54,7 @@ class AttachmentsViewModel @Inject constructor(
 
             message?.let { existingMessage ->
                 val messageDbId = requireNotNull(existingMessage.dbId)
-                val messageFlow = messageDetailsRepository.findMessageByDbId(messageDbId)
+                val messageFlow = messageDetailsRepository.findMessageByDatabaseId(messageDbId)
 
                 if (!networkConnectivityManager.isInternetConnectionPossible()) {
                     viewState.postValue(AttachmentsViewState.MissingConnectivity)
@@ -68,7 +68,7 @@ class AttachmentsViewModel @Inject constructor(
                         return@collect
                     }
                     if (draftCreationHappened(existingMessage, updatedMessage)) {
-                        viewState.postValue(AttachmentsViewState.UpdateAttachments(updatedMessage.Attachments))
+                        viewState.postValue(AttachmentsViewState.UpdateAttachments(updatedMessage.attachments))
                         this.cancel()
                     }
                 }

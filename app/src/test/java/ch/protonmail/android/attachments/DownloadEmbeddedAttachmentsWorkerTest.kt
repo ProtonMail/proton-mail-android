@@ -113,7 +113,7 @@ class DownloadEmbeddedAttachmentsWorkerTest {
             val message = mockk<Message> {
                 every { messageId } returns testMessageId
                 every { addressID } returns testAddressId
-                every { Attachments } returns attachments
+                every { attachments } returns attachments
                 every { decrypt(any()) } returns Unit
                 every { isPGPMime } returns isPgpMessage
                 every { embeddedImageIds } returns listOf(attachmentId1, attachmentId2)
@@ -180,7 +180,7 @@ class DownloadEmbeddedAttachmentsWorkerTest {
             val message = mockk<Message> {
                 every { messageId } returns testMessageId
                 every { addressID } returns testAddressId
-                every { Attachments } returns attachments
+                every { attachments } returns attachments
                 every { decrypt(any()) } returns Unit
                 every { isPGPMime } returns isPgpMessage
                 every { embeddedImageIds } returns listOf(attachmentId1, attachmentId2)

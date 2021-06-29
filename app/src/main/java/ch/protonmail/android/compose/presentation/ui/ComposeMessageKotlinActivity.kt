@@ -19,43 +19,28 @@
 
 package ch.protonmail.android.compose.presentation.ui
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.activities.BaseContactsActivity
-import ch.protonmail.android.attachments.domain.model.ImportAttachmentResult
-import ch.protonmail.android.attachments.domain.model.UriPair
 import ch.protonmail.android.compose.ComposeMessageViewModel
-import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnAttachmentsChange
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnExpirationChange
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnExpirationChangeRequest
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPasswordChange
 import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPasswordChangeRequest
-import ch.protonmail.android.compose.presentation.model.ComposeMessageEventUiModel.OnPhotoUriReady
 import ch.protonmail.android.compose.presentation.model.MessagePasswordUiModel
 import ch.protonmail.android.databinding.ActivityComposeMessage2Binding
-import ch.protonmail.android.domain.entity.user.MimeType
-import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheet
-import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheet.Action
-import ch.protonmail.android.ui.actionsheet.AddAttachmentsActionSheetViewModel
 import ch.protonmail.android.ui.view.DaysHoursPair
 import ch.protonmail.android.utils.UiUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import me.proton.core.presentation.utils.onClick
-import me.proton.core.util.kotlin.exhaustive
-import timber.log.Timber
 
 @AndroidEntryPoint
 abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
 
     protected val composeViewModel: ComposeMessageViewModel by viewModels()
-    private val addAttachmentsViewModel: AddAttachmentsActionSheetViewModel by viewModels()
     protected lateinit var binding: ActivityComposeMessage2Binding
 
     // region activity results
@@ -73,23 +58,6 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
         }
     // endregion
 
-    // region attachments
-    private var takePhotoFromCameraUri: UriPair? = null
-    private val takePhotoFromCameraLauncher: ActivityResultLauncher<Uri> =
-        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-            if (success) {
-                val uri = checkNotNull(takePhotoFromCameraUri)
-                composeViewModel.addAttachments(listOf(uri.insecure), deleteOriginalFiles = false)
-            } else {
-                Timber.i("Take photo canceled!")
-            }
-            takePhotoFromCameraUri = null
-        }
-    private val getContentsLauncher: ActivityResultLauncher<String> =
-        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
-            composeViewModel.addAttachments(uris, deleteOriginalFiles = false)
-        }
-    // endregion
     // endregion
 
     override fun getRootView(): View {
@@ -110,7 +78,7 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
             }
             onAttachmentsClick {
                 UiUtil.hideKeyboard(this@ComposeMessageKotlinActivity)
-                AddAttachmentsActionSheet.show(supportFragmentManager)
+                composeViewModel.openAttachmentsScreen()
             }
         }
         // endregion
@@ -118,22 +86,11 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
         composeViewModel.events
             .onEach { event ->
                 when (event) {
-                    is OnAttachmentsChange -> onAttachmentsChanged(event.attachments)
                     is OnExpirationChange -> binding.composerBottomAppBar.setHasExpiration(event.hasExpiration)
                     is OnExpirationChangeRequest -> openSetExpiration(event.currentExpiration)
                     is OnPasswordChange -> binding.composerBottomAppBar.setHasPassword(event.hasPassword)
                     is OnPasswordChangeRequest -> openSetPassword(event.currentPassword)
-                    is OnPhotoUriReady -> takePhotoFromCamera(event.uri)
                 }
-            }.launchIn(lifecycleScope)
-
-        addAttachmentsViewModel.result
-            .onEach { result ->
-                when (result) {
-                    Action.GALLERY -> openGallery()
-                    Action.CAMERA -> composeViewModel.requestNewPhotoUri()
-                    Action.FILE_EXPLORER -> openFileExplorer()
-                }.exhaustive
             }.launchIn(lifecycleScope)
         // endregion
     }
@@ -147,29 +104,6 @@ abstract class ComposeMessageKotlinActivity : BaseContactsActivity() {
     // region expiration
     private fun openSetExpiration(currentExpiration: DaysHoursPair) {
         setExpirationLauncher.launch(currentExpiration)
-    }
-    // endregion
-
-    // region attachments
-    private fun openGallery() {
-        getContentsLauncher.launch(MimeType.IMAGE.string)
-    }
-
-    private fun takePhotoFromCamera(uri: UriPair) {
-        takePhotoFromCameraUri = uri
-        takePhotoFromCameraLauncher.launch(uri.secure)
-    }
-
-    private fun openFileExplorer() {
-        getContentsLauncher.launch(MimeType.ALL.string)
-    }
-
-    private fun onAttachmentsImported(results: List<ImportAttachmentResult>) {
-
-    }
-
-    private fun onAttachmentRemoved(originalAttachmentUri: Uri) {
-
     }
     // endregion
 }

@@ -39,6 +39,6 @@ class MessageResponse : ResponseBody() {
         get() = message.messageId
 
     val attachments: List<Attachment>
-        get() = message.Attachments
+        get() = message.attachments
 
 }

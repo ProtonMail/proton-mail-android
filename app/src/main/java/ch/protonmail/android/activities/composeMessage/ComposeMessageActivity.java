@@ -18,12 +18,6 @@
  */
 package ch.protonmail.android.activities.composeMessage;
 
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_ATTACHMENT_IMPORT_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -72,7 +66,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.work.Data;
@@ -104,11 +97,8 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.AddAttachmentsActivity;
-import ch.protonmail.android.activities.BaseContactsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.api.models.MessageRecipient;
 import ch.protonmail.android.api.models.SendPreference;
@@ -119,7 +109,6 @@ import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker;
 import ch.protonmail.android.attachments.ImportAttachmentsWorker;
 import ch.protonmail.android.compose.ComposeMessageViewModel;
-import ch.protonmail.android.compose.ComposeMessageViewModelFactory;
 import ch.protonmail.android.compose.presentation.ui.ComposeMessageKotlinActivity;
 import ch.protonmail.android.compose.presentation.ui.MessageRecipientArrayAdapter;
 import ch.protonmail.android.compose.recipients.GroupRecipientsDialogFragment;
@@ -133,7 +122,6 @@ import ch.protonmail.android.data.local.model.ContactLabel;
 import ch.protonmail.android.data.local.model.LocalAttachment;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.MessageSender;
-import ch.protonmail.android.databinding.ActivityComposeMessage2Binding;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
@@ -179,6 +167,12 @@ import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import me.proton.core.accountmanager.domain.AccountManager;
 import timber.log.Timber;
+
+import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
+import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_ATTACHMENT_IMPORT_EVENT;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
 
 @AndroidEntryPoint
 public class ComposeMessageActivity

@@ -53,6 +53,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
 @Dao
@@ -146,16 +147,15 @@ interface MessageDao {
 
     fun findMessageByIdObservable(messageId: String) = findMessageInfoByIdObservable(messageId)
 
-    fun findMessageByMessageDbId(messageDbId: Long) = findMessageInfoByDbId(messageDbId)
+    fun findMessageByDatabaseId(messageDbId: Long): Flow<Message?> = findMessageInfoByDbId(messageDbId)
         .onEach { message ->
             message ?: return@onEach
             message.attachments = message.attachmentsBlocking(this)
         }
 
-    fun findMessageByMessageDbIdBlocking(messageDbId: Long) = findMessageInfoByDbIdBlocking(messageDbId)
-        ?.also { message ->
-            message.attachments = message.attachmentsBlocking(this)
-        }
+    fun findMessageByDatabaseIdBlocking(messageDbId: Long): Message? = runBlocking {
+        findMessageByDatabaseId(messageDbId).first()
+    }
 
     fun findMessageByDbId(dbId: Long): Flow<Message?> =
         findMessageInfoByDbId(dbId).map { message ->
@@ -165,7 +165,6 @@ interface MessageDao {
             }
         }
 
-    @JvmOverloads
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =
         findAllMessageInfoByLastMessageAccessTime(laterThan)
             .map { messages ->

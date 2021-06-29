@@ -107,7 +107,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
         val message = Message(messageId = messageId).apply { dbId = messageDbId }
         val updatedMessageAttachments = listOf(Attachment(attachmentId = "updatedAttId"))
         val remoteMessage = message.copy(messageId = "Remote message id").apply {
-            Attachments = updatedMessageAttachments
+            attachments = updatedMessageAttachments
         }
         coEvery { messageRepository.findMessageById(messageId) } returns flowOf(message)
         coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(remoteMessage)
@@ -126,7 +126,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
         val message = Message(messageId = messageId).apply { dbId = messageDbId }
         val updatedMessageAttachments = listOf(Attachment(attachmentId = "updatedAttId"))
         val remoteMessage = message.copy(messageId = "Remote message id").apply {
-            Attachments = updatedMessageAttachments
+            attachments = updatedMessageAttachments
         }
         val updatedDraftMessage = remoteMessage.copy(messageId = "Updated remote messageID")
         coEvery { messageRepository.findMessageById(messageId) } returns flowOf(message)
@@ -148,7 +148,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
         val message = Message().apply { dbId = messageDbId }
         val updatedMessageAttachments = listOf(Attachment(attachmentId = "updatedAttId"))
         val remoteMessage = message.copy(messageId = "Updated Draft Remote message id").apply {
-            Attachments = updatedMessageAttachments
+            attachments = updatedMessageAttachments
         }
         coEvery { messageRepository.findMessageById(messageId) } returns flowOf(message)
         coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(remoteMessage)
@@ -207,7 +207,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
         val message = Message(messageId = messageId).apply { dbId = messageDbId }
         val updatedMessageAttachments = listOf(Attachment(attachmentId = "updatedAttId"))
         val remoteMessage = message.copy(messageId = "Remote message id").apply {
-            Attachments = updatedMessageAttachments
+            attachments = updatedMessageAttachments
         }
         coEvery { messageRepository.findMessageById(messageId) } returns flowOf(message)
         coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(

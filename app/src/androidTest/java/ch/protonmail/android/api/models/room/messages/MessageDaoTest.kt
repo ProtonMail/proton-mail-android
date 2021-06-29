@@ -59,7 +59,7 @@ class MessageDaoTest : CoroutinesTest {
         val id = "testId"
         expected.messageId = id
         val dbId = initiallyEmptyDatabase.saveMessage(expected)
-        val actual = initiallyEmptyDatabase.findMessageByMessageDbId(dbId).first()
+        val actual = initiallyEmptyDatabase.findMessageByDatabaseId(dbId).first()
         Assert.assertEquals(expected, actual)
     }
 
