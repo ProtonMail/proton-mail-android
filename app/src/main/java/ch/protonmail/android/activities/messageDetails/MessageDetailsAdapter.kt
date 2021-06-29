@@ -56,6 +56,7 @@ import ch.protonmail.android.utils.ui.TYPE_HEADER
 import ch.protonmail.android.utils.ui.TYPE_ITEM
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
+import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
 import org.apache.http.protocol.HTTP
@@ -145,6 +146,22 @@ internal class MessageDetailsAdapter(
         fun bind(message: Message) {
             val messageDetailsHeaderView = itemView.headerView
             messageDetailsHeaderView.bind(message, allLabelsList ?: listOf(), nonInclusiveLabelsList)
+
+            messageDetailsHeaderView.setOnClickListener { view ->
+                val headerView = view as MessageDetailsHeaderView
+
+                if (isExpanded(layoutPosition)) {
+                    // Message Body is expended - will collapse
+                    headerView.forbidExpandingHeaderView()
+                    headerView.collapseHeader()
+                    toggleExpandedItems(layoutPosition, false)
+                    return@setOnClickListener
+                }
+
+                // Message Body is collapsed - will expand
+                headerView.allowExpandingHeaderView()
+                toggleExpandedItems(layoutPosition, false)
+            }
         }
     }
 

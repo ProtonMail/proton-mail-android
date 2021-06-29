@@ -179,20 +179,11 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
 
     private val onChevronClickListener = OnClickListener {
         if (isExpanded) {
-            isExpanded = false
-            expandedHeaderGroup.visibility = View.GONE
-            collapsedHeaderGroup.visibility = View.VISIBLE
-            expandCollapseChevronImageView.setImageDrawable(
-                ContextCompat.getDrawable(context, R.drawable.ic_chevron_down)
-            )
+            collapseHeader()
         } else {
-            isExpanded = true
-            collapsedHeaderGroup.visibility = View.GONE
-            expandedHeaderGroup.visibility = View.VISIBLE
-            expandCollapseChevronImageView.setImageDrawable(
-                ContextCompat.getDrawable(context, R.drawable.ic_chevron_up)
-            )
+            expandHeader()
         }
+        isExpanded = isExpanded.not()
     }
 
     fun bind(message: Message, allLabels: List<Label>, nonInclusiveLabels: List<LabelChipUiModel>) {
@@ -260,6 +251,30 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         forwardedImageView.isVisible = message.isForwarded ?: false
 
         messageDetailsIcons.bind(message)
+    }
+
+    fun allowExpandingHeaderView() {
+        expandCollapseChevronImageView.isVisible = true
+    }
+
+    fun forbidExpandingHeaderView() {
+        expandCollapseChevronImageView.isVisible = false
+    }
+
+    fun collapseHeader() {
+        expandedHeaderGroup.visibility = GONE
+        collapsedHeaderGroup.visibility = VISIBLE
+        expandCollapseChevronImageView.setImageDrawable(
+            ContextCompat.getDrawable(context, R.drawable.ic_chevron_down)
+        )
+    }
+
+    private fun expandHeader() {
+        collapsedHeaderGroup.visibility = GONE
+        expandedHeaderGroup.visibility = VISIBLE
+        expandCollapseChevronImageView.setImageDrawable(
+            ContextCompat.getDrawable(context, R.drawable.ic_chevron_up)
+        )
     }
 
     private fun getSenderText(message: Message): String {

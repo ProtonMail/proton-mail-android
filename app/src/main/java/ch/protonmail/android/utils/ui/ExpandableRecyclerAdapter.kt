@@ -133,7 +133,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
         }
     }
 
-    private fun isExpanded(position: Int): Boolean {
+    fun isExpanded(position: Int): Boolean {
         val allItemsPosition = indexList[position]
         return expandMap.get(allItemsPosition, -1) >= 0
     }
