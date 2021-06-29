@@ -48,9 +48,12 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.MessageDetailsListItem
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
+import ch.protonmail.android.utils.ui.TYPE_HEADER
+import ch.protonmail.android.utils.ui.TYPE_ITEM
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
@@ -58,9 +61,6 @@ import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
 import java.util.ArrayList
-
-private const val TYPE_ITEM = 1001
-private const val TYPE_HEADER = 1000
 
 internal class MessageDetailsAdapter(
     private val context: Context,
@@ -72,7 +72,7 @@ internal class MessageDetailsAdapter(
     private val onLoadMessageBody: (Message) -> Unit,
     private val onAttachmentDownloadCallback: (Attachment) -> Unit,
     private val onEditDraftClicked: (Message) -> Unit
-) : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
+) : ExpandableRecyclerAdapter<MessageDetailsListItem>(context) {
 
     private var allLabelsList: List<Label>? = emptyList()
     private var nonInclusiveLabelsList: List<LabelChipUiModel> = emptyList()
@@ -138,22 +138,6 @@ internal class MessageDetailsAdapter(
         return webView
     }
 
-    class MessageDetailsListItem : ListItem {
-
-        var message: Message
-        var messageFormattedHtml: String? = null
-        var showLoadEmbeddedImagesButton: Boolean = false
-
-        constructor(messageData: Message) : super(TYPE_HEADER) {
-            message = messageData
-        }
-
-        constructor(message: Message, content: String?) : super(TYPE_ITEM) {
-            this.message = message
-            this.messageFormattedHtml = content
-        }
-    }
-
     inner class HeaderViewHolder(
         view: View
     ) : ExpandableRecyclerAdapter<MessageDetailsListItem>.HeaderViewHolder(view) {
@@ -164,7 +148,7 @@ internal class MessageDetailsAdapter(
         }
     }
 
-    open inner class ItemViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.ViewHolder(view) {
+    inner class ItemViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.ViewHolder(view) {
 
         fun bind(position: Int, listItem: MessageDetailsListItem) {
             val message = listItem.message

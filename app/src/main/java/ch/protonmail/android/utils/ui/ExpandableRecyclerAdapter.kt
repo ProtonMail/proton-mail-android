@@ -26,9 +26,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import timber.log.Timber
 
-private const val TYPE_HEADER = 1000
+const val TYPE_HEADER = 1000
+const val TYPE_ITEM = 1001
 
-abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>(private var mContext: Context) : RecyclerView.Adapter<ExpandableRecyclerAdapter<T>.ViewHolder>() {
+abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>(private var mContext: Context) :
+    RecyclerView.Adapter<ExpandableRecyclerAdapter<T>.ViewHolder>() {
+
     protected var allItems: MutableList<T> = ArrayList()
     protected var visibleItems: MutableList<T>? = ArrayList()
     private var indexList: MutableList<Int> = ArrayList()
