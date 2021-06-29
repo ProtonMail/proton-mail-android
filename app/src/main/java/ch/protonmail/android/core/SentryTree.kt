@@ -40,8 +40,13 @@ internal class SentryTree : Timber.Tree() {
 
         if (priority >= Log.WARN) {
             val event = EventBuilder().apply {
-                withMessage(message)
                 tag?.let { withTag(TAG_LOG, it) }
+                if (t is DetailedException) {
+                    for (extra in t.extras) {
+                        withExtra(extra.key, extra.value)
+                    }
+                }
+                withMessage(obfuscateEmails(message))
                 withTag(TAG_APP_VERSION, AppUtil.getAppVersion())
                 withTag(TAG_SDK_VERSION, "${Build.VERSION.SDK_INT}")
                 withTag(TAG_DEVICE_MODEL, Build.MODEL)
@@ -50,15 +55,15 @@ internal class SentryTree : Timber.Tree() {
         }
     }
 
+    private fun obfuscateEmails(string: String): String =
+        string.replace(EmailAddress.VALIDATION_REGEX) {
+            it.value.obfuscateEmail()
+        }
+
     private companion object {
         private const val TAG_LOG = "LOG_TAG"
         private const val TAG_APP_VERSION = "APP_VERSION"
         private const val TAG_SDK_VERSION = "SDK_VERSION"
         private const val TAG_DEVICE_MODEL = "DEVICE_MODEL"
     }
-
-    fun obfuscateEmails(string: String): String =
-        string.replace(EmailAddress.VALIDATION_REGEX) {
-            it.value.obfuscateEmail()
-        }
 }

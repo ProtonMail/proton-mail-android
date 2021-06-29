@@ -55,7 +55,10 @@ import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_SENT
 import ch.protonmail.android.core.Constants.MessageLocationType.SENT
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
+import ch.protonmail.android.core.DetailedException
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.core.apiError
+import ch.protonmail.android.core.messageId
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
@@ -64,6 +67,7 @@ import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -106,11 +110,12 @@ class SendMessageWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        Timber.i("Send Message Worker executing with messageDbId ${getInputMessageDbId()}")
-        val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId()).first()
+        val messageDatabaseId = getInputMessageDatabaseId()
+        Timber.i("Send Message Worker executing with messageDatabaseId $messageDatabaseId")
+        val message = messageDetailsRepository.findMessageByMessageDbId(messageDatabaseId).first()
         if (message == null) {
             showSendMessageError(NO_SUBJECT)
-            pendingActionDao.deletePendingSendByDbId(getInputMessageDbId())
+            pendingActionDao.deletePendingSendByDbId(messageDatabaseId)
             return failureWithError(MessageNotFound)
         }
 
@@ -134,11 +139,12 @@ class SendMessageWorker @AssistedInject constructor(
 
             Timber.d("Send Message Worker building request for messageId $messageId")
             savedDraftMessage.decrypt(userManager, userId)
-            val requestBody = buildSendMessageRequest(savedDraftMessage, sendPreferences, userId)
-                ?: return retryOrFail(
-                    FailureBuildingApiRequest,
-                    savedDraftMessage
-                )
+            val requestBody = try {
+                buildSendMessageRequest(savedDraftMessage, sendPreferences, userId)
+            } catch (t: Throwable) {
+                if (t is CancellationException) throw t
+                return retryOrFail(FailureBuildingApiRequest, savedDraftMessage, t)
+            }
 
             return try {
                 val response = apiManager.sendMessage(messageId, requestBody, UserIdTag(userId))
@@ -171,7 +177,10 @@ class SendMessageWorker @AssistedInject constructor(
                 handleMessageSentSuccess(response.sent, savedDraftMessage)
             }
             else -> {
-                Timber.e("Send Message API call failed for messageId $messageId with error ${response.error}")
+                Timber.e(
+                    DetailedException().apiError(response.code, response.error).messageId(messageId),
+                    "Send Message API call failed for messageId $messageId with error ${response.error}"
+                )
                 showSendMessageError(savedDraftMessage.subject)
                 failureWithError(ApiRequestReturnedBadBodyCode)
             }
@@ -196,28 +205,22 @@ class SendMessageWorker @AssistedInject constructor(
         return Result.success()
     }
 
+    // TODO improve error handling for generic exception MAILAND-2003
     private suspend fun buildSendMessageRequest(
         savedDraftMessage: Message,
         sendPreferences: List<SendPreference>,
         userId: Id
-    ): MessageSendBody? =
-        runCatching {
-            val securityOptions = getInputMessageSecurityOptions() ?: return null
-            val packages = packagesFactory.generatePackages(
-                savedDraftMessage,
-                sendPreferences,
-                securityOptions,
-                userId
-            )
-            val autoSaveContacts = userManager.getMailSettings(userId).autoSaveContacts
-            MessageSendBody(packages, securityOptions.expiresAfterInSeconds, autoSaveContacts)
-        }.fold(
-            onSuccess = { return it },
-            onFailure = {
-                Timber.w(it, "Failed building MessageSendBody for API request")
-                return null
-            }
+    ): MessageSendBody {
+        val securityOptions = requireInputMessageSecurityOptions()
+        val packages = packagesFactory.generatePackages(
+            savedDraftMessage,
+            sendPreferences,
+            securityOptions,
+            userId
         )
+        val autoSaveContacts = userManager.getMailSettings(userId).autoSaveContacts
+        return MessageSendBody(packages, securityOptions.expiresAfterInSeconds, autoSaveContacts)
+    }
 
     private fun requestSendPreferences(message: Message, userId: Id): List<SendPreference>? {
         return runCatching {
@@ -261,7 +264,7 @@ class SendMessageWorker @AssistedInject constructor(
         exception: Throwable? = null
     ): Result {
         if (runAttemptCount < SEND_MESSAGE_MAX_RETRIES) {
-            Timber.d("Send Message Worker failed with error = ${error.name}, exception = $exception. Retrying...")
+            Timber.d(exception, "Send Message Worker failed with error = ${error.name}. Retrying...")
             return Result.retry()
         }
         pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
@@ -277,7 +280,7 @@ class SendMessageWorker @AssistedInject constructor(
     }
 
     private fun failureWithError(error: SendMessageWorkerError, exception: Throwable? = null): Result {
-        Timber.e("Send Message Worker failed permanently. error = $error, exception = $exception. FAILING")
+        Timber.e(exception, "Send Message Worker failed permanently. error = ${error.name}. FAILING")
         val errorData = workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to error.name)
         return Result.failure(errorData)
     }
@@ -287,10 +290,14 @@ class SendMessageWorker @AssistedInject constructor(
             .getString(KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID)
             ?.let(::Id)
 
-    private fun getInputMessageSecurityOptions(): MessageSecurityOptions? =
-        inputData
-            .getString(KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED)
-            ?.deserialize(MessageSecurityOptions.serializer())
+    private fun requireInputMessageSecurityOptions(): MessageSecurityOptions =
+        requireNotNull(
+            inputData
+                .getString(KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED)
+                ?.deserialize(MessageSecurityOptions.serializer())
+        ) {
+            "Security options not found as input parameter - $KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED"
+        }
 
     private fun getInputActionType(): Constants.MessageActionType =
         Constants.MessageActionType.fromInt(inputData.getInt(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL, -1))
@@ -300,7 +307,7 @@ class SendMessageWorker @AssistedInject constructor(
 
     private fun getInputParentId() = inputData.getString(KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID)
 
-    private fun getInputMessageDbId() =
+    private fun getInputMessageDatabaseId() =
         inputData.getLong(KEY_INPUT_SEND_MESSAGE_MSG_DB_ID, INPUT_MESSAGE_DB_ID_NOT_FOUND)
 
     private fun getInputAttachmentIds() =

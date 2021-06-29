@@ -77,6 +77,7 @@ public class PackageFactory {
         this.authRepository = authRepository;
     }
 
+    // TODO improve error handling for generic exception MAILAND-2003
     public List<MessageSendPackage> generatePackages(
             @NonNull Message message,
             @NonNull List<SendPreference> preferences,
