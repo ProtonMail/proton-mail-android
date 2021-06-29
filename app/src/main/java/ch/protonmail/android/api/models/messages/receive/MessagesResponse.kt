@@ -22,7 +22,6 @@ import ch.protonmail.android.api.models.ResponseBody
 import com.google.gson.annotations.SerializedName
 
 class MessagesResponse : ResponseBody() {
-    var Total: Int = 0
     @SerializedName("Messages")
     var serverMessages: List<ServerMessage>? = null
 
