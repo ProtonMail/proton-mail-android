@@ -66,7 +66,6 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.ui.MODE_ACCORDION
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.messageDetails.BottomActionsView
 import com.google.android.material.appbar.AppBarLayout
@@ -497,7 +496,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 if (isAutoShowRemoteImages) {
                     viewModel.remoteContentDisplayed()
                 }
-                messageExpandableAdapter.mode = MODE_ACCORDION
                 messageDetailsRecyclerView.layoutManager = LinearLayoutManager(this@MessageDetailsActivity)
                 messageDetailsRecyclerView.adapter = messageExpandableAdapter
             }

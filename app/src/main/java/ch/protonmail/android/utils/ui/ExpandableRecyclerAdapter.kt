@@ -26,18 +26,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import timber.log.Timber
 
-// region constants
 private const val TYPE_HEADER = 1000
-const val MODE_ACCORDION = 1
-// endregion
 
-// TODO: Investigate in MAILAND-1535 whether we can use this adapter for collapsing messages in conversation
 abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>(private var mContext: Context) : RecyclerView.Adapter<ExpandableRecyclerAdapter<T>.ViewHolder>() {
     protected var allItems: MutableList<T> = ArrayList()
     protected var visibleItems: MutableList<T>? = ArrayList()
     private var indexList: MutableList<Int> = ArrayList()
     private var expandMap = SparseIntArray()
-    var mode: Int = 0
 
     open class ListItem(var ItemType: Int)
 
@@ -85,10 +80,6 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
             false
         } else {
             expandItems(position, notify)
-
-            if (mode == MODE_ACCORDION) {
-                collapseAllExcept(position)
-            }
             true
         }
     }
