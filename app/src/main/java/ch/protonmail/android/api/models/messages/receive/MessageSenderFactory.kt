@@ -19,7 +19,6 @@
 package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.data.local.model.MessageSender
-import ch.protonmail.android.utils.extensions.notNull
 import javax.inject.Inject
 
 class MessageSenderFactory @Inject constructor() {
@@ -31,7 +30,7 @@ class MessageSenderFactory @Inject constructor() {
 
     fun createMessageSender(serverMessageSender: ServerMessageSender): MessageSender {
         val name = serverMessageSender.Name
-        val emailAddress = serverMessageSender.Address.notNull("emailAddress")
+        val emailAddress = requireNotNull(serverMessageSender.Address)
         return MessageSender(name, emailAddress)
     }
 }

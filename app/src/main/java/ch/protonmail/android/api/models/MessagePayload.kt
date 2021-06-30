@@ -24,19 +24,28 @@ import ch.protonmail.android.api.utils.Fields
 import com.google.gson.annotations.SerializedName
 
 data class MessagePayload(
-    var ID: String? = null,
+
+    @SerializedName(Fields.Message.ID)
+    val id: String? = null,
+
     @SerializedName(Fields.Message.SUBJECT)
-    var subject: String? = null,
+    val subject: String? = null,
+
     @SerializedName(Fields.Message.SENDER)
-    var sender: ServerMessageSender? = null,
+    val sender: ServerMessageSender? = null,
+
     @SerializedName(Fields.Message.MESSAGE_BODY)
-    var body: String? = null,
+    val body: String? = null,
+
     @SerializedName(Fields.Message.TO_LIST)
-    var toList: List<MessageRecipient>? = null,
+    val toList: List<MessageRecipient>? = null,
+
     @SerializedName(Fields.Message.CC_LIST)
-    var ccList: List<MessageRecipient>? = null,
+    val ccList: List<MessageRecipient>? = null,
+
     @SerializedName(Fields.Message.BCC_LIST)
-    var bccList: List<MessageRecipient>? = null,
+    val bccList: List<MessageRecipient>? = null,
+
     @SerializedName(Fields.Message.UNREAD)
-    var unread: Int? = null
+    val unread: Int? = null
 )
