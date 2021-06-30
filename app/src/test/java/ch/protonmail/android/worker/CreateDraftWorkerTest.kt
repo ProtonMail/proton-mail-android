@@ -1174,7 +1174,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
         val message = Message().apply {
             addressID = "addressId"
         }
-        every { messageDetailsRepository.findMessageByMessageDbId(any()) } returns flowOf(message)
+        every { messageDetailsRepository.findMessageByDatabaseId(any()) } returns flowOf(message)
         val expectedErrorData = workDataOf(
             Pair(
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
@@ -1197,7 +1197,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             messageId = "messageId"
             addressID = "addressId"
         }
-        every { messageDetailsRepository.findMessageByMessageDbId(any()) } returns flowOf(message)
+        every { messageDetailsRepository.findMessageByDatabaseId(any()) } returns flowOf(message)
         val expectedErrorData = workDataOf(
             Pair(
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
@@ -1221,7 +1221,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             addressID = "addressId"
             messageBody = "  "
         }
-        every { messageDetailsRepository.findMessageByMessageDbId(any()) } returns flowOf(message)
+        every { messageDetailsRepository.findMessageByDatabaseId(any()) } returns flowOf(message)
         val expectedErrorData = workDataOf(
             Pair(
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
