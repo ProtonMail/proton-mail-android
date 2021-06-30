@@ -30,10 +30,8 @@ import ch.protonmail.android.api.models.MessageCount
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.enumerations.MessageFlag
-import ch.protonmail.android.api.models.messages.receive.AttachmentFactory
 import ch.protonmail.android.api.models.messages.receive.LabelFactory
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
-import ch.protonmail.android.api.models.messages.receive.MessageSenderFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_ID
 import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST
@@ -70,13 +68,14 @@ class EventHandler @AssistedInject constructor(
     private val context: Context,
     private val protonMailApiManager: ProtonMailApiManager,
     private val userManager: UserManager,
-    private val messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
+    messageDetailsRepositoryFactory: MessageDetailsRepository.AssistedFactory,
     private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
     private val fetchUserWorkerEnqueuer: FetchUserWorker.Enqueuer,
     private val fetchUserAddressesWorkerEnqueuer: FetchUserAddressesWorker.Enqueuer,
-    private val databaseProvider: DatabaseProvider,
+    databaseProvider: DatabaseProvider,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
+    private val messageFactory: MessageFactory,
     @Assisted val userId: Id
 ) {
 
@@ -91,14 +90,9 @@ class EventHandler @AssistedInject constructor(
         fun create(userId: Id): EventHandler
     }
 
-    private val messageFactory: MessageFactory
-
     private val stagedMessages = HashMap<String, Message>()
 
     init {
-        val attachmentFactory = AttachmentFactory()
-        val messageSenderFactory = MessageSenderFactory()
-        messageFactory = MessageFactory(attachmentFactory, messageSenderFactory)
         messageDetailsRepository.reloadDependenciesForUser(userId)
     }
 

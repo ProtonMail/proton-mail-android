@@ -298,14 +298,12 @@ data class Message @JvmOverloads constructor(
                     ) && newLocation.messageLocationTypeValue < location.messageLocationTypeValue
                 ) {
                     newLocation
-
                 } else if (newLocation in listOf(
                         Constants.MessageLocationType.DRAFT,
                         Constants.MessageLocationType.SENT
                     )
                 ) {
                     newLocation
-
                 } else {
                     location
                 }
@@ -355,9 +353,7 @@ data class Message @JvmOverloads constructor(
             embedded.add(match.removePrefix("cid:"))
         }
         embeddedImageIds = embedded
-
     }
-
 
     fun setLabelIDs(labelIDs: List<String>?) {
         allLabelIDs = labelIDs ?: ArrayList()

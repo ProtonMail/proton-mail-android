@@ -27,21 +27,22 @@ import com.google.gson.annotations.SerializedName
  * TODO: Move to more appropriate package, because contact groups and message labels depend on this class.
  * */
 data class ServerLabel(
-		var ID:String?=null,
-		@SerializedName(Fields.Label.NAME)
-		var name:String?=null,
-		@SerializedName(Fields.Label.COLOR)
-		var color:String?=null,
-		@SerializedName(Fields.Label.DISPLAY)
-		var display:Int?=null,
-		@SerializedName(Fields.Label.ORDER)
-		var order:Int?=null,
-		@SerializedName(Fields.Label.EXCLUSIVE)
-		var exclusive:Int?=null,
-		@SerializedName(Fields.Label.TYPE)
-		var type:Int?=null
+    var ID: String? = null,
+    @SerializedName(Fields.Label.NAME)
+    var name: String? = null,
+    @SerializedName(Fields.Label.COLOR)
+    var color: String? = null,
+    @SerializedName(Fields.Label.DISPLAY)
+    var display: Int? = null,
+    @SerializedName(Fields.Label.ORDER)
+    var order: Int? = null,
+    @SerializedName(Fields.Label.EXCLUSIVE)
+    var exclusive: Int? = null,
+    @SerializedName(Fields.Label.TYPE)
+    var type: Int? = null
 ) {
-	val labelBody by lazy {
-		LabelBody(name, color, display!!, exclusive!!, type!!)
-	}
+
+    val labelBody by lazy {
+        LabelBody(name, color, display!!, exclusive!!, type!!)
+    }
 }

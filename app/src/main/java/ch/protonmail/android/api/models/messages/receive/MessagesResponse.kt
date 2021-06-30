@@ -28,7 +28,8 @@ class MessagesResponse : ResponseBody() {
     val messages by lazy {
         val attachmentFactory = AttachmentFactory()
         val messageSenderFactory = MessageSenderFactory()
-        val messageFactory = MessageFactory(attachmentFactory, messageSenderFactory)
+        val messageLocationResolver = MessageLocationResolver()
+        val messageFactory = MessageFactory(attachmentFactory, messageSenderFactory, messageLocationResolver)
 
         serverMessages?.map(messageFactory::createMessage) ?: emptyList()
     }

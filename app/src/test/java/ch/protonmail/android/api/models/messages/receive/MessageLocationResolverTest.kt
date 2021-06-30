@@ -20,22 +20,12 @@
 package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.core.Constants
-import io.mockk.mockk
 import org.junit.Test
 import kotlin.test.assertEquals
 
-/**
- *How to find the exclusive LabelID (folder) attach to a message?
- *In Message.LabelIDs, find the labelID that equals to INBOX 0, TRASH 3, SPAM 4, ARCHIVE 6 or custom folder ID.
- */
-class MessageFactoryTest {
+class MessageLocationResolverTest {
 
-    private val attachmentsFactory = mockk<IAttachmentFactory>()
-    private val messageSenderFactory = mockk<MessageSenderFactory>()
-    private val messageFactory = MessageFactory(
-        attachmentsFactory,
-        messageSenderFactory
-    )
+    private val messageFactory = MessageLocationResolver()
 
     @Test
     fun verifyLocationIsCorrectlyResolvedFromLabelsWithMultipleInputs() {

@@ -18,24 +18,24 @@
  */
 package ch.protonmail.android.adapters.swipe
 
-import com.birbit.android.jobqueue.Job
-
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.jobs.MoveToFolderJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostSpamJob
+import com.birbit.android.jobqueue.Job
 
-/**
- * Created by dkadrikj on 9.7.15.
- */
 class SpamSwipeHandler : ISwipeHandler {
 
     override fun handleSwipe(message: SimpleMessage, currentLocation: String?): Job {
         return PostSpamJob(listOf(message.messageId), currentLocation)
     }
 
-    override fun handleUndo(message: SimpleMessage, messageLocation: Constants.MessageLocationType, currentLocation: String?): Job {
+    override fun handleUndo(
+        message: SimpleMessage,
+        messageLocation: Constants.MessageLocationType,
+        currentLocation: String?
+    ): Job {
         return if (messageLocation == Constants.MessageLocationType.LABEL_FOLDER) {
             MoveToFolderJob(listOf(message.messageId), currentLocation)
         } else {

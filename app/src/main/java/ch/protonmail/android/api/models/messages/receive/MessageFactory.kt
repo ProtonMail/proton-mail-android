@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.api.models.messages.receive
 
-import androidx.annotation.VisibleForTesting
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.enumerations.MessageFlag
 import ch.protonmail.android.api.models.factories.checkIfSet
@@ -31,7 +30,8 @@ import javax.inject.Inject
 
 class MessageFactory @Inject constructor(
     private val attachmentFactory: IAttachmentFactory,
-    private val messageSenderFactory: MessageSenderFactory
+    private val messageSenderFactory: MessageSenderFactory,
+    private val messageLocationResolver: MessageLocationResolver
 ) {
 
     fun createDraftApiRequest(message: Message): DraftBody = DraftBody(message.toApiPayload())
@@ -50,7 +50,7 @@ class MessageFactory @Inject constructor(
             message.sender = messageSenderFactory.createMessageSender(serverMessageSender)
             message.time = it.Time.checkIfSet("Time")
             message.totalSize = it.Size.checkIfSet("Size")
-            message.location = resolveLocationFromLabels(it.LabelIDs ?: emptyList())
+            message.location = messageLocationResolver.resolveLocationFromLabels(it.LabelIDs ?: emptyList())
             message.isStarred = it.LabelIDs!!
                 .asSequence()
                 .filter { it.length <= 2 }
@@ -87,35 +87,4 @@ class MessageFactory @Inject constructor(
             message
         }
     }
-
-    @VisibleForTesting
-    fun resolveLocationFromLabels(labelIds: List<String>): Int {
-        if (labelIds.isEmpty()) {
-            return 0 // Inbox
-        }
-
-        val validLocations: List<Int> = listOf(
-            Constants.MessageLocationType.INBOX.messageLocationTypeValue,
-            Constants.MessageLocationType.TRASH.messageLocationTypeValue,
-            Constants.MessageLocationType.SPAM.messageLocationTypeValue,
-            Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue,
-            Constants.MessageLocationType.SENT.messageLocationTypeValue,
-            Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
-        )
-
-        for (i in labelIds.indices) {
-            val item = labelIds[i]
-            if (item.length <= 2) {
-                val locationInt = item.toInt()
-                if (locationInt in validLocations) {
-                    return locationInt
-                }
-            } else {
-                return Constants.MessageLocationType.LABEL_FOLDER.messageLocationTypeValue
-            }
-        }
-
-        throw IllegalArgumentException("No valid location found in IDs: $labelIds ")
-    }
-
 }

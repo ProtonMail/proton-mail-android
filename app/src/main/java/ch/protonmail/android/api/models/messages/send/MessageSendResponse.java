@@ -21,6 +21,7 @@ package ch.protonmail.android.api.models.messages.send;
 import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.api.models.messages.receive.AttachmentFactory;
 import ch.protonmail.android.api.models.messages.receive.MessageFactory;
+import ch.protonmail.android.api.models.messages.receive.MessageLocationResolver;
 import ch.protonmail.android.api.models.messages.receive.MessageSenderFactory;
 import ch.protonmail.android.api.models.messages.receive.ServerMessage;
 import ch.protonmail.android.data.local.model.Message;
@@ -32,7 +33,8 @@ public class MessageSendResponse extends ResponseBody {
     public Message getSent() {
         final AttachmentFactory attachmentFactory = new AttachmentFactory();
         MessageSenderFactory messageSenderFactory = new MessageSenderFactory();
-        final MessageFactory messageFactory = new MessageFactory(attachmentFactory, messageSenderFactory);
+        final MessageLocationResolver messageLocationResolver = new MessageLocationResolver();
+        final MessageFactory messageFactory = new MessageFactory(attachmentFactory, messageSenderFactory, messageLocationResolver);
         return messageFactory.createMessage(Sent);
     }
 
