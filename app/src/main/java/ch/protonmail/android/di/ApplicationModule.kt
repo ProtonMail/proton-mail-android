@@ -20,7 +20,6 @@
 package ch.protonmail.android.di
 
 import android.app.NotificationManager
-import android.content.ContentResolver
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
@@ -107,16 +106,6 @@ object ApplicationModule {
         AndroidContactsLoaderCallbacksFactory(context, ContactItemListFactory()::convert)
 
     @Provides
-    @AppCacheDirectory
-    fun appCacheDirectory(context: Context): File =
-        context.cacheDir
-
-    @Provides
-    @AppDataDirectory
-    fun appDataDirectory(context: Context): File =
-        File(context.applicationInfo.dataDir)
-
-    @Provides
     @AttachmentsDirectory
     fun attachmentsDirectory(context: Context) =
         File(context.filesDir, Constants.DIR_EMB_ATTACHMENT_DOWNLOADS)
@@ -126,10 +115,6 @@ object ApplicationModule {
     @BackupSharedPreferences
     fun backupSharedPreferences(context: Context): SharedPreferences =
         context.getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE)
-
-    @Provides
-    fun contentResolver(context: Context): ContentResolver =
-        context.contentResolver
 
     @Provides
     @CurrentUserCrypto

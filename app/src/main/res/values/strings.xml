@@ -73,16 +73,6 @@
     <string name="set_msg_expiration_check_description">This item is checked</string>
     <!-- endregion -->
 
-    <!-- region Attachments -->
-    <string name="actionsheet_add_attachments_gallery">Select from your photo library</string>
-    <string name="actionsheet_add_attachments_camera">Take new photo</string>
-    <string name="actionsheet_add_attachments_import">Import from…</string>
-    <string name="actionsheet_add_attachments_import_description">Import file from File Explorer</string>
-
-    <string name="composer_attachment_icon_description">Icon for attachment type</string>
-    <string name="composer_attachment_remove_description">Remove attachment</string>
-    <!-- endregion -->
-
     <!-- region Settings -->
     <string name="settings_create_pin_code_title">Set PIN code</string>
     <string name="settings_confirm_pin_code_title">Repeat PIN code</string>

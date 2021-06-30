@@ -38,7 +38,6 @@ import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
-import ch.protonmail.android.worker.DeleteAttachmentWorker
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -92,34 +91,26 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
 
     private val workManager: WorkManager = mockk(relaxed = true)
 
-    private val deleteAttachmentWorker: DeleteAttachmentWorker.Enqueuer = mockk()
-
-    private lateinit var viewModel: ComposeMessageViewModel
+    private val viewModel = ComposeMessageViewModel(
+        composeMessageRepository = composeMessageRepository,
+        userManager = userManager,
+        accountManager = accountManager,
+        messageDetailsRepository = messageDetailsRepository,
+        deleteMessage = deleteMessage,
+        fetchPublicKeys = fetchPublicKeys,
+        saveDraft = saveDraft,
+        dispatchers = dispatchers,
+        stringResourceResolver = stringResourceResolver,
+        sendMessage = sendMessage,
+        verifyConnection = verifyConnection,
+        networkConfigurator = networkConfigurator,
+    )
 
     @BeforeTest
     fun setUp() {
         mockkStatic(UiUtil::class)
         every { UiUtil.fromHtml(any()) } returns mockk(relaxed = true)
         every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
-
-        viewModel = ComposeMessageViewModel(
-            composeMessageRepository,
-            userManager,
-            accountManager,
-            messageDetailsRepository,
-            deleteMessage,
-            fetchPublicKeys,
-            mockk(),
-            saveDraft,
-            dispatchers,
-            mockk(),
-            stringResourceResolver,
-            sendMessage,
-            mockk(),
-            verifyConnection,
-            networkConfigurator,
-            deleteAttachmentWorker
-        )
     }
 
     @AfterTest

@@ -55,7 +55,7 @@ public class FetchDraftDetailJob extends ProtonMailBaseJob {
             long messageDbId = getMessageDetailsRepository().saveMessageBlocking(message);
             final FetchDraftDetailEvent event = new FetchDraftDetailEvent(true);
             // we need to re-query MessageRepository, because after saving, messageBody may be replaced with uri to file
-            event.setMessage(getMessageDetailsRepository().findMessageByMessageDbIdBlocking(messageDbId));
+            event.setMessage(getMessageDetailsRepository().findMessageByDatabaseIdBlocking(messageDbId));
             AppUtil.postEventOnUi(event);
         } catch (Exception e) {
             AppUtil.postEventOnUi(new FetchDraftDetailEvent(false));

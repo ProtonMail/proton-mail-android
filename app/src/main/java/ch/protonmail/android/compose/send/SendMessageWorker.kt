@@ -112,7 +112,7 @@ class SendMessageWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val messageDatabaseId = getInputMessageDatabaseId()
         Timber.i("Send Message Worker executing with messageDatabaseId $messageDatabaseId")
-        val message = messageDetailsRepository.findMessageByMessageDbId(messageDatabaseId).first()
+        val message = messageDetailsRepository.findMessageByDatabaseId(messageDatabaseId).first()
         if (message == null) {
             showSendMessageError(NO_SUBJECT)
             pendingActionDao.deletePendingSendByDbId(messageDatabaseId)

@@ -29,17 +29,7 @@ annotation class AlternativeApiPins
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 @Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
-annotation class AppCacheDirectory
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
 annotation class AppCoroutineScope
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION])
-annotation class AppDataDirectory
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)

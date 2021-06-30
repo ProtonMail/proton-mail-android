@@ -32,11 +32,6 @@
         <item name="actionModeCloseDrawable">@drawable/ic_arrow_left</item>
         <item name="bottomSheetDialogTheme">@style/ProtonMail.BottomSheetDialogTheme</item>
         <item name="colorControlHighlight">@color/interaction_weak_pressed</item>
-        <item name="shapeAppearanceLargeComponent">@style/Proton.ShapeAppearance.Large</item>
-    </style>
-
-    <style name="Proton.ShapeAppearance.Large" parent="ShapeAppearance.MaterialComponents.LargeComponent">
-        <item name="cornerSize">@dimen/size_corner_s</item>
     </style>
 
     <style name="ProtonMailActionMode" parent="Widget.AppCompat.ActionMode">

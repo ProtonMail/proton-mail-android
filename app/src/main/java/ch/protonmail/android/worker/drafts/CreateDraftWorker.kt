@@ -94,7 +94,7 @@ class CreateDraftWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val userId = getInputUserId()
 
-        val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId()).first()
+        val message = messageDetailsRepository.findMessageByDatabaseId(getInputMessageDbId()).first()
             ?: return failureWithError(CreateDraftWorkerErrors.MessageNotFound)
         val senderAddressId = requireNotNull(message.addressID)
         val senderAddress = requireNotNull(getSenderAddress(senderAddressId))
