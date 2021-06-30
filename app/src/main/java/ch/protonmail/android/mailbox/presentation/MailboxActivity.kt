@@ -1049,18 +1049,8 @@ class MailboxActivity :
                 )
                 undoSnack!!.show()
             }
-            R.id.delete_message ->
-                showDeleteConfirmationDialog(
-                    this,
-                    getString(R.string.delete_messages),
-                    getString(R.string.confirm_destructive_action)
-                ) {
-                    mailboxViewModel.deleteMessages(
-                        messageIds,
-                        currentMailboxLocation.messageLocationTypeValue.toString()
-                    )
-                    mode.finish()
-                }
+            R.id.delete_message -> {
+            }
             R.id.mark_read -> {
             }
             R.id.mark_unread -> {
@@ -1125,9 +1115,10 @@ class MailboxActivity :
                     getString(R.string.delete_messages),
                     getString(R.string.confirm_destructive_action)
                 ) {
-                    mailboxViewModel.deleteMessages(
+                    mailboxViewModel.deleteAction(
                         messageIds,
-                        currentMailboxLocation.messageLocationTypeValue.toString()
+                        UserId(userManager.requireCurrentUserId().s),
+                        currentMailboxLocation
                     )
                 }
             } else {

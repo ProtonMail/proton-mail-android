@@ -34,6 +34,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
+import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetMessagesByLocation
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
@@ -104,7 +105,8 @@ internal class ViewModelModule {
         getConversations: GetConversations,
         changeConversationsReadStatus: ChangeConversationsReadStatus,
         getMessagesByLocation: GetMessagesByLocation,
-        moveConversationsToFolder: MoveConversationsToFolder
+        moveConversationsToFolder: MoveConversationsToFolder,
+        deleteConversations: DeleteConversations
     ) = MailboxViewModel(
         messageDetailsRepository,
         userManager,
@@ -120,6 +122,7 @@ internal class ViewModelModule {
         getConversations,
         changeConversationsReadStatus,
         getMessagesByLocation,
-        moveConversationsToFolder
+        moveConversationsToFolder,
+        deleteConversations
     )
 }

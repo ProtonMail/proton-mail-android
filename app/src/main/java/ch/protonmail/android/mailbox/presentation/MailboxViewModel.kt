@@ -45,6 +45,7 @@ import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.Conversation
+import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetMessagesByLocation
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
@@ -111,6 +112,7 @@ class MailboxViewModel @Inject constructor(
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
     private val getMessagesByLocation: GetMessagesByLocation,
     private val moveConversationsToFolder: MoveConversationsToFolder,
+    private val deleteConversations: DeleteConversations
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -566,11 +568,20 @@ class MailboxViewModel @Inject constructor(
         return ApplyRemoveLabels(checkedLabelIds, labelsToRemove)
     }
 
-    fun deleteMessages(messageIds: List<String>, currentLabelId: String?) =
+    fun deleteAction(
+        ids: List<String>,
+        userId: UserId,
+        currentLocation: Constants.MessageLocationType
+    ) {
         viewModelScope.launch {
-            val deleteMessagesResult = deleteMessage(messageIds, currentLabelId)
-            _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
+            if (conversationModeEnabled(currentLocation)) {
+                deleteConversations(ids, userId, currentLocation.messageLocationTypeValue.toString())
+            } else {
+                val deleteMessagesResult = deleteMessage(ids, currentLocation.messageLocationTypeValue.toString())
+                _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
+            }
         }
+    }
 
     fun refreshMailboxCount(location: Constants.MessageLocationType) {
         if (conversationModeEnabled(location)) {
