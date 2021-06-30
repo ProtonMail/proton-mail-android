@@ -26,6 +26,7 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
+import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
@@ -43,6 +44,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MessageActionSheetViewModel @Inject constructor(
     private val deleteMessage: DeleteMessage,
+    private val deleteConversations: DeleteConversations,
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val moveConversationsToFolder: MoveConversationsToFolder,
     private val messageRepository: MessageRepository,
@@ -71,11 +73,35 @@ class MessageActionSheetViewModel @Inject constructor(
         }
     }
 
-    fun deleteMessage(messageIds: List<String>) {
+    /**
+     * If conversation mode is on, this will delete conversations with the given [ids] regardless of [currentFolder]
+     * (Example: all selected conversations in mailbox selection mode;
+     * or the conversation that is currently opened in the details)
+     * If conversation mode is off, this will delete messages with the given [ids] regardless of [currentFolder]
+     * (Example: all selected messages in mailbox selection mode;
+     * or the message that is currently opened in the details)
+     */
+    fun delete(
+        ids: List<String>,
+        currentFolder: Constants.MessageLocationType
+    ) {
         viewModelScope.launch {
-            deleteMessage(
-                messageIds, Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
-            )
+            if (conversationModeEnabled(currentFolder)) {
+                accountManager.getPrimaryUserId().first()?.let {
+                    deleteConversations(
+                        ids,
+                        it,
+                        currentFolder.messageLocationTypeValue.toString()
+                    )
+                }
+            } else {
+                deleteMessage(
+                    ids,
+                    currentFolder.messageLocationTypeValue.toString()
+                )
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.Delete
         }
     }
 

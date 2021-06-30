@@ -25,6 +25,7 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
+import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
@@ -68,6 +69,9 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     private lateinit var moveConversationsToFolder: MoveConversationsToFolder
 
     @MockK
+    private lateinit var deleteConversations: DeleteConversations
+
+    @MockK
     private lateinit var accountManager: AccountManager
 
     private lateinit var viewModel: MessageActionSheetViewModel
@@ -77,6 +81,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         MockKAnnotations.init(this)
         viewModel = MessageActionSheetViewModel(
             deleteMessage,
+            deleteConversations,
             moveMessagesToFolder,
             moveConversationsToFolder,
             repository,

@@ -258,8 +258,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                             type != Constants.MessageLocationType.ALL_MAIL
                     }
                 setOnClickListener {
-                    viewModel.deleteMessage(messageIds)
-                    dismiss()
+                    viewModel.delete(messageIds, messageLocation)
                 }
             }
             textViewDetailsActionsMoveTo.setOnClickListener {
@@ -325,6 +324,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             is MessageActionSheetAction.ChangeReadStatus -> dismissActionSheetAndGoToMailbox()
             is MessageActionSheetAction.ChangeStarredStatus -> dismiss()
             is MessageActionSheetAction.MoveToFolder -> dismissActionSheetAndGoToMailbox()
+            is MessageActionSheetAction.Delete -> dismiss()
             else -> Timber.v("unhandled action $sheetAction")
         }
     }
