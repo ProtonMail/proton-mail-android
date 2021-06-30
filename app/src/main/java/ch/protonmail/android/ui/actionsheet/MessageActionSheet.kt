@@ -221,28 +221,28 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     setText(R.string.not_spam_move_to_inbox)
                 }
                 setOnClickListener {
-                    viewModel.moveToInbox(messageIds, messageLocation)
+                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.INBOX)
                 }
             }
             textViewDetailsActionsTrash.apply {
                 isVisible = messageLocation in Constants.MessageLocationType.values()
                     .filter { it != Constants.MessageLocationType.TRASH }
                 setOnClickListener {
-                    viewModel.moveToTrash(messageIds, messageLocation)
+                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.TRASH)
                 }
             }
             textViewDetailsActionsMoveToArchive.apply {
                 isVisible = messageLocation in Constants.MessageLocationType.values()
                     .filter { it != Constants.MessageLocationType.ARCHIVE }
                 setOnClickListener {
-                    viewModel.moveToArchive(messageIds, messageLocation)
+                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.ARCHIVE)
                 }
             }
             textViewDetailsActionsMoveToSpam.apply {
                 isVisible = messageLocation in Constants.MessageLocationType.values()
                     .filter { it != Constants.MessageLocationType.SPAM }
                 setOnClickListener {
-                    viewModel.moveToSpam(messageIds, messageLocation)
+                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.SPAM)
                 }
             }
             textViewDetailsActionsDelete.apply {
