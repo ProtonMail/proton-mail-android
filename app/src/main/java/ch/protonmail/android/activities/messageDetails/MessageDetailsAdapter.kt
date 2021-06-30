@@ -150,10 +150,10 @@ internal class MessageDetailsAdapter(
             messageDetailsHeaderView.setOnClickListener { view ->
                 val headerView = view as MessageDetailsHeaderView
 
-                if (isExpanded(layoutPosition)) {
+                if (isMessageBodyExpanded()) {
                     // Message Body is expended - will collapse
-                    headerView.forbidExpandingHeaderView()
                     headerView.collapseHeader()
+                    headerView.forbidExpandingHeaderView()
                     toggleExpandedItems(layoutPosition, false)
                     return@setOnClickListener
                 }
@@ -162,6 +162,17 @@ internal class MessageDetailsAdapter(
                 headerView.allowExpandingHeaderView()
                 toggleExpandedItems(layoutPosition, false)
             }
+
+            if (isLastItemHeader()) {
+                messageDetailsHeaderView.allowExpandingHeaderView()
+            }
+        }
+
+        private fun isMessageBodyExpanded() = isExpanded(layoutPosition)
+
+        private fun isLastItemHeader(): Boolean {
+            val lastHeaderItem = visibleItems?.last { it.ItemType == TYPE_HEADER }
+            return layoutPosition == visibleItems?.indexOf(lastHeaderItem)
         }
     }
 
