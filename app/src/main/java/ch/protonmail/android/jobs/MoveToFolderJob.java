@@ -22,7 +22,7 @@ import android.text.TextUtils;
 
 import com.birbit.android.jobqueue.Params;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,8 +32,10 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
+import ch.protonmail.android.data.local.model.Label;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
+import timber.log.Timber;
 
 public class MoveToFolderJob extends ProtonMailBaseJob {
     private List<String> mMessageIds;
@@ -54,15 +56,9 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
         for (String id : mMessageIds) {
             final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
-                if (!TextUtils.isEmpty(mLabelId)) {
-                    int location = message.getLocation();
-                    message.addLabels(Arrays.asList(mLabelId));
-                    message.removeLabels(Arrays.asList(String.valueOf(location)));
-                }
                 if (markMessageLocally(counterDao, message)) {
                     totalUnread++;
                 }
-                getMessageDetailsRepository().saveMessageBlocking(message);
             }
         }
 
@@ -74,14 +70,18 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
         counterDao.insertUnreadLocation(unreadLocationCounter);
     }
 
-    @Override
-    public void onRun() throws Throwable {
-        IDList body = new IDList(mLabelId, mMessageIds);
-        getApi().labelMessages(body);
-    }
-
     private boolean markMessageLocally(CounterDao counterDao, Message message) {
         boolean unreadIncrease = false;
+
+        MessageDao messageDao = MessageDatabase.Factory
+                .getInstance(getApplicationContext(), getUserId())
+                .getDao();
+
+        if (!TextUtils.isEmpty(mLabelId)) {
+            message.addLabels(Collections.singletonList(mLabelId));
+            removeOldFolderIds(message, messageDao);
+        }
+
         if (!message.isRead()) {
             UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
             if (unreadLocationCounter != null) {
@@ -93,13 +93,35 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
         if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.SENT) {
             message.addLabels(Collections.singletonList(mLabelId));
         } else {
-            message.setLocation(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue());
+            message.setLocation(Constants.MessageLocationType.LABEL_FOLDER.getMessageLocationTypeValue());
         }
-        MessageDao messageDao = MessageDatabase.Factory
-                .getInstance(getApplicationContext(), getUserId())
-                .getDao();
+
         message.setFolderLocation(messageDao);
+        Timber.d("Move message id: %s, location: %s, labels: %s", message.getMessageId(), message.getLocation(), message.getAllLabelIDs());
         getMessageDetailsRepository().saveMessageBlocking(message);
         return unreadIncrease;
+    }
+
+    private void removeOldFolderIds(Message message, MessageDao messageDao) {
+        int location = message.getLocation();
+        List<String> oldLabels = message.getAllLabelIDs();
+        ArrayList<String> labelsToRemove = new ArrayList<>();
+        labelsToRemove.add(String.valueOf(location));
+
+        for (String labelId : oldLabels) {
+            Label label = messageDao.findLabelById(labelId);
+            // find folders
+            if (label != null && label.getExclusive()) {
+                labelsToRemove.add(labelId);
+            }
+        }
+
+        message.removeLabels(labelsToRemove);
+    }
+
+    @Override
+    public void onRun() throws Throwable {
+        IDList body = new IDList(mLabelId, mMessageIds);
+        getApi().labelMessages(body);
     }
 }
