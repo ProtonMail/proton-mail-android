@@ -116,8 +116,15 @@ class MessageActionSheetViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (conversationModeEnabled(location)) {
-                accountManager.getPrimaryUserId().first()?.let {
-                    changeConversationsStarredStatus(ids, it, ChangeConversationsStarredStatus.Action.ACTION_STAR)
+                val primaryUserId = accountManager.getPrimaryUserId().first()
+                if (primaryUserId != null) {
+                    changeConversationsStarredStatus(
+                        ids,
+                        primaryUserId,
+                        ChangeConversationsStarredStatus.Action.ACTION_STAR
+                    )
+                } else {
+                    Timber.e("Primary user id is null. Cannot star message/conversation")
                 }
             } else {
                 messageRepository.starMessages(ids)
@@ -133,8 +140,15 @@ class MessageActionSheetViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (conversationModeEnabled(location)) {
-                accountManager.getPrimaryUserId().first()?.let {
-                    changeConversationsStarredStatus(ids, it, ChangeConversationsStarredStatus.Action.ACTION_UNSTAR)
+                val primaryUserId = accountManager.getPrimaryUserId().first()
+                if (primaryUserId != null) {
+                    changeConversationsStarredStatus(
+                        ids,
+                        primaryUserId,
+                        ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
+                    )
+                } else {
+                    Timber.e("Primary user id is null. Cannot unstar message/conversation")
                 }
             } else {
                 messageRepository.unStarMessages(ids)
@@ -150,13 +164,16 @@ class MessageActionSheetViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (conversationModeEnabled(location)) {
-                accountManager.getPrimaryUserId().first()?.let {
+                val primaryUserId = accountManager.getPrimaryUserId().first()
+                if (primaryUserId != null) {
                     changeConversationsReadStatus(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
-                        it,
+                        primaryUserId,
                         location
                     )
+                } else {
+                    Timber.e("Primary user id is null. Cannot mark message/conversation unread")
                 }
             } else {
                 messageRepository.markUnRead(ids)
@@ -172,13 +189,16 @@ class MessageActionSheetViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (conversationModeEnabled(location)) {
-                accountManager.getPrimaryUserId().first()?.let {
+                val primaryUserId = accountManager.getPrimaryUserId().first()
+                if (primaryUserId != null) {
                     changeConversationsReadStatus(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
-                        it,
+                        primaryUserId,
                         location
                     )
+                } else {
+                    Timber.e("Primary user id is null. Cannot mark message/conversation read")
                 }
             } else {
                 messageRepository.markRead(ids)
