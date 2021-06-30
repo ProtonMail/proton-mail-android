@@ -40,7 +40,6 @@ class GetMessagesByLocation @Inject constructor(
     ): Flow<GetMessagesResult> =
         when (mailboxLocation) {
             Constants.MessageLocationType.LABEL,
-            Constants.MessageLocationType.LABEL_OFFLINE,
             Constants.MessageLocationType.LABEL_FOLDER ->
                 messageRepository.observeMessagesByLabelId(requireNotNull(labelId), userId)
             Constants.MessageLocationType.STARRED,

@@ -48,7 +48,7 @@ class FetchByLocationJob(
             }
 
         when (location) {
-            MessageLocationType.LABEL, MessageLocationType.LABEL_OFFLINE, MessageLocationType.LABEL_FOLDER -> {
+            MessageLocationType.LABEL, MessageLocationType.LABEL_FOLDER -> {
                 // `labelId` can be null if `location` isn't any of the three options above,
                 // but should never be null at this point
                 startFetchFirstPageByLabel(applicationContext, userId, location, labelId, refreshMessages)
