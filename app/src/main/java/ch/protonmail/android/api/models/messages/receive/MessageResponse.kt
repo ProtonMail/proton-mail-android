@@ -31,7 +31,7 @@ class MessageResponse : ResponseBody() {
     val message by lazy {
         val attachmentFactory = AttachmentFactory()
         val messageSenderFactory = MessageSenderFactory()
-        val messageLocationResolver = MessageLocationResolver()
+        val messageLocationResolver = MessageLocationResolver(null)
         val messageFactory = MessageFactory(attachmentFactory, messageSenderFactory, messageLocationResolver)
         messageFactory.createMessage(serverMessage)
     }

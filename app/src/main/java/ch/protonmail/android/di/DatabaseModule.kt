@@ -48,7 +48,6 @@ object DatabaseModule {
         @CurrentUserId userId: Id
     ): AttachmentMetadataDao = AttachmentMetadataDatabase.getInstance(context, userId).getDao()
 
-
     @Provides
     fun provideContactDatabase(
         context: Context,
@@ -58,7 +57,6 @@ object DatabaseModule {
     @Provides
     fun provideContactDao(factory: ContactDatabase): ContactDao =
         factory.getDao()
-
 
     @Provides
     fun provideCounterDatabase(

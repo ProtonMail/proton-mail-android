@@ -50,7 +50,7 @@ class MessageFactory @Inject constructor(
             message.sender = messageSenderFactory.createMessageSender(serverMessageSender)
             message.time = it.Time.checkIfSet("Time")
             message.totalSize = it.Size.checkIfSet("Size")
-            message.location = messageLocationResolver.resolveLocationFromLabels(it.LabelIDs ?: emptyList())
+            message.location = messageLocationResolver.resolveLocationFromLabels(it.LabelIDs ?: emptyList()).messageLocationTypeValue
             message.isStarred = it.LabelIDs!!
                 .asSequence()
                 .filter { it.length <= 2 }

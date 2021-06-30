@@ -33,7 +33,7 @@ public class MessageSendResponse extends ResponseBody {
     public Message getSent() {
         final AttachmentFactory attachmentFactory = new AttachmentFactory();
         MessageSenderFactory messageSenderFactory = new MessageSenderFactory();
-        final MessageLocationResolver messageLocationResolver = new MessageLocationResolver();
+        final MessageLocationResolver messageLocationResolver = new MessageLocationResolver(null);
         final MessageFactory messageFactory = new MessageFactory(attachmentFactory, messageSenderFactory, messageLocationResolver);
         return messageFactory.createMessage(Sent);
     }
