@@ -31,8 +31,6 @@ data class DrawerLabelUiModel(
     val name: String,
     @DrawableRes val image: Int,
     @ColorInt val color: Int,
-    val isChecked: Boolean,
-    val display: Int,
     val type: Type
 ) {
 

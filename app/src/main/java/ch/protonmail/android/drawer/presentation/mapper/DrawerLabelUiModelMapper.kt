@@ -51,8 +51,6 @@ internal class DrawerLabelUiModelMapper @Inject constructor() : UiModelMapper<La
             name = name,
             image = image,
             color = normalizeColor(color),
-            isChecked = false,
-            display = display,
             type = type
         )
     }
