@@ -25,6 +25,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.humanverification.presentation.CaptchaBaseUrl
+import me.proton.core.network.data.di.Constants as CoreConstants
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -40,9 +42,9 @@ object ConfigurableParametersModule {
 
     @Provides
     @AlternativeApiPins
-    fun alternativeApiPins() = me.proton.core.network.data.di.Constants.ALTERNATIVE_API_SPKI_PINS
+    fun alternativeApiPins() = CoreConstants.ALTERNATIVE_API_SPKI_PINS
 
     @Provides
     @DefaultApiPins
-    fun defaultApiPins() = me.proton.core.network.data.di.Constants.DEFAULT_SPKI_PINS
+    fun defaultApiPins() = CoreConstants.DEFAULT_SPKI_PINS
 }
