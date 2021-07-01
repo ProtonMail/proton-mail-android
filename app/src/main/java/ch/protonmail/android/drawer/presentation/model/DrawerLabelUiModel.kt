@@ -29,8 +29,7 @@ import androidx.annotation.DrawableRes
 data class DrawerLabelUiModel(
     val labelId: String,
     val name: String,
-    @DrawableRes val image: Int,
-    @ColorInt val color: Int,
+    val icon: Icon,
     val type: Type
 ) {
 
@@ -42,4 +41,9 @@ data class DrawerLabelUiModel(
         /** Model is Folder */
         FOLDERS
     }
+
+    data class Icon(
+        @DrawableRes val drawableRes: Int,
+        @ColorInt val colorInt: Int
+    )
 }

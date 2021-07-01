@@ -129,8 +129,8 @@ internal class DrawerAdapter : BaseAdapter<
         override fun onBind(item: Primary.Label) = with(itemView) {
             super.onBind(item)
             drawer_item_label_text_view.text = item.uiModel.name
-            drawer_item_icon_view.setColorFilter(item.uiModel.color)
-            drawer_item_icon_view.setImageResource(item.uiModel.image)
+            drawer_item_icon_view.setColorFilter(item.uiModel.icon.colorInt)
+            drawer_item_icon_view.setImageResource(item.uiModel.icon.drawableRes)
             drawer_item_label_text_view.tag = item.uiModel.name
         }
     }

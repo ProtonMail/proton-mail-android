@@ -49,8 +49,7 @@ internal class DrawerLabelUiModelMapper @Inject constructor() : UiModelMapper<La
         return DrawerLabelUiModel(
             labelId = id,
             name = name,
-            image = image,
-            color = normalizeColor(color),
+            icon = DrawerLabelUiModel.Icon(image, normalizeColor(color)),
             type = type
         )
     }
