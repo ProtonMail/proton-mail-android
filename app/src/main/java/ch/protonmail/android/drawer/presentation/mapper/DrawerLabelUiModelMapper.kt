@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.drawer.presentation.mapper
 
+import android.content.Context
 import android.graphics.Color
 import ch.protonmail.android.R
 import ch.protonmail.android.data.local.model.Label
@@ -31,27 +32,43 @@ import javax.inject.Inject
  * A Mapper of [DrawerLabelUiModel]
  * Inherit from [UiModelMapper]
  *
+ * @property useFolderColor whether the user enabled the settings for use Colors for Folders.
+ *  TODO to be implemented in MAILAND-1818, ideally inject its use case. Currently defaults to `true`
+ *
  * @author Davide Farella
  */
-internal class DrawerLabelUiModelMapper @Inject constructor() : UiModelMapper<Label, DrawerLabelUiModel> {
+internal class DrawerLabelUiModelMapper @Inject constructor(
+    private val context: Context
+) : UiModelMapper<Label, DrawerLabelUiModel> {
+
+    private val useFolderColor: Boolean = true
 
     override fun Label.toUiModel(): DrawerLabelUiModel {
 
-        val type = if (exclusive) {
-            DrawerLabelUiModel.Type.FOLDERS
-        } else DrawerLabelUiModel.Type.LABELS
-
-        val image = when (type) {
-            DrawerLabelUiModel.Type.LABELS -> R.drawable.shape_ellipse
-            DrawerLabelUiModel.Type.FOLDERS -> R.drawable.ic_folder
-        }
+        val type =
+            if (exclusive) DrawerLabelUiModel.Type.FOLDERS
+            else DrawerLabelUiModel.Type.LABELS
 
         return DrawerLabelUiModel(
             labelId = id,
             name = name,
-            icon = DrawerLabelUiModel.Icon(image, normalizeColor(color)),
+            icon = buildIcon(type, color),
             type = type
         )
+    }
+
+    private fun buildIcon(type: DrawerLabelUiModel.Type, color: String): DrawerLabelUiModel.Icon {
+
+        val drawableRes = when (type) {
+            DrawerLabelUiModel.Type.LABELS -> R.drawable.shape_ellipse
+            DrawerLabelUiModel.Type.FOLDERS -> if (useFolderColor) R.drawable.ic_folder_filled else R.drawable.ic_folder
+        }
+
+        val colorInt =
+            if (useFolderColor) normalizeColor(color)
+            else context.getColor(R.color.icon_inverted)
+
+        return DrawerLabelUiModel.Icon(drawableRes, colorInt)
     }
 
     private fun normalizeColor(color: String): Int {
