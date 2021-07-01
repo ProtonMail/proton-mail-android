@@ -81,6 +81,15 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/storageLimitAlert" />
 
+                <include
+                    android:id="@+id/include_mailbox_error"
+                    layout="@layout/layout_mailbox_error_state"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/mailboxActionsView"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/storageLimitAlert" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/mailboxRecyclerView"
                     android:layout_width="match_parent"
