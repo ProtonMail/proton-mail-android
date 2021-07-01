@@ -24,19 +24,16 @@ import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Footer
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.SectionName
-import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
 import kotlinx.android.synthetic.main.drawer_list_item.view.*
 import kotlinx.android.synthetic.main.drawer_section_name_item.view.*
 import me.proton.core.presentation.utils.inflate
-import me.proton.core.util.kotlin.invoke
 
 // region constants
 /** View types for Adapter */
@@ -191,18 +188,3 @@ internal class DrawerAdapter : BaseAdapter<
         } as ViewHolder<Model>
     }
 }
-
-/**
- * @return [List] of [DrawerItemUiModel.Primary.Label] created from a [List] of
- * [LabelWithUnreadCounter]
- *
- * This function is an helper for Java, since it would be annoying to implement it in Java.
- */
-internal fun mapLabelsToDrawerLabels(
-    mapper: LabelUiModelMapper,
-    labels: List<LabelWithUnreadCounter>
-): List<Primary.Label> = labels.map { labelWithUnread ->
-    val uiModel = mapper { labelWithUnread.label.toUiModel() }
-    Primary.Label(uiModel, labelWithUnread.unreadCount)
-}
-

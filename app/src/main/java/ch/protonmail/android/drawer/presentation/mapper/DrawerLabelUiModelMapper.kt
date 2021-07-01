@@ -25,6 +25,7 @@ import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
 import ch.protonmail.android.mapper.UiModelMapper
 import ch.protonmail.android.utils.UiUtil
 import timber.log.Timber
+import javax.inject.Inject
 
 /**
  * A Mapper of [DrawerLabelUiModel]
@@ -32,7 +33,7 @@ import timber.log.Timber
  *
  * @author Davide Farella
  */
-internal class DrawerLabelUiModelMapper : UiModelMapper<Label, DrawerLabelUiModel> {
+internal class DrawerLabelUiModelMapper @Inject constructor() : UiModelMapper<Label, DrawerLabelUiModel> {
 
     override fun Label.toUiModel(): DrawerLabelUiModel {
 
