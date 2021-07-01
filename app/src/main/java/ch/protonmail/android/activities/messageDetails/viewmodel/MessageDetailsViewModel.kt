@@ -183,6 +183,7 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
     private val _decryptedConversationUiModel: MutableLiveData<ConversationUiModel> = MutableLiveData()
+    private val _messageRenderedWithImages: MutableLiveData<Message> = MutableLiveData()
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
 
@@ -222,6 +223,9 @@ internal class MessageDetailsViewModel @Inject constructor(
     val decryptedConversationUiModel: LiveData<ConversationUiModel>
         get() = _decryptedConversationUiModel
 
+    val messageRenderedWithImages: LiveData<Message>
+        get() = _messageRenderedWithImages
+
     private var areImagesDisplayed: Boolean = false
 
     init {
@@ -230,7 +234,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 val currentUiModel = _decryptedConversationUiModel.value
                 val message = currentUiModel?.messages?.find { it.messageId == renderedMessage.messageId }
                 message?.decryptedHTML = renderedMessage.renderedHtmlBody
-                _decryptedConversationUiModel.value = currentUiModel
+                _messageRenderedWithImages.value = message
                 areImagesDisplayed = true
             }
         }
@@ -252,14 +256,13 @@ internal class MessageDetailsViewModel @Inject constructor(
             val isDecrypted = fetchedMessage?.tryDecrypt(publicKeys)
             if (isDecrypted == true) {
                 Timber.v("message $messageId isDecrypted, isRead: ${fetchedMessage.isRead}")
-                if (!message.isRead) {
+                if (!fetchedMessage.isRead) {
                     messageRepository.markRead(listOf(messageId))
                 }
                 emit(fetchedMessage)
             }
         }
-    }
-        .flowOn(dispatchers.Io)
+    }.flowOn(dispatchers.Io)
 
     fun loadMailboxItemDetails() {
         viewModelScope.launch(dispatchers.Io) {
@@ -358,17 +361,15 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    fun startDownloadEmbeddedImagesJob() {
+    fun startDownloadEmbeddedImagesJob(message: Message) {
         hasEmbeddedImages = false
 
         viewModelScope.launch(dispatchers.Io) {
 
-            val lastMessageId = lastMessage()?.messageId ?: return@launch
-            val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(lastMessageId)
-            val embeddedImages = embeddedImagesAttachments.mapNotNull {
-                attachmentsHelper.fromAttachmentToEmbeddedImage(
-                    it, lastMessage()?.embeddedImageIds?.toList().orEmpty()
-                )
+            val messageId = message.messageId ?: return@launch
+            val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(messageId)
+            val embeddedImages = embeddedImagesAttachments.mapNotNull { embeddedImage ->
+                attachmentsHelper.fromAttachmentToEmbeddedImage(embeddedImage, message.embeddedImageIds.toList())
             }
             val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
             embeddedImages.forEach { embeddedImage ->
@@ -387,7 +388,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImagesWithLocalFiles))
             } else {
                 messageDetailsRepository.startDownloadEmbeddedImages(
-                    lastMessageId, userManager.requireCurrentUserId()
+                    messageId, userManager.requireCurrentUserId()
                 )
             }
         }
@@ -424,12 +425,12 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    fun viewOrDownloadAttachment(context: Context, attachmentToDownloadId: String) {
+    fun viewOrDownloadAttachment(context: Context, attachment: Attachment) {
         viewModelScope.launch(dispatchers.Io) {
-            val messageId = lastMessage()?.messageId ?: return@launch
-            val metadata = attachmentMetadataDao
-                .getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
-            Timber.v("viewOrDownloadAttachment Id: $attachmentToDownloadId metadataId: ${metadata?.id}")
+            val attachmentId = requireNotNull(attachment.attachmentId)
+            val messageId = attachment.messageId
+            val metadata = attachmentMetadataDao.getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentId)
+            Timber.v("viewOrDownloadAttachment Id: $attachmentId metadataId: ${metadata?.id}")
             val uri = metadata?.uri
             // extra check if user has not deleted the file
             if (uri != null && attachmentsHelper.isFileAvailable(context, uri)) {
@@ -439,13 +440,13 @@ internal class MessageDetailsViewModel @Inject constructor(
                     viewAttachment(context, metadata.name, uri)
                 }
             } else {
-                Timber.d("Attachment id: $attachmentToDownloadId file not available, uri: $uri ")
-                attachmentsWorker.enqueue(messageId, userManager.requireCurrentUserId(), attachmentToDownloadId)
+                Timber.d("Attachment id: $attachmentId file not available, uri: $uri ")
+                attachmentsWorker.enqueue(messageId, userManager.requireCurrentUserId(), attachmentId)
             }
         }
     }
 
-    private fun lastMessage() = conversationUiModel.value?.messages?.last()
+    private fun lastMessage() = conversationUiModel.value?.messages?.maxByOrNull { it.time }
 
     /**
      * Explicitly make a copy of embedded attachment to downloads and display it (product requirement)
@@ -507,9 +508,9 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun isEmbeddedImagesDisplayed() = areImagesDisplayed
 
-    fun displayEmbeddedImages() {
+    fun displayEmbeddedImages(message: Message) {
         areImagesDisplayed = true // this will be passed to edit intent
-        startDownloadEmbeddedImagesJob()
+        startDownloadEmbeddedImagesJob(message)
     }
 
     fun isAutoShowEmbeddedImages(): Boolean {

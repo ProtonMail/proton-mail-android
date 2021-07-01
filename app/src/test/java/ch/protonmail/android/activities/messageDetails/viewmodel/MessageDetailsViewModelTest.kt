@@ -500,6 +500,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
         // Then
         assertEquals(fetchedMessage, decryptedMessage)
+        verify(exactly = 0) { messageRepository.markRead(any()) }
     }
 
     private fun buildEmptyConversation(conversationId: String) = Conversation(

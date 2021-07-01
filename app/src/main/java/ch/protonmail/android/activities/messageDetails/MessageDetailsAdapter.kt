@@ -21,6 +21,7 @@ package ch.protonmail.android.activities.messageDetails
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
 import android.view.LayoutInflater
@@ -38,7 +39,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
-import ch.protonmail.android.activities.messageDetails.attachments.OnAttachmentDownloadCallback
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyScaleListener
 import ch.protonmail.android.activities.messageDetails.body.MessageBodyTouchListener
 import ch.protonmail.android.core.Constants
@@ -47,7 +47,6 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
-import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
@@ -59,7 +58,6 @@ import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
 import java.util.ArrayList
-import java.util.concurrent.atomic.AtomicReference
 
 private const val TYPE_ITEM = 1001
 private const val TYPE_HEADER = 1000
@@ -68,12 +66,11 @@ internal class MessageDetailsAdapter(
     private val context: Context,
     private var messages: List<Message>,
     private val messageDetailsRecyclerView: RecyclerView,
-    private val onLoadEmbeddedImagesClicked: (() -> Unit)?,
-    private val onDisplayRemoteContentClicked: ((Message) -> Unit)?,
-    private val storagePermissionHelper: PermissionHelper,
-    private val attachmentToDownloadId: AtomicReference<String?>,
+    private val onLoadEmbeddedImagesClicked: (Message) -> Unit,
+    private val onDisplayRemoteContentClicked: (Message) -> Unit,
     private val userManager: UserManager,
-    private val onLoadMessage: (Message) -> Unit
+    private val onLoadMessageBody: (Message) -> Unit,
+    private val onAttachmentDownloadCallback: (Attachment) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
 
     private var allLabelsList: List<Label>? = listOf()
@@ -183,7 +180,7 @@ internal class MessageDetailsAdapter(
 
             Timber.v("Load data for message: ${message.messageId} at position $position")
             if (listItem.messageFormattedHtml == null) {
-                onLoadMessage(message)
+                onLoadMessageBody(message)
             }
 
             val webView = itemView.messageWebViewContainer.getChildAt(0) as? WebView ?: return
@@ -211,9 +208,18 @@ internal class MessageDetailsAdapter(
             loadEmbeddedImagesContainer: LoadContentButton,
             displayRemoteContentButton: LoadContentButton
         ) {
-            loadEmbeddedImagesContainer.setOnClickListener {
-                it.visibility = View.GONE
-                onLoadEmbeddedImagesClicked?.invoke()
+            loadEmbeddedImagesContainer.setOnClickListener { view ->
+                view.visibility = View.GONE
+                // Once images were loaded for one message, we automatically load them for all the others, so:
+                // the 'load embedded images' button will be hidden for all messages
+                // the 'formatted html' gets reset so that messages which were already rendered without images
+                // go through the rendering again (through `onLoadMessageBody` callback) and load them
+                allItems.map {
+                    it.showLoadEmbeddedImagesButton = false
+                    it.messageFormattedHtml = null
+                }
+                val item = visibleItems!![position]
+                onLoadEmbeddedImagesClicked(item.message)
             }
 
             displayRemoteContentButton.setOnClickListener {
@@ -225,7 +231,7 @@ internal class MessageDetailsAdapter(
                     itemView.displayRemoteContentButton.visibility = View.GONE
                     (webView.webViewClient as MessageDetailsPmWebViewClient).allowLoadingRemoteResources()
                     webView.reload()
-                    onDisplayRemoteContentClicked?.invoke(item.message)
+                    onDisplayRemoteContentClicked(item.message)
                 }
             }
         }
@@ -241,15 +247,22 @@ internal class MessageDetailsAdapter(
         }
     }
 
-    fun showMessageBody(parsedBody: String?, messageId: String, showLoadEmbeddedImagesButton: Boolean) {
-        val item: MessageDetailsListItem = visibleItems!!.first {
+    fun showMessageDetails(
+        parsedBody: String?,
+        messageId: String,
+        showLoadEmbeddedImagesButton: Boolean,
+        attachments: List<Attachment>
+    ) {
+        val item: MessageDetailsListItem? = visibleItems?.firstOrNull {
             it.ItemType == TYPE_ITEM && it.message.messageId == messageId
         }
-        item.messageFormattedHtml = parsedBody
-        item.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton
+        item?.messageFormattedHtml = parsedBody
+        item?.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton
+        item?.message?.setAttachmentList(attachments)
 
-        val changedItemIndex = visibleItems!!.indexOf(item)
-        notifyItemChanged(changedItemIndex, item)
+        visibleItems?.indexOf(item)?.let { changedItemIndex ->
+            notifyItemChanged(changedItemIndex, item)
+        }
     }
 
     fun setMessageData(messageData: List<Message>) {
@@ -298,7 +311,7 @@ internal class MessageDetailsAdapter(
 
         val attachmentsListAdapter = MessageDetailsAttachmentListAdapter(
             context,
-            OnAttachmentDownloadCallback(storagePermissionHelper, attachmentToDownloadId)
+            onAttachmentDownloadCallback
         )
         attachmentsListAdapter.setList(attachments)
         attachmentsView.bind(attachmentsCount, totalAttachmentSize, attachmentsListAdapter)
@@ -377,11 +390,16 @@ internal class MessageDetailsAdapter(
     ) : PMWebViewClient(userManager, activity, false) {
 
         override fun onPageFinished(view: WebView, url: String) {
-            if (amountOfRemoteResourcesBlocked() > 0) {
+            // Do not display the 'displayRemoteContent' button when API is lower than 26 as in that case remote
+            // images will be loaded automatically for the reason mentioned below
+            if (amountOfRemoteResourcesBlocked() > 0 && !isAndroidAPILevelLowerThan26()) {
                 itemView.displayRemoteContentButton.isVisible = true
             }
 
-            this.blockRemoteResources(!isAutoShowRemoteImages())
+            // When android API < 26 we automatically show remote images because the `getWebViewClient` method
+            // that we use to access the webView and load them later on was only introduced with API 26
+            val showRemoteImages = isAutoShowRemoteImages() || isAndroidAPILevelLowerThan26()
+            this.blockRemoteResources(!showRemoteImages)
 
             super.onPageFinished(view, url)
         }
@@ -390,5 +408,7 @@ internal class MessageDetailsAdapter(
             val mailSettings = userManager.getCurrentUserMailSettingsBlocking()
             return mailSettings?.showImagesFrom?.includesRemote() ?: false
         }
+
+        private fun isAndroidAPILevelLowerThan26() = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
     }
 }

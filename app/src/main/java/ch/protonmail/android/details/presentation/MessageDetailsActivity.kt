@@ -49,6 +49,7 @@ import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
 import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
@@ -95,7 +96,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private var messageRecipientUserId: Id? = null
     private var messageRecipientUsername: String? = null
-    private val attachmentToDownloadId = AtomicReference<String?>(null)
+    private val attachmentToDownload = AtomicReference<Attachment?>(null)
     private var showPhishingReportButton = true
     private var shouldTitleFadeOut = false
     private var shouldTitleFadeIn = true
@@ -137,9 +138,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     override fun getLayoutId(): Int = R.layout.activity_message_details
 
     override fun storagePermissionGranted() {
-        val attachmentToDownloadIdAux = attachmentToDownloadId.getAndSet(null)
-        if (!attachmentToDownloadIdAux.isNullOrEmpty()) {
-            viewModel.viewOrDownloadAttachment(this, attachmentToDownloadIdAux)
+        val attachmentToDownload = attachmentToDownload.getAndSet(null)
+        if (attachmentToDownload?.attachmentId?.isNotEmpty() == true) {
+            viewModel.viewOrDownloadAttachment(this, attachmentToDownload)
         }
     }
 
@@ -189,6 +190,15 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private fun continueSetup() {
         viewModel.conversationUiModel.observe(this) { viewModel.loadMailboxItemDetails() }
         viewModel.decryptedConversationUiModel.observe(this, ConversationUiModelObserver())
+        viewModel.messageRenderedWithImages.observe(this) { message ->
+            val messageId = message.messageId ?: return@observe
+            messageExpandableAdapter.showMessageDetails(
+                message.decryptedHTML,
+                messageId,
+                false,
+                message.attachments
+            )
+        }
 
         viewModel.labels
             .onEach(messageExpandableAdapter::setAllLabels)
@@ -207,12 +217,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             this,
             listOf(),
             messageDetailsRecyclerView,
-            { onLoadEmbeddedImagesClicked() },
+            onLoadEmbeddedImagesClicked(),
             onDisplayRemoteContentClicked(),
-            storagePermissionHelper,
-            attachmentToDownloadId,
             mUserManager,
-            onLoadMessageBody()
+            onLoadMessageBody(),
+            onDownloadAttachment()
         )
     }
 
@@ -228,25 +237,29 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 )
 
                 val messageId = loadedMessage.messageId ?: return@mapLatest
-                messageExpandableAdapter.showMessageBody(
+                val showLoadEmbeddedImagesButton = handleEmbeddedImagesLoading(loadedMessage)
+                messageExpandableAdapter.showMessageDetails(
                     parsedBody,
                     messageId,
-                    shouldShowLoadEmbeddedImagesButton(message)
+                    showLoadEmbeddedImagesButton,
+                    loadedMessage.attachments
                 )
             }.launchIn(lifecycleScope)
         }
     }
 
-    private fun shouldShowLoadEmbeddedImagesButton(message: Message): Boolean {
+    private fun handleEmbeddedImagesLoading(message: Message): Boolean {
         val hasEmbeddedImages = viewModel.prepareEmbeddedImages(message)
         if (!hasEmbeddedImages) {
+            // Let client know the 'load images' button should not be shown
             return false
         }
 
         val displayEmbeddedImages = viewModel.isAutoShowEmbeddedImages() || viewModel.isEmbeddedImagesDisplayed()
         if (displayEmbeddedImages) {
-            viewModel.displayEmbeddedImages()
+            viewModel.displayEmbeddedImages(message)
         }
+        // Let client know whether the 'load images' button should be shown
         return !displayEmbeddedImages
     }
 
@@ -462,15 +475,15 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private inner class ConversationUiModelObserver : Observer<ConversationUiModel> {
 
         override fun onChanged(conversation: ConversationUiModel) {
-            val message = lastMessage(conversation)
+            val lastMessage = conversation.messages.last()
 
             displayToolbarData(conversation)
-            setupLastMessageActionsListener(message)
+            setupLastMessageActionsListener(lastMessage)
 
-            Timber.v("New decrypted message ${message.messageId}")
+            Timber.v("New decrypted message ${lastMessage.messageId}")
             viewModel.renderedFromCache = AtomicBoolean(true)
-            val decryptedBody = getDecryptedBody(message.decryptedHTML)
-            if (decryptedBody.isEmpty() || message.messageBody.isNullOrEmpty()) {
+            val decryptedBody = getDecryptedBody(lastMessage.decryptedHTML)
+            if (decryptedBody.isEmpty() || lastMessage.messageBody.isNullOrEmpty()) {
                 UiUtil.showInfoSnack(mSnackLayout, this@MessageDetailsActivity, R.string.decryption_error_desc).show()
                 return
             }
@@ -546,8 +559,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         collapsedToolbarTitleTextView.visibility = View.INVISIBLE
         expandedToolbarTitleTextView.text = subject
     }
-
-    private fun lastMessage(conversation: ConversationUiModel): Message = conversation.messages.last()
 
     fun executeMessageAction(
         messageAction: Constants.MessageActionType,
@@ -718,18 +729,22 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private fun onLoadEmbeddedImagesClicked() {
+    private fun onLoadEmbeddedImagesClicked() = { message: Message ->
         // this will ensure that the message has been loaded
         // and will protect from premature clicking on download attachments button
         if (viewModel.renderingPassed) {
-            viewModel.startDownloadEmbeddedImagesJob()
+            viewModel.startDownloadEmbeddedImagesJob(message)
         }
-        return
     }
 
     private fun onDisplayRemoteContentClicked() = { message: Message ->
         viewModel.displayRemoteContent(message)
         viewModel.checkStoragePermission.observe(this, { storagePermissionHelper.checkPermission() })
+    }
+
+    private fun onDownloadAttachment() = { attachment: Attachment ->
+        attachmentToDownload.set(attachment)
+        storagePermissionHelper.checkPermission()
     }
 
     fun printMessage() {
