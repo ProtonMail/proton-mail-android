@@ -26,7 +26,7 @@ buildscript {
 plugins {
     id("me.proton.kotlin") version "0.1" // Released: Oct 09, 2020
     id("me.proton.tests") version "0.1" // Released: Oct 09, 2020
-    id("me.proton.detekt") version "0.2" // Released: Nov 23, 2020
+    id("io.gitlab.arturbosch.detekt").version("1.17.1")
     `sonarQube`
 }
 
