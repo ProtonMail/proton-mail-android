@@ -29,12 +29,9 @@ import timber.log.Timber
  * A Mapper of [LabelUiModel]
  * Inherit from [UiModelMapper]
  *
- * @param isLabelEditable whether the created Label is editable.
- * A different [LabelUiModel.image] will be used if [isLabelEditable]
- *
  * @author Davide Farella
  */
-internal class LabelUiModelMapper(private val isLabelEditable: Boolean) : UiModelMapper<Label, LabelUiModel> {
+internal class LabelUiModelMapper : UiModelMapper<Label, LabelUiModel> {
 
     /** @return [LabelUiModel] from receiver [Label] Entity */
     override fun Label.toUiModel(): LabelUiModel {

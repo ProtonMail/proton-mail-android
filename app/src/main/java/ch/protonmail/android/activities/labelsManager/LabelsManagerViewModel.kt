@@ -88,7 +88,7 @@ internal class LabelsManagerViewModel @Inject constructor(
         LabelUiModel.Type.FOLDERS -> messageDao.getAllLabelsExclusivePaged()
     }
 
-    private val labelMapper = LabelUiModelMapper(isLabelEditable = true)
+    private val labelMapper = LabelUiModelMapper()
 
     /**
      * A Locked [PagedViewStateStore] of type [LabelUiModel]

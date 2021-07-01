@@ -448,7 +448,7 @@ abstract class NavigationActivity : BaseActivity() {
                 return
 
             // Get a mapper for create LabelUiModels. TODO this dependency could be handled better
-            val mapper = LabelUiModelMapper( /* isLabelEditable */false)
+            val mapper = LabelUiModelMapper()
 
             // Prepare new Labels for the Adapter
             val (labelsItems, foldersItems) = mapLabelsToDrawerLabels(mapper, labels)
