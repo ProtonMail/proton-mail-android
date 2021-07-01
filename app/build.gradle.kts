@@ -302,6 +302,8 @@ dependencies {
         `Proton-user`,
         `Proton-key`,
         `Proton-human-verification`,
+        `Proton-payment`,
+        `Proton-plan`,
         `Proton-country`,
 
         // Modules

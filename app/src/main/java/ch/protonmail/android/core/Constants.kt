@@ -26,12 +26,9 @@ import ch.protonmail.android.R
 object Constants {
 
     // region Urls
-    const val BASE_URL = "protonmail.ch"
-    const val BASE_API_URL = "api.$BASE_URL"
-    const val REDIRECT_URI = "https://protonmail.ch"
-    const val ENDPOINT_URI = "https://$BASE_API_URL"
+    const val API_HOST = "api.protonmail.ch"
+    const val BASE_URL = "https://$API_HOST"
     const val DUMMY_URL_PREFIX = "http://androidlinksfix.protonmail.com"
-    const val SECURE_ENDPOINT_HOST = "secure.protonmail.com"
 
     // Mail domains
     const val MAIL_DOMAIN_CH = "protonmail.ch"

@@ -23,7 +23,7 @@ import ch.protonmail.android.di.AlternativeApiPins
 import ch.protonmail.android.di.BaseUrl
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.core.humanverification.presentation.CaptchaBaseUrl
+import me.proton.core.humanverification.presentation.CaptchaApiHost
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import javax.inject.Inject
@@ -45,8 +45,8 @@ class ExampleCustomInjectionTest {
     lateinit var baseUrl: String
 
     @Inject
-    @CaptchaBaseUrl
-    lateinit var captchaBaseUrl: String
+    @CaptchaApiHost
+    lateinit var captchaApiHost: String
 
     @Inject
     @AlternativeApiPins
@@ -59,11 +59,9 @@ class ExampleCustomInjectionTest {
 
     @Test
     fun verifyBaseUrl() {
-
         assertThat(baseUrl).isNotNull
         assertEquals("http://localhost:8080/", baseUrl)
-        assertEquals("http://localhost:8080/", captchaBaseUrl)
+        assertEquals("localhost:8080", captchaApiHost)
         assertEquals(emptyList(), alternativePins)
     }
-
 }
