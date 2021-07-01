@@ -43,6 +43,7 @@ import java.util.List;
 
 import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.utils.Logger;
+import timber.log.Timber;
 
 public class AttachmentHeaders implements Serializable {
     private static final String TAG_ATTACHMENT_HEADERS = "AttachmentHeaders";
@@ -119,7 +120,7 @@ public class AttachmentHeaders implements Serializable {
         try {
             result = (AttachmentHeaders) new ObjectInputStream(in).readObject();
         } catch (Exception e) {
-            Logger.doLogException(TAG_ATTACHMENT_HEADERS, "DeSerialization of recipients failed", e);
+            Timber.e(e, "DeSerialization of recipients failed");
         }
         return result;
     }

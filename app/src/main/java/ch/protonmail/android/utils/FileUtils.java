@@ -1,27 +1,27 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.utils;
 
 import android.content.Context;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
-import android.util.Base64;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -34,14 +34,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import ch.protonmail.android.core.Constants;
+import timber.log.Timber;
 
-/**
- * Created by dkadrikj on 3/29/16.
- */
 public class FileUtils {
-
-    private static final String TAG_FILE_UTILS = "FileUtils";
-
 
     public static void createDownloadsDir(Context context) {
         File attachmentFile = new File(context.getFilesDir() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS);
@@ -64,6 +59,7 @@ public class FileUtils {
                 text.append('\n');
             }
         } catch (IOException e) {
+            Timber.i(e);
             return null;
         }
         return text.toString();
@@ -87,22 +83,22 @@ public class FileUtils {
         try {
             new ObjectOutputStream(out).writeObject(value);
         } catch (IOException e) {
-            Logger.doLogException(TAG_FILE_UTILS, "Serialization of recipients failed ", e);
+            Timber.e(e, "Serialization of recipients failed ");
         }
 
-        return Base64.encodeToString(out.toByteArray(),Base64.DEFAULT);
+        return Base64.encodeToString(out.toByteArray(), Base64.DEFAULT);
     }
 
     public static <T> T deserializeStringToObject(String value) {
-        if (value==null||value.equals("")) {
+        if (value == null || value.equals("")) {
             return null;
         }
-        ByteArrayInputStream in = new ByteArrayInputStream(Base64.decode(value,Base64.DEFAULT));
+        ByteArrayInputStream in = new ByteArrayInputStream(Base64.decode(value, Base64.DEFAULT));
         T result = null;
         try {
             result = (T) new ObjectInputStream(in).readObject();
         } catch (Exception e) {
-            Logger.doLogException(TAG_FILE_UTILS, "Deserialization of recipients failed", e);
+            Timber.e(e, "Deserialization of recipients failed");
         }
         return result;
     }
