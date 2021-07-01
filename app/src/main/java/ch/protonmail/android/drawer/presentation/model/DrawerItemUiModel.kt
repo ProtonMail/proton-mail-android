@@ -22,11 +22,10 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import ch.protonmail.android.core.Constants.DrawerOptionType
 import ch.protonmail.android.core.Constants.MessageLocationType
-import ch.protonmail.android.uiModel.LabelUiModel
 
 /**
  * Ui Model for Items in Navigation Drawer
- * @see ch.protonmail.android.adapters.DrawerAdapter
+ * @see ch.protonmail.android.drawer.presentation.ui.DrawerAdapter
  *
  * @author Davide Farella
  */
@@ -127,7 +126,7 @@ internal sealed class DrawerItemUiModel {
          * @param selected [Boolean] overridden in constructor for `copy` purpose
          */
         data class Label @JvmOverloads constructor(
-            val uiModel: LabelUiModel,
+            val uiModel: DrawerLabelUiModel,
             override val notificationCount: Int = 0,
             override val selected: Boolean = false
         ) : Primary() {
