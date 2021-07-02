@@ -154,12 +154,10 @@ internal class MessageDetailsAdapter(
                     // Message Body is expended - will collapse
                     headerView.collapseHeader()
                     headerView.forbidExpandingHeaderView()
-                    toggleExpandedItems(layoutPosition, false)
-                    return@setOnClickListener
+                } else {
+                    // Message Body is collapsed - will expand
+                    headerView.allowExpandingHeaderView()
                 }
-
-                // Message Body is collapsed - will expand
-                headerView.allowExpandingHeaderView()
                 toggleExpandedItems(layoutPosition, false)
             }
 
