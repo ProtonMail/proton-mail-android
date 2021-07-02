@@ -166,7 +166,7 @@ abstract class BaseRequestInterceptor(
             }
             RESPONSE_CODE_SERVICE_UNAVAILABLE -> { // 503
                 Timber.d("'service unavailable' when processing request")
-                networkUtils.setCurrentlyDoesntHaveConnectivity()
+                networkUtils.retryPingAsPreviousRequestWasInconclusive()
             }
             RESPONSE_CODE_UNPROCESSABLE_ENTITY -> {
                 Timber.d("'unprocessable entity' when processing request")

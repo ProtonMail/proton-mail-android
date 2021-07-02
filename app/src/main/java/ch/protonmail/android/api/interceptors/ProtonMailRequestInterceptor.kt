@@ -20,8 +20,6 @@ package ch.protonmail.android.api.interceptors
 
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.events.ConnectivityEvent
-import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.notifier.UserNotifier
 import com.birbit.android.jobqueue.JobManager
 import me.proton.core.accountmanager.domain.SessionManager
@@ -51,14 +49,13 @@ class ProtonMailRequestInterceptor private constructor(
             val response: Response = chain.proceed(request)
 
             networkUtils.setCurrentlyHasConnectivity()
-            AppUtil.postEventOnUi(ConnectivityEvent(true))
 
             // check validity of response (DoH expiration and error codes)
             return checkResponse(response, chain)
 
         } catch (exception: IOException) {
             Timber.d(exception, "Intercept: IOException with url: " + request.url)
-            networkUtils.setConnectivityHasFailed(exception)
+            networkUtils.retryPingAsPreviousRequestWasInconclusive()
             throw exception
         } finally {
             requestCount--

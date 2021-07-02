@@ -34,8 +34,6 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
-import ch.protonmail.android.events.ConnectivityEvent
-import ch.protonmail.android.utils.AppUtil
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
@@ -75,7 +73,6 @@ class PingWorker @AssistedInject constructor(
                 onFailure = { throwable ->
                     Timber.v("Ping isAccessible: failed")
                     queueNetworkUtil.setConnectivityHasFailed(throwable)
-                    AppUtil.postEventOnUi(ConnectivityEvent(false))
                     Result.failure(
                         workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${throwable.message}")
                     )
