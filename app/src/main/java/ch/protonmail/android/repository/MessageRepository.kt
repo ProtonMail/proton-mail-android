@@ -40,6 +40,7 @@ import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
@@ -229,13 +230,21 @@ class MessageRepository @Inject constructor(
                     Timber.d("Skipping network refresh as connectivity is not available")
                     return@onStart
                 }
+
                 Timber.v("location: $location, trying fetching from remote")
-                val messagesResponse =
-                    protonMailApiManager.getMessages(location.messageLocationTypeValue, UserIdTag(userId))
-                if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
-                    emit(messagesResponse.messages)
-                    persistMessages(messagesResponse.messages, userId, location.messageLocationTypeValue)
-                }
+                runCatching { protonMailApiManager.getMessages(location.messageLocationTypeValue, UserIdTag(userId)) }
+                    .fold(
+                        onSuccess = { messagesResponse ->
+                            if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
+                                persistMessages(messagesResponse.messages, userId, location.messageLocationTypeValue)
+                            }
+                        },
+                        onFailure = { exception ->
+                            val dbData = observeLocationDbDataFlow(location, messagesDao).first()
+                            emit(dbData)
+                            throw exception
+                        }
+                    )
             }
     }
 
@@ -259,15 +268,27 @@ class MessageRepository @Inject constructor(
                     Timber.d("Skipping network refresh as connectivity is not available")
                     return@onStart
                 }
+
                 Timber.v("labelId: $labelId, trying fetching from remote")
-                val labelsResponse = protonMailApiManager.searchByLabelAndPage(labelId, 0)
-                if (labelsResponse.code == Constants.RESPONSE_CODE_OK) {
-                    persistMessages(labelsResponse.messages, userId)
-                }
+                runCatching { protonMailApiManager.searchByLabelAndPage(labelId, 0) }
+                    .fold(
+                        onSuccess = { labelsResponse ->
+                            if (labelsResponse.code == Constants.RESPONSE_CODE_OK) {
+                                persistMessages(labelsResponse.messages, userId)
+                            }
+                        },
+                        onFailure = { exception ->
+                            val dbData = messagesDao.observeMessagesByLabelId(labelId).first()
+                            emit(dbData)
+                            throw exception
+                        }
+                    )
             }
     }
 
-    fun observeAllMessages(userId: Id): Flow<List<Message>> {
+    fun observeAllMessages(
+        userId: Id
+    ): Flow<List<Message>> {
         val messagesDao = databaseProvider.provideMessageDao(userId)
         return messagesDao.observeAllMessages()
             .onStart {
@@ -276,14 +297,26 @@ class MessageRepository @Inject constructor(
                     Timber.d("Skipping network refresh as connectivity is not available")
                     return@onStart
                 }
+
                 Timber.v("re-fetching messages all from remote")
-                val messagesResponse = protonMailApiManager.getMessages(
-                    Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
-                    UserIdTag(userId)
-                )
-                if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
-                    persistMessages(messagesResponse.messages, userId)
+                runCatching {
+                    protonMailApiManager.getMessages(
+                        Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
+                        UserIdTag(userId)
+                    )
                 }
+                    .fold(
+                        onSuccess = { messagesResponse ->
+                            if (messagesResponse.code == Constants.RESPONSE_CODE_OK) {
+                                persistMessages(messagesResponse.messages, userId)
+                            }
+                        },
+                        onFailure = { exception ->
+                            val dbData = messagesDao.observeAllMessages().first()
+                            emit(dbData)
+                            throw exception
+                        }
+                    )
             }
     }
 
@@ -301,5 +334,4 @@ class MessageRepository @Inject constructor(
         }
         messagesDao.saveMessages(messages)
     }
-
 }

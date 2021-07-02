@@ -60,7 +60,9 @@ import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -70,6 +72,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -120,6 +123,10 @@ class MailboxViewModel @Inject constructor(
     private val mutableMailboxLocation = MutableStateFlow(INBOX)
     private val mutableMailboxLabelId = MutableStateFlow(EMPTY_STRING)
     private val mutableUserId = MutableStateFlow(requireNotNull(userManager.currentUserId))
+    private val mutableRefreshFlow = MutableSharedFlow<Boolean>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
 
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning
@@ -140,17 +147,22 @@ class MailboxViewModel @Inject constructor(
     val mailboxLocation = mutableMailboxLocation.asStateFlow()
 
     init {
-        combine(mutableMailboxLocation, mutableMailboxLabelId, mutableUserId) { location, label, userId ->
+        combine(
+            mutableMailboxLocation,
+            mutableMailboxLabelId,
+            mutableUserId,
+            mutableRefreshFlow.onStart { emit(false) }
+        ) { location, label, userId, isRefresh ->
+            Timber.v("New location: $location, label: $label, user: $userId, isRefresh: $isRefresh")
             Triple(location, label, userId)
         }
             .onEach {
-                Timber.v("New location,label,user: $it")
                 mutableMailboxState.value = MailboxState.Loading
             }
-            .flatMapLatest { triple ->
-                val location = triple.first
-                val labelId = triple.second
-                val userId = triple.third
+            .flatMapLatest { parameters ->
+                val location = parameters.first
+                val labelId = parameters.second
+                val userId = parameters.third
 
                 if (conversationModeEnabled(location)) {
                     Timber.v("Getting conversations for $location, label: $labelId, user: $userId")
@@ -606,6 +618,10 @@ class MailboxViewModel @Inject constructor(
 
     fun setNewUserId(currentUserId: Id) {
         mutableUserId.value = currentUserId
+    }
+
+    fun refreshMessages() {
+        mutableRefreshFlow.tryEmit(true)
     }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)

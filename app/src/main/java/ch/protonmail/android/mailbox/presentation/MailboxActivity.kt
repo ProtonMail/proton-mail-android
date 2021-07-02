@@ -1221,15 +1221,7 @@ class MailboxActivity :
     override fun onRefresh() {
         syncUUID = UUID.randomUUID().toString()
         mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
-        loadMailboxItems(
-            includeLabels = true,
-            refreshMessages = true
-        )
-        // this is just to stop the progress to prevent it being shown "forever"
-        lifecycleScope.launch {
-            delay(3.toDuration(TimeUnit.SECONDS))
-            setRefreshing(false)
-        }
+        mailboxViewModel.refreshMessages()
     }
 
     private fun now() = System.currentTimeMillis() / 1000
