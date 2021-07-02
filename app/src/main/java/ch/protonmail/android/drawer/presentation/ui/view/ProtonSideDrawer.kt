@@ -28,6 +28,7 @@ import androidx.annotation.StyleRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
+import ch.protonmail.android.drawer.presentation.ui.DrawerAdapter
 
 internal class ProtonSideDrawer @JvmOverloads constructor(
     context: Context,
