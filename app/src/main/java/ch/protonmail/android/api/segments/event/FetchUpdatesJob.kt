@@ -16,68 +16,49 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.segments.event;
+package ch.protonmail.android.api.segments.event
 
-import androidx.annotation.Nullable;
+import ch.protonmail.android.api.AccountManager
+import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
+import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.events.FetchUpdatesEvent
+import ch.protonmail.android.events.Status
+import ch.protonmail.android.jobs.Priority
+import ch.protonmail.android.jobs.ProtonMailBaseJob
+import ch.protonmail.android.utils.AppUtil
+import com.birbit.android.jobqueue.Params
+import timber.log.Timber
+import java.net.ConnectException
+import java.util.concurrent.TimeUnit
 
-import com.birbit.android.jobqueue.Params;
+class FetchUpdatesJob internal constructor(private val eventManager: EventManager) : ProtonMailBaseJob(
+    Params(Priority.HIGH).requireNetwork()
+) {
 
-import java.net.ConnectException;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+    constructor() : this(ProtonMailApplication.getApplication().eventManager)
 
-import ch.protonmail.android.api.AccountManager;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
-import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.events.ConnectivityEvent;
-import ch.protonmail.android.events.FetchUpdatesEvent;
-import ch.protonmail.android.events.Status;
-import ch.protonmail.android.jobs.Priority;
-import ch.protonmail.android.jobs.ProtonMailBaseJob;
-import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.Logger;
-
-public class FetchUpdatesJob extends ProtonMailBaseJob {
-
-    private static final String TAG_FETCH_UPDATES_JOB = "FetchUpdatesJob";
-    private EventManager eventManager;
-
-    FetchUpdatesJob(EventManager eventManager) {
-        super(new Params(Priority.HIGH).requireNetwork());
-        this.eventManager = eventManager;
-	}
-
-	public FetchUpdatesJob() {
-        this(ProtonMailApplication.getApplication().getEventManager());
-    }
-
-    @Override
-    public void onRun() throws Throwable {
-        MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
+    @Throws(Throwable::class)
+    override fun onRun() {
+        val messageDao = MessagesDatabaseFactory.getInstance(applicationContext).getDatabase()
         if (!getQueueNetworkUtil().isConnected()) {
-            Logger.doLog(TAG_FETCH_UPDATES_JOB, "no network cannot fetch updates");
-            AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.NO_NETWORK));
-            return;
+            Timber.i("no network cannot fetch updates")
+            return
         }
 
-        //check for expired messages in the cache and delete them
-        long currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-        messagesDatabase.deleteExpiredMessages(currentTime);
+        // check for expired messages in the cache and delete them
+        val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+        messageDao.deleteExpiredMessages(currentTime)
         try {
-            List<String> loggedInUsers = AccountManager.Companion.getInstance(ProtonMailApplication.getApplication()).getLoggedInUsers();
-            eventManager.start(loggedInUsers);
-            AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.SUCCESS));
-        } catch (Exception e) {
-            if (e.getCause() instanceof ConnectException) {
-                AppUtil.postEventOnUi(new ConnectivityEvent(false));
+            val loggedInUsers = AccountManager.getInstance(ProtonMailApplication.getApplication()).getLoggedInUsers()
+            eventManager.start(loggedInUsers)
+            AppUtil.postEventOnUi(FetchUpdatesEvent(Status.SUCCESS))
+        } catch (e: Exception) {
+            Timber.e(e, "FetchUpdatesJob has failed")
+            if (e is ConnectException) {
+                getQueueNetworkUtil().retryPingAsPreviousRequestWasInconclusive()
             }
-            AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.FAILED));
         }
     }
 
-    @Override
-    protected void onProtonCancel(int cancelReason, @Nullable Throwable throwable) {
-        AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.FAILED));
-    }
+    override fun onProtonCancel(cancelReason: Int, throwable: Throwable?) {}
 }

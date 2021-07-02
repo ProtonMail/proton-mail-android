@@ -391,6 +391,7 @@ object Constants {
     }
 
     enum class ConnectionState {
+        PING_NEEDED,
         CONNECTED,
         NO_INTERNET,
         CANT_REACH_SERVER;
