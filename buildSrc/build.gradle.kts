@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    val android =       "4.2.1"         // Released: May, 2021
+    val android =       "4.2.2"         // Released: June, 2021
     val easyGradle =    "2.7"           // Released: Oct 15, 2020
 
     // Needed for setup Android config
