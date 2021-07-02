@@ -530,8 +530,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             onBackPressed()
         }
         messageDetailsActionsView.setOnSecondActionClickListener {
-            viewModel.markUnread()
             onBackPressed()
+            viewModel.markUnread()
         }
         messageDetailsActionsView.setOnFirstActionClickListener {
             val messageAction = if (message.toList.size + message.ccList.size > 1) {
@@ -541,7 +541,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             }
             executeMessageAction(messageAction, message)
         }
-
     }
 
     private fun displayToolbarData(conversation: ConversationUiModel) {
