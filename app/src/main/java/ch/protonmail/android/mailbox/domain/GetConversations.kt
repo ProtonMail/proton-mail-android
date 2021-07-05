@@ -24,6 +24,7 @@ import ch.protonmail.android.mailbox.data.NO_MORE_CONVERSATIONS_ERROR_CODE
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.arch.DataResult
 import timber.log.Timber
@@ -72,6 +73,9 @@ class GetConversations @Inject constructor(
                         GetConversationsResult.Error()
                     }
                 }
+            }
+            .catch {
+                emit(GetConversationsResult.Error(it))
             }
     }
 

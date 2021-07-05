@@ -39,8 +39,8 @@ import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.StoreBuilder
 import com.dropbox.android.external.store4.StoreRequest
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emitAll
@@ -55,8 +55,10 @@ import me.proton.core.domain.arch.DataResult.Success
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.math.max
+import kotlin.time.toDuration
 
 const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
 
@@ -94,7 +96,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         loadMore(params)
 
         return paramFlow.transformLatest { parameters ->
-
+            Timber.v("New parameters: $parameters")
             runCatching {
                 api.fetchConversations(parameters)
             }.fold(
@@ -106,11 +108,11 @@ class ConversationsRepositoryImpl @Inject constructor(
                     }
                 },
                 onFailure = { throwable ->
-                    Timber.i(throwable, "fetchConversations error")
-                    if (throwable is CancellationException) {
-                        throw throwable
-                    }
-                    emit(Error.Remote(throwable.message, throwable))
+                    val dbData = getConversationsLocal(parameters).first()
+                    Timber.i(throwable, "fetchConversations error, local data size: ${dbData.size}")
+                    emit(Success(ResponseSource.Local, dbData))
+                    delay(1.toDuration(TimeUnit.SECONDS))
+                    throw throwable
                 }
             )
 
@@ -222,7 +224,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             ).toDomainModelList()
         }
 
-    private fun getConversationLocal(conversationId: String, userId: Id) =
+    private fun getConversationLocal(conversationId: String, userId: Id): Flow<Conversation> =
         messageDao.findAllMessageFromAConversation(conversationId).flatMapConcat { localMessages ->
             val messages = localMessages.toDomainModelList()
             conversationDao.getConversation(conversationId, userId.s).map { it.toDomainModel(messages) }
