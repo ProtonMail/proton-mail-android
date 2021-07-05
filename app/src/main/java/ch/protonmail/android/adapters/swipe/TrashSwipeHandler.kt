@@ -24,13 +24,13 @@ import ch.protonmail.android.jobs.MoveToFolderJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostDraftJob
 import ch.protonmail.android.jobs.PostInboxJob
-import ch.protonmail.android.jobs.PostTrashJob
+import ch.protonmail.android.jobs.PostTrashJobV2
 import com.birbit.android.jobqueue.Job
 
 class TrashSwipeHandler : ISwipeHandler {
 
     override fun handleSwipe(message: SimpleMessage, currentLocation: String?): Job =
-        PostTrashJob(listOf(message.messageId), currentLocation)
+        PostTrashJobV2(listOf(message.messageId), currentLocation)
 
     override fun handleUndo(
         message: SimpleMessage,

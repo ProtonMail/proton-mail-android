@@ -30,10 +30,11 @@ import ch.protonmail.android.api.models.IDList;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
+import ch.protonmail.android.data.local.model.Label;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
-import ch.protonmail.android.events.RefreshDrawerEvent;
-import ch.protonmail.android.utils.AppUtil;
 
 public class PostTrashJobV2 extends ProtonMailCounterJob {
 
@@ -80,8 +81,8 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
                     if (!TextUtils.isEmpty(mLabelId)) {
                         message.removeLabels(Collections.singletonList(mLabelId));
                     }
+                    removeOldFolderIds(message);
                     message.setLocation(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue());
-
                 }
                 if (mFolderIds != null) {
                     for (String folderId : mFolderIds) {
@@ -101,7 +102,27 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
         unreadLocationCounter.increment(totalUnread);
         counterDao.insertUnreadLocation(unreadLocationCounter);
 
-        AppUtil.postEventOnUi(new RefreshDrawerEvent());
+    }
+
+    private void removeOldFolderIds(Message message) {
+        int oldLocation = message.getLocation();
+        List<String> oldLabels = message.getAllLabelIDs();
+        ArrayList<String> labelsToRemove = new ArrayList<>();
+        labelsToRemove.add(String.valueOf(oldLocation));
+
+        MessageDao messageDao = MessageDatabase.Factory
+                .getInstance(getApplicationContext(), getUserId())
+                .getDao();
+
+        for (String labelId : oldLabels) {
+            Label label = messageDao.findLabelById(labelId);
+            // find folders
+            if (label != null && label.getExclusive()) {
+                labelsToRemove.add(labelId);
+            }
+        }
+
+        message.removeLabels(labelsToRemove);
     }
 
     @Override

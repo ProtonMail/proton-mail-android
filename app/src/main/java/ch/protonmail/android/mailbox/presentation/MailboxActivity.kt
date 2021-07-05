@@ -938,16 +938,6 @@ class MailboxActivity :
         if (!isDohOngoing) {
             showToast(event.status)
         }
-        val mailboxLocation = mailboxViewModel.mailboxLocation.value
-        val setOfLabels =
-            setOf(
-                MessageLocationType.LABEL,
-                MessageLocationType.LABEL_FOLDER,
-                MessageLocationType.LABEL_OFFLINE
-            )
-        if (event.status == Status.NO_NETWORK && setOfLabels.any { it == mailboxLocation }) {
-            setMailboxLocation(MessageLocationType.LABEL_OFFLINE)
-        }
         mNetworkResults.setMailboxLoaded(MailboxLoadedEvent(Status.SUCCESS, null))
     }
 

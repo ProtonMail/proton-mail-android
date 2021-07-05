@@ -30,7 +30,8 @@ import javax.inject.Inject
 
 class MessageFactory @Inject constructor(
     private val attachmentFactory: IAttachmentFactory,
-    private val messageSenderFactory: MessageSenderFactory
+    private val messageSenderFactory: MessageSenderFactory,
+    private val messageLocationResolver: MessageLocationResolver
 ) {
 
     fun createDraftApiRequest(message: Message): DraftBody = DraftBody(message.toApiPayload())
@@ -49,30 +50,7 @@ class MessageFactory @Inject constructor(
             message.sender = messageSenderFactory.createMessageSender(serverMessageSender)
             message.time = it.Time.checkIfSet("Time")
             message.totalSize = it.Size.checkIfSet("Size")
-            message.location = it.LabelIDs!!
-                .asSequence()
-                .filter { it.length <= 2 }
-                .map { it.toInt() }
-                .fold(Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue) { location, newLocation ->
-                    if (
-                        newLocation !in listOf(
-                            Constants.MessageLocationType.STARRED.messageLocationTypeValue,
-                            Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
-                            Constants.MessageLocationType.INVALID.messageLocationTypeValue
-                        ) &&
-                        newLocation < location
-                    ) {
-                        newLocation
-                    } else if (
-                        newLocation in listOf(
-                            Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
-                            Constants.MessageLocationType.SENT.messageLocationTypeValue
-                        )
-                    ) {
-                        newLocation
-                    } else
-                        location
-                }
+            message.location = messageLocationResolver.resolveLocationFromLabels(it.LabelIDs ?: emptyList()).messageLocationTypeValue
             message.isStarred = it.LabelIDs!!
                 .asSequence()
                 .filter { it.length <= 2 }
@@ -101,12 +79,12 @@ class MessageFactory @Inject constructor(
             message.embeddedImageIds = it.embeddedImagesArray?.toList() ?: emptyList()
             val numOfAttachments = message.numAttachments
             val attachmentsListSize = message.attachments.size
-            if (attachmentsListSize != 0 && attachmentsListSize != numOfAttachments)
+            if (attachmentsListSize != 0 && attachmentsListSize != numOfAttachments) {
                 throw IllegalArgumentException(
                     "Attachments size does not match expected: $numOfAttachments, actual: $attachmentsListSize "
                 )
+            }
             message
         }
     }
-
 }

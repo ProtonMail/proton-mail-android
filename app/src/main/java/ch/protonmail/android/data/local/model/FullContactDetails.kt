@@ -153,7 +153,7 @@ class FullContactDetailsConverter {
             val encryptedDataArray = contactEncryptedDataList?.toTypedArray() ?: arrayOf()
             ObjectOutputStream(out).writeObject(encryptedDataArray)
         } catch (e: IOException) {
-            Timber.e("Serialization of encrypted data failed ", e)
+            Timber.e(e, "Serialization of encrypted data failed ")
         }
 
         return Base64.encodeToString(out.toByteArray(), Base64.DEFAULT)

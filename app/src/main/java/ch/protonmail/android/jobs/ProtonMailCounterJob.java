@@ -29,8 +29,6 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
-import ch.protonmail.android.events.RefreshDrawerEvent;
-import ch.protonmail.android.utils.AppUtil;
 
 public abstract class ProtonMailCounterJob extends ProtonMailEndlessJob {
 
@@ -53,7 +51,7 @@ public abstract class ProtonMailCounterJob extends ProtonMailEndlessJob {
         for (String id : messageIds) {
             final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
-                if ( !message.isRead() ) {
+                if (!message.isRead()) {
                     UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
                     if (unreadLocationCounter != null) {
                         unreadLocationCounter.increment();
@@ -70,6 +68,5 @@ public abstract class ProtonMailCounterJob extends ProtonMailEndlessJob {
         }
         unreadLocationCounter.decrement(totalUnread);
         counterDao.insertUnreadLocation(unreadLocationCounter);
-        AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 }

@@ -22,6 +22,7 @@ import android.text.TextUtils;
 
 import com.birbit.android.jobqueue.Params;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,8 +32,7 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
-import ch.protonmail.android.events.RefreshDrawerEvent;
-import ch.protonmail.android.utils.AppUtil;
+import timber.log.Timber;
 
 public class PostArchiveJob extends ProtonMailCounterJob {
 
@@ -60,17 +60,9 @@ public class PostArchiveJob extends ProtonMailCounterJob {
         for (String id : mMessageIds) {
             final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
-                if (markMessageLocally(counterDao, message)) {
+                if (updateMessageLocally(counterDao, message)) {
                     totalUnread++;
                 }
-                if (mFolderIds != null) {
-                    for (String folderId : mFolderIds) {
-                        if (!TextUtils.isEmpty(folderId)) {
-                            message.removeLabels(Collections.singletonList(folderId));
-                        }
-                    }
-                }
-                getMessageDetailsRepository().saveMessageBlocking(message);
             }
         }
 
@@ -80,11 +72,10 @@ public class PostArchiveJob extends ProtonMailCounterJob {
         }
         unreadLocationCounter.increment(totalUnread);
         counterDao.insertUnreadLocation(unreadLocationCounter);
-        AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 
-    private boolean markMessageLocally(CounterDao counterDao,
-                                       Message message) {
+    private boolean updateMessageLocally(CounterDao counterDao,
+                                         Message message) {
         boolean unreadIncrease = false;
         if (!message.isRead()) {
             UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
@@ -95,13 +86,20 @@ public class PostArchiveJob extends ProtonMailCounterJob {
             unreadIncrease = true;
         }
         if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.SENT) {
-            message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
             message.removeLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.SENT.getMessageLocationTypeValue())));
             message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.ALL_SENT.getMessageLocationTypeValue())));
 
-        } else {
-            message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
         }
+        if (mFolderIds != null) {
+            for (String folderId : mFolderIds) {
+                if (!TextUtils.isEmpty(folderId)) {
+                    message.removeLabels(Collections.singletonList(folderId));
+                }
+            }
+        }
+        message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
+        message.setLabelIDs(Arrays.asList(String.valueOf(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue())));
+        Timber.d("Archive message id: %s, location: %s, labels: %s", message.getMessageId(), message.getLocation(), message.getAllLabelIDs());
         getMessageDetailsRepository().saveMessageBlocking(message);
         return unreadIncrease;
     }

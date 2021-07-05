@@ -34,6 +34,7 @@ import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.RecipientType
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
 import ch.protonmail.android.api.models.messages.ParsedHeaders
+import ch.protonmail.android.api.models.messages.receive.MessageLocationResolver
 import ch.protonmail.android.api.models.messages.receive.ServerMessageSender
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
@@ -284,32 +285,9 @@ data class Message @JvmOverloads constructor(
         get() =
             MessageUtils.toContactString(bccList)
 
-    fun locationFromLabel(): Constants.MessageLocationType =
-        allLabelIDs
-            .asSequence()
-            .filter { it.length <= 2 }
-            .map { Constants.MessageLocationType.fromInt(it.toInt()) }
-            .fold(Constants.MessageLocationType.STARRED) { location, newLocation ->
-
-                if (newLocation !in listOf(
-                        Constants.MessageLocationType.STARRED,
-                        Constants.MessageLocationType.ALL_MAIL,
-                        Constants.MessageLocationType.INVALID
-                    ) && newLocation.messageLocationTypeValue < location.messageLocationTypeValue
-                ) {
-                    newLocation
-
-                } else if (newLocation in listOf(
-                        Constants.MessageLocationType.DRAFT,
-                        Constants.MessageLocationType.SENT
-                    )
-                ) {
-                    newLocation
-
-                } else {
-                    location
-                }
-            }
+    fun locationFromLabel(messageDao: MessageDao? = null): Constants.MessageLocationType  {
+        return MessageLocationResolver(messageDao).resolveLocationFromLabels(allLabelIDs)
+    }
 
     val isSent: Boolean
         get() {
@@ -355,9 +333,7 @@ data class Message @JvmOverloads constructor(
             embedded.add(match.removePrefix("cid:"))
         }
         embeddedImageIds = embedded
-
     }
-
 
     fun setLabelIDs(labelIDs: List<String>?) {
         allLabelIDs = labelIDs ?: ArrayList()

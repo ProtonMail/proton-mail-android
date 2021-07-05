@@ -2,7 +2,7 @@
 
 # Default excluded files are `` ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**'] ``
 build:
-  maxIssues: 3600
+  maxIssues: 3300
   excludeCorrectable: false
   weights:
   # complexity: 2

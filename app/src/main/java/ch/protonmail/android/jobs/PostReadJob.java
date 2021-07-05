@@ -29,8 +29,6 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
-import ch.protonmail.android.events.RefreshDrawerEvent;
-import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.ServerTime;
 import timber.log.Timber;
 
@@ -45,7 +43,7 @@ public class PostReadJob extends ProtonMailEndlessJob {
 
     @Override
     public void onAdded() {
-        Timber.d("markRead %s",mMessageIds);
+        Timber.d("markRead %s", mMessageIds);
         final CounterDao counterDao = CounterDatabase.Companion
                 .getInstance(getApplicationContext(), getUserId())
                 .getDao();
@@ -79,7 +77,6 @@ public class PostReadJob extends ProtonMailEndlessJob {
             }
             counterDao.insertAllUnreadLocations(countersToUpdate);
         }
-        AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 
     @Override

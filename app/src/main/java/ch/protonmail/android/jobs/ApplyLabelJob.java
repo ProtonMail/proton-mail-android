@@ -31,8 +31,6 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLabelCounter;
-import ch.protonmail.android.events.RefreshDrawerEvent;
-import ch.protonmail.android.utils.AppUtil;
 
 /**
  * Created by dkadrikj on 17.7.15.
@@ -58,7 +56,7 @@ public class ApplyLabelJob extends ProtonMailEndlessJob {
     }
 
     enum ModificationMethod {
-        INCREMENT,DECREMENT
+        INCREMENT, DECREMENT
     }
 
     private void countUnread(@NonNull ModificationMethod modificationMethod) {
@@ -78,8 +76,7 @@ public class ApplyLabelJob extends ProtonMailEndlessJob {
 
         UnreadLabelCounter unreadLabelCounter = counterDao.findUnreadLabelById(labelId);
         if (unreadLabelCounter != null) {
-            switch(modificationMethod)
-            {
+            switch (modificationMethod) {
                 case INCREMENT:
                     unreadLabelCounter.increment(totalUnread);
                     break;
@@ -88,7 +85,6 @@ public class ApplyLabelJob extends ProtonMailEndlessJob {
                     break;
             }
             counterDao.insertUnreadLabel(unreadLabelCounter);
-            AppUtil.postEventOnUi(new RefreshDrawerEvent());
         }
     }
 

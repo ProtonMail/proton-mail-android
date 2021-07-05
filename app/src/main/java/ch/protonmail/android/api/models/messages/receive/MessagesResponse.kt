@@ -22,14 +22,14 @@ import ch.protonmail.android.api.models.ResponseBody
 import com.google.gson.annotations.SerializedName
 
 class MessagesResponse : ResponseBody() {
-    var Total: Int = 0
     @SerializedName("Messages")
     var serverMessages: List<ServerMessage>? = null
 
     val messages by lazy {
         val attachmentFactory = AttachmentFactory()
         val messageSenderFactory = MessageSenderFactory()
-        val messageFactory = MessageFactory(attachmentFactory, messageSenderFactory)
+        val messageLocationResolver = MessageLocationResolver(null)
+        val messageFactory = MessageFactory(attachmentFactory, messageSenderFactory, messageLocationResolver)
 
         serverMessages?.map(messageFactory::createMessage) ?: emptyList()
     }

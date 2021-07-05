@@ -46,6 +46,7 @@
         android:id="@+id/checkbox_manage_labels_action_is_checked"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/padding_l"
         android:clickable="false"
         android:focusable="false"
         android:text="@null"

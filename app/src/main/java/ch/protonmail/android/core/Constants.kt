@@ -209,7 +209,6 @@ object Constants {
         DRAFT(8),
         STARRED(10),
         LABEL(77),
-        LABEL_OFFLINE(88),
         SEARCH(99),
         LABEL_FOLDER(999);
 

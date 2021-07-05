@@ -18,24 +18,24 @@
  */
 package ch.protonmail.android.adapters.swipe
 
-import com.birbit.android.jobqueue.Job
-
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.jobs.MoveToFolderJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
+import com.birbit.android.jobqueue.Job
 
-/**
- * Created by dkadrikj on 9.7.15.
- */
 class ArchiveSwipeHandler : ISwipeHandler {
 
     override fun handleSwipe(message: SimpleMessage, currentLocation: String?): Job {
         return PostArchiveJob(listOf(message.messageId), listOf(currentLocation))
     }
 
-    override fun handleUndo(message: SimpleMessage, messageLocation: Constants.MessageLocationType, currentLocation: String?): Job {
+    override fun handleUndo(
+        message: SimpleMessage,
+        messageLocation: Constants.MessageLocationType,
+        currentLocation: String?
+    ): Job {
         return if (messageLocation == Constants.MessageLocationType.LABEL_FOLDER) {
             MoveToFolderJob(listOf(message.messageId), currentLocation)
         } else {

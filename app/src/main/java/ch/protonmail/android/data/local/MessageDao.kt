@@ -134,7 +134,7 @@ interface MessageDao {
         }
 
     suspend fun findMessageByIdOnce(messageId: String): Message? = findMessageInfoByIdOnce(messageId)?.also { message ->
-        message.attachments = message.attachmentsBlocking(this)
+        message.attachments = findAttachmentByMessageId(messageId)
     }
 
     @Deprecated("Use Flow variant", ReplaceWith("findMessageById(messageId).first()"))
@@ -221,7 +221,7 @@ interface MessageDao {
     fun findAllMessageInfoFromAConversation(conversationId: String): Flow<List<Message>>
 
     suspend fun saveMessage(message: Message): Long {
-        Timber.d("saveMessage ${message.messageId}")
+        Timber.d("saveMessage ${message.messageId}, location: ${message.location}, labels: ${message.allLabelIDs}")
         processMessageAttachments(message)
         return saveMessageInfo(message)
     }
@@ -352,6 +352,9 @@ interface MessageDao {
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
     fun findAttachmentsByMessageId(messageId: String): Flow<List<Attachment>>
+
+    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
+    suspend fun findAttachmentByMessageId(messageId: String): List<Attachment>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAttachment(attachment: Attachment): Long
