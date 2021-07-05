@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">Giorni</string>
     <string name="x_folders">Cartelle</string>
+    <string name="x_hours">Ore</string>
     <string name="x_labels">Etichette</string>
     <string name="x_more">Altro</string>
     <string name="x_search">Ricerca</string>
+    <string name="x_set">Imposta</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contatti</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">Da:</string>
     <string name="composer_subject">Oggetto:</string>
     <string name="composer_to">A:</string>
+    <string name="set_msg_password_title">Imposta password</string>
+    <string name="set_msg_password_info">Imposta una password per cifrare questo messaggio per utenti non protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Per saperne di più</a></string>
+    <string name="set_msg_password_info_icon_description">Info</string>
+    <string name="set_msg_password_msg_password_title">Password messaggio</string>
+    <string name="set_msg_password_msg_password_hint">da 4 a 21 caratteri</string>
+    <string name="set_msg_password_repeat_password_title">Ripeti la password</string>
+    <string name="set_msg_password_repeat_password_hint">Le password devono corrispondere</string>
+    <string name="set_msg_password_password_hint_title">Suggerimento password</string>
+    <string name="set_msg_password_password_hint_hint">Definisci suggerimento (opzionale)</string>
+    <string name="set_msg_password_apply_password">Applica password</string>
+    <string name="set_msg_password_remove_password">Rimuovi password</string>
+    <string name="set_msg_password_error_too_short">Password troppo corta</string>
+    <string name="set_msg_password_error_too_long">Password troppo lunga</string>
+    <string name="set_msg_password_error_mismatch">La password non corrisponde</string>
+    <string name="set_msg_expiration_title">Scadenza del messaggio</string>
+    <string name="set_msg_expiration_none">Nessuno</string>
+    <string name="set_msg_expiration_1_hour">1 ora</string>
+    <string name="set_msg_expiration_1_day">1 giorno</string>
+    <string name="set_msg_expiration_3_days">3 giorni</string>
+    <string name="set_msg_expiration_1_week">1 settimana</string>
+    <string name="set_msg_expiration_custom">Personalizzato</string>
+    <string name="set_msg_expiration_check_description">Questo elemento è controllato</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Imposta codice PIN</string>
+    <string name="settings_confirm_pin_code_title">Ripeti il codice PIN</string>
+    <string name="settings_pins_dont_match">I codici PIN devono corrispondere!</string>
+    <string name="settings_enter_pin_code_title">Inserisci il codice PIN</string>
+    <string name="settings_swipe_settings_info">Configura i gesti di scorrimento per accedere alle azioni più usate.</string>
+    <string name="settings_swipe_left_to_right">Da sinistra a destra</string>
+    <string name="settings_swipe_right_to_left">Da destra a sinistra</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Annullare le modifiche?</string>
+    <string name="dialog_discard_changes_message">Eventuali modifiche non salvate verranno scartate.</string>
+    <string name="discard">Annulla</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -443,6 +482,8 @@
     <string name="vcard_other_option_role">Ruolo</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Converti contatto</string>
+    <string name="contacts_import_contact">Importa Contatto</string>
+    <string name="contacts_import">Importa</string>
     <string name="upload_contacts">Carica contatti</string>
     <string name="upgrade_encrypted_contact">Per favore, effettui l\'upgrade per usare la cifratura delle informazioni del contatto.</string>
     <string name="uploading_contacts">Caricamento dei contatti…</string>
@@ -588,7 +629,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Messaggio crittografato end-to-end</string>
     <string name="sender_lock_internal_verified">Messaggio crittografato ent-to-end da un indirizzo verificato</string>
-    <string name="sender_lock_learn_more"><a href="">Per saperne di più</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Per saperne di più</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Crittografia end-to-end</string>
     <string name="composer_lock_internal_pinned">Destinatario crittografato end-to-end verificato</string>
@@ -630,10 +671,11 @@
     <string name="edit_contact">Modifica contatto</string>
     <string name="create_contact_group">Creare un gruppo di contatto</string>
     <string name="edit_contact_group">Modifica un gruppo di contatto</string>
+    <string name="contact_groups_manage_members">Gestisci i membri</string>
     <string name="contact_group_display_name">Nome visualizzato</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Aggiungere indirizzo ai gruppi</string>
-    <string name="title_activity_address_chooser">Gestire gli indirizzi</string>
+    <string name="title_activity_address_chooser">Gestisci i membri</string>
     <string name="title_activity_account_manager">Gestisci account</string>
     <string name="account_manager_add_account">Aggiungi account</string>
     <string name="account_manager_remove_all_accounts">Rimuovendo tutti gli account</string>
@@ -646,7 +688,7 @@
     <string name="account_manager_remove">Rimuovi</string>
     <string name="default_error_message">Si è verificato un errore</string>
     <string name="no_contact_groups">Nessun gruppo di contatto</string>
-    <string name="search_contacts_inside_group">Ricerca di contatti all\'interno del gruppo</string>
+    <string name="search_contacts_inside_group">Cerca contatti</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d membro</item>
@@ -728,10 +770,11 @@
     <string name="display_name">Nome visualizzato</string>
     <string name="edit_display_name">Modifica nome visualizzato</string>
     <string name="signature">Firma</string>
-    <string name="mobile_footer">Firma mobile</string>
-    <string name="edit_mobile_footer">Abilita firma mobile</string>
+    <string name="mobile_footer">Piè di pagina mobile</string>
+    <string name="edit_mobile_footer">Abilita piè di pagina mobile</string>
     <string name="default_mobile_footer">Inviato da ProtonMail mobile</string>
-    <string name="mobile_footer_is_premium">La modifica della firma mobile è permessa solo agli utenti premium</string>
+    <string name="mobile_footer_is_premium">Cambiare il piè di pagina mobile è consentito solo agli utenti a pagamento</string>
+    <string name="mobile_footer_info">Questo piè di pagina viene aggiunto dopo la firma</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Posticipa</string>
     <string name="notifications_snooze">Silenzia notifiche</string>
@@ -792,18 +835,21 @@
     <string name="labels_and_folders">Etichette &amp; Cartelle </string>
     <string name="folders">Cartelle</string>
     <string name="labels">Etichette</string>
-    <string name="labels_manage">Gestione etichette</string>
+    <string name="labels_manager">Gestione etichette</string>
     <string name="folders_manage">Gestore cartelle</string>
-    <string name="swipe_actions">Gesto di scorrimento</string>
+    <string name="swipe_actions">Azioni di scorrimento</string>
     <string name="swipe_action_right">Scorri a destra</string>
     <string name="swipe_action_left">Scorri a sinistra</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Scelta azione con gesti di scorrimento</string>
     <string name="swipe_action_trash">Messaggio spostato nel cestino</string>
+    <string name="swipe_action_trash_short">Sposta nel Cestino</string>
     <string name="swipe_action_star">Messaggio preferito aggiornato</string>
     <string name="swipe_action_star_short">Aggiorna stella</string>
     <string name="swipe_action_spam">Messaggio segnato come spam</string>
+    <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Messaggio archiviato</string>
+    <string name="swipe_action_archive_short">Archivio</string>
     <string name="swipe_action_mark_read">Messaggio segnato come letto</string>
     <string name="swipe_action_mark_read_short">Letto</string>
     <plurals name="action_move_to_trash">
@@ -844,7 +890,7 @@
     <string name="turn_combined_contacts_on">Attiva questa funzione per completare automaticamente gli indirizzi email utilizzando i contatti da tutti i tuoi account collegati.</string>
     <string name="local_cache_management">Gestione cache locale</string>
     <string name="cache_cleared">La cache locale è aggiornata</string>
-    <string name="empty_data">Svuota Cache</string>
+    <string name="empty_data">Dato vuoto</string>
     <!-- endregion -->
     <string name="enabled">Abilitata</string>
     <string name="disabled">Disabilitata</string>
@@ -866,13 +912,13 @@
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemi di connessione comuni e soluzioni</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Nessuna connessione a internet&lt;/i&gt; - Sei pregato d\'assicurarti che la tua connessione a internet stia funzionando.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema dell\'Internet Service Provider (ISP)&lt;/i&gt; - Prova a connetterti a Proton da una rete differente (o usa &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Blocco governativo&lt;/i&gt; - Il tuo paese potrebbe bloccare l\'accesso a Proton. Prova &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (od ogni altra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; per accedere a Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferenza dell\'antivirus&lt;/i&gt; - Disabilita temporaneamente o rimuovi il software del tuo antivirus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferenza del Proxy/Firewall&lt;/i&gt; - Disabilita ogni proxy o firewall, o contatta l\'amministratore della tua rete.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton non sta funzionando&lt;/i&gt; - Controlla lo &lt;a href=\"http://protonstatus.com/\"&gt;Stato di Proton&lt;/a&gt; per lo stato del nostro sistema.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Impossibile trovare una soluzione&lt;/i&gt; - Contattaci direttamente tramite il nostro &lt;a href=\"https://protonmail.com/support-form\"&gt;modulo di supporto&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->
@@ -898,12 +944,14 @@
     <string name="error_loading_conversations">Errore caricando le conversazioni, sei pregato di riprovare</string>
     <string name="star">Stella</string>
     <string name="unstar">Rimuovi stella</string>
+    <string name="star_unstar">Aggiungi/rimuovi stella</string>
     <string name="send_to_archive">Inviare all\'archivio?</string>
     <string name="new_label">Nuova Etichetta</string>
     <string name="new_folder">Nuova Cartella</string>
     <string name="label_as">Etichetta come…</string>
     <string name="mark_as_unread">Segna come non letto</string>
     <string name="mark_as_read">Segna come letto</string>
+    <string name="mark_as_read_unread">Segna come letta/da leggere</string>
     <string name="move_message">Sposta messaggio</string>
     <string name="manage">Gestisci</string>
     <string name="message_from">Messaggio da %s</string>
@@ -916,4 +964,8 @@
         <item quantity="one">%d conversazione</item>
         <item quantity="other">%d conversazioni</item>
     </plurals>
+    <string name="contacts_call">Chiama</string>
+    <string name="contacts_send_group_message">Invia messaggio di gruppo</string>
+    <string name="inbox_this_folder_is_empty">Questa cartella è vuota</string>
+    <string name="inbox_nothing_to_see_here">Niente da vedere qui</string>
 </resources>

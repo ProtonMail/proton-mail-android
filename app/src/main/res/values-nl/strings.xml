@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">Dagen</string>
     <string name="x_folders">Mappen</string>
+    <string name="x_hours">Uren</string>
     <string name="x_labels">Labels</string>
     <string name="x_more">Meer</string>
     <string name="x_search">Zoeken</string>
+    <string name="x_set">Instellen</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contactpersonen</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">Van:</string>
     <string name="composer_subject">Onderwerp:</string>
     <string name="composer_to">Aan:</string>
+    <string name="set_msg_password_title">Wachtwoord instellen</string>
+    <string name="set_msg_password_info">Stel een wachtwoord in om dit bericht te versleutelen. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Meer informatie</a></string>
+    <string name="set_msg_password_info_icon_description">Info</string>
+    <string name="set_msg_password_msg_password_title">Wachtwoord van bericht</string>
+    <string name="set_msg_password_msg_password_hint">4 tot 21 tekens lang</string>
+    <string name="set_msg_password_repeat_password_title">Wachtwoord herhalen</string>
+    <string name="set_msg_password_repeat_password_hint">Wachtwoorden moeten overeenkomen</string>
+    <string name="set_msg_password_password_hint_title">Wachtwoord hint</string>
+    <string name="set_msg_password_password_hint_hint">Hint opgeven (optioneel)</string>
+    <string name="set_msg_password_apply_password">Wachtwoord toepassen</string>
+    <string name="set_msg_password_remove_password">Verwijder wachtwoord</string>
+    <string name="set_msg_password_error_too_short">Wachtwoord is te kort</string>
+    <string name="set_msg_password_error_too_long">Wachtwoord te lang</string>
+    <string name="set_msg_password_error_mismatch">Wachtwoord komt niet overeen</string>
+    <string name="set_msg_expiration_title">Vervaldatum bericht</string>
+    <string name="set_msg_expiration_none">Geen</string>
+    <string name="set_msg_expiration_1_hour">1 uur</string>
+    <string name="set_msg_expiration_1_day">1 dag</string>
+    <string name="set_msg_expiration_3_days">3 dagen</string>
+    <string name="set_msg_expiration_1_week">1 week</string>
+    <string name="set_msg_expiration_custom">Aangepast</string>
+    <string name="set_msg_expiration_check_description">Dit item is gecontroleerd</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">PIN-code instellen</string>
+    <string name="settings_confirm_pin_code_title">Herhaal PIN-code</string>
+    <string name="settings_pins_dont_match">De pincodes moeten overeen komen!</string>
+    <string name="settings_enter_pin_code_title">PIN-code invoeren</string>
+    <string name="settings_swipe_settings_info">Stel veeg gebaren in om toegang te krijgen tot de meest gebruikte acties.</string>
+    <string name="settings_swipe_left_to_right">Links naar rechts</string>
+    <string name="settings_swipe_right_to_left">Van rechts naar links</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Wijzigingen negeren?</string>
+    <string name="dialog_discard_changes_message">Alle niet-opgeslagen wijzigingen worden ongedaan gemaakt.</string>
+    <string name="discard">Verwijderen</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -443,6 +482,8 @@
     <string name="vcard_other_option_role">Rol</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Contact converteren</string>
+    <string name="contacts_import_contact">Contactpersoon importeren</string>
+    <string name="contacts_import">Importeren</string>
     <string name="upload_contacts">Contacten uploaden</string>
     <string name="upgrade_encrypted_contact">Upgrade om gebruik te maken van versleutelde contactgegevens.</string>
     <string name="uploading_contacts">Contacten uploaden…</string>
@@ -588,7 +629,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">End-to-end versleuteld bericht</string>
     <string name="sender_lock_internal_verified">End-to-end versleuteld bericht van geverifieerd e-mailadres</string>
-    <string name="sender_lock_learn_more"><a href="">Meer informatie</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Meer informatie</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-end versleuteld</string>
     <string name="composer_lock_internal_pinned">End-to-end versleuteld naar geverifieerde ontvanger</string>
@@ -624,16 +665,17 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">Foto toevoegen</string>
     <string name="contact_display_name">Weergavenaam</string>
-    <string name="add_new_email">E-mailadres toevoegen</string>
+    <string name="add_new_email">Voeg e-mailadres toe</string>
     <string name="no_groups">Geen groepen</string>
     <string name="contact_vcard_note">Opmerking</string>
     <string name="edit_contact">Contactpersoon bewerken</string>
     <string name="create_contact_group">Contactgroep aanmaken</string>
     <string name="edit_contact_group">Contactgroep bewerken</string>
+    <string name="contact_groups_manage_members">Beheer Leden</string>
     <string name="contact_group_display_name">Weergavenaam</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Adres toevoegen aan groepen</string>
-    <string name="title_activity_address_chooser">Adressen beheren</string>
+    <string name="title_activity_address_chooser">Beheer Leden</string>
     <string name="title_activity_account_manager">Accounts beheren</string>
     <string name="account_manager_add_account">Account toevoegen</string>
     <string name="account_manager_remove_all_accounts">Alle accounts verwijderen</string>
@@ -646,7 +688,7 @@
     <string name="account_manager_remove">Verwijderen</string>
     <string name="default_error_message">Er is iets fout gegaan</string>
     <string name="no_contact_groups">Geen contactgroepen</string>
-    <string name="search_contacts_inside_group">Zoeken naar contacten binnen groep</string>
+    <string name="search_contacts_inside_group">Zoeken naar contacten</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d lid</item>
@@ -728,10 +770,11 @@
     <string name="display_name">Weergavenaam</string>
     <string name="edit_display_name">Weergavenaam bewerken</string>
     <string name="signature">Handtekening</string>
-    <string name="mobile_footer">Mobiele handtekening</string>
-    <string name="edit_mobile_footer">Mobiele handtekening inschakelen</string>
+    <string name="mobile_footer">Mobiele voettekst</string>
+    <string name="edit_mobile_footer">Mobiele voettekst inschakelen</string>
     <string name="default_mobile_footer">Verzonden met ProtonMail Mobile</string>
-    <string name="mobile_footer_is_premium">Alleen betalende gebruikers kunnen de mobiele handtekening aanpassen</string>
+    <string name="mobile_footer_is_premium">Het veranderen van de Mobile Footer is alleen toegestaan voor betaalde gebruikers</string>
+    <string name="mobile_footer_info">Deze voettekst is toegevoegd na uw handtekening</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Uitstellen</string>
     <string name="notifications_snooze">Notificaties uitstellen</string>
@@ -792,18 +835,21 @@
     <string name="labels_and_folders">Labels &amp; Mappen </string>
     <string name="folders">Mappen</string>
     <string name="labels">Labels</string>
-    <string name="labels_manage">Labels beheren</string>
+    <string name="labels_manager">Labels beheren</string>
     <string name="folders_manage">Mappen beheren</string>
-    <string name="swipe_actions">Swipe gebaren</string>
+    <string name="swipe_actions">Veegacties</string>
     <string name="swipe_action_right">Naar rechts vegen</string>
     <string name="swipe_action_left">Naar links vegen</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Kies veegactie</string>
     <string name="swipe_action_trash">Bericht verplaatst naar de prullenbak</string>
+    <string name="swipe_action_trash_short">Verplaats naar prullenbak</string>
     <string name="swipe_action_star">Stermarkering bijgewerkt</string>
     <string name="swipe_action_star_short">Ster bijwerken</string>
     <string name="swipe_action_spam">Bericht gemarkeerd als spam</string>
+    <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Bericht gearchiveerd</string>
+    <string name="swipe_action_archive_short">Archiveren</string>
     <string name="swipe_action_mark_read">Bericht gemarkeerd als gelezen</string>
     <string name="swipe_action_mark_read_short">Gelezen</string>
     <plurals name="action_move_to_trash">
@@ -844,7 +890,7 @@
     <string name="turn_combined_contacts_on">Schakel deze functie in om e-mailadressen automatisch aan te vullen met behulp van contacten van al uw ingelogde accounts.</string>
     <string name="local_cache_management">Lokale Cache beheer</string>
     <string name="cache_cleared">Lokale cache is ververst</string>
-    <string name="empty_data">Cache legen</string>
+    <string name="empty_data">Data leegmaken</string>
     <!-- endregion -->
     <string name="enabled">Ingeschakeld</string>
     <string name="disabled">Uitgeschakeld</string>
@@ -898,12 +944,14 @@
     <string name="error_loading_conversations">Fout bij het laden van gesprekken, probeer het opnieuw</string>
     <string name="star">Ster</string>
     <string name="unstar">Ster verwijderen</string>
+    <string name="star_unstar">Ster/verwijder ster</string>
     <string name="send_to_archive">Verzenden naar archief?</string>
     <string name="new_label">Nieuw Label</string>
     <string name="new_folder">Nieuwe map</string>
     <string name="label_as">Label als…</string>
     <string name="mark_as_unread">Markeren als ongelezen</string>
     <string name="mark_as_read">Markeer als gelezen</string>
+    <string name="mark_as_read_unread">Markeer als gelezen/ongelezen</string>
     <string name="move_message">Verplaats bericht</string>
     <string name="manage">Beheren</string>
     <string name="message_from">Bericht van %s</string>
@@ -916,4 +964,8 @@
         <item quantity="one">%d gesprek</item>
         <item quantity="other">%d conversaties</item>
     </plurals>
+    <string name="contacts_call">Bellen</string>
+    <string name="contacts_send_group_message">Groepsbericht verzenden</string>
+    <string name="inbox_this_folder_is_empty">Deze map is leeg</string>
+    <string name="inbox_nothing_to_see_here">Niets te zien hier</string>
 </resources>

@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">Dage</string>
     <string name="x_folders">Mapper</string>
+    <string name="x_hours">Timer</string>
     <string name="x_labels">Etiketter</string>
     <string name="x_more">Mere</string>
     <string name="x_search">Søg</string>
+    <string name="x_set">Indstil</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakter</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">Fra:</string>
     <string name="composer_subject">Emne:</string>
     <string name="composer_to">Til:</string>
+    <string name="set_msg_password_title">Indstil adgangskode</string>
+    <string name="set_msg_password_info">Angiv en adgangskode for at kryptere denne besked til ikke-protonmail-brugere. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Få mere at vide</a></string>
+    <string name="set_msg_password_info_icon_description">Info</string>
+    <string name="set_msg_password_msg_password_title">Beskedadgangskode</string>
+    <string name="set_msg_password_msg_password_hint">4 til 21 tegn lang</string>
+    <string name="set_msg_password_repeat_password_title">Gentag kodeord</string>
+    <string name="set_msg_password_repeat_password_hint">Adgangskoder skal være ens</string>
+    <string name="set_msg_password_password_hint_title">Adgangskodetip</string>
+    <string name="set_msg_password_password_hint_hint">Angiv tip (valgfrit)</string>
+    <string name="set_msg_password_apply_password">Anvend adgangskode</string>
+    <string name="set_msg_password_remove_password">Fjern adgangskode</string>
+    <string name="set_msg_password_error_too_short">Adgangskode er for kort</string>
+    <string name="set_msg_password_error_too_long">Adgangskode for lang</string>
+    <string name="set_msg_password_error_mismatch">Adgangskode stemmer ikke overens</string>
+    <string name="set_msg_expiration_title">Beskedudløb</string>
+    <string name="set_msg_expiration_none">Intet</string>
+    <string name="set_msg_expiration_1_hour">1 time</string>
+    <string name="set_msg_expiration_1_day">1 dag</string>
+    <string name="set_msg_expiration_3_days">3 dage</string>
+    <string name="set_msg_expiration_1_week">1 uge</string>
+    <string name="set_msg_expiration_custom">Tilpasset</string>
+    <string name="set_msg_expiration_check_description">Dette emne er afmærket</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Angiv pinkode</string>
+    <string name="settings_confirm_pin_code_title">Gentag pinkode</string>
+    <string name="settings_pins_dont_match">Pinkoderne skal matche!</string>
+    <string name="settings_enter_pin_code_title">Indtast pinkode</string>
+    <string name="settings_swipe_settings_info">Indstil strygebevægelser som adgang til de mest brugte handlinger.</string>
+    <string name="settings_swipe_left_to_right">Venstre mod højre</string>
+    <string name="settings_swipe_right_to_left">Højre mod venstre</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Kassér ændringer?</string>
+    <string name="dialog_discard_changes_message">Alle ikke-gemte ændringer vil blive kasseret.</string>
+    <string name="discard">Kassér</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -284,14 +323,14 @@
     <string name="engagement_title_welcome">Velkommen til ProtonMail!</string>
     <string name="engagement_title_swipe">Hurtig-stryg handlinger</string>
     <string name="engagement_title_labels">Etikethåndtering</string>
-    <string name="engagement_title_encryption">Ende-til-Ende kryptering</string>
+    <string name="engagement_title_encryption">End-to-end kryptering</string>
     <string name="engagement_title_expire">Beskedudløb</string>
     <string name="engagement_title_help">Hjælp og Support</string>
     <string name="engagement_title_support_protonmail">Støt ProtonMail</string>
     <string name="engagement_subtitle_welcome">Din nye krypterede e-mailkonto er opsat og er klar til at sende og modtage krypterede beskeder.</string>
     <string name="engagement_subtitle_swipe">Du kan tilpasse stryge-gestusser i ProtonMail App-indstillinger.</string>
     <string name="engagement_subtitle_labels">Opret og tilføj Etiketter for at organisere din indbakke. Tryk og hold på en besked for at se alle muligheder.</string>
-    <string name="engagement_subtitle_encryption">Din indbakke er nu beskyttet med ende-til-ende kryptering. Invitér dine kontakter til at benytte ProtonMail for automatisk at sende sikre e-mails til dem! Du kan også manuelt kryptere beskeder til dem, hvis de ikke benytter ProtonMail.</string>
+    <string name="engagement_subtitle_encryption">Din indbakke er nu beskyttet med end-to-end kryptering. Invitér dine kontakter til at benytte ProtonMail for automatisk at sende sikre e-mails til dem! Du kan også manuelt kryptere beskeder til dem, hvis de ikke benytter ProtonMail.</string>
     <string name="engagement_subtitle_expire">Beskeder, du sender, kan indstilles til at auto-slettes efter et bestemt tidsinterval.</string>
     <string name="engagement_subtitle_help">Du kan få hjælp og support via protonmail.com/support. Fejl kan tillige anmeldes via app\'en.</string>
     <string name="attachment_exists">Element allerede vedhæftet</string>
@@ -443,6 +482,8 @@
     <string name="vcard_other_option_role">Rolle</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Konvertér kontakt</string>
+    <string name="contacts_import_contact">Importér kontakt</string>
+    <string name="contacts_import">Importér</string>
     <string name="upload_contacts">Upload kontakter</string>
     <string name="upgrade_encrypted_contact">Opgradér for at benytte krypterede kontaktoplysninger.</string>
     <string name="uploading_contacts">Uploader kontakter…</string>
@@ -578,7 +619,7 @@
     <string name="sender_lock_unencrypted">Ukrypteret besked</string>
     <string name="sender_lock_zero_access">Lagret med nuladgangskryptering</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_end_to_end">Afsendt af dig med ende-til-ende kryptering</string>
+    <string name="sender_lock_sent_end_to_end">Afsendt af dig med end-to-end kryptering</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_autoresponder">Sendt af ProtonMail med nuladgangskryptering</string>
     <string name="sender_lock_verification_failed">Afsenderbekræftelse mislykkedes</string>
@@ -586,12 +627,12 @@
     <string name="sender_lock_pgp_encrypted_verified">PGP-krypteret besked fra bekræftet adresse</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-signeret besked fra bekræftet adresse</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">Ende-til-ende krypteret besked</string>
-    <string name="sender_lock_internal_verified">Ende-til-ende krypteret besked fra bekræftet adresse</string>
-    <string name="sender_lock_learn_more"><a href="">Få mere at vide</a></string>
+    <string name="sender_lock_internal">End-to-end krypteret besked</string>
+    <string name="sender_lock_internal_verified">End-to-end krypteret besked fra bekræftet adresse</string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Få mere at vide</a></string>
     <!-- Composer locks -->
-    <string name="composer_lock_internal">Ende-til-ende kryptering</string>
-    <string name="composer_lock_internal_pinned">Ende-til-ende krypteret for at bekræfte adresse</string>
+    <string name="composer_lock_internal">End-to-end-kryptering</string>
+    <string name="composer_lock_internal_pinned">End-to-end krypteret for at bekræfte adresse</string>
     <string name="composer_lock_pgp_encrypted_pinned">PGP-krypteret</string>
     <string name="composer_lock_pgp_signed">PGP-signeret</string>
     <string name="recipient_not_found_and_removed">Modtager %s ikke fundet, adresse fjernet</string>
@@ -623,17 +664,18 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Tilføj foto</string>
-    <string name="contact_display_name">Visningsnavn</string>
-    <string name="add_new_email">Tilføj e-mail</string>
+    <string name="contact_display_name">Vist navn</string>
+    <string name="add_new_email">Tilføj e-mailadresse</string>
     <string name="no_groups">Ingen grupper</string>
     <string name="contact_vcard_note">Notat</string>
     <string name="edit_contact">Redigér kontakt</string>
     <string name="create_contact_group">Opret kontaktgruppe</string>
     <string name="edit_contact_group">Redigér kontaktgruppe</string>
-    <string name="contact_group_display_name">\ue91c Visningsnavn</string>
+    <string name="contact_groups_manage_members">Administrer medlemmer</string>
+    <string name="contact_group_display_name">Vist navn</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Føj adresse til grupper</string>
-    <string name="title_activity_address_chooser">Håndtere adresser</string>
+    <string name="title_activity_address_chooser">Administrer medlemmer</string>
     <string name="title_activity_account_manager">Håndtér konti</string>
     <string name="account_manager_add_account">Tilføj konto</string>
     <string name="account_manager_remove_all_accounts">Fjerner alle konti</string>
@@ -646,7 +688,7 @@
     <string name="account_manager_remove">Fjern</string>
     <string name="default_error_message">Fejl opstået</string>
     <string name="no_contact_groups">Ingen kontaktgrupper</string>
-    <string name="search_contacts_inside_group">Søger efter kontakter i gruppe</string>
+    <string name="search_contacts_inside_group">Søg efter kontakter</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d medlem</item>
@@ -701,10 +743,10 @@
     <string name="app_locked">App er låst</string>
     <string name="use_pin_instead">Brug i stedet PIN-kode</string>
     <!-- strings used for biometric enrollment -->
-    <string name="no_biometric_data_enrolled">No biometric data enrolled</string>
-    <string name="log_in_using_biometric_credential">Unlock using your biometric credentials</string>
-    <string name="unlock_using_biometrics">Unlock using biometrics</string>
-    <string name="biometric_error_hw_not_available">Biometric hardware not available.</string>
+    <string name="no_biometric_data_enrolled">Ingen biometriske data registreret</string>
+    <string name="log_in_using_biometric_credential">Lås op ved hjælp af dine biometriske legitimationsoplysninger</string>
+    <string name="unlock_using_biometrics">Lås op med biometri</string>
+    <string name="biometric_error_hw_not_available">Hardware til biometri er ikke tilgængelig.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Ikke-oplyste modtagere</string>
     <string name="manage_accounts">Håndtér konti</string>
@@ -728,10 +770,11 @@
     <string name="display_name">Vis navn</string>
     <string name="edit_display_name">Redigér vist navn</string>
     <string name="signature">Signatur</string>
-    <string name="mobile_footer">Mobilsignatur</string>
-    <string name="edit_mobile_footer">Aktivér mobilsignatur</string>
-    <string name="default_mobile_footer">Sendt fra ProtonMail-mobil</string>
-    <string name="mobile_footer_is_premium">Ændring af Mobilsignaturen er kun tilladt for betalende brugere</string>
+    <string name="mobile_footer">Mobil-sidefod</string>
+    <string name="edit_mobile_footer">Aktivér mobil-sidefod</string>
+    <string name="default_mobile_footer">Sendt fra ProtonMail mobil</string>
+    <string name="mobile_footer_is_premium">Ændring af mobilsignaturen er kun tilladt for betalende brugere</string>
+    <string name="mobile_footer_info">Denne sidefod tilføjes efter din signatur</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Udsæt</string>
     <string name="notifications_snooze">Notifikationsudsættelse</string>
@@ -761,9 +804,9 @@
     <string name="set_custom_quick_snooze">Indstil tilpasset værdi for Straks-udsættelse</string>
     <string name="turn_off">Slå fra</string>
     <string name="snooze_will_repeat">Udsættelse gentages</string>
-    <string name="work_days">Work days</string>
+    <string name="work_days">Arbejdsdage</string>
     <string name="weekends">Weekend</string>
-    <string name="every_day">Every day</string>
+    <string name="every_day">Hverdag</string>
     <string-array name="snooze_repeat_values">
         <item>Man</item>
         <item>Tir</item>
@@ -792,18 +835,21 @@
     <string name="labels_and_folders">Etiketter og Mapper </string>
     <string name="folders">Mapper</string>
     <string name="labels">Etiketter</string>
-    <string name="labels_manage">Etikethåndtering</string>
+    <string name="labels_manager">Etikethåndtering</string>
     <string name="folders_manage">Mappehåndtering</string>
-    <string name="swipe_actions">Strygebevægelser</string>
+    <string name="swipe_actions">Strygehandlinger</string>
     <string name="swipe_action_right">Stryg til højre</string>
     <string name="swipe_action_left">Stryg til venstre</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Vælg handling for stryg</string>
     <string name="swipe_action_trash">Besked flyttet til Papirkurv</string>
+    <string name="swipe_action_trash_short">Flyt til Papirkurv</string>
     <string name="swipe_action_star">Beskedstjerne er opdateret</string>
     <string name="swipe_action_star_short">Opdater stjerne</string>
     <string name="swipe_action_spam">Besked er markeret som spam</string>
+    <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Besked er arkiveret</string>
+    <string name="swipe_action_archive_short">Arkiv</string>
     <string name="swipe_action_mark_read">Besked er markeret som læst</string>
     <string name="swipe_action_mark_read_short">Læst</string>
     <plurals name="action_move_to_trash">
@@ -833,10 +879,10 @@
     <string name="auto_lock_description">Slå funktionen til for at autolåse din\napp og benytte PIN-kode eller fingeraftryk\ntil oplåsning af den.</string>
     <string name="change_pin_code">Skift PIN-kode</string>
     <string name="auto_lock_timer">Autolås-timer</string>
-    <string name="connections_via_third_parties">Alternative routing</string>
-    <string name="allow_secure_connections_via_third_parties">Allow alternative routing</string>
-    <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a></string>
+    <string name="connections_via_third_parties">Alternativ routing</string>
+    <string name="allow_secure_connections_via_third_parties">Tillad alternativ routing</string>
+    <string name="allow_secure_connections_via_third_parties_settings_description">Hvis Proton-websteder er blokeret giver denne indstilling appen mulighed for at prøve alternativ netværksrouting for at nå Proton, hvilket kan være nyttige til at omgå firewalls eller ved netværksproblemer. Vi anbefaler at holde denne indstilling slået til for større pålidelighed.</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Hvis Proton-websteder er blokeret giver denne indstilling appen mulighed for at prøve alternativ netværksrouting for at nå Proton, hvilket kan være nyttige til at omgå firewalls eller ved netværksproblemer. Vi anbefaler at holde denne indstilling slået til for større pålidelighed. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Få mere at vide</a></string>
     <string name="app_language">App-sprog</string>
     <string name="custom_language_dialog_title">Vælg App-sprog</string>
     <string name="auto_detect">Autoregistrér</string>
@@ -844,7 +890,7 @@
     <string name="turn_combined_contacts_on">Slå funktionen til for at autoudfylde e-mailadresser vha. kontakter fra alle dine indloggede konti.</string>
     <string name="local_cache_management">Lokal cachehåndtering</string>
     <string name="cache_cleared">Lokale Cache er opfrisket</string>
-    <string name="empty_data">Tøm cache</string>
+    <string name="empty_data">Tøm Data</string>
     <!-- endregion -->
     <string name="enabled">Aktiv</string>
     <string name="disabled">Inaktiv</string>
@@ -861,18 +907,18 @@
     <string name="switch_to_account">Skift til %s</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
-    <string name="shortcut_compose">Compose</string>
-    <string name="shortcut_compose_new_message">Compose a new message</string>
+    <string name="shortcut_compose">Skriv</string>
+    <string name="shortcut_compose_new_message">Skriv en ny besked</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
-    <string name="troubleshoot_dialog_title">Common connection problems and solutions</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_title">Almindelige forbindelsesproblemer og løsninger</string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Ingen internetforbindelse&lt;/i&gt; - Sørg venligst for at din internetforbindelse fungerer.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internetudbyder-problem&lt;/i&gt; - Prøv at forbinde til Proton fra et andet netværk (eller brug &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; eller &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Regeringsblokering&lt;/i&gt; - Dit land blokerer muligvis adgang til Proton. Prøv &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (eller en anden VPN) eller &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; for at tilgå Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus-forstyrrelse&lt;/i&gt; - Deaktivér midlertidigt eller fjern din antivirus-software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall-forstyrrelse&lt;/i&gt; - Deaktivér eventuelle proxier eller firewalls, eller kontakt din netværksadministrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton er nede&lt;/i&gt; - Tjek &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for vores systemstatus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Kan stadig ikke finde en løsning&lt;/i&gt; - Kontakt os direkte via vores &lt;a href=\"https://protonmail.com/support-form\"&gt;support formular&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;e-mail&lt;/a&gt; (support@protonmail.com), eller &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->
@@ -880,8 +926,8 @@
     <string name="error_image_bad_url">Misformet billed-URL</string>
     <string name="error_saving_try_again">Fejl under lagring af besked. Prøv igen.</string>
     <!-- endregion -->
-    <string name="allowed">Allowed</string>
-    <string name="denied">Denied</string>
+    <string name="allowed">Tilladt</string>
+    <string name="denied">Afvist</string>
     <string name="more">Mere</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Strygebevægelser ændret</string>
@@ -898,12 +944,14 @@
     <string name="error_loading_conversations">Fejl under indlæsning af samtaler, prøv igen</string>
     <string name="star">Stjernemarkér</string>
     <string name="unstar">Fjern stjerne</string>
+    <string name="star_unstar">Tilføj stjerne/Fjern stjerne</string>
     <string name="send_to_archive">Send til arkiv?</string>
     <string name="new_label">Ny etiket</string>
     <string name="new_folder">Ny mappe</string>
     <string name="label_as">Tilføj etiket…</string>
     <string name="mark_as_unread">Markér som ulæst</string>
     <string name="mark_as_read">Markér som læst</string>
+    <string name="mark_as_read_unread">Markér som læst/ulæst</string>
     <string name="move_message">Flyt besked</string>
     <string name="manage">Administrer</string>
     <string name="message_from">Besked fra %s</string>
@@ -916,4 +964,8 @@
         <item quantity="one">%d samtale</item>
         <item quantity="other">%d samtaler</item>
     </plurals>
+    <string name="contacts_call">Ring op</string>
+    <string name="contacts_send_group_message">Send gruppebesked</string>
+    <string name="inbox_this_folder_is_empty">Denne mappe er tom</string>
+    <string name="inbox_nothing_to_see_here">Intet at se her</string>
 </resources>

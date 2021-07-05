@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">日</string>
     <string name="x_folders">フォルダー</string>
+    <string name="x_hours">時間</string>
     <string name="x_labels">ラベル</string>
     <string name="x_more">その他</string>
     <string name="x_search">検索</string>
+    <string name="x_set">設定</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">連絡先</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">差出人：</string>
     <string name="composer_subject">件名：</string>
     <string name="composer_to">宛先：</string>
+    <string name="set_msg_password_title">パスワードを設定</string>
+    <string name="set_msg_password_info">ProtonMail ユーザー以外がこのメッセージを読めるようにパスワードを設定してください <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">詳細</a></string>
+    <string name="set_msg_password_info_icon_description">情報</string>
+    <string name="set_msg_password_msg_password_title">メッセージのパスワード</string>
+    <string name="set_msg_password_msg_password_hint">4〜21 文字</string>
+    <string name="set_msg_password_repeat_password_title">パスワードを再度入力</string>
+    <string name="set_msg_password_repeat_password_hint">パスワードが一致しません</string>
+    <string name="set_msg_password_password_hint_title">パスワードのヒント</string>
+    <string name="set_msg_password_password_hint_hint">パスワードのヒント（任意）</string>
+    <string name="set_msg_password_apply_password">パスワードを適用</string>
+    <string name="set_msg_password_remove_password">パスワードを削除</string>
+    <string name="set_msg_password_error_too_short">パスワードが短すぎます</string>
+    <string name="set_msg_password_error_too_long">パスワードが長すぎます</string>
+    <string name="set_msg_password_error_mismatch">パスワードが一致しません</string>
+    <string name="set_msg_expiration_title">メッセージの有効期限</string>
+    <string name="set_msg_expiration_none">なし</string>
+    <string name="set_msg_expiration_1_hour">1 時間</string>
+    <string name="set_msg_expiration_1_day">1 日</string>
+    <string name="set_msg_expiration_3_days">3 日</string>
+    <string name="set_msg_expiration_1_week">1 週間</string>
+    <string name="set_msg_expiration_custom">カスタム</string>
+    <string name="set_msg_expiration_check_description">このアイテムはチェックされています</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Set PIN code</string>
+    <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
+    <string name="settings_pins_dont_match">The PIN codes must match!</string>
+    <string name="settings_enter_pin_code_title">Enter PIN code</string>
+    <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
+    <string name="settings_swipe_left_to_right">Left to right</string>
+    <string name="settings_swipe_right_to_left">Right to left</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Discard changes?</string>
+    <string name="dialog_discard_changes_message">Any unsaved changes will be discarded.</string>
+    <string name="discard">Discard</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -277,14 +316,14 @@
     <string name="engagement_title_welcome">ProtonMail へようこそ</string>
     <string name="engagement_title_swipe">クイックスワイプ操作</string>
     <string name="engagement_title_labels">ラベルの管理</string>
-    <string name="engagement_title_encryption">端末相互間の暗号化</string>
+    <string name="engagement_title_encryption">エンドツーエンド暗号化</string>
     <string name="engagement_title_expire">有効期限付きメッセージ</string>
     <string name="engagement_title_help">ヘルプとサポート</string>
     <string name="engagement_title_support_protonmail">ProtonMail を支援する</string>
     <string name="engagement_subtitle_welcome">新しい暗号化された電子メールアカウントが設定され、暗号化されたメッセージを送受信する準備ができました。</string>
     <string name="engagement_subtitle_swipe">ProtonMailアプリの設定で、スワイプ操作をカスタマイズできます。</string>
     <string name="engagement_subtitle_labels">受信箱を整理するラベルの作成ができます。メッセージを長押しすると全てのオプションが表示されます。</string>
-    <string name="engagement_subtitle_encryption">受信箱は、端末相互間で暗号保護されています。保護された電子メールを自動的に送信するためには、送信相手にProtonMail を使用するように招待してください。送信相手がProtonMailを使用しない場合には、メッセージを手動で暗号化することもできます。</string>
+    <string name="engagement_subtitle_encryption">受信箱は、エンドツーエンド暗号化で暗号保護されています。保護された電子メールを自動的に送信するためには、送信相手に ProtonMail を使用するように招待してください。送信相手が ProtonMail を使用しない場合には、メッセージを手動で暗号化することもできます。</string>
     <string name="engagement_subtitle_expire">送信メッセージが一定時間後に自動的に削除されるように設定できます。</string>
     <string name="engagement_subtitle_help">protonmail.com/supportでヘルプとサポートが受けられます。バグの報告はアプリ内からも行えます。</string>
     <string name="attachment_exists">既に添付されている添付ファイル</string>
@@ -434,6 +473,8 @@
     <string name="vcard_other_option_role">役職</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">連絡先を変換</string>
+    <string name="contacts_import_contact">Import Contact</string>
+    <string name="contacts_import">Import</string>
     <string name="upload_contacts">連絡先をアップロード</string>
     <string name="upgrade_encrypted_contact">暗号化された連絡先情報を使用するにはアップグレードしてください。</string>
     <string name="uploading_contacts">連絡先をアップロード中 …</string>
@@ -569,7 +610,7 @@
     <string name="sender_lock_unencrypted">暗号化されていないメッセージ</string>
     <string name="sender_lock_zero_access">暗号化されずに送受信されたメッセージ</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_end_to_end">端末相互間の暗号化による送信</string>
+    <string name="sender_lock_sent_end_to_end">あなたによって送信された、エンドツーエンド暗号化されたメッセージ</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_autoresponder">ProtonMail によって送信された、ゼロアクセス暗号化されたメッセージ</string>
     <string name="sender_lock_verification_failed">送信者の検証に失敗しました。</string>
@@ -577,12 +618,12 @@
     <string name="sender_lock_pgp_encrypted_verified">検証済みアドレスからのPGP暗号化メッセージ</string>
     <string name="sender_lock_pgp_signed_verified_sender">検証済みアドレスからのPGP署名付きメッセージ（暗号化なし）</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
-    <string name="sender_lock_internal">端末相互間で暗号化されたメッセージ</string>
-    <string name="sender_lock_internal_verified">検証済みアドレスからの端末相互間の暗号化によるメッセージ</string>
-    <string name="sender_lock_learn_more"><a href="">詳細</a></string>
+    <string name="sender_lock_internal">エンドツーエンド暗号化されたメッセージ</string>
+    <string name="sender_lock_internal_verified">検証済みアドレスからの、エンドツーエンド暗号化されたメッセージ</string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Learn more</a></string>
     <!-- Composer locks -->
-    <string name="composer_lock_internal">端末相互間の暗号化済み</string>
-    <string name="composer_lock_internal_pinned">検証済みアドレスへの端末相互間の暗号化による送信</string>
+    <string name="composer_lock_internal">エンドツーエンド暗号化</string>
+    <string name="composer_lock_internal_pinned">検証済みアドレスへの、エンドツーエンド暗号化による送信</string>
     <string name="composer_lock_pgp_encrypted_pinned">PGP暗号化済み（署名付き）</string>
     <string name="composer_lock_pgp_signed">PGP署名のみ（暗号化なし）</string>
     <string name="recipient_not_found_and_removed">宛先が見つかりません：%sは削除されています</string>
@@ -611,17 +652,18 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">写真を追加</string>
-    <string name="contact_display_name">表示名</string>
-    <string name="add_new_email">メールアドレスを追加する</string>
+    <string name="contact_display_name">Display Name</string>
+    <string name="add_new_email">Add Email Address</string>
     <string name="no_groups">グループはありません。</string>
     <string name="contact_vcard_note">メモ</string>
     <string name="edit_contact">連絡先の編集</string>
     <string name="create_contact_group">連絡先グループの作成</string>
     <string name="edit_contact_group">連絡先グループの編集</string>
-    <string name="contact_group_display_name">表示名</string>
+    <string name="contact_groups_manage_members">Manage Members</string>
+    <string name="contact_group_display_name">Display Name</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">アドレスをグループへ追加</string>
-    <string name="title_activity_address_chooser">メンバーの管理</string>
+    <string name="title_activity_address_chooser">Manage Members</string>
     <string name="title_activity_account_manager">アカウントの管理</string>
     <string name="account_manager_add_account">アカウントの追加</string>
     <string name="account_manager_remove_all_accounts">全てのアカウントを削除しています...</string>
@@ -634,7 +676,7 @@
     <string name="account_manager_remove">削除</string>
     <string name="default_error_message">エラーが発生しました</string>
     <string name="no_contact_groups">連絡先グループがありません</string>
-    <string name="search_contacts_inside_group">グループ内の連絡先を検索する</string>
+    <string name="search_contacts_inside_group">Search for contacts</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="other">%d メンバー</item>
@@ -708,10 +750,11 @@
     <string name="display_name">表示名</string>
     <string name="edit_display_name">表示名の編集</string>
     <string name="signature">署名</string>
-    <string name="mobile_footer">モバイル署名</string>
-    <string name="edit_mobile_footer">モバイル署名を有効にする</string>
-    <string name="default_mobile_footer">ProtonMailモバイルから送信</string>
-    <string name="mobile_footer_is_premium">モバイル署名の変更は有料ユーザーのみが可能です。</string>
+    <string name="mobile_footer">Mobile footer</string>
+    <string name="edit_mobile_footer">Enable mobile footer</string>
+    <string name="default_mobile_footer">Sent from ProtonMail mobile</string>
+    <string name="mobile_footer_is_premium">Changing the Mobile Footer is allowed to Paid users only</string>
+    <string name="mobile_footer_info">This footer is added after your signature</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">通知の停止</string>
     <string name="notifications_snooze">通知の停止計画</string>
@@ -771,18 +814,21 @@
     <string name="labels_and_folders">ラベルとフォルダー</string>
     <string name="folders">フォルダー</string>
     <string name="labels">ラベル</string>
-    <string name="labels_manage">ラベルの管理</string>
+    <string name="labels_manager">Labels manager</string>
     <string name="folders_manage">フォルダーの管理</string>
-    <string name="swipe_actions">スワイプ操作</string>
+    <string name="swipe_actions">Swipe actions</string>
     <string name="swipe_action_right">右にスワイプ</string>
     <string name="swipe_action_left">左にスワイプ</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">スワイプ操作時のアクション選択</string>
     <string name="swipe_action_trash">メッセージをごみ箱に移動する</string>
+    <string name="swipe_action_trash_short">Move to Trash</string>
     <string name="swipe_action_star">メッセージへの星印の付け外し</string>
     <string name="swipe_action_star_short">スターを更新</string>
     <string name="swipe_action_spam">メッセージを迷惑メールとする</string>
+    <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">メッセージをアーカイブする</string>
+    <string name="swipe_action_archive_short">Archive</string>
     <string name="swipe_action_mark_read">メッセージを既読にする</string>
     <string name="swipe_action_mark_read_short">既読</string>
     <plurals name="action_move_to_trash">
@@ -820,7 +866,7 @@
     <string name="turn_combined_contacts_on">この機能を有効化すると、ログイン済みのアカウントの連絡先を、メールアドレスの自動補完に利用可能になります。</string>
     <string name="local_cache_management">端末のキャッシュ管理</string>
     <string name="cache_cleared">端末のキャッシュが更新されました。</string>
-    <string name="empty_data">キャッシュの削除</string>
+    <string name="empty_data">Empty Data</string>
     <!-- endregion -->
     <string name="enabled">有効</string>
     <string name="disabled">無効</string>
@@ -874,12 +920,14 @@
     <string name="error_loading_conversations">会話の読み込み中にエラーが発生しました。もう一度やり直してください。</string>
     <string name="star">星印</string>
     <string name="unstar">星印をはずす</string>
+    <string name="star_unstar">Star/unstar</string>
     <string name="send_to_archive">アーカイブに送る</string>
     <string name="new_label">新しいラベル</string>
     <string name="new_folder">新規フォルダ</string>
     <string name="label_as">…としてラベル付け</string>
     <string name="mark_as_unread">未読にする</string>
     <string name="mark_as_read">既読にする</string>
+    <string name="mark_as_read_unread">Mark as read/unread</string>
     <string name="move_message">メールを移動</string>
     <string name="manage">管理</string>
     <string name="message_from">\"%s\"からのメッセージ</string>
@@ -890,4 +938,8 @@
     <plurals name="x_conversations_count">
         <item quantity="other">%d 件の会話</item>
     </plurals>
+    <string name="contacts_call">Call</string>
+    <string name="contacts_send_group_message">Send group message</string>
+    <string name="inbox_this_folder_is_empty">This folder is empty</string>
+    <string name="inbox_nothing_to_see_here">Nothing to see here</string>
 </resources>

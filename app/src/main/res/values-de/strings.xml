@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">Tage</string>
     <string name="x_folders">Ordner</string>
+    <string name="x_hours">Stunden</string>
     <string name="x_labels">Kategorien</string>
     <string name="x_more">Mehr</string>
     <string name="x_search">Suchen</string>
+    <string name="x_set">Festgelegen</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakte</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">Von:</string>
     <string name="composer_subject">Betreff:</string>
     <string name="composer_to">An:</string>
+    <string name="set_msg_password_title">Passwort festlegen</string>
+    <string name="set_msg_password_info">Legen Sie ein Passwort fest, um diese Nachricht für Nicht-Protonmail-Benutzer zu verschlüsseln. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Mehr erfahren</a></string>
+    <string name="set_msg_password_info_icon_description">Info</string>
+    <string name="set_msg_password_msg_password_title">Nachrichtenpasswort</string>
+    <string name="set_msg_password_msg_password_hint">4-21 Zeichen lang</string>
+    <string name="set_msg_password_repeat_password_title">Passwort erneut eingeben</string>
+    <string name="set_msg_password_repeat_password_hint">Passwörter müssen übereinstimmen</string>
+    <string name="set_msg_password_password_hint_title">Passwort-Hinweis</string>
+    <string name="set_msg_password_password_hint_hint">Hinweis angeben (optional)</string>
+    <string name="set_msg_password_apply_password">Passwort übernehmen</string>
+    <string name="set_msg_password_remove_password">Passwort entfernen</string>
+    <string name="set_msg_password_error_too_short">Passwort zu kurz</string>
+    <string name="set_msg_password_error_too_long">Passwort zu lang</string>
+    <string name="set_msg_password_error_mismatch">Passwort stimmt nicht überein</string>
+    <string name="set_msg_expiration_title">Gültigkeitsdauer der Nachricht</string>
+    <string name="set_msg_expiration_none">Keine</string>
+    <string name="set_msg_expiration_1_hour">1 Stunde</string>
+    <string name="set_msg_expiration_1_day">1 Tag</string>
+    <string name="set_msg_expiration_3_days">3 Tage</string>
+    <string name="set_msg_expiration_1_week">1 Woche</string>
+    <string name="set_msg_expiration_custom">Benutzerdefiniert</string>
+    <string name="set_msg_expiration_check_description">Dieser Eintrag wurde geprüft</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">PIN festlegen</string>
+    <string name="settings_confirm_pin_code_title">PIN erneut eingeben</string>
+    <string name="settings_pins_dont_match">PINs stimmen nicht überein!</string>
+    <string name="settings_enter_pin_code_title">PIN eingeben</string>
+    <string name="settings_swipe_settings_info">Richten Sie Wischgesten für den Zugriff auf die am häufigsten verwendeten Aktionen ein.</string>
+    <string name="settings_swipe_left_to_right">Von links nach rechts</string>
+    <string name="settings_swipe_right_to_left">Von rechts nach links</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Änderungen verwerfen?</string>
+    <string name="dialog_discard_changes_message">Alle nicht gespeicherten Änderungen werden verworfen.</string>
+    <string name="discard">Verwerfen</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -375,7 +414,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="inactive_addresses">Deaktivierte E-Mail-Adressen</string>
     <string name="not_set">Nicht festgelegt</string>
     <string name="edit_notification_email">E-Mail-Adresse für Wiederherstellung bearbeiten</string>
-    <string name="available_swipe_actions">Vefügbare Aktionen</string>
+    <string name="available_swipe_actions">Verfügbare Aktionen</string>
     <string name="no_available_addresses">Sie verfügbaren über keine weiteren E-Mail-Adressen</string>
     <string name="no_inactive_addresses">Sie verfügbaren über keine inaktiven E-Mail-Adressen</string>
     <string name="label_add_new">Neue Kategorie hinzufügen</string>
@@ -443,6 +482,8 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="vcard_other_option_role">Funktion</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Kontakt konvertieren</string>
+    <string name="contacts_import_contact">Kontakt importieren</string>
+    <string name="contacts_import">Importieren</string>
     <string name="upload_contacts">Kontakte hochladen</string>
     <string name="upgrade_encrypted_contact">Bitte führen Sie ein Upgrade durch, um verschlüsselte Kontaktinformationen nutzen zu können.</string>
     <string name="uploading_contacts">Kontakte werden hochgeladen …</string>
@@ -588,7 +629,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Ende-zu-Ende verschlüsselte Nachricht</string>
     <string name="sender_lock_internal_verified">Ende-zu-Ende verschlüsselte Nachricht von bestätigter Adresse</string>
-    <string name="sender_lock_learn_more"><a href="">Mehr erfahren</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Mwehr erfahren</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Ende-zu-Ende verschlüsselt</string>
     <string name="composer_lock_internal_pinned">Ende-zu-Ende verschlüsselt zum verifizierten Empfänger</string>
@@ -620,17 +661,18 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Foto hinzufügen</string>
-    <string name="contact_display_name">Name anzeigen</string>
-    <string name="add_new_email">E-Mail-Adresse hinzufügen</string>
+    <string name="contact_display_name">Namen anzeigen</string>
+    <string name="add_new_email">E-Mail Adresse hinzufügen</string>
     <string name="no_groups">Keine Gruppen</string>
     <string name="contact_vcard_note">Notiz</string>
     <string name="edit_contact">Kontakt bearbeiten</string>
     <string name="create_contact_group">Kontaktgruppe erstellen</string>
     <string name="edit_contact_group">Kontaktgruppe bearbeiten</string>
-    <string name="contact_group_display_name">Name anzeigen</string>
+    <string name="contact_groups_manage_members">Mitglieder verwalten</string>
+    <string name="contact_group_display_name">Namen anzeigen</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Adresse zu Gruppen hinzufügen</string>
-    <string name="title_activity_address_chooser">E-Mail-Adressen verwalten</string>
+    <string name="title_activity_address_chooser">Mitglieder verwalten</string>
     <string name="title_activity_account_manager">Konten verwalten</string>
     <string name="account_manager_add_account">Konto hinzufügen</string>
     <string name="account_manager_remove_all_accounts">Alle Konten entfernen</string>
@@ -643,7 +685,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="account_manager_remove">Entfernen</string>
     <string name="default_error_message">Fehler aufgetreten</string>
     <string name="no_contact_groups">Keine Kontaktgruppen</string>
-    <string name="search_contacts_inside_group">Nach Kontakten innerhalb der Gruppe suchen</string>
+    <string name="search_contacts_inside_group">Nach Kontakten suchen</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d Mitglied</item>
@@ -720,10 +762,11 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="display_name">Name anzeigen</string>
     <string name="edit_display_name">Anzeigename ändern</string>
     <string name="signature">Signatur</string>
-    <string name="mobile_footer">Signatur auf Mobilgeräten</string>
-    <string name="edit_mobile_footer">Signatur auf Mobilgerät aktivieren</string>
-    <string name="default_mobile_footer">Gesendet von ProtonMail mobile</string>
-    <string name="mobile_footer_is_premium">Das Ändern der mobilen Signatur ist nur in der kostenpflichtigen Version möglich</string>
+    <string name="mobile_footer">Fußzeile auf Mobilgeräten</string>
+    <string name="edit_mobile_footer">Fußzeile auf Mobilgeräten aktivieren</string>
+    <string name="default_mobile_footer">Gesendet mit ProtonMail für Mobilgerät</string>
+    <string name="mobile_footer_is_premium">Das Ändern der Fußzeile auf Mobilgeräten ist nur zahlenden Benutzer erlaubt</string>
+    <string name="mobile_footer_info">Diese Fußzeile wird nach Ihrer Signatur eingefügt</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Zurückstellen</string>
     <string name="notifications_snooze">Benachrichtigungen später lesen</string>
@@ -784,7 +827,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="labels_and_folders">Kategorien und Ordner </string>
     <string name="folders">Ordner</string>
     <string name="labels">Kategorien</string>
-    <string name="labels_manage">Kategorien verwalten</string>
+    <string name="labels_manager">Kategorien verwalten</string>
     <string name="folders_manage">Ordnerverwaltung</string>
     <string name="swipe_actions">Wischgesten</string>
     <string name="swipe_action_right">Nach rechts wischen</string>
@@ -792,10 +835,13 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Wischgeste wählen</string>
     <string name="swipe_action_trash">Nachricht in den Papierkorb verschieben</string>
+    <string name="swipe_action_trash_short">In Papierkorb verschieben</string>
     <string name="swipe_action_star">Kennzeichnung der Nachricht aktualisiert</string>
     <string name="swipe_action_star_short">Kennzeichnung aktualisieren</string>
     <string name="swipe_action_spam">Nachricht als Spam gekennzeichnet</string>
+    <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Archivieren</string>
+    <string name="swipe_action_archive_short">Archivieren</string>
     <string name="swipe_action_mark_read">Nachricht als gelesen gekennzeichnet</string>
     <string name="swipe_action_mark_read_short">Gelesen</string>
     <plurals name="action_move_to_trash">
@@ -836,7 +882,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="turn_combined_contacts_on">Aktivieren Sie diese Funktion, um E-Mail-Adressen aus Kontakten all Ihren angemeldeten Konten automatisch zu vervollständigen.</string>
     <string name="local_cache_management">Lokalen Zwischenspeicher verwalten</string>
     <string name="cache_cleared">Lokaler Zwischenspeicher wurde aktualisiert</string>
-    <string name="empty_data">Zwischenspeicher leeren</string>
+    <string name="empty_data">Daten löschen</string>
     <!-- endregion -->
     <string name="enabled">Aktiviert</string>
     <string name="disabled">Deaktiviert</string>
@@ -889,12 +935,14 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="error_loading_conversations">Fehler beim Laden des Themas. Bitte versuchen Sie es erneut.</string>
     <string name="star">Kennzeichnen</string>
     <string name="unstar">Kennzeichnung entfernen</string>
+    <string name="star_unstar">Kennzeichnen/Kennzeichnung aufheben</string>
     <string name="send_to_archive">In Archiv verschieben?</string>
     <string name="new_label">Neue Kategorie</string>
     <string name="new_folder">Neuer Ordner</string>
     <string name="label_as">Hinzufügen zur Kategorie …</string>
     <string name="mark_as_unread">Als „Ungelesen” kennzeichnen</string>
     <string name="mark_as_read">Als „Gelesen” kennzeichnen</string>
+    <string name="mark_as_read_unread">Als „Gelesen/Ungelesen” kennzeichnen</string>
     <string name="move_message">Nachricht verschieben</string>
     <string name="manage">Verwalten</string>
     <string name="message_from">Nachricht von %s</string>
@@ -907,4 +955,8 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
         <item quantity="one">%d Thema</item>
         <item quantity="other">%d Themen</item>
     </plurals>
+    <string name="contacts_call">Anrufen</string>
+    <string name="contacts_send_group_message">Gruppennachricht senden</string>
+    <string name="inbox_this_folder_is_empty">Dieser Ordner ist leer</string>
+    <string name="inbox_nothing_to_see_here">Hier gibt es nichts zu sehen</string>
 </resources>

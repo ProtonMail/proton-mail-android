@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">Dny</string>
     <string name="x_folders">Složky</string>
+    <string name="x_hours">Hodiny</string>
     <string name="x_labels">Štítky</string>
     <string name="x_more">Více</string>
     <string name="x_search">Hledat</string>
+    <string name="x_set">Nastavit</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakty</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">Od:</string>
     <string name="composer_subject">Předmět:</string>
     <string name="composer_to">Pro:</string>
+    <string name="set_msg_password_title">Nastavit heslo</string>
+    <string name="set_msg_password_info">Nastavte heslo pro zašifrování této zprávy pro uživatele, kteří nepoužívají Proton Mail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Další informace</a></string>
+    <string name="set_msg_password_info_icon_description">Informace</string>
+    <string name="set_msg_password_msg_password_title">Heslo zprávy</string>
+    <string name="set_msg_password_msg_password_hint">4 až 21 znaků</string>
+    <string name="set_msg_password_repeat_password_title">Zopakovat heslo</string>
+    <string name="set_msg_password_repeat_password_hint">Hesla se musí shodovat</string>
+    <string name="set_msg_password_password_hint_title">Nápověda pro heslo</string>
+    <string name="set_msg_password_password_hint_hint">Nápověda k heslu (volitelné)</string>
+    <string name="set_msg_password_apply_password">Použít heslo</string>
+    <string name="set_msg_password_remove_password">Odstranit heslo</string>
+    <string name="set_msg_password_error_too_short">Heslo je příliš krátké</string>
+    <string name="set_msg_password_error_too_long">Heslo je příliš dlouhé</string>
+    <string name="set_msg_password_error_mismatch">Hesla se neshodují</string>
+    <string name="set_msg_expiration_title">Čas vypršení zprávy</string>
+    <string name="set_msg_expiration_none">Žádný</string>
+    <string name="set_msg_expiration_1_hour">1 hodina</string>
+    <string name="set_msg_expiration_1_day">1 den</string>
+    <string name="set_msg_expiration_3_days">3 dny</string>
+    <string name="set_msg_expiration_1_week">1 týden</string>
+    <string name="set_msg_expiration_custom">Vlastní</string>
+    <string name="set_msg_expiration_check_description">Tato položka je zaškrtnuta</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Set PIN code</string>
+    <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
+    <string name="settings_pins_dont_match">The PIN codes must match!</string>
+    <string name="settings_enter_pin_code_title">Enter PIN code</string>
+    <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
+    <string name="settings_swipe_left_to_right">Left to right</string>
+    <string name="settings_swipe_right_to_left">Right to left</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Discard changes?</string>
+    <string name="dialog_discard_changes_message">Any unsaved changes will be discarded.</string>
+    <string name="discard">Discard</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -461,6 +500,8 @@
     <string name="vcard_other_option_role">Role</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Převést Kontakt</string>
+    <string name="contacts_import_contact">Import Contact</string>
+    <string name="contacts_import">Import</string>
     <string name="upload_contacts">Nahrát kontakty</string>
     <string name="upgrade_encrypted_contact">Proveďte prosím navýšení svého účtu pro přístup k šifrováným detailům kontaktu.</string>
     <string name="uploading_contacts">Nahrávání kontaktů…</string>
@@ -606,7 +647,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">End-to-End šifrovaná zpráva</string>
     <string name="sender_lock_internal_verified">End-to-end šifrovaná zpráva z ověřené adresy</string>
-    <string name="sender_lock_learn_more"><a href="">Více informací</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Více informací</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-End šifrováno</string>
     <string name="composer_lock_internal_pinned">Zašifrováno End-to-end k ověřenému příjemci</string>
@@ -641,17 +682,18 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Přidat fotku</string>
-    <string name="contact_display_name">Zobrazit jméno</string>
+    <string name="contact_display_name">Zobrazované jméno</string>
     <string name="add_new_email">Přidat e-mailovou adresu</string>
     <string name="no_groups">Žádné skupiny</string>
     <string name="contact_vcard_note">Poznámka</string>
     <string name="edit_contact">Upravit kontakt</string>
     <string name="create_contact_group">Vytvoření skupinu kontaktů</string>
     <string name="edit_contact_group">Upravit Skupinu Kontaktů</string>
-    <string name="contact_group_display_name">Zobrazit název</string>
+    <string name="contact_groups_manage_members">Spravovat členy</string>
+    <string name="contact_group_display_name">Zobrazované jméno</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Přidat adresu do skupin</string>
-    <string name="title_activity_address_chooser">Upravit Adresy</string>
+    <string name="title_activity_address_chooser">Spravovat členy</string>
     <string name="title_activity_account_manager">Správa účtů</string>
     <string name="account_manager_add_account">Přidat účet</string>
     <string name="account_manager_remove_all_accounts">Removing all accounts</string>
@@ -664,7 +706,7 @@
     <string name="account_manager_remove">Remove</string>
     <string name="default_error_message">Došlo k chybě</string>
     <string name="no_contact_groups">Žádné skupiny kontaktů</string>
-    <string name="search_contacts_inside_group">Vyhledávat kontakty ve skupině</string>
+    <string name="search_contacts_inside_group">Vyhledávat kontakty</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d člen</item>
@@ -754,10 +796,11 @@
     <string name="display_name">Zobrazované jméno</string>
     <string name="edit_display_name">Upravit zobrazované jméno</string>
     <string name="signature">Podpis</string>
-    <string name="mobile_footer">Mobile signature</string>
-    <string name="edit_mobile_footer">Enable mobile signature</string>
-    <string name="default_mobile_footer">Odesláno z mobilní verze ProtonMail</string>
-    <string name="mobile_footer_is_premium">Změna podpisu na mobilním zařízení je dostupná pouze pro platící uživatele</string>
+    <string name="mobile_footer">Mobile footer</string>
+    <string name="edit_mobile_footer">Enable mobile footer</string>
+    <string name="default_mobile_footer">Sent from ProtonMail mobile</string>
+    <string name="mobile_footer_is_premium">Changing the Mobile Footer is allowed to Paid users only</string>
+    <string name="mobile_footer_info">This footer is added after your signature</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Snooze</string>
     <string name="notifications_snooze">Oznámení odložení</string>
@@ -820,18 +863,21 @@
     <string name="labels_and_folders">Štítky &amp; složky </string>
     <string name="folders">Složky</string>
     <string name="labels">Štítky</string>
-    <string name="labels_manage">Správce štítků</string>
+    <string name="labels_manager">Labels manager</string>
     <string name="folders_manage">Správce složek</string>
-    <string name="swipe_actions">Swiping gesture</string>
+    <string name="swipe_actions">Swipe actions</string>
     <string name="swipe_action_right">Odsunutí doprava</string>
     <string name="swipe_action_left">Odsunutí doleva</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Zvolit akci posunutí</string>
     <string name="swipe_action_trash">Zpráva byla přesunuta do Koše</string>
+    <string name="swipe_action_trash_short">Move to Trash</string>
     <string name="swipe_action_star">Zpráva byla označena</string>
     <string name="swipe_action_star_short">Aktualizovat hvězdičku</string>
     <string name="swipe_action_spam">Zpráva označena jako spam</string>
+    <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Archivovat zprávu</string>
+    <string name="swipe_action_archive_short">Archive</string>
     <string name="swipe_action_mark_read">Zpráva označena jako přečtená</string>
     <string name="swipe_action_mark_read_short">Přečteno</string>
     <plurals name="action_move_to_trash">
@@ -860,11 +906,11 @@
     <!-- region App Settings -->
     <string name="push_notifications">Oznámení</string>
     <string name="extended_notifications">Rozšířená oznámení</string>
-    <string name="extended_notifications_description">Turn this feature on to see the sender\nof the emails in the push notifications.</string>
+    <string name="extended_notifications_description">Turn this feature on to see the sender of the emails in the push notifications.</string>
     <string name="notification_settings">Nastavení notifikací</string>
     <string name="auto_lock">Auto-lock</string>
     <string name="auto_lock_app">Auto-lock app</string>
-    <string name="auto_lock_description">Turn this feature on to auto-lock your\napp and use a PIN code or fingerprint\nto unlock it.</string>
+    <string name="auto_lock_description">Turn this feature on to auto-lock your app and use a PIN code or fingerprint to unlock it.</string>
     <string name="change_pin_code">Změnit PIN kód</string>
     <string name="auto_lock_timer">Auto-lock timer</string>
     <string name="connections_via_third_parties">Alternative routing</string>
@@ -876,9 +922,9 @@
     <string name="auto_detect">Auto-detect</string>
     <string name="combined_contacts">Combined Contacts</string>
     <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
-    <string name="local_cache_management">Local Cache Management</string>
+    <string name="local_cache_management">Local Cache</string>
     <string name="cache_cleared">Mezipaměť byla obnovena</string>
-    <string name="empty_data">Vyprázdnit cache</string>
+    <string name="empty_data">Empty Data</string>
     <!-- endregion -->
     <string name="enabled">Povoleno</string>
     <string name="disabled">Zakázáno</string>
@@ -932,12 +978,14 @@
     <string name="error_loading_conversations">Chyba při načítání konverzací, zkuste to prosím znovu</string>
     <string name="star">Označit hvězdičkou</string>
     <string name="unstar">Odebrat hvězdičku</string>
+    <string name="star_unstar">Star/unstar</string>
     <string name="send_to_archive">Odeslat do archivu?</string>
     <string name="new_label">Nový štítek</string>
     <string name="new_folder">Nová složka</string>
     <string name="label_as">Označit jako…</string>
     <string name="mark_as_unread">Označit jako nepřečtené</string>
     <string name="mark_as_read">Označit jako přečtené</string>
+    <string name="mark_as_read_unread">Mark as read/unread</string>
     <string name="move_message">Přesunout zprávu</string>
     <string name="manage">Spravovat</string>
     <string name="message_from">Zpráva od %s</string>
@@ -954,4 +1002,8 @@
         <item quantity="many">%d konverzací</item>
         <item quantity="other">%d konverzací</item>
     </plurals>
+    <string name="contacts_call">Zavolat</string>
+    <string name="contacts_send_group_message">Odeslat skupinovou zprávu</string>
+    <string name="inbox_this_folder_is_empty">This folder is empty</string>
+    <string name="inbox_nothing_to_see_here">Nothing to see here</string>
 </resources>

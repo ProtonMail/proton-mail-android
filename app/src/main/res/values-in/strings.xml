@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">Hari</string>
     <string name="x_folders">Folder</string>
+    <string name="x_hours">Jam</string>
     <string name="x_labels">Label</string>
     <string name="x_more">Lainnya</string>
     <string name="x_search">Pencarian</string>
+    <string name="x_set">Setel</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontak</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">Dari:</string>
     <string name="composer_subject">Subyek:</string>
     <string name="composer_to">Kepada:</string>
+    <string name="set_msg_password_title">Setel kata sandi</string>
+    <string name="set_msg_password_info">Setel sandi untuk mengenkripsi pesan ini bagi pengguna non-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Pelajari lebih lanjut</a></string>
+    <string name="set_msg_password_info_icon_description">Info</string>
+    <string name="set_msg_password_msg_password_title">Kata sandi pesan</string>
+    <string name="set_msg_password_msg_password_hint">panjang karakter 8 - 21</string>
+    <string name="set_msg_password_repeat_password_title">Ulangi kata sandi</string>
+    <string name="set_msg_password_repeat_password_hint">Sandi harus cocok</string>
+    <string name="set_msg_password_password_hint_title">Petunjuk kata sandi</string>
+    <string name="set_msg_password_password_hint_hint">Tentukan petunjuk (Opsional)</string>
+    <string name="set_msg_password_apply_password">Terapkan sandi</string>
+    <string name="set_msg_password_remove_password">Hapus sandi</string>
+    <string name="set_msg_password_error_too_short">Sandi terlalu pendek</string>
+    <string name="set_msg_password_error_too_long">Sandi terlalu panjang</string>
+    <string name="set_msg_password_error_mismatch">Kata sandi tidak cocok</string>
+    <string name="set_msg_expiration_title">Pesan Kadaluwarsa</string>
+    <string name="set_msg_expiration_none">Tidak ada</string>
+    <string name="set_msg_expiration_1_hour">1 jam</string>
+    <string name="set_msg_expiration_1_day">1 hari</string>
+    <string name="set_msg_expiration_3_days">3 hari</string>
+    <string name="set_msg_expiration_1_week">1 pekan</string>
+    <string name="set_msg_expiration_custom">Sesuaikan</string>
+    <string name="set_msg_expiration_check_description">Item ini sudah dicentang</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Atur kode PIN</string>
+    <string name="settings_confirm_pin_code_title">Ulangi kode PIN</string>
+    <string name="settings_pins_dont_match">Kode PIN harus cocok!</string>
+    <string name="settings_enter_pin_code_title">Masukkan kode PIN</string>
+    <string name="settings_swipe_settings_info">Atur gestur usap untuk mengakses tindakan yang paling sering digunakan.</string>
+    <string name="settings_swipe_left_to_right">Kiri ke kanan</string>
+    <string name="settings_swipe_right_to_left">Kanan ke kiri</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Buang perubahan?</string>
+    <string name="dialog_discard_changes_message">Perubahan yang belum disimpan akan dibuang.</string>
+    <string name="discard">Buang</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -437,6 +476,8 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="vcard_other_option_role">Peran</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Mengkonversi Kontak</string>
+    <string name="contacts_import_contact">Impor Kontak</string>
+    <string name="contacts_import">Impor</string>
     <string name="upload_contacts">Unggah Kontak</string>
     <string name="upgrade_encrypted_contact">Silakan tingkatkan akun untuk menggunakan informasi kontak terenkripsi.</string>
     <string name="uploading_contacts">Mengunggah kontak…</string>
@@ -582,7 +623,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Pesan terenkripsi end-to-end</string>
     <string name="sender_lock_internal_verified">Pesan terenkripsi end-to-end dari alamat terverifikasi</string>
-    <string name="sender_lock_learn_more"><a href="">Pelajari lebih lanjut</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Pelajari lebih lanjut</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Dienkripsi end-to-end</string>
     <string name="composer_lock_internal_pinned">Terenkripsi end-to-end ke alamat terverifikasi</string>
@@ -624,10 +665,11 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="edit_contact">Ubah Kontak</string>
     <string name="create_contact_group">Buat Grup Kontak</string>
     <string name="edit_contact_group">Edit Grup Kontak</string>
+    <string name="contact_groups_manage_members">Kelola Anggota</string>
     <string name="contact_group_display_name">Nama Tampilan</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Tambahkan alamat ke grup</string>
-    <string name="title_activity_address_chooser">Kelola Alamat</string>
+    <string name="title_activity_address_chooser">Kelola Anggota</string>
     <string name="title_activity_account_manager">Kelola Akun</string>
     <string name="account_manager_add_account">Tambahkan Akun</string>
     <string name="account_manager_remove_all_accounts">Hapus semua akun</string>
@@ -640,7 +682,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="account_manager_remove">Hapus</string>
     <string name="default_error_message">Terjadi kesalahan</string>
     <string name="no_contact_groups">Tidak ada Grup Kontak</string>
-    <string name="search_contacts_inside_group">Cari kontak dari dalam grup</string>
+    <string name="search_contacts_inside_group">Pencarian kontak</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="other">%d Anggota</item>
@@ -718,10 +760,11 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="display_name">Nama tampilan</string>
     <string name="edit_display_name">Edit nama tampilan</string>
     <string name="signature">Tanda tangan</string>
-    <string name="mobile_footer">Tanda tangan mobile</string>
-    <string name="edit_mobile_footer">Aktifkan tanda tangan seluler</string>
-    <string name="default_mobile_footer">Dikirim dari ProtonMail seluler</string>
-    <string name="mobile_footer_is_premium">Mengubah Tanda Tangan Seluler hanya diizinkan hanya untuk pengguna berbayar</string>
+    <string name="mobile_footer">Footer selular</string>
+    <string name="edit_mobile_footer">Aktifkan footer selular</string>
+    <string name="default_mobile_footer">Dikirim dari ProtonMail selular</string>
+    <string name="mobile_footer_is_premium">Mengubah Footer Selular diizinkan hanya untuk pengguna Berbayar</string>
+    <string name="mobile_footer_info">Footer ini ditambahkan setelah tanda tangan Anda</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Tunda</string>
     <string name="notifications_snooze">Pemberitahuan Tunda</string>
@@ -781,18 +824,21 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="labels_and_folders">Label &amp; Folder </string>
     <string name="folders">Folder</string>
     <string name="labels">Label</string>
-    <string name="labels_manage">Pengelola Label</string>
+    <string name="labels_manager">Pengelola Label</string>
     <string name="folders_manage">Pengelola Folder</string>
-    <string name="swipe_actions">Gerakan usap</string>
+    <string name="swipe_actions">Tindakan geser</string>
     <string name="swipe_action_right">Geser kanan</string>
     <string name="swipe_action_left">Geser kiri</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Pilih tindakan usap</string>
     <string name="swipe_action_trash">Pesan dipindahkan ke sampah</string>
+    <string name="swipe_action_trash_short">Pindahkan ke Sampah</string>
     <string name="swipe_action_star">Pesan berbintang diperbarui</string>
     <string name="swipe_action_star_short">Perbarui Bintang</string>
     <string name="swipe_action_spam">Pesan ditandai sebagai spam</string>
+    <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Pesan diarsipkan</string>
+    <string name="swipe_action_archive_short">Arsip</string>
     <string name="swipe_action_mark_read">Pesan ditandai telah dibaca</string>
     <string name="swipe_action_mark_read_short">Telah dibaca</string>
     <plurals name="action_move_to_trash">
@@ -830,7 +876,7 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="turn_combined_contacts_on">Aktifkan fitur ini untuk otomatis melengkapi alamat email menggunakan kontak dari semua akun masuk anda.</string>
     <string name="local_cache_management">Pengelola Cache Lokal</string>
     <string name="cache_cleared">Cache Lokal Disegarkan</string>
-    <string name="empty_data">Kosongkan Cache</string>
+    <string name="empty_data">Kosongkan Data</string>
     <!-- endregion -->
     <string name="enabled">Diaktifkan</string>
     <string name="disabled">Dinonaktifkan</string>
@@ -884,12 +930,14 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="error_loading_conversations">Kesalahan memuat percakapan, silakan coba lagi</string>
     <string name="star">Bintang</string>
     <string name="unstar">Hapus Bintang</string>
+    <string name="star_unstar">Bintangi/Hapus Bintang</string>
     <string name="send_to_archive">Kirim ke arsip?</string>
     <string name="new_label">Label Baru</string>
     <string name="new_folder">Folder Baru</string>
     <string name="label_as">Labeli sebagai…</string>
     <string name="mark_as_unread">Tandai belum dibaca</string>
     <string name="mark_as_read">Tandai telah dibaca</string>
+    <string name="mark_as_read_unread">Tandai sebagai dibaca/belum dibaca</string>
     <string name="move_message">Pindahkan pesan</string>
     <string name="manage">Kelola</string>
     <string name="message_from">Pesan dari %s</string>
@@ -900,4 +948,8 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <plurals name="x_conversations_count">
         <item quantity="other">%d percakapan</item>
     </plurals>
+    <string name="contacts_call">Panggilan</string>
+    <string name="contacts_send_group_message">Kirim pesan grup</string>
+    <string name="inbox_this_folder_is_empty">Folder ini kosong</string>
+    <string name="inbox_nothing_to_see_here">Tidak ada yang bisa dilihat di sini</string>
 </resources>

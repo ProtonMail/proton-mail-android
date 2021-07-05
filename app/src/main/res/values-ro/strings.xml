@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">zile</string>
     <string name="x_folders">Foldere</string>
+    <string name="x_hours">ore</string>
     <string name="x_labels">Etichete</string>
     <string name="x_more">Detalii</string>
     <string name="x_search">Căutare</string>
+    <string name="x_set">Setare</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contacte</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">De la:</string>
     <string name="composer_subject">Subiect:</string>
     <string name="composer_to">Către:</string>
+    <string name="set_msg_password_title">Setare parolă</string>
+    <string name="set_msg_password_info">Setaţi o parolă pentru criptarea acestui mesaj pentru utilizatorii non-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Mai multe detalii</a></string>
+    <string name="set_msg_password_info_icon_description">Informaţii</string>
+    <string name="set_msg_password_msg_password_title">Parolă mesaj</string>
+    <string name="set_msg_password_msg_password_hint">între 4 și 21 de caractere</string>
+    <string name="set_msg_password_repeat_password_title">Repetare parolă</string>
+    <string name="set_msg_password_repeat_password_hint">Parolele trebuie să corespundă.</string>
+    <string name="set_msg_password_password_hint_title">Indiciu parolă</string>
+    <string name="set_msg_password_password_hint_hint">Definire indiciu (opțional)</string>
+    <string name="set_msg_password_apply_password">Aplicare parolă</string>
+    <string name="set_msg_password_remove_password">Eliminare parolă</string>
+    <string name="set_msg_password_error_too_short">Parolă prea scurtă</string>
+    <string name="set_msg_password_error_too_long">Parolă prea lungă</string>
+    <string name="set_msg_password_error_mismatch">Parolele nu se potrivesc</string>
+    <string name="set_msg_expiration_title">Expirare mesaj</string>
+    <string name="set_msg_expiration_none">Nimic</string>
+    <string name="set_msg_expiration_1_hour">o oră</string>
+    <string name="set_msg_expiration_1_day">o zi</string>
+    <string name="set_msg_expiration_3_days">3 zile</string>
+    <string name="set_msg_expiration_1_week">o săptămână</string>
+    <string name="set_msg_expiration_custom">Personalizat</string>
+    <string name="set_msg_expiration_check_description">Acest articol este selectat</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Setare cod PIN</string>
+    <string name="settings_confirm_pin_code_title">Repere cod PIN</string>
+    <string name="settings_pins_dont_match">Codurile PIN trebuie să corespundă!</string>
+    <string name="settings_enter_pin_code_title">Introduceţi codul PIN</string>
+    <string name="settings_swipe_settings_info">Configurare gesturi de glisare pentru a accesa cele mai utilizate acțiuni.</string>
+    <string name="settings_swipe_left_to_right">De la stânga la dreapta</string>
+    <string name="settings_swipe_right_to_left">De la dreapta la stânga</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Anulare modificări?</string>
+    <string name="dialog_discard_changes_message">Toate modificările nesalvate vor fi pierdute.</string>
+    <string name="discard">Renunțare</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -451,6 +490,8 @@
     <string name="vcard_other_option_role">Rol</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Convertire contact</string>
+    <string name="contacts_import_contact">Importare contacte</string>
+    <string name="contacts_import">Importare</string>
     <string name="upload_contacts">Încărcare contacte</string>
     <string name="upgrade_encrypted_contact">Treceți la un plan cu plată pentru a putea cripta informațiile contactelor.</string>
     <string name="uploading_contacts">Încărcare contacte…</string>
@@ -596,7 +637,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Mesaj criptat în ambele părți</string>
     <string name="sender_lock_internal_verified">Mesaj criptat în ambele părți de la adresă verificată</string>
-    <string name="sender_lock_learn_more"><a href="">Detalii</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Mai multe detalii</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Criptat în ambele părți</string>
     <string name="composer_lock_internal_pinned">Criptat în ambele părți spre adresă verificată</string>
@@ -632,16 +673,17 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">Adăugare fotografie</string>
     <string name="contact_display_name">Nume afișat</string>
-    <string name="add_new_email">Adăugare e-mail</string>
+    <string name="add_new_email">Adăugare adresă de e-mail</string>
     <string name="no_groups">Lipsă grupuri</string>
     <string name="contact_vcard_note">Notă</string>
     <string name="edit_contact">Editare contact</string>
     <string name="create_contact_group">Creare grup de contacte</string>
     <string name="edit_contact_group">Editare grup de contacte</string>
+    <string name="contact_groups_manage_members">Gestionare Membri</string>
     <string name="contact_group_display_name">Nume afișat</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Adăugare adresă în grupuri</string>
-    <string name="title_activity_address_chooser">Gestionare adrese</string>
+    <string name="title_activity_address_chooser">Gestionare Membri</string>
     <string name="title_activity_account_manager">Gestionare conturi</string>
     <string name="account_manager_add_account">Adăugare cont</string>
     <string name="account_manager_remove_all_accounts">Eliminare toate conturile</string>
@@ -654,7 +696,7 @@
     <string name="account_manager_remove">Eliminare</string>
     <string name="default_error_message">A apărut o eroare</string>
     <string name="no_contact_groups">Nu există grupuri de contacte</string>
-    <string name="search_contacts_inside_group">Căutare contacte în grup</string>
+    <string name="search_contacts_inside_group">Căutare contacte</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">Un membru</item>
@@ -740,10 +782,11 @@
     <string name="display_name">Afișare nume</string>
     <string name="edit_display_name">Editare nume afișat</string>
     <string name="signature">Semnătura</string>
-    <string name="mobile_footer">Semnătură mobil</string>
-    <string name="edit_mobile_footer">Activare semnătură mobil</string>
+    <string name="mobile_footer">Mesaj subsol</string>
+    <string name="edit_mobile_footer">Activare mesaj subsol</string>
     <string name="default_mobile_footer">Trimis cu ProtonMail pentru mobil</string>
-    <string name="mobile_footer_is_premium">Modificarea semnăturii pentru mobil este permisă doar celor cu un cont plătit</string>
+    <string name="mobile_footer_is_premium">Modificarea mesajului din subsol este permisă doar celor cu un cont plătit</string>
+    <string name="mobile_footer_info">Acest mesaj din subsol este adăugat după semnătură</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Amânare</string>
     <string name="notifications_snooze">Notificări amânate</string>
@@ -805,18 +848,21 @@
     <string name="labels_and_folders">Etichete și foldere </string>
     <string name="folders">Foldere</string>
     <string name="labels">Etichete</string>
-    <string name="labels_manage">Gestionare etichete</string>
+    <string name="labels_manager">Gestionare etichete</string>
     <string name="folders_manage">Gestionare foldere</string>
-    <string name="swipe_actions">Gesturi glisare</string>
+    <string name="swipe_actions">Acțiuni de glisare</string>
     <string name="swipe_action_right">Glisare la dreapta</string>
     <string name="swipe_action_left">Glisare la stânga</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Alegere acțiune de glisare</string>
     <string name="swipe_action_trash">Mutare mesaj în «Gunoi»</string>
+    <string name="swipe_action_trash_short">Mutare în «Gunoi»</string>
     <string name="swipe_action_star">Marcare cu stea modificată</string>
     <string name="swipe_action_star_short">Actualizare stea</string>
     <string name="swipe_action_spam">Marcare mesaj ca spam</string>
+    <string name="swipe_action_spam_short">Nedorite</string>
     <string name="swipe_action_archive">Mesaj arhivat</string>
+    <string name="swipe_action_archive_short">Arhivare</string>
     <string name="swipe_action_mark_read">Mesaj marcat ca citit</string>
     <string name="swipe_action_mark_read_short">Citit</string>
     <plurals name="action_move_to_trash">
@@ -860,7 +906,7 @@
     <string name="turn_combined_contacts_on">Activați funcția pentru autocompletarea adreselor de e-mail folosind contactele din toate conturile conectate.</string>
     <string name="local_cache_management">Gestionare buffer local</string>
     <string name="cache_cleared">Buffer local actualizat</string>
-    <string name="empty_data">Golire buffer</string>
+    <string name="empty_data">Golire date</string>
     <!-- endregion -->
     <string name="enabled">Activat</string>
     <string name="disabled">Dezactivat</string>
@@ -914,12 +960,14 @@
     <string name="error_loading_conversations">Eroare la încărcarea conversațiilor, reîncercați.</string>
     <string name="star">Aplicare stea</string>
     <string name="unstar">Anulare stea</string>
+    <string name="star_unstar">Cu stea/Fără stea</string>
     <string name="send_to_archive">Trimitere în «Arhivă»?</string>
     <string name="new_label">Etichetă nouă</string>
     <string name="new_folder">Folder nou</string>
     <string name="label_as">Etichetare ca…</string>
     <string name="mark_as_unread">Marcare ca necitit</string>
     <string name="mark_as_read">Marcare ca citit</string>
+    <string name="mark_as_read_unread">Marcare ca citit/necitit</string>
     <string name="move_message">Mutare mesaj</string>
     <string name="manage">Gestionare</string>
     <string name="message_from">Mesaj de la %s</string>
@@ -934,4 +982,8 @@
         <item quantity="few">%d conversații</item>
         <item quantity="other">%d de conversații</item>
     </plurals>
+    <string name="contacts_call">Apelare</string>
+    <string name="contacts_send_group_message">Trimitere mesaj la grup</string>
+    <string name="inbox_this_folder_is_empty">Acest folder este gol</string>
+    <string name="inbox_nothing_to_see_here">Nimic de văzut aici</string>
 </resources>

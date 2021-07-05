@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">Dies</string>
     <string name="x_folders">Carpetes</string>
+    <string name="x_hours">Hores</string>
     <string name="x_labels">Etiquetes</string>
     <string name="x_more">Més</string>
     <string name="x_search">Cercar</string>
+    <string name="x_set">Establir</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contactes</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">De:</string>
     <string name="composer_subject">Assumpte:</string>
     <string name="composer_to">A:</string>
+    <string name="set_msg_password_title">Establir contrasenya</string>
+    <string name="set_msg_password_info">Establiu una contrasenya per xifrar aquest missatge per a usuaris fora de ProtonMail.<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Saber-ne més</a></string>
+    <string name="set_msg_password_info_icon_description">Informació</string>
+    <string name="set_msg_password_msg_password_title">Contrasenya del missatge</string>
+    <string name="set_msg_password_msg_password_hint">Longitud de 4 a 21 caràcters</string>
+    <string name="set_msg_password_repeat_password_title">Repetir contrasenya</string>
+    <string name="set_msg_password_repeat_password_hint">Les contrasenyes han de coincidir</string>
+    <string name="set_msg_password_password_hint_title">Pista de contrasenya</string>
+    <string name="set_msg_password_password_hint_hint">Definir pista (opcional)</string>
+    <string name="set_msg_password_apply_password">Aplicar contrasenya</string>
+    <string name="set_msg_password_remove_password">Suprimir contrasenya</string>
+    <string name="set_msg_password_error_too_short">Contrasenya massa curta</string>
+    <string name="set_msg_password_error_too_long">Contrasenya massa llarga</string>
+    <string name="set_msg_password_error_mismatch">La contrasenya no coincideix</string>
+    <string name="set_msg_expiration_title">Caducitat del missatge</string>
+    <string name="set_msg_expiration_none">Cap</string>
+    <string name="set_msg_expiration_1_hour">1 hora</string>
+    <string name="set_msg_expiration_1_day">1 dia</string>
+    <string name="set_msg_expiration_3_days">3 dies</string>
+    <string name="set_msg_expiration_1_week">1 setmana</string>
+    <string name="set_msg_expiration_custom">Personalitzat</string>
+    <string name="set_msg_expiration_check_description">S\'ha comprovat aquest element</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Establir codi PIN</string>
+    <string name="settings_confirm_pin_code_title">Repetir codi PIN</string>
+    <string name="settings_pins_dont_match">Els codis PIN han de coincidir!</string>
+    <string name="settings_enter_pin_code_title">Introduir codi PIN</string>
+    <string name="settings_swipe_settings_info">Establir gestos de lliscament per accedir a les accions més utilitzades.</string>
+    <string name="settings_swipe_left_to_right">Esquerra a dreta</string>
+    <string name="settings_swipe_right_to_left">Dreta a esquerra</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Descartar els canvis?</string>
+    <string name="dialog_discard_changes_message">Qualsevol canvi no desat es descartarà.</string>
+    <string name="discard">Descartar</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -443,6 +482,8 @@
     <string name="vcard_other_option_role">Rol</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Converteix el contacte</string>
+    <string name="contacts_import_contact">Importar contacte</string>
+    <string name="contacts_import">Importar</string>
     <string name="upload_contacts">Pujar contactes</string>
     <string name="upgrade_encrypted_contact">Actualitzeu per utilitzar la informació de contacte xifrada.</string>
     <string name="uploading_contacts">Carregant contactes…</string>
@@ -588,7 +629,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Missatge encriptat extrem a extrem</string>
     <string name="sender_lock_internal_verified">Missatge encriptat extrem a extrem d\'una adreça verificada</string>
-    <string name="sender_lock_learn_more"><a href="">Saber-ne més</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Saber-ne més</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Encriptat extrem a extrem</string>
     <string name="composer_lock_internal_pinned">D\'extrem a extrem encriptada a l\'adreça verificada</string>
@@ -623,17 +664,18 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Afegir foto</string>
-    <string name="contact_display_name">Nom de Visualització</string>
+    <string name="contact_display_name">Nom a mostrar</string>
     <string name="add_new_email">Afegir Adreça de Correu Electrònic</string>
     <string name="no_groups">No hi ha grups</string>
     <string name="contact_vcard_note">Nota</string>
     <string name="edit_contact">Editar Contacte</string>
     <string name="create_contact_group">Crear Grup de Contactes</string>
     <string name="edit_contact_group">Edita Grup de Contactes</string>
-    <string name="contact_group_display_name">Nom de Visualització</string>
+    <string name="contact_groups_manage_members">Gestionar Membres</string>
+    <string name="contact_group_display_name">Nom a mostrar</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Afegiu adreces a grups</string>
-    <string name="title_activity_address_chooser">Gestiona les adreces</string>
+    <string name="title_activity_address_chooser">Gestionar Membres</string>
     <string name="title_activity_account_manager">Gestionar comptes</string>
     <string name="account_manager_add_account">Afegir compte</string>
     <string name="account_manager_remove_all_accounts">Esborrant totes les comptes</string>
@@ -646,7 +688,7 @@
     <string name="account_manager_remove">Suprimeix</string>
     <string name="default_error_message">S\'ha produït un error</string>
     <string name="no_contact_groups">No hi ha grups de contactes</string>
-    <string name="search_contacts_inside_group">Buscar contactes dins el grup</string>
+    <string name="search_contacts_inside_group">Cercar contactes</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d Membre</item>
@@ -728,10 +770,11 @@
     <string name="display_name">Mostrar el nom</string>
     <string name="edit_display_name">Modificar el nom per mostrar</string>
     <string name="signature">Signatura</string>
-    <string name="mobile_footer">Signatura mòbil</string>
-    <string name="edit_mobile_footer">Habilitar signatura mòbil</string>
+    <string name="mobile_footer">Text al peu al mòbil</string>
+    <string name="edit_mobile_footer">Activar text al peu</string>
     <string name="default_mobile_footer">Enviat des de ProtonMail mòbil</string>
-    <string name="mobile_footer_is_premium">El canvi de la signatura mòbil només es permet als usuaris de pagament</string>
+    <string name="mobile_footer_is_premium">El canvi de del text al peu al mòbil només es permet als usuaris de pagament</string>
+    <string name="mobile_footer_info">Aquest text al peu s\'afegeix després de la vostra signtura</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Posposa</string>
     <string name="notifications_snooze">Posposar notificacions</string>
@@ -792,18 +835,21 @@
     <string name="labels_and_folders">Etiquetes &amp; Carpetes </string>
     <string name="folders">Carpetes</string>
     <string name="labels">Etiquetes</string>
-    <string name="labels_manage">Administrador de etiquetes</string>
+    <string name="labels_manager">Administrador d\'etiquetes</string>
     <string name="folders_manage">Administrar carpetes</string>
-    <string name="swipe_actions">Gest de lliscament</string>
+    <string name="swipe_actions">Accions de lliscament</string>
     <string name="swipe_action_right">Llisca a dreta</string>
     <string name="swipe_action_left">Llisca a l\'esquerra</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Tria l\'acció de lliscar</string>
     <string name="swipe_action_trash">Missatge mogut a la paperera</string>
+    <string name="swipe_action_trash_short">Moure a la paperera</string>
     <string name="swipe_action_star">Missatge destacat actualitzat</string>
     <string name="swipe_action_star_short">Actualitzar destacat</string>
     <string name="swipe_action_spam">Missatge marcat com a spam</string>
+    <string name="swipe_action_spam_short">Correu brossa</string>
     <string name="swipe_action_archive">Missatge arxivat</string>
+    <string name="swipe_action_archive_short">Arxivar</string>
     <string name="swipe_action_mark_read">Missatge marcat com a llegit</string>
     <string name="swipe_action_mark_read_short">Llegit</string>
     <plurals name="action_move_to_trash">
@@ -844,7 +890,7 @@
     <string name="turn_combined_contacts_on">Activeu aquesta funció a les adreces de correu electrònic completades mitjançant contactes de tots els vostres comptes registrats.</string>
     <string name="local_cache_management">Administrador de memòria cau local</string>
     <string name="cache_cleared">La memòria cau local es restaura</string>
-    <string name="empty_data">Buidar cache</string>
+    <string name="empty_data">Buidar dades</string>
     <!-- endregion -->
     <string name="enabled">Activat</string>
     <string name="disabled">Desactivat</string>
@@ -897,12 +943,14 @@
     <string name="error_loading_conversations">Error carregant converses, torneu-ho a provar</string>
     <string name="star">Destacat</string>
     <string name="unstar">Treure de destacats</string>
+    <string name="star_unstar">Destacar / no destacar</string>
     <string name="send_to_archive">Enviar a l\'arxiu?</string>
     <string name="new_label">Etiqueta nova</string>
     <string name="new_folder">Carpeta nova</string>
     <string name="label_as">Etiquetar com a…</string>
     <string name="mark_as_unread">Marcar com a no llegit</string>
     <string name="mark_as_read">Marcar com a llegit</string>
+    <string name="mark_as_read_unread">Marcar com a llegit/no llegit</string>
     <string name="move_message">Moure missatge</string>
     <string name="manage">Gestionar</string>
     <string name="message_from">Missatge de %s</string>
@@ -915,4 +963,8 @@
         <item quantity="one">%d conversa</item>
         <item quantity="other">%d converses</item>
     </plurals>
+    <string name="contacts_call">Trucada</string>
+    <string name="contacts_send_group_message">Enviar missatge de grup</string>
+    <string name="inbox_this_folder_is_empty">Aquesta carpeta és buida</string>
+    <string name="inbox_nothing_to_see_here">Aquí no hi ha res</string>
 </resources>

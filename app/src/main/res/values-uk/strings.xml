@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">Днів</string>
     <string name="x_folders">Теки</string>
+    <string name="x_hours">Годин</string>
     <string name="x_labels">Мітки</string>
     <string name="x_more">Докладніше</string>
     <string name="x_search">Пошук</string>
+    <string name="x_set">Встановити</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Контакти</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">Від:</string>
     <string name="composer_subject">Тема:</string>
     <string name="composer_to">Кому:</string>
+    <string name="set_msg_password_title">Встановити пароль</string>
+    <string name="set_msg_password_info">Встановіть пароль для шифрування цього повідомлення для користувачів інших постачальників пошти. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Докладніше</a></string>
+    <string name="set_msg_password_info_icon_description">Відомості</string>
+    <string name="set_msg_password_msg_password_title">Пароль повідомлення</string>
+    <string name="set_msg_password_msg_password_hint">Довжина від 4 до 21 символу</string>
+    <string name="set_msg_password_repeat_password_title">Повторити пароль</string>
+    <string name="set_msg_password_repeat_password_hint">Паролі повинні збігатися</string>
+    <string name="set_msg_password_password_hint_title">Підказка для пароля</string>
+    <string name="set_msg_password_password_hint_hint">Вкажіть підказку (необов\'язково)</string>
+    <string name="set_msg_password_apply_password">Застосувати пароль</string>
+    <string name="set_msg_password_remove_password">Вилучити пароль</string>
+    <string name="set_msg_password_error_too_short">Пароль закороткий</string>
+    <string name="set_msg_password_error_too_long">Пароль задовгий</string>
+    <string name="set_msg_password_error_mismatch">Пароль не збігається</string>
+    <string name="set_msg_expiration_title">Термін дії повідомлення</string>
+    <string name="set_msg_expiration_none">Немає</string>
+    <string name="set_msg_expiration_1_hour">1 година</string>
+    <string name="set_msg_expiration_1_day">1 день</string>
+    <string name="set_msg_expiration_3_days">3 дні</string>
+    <string name="set_msg_expiration_1_week">1 тиждень</string>
+    <string name="set_msg_expiration_custom">Власний</string>
+    <string name="set_msg_expiration_check_description">Цей елемент позначено</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Встановити ПІН-код</string>
+    <string name="settings_confirm_pin_code_title">Повторіть ПІН-код</string>
+    <string name="settings_pins_dont_match">ПІН-коди повинні збігатися!</string>
+    <string name="settings_enter_pin_code_title">Введіть ПІН-код</string>
+    <string name="settings_swipe_settings_info">Налаштуйте жести посування для швидких дій.</string>
+    <string name="settings_swipe_left_to_right">Зліва направо</string>
+    <string name="settings_swipe_right_to_left">Зправа наліво</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Відхилити зміни?</string>
+    <string name="dialog_discard_changes_message">Незбережені зміни буде відхилено.</string>
+    <string name="discard">Відхилити</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -461,6 +500,8 @@
     <string name="vcard_other_option_role">Роль</string>
     <string name="vcard_other_option_url">URL-адреса</string>
     <string name="convert_contact">Перетворити контакт</string>
+    <string name="contacts_import_contact">Імпортувати контакт</string>
+    <string name="contacts_import">Імпорт</string>
     <string name="upload_contacts">Вивантажити контакти</string>
     <string name="upgrade_encrypted_contact">Будь ласка, підвищіть свій план щоб користуватись зашифрованою інофромацією про контакти.</string>
     <string name="uploading_contacts">Вивантаження контактів …</string>
@@ -509,7 +550,7 @@
     <string name="message_expires_in">Термін дії цього повідомлення завершується через %s</string>
     <string name="unsaved_changes_title">Незбережені зміни</string>
     <string name="unsaved_changes_subtitle">Виявлено незбереженні записи у формі. Ви дійсно бажаєте скасувати їх?</string>
-    <string name="request_timeout">Request timed out, please try again</string>
+    <string name="request_timeout">Час очікування запиту задовгий, будь ласка, спробуйте ще раз</string>
     <string name="add_folder">Додати теку</string>
     <string name="no_folders">Немає тек</string>
     <string name="folders_title_move">Перенести листи до</string>
@@ -606,7 +647,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Наскрізно зашифроване повідомлення</string>
     <string name="sender_lock_internal_verified">Наскрізно зашифроване повідомлення з надійної адреси</string>
-    <string name="sender_lock_learn_more"><a href="">Докладніше</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Докладніше</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Наскрізно зашифровано</string>
     <string name="composer_lock_internal_pinned">Наскрізно зашифровано для перевіреного отримувача</string>
@@ -642,16 +683,17 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">Додати світлину</string>
     <string name="contact_display_name">Показуване ім\'я</string>
-    <string name="add_new_email">Додати адресу е-пошти</string>
+    <string name="add_new_email">Додати адресу електронної пошти</string>
     <string name="no_groups">Немає груп</string>
     <string name="contact_vcard_note">Нотатка</string>
     <string name="edit_contact">Редагувати контакт</string>
     <string name="create_contact_group">Створити групу контактів</string>
     <string name="edit_contact_group">Редагувати групу контактів</string>
+    <string name="contact_groups_manage_members">Керувати учасниками</string>
     <string name="contact_group_display_name">Показуване ім\'я</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Додати адресу до груп</string>
-    <string name="title_activity_address_chooser">Керувати адресами</string>
+    <string name="title_activity_address_chooser">Керувати учасниками</string>
     <string name="title_activity_account_manager">Керувати обліковими записами</string>
     <string name="account_manager_add_account">Додати обліковий запис</string>
     <string name="account_manager_remove_all_accounts">Вилучення всіх облікових записів</string>
@@ -664,7 +706,7 @@
     <string name="account_manager_remove">Видалити</string>
     <string name="default_error_message">Сталась помилка</string>
     <string name="no_contact_groups">Нема груп контактів</string>
-    <string name="search_contacts_inside_group">Шукати контакти всередині групи</string>
+    <string name="search_contacts_inside_group">Пошук контактів</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d учасник</item>
@@ -754,10 +796,11 @@
     <string name="display_name">Ім\'я для показу</string>
     <string name="edit_display_name">Редагувати показуване ім\'я</string>
     <string name="signature">Підпис</string>
-    <string name="mobile_footer">Мобільні підпис</string>
-    <string name="edit_mobile_footer">Додавати мобільний підпис</string>
+    <string name="mobile_footer">Мобільний нижній колонтитул</string>
+    <string name="edit_mobile_footer">Увімкнути мобільний колонтитул</string>
     <string name="default_mobile_footer">Надіслано з ProtonMail mobile</string>
-    <string name="mobile_footer_is_premium">Змінення мобільного підпису дозволено лише передплаченим користувачам</string>
+    <string name="mobile_footer_is_premium">Змінення мобільного колонтитула дозволено лише передплаченим користувачам</string>
+    <string name="mobile_footer_info">Цей нижній колонтитул додається нижче підпису</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Відкласти</string>
     <string name="notifications_snooze">Затримка сповіщень</string>
@@ -820,18 +863,21 @@
     <string name="labels_and_folders">Мітки й Теки </string>
     <string name="folders">Теки</string>
     <string name="labels">Мітки</string>
-    <string name="labels_manage">Менеджер міток</string>
+    <string name="labels_manager">Керування мітками</string>
     <string name="folders_manage">Менеджер тек</string>
-    <string name="swipe_actions">Жест проведення</string>
+    <string name="swipe_actions">Жести посування</string>
     <string name="swipe_action_right">Провести праворуч</string>
     <string name="swipe_action_left">Провести ліворуч</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Вибрати дію проведення</string>
     <string name="swipe_action_trash">Листа переміщено до кошика</string>
+    <string name="swipe_action_trash_short">Перемістити до смітника</string>
     <string name="swipe_action_star">Позначення повідомлення оновлена</string>
     <string name="swipe_action_star_short">Зірку додано</string>
     <string name="swipe_action_spam">Повідомлення позначено небажаним</string>
+    <string name="swipe_action_spam_short">Перемістити до небажаних</string>
     <string name="swipe_action_archive">Лист кинуто у архів</string>
+    <string name="swipe_action_archive_short">Архівувати</string>
     <string name="swipe_action_mark_read">Лист позначено небажаним</string>
     <string name="swipe_action_mark_read_short">Прочитано</string>
     <plurals name="action_move_to_trash">
@@ -875,10 +921,10 @@
     <string name="custom_language_dialog_title">Вибір мови застосунку</string>
     <string name="auto_detect">Автовизначення</string>
     <string name="combined_contacts">Об\'єднані контакти</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
+    <string name="turn_combined_contacts_on">Увімкніть цю функцію для автозавершення адрес з використанням контактів з усіх ваших під\'єднаних облікових записів.</string>
     <string name="local_cache_management">Керування локальним кешем</string>
     <string name="cache_cleared">Локальний кеш оновлено</string>
-    <string name="empty_data">Очистити кеш</string>
+    <string name="empty_data">Прибрати дані</string>
     <!-- endregion -->
     <string name="enabled">Увімкнено</string>
     <string name="disabled">Вимкнено</string>
@@ -932,12 +978,14 @@
     <string name="error_loading_conversations">Помилка завантаження бесід, повторіть сробу</string>
     <string name="star">Позначити зіркою</string>
     <string name="unstar">Прибрати зірку</string>
+    <string name="star_unstar">Позначити/Прибрати зірочку</string>
     <string name="send_to_archive">Архівувати?</string>
     <string name="new_label">Нова мітка</string>
     <string name="new_folder">Нова тека</string>
     <string name="label_as">Позначити міткою…</string>
     <string name="mark_as_unread">Позначити непрочитаним</string>
     <string name="mark_as_read">Позначити прочитаним</string>
+    <string name="mark_as_read_unread">Позначити прочитаним/непрочитаним</string>
     <string name="move_message">Перемістити повідомлення</string>
     <string name="manage">Керувати</string>
     <string name="message_from">Повідомлення від %s</string>
@@ -954,4 +1002,8 @@
         <item quantity="many">%d бесід</item>
         <item quantity="other">%d бесіди</item>
     </plurals>
+    <string name="contacts_call">Виклик</string>
+    <string name="contacts_send_group_message">Надіслати групове повідомлення</string>
+    <string name="inbox_this_folder_is_empty">Ця тека порожня</string>
+    <string name="inbox_nothing_to_see_here">Тут нічого немає</string>
 </resources>
