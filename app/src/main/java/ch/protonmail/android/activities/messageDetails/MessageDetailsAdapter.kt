@@ -49,6 +49,7 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.MessageDetailsListItem
+import ch.protonmail.android.details.presentation.parseBodyToPair
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
@@ -57,11 +58,16 @@ import ch.protonmail.android.utils.ui.TYPE_ITEM
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
+import kotlinx.android.synthetic.main.details_message_actions.view.*
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
 import java.util.ArrayList
+
+private const val ITEM_MESSAGE_BODY_WEB_VIEW_ID = 0x0072347283
+private const val ITEM_MESSAGE_BODY_PROGRESS_VIEW_ID = 0x0072349834
+private const val ITEM_MESSAGE_ACTIONS_LAYOUT_ID = 0x0072342369
 
 internal class MessageDetailsAdapter(
     private val context: Context,
@@ -101,21 +107,45 @@ internal class MessageDetailsAdapter(
                 )
             )
         } else {
-            val messageBodyProgress = ProgressBar(context)
-            val view = LayoutInflater.from(context).inflate(
+            val itemView = LayoutInflater.from(context).inflate(
                 R.layout.layout_message_details_web_view,
                 parent,
                 false
             )
-            setupMessageWebView(messageBodyProgress, view)
-            ItemViewHolder(view)
+
+            val webView = setupMessageBodyWebView(itemView)
+            itemView.messageWebViewContainer.removeAllViews()
+            itemView.messageWebViewContainer.addView(webView)
+
+            val messageBodyProgress = createMessageBodyProgressBar()
+            itemView.messageWebViewContainer.addView(messageBodyProgress)
+
+            if (showingMoreThanOneMessage()) {
+                val detailsMessageActions = createInMessageActionsView()
+                itemView.messageWebViewContainer.addView(detailsMessageActions)
+            }
+
+            ItemViewHolder(itemView)
         }
     }
 
-    private fun setupMessageWebView(
-        messageBodyProgress: ProgressBar,
-        itemView: View
-    ): WebView? {
+    private fun createMessageBodyProgressBar(): ProgressBar {
+        val messageBodyProgress = ProgressBar(context)
+        messageBodyProgress.id = ITEM_MESSAGE_BODY_PROGRESS_VIEW_ID
+        return messageBodyProgress
+    }
+
+    private fun showingMoreThanOneMessage() = messages.size > 1
+
+    private fun createInMessageActionsView(): View {
+        val detailsMessageActions = LayoutInflater.from(context).inflate(
+            R.layout.details_message_actions, null
+        )
+        detailsMessageActions.id = ITEM_MESSAGE_ACTIONS_LAYOUT_ID
+        return detailsMessageActions
+    }
+
+    private fun setupMessageBodyWebView(itemView: View): WebView? {
         val context = context as MessageDetailsActivity
         // Looks like some devices are not able to create a WebView in some conditions.
         // Show Toast and redirect to the proper page.
@@ -125,6 +155,7 @@ internal class MessageDetailsAdapter(
             (context as FragmentActivity).redirectToChrome()
             return null
         }
+        webView.id = ITEM_MESSAGE_BODY_WEB_VIEW_ID
 
         val webViewClient = MessageDetailsPmWebViewClient(userManager, context, itemView)
         configureWebView(webView, webViewClient)
@@ -132,9 +163,6 @@ internal class MessageDetailsAdapter(
 
         webView.invalidate()
         context.registerForContextMenu(webView)
-        itemView.messageWebViewContainer.removeAllViews()
-        itemView.messageWebViewContainer.addView(webView)
-        itemView.messageWebViewContainer.addView(messageBodyProgress)
 
         return webView
     }
@@ -196,8 +224,10 @@ internal class MessageDetailsAdapter(
                 onLoadMessageBody(message)
             }
 
-            val webView = itemView.messageWebViewContainer.getChildAt(0) as? WebView ?: return
-            val messageBodyProgress = itemView.messageWebViewContainer.getChildAt(1) as? ProgressBar ?: return
+            val webView =
+                itemView.messageWebViewContainer.findViewById<WebView>(ITEM_MESSAGE_BODY_WEB_VIEW_ID) ?: return
+            val messageBodyProgress =
+                itemView.messageWebViewContainer.findViewById<ProgressBar>(ITEM_MESSAGE_BODY_PROGRESS_VIEW_ID) ?: return
             webView.loadDataWithBaseURL(
                 Constants.DUMMY_URL_PREFIX,
                 listItem.messageFormattedHtml ?: "",
@@ -207,13 +237,38 @@ internal class MessageDetailsAdapter(
             )
 
             listItem.messageFormattedHtml?.let {
-                messageBodyProgress.visibility = View.INVISIBLE
+                messageBodyProgress.visibility = View.GONE
             }
             displayAttachmentInfo(listItem.message.attachments, attachmentsView)
             loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
             setUpViewDividers()
 
+            val detailsMessageActions: ViewGroup? =
+                itemView.messageWebViewContainer.findViewById(ITEM_MESSAGE_ACTIONS_LAYOUT_ID)
+            setupShowHistoryAction(detailsMessageActions, listItem, webView)
+
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
+        }
+
+        private fun setupShowHistoryAction(
+            detailsMessageActions: ViewGroup?,
+            listItem: MessageDetailsListItem,
+            webView: WebView
+        ) {
+            val showHistoryButton = detailsMessageActions?.details_button_show_history
+            val messageHasQuotedHistory =
+                listItem.messageFormattedHtml != listItem.messageFormattedHtmlWithQuotedHistory
+            showHistoryButton?.isVisible = messageHasQuotedHistory
+            showHistoryButton?.setOnClickListener {
+                webView.loadDataWithBaseURL(
+                    Constants.DUMMY_URL_PREFIX,
+                    listItem.messageFormattedHtmlWithQuotedHistory ?: "",
+                    "text/html",
+                    HTTP.UTF_8,
+                    ""
+                )
+                showHistoryButton.isVisible = false
+            }
         }
 
         private fun setupMessageContentActions(
@@ -275,7 +330,11 @@ internal class MessageDetailsAdapter(
         val item: MessageDetailsListItem? = visibleItems?.firstOrNull {
             it.ItemType == TYPE_ITEM && it.message.messageId == messageId
         }
-        item?.messageFormattedHtml = parsedBody
+
+        val validParsedBody = parsedBody ?: return
+        val (formattedMessage, formattedMessageWithQuote) = validParsedBody.parseBodyToPair()
+        item?.messageFormattedHtml = formattedMessage
+        item?.messageFormattedHtmlWithQuotedHistory = formattedMessageWithQuote
         item?.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton
         item?.message?.setAttachmentList(attachments)
 
@@ -290,7 +349,7 @@ internal class MessageDetailsAdapter(
         val items = ArrayList<MessageDetailsListItem>()
         messages.forEach { message ->
             items.add(MessageDetailsListItem(message))
-            items.add(MessageDetailsListItem(message, message.decryptedHTML))
+            items.add(MessageDetailsListItem(message, message.decryptedHTML, message.decryptedHTML))
         }
         setItems(items)
     }

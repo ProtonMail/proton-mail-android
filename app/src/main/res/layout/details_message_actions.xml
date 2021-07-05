@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding_m">
+
+    <Button
+        android:id="@+id/details_button_show_history"
+        style="@style/ProtonButton.Borderless.Text"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/message_details_actions_button_size"
+        android:text="@string/details_show_history"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+    <ImageButton
+        android:id="@+id/details_button_reply"
+        style="@style/ProtonImage.ImageButton"
+        android:layout_width="@dimen/message_details_actions_button_size"
+        android:layout_height="@dimen/message_details_actions_button_size"
+        android:background="?selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_reply"
+        app:layout_constraintEnd_toStartOf="@id/details_button_more"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:tint="@color/cornflower_blue" />
+
+    <ImageButton
+        android:id="@+id/details_button_more"
+        style="@style/ProtonImage.ImageButton"
+        android:layout_width="@dimen/message_details_actions_button_size"
+        android:layout_height="@dimen/message_details_actions_button_size"
+        android:background="?selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_three_dots_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:tint="@color/cornflower_blue" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

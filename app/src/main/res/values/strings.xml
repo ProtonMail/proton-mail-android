@@ -1072,4 +1072,6 @@
     <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
     <string name="edit_draft">Edit draft</string>
     <string name="primary_user_error">Could not upgrade, something went wrong.</string>
+
+    <string name="details_show_history">Show history</string>
 </resources>
