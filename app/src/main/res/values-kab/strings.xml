@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">Ussan</string>
     <string name="x_folders">Ikaramen</string>
+    <string name="x_hours">Isragen</string>
     <string name="x_labels">Tibzimin</string>
     <string name="x_more">Ugar</string>
     <string name="x_search">Anadi</string>
+    <string name="x_set">Sbadu</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Inermisen</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">Sɣur:</string>
     <string name="composer_subject">Asentel:</string>
     <string name="composer_to">Ɣer:</string>
+    <string name="set_msg_password_title">Sbadu awal uffir</string>
+    <string name="set_msg_password_info">Sbadu awal uffir akken ad tewglehneḍ izen-agi i wid isseqdacen ara protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Issin ugar</a></string>
+    <string name="set_msg_password_info_icon_description">Talɣut</string>
+    <string name="set_msg_password_msg_password_title">Awal n uffir n yizen</string>
+    <string name="set_msg_password_msg_password_hint">8 ar 21 n yisekkilen</string>
+    <string name="set_msg_password_repeat_password_title">Ales awal uffir</string>
+    <string name="set_msg_password_repeat_password_hint">Awalen uffiren ilaq ad ilin kifkif</string>
+    <string name="set_msg_password_password_hint_title">Amatar n wawal uffir</string>
+    <string name="set_msg_password_password_hint_hint">Sbadu amatar (afrayan)</string>
+    <string name="set_msg_password_apply_password">Snes awal uffir</string>
+    <string name="set_msg_password_remove_password">Kkes wawal uffir</string>
+    <string name="set_msg_password_error_too_short">Awal uffir wezzil aṭas</string>
+    <string name="set_msg_password_error_too_long">Awal uffir ɣezzif aṭas</string>
+    <string name="set_msg_password_error_mismatch">Awalen uffiren mgraden</string>
+    <string name="set_msg_expiration_title">Afati n yizen</string>
+    <string name="set_msg_expiration_none">Ulac</string>
+    <string name="set_msg_expiration_1_hour">1 n usrag</string>
+    <string name="set_msg_expiration_1_day">1 n wass</string>
+    <string name="set_msg_expiration_3_days">3 n wussan</string>
+    <string name="set_msg_expiration_1_week">1 n yimalas</string>
+    <string name="set_msg_expiration_custom">Yugen</string>
+    <string name="set_msg_expiration_check_description">Aferdis-agi yettwafren</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Sbadu tangalt PIN</string>
+    <string name="settings_confirm_pin_code_title">Ales tangalt PIN</string>
+    <string name="settings_pins_dont_match">Tingalin PIN ilaq ad ilint kifkif!</string>
+    <string name="settings_enter_pin_code_title">Sekcem tangalt n PIN</string>
+    <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
+    <string name="settings_swipe_left_to_right">Seg uzelmaḍ s ayeffus</string>
+    <string name="settings_swipe_right_to_left">Seg uyeffus s azelmaḍ</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Sefsex ibeddilen?</string>
+    <string name="dialog_discard_changes_message">Ad ruḥen akk ibeddilen ur nettwasekles ara.</string>
+    <string name="discard">Sefsex</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -207,11 +246,11 @@
     <string name="sending_report">Tuzna n uneqqis...</string>
     <string name="received_report">Aneqqis yettwarmes</string>
     <string name="not_received_report">Aneqqis ur yettwarmes ara</string>
-    <string name="not_received_report_offline">Offline! Report will be submitted when online</string>
+    <string name="not_received_report_offline">Ur iqqin ara! Aneqqis ad yettwazen ticki teqqneḍ</string>
     <string name="forward_prefix">Welleh:</string>
     <string name="original_message_divider">-------- Izen aneṣli --------</string>
     <string name="invalid_email_address">ThTansa \'%s\' mačči d tameɣtut</string>
-    <string name="invalid_email_address_removed">The address \'%s\' is invalid and was removed</string>
+    <string name="invalid_email_address_removed">Tansa \'%s\' d tarmeɣtut yerna tettwakkes</string>
     <string name="no_recipients_specified">Ma ulac aɣilif, rnu xarsum yiwen n unermis</string>
     <string name="no_password_specified">Akud n tagara yezmer kan ad yettwarnu ɣef yiznan iwgelhanen. Sbadu awal uffir i yinermisen ur nelli ara di ProtonMail.</string>
     <string name="attachment_limit">Ifuyla yeddan ɣer-sen talast n %1$s. Amḍan amatu ahat %2$s.</string>
@@ -220,7 +259,7 @@
     <string name="go_to_inbox">Ddu ar tnaka-iw n urmas</string>
     <string name="message_sent">Izen yettwazen</string>
     <string name="message_failed">Tucḍa deg tuzna n yizen</string>
-    <string name="message_sending_failures">%d message sending failures</string>
+    <string name="message_sending_failures">%d n tucḍiwin n tuzna n yizen</string>
     <string name="storage_limit">Tilisa n ukalas</string>
     <string name="edit_settings">Ẓreg iγewwaṛen</string>
     <string name="save_settings">Sekes iγewwaṛen</string>
@@ -240,8 +279,8 @@
     <string name="display_name_banned_chars">Yir isem n uskan. \'&gt;\' and \'&lt;\' ur ttwasirgen ara</string>
     <string name="cont">Kemmel</string>
     <string name="reply_prefix_on">Irmed</string>
-    <string name="terms_and_conditions">By using ProtonMail, you agree to our\n
-        <a href="https://protonmail.com/terms-and-conditions">terms and conditions</a> and <a href="https://protonmail.com/privacy-policy">privacy policy</a></string>
+    <string name="terms_and_conditions">S useqdec n ProtonMail, ad tqebleḍ\n
+        <a href="https://protonmail.com/terms-and-conditions">tiwtilin-nneɣ timatutin n useqdec</a> akked <a href="https://protonmail.com/privacy-policy">tasertit-nneɣ tabaḍnit</a></string>
     <string name="labels_title_apply">Snes tibzimin</string>
     <string name="labels_title_add">Rnu tabzimt</string>
     <string name="labels_title">Tibzimin</string>
@@ -258,18 +297,18 @@
     <string name="label_add">Rnu</string>
     <string name="no_browser_found">Ma ulac aɣilif, sebded iminig akken ad tfakeḍ tigawt-agi</string>
     <string name="no_application_found">Ulac asnas yettwafen akken ad isefrek tigawt-agi</string>
-    <string name="no_application_found_or_link_invalid">No app found to handle this action or invalid URL</string>
+    <string name="no_application_found_or_link_invalid">Ur nufi ara asnas ara isferken tigawt-agi neɣ URL d armeɣtu</string>
     <string name="also_archive">Ɣber daɣen</string>
     <string name="label_deleted">Tabzimt tettwakkes</string>
     <string name="label_deleted_error">Tuccḍa di tukksa n tabzimt</string>
-    <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
-    <string name="respond_inline">Respond in-line</string>
+    <string name="message_deleted_error">Tuccḍa di tukksa n kra n yiznan. Kra n yiznan yettwakksen tetteddu tuzna-nnsen amira?!</string>
+    <string name="respond_inline">Err degi imayl</string>
     <string name="no_connectivity_detected">Ulac tuqqna yettwafen...</string>
     <string name="server_not_reachable_troubleshoot">Aqeddac ur yettwaweḍ ara… (<u> Aqeɛɛed</u>)</string>
     <string name="connectivity_checking">Asenqed n tuqqna...</string>
     <string name="sync_short">mtawi</string>
     <string name="draft_attachments_uploading">Irewwayen ad ttadren akka tura...</string>
-    <string name="draft_label_attachments_uploading">uploading attachments…</string>
+    <string name="draft_label_attachments_uploading">asali n yifuyla yeddan…</string>
     <string name="draft_label_message_uploading">tuzna n yizen…</string>
     <string name="attachment_failed">Timerna n ufaylu yeddan ar yizen ur teddi ara </string>
     <string name="attaching_photo_failed">Timerna n tewlaft ur teddi ara</string>
@@ -290,21 +329,21 @@
     <string name="engagement_title_support_protonmail">Mudd afus i ProntonMail</string>
     <string name="engagement_subtitle_welcome">Amiḍan-ik amaynut n yimaylen iwgelhanen yers, udiɣ ihegga i tuzna d urmas i yiznan iwgelhanen.</string>
     <string name="engagement_subtitle_swipe">Tzemreḍ ad terreɣ imussuten n uḍummu d idmawanen, deg uɣewwaṛen n usnas ProtonMail.</string>
-    <string name="engagement_subtitle_labels">Create and add Labels to organize your inbox. Press and hold down on a message for all options.</string>
-    <string name="engagement_subtitle_encryption">Your inbox is now protected with end-to-end encryption. To automatically send secure emails to your contacts, invite them to use ProtonMail!  You can also manually encrypt messages to them if they don\'t use ProtonMail.</string>
+    <string name="engagement_subtitle_labels">Tzemreḍ ad ternuḍ tibzimin akken ad tseggmeḍ tanaka-ik n urmas. Eǧǧ afus-ikɣef yizen i wugar n iɣewwaṛen.</string>
+    <string name="engagement_subtitle_encryption">Tanaka-ik n urmas tettwammesten tura s uwgelhen si ṭerf ar ṭerf. Akken ad tazneḍ s wudem awurman imaylen iqelsanen i yinermisen-ik, ɛreḍ-iten-id ad d-ddun ar ProtonMail, tzemreḍ daɣen ad terreḍ iznan-ik d iwgelhanen s ufus ma yella ur seqdacen ara ProtonMail.</string>
     <string name="engagement_subtitle_expire">Iznan i tuzneḍ zemren ad ttwacerḍen i tukksa tawurmant seld kra n wakud.</string>
-    <string name="engagement_subtitle_help">You can get help and support at protonmail.com/support. Bugs can also be reported with the app.</string>
-    <string name="attachment_exists">Attachment already attached</string>
+    <string name="engagement_subtitle_help">Tzemreḍ ad d-remseḍ tallelt si protonmail.com/support. Ibugen zemren daɣen ad ttwaznen s usnas.</string>
+    <string name="attachment_exists">Afaylu yedda yakan</string>
     <string name="sending_email_success">Tangalt n usenqed tettwazen</string>
     <string name="sending_email_failed">Tuzna n tengalt n usenqed tecceḍ</string>
-    <string name="send_code_wait">Please wait %d seconds to click again</string>
+    <string name="send_code_wait">Ma ulac uɣilif arǧu %d n tasinin sakin sit tikelt-nniḍen</string>
     <string name="eo_password_not_completed">Awal uffir n yizen ur immid ara.</string>
-    <string name="delinquency_subtitle">Access to this account is disabled due to non-payment. Please sign in through protonmail.com to pay your unpaid invoice.</string>
-    <string name="direct_disabled_subtitle">Mobile signups are temporarily disabled. Please try again later, or try signing up at <a href="https://protonmail.com">protonmail.com</a> using a desktop or laptop computer.</string>
+    <string name="delinquency_subtitle">Anekcum ar umiḍan-agi yensa ɣef sebba n lexlaṣ mazal. Ma ulac aɣilif qqen ar protonmail.com akken ad txelseḍ tafaturt mazal.</string>
+    <string name="direct_disabled_subtitle">Ijerriden ɣef tiliɣriyin nsan di leɛḍil. Ma ulac aɣilif ɛreḍ ticki neɣ ɛreḍ s ujerred di <a href="https://protonmail.com">protonmail.com</a> s useqdec n uselkim n tnarit neɣ n ufus.</string>
     <string name="downloading">Asider...</string>
     <string name="cant_download_attachment">Ur izmir ara ad d-isider afaylu yeddan</string>
     <string-array name="auto_logout_options_array">
-        <item>Immediately</item>
+        <item>Imir kan</item>
         <item>5 n tisdatin n urmud</item>
         <item>15 n tisdatin n urmud</item>
         <item>1 n usrag n urmud</item>
@@ -337,7 +376,7 @@
     <string name="sync_attachments">Amtawi n ifuyla yeddan</string>
     <string name="processing_attachment">Asesfer n ufaylu yeddan</string>
     <string name="hyperlink_confirmation_dialog_text_html">Ad tsnekreḍ iminig web akken zd terzuḍ ɣer:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Tebɣiḍ ad tkemleḍ?</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">Ur ssutur ara tikelt-nniḍen</string>
     <string name="none">Ula yiwen</string>
     <string name="changes_affected_after_closing">Abeddel ad d-yili seld amdal n usnas </string>
     <plurals name="incorrect_pin_remaining_attempts">
@@ -350,9 +389,9 @@
     </plurals>
     <string name="done">Immed</string>
     <string name="logout">Tuffɣa</string>
-    <string name="log_out">Log out %s?</string>
+    <string name="log_out">Ad teffɣeḍ %s?</string>
     <string name="logout_question">Tebɣiḍ ad teffɣeḍ?</string>
-    <string name="logout_question_next_account">Are you sure you want to logout with current account and proceed using %s?</string>
+    <string name="logout_question_next_account">Ad tɛeddiḍ ɣer %s.</string>
     <string name="upgrade">Leqqem</string>
     <string name="country">Tamurt</string>
     <string name="set_cont">Sekles &amp; kemmel</string>
@@ -400,8 +439,8 @@
         <item>Professional</item>
     </string-array>
     <plurals name="custom_domains">
-        <item quantity="one">Use your own domain (ex: john@smith.com)</item>
-        <item quantity="other">Support for up to %d domains</item>
+        <item quantity="one">Seqdec taɣult-inek•inem (amedya: lwennas@idurar.com)</item>
+        <item quantity="other">Tadhelt alamma d %d n tɣula</item>
     </plurals>
     <string-array name="months_array">
         <item>MM</item>
@@ -443,6 +482,8 @@
     <string name="vcard_other_option_role">Tamlilt</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Selket anermis</string>
+    <string name="contacts_import_contact">Kter anermis</string>
+    <string name="contacts_import">Kter</string>
     <string name="upload_contacts">Sali inermisen</string>
     <string name="upgrade_encrypted_contact">Ma ulac aɣilif, sali aswir akken ad tesqedceḍ awgelhen n telɣut n unermis.</string>
     <string name="uploading_contacts">Akter n inermisen…</string>
@@ -478,7 +519,7 @@
     </string-array>
     <string name="logged_out">Teffɣeḍ</string>
     <string name="logged_out_description">Tuffɣeḍ. Ma ulac aɣilif, qqen tikelt-nniḍen.</string>
-    <string name="error_message_zip_code_invalid">Error: Postal Code invalid</string>
+    <string name="error_message_zip_code_invalid">Tuccḍa: Yir tangalt n lpusta</string>
     <string name="error_message_cvc_invalid">Tuccḍa: Yir uṭṭun CVC</string>
     <string name="error_message_card_name_invalid">Tuccḍa: Yir isem n tkarḍa</string>
     <string name="error_message_select_country">Fren tamurt</string>
@@ -491,7 +532,7 @@
     <string name="message_expires_in">Izen-agi ad yemmet di %s</string>
     <string name="unsaved_changes_title">Abeddel ur yettwaskelsen ara</string>
     <string name="unsaved_changes_subtitle">Yella ubeddel ur yettwaskelsen ara. Tebɣiḍ ad ten-teǧǧeḍ?</string>
-    <string name="request_timeout">Request timed out, please try again</string>
+    <string name="request_timeout">Tuttra tfat. Ɛreḍ tikelt nniḍen</string>
     <string name="add_folder">Rnu akaram</string>
     <string name="no_folders">Ulac ikaramen</string>
     <string name="folders_title_move">Awi iznan ar</string>
@@ -513,12 +554,12 @@
     <string name="update_label">Leqqem tabzimt</string>
     <string name="max_labels_in_message">Izen %1$s ur yezmir ara ad yawi ugar n %2$d n tibzimin.</string>
     <string name="delete">Kkes</string>
-    <string name="subject_copied">Subject copied to clipboard</string>
+    <string name="subject_copied">Asentel yettwanɣel ɣef afus</string>
     <string name="details_copied">Tlqayt tettwanɣel ɣef afus</string>
     <string name="saving">Asekles...</string>
     <string name="update_folder">Leqqem akaram</string>
-    <string name="spam_score_100">This email seems to be from a ProtonMail address but came from outside our system and failed our authentication requirements. It may be spoofed or improperly forwarded!</string>
-    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded!</string>
+    <string name="spam_score_100">Imayl-agi yettban d akken yekka-d si ProtonMail, acu kan yussa-d si beṛṛa n unagraw ihi ur iɛedda ara asekyed n usesteb. Ahat beddlen-t neɣ win-t s tuccḍa aniɣer nniḍen!</string>
+    <string name="spam_score_101">Imayl-agi yecceḍ deg usekyed n usesteb n taɣult-is. Ahat beddlen-t neɣ wwin-t s tuccḍa aniɣer nniḍen!</string>
     <string name="spam_score_102">Izen-agi yezmer ad yili d aneɛruḍ n ukellex. Ttxil-k senqed amazan akked ugbur iwakken ad tḥeqqqeḍ belli d izerfanen. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">ISSIN UGAR</a></string>
     <string name="print_from_template">Si: %s</string>
     <string name="print_to_template">I: %s;  </string>
@@ -580,7 +621,7 @@
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Tuzneḍ-t s yiman-ik s uwgelhen si ṭerf ar ṭerf</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Sent by ProtonMail with zero access encryption</string>
+    <string name="sender_lock_sent_autoresponder">Yettwazen s ProtonMail s uwgelhen ilem n wadduf</string>
     <string name="sender_lock_verification_failed">Tuzna n usenqed tecceḍ</string>
     <string name="sender_lock_pgp_encrypted">Izen awgelhan PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Izen ittuwegelhen s PGP yekka-d seg tansa yettusneqden</string>
@@ -588,7 +629,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Izen ittwawegelhen seg tazwara ar tagara</string>
     <string name="sender_lock_internal_verified">Izen ittwawegelhen seg tazwara ar tagara yekka-d seg tansa yettusneqden</string>
-    <string name="sender_lock_learn_more"><a href="">Issin ugar</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Issin ugar</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Ittwawegelhen seg tazwara ar tagara</string>
     <string name="composer_lock_internal_pinned">Ittwawegelhen seg tazwara ar tagara ar tansa yettusneqden</string>
@@ -623,30 +664,31 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Rnu Tawlaft</string>
-    <string name="contact_display_name">Sken Isem</string>
-    <string name="add_new_email">Rnu Tansa Imayl</string>
+    <string name="contact_display_name">Isem n ubeqqeḍ</string>
+    <string name="add_new_email">Rnu tansa imayl</string>
     <string name="no_groups">Ulac Igrawen</string>
     <string name="contact_vcard_note">Tazmilt</string>
     <string name="edit_contact">Ẓreg anermis</string>
     <string name="create_contact_group">Rnu Agraw n Unermes</string>
     <string name="edit_contact_group">Ẓreg Agraw n Unermes</string>
-    <string name="contact_group_display_name">Sken Isem</string>
+    <string name="contact_groups_manage_members">Sefrek imttekkiyen</string>
+    <string name="contact_group_display_name">Isem n ubeqqeḍ</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Rnu tansa ɣer igrawen</string>
-    <string name="title_activity_address_chooser">Sefrek Tansiwin</string>
+    <string name="title_activity_address_chooser">Sefrek imttekkiyen</string>
     <string name="title_activity_account_manager">Sefrek imiḍanen</string>
     <string name="account_manager_add_account">Rnu amiḍan</string>
     <string name="account_manager_remove_all_accounts">Kkes akk imiḍanen</string>
-    <string name="account_manager_note">You can be simultaneously logged into an unlimited number of paid ProtonMail accounts and one free account.</string>
+    <string name="account_manager_note">Tzemreḍ ad teqqneḍ ɣef tikkelt deg yimiḍanen n lexlsaṣ n ProtonMail, war tilist akked yiwen n umiḍan n baṭel.</string>
     <string name="account_manager_remove_all">Kkes akk imiḍanen</string>
     <string name="account_manager_logout">Ffeɣ</string>
     <string name="account_manager_login">Qqen</string>
-    <string name="manage_accounts_user_loggedout">%s (logged out)</string>
+    <string name="manage_accounts_user_loggedout">%s (Teffɣeḍ)</string>
     <string name="manage_accounts_user_primary">%s (primary)</string>
     <string name="account_manager_remove">Kkes</string>
     <string name="default_error_message">Tella-d tuccḍa</string>
     <string name="no_contact_groups">Ulac igrawen n unermes</string>
-    <string name="search_contacts_inside_group">Nadi ɣef inermisen deg ugraw</string>
+    <string name="search_contacts_inside_group">Nadi inermisen</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d Aεeggal</item>
@@ -698,8 +740,8 @@
         akeccum ar tkatut n uḥraz.</string>
     <string name="push_notifications_alert_title">Ilɣa Push</string>
     <string name="push_notifications_alert_subtitle">Ilɣa Push i ProtonMail ur teddun ara wer alqem n imeẓla Google Play.</string>
-    <string name="app_locked">App locked</string>
-    <string name="use_pin_instead">Use PIN instead</string>
+    <string name="app_locked">Asnas yesekkeṛ</string>
+    <string name="use_pin_instead">Seqdec PIN deg umḍiq</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">No biometric data enrolled</string>
     <string name="log_in_using_biometric_credential">Unlock using your biometric credentials</string>
@@ -724,16 +766,17 @@
     <string name="addresses">Tansiwin</string>
     <string name="default_mail_address">Tansa yimayl n lexṣas</string>
     <string name="default_address">Tansa tamezwarut</string>
-    <string name="display_name_n_signature">Display name &amp; signature</string>
-    <string name="display_name">Display name</string>
+    <string name="display_name_n_signature">Isem n uskan &amp; azmul</string>
+    <string name="display_name">Isem n uskan</string>
     <string name="edit_display_name">Ẓreg isem n uskan</string>
     <string name="signature">Azmul</string>
-    <string name="mobile_footer">Mobile signature</string>
-    <string name="edit_mobile_footer">Enable mobile signature</string>
+    <string name="mobile_footer">Aḍar n usebter n uziraz</string>
+    <string name="edit_mobile_footer">Sermed aḍar n usebter n uziraz</string>
     <string name="default_mobile_footer">Ittwazen sγur`ProtonMail Aziraz</string>
-    <string name="mobile_footer_is_premium">Changing the Mobile Signature is allowed to Paid users only</string>
+    <string name="mobile_footer_is_premium">Abeddel n uḍar n usebter n uziraz yureg anagar i yiseqdacen s lexlaṣ</string>
+    <string name="mobile_footer_info">Aḍar-agi n usebter yettwarna seld azmul-inek•inem</string>
     <!-- region Snooze Settings -->
-    <string name="snooze_header">Snooze</string>
+    <string name="snooze_header">Ales</string>
     <string name="notifications_snooze">Ilɣa n usmekti</string>
     <string-array name="quick_snooze_values">
         <item>30 n tesdatin</item>
@@ -761,9 +804,9 @@
     <string name="set_custom_quick_snooze">Tawila tudmawant n usmekti arura</string>
     <string name="turn_off">Sens</string>
     <string name="snooze_will_repeat">Aṭenṭen n usmekti ad yales</string>
-    <string name="work_days">Work days</string>
-    <string name="weekends">Weekend</string>
-    <string name="every_day">Every day</string>
+    <string name="work_days">Ussan n uxeddim</string>
+    <string name="weekends">Tagara n dduṛt</string>
+    <string name="every_day">Yal ass</string>
     <string-array name="snooze_repeat_values">
         <item>Ari</item>
         <item>Ara</item>
@@ -780,8 +823,8 @@
     <string name="scheduled_snooze_on">Yettwasihel (Irmed)</string>
     <string name="scheduled_snooze_off">Yettwasihel (Insa)</string>
     <!-- endregion -->
-    <string name="mailbox">Mailbox</string>
-    <string name="privacy">Privacy</string>
+    <string name="mailbox">Tanaka n yimayl</string>
+    <string name="privacy">Tabaḍnit</string>
     <string name="auto_download_messages_title">Sider iznan s wudem awurman</string>
     <string name="auto_download_messages_subtitle">When this option is enabled, messaged bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or log out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Amtawi deg ugilal</string>
@@ -789,26 +832,29 @@
     <string name="settings_auto_show_embedded_images">Sken-d tugna tusliγt s wudem awurman</string>
     <string name="settings_prevent_taking_screenshots">Sewḥel tuṭṭfa n ugdil</string>
     <string name="hyperlink_confirmation">Suter aseɣwen n usentem</string>
-    <string name="labels_and_folders">Labels &amp; Folders </string>
+    <string name="labels_and_folders">Tibzimin&amp; Ikaramen </string>
     <string name="folders">Ikaramen</string>
     <string name="labels">Tibzimin</string>
-    <string name="labels_manage">Labels manager</string>
-    <string name="folders_manage">Folders manager</string>
-    <string name="swipe_actions">Swiping gesture</string>
+    <string name="labels_manager">Amsefrak n tibzimin</string>
+    <string name="folders_manage">Amsefrak n ikaramen</string>
+    <string name="swipe_actions">Tigawin n uḍummu</string>
     <string name="swipe_action_right">Zuɣer ar tama tayeffust</string>
     <string name="swipe_action_left">Zuɣer s azelmaḍ</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Fren tigawt n usnirem</string>
     <string name="swipe_action_trash">Izen ittwasenkez ɣer iḍumman</string>
+    <string name="swipe_action_trash_short">Awi ar iḍumman</string>
     <string name="swipe_action_star">Aḍfaṛ n yizen yettwalqem</string>
     <string name="swipe_action_star_short">Leqqem anurif</string>
     <string name="swipe_action_spam">Izen yettwacreḍ d aspam</string>
+    <string name="swipe_action_spam_short">Ispamen</string>
     <string name="swipe_action_archive">Izen yettwaḥrez</string>
+    <string name="swipe_action_archive_short">Aɣbar</string>
     <string name="swipe_action_mark_read">Izen yettwacreḍ ittwaγra</string>
     <string name="swipe_action_mark_read_short">Ɣer</string>
     <plurals name="action_move_to_trash">
-        <item quantity="one">Message moved to trash</item>
-        <item quantity="other">Messages moved to trash</item>
+        <item quantity="one">Izen imutti ɣer iḍuman</item>
+        <item quantity="other">Iznan muttin ɣer iḍuman</item>
     </plurals>
     <plurals name="action_move_to_spam">
         <item quantity="one">Yettwacreḍ yizen d aspam</item>
@@ -819,53 +865,53 @@
         <item quantity="other">Messages archived</item>
     </plurals>
     <!-- endregion -->
-    <string name="local_storage">Local storage limit</string>
-    <string name="storage_value">%1$d MB (%2$.2f MB used)</string>
+    <string name="local_storage">Talast n tkatut tadigant</string>
+    <string name="storage_value">%1$d MṬ (%2$.2f MṬ yettwaseqdec)</string>
     <!-- endregion -->
-    <string name="app_settings">App Settings</string>
+    <string name="app_settings">Iɣewwaṛen n usnas</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Push Notifications</string>
-    <string name="extended_notifications">Extended Notifications</string>
-    <string name="extended_notifications_description">Turn this feature on to see the sender\nof the emails in the push notifications.</string>
+    <string name="push_notifications">Tilɣa yettudemmren</string>
+    <string name="extended_notifications">Ilɣa n usiɣzef</string>
+    <string name="extended_notifications_description">Turn this feature on to see the sender of the emails in the push notifications.</string>
     <string name="notification_settings">Iɣewwaren n ilɣa</string>
-    <string name="auto_lock">Auto-lock</string>
-    <string name="auto_lock_app">Auto-lock app</string>
-    <string name="auto_lock_description">Turn this feature on to auto-lock your\napp and use a PIN code or fingerprint\nto unlock it.</string>
-    <string name="change_pin_code">Change PIN code</string>
-    <string name="auto_lock_timer">Auto-lock timer</string>
-    <string name="connections_via_third_parties">Alternative routing</string>
-    <string name="allow_secure_connections_via_third_parties">Allow alternative routing</string>
+    <string name="auto_lock">Asekkeṛ awurman</string>
+    <string name="auto_lock_app">Asekkeṛ awurman n usnas</string>
+    <string name="auto_lock_description">Err tamahilt-a ɣer usnas-ik·im s usekkeṛ awurman syen seqdec tangalt PIN neɣ s useqdec n udsil umḍin i wakken ad as-tekkseḍ asekker.</string>
+    <string name="change_pin_code">Beddel tangalt n PIN</string>
+    <string name="auto_lock_timer">Tanzagt n usekkeṛ awurman</string>
+    <string name="connections_via_third_parties">Aseglu amlellay</string>
+    <string name="allow_secure_connections_via_third_parties">Rnu aseglu amlellay</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a></string>
-    <string name="app_language">App Language</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. [Issin ugar]<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/"> Issin ugar</a></string>
+    <string name="app_language">Tutlayt n usnas</string>
     <string name="custom_language_dialog_title">Fren tutlayt n usnas</string>
-    <string name="auto_detect">Auto-detect</string>
-    <string name="combined_contacts">Combined Contacts</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
-    <string name="local_cache_management">Local Cache Management</string>
+    <string name="auto_detect">Tifin tawurmant</string>
+    <string name="combined_contacts">Inermisen uddisen</string>
+    <string name="turn_combined_contacts_on">Sermed tawuri-agi i usemmed awurman n tansiwin imayl s useqdec n yinermisen n yal imiḍanen-inek•inem yeqqnen.</string>
+    <string name="local_cache_management">Tuffirt tadigant</string>
     <string name="cache_cleared">Tuffirt tadigant tettwalqem</string>
-    <string name="empty_data">Empty Cache</string>
+    <string name="empty_data">Isefka ilmawen</string>
     <!-- endregion -->
     <string name="enabled">Urmid</string>
     <string name="disabled">Yensa</string>
-    <string name="app_info">App Information</string>
-    <string name="app_version">App version</string>
+    <string name="app_info">Talɣut n usnas</string>
+    <string name="app_version">Lqem n usnas</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="remove_account_question">Remove %s?</string>
-    <string name="signed_in_with">Signed in with %s</string>
-    <string name="signed_in_with_logged_out_from">Logged out from %1$s and signed in with %2$s</string>
-    <string name="connect_account_limit_title">Limit reached</string>
+    <string name="remove_account_question">Kkes %s?</string>
+    <string name="signed_in_with">Teqqneḍ s %s</string>
+    <string name="signed_in_with_logged_out_from">Tffɣeḍ seg %1$s yerna teqqneḍ ɣer %2$s</string>
+    <string name="connect_account_limit_title">Tewwḍeḍ tilist</string>
     <string name="connect_account_limit_subtitle">Ur tezmireḍ ara ad ternuḍ amiḍan n baṭṭel n Protonmail. Yiwen kan n umiḍan baṭṭel i tzemreḍ ad ternuḍ. Ttxil ffeɣ seg umiḍan-inek. inem nniḍe, neɣ beddel ɣer umiḍan n uxelles.</string>
-    <string name="switch_accounts_question">Switch account?</string>
-    <string name="switch_to_account">Switch to %s</string>
+    <string name="switch_accounts_question">Beddel amiḍan?</string>
+    <string name="switch_to_account">Ddu ɣer %s</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
-    <string name="shortcut_compose">Compose</string>
-    <string name="shortcut_compose_new_message">Compose a new message</string>
+    <string name="shortcut_compose">Aru</string>
+    <string name="shortcut_compose_new_message">Aru izen amaynut</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
-    <string name="troubleshoot_dialog_title">Common connection problems and solutions</string>
+    <string name="troubleshoot_dialog_title">Uguren n tuqqna yezgan akked tifrat</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
@@ -880,8 +926,8 @@
     <string name="error_image_bad_url">Tugna Url texṣer</string>
     <string name="error_saving_try_again">Tuccḍa deg usekles n yizen. ɛreḍ tikelt-nniḍen.</string>
     <!-- endregion -->
-    <string name="allowed">Allowed</string>
-    <string name="denied">Denied</string>
+    <string name="allowed">Yureg</string>
+    <string name="denied">Yegdel</string>
     <string name="more">Ugar</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Tigawin n uwehhi bedlent</string>
@@ -898,12 +944,14 @@
     <string name="error_loading_conversations">Tuccḍa deg usali n yidiwenniyen, ttxil-k• eɛreḍ tikkelt-nniḍen</string>
     <string name="star">Itri</string>
     <string name="unstar">Kkes seg inurifen</string>
+    <string name="star_unstar">Err itri/Kkes itri</string>
     <string name="send_to_archive">Azen s iɣbaren?</string>
     <string name="new_label">Tabzimt tamaynutt</string>
     <string name="new_folder">Akaram amaynut</string>
     <string name="label_as">Bzem am…</string>
     <string name="mark_as_unread">Creḍ ur yettwaɣra ara</string>
     <string name="mark_as_read">Creḍ yettwaɣra</string>
+    <string name="mark_as_read_unread">Creḍ yettwaɣra / ur yettwaɣra ara</string>
     <string name="move_message">Smutti izen</string>
     <string name="manage">Sefrek</string>
     <string name="message_from">Izen sɣur %s</string>
@@ -916,4 +964,8 @@
         <item quantity="one">%d n udiwenni</item>
         <item quantity="other">%d n yidiwenniyen</item>
     </plurals>
+    <string name="contacts_call">Siwel</string>
+    <string name="contacts_send_group_message">Azen izen n ugraw</string>
+    <string name="inbox_this_folder_is_empty">Akaram-agi d ilem</string>
+    <string name="inbox_nothing_to_see_here">Ulac acu ara twaliḍ dagi</string>
 </resources>

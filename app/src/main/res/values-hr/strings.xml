@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">Dana</string>
     <string name="x_folders">Mape</string>
+    <string name="x_hours">Sati</string>
     <string name="x_labels">Oznake</string>
     <string name="x_more">Više</string>
     <string name="x_search">Pretraga</string>
+    <string name="x_set">Postavi</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakti</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">Od:</string>
     <string name="composer_subject">Predmet:</string>
     <string name="composer_to">Za:</string>
+    <string name="set_msg_password_title">Postavi lozinku</string>
+    <string name="set_msg_password_info">Postavite lozinku za šifriranje ove poruke za one koji nisu korisnici ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Saznajte više</a></string>
+    <string name="set_msg_password_info_icon_description">Informacije</string>
+    <string name="set_msg_password_msg_password_title">Lozinka poruke</string>
+    <string name="set_msg_password_msg_password_hint">4 do 21 znakova dugo</string>
+    <string name="set_msg_password_repeat_password_title">Ponovite lozinku</string>
+    <string name="set_msg_password_repeat_password_hint">Lozinke se moraju poklapati</string>
+    <string name="set_msg_password_password_hint_title">Podsjetnik za lozinku</string>
+    <string name="set_msg_password_password_hint_hint">Odredi savjet (neobavezno)</string>
+    <string name="set_msg_password_apply_password">Primjeni lozinku</string>
+    <string name="set_msg_password_remove_password">Ukloni lozinku</string>
+    <string name="set_msg_password_error_too_short">Lozinka je prekratka</string>
+    <string name="set_msg_password_error_too_long">Lozinka je preduga</string>
+    <string name="set_msg_password_error_mismatch">Lozinke se ne poklapaju</string>
+    <string name="set_msg_expiration_title">Istek poruke</string>
+    <string name="set_msg_expiration_none">Ništa</string>
+    <string name="set_msg_expiration_1_hour">1 sat</string>
+    <string name="set_msg_expiration_1_day">1 dan</string>
+    <string name="set_msg_expiration_3_days">3 dana</string>
+    <string name="set_msg_expiration_1_week">1 tjedan</string>
+    <string name="set_msg_expiration_custom">Prilagođeno</string>
+    <string name="set_msg_expiration_check_description">Stavka je označena</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Postavite PIN kôd</string>
+    <string name="settings_confirm_pin_code_title">Ponovite PIN kôd</string>
+    <string name="settings_pins_dont_match">PIN kôdovi se moraju podudarati!</string>
+    <string name="settings_enter_pin_code_title">Unesite PIN kȏd</string>
+    <string name="settings_swipe_settings_info">Postavite radnje povlačenja prstom za pristup najčešće korištenim radnjama.</string>
+    <string name="settings_swipe_left_to_right">S lijeva na desno</string>
+    <string name="settings_swipe_right_to_left">S desna na lijevo</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Odbaci promjene?</string>
+    <string name="dialog_discard_changes_message">Sve vaše nespremljene promjene će biti odbačene.</string>
+    <string name="discard">Odbaci</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -452,6 +491,8 @@
     <string name="vcard_other_option_role">Uloga</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Pretvori kontakt</string>
+    <string name="contacts_import_contact">Uvezi kontakte</string>
+    <string name="contacts_import">Uvoz</string>
     <string name="upload_contacts">Učitavanje kontakata</string>
     <string name="upgrade_encrypted_contact">Nadogradite kako biste mogli koristiti šifrirane podatke o kontaktu.</string>
     <string name="uploading_contacts">Učitavanje kontakata…</string>
@@ -597,7 +638,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">End-to-end šifrirane poruke</string>
     <string name="sender_lock_internal_verified">End-to-end šifrirana poruka od potvrđene adrese</string>
-    <string name="sender_lock_learn_more"><a href="">Saznajte više</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Saznajte više</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">End-to-End šifriranje</string>
     <string name="composer_lock_internal_pinned">End-to-end šifiranje za potvrđenu adresu</string>
@@ -632,17 +673,18 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Dodaj fotografiju</string>
-    <string name="contact_display_name">Zaslonski naziv</string>
+    <string name="contact_display_name">Zaslonsko ime</string>
     <string name="add_new_email">Dodaj adresu e-pošte</string>
     <string name="no_groups">Nema grupe</string>
     <string name="contact_vcard_note">Bilješka</string>
     <string name="edit_contact">Uredi kontakt</string>
     <string name="create_contact_group">Stvaranje grupe kontakta</string>
     <string name="edit_contact_group">Uredi grupu kontakata</string>
-    <string name="contact_group_display_name">Zaslonski naziv</string>
+    <string name="contact_groups_manage_members">Upravljanje korisnicima</string>
+    <string name="contact_group_display_name">Zaslonsko ime</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Dodajte adresu u grupu</string>
-    <string name="title_activity_address_chooser">Upravljanje adresama</string>
+    <string name="title_activity_address_chooser">Upravljanje korisnicima</string>
     <string name="title_activity_account_manager">Upravljanje korisničkim računima</string>
     <string name="account_manager_add_account">Dodaj korisnički račun</string>
     <string name="account_manager_remove_all_accounts">Uklanjanje svih računa</string>
@@ -655,7 +697,7 @@
     <string name="account_manager_remove">Ukloni</string>
     <string name="default_error_message">Došlo je do pogreške</string>
     <string name="no_contact_groups">Nema grupa kontakta</string>
-    <string name="search_contacts_inside_group">Pretraži kontakte unutar grupe</string>
+    <string name="search_contacts_inside_group">Pretraži kontakte</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d član</item>
@@ -741,10 +783,11 @@
     <string name="display_name">Zaslonski naziv</string>
     <string name="edit_display_name">Uredi zaslonski naziv</string>
     <string name="signature">Potpis</string>
-    <string name="mobile_footer">Potpis na mobilnim uređajima</string>
-    <string name="edit_mobile_footer">Omogući potpis na mobilnim uređajima</string>
-    <string name="default_mobile_footer">Poslano sa ProtonMaila</string>
-    <string name="mobile_footer_is_premium">Promjena potpisa za mobilne uređaje je dopuštena samo plaćenim korisnicima</string>
+    <string name="mobile_footer">Podnožje na mobitelu</string>
+    <string name="edit_mobile_footer">Omogući podnožje na mobitelu</string>
+    <string name="default_mobile_footer">Poslano sa ProtonMail Mobile</string>
+    <string name="mobile_footer_is_premium">Promjena podnožja za mobilne uređaje je dopuštena samo plaćenim korisnicima</string>
+    <string name="mobile_footer_info">Podnožje se dodaje nakon vašeg potpisa</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Utišaj</string>
     <string name="notifications_snooze">Utišavanje obavijesti</string>
@@ -806,18 +849,21 @@
     <string name="labels_and_folders">Oznake i mape </string>
     <string name="folders">Mape</string>
     <string name="labels">Oznake</string>
-    <string name="labels_manage">Upravljanje oznakama</string>
+    <string name="labels_manager">Upravljanje oznakama</string>
     <string name="folders_manage">Upravljanje mapama</string>
-    <string name="swipe_actions">Povlačenje prstom</string>
+    <string name="swipe_actions">Akcija potezanjem prsta</string>
     <string name="swipe_action_right">Prelazak prstom udesno</string>
     <string name="swipe_action_left">Prelazak prstom ulijevo</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Odaberite radnje prelaska prstom</string>
     <string name="swipe_action_trash">Poruka premještena u otpad</string>
+    <string name="swipe_action_trash_short">Premjesti u Otpad</string>
     <string name="swipe_action_star">Ažuriranje zvjezdice poruke</string>
     <string name="swipe_action_star_short">Ažuriraj zvjezdicu</string>
     <string name="swipe_action_spam">Poruka označena kao neželjena pošta</string>
+    <string name="swipe_action_spam_short">Neželjena pošta</string>
     <string name="swipe_action_archive">Poruka je arhivirana</string>
+    <string name="swipe_action_archive_short">Arhiva</string>
     <string name="swipe_action_mark_read">Poruka označena kao pročitana</string>
     <string name="swipe_action_mark_read_short">Pročitano</string>
     <plurals name="action_move_to_trash">
@@ -861,7 +907,7 @@
     <string name="turn_combined_contacts_on">Uključite ovu značajku za automatsko dovršavanje adresa e-pošte pomoću kontakata sa svih vaših prijavljenih računa.</string>
     <string name="local_cache_management">Upravitelj predmemorijom</string>
     <string name="cache_cleared">Lokalna predmemorija je osvježena</string>
-    <string name="empty_data">Očistite predmemoriju</string>
+    <string name="empty_data">Očisti podatke</string>
     <!-- endregion -->
     <string name="enabled">Omogućeno</string>
     <string name="disabled">Onemogućeno</string>
@@ -915,12 +961,14 @@
     <string name="error_loading_conversations">Pogreška prilikom učitavanja razgovora, pokušajte ponovno</string>
     <string name="star">Zvjezdica</string>
     <string name="unstar">Ukloni zvjezdicu</string>
+    <string name="star_unstar">Postavi/ukloni zvjezdicu</string>
     <string name="send_to_archive">Pošalji u arhivu?</string>
     <string name="new_label">Nova oznaka</string>
     <string name="new_folder">Nova mapa</string>
     <string name="label_as">Označi kao…</string>
     <string name="mark_as_unread">Označi kao nepročitano</string>
     <string name="mark_as_read">Označi kao pročitano</string>
+    <string name="mark_as_read_unread">Označi kao pročitano/nepročitano</string>
     <string name="move_message">Premjesti poruku</string>
     <string name="manage">Upravljanje</string>
     <string name="message_from">Poruka od %s</string>
@@ -935,4 +983,8 @@
         <item quantity="few">%d razgovora</item>
         <item quantity="other">%d razgovora</item>
     </plurals>
+    <string name="contacts_call">Nazovi</string>
+    <string name="contacts_send_group_message">Pošalji grupnu poruku</string>
+    <string name="inbox_this_folder_is_empty">Ova mapa je prazna</string>
+    <string name="inbox_nothing_to_see_here">Ovdje se nema što vidjeti</string>
 </resources>

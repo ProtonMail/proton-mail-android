@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">Dias</string>
     <string name="x_folders">Pastas</string>
+    <string name="x_hours">Horas</string>
     <string name="x_labels">Etiquetas</string>
     <string name="x_more">Mais</string>
     <string name="x_search">Procurar</string>
+    <string name="x_set">Definir</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Contactos</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">De:</string>
     <string name="composer_subject">Assunto:</string>
     <string name="composer_to">Para:</string>
+    <string name="set_msg_password_title">Definir senha</string>
+    <string name="set_msg_password_info">Defina uma senha para encriptar esta mensagem para utilizadores não-protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Saiba mais</a></string>
+    <string name="set_msg_password_info_icon_description">Informação</string>
+    <string name="set_msg_password_msg_password_title">Senha da mensagem</string>
+    <string name="set_msg_password_msg_password_hint">4 a 21 caracteres</string>
+    <string name="set_msg_password_repeat_password_title">Repita a senha</string>
+    <string name="set_msg_password_repeat_password_hint">As senhas têm de coincidir</string>
+    <string name="set_msg_password_password_hint_title">Dica da senha</string>
+    <string name="set_msg_password_password_hint_hint">Definir uma dica (opcional)</string>
+    <string name="set_msg_password_apply_password">Aplicar senha</string>
+    <string name="set_msg_password_remove_password">Remover senha</string>
+    <string name="set_msg_password_error_too_short">Senha muito curta</string>
+    <string name="set_msg_password_error_too_long">Senha muito longa</string>
+    <string name="set_msg_password_error_mismatch">A senha não coincide</string>
+    <string name="set_msg_expiration_title">Validade da mensagem</string>
+    <string name="set_msg_expiration_none">Nenhuma</string>
+    <string name="set_msg_expiration_1_hour">1 hora</string>
+    <string name="set_msg_expiration_1_day">1dia</string>
+    <string name="set_msg_expiration_3_days">3 dias</string>
+    <string name="set_msg_expiration_1_week">1 semana</string>
+    <string name="set_msg_expiration_custom">Personalizada</string>
+    <string name="set_msg_expiration_check_description">Este item está verificado</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Definir código PIN</string>
+    <string name="settings_confirm_pin_code_title">Repetir o código PIN</string>
+    <string name="settings_pins_dont_match">Os códigos PIN têm de ser iguais!</string>
+    <string name="settings_enter_pin_code_title">Inserir o código PIN</string>
+    <string name="settings_swipe_settings_info">Configure gestos de deslize para aceder às acções mais usadas.</string>
+    <string name="settings_swipe_left_to_right">Da esquerda para a direita</string>
+    <string name="settings_swipe_right_to_left">Da direita para a esquerda</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Descartar alterações?</string>
+    <string name="dialog_discard_changes_message">Quaisquer alterações por gravar serão descartadas.</string>
+    <string name="discard">Descartar</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -442,6 +481,8 @@
     <string name="vcard_other_option_role">Papel</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Converter contacto</string>
+    <string name="contacts_import_contact">Importar contacto</string>
+    <string name="contacts_import">Importar</string>
     <string name="upload_contacts">Importar contactos</string>
     <string name="upgrade_encrypted_contact">Por favor, actualize para utilizar informação de contacto encriptada.</string>
     <string name="uploading_contacts">A enviar contactos…</string>
@@ -587,7 +628,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Mensagem encriptada de ponta-a-ponta</string>
     <string name="sender_lock_internal_verified">Mensagem de endereço verificado encriptada ponta-a-ponta</string>
-    <string name="sender_lock_learn_more"><a href="">Saiba mais</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Saiba mais</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Encriptação ponta-a-ponta</string>
     <string name="composer_lock_internal_pinned">Encriptada ponta-a-ponta para endereço verificado</string>
@@ -623,16 +664,17 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">Adicionar fotografia</string>
     <string name="contact_display_name">Nome a mostrar</string>
-    <string name="add_new_email">Adicionar endereço de email</string>
+    <string name="add_new_email">Adicionar endereço electrónico</string>
     <string name="no_groups">Sem grupos</string>
     <string name="contact_vcard_note">Nota</string>
     <string name="edit_contact">Editar contacto</string>
     <string name="create_contact_group">Criar grupo de contactos</string>
     <string name="edit_contact_group">Editar grupo de contactos</string>
+    <string name="contact_groups_manage_members">Gerir membros</string>
     <string name="contact_group_display_name">Nome a mostrar</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Adicionar endereço aos grupos</string>
-    <string name="title_activity_address_chooser">Gerir endereços</string>
+    <string name="title_activity_address_chooser">Gerir membros</string>
     <string name="title_activity_account_manager">Gerir contas</string>
     <string name="account_manager_add_account">Adicionar conta</string>
     <string name="account_manager_remove_all_accounts">Remover todas as contas</string>
@@ -645,7 +687,7 @@
     <string name="account_manager_remove">Remover</string>
     <string name="default_error_message">Ocorreu um erro</string>
     <string name="no_contact_groups">Sem grupos de contactos</string>
-    <string name="search_contacts_inside_group">Procurar contactos dentro do grupo</string>
+    <string name="search_contacts_inside_group">Procurar contactos</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d membro</item>
@@ -727,10 +769,11 @@
     <string name="display_name">Nome a mostrar</string>
     <string name="edit_display_name">Editar nome a mostrar</string>
     <string name="signature">Assinatura</string>
-    <string name="mobile_footer">Assinatura móvel</string>
-    <string name="edit_mobile_footer">Activar assinatura móvel</string>
-    <string name="default_mobile_footer">Enviado através do ProtonMail móvel</string>
-    <string name="mobile_footer_is_premium">A alteração da assinatura móvel só é permitida a utilizadores pagantes</string>
+    <string name="mobile_footer">Rodapé móvel</string>
+    <string name="edit_mobile_footer">Activar rodapé móvel</string>
+    <string name="default_mobile_footer">Enviado com o ProtonMail móvel</string>
+    <string name="mobile_footer_is_premium">Mudar o rodapé móvel só é permitido a utilizadores pagantes</string>
+    <string name="mobile_footer_info">Este rodapé é adicionado após a assinatura</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Adiar</string>
     <string name="notifications_snooze">Adiamento de notificações</string>
@@ -791,18 +834,21 @@
     <string name="labels_and_folders">Etiquetas &amp; Pastas </string>
     <string name="folders">Pastas</string>
     <string name="labels">Etiquetas</string>
-    <string name="labels_manage">Gestor de etiquetas</string>
+    <string name="labels_manager">Gestor de etiquetas</string>
     <string name="folders_manage">Gestor de pastas</string>
-    <string name="swipe_actions">Gestos de deslize</string>
+    <string name="swipe_actions">Acções ao deslizar</string>
     <string name="swipe_action_right">Deslizar à direita</string>
     <string name="swipe_action_left">Deslizar à esquerda</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Escolher acção de deslizar</string>
     <string name="swipe_action_trash">Mensagem movida para o lixo</string>
+    <string name="swipe_action_trash_short">Mover para Lixo</string>
     <string name="swipe_action_star">Estrela da mensagem actualizada</string>
     <string name="swipe_action_star_short">Actualizar estrela</string>
     <string name="swipe_action_spam">Mensagem marcada como assédio</string>
+    <string name="swipe_action_spam_short">Assédio</string>
     <string name="swipe_action_archive">Mensagem arquivada</string>
+    <string name="swipe_action_archive_short">Arquivo</string>
     <string name="swipe_action_mark_read">Mensagem marcada como lida</string>
     <string name="swipe_action_mark_read_short">Lido</string>
     <plurals name="action_move_to_trash">
@@ -843,7 +889,7 @@
     <string name="turn_combined_contacts_on">Active esta funcionalidade para preencher automaticamente endereços de email utilizando contactos de todas as suas contas ligadas.</string>
     <string name="local_cache_management">Gestão da memória local</string>
     <string name="cache_cleared">A memória local foi actualizada</string>
-    <string name="empty_data">Limpar memória</string>
+    <string name="empty_data">Limpar dados</string>
     <!-- endregion -->
     <string name="enabled">Activado</string>
     <string name="disabled">Desactivado</string>
@@ -897,12 +943,14 @@
     <string name="error_loading_conversations">Erro ao carregar conversas, por favor, tente novamente</string>
     <string name="star">Marcar com estrela</string>
     <string name="unstar">Remover estrela</string>
+    <string name="star_unstar">Adicionar/Remover estrela</string>
     <string name="send_to_archive">Enviar para o arquivo?</string>
     <string name="new_label">Nova etiqueta</string>
     <string name="new_folder">Nova pasta</string>
     <string name="label_as">Etiquetar como…</string>
     <string name="mark_as_unread">Marcar como não lido</string>
     <string name="mark_as_read">Marcar como lido</string>
+    <string name="mark_as_read_unread">Marcar como lido/não lido</string>
     <string name="move_message">Mover mensagem</string>
     <string name="manage">Gerir</string>
     <string name="message_from">Mensagem de %s</string>
@@ -915,4 +963,8 @@
         <item quantity="one">%d conversa</item>
         <item quantity="other">%d conversas</item>
     </plurals>
+    <string name="contacts_call">Telefonar</string>
+    <string name="contacts_send_group_message">Enviar mensagem de grupo</string>
+    <string name="inbox_this_folder_is_empty">Esta pasta está vazia</string>
+    <string name="inbox_nothing_to_see_here">Nada para ver aqui</string>
 </resources>

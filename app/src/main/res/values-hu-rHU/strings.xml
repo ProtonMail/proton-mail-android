@@ -20,26 +20,65 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
-    <string name="x_folders">Folders</string>
-    <string name="x_labels">Labels</string>
-    <string name="x_more">More</string>
-    <string name="x_search">Search</string>
+    <string name="x_days">Nap</string>
+    <string name="x_folders">Mappa</string>
+    <string name="x_hours">Óra</string>
+    <string name="x_labels">Címke</string>
+    <string name="x_more">Továbbiak</string>
+    <string name="x_search">Keresés</string>
+    <string name="x_set">Beállítás</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
-    <string name="drawer_contacts">Contacts</string>
+    <string name="drawer_contacts">Névjegyek</string>
     <string name="drawer_lock_the_app">Alkalmazás zárolása</string>
-    <string name="drawer_report_bug">Report bug</string>
-    <string name="drawer_settings">Settings</string>
-    <string name="drawer_subscription">Subscription</string>
-    <string name="drawer_sign_out">Sign out</string>
+    <string name="drawer_report_bug">Hiba jelentése</string>
+    <string name="drawer_settings">Beállítások</string>
+    <string name="drawer_subscription">Előfizetés</string>
+    <string name="drawer_sign_out">Kijelentkezés</string>
     <!-- endregion -->
     <!-- region Composer -->
-    <string name="composer_bcc">Bcc:</string>
-    <string name="composer_cc">Cc:</string>
+    <string name="composer_bcc">Titkos másolat:</string>
+    <string name="composer_cc">Másolat:</string>
     <string name="composer_compose_email">E-mail írása</string>
-    <string name="composer_from">From:</string>
-    <string name="composer_subject">Subject:</string>
-    <string name="composer_to">To:</string>
+    <string name="composer_from">Feladó:</string>
+    <string name="composer_subject">Tárgy:</string>
+    <string name="composer_to">Címzett:</string>
+    <string name="set_msg_password_title">Jelszó beállítása</string>
+    <string name="set_msg_password_info">Állítson be egy jelszót, a nem ProtonMail címzettek számára küldött üzenet titkosításához. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">További információk</a></string>
+    <string name="set_msg_password_info_icon_description">Infó</string>
+    <string name="set_msg_password_msg_password_title">Üzenet jelszó</string>
+    <string name="set_msg_password_msg_password_hint">4-től 21 karakter hosszúságig</string>
+    <string name="set_msg_password_repeat_password_title">Jelszó ismét</string>
+    <string name="set_msg_password_repeat_password_hint">A jelszavaknak egyezniük kell</string>
+    <string name="set_msg_password_password_hint_title">Jelszó emlékeztető</string>
+    <string name="set_msg_password_password_hint_hint">Emlékeztető megadása (opcionális)</string>
+    <string name="set_msg_password_apply_password">Jelszó alkalmazása</string>
+    <string name="set_msg_password_remove_password">Jelszó eltávolítása</string>
+    <string name="set_msg_password_error_too_short">A jelszó túl rövid</string>
+    <string name="set_msg_password_error_too_long">A jelszó túl hosszú</string>
+    <string name="set_msg_password_error_mismatch">A jelszavak nem egyeznek meg</string>
+    <string name="set_msg_expiration_title">Időkorlátos üzenet</string>
+    <string name="set_msg_expiration_none">Nem</string>
+    <string name="set_msg_expiration_1_hour">1 óra</string>
+    <string name="set_msg_expiration_1_day">1 nap</string>
+    <string name="set_msg_expiration_3_days">3 nap</string>
+    <string name="set_msg_expiration_1_week">1 hét</string>
+    <string name="set_msg_expiration_custom">Egyedi</string>
+    <string name="set_msg_expiration_check_description">Ez az elem ki van választva</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Set PIN code</string>
+    <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
+    <string name="settings_pins_dont_match">The PIN codes must match!</string>
+    <string name="settings_enter_pin_code_title">Enter PIN code</string>
+    <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
+    <string name="settings_swipe_left_to_right">Left to right</string>
+    <string name="settings_swipe_right_to_left">Right to left</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Discard changes?</string>
+    <string name="dialog_discard_changes_message">Any unsaved changes will be discarded.</string>
+    <string name="discard">Discard</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -80,14 +119,14 @@ Svájci székhellyel</string>
     <string name="message_drafted">Az üzenet küldése sikertelen volt. A Piszkozatok mappában került mentésre.</string>
     <string name="open_drawer">Megnyitás</string>
     <string name="close_drawer">Bezárás</string>
-    <string name="inbox_option">Inbox</string>
-    <string name="starred_option">Starred</string>
-    <string name="drafts_option">Drafts</string>
-    <string name="sent_option">Sent</string>
-    <string name="archive_option">Archive</string>
-    <string name="trash_option">Trash</string>
-    <string name="spam_option">Spam</string>
-    <string name="allmail_option">All Mail</string>
+    <string name="inbox_option">Beérkezett üzenetek</string>
+    <string name="starred_option">Csillagozott</string>
+    <string name="drafts_option">Piszkozatok</string>
+    <string name="sent_option">Elküldött</string>
+    <string name="archive_option">Archív2</string>
+    <string name="trash_option">Lomtár</string>
+    <string name="spam_option">Levélszemét</string>
+    <string name="allmail_option">Összes levél</string>
     <string name="inbox">Beérkezett üzenetek</string>
     <string name="starred">Csillagozott</string>
     <string name="drafts">Piszkozatok</string>
@@ -444,6 +483,8 @@ Svájci székhellyel</string>
     <string name="vcard_other_option_role">Szerepkör</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Névjegyek konvertálása</string>
+    <string name="contacts_import_contact">Import Contact</string>
+    <string name="contacts_import">Import</string>
     <string name="upload_contacts">Névjegyek feltöltése</string>
     <string name="upgrade_encrypted_contact">Kérjük, fizessen elő, hogy titkosított névjegyadatokat is tárolhasson.</string>
     <string name="uploading_contacts">Névjegyek feltöltése…</string>
@@ -589,7 +630,7 @@ Svájci székhellyel</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Végpontok közt titkosított üzenet</string>
     <string name="sender_lock_internal_verified">Végpontok közt titkosított, ellenőrzött címről</string>
-    <string name="sender_lock_learn_more"><a href="">Részletek</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">További információk</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Végpontok közt titkosított</string>
     <string name="composer_lock_internal_pinned">Végpontok közt titkosított, ellenőrzött címre</string>
@@ -631,6 +672,7 @@ Svájci székhellyel</string>
     <string name="edit_contact">Névjegy szerkesztése</string>
     <string name="create_contact_group">Új névjegy csoport</string>
     <string name="edit_contact_group">Névjegy csoport szerkesztése</string>
+    <string name="contact_groups_manage_members">Tagok kezelése</string>
     <string name="contact_group_display_name">Megjelenített név</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Címek hozzáadása a csoporthoz</string>
@@ -647,7 +689,7 @@ Svájci székhellyel</string>
     <string name="account_manager_remove">Eltávolítás</string>
     <string name="default_error_message">Hiba történt</string>
     <string name="no_contact_groups">Nincsenek névjegy csoportok</string>
-    <string name="search_contacts_inside_group">Névjegyek keresése a csoportban</string>
+    <string name="search_contacts_inside_group">Névjegy keresése</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d tag</item>
@@ -729,22 +771,23 @@ Svájci székhellyel</string>
     <string name="display_name">Megjelenített név</string>
     <string name="edit_display_name">Megjelenített név szerkesztése</string>
     <string name="signature">Aláírás</string>
-    <string name="mobile_footer">Mobil aláírás</string>
-    <string name="edit_mobile_footer">Mobil aláírás bekapcsolása</string>
-    <string name="default_mobile_footer">ProtonMail alkalmazásból küldve</string>
-    <string name="mobile_footer_is_premium">A mobil aláírást csak elfőzető felhasználók módosíthatják</string>
+    <string name="mobile_footer">Mobile footer</string>
+    <string name="edit_mobile_footer">Enable mobile footer</string>
+    <string name="default_mobile_footer">Sent from ProtonMail mobile</string>
+    <string name="mobile_footer_is_premium">Changing the Mobile Footer is allowed to Paid users only</string>
+    <string name="mobile_footer_info">This footer is added after your signature</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Szüneteltetés</string>
     <string name="notifications_snooze">Értesítések szüneteltetése</string>
     <string-array name="quick_snooze_values">
-        <item>30 minutes</item>
+        <item>30 perc</item>
         <item>1 óra</item>
         <item>2 óra</item>
         <item>4 óra</item>
         <item>8 óra</item>
         <item>12 óra</item>
-        <item>Custom</item>
-        <item>Scheduled</item>
+        <item>Egyedi</item>
+        <item>Ütemezés</item>
     </string-array>
     <string name="notifications_snoozed">Értesítések szüneteltetve</string>
     <string name="notifications_snooze_scheduled">Ütemezés</string>
@@ -791,22 +834,25 @@ Svájci székhellyel</string>
     <string name="settings_prevent_taking_screenshots">Képernyőkép készítés megakadályozása</string>
     <string name="hyperlink_confirmation">Kérés link megerősítése</string>
     <string name="labels_and_folders">Címkék és Mappák </string>
-    <string name="folders">Folders</string>
-    <string name="labels">Labels</string>
-    <string name="labels_manage">Címkék kezelése</string>
+    <string name="folders">Mappák</string>
+    <string name="labels">Címkék</string>
+    <string name="labels_manager">Labels manager</string>
     <string name="folders_manage">Mappák kezelése</string>
-    <string name="swipe_actions">Csúsztatási műveletek</string>
+    <string name="swipe_actions">Swipe actions</string>
     <string name="swipe_action_right">Csúsztatás jobbra</string>
     <string name="swipe_action_left">Csúsztatás balra</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Válasszon műveletet a csúsztatáshoz</string>
     <string name="swipe_action_trash">Áthelyezés a Lomtárba</string>
+    <string name="swipe_action_trash_short">Move to Trash</string>
     <string name="swipe_action_star">Csillagozás frissítése</string>
     <string name="swipe_action_star_short">Csillagozás</string>
     <string name="swipe_action_spam">Levélszemétként megjelölés</string>
+    <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Archiválás</string>
+    <string name="swipe_action_archive_short">Archive</string>
     <string name="swipe_action_mark_read">Megjelölés olvasottként</string>
-    <string name="swipe_action_mark_read_short">Read</string>
+    <string name="swipe_action_mark_read_short">Olvasott</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Üzenet áthelyezve a lomtárba</item>
         <item quantity="other">Üzenetek áthelyezve a lomtárba</item>
@@ -845,7 +891,7 @@ Svájci székhellyel</string>
     <string name="turn_combined_contacts_on">Kapcsolja be ezt a funkciót az automatikus e-mail címek kitöltéséhez az összes bejelentkezett fiók névjegyei alapján.</string>
     <string name="local_cache_management">Helyi gyorsítótár-kezelő</string>
     <string name="cache_cleared">Helyi gyorsítótár frissítve</string>
-    <string name="empty_data">Gyorsítótár ürítése</string>
+    <string name="empty_data">Empty Data</string>
     <!-- endregion -->
     <string name="enabled">Engedélyezve</string>
     <string name="disabled">Letiltva</string>
@@ -883,7 +929,7 @@ Svájci székhellyel</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
-    <string name="more">More</string>
+    <string name="more">Továbbiak</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Csúsztatás műveletek frissítve</string>
     <string name="swipe_gestures_changed_message">A legutóbbi frissítés után a csúsztatás műveletek megváltoztak. Ha szeretné, visszaállíthatja a beállításoknál.</string>
@@ -897,16 +943,18 @@ Svájci székhellyel</string>
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
     <string name="error_loading_conversations">Hiba a beszélgetések betöltése során, kérjük próbálja újra</string>
-    <string name="star">Star</string>
-    <string name="unstar">Unstar</string>
+    <string name="star">Csillagozás</string>
+    <string name="unstar">Csillagozás törlése</string>
+    <string name="star_unstar">Star/unstar</string>
     <string name="send_to_archive">Áthelyezi az archívumba?</string>
     <string name="new_label">Új címke</string>
     <string name="new_folder">Új mappa</string>
     <string name="label_as">Címkézés, mint…</string>
-    <string name="mark_as_unread">Mark as unread</string>
-    <string name="mark_as_read">Mark as read</string>
+    <string name="mark_as_unread">Megjelölés olvasatlanként</string>
+    <string name="mark_as_read">Megjelölés olvasottként</string>
+    <string name="mark_as_read_unread">Mark as read/unread</string>
     <string name="move_message">Levél áthelyezése</string>
-    <string name="manage">Manage</string>
+    <string name="manage">Kezelés</string>
     <string name="message_from">Üzenetek tőle: %s</string>
     <string name="not_spam_move_to_inbox">Nem spam (áthelyezés a bejövő üzenetek közé)</string>
     <plurals name="x_messages_count">
@@ -917,4 +965,8 @@ Svájci székhellyel</string>
         <item quantity="one">%d beszélgetés</item>
         <item quantity="other">%d beszélgetés(ek)</item>
     </plurals>
+    <string name="contacts_call">Hívás</string>
+    <string name="contacts_send_group_message">Csoport üzenet küldése</string>
+    <string name="inbox_this_folder_is_empty">This folder is empty</string>
+    <string name="inbox_nothing_to_see_here">Nothing to see here</string>
 </resources>

@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">天</string>
     <string name="x_folders">資料夾</string>
+    <string name="x_hours">小時</string>
     <string name="x_labels">標籤</string>
     <string name="x_more">更多</string>
     <string name="x_search">搜尋</string>
+    <string name="x_set">設定</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">聯絡人</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">寄件人：</string>
     <string name="composer_subject">主旨：</string>
     <string name="composer_to">收件人：</string>
+    <string name="set_msg_password_title">設定密碼</string>
+    <string name="set_msg_password_info">為非 ProtonMail 使用者設定加密此郵件的密碼。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">瞭解更多</a></string>
+    <string name="set_msg_password_info_icon_description">資訊</string>
+    <string name="set_msg_password_msg_password_title">郵件密碼</string>
+    <string name="set_msg_password_msg_password_hint">長度為 4 至 21 個字元</string>
+    <string name="set_msg_password_repeat_password_title">重複輸入密碼</string>
+    <string name="set_msg_password_repeat_password_hint">輸入的密碼必須完全相同</string>
+    <string name="set_msg_password_password_hint_title">密碼提示</string>
+    <string name="set_msg_password_password_hint_hint">自訂密碼提示 (可選)</string>
+    <string name="set_msg_password_apply_password">套用密碼</string>
+    <string name="set_msg_password_remove_password">移除密碼</string>
+    <string name="set_msg_password_error_too_short">密碼太短</string>
+    <string name="set_msg_password_error_too_long">密碼太長</string>
+    <string name="set_msg_password_error_mismatch">密碼不一致</string>
+    <string name="set_msg_expiration_title">郵件效期</string>
+    <string name="set_msg_expiration_none">未設定</string>
+    <string name="set_msg_expiration_1_hour">1 小時</string>
+    <string name="set_msg_expiration_1_day">1 天</string>
+    <string name="set_msg_expiration_3_days">3 天</string>
+    <string name="set_msg_expiration_1_week">1 週</string>
+    <string name="set_msg_expiration_custom">自定義</string>
+    <string name="set_msg_expiration_check_description">此項目已保留。</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">設定 PIN 碼</string>
+    <string name="settings_confirm_pin_code_title">重複輸入 PIN 碼</string>
+    <string name="settings_pins_dont_match">PIN 碼必須相符！</string>
+    <string name="settings_enter_pin_code_title">輸入 PIN 碼</string>
+    <string name="settings_swipe_settings_info">設定滑動手勢以存取最常用動作。</string>
+    <string name="settings_swipe_left_to_right">由左至右</string>
+    <string name="settings_swipe_right_to_left">從右到左</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">放棄變更？</string>
+    <string name="dialog_discard_changes_message">未儲存的變更將會被丟棄。</string>
+    <string name="discard">捨棄</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -109,7 +148,7 @@
     <string name="message_headers">郵件標頭</string>
     <string name="delete_message">刪除郵件</string>
     <string name="delete_messages">刪除郵件</string>
-    <string name="add_label">新增標籤</string>
+    <string name="add_label">加上標籤</string>
     <string name="add_star">加上星號</string>
     <string name="remove_star">移除星號</string>
     <string name="mark_read">標記為已讀</string>
@@ -237,7 +276,7 @@
     <string name="terms_and_conditions">使用 ProtonMail 即代表您同意我們的\n
         <a href="https://protonmail.com/terms-and-conditions">條款及細則</a>和<a href="https://protonmail.com/privacy-policy">隱私權政策</a></string>
     <string name="labels_title_apply">套用標籤</string>
-    <string name="labels_title_add">新增標籤</string>
+    <string name="labels_title_add">加上標籤</string>
     <string name="labels_title">標籤</string>
     <string name="label_name">標籤名稱</string>
     <string name="label_name_empty">標籤必須要有名稱</string>
@@ -434,6 +473,8 @@
     <string name="vcard_other_option_role">身份</string>
     <string name="vcard_other_option_url">網址</string>
     <string name="convert_contact">轉換聯絡人</string>
+    <string name="contacts_import_contact">匯入聯絡人</string>
+    <string name="contacts_import">匯入</string>
     <string name="upload_contacts">上傳聯絡人</string>
     <string name="upgrade_encrypted_contact">請升級以使用加密的聯絡資訊。</string>
     <string name="uploading_contacts">正在上傳聯絡人…</string>
@@ -483,7 +524,7 @@
     <string name="unsaved_changes_title">未儲存的變更</string>
     <string name="unsaved_changes_subtitle">表單中有未儲存的項目。是否確定要丟棄它們？</string>
     <string name="request_timeout">請求逾時，請重試</string>
-    <string name="add_folder">新增資料夾</string>
+    <string name="add_folder">加入資料夾</string>
     <string name="no_folders">沒有資料夾</string>
     <string name="folders_title_move">將郵件移動到</string>
     <string name="folders_manager">資料夾管理員</string>
@@ -579,7 +620,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">端到端加密郵件</string>
     <string name="sender_lock_internal_verified">來自已驗證電子郵件地址的端到端加密郵件</string>
-    <string name="sender_lock_learn_more"><a href="">瞭解更多</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">取得更多資訊</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">端到端加密</string>
     <string name="composer_lock_internal_pinned">以端到端加密寄送到已驗證電子郵件地址</string>
@@ -613,16 +654,17 @@
     <!-- Contact Groups Strings -->
     <string name="add_photo">新增照片</string>
     <string name="contact_display_name">顯示名稱</string>
-    <string name="add_new_email">新增電子郵件地址</string>
+    <string name="add_new_email">新增電郵位址</string>
     <string name="no_groups">沒有群組</string>
     <string name="contact_vcard_note">備註</string>
     <string name="edit_contact">編輯聯絡人</string>
     <string name="create_contact_group">建立聯絡人群組</string>
     <string name="edit_contact_group">編輯聯絡人群組</string>
+    <string name="contact_groups_manage_members">管理群組成員</string>
     <string name="contact_group_display_name">顯示名稱</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">新增電子郵件地址到群組</string>
-    <string name="title_activity_address_chooser">管理電子郵件地址</string>
+    <string name="title_activity_address_chooser">管理群組成員</string>
     <string name="title_activity_account_manager">管理帳號</string>
     <string name="account_manager_add_account">新增帳號</string>
     <string name="account_manager_remove_all_accounts">正在移除所有帳號</string>
@@ -635,7 +677,7 @@
     <string name="account_manager_remove">移除</string>
     <string name="default_error_message">發生錯誤</string>
     <string name="no_contact_groups">無聯絡人群組</string>
-    <string name="search_contacts_inside_group">搜尋群組中的聯絡人</string>
+    <string name="search_contacts_inside_group">搜尋聯絡人</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="other">%d 個成員</item>
@@ -713,10 +755,11 @@
     <string name="display_name">顯示名稱</string>
     <string name="edit_display_name">編輯顯示名稱</string>
     <string name="signature">簽名</string>
-    <string name="mobile_footer">行動裝置簽名檔</string>
-    <string name="edit_mobile_footer">啟用行動裝置簽名檔</string>
+    <string name="mobile_footer">行動註腳</string>
+    <string name="edit_mobile_footer">啟用行動註腳</string>
     <string name="default_mobile_footer">從 ProtonMail 手機版送出</string>
-    <string name="mobile_footer_is_premium">只有付費使用者可變更行動版簽名</string>
+    <string name="mobile_footer_is_premium">只有付費使用者可變更行動版註腳</string>
+    <string name="mobile_footer_info">此註腳會新增至您的簽章之後</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">延遲</string>
     <string name="notifications_snooze">通知延遲</string>
@@ -776,18 +819,21 @@
     <string name="labels_and_folders">標籤與資料夾 </string>
     <string name="folders">資料夾</string>
     <string name="labels">標籤</string>
-    <string name="labels_manage">標籤管理員</string>
+    <string name="labels_manager">標籤管理程式</string>
     <string name="folders_manage">資料夾管理員</string>
-    <string name="swipe_actions">滑動手勢</string>
+    <string name="swipe_actions">滑動動作</string>
     <string name="swipe_action_right">向右滑動</string>
     <string name="swipe_action_left">向左滑動</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">選擇滑動動作</string>
     <string name="swipe_action_trash">郵件移動到垃圾桶</string>
+    <string name="swipe_action_trash_short">移至垃圾桶</string>
     <string name="swipe_action_star">郵件加上星號</string>
     <string name="swipe_action_star_short">更新星號</string>
     <string name="swipe_action_spam">郵件標記為垃圾郵件</string>
+    <string name="swipe_action_spam_short">垃圾郵件</string>
     <string name="swipe_action_archive">郵件封存</string>
+    <string name="swipe_action_archive_short">封存</string>
     <string name="swipe_action_mark_read">郵件標記為已讀</string>
     <string name="swipe_action_mark_read_short">已讀</string>
     <plurals name="action_move_to_trash">
@@ -825,7 +871,7 @@
     <string name="turn_combined_contacts_on">啟用此功能以使用您所有已登入的帳號中的聯絡人來自動完成電子郵件地址。</string>
     <string name="local_cache_management">本機快取管理</string>
     <string name="cache_cleared">本機快取已重新整理</string>
-    <string name="empty_data">清空快取</string>
+    <string name="empty_data">清空資料</string>
     <!-- endregion -->
     <string name="enabled">已啟用</string>
     <string name="disabled">已停用</string>
@@ -879,12 +925,14 @@
     <string name="error_loading_conversations">載入會話時發生錯誤，請再試一次</string>
     <string name="star">加上星號</string>
     <string name="unstar">移除星號</string>
+    <string name="star_unstar">加上星號／移除星號</string>
     <string name="send_to_archive">要送歸封存嗎？</string>
     <string name="new_label">新增標籤</string>
     <string name="new_folder">新增資料夾</string>
     <string name="label_as">加上標籤…</string>
     <string name="mark_as_unread">標記為未讀</string>
     <string name="mark_as_read">標記為已讀</string>
+    <string name="mark_as_read_unread">標記為已讀／未讀</string>
     <string name="move_message">移動郵件</string>
     <string name="manage">管理</string>
     <string name="message_from">來自 %s 的郵件</string>
@@ -895,4 +943,8 @@
     <plurals name="x_conversations_count">
         <item quantity="other">%d 個會話</item>
     </plurals>
+    <string name="contacts_call">通話</string>
+    <string name="contacts_send_group_message">發送群組訊息</string>
+    <string name="inbox_this_folder_is_empty">此資料夾是空的</string>
+    <string name="inbox_nothing_to_see_here">這裡空空如也</string>
 </resources>

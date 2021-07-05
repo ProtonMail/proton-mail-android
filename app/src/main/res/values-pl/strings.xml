@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">dni</string>
     <string name="x_folders">Foldery</string>
+    <string name="x_hours">godziny</string>
     <string name="x_labels">Etykiety</string>
     <string name="x_more">Więcej</string>
     <string name="x_search">Szukaj</string>
+    <string name="x_set">Ustaw</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Kontakty</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">Od:</string>
     <string name="composer_subject">Temat:</string>
     <string name="composer_to">Do:</string>
+    <string name="set_msg_password_title">Ustaw hasło</string>
+    <string name="set_msg_password_info">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza ProtonMaila. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Dowiedz się więcej</a></string>
+    <string name="set_msg_password_info_icon_description">Informacje</string>
+    <string name="set_msg_password_msg_password_title">Hasło wiadomości</string>
+    <string name="set_msg_password_msg_password_hint">od 4 do 21 znaków</string>
+    <string name="set_msg_password_repeat_password_title">Potwierdź hasło</string>
+    <string name="set_msg_password_repeat_password_hint">Hasła muszą pasować do siebie</string>
+    <string name="set_msg_password_password_hint_title">Podpowiedź do hasła</string>
+    <string name="set_msg_password_password_hint_hint">Ustaw podpowiedź (opcjonalnie)</string>
+    <string name="set_msg_password_apply_password">Zastosuj hasło</string>
+    <string name="set_msg_password_remove_password">Usuń hasło</string>
+    <string name="set_msg_password_error_too_short">Hasło jest zbyt krótkie</string>
+    <string name="set_msg_password_error_too_long">Hasło jest zbyt długie</string>
+    <string name="set_msg_password_error_mismatch">Hasła nie pasują do siebie</string>
+    <string name="set_msg_expiration_title">Wygaśniecie wiadomości</string>
+    <string name="set_msg_expiration_none">Brak</string>
+    <string name="set_msg_expiration_1_hour">1 godzina</string>
+    <string name="set_msg_expiration_1_day">1 dzień</string>
+    <string name="set_msg_expiration_3_days">3 dni</string>
+    <string name="set_msg_expiration_1_week">1 tydzień</string>
+    <string name="set_msg_expiration_custom">Niestandardowy</string>
+    <string name="set_msg_expiration_check_description">Ten element jest zaznaczony</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Ustaw kod PIN</string>
+    <string name="settings_confirm_pin_code_title">Powtórz kod PIN</string>
+    <string name="settings_pins_dont_match">Kody PIN muszą pasować do siebie!</string>
+    <string name="settings_enter_pin_code_title">Wpisz kod PIN</string>
+    <string name="settings_swipe_settings_info">Ustaw gesty przesunięcia palcem, aby uzyskać dostęp do najczęściej używanych akcji.</string>
+    <string name="settings_swipe_left_to_right">Od lewej do prawej</string>
+    <string name="settings_swipe_right_to_left">Od prawej do lewej</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Czy chcesz odrzucić zmiany?</string>
+    <string name="dialog_discard_changes_message">Wszystkie niezapisane zmiany zostaną odrzucone.</string>
+    <string name="discard">Odrzuć</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -58,7 +97,7 @@
     <string name="error_chrome_not_found">Nie można załadować zawartości. Zainstaluj przeglądarkę Chrome</string>
     <string name="messages_load_failure">Nie można pobrać wiadomości</string>
     <string name="message_details_load_failure">Nie można pobrać szczegółów wiadomości</string>
-    <string name="no_more_messages">Nie ma więcej wiadomości</string>
+    <string name="no_more_messages">Nie masz więcej wiadomości</string>
     <string name="mailbox_login_failure">Logowanie do skrzynki pocztowej nie powiodło się</string>
     <string name="login_failure">Logowanie nie powiodło się</string>
     <string name="incorrect_key_parameters">Parametry klucza są nieprawidłowe</string>
@@ -461,6 +500,8 @@
     <string name="vcard_other_option_role">Stanowisko</string>
     <string name="vcard_other_option_url">Adres URL</string>
     <string name="convert_contact">Konwertuj kontakt</string>
+    <string name="contacts_import_contact">Importuj kontakt</string>
+    <string name="contacts_import">Importuj</string>
     <string name="upload_contacts">Prześlij kontakty</string>
     <string name="upgrade_encrypted_contact">Ulepsz konto, aby używać zaszyfrowanych informacji o kontakcie.</string>
     <string name="uploading_contacts">Przesyłanie kontaktów…</string>
@@ -558,7 +599,7 @@
     <string name="empty_recipients">(brak odbiorców)</string>
     <string name="contacts_unknown">Nieznany</string>
     <string name="learn_more"><u>Dowiedz się więcej</u></string>
-    <string name="info">Info</string>
+    <string name="info">Informacje</string>
     <string name="error_can_not_send_from_this_address">Ulepsz do płatnego planu, aby wysyłać wiadomości z adresu %s.</string>
     <string name="email_empty">Brak adresu e-mail</string>
     <string name="add_contact_details">Add Contact Details</string>
@@ -606,7 +647,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Wiadomość zaszyfrowana end-to-end</string>
     <string name="sender_lock_internal_verified">Wiadomość zaszyfrowana end-to-end od zweryfikowanego adresu</string>
-    <string name="sender_lock_learn_more"><a href="">Dowiedz się więcej</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Dowiedz się więcej</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Zaszyfrowane end-to-end</string>
     <string name="composer_lock_internal_pinned">Zaszyfrowana end-to-end do zweryfikowanego adresu</string>
@@ -646,10 +687,11 @@
     <string name="edit_contact">Edytuj kontakt</string>
     <string name="create_contact_group">Utwórz grupę kontaktów</string>
     <string name="edit_contact_group">Edytuj grupę kontaktów</string>
+    <string name="contact_groups_manage_members">Zarządzaj członkami</string>
     <string name="contact_group_display_name">Nazwa wyświetlana</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Dodaj adres do grup</string>
-    <string name="title_activity_address_chooser">Zarządzaj adresami</string>
+    <string name="title_activity_address_chooser">Zarządzaj członkami</string>
     <string name="title_activity_account_manager">Zarządzaj kontami</string>
     <string name="account_manager_add_account">Dodaj konto</string>
     <string name="account_manager_remove_all_accounts">Trwa usuwanie wszystkich kont</string>
@@ -662,7 +704,7 @@
     <string name="account_manager_remove">Usuń</string>
     <string name="default_error_message">Wystąpił błąd</string>
     <string name="no_contact_groups">Brak grup kontaktów</string>
-    <string name="search_contacts_inside_group">Szukaj kontaktów wewnątrz grupy</string>
+    <string name="search_contacts_inside_group">Szukaj kontaktów</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d członek</item>
@@ -752,10 +794,11 @@
     <string name="display_name">Nazwa wyświetlana</string>
     <string name="edit_display_name">Edytuj nazwę wyświetlaną</string>
     <string name="signature">Podpis</string>
-    <string name="mobile_footer">Podpis mobilny</string>
-    <string name="edit_mobile_footer">Włącz podpis mobilny</string>
+    <string name="mobile_footer">Stopka mobilna</string>
+    <string name="edit_mobile_footer">Włącz stopkę mobilną</string>
     <string name="default_mobile_footer">Wysłano z aplikacji ProtonMail</string>
-    <string name="mobile_footer_is_premium">Zmiana podpisu mobilnego jest dostępna tylko dla użytkowników płatnego planu</string>
+    <string name="mobile_footer_is_premium">Zmiana stopki mobilnej jest dostępna tylko dla użytkowników płatnego planu</string>
+    <string name="mobile_footer_info">Stopka jest dodawana pod Twoim podpisem</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Usypianie powiadomień</string>
     <string name="notifications_snooze">Usypianie powiadomień</string>
@@ -818,18 +861,21 @@
     <string name="labels_and_folders">Etykiety i foldery </string>
     <string name="folders">Foldery</string>
     <string name="labels">Etykiety</string>
-    <string name="labels_manage">Menedżer etykiet</string>
+    <string name="labels_manager">Menedżer etykiet</string>
     <string name="folders_manage">Menedżer folderów</string>
-    <string name="swipe_actions">Gesty przeciągania</string>
+    <string name="swipe_actions">Gesty przesunięcia</string>
     <string name="swipe_action_right">Przesuń palcem w prawo</string>
     <string name="swipe_action_left">Przesuń palcem w lewo</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Wybierz gest przesunięcia palcem</string>
     <string name="swipe_action_trash">Wiadomość została przeniesiona do Kosza</string>
+    <string name="swipe_action_trash_short">Przenieś do Kosza</string>
     <string name="swipe_action_star">Gwiazdka została zaktualizowana</string>
     <string name="swipe_action_star_short">Oznacz gwiazdką</string>
     <string name="swipe_action_spam">Wiadomość została oznaczona jako spam</string>
+    <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Wiadomość została zarchiwizowana</string>
+    <string name="swipe_action_archive_short">Archiwum</string>
     <string name="swipe_action_mark_read">Wiadomość została oznaczona jako przeczytana</string>
     <string name="swipe_action_mark_read_short">Przeczytane</string>
     <plurals name="action_move_to_trash">
@@ -876,7 +922,7 @@
     <string name="turn_combined_contacts_on">Włączenie tej funkcji spowoduje uzupełnianie adresów e-mail przy użyciu wszystkich kontaktów na Twoich zalogowanych kontach.</string>
     <string name="local_cache_management">Zarządzanie pamięcią podręczną</string>
     <string name="cache_cleared">Lokalna pamięć podręczna została odświeżona</string>
-    <string name="empty_data">Wyczyść pamięć podręczną</string>
+    <string name="empty_data">Usuń dane</string>
     <!-- endregion -->
     <string name="enabled">Włączone</string>
     <string name="disabled">Wyłączone</string>
@@ -930,12 +976,14 @@
     <string name="error_loading_conversations">Wystąpił błąd podczas ładowania wątków. Spróbuj ponownie</string>
     <string name="star">Oznacz gwiazdką</string>
     <string name="unstar">Usuń gwiazdkę</string>
+    <string name="star_unstar">Oznacz gwiazdką / usuń gwiazdkę</string>
     <string name="send_to_archive">Przenieś do Archiwum?</string>
     <string name="new_label">Nowa etykieta</string>
     <string name="new_folder">Nowy folder</string>
     <string name="label_as">Oznacz jako…</string>
     <string name="mark_as_unread">Oznacz jako nieprzeczytane</string>
     <string name="mark_as_read">Oznacz jako przeczytane</string>
+    <string name="mark_as_read_unread">Oznacz jako przeczytane/nieprzeczytane</string>
     <string name="move_message">Przenieś wiadomość</string>
     <string name="manage">Zarządzaj</string>
     <string name="message_from">Wiadomość od %s</string>
@@ -952,4 +1000,8 @@
         <item quantity="many">%d wątków</item>
         <item quantity="other">%d wątków</item>
     </plurals>
+    <string name="contacts_call">Zadzwoń</string>
+    <string name="contacts_send_group_message">Wyślij wiadomość grupową</string>
+    <string name="inbox_this_folder_is_empty">Folder jest pusty</string>
+    <string name="inbox_nothing_to_see_here">Niczego tutaj nie ma</string>
 </resources>

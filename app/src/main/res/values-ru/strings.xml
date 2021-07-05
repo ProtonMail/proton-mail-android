@@ -20,10 +20,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
+    <string name="x_days">Дней</string>
     <string name="x_folders">Папки</string>
+    <string name="x_hours">Часов</string>
     <string name="x_labels">Ярлыки</string>
     <string name="x_more">Ещё</string>
     <string name="x_search">Поиск</string>
+    <string name="x_set">Установить</string>
+    <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
     <string name="drawer_contacts">Контакты</string>
@@ -40,6 +44,41 @@
     <string name="composer_from">От:</string>
     <string name="composer_subject">Тема:</string>
     <string name="composer_to">Кому:</string>
+    <string name="set_msg_password_title">Задать пароль</string>
+    <string name="set_msg_password_info">Задайте пароль для шифрования этого сообщения для пользователей не использующих protonmail. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Подробнее</a></string>
+    <string name="set_msg_password_info_icon_description">Информация</string>
+    <string name="set_msg_password_msg_password_title">Пароль сообщения</string>
+    <string name="set_msg_password_msg_password_hint">от 4 до 21 символов</string>
+    <string name="set_msg_password_repeat_password_title">Подтвердить пароль</string>
+    <string name="set_msg_password_repeat_password_hint">Пароли должны совпадать</string>
+    <string name="set_msg_password_password_hint_title">Подсказка к паролю</string>
+    <string name="set_msg_password_password_hint_hint">Укажите подсказку (необязательно)</string>
+    <string name="set_msg_password_apply_password">Применить пароль</string>
+    <string name="set_msg_password_remove_password">Убрать пароль</string>
+    <string name="set_msg_password_error_too_short">Пароль слишком короткий</string>
+    <string name="set_msg_password_error_too_long">Пароль слишком длинный</string>
+    <string name="set_msg_password_error_mismatch">Пароль и его подтверждение не совпадают</string>
+    <string name="set_msg_expiration_title">Срок действия сообщения</string>
+    <string name="set_msg_expiration_none">Нет</string>
+    <string name="set_msg_expiration_1_hour">1 час</string>
+    <string name="set_msg_expiration_1_day">1 день</string>
+    <string name="set_msg_expiration_3_days">3 дня</string>
+    <string name="set_msg_expiration_1_week">1 неделя</string>
+    <string name="set_msg_expiration_custom">Настроить</string>
+    <string name="set_msg_expiration_check_description">Этот элемент отмечен</string>
+    <!-- endregion -->
+    <!-- region Settings -->
+    <string name="settings_create_pin_code_title">Set PIN code</string>
+    <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
+    <string name="settings_pins_dont_match">The PIN codes must match!</string>
+    <string name="settings_enter_pin_code_title">Enter PIN code</string>
+    <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
+    <string name="settings_swipe_left_to_right">Left to right</string>
+    <string name="settings_swipe_right_to_left">Right to left</string>
+    <!-- region Dialogs -->
+    <string name="dialog_discard_changes_title">Discard changes?</string>
+    <string name="dialog_discard_changes_message">Any unsaved changes will be discarded.</string>
+    <string name="discard">Discard</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -79,14 +118,14 @@
     <string name="message_drafted">Сбой отправки сообщения. Ваши сообщения сохранены в папке Черновики</string>
     <string name="open_drawer">Открыть</string>
     <string name="close_drawer">Закрыть</string>
-    <string name="inbox_option">Inbox</string>
-    <string name="starred_option">Starred</string>
-    <string name="drafts_option">Drafts</string>
-    <string name="sent_option">Sent</string>
-    <string name="archive_option">Archive</string>
-    <string name="trash_option">Trash</string>
-    <string name="spam_option">Spam</string>
-    <string name="allmail_option">All Mail</string>
+    <string name="inbox_option">Входящие</string>
+    <string name="starred_option">Важные</string>
+    <string name="drafts_option">Черновики</string>
+    <string name="sent_option">Отправленные</string>
+    <string name="archive_option">Архив</string>
+    <string name="trash_option">Корзина</string>
+    <string name="spam_option">Спам</string>
+    <string name="allmail_option">Все письма</string>
     <string name="inbox">Входящие</string>
     <string name="starred">Со звёздами</string>
     <string name="drafts">Черновики</string>
@@ -461,6 +500,8 @@
     <string name="vcard_other_option_role">Роль</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Конвертировать контакт</string>
+    <string name="contacts_import_contact">Import Contact</string>
+    <string name="contacts_import">Import</string>
     <string name="upload_contacts">Загрузить контакты</string>
     <string name="upgrade_encrypted_contact">Пожалуйста, расширьте ваш тариф, чтобы использовать зашифрованную контактную информацию.</string>
     <string name="uploading_contacts">Загрузка контактов…</string>
@@ -606,7 +647,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Сообщение, зашифрованное сквозным методом</string>
     <string name="sender_lock_internal_verified">Сообщение, зашифрованное сквозным методом; с проверенного адреса</string>
-    <string name="sender_lock_learn_more"><a href="">Подробнее</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Подробнее</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Зашифровано сквозным методом</string>
     <string name="composer_lock_internal_pinned">Зашифровано сквозным методом для проверенного адреса</string>
@@ -648,10 +689,11 @@
     <string name="edit_contact">Изменить контакт</string>
     <string name="create_contact_group">Создать группу контактов</string>
     <string name="edit_contact_group">Изменить группу контактов</string>
+    <string name="contact_groups_manage_members">Управление участниками</string>
     <string name="contact_group_display_name">Отображаемое имя</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Добавить адрес в группы</string>
-    <string name="title_activity_address_chooser">Управление адресами</string>
+    <string name="title_activity_address_chooser">Управление участниками</string>
     <string name="title_activity_account_manager">Управление учётными записями</string>
     <string name="account_manager_add_account">Добавить учётную запись</string>
     <string name="account_manager_remove_all_accounts">Удаление всех учётных записей</string>
@@ -664,7 +706,7 @@
     <string name="account_manager_remove">Удалить</string>
     <string name="default_error_message">Произошла ошибка</string>
     <string name="no_contact_groups">Нет групп контактов</string>
-    <string name="search_contacts_inside_group">Поиск контактов внутри группы</string>
+    <string name="search_contacts_inside_group">Поиск контактов</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d участник</item>
@@ -754,10 +796,11 @@
     <string name="display_name">Отображаемое имя</string>
     <string name="edit_display_name">Изменить отображаемое имя</string>
     <string name="signature">Подпись</string>
-    <string name="mobile_footer">Подпись для мобильного клиента</string>
-    <string name="edit_mobile_footer">Добавлять мобильную подпись</string>
-    <string name="default_mobile_footer">Отправлено из мобильного клиента ProtonMail</string>
-    <string name="mobile_footer_is_premium">Изменение мобильной подписи разрешено только пользователям на платных тарифах</string>
+    <string name="mobile_footer">Mobile footer</string>
+    <string name="edit_mobile_footer">Enable mobile footer</string>
+    <string name="default_mobile_footer">Sent from ProtonMail mobile</string>
+    <string name="mobile_footer_is_premium">Changing the Mobile Footer is allowed to Paid users only</string>
+    <string name="mobile_footer_info">This footer is added after your signature</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Приглушение</string>
     <string name="notifications_snooze">Приглушение уведомлений</string>
@@ -820,20 +863,23 @@
     <string name="labels_and_folders">Ярлыки и папки </string>
     <string name="folders">Папки</string>
     <string name="labels">Ярлыки</string>
-    <string name="labels_manage">Управление ярлыками</string>
+    <string name="labels_manager">Labels manager</string>
     <string name="folders_manage">Управление папками</string>
-    <string name="swipe_actions">Жесты смахиванием</string>
+    <string name="swipe_actions">Swipe actions</string>
     <string name="swipe_action_right">Свайп вправо</string>
     <string name="swipe_action_left">Свайп влево</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Выберите действие смахивания</string>
     <string name="swipe_action_trash">Сообщение перемещено в корзину</string>
+    <string name="swipe_action_trash_short">Move to Trash</string>
     <string name="swipe_action_star">Звезда сообщения обновлена</string>
     <string name="swipe_action_star_short">Обновить отметку</string>
     <string name="swipe_action_spam">Сообщение помечено как спам</string>
+    <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Сообщение отправлено в архив</string>
+    <string name="swipe_action_archive_short">Archive</string>
     <string name="swipe_action_mark_read">Сообщение помечено как прочитанное</string>
-    <string name="swipe_action_mark_read_short">Read</string>
+    <string name="swipe_action_mark_read_short">Прочитанное</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Сообщение перемещено в корзину</item>
         <item quantity="few">Сообщения перемещены в корзину</item>
@@ -878,7 +924,7 @@
     <string name="turn_combined_contacts_on">Включите эту функцию для автозавершения адресов эл. почты путём использования контактов из всех учётных записей, в которые вы вошли.</string>
     <string name="local_cache_management">Управление локальным кэшем</string>
     <string name="cache_cleared">Локальный кэш обновлён</string>
-    <string name="empty_data">Очистить кэш</string>
+    <string name="empty_data">Empty Data</string>
     <!-- endregion -->
     <string name="enabled">Включено</string>
     <string name="disabled">Отключено</string>
@@ -930,18 +976,20 @@
     <string name="recipient_email_format">&lt;%s&gt;</string>
     <string name="recipient_name_email_format">%s &lt;%s&gt;</string>
     <string name="error_loading_conversations">Ошибка загрузки бесед, попробуйте еще раз</string>
-    <string name="star">Star</string>
-    <string name="unstar">Unstar</string>
+    <string name="star">Отметить как Важное</string>
+    <string name="unstar">Снять пометку</string>
+    <string name="star_unstar">Star/unstar</string>
     <string name="send_to_archive">Отправить в архив?</string>
     <string name="new_label">Новый ярлык</string>
     <string name="new_folder">Новая папка</string>
     <string name="label_as">Отметить...</string>
-    <string name="mark_as_unread">Mark as unread</string>
-    <string name="mark_as_read">Mark as read</string>
+    <string name="mark_as_unread">Отметить как непрочитанное</string>
+    <string name="mark_as_read">Отметить как прочитанное</string>
+    <string name="mark_as_read_unread">Mark as read/unread</string>
     <string name="move_message">Переместить сообщение</string>
-    <string name="manage">Manage</string>
+    <string name="manage">Управление</string>
     <string name="message_from">Сообщение от %s</string>
-    <string name="not_spam_move_to_inbox">Не спам (Переместить во \"Входящие\")</string>
+    <string name="not_spam_move_to_inbox">Не спам (переместить во Входящие)</string>
     <plurals name="x_messages_count">
         <item quantity="one">%d сообщение</item>
         <item quantity="few">%d сообщения</item>
@@ -954,4 +1002,8 @@
         <item quantity="many">%d бесед</item>
         <item quantity="other">%d бесед</item>
     </plurals>
+    <string name="contacts_call">Позвонить</string>
+    <string name="contacts_send_group_message">Отправить сообщение всей группе</string>
+    <string name="inbox_this_folder_is_empty">This folder is empty</string>
+    <string name="inbox_nothing_to_see_here">Nothing to see here</string>
 </resources>
