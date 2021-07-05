@@ -47,9 +47,9 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.MessageDetailsListItem
-import ch.protonmail.android.details.presentation.parseBodyToPair
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
@@ -78,7 +78,8 @@ internal class MessageDetailsAdapter(
     private val userManager: UserManager,
     private val onLoadMessageBody: (Message) -> Unit,
     private val onAttachmentDownloadCallback: (Attachment) -> Unit,
-    private val onEditDraftClicked: (Message) -> Unit
+    private val onEditDraftClicked: (Message) -> Unit,
+    private val messageBodyParser: MessageBodyParser
 ) : ExpandableRecyclerAdapter<MessageDetailsListItem>(context) {
 
     private var allLabelsList: List<Label>? = emptyList()
@@ -256,9 +257,7 @@ internal class MessageDetailsAdapter(
             webView: WebView
         ) {
             val showHistoryButton = detailsMessageActions?.details_button_show_history
-            val messageHasQuotedHistory =
-                listItem.messageFormattedHtml != listItem.messageFormattedHtmlWithQuotedHistory
-            showHistoryButton?.isVisible = messageHasQuotedHistory
+            showHistoryButton?.isVisible = !listItem.messageFormattedHtmlWithQuotedHistory.isNullOrEmpty()
             showHistoryButton?.setOnClickListener {
                 webView.loadDataWithBaseURL(
                     Constants.DUMMY_URL_PREFIX,
@@ -332,9 +331,9 @@ internal class MessageDetailsAdapter(
         }
 
         val validParsedBody = parsedBody ?: return
-        val (formattedMessage, formattedMessageWithQuote) = validParsedBody.parseBodyToPair()
-        item?.messageFormattedHtml = formattedMessage
-        item?.messageFormattedHtmlWithQuotedHistory = formattedMessageWithQuote
+        val messageBodyParts = messageBodyParser.splitBody(validParsedBody)
+        item?.messageFormattedHtml = messageBodyParts.messageBody
+        item?.messageFormattedHtmlWithQuotedHistory = messageBodyParts.messageBodyWithQuote
         item?.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton
         item?.message?.setAttachmentList(attachments)
 

@@ -16,13 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.details.presentation
 
+package ch.protonmail.android.details.domain
+
+import ch.protonmail.android.details.domain.model.MessageBodyParts
 import org.jsoup.Jsoup
+import javax.inject.Inject
 
-internal fun String.parseBodyToPair(): Pair<String, String> {
+class MessageBodyParser @Inject constructor() {
 
-    val quoteList = arrayOf(
+    private val quoteDescriptors = listOf(
         ".protonmail_quote",
         ".gmail_quote",
         ".yahoo_quoted",
@@ -39,15 +42,29 @@ internal fun String.parseBodyToPair(): Pair<String, String> {
         "[name=\"quote\"]", // gmx
     )
 
-    val originalMessageHtml = Jsoup.parse(this)
-    val messageHtmlWithoutQuote = Jsoup.parse(this)
+    fun splitBody(messageBody: String): MessageBodyParts {
+        val htmlDocumentWithQuote = Jsoup.parse(messageBody)
+        val htmlDocumentWithoutQuote = Jsoup.parse(messageBody)
+        var htmlQuote: String? = null
 
-    for (quoteElement in quoteList) {
-        val quotedContentElements = messageHtmlWithoutQuote.select(quoteElement)
-        if (!quotedContentElements.isNullOrEmpty()) {
-            quotedContentElements.remove()
+        for (quoteElement in quoteDescriptors) {
+            val quotedContentElements = htmlDocumentWithoutQuote.select(quoteElement)
+            if (quotedContentElements.isNotEmpty()) {
+                htmlQuote = quotedContentElements[0].toString()
+                quotedContentElements.remove()
+            }
         }
+
+        val htmlWithoutQuote = htmlDocumentWithoutQuote.toString()
+        val htmlWithQuote = htmlDocumentWithQuote.toString()
+
+        val messageHasQuote = htmlWithQuote != htmlWithoutQuote
+        val messageWithQuote = if (messageHasQuote) {
+            htmlWithQuote
+        } else {
+            null
+        }
+        return MessageBodyParts(htmlWithoutQuote, messageWithQuote, htmlQuote)
     }
 
-    return Pair(messageHtmlWithoutQuote.toString(), originalMessageHtml.toString())
 }

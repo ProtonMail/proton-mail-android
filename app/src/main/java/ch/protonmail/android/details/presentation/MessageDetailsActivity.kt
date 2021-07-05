@@ -51,6 +51,7 @@ import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsV
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
@@ -79,6 +80,7 @@ import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
+import javax.inject.Inject
 import kotlin.math.abs
 
 private const val TITLE_ANIMATION_THRESHOLD = 0.9
@@ -87,6 +89,9 @@ private const val ONE_HUNDRED_PERCENT = 1.0
 
 @AndroidEntryPoint
 internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
+
+    @Inject
+    lateinit var messageBodyParser: MessageBodyParser
 
     private lateinit var messageOrConversationId: String
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
@@ -187,7 +192,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             mUserManager,
             onLoadMessageBody(),
             onDownloadAttachment(),
-            onEditDraftClicked()
+            onEditDraftClicked(),
+            messageBodyParser
         )
     }
 
