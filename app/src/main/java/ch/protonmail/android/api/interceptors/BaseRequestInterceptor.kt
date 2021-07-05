@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.api.interceptors
 
+import androidx.preference.PreferenceManager
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.User
@@ -82,7 +83,7 @@ abstract class BaseRequestInterceptor(
 
     private fun check24hExpired(): Boolean {
         val user = userManager.currentLegacyUser
-        val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
+        val prefs = PreferenceManager.getDefaultSharedPreferences(ProtonMailApplication.getApplication())
         val proxies = Proxies.getInstance(null, prefs)
         if (user != null && user.allowSecureConnectionsViaThirdParties && !user.usingDefaultApi) {
             if (proxies.proxyList.proxies.isNotEmpty()) {

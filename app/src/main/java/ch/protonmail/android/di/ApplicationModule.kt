@@ -24,6 +24,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.os.Build
+import androidx.preference.PreferenceManager
 import androidx.work.WorkManager
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
@@ -93,15 +94,6 @@ object ApplicationModule {
     fun alarmReceiver() = AlarmReceiver()
 
     @Provides
-    @AlternativeApiPins
-    fun alternativeApiPins() = listOf(
-        "EU6TS9MO0L/GsDHvVc9D5fChYLNy5JdGYpJw0ccgetM=",
-        "iKPIHPnDNqdkvOnTClQ8zQAIKG0XavaPkcEo0LBAABA=",
-        "MSlVrBCdL0hKyczvgYVSRNm88RicyY04Q2y5qrBt0xA=",
-        "C2UxW0T1Ckl9s+8cXfjXxlEqwAfPM4HiW2y3UdtBeCw="
-    )
-
-    @Provides
     fun androidContactsLoaderCallbacksFactory(context: Context): AndroidContactsLoaderCallbacksFactory =
         AndroidContactsLoaderCallbacksFactory(context, ContactItemListFactory()::convert)
 
@@ -139,7 +131,7 @@ object ApplicationModule {
     @Singleton
     @DefaultSharedPreferences
     fun defaultSharedPreferences(app: ProtonMailApplication): SharedPreferences =
-        app.defaultSharedPreferences
+        PreferenceManager.getDefaultSharedPreferences(app)
 
     @Provides
     fun dispatcherProvider() = object : DispatcherProvider {
@@ -197,7 +189,8 @@ object ApplicationModule {
         okHttpProvider: OkHttpProvider,
         @DefaultSharedPreferences prefs: SharedPreferences,
         userNotifier: UserNotifier,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
+        @BaseUrl baseUrl: String
     ): ProtonRetrofitBuilder {
 
         // userManager.user.allowSecureConnectionsViaThirdParties)
@@ -205,7 +198,7 @@ object ApplicationModule {
         val dnsOverHttpsHost =
             if (user != null && !user.usingDefaultApi)
                 Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
-            else Constants.ENDPOINT_URI
+            else baseUrl
 
         return ProtonRetrofitBuilder(
             userManager,

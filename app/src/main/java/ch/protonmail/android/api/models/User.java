@@ -26,6 +26,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 
@@ -335,12 +336,12 @@ public class User {
      * @param useDefaultApi boolean
      */
     public void setUsingDefaultApi(boolean useDefaultApi) {
-        SharedPreferences secureSharedPreferences = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+        SharedPreferences secureSharedPreferences = PreferenceManager.getDefaultSharedPreferences(ProtonMailApplication.getApplication());
         secureSharedPreferences.edit().putBoolean(PREF_USING_REGULAR_API, useDefaultApi).apply();
     }
 
     public boolean getUsingDefaultApi() {
-        SharedPreferences sharedPreferences = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ProtonMailApplication.getApplication());
         return sharedPreferences.getBoolean(PREF_USING_REGULAR_API, true); // false);
     }
 

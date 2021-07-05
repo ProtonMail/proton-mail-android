@@ -138,4 +138,5 @@ val DependencyHandler.`orchestrator` get() =  androidx("test", module = "orchest
 val DependencyHandler.`browserstack-gradle-plugin` get() =  dependency("gradle.plugin.com.browserstack.gradle", module = "browserstack-gradle-plugin") version `browserstack-plugin version`
 val DependencyHandler.`uiautomator` get() =  androidx("test.uiautomator", module = "uiautomator") version `uiautomator version`
 val DependencyHandler.`android-activation` get() =  dependency("com.sun.mail", module = "android-activation") version `sun-mail-android version`
+val DependencyHandler.`junit-ext` get() =  androidx("test.ext", module = "junit-ktx") version `junit-ktx version`
 // endregion

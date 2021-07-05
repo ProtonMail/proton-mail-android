@@ -19,7 +19,6 @@
 package ch.protonmail.android.api
 
 import ch.protonmail.android.api.cookie.ProtonCookieStore
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
 import com.datatheorem.android.trustkit.TrustKit
@@ -104,6 +103,7 @@ class DefaultOkHttpClient(
     loggingLevel: HttpLoggingInterceptor.Level,
     connectionSpecs: List<ConnectionSpec>,
     serverTimeInterceptor: ServerTimeInterceptor?,
+    baseUrl: String,
     cookieStore: ProtonCookieStore?
 ) : ProtonOkHttpClient(
     timeout,
@@ -111,7 +111,7 @@ class DefaultOkHttpClient(
     loggingLevel,
     connectionSpecs,
     serverTimeInterceptor,
-    Constants.ENDPOINT_URI,
+    baseUrl,
     cookieStore
 ) {
 

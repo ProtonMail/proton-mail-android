@@ -36,7 +36,7 @@ fun initVersions() {
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
     `constraint-layout version` =               "2.0.4"         // Released: Oct 31, 2020
     `espresso version` =                        "3.4.0-beta01"  // Released: May 15, 2021
-    `hilt-android version` =                    "2.35.1"        // Released: Apr 28, 2021
+    `hilt-android version` =                    "2.37"          // Released: Jun 10, 2021
     `hilt-androidx version` =                   "1.0.0"         // Released: May 05, 2021
     `ktx version` =                             "1.5.0-rc02"    // Released: May 24, 2021
     `lifecycle version` =                       "2.4.0-alpha01" // Released: Mar 24, 2021
@@ -99,6 +99,7 @@ const val `browserstack-plugin version` =       "3.0.1"         // Released: Jun
 const val `uiautomator version` =               "2.2.0"         // Released: Oct 25, 2018
 const val `sun-mail-android version` =          "1.5.5"         // Released: Mar 06, 2020
 const val `turbine version` =                   "0.5.1"         // Released: Mar 15, 2021
+const val `junit-ktx version` =                 "1.1.2"         // Released: Aug 06, 2020
 
 // Android
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020

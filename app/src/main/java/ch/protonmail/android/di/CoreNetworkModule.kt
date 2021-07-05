@@ -2,7 +2,6 @@ package ch.protonmail.android.di
 
 import android.content.Context
 import ch.protonmail.android.api.ProtonMailApiClient
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.CoreLogger
 import dagger.Binds
 import dagger.Module
@@ -68,9 +67,12 @@ object NetworkModule {
         sessionProvider: SessionProvider,
         sessionListener: SessionListener,
         humanVerificationProvider: HumanVerificationProvider,
-        humanVerificationListener: HumanVerificationListener
+        humanVerificationListener: HumanVerificationListener,
+        @DefaultApiPins defaultApiPins: Array<String>,
+        @AlternativeApiPins alternativeApiPins: List<String>,
+        @BaseUrl baseUrl: String
     ): ApiManagerFactory = ApiManagerFactory(
-        Constants.ENDPOINT_URI,
+        baseUrl,
         apiClient,
         clientIdProvider,
         serverTimeListener,
@@ -82,7 +84,9 @@ object NetworkModule {
         humanVerificationProvider,
         humanVerificationListener,
         protonCookieStore,
-        CoroutineScope(Job() + Dispatchers.Default)
+        CoroutineScope(Job() + Dispatchers.Default),
+        defaultApiPins,
+        alternativeApiPins
     )
 
     @Provides
@@ -97,8 +101,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideClientIdProvider(protonCookieStore: ProtonCookieStore): ClientIdProvider =
-        ClientIdProviderImpl(Constants.ENDPOINT_URI, protonCookieStore)
+    fun provideClientIdProvider(protonCookieStore: ProtonCookieStore, @BaseUrl baseUrl: String): ClientIdProvider =
+        ClientIdProviderImpl(baseUrl, protonCookieStore)
 
     @Provides
     @Singleton

@@ -147,6 +147,8 @@ android(
                 arguments["room.schemaLocation"] = "$projectDir/schemas"
             }
         }
+
+        testInstrumentationRunner = "ch.protonmail.android.HiltCustomTestRunner"
     }
 
     signingConfigs {
@@ -265,6 +267,10 @@ dependencies {
         `assistedInject-processor-dagger`,
         `hilt-android-compiler`,
         `hilt-androidx-compiler`
+    )
+
+    kaptAndroidTest( // https://developer.android.com/training/dependency-injection/hilt-testing
+        `hilt-android-compiler`
     )
 
     // Dagger modules
@@ -398,7 +404,8 @@ dependencies {
         `espresso-web`,
         `uiautomator`,
         `android-activation`,
-        `Proton-android-instrumented-test`
+        `Proton-android-instrumented-test`,
+        `junit-ext`
     )
 }
 

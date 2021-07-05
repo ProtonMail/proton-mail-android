@@ -122,6 +122,7 @@ import ch.protonmail.android.data.local.model.ContactLabel;
 import ch.protonmail.android.data.local.model.LocalAttachment;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.MessageSender;
+import ch.protonmail.android.di.DefaultSharedPreferences;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
@@ -251,6 +252,10 @@ public class ComposeMessageActivity
     @Inject
     DownloadEmbeddedAttachmentsWorker.Enqueuer attachmentsWorker;
 
+    @Inject
+    @DefaultSharedPreferences
+    SharedPreferences defaultSharedPreferences;
+
     String composerInstanceId;
 
     Menu menu;
@@ -377,8 +382,7 @@ public class ComposeMessageActivity
                 mSelectedAddressPosition++; // if alias is on the list, index is actually 1 more than usual
             }
             composeMessageViewModel.setSenderAddressIdByEmail(fromAddressSpinner.getAdapter().getItem(mSelectedAddressPosition).toString());
-            final SharedPreferences prefs = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
-            boolean dialogShowed = prefs.getBoolean(Constants.Prefs.PREF_PM_ADDRESS_CHANGED, false);
+            boolean dialogShowed = defaultSharedPreferences.getBoolean(Constants.Prefs.PREF_PM_ADDRESS_CHANGED, false);
             if (!dialogShowed && !isFinishing()) {
                 showPmChangedDialog(senderAddresses.get(mSelectedAddressPosition));
             }
@@ -1762,8 +1766,7 @@ public class ComposeMessageActivity
 
         DialogUtils.Companion.warningDialog(ComposeMessageActivity.this, getString(R.string.dont_remind_again), getString(R.string.okay), String.format(getString(R.string.pm_me_changed), address),
                 unit -> {
-                    final SharedPreferences prefs = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
-                    prefs.edit().putBoolean(Constants.Prefs.PREF_PM_ADDRESS_CHANGED, true).apply();
+                    defaultSharedPreferences.edit().putBoolean(Constants.Prefs.PREF_PM_ADDRESS_CHANGED, true).apply();
                     return unit;
                 });
     }

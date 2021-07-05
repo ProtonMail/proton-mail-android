@@ -61,7 +61,6 @@ fun org.gradle.api.Project.android(
         targetSdkVersion(targetSdk)
 
         // Other
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
 
         buildFeatures.viewBinding = true

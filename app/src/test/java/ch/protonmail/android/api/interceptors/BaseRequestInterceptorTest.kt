@@ -19,6 +19,7 @@
 package ch.protonmail.android.api.interceptors
 
 import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.doh.PREF_DNS_OVER_HTTPS_API_URL_LIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_GATEWAY_TIMEOUT
@@ -75,13 +76,15 @@ class BaseRequestInterceptorTest {
     fun setup() {
         mockkStatic(AppUtil::class)
         mockkStatic(ProtonMailApplication::class)
+        mockkStatic(PreferenceManager::class)
+
         every { AppUtil.postEventOnUi(any()) } answers { mockk<Void>() }
         every { AppUtil.getAppVersionName(any()) } answers { "app version name" }
         every { AppUtil.buildUserAgent() } answers { "user agent" }
 
         every { ProtonMailApplication.getApplication().currentLocale } returns "current locale"
         every {
-            ProtonMailApplication.getApplication().defaultSharedPreferences
+            PreferenceManager.getDefaultSharedPreferences(any())
         } returns prefsMock
     }
 
@@ -89,6 +92,7 @@ class BaseRequestInterceptorTest {
     fun teardown() {
         unmockkStatic(AppUtil::class)
         unmockkStatic(ProtonMailApplication::class)
+        unmockkStatic(PreferenceManager::class)
     }
 
     @Test
@@ -122,9 +126,6 @@ class BaseRequestInterceptorTest {
     @Test
     fun verifyThatOkResponseReturns() {
         // given
-        every {
-            ProtonMailApplication.getApplication().defaultSharedPreferences
-        } returns prefsMock
 
         val responseMock = mockk<Response> {
             every { code } returns 200
@@ -142,10 +143,6 @@ class BaseRequestInterceptorTest {
     @Test
     fun verifyThatUnprocessableEntityResponseShowsErrorToTheUser() {
         // given
-        every {
-            ProtonMailApplication.getApplication().defaultSharedPreferences
-        } returns prefsMock
-
         val errorMessage = "Error - Reason for 422 response"
         val responseMock = mockk<Response> {
             every { code } returns 422
@@ -164,10 +161,6 @@ class BaseRequestInterceptorTest {
     @Test
     fun verifyThatUnprocessableEntityResponseDoesntShowsErrorToTheUser() {
         // given
-        every {
-            ProtonMailApplication.getApplication().defaultSharedPreferences
-        } returns prefsMock
-
         val errorMessage = "Error - Reason for 422 response"
         val responseMock = mockk<Response> {
             every { code } returns 422
