@@ -354,10 +354,10 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             this,
             { isConnectionActive ->
                 Timber.v("isConnectionActive:${isConnectionActive.name}")
-                if (isConnectionActive == Constants.ConnectionState.CONNECTED) {
-                    hideNoConnSnackExtended()
-                } else {
+                if (isConnectionActive != Constants.ConnectionState.CONNECTED) {
                     showNoConnSnackExtended(isConnectionActive)
+                } else {
+                    hideNoConnSnackExtended()
                 }
             }
         )
