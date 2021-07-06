@@ -578,6 +578,7 @@ class MailboxActivity :
             is MailboxState.Data -> {
                 setRefreshing(false)
                 Timber.v("Data state items count: ${state.items.size}")
+                include_mailbox_error.isVisible = false
                 include_mailbox_no_messages.isVisible = state.items.isEmpty()
                 mailboxRecyclerView.isVisible != state.items.isEmpty()
 
@@ -587,7 +588,17 @@ class MailboxActivity :
             is MailboxState.Error -> {
                 setRefreshing(false)
                 Timber.e(state.throwable, "Mailbox error ${state.error}")
-                Toast.makeText(this, getString(R.string.error_loading_conversations), Toast.LENGTH_SHORT).show()
+                include_mailbox_no_messages.isVisible = false
+
+                if (mailboxAdapter.itemCount > 0) {
+                    include_mailbox_error.isVisible = false
+                    Toast.makeText(
+                        this, getString(R.string.inbox_could_not_retrieve_messages), Toast.LENGTH_LONG
+                    )
+                        .show()
+                } else {
+                    include_mailbox_error.isVisible = true
+                }
             }
         }
     }
@@ -1210,15 +1221,7 @@ class MailboxActivity :
     override fun onRefresh() {
         syncUUID = UUID.randomUUID().toString()
         mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
-        loadMailboxItems(
-            includeLabels = true,
-            refreshMessages = true
-        )
-        // this is just to stop the progress to prevent it being shown "forever"
-        lifecycleScope.launch {
-            delay(3.toDuration(TimeUnit.SECONDS))
-            setRefreshing(false)
-        }
+        mailboxViewModel.refreshMessages()
     }
 
     private fun now() = System.currentTimeMillis() / 1000

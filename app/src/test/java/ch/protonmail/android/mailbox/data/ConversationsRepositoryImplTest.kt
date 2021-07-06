@@ -45,7 +45,6 @@ import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
-import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -55,7 +54,6 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
-import io.mockk.verify
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -72,7 +70,6 @@ import org.junit.Before
 import org.junit.Test
 import java.io.IOException
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
 
@@ -268,8 +265,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coVerify { conversationDao.insertOrUpdate(*expectedConversations.toTypedArray()) }
         }
 
-    @Test
-    fun verifyGetConversationsEmitErrorWhenFetchingDataFromApiWasNotSuccessful() = runBlocking {
+    @Test(expected = IOException::class)
+    fun verifyGetConversationsThrowsExceptionWhenFetchingDataFromApiWasNotSuccessful() = runBlocking {
         // given
         val parameters = GetConversationsParameters(
             locationId = "8234",
@@ -285,14 +282,14 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         val result = conversationsRepository.getConversations(parameters).take(2).toList()
 
         // Then
-        val actualApiError = result[0] as DataResult.Error
-        assertEquals("Test - Bad Request", actualApiError.message)
-
-        val actualLocalItems = result[1] as DataResult.Success
+        val actualLocalItems = result[0] as DataResult.Success
         assertEquals(ResponseSource.Local, actualLocalItems.source)
+
+        val actualLocalItems2 = result[1] as DataResult.Success
+        assertEquals(ResponseSource.Local, actualLocalItems2.source)
     }
 
-    @Test
+    @Test(expected = IOException::class)
     fun verifyGetConversationsReturnsLocalDataWhenFetchingFromApiFails() = runBlocking {
         // given
         val parameters = GetConversationsParameters(
@@ -333,8 +330,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         val result = conversationsRepository.getConversations(parameters).take(2).toList()
 
         // Then
-        val actualError = result[0] as DataResult.Error.Remote
-        assertNotNull(actualError)
+        val actualLocalItems0 = result[0] as DataResult.Success
+        assertEquals(ResponseSource.Local, actualLocalItems0.source)
 
         val actualLocalItems = result[1] as DataResult.Success
         assertEquals(ResponseSource.Local, actualLocalItems.source)
@@ -535,8 +532,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         }
     }
 
-    @Test
-    @Throws(CancellationException::class)
+    @Test(expected = CancellationException::class)
     fun verifyGetConversationsReThrowsCancellationExceptionWithoutEmittingError() {
         runBlocking {
             // given
@@ -545,16 +541,15 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 userId = testUserId,
                 oldestConversationTimestamp = null
             )
+            coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(emptyList())
             coEvery { api.fetchConversations(parameters) } throws CancellationException("Cancelled")
 
             // when
-            try {
-                conversationsRepository.getConversations(parameters).first()
-            } catch (exception: CancellationException) {
-                assertEquals("Cancelled", exception.message)
-            }
 
-            verify { conversationDao wasNot Called }
+           val result = conversationsRepository.getConversations(parameters).take(2).toList()
+
+            val actualLocalItems0 = result[0] as DataResult.Success
+            assertEquals(ResponseSource.Local, actualLocalItems0.source)
         }
     }
 
