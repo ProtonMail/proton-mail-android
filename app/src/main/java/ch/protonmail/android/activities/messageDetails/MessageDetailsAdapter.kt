@@ -229,13 +229,7 @@ internal class MessageDetailsAdapter(
                 itemView.messageWebViewContainer.findViewById<WebView>(ITEM_MESSAGE_BODY_WEB_VIEW_ID) ?: return
             val messageBodyProgress =
                 itemView.messageWebViewContainer.findViewById<ProgressBar>(ITEM_MESSAGE_BODY_PROGRESS_VIEW_ID) ?: return
-            webView.loadDataWithBaseURL(
-                Constants.DUMMY_URL_PREFIX,
-                listItem.messageFormattedHtml ?: "",
-                "text/html",
-                HTTP.UTF_8,
-                ""
-            )
+            loadHtmlDataIntoWebView(webView, listItem.messageFormattedHtml)
 
             listItem.messageFormattedHtml?.let {
                 messageBodyProgress.visibility = View.GONE
@@ -244,6 +238,15 @@ internal class MessageDetailsAdapter(
             loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
             setUpViewDividers()
 
+            setupMessageActionsView(message, listItem.messageFormattedHtmlWithQuotedHistory, webView)
+            setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
+        }
+
+        private fun setupMessageActionsView(
+            message: Message,
+            messageHtmlWithQuotedHistory: String?,
+            webView: WebView
+        ) {
             val messageActionsView: MessageDetailsActionsView? =
                 itemView.messageWebViewContainer.findViewById(ITEM_MESSAGE_ACTIONS_LAYOUT_ID)
             val replyMode = if (message.toList.size + message.ccList.size > 1) {
@@ -251,32 +254,29 @@ internal class MessageDetailsAdapter(
             } else {
                 MessageDetailsActionsView.ReplyMode.REPLY
             }
-            messageActionsView?.bind(MessageDetailsActionsView.UiModel(replyMode))
-            setupShowHistoryAction(messageActionsView, listItem, webView)
-            messageActionsView?.onReplyClicked { onReplyMessageClicked(message) }
-            messageActionsView?.onMoreActionsClicked { onMoreMessageActionsClicked(message) }
-
-            setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
-        }
-
-        private fun setupShowHistoryAction(
-            messageActionsView: MessageDetailsActionsView?,
-            listItem: MessageDetailsListItem,
-            webView: WebView
-        ) {
-            messageActionsView?.displayShowHistoryButton(
-                !listItem.messageFormattedHtmlWithQuotedHistory.isNullOrEmpty()
+            val uiModel = MessageDetailsActionsView.UiModel(
+                replyMode,
+                messageHtmlWithQuotedHistory.isNullOrEmpty(),
+                message.isDraft()
             )
+            messageActionsView?.bind(uiModel)
+
             messageActionsView?.onShowHistoryClicked { showHistoryButton ->
-                webView.loadDataWithBaseURL(
-                    Constants.DUMMY_URL_PREFIX,
-                    listItem.messageFormattedHtmlWithQuotedHistory ?: "",
-                    "text/html",
-                    HTTP.UTF_8,
-                    ""
-                )
+                loadHtmlDataIntoWebView(webView, messageHtmlWithQuotedHistory)
                 showHistoryButton.isVisible = false
             }
+            messageActionsView?.onReplyClicked { onReplyMessageClicked(message) }
+            messageActionsView?.onMoreActionsClicked { onMoreMessageActionsClicked(message) }
+        }
+
+        private fun loadHtmlDataIntoWebView(webView: WebView, htmlContent: String?) {
+            webView.loadDataWithBaseURL(
+                Constants.DUMMY_URL_PREFIX,
+                htmlContent ?: "",
+                "text/html",
+                HTTP.UTF_8,
+                ""
+            )
         }
 
         private fun setupMessageContentActions(

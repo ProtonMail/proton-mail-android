@@ -55,10 +55,8 @@ class MessageDetailsActionsView @JvmOverloads constructor(
 
     fun bind(uiModel: UiModel) {
         replyButton.setImageDrawable(ContextCompat.getDrawable(context, uiModel.replyMode.drawableId))
-    }
-
-    fun displayShowHistoryButton(isVisible: Boolean) {
-        showHistoryButton.isVisible = isVisible
+        showHistoryButton.isVisible = !uiModel.hideShowHistory
+        this.isVisible = !uiModel.hideAllActions
     }
 
     fun onReplyClicked(callback: (View) -> Unit) {
@@ -74,11 +72,13 @@ class MessageDetailsActionsView @JvmOverloads constructor(
     }
 
     class UiModel(
-        val replyMode: ReplyMode
+        val replyMode: ReplyMode,
+        val hideShowHistory: Boolean,
+        val hideAllActions: Boolean
     )
 
     enum class ReplyMode(@DrawableRes val drawableId: Int) {
-        REPLY(R.drawable.reply),
-        REPLY_ALL(R.drawable.reply_all),
+        REPLY(R.drawable.ic_reply),
+        REPLY_ALL(R.drawable.ic_reply_all),
     }
 }
