@@ -61,7 +61,6 @@ import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
-import kotlinx.android.synthetic.main.message_details_actions.view.*
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
 import java.util.ArrayList
@@ -80,7 +79,9 @@ internal class MessageDetailsAdapter(
     private val onLoadMessageBody: (Message) -> Unit,
     private val onAttachmentDownloadCallback: (Attachment) -> Unit,
     private val onEditDraftClicked: (Message) -> Unit,
-    private val messageBodyParser: MessageBodyParser
+    private val messageBodyParser: MessageBodyParser,
+    private val onReplyMessageClicked: (Message) -> Unit,
+    private val onMessageActionSheet: (Message) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsListItem>(context) {
 
     private var allLabelsList: List<Label>? = emptyList()
@@ -243,15 +244,16 @@ internal class MessageDetailsAdapter(
             loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
             setUpViewDividers()
 
-            val detailsMessageActions = itemView.messageWebViewContainer
+            val messageActionsView = itemView.messageWebViewContainer
                 .findViewById<MessageDetailsActionsView>(ITEM_MESSAGE_ACTIONS_LAYOUT_ID)
             val replyMode = if (message.toList.size + message.ccList.size > 1) {
                 MessageDetailsActionsView.ReplyMode.REPLY_ALL
             } else {
                 MessageDetailsActionsView.ReplyMode.REPLY
             }
-            detailsMessageActions.bind(MessageDetailsActionsView.UiModel(replyMode))
-            setupShowHistoryAction(detailsMessageActions, listItem, webView)
+            messageActionsView.bind(MessageDetailsActionsView.UiModel(replyMode))
+            setupShowHistoryAction(messageActionsView, listItem, webView)
+            messageActionsView.onReplyClicked { onReplyMessageClicked(message) }
 
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
         }
@@ -261,9 +263,10 @@ internal class MessageDetailsAdapter(
             listItem: MessageDetailsListItem,
             webView: WebView
         ) {
-            val showHistoryButton = messageActionsView?.details_button_show_history
-            showHistoryButton?.isVisible = !listItem.messageFormattedHtmlWithQuotedHistory.isNullOrEmpty()
-            showHistoryButton?.setOnClickListener {
+            messageActionsView?.displayShowHistoryButton(
+                !listItem.messageFormattedHtmlWithQuotedHistory.isNullOrEmpty()
+            )
+            messageActionsView?.onShowHistoryClicked { showHistoryButton ->
                 webView.loadDataWithBaseURL(
                     Constants.DUMMY_URL_PREFIX,
                     listItem.messageFormattedHtmlWithQuotedHistory ?: "",

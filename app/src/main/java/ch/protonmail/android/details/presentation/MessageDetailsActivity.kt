@@ -193,7 +193,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             onLoadMessageBody(),
             onDownloadAttachment(),
             onEditDraftClicked(),
-            messageBodyParser
+            messageBodyParser,
+            onReplyMessageClicked(),
+            onShowMessageActionSheet()
         )
     }
 
@@ -553,13 +555,17 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             viewModel.markUnread()
         }
         messageDetailsActionsView.setOnFirstActionClickListener {
-            val messageAction = if (message.toList.size + message.ccList.size > 1) {
-                Constants.MessageActionType.REPLY_ALL
-            } else {
-                Constants.MessageActionType.REPLY
-            }
-            executeMessageAction(messageAction, message)
+            onReplyMessage(message)
         }
+    }
+
+    private fun onReplyMessage(message: Message) {
+        val messageAction = if (message.toList.size + message.ccList.size > 1) {
+            Constants.MessageActionType.REPLY_ALL
+        } else {
+            Constants.MessageActionType.REPLY
+        }
+        executeMessageAction(messageAction, message)
     }
 
     private fun displayToolbarData(conversation: ConversationUiModel) {
@@ -779,6 +785,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private fun onDownloadAttachment() = { attachment: Attachment ->
         attachmentToDownload.set(attachment)
         storagePermissionHelper.checkPermission()
+    }
+
+    private fun onReplyMessageClicked() = { message: Message ->
+        onReplyMessage(message)
+    }
+
+    private fun onShowMessageActionSheet() = { message: Message ->
+        TODO("Not yet implemented")
     }
 
     fun printMessage() {

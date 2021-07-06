@@ -22,10 +22,13 @@ package ch.protonmail.android.details.presentation
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import ch.protonmail.android.R
 import ch.protonmail.android.databinding.MessageDetailsActionsBinding
 
@@ -51,14 +54,27 @@ class MessageDetailsActionsView @JvmOverloads constructor(
     }
 
     fun bind(uiModel: UiModel) {
-        val replyActionIcon = if (uiModel.replyMode == ReplyMode.REPLY) { R.drawable.reply } else { R.drawable.reply_all }
-        replyButton.setImageDrawable(ContextCompat.getDrawable(context, replyActionIcon))
+        replyButton.setImageDrawable(ContextCompat.getDrawable(context, uiModel.replyMode.drawableId))
     }
 
-    class UiModel(val replyMode: ReplyMode)
+    fun displayShowHistoryButton(isVisible: Boolean) {
+        showHistoryButton.isVisible = isVisible
+    }
 
-    enum class ReplyMode {
-        REPLY,
-        REPLY_ALL
+    fun onReplyClicked(callback: (View) -> Unit) {
+        replyButton.setOnClickListener { callback(it) }
+    }
+
+    fun onShowHistoryClicked(callback: (View) -> Unit) {
+        showHistoryButton.setOnClickListener { callback(it) }
+    }
+
+    class UiModel(
+        val replyMode: ReplyMode
+    )
+
+    enum class ReplyMode(@DrawableRes val drawableId: Int) {
+        REPLY(R.drawable.reply),
+        REPLY_ALL(R.drawable.reply_all),
     }
 }
