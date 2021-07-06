@@ -58,6 +58,7 @@ import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
@@ -118,8 +119,9 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val attachmentsHelper: AttachmentsHelper,
     private val downloadUtils: DownloadUtils,
     private val moveMessagesToFolder: MoveMessagesToFolder,
-    conversationModeEnabled: ConversationModeEnabled,
+    private val conversationModeEnabled: ConversationModeEnabled,
     private val conversationRepository: ConversationsRepository,
+    private val changeConversationsReadStatus: ChangeConversationsReadStatus,
     savedStateHandle: SavedStateHandle,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
@@ -265,7 +267,18 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
 
     fun markUnread() {
-        messageRepository.markUnRead(listOf(messageOrConversationId))
+        if (conversationModeEnabled(location)) {
+            viewModelScope.launch {
+                changeConversationsReadStatus(
+                    listOf(messageOrConversationId),
+                    ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
+                    UserId(userManager.requireCurrentUserId().s),
+                    location
+                )
+            }
+        } else {
+            messageRepository.markUnRead(listOf(messageOrConversationId))
+        }
     }
 
     fun loadMessageBody(message: Message) = flow {

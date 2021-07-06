@@ -33,6 +33,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -58,6 +59,7 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
                 workDataOf(KEY_MARK_UNREAD_WORKER_ERROR_DESCRIPTION to "Conversation ids list is null")
             )
 
+        Timber.v("MarkConversationsUnreadRemoteWorker conversationIds: $conversationIds")
         val requestBody = ConversationIdsRequestBody(ids = conversationIds.asList())
 
         return runCatching {

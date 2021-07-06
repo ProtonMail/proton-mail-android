@@ -42,6 +42,7 @@ import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
+import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.Correspondent
@@ -83,6 +84,8 @@ import kotlin.test.assertNotNull
 private const val INPUT_ITEM_DETAIL_ID = "inputMessageOrConversationId"
 
 class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
+
+    private val changeConversationsReadStatus: ChangeConversationsReadStatus = mockk(relaxed = true)
 
     private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true)
 
@@ -166,6 +169,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             moveMessagesToFolder,
             conversationModeEnabled,
             conversationRepository,
+            changeConversationsReadStatus,
             savedStateHandle,
             messageRendererFactory,
             verifyConnection,
