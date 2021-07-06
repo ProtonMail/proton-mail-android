@@ -191,9 +191,8 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         val initials = if (senderText.isEmpty()) HYPHEN else senderText.substring(0, 1)
         senderInitialView.bind(initials)
 
-        val isDraft = message.location == Constants.MessageLocationType.DRAFT.messageLocationTypeValue
-        senderInitialView.visibility = if (isDraft) View.INVISIBLE else View.VISIBLE
-        draftInitialView.isVisible = isDraft
+        senderInitialView.visibility = if (message.isDraft()) View.INVISIBLE else View.VISIBLE
+        draftInitialView.isVisible = message.isDraft()
 
 
         senderNameTextView.text = senderText

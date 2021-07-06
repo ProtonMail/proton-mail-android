@@ -187,8 +187,7 @@ internal class MessageDetailsAdapter(
             val loadEmbeddedImagesButton = itemView.loadEmbeddedImagesButton
             val editDraftButton = itemView.editDraftButton
 
-            val isDraft = message.location == Constants.MessageLocationType.DRAFT.messageLocationTypeValue
-            editDraftButton.isVisible = isDraft
+            editDraftButton.isVisible = message.isDraft()
             expirationInfoView.bind(message.expirationTime)
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
 

@@ -583,6 +583,9 @@ data class Message @JvmOverloads constructor(
         )
     }
 
+    fun isDraft() = location == Constants.MessageLocationType.DRAFT.messageLocationTypeValue ||
+        location == Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue
+
     enum class MessageType {
         INBOX, DRAFT, SENT, INBOX_AND_SENT
     }
