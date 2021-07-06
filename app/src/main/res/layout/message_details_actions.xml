@@ -42,13 +42,13 @@
         android:layout_height="@dimen/message_details_actions_button_size"
         android:background="?selectableItemBackgroundBorderless"
         android:src="@drawable/ic_reply"
-        app:layout_constraintEnd_toStartOf="@id/details_button_more"
+        app:layout_constraintEnd_toStartOf="@id/details_action_sheet_button"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:tint="@color/cornflower_blue" />
 
     <ImageButton
-        android:id="@+id/details_button_more"
+        android:id="@+id/details_action_sheet_button"
         style="@style/ProtonImage.ImageButton"
         android:layout_width="@dimen/message_details_actions_button_size"
         android:layout_height="@dimen/message_details_actions_button_size"

@@ -48,6 +48,7 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.MessageBodyParser
+import ch.protonmail.android.details.presentation.MessageDetailsActionsView
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.details.presentation.MessageDetailsListItem
 import ch.protonmail.android.ui.view.LabelChipUiModel
@@ -58,9 +59,9 @@ import ch.protonmail.android.utils.ui.TYPE_ITEM
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
-import kotlinx.android.synthetic.main.details_message_actions.view.*
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
+import kotlinx.android.synthetic.main.message_details_actions.view.*
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
 import java.util.ArrayList
@@ -139,9 +140,7 @@ internal class MessageDetailsAdapter(
     private fun showingMoreThanOneMessage() = messages.size > 1
 
     private fun createInMessageActionsView(): View {
-        val detailsMessageActions = LayoutInflater.from(context).inflate(
-            R.layout.details_message_actions, null
-        )
+        val detailsMessageActions = MessageDetailsActionsView(context)
         detailsMessageActions.id = ITEM_MESSAGE_ACTIONS_LAYOUT_ID
         return detailsMessageActions
     }
@@ -244,19 +243,25 @@ internal class MessageDetailsAdapter(
             loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
             setUpViewDividers()
 
-            val detailsMessageActions: ViewGroup? =
-                itemView.messageWebViewContainer.findViewById(ITEM_MESSAGE_ACTIONS_LAYOUT_ID)
+            val detailsMessageActions = itemView.messageWebViewContainer
+                .findViewById<MessageDetailsActionsView>(ITEM_MESSAGE_ACTIONS_LAYOUT_ID)
+            val replyMode = if (message.toList.size + message.ccList.size > 1) {
+                MessageDetailsActionsView.ReplyMode.REPLY_ALL
+            } else {
+                MessageDetailsActionsView.ReplyMode.REPLY
+            }
+            detailsMessageActions.bind(MessageDetailsActionsView.UiModel(replyMode))
             setupShowHistoryAction(detailsMessageActions, listItem, webView)
 
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
         }
 
         private fun setupShowHistoryAction(
-            detailsMessageActions: ViewGroup?,
+            messageActionsView: MessageDetailsActionsView?,
             listItem: MessageDetailsListItem,
             webView: WebView
         ) {
-            val showHistoryButton = detailsMessageActions?.details_button_show_history
+            val showHistoryButton = messageActionsView?.details_button_show_history
             showHistoryButton?.isVisible = !listItem.messageFormattedHtmlWithQuotedHistory.isNullOrEmpty()
             showHistoryButton?.setOnClickListener {
                 webView.loadDataWithBaseURL(
