@@ -52,16 +52,19 @@ class MessageLocationResolver @Inject constructor(
             Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
         )
 
-        for (i in labelIds.indices) {
+        val shortLabels = labelIds.filter { it.length <= 2 }
+        val longLabels = labelIds.filter { it.length > 2 }
+
+        for (i in shortLabels.indices.reversed()) {
             val item = labelIds[i]
-            if (item.length <= 2) {
-                val locationInt = item.toInt()
-                if (locationInt in validLocations) {
-                    return Constants.MessageLocationType.fromInt(locationInt)
-                }
-            } else {
-                return resolveLabelType(item)
+            val locationInt = item.toInt()
+            if (locationInt in validLocations) {
+                return Constants.MessageLocationType.fromInt(locationInt)
             }
+        }
+
+        if (longLabels.isNotEmpty()) {
+            return resolveLabelType(longLabels[0])
         }
 
         throw IllegalArgumentException("No valid location found in IDs: $labelIds ")
