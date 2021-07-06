@@ -22,11 +22,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import javax.inject.Inject
 
-/**
- * Created by kadrikj on 9/7/18. */
 class AddressChooserViewModelFactory @Inject constructor(
-        private val addressChooserViewModel: AddressChooserViewModel
+    private val addressChooserViewModel: AddressChooserViewModel
 ) : ViewModelProvider.NewInstanceFactory() {
+
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AddressChooserViewModel::class.java)) {
             return addressChooserViewModel as T

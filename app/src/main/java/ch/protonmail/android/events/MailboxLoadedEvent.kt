@@ -20,4 +20,8 @@ package ch.protonmail.android.events
 
 import me.proton.core.util.kotlin.EMPTY_STRING
 
-class MailboxLoadedEvent(val status: Status, val uuid: String? = null, val errorMessage: String = EMPTY_STRING)
+class MailboxLoadedEvent(
+    val status: Status,
+    val uuid: String? = null,
+    val errorMessage: String = EMPTY_STRING
+)

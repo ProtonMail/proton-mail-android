@@ -25,14 +25,12 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
 import ch.protonmail.android.contacts.groups.GroupsItemAdapterMode
-import ch.protonmail.android.data.local.model.*
-import ch.protonmail.android.utils.Event
+import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.utils.UiUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.content_contact_group_details.*
@@ -41,10 +39,6 @@ import javax.inject.Inject
 // region constants
 const val EXTRA_CONTACT_EMAILS = "extra_contact_emails"
 // endregion
-
-/*
- * Created by kadrikj on 9/7/18.
- */
 
 @AndroidEntryPoint
 class AddressChooserActivity : BaseActivity() {
@@ -60,19 +54,24 @@ class AddressChooserActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         addressChooserViewModel = ViewModelProvider(this, addressChooserViewModelFactory)
-                .get(AddressChooserViewModel::class.java)
+            .get(AddressChooserViewModel::class.java)
         setupToolbar()
         initAdapter()
         initFilterView()
-        addressChooserViewModel.contactGroupEmailsResult.observe(this, Observer {
-            contactGroupEmailsAdapter.setData(it ?: ArrayList())
-        })
+        addressChooserViewModel.contactGroupEmailsResult.observe(
+            this,
+            {
+                contactGroupEmailsAdapter.setData(it ?: ArrayList())
+            }
+        )
         addressChooserViewModel.contactGroupEmailsEmpty.observe(
-                this,
-                Observer<Event<String>> {
-                    contactGroupEmailsAdapter.setData(ArrayList())
-                })
-        val selected: ArrayList<ContactEmail> = ArrayList(intent.getSerializableExtra(EXTRA_CONTACT_EMAILS) as HashSet<ContactEmail>)
+            this,
+            {
+                contactGroupEmailsAdapter.setData(ArrayList())
+            }
+        )
+        val selected: ArrayList<ContactEmail> =
+            ArrayList(intent.getSerializableExtra(EXTRA_CONTACT_EMAILS) as HashSet<ContactEmail>)
         addressChooserViewModel.getAllEmails(HashSet(selected))
     }
 
@@ -108,13 +107,14 @@ class AddressChooserActivity : BaseActivity() {
     }
 
     private fun initAdapter() {
-        contactGroupEmailsAdapter = ContactGroupEmailsAdapter(this, ArrayList(), null, mode = GroupsItemAdapterMode.CHECKBOXES)
+        contactGroupEmailsAdapter =
+            ContactGroupEmailsAdapter(this, ArrayList(), null, mode = GroupsItemAdapterMode.CHECKBOXES)
         with(contactGroupEmailsAdapter) {
             registerAdapterDataObserver(
-                    ch.protonmail.android.utils.ui.RecyclerViewEmptyViewSupport(
-                            contactEmailsRecyclerView,
-                            noResults
-                    )
+                ch.protonmail.android.utils.ui.RecyclerViewEmptyViewSupport(
+                    contactEmailsRecyclerView,
+                    noResults
+                )
             )
         }
         with(contactEmailsRecyclerView) {
@@ -132,7 +132,9 @@ class AddressChooserActivity : BaseActivity() {
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
                 override fun afterTextChanged(editable: Editable?) {
-                    addressChooserViewModel.doFilter(filterView.text.toString(), contactGroupEmailsAdapter.getSelected())
+                    addressChooserViewModel.doFilter(
+                        filterView.text.toString(), contactGroupEmailsAdapter.getSelected()
+                    )
                 }
             })
         }

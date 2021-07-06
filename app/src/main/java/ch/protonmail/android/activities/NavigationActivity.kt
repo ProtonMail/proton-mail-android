@@ -54,8 +54,8 @@ import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.EXTRA_FRAGMENT_TITLE
 import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.ui.view.ProtonSideDrawer
-import ch.protonmail.android.uiModel.DrawerItemUiModel.*
-import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary.Static.*
+import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
+import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary.Static.Type
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
@@ -71,7 +71,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import me.proton.core.accountmanager.presentation.view.AccountPrimaryView
 import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewModel
 import me.proton.core.auth.presentation.AuthOrchestrator
@@ -343,10 +342,6 @@ abstract class NavigationActivity : BaseActivity() {
             return isQuickSnoozeEnabled || (isScheduledSnoozeEnabled && !shouldShowNotification)
         }
     }
-
-    @Deprecated("Use suspend function", ReplaceWith("areNotificationsSnoozed(userId)"))
-    private fun areNotificationSnoozedBlocking(userId: Id): Boolean =
-        runBlocking { areNotificationsSnoozed(userId) }
 
     private fun setUpInitialDrawerItems(isPinEnabled: Boolean) {
         val hasPin = isPinEnabled && userManager.getMailboxPin() != null

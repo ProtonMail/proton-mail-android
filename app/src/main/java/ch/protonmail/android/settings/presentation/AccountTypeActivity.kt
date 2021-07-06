@@ -31,7 +31,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import butterknife.OnClick
-import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.api.models.Organization
@@ -43,6 +42,7 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.organizations.OrganizationEvent
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob
 import ch.protonmail.android.usecase.model.FetchPaymentMethodsResult
+import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialog
 import ch.protonmail.android.viewmodel.AccountTypeViewModel
 import com.squareup.otto.Subscribe
@@ -82,7 +82,8 @@ class AccountTypeActivity : BaseActivity() {
             }
         }
         viewModel?.fetchPaymentMethodsResult?.observe(
-            this, { result: FetchPaymentMethodsResult -> onPaymentMethods(result) })
+            this, { result: FetchPaymentMethodsResult -> onPaymentMethods(result) }
+        )
         viewModel?.fetchPaymentMethods()
     }
 

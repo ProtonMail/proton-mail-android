@@ -25,10 +25,6 @@ import ch.protonmail.android.settings.presentation.SnoozeRepeatDayView
 import ch.protonmail.libs.core.utils.EMPTY_STRING
 
 /**
- * Created by dinokadrikj on 2019-11-01.
- */
-
-/**
  * Do the true values represent days of the weekend only (0 position is representing Monday)
  */
 fun Array<Boolean>.isWeekend(): Boolean {

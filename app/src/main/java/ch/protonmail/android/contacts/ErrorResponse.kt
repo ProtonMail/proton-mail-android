@@ -22,23 +22,22 @@ import android.content.Context
 import ch.protonmail.android.R
 import ch.protonmail.android.utils.setDefaultIfEmpty
 
-class ErrorResponse(val message:String, val type:ErrorEnum){
+class ErrorResponse(val message: String, val type: ErrorEnum) {
 
-
-    fun getMessage(context: Context):String {
-        return when(type){
+    fun getMessage(context: Context): String {
+        return when (type) {
             ErrorEnum.INVALID_EMAIL -> context.resources.getString(R.string.invalid_email)
             ErrorEnum.INVALID_EMAIL_LIST -> context.resources.getString(R.string.empty_emails)
             ErrorEnum.INVALID_GROUP_LIST -> context.resources.getString(R.string.no_groups)
             ErrorEnum.DEFAULT_ERROR -> context.resources.getString(R.string.default_error_message)
-            ErrorEnum.SERVER_ERROR -> message.setDefaultIfEmpty(context.resources.getString(R.string.message_details_load_failure))
+            ErrorEnum.SERVER_ERROR -> message.setDefaultIfEmpty(
+                context.resources.getString(R.string.message_details_load_failure)
+            )
             ErrorEnum.DEFAULT -> context.resources.getString(R.string.message_details_load_failure)
         }
     }
-
 }
 
 enum class ErrorEnum {
     INVALID_EMAIL, INVALID_EMAIL_LIST, INVALID_GROUP_LIST, DEFAULT_ERROR, SERVER_ERROR, DEFAULT
-
 }

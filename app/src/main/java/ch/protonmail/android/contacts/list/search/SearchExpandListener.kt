@@ -18,11 +18,14 @@
  */
 package ch.protonmail.android.contacts.list.search
 
-import androidx.appcompat.widget.SearchView
 import android.view.MenuItem
+import androidx.appcompat.widget.SearchView
 
-internal class SearchExpandListener(private val searchView: SearchView,
-                                    private val viewModels: List<ISearchListenerViewModel>) : MenuItem.OnActionExpandListener {
+internal class SearchExpandListener(
+    private val searchView: SearchView,
+    private val viewModels: List<ISearchListenerViewModel>
+) : MenuItem.OnActionExpandListener {
+
     override fun onMenuItemActionExpand(item: MenuItem): Boolean {
         return true
     }

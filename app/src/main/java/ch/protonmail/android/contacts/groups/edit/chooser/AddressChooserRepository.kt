@@ -39,12 +39,12 @@ class AddressChooserRepository @Inject constructor(
 
     fun getContactGroupEmails(): Observable<List<ContactEmail>> {
         return contactDao.findAllContactsEmailsAsyncObservable()
-                .toObservable()
+            .toObservable()
     }
 
     fun filterContactGroupEmails(filter: String): Observable<List<ContactEmail>> {
         val filterString = "%$filter%"
         return contactDao.findAllContactsEmailsAsyncObservable(filterString)
-                .toObservable()
+            .toObservable()
     }
 }

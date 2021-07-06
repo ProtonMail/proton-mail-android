@@ -67,15 +67,19 @@ class ContactGroupEmailsAdapter(
     }
 
     fun getUnSelected(): ArrayList<ContactEmail> {
-        return ArrayList(items.filter {
-            !it.selected
-        })
+        return ArrayList(
+            items.filter {
+                !it.selected
+            }
+        )
     }
 
     fun getSelected(): ArrayList<ContactEmail> {
-        return ArrayList(items.filter {
-            it.selected
-        })
+        return ArrayList(
+            items.filter {
+                it.selected
+            }
+        )
     }
 
     private fun <T : RecyclerView.ViewHolder> T.listen(event: (position: Int) -> Unit) {

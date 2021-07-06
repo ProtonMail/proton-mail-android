@@ -47,9 +47,8 @@ class MessageDetailsHeaderIcons @JvmOverloads constructor(
         starredToggleButton = binding.starredToggleButton
     }
 
-   fun bind(message: Message) {
-       attachmentsImageView.isVisible = message.numAttachments > 0
-       starredToggleButton.isVisible = message.isStarred ?: false
-   }
-
+    fun bind(message: Message) {
+        attachmentsImageView.isVisible = message.numAttachments > 0
+        starredToggleButton.isVisible = message.isStarred ?: false
+    }
 }

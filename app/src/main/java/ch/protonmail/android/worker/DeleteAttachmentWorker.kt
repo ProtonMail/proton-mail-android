@@ -33,7 +33,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_ID
 import ch.protonmail.android.attachments.KEY_INPUT_DATA_ATTACHMENT_ID_STRING
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.*
+import ch.protonmail.android.data.local.MessageDao
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
@@ -93,6 +93,7 @@ class DeleteAttachmentWorker @AssistedInject constructor(
     }
 
     class Enqueuer(private val workManager: WorkManager) {
+
         fun enqueue(attachmentId: String): Operation {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)

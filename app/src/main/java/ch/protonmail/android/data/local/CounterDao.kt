@@ -73,9 +73,9 @@ abstract class CounterDao {
 
     @Transaction
     open fun updateUnreadCounters(
-	    locations: Collection<UnreadLocationCounter>,
-		labels: Collection<UnreadLabelCounter>
-	) {
+        locations: Collection<UnreadLocationCounter>,
+        labels: Collection<UnreadLabelCounter>
+    ) {
         clearUnreadLocationsTable()
         clearUnreadLabelsTable()
         insertAllUnreadLocations(locations)
@@ -110,7 +110,10 @@ abstract class CounterDao {
     protected abstract fun insertTotalLocations(locations: Collection<TotalLocationCounter>)
 
     @Transaction
-    open fun refreshTotalCounters(locations: Collection<TotalLocationCounter>, labels: List<TotalLabelCounter>) {
+    open fun refreshTotalCounters(
+        locations: Collection<TotalLocationCounter>,
+        labels: List<TotalLabelCounter>
+    ) {
         refreshTotalLocationCounters(locations)
         refreshTotalLabelCounters(labels)
     }
@@ -127,5 +130,4 @@ abstract class CounterDao {
         insertTotalLocations(locations)
     }
     //endregion
-
 }

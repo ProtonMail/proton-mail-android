@@ -23,8 +23,6 @@ import androidx.lifecycle.ViewModel
 import ch.protonmail.android.settings.pin.PinAction
 import javax.inject.Inject
 
-/**
- * Created by dkadrikj on 14.03.19. */
 class PinFragmentViewModel @Inject constructor() : ViewModel() {
 
     val setupDoneObservable: MutableLiveData<PinSetup> = MutableLiveData()
@@ -42,7 +40,12 @@ class PinFragmentViewModel @Inject constructor() : ViewModel() {
     private var fingerprintDialogListener: ReopenFingerprintDialogListener? = null
     private lateinit var listener: IPinCreationListener
 
-    fun setup(actionType: PinAction, signOutPossible: Boolean, wantedPin: String?, useFingerprint: Boolean) {
+    fun setup(
+        actionType: PinAction,
+        signOutPossible: Boolean,
+        wantedPin: String?,
+        useFingerprint: Boolean
+    ) {
         this.actionType = actionType
         this.signOutPossible = signOutPossible
         this.wantedPin = wantedPin
@@ -75,7 +78,7 @@ class PinFragmentViewModel @Inject constructor() : ViewModel() {
     }
 
     fun nextClicked(pin: String, createdPinValid: Boolean, validationPinValid: Boolean):
-            MutableLiveData<ValidationResult> {
+        MutableLiveData<ValidationResult> {
         if (actionType == PinAction.CREATE) {
             invalidPinObservable.postValue(ValidationResult(actionType, createdPinValid))
             if (createdPinValid) {
@@ -92,17 +95,23 @@ class PinFragmentViewModel @Inject constructor() : ViewModel() {
 
     // region interfaces and helper classes
     interface ReopenFingerprintDialogListener {
+
         fun onFingerprintReopen()
     }
 
     interface IPinCreationListener {
+
         fun onPinCreated(pin: String)
         fun showCreatePin()
         fun onPinConfirmed(confirmPin: String?)
         fun onForgotPin()
     }
 
-    data class PinSetup(val actionType: PinAction, val signOutPossible: Boolean, val useFingerprint: Boolean)
+    data class PinSetup(
+        val actionType: PinAction,
+        val signOutPossible: Boolean,
+        val useFingerprint: Boolean
+    )
 
     data class ValidationResult(val actionType: PinAction, val valid: Boolean)
     // endregion

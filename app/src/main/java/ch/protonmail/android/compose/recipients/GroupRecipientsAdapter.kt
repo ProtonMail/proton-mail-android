@@ -56,8 +56,10 @@ class GroupRecipientsAdapter(
     }
 
     fun getSelected(): ArrayList<MessageRecipient> {
-        return ArrayList(items.filter {
-            it.isSelected
-        })
+        return ArrayList(
+            items.filter {
+                it.isSelected
+            }
+        )
     }
 }

@@ -823,12 +823,12 @@ class MailboxActivity :
         val mailboxLocation = mailboxViewModel.mailboxLocation.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
-                MessageLocationType.DRAFT,
-                MessageLocationType.SPAM,
-                MessageLocationType.TRASH,
-                MessageLocationType.LABEL,
-                MessageLocationType.LABEL_FOLDER
-            )
+            MessageLocationType.DRAFT,
+            MessageLocationType.SPAM,
+            MessageLocationType.TRASH,
+            MessageLocationType.LABEL,
+            MessageLocationType.LABEL_FOLDER
+        )
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -888,7 +888,12 @@ class MailboxActivity :
         switchToMailboxLocation(type.drawerOptionTypeValue)
     }
 
-    public override fun onLabelMailBox(type: DrawerOptionType, labelId: String, labelName: String, isFolder: Boolean) {
+    public override fun onLabelMailBox(
+        type: DrawerOptionType,
+        labelId: String,
+        labelName: String,
+        isFolder: Boolean
+    ) {
         switchToMailboxCustomLocation(type.drawerOptionTypeValue, labelId, labelName, isFolder)
     }
 
@@ -1180,10 +1185,11 @@ class MailboxActivity :
         messagesIds: List<String>,
         isConversationsModeOn: Boolean
     ) {
-        val messagesStringRes = if (isConversationsModeOn)
+        val messagesStringRes = if (isConversationsModeOn) {
             R.plurals.x_conversations_count
-        else
+        } else {
             R.plurals.x_messages_count
+        }
 
         MessageActionSheet.newInstance(
             originatorLocationId = MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID,

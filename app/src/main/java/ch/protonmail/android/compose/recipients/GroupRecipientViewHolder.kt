@@ -30,8 +30,6 @@ import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.utils.extensions.showToast
 import kotlinx.android.synthetic.main.group_recipient_list_item.view.*
 
-/**
- * Created by kadrikj on 9/19/18. */
 class GroupRecipientViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(recipient: MessageRecipient, clickListener: () -> Unit) {
@@ -39,26 +37,26 @@ class GroupRecipientViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val address = recipient.emailAddress
 
         itemView.pgpIcon.typeface =
-                Typeface.createFromAsset(this.itemView.context.assets, "pgp-icons-android.ttf")
+            Typeface.createFromAsset(this.itemView.context.assets, "pgp-icons-android.ttf")
 
-            if (recipient.icon != 0) {
-                itemView.pgpIcon.visibility = View.VISIBLE
-                itemView.pgpIcon.text = this.itemView.context.getString(recipient.icon)
-            }
-            if (recipient.iconColor != 0) {
-                itemView.pgpIcon.setTextColor(
-                    ContextCompat.getColor(
-                        this.itemView.context,
-                        recipient.iconColor
-                    )
+        if (recipient.icon != 0) {
+            itemView.pgpIcon.visibility = View.VISIBLE
+            itemView.pgpIcon.text = this.itemView.context.getString(recipient.icon)
+        }
+        if (recipient.iconColor != 0) {
+            itemView.pgpIcon.setTextColor(
+                ContextCompat.getColor(
+                    this.itemView.context,
+                    recipient.iconColor
                 )
-            }
+            )
+        }
 
-            itemView.pgpIcon.setOnClickListener {
-                if (recipient.description != 0) run {
-                    itemView.context.showToast(recipient.description, Toast.LENGTH_SHORT)
-                }
+        itemView.pgpIcon.setOnClickListener {
+            if (recipient.description != 0) run {
+                itemView.context.showToast(recipient.description, Toast.LENGTH_SHORT)
             }
+        }
 
         val spannableText = SpannableString("$name \n<$address>")
         spannableText.setSpan(

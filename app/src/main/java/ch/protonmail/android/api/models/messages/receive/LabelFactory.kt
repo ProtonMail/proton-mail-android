@@ -24,26 +24,28 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.utils.extensions.notNull
 import ch.protonmail.android.utils.extensions.notNullOrEmpty
 
-class LabelFactory:IConverterFactory<ServerLabel, Label> {
-	override fun createServerObjectFromDBObject(dbObject: Label): ServerLabel {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
+class LabelFactory : IConverterFactory<ServerLabel, Label> {
 
-	override fun createDBObjectFromServerObject(serverLabel: ServerLabel): Label {
-		val id = serverLabel.ID.notNullOrEmpty("ID")
-		val name = serverLabel.name.notNullOrEmpty("name")
-		val color = serverLabel.color.notNullOrEmpty("color")
-		val display = serverLabel.display.notNull("display")
-		val order = serverLabel.order.notNull("order")
-		val exclusive = serverLabel.exclusive.notNull("exclusive").parseBoolean("exclusive")
-		val type = serverLabel.exclusive.notNull("type")
-		return Label(
-				id = id,
-				name = name,
-				color = color,
-				display = display,
-				order = order,
-				exclusive = exclusive,
-				type = type)
-	}
+    override fun createServerObjectFromDBObject(dbObject: Label): ServerLabel {
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createDBObjectFromServerObject(serverLabel: ServerLabel): Label {
+        val id = serverLabel.ID.notNullOrEmpty("ID")
+        val name = serverLabel.name.notNullOrEmpty("name")
+        val color = serverLabel.color.notNullOrEmpty("color")
+        val display = serverLabel.display.notNull("display")
+        val order = serverLabel.order.notNull("order")
+        val exclusive = serverLabel.exclusive.notNull("exclusive").parseBoolean("exclusive")
+        val type = serverLabel.exclusive.notNull("type")
+        return Label(
+            id = id,
+            name = name,
+            color = color,
+            display = display,
+            order = order,
+            exclusive = exclusive,
+            type = type
+        )
+    }
 }

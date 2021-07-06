@@ -45,4 +45,4 @@ inline fun <reified T : Serializable> String.deserialize() = deserialize(T::clas
  * We use this because reified can not be used from Java
  */
 fun <T : Serializable> String.deserialize(clazz: Class<T>): T =
-        DEFAULT_SERIALIZER.fromJson<T>(this, clazz)
+    DEFAULT_SERIALIZER.fromJson<T>(this, clazz)

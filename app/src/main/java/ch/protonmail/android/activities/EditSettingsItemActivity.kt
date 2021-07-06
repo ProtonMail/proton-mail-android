@@ -85,13 +85,13 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
         mSnackLayout = findViewById(R.id.layout_no_connectivity_info)
 
-            val jsonSettingsListResponse =
-                resources.openRawResource(R.raw.edit_settings_structure).bufferedReader().use { it.readText() }
+        val jsonSettingsListResponse =
+            resources.openRawResource(R.raw.edit_settings_structure).bufferedReader().use { it.readText() }
 
-            val gson = Gson()
-            val settingsUiList =
-                gson.fromJson(jsonSettingsListResponse, Array<Array<SettingsItemUiModel>>::class.java).asList()
-            setUpSettingsItems(settingsUiList[settingsItemType.ordinal].asList())
+        val gson = Gson()
+        val settingsUiList =
+            gson.fromJson(jsonSettingsListResponse, Array<Array<SettingsItemUiModel>>::class.java).asList()
+        setUpSettingsItems(settingsUiList[settingsItemType.ordinal].asList())
 
         renderViews()
 

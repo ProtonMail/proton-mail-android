@@ -18,8 +18,6 @@
  */
 package ch.protonmail.android.contacts.groups.edit
 
-/**
- * Created by kadrikj on 9/5/18. */
 enum class ContactGroupMode {
     EDIT, CREATE
 }

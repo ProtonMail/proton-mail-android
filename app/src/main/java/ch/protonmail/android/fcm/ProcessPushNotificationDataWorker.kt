@@ -170,7 +170,6 @@ class ProcessPushNotificationDataWorker @AssistedInject constructor(
 
         if (notifications.size > 1) {
             notificationServer.notifyMultipleUnreadEmail(
-                userManager,
                 user.toNewUser(),
                 user.notificationSetting,
                 user.ringtone,

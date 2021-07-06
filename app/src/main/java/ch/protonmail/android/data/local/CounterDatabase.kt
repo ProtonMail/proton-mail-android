@@ -30,7 +30,8 @@ import ch.protonmail.android.data.local.model.UnreadLocationCounter
         UnreadLabelCounter::class,
         UnreadLocationCounter::class,
         TotalLabelCounter::class,
-        TotalLocationCounter::class],
+        TotalLocationCounter::class
+    ],
     version = 1
 )
 abstract class CounterDatabase : RoomDatabase() {

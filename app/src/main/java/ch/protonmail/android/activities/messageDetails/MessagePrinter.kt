@@ -42,7 +42,10 @@ internal class MessagePrinter(
     private val loadRemoteImages: Boolean
 ) {
 
-    private fun StringBuilder.appendRecipientsList(recipients: List<MessageRecipient>, @StringRes header: Int) {
+    private fun StringBuilder.appendRecipientsList(
+        recipients: List<MessageRecipient>,
+        @StringRes header: Int
+    ) {
         if (recipients.isEmpty()) {
             return
         }

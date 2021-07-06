@@ -29,15 +29,34 @@ import java.io.IOException
 class ReportApi(private val service: ReportService) : BaseApi(), ReportApiSpec {
 
     @Throws(IOException::class)
-    override fun reportBug(osName: String, appVersion: String, client: String, clientVersion: String, title: String, description: String, username: String, email: String): ResponseBody {
-        return ParseUtils.parse(service.bugs(BugsBody(osName, appVersion, client, clientVersion, title, description, username, email)).execute())
+    override fun reportBug(
+        osName: String,
+        appVersion: String,
+        client: String,
+        clientVersion: String,
+        title: String,
+        description: String,
+        username: String,
+        email: String
+    ): ResponseBody {
+        return ParseUtils.parse(
+            service.bugs(BugsBody(osName, appVersion, client, clientVersion, title, description, username, email))
+                .execute()
+        )
     }
 
     @Throws(IOException::class)
     override fun postPhishingReport(messageId: String, messageBody: String, mimeType: String): ResponseBody? {
         // Accept only 'text/plain' / 'text/html'
-        val correctedMimeType = if (Constants.MIME_TYPE_PLAIN_TEXT == mimeType) Constants.MIME_TYPE_PLAIN_TEXT else Constants.MIME_TYPE_HTML
-        return ParseUtils.parse(service.postPhishingReport(PostPhishingReportBody(messageId, messageBody,
-                correctedMimeType)).execute())
+        val correctedMimeType =
+            if (Constants.MIME_TYPE_PLAIN_TEXT == mimeType) Constants.MIME_TYPE_PLAIN_TEXT else Constants.MIME_TYPE_HTML
+        return ParseUtils.parse(
+            service.postPhishingReport(
+                PostPhishingReportBody(
+                    messageId, messageBody,
+                    correctedMimeType
+                )
+            ).execute()
+        )
     }
 }

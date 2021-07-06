@@ -27,56 +27,55 @@ import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.FragmentActivity
 import ch.protonmail.android.R
 import ch.protonmail.android.utils.extensions.showToast
+import timber.log.Timber
 
 /**
  * An utility for Google Chrome
  *
  * @author Davide Farella
  */
-//object ChromeUtils {
+// object ChromeUtils {
 
-    /** Name of Google Chrome package  */
-    private const val CHROME_PACKAGE_NAME = "com.android.chrome"
+/** Name of Google Chrome package  */
+private const val CHROME_PACKAGE_NAME = "com.android.chrome"
 
-    /** Send the user to Chrome settings page if installed but disabled, else to Play Store's page */
-    fun FragmentActivity.redirectToChrome() {
-        finish()
+/** Send the user to Chrome settings page if installed but disabled, else to Play Store's page */
+fun FragmentActivity.redirectToChrome() {
+    finish()
 
-        try {
-            packageManager.getPackageInfo( CHROME_PACKAGE_NAME, 0 )
+    try {
+        packageManager.getPackageInfo(CHROME_PACKAGE_NAME, 0)
 
-            // Chrome is installed but may be disabled
-            showToast( R.string.error_chrome_disabled )
-            openChromeSettings()
-
-        } catch ( e: PackageManager.NameNotFoundException ) {
-
-            // Chrome is not installed
-            showToast( R.string.error_chrome_not_found )
-            openChromeOnStore()
-        }
-
+        // Chrome is installed but may be disabled
+        showToast(R.string.error_chrome_disabled)
+        openChromeSettings()
+    } catch (e: PackageManager.NameNotFoundException) {
+        Timber.i(e, "redirectToChrome exception")
+        // Chrome is not installed
+        showToast(R.string.error_chrome_not_found)
+        openChromeOnStore()
     }
+}
 
-    /** Open the Store on Google Chrome page, if any store available  */
-    @VisibleForTesting
-    internal fun FragmentActivity.openChromeOnStore() {
-        try {
-            val uri = Uri.parse( "market://details?id=$CHROME_PACKAGE_NAME" )
-            startActivity( Intent( Intent.ACTION_VIEW, uri ) )
-        } catch (notFoundException: ActivityNotFoundException) {
-            // Store not found!
-        }
-
+/** Open the Store on Google Chrome page, if any store available  */
+@VisibleForTesting
+internal fun FragmentActivity.openChromeOnStore() {
+    try {
+        val uri = Uri.parse("market://details?id=$CHROME_PACKAGE_NAME")
+        startActivity(Intent(Intent.ACTION_VIEW, uri))
+    } catch (notFoundException: ActivityNotFoundException) {
+        Timber.i(notFoundException, "openChromeOnStore exception")
+        // Store not found!
     }
+}
 
-    /** Open the Settings on Google Chrome page  */
-    @VisibleForTesting
-    internal fun FragmentActivity.openChromeSettings() {
-        val uri = Uri.fromParts( "package", CHROME_PACKAGE_NAME, null )
-        val intent = Intent()
-                .setAction( Settings.ACTION_APPLICATION_DETAILS_SETTINGS )
-                .setData( uri )
-        startActivity( intent )
-    }
-//}
+/** Open the Settings on Google Chrome page  */
+@VisibleForTesting
+internal fun FragmentActivity.openChromeSettings() {
+    val uri = Uri.fromParts("package", CHROME_PACKAGE_NAME, null)
+    val intent = Intent()
+        .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        .setData(uri)
+    startActivity(intent)
+}
+// }

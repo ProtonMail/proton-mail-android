@@ -42,7 +42,7 @@ import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
@@ -251,7 +251,7 @@ class NotificationServer @Inject constructor(
 
     /**
      * @return [NotificationCompat.Builder] with common parameters that will be used from
-     * [notifySingleNewEmail] and [notifyMultipleUnreadEmail]
+     * [notifySingleNewEmail]  and [notifyMultipleUnreadEmail]
      *
      * @param user [LegacyUser] for get some Notification's settings
      */
@@ -376,7 +376,6 @@ class NotificationServer @Inject constructor(
             notificationBody?.let { addLine(it) }
         }
 
-
         // Create Notification's Builder with the prepared params
         val builder =
             createGenericEmailNotification(
@@ -399,12 +398,13 @@ class NotificationServer @Inject constructor(
                     context.getString(R.string.trash),
                     trashIntent
                 )
-                if (replyIntent != null)
+                if (replyIntent != null) {
                     addAction(
                         R.drawable.action_notification_reply,
                         context.getString(R.string.reply),
                         replyIntent
                     )
+                }
             }
 
         // Build the Notification
@@ -471,7 +471,6 @@ class NotificationServer @Inject constructor(
      * @param unreadNotifications [List] of [RoomNotification] to show to the user
      */
     fun notifyMultipleUnreadEmail(
-        userManager: UserManager,
         loggedInUser: User,
         notificationSettings: Int,
         ringtoneUri: Uri?,
@@ -507,41 +506,6 @@ class NotificationServer @Inject constructor(
         val notification = builder.build()
 
         notificationManager.notify(loggedInUser.id.hashCode(), notification)
-    }
-
-    /**
-     * Show a Notification for MORE THAN ONE unread Emails. This will be called ONLY if there are
-     * MORE than one unread Notifications
-     *
-     * @param user current logged [LegacyUser]
-     * @param unreadNotifications [List] of [RoomNotification] to show to the user
-     */
-    @Deprecated(
-        "Use with new User model",
-        ReplaceWith(
-            "notifyMultipleUnreadEmail(\n" +
-                "    userManager,\n" +
-                "    user.toNewUser(),\n" +
-                "    user.notificationSetting,\n" +
-                "    user.ringtone,\n" +
-                "    user.isNotificationVisibilityLockScreen,\n" +
-                "    unreadNotifications\n" +
-                ")"
-        )
-    )
-    fun notifyMultipleUnreadEmail(
-        userManager: UserManager,
-        user: LegacyUser,
-        unreadNotifications: List<RoomNotification>
-    ) {
-        notifyMultipleUnreadEmail(
-            userManager,
-            user.toNewUser(),
-            user.notificationSetting,
-            user.ringtone,
-            user.isNotificationVisibilityLockScreen,
-            unreadNotifications
-        )
     }
 
     private fun getMailboxActivityIntent(loggedInUserId: Id): PendingIntent {
@@ -620,7 +584,12 @@ class NotificationServer @Inject constructor(
         notifySingleErrorSendingMessage(Id(user.id), Name(user.name), error)
     }
 
-    fun notifySaveDraftError(userId: Id, errorMessage: String, messageSubject: String?, username: Name) {
+    fun notifySaveDraftError(
+        userId: Id,
+        errorMessage: String,
+        messageSubject: String?,
+        username: Name
+    ) {
         val title = context.getString(R.string.failed_saving_draft_online, messageSubject)
 
         val bigTextStyle = NotificationCompat.BigTextStyle()

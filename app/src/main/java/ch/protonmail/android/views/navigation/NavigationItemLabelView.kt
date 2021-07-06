@@ -30,29 +30,36 @@ import androidx.core.graphics.drawable.DrawableCompat
 import ch.protonmail.android.R
 import kotlinx.android.synthetic.main.nav_item_label.view.*
 
-/**
- * Created by Kamil Rajtar on 20.08.18.  */
 class NavigationItemLabelView @JvmOverloads constructor(
-		context:Context,attrs:AttributeSet?=null,defStyleAttr:Int=0
-): ConstraintLayout(context,attrs,defStyleAttr)
-{
-	init {
-		inflate(context,R.layout.nav_item_label,this)
-	}
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-	fun bind(name:CharSequence,@DrawableRes labelRes:Int,@ColorInt labelColor:Int,notificationCount:Int)
-	{
-		label_name.text=name
+    init {
+        inflate(context, R.layout.nav_item_label, this)
+    }
 
-		val normalDrawable=ContextCompat.getDrawable(context,labelRes)?:throw RuntimeException("Cannot find drawable for $labelRes")
-		val wrapDrawable=DrawableCompat.wrap(normalDrawable)
-		DrawableCompat.setTint(wrapDrawable,labelColor)
-		wrapDrawable.mutate().setColorFilter(labelColor,PorterDuff.Mode.SRC_IN)
-		label_icon.setImageDrawable(wrapDrawable)
+    fun bind(
+        name: CharSequence,
+        @DrawableRes labelRes: Int,
+        @ColorInt labelColor: Int,
+        notificationCount: Int
+    ) {
+        label_name.text = name
 
-		if(notificationCount>0) {
-			drawer_item_notifications_text_view.visibility=View.VISIBLE
-			drawer_item_notifications_text_view.text=notificationCount.toString()
-		}
-	}
+        val normalDrawable =
+            ContextCompat.getDrawable(context, labelRes) ?: throw IllegalArgumentException(
+                "Cannot find drawable for $labelRes"
+            )
+        val wrapDrawable = DrawableCompat.wrap(normalDrawable)
+        DrawableCompat.setTint(wrapDrawable, labelColor)
+        wrapDrawable.mutate().setColorFilter(labelColor, PorterDuff.Mode.SRC_IN)
+        label_icon.setImageDrawable(wrapDrawable)
+
+        if (notificationCount > 0) {
+            drawer_item_notifications_text_view.visibility = View.VISIBLE
+            drawer_item_notifications_text_view.text = notificationCount.toString()
+        }
+    }
 }

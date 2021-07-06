@@ -22,15 +22,14 @@ import android.app.ProgressDialog
 import android.content.Context
 import ch.protonmail.android.R
 
-/**
- * Created by Kamil Rajtar on 24.08.18.  */
-class ProgressDialogFactory(val context:Context):IProgressDialogFactory {
-	override fun create():ProgressDialog{
-		val progressDialog=ProgressDialog(context)
-		progressDialog.setCancelable(false)
-		progressDialog.setMessage(context.getString(R.string.uploading_contacts))
-		progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-		progressDialog.setCanceledOnTouchOutside(false)
-		return progressDialog
-	}
+class ProgressDialogFactory(val context: Context) : IProgressDialogFactory {
+
+    override fun create(): ProgressDialog {
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setCancelable(false)
+        progressDialog.setMessage(context.getString(R.string.uploading_contacts))
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+        progressDialog.setCanceledOnTouchOutside(false)
+        return progressDialog
+    }
 }

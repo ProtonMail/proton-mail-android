@@ -26,8 +26,8 @@ private const val FIELD_CONTACT_EMAILS_IDS = "ContactEmailIDs"
 // endregion
 
 class LabelContactsBody(
-        @SerializedName(FIELD_LABEL_ID)
-        var labelId: String,
-        @SerializedName(FIELD_CONTACT_EMAILS_IDS)
-        var contactEmailIds: List<String>
+    @SerializedName(FIELD_LABEL_ID)
+    var labelId: String,
+    @SerializedName(FIELD_CONTACT_EMAILS_IDS)
+    var contactEmailIds: List<String>
 )

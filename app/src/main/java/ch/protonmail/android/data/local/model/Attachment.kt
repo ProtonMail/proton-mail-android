@@ -278,7 +278,12 @@ data class Attachment constructor(
          * @throws NoSuchAlgorithmException
          * @throws IOException
          */
-        fun fromMimeAttachment(data: ByteArray, headers: InternetHeaders, message_id: String, count: Int): Attachment =
+        fun fromMimeAttachment(
+            data: ByteArray,
+            headers: InternetHeaders,
+            message_id: String,
+            count: Int
+        ): Attachment =
             fromMimeAttachment(MimeBodyPart(headers, ByteArray(0)), data, message_id, count)
 
         /**

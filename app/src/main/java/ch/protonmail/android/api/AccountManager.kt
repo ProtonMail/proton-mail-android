@@ -113,11 +113,13 @@ class AccountManager(
             if (allUsernames.isEmpty())
                 return@withContext
 
-            Timber.v("""
+            Timber.v(
+                """
                 |Migrating AccountManger:
                 |  saved username: ${ allSavedUsernames.joinToString { it.obfuscateUsername() } }
                 |  logged in usernames: ${ allLoggedUsernames.joinToString { it.obfuscateUsername() } }
-            """.trimMargin("|"))
+            """.trimMargin("|")
+            )
 
             val allUsernamesToIds = secureSharedPreferencesMigration(allUsernames)
 

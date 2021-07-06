@@ -20,7 +20,4 @@ package ch.protonmail.android.activities.navigation
 
 import ch.protonmail.android.data.local.model.Label
 
-/**
- * Created by Kamil Rajtar on 17.08.18.
- */
-data class LabelWithUnreadCounter(val label:Label,val unreadCount:Int)
+data class LabelWithUnreadCounter(val label: Label, val unreadCount: Int)

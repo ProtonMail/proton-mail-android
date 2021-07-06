@@ -18,11 +18,14 @@
  */
 package ch.protonmail.android.contacts.list.search
 
-import androidx.appcompat.widget.SearchView
 import android.view.View
+import androidx.appcompat.widget.SearchView
 
-class OnSearchClose(private val searchView: SearchView,
-                    private val viewModels: List<ISearchListenerViewModel>) : View.OnClickListener {
+class OnSearchClose(
+    private val searchView: SearchView,
+    private val viewModels: List<ISearchListenerViewModel>
+) : View.OnClickListener {
+
     override fun onClick(view: View) {
         searchView.onActionViewCollapsed()
         for (viewModel in viewModels) {

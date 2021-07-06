@@ -108,7 +108,11 @@ class DisplayNameAndSignatureFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = SettingsFragmentDisplayNameAndSignatureBinding.inflate(inflater)
         return binding.root
     }

@@ -35,21 +35,24 @@ constructor(
     attrs: AttributeSet? = null
 ) : RelativeLayout(context, attrs) {
 
-
     init {
         LayoutInflater.from(context).inflate(R.layout.storage_limit_layout_view, this, true)
         this.setOnClickListener {
-            DialogUtils.showInfoDialogWithTwoButtons(context,
-                    context.getString(R.string.storage_limit_warning_title),
-                    context.getString(R.string.storage_limit_reached_text),
-                    context.getString(R.string.learn_more),
-                    context.getString(R.string.okay), { unit ->
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.limit_reached_learn_more)))
-                context.startActivity(browserIntent)
-                unit
-            }, { unit ->
-                unit
-            }, true)
+            DialogUtils.showInfoDialogWithTwoButtons(
+                context,
+                context.getString(R.string.storage_limit_warning_title),
+                context.getString(R.string.storage_limit_reached_text),
+                context.getString(R.string.learn_more),
+                context.getString(R.string.okay),
+                { unit ->
+                    val browserIntent =
+                        Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.limit_reached_learn_more)))
+                    context.startActivity(browserIntent)
+                },
+                {
+                },
+                true
+            )
         }
     }
 
@@ -61,4 +64,3 @@ constructor(
         imageStorageLimit.setImageDrawable(image)
     }
 }
-

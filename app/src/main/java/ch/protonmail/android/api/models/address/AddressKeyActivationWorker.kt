@@ -238,7 +238,11 @@ class AddressKeyActivationWorker @AssistedInject constructor(
             runIfNeeded(workManager, addresses.addresses.values, userId)
         }
 
-        private fun runIfNeeded(workManager: WorkManager, addresses: Collection<Address>, userId: Id) {
+        private fun runIfNeeded(
+            workManager: WorkManager,
+            addresses: Collection<Address>,
+            userId: Id
+        ) {
             val isActivationNeeded = addresses.any { address ->
                 address.keys.keys.any { it.activation != null }
             }

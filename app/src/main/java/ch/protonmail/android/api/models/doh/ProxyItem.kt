@@ -18,13 +18,11 @@
  */
 package ch.protonmail.android.api.models.doh
 
-/**
- * Created by dinokadrikj on 3/5/20.
- */
 data class ProxyItem(
-        val baseUrl: String,
-        val lastTrialTimestamp: Long,
-        val success: Boolean?, // success means whether we have contacted the API successfully
-        val active: Boolean // active means whether the current network stack is using this proxy. this does not mean that it is
-                            // contacting the api successfully, maybe it just tries to contact.
+    val baseUrl: String,
+    val lastTrialTimestamp: Long,
+    val success: Boolean?, // success means whether we have contacted the API successfully
+    val active: Boolean // active means whether the current network stack is using this proxy.
+    // this does not mean that it is
+    // contacting the api successfully, maybe it just tries to contact.
 )

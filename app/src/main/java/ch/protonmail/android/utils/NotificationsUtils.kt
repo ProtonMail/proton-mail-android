@@ -28,7 +28,7 @@ import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_ARCHIVE_MESSAGE
 import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_TRASH_MESSAGE
 import ch.protonmail.android.receivers.NotificationReceiver
 
-//TODO move to GCMService
+// TODO move to GCMService
 fun Context.buildArchiveIntent(messageId: String): PendingIntent {
     val intent = Intent(getString(R.string.notification_action_archive))
     intent.putExtra(EXTRA_NOTIFICATION_ARCHIVE_MESSAGE, messageId)
@@ -36,7 +36,7 @@ fun Context.buildArchiveIntent(messageId: String): PendingIntent {
     return PendingIntent.getBroadcast(this, System.currentTimeMillis().toInt(), intent, 0)
 }
 
-//TODO move to GCMService
+// TODO move to GCMService
 fun Context.buildTrashIntent(messageId: String): PendingIntent {
     val intent = Intent(getString(R.string.notification_action_trash))
     intent.putExtra(EXTRA_NOTIFICATION_TRASH_MESSAGE, messageId)

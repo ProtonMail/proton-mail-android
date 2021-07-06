@@ -24,11 +24,19 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatButton
 import ch.protonmail.android.R
 
-class RoundButton @JvmOverloads constructor(context: Context, attrs: AttributeSet, defStyle: Int = 0) :
+class RoundButton @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet,
+    defStyle: Int = 0
+) :
     AppCompatButton(context, attrs, defStyle) {
 
     var keyValue: String? = null
         private set
+
+    init {
+        init(context, attrs)
+    }
 
     private fun init(context: Context, attrs: AttributeSet) {
         val array = context.obtainStyledAttributes(attrs, R.styleable.PINValue)
@@ -43,9 +51,5 @@ class RoundButton @JvmOverloads constructor(context: Context, attrs: AttributeSe
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val width = measuredWidth
         setMeasuredDimension(width, width)
-    }
-
-    init {
-        init(context, attrs)
     }
 }

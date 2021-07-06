@@ -20,32 +20,34 @@ package ch.protonmail.android.contacts.list.progress
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import ch.protonmail.android.contacts.list.progress.ProgressState
 
-class ProgressLiveData(progressLiveData:LiveData<Int?>,progressMaxLiveData:LiveData<Int?>):MediatorLiveData<ProgressState?>(){
+class ProgressLiveData(progressLiveData: LiveData<Int?>, progressMaxLiveData: LiveData<Int?>) :
+    MediatorLiveData<ProgressState?>() {
 
-	var progress:Int?=null
-	var progressMax:Int?=null
+    var progress: Int? = null
+    var progressMax: Int? = null
 
-	init {
-		addSource(progressLiveData){
-			progress=it
-			emit()
-		}
-		addSource(progressMaxLiveData) {
-			progressMax=it
-			emit()
-		}
-	}
+    init {
+        addSource(progressLiveData) {
+            progress = it
+            emit()
+        }
+        addSource(progressMaxLiveData) {
+            progressMax = it
+            emit()
+        }
+    }
 
-	fun emit(){
-		val progress=progress
-		val progressMax=progressMax
-		value=if(progress==null||progressMax==null){
-			null
-		}else{
-			ProgressState(progress,
-					progressMax)
-		}
-	}
+    fun emit() {
+        val progress = progress
+        val progressMax = progressMax
+        value = if (progress == null || progressMax == null) {
+            null
+        } else {
+            ProgressState(
+                progress,
+                progressMax
+            )
+        }
+    }
 }

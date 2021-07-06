@@ -48,33 +48,16 @@ private const val ARGUMENT_LOCATION =
 @AndroidEntryPoint
 class GroupRecipientsDialogFragment : AbstractDialogFragment() {
 
-    override fun onBackPressed() {
-        CANCELED = true
-        dismiss()
-    }
-
-    companion object {
-
-        private var CANCELED = false
-
-        fun newInstance(
-            recipients: ArrayList<MessageRecipient>,
-            location: Constants.RecipientLocationType
-        ): GroupRecipientsDialogFragment {
-            val fragment = GroupRecipientsDialogFragment()
-            val extras = Bundle()
-            extras.putSerializable(ARGUMENT_RECIPIENTS, recipients)
-            extras.putSerializable(ARGUMENT_LOCATION, location)
-            fragment.arguments = extras
-            return fragment
-        }
-    }
-
     @Inject
     lateinit var groupRecipientsViewModelFactory: GroupRecipientsViewModelFactory
     private lateinit var groupRecipientsViewModel: GroupRecipientsViewModel
     private lateinit var groupRecipientsAdapter: GroupRecipientsAdapter
     private lateinit var groupRecipientsListener: IGroupRecipientsListener
+
+    override fun onBackPressed() {
+        CANCELED = true
+        dismiss()
+    }
 
     override fun getLayoutResourceId(): Int = R.layout.dialog_fragment_group_recipients
 
@@ -88,18 +71,24 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
         groupRecipientsViewModel = ViewModelProviders.of(this, groupRecipientsViewModelFactory)
             .get(GroupRecipientsViewModel::class.java)
 
-        groupRecipientsViewModel.contactGroupResult.observe(this, {
-        })
+        groupRecipientsViewModel.contactGroupResult.observe(
+            this,
+            {
+            }
+        )
 
-        groupRecipientsViewModel.contactGroupError.observe(this, { event ->
-            var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
-            if (event != null) {
-                error = event.getContentIfNotHandled()
+        groupRecipientsViewModel.contactGroupError.observe(
+            this,
+            { event ->
+                var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
+                if (event != null) {
+                    error = event.getContentIfNotHandled()
+                }
+                if (error != null) {
+                    context?.showToast(error.getMessage(context!!))
+                }
             }
-            if (error != null) {
-                context?.showToast(error.getMessage(context!!))
-            }
-        })
+        )
 
         val args = arguments
         args?.let {
@@ -124,35 +113,41 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
     override fun initUi(rootView: View?) {
         groupRecipientsAdapter =
             GroupRecipientsAdapter(context!!, groupRecipientsViewModel.getData(), this::onMembersSelectChanged)
-        groupRecipientsViewModel.contactGroupResult.observe(this, Observer {
-            val allMessageRecipients = ArrayList<MessageRecipient>()
-            it?.let {
-                for (email in it) {
-                    val recipient = MessageRecipient(email.name, email.email)
-                    recipient.isSelected = email.selected
-                    recipient.icon = email.pgpIcon
-                    recipient.iconColor = email.pgpIconColor
-                    recipient.description = email.pgpDescription
-                    recipient.setIsPGP(email.isPGP)
-                    recipient.group = groupRecipientsViewModel.getGroup()
-                    recipient.groupIcon = groupRecipientsViewModel.getGroupIcon()
-                    recipient.groupColor = groupRecipientsViewModel.getGroupColor()
-                    allMessageRecipients.add(recipient)
+        groupRecipientsViewModel.contactGroupResult.observe(
+            this,
+            Observer {
+                val allMessageRecipients = ArrayList<MessageRecipient>()
+                it?.let {
+                    for (email in it) {
+                        val recipient = MessageRecipient(email.name, email.email)
+                        recipient.isSelected = email.selected
+                        recipient.icon = email.pgpIcon
+                        recipient.iconColor = email.pgpIconColor
+                        recipient.description = email.pgpDescription
+                        recipient.setIsPGP(email.isPGP)
+                        recipient.group = groupRecipientsViewModel.getGroup()
+                        recipient.groupIcon = groupRecipientsViewModel.getGroupIcon()
+                        recipient.groupColor = groupRecipientsViewModel.getGroupColor()
+                        allMessageRecipients.add(recipient)
+                    }
+                    groupRecipientsAdapter.setData(allMessageRecipients)
+                    onMembersSelectChanged()
                 }
-                groupRecipientsAdapter.setData(allMessageRecipients)
-                onMembersSelectChanged()
             }
-        })
+        )
 
-        groupRecipientsViewModel.contactGroupError.observe(this, Observer { event ->
-            var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
-            if (event != null) {
-                error = event.getContentIfNotHandled()
+        groupRecipientsViewModel.contactGroupError.observe(
+            this,
+            Observer { event ->
+                var error: ErrorResponse? = ErrorResponse("", ErrorEnum.DEFAULT_ERROR)
+                if (event != null) {
+                    error = event.getContentIfNotHandled()
+                }
+                if (error != null) {
+                    context?.showToast(error.getMessage(context!!))
+                }
             }
-            if (error != null) {
-                context?.showToast(error.getMessage(context!!))
-            }
-        })
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -199,7 +194,11 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
 
     interface IGroupRecipientsListener {
 
-        fun recipientsSelected(recipients: ArrayList<MessageRecipient>, location: Constants.RecipientLocationType)
+        fun recipientsSelected(
+            recipients: ArrayList<MessageRecipient>,
+            location: Constants.RecipientLocationType
+        )
+
     }
 
     override fun onDismiss(dialog: DialogInterface) {
@@ -217,5 +216,22 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
 
     private fun onMembersSelectChanged() {
         check.isChecked = groupRecipientsAdapter.itemCount == groupRecipientsAdapter.getSelected().size
+    }
+
+    companion object {
+
+        private var CANCELED = false
+
+        fun newInstance(
+            recipients: ArrayList<MessageRecipient>,
+            location: Constants.RecipientLocationType
+        ): GroupRecipientsDialogFragment {
+            val fragment = GroupRecipientsDialogFragment()
+            val extras = Bundle()
+            extras.putSerializable(ARGUMENT_RECIPIENTS, recipients)
+            extras.putSerializable(ARGUMENT_LOCATION, location)
+            fragment.arguments = extras
+            return fragment
+        }
     }
 }

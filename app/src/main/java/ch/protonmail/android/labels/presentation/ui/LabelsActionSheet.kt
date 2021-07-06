@@ -53,7 +53,11 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
     private var _binding: FragmentLabelsActionSheetBinding? = null
     private val binding get() = requireNotNull(_binding)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentLabelsActionSheetBinding.inflate(inflater)
 
         val actionSheetType = arguments?.getSerializable(EXTRA_ARG_ACTION_SHEET_TYPE) as Type

@@ -21,8 +21,6 @@ package ch.protonmail.android.api.rx
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
-/**
- * Created by kadrikj on 9/13/18. */
 object RxEventBus {
 
     private val publisher = PublishSubject.create<Any>()

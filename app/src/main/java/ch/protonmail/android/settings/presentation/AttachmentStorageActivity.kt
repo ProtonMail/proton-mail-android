@@ -80,7 +80,8 @@ class AttachmentStorageActivity : BaseActivity() {
                 if (attachmentStorageChanged) {
                     user?.maxAttachmentStorage = mAttachmentStorageCurrentValue
                 }
-            })
+            }
+        )
     }
 
     @OnClick(R.id.clear_local_cache)

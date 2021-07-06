@@ -21,17 +21,15 @@ package ch.protonmail.android.tasks
 import android.text.TextUtils
 import android.util.Pair
 import android.webkit.WebView
-
+import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import org.apache.http.protocol.HTTP
-
 import java.lang.ref.WeakReference
 
-import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
-
-/**
- * Created by kadrikj on 12/28/18.
- */
-class EmbeddedImagesThread(private val viewReference: WeakReference<WebView>, event: DownloadEmbeddedImagesEvent, messageContent: String) : AbstractEmbeddedImagesThread(event, messageContent, "") {
+class EmbeddedImagesThread(
+    private val viewReference: WeakReference<WebView>,
+    event: DownloadEmbeddedImagesEvent,
+    messageContent: String
+) : AbstractEmbeddedImagesThread(event, messageContent, "") {
 
     override fun onPostExecute(pair: Pair<String, String>) {
         val content = pair.first

@@ -502,7 +502,11 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
      * Sets the setting with [settingType] to locked, so the user can't change.
      * Usually if the account is on a free plan.
      */
-    protected fun setSettingDisabled(settingType: SettingsEnum, settingDisabledNew: Boolean, description: String) {
+    protected fun setSettingDisabled(
+        settingType: SettingsEnum,
+        settingDisabledNew: Boolean,
+        description: String
+    ) {
         settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }?.apply {
             settingDisabled = settingDisabledNew
             settingsDescription = description

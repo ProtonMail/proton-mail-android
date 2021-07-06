@@ -20,9 +20,7 @@ package ch.protonmail.android.contacts.list.progress
 
 import android.app.ProgressDialog
 
-/**
- * Created by Kamil Rajtar on 24.08.18.
- */
 interface IProgressDialogFactory {
-	fun create():ProgressDialog
+
+    fun create(): ProgressDialog
 }

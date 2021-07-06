@@ -37,11 +37,8 @@ const val EXTRA_NEW_PIN_SET = "extra_new_pin_set"
 const val EXTRA_NEW_PIN = "extra_pin"
 // endregion
 
-/*
- * Created by dkadrikj on 3/27/16.
- */
-
-class ChangePinActivity : BaseActivity(),
+class ChangePinActivity :
+    BaseActivity(),
     PinFragmentViewModel.IPinCreationListener,
     ISecurePINListener {
 

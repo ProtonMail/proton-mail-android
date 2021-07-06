@@ -60,7 +60,8 @@ class Proxies constructor(
             it.baseUrl == baseUrl
         }
         val index = proxyList.proxies.indexOf(proxyBaseUrl)
-        (proxyList.proxies as MutableList)[index] = proxyBaseUrl.copy(active = false, lastTrialTimestamp = timestamp, success = false)
+        (proxyList.proxies as MutableList)[index] =
+            proxyBaseUrl.copy(active = false, lastTrialTimestamp = timestamp, success = false)
         save()
     }
 
@@ -78,7 +79,8 @@ class Proxies constructor(
             it.baseUrl == baseUrl
         }
         val index = proxyList.proxies.indexOf(proxyBaseUrl)
-        (proxyList.proxies as MutableList)[index] = proxyBaseUrl.copy(active = true, lastTrialTimestamp = timestamp, success = true)
+        (proxyList.proxies as MutableList)[index] =
+            proxyBaseUrl.copy(active = true, lastTrialTimestamp = timestamp, success = true)
         save()
     }
 
@@ -95,7 +97,9 @@ class Proxies constructor(
     }
 
     companion object {
-        @Volatile private var INSTANCE: Proxies? = null
+
+        @Volatile
+        private var INSTANCE: Proxies? = null
 
         /**
          * If you supply proxyList, this mean that it will overwrite the current saved proxies completely.

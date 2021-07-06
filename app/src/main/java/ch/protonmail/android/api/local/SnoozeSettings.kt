@@ -23,10 +23,8 @@ import android.content.SharedPreferences
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
-import kotlinx.coroutines.runBlocking
 import me.proton.core.util.android.sharedpreferences.minusAssign
 import me.proton.core.util.android.sharedpreferences.set
-import me.proton.core.util.kotlin.unsupported
 import java.util.Calendar
 
 // region constants
@@ -95,19 +93,6 @@ class SnoozeSettings(
             )
         }
 
-        @Deprecated("Use suspend function", ReplaceWith("load(userId)"))
-        fun loadBlocking(userPreferences: SharedPreferences): SnoozeSettings =
-            runBlocking { load(userPreferences) }
-
-        @Deprecated(
-            "Load using Preferences directly",
-            ReplaceWith("load(preferences)"),
-            DeprecationLevel.ERROR
-        )
-        fun load(username: String): SnoozeSettings {
-            unsupported
-        }
-
         /**
          * Migration for snooze setting from different file from SharedPreferences.
          */
@@ -166,64 +151,19 @@ class SnoozeSettings(
         saveScheduledSnoozeRepeatingDaysBackup(userPreferences)
     }
 
-    @Deprecated(
-        "Save using Preferences directly",
-        ReplaceWith("save(preferences)"),
-        DeprecationLevel.ERROR
-    )
-    fun save(username: String) {
-        unsupported
-    }
-
     fun getScheduledSnooze(userPreferences: SharedPreferences): Boolean =
         userPreferences.getBoolean(PREF_SNOOZE_SCHEDULED, false)
 
-    @Deprecated(
-        "Get using Preferences directly",
-        ReplaceWith("getScheduledSnooze(preferences)"),
-        DeprecationLevel.ERROR
-    )
-    fun getScheduledSnooze(username: String): Boolean {
-        unsupported
-    }
-
     private fun saveScheduledBackup(userPreferences: SharedPreferences) {
         userPreferences[PREF_SNOOZE_SCHEDULED] = snoozeScheduled
-    }
-
-    @Deprecated(
-        "Save using Preferences directly",
-        ReplaceWith("saveScheduledBackup(preferences)"),
-        DeprecationLevel.ERROR
-    )
-    private fun saveScheduledBackup(username: String) {
-        unsupported
     }
 
     fun saveQuickSnoozeBackup(userPreferences: SharedPreferences) {
         userPreferences[PREF_SNOOZE_QUICK] = snoozeQuick
     }
 
-    @Deprecated(
-        "Save using Preferences directly",
-        ReplaceWith("saveQuickSnoozeBackup(preferences)"),
-        DeprecationLevel.ERROR
-    )
-    fun saveQuickSnoozeBackup(username: String) {
-        unsupported
-    }
-
     fun saveQuickSnoozeEndTimeBackup(userPreferences: SharedPreferences) {
         userPreferences[PREF_SNOOZE_QUICK_END_TIME] = snoozeQuickEndTime
-    }
-
-    @Deprecated(
-        "Save using Preferences directly",
-        ReplaceWith("saveQuickSnoozeEndTimeBackup(preferences)"),
-        DeprecationLevel.ERROR
-    )
-    fun saveQuickSnoozeEndTimeBackup(username: String) {
-        unsupported
     }
 
     private fun saveScheduledSnoozeStartTimeBackup(userPreferences: SharedPreferences) {
@@ -231,39 +171,12 @@ class SnoozeSettings(
             "$snoozeScheduledStartTimeHour:$snoozeScheduledStartTimeMinute"
     }
 
-    @Deprecated(
-        "Save using Preferences directly",
-        ReplaceWith("saveScheduledSnoozeStartTimeBackup(preferences)"),
-        DeprecationLevel.ERROR
-    )
-    private fun saveScheduledSnoozeStartTimeBackup(username: String) {
-        unsupported
-    }
-
     private fun saveScheduledSnoozeEndTimeBackup(userPreferences: SharedPreferences) {
         userPreferences[PREF_SNOOZE_SCHEDULED_END_TIME] = "$snoozeScheduledEndTimeHour:$snoozeScheduledEndTimeMinute"
     }
 
-    @Deprecated(
-        "Save using Preferences directly",
-        ReplaceWith("saveScheduledSnoozeEndTimeBackup(preferences)"),
-        DeprecationLevel.ERROR
-    )
-    private fun saveScheduledSnoozeEndTimeBackup(username: String) {
-        unsupported
-    }
-
     private fun saveScheduledSnoozeRepeatingDaysBackup(userPreferences: SharedPreferences) {
         userPreferences[PREF_SNOOZE_SCHEDULED_REPEAT_DAYS] = snoozeScheduledRepeatingDays
-    }
-
-    @Deprecated(
-        "Save using Preferences directly",
-        ReplaceWith("saveScheduledSnoozeRepeatingDaysBackup(preferences)"),
-        DeprecationLevel.ERROR
-    )
-    private fun saveScheduledSnoozeRepeatingDaysBackup(username: String) {
-        unsupported
     }
 
     /**
@@ -292,13 +205,11 @@ class SnoozeSettings(
             isWithinSnoozeWindow = currentTimestamp in startTimestamp until endTimestamp
             isOnCorrectDay = snoozeScheduledRepeatingDays
                 ?.contains(days[time.get(Calendar.DAY_OF_WEEK)] ?: "xx") ?: false
-
         } else { // snooze happens over the midnight
             if (currentTimestamp >= startTimestamp) {
                 isWithinSnoozeWindow = true
                 isOnCorrectDay = snoozeScheduledRepeatingDays
                     ?.contains(days[time.get(Calendar.DAY_OF_WEEK)] ?: "xx") ?: false
-
             } else if (currentTimestamp < endTimestamp) {
                 isWithinSnoozeWindow = true
                 time.add(Calendar.DAY_OF_WEEK, -1)

@@ -75,7 +75,11 @@ class BottomActionsView @JvmOverloads constructor(
             ActionPosition.ACTION_FOURTH -> fourthActionImageButton
         }
 
-    fun setAction(actionPosition: ActionPosition, isVisible: Boolean, @DrawableRes actionIcon: Int? = null) {
+    fun setAction(
+        actionPosition: ActionPosition,
+        isVisible: Boolean,
+        @DrawableRes actionIcon: Int? = null
+    ) {
         val actionButton = getButtonForPosition(actionPosition)
         if (isVisible && actionIcon != null) {
             actionButton.visibility = View.VISIBLE

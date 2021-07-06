@@ -156,7 +156,10 @@ class AccountStateManager @Inject constructor(
      *
      * For example, SecondFactor Workflow, TwoPassMode Workflow or ChooseAddress Workflow.
      */
-    fun observeAccountStateWithExternalLifecycle(lifecycle: Lifecycle, isSplashActivity: Boolean = false) {
+    fun observeAccountStateWithExternalLifecycle(
+        lifecycle: Lifecycle,
+        isSplashActivity: Boolean = false
+    ) {
         // Don't start workflow if MailboxActivity will do it later.
         fun shouldStart() = !isSplashActivity || state.value != State.PrimaryExist
         observeAccountManager(lifecycle)
@@ -182,7 +185,9 @@ class AccountStateManager @Inject constructor(
         currentAuthOrchestrator = authOrchestrator
     }
 
-    fun setHumanVerificationOrchestrator(humanVerificationOrchestrator: HumanVerificationOrchestrator) {
+    fun setHumanVerificationOrchestrator(
+        humanVerificationOrchestrator: HumanVerificationOrchestrator
+    ) {
         currentHumanVerificationOrchestrator = humanVerificationOrchestrator
     }
 

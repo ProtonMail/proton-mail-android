@@ -132,7 +132,10 @@ class ContactsGroupsListAdapter(
             oldItem.contactId == newItem.contactId &&
                 oldItem.name == newItem.name
 
-        override fun areContentsTheSame(oldItem: ContactGroupListItem, newItem: ContactGroupListItem): Boolean =
+        override fun areContentsTheSame(
+            oldItem: ContactGroupListItem,
+            newItem: ContactGroupListItem
+        ): Boolean =
             oldItem.contactId == newItem.contactId &&
                 oldItem.name == newItem.name &&
                 oldItem.color == newItem.color &&
@@ -140,7 +143,4 @@ class ContactsGroupsListAdapter(
                 oldItem.isMultiselectActive == newItem.isMultiselectActive &&
                 oldItem.isSelected == newItem.isSelected
     }
-
 }
-
-

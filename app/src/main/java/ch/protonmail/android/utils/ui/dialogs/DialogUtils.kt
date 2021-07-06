@@ -34,14 +34,16 @@ import ch.protonmail.android.R
 import ch.protonmail.android.views.CustomFontButton
 import com.google.android.material.snackbar.Snackbar
 
-
-/**
- * Created by kadrikj on 10/24/18. */
 class DialogUtils {
 
     companion object {
 
-        fun showInfoDialog(context: Context, title: String, message: String, okListener: ((Unit) -> Unit)?) {
+        fun showInfoDialog(
+            context: Context,
+            title: String,
+            message: String,
+            okListener: ((Unit) -> Unit)?
+        ) {
             val builder = AlertDialog.Builder(context)
 
             val messageWithLinks = SpannableString(message)
@@ -61,7 +63,12 @@ class DialogUtils {
             (dialog.findViewById(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
         }
 
-        fun showInfoDialogWithCustomView(context: Context, title: String, view: View, okListener: ((Unit) -> Unit)?) {
+        fun showInfoDialogWithCustomView(
+            context: Context,
+            title: String,
+            view: View,
+            okListener: ((Unit) -> Unit)?
+        ) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle(title)
                 .setView(view)
@@ -75,7 +82,12 @@ class DialogUtils {
                 .show()
         }
 
-        fun showDeleteConfirmationDialog(context: Context, title: String, message: String, okListener: (Unit) -> Unit) {
+        fun showDeleteConfirmationDialog(
+            context: Context,
+            title: String,
+            message: String,
+            okListener: (Unit) -> Unit
+        ) {
             showInfoDialogWithTwoButtons(
                 context, title, message, context.getString(R.string.no),
                 context.getString(R.string.yes), okListener, true

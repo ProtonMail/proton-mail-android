@@ -23,11 +23,12 @@ import androidx.lifecycle.MediatorLiveData
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.UnreadLabelCounter
 
-/**
- * Created by Kamil Rajtar on 17.08.18.  */
-//TODO change MutableList to List after rewritting Notifications activity to kotlin
-class LabelsWithUnreadCounterLiveData(labelsLiveData: LiveData<List<Label>>,
-                                      countersLiveData: LiveData<List<UnreadLabelCounter>>) : MediatorLiveData<MutableList<LabelWithUnreadCounter>>() {
+// TODO change MutableList to List after rewritting Notifications activity to kotlin
+class LabelsWithUnreadCounterLiveData(
+    labelsLiveData: LiveData<List<Label>>,
+    countersLiveData: LiveData<List<UnreadLabelCounter>>
+) : MediatorLiveData<MutableList<LabelWithUnreadCounter>>() {
+
     var labels: List<Label>? = null
     var unreadCounters: List<UnreadLabelCounter>? = null
 

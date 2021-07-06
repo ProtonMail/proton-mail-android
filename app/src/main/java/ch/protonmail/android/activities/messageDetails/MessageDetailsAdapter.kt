@@ -73,7 +73,7 @@ internal class MessageDetailsAdapter(
     private val onAttachmentDownloadCallback: (Attachment) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
 
-    private var allLabelsList: List<Label>? = listOf()
+    private var allLabelsList: List<Label>? = emptyList()
     private var nonInclusiveLabelsList: List<LabelChipUiModel> = emptyList()
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -237,12 +237,12 @@ internal class MessageDetailsAdapter(
         }
 
         private fun setUpViewDividers() {
-            val hideHeaderDivider = itemView.attachmentsView.visibility == View.GONE
-                && itemView.expirationInfoView.visibility == View.VISIBLE
+            val hideHeaderDivider = itemView.attachmentsView.visibility == View.GONE &&
+                itemView.expirationInfoView.visibility == View.VISIBLE
             itemView.headerDividerView.isVisible = !hideHeaderDivider
 
-            val showAttachmentsDivider = itemView.attachmentsView.visibility == View.VISIBLE
-                && itemView.expirationInfoView.visibility != View.VISIBLE
+            val showAttachmentsDivider = itemView.attachmentsView.visibility == View.VISIBLE &&
+                itemView.expirationInfoView.visibility != View.VISIBLE
             itemView.attachmentsDividerView.isVisible = showAttachmentsDivider
         }
     }
@@ -301,7 +301,10 @@ internal class MessageDetailsAdapter(
         webView.setOnTouchListener(touchListener)
     }
 
-    private fun displayAttachmentInfo(attachments: List<Attachment>?, attachmentsView: MessageDetailsAttachmentsView) {
+    private fun displayAttachmentInfo(
+        attachments: List<Attachment>?,
+        attachmentsView: MessageDetailsAttachmentsView
+    ) {
         if (attachments == null) {
             attachmentsView.visibility = View.GONE
             return

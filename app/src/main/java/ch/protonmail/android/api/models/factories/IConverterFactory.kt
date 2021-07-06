@@ -19,12 +19,11 @@
 package ch.protonmail.android.api.models.factories
 
 /**
- * Created by kadrikj on 8/21/18.
- *
  * T - the Server type.
  * Z - the DB type.
  * */
 interface IConverterFactory<T, Z> {
+
     fun createDBObjectFromServerObject(serverObject: T): Z
     fun createServerObjectFromDBObject(dbObject: Z): T
 }

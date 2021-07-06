@@ -23,19 +23,19 @@ import ch.protonmail.android.R
 import studio.forface.viewstatestore.ViewState
 
 /** An [Exception] that will be thrown when is it impossible to get a `Ringtone` for the user */
-internal class InvalidRingtoneException( cause: Throwable, uri: Uri ) : Exception(
-        "Error loading Ringtone from the given Uri: `$uri`", cause
+internal class InvalidRingtoneException(cause: Throwable, uri: Uri) : Exception(
+    "Error loading Ringtone from the given Uri: `$uri`", cause
 )
 
 /** A [ViewState.Error] that will be generated when ringtone is invalid */
-internal class InvalidRingtoneError( throwable: InvalidRingtoneException ) :
-        ViewState.Error( throwable, R.string.ringtone_invalid )
+internal class InvalidRingtoneError(throwable: InvalidRingtoneException) :
+    ViewState.Error(throwable, R.string.ringtone_invalid)
 
 /** An [Exception] that will be thrown when it is impossible to get default `Ringtone` */
 internal class NoDefaultRingtoneException : Exception(
-        "Error loading default Ringtone"
+    "Error loading default Ringtone"
 )
 
 /** A [ViewState.Error] that will be generated when it is impossible to get default `Ringtone` */
-internal class NoDefaultRingtoneError( throwable: NoDefaultRingtoneException ) :
-        ViewState.Error( throwable, R.string.ringtone_no_default )
+internal class NoDefaultRingtoneError(throwable: NoDefaultRingtoneException) :
+    ViewState.Error(throwable, R.string.ringtone_no_default)

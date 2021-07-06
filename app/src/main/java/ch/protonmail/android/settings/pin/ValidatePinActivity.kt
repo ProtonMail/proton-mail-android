@@ -49,11 +49,8 @@ const val EXTRA_MESSAGE_DETAIL_EVENT = "extra_message_details_event"
 const val EXTRA_DRAFT_DETAILS_EVENT = "extra_draft_details_event"
 // endregion
 
-/*
- * Created by dkadrikj on 3/27/16.
- */
-
-class ValidatePinActivity : BaseActivity(),
+class ValidatePinActivity :
+    BaseActivity(),
     PinFragmentViewModel.IPinCreationListener,
     ISecurePINListener,
     PinFragmentViewModel.ReopenFingerprintDialogListener {
@@ -170,7 +167,8 @@ class ValidatePinActivity : BaseActivity(),
 
     private fun initBiometricPrompt() {
         val executor = Executors.newSingleThreadExecutor()
-        biometricPrompt = BiometricPrompt(this, executor,
+        biometricPrompt = BiometricPrompt(
+            this, executor,
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
@@ -183,7 +181,8 @@ class ValidatePinActivity : BaseActivity(),
                     super.onAuthenticationSucceeded(result)
                     onPinSuccess()
                 }
-            })
+            }
+        )
         promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(R.string.app_locked))
             .setDescription(getString(R.string.log_in_using_biometric_credential))
