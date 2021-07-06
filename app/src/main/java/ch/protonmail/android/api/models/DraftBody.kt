@@ -18,38 +18,24 @@
  */
 package ch.protonmail.android.api.models
 
-import ch.protonmail.android.api.models.messages.receive.ServerMessageSender
 import ch.protonmail.android.api.utils.Fields
-import ch.protonmail.android.data.local.model.MessageSender
 import com.google.gson.annotations.SerializedName
 
 data class DraftBody(
+
     @SerializedName(Fields.Message.MESSAGE)
-    val message: MessagePayload
-) {
+    val message: MessagePayload,
 
     @SerializedName(Fields.Message.PARENT_ID)
-    var parentID: String? = null
+    val parentId: String? = null,
 
     @SerializedName(Fields.Message.ACTION)
-    var action = 0
+    val action: Int = 0,
 
     @SerializedName(Fields.Message.UNREAD)
-    var unread: Int? = message.unread
+    val unread: Int? = message.unread,
 
     @SerializedName(Fields.Message.Send.ATTACHMENT_KEY_PACKETS)
-    val attachmentKeyPackets: MutableMap<String, String> = hashMapOf()
-
-    fun setSender(messageSender: MessageSender) {
-        message.sender = ServerMessageSender(messageSender.name, messageSender.emailAddress)
-    }
-
-    fun setMessageBody(messageBody: String) {
-        message.body = messageBody
-    }
-
-    fun addAttachmentKeyPacket(key: String, value: String) {
-        attachmentKeyPackets[key] = value
-    }
-}
+    val attachmentKeyPackets: Map<String, String> = hashMapOf()
+)
 

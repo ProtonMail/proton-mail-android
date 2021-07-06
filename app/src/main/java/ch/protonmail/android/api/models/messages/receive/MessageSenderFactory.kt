@@ -19,19 +19,20 @@
 package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.data.local.model.MessageSender
-import ch.protonmail.android.utils.extensions.notNull
 import javax.inject.Inject
 
 class MessageSenderFactory @Inject constructor() {
 
     fun createServerMessageSender(messageSender: MessageSender): ServerMessageSender {
-        val (name, emailAddress) = messageSender
+        val (name, emailAddress) = with(messageSender) {
+            name to checkNotNull(emailAddress) { "Email address cannot be null" }
+        }
         return ServerMessageSender(name, emailAddress)
     }
 
     fun createMessageSender(serverMessageSender: ServerMessageSender): MessageSender {
-        val name = serverMessageSender.Name
-        val emailAddress = serverMessageSender.Address.notNull("emailAddress")
+        val name = serverMessageSender.name
+        val emailAddress = requireNotNull(serverMessageSender.address)
         return MessageSender(name, emailAddress)
     }
 }

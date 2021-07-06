@@ -44,6 +44,7 @@ import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.util.checkNotBlank
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
@@ -563,16 +564,24 @@ data class Message @JvmOverloads constructor(
 
     fun isSenderEmailAlias() = senderEmail.contains("+")
 
-    fun toApiPayload() = MessagePayload(
-        messageId,
-        subject,
-        ServerMessageSender(sender?.name, sender?.emailAddress),
-        messageBody,
-        toList,
-        ccList,
-        bccList,
-        Unread.toInt()
-    )
+    fun toApiPayload(): MessagePayload {
+        val serverSender = run {
+            val sender = checkNotNull(sender) { "Sender is required to create a Payload" }
+            val senderAddress = checkNotNull(sender.emailAddress) { "Sender address is required to create a Payload" }
+            ServerMessageSender(name = sender.name, address = senderAddress)
+        }
+
+        return MessagePayload(
+            sender = serverSender,
+            body = checkNotBlank(messageBody) { "An encrypted message body is required to create a Payload" },
+            id = messageId,
+            subject = subject,
+            toList = toList,
+            ccList = ccList,
+            bccList = bccList,
+            unread = Unread.toInt()
+        )
+    }
 
     enum class MessageType {
         INBOX, DRAFT, SENT, INBOX_AND_SENT

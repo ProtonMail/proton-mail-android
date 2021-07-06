@@ -353,7 +353,7 @@ class EventHandler @AssistedInject constructor(
             }
             val sender = newMessage.Sender
             if (sender != null) {
-                message.sender = MessageSender(sender.Name, sender.Address)
+                message.sender = MessageSender(sender.name, sender.address)
             }
             val toList = newMessage.ToList
             if (toList != null) {

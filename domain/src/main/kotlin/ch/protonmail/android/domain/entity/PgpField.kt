@@ -55,7 +55,6 @@ sealed class PgpField(input: NotBlankString, val type: String) {
     class PrivateKey(input: NotBlankString) : PgpField(input, "PRIVATE KEY BLOCK")
     class Signature(input: NotBlankString) : PgpField(input, "SIGNATURE KEY BLOCK")
 
-
     override fun equals(other: Any?) =
         other is PgpField && type == other.type && content == other.content
 
