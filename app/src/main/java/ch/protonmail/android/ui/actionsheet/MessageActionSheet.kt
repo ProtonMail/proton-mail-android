@@ -228,14 +228,14 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     setText(R.string.not_spam_move_to_inbox)
                 }
                 setOnClickListener {
-                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.INBOX)
+                    viewModel.moveToInbox(messageIds, messageLocation)
                 }
             }
             textViewDetailsActionsTrash.apply {
                 isVisible = messageLocation in Constants.MessageLocationType.values()
                     .filter { it != Constants.MessageLocationType.TRASH }
                 setOnClickListener {
-                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.TRASH)
+                    viewModel.moveToTrash(messageIds, messageLocation)
                 }
             }
             textViewDetailsActionsMoveToArchive.apply {
@@ -245,7 +245,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                             type != Constants.MessageLocationType.SPAM
                     }
                 setOnClickListener {
-                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.ARCHIVE)
+                    viewModel.moveToArchive(messageIds, messageLocation)
                 }
             }
             textViewDetailsActionsMoveToSpam.apply {
@@ -257,7 +257,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                             type != Constants.MessageLocationType.TRASH
                     }
                 setOnClickListener {
-                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.SPAM)
+                    viewModel.moveToSpam(messageIds, messageLocation)
                 }
             }
             textViewDetailsActionsDelete.apply {
@@ -334,9 +334,16 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             is MessageActionSheetAction.ShowMessageHeaders -> showMessageHeaders(sheetAction.messageHeaders)
             is MessageActionSheetAction.ChangeReadStatus -> dismissActionSheetAndGoToMailbox()
             is MessageActionSheetAction.ChangeStarredStatus -> dismiss()
-            is MessageActionSheetAction.MoveToFolder -> dismissActionSheetAndGoToMailbox()
             is MessageActionSheetAction.Delete -> dismiss()
+            is MessageActionSheetAction.ShouldDismiss -> handleDismissBehavior(sheetAction.dismissBackingActivity)
             else -> Timber.v("unhandled action $sheetAction")
+        }
+    }
+
+    private fun handleDismissBehavior(dismissBackingActivity: Boolean) {
+        dismiss()
+        if (dismissBackingActivity) {
+            popBackDetailsActivity()
         }
     }
 
@@ -378,10 +385,11 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         private const val EXTRA_ARG_TITLE = "arg_message_details_actions_title"
         private const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
         private const val EXTRA_ARG_IS_STARED = "arg_extra_is_stared"
-        private const val EXTRA_ARG_ORIGINATOR_SCREEN_ID = "extra_arg_originator_screen_id"
         private const val HEADER_SLIDE_THRESHOLD = 0.8f
+        internal const val EXTRA_ARG_ORIGINATOR_SCREEN_ID = "extra_arg_originator_screen_id"
         const val ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID = 0 // e.g. [MessageDetailsActivity]
         const val ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID = 1 // e.g [MailboxActivity]
+        const val ARG_ORIGINATOR_SCREEN_CONVERSATION_DETAILS_ID = 2 // e.g [MessageDetailsActivity with conversations]
 
         /**
          * Creates new action sheet instance.

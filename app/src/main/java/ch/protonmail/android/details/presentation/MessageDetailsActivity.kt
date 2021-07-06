@@ -793,7 +793,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private fun onShowMessageActionSheet() = { message: Message ->
         MessageActionSheet.newInstance(
-            MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
+            MessageActionSheet.ARG_ORIGINATOR_SCREEN_CONVERSATION_DETAILS_ID,
             listOf(message.messageId ?: messageOrConversationId),
             message.location,
             getCurrentSubject(),

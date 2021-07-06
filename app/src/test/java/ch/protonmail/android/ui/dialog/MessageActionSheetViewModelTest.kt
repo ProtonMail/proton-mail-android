@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.ui.dialog
 
+import androidx.lifecycle.SavedStateHandle
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
@@ -29,13 +30,16 @@ import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
+import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetAction
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetViewModel
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
@@ -74,12 +78,16 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     @MockK
     private lateinit var accountManager: AccountManager
 
+    @MockK
+    private lateinit var savedStateHandle: SavedStateHandle
+
     private lateinit var viewModel: MessageActionSheetViewModel
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         viewModel = MessageActionSheetViewModel(
+            savedStateHandle,
             deleteMessage,
             deleteConversations,
             moveMessagesToFolder,
@@ -177,6 +185,46 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // when
         viewModel.showMessageHeaders(messageId1)
+
+        // then
+        assertEquals(expected, viewModel.actionsFlow.value)
+    }
+
+    @Test
+    fun verifyMoveToInboxEmitsShouldDismissActionThatDoesNotDismissBackingActivityWhenBottomActionSheetOriginatorWasConversationDetails() {
+        // given
+        val messageId1 = "messageId1"
+        val expected = MessageActionSheetAction.ShouldDismiss(false)
+        every { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
+        every {
+            savedStateHandle.get<Int>("extra_arg_originator_screen_id")
+        } returns MessageActionSheet.ARG_ORIGINATOR_SCREEN_CONVERSATION_DETAILS_ID
+
+        // when
+        viewModel.moveToInbox(
+            listOf(messageId1),
+            Constants.MessageLocationType.ARCHIVE
+        )
+
+        // then
+        assertEquals(expected, viewModel.actionsFlow.value)
+    }
+
+    @Test
+    fun verifyMoveToInboxEmitsShouldDismissActionThatDismissesBackingActivityWhenBottomActionSheetOriginatorWasMessageDetails() {
+        // given
+        val messageId1 = "messageId1"
+        val expected = MessageActionSheetAction.ShouldDismiss(true)
+        every { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
+        every {
+            savedStateHandle.get<Int>("extra_arg_originator_screen_id")
+        } returns MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+
+        // when
+        viewModel.moveToInbox(
+            listOf(messageId1),
+            Constants.MessageLocationType.ARCHIVE
+        )
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
