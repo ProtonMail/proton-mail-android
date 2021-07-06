@@ -792,7 +792,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun onShowMessageActionSheet() = { message: Message ->
-        TODO("Not yet implemented")
+        MessageActionSheet.newInstance(
+            MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
+            listOf(message.messageId ?: messageOrConversationId),
+            message.location,
+            getCurrentSubject(),
+            getMessagesFrom(message.sender?.name),
+            message.isStarred ?: false
+        ).show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
     }
 
     fun printMessage() {

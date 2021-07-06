@@ -81,7 +81,7 @@ internal class MessageDetailsAdapter(
     private val onEditDraftClicked: (Message) -> Unit,
     private val messageBodyParser: MessageBodyParser,
     private val onReplyMessageClicked: (Message) -> Unit,
-    private val onMessageActionSheet: (Message) -> Unit
+    private val onMoreMessageActionsClicked: (Message) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsListItem>(context) {
 
     private var allLabelsList: List<Label>? = emptyList()
@@ -244,16 +244,17 @@ internal class MessageDetailsAdapter(
             loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
             setUpViewDividers()
 
-            val messageActionsView = itemView.messageWebViewContainer
-                .findViewById<MessageDetailsActionsView>(ITEM_MESSAGE_ACTIONS_LAYOUT_ID)
+            val messageActionsView: MessageDetailsActionsView? =
+                itemView.messageWebViewContainer.findViewById(ITEM_MESSAGE_ACTIONS_LAYOUT_ID)
             val replyMode = if (message.toList.size + message.ccList.size > 1) {
                 MessageDetailsActionsView.ReplyMode.REPLY_ALL
             } else {
                 MessageDetailsActionsView.ReplyMode.REPLY
             }
-            messageActionsView.bind(MessageDetailsActionsView.UiModel(replyMode))
+            messageActionsView?.bind(MessageDetailsActionsView.UiModel(replyMode))
             setupShowHistoryAction(messageActionsView, listItem, webView)
-            messageActionsView.onReplyClicked { onReplyMessageClicked(message) }
+            messageActionsView?.onReplyClicked { onReplyMessageClicked(message) }
+            messageActionsView?.onMoreActionsClicked { onMoreMessageActionsClicked(message) }
 
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
         }

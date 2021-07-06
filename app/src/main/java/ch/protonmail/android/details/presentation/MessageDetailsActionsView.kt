@@ -40,7 +40,7 @@ class MessageDetailsActionsView @JvmOverloads constructor(
 
     private val showHistoryButton: Button
     private val replyButton: ImageButton
-    private val actionsSheetButton: ImageButton
+    private val moreActionsButton: ImageButton
 
     init {
         val binding = MessageDetailsActionsBinding.inflate(
@@ -50,7 +50,7 @@ class MessageDetailsActionsView @JvmOverloads constructor(
         )
         showHistoryButton = binding.detailsButtonShowHistory
         replyButton = binding.detailsButtonReply
-        actionsSheetButton = binding.detailsActionSheetButton
+        moreActionsButton = binding.detailsButtonMoreActions
     }
 
     fun bind(uiModel: UiModel) {
@@ -67,6 +67,10 @@ class MessageDetailsActionsView @JvmOverloads constructor(
 
     fun onShowHistoryClicked(callback: (View) -> Unit) {
         showHistoryButton.setOnClickListener { callback(it) }
+    }
+
+    fun onMoreActionsClicked(callback: (View) -> Unit) {
+        moreActionsButton.setOnClickListener { callback(it) }
     }
 
     class UiModel(
