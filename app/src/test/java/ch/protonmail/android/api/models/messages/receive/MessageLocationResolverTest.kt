@@ -50,6 +50,22 @@ class MessageLocationResolverTest {
     }
 
     @Test
+    fun verifyThatDraftsAreProperlyResolvedFromLabelsWithMultipleInputs() {
+
+        // given
+        val testLabelIds = listOf(
+            "1",
+            "5",
+            "8"
+        )
+        val expected = Constants.MessageLocationType.DRAFT
+
+        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
+
+        assertEquals(expected, result)
+    }
+
+    @Test
     fun verifyThatSingleAllLocationIsInvalid() {
 
         // given
@@ -142,6 +158,29 @@ class MessageLocationResolverTest {
         val testLabelIds = listOf(
             "5",
             "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg=="
+        )
+        val expected = Constants.MessageLocationType.LABEL_FOLDER
+        val testLabel = mockk<Label> {
+            every { exclusive } returns true
+        }
+        every { messageDao.findLabelById(any()) } returns testLabel
+
+        // when
+        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
+
+        // then
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun verifyThaLabelFolderLocationWithAllLocationAndStarredIsParsedProperly() {
+
+        // given
+        val testLabelIds = listOf(
+            "5",
+            "10",
+            "KixlLFyrSj5yTKHwMrhJjKEwSQ3MW7nxyIMplCGpaH8jL5mamO1oYM9Djo2S6pAm8EQmJ3CYMmo4Jpg_ax-LWw==",
+            "hk3g-efDXUe5pZKWzIkPPYKueFyAu9UCYRlD2ej-auBnu8gSC2g6hC0OVSkZm_3zdKkZdvLZBtRwydhjvUi-Wg=="
         )
         val expected = Constants.MessageLocationType.LABEL_FOLDER
         val testLabel = mockk<Label> {
