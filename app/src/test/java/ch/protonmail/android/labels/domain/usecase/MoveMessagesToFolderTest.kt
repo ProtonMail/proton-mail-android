@@ -48,10 +48,9 @@ class MoveMessagesToFolderTest {
 
         // given
         val messageIds = listOf("id1", "id2")
-        val newFolderLocation = Constants.MessageLocationType.TRASH.toString()
+        val newFolderLocation = Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
         val currentFolderLabelId = "currentFolderId"
         every { repository.moveToTrash(messageIds, currentFolderLabelId) } just Runs
-
 
         // when
         useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId)
@@ -65,10 +64,9 @@ class MoveMessagesToFolderTest {
 
         // given
         val messageIds = listOf("id1", "id2")
-        val newFolderLocation = Constants.MessageLocationType.ARCHIVE.toString()
+        val newFolderLocation = Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
         val currentFolderLabelId = "currentFolderId"
         every { repository.moveToArchive(messageIds, currentFolderLabelId) } just Runs
-
 
         // when
         useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId)
@@ -82,10 +80,9 @@ class MoveMessagesToFolderTest {
 
         // given
         val messageIds = listOf("id1", "id2")
-        val newFolderLocation = Constants.MessageLocationType.INBOX.toString()
+        val newFolderLocation = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
         val currentFolderLabelId = "currentFolderId"
         every { repository.moveToInbox(messageIds, currentFolderLabelId) } just Runs
-
 
         // when
         useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId)
@@ -99,10 +96,9 @@ class MoveMessagesToFolderTest {
 
         // given
         val messageIds = listOf("id1", "id2")
-        val newFolderLocation = Constants.MessageLocationType.SPAM.toString()
+        val newFolderLocation = Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString()
         val currentFolderLabelId = "currentFolderId"
         every { repository.moveToSpam(messageIds) } just Runs
-
 
         // when
         useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId)
@@ -119,7 +115,6 @@ class MoveMessagesToFolderTest {
         val newFolderLocation = "newFolderCustomId"
         val currentFolderLabelId = "currentFolderId"
         every { repository.moveToCustomFolderLocation(messageIds, newFolderLocation) } just Runs
-
 
         // when
         useCase.invoke(messageIds, newFolderLocation, currentFolderLabelId)

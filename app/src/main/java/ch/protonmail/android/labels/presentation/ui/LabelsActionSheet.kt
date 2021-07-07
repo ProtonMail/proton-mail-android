@@ -30,6 +30,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentLabelsActionSheetBinding
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
@@ -134,7 +135,9 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
     }
 
     private fun onLabelClicked(model: LabelActonItemUiModel) {
-        viewModel.onLabelClicked(model)
+        val currentFolderLocationId = arguments?.getInt(EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID)
+            ?: Constants.MessageLocationType.INVALID.messageLocationTypeValue
+        viewModel.onLabelClicked(model, currentFolderLocationId)
     }
 
     private fun showApplicableLabelsThresholdError(maxLabelsAllowed: Int) {

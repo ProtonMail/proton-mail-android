@@ -1134,7 +1134,12 @@ class MailboxActivity :
                     false
                 )
                 undoSnack!!.show()
-                mJobManager.addJobInBackground(PostTrashJobV2(messageIds, mailboxLabelId))
+                mailboxViewModel.moveToTrash(
+                    messageIds,
+                    UserId(userManager.requireCurrentUserId().s),
+                    currentMailboxLocation,
+                    mailboxLabelId
+                )
             }
             actionMode?.finish()
         }

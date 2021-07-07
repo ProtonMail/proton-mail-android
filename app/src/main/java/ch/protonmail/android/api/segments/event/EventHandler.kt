@@ -582,7 +582,7 @@ class EventHandler @AssistedInject constructor(
                     val labelType = item.type!!
                     val labelId = item.ID
                     if (labelType == Constants.LABEL_TYPE_MESSAGE) {
-                        val label = messageDao.findLabelById(labelId!!)
+                        val label = messageDao.findLabelByIdBlocking(labelId!!)
                         writeMessageLabel(label, item, messageDao)
                     } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
                         val contactLabel = contactDao.findContactGroupByIdBlocking(labelId!!)

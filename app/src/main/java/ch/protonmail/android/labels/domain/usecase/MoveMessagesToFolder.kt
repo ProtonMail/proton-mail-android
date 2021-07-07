@@ -34,17 +34,16 @@ class MoveMessagesToFolder @Inject constructor(
         currentFolderLabelId: String = EMPTY_STRING,
     ) {
         when (newFolderLocationId) {
-            Constants.MessageLocationType.TRASH.toString() ->
+            Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString() ->
                 messagesRepository.moveToTrash(messageIds, currentFolderLabelId)
-            Constants.MessageLocationType.ARCHIVE.toString() ->
+            Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString() ->
                 messagesRepository.moveToArchive(messageIds, currentFolderLabelId)
-            Constants.MessageLocationType.INBOX.toString() ->
+            Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString() ->
                 messagesRepository.moveToInbox(messageIds, currentFolderLabelId)
-            Constants.MessageLocationType.SPAM.toString() ->
+            Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString() ->
                 messagesRepository.moveToSpam(messageIds)
             else ->
                 messagesRepository.moveToCustomFolderLocation(messageIds, newFolderLocationId)
         }
     }
-
 }

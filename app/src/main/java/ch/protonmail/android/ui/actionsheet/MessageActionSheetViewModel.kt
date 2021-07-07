@@ -26,6 +26,7 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
+import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -36,12 +37,14 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.util.kotlin.EMPTY_STRING
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class MessageActionSheetViewModel @Inject constructor(
     private val deleteMessage: DeleteMessage,
     private val moveMessagesToFolder: MoveMessagesToFolder,
+    private val moveConversationsToFolder: MoveConversationsToFolder,
     private val messageRepository: MessageRepository,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
@@ -76,37 +79,36 @@ class MessageActionSheetViewModel @Inject constructor(
         }
     }
 
-    fun moveToInbox(
-        messageIds: List<String>,
-        currentFolder: Constants.MessageLocationType
-    ) = moveMessagesToFolder(
-        messageIds, Constants.MessageLocationType.INBOX.toString(),
-        currentFolder.messageLocationTypeValue.toString()
-    )
-
-    fun moveToArchive(
-        messageIds: List<String>,
-        currentFolder: Constants.MessageLocationType
-    ) = moveMessagesToFolder(
-        messageIds, Constants.MessageLocationType.ARCHIVE.toString(),
-        currentFolder.messageLocationTypeValue.toString()
-    )
-
-    fun moveToSpam(
-        messageIds: List<String>,
-        currentFolder: Constants.MessageLocationType
-    ) = moveMessagesToFolder(
-        messageIds, Constants.MessageLocationType.SPAM.toString(),
-        currentFolder.messageLocationTypeValue.toString()
-    )
-
-    fun moveToTrash(
-        messageIds: List<String>,
-        currentFolder: Constants.MessageLocationType
-    ) = moveMessagesToFolder(
-        messageIds, Constants.MessageLocationType.TRASH.toString(),
-        currentFolder.messageLocationTypeValue.toString()
-    )
+    fun moveToFolder(
+        ids: List<String>,
+        currentFolder: Constants.MessageLocationType,
+        destinationFolder: Constants.MessageLocationType
+    ) {
+        viewModelScope.launch {
+            if (conversationModeEnabled(currentFolder)) {
+                val primaryUserId = accountManager.getPrimaryUserId().first()
+                if (primaryUserId != null) {
+                    moveConversationsToFolder(
+                        ids,
+                        primaryUserId,
+                        destinationFolder.messageLocationTypeValue.toString()
+                    )
+                } else {
+                    Timber.e("Primary user id is null. Cannot move message/conversation to folder")
+                }
+            } else {
+                moveMessagesToFolder(
+                    ids,
+                    destinationFolder.toString(),
+                    currentFolder.messageLocationTypeValue.toString()
+                )
+            }
+        }.invokeOnCompletion {
+            actionsMutableFlow.value = MessageActionSheetAction.MoveToFolder(
+                destinationFolder.messageLocationTypeValue.toString()
+            )
+        }
+    }
 
     fun starMessage(
         ids: List<String>,
@@ -114,8 +116,15 @@ class MessageActionSheetViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (conversationModeEnabled(location)) {
-                accountManager.getPrimaryUserId().first()?.let {
-                    changeConversationsStarredStatus(ids, it, ChangeConversationsStarredStatus.Action.ACTION_STAR)
+                val primaryUserId = accountManager.getPrimaryUserId().first()
+                if (primaryUserId != null) {
+                    changeConversationsStarredStatus(
+                        ids,
+                        primaryUserId,
+                        ChangeConversationsStarredStatus.Action.ACTION_STAR
+                    )
+                } else {
+                    Timber.e("Primary user id is null. Cannot star message/conversation")
                 }
             } else {
                 messageRepository.starMessages(ids)
@@ -131,8 +140,15 @@ class MessageActionSheetViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (conversationModeEnabled(location)) {
-                accountManager.getPrimaryUserId().first()?.let {
-                    changeConversationsStarredStatus(ids, it, ChangeConversationsStarredStatus.Action.ACTION_UNSTAR)
+                val primaryUserId = accountManager.getPrimaryUserId().first()
+                if (primaryUserId != null) {
+                    changeConversationsStarredStatus(
+                        ids,
+                        primaryUserId,
+                        ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
+                    )
+                } else {
+                    Timber.e("Primary user id is null. Cannot unstar message/conversation")
                 }
             } else {
                 messageRepository.unStarMessages(ids)
@@ -148,13 +164,16 @@ class MessageActionSheetViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (conversationModeEnabled(location)) {
-                accountManager.getPrimaryUserId().first()?.let {
+                val primaryUserId = accountManager.getPrimaryUserId().first()
+                if (primaryUserId != null) {
                     changeConversationsReadStatus(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
-                        it,
+                        primaryUserId,
                         location
                     )
+                } else {
+                    Timber.e("Primary user id is null. Cannot mark message/conversation unread")
                 }
             } else {
                 messageRepository.markUnRead(ids)
@@ -170,13 +189,16 @@ class MessageActionSheetViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (conversationModeEnabled(location)) {
-                accountManager.getPrimaryUserId().first()?.let {
+                val primaryUserId = accountManager.getPrimaryUserId().first()
+                if (primaryUserId != null) {
                     changeConversationsReadStatus(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
-                        it,
+                        primaryUserId,
                         location
                     )
+                } else {
+                    Timber.e("Primary user id is null. Cannot mark message/conversation read")
                 }
             } else {
                 messageRepository.markRead(ids)

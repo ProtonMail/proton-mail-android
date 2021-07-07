@@ -41,11 +41,13 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchMessageCountsJob
+import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetMessagesByLocation
+import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
@@ -107,7 +109,8 @@ class MailboxViewModel @Inject constructor(
     private val conversationModeEnabled: ConversationModeEnabled,
     private val getConversations: GetConversations,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
-    private val getMessagesByLocation: GetMessagesByLocation
+    private val getMessagesByLocation: GetMessagesByLocation,
+    private val moveConversationsToFolder: MoveConversationsToFolder,
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -605,6 +608,25 @@ class MailboxViewModel @Inject constructor(
             }
         } else {
             messageDetailsRepository.markUnRead(ids)
+        }
+    }
+
+    fun moveToTrash(
+        ids: List<String>,
+        userId: UserId,
+        currentLocation: Constants.MessageLocationType,
+        mailboxLabelId: String?
+    ) {
+        if (conversationModeEnabled(currentLocation)) {
+            viewModelScope.launch {
+                moveConversationsToFolder(
+                    ids,
+                    userId,
+                    Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
+                )
+            }
+        } else {
+            jobManager.addJobInBackground(PostTrashJobV2(ids, mailboxLabelId))
         }
     }
 

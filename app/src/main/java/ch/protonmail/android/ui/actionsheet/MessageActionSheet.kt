@@ -221,32 +221,28 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     setText(R.string.not_spam_move_to_inbox)
                 }
                 setOnClickListener {
-                    viewModel.moveToInbox(messageIds, messageLocation)
-                    dismissActionSheetAndGoToMailbox()
+                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.INBOX)
                 }
             }
             textViewDetailsActionsTrash.apply {
                 isVisible = messageLocation in Constants.MessageLocationType.values()
                     .filter { it != Constants.MessageLocationType.TRASH }
                 setOnClickListener {
-                    viewModel.moveToTrash(messageIds, messageLocation)
-                    dismissActionSheetAndGoToMailbox()
+                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.TRASH)
                 }
             }
             textViewDetailsActionsMoveToArchive.apply {
                 isVisible = messageLocation in Constants.MessageLocationType.values()
                     .filter { it != Constants.MessageLocationType.ARCHIVE }
                 setOnClickListener {
-                    viewModel.moveToArchive(messageIds, messageLocation)
-                    dismissActionSheetAndGoToMailbox()
+                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.ARCHIVE)
                 }
             }
             textViewDetailsActionsMoveToSpam.apply {
                 isVisible = messageLocation in Constants.MessageLocationType.values()
                     .filter { it != Constants.MessageLocationType.SPAM }
                 setOnClickListener {
-                    viewModel.moveToSpam(messageIds, messageLocation)
-                    dismissActionSheetAndGoToMailbox()
+                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.SPAM)
                 }
             }
             textViewDetailsActionsDelete.apply {
@@ -324,6 +320,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             is MessageActionSheetAction.ShowMessageHeaders -> showMessageHeaders(sheetAction.messageHeaders)
             is MessageActionSheetAction.ChangeReadStatus -> dismissActionSheetAndGoToMailbox()
             is MessageActionSheetAction.ChangeStarredStatus -> dismiss()
+            is MessageActionSheetAction.MoveToFolder -> dismissActionSheetAndGoToMailbox()
             else -> Timber.v("unhandled action $sheetAction")
         }
     }

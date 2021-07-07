@@ -109,7 +109,7 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
         labelsToRemove.add(String.valueOf(location));
 
         for (String labelId : oldLabels) {
-            Label label = messageDao.findLabelById(labelId);
+            Label label = messageDao.findLabelByIdBlocking(labelId);
             // find folders
             if (label != null && label.getExclusive()) {
                 labelsToRemove.add(labelId);

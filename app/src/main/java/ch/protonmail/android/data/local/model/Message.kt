@@ -534,7 +534,7 @@ data class Message @JvmOverloads constructor(
 
     fun setFolderLocation(messageDao: MessageDao) {
         for (labelId in allLabelIDs) {
-            val label = messageDao.findLabelById(labelId)
+            val label = messageDao.findLabelByIdBlocking(labelId)
             if (label != null && label.exclusive) {
                 folderLocation = label.id
             }

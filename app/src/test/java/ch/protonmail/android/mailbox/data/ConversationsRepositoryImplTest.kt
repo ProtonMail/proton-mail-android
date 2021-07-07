@@ -67,8 +67,8 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Before
-import org.junit.Test
 import java.io.IOException
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
@@ -235,7 +235,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
             // then
             assertEquals(DataResult.Success(ResponseSource.Local, conversationsOrdered), result)
-
         }
 
     @Test
@@ -696,6 +695,58 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             }
             coVerify(exactly = 4) {
                 messageDao.updateStarred("messageId", false)
+            }
+        }
+    }
+
+    @Test
+    fun verifyConversationsAndMessagesAreMovedToFolder() {
+        runBlockingTest {
+            // given
+            val conversationId1 = "conversationId1"
+            val conversationId2 = "conversationId2"
+            val conversationIds = listOf(conversationId1, conversationId2)
+            val userId = UserId("userId")
+            val folderId = "folderId"
+            val inboxId = "0"
+            val starredId = "10"
+            val allMailId = "5"
+            val message = mockk<Message> {
+                every { time } returns 123
+                every { allLabelIDs } returns listOf(inboxId, starredId)
+                every { labelIDsNotIncludingLocations } returns listOf("labelId")
+                every { removeLabels(listOf(inboxId)) } just runs
+                every { addLabels(listOf(folderId)) } just runs
+            }
+            val conversationLabels = listOf(
+                LabelContextDatabaseModel(allMailId, 0, 2, 123, 123, 1),
+                LabelContextDatabaseModel(starredId, 0, 2, 123, 123, 1),
+                LabelContextDatabaseModel(inboxId, 0, 2, 123, 123, 0)
+            )
+            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
+            coEvery { conversationDao.getConversation(any(), any()) } returns flowOf(
+                mockk {
+                    every { labels } returns conversationLabels
+                    every { numUnread } returns 0
+                    every { numMessages } returns 2
+                    every { size } returns 123
+                    every { numAttachments } returns 1
+                }
+            )
+            coEvery { conversationDao.updateLabels(any(), any()) } just runs
+
+            // when
+            conversationsRepository.moveToFolder(conversationIds, userId, folderId)
+
+            // then
+            coVerify(exactly = 4) {
+                messageDao.saveMessage(any())
+            }
+            coVerify(exactly = 2) {
+                conversationDao.updateLabels(any(), conversationId1)
+            }
+            coVerify(exactly = 2) {
+                conversationDao.updateLabels(any(), conversationId2)
             }
         }
     }
