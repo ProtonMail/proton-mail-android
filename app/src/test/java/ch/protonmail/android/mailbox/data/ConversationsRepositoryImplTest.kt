@@ -725,13 +725,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val inboxId = "0"
             val starredId = "10"
             val allMailId = "5"
-//            val message = mockk<Message> {
-//                every { time } returns 123
-//                every { allLabelIDs } returns listOf(inboxId, starredId)
-//                every { labelIDsNotIncludingLocations } returns listOf("labelId")
-//                every { removeLabels(listOf(inboxId)) } just runs
-//                every { addLabels(listOf(folderId)) } just runs
-//            }
             val message = Message(
                 time = 123,
                 allLabelIDs = listOf(inboxId, allMailId),

@@ -63,7 +63,7 @@ class MessagesTypesConverter {
 
         } catch (e: Exception) {
             Timber.e(e, "Deserialization of recipients failed")
-            listOf()
+            emptyList()
         }
     }
 

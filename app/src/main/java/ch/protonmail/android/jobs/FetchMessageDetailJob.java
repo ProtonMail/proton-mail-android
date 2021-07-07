@@ -41,7 +41,7 @@ public class FetchMessageDetailJob extends ProtonMailBaseJob {
     }
 
     @Override
-    public void onRun() throws Throwable {
+    public void onRun() {
         final MessageDao messageDao = MessageDatabase.Factory
                 .getInstance(getApplicationContext(), getUserId())
                 .getDao();

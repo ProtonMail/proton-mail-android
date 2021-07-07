@@ -150,7 +150,7 @@ class FullContactDetailsConverter {
     fun contactEncryptedDataListToString(contactEncryptedDataList: List<ContactEncryptedData>?): String? {
         val out = ByteArrayOutputStream()
         try {
-            val encryptedDataArray = contactEncryptedDataList?.toTypedArray() ?: arrayOf()
+            val encryptedDataArray = contactEncryptedDataList?.toTypedArray() ?: emptyArray()
             ObjectOutputStream(out).writeObject(encryptedDataArray)
         } catch (e: IOException) {
             Timber.e(e, "Serialization of encrypted data failed ")

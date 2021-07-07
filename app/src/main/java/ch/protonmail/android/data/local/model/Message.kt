@@ -183,11 +183,11 @@ data class Message @JvmOverloads constructor(
     var parsedHeaders: ParsedHeaders? = null,
 
     @ColumnInfo(name = COLUMN_MESSAGE_LABELS)
-    var allLabelIDs: List<String> = listOf(),
+    var allLabelIDs: List<String> = emptyList(),
 
     @JvmSuppressWildcards
     @ColumnInfo(name = COLUMN_MESSAGE_TO_LIST)
-    var toList: List<MessageRecipient> = listOf(),
+    var toList: List<MessageRecipient> = emptyList(),
 
     @JvmSuppressWildcards
     @ColumnInfo(name = COLUMN_MESSAGE_REPLY_TOS)
@@ -199,7 +199,7 @@ data class Message @JvmOverloads constructor(
 
     @JvmSuppressWildcards
     @ColumnInfo(name = COLUMN_MESSAGE_BCC_LIST)
-    var bccList: List<MessageRecipient> = listOf(),
+    var bccList: List<MessageRecipient> = emptyList(),
 
     @ColumnInfo(name = COLUMN_MESSAGE_DELETED)
     var deleted: Boolean = false,

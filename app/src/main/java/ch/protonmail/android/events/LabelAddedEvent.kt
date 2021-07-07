@@ -18,7 +18,4 @@
  */
 package ch.protonmail.android.events
 
-/**
- * Created by sunny on 7/20/15.
- */
 class LabelAddedEvent(val status: Status, val error: String?)

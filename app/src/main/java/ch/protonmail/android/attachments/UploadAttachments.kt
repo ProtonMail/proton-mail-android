@@ -37,7 +37,8 @@ import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.PendingActionDao
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.di.CurrentUserId
 import ch.protonmail.android.di.CurrentUserMailSettings
 import ch.protonmail.android.domain.entity.Id

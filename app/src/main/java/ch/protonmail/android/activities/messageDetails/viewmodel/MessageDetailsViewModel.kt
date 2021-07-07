@@ -150,9 +150,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private var embeddedImagesAttachments: ArrayList<Attachment> = ArrayList()
     private var embeddedImagesToFetch: ArrayList<EmbeddedImage> = ArrayList()
     private var remoteContentDisplayed: Boolean = false
-
     var renderedFromCache = AtomicBoolean(false)
-
     var refreshedKeys: Boolean = true
 
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()

@@ -41,7 +41,6 @@ private const val BASE_64 = "base64"
 
 /**
  * Common methods used by Download attachments components.
- * TODO: Move to new AttachmentsRepository
  */
 class AttachmentsHelper @Inject constructor() {
 
