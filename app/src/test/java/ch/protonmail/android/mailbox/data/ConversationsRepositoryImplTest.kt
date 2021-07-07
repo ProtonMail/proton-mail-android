@@ -607,11 +607,10 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 location = mailboxLocation.messageLocationTypeValue
             )
             val unreadMessages = 0
-            every { conversationDao.observeConversation(any(), any()) } returns flowOf(
+            coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
                     every { numUnread } returns unreadMessages
                 }
-            )
             coEvery { conversationDao.updateNumUnreadMessages(unreadMessages + 1, any()) } just runs
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
             coEvery { messageDao.saveMessage(any()) } returns 123

@@ -348,7 +348,6 @@ interface MessageDao {
     )
     suspend fun updateStarred(messageId: String, starred: Boolean)
 
-
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
     fun findAttachmentsByMessageIdAsync(messageId: String): LiveData<List<Attachment>>
 

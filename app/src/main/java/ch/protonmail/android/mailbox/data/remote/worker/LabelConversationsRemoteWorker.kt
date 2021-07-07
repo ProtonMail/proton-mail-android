@@ -35,6 +35,7 @@ import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBod
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -66,6 +67,8 @@ class LabelConversationsRemoteWorker @AssistedInject constructor(
         }
 
         val requestBody = ConversationIdsRequestBody(labelId, conversationIds.asList())
+
+        Timber.v("LabelConversationsRemoteWorker labelId: $labelId convIds: $conversationIds")
 
         return runCatching {
             protonMailApiManager.labelConversations(requestBody, Id(userId))

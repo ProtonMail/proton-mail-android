@@ -185,7 +185,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         markConversationsUnreadWorker.enqueue(conversationIds)
 
         conversationIds.forEach forEachConversation@{ conversationId ->
-            val conversation = requireNotNull(conversationDao.observeConversation(conversationId, userId.id).first())
+            val conversation = requireNotNull(conversationDao.findConversation(conversationId, userId.id))
             conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
             // Only the latest message from the current location is marked as unread
             getAllMessagesFromAConversation(conversationId).forEach { message ->

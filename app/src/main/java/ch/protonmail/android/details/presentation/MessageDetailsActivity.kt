@@ -533,10 +533,15 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         } else {
             ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
         }
+        val id = if (viewModel.isConversationEnabled()) {
+            messageOrConversationId
+        } else {
+            message.messageId ?: messageOrConversationId
+        }
         messageDetailsActionsView.setOnMoreActionClickListener {
             MessageActionSheet.newInstance(
                 actionSheetTarget,
-                listOf(message.messageId ?: messageOrConversationId),
+                listOf(id),
                 message.location,
                 getCurrentSubject(),
                 getMessagesFrom(message.sender?.name),
