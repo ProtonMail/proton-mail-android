@@ -528,9 +528,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun setupLastMessageActionsListener(message: Message) {
+        val actionSheetTarget = if (viewModel.isConversationEnabled()) {
+            ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+        } else {
+            ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+        }
         messageDetailsActionsView.setOnMoreActionClickListener {
             MessageActionSheet.newInstance(
-                ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN,
+                actionSheetTarget,
                 listOf(message.messageId ?: messageOrConversationId),
                 message.location,
                 getCurrentSubject(),

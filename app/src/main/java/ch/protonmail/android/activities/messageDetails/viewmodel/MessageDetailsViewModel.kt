@@ -267,7 +267,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
 
     fun markUnread() {
-        if (conversationModeEnabled(location)) {
+        if (isConversationEnabled()) {
             viewModelScope.launch {
                 changeConversationsReadStatus(
                     listOf(messageOrConversationId),
@@ -320,6 +320,8 @@ internal class MessageDetailsViewModel @Inject constructor(
         messageWithDetails.senderDisplayName = contactEmail?.name.orEmpty()
         return messageWithDetails.toConversationUiModel()
     }
+
+    fun isConversationEnabled() = conversationModeEnabled(location)
 
     private suspend fun loadConversationDetails(result: DataResult<Conversation>, userId: Id): ConversationUiModel? {
         return when (result) {

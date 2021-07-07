@@ -177,7 +177,7 @@ class MessageRepository @Inject constructor(
             PostTrashJobV2(
                 messageIds,
                 listOf(currentFolderLabelId),
-                currentFolderLabelId // TODO: Think why is this parameter needed here?
+                currentFolderLabelId
             )
         )
     }
