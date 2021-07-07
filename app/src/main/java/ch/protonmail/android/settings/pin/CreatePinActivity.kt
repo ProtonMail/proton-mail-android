@@ -41,7 +41,8 @@ enum class PinAction {
     VALIDATE
 }
 
-class CreatePinActivity : BaseActivity(),
+class CreatePinActivity :
+    BaseActivity(),
     PinFragmentViewModel.IPinCreationListener,
     ISecurePINListener {
 

@@ -30,7 +30,6 @@ import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.utils.UiUtil
 import kotlinx.android.synthetic.main.contacts_groups_dropdown_item.view.*
 
-
 class ContactEditDetailsEmailGroupsAdapter(
     val context: Context,
     var items: List<ContactLabel>
@@ -47,11 +46,11 @@ class ContactEditDetailsEmailGroupsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-                LayoutInflater.from(context).inflate(
-                        R.layout.contacts_groups_dropdown_item,
-                        parent,
-                        false
-                )
+            LayoutInflater.from(context).inflate(
+                R.layout.contacts_groups_dropdown_item,
+                parent,
+                false
+            )
         )
     }
 
@@ -68,7 +67,7 @@ class ContactEditDetailsEmailGroupsAdapter(
             this.setIsRecyclable(false)
 
             itemView.checkBox.isChecked = contactLabel.isSelected ==
-                    ContactEmailGroupSelectionState.SELECTED
+                ContactEmailGroupSelectionState.SELECTED
 
             itemView.checkBox.setOnCheckedChangeListener { view, isChecked ->
                 contactLabel.isSelected = if (isChecked) {
@@ -96,9 +95,7 @@ class ContactEditDetailsEmailGroupsAdapter(
 
             itemView.setOnClickListener {
                 itemView.checkBox.isChecked = !itemView.checkBox.isChecked
-
             }
-
         }
     }
 }

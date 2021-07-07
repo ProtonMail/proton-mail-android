@@ -39,7 +39,7 @@ import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserActivity
 import ch.protonmail.android.contacts.groups.edit.chooser.ColorChooserFragment
 import ch.protonmail.android.contacts.groups.edit.chooser.EXTRA_CONTACT_EMAILS
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
@@ -57,21 +57,22 @@ private const val REQUEST_CODE_ADDRESSES = 1
 @AndroidEntryPoint
 class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.IColorChooserListener {
 
+    @Inject
+    lateinit var contactGroupEditCreateViewModelFactory: ContactGroupEditCreateViewModelFactory
+    private lateinit var contactGroupEditCreateViewModel: ContactGroupEditCreateViewModel
+    private lateinit var contactGroupEmailsAdapter: ContactGroupEmailsAdapter
+
     override fun colorChosen(@ColorInt color: Int) {
         contactGroupEditCreateViewModel.setGroupColor(color)
         setColor()
         contactGroupEditCreateViewModel.setChanged()
     }
 
-    @Inject
-    lateinit var contactGroupEditCreateViewModelFactory: ContactGroupEditCreateViewModelFactory
-    private lateinit var contactGroupEditCreateViewModel: ContactGroupEditCreateViewModel
-    private lateinit var contactGroupEmailsAdapter: ContactGroupEmailsAdapter
-
-    override fun getLayoutId(): Int = if (intent?.extras?.containsKey(EXTRA_CONTACT_GROUP)!!)
+    override fun getLayoutId(): Int = if (intent?.extras?.containsKey(EXTRA_CONTACT_GROUP)!!) {
         R.layout.activity_edit_contact_group
-    else
+    } else {
         R.layout.activity_create_contact_group
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,23 +82,26 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         contactGroupEditCreateViewModel.setData(intent?.extras?.getParcelable(EXTRA_CONTACT_GROUP))
         setColor()
         setName()
-        contactGroupEditCreateViewModel.contactGroupSetupLayout.observe(this, { event ->
-            event?.getContentIfNotHandled()?.let { contactGroupMode ->
-                when (contactGroupMode) {
-                    ContactGroupMode.EDIT -> setupEditContactGroupLayout()
-                    ContactGroupMode.CREATE -> setupNewContactGroupLayout()
-                }
-                manageMembers.setOnClickListener {
-                    val intent = Intent(this@ContactGroupEditCreateActivity, AddressChooserActivity::class.java)
-                    intent.putExtra(EXTRA_CONTACT_EMAILS, contactGroupEmailsAdapter.getData())
-                    val addressChooserIntent = AppUtil.decorInAppIntent(intent)
-                    startActivityForResult(addressChooserIntent, REQUEST_CODE_ADDRESSES)
-                }
-                chooseGroupColor.setOnClickListener {
-                    showColorsDialog()
+        contactGroupEditCreateViewModel.contactGroupSetupLayout.observe(
+            this,
+            { event ->
+                event?.getContentIfNotHandled()?.let { contactGroupMode ->
+                    when (contactGroupMode) {
+                        ContactGroupMode.EDIT -> setupEditContactGroupLayout()
+                        ContactGroupMode.CREATE -> setupNewContactGroupLayout()
+                    }
+                    manageMembers.setOnClickListener {
+                        val intent = Intent(this@ContactGroupEditCreateActivity, AddressChooserActivity::class.java)
+                        intent.putExtra(EXTRA_CONTACT_EMAILS, contactGroupEmailsAdapter.getData())
+                        val addressChooserIntent = AppUtil.decorInAppIntent(intent)
+                        startActivityForResult(addressChooserIntent, REQUEST_CODE_ADDRESSES)
+                    }
+                    chooseGroupColor.setOnClickListener {
+                        showColorsDialog()
+                    }
                 }
             }
-        })
+        )
         initAdapter()
         startObserving()
     }
@@ -122,25 +126,28 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
             android.R.id.home -> onBackPressed()
             R.id.action_save -> {
                 progress.visibility = View.VISIBLE
-                contactGroupEditCreateViewModel.contactGroupUpdateResult.observe(this, {
-                    progress.visibility = View.GONE
-                    it?.getContentIfNotHandled()?.let {
-                        val status = it.status
-                        when (status) {
-                            Status.FAILED -> showToast(it.message ?: getString(R.string.error))
-                            Status.SUCCESS -> {
-                                showToast(R.string.contact_group_saved)
-                                saveLastInteraction()
-                                finish()
-                            }
-                            Status.UNAUTHORIZED -> showToast(R.string.paid_plan_needed)
-                            Status.VALIDATION_FAILED -> showToast(R.string.save_group_validation_error)
-                            else -> {
-                                showToast(R.string.error)
+                contactGroupEditCreateViewModel.contactGroupUpdateResult.observe(
+                    this,
+                    {
+                        progress.visibility = View.GONE
+                        it?.getContentIfNotHandled()?.let {
+                            val status = it.status
+                            when (status) {
+                                Status.FAILED -> showToast(it.message ?: getString(R.string.error))
+                                Status.SUCCESS -> {
+                                    showToast(R.string.contact_group_saved)
+                                    saveLastInteraction()
+                                    finish()
+                                }
+                                Status.UNAUTHORIZED -> showToast(R.string.paid_plan_needed)
+                                Status.VALIDATION_FAILED -> showToast(R.string.save_group_validation_error)
+                                else -> {
+                                    showToast(R.string.error)
+                                }
                             }
                         }
                     }
-                })
+                )
                 contactGroupEditCreateViewModel.save(contactGroupName.text.toString())
             }
         }
@@ -164,9 +171,13 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
     }
 
     private fun initAdapter() {
-        contactGroupEmailsAdapter = ContactGroupEmailsAdapter(this, ArrayList(), null, {
-            showToast("delete!")
-        }, mode = GroupsItemAdapterMode.NORMAL)
+        contactGroupEmailsAdapter = ContactGroupEmailsAdapter(
+            this, ArrayList(), null,
+            {
+                showToast("delete!")
+            },
+            mode = GroupsItemAdapterMode.NORMAL
+        )
         with(contactEmailsRecyclerView) {
             layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this@ContactGroupEditCreateActivity)
             adapter = contactGroupEmailsAdapter
@@ -196,25 +207,34 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
     }
 
     private fun startObserving() {
-        contactGroupEditCreateViewModel.contactGroupEmailsResult.observe(this, Observer {
-            // prevent flickering between previous and future contacts list while waiting for response
-            if (progress.visibility != View.VISIBLE) {
-                refreshData(HashSet(it))
-            }
-        })
-        contactGroupEditCreateViewModel.contactGroupEmailsError.observe(this, Observer {
-            membersList.visibility = View.GONE
-        })
-        contactGroupEditCreateViewModel.cleanUpComplete.observe(this, Observer {
-            it?.getContentIfNotHandled()?.let {
-                if (!it) {
-                    buildAndShowUnsavedEditDialog()
-                } else {
-                    saveLastInteraction()
-                    finish()
+        contactGroupEditCreateViewModel.contactGroupEmailsResult.observe(
+            this,
+            Observer {
+                // prevent flickering between previous and future contacts list while waiting for response
+                if (progress.visibility != View.VISIBLE) {
+                    refreshData(HashSet(it))
                 }
             }
-        })
+        )
+        contactGroupEditCreateViewModel.contactGroupEmailsError.observe(
+            this,
+            Observer {
+                membersList.visibility = View.GONE
+            }
+        )
+        contactGroupEditCreateViewModel.cleanUpComplete.observe(
+            this,
+            Observer {
+                it?.getContentIfNotHandled()?.let {
+                    if (!it) {
+                        buildAndShowUnsavedEditDialog()
+                    } else {
+                        saveLastInteraction()
+                        finish()
+                    }
+                }
+            }
+        )
         contactGroupEditCreateViewModel.getContactGroupEmails()
     }
 
@@ -265,10 +285,13 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
     }
 
     private fun buildAndShowUnsavedEditDialog() {
-        UnsavedChangesDialog(this, { }, {
-            saveLastInteraction()
-            finish()
-        }).build()
+        UnsavedChangesDialog(
+            this, { },
+            {
+                saveLastInteraction()
+                finish()
+            }
+        ).build()
     }
 
     @ColorInt

@@ -68,9 +68,11 @@ internal class AndroidContactsLoaderCallbacks(
                 OR ${CommonDataKinds.Email.DATA} LIKE ?
         """
 
-        private val ANDROID_PROJECTION = arrayOf(CommonDataKinds.Email.RAW_CONTACT_ID,
+        private val ANDROID_PROJECTION = arrayOf(
+            CommonDataKinds.Email.RAW_CONTACT_ID,
             CommonDataKinds.Email.DISPLAY_NAME_PRIMARY,
             CommonDataKinds.Email.ADDRESS,
-            CommonDataKinds.Email.DATA)
+            CommonDataKinds.Email.DATA
+        )
     }
 }

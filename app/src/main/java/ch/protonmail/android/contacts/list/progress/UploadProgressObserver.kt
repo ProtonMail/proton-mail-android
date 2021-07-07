@@ -21,26 +21,27 @@ package ch.protonmail.android.contacts.list.progress
 import android.app.ProgressDialog
 import androidx.lifecycle.Observer
 
-class UploadProgressObserver(val progressDialogFactory:()->ProgressDialog):Observer<ProgressState?> {
-	private var progressDialog:ProgressDialog?=null
+class UploadProgressObserver(val progressDialogFactory: () -> ProgressDialog) : Observer<ProgressState?> {
 
-	private fun ProgressDialog.setProgress(progressState:ProgressState?) {
-		if(progressState==null) {
-			dismiss()
-			return
-		}
-		val (completed,total)=progressState
-		progress=completed
-		max=total
-		when {
-			completed>=total->dismiss()
-			!isShowing->show()
-		}
-	}
+    private var progressDialog: ProgressDialog? = null
 
-	override fun onChanged(progressState:ProgressState?) {
-		val progressDialog=progressDialog?:progressDialogFactory()
-		progressDialog.setProgress(progressState)
-		this.progressDialog=if(progressState!=null)progressDialog else null
-	}
+    private fun ProgressDialog.setProgress(progressState: ProgressState?) {
+        if (progressState == null) {
+            dismiss()
+            return
+        }
+        val (completed, total) = progressState
+        progress = completed
+        max = total
+        when {
+            completed >= total -> dismiss()
+            !isShowing -> show()
+        }
+    }
+
+    override fun onChanged(progressState: ProgressState?) {
+        val progressDialog = progressDialog ?: progressDialogFactory()
+        progressDialog.setProgress(progressState)
+        this.progressDialog = if (progressState != null) progressDialog else null
+    }
 }

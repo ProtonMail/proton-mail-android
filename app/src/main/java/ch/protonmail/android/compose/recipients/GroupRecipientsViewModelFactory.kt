@@ -22,10 +22,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import javax.inject.Inject
 
-/**
- * Created by kadrikj on 9/18/18. */
 class GroupRecipientsViewModelFactory @Inject constructor(
-        private val groupRecipientsViewModel: GroupRecipientsViewModel) : ViewModelProvider.NewInstanceFactory() {
+    private val groupRecipientsViewModel: GroupRecipientsViewModel
+) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(GroupRecipientsViewModel::class.java)) {

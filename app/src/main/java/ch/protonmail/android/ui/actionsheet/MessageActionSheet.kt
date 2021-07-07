@@ -57,7 +57,11 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     private var actionSheetHeader: ActionSheetHeader? = null
     private val viewModel: MessageActionSheetViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val originatorId = arguments?.getInt(EXTRA_ARG_ORIGINATOR_SCREEN_ID) ?: ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
         val messageIds: List<String> = arguments?.getStringArray(EXTRA_ARG_MESSAGE_IDS)?.toList()
             ?: throw IllegalStateException("messageIds in MessageActionSheet are Empty!")

@@ -18,7 +18,4 @@
  */
 package ch.protonmail.android.events
 
-/**
- * Created by Kamil Rajtar on 30.07.18.
- */
-data class PostPhishingReportEvent(val status:Status)
+data class PostPhishingReportEvent(val status: Status)

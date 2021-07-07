@@ -29,53 +29,50 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.max
 import kotlin.math.min
 
-
 internal class MessageBodyScaleListener(
-	private val wvScrollView: RecyclerView,
-	private val messageBodyWebView: WebView,
-	private val directParent: LinearLayout
+    private val wvScrollView: RecyclerView,
+    private val messageBodyWebView: WebView,
+    private val directParent: LinearLayout
 ) : ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
-	private var scaleFactor = 1f
-	private var preSF = 1f
+    private var scaleFactor = 1f
+    private var preSF = 1f
 
-	override fun onScale(detector: ScaleGestureDetector): Boolean {
-		wvScrollView.requestDisallowInterceptTouchEvent(true)
-		scaleFactor *= detector.scaleFactor
+    override fun onScale(detector: ScaleGestureDetector): Boolean {
+        wvScrollView.requestDisallowInterceptTouchEvent(true)
+        scaleFactor *= detector.scaleFactor
 
-		// Don't let the object get too small or too large.
-		scaleFactor = max(0.1f, min(scaleFactor, 10.0f))
+        // Don't let the object get too small or too large.
+        scaleFactor = max(0.1f, min(scaleFactor, 10.0f))
 
-		val a = messageBodyWebView.scrollY
-		messageBodyWebView.scrollTo(0, 0)
-		directParent.scrollTo(0, 0)
+        val a = messageBodyWebView.scrollY
+        messageBodyWebView.scrollTo(0, 0)
+        directParent.scrollTo(0, 0)
 
-		val animSet = AnimationSet(true)
-		animSet.fillAfter = true
-		animSet.duration = 1000
-		animSet.interpolator = DecelerateInterpolator()
-		val translate = TranslateAnimation(0f, 0f, 0f, (-a).toFloat())
-		animSet.addAnimation(translate)
-		val scale = ScaleAnimation(
-			preSF, scaleFactor, preSF, scaleFactor, ScaleAnimation.RELATIVE_TO_PARENT, 0.5f,
-			ScaleAnimation.RELATIVE_TO_PARENT, 0.5f
-		)
-		animSet.addAnimation(scale)
+        val animSet = AnimationSet(true)
+        animSet.fillAfter = true
+        animSet.duration = 1000
+        animSet.interpolator = DecelerateInterpolator()
+        val translate = TranslateAnimation(0f, 0f, 0f, (-a).toFloat())
+        animSet.addAnimation(translate)
+        val scale = ScaleAnimation(
+            preSF, scaleFactor, preSF, scaleFactor, ScaleAnimation.RELATIVE_TO_PARENT, 0.5f,
+            ScaleAnimation.RELATIVE_TO_PARENT, 0.5f
+        )
+        animSet.addAnimation(scale)
 
-
-		val animSet3 = AnimationSet(true)
-		animSet3.fillAfter = true
-		animSet3.duration = 1000
-		animSet3.interpolator = DecelerateInterpolator()
-		val translate3 = TranslateAnimation(0f, 0f, 0f, (-a).toFloat())
-		animSet3.addAnimation(translate3)
-		val scale3 = ScaleAnimation(
-			preSF, preSF, preSF, scaleFactor, ScaleAnimation.RELATIVE_TO_PARENT, 0f, ScaleAnimation.RELATIVE_TO_PARENT,
-			0f
-		)
-		animSet3.addAnimation(scale3)
-		preSF = scaleFactor
-		return true
-	}
-
+        val animSet3 = AnimationSet(true)
+        animSet3.fillAfter = true
+        animSet3.duration = 1000
+        animSet3.interpolator = DecelerateInterpolator()
+        val translate3 = TranslateAnimation(0f, 0f, 0f, (-a).toFloat())
+        animSet3.addAnimation(translate3)
+        val scale3 = ScaleAnimation(
+            preSF, preSF, preSF, scaleFactor, ScaleAnimation.RELATIVE_TO_PARENT, 0f, ScaleAnimation.RELATIVE_TO_PARENT,
+            0f
+        )
+        animSet3.addAnimation(scale3)
+        preSF = scaleFactor
+        return true
+    }
 }

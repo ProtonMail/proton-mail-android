@@ -26,13 +26,11 @@ import com.google.gson.annotations.SerializedName
 private const val FIELD_LABELS = "Labels"
 // endregion
 
-/**
- * Created by kadrikj on 8/21/18.
- */
-
 data class ContactGroupsResponse(
-        @SerializedName(FIELD_LABELS)
-        var serverContactLabel: List<ServerLabel> = ArrayList()) : ResponseBody() {
+    @SerializedName(FIELD_LABELS)
+    var serverContactLabel: List<ServerLabel> = ArrayList()
+) : ResponseBody() {
+
     @delegate:Transient
     val contactGroups by lazy {
         val contactGroupsFactory = ContactLabelFactory()

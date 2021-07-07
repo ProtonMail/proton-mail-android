@@ -93,7 +93,11 @@ object MessageUtils {
     }
 
     // TODO: discard nullability of parameters once MessageDetailsActivity is converted to Kotlin
-    fun buildNewMessageTitle(context: Context, messageAction: MessageActionType?, messageTitle: String?): String {
+    fun buildNewMessageTitle(
+        context: Context,
+        messageAction: MessageActionType?,
+        messageTitle: String?
+    ): String {
         val normalizedMessageTitle = normalizeMessageTitle(context, messageTitle)
         val messagePrefix = when (messageAction) {
             MessageActionType.REPLY,
@@ -234,7 +238,6 @@ object MessageUtils {
             return if (auto) {
                 MessageEncryption.AUTO_RESPONSE
             } else MessageEncryption.INTERNAL
-
         } else if (received && e2e) {
             return MessageEncryption.EXTERNAL_PGP
         } else if (received) {

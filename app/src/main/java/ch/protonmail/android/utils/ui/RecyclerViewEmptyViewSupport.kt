@@ -18,12 +18,14 @@
  */
 package ch.protonmail.android.utils.ui
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 
-/**
- * Created by kadrikj on 9/3/18. */
-class RecyclerViewEmptyViewSupport(private val recyclerView: RecyclerView, private val emptyView: View): RecyclerView.AdapterDataObserver() {
+class RecyclerViewEmptyViewSupport(
+    private val recyclerView: RecyclerView,
+    private val emptyView: View
+) :
+    RecyclerView.AdapterDataObserver() {
 
     init {
         checkIfEmpty()

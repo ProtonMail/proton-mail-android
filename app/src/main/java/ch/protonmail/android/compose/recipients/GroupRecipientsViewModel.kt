@@ -33,10 +33,9 @@ import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.utils.Event
 import javax.inject.Inject
 
-/**
- * Created by kadrikj on 9/18/18. */
 class GroupRecipientsViewModel @Inject constructor(
-    private val composeMessageRepository: ComposeMessageRepository) : ViewModel() {
+    private val composeMessageRepository: ComposeMessageRepository
+) : ViewModel() {
 
     private lateinit var _recipients: ArrayList<MessageRecipient>
     private var _location: Constants.RecipientLocationType = Constants.RecipientLocationType.TO
@@ -73,21 +72,29 @@ class GroupRecipientsViewModel @Inject constructor(
                 _groupDetails = it
                 composeMessageRepository.getContactGroupEmails(it.ID)
             }
-            .subscribe({ it ->
-                           _groupAllEmails = it
-                           _groupAllEmails.forEach {
-                               it.selected = _recipients.find { selected -> selected.emailAddress == it.email && selected.name == it.name } != null
-                               it.isPGP = _recipients.find { selected -> selected.emailAddress == it.email }?.isPGP ?: false
-                               it.pgpIcon = _recipients.find { selected -> selected.emailAddress == it.email }?.icon ?: 0
-                               it.pgpIconColor = _recipients.find { selected -> selected.emailAddress == it.email }?.iconColor ?: 0
-                               it.pgpDescription = _recipients.find { selected -> selected.emailAddress == it.email }?.description ?: 0
-                           }
-                           _contactGroupResult.postValue(it)
-                       }, {
-                           _contactGroupError.postValue(Event(ErrorResponse(it.message ?: "", ErrorEnum.DEFAULT_ERROR)))
-
-            })
-
+            .subscribe(
+                { it ->
+                    _groupAllEmails = it
+                    _groupAllEmails.forEach {
+                        it.selected =
+                            _recipients.find { selected ->
+                            selected.emailAddress == it.email && selected.name == it.name
+                        } != null
+                        it.isPGP = _recipients.find { selected -> selected.emailAddress == it.email }?.isPGP ?: false
+                        it.pgpIcon = _recipients.find { selected -> selected.emailAddress == it.email }?.icon ?: 0
+                        it.pgpIconColor = _recipients.find {
+                            selected ->
+                            selected.emailAddress == it.email
+                        }?.iconColor ?: 0
+                        it.pgpDescription =
+                            _recipients.find { selected -> selected.emailAddress == it.email }?.description ?: 0
+                    }
+                    _contactGroupResult.postValue(it)
+                },
+                {
+                    _contactGroupError.postValue(Event(ErrorResponse(it.message ?: "", ErrorEnum.DEFAULT_ERROR)))
+                }
+            )
     }
 
     fun getData(): ArrayList<MessageRecipient> {
@@ -99,5 +106,4 @@ class GroupRecipientsViewModel @Inject constructor(
     fun getGroupColor(): Int = _recipients[0].groupColor
 
     fun getGroupIcon(): Int = _recipients[0].groupIcon
-
 }

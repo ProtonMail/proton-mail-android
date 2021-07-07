@@ -22,16 +22,14 @@ import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-/**
- * Created by kadrikj on 8/21/18. */
 class ThreadSchedulers {
 
     companion object {
+
         @JvmStatic
         fun io(): Scheduler = Schedulers.io()
 
         @JvmStatic
         fun main(): Scheduler = AndroidSchedulers.mainThread()
-
     }
 }

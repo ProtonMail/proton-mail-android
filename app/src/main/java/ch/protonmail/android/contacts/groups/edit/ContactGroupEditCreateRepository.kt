@@ -67,7 +67,11 @@ class ContactGroupEditCreateRepository @Inject constructor(
             .toObservable()
     }
 
-    fun removeMembersFromContactGroup(contactGroupId: String, contactGroupName: String, membersList: List<String>): Completable {
+    fun removeMembersFromContactGroup(
+        contactGroupId: String,
+        contactGroupName: String,
+        membersList: List<String>
+    ): Completable {
         if (membersList.isEmpty()) {
             return Completable.complete()
         }
@@ -90,7 +94,11 @@ class ContactGroupEditCreateRepository @Inject constructor(
             }
     }
 
-    fun setMembersForContactGroup(contactGroupId: String, contactGroupName: String, membersList: List<String>): Completable {
+    fun setMembersForContactGroup(
+        contactGroupId: String,
+        contactGroupName: String,
+        membersList: List<String>
+    ): Completable {
         if (membersList.isEmpty()) {
             return Completable.complete()
         }
@@ -105,7 +113,9 @@ class ContactGroupEditCreateRepository @Inject constructor(
                 contactDao.saveContactEmailContactLabelBlocking(list)
             }.doOnError { throwable ->
                 if (throwable is IOException) {
-                    jobManager.addJobInBackground(SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList))
+                    jobManager.addJobInBackground(
+                        SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList)
+                    )
                 }
             }
     }

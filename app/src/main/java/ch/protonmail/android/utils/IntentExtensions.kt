@@ -35,11 +35,16 @@ fun Context.startSplashActivity() =
 fun Context.getSplashActivityIntent(): Intent =
     Intent(this, SplashActivity::class.java)
 
-
-fun Context.startMailboxActivity(userId: UserId? = null, type: Constants.MessageLocationType? = null) =
+fun Context.startMailboxActivity(
+    userId: UserId? = null,
+    type: Constants.MessageLocationType? = null
+) =
     startActivity(getMailboxActivityIntent(userId, type))
 
-fun Context.getMailboxActivityIntent(userId: UserId? = null, type: Constants.MessageLocationType? = null): Intent =
+fun Context.getMailboxActivityIntent(
+    userId: UserId? = null,
+    type: Constants.MessageLocationType? = null
+): Intent =
     Intent(this, MailboxActivity::class.java).apply {
         userId?.let { putExtra(EXTRA_USER_ID, it.id) }
         type?.let { putExtra(EXTRA_MAILBOX_LOCATION, it.messageLocationTypeValue) }

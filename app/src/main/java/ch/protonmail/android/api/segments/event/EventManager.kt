@@ -191,22 +191,25 @@ class EventManager @Inject constructor(
     }
 
     private fun recoverNextEventId(userId: Id): String? {
-        val prefs = sharedPrefs.getOrPut(userId, {
-            SecureSharedPreferences.getPrefsForUser(context, userId)
-        })
+        val prefs = sharedPrefs.getOrPut(
+            userId,
+            {
+                SecureSharedPreferences.getPrefsForUser(context, userId)
+            }
+        )
         Timber.d("EventManager recoverLastEventId")
         val lastEventId = prefs.getString(PREF_NEXT_EVENT_ID, null)
         return if (lastEventId.isNullOrEmpty()) null else lastEventId
     }
 
     private fun backupNextEventId(userId: Id, eventId: String) {
-        val prefs = sharedPrefs.getOrPut(userId, {
-            SecureSharedPreferences.getPrefsForUser(context, userId)
-        })
+        val prefs = sharedPrefs.getOrPut(
+            userId,
+            {
+                SecureSharedPreferences.getPrefsForUser(context, userId)
+            }
+        )
         Timber.d("EventManager backupLastEventId")
         prefs.edit().putString(PREF_NEXT_EVENT_ID, eventId).apply()
     }
-
 }
-
-

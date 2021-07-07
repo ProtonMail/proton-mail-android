@@ -18,8 +18,6 @@
  */
 package ch.protonmail.android.activities.composeMessage
 
-/**
- * Created by kadrikj on 12/21/18. */
 enum class UserAction {
     NONE, SAVE_DRAFT, FINISH_EDIT, SAVE_DRAFT_EXIT
 }

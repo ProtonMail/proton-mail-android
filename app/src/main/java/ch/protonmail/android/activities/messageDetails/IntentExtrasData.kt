@@ -50,8 +50,11 @@ class IntentExtrasData(
     val addressEmailAlias: String?,
     val mBigContentHolder: BigContentHolder,
     val attachments: ArrayList<LocalAttachment>,
-    val embeddedImagesAttachmentsExist: Boolean) {
+    val embeddedImagesAttachmentsExist: Boolean
+) {
+
     class Builder {
+
         private lateinit var user: User
         private lateinit var userAddresses: List<Address>
         private lateinit var message: Message
@@ -90,7 +93,7 @@ class IntentExtrasData(
         fun messageSenderName() = apply { this.messageSenderName = message.senderName ?: "" }
         fun newMessageTitle(newMessageTitle: String?) = apply {
             this.newMessageTitle =
-                    newMessageTitle
+                newMessageTitle
         }
 
         fun content(content: String) = apply { this.content = content }
@@ -99,7 +102,9 @@ class IntentExtrasData(
 
         fun body() = apply {
             val bodyTemp = if (message.isPGPMime) message.decryptedBody else content
-            if (bodyTemp != null && bodyTemp.isNotEmpty() && bodyTemp.toByteArray().size > Constants.MAX_INTENT_STRING_SIZE) {
+            if (bodyTemp != null && bodyTemp.isNotEmpty() &&
+                bodyTemp.toByteArray().size > Constants.MAX_INTENT_STRING_SIZE
+            ) {
                 this.mBigContentHolder.content = bodyTemp
                 this.largeMessageBody = true
             } else {
@@ -110,6 +115,7 @@ class IntentExtrasData(
         fun messageAction(messageAction: Constants.MessageActionType) = apply { this.messageAction = messageAction }
         fun imagesDisplayed(imagesDisplayed: Boolean) =
             apply { this.imagesDisplayed = imagesDisplayed }
+
         fun remoteContentDisplayed(remoteContentDisplayed: Boolean) =
             apply { this.remoteContentDisplayed = remoteContentDisplayed }
 
@@ -118,6 +124,7 @@ class IntentExtrasData(
         fun messageIsEncrypted() = apply { this.messageIsEncrypted = message.isEncrypted() }
         fun messageId() = apply { this.messageId = message.messageId }
         fun addressID() = apply { this.addressID = message.addressID }
+
         /**
          * This method extract user's email alias, but also normalizes it
          * so the non-alias part is equal to user's original address,
@@ -128,8 +135,10 @@ class IntentExtrasData(
             var originalAddress: String? = null
             val aliasAddress = recipients.find {
                 if (it.emailAddress.contains("+")) {
-                    val nonAliasAddress = "${it.emailAddress.substringBefore("+")}@${it.emailAddress.substringAfter("@")}"
-                    val address = user.addresses.find { address -> address.email.equals(nonAliasAddress, ignoreCase = true) }
+                    val nonAliasAddress =
+                        "${it.emailAddress.substringBefore("+")}@${it.emailAddress.substringAfter("@")}"
+                    val address =
+                        user.addresses.find { address -> address.email.equals(nonAliasAddress, ignoreCase = true) }
                     if (address != null) {
                         originalAddress = address.email
                         true
@@ -143,18 +152,29 @@ class IntentExtrasData(
 
             if (aliasAddress != null) {
                 val aliasPart = aliasAddress.emailAddress.substringBefore("@").substringAfter("+")
-                this.addressEmailAlias = "${(originalAddress as String).substringBefore("@")}+$aliasPart@${(originalAddress as String).substringAfter("@")}"
+                this.addressEmailAlias = "${
+                (originalAddress as String).substringBefore(
+                    "@"
+                )
+                }+$aliasPart@${(originalAddress as String).substringAfter("@")}"
             } else {
                 this.addressEmailAlias = null
             }
         }
-        fun attachments(attachments: ArrayList<LocalAttachment>, embeddedImagesAttachments:
-        MutableList<Attachment>?) = apply {
+
+        fun attachments(
+            attachments: ArrayList<LocalAttachment>,
+            embeddedImagesAttachments:
+                MutableList<Attachment>?
+        ) = apply {
             if (!message.isPGPMime && messageAction == Constants.MessageActionType.FORWARD) {
                 this.embeddedImagesAttachmentsExist = embeddedImagesAttachments != null &&
-                        !embeddedImagesAttachments.isEmpty()
+                    !embeddedImagesAttachments.isEmpty()
                 this.attachments = attachments
-            } else if (!message.isPGPMime && (messageAction == Constants.MessageActionType.REPLY || messageAction == Constants.MessageActionType.REPLY_ALL) && embeddedImagesAttachments != null) {
+            } else if (!message.isPGPMime &&
+                (messageAction == Constants.MessageActionType.REPLY || messageAction == Constants.MessageActionType.REPLY_ALL) &&
+                embeddedImagesAttachments != null
+            ) {
                 val att =
                     ArrayList(LocalAttachment.createLocalAttachmentList(embeddedImagesAttachments))
                 this.attachments = att

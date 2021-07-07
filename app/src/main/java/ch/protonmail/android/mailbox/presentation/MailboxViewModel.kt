@@ -245,7 +245,11 @@ class MailboxViewModel @Inject constructor(
         }
     }
 
-    fun processLabels(messageIds: List<String>, checkedLabelIds: List<String>, unchangedLabels: List<String>) {
+    fun processLabels(
+        messageIds: List<String>,
+        checkedLabelIds: List<String>,
+        unchangedLabels: List<String>
+    ) {
         val iterator = messageIds.iterator()
 
         val labelsToApplyMap = HashMap<String, MutableList<String>>()
@@ -505,7 +509,10 @@ class MailboxViewModel @Inject constructor(
             contacts
         )
 
-    private fun getCorrespondentDisplayName(correspondent: Correspondent, contacts: List<ContactEmail>): String {
+    private fun getCorrespondentDisplayName(
+        correspondent: Correspondent,
+        contacts: List<ContactEmail>
+    ): String {
         val senderNameFromContacts = contacts.find { correspondent.address == it.email }?.name
 
         if (!senderNameFromContacts.isNullOrEmpty()) {

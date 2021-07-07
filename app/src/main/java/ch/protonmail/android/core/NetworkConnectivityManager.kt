@@ -69,7 +69,10 @@ class NetworkConnectivityManager @Inject constructor(
                 Timber.v("Network Unavailable")
             }
 
-            override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+            override fun onCapabilitiesChanged(
+                network: Network,
+                networkCapabilities: NetworkCapabilities
+            ) {
                 if (networkCapabilities.hasCapability(NET_CAPABILITY_INTERNET)) {
                     Timber.v("Network $network has internet capability")
                     trySend(Constants.ConnectionState.CONNECTED)

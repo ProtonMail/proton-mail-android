@@ -62,7 +62,8 @@ class LocalAttachment @JvmOverloads constructor(
             val uriToParse = if (attachment.isPGPAttachment) {
                 val encodedMimeData = Base64.encodeToString(
                     attachment.mimeData,
-                    Base64.NO_WRAP)
+                    Base64.NO_WRAP
+                )
                 "data:application/octet-stream;base64,$encodedMimeData"
             } else {
                 api.getAttachmentUrl(attachment.attachmentId!!)
@@ -119,7 +120,8 @@ class LocalAttachment @JvmOverloads constructor(
                     isUploading,
                     keyPackets,
                     headers,
-                    isUploaded)
+                    isUploaded
+                )
             }
 
             override fun newArray(size: Int) = arrayOfNulls<LocalAttachment>(size)

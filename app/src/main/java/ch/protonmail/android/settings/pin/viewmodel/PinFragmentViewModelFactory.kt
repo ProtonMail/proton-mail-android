@@ -22,10 +22,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import javax.inject.Inject
 
-/**
- * Created by kadrikj on 3/14/19. */
-class PinFragmentViewModelFactory @Inject constructor(private val pinFragmentViewModel: PinFragmentViewModel)
-    : ViewModelProvider.NewInstanceFactory() {
+class PinFragmentViewModelFactory @Inject constructor(private val pinFragmentViewModel: PinFragmentViewModel) :
+    ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PinFragmentViewModel::class.java)) {

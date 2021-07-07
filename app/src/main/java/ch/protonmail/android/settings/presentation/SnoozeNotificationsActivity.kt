@@ -135,7 +135,10 @@ class SnoozeNotificationsActivity : BaseActivity() {
         if (repeatingDays == null) {
             repeatingDays = DAYS_OF_THE_WEEK
         }
-        chosenDays = Arrays.asList(*repeatingDays!!.split(resources.getString(R.string.default_delimiter).toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+        chosenDays = Arrays.asList(
+            *repeatingDays!!.split(resources.getString(R.string.default_delimiter).toRegex())
+                .dropLastWhile { it.isEmpty() }.toTypedArray()
+        )
         snoozeStartTime.text = "${startTimeHour.roundHourOrMinute()} : ${startTimeMinute.roundHourOrMinute()}"
         snoozeEndTime.text = "${endTimeHour.roundHourOrMinute()} : ${endTimeMinute.roundHourOrMinute()}"
         setCurrentStatus()

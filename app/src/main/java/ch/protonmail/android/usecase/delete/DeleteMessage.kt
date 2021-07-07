@@ -21,7 +21,9 @@ package ch.protonmail.android.usecase.delete
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.data.local.PendingActionDao
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.PendingSend
+import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.usecase.model.DeleteMessageResult
 import ch.protonmail.android.worker.DeleteMessageWorker
 import kotlinx.coroutines.ensureActive
@@ -93,6 +95,9 @@ class DeleteMessage @Inject constructor(
      * there is a pending upload or pending send message
      * or if there is a failed pending send expressed by the nullable Sent property of the PendingSend class
      */
-    private fun areThereAnyPendingUplandsOrSends(pendingUploads: PendingUpload?, pendingForSending: PendingSend?) =
+    private fun areThereAnyPendingUplandsOrSends(
+        pendingUploads: PendingUpload?,
+        pendingForSending: PendingSend?
+    ) =
         pendingUploads != null || !(pendingForSending == null || pendingForSending.sent == false)
 }

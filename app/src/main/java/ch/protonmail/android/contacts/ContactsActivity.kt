@@ -186,6 +186,7 @@ class ContactsActivity :
         alreadyCheckedPermission = false
         super.onStop()
     }
+
     override fun requestContactsPermission() {
         contactsPermissionHelper.checkPermission()
         alreadyCheckedPermission = true
@@ -298,11 +299,11 @@ class ContactsActivity :
 
     override fun selectPage(position: Int) = onPageSelected(position)
 
-    override fun doRequestContactsPermission() = requestContactsPermission()
+    override fun doRequestContactsPermission(): Unit = requestContactsPermission()
 
     override fun doStartActionMode(callback: ActionMode.Callback): ActionMode? = startActionMode(callback)
 
-    override fun doStartActivityForResult(intent: Intent, requestCode: Int) =
+    override fun doStartActivityForResult(intent: Intent, requestCode: Int): Unit =
         startActivityForResult(intent, requestCode)
 
     override fun registerObject(registerObject: Any) = mApp.bus.register(registerObject)

@@ -26,14 +26,11 @@ private const val FIELD_BODY = "Body"
 private const val FIELD_MIME_TYPE = "MIMEType"
 // endregion
 
-/**
- * Created by Kamil Rajtar on 30.07.18.
- */
-
 class PostPhishingReportBody(
-		@SerializedName(FIELD_MESSAGE_ID)
-		var messageId:String,
-		@SerializedName(FIELD_BODY)
-		var body:String,
-		@SerializedName(FIELD_MIME_TYPE)
-		var mimeType:String)
+    @SerializedName(FIELD_MESSAGE_ID)
+    var messageId: String,
+    @SerializedName(FIELD_BODY)
+    var body: String,
+    @SerializedName(FIELD_MIME_TYPE)
+    var mimeType: String
+)

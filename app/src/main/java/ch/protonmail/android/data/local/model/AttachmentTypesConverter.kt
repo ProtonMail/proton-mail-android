@@ -19,7 +19,6 @@
 package ch.protonmail.android.data.local.model
 
 import androidx.room.TypeConverter
-import ch.protonmail.android.data.local.model.AttachmentHeaders
 
 class AttachmentTypesConverter {
 

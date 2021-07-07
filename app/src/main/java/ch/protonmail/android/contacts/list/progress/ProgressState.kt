@@ -18,4 +18,4 @@
  */
 package ch.protonmail.android.contacts.list.progress
 
-data class ProgressState(val completed:Int,val total:Int)
+data class ProgressState(val completed: Int, val total: Int)

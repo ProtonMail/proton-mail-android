@@ -435,7 +435,10 @@ class EventHandler @AssistedInject constructor(
         return pendingForSending != null
     }
 
-    private fun writeContactsUpdates(contactDao: ContactDao, events: List<EventResponse.ContactEventBody>) {
+    private fun writeContactsUpdates(
+        contactDao: ContactDao,
+        events: List<EventResponse.ContactEventBody>
+    ) {
         for (event in events) {
             Timber.v("New contacts event type: ${event.type} id: ${event.contactID}")
             when (EventType.fromInt(event.type)) {
@@ -607,7 +610,11 @@ class EventHandler @AssistedInject constructor(
         AppUtil.postEventOnUi(MessageCountsEvent(Status.SUCCESS, response))
     }
 
-    private fun writeMessageLabel(currentLabel: Label?, updatedLabel: ServerLabel, messageDao: MessageDao) {
+    private fun writeMessageLabel(
+        currentLabel: Label?,
+        updatedLabel: ServerLabel,
+        messageDao: MessageDao
+    ) {
         if (currentLabel != null) {
             val labelFactory = LabelFactory()
             val labelToSave = labelFactory.createDBObjectFromServerObject(updatedLabel)

@@ -461,18 +461,16 @@ class ProcessPushNotificationDataWorkerTest {
             }
             val mockMessage = mockk<Message>()
             coEvery { messageRepository.getMessage(testId, "messageId") } returns mockMessage
-            every { notificationServer.notifyMultipleUnreadEmail(any(), any(), any(), any(), any(), any()) } just runs
+            every { notificationServer.notifyMultipleUnreadEmail(any(), any(), any(), any(), any()) } just runs
 
             // when
             processPushNotificationDataWorker.doWork()
 
             // then
-            val userManagerSlot = slot<UserManager>()
             val userSlot = slot<ch.protonmail.android.domain.entity.user.User>()
             val unreadNotificationsSlot = slot<List<Notification>>()
             verify {
                 notificationServer.notifyMultipleUnreadEmail(
-                    capture(userManagerSlot),
                     capture(userSlot),
                     any(),
                     any(),
@@ -480,7 +478,6 @@ class ProcessPushNotificationDataWorkerTest {
                     capture(unreadNotificationsSlot)
                 )
             }
-            assertEquals(userManager, userManagerSlot.captured)
             assertEquals(testId, userSlot.captured.id)
             assertEquals(unreadNotifications, unreadNotificationsSlot.captured)
         }

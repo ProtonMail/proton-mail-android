@@ -108,7 +108,11 @@ class HandleSingleAttachment @Inject constructor(
         return ListenableWorker.Result.success()
     }
 
-    private suspend fun downloadAttachment(attachment: Attachment, filename: String, crypto: AddressCrypto): Uri? {
+    private suspend fun downloadAttachment(
+        attachment: Attachment,
+        filename: String,
+        crypto: AddressCrypto
+    ): Uri? {
         while (runAttemptCount < MAX_RETRY_ATTEMPTS) {
             try {
                 runAttemptCount++

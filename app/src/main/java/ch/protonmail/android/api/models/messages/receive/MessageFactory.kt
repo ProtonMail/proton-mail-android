@@ -60,9 +60,9 @@ class MessageFactory @Inject constructor(
             message.numAttachments = it.NumAttachments
             message.messageEncryption = MessageUtils.calculateEncryption(it.Flags)
             message.expirationTime = it.ExpirationTime.notNull("ExpirationTime")
-            message.isReplied = (it.Flags and MessageFlag.REPLIED.value) == MessageFlag.REPLIED.value
-            message.isRepliedAll = (it.Flags and MessageFlag.REPLIED_ALL.value) == MessageFlag.REPLIED_ALL.value
-            message.isForwarded = (it.Flags and MessageFlag.FORWARDED.value) == MessageFlag.FORWARDED.value
+            message.isReplied = it.Flags and MessageFlag.REPLIED.value == MessageFlag.REPLIED.value
+            message.isRepliedAll = it.Flags and MessageFlag.REPLIED_ALL.value == MessageFlag.REPLIED_ALL.value
+            message.isForwarded = it.Flags and MessageFlag.FORWARDED.value == MessageFlag.FORWARDED.value
             message.isDownloaded = it.Body != null
             message.spamScore = it.SpamScore
             message.addressID = it.AddressID

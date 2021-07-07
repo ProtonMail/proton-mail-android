@@ -23,12 +23,11 @@ import android.content.Context
 import android.content.DialogInterface
 import ch.protonmail.android.R
 
-/**
- * Created by kadrikj on 9/27/18. */
 class UnsavedChangesDialog(
-        private val context: Context,
-        private val negativeButtonListener: (() -> Unit),
-        private val positiveButtonListener: (() -> Unit)) {
+    private val context: Context,
+    private val negativeButtonListener: (() -> Unit),
+    private val positiveButtonListener: (() -> Unit)
+) {
 
     fun build() {
         val builder = AlertDialog.Builder(context)
@@ -42,10 +41,10 @@ class UnsavedChangesDialog(
             }
         }
         builder.setTitle(R.string.unsaved_changes_title)
-                .setMessage(R.string.unsaved_changes_subtitle)
-                .setNegativeButton(R.string.no, clickListener)
-                .setPositiveButton(R.string.yes, clickListener)
-                .create()
-                .show()
+            .setMessage(R.string.unsaved_changes_subtitle)
+            .setNegativeButton(R.string.no, clickListener)
+            .setPositiveButton(R.string.yes, clickListener)
+            .create()
+            .show()
     }
 }

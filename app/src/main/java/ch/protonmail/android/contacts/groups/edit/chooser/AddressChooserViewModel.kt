@@ -31,9 +31,9 @@ import com.jakewharton.rxrelay2.PublishRelay
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-/**
- * Created by kadrikj on 9/7/18. */
-class AddressChooserViewModel @Inject constructor(private val addressChooserRepository: AddressChooserRepository): ViewModel() {
+class AddressChooserViewModel @Inject constructor(
+    private val addressChooserRepository: AddressChooserRepository
+) : ViewModel() {
 
     private var _data: List<ContactEmail> = ArrayList()
     private var _selected: HashSet<ContactEmail> = HashSet()
@@ -55,49 +55,56 @@ class AddressChooserViewModel @Inject constructor(private val addressChooserRepo
     @SuppressLint("CheckResult")
     private fun initFiltering() {
         _filteringPublishSubject
-                .debounce(300, TimeUnit.MILLISECONDS)
-                .distinctUntilChanged()
-                .switchMap {
-                    addressChooserRepository.filterContactGroupEmails(it)
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .switchMap {
+                addressChooserRepository.filterContactGroupEmails(it)
+            }
+            .subscribeOn(ThreadSchedulers.io())
+            .observeOn(ThreadSchedulers.main())
+            .subscribe(
+                { list ->
+                    list.forEach { contactEmail ->
+                        contactEmail.selected =
+                            _selected.find { selected ->
+                            selected.contactEmailId == contactEmail.contactEmailId
+                        } != null
+                    }
+                    _contactGroupEmailsResult.postValue(list)
+                },
+                {
+                    _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
                 }
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main())
-                .subscribe(
-                        { list ->
-                            list.forEach { contactEmail ->
-                                contactEmail.selected = _selected.find { selected -> selected.contactEmailId == contactEmail.contactEmailId } != null
-                            }
-                            _contactGroupEmailsResult.postValue(list)
-                        },
-                        {
-                            _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
-                        }
-                )
+            )
     }
 
     @SuppressLint("CheckResult")
     fun getAllEmails(selected: HashSet<ContactEmail>) {
         _selected = selected
         addressChooserRepository.getContactGroupEmails()
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main()).subscribe(
-                        { list ->
-                            list.forEach { contactEmail ->
-                                contactEmail.selected = _selected.find { selected -> selected.contactEmailId == contactEmail.contactEmailId } != null
-                            }
-                            _data = list
-                            _contactGroupEmailsResult.postValue(list)
-                        },
-                        {
-                            _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
-                        }
-                )
+            .subscribeOn(ThreadSchedulers.io())
+            .observeOn(ThreadSchedulers.main()).subscribe(
+                { list ->
+                    list.forEach { contactEmail ->
+                        contactEmail.selected =
+                            _selected.find { selected ->
+                            selected.contactEmailId == contactEmail.contactEmailId
+                        } != null
+                    }
+                    _data = list
+                    _contactGroupEmailsResult.postValue(list)
+                },
+                {
+                    _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
+                }
+            )
     }
 
     fun doFilter(filter: String, selected: List<ContactEmail>) {
         if (TextUtils.isEmpty(filter)) {
             _data.forEach { contactEmail ->
-                contactEmail.selected = _selected.find { selected -> selected.contactEmailId == contactEmail.contactEmailId } != null
+                contactEmail.selected =
+                    _selected.find { selected -> selected.contactEmailId == contactEmail.contactEmailId } != null
             }
             _contactGroupEmailsResult.postValue(_data)
         } else {

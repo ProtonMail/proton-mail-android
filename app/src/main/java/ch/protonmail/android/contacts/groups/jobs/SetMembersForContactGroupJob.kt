@@ -44,9 +44,8 @@ class SetMembersForContactGroupJob(
         }
         val labelContactsBody = LabelContactsBody(id, membersList)
         getApi().labelContacts(labelContactsBody)
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.io())
-                .blockingAwait()
+            .subscribeOn(ThreadSchedulers.io())
+            .observeOn(ThreadSchedulers.io())
+            .blockingAwait()
     }
-
 }

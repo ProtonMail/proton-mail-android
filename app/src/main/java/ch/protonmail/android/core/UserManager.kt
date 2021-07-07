@@ -190,7 +190,7 @@ class UserManager @Inject constructor(
 
     @Deprecated("Use suspend function", ReplaceWith("getCurrentUserMailSettings()"))
     fun requireCurrentUserMailSettingsBlocking(): MailSettings =
-       requireNotNull(getCurrentUserMailSettingsBlocking())
+        requireNotNull(getCurrentUserMailSettingsBlocking())
 
     suspend fun getMailSettings(userId: Id): MailSettings = withContext(dispatchers.Io) {
         MailSettings.load(preferencesFor(userId))

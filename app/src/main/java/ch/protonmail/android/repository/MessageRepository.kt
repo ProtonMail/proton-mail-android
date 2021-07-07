@@ -157,7 +157,11 @@ class MessageRepository @Inject constructor(
      *        should be fetched, even if the user settings say otherwise. Example: When a message is being open.
      * @return An instance of Message
      */
-    suspend fun getMessage(userId: Id, messageId: String, shouldFetchMessageDetails: Boolean = false): Message? =
+    suspend fun getMessage(
+        userId: Id,
+        messageId: String,
+        shouldFetchMessageDetails: Boolean = false
+    ): Message? =
         withContext(dispatcherProvider.Io) {
             val user = userManager.getLegacyUser(userId)
             return@withContext if (user.isGcmDownloadMessageDetails || shouldFetchMessageDetails) {

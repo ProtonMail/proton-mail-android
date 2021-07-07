@@ -139,8 +139,6 @@ class ComposeMessageRepository @Inject constructor(
         return messageDetailsRepository.findMessageById(draftId).first()
     }
 
-
-
     fun startFetchDraftDetail(messageId: String) {
         jobManager.addJobInBackground(FetchDraftDetailJob(messageId))
     }
@@ -149,7 +147,10 @@ class ComposeMessageRepository @Inject constructor(
         jobManager.addJobInBackground(FetchMessageDetailJob(messageId))
     }
 
-    suspend fun createAttachmentList(attachmentList: List<LocalAttachment>, dispatcher: CoroutineDispatcher) =
+    suspend fun createAttachmentList(
+        attachmentList: List<LocalAttachment>,
+        dispatcher: CoroutineDispatcher
+    ) =
         withContext(dispatcher) {
             Attachment.createAttachmentList(messageDao, attachmentList, false)
         }
@@ -171,7 +172,9 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     fun prepareMessageData(
-        isPgpMime: Boolean, addressId: String, addressEmailAlias: String? = null
+        isPgpMime: Boolean,
+        addressId: String,
+        addressEmailAlias: String? = null
     ): MessageBuilderData {
         return MessageBuilderData.Builder()
             .message(Message())
@@ -201,7 +204,11 @@ class ComposeMessageRepository @Inject constructor(
         jobManager.addJobInBackground(GetSendPreferenceJob(contactDao, emailList, destination))
     }
 
-    fun resignContactJob(contactEmail: String, sendPreference: SendPreference, destination: GetSendPreferenceJob.Destination) {
+    fun resignContactJob(
+        contactEmail: String,
+        sendPreference: SendPreference,
+        destination: GetSendPreferenceJob.Destination
+    ) {
         jobManager.addJobInBackground(ResignContactJob(contactEmail, sendPreference, destination))
     }
 }

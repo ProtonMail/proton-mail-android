@@ -46,7 +46,10 @@ import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.Attachment
+import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.LocalAttachment
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
@@ -87,7 +90,6 @@ import java.util.HashMap
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
-import kotlin.collections.set
 import kotlin.math.roundToInt
 import kotlin.time.days
 import kotlin.time.hours
@@ -213,6 +215,7 @@ class ComposeMessageViewModel @Inject constructor(
     )
     val events: Flow<ComposeMessageEventUiModel> =
         _events.asSharedFlow()
+
     // endregion
     // region getters
     var draftId: String
@@ -246,7 +249,6 @@ class ComposeMessageViewModel @Inject constructor(
     } else {
         listOf(userManager.currentUserId)
     }
-
 
     fun init(processor: HtmlProcessor) {
         htmlProcessor = processor
@@ -580,7 +582,10 @@ class ComposeMessageViewModel @Inject constructor(
         fetchKeyDetailsTrigger.value = request
     }
 
-    fun startSendPreferenceJob(emailList: List<String>, destination: GetSendPreferenceJob.Destination) {
+    fun startSendPreferenceJob(
+        emailList: List<String>,
+        destination: GetSendPreferenceJob.Destination
+    ) {
         composeMessageRepository.getSendPreference(emailList, destination)
     }
 
@@ -978,7 +983,6 @@ class ComposeMessageViewModel @Inject constructor(
         _contactGroupsResult.postValue(groupedContactsAndGroups)
         _mergedContactsLiveData.removeSource(contactGroupsResult)
         _mergedContactsLiveData.addSource(contactGroupsResult) { value -> _mergedContactsLiveData.postValue(value) }
-
     }
 
     fun getContent(content: String): String {

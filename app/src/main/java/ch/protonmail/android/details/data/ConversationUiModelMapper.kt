@@ -35,8 +35,8 @@ internal fun Conversation.toConversationUiModel() = ConversationUiModel(
 
 internal fun Message.toConversationUiModel() = ConversationUiModel(
     isStarred = isStarred ?: false,
-   subject = subject,
-   labelIds = labelIDsNotIncludingLocations,
-   messages = listOf(this),
-   messagesCount = null
+    subject = subject,
+    labelIds = labelIDsNotIncludingLocations,
+    messages = listOf(this),
+    messagesCount = null
 )

@@ -59,10 +59,11 @@ internal class LabelsManagerViewModel @Inject constructor(
 ) : ViewModel(), ViewStateStoreScope {
 
     // Extract the original form of the data
-    private val type: LabelUiModel.Type = if (savedStateHandle.get<Boolean>(EXTRA_MANAGE_FOLDERS) == true)
+    private val type: LabelUiModel.Type = if (savedStateHandle.get<Boolean>(EXTRA_MANAGE_FOLDERS) == true) {
         LabelUiModel.Type.FOLDERS
-    else
+    } else {
         LabelUiModel.Type.LABELS
+    }
 
     /** Triggered when a selection has changed */
     private val selectedLabelIds = MutableLiveData(mutableSetOf<String>())
@@ -166,12 +167,14 @@ internal class LabelsManagerViewModel @Inject constructor(
         labelEditor?.let { it.name = name } ?: run { tempLabelName = name }
     }
 
-    private fun createOrUpdateLabel(labelName: String,
-                                    color: String,
-                                    display: Int,
-                                    exclusive: Int,
-                                    update: Boolean,
-                                    labelId: String?): LiveData<WorkInfo> {
+    private fun createOrUpdateLabel(
+        labelName: String,
+        color: String,
+        display: Int,
+        exclusive: Int,
+        update: Boolean,
+        labelId: String?
+    ): LiveData<WorkInfo> {
         return PostLabelWorker.Enqueuer(workManager).enqueue(
             labelName,
             color,

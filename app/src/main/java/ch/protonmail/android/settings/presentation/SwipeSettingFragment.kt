@@ -52,7 +52,11 @@ class SwipeSettingFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.setTitle(R.string.swipe_actions)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = SettingsSwipeFragmentBinding.inflate(inflater)
         return binding.root
     }

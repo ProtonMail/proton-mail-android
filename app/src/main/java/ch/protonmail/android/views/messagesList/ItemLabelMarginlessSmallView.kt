@@ -27,27 +27,25 @@ import ch.protonmail.android.R
 import com.google.android.material.chip.ChipGroup
 import kotlinx.android.synthetic.main.item_label_marginless_small.view.*
 
-/**
- * Created by Kamil Rajtar on 17.07.18.  */
-class ItemLabelMarginlessSmallView @JvmOverloads constructor(context:Context,
-																 attrs:AttributeSet?=null,
-																 defStyleAttr:Int=0):LinearLayout(
-		context,
-		attrs,
-		defStyleAttr) {
+class ItemLabelMarginlessSmallView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : LinearLayout(
+    context,
+    attrs,
+    defStyleAttr
+) {
 
-	init {
-		inflate(context,R.layout.item_label_marginless_small,this)
-		layoutParams=ChipGroup.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT)
-	}
+    init {
+        inflate(context, R.layout.item_label_marginless_small, this)
+        layoutParams = ChipGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+    }
 
-	fun bind(text:CharSequence,@ColorInt color:Int,strokeWidth:Int)
-	{
-		nameTextView.text=text
-		nameTextView.setTextColor(color)
-		val gd=nameTextView.background.current as GradientDrawable
-		gd.setStroke(strokeWidth,color)
-	}
-
+    fun bind(text: CharSequence, @ColorInt color: Int, strokeWidth: Int) {
+        nameTextView.text = text
+        nameTextView.setTextColor(color)
+        val gd = nameTextView.background.current as GradientDrawable
+        gd.setStroke(strokeWidth, color)
+    }
 }
-

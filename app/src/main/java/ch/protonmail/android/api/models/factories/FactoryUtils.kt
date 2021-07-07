@@ -20,15 +20,15 @@ package ch.protonmail.android.api.models.factories
 
 internal fun Int.parseBoolean(variableName: String = ""): Boolean {
     return when (this) {
-		0 -> false
-		1 -> true
-        else -> throw RuntimeException("$variableName value not from acceptable range [0,1]: $this")
+        0 -> false
+        1 -> true
+        else -> throw IllegalArgumentException("$variableName value not from acceptable range [0,1]: $this")
     }
 }
 
 internal fun Long.checkIfSet(variableName: String = ""): Long {
     return when (this) {
-		-1L -> throw RuntimeException("$variableName is not set")
+        -1L -> throw IllegalStateException("$variableName is not set")
         else -> this
     }
 }

@@ -54,12 +54,16 @@ data class SettingsItemUiModel constructor(
     enum class SettingsItemTypeEnum {
         @SerializedName("info")
         INFO,
+
         @SerializedName("drill")
         DRILL_DOWN,
+
         @SerializedName("button")
         BUTTON,
+
         @SerializedName("toggle")
         TOGGLE,
+
         @SerializedName("spinner")
         SPINNER
     }

@@ -224,7 +224,11 @@ class EditContactDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun setupVCards(vCardStringType0: String?, vCardStringType2: String?, vCardStringType3Path: String?) {
+    private fun setupVCards(
+        vCardStringType0: String?,
+        vCardStringType2: String?,
+        vCardStringType3Path: String?
+    ) {
         var vCard0: VCard? = null
         if (!TextUtils.isEmpty(vCardStringType0)) {
             vCard0 = Ezvcard.parse(vCardStringType0).first()
@@ -389,5 +393,9 @@ class EditContactDetailsViewModel @Inject constructor(
         }
     }
 
-    data class EditContactCardsHolder(val vCardType0: VCard, val vCardType2: VCard, val vCardType3: VCard)
+    data class EditContactCardsHolder(
+        val vCardType0: VCard,
+        val vCardType2: VCard,
+        val vCardType3: VCard
+    )
 }

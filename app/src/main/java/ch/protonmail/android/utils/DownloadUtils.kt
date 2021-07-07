@@ -53,7 +53,12 @@ class DownloadUtils @Inject constructor() {
         }
     }
 
-    fun viewAttachmentNotification(context: Context, fileName: String, uri: Uri?, showNotification: Boolean) {
+    fun viewAttachmentNotification(
+        context: Context,
+        fileName: String,
+        uri: Uri?,
+        showNotification: Boolean
+    ) {
         if (uri != null) {
             val mimeType = getMimeType(uri, context, fileName)
 

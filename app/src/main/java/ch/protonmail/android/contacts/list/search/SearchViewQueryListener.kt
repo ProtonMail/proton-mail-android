@@ -20,9 +20,11 @@ package ch.protonmail.android.contacts.list.search
 
 import androidx.appcompat.widget.SearchView
 
-internal class SearchViewQueryListener(private val searchView: SearchView,
-                                       private val viewModels: List<ISearchListenerViewModel>
+internal class SearchViewQueryListener(
+    private val searchView: SearchView,
+    private val viewModels: List<ISearchListenerViewModel>
 ) : SearchView.OnQueryTextListener {
+
     override fun onQueryTextSubmit(searchPhrase: String): Boolean {
         for (viewModel in viewModels) {
             viewModel.setSearchPhrase(searchPhrase)

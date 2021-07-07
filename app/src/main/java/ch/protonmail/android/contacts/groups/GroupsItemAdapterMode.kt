@@ -18,8 +18,6 @@
  */
 package ch.protonmail.android.contacts.groups
 
-/**
- * Created by kadrikj on 9/18/18. */
 enum class GroupsItemAdapterMode {
     NORMAL, CHECKBOXES, DELETE
 }

@@ -21,15 +21,16 @@ package ch.protonmail.android.views.messageDetails
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import ch.protonmail.android.R
 
-/**
- * Created by Kamil Rajtar on 13.08.18.  */
 class FolderIconView @JvmOverloads constructor(
-		context:Context,attrs:AttributeSet?=null,defStyleAttr:Int=0
-):ImageView(context,attrs,defStyleAttr){
-	init {
-		View.inflate(context,R.layout.view_folder_icon,null)
-	}
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : AppCompatImageView(context, attrs, defStyleAttr) {
+
+    init {
+        View.inflate(context, R.layout.view_folder_icon, null)
+    }
 }

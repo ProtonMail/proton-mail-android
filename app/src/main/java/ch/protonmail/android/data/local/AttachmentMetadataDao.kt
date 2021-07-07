@@ -55,10 +55,12 @@ interface AttachmentMetadataDao {
     @Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA WHERE $COLUMN_ATTACHMENT_FOLDER_LOCATION = :messageId")
     fun getAllAttachmentsForMessage(messageId: String): List<AttachmentMetadata>
 
-    @Query("""
+    @Query(
+        """
         SELECT * FROM $TABLE_ATTACHMENT_METADATA 
         WHERE $COLUMN_ATTACHMENT_FOLDER_LOCATION = :messageId AND $COLUMN_ATTACHMENT_ID = :attachmentId
-    """)
+    """
+    )
     fun getAttachmentMetadataForMessageAndAttachmentId(
         messageId: String,
         attachmentId: String

@@ -78,5 +78,8 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
             WHERE $COLUMN_ID = :conversationId
         """
     )
-    abstract suspend fun updateLabels(labels: List<LabelContextDatabaseModel>, conversationId: String)
+    abstract suspend fun updateLabels(
+        labels: List<LabelContextDatabaseModel>,
+        conversationId: String
+    )
 }

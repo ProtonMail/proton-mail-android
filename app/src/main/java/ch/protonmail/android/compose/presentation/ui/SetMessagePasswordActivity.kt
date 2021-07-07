@@ -45,6 +45,7 @@ import timber.log.Timber
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 const val ARG_SET_MESSAGE_PASSWORD_PASSWORD = "arg.password"
+
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 const val ARG_SET_MESSAGE_PASSWORD_HINT = "arg.hint"
 
