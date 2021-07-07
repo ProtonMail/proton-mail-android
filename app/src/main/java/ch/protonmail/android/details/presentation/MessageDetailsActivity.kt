@@ -95,8 +95,10 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private var messageRecipientUserId: Id? = null
     private var messageRecipientUsername: String? = null
-    private val attachmentToDownload = AtomicReference<Attachment?>(null)
+    private var onOffsetChangedListener: AppBarLayout.OnOffsetChangedListener? = null
     private var showPhishingReportButton = true
+
+    private val attachmentToDownload = AtomicReference<Attachment?>(null)
     private val viewModel: MessageDetailsViewModel by viewModels()
 
     /** Lazy instance of [ClipboardManager] that will be used for copy content into the Clipboard */
@@ -475,9 +477,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun setupToolbarOffsetListener(messagesCount: Int) {
+        // Ensure we do only set onOffsetChangedListener once
+        if (onOffsetChangedListener != null) {
+            return
+        }
+
         var areCollapsedViewsShown = false
 
-        val onOffsetChangedListener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+        onOffsetChangedListener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             val scrolledPercentage = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange.toFloat()
 
             val collapsedViewsAnimation = if (areCollapsedViewsShown) AlphaAnimation(1f, 0f) else AlphaAnimation(0f, 1f)
