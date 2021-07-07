@@ -34,15 +34,20 @@ import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetAction
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetViewModel
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.verify
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.BeforeTest
@@ -58,7 +63,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     private lateinit var moveMessagesToFolder: MoveMessagesToFolder
 
     @MockK
-    private lateinit var repository: MessageRepository
+    private lateinit var messageRepository: MessageRepository
 
     @MockK
     private lateinit var changeConversationsReadStatus: ChangeConversationsReadStatus
@@ -92,7 +97,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             deleteConversations,
             moveMessagesToFolder,
             moveConversationsToFolder,
-            repository,
+            messageRepository,
             changeConversationsReadStatus,
             changeConversationsStarredStatus,
             conversationModeEnabled,
@@ -102,7 +107,6 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun verifyShowLabelsManagerActionIsExecutedForLabels() = runBlockingTest {
-
         // given
         val messageId1 = "messageId1"
         val labelId1 = "labelId1"
@@ -125,8 +129,8 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             every { messageId } returns messageId2
             every { labelIDsNotIncludingLocations } returns listOf(labelId2)
         }
-        coEvery { repository.findMessageById(messageId1) } returns message1
-        coEvery { repository.findMessageById(messageId2) } returns message2
+        coEvery { messageRepository.findMessageById(messageId1) } returns message1
+        coEvery { messageRepository.findMessageById(messageId2) } returns message2
 
         // when
         viewModel.showLabelsManager(messageIds, currentLocation)
@@ -137,14 +141,12 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
     @Test
     fun verifyShowLabelsManagerActionIsExecutedForFolders() = runBlockingTest {
-
         // given
         val messageId1 = "messageId1"
         val labelId1 = "labelId1"
         val messageId2 = "messageId2"
         val labelId2 = "labelId2"
         val messageIds = listOf(messageId1, messageId2)
-        val labelIds = listOf(labelId1, labelId2)
         val currentLocation = Constants.MessageLocationType.INBOX
         val labelsSheetType = LabelsActionSheet.Type.FOLDER
         val expected = MessageActionSheetAction.ShowLabelsManager(
@@ -160,8 +162,8 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             every { messageId } returns messageId2
             every { labelIDsNotIncludingLocations } returns listOf(labelId2)
         }
-        coEvery { repository.findMessageById(messageId1) } returns message1
-        coEvery { repository.findMessageById(messageId2) } returns message2
+        coEvery { messageRepository.findMessageById(messageId1) } returns message1
+        coEvery { messageRepository.findMessageById(messageId2) } returns message2
 
         // when
         viewModel.showLabelsManager(messageIds, currentLocation, LabelsActionSheet.Type.FOLDER)
@@ -180,7 +182,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
             every { messageId } returns messageId1
             every { header } returns messageHeader
         }
-        coEvery { repository.findMessageById(messageId1) } returns message1
+        coEvery { messageRepository.findMessageById(messageId1) } returns message1
         val expected = MessageActionSheetAction.ShowMessageHeaders(messageHeader)
 
         // when
@@ -193,7 +195,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun verifyMoveToInboxEmitsShouldDismissActionThatDoesNotDismissBackingActivityWhenBottomActionSheetOriginatorWasConversationDetails() {
         // given
-        val messageId1 = "messageId1"
+        val messageId = "messageId1"
         val expected = MessageActionSheetAction.ShouldDismiss(false)
         every { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
         every {
@@ -202,7 +204,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // when
         viewModel.moveToInbox(
-            listOf(messageId1),
+            listOf(messageId),
             Constants.MessageLocationType.ARCHIVE
         )
 
@@ -213,7 +215,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun verifyMoveToInboxEmitsShouldDismissActionThatDismissesBackingActivityWhenBottomActionSheetOriginatorWasMessageDetails() {
         // given
-        val messageId1 = "messageId1"
+        val messageId = "messageId2"
         val expected = MessageActionSheetAction.ShouldDismiss(true)
         every { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
         every {
@@ -222,11 +224,108 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // when
         viewModel.moveToInbox(
-            listOf(messageId1),
+            listOf(messageId),
             Constants.MessageLocationType.ARCHIVE
         )
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
+    }
+
+    @Test
+    fun verifyUnStarMessageCallsChangeConversationStarredStatusWhenConversationModeIsEnabledAndAConversationIsBeingUnStarred() {
+        // given
+        val conversationId = "conversationId01"
+        val expected = MessageActionSheetAction.ChangeStarredStatus(false)
+        val userId = UserId("userId")
+        val unstarAction = ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
+        every { conversationModeEnabled(any()) } returns true
+        every { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        every {
+            savedStateHandle.get<Int>("extra_arg_originator_screen_id")
+        } returns MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+
+        // when
+        viewModel.unStarMessage(
+            listOf(conversationId),
+            Constants.MessageLocationType.LABEL_FOLDER
+        )
+
+        // then
+        assertEquals(expected, viewModel.actionsFlow.value)
+        coVerify { changeConversationsStarredStatus.invoke(listOf(conversationId), userId, unstarAction) }
+        verify { messageRepository wasNot Called }
+    }
+
+    @Test
+    fun verifyMarkReadCallsChangeConversationReadStatusWhenConversationModeIsEnabledAndAConversationIsBeingMarkedAsRead() {
+        // given
+        val conversationId = "conversationId02"
+        val expected = MessageActionSheetAction.ShouldDismiss(true)
+        val userId = UserId("userId02")
+        val markReadAction = ChangeConversationsReadStatus.Action.ACTION_MARK_READ
+        val location = Constants.MessageLocationType.ALL_MAIL
+        every { conversationModeEnabled(any()) } returns true
+        every { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        every {
+            savedStateHandle.get<Int>("extra_arg_originator_screen_id")
+        } returns MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+
+        // when
+        viewModel.markRead(
+            listOf(conversationId),
+            location
+        )
+
+        // then
+        assertEquals(expected, viewModel.actionsFlow.value)
+        coVerify { changeConversationsReadStatus.invoke(listOf(conversationId), markReadAction, userId, location) }
+        verify { messageRepository wasNot Called }
+    }
+
+    @Test
+    fun verifyStarMessageCallsMessageRepositoryToStarMessageWhenConversationIsEnabledAndActionIsBeingAppliedToASpecificMessageInAConversation() {
+        // given
+        val messageId = "messageId3"
+        val expected = MessageActionSheetAction.ChangeStarredStatus(true)
+        every { conversationModeEnabled(any()) } returns true
+        every { messageRepository.starMessages(listOf(messageId)) } just Runs
+        every {
+            savedStateHandle.get<Int>("extra_arg_originator_screen_id")
+        } returns MessageActionSheet.ARG_ORIGINATOR_SCREEN_CONVERSATION_DETAILS_ID
+
+        // when
+        viewModel.starMessage(
+            listOf(messageId),
+            Constants.MessageLocationType.INBOX
+        )
+
+        // then
+        assertEquals(expected, viewModel.actionsFlow.value)
+        verify { messageRepository.starMessages(listOf(messageId)) }
+        verify { accountManager wasNot Called }
+    }
+
+    @Test
+    fun verifyMarkUnreadCallsMessageRepositoryToMarkUnreadWhenConversationIsEnabledAndActionIsBeingAppliedToASpecificMessageInAConversation() {
+        // given
+        val messageId = "messageId4"
+        val expected = MessageActionSheetAction.ShouldDismiss(false)
+        every { conversationModeEnabled(any()) } returns true
+        every { messageRepository.markUnRead(listOf(messageId)) } just Runs
+        every {
+            savedStateHandle.get<Int>("extra_arg_originator_screen_id")
+        } returns MessageActionSheet.ARG_ORIGINATOR_SCREEN_CONVERSATION_DETAILS_ID
+
+        // when
+        viewModel.markUnread(
+            listOf(messageId),
+            Constants.MessageLocationType.INBOX
+        )
+
+        // then
+        assertEquals(expected, viewModel.actionsFlow.value)
+        verify { messageRepository.markUnRead(listOf(messageId)) }
+        verify { accountManager wasNot Called }
     }
 }

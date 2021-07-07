@@ -140,7 +140,7 @@ class MessageActionSheetViewModel @Inject constructor(
         location: Constants.MessageLocationType
     ) {
         viewModelScope.launch {
-            if (conversationModeEnabled(location)) {
+            if (isActionAppliedToConversation(location)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     changeConversationsStarredStatus(
@@ -164,7 +164,7 @@ class MessageActionSheetViewModel @Inject constructor(
         location: Constants.MessageLocationType
     ) {
         viewModelScope.launch {
-            if (conversationModeEnabled(location)) {
+            if (isActionAppliedToConversation(location)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     changeConversationsStarredStatus(
@@ -188,7 +188,7 @@ class MessageActionSheetViewModel @Inject constructor(
         location: Constants.MessageLocationType
     ) {
         viewModelScope.launch {
-            if (conversationModeEnabled(location)) {
+            if (isActionAppliedToConversation(location)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     changeConversationsReadStatus(
@@ -204,7 +204,8 @@ class MessageActionSheetViewModel @Inject constructor(
                 messageRepository.markUnRead(ids)
             }
         }.invokeOnCompletion {
-            actionsMutableFlow.value = MessageActionSheetAction.ChangeReadStatus(false)
+            val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+            actionsMutableFlow.value = MessageActionSheetAction.ShouldDismiss(dismissBackingActivity)
         }
     }
 
@@ -213,7 +214,7 @@ class MessageActionSheetViewModel @Inject constructor(
         location: Constants.MessageLocationType
     ) {
         viewModelScope.launch {
-            if (conversationModeEnabled(location)) {
+            if (isActionAppliedToConversation(location)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     changeConversationsReadStatus(
@@ -229,7 +230,8 @@ class MessageActionSheetViewModel @Inject constructor(
                 messageRepository.markRead(ids)
             }
         }.invokeOnCompletion {
-            actionsMutableFlow.value = MessageActionSheetAction.ChangeReadStatus(true)
+            val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+            actionsMutableFlow.value = MessageActionSheetAction.ShouldDismiss(dismissBackingActivity)
         }
     }
 
@@ -241,11 +243,11 @@ class MessageActionSheetViewModel @Inject constructor(
     }
 
     private fun moveMessagesToFolderAndDismiss(
-        messageIds: List<String>, newFolderLocationId: String,
+        ids: List<String>, newFolderLocationId: String,
         currentFolder: Constants.MessageLocationType
     ) {
         viewModelScope.launch {
-            if (conversationModeEnabled(currentFolder)) {
+            if (isActionAppliedToConversation(currentFolder)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     moveConversationsToFolder(
@@ -264,12 +266,15 @@ class MessageActionSheetViewModel @Inject constructor(
                 )
             }
         }.invokeOnCompletion {
-          val dismissBackingActivity = !isMoveActionAppliedToMessageWithinAConversation()
+            val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
             actionsMutableFlow.value = MessageActionSheetAction.ShouldDismiss(dismissBackingActivity)
         }
     }
 
-    private fun isMoveActionAppliedToMessageWithinAConversation(): Boolean {
+    private fun isActionAppliedToConversation(location: Constants.MessageLocationType) =
+        conversationModeEnabled(location) && !isApplyingActionToMessageWithinAConversation()
+
+    private fun isApplyingActionToMessageWithinAConversation(): Boolean {
         val originatorId = getOriginatorIdInputArg()
         return originatorId == MessageActionSheet.ARG_ORIGINATOR_SCREEN_CONVERSATION_DETAILS_ID
     }

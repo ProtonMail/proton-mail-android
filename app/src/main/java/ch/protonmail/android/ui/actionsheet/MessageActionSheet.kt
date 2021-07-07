@@ -332,7 +332,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 sheetAction.currentFolderLocationId
             )
             is MessageActionSheetAction.ShowMessageHeaders -> showMessageHeaders(sheetAction.messageHeaders)
-            is MessageActionSheetAction.ChangeReadStatus -> dismissActionSheetAndGoToMailbox()
             is MessageActionSheetAction.ChangeStarredStatus -> dismiss()
             is MessageActionSheetAction.Delete -> dismiss()
             is MessageActionSheetAction.ShouldDismiss -> handleDismissBehavior(sheetAction.dismissBackingActivity)
@@ -373,11 +372,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         dismiss()
     }
 
-    private fun dismissActionSheetAndGoToMailbox() {
-        dismiss()
-        popBackDetailsActivity()
-    }
-
     companion object {
 
         private const val EXTRA_ARG_MESSAGE_IDS = "arg_message_ids"
@@ -387,8 +381,23 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         private const val EXTRA_ARG_IS_STARED = "arg_extra_is_stared"
         private const val HEADER_SLIDE_THRESHOLD = 0.8f
         internal const val EXTRA_ARG_ORIGINATOR_SCREEN_ID = "extra_arg_originator_screen_id"
+
+        /**
+         * ActionSheet is being summoned from the Detail Screen (ie. MessageDetailsActivity)
+         * of either a conversation or a message
+         */
         const val ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID = 0 // e.g. [MessageDetailsActivity]
+
+        /**
+         * ActionSheet is being summoned from the MailBox Screen (ie. MailboxActivity)
+         * which contains either conversations or messages
+         */
         const val ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID = 1 // e.g [MailboxActivity]
+
+        /**
+         * ActionSheet is being summoned from the Detail Screen (ie. MessageDetailsActivity) displaying a Conversation
+         * and it's being used to apply actions on one specific message into such conversation
+         */
         const val ARG_ORIGINATOR_SCREEN_CONVERSATION_DETAILS_ID = 2 // e.g [MessageDetailsActivity with conversations]
 
         /**
@@ -397,6 +406,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
          * @param originatorLocationId defines starting activity/location
          *  0 = [ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID]
          *  1 = [ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID]
+         *  2 = [ARG_ORIGINATOR_SCREEN_CONVERSATION_DETAILS_ID]
          * @param messagesIds current message id/ or selected messages Ids
          * @param currentFolderLocationId defines current message folder location based on values from
          * [Constants.MessageLocationType] e.g. 3 = trash
