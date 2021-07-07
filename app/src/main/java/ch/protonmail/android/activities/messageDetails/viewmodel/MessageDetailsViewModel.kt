@@ -640,7 +640,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     fun deleteMessage(messageId: String) {
         viewModelScope.launch {
-            deleteMessageUseCase(listOf(messageId))
+            deleteMessageUseCase(listOf(messageId), Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString())
         }
     }
 

@@ -46,7 +46,7 @@ class ServerTimeInterceptor(
             handleResponse(response)
         } catch (exception: IOException) {
             Timber.d(exception, "IOException ${request.url()}")
-            queueNetworkUtil.setConnectivityHasFailed(exception)
+            queueNetworkUtil.retryPingAsPreviousRequestWasInconclusive()
         }
 
         if (response == null) {

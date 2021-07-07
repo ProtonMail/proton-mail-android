@@ -76,11 +76,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.BaseActivity;
-import ch.protonmail.android.activities.UpsellingActivity;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.activities.contactDetails.ExtractFullContactDetailsTask;
 import ch.protonmail.android.activities.guest.LoginActivity;
@@ -101,6 +102,7 @@ import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.usecase.model.FetchContactDetailsResult;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
+import ch.protonmail.android.utils.FileHelper;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.VCardUtil;
@@ -135,6 +137,7 @@ import ezvcard.util.PartialDate;
 import kotlin.Unit;
 import timber.log.Timber;
 
+import static ch.protonmail.android.usecase.create.CreateContactKt.VCARD_TEMP_FILE_NAME;
 import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_INITIALS;
 import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_PHOTO;
 
@@ -165,8 +168,6 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     LinearLayout mEncryptedDataContainer;
     @BindView(R.id.contactDetailsProgressBar)
     View progressBar;
-    @BindView(R.id.upgradeEncryptedStub)
-    ViewStub mUpgradeEncryptedStub;
     @BindView(R.id.emptyEncryptedStub)
     ViewStub mEmptyEncryptedStub;
     @BindView(R.id.errorEncryptedStub)
@@ -189,6 +190,9 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     ImageButton fabPhone;
     @BindView(R.id.fabWeb)
     ImageButton fabWeb;
+
+    @Inject
+    FileHelper fileHelper;
 
     private ContactsDatabase contactsDatabase;
     private User mUser;
@@ -228,10 +232,6 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         mUser = mUserManager.getUser();
-        if (!mUser.isPaidUser()) {
-            View mUpgradeView = mUpgradeEncryptedStub.inflate();
-            mUpgradeView.findViewById(R.id.upgrade).setOnClickListener(mUpgradeClickListener);
-        }
 
         Bundle extras = getIntent().getExtras();
         inflater = LayoutInflater.from(this);
@@ -715,7 +715,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             if (mEmptyEncryptedView == null) {
                 mEmptyEncryptedView = mEmptyEncryptedStub.inflate();
                 mEmptyEncryptedView.findViewById(R.id.add_contact_details).setOnClickListener(v ->
-                        EditContactDetailsActivity.startEditContactActivity(ContactDetailsActivity.this, mContactId, REQUEST_CODE_EDIT_CONTACT, mVCardType0, mVCardType2, mVCardType3));
+                        startEditContacts());
             } else {
                 if (!hasDecryptionError) {
                     mEmptyEncryptedView.setVisibility(View.VISIBLE);
@@ -990,12 +990,6 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         return isEmpty;
     }
 
-    private final View.OnClickListener mUpgradeClickListener = v -> {
-        Intent upgradeIntent = new Intent(ContactDetailsActivity.this, UpsellingActivity.class);
-        upgradeIntent.putExtra(UpsellingActivity.EXTRA_OPEN_UPGRADE_CONTAINER, true);
-        startActivityForResult(AppUtil.decorInAppIntent(upgradeIntent), REQUEST_CODE_UPGRADE);
-    };
-
     private void showSignatureErrorTopPart() {
         mTopPanel.setBackgroundDrawable(getResources().getDrawable(R.drawable.signature_error_border));
         mTopPanelVerificationError.setVisibility(View.VISIBLE);
@@ -1040,7 +1034,18 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
     @OnClick(R.id.editContactDetails)
     public void onEditContactDetailsClicked() {
-        EditContactDetailsActivity.startEditContactActivity(this, mContactId, REQUEST_CODE_EDIT_CONTACT, mVCardType0, mVCardType2, mVCardType3);
+        startEditContacts();
+    }
+
+    private void startEditContacts() {
+        String vCardFilePath = "";
+        if (mVCardType3 != null && mVCardType3.length() > 0) {
+            vCardFilePath = getCacheDir().toString() + File.separator +  VCARD_TEMP_FILE_NAME;
+            fileHelper.saveStringToFile(vCardFilePath, mVCardType3);
+        }
+        EditContactDetailsActivity.startEditContactActivity(
+                this, mContactId, REQUEST_CODE_EDIT_CONTACT, mVCardType0, mVCardType2, vCardFilePath
+        );
     }
 
     private void copyValueToClipboard(CharSequence title, CharSequence value) {

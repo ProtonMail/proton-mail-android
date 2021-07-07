@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.usecase.create
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
@@ -29,6 +30,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.ContactIdGenerator
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.utils.FileHelper
 import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors
 import ch.protonmail.android.worker.CreateContactWorker.Enqueuer
@@ -39,14 +41,19 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import me.proton.core.util.kotlin.DispatcherProvider
+import java.io.File
 import javax.inject.Inject
+
+internal const val VCARD_TEMP_FILE_NAME = "temp_card.vcard"
 
 class CreateContact @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val contactsRepository: ContactDetailsRepository,
     private val createContactScheduler: Enqueuer,
     private val contactIdGenerator: ContactIdGenerator,
-    private val connectivityManager: NetworkConnectivityManager
+    private val connectivityManager: NetworkConnectivityManager,
+    private val context: Context,
+    private val fileHelper: FileHelper
 ) {
 
     suspend operator fun invoke(
@@ -64,7 +71,15 @@ class CreateContact @Inject constructor(
             contactEmails.forEach { it.contactId = contactData.contactId }
             contactsRepository.saveContactEmails(contactEmails)
 
-            createContactScheduler.enqueue(encryptedContactData, signedContactData)
+            // we have to save encrypted vCard to a file due to worker arguments size limitations
+            // they are limited to 10240 bytes, if it is exceeded we get
+            // IllegalStateException: Data cannot occupy more than 10240 bytes when serialized
+            // but if we add an image to a contact we exceed this value
+            // therefore we will just pass to the worker a cached file path
+            val vCardFilePath = context.cacheDir.toString() + File.separator + VCARD_TEMP_FILE_NAME
+            fileHelper.saveStringToFile(vCardFilePath, encryptedContactData)
+
+            createContactScheduler.enqueue(vCardFilePath, signedContactData)
                 .filter { it?.state?.isFinished == true || it?.state == WorkInfo.State.ENQUEUED }
                 .switchMap { workInfo: WorkInfo? ->
                     liveData(dispatcherProvider.Io) {
