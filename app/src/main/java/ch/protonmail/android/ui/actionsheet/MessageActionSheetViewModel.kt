@@ -69,7 +69,8 @@ class MessageActionSheetViewModel @Inject constructor(
             val showLabelsManager = MessageActionSheetAction.ShowLabelsManager(
                 messageIds,
                 currentLocation.messageLocationTypeValue,
-                labelsSheetType
+                labelsSheetType,
+                getActionsTargetInputArg()
             )
             actionsMutableFlow.value = showLabelsManager
         }
@@ -275,11 +276,12 @@ class MessageActionSheetViewModel @Inject constructor(
         conversationModeEnabled(location) && !isApplyingActionToMessageWithinAConversation()
 
     private fun isApplyingActionToMessageWithinAConversation(): Boolean {
-        val originatorId = getOriginatorIdInputArg()
-        return originatorId == MessageActionSheet.ARG_ORIGINATOR_SCREEN_CONVERSATION_DETAILS_ID
+        val actionsTarget = getActionsTargetInputArg()
+        return actionsTarget == ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
     }
 
-    private fun getOriginatorIdInputArg() = savedStateHandle.get(MessageActionSheet.EXTRA_ARG_ORIGINATOR_SCREEN_ID)
-        ?: MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+    private fun getActionsTargetInputArg() = savedStateHandle.get<ActionSheetTarget>(
+        MessageActionSheet.EXTRA_ARG_ACTION_TARGET
+    ) ?: ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
 
 }

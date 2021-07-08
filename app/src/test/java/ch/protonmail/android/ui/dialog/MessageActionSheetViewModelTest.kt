@@ -30,7 +30,7 @@ import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
-import ch.protonmail.android.ui.actionsheet.MessageActionSheet
+import ch.protonmail.android.ui.actionsheet.ActionSheetTarget
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetAction
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetViewModel
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -113,13 +113,13 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val messageId2 = "messageId2"
         val labelId2 = "labelId2"
         val messageIds = listOf(messageId1, messageId2)
-        val labelIds = listOf(labelId1, labelId2)
         val currentLocation = Constants.MessageLocationType.INBOX
         val labelsSheetType = LabelsActionSheet.Type.LABEL
         val expected = MessageActionSheetAction.ShowLabelsManager(
             messageIds,
             currentLocation.messageLocationTypeValue,
-            labelsSheetType
+            labelsSheetType,
+            ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
         )
         val message1 = mockk<Message> {
             every { messageId } returns messageId1
@@ -131,6 +131,9 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         }
         coEvery { messageRepository.findMessageById(messageId1) } returns message1
         coEvery { messageRepository.findMessageById(messageId2) } returns message2
+        every {
+            savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
+        } returns ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
 
         // when
         viewModel.showLabelsManager(messageIds, currentLocation)
@@ -152,7 +155,8 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         val expected = MessageActionSheetAction.ShowLabelsManager(
             messageIds,
             currentLocation.messageLocationTypeValue,
-            labelsSheetType
+            labelsSheetType,
+            ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
         )
         val message1 = mockk<Message> {
             every { messageId } returns messageId1
@@ -164,6 +168,9 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         }
         coEvery { messageRepository.findMessageById(messageId1) } returns message1
         coEvery { messageRepository.findMessageById(messageId2) } returns message2
+        every {
+            savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
+        } returns ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
 
         // when
         viewModel.showLabelsManager(messageIds, currentLocation, LabelsActionSheet.Type.FOLDER)
@@ -193,15 +200,15 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyMoveToInboxEmitsShouldDismissActionThatDoesNotDismissBackingActivityWhenBottomActionSheetOriginatorWasConversationDetails() {
+    fun verifyMoveToInboxEmitsShouldDismissActionThatDoesNotDismissBackingActivityWhenBottomActionSheetTargetIsConversationDetails() {
         // given
         val messageId = "messageId1"
         val expected = MessageActionSheetAction.ShouldDismiss(false)
         every { conversationModeEnabled(any()) } returns true
         every { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
         every {
-            savedStateHandle.get<Int>("extra_arg_originator_screen_id")
-        } returns MessageActionSheet.ARG_ORIGINATOR_SCREEN_CONVERSATION_DETAILS_ID
+            savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
+        } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
         // when
         viewModel.moveToInbox(
@@ -215,15 +222,15 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun verifyMoveToInboxEmitsShouldDismissActionThatDismissesBackingActivityWhenBottomActionSheetOriginatorWasMessageDetails() {
+    fun verifyMoveToInboxEmitsShouldDismissActionThatDismissesBackingActivityWhenBottomActionSheetTargetIsMessageDetails() {
         // given
         val messageId = "messageId2"
         val expected = MessageActionSheetAction.ShouldDismiss(true)
         every { conversationModeEnabled(any()) } returns false
         every { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
         every {
-            savedStateHandle.get<Int>("extra_arg_originator_screen_id")
-        } returns MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+            savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
+        } returns ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
 
         // when
         viewModel.moveToInbox(
@@ -246,8 +253,8 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(any()) } returns true
         every { accountManager.getPrimaryUserId() } returns flowOf(userId)
         every {
-            savedStateHandle.get<Int>("extra_arg_originator_screen_id")
-        } returns MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+            savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
+        } returns ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
 
         // when
         viewModel.unStarMessage(
@@ -272,8 +279,8 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(any()) } returns true
         every { accountManager.getPrimaryUserId() } returns flowOf(userId)
         every {
-            savedStateHandle.get<Int>("extra_arg_originator_screen_id")
-        } returns MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+            savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
+        } returns ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
 
         // when
         viewModel.markRead(
@@ -295,8 +302,8 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(any()) } returns true
         every { messageRepository.starMessages(listOf(messageId)) } just Runs
         every {
-            savedStateHandle.get<Int>("extra_arg_originator_screen_id")
-        } returns MessageActionSheet.ARG_ORIGINATOR_SCREEN_CONVERSATION_DETAILS_ID
+            savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
+        } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
         // when
         viewModel.starMessage(
@@ -318,8 +325,8 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(any()) } returns true
         every { messageRepository.markUnRead(listOf(messageId)) } just Runs
         every {
-            savedStateHandle.get<Int>("extra_arg_originator_screen_id")
-        } returns MessageActionSheet.ARG_ORIGINATOR_SCREEN_CONVERSATION_DETAILS_ID
+            savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
+        } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
         // when
         viewModel.markUnread(

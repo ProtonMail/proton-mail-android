@@ -36,6 +36,7 @@ import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionAdapter
 import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionSheetViewModel
+import ch.protonmail.android.ui.actionsheet.ActionSheetTarget
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -156,18 +157,21 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
         const val EXTRA_ARG_MESSAGES_IDS = "extra_arg_messages_ids"
         const val EXTRA_ARG_ACTION_SHEET_TYPE = "extra_arg_action_sheet_type"
         const val EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID = "extra_arg_current_folder_location_id"
+        const val EXTRA_ARG_ACTION_TARGET = "extra_arg_labels_action_sheet_actions_target"
 
         fun newInstance(
             messageIds: List<String>,
             currentFolderLocationId: Int,
-            labelActionSheetType: Type = Type.LABEL
+            labelActionSheetType: Type = Type.LABEL,
+            actionSheetTarget: ActionSheetTarget
         ): LabelsActionSheet {
 
             return LabelsActionSheet().apply {
                 arguments = bundleOf(
                     EXTRA_ARG_MESSAGES_IDS to messageIds,
                     EXTRA_ARG_ACTION_SHEET_TYPE to labelActionSheetType,
-                    EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID to currentFolderLocationId
+                    EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID to currentFolderLocationId,
+                    EXTRA_ARG_ACTION_TARGET to actionSheetTarget
                 )
             }
         }

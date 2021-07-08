@@ -60,6 +60,7 @@ import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.ReportPhishingJob
+import ch.protonmail.android.ui.actionsheet.ActionSheetTarget
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
@@ -530,7 +531,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private fun setupLastMessageActionsListener(message: Message) {
         messageDetailsActionsView.setOnMoreActionClickListener {
             MessageActionSheet.newInstance(
-                MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
+                ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN,
                 listOf(message.messageId ?: messageOrConversationId),
                 message.location,
                 getCurrentSubject(),
@@ -793,7 +794,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private fun onShowMessageActionSheet() = { message: Message ->
         MessageActionSheet.newInstance(
-            MessageActionSheet.ARG_ORIGINATOR_SCREEN_CONVERSATION_DETAILS_ID,
+            ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN,
             listOf(message.messageId ?: messageOrConversationId),
             message.location,
             getCurrentSubject(),

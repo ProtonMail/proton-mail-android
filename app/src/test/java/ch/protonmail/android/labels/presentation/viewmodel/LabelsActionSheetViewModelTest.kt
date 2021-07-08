@@ -24,6 +24,7 @@ import androidx.lifecycle.SavedStateHandle
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetAllLabels
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
@@ -35,6 +36,8 @@ import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.UpdateConversationsLabels
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
+import ch.protonmail.android.ui.actionsheet.ActionSheetTarget
+import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -208,4 +211,46 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         coVerify { moveMessagesToFolder.invoke(any(), any(), any()) }
         assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved, viewModel.actionsResult.value)
     }
+
+    @Test
+    fun verifyThatWhenLabelIsClickedForFolderTypeWithConversationModeEnabledThenConversationsAreMoved() =
+        runBlockingTest {
+
+            // given
+            coEvery { userManager.currentUserId } returns Id("userId")
+            coEvery { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
+            coEvery { conversationModeEnabled(any()) } returns true
+            every {
+                savedStateHandle.get<ActionSheetTarget>("extra_arg_labels_action_sheet_actions_target")
+            } returns ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+
+            // when
+            viewModel.onLabelClicked(model2folder, 0)
+
+            // then
+            coVerify { moveConversationsToFolder(any(), any(), any()) }
+            coVerify { moveMessagesToFolder wasNot Called }
+            assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved, viewModel.actionsResult.value)
+        }
+
+    @Test
+    fun verifyThatWhenLabelIsClickedForFolderTypeWithMessageItemWithinConversationAsActionsTargetThenTheMessageIsMoved() =
+        runBlockingTest {
+
+            // given
+            coEvery { userManager.currentUserId } returns Id("userId")
+            coEvery { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
+            coEvery { conversationModeEnabled(any()) } returns true
+            every {
+                savedStateHandle.get<ActionSheetTarget>("extra_arg_labels_action_sheet_actions_target")
+            } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+
+            // when
+            viewModel.onLabelClicked(model2folder, 0)
+
+            // then
+            coVerify { moveMessagesToFolder.invoke(any(), any(), any()) }
+            coVerify { moveConversationsToFolder wasNot Called }
+            assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved, viewModel.actionsResult.value)
+        }
 }

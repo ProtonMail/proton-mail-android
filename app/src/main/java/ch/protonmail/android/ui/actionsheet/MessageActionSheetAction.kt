@@ -30,7 +30,8 @@ sealed class MessageActionSheetAction {
     data class ShowLabelsManager(
         val messageIds: List<String>,
         val currentFolderLocationId: Int,
-        val labelActionSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL
+        val labelActionSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL,
+        val actionSheetTarget: ActionSheetTarget
     ) : MessageActionSheetAction()
 
     data class ShowMessageHeaders(val messageHeaders: String) : MessageActionSheetAction()

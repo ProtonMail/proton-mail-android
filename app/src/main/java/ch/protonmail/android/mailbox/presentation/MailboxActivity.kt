@@ -124,6 +124,7 @@ import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
+import ch.protonmail.android.ui.actionsheet.ActionSheetTarget
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
@@ -1124,7 +1125,7 @@ class MailboxActivity :
         }
 
         MessageActionSheet.newInstance(
-            originatorLocationId = MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID,
+            actionSheetTarget = ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN,
             messagesIds = messagesIds,
             currentFolderLocationId = currentMailboxLocation.messageLocationTypeValue,
             title = resources.getQuantityString(
@@ -1145,17 +1146,19 @@ class MailboxActivity :
 
     private fun showFoldersManager(messageIds: List<String>) {
         LabelsActionSheet.newInstance(
-            messageIds,
-            currentMailboxLocation.messageLocationTypeValue,
-            LabelsActionSheet.Type.FOLDER
+            messageIds = messageIds,
+            currentFolderLocationId = currentMailboxLocation.messageLocationTypeValue,
+            labelActionSheetType = LabelsActionSheet.Type.FOLDER,
+            actionSheetTarget = ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
         )
             .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
     }
 
     private fun showLabelsManager(messageIds: List<String>) {
         LabelsActionSheet.newInstance(
-            messageIds,
-            currentMailboxLocation.messageLocationTypeValue,
+            messageIds = messageIds,
+            currentFolderLocationId = currentMailboxLocation.messageLocationTypeValue,
+            actionSheetTarget = ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
         )
             .show(supportFragmentManager, LabelsActionSheet::class.qualifiedName)
     }
