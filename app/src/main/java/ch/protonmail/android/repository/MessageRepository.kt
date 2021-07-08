@@ -68,6 +68,7 @@ class MessageRepository @Inject constructor(
     fun findMessage(userId: UserId, messageId: String): Flow<Message?> {
         val messageDao = databaseProvider.provideMessageDao(Id(userId.id))
         return messageDao.findMessageById(messageId).onEach { message ->
+            Timber.d("findMessage id: ${message?.messageId}, ${message?.isRead}, ${message?.isDownloaded}")
             message?.messageBody?.let {
                 if (it.startsWith(FILE_PREFIX)) {
                     message.messageBody = messageBodyFileManager.readMessageBodyFromFile(message)

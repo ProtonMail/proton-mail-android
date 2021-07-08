@@ -173,13 +173,18 @@ interface MessageDao {
                 }
             }
 
-    fun findAllMessageFromAConversation(conversationId: String): Flow<List<Message>> =
+    fun observeAllMessagesFromAConversation(conversationId: String): Flow<List<Message>> =
         findAllMessageInfoFromAConversation(conversationId)
             .map { messages ->
                 messages.onEach { message ->
                     message.attachments = message.attachments(this)
                 }
             }
+
+    suspend fun getAllMessagesFromAConversation(conversationId: String): List<Message> =
+        getAllMessageInfoFromAConversation(conversationId).onEach { message ->
+            message.attachments = message.attachments(this)
+        }
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
     fun findMessageInfoById(messageId: String): Flow<Message?>
@@ -219,6 +224,16 @@ interface MessageDao {
     """
     )
     fun findAllMessageInfoFromAConversation(conversationId: String): Flow<List<Message>>
+
+    @Query(
+        """
+        SELECT *
+        FROM $TABLE_MESSAGES
+        WHERE $COLUMN_CONVERSATION_ID = :conversationId
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+    """
+    )
+    suspend fun getAllMessageInfoFromAConversation(conversationId: String): List<Message>
 
     suspend fun saveMessage(message: Message): Long {
         Timber.d("saveMessage ${message.messageId}, location: ${message.location}, labels: ${message.allLabelIDs}")

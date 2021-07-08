@@ -46,8 +46,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.data.arch.toDataResult
 import me.proton.core.domain.arch.DataResult
@@ -84,12 +84,14 @@ class ConversationsRepositoryImpl @Inject constructor(
             api.fetchConversation(key.conversationId, key.userId)
         },
         sourceOfTruth = SourceOfTruth.Companion.of(
-            reader = { key -> getConversationLocal(key.conversationId, key.userId) },
+            reader = { key -> observeConversationLocal(key.conversationId, key.userId) },
             writer = { key: ConversationStoreKey, output: ConversationResponse ->
-                val conversation = output.conversation.toLocal(userId = key.userId.s)
                 val messages = output.messages.map(messageFactory::createMessage)
                 messageDao.saveMessages(messages)
+                Timber.v("Stored new messages size: ${messages.size}")
+                val conversation = output.conversation.toLocal(userId = key.userId.s)
                 conversationDao.insertOrUpdate(conversation)
+                Timber.v("Stored new conversation id: ${conversation.id}")
             },
             delete = { key ->
                 conversationDao.deleteConversations(
@@ -116,7 +118,7 @@ class ConversationsRepositoryImpl @Inject constructor(
                     }
                 },
                 onFailure = { throwable ->
-                    val dbData = getConversationsLocal(parameters).first()
+                    val dbData = observeConversationsLocal(parameters).first()
                     Timber.i(throwable, "fetchConversations error, local data size: ${dbData.size}")
                     emit(Success(ResponseSource.Local, dbData))
                     delay(1.toDuration(TimeUnit.SECONDS))
@@ -125,7 +127,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             )
 
             emitAll(
-                getConversationsLocal(parameters).map {
+                observeConversationsLocal(parameters).map {
                     Success(ResponseSource.Local, it)
                 }
             )
@@ -143,6 +145,7 @@ class ConversationsRepositoryImpl @Inject constructor(
     ): Flow<DataResult<Conversation>> =
         store.stream(StoreRequest.cached(ConversationStoreKey(conversationId, userId), true))
             .map { it.toDataResult() }
+            .onStart { Timber.i("getConversation conversationId: $conversationId") }
 
 
     override suspend fun findConversation(conversationId: String, userId: Id): ConversationDatabaseModel? =
@@ -164,7 +167,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationIds.forEach { conversationId ->
             conversationDao.updateNumUnreadMessages(0, conversationId)
             // All the messages from the conversation are marked as read
-            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+            messageDao.observeAllMessagesFromAConversation(conversationId).first().forEach { message ->
                 messageDao.saveMessage(message.apply { setIsRead(true) })
             }
         }
@@ -181,7 +184,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             val conversation = conversationDao.getConversation(conversationId, userId.id).first()
             conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
             // Only the latest message from the current location is marked as unread
-            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+            messageDao.observeAllMessagesFromAConversation(conversationId).first().forEach { message ->
                 if (Constants.MessageLocationType.fromInt(message.location) == location) {
                     messageDao.saveMessage(message.apply { setIsRead(false) })
                     return@forEachConversation
@@ -197,7 +200,7 @@ class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             var lastMessageTime = 0L
-            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+            messageDao.observeAllMessagesFromAConversation(conversationId).first().forEach { message ->
                 messageDao.updateStarred(message.messageId!!, true)
                 lastMessageTime = max(lastMessageTime, message.time)
             }
@@ -214,7 +217,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationIds.forEach { conversationId ->
             removeLabelsFromConversation(conversationId, userId, listOf(starredLabelId))
 
-            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+            messageDao.observeAllMessagesFromAConversation(conversationId).first().forEach { message ->
                 messageDao.updateStarred(message.messageId!!, false)
             }
         }
@@ -229,7 +232,7 @@ class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             var lastMessageTime = 0L
-            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+            messageDao.observeAllMessagesFromAConversation(conversationId).first().forEach { message ->
                 val labelsToRemoveFromMessage = getLabelIdsForRemovingWhenMovingToFolder(message.allLabelIDs)
                 val labelsToAddToMessage = getLabelIdsForAddingWhenMovingToFolder(folderId, message.allLabelIDs)
                 message.removeLabels(labelsToRemoveFromMessage.toList())
@@ -382,7 +385,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationDao.updateLabels(labels, conversationId)
     }
 
-    private fun getConversationsLocal(params: GetConversationsParameters): Flow<List<Conversation>> =
+    private fun observeConversationsLocal(params: GetConversationsParameters): Flow<List<Conversation>> =
         conversationDao.getConversations(params.userId.s).map { list ->
             list.sortedWith(
                 compareByDescending<ConversationDatabaseModel> { conversation ->
@@ -391,11 +394,17 @@ class ConversationsRepositoryImpl @Inject constructor(
             ).toDomainModelList()
         }
 
-    private fun getConversationLocal(conversationId: String, userId: Id): Flow<Conversation> =
-        messageDao.findAllMessageFromAConversation(conversationId).flatMapConcat { localMessages ->
-            val messages = localMessages.toDomainModelList()
-            conversationDao.getConversation(conversationId, userId.s).map { it.toDomainModel(messages) }
-        }
+    private fun observeConversationLocal(conversationId: String, userId: Id): Flow<Conversation> =
+        conversationDao.getConversation(conversationId, userId.s)
+            .map { conversation ->
+                val messages = messageDao.getAllMessagesFromAConversation(conversation.id)
+                    .onEach { Timber.d("message id: ${it.messageId}, body: ${it.messageBody?.length}") }
+                    .toDomainModelList()
+                Timber.d(
+                    "Processed conversation id: ${conversation.id} messages size: ${messages.size}"
+                )
+                conversation.toDomainModel(messages)
+            }
 
     private data class ConversationStoreKey(val conversationId: String, val userId: Id)
 }

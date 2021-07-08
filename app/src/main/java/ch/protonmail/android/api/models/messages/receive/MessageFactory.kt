@@ -25,7 +25,7 @@ import ch.protonmail.android.api.models.factories.parseBoolean
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.utils.MessageUtils
-import ch.protonmail.android.utils.extensions.notNull
+import timber.log.Timber
 import javax.inject.Inject
 
 class MessageFactory @Inject constructor(
@@ -37,54 +37,59 @@ class MessageFactory @Inject constructor(
     fun createDraftApiRequest(message: Message): DraftBody = DraftBody(message.toApiPayload())
 
     fun createMessage(serverMessage: ServerMessage): Message {
-        return serverMessage.let {
-            val message = Message()
-            message.messageId = it.ID
-            message.conversationId = it.ConversationID
-            message.subject = it.Subject
-            message.Unread = it.Unread.parseBoolean("Unread")
+        return Message(
+            messageId = serverMessage.ID,
+            conversationId = serverMessage.ConversationID,
+            subject = serverMessage.Subject,
+            Unread = serverMessage.Unread.parseBoolean("Unread"),
+            Type = MessageUtils.calculateType(serverMessage.Flags),
 
-            message.Type = MessageUtils.calculateType(it.Flags)
+            sender = messageSenderFactory.createMessageSender(requireNotNull(serverMessage.Sender)),
+            time = serverMessage.Time.checkIfSet("Time"),
+            totalSize = serverMessage.Size.checkIfSet("Size"),
+            location = messageLocationResolver.resolveLocationFromLabels(
+                serverMessage.LabelIDs ?: emptyList()
+            ).messageLocationTypeValue,
 
-            val serverMessageSender = it.Sender ?: throw IllegalArgumentException("Sender is not set")
-            message.sender = messageSenderFactory.createMessageSender(serverMessageSender)
-            message.time = it.Time.checkIfSet("Time")
-            message.totalSize = it.Size.checkIfSet("Size")
-            message.location = messageLocationResolver.resolveLocationFromLabels(it.LabelIDs ?: emptyList()).messageLocationTypeValue
-            message.isStarred = it.LabelIDs!!
+            isStarred = serverMessage.LabelIDs!!
                 .asSequence()
                 .filter { it.length <= 2 }
                 .map { Constants.MessageLocationType.fromInt(it.toInt()) }
-                .contains(Constants.MessageLocationType.STARRED)
-            message.folderLocation = it.FolderLocation
-            message.numAttachments = it.NumAttachments
-            message.messageEncryption = MessageUtils.calculateEncryption(it.Flags)
-            message.expirationTime = it.ExpirationTime.notNull("ExpirationTime")
-            message.isReplied = it.Flags and MessageFlag.REPLIED.value == MessageFlag.REPLIED.value
-            message.isRepliedAll = it.Flags and MessageFlag.REPLIED_ALL.value == MessageFlag.REPLIED_ALL.value
-            message.isForwarded = it.Flags and MessageFlag.FORWARDED.value == MessageFlag.FORWARDED.value
-            message.isDownloaded = it.Body != null
-            message.spamScore = it.SpamScore
-            message.addressID = it.AddressID
-            message.messageBody = it.Body
-            message.mimeType = it.MIMEType
-            message.allLabelIDs = it.LabelIDs?.toList() ?: listOf()
-            message.toList = it.ToList?.toList() ?: listOf()
-            message.ccList = it.CCList?.toList() ?: listOf()
-            message.bccList = it.BCCList?.toList() ?: listOf()
-            message.replyTos = it.ReplyTos?.toList() ?: listOf()
-            message.header = it.Header
-            message.parsedHeaders = it.parsedHeaders
-            message.attachments = it.Attachments?.map(attachmentFactory::createAttachment) ?: emptyList()
-            message.embeddedImageIds = it.embeddedImagesArray?.toList() ?: emptyList()
-            val numOfAttachments = message.numAttachments
-            val attachmentsListSize = message.attachments.size
-            if (attachmentsListSize != 0 && attachmentsListSize != numOfAttachments) {
+                .contains(Constants.MessageLocationType.STARRED),
+            folderLocation = serverMessage.FolderLocation,
+            numAttachments = serverMessage.NumAttachments,
+            messageEncryption = MessageUtils.calculateEncryption(serverMessage.Flags),
+            expirationTime = serverMessage.ExpirationTime,
+            isReplied = serverMessage.Flags and MessageFlag.REPLIED.value == MessageFlag.REPLIED.value,
+            isRepliedAll = serverMessage.Flags and MessageFlag.REPLIED_ALL.value == MessageFlag.REPLIED_ALL.value,
+            isForwarded = serverMessage.Flags and MessageFlag.FORWARDED.value == MessageFlag.FORWARDED.value,
+            isDownloaded = serverMessage.Body != null,
+            spamScore = serverMessage.SpamScore,
+            addressID = serverMessage.AddressID,
+            messageBody = serverMessage.Body,
+            mimeType = serverMessage.MIMEType,
+            allLabelIDs = serverMessage.LabelIDs.toList(),
+            toList = serverMessage.ToList?.toList() ?: listOf(),
+            ccList = serverMessage.CCList?.toList() ?: listOf(),
+            bccList = serverMessage.BCCList?.toList() ?: listOf(),
+            replyTos = serverMessage.ReplyTos?.toList() ?: listOf(),
+            header = serverMessage.Header,
+            parsedHeaders = serverMessage.parsedHeaders
+        ).apply {
+            attachments = serverMessage.Attachments?.map(attachmentFactory::createAttachment) ?: emptyList()
+            embeddedImageIds = serverMessage.embeddedImagesArray?.toList() ?: emptyList()
+            val attachmentsListSize = attachments.size
+            if (attachmentsListSize != 0 && attachmentsListSize != numAttachments) {
                 throw IllegalArgumentException(
-                    "Attachments size does not match expected: $numOfAttachments, actual: $attachmentsListSize "
+                    "Attachments size does not match expected: $numAttachments, actual: $attachmentsListSize "
                 )
             }
-            message
+            Timber.v(
+                "created Message id: ${serverMessage.ID?.take(
+                    6
+                )}, body size: ${serverMessage.Body?.length}, location: $location, isDownloaded: $isDownloaded"
+            )
         }
+
     }
 }

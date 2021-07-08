@@ -61,7 +61,6 @@ import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
@@ -117,7 +116,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     override fun attachBaseContext(base: Context) {
         primaryBaseActivity = base
-        super.attachBaseContext(CustomLocale.apply(base))
+        super.attachBaseContext(base)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -155,7 +154,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun continueSetup() {
-        viewModel.conversationUiModel.observe(this) { viewModel.loadMailboxItemDetails() }
         viewModel.decryptedConversationUiModel.observe(this, ConversationUiModelObserver())
         viewModel.messageRenderedWithImages.observe(this) { message ->
             val messageId = message.messageId ?: return@observe
@@ -306,7 +304,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     }
 
     private fun onConnectivityCheckRetry() {
-        viewModel.loadMailboxItemDetails()
         networkSnackBarUtil.getCheckingConnectionSnackBar(
             mSnackLayout,
             R.id.messageDetailsActionsView

@@ -421,7 +421,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 isForwarded = false,
                 allLabelIDs = listOf("1", "2")
             )
-            coEvery { messageDao.findAllMessageFromAConversation(conversationId) } returns flowOf(listOf(message))
+            coEvery { messageDao.getAllMessagesFromAConversation(conversationId) } returns listOf(message)
             coEvery { conversationDao.getConversation(conversationId, userId) } returns flowOf(
                 conversationDbModel
             )
@@ -500,8 +500,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             )
             val expectedMessage = Message(messageId = "messageId23842737", conversationId)
             coEvery { api.fetchConversation(conversationId, Id(userId)) } returns conversationResponse
-            coEvery { messageDao.findAllMessageFromAConversation(conversationId) } returns flowOf(emptyList())
-            coEvery { conversationDao.getConversation(conversationId, userId) } throws Exception("no conversations")
+            coEvery { messageDao.getAllMessagesFromAConversation(conversationId) } returns emptyList()
+            coEvery { conversationDao.getConversation(conversationId, userId) } throws Exception("no conversations test")
             every { messageFactory.createMessage(apiMessage) } returns expectedMessage
 
             // when
@@ -550,7 +550,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
 
             // when
 
-           val result = conversationsRepository.getConversations(parameters).take(2).toList()
+            val result = conversationsRepository.getConversations(parameters).take(2).toList()
 
             val actualLocalItems0 = result[0] as DataResult.Success
             assertEquals(ResponseSource.Local, actualLocalItems0.source)
@@ -568,7 +568,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 every { setIsRead(any()) } just runs
             }
             coEvery { conversationDao.updateNumUnreadMessages(0, any()) } just runs
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
+            coEvery { messageDao.observeAllMessagesFromAConversation(any()) } returns flowOf(listOf(message, message))
             coEvery { messageDao.saveMessage(any()) } returns 123
 
             // when
@@ -604,7 +604,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 }
             )
             coEvery { conversationDao.updateNumUnreadMessages(unreadMessages + 1, any()) } just runs
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
+            coEvery { messageDao.observeAllMessagesFromAConversation(any()) } returns flowOf(listOf(message, message))
             coEvery { messageDao.saveMessage(any()) } returns 123
 
             // when
@@ -647,7 +647,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 }
             )
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
+            coEvery { messageDao.observeAllMessagesFromAConversation(any()) } returns flowOf(listOf(message, message))
             coEvery { messageDao.updateStarred("messageId", true) } just runs
 
             // when
@@ -688,7 +688,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 }
             )
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
+            coEvery { messageDao.observeAllMessagesFromAConversation(any()) } returns flowOf(listOf(message, message))
             coEvery { messageDao.updateStarred("messageId", false) } just runs
 
             // when
@@ -728,7 +728,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 LabelContextDatabaseModel(starredId, 0, 2, 123, 123, 1),
                 LabelContextDatabaseModel(inboxId, 0, 2, 123, 123, 0)
             )
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
+            coEvery { messageDao.observeAllMessagesFromAConversation(any()) } returns flowOf(listOf(message, message))
             coEvery { conversationDao.getConversation(any(), any()) } returns flowOf(
                 mockk {
                     every { labels } returns conversationLabels

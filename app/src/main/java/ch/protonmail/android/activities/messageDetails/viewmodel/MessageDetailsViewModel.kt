@@ -31,7 +31,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessagePrinter
@@ -78,14 +77,17 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
@@ -138,36 +140,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val messageRenderer
         by lazy { messageRendererFactory.create(viewModelScope) }
 
-    val conversationUiModel: LiveData<ConversationUiModel> =
-        if (conversationModeEnabled(location)) {
-            getConversationFlow().map { it.toConversationUiModel() }
-        } else {
-            getMessageFlow().map { it.toConversationUiModel() }
-        }.asLiveData().distinctUntilChanged()
-
-    private fun getMessageFlow() = userManager.primaryUserId
-        .flatMapLatest { userId ->
-            if (userId != null) {
-                messageRepository.findMessage(userId, messageOrConversationId)
-            } else {
-                emptyFlow()
-            }
-        }
-        .filterNotNull()
-
-    private fun getConversationFlow() = userManager.primaryUserId
-        .flatMapLatest { userId ->
-            if (userId == null) {
-                return@flatMapLatest emptyFlow()
-            }
-
-            conversationRepository.getConversation(messageOrConversationId, Id(userId.id))
-                .filter { it is DataResult.Success }
-                .map {
-                    return@map (it as DataResult.Success).value
-                }
-        }
-
     private var publicKeys: List<KeyInformation>? = null
 
     var renderingPassed = false
@@ -186,6 +158,10 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val _messageRenderedWithImages: MutableLiveData<Message> = MutableLiveData()
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
+    private val _conversationUiFLow = MutableSharedFlow<ConversationUiModel>(replay = 1)
+
+    val conversationUiModel: LiveData<ConversationUiModel> =
+        _conversationUiFLow.asLiveData()
 
     private var bodyString: String? = null
         set(value) {
@@ -197,7 +173,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         conversationUiModel.asFlow()
             .flatMapLatest { conversation ->
                 val userId = UserId(userManager.requireCurrentUserId().s)
-                val labelsIds = (conversation.labelIds).map(::Id)
+                val labelsIds = conversation.labelIds.map(::Id)
                 labelRepository.findLabels(userId, labelsIds)
             }
 
@@ -229,6 +205,20 @@ internal class MessageDetailsViewModel @Inject constructor(
     private var areImagesDisplayed: Boolean = false
 
     init {
+        // message render flow
+        if (conversationModeEnabled(location)) {
+            getConversationFlow().map { it.toConversationUiModel() }
+        } else {
+            getMessageFlow().map { it.toConversationUiModel() }
+        }
+            .distinctUntilChanged()
+            .onEach {
+                Timber.i("Emit conversation Ui model subject ${it.subject}")
+                _conversationUiFLow.emit(it)
+            }
+            .launchIn(viewModelScope)
+
+
         viewModelScope.launch {
             for (renderedMessage in messageRenderer.renderedMessage) {
                 val updatedMessage = updateUiModelMessageWithFormattedHtml(
@@ -240,6 +230,36 @@ internal class MessageDetailsViewModel @Inject constructor(
             }
         }
     }
+
+    private fun getMessageFlow() = userManager.primaryUserId
+        .flatMapLatest { userId ->
+            if (userId != null) {
+                messageRepository.findMessage(userId, messageOrConversationId)
+            } else {
+                emptyFlow()
+            }
+        }
+        .filterNotNull()
+        .distinctUntilChanged()
+        .onEach {
+            loadMessageDetails()
+        }
+
+    private fun getConversationFlow() = userManager.primaryUserId
+        .flatMapLatest { userId ->
+            if (userId == null) {
+                return@flatMapLatest emptyFlow()
+            }
+
+            conversationRepository.getConversation(messageOrConversationId, Id(userId.id))
+                .filter { it is DataResult.Success }
+                .onEach {
+                    loadConversationDetails(it, Id(userId.id))
+                }
+                .map {
+                    return@map (it as DataResult.Success).value
+                }
+        }
 
     fun markUnread() {
         messageRepository.markUnRead(listOf(messageOrConversationId))
@@ -265,43 +285,32 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }.flowOn(dispatchers.Io)
 
-    fun loadMailboxItemDetails() {
-        viewModelScope.launch(dispatchers.Io) {
-            val userId = userManager.requireCurrentUserId()
-
-            Timber.v("loadMailboxItemDetails conversation: ${conversationModeEnabled(location)}, location: $location")
-            if (conversationModeEnabled(location)) {
-                loadConversationDetails(userId)
-                return@launch
-            }
-
-            val message = messageRepository.getMessage(userId, messageOrConversationId, true)
-            if (message == null) {
-                Timber.d("Failed fetching Message Details for message $messageOrConversationId")
-                _messageDetailsError.postValue(Event("Failed getting message details"))
-                return@launch
-            }
+    private suspend fun loadMessageDetails() {
+        val userId = userManager.requireCurrentUserId()
+        val message = messageRepository.getMessage(userId, messageOrConversationId, true)
+        if (message != null) {
             val contactEmail = contactsRepository.findContactEmailByEmail(message.senderEmail)
             message.senderDisplayName = contactEmail?.name.orEmpty()
             emitConversationUiItem(message.toConversationUiModel())
+        } else {
+            Timber.d("Failed fetching Message Details for message $messageOrConversationId")
+            _messageDetailsError.postValue(Event("Failed getting message details"))
         }
     }
 
-    private suspend fun loadConversationDetails(userId: Id) {
-        conversationRepository.getConversation(messageOrConversationId, userId).map { result ->
-            if (result is DataResult.Success) {
-                val conversation = result.value
-                if (conversation.messages?.isEmpty() == true) {
-                    return@map null
-                }
-                onConversationLoaded(conversation, userId)
-                return@map conversation
-            } else if (result is DataResult.Error) {
-                Timber.d("Error loading conversation $messageOrConversationId - cause: ${result.cause}")
-                _messageDetailsError.postValue(Event("Failed getting conversation details"))
+    private suspend fun loadConversationDetails(result: DataResult<Conversation>, userId: Id) {
+        Timber.v("loadConversationDetails result: ${result.javaClass.canonicalName}")
+        if (result is DataResult.Success) {
+            val conversation = result.value
+            if (conversation.messages?.isEmpty() == true) {
+                return
             }
-            return@map null
-        }.first { it?.messages?.isNotEmpty() ?: false }
+            onConversationLoaded(conversation, userId)
+
+        } else if (result is DataResult.Error) {
+            Timber.d("Error loading conversation $messageOrConversationId - cause: ${result.cause}")
+            _messageDetailsError.postValue(Event("Failed getting conversation details"))
+        }
     }
 
     private suspend fun onConversationLoaded(
@@ -332,7 +341,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         refreshedKeys = true
         val lastMessage = conversationUiModel.messages.last()
         if (!lastMessage.isDownloaded) {
-            Timber.d("Message detail tried loading a non-downloaded message")
+            Timber.d("Message detail tried loading a non-downloaded message! id: ${lastMessage.messageId}")
             return
         }
 
@@ -343,6 +352,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
         return try {
             decrypt(userManager, userManager.requireCurrentUserId(), verificationKeys)
+            Timber.d("decrypted verificationKeys size: ${verificationKeys?.size}, body size: ${messageBody?.length}")
             true
         } catch (exception: Exception) {
             // signature verification failed with special case, try to decrypt again without verification
@@ -350,13 +360,13 @@ internal class MessageDetailsViewModel @Inject constructor(
             if (verificationKeys != null && verificationKeys.isNotEmpty() &&
                 exception.message == "Signature Verification Error: No matching signature"
             ) {
-                Timber.d(exception, "Decrypting message again without verkeys")
+                Timber.i(exception, "Decrypting message again without verkeys")
                 decrypt(userManager, userManager.requireCurrentUserId())
                 this.hasValidSignature = false
                 this.hasInvalidSignature = true
                 true
             } else {
-                Timber.d(exception, "Cannot decrypt message")
+                Timber.w(exception, "Cannot decrypt message")
                 false
             }
         }
