@@ -59,7 +59,7 @@ interface ConversationsRepository {
      * @return an empty optional when the repository encounters a handled failure getting the given conversation
      * @throws exception when the repository fails getting this conversation for any unhandled reasons
      */
-    suspend fun findConversationOnce(conversationId: String, userId: Id): ConversationDatabaseModel?
+    suspend fun findConversation(conversationId: String, userId: Id): ConversationDatabaseModel?
 
     /**
      * @param conversations a list representing the conversations we want to save to the local data source
@@ -67,8 +67,6 @@ interface ConversationsRepository {
      * @throws exception when the repository fails to insert conversations for any unhandled reasons into local storage
      */
     suspend fun saveConversations(conversations: List<ConversationDatabaseModel>, userId: Id)
-
-    suspend fun updateConversation(conversationResponse: ConversationsEventResponse, userId: Id): Boolean
 
     /**
      * Deletes all the conversations from the [TABLE_CONVERSATIONS] inside the local storage

@@ -144,21 +144,12 @@ class ConversationsRepositoryImpl @Inject constructor(
             .map { it.toDataResult() }
 
 
-    override suspend fun findConversationOnce(conversationId: String, userId: Id): ConversationDatabaseModel? =
-        conversationDao.findConversationOnce(conversationId, userId.s)
+    override suspend fun findConversation(conversationId: String, userId: Id): ConversationDatabaseModel? =
+        conversationDao.findConversation(conversationId, userId.s)
 
 
     override suspend fun saveConversations(conversations: List<ConversationDatabaseModel>, userId: Id) =
         conversationDao.insertOrUpdate(*conversations.toTypedArray())
-
-    override suspend fun updateConversation(conversationResponse: ConversationsEventResponse, userId: Id): Boolean {
-        val conversationFromLocal = findConversationOnce(conversationResponse.id, userId)
-        return if (conversationFromLocal != null) {
-            val completeConversation = conversationResponse.conversation.completeToLocal(conversationFromLocal)
-            saveConversations(listOf(completeConversation), userId)
-            true
-        } else false
-    }
 
     override suspend fun deleteConversations(conversationIds: List<String>, userId: Id) {
         conversationDao.deleteConversations(*conversationIds.toTypedArray(), userId = userId.s)

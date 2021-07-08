@@ -48,31 +48,6 @@ internal fun ConversationApiModel.toLocal(userId: String) = ConversationDatabase
 )
 
 
-/**
- * This is mainly used to handle an API update event where we only receive the changes inside the ConversationApiModel
- * which ends up being an incomplete object on our en. So we need to map it to the correct instance from our local
- * storage, accept the correct changes and create a new complete instance of the conversation.
- *
- * @receiver an instance of [ConversationApiModel] containing only the changes
- * @param existing representing the complete and existing instance of the same object inside local data source
- * @return ne instance of [ConversationDatabaseModel] containing the complete object with the changes
- *
- */
-internal fun ConversationApiModel.completeToLocal(existing: ConversationDatabaseModel) = ConversationDatabaseModel(
-    id = id ?: existing.id,
-    order = if (order != 0L) order else existing.order,
-    userId = existing.userId,
-    subject = subject ?: existing.subject,
-    senders = senders?.toMessageSender() ?: existing.senders,
-    recipients = recipients?.toMessageRecipient() ?: existing.recipients,
-    numMessages = if (numMessages != 0) numMessages else existing.numMessages,
-    numUnread = if (numUnread != 0) numUnread else existing.numUnread,
-    numAttachments = if (numAttachments != 0) numAttachments else existing.numAttachments,
-    expirationTime = if (expirationTime != 0L) expirationTime else existing.expirationTime,
-    size = if (size != 0L) size else existing.size,
-    labels = labels?.toLabelContextDatabaseModel() ?: existing.labels
-)
-
 internal fun ConversationDatabaseModel.toDomainModel() = Conversation(
     id = id,
     subject = subject,

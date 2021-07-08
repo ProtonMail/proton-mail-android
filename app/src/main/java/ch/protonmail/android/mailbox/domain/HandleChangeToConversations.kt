@@ -19,9 +19,6 @@
 
 package ch.protonmail.android.mailbox.domain
 
-import android.content.Context
-import androidx.room.withTransaction
-import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.event.data.remote.model.ConversationsEventResponse
 import ch.protonmail.android.event.domain.model.ActionType
@@ -31,7 +28,6 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 class HandleChangeToConversations @Inject constructor(
-    private val applicationContext: Context,
     private val conversationRepository: ConversationsRepository,
     private val dispatchers: DispatcherProvider
 ) {
@@ -47,20 +43,12 @@ class HandleChangeToConversations @Inject constructor(
         conversations.forEach { response ->
 
             when (ActionType.fromInt(response.action)) {
-                ActionType.CREATE -> {
+                ActionType.CREATE,
+                ActionType.UPDATE,
+                ActionType.UPDATE_FLAGS -> {
                     val conversation = response.conversation.toLocal(userId = userId.s)
                     conversationRepository.saveConversations(listOf(conversation), userId)
                 }
-                ActionType.UPDATE,
-                ActionType.UPDATE_FLAGS -> {
-                    if (!MessageDatabase.getInstance(applicationContext, userId).withTransaction {
-                        conversationRepository.updateConversation(response, userId)
-                    }
-                    ) {
-                        conversationRepository.getConversation(response.id, userId)
-                    }
-                }
-
                 ActionType.DELETE -> {
                     conversationRepository.deleteConversations(listOf(response.id), userId)
                 }

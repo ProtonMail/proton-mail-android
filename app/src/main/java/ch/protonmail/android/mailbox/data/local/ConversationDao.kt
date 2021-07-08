@@ -56,7 +56,7 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
         WHERE $COLUMN_ID = :conversationId AND $COLUMN_USER_ID = :userId
         """
     )
-    abstract suspend fun findConversationOnce(conversationId: String, userId: String): ConversationDatabaseModel?
+    abstract suspend fun findConversation(conversationId: String, userId: String): ConversationDatabaseModel?
 
     @Query(
         """
