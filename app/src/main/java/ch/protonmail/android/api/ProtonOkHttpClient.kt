@@ -55,7 +55,7 @@ sealed class ProtonOkHttpClient(
     loggingLevel: HttpLoggingInterceptor.Level,
     connectionSpecs: List<ConnectionSpec>,
     serverTimeInterceptor: ServerTimeInterceptor?,
-    endpointUri: String,
+    baseUrl: String,
     cookieStore: ProtonCookieStore? = null
 ) {
 
@@ -64,7 +64,7 @@ sealed class ProtonOkHttpClient(
     // TLS Certificate Pinning
     val trustKit = TrustKit.getInstance()
     // val serverHostname = URL(Constants.ENDPOINT_URI).host
-    val serverHostname: String = URL(endpointUri).host
+    val serverHostname: String = URL(baseUrl).host
 
     init {
         if (cookieStore != null) {

@@ -27,9 +27,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import me.proton.core.humanverification.presentation.CaptchaBaseUrl
+import me.proton.core.humanverification.presentation.CaptchaApiHost
 
-private const val LOCAL_HOST_URL = "http://localhost:8080/"
+private const val LOCAL_API_HOST = "localhost:8080"
+private const val LOCAL_BASE_URL = "http://$LOCAL_API_HOST/"
 
 @Module
 @TestInstallIn(
@@ -45,11 +46,11 @@ object TestConfigurableParametersModule {
 
     @BaseUrl
     @Provides
-    fun provideBaseUrl(): String = LOCAL_HOST_URL
+    fun provideBaseUrl(): String = LOCAL_BASE_URL
 
     @Provides
-    @CaptchaBaseUrl
-    fun provideCaptchaBaseUrl(): String = LOCAL_HOST_URL
+    @CaptchaApiHost
+    fun provideCaptchaApiHost(): String = LOCAL_API_HOST
 
     @Provides
     @AlternativeApiPins

@@ -30,18 +30,20 @@ val DependencyHandler.`Proton-android-test` get() =                 protonTest("
 val DependencyHandler.`Proton-android-instrumented-test` get() =    protonTest("android-instrumented") version `Proton-android-instr-test version`
 val DependencyHandler.`Proton-kotlin-test` get() =                  protonTest("kotlin") version `Proton-kotlin-test version`
 
-val DependencyHandler.`Proton-data` get() =                         proton("data") version `Proton-data version`
-val DependencyHandler.`Proton-domain` get() =                       proton("domain") version `Proton-domain version`
-val DependencyHandler.`Proton-presentation` get() =                 proton("presentation") version `Proton-presentation version`
-val DependencyHandler.`Proton-network` get() =                      proton("network") version `Proton-network version`
-val DependencyHandler.`Proton-crypto` get() =                       proton("crypto") version `Proton-crypto version`
-val DependencyHandler.`Proton-auth` get() =                         proton("auth") version `Proton-auth version`
 val DependencyHandler.`Proton-account` get() =                      proton("account") version `Proton-account version`
 val DependencyHandler.`Proton-account-manager` get() =              proton("account-manager") version `Proton-account-manager version`
-val DependencyHandler.`Proton-user` get() =                         proton("user") version `Proton-user version`
-val DependencyHandler.`Proton-key` get() =                          proton("key") version `Proton-key version`
-val DependencyHandler.`Proton-human-verification` get() =           proton("human-verification") version `Proton-human-verification version`
+val DependencyHandler.`Proton-auth` get() =                         proton("auth") version `Proton-auth version`
 val DependencyHandler.`Proton-country` get() =                      proton("country") version `Proton-country version`
+val DependencyHandler.`Proton-crypto` get() =                       proton("crypto") version `Proton-crypto version`
+val DependencyHandler.`Proton-data` get() =                         proton("data") version `Proton-data version`
+val DependencyHandler.`Proton-domain` get() =                       proton("domain") version `Proton-domain version`
+val DependencyHandler.`Proton-human-verification` get() =           proton("human-verification") version `Proton-human-verification version`
+val DependencyHandler.`Proton-key` get() =                          proton("key") version `Proton-key version`
+val DependencyHandler.`Proton-network` get() =                      proton("network") version `Proton-network version`
+val DependencyHandler.`Proton-payment` get() =                      proton("payment") version `Proton-payment version`
+val DependencyHandler.`Proton-plan` get() =                         proton("plan") version `Proton-plan version`
+val DependencyHandler.`Proton-presentation` get() =                 proton("presentation") version `Proton-presentation version`
+val DependencyHandler.`Proton-user` get() =                         proton("user") version `Proton-user version`
 
 fun DependencyHandler.protonTest(moduleSuffix: String, version: String? = null) =
     proton("test", moduleSuffix, version)

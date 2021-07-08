@@ -93,7 +93,7 @@ class Proxies constructor(
     }
 
     fun getCurrentWorkingProxyDomain(): String {
-        return prefs.getString(PREF_DNS_OVER_HTTPS_API_URL, Constants.ENDPOINT_URI)!!
+        return prefs.getString(PREF_DNS_OVER_HTTPS_API_URL, Constants.BASE_URL)!!
     }
 
     companion object {

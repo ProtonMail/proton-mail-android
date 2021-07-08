@@ -173,12 +173,7 @@ class AccountStateManager @Inject constructor(
      */
     fun observeHumanVerificationStateWithExternalLifecycle(lifecycle: Lifecycle) {
         observeHumanVerificationManager(lifecycle)
-            .onHumanVerificationNeeded {
-                currentHumanVerificationOrchestrator.startHumanVerificationWorkflow(
-                    clientId = it.clientId,
-                    methods = HumanVerificationAvailableMethods(it.verificationMethods, it.captchaVerificationToken)
-                )
-            }
+            .onHumanVerificationNeeded { currentHumanVerificationOrchestrator.startHumanVerificationWorkflow(it) }
     }
 
     fun setAuthOrchestrator(authOrchestrator: AuthOrchestrator) {
