@@ -29,6 +29,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import butterknife.OnClick
 import ch.protonmail.android.R
@@ -43,10 +44,13 @@ import ch.protonmail.android.events.organizations.OrganizationEvent
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob
 import ch.protonmail.android.usecase.model.FetchPaymentMethodsResult
 import ch.protonmail.android.utils.extensions.app
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialog
+import ch.protonmail.android.utils.extensions.exhaustive
+import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.viewmodel.AccountTypeViewModel
+import ch.protonmail.android.viewmodel.AccountTypeViewModel.State.Error.PrimaryUser
 import com.squareup.otto.Subscribe
 import timber.log.Timber
+
 
 class AccountTypeActivity : BaseActivity() {
 
@@ -72,7 +76,9 @@ class AccountTypeActivity : BaseActivity() {
         val elevation = resources.getDimension(R.dimen.action_bar_elevation)
         actionBar?.elevation = elevation
 
-        viewModel = ViewModelProvider(this).get(AccountTypeViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(AccountTypeViewModel::class.java).apply {
+            register(this@AccountTypeActivity)
+        }
         val user = mUserManager.currentLegacyUser
         if (user != null) {
             if (!user.isPaidUser) {
@@ -84,6 +90,25 @@ class AccountTypeActivity : BaseActivity() {
         viewModel?.fetchPaymentMethodsResult?.observe(
             this, { result: FetchPaymentMethodsResult -> onPaymentMethods(result) }
         )
+        viewModel?.upgradeStateResult?.observe(this) { state ->
+            when (state) {
+                is AccountTypeViewModel.State.Error.Message -> {
+                    // show error
+                    var message = state.message
+                    message = message ?: getString(R.string.error)
+                    showToast(message, Toast.LENGTH_SHORT)
+                }
+                is PrimaryUser -> {
+                    val message = getString(R.string.primary_user_error)
+                    showToast(message, Toast.LENGTH_SHORT)
+                }
+                is AccountTypeViewModel.State.Success -> {
+                    // refresh
+                    val getOrganizationJob = GetOrganizationJob()
+                    mJobManager.addJobInBackground(getOrganizationJob)
+                }
+            }.exhaustive
+        }
         viewModel?.fetchPaymentMethods()
     }
 
@@ -217,16 +242,6 @@ class AccountTypeActivity : BaseActivity() {
 
     @OnClick(R.id.upgrade)
     fun onUpgrade() {
-        showInfoDialog(
-            this,
-            "",
-            getString(R.string.info_for_missing_functionality)
-        ) { unit: Unit -> unit }
-        /*
-        Intent upgradeIntent = new Intent(this, UpsellingActivity.class);
-        upgradeIntent.putExtra(UpsellingActivity.EXTRA_OPEN_UPGRADE_CONTAINER, true);
-        startActivityForResult(AppUtil.decorInAppIntent(upgradeIntent), REQUEST_CODE_UPGRADE);
-        TODO("startUpgradePlanWorkflow")
-        */
+        viewModel?.onUpgradeClicked()
     }
 }
