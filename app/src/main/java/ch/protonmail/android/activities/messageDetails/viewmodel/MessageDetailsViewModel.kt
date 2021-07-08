@@ -621,7 +621,7 @@ internal class MessageDetailsViewModel @Inject constructor(
             lastMessage()?.let { message ->
                 moveMessagesToFolder(
                     listOf(messageOrConversationId),
-                    Constants.MessageLocationType.TRASH.toString(),
+                    Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
                     message.folderLocation ?: EMPTY_STRING
                 )
             }

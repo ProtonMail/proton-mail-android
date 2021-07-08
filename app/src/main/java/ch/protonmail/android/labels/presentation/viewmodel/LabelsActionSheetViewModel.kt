@@ -162,7 +162,7 @@ class LabelsActionSheetViewModel @Inject constructor(
                     } else {
                         moveMessagesToFolder(
                             ids,
-                            Constants.MessageLocationType.ARCHIVE.toString(),
+                            Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString(),
                             currentMessageFolder.messageLocationTypeValue.toString()
                         )
                     }

@@ -197,6 +197,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // given
         val messageId = "messageId1"
         val expected = MessageActionSheetAction.ShouldDismiss(false)
+        every { conversationModeEnabled(any()) } returns true
         every { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
         every {
             savedStateHandle.get<Int>("extra_arg_originator_screen_id")
@@ -210,6 +211,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
+        verify { moveMessagesToFolder.invoke(listOf(messageId), "0", "6") }
     }
 
     @Test
@@ -217,6 +219,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // given
         val messageId = "messageId2"
         val expected = MessageActionSheetAction.ShouldDismiss(true)
+        every { conversationModeEnabled(any()) } returns false
         every { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
         every {
             savedStateHandle.get<Int>("extra_arg_originator_screen_id")
@@ -225,11 +228,12 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // when
         viewModel.moveToInbox(
             listOf(messageId),
-            Constants.MessageLocationType.ARCHIVE
+            Constants.MessageLocationType.SPAM
         )
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
+        verify { moveMessagesToFolder.invoke(listOf(messageId), "0", "4") }
     }
 
     @Test

@@ -23,9 +23,9 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Label
-import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
 import ch.protonmail.android.labels.presentation.mapper.LabelsMapper
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
+import ch.protonmail.android.labels.presentation.model.StandardFolderLocation
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -186,7 +186,7 @@ class GetAllLabelsTest {
             LabelsActionSheet.Type.FOLDER.typeInt
         )
         val expected = listOf(uiLabel1, uiLabel2) + getAllStandardFolders()
-            .filter { it.labelId !=  Constants.MessageLocationType.INBOX.toString()}
+            .filter { it.labelId != Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString() }
         coEvery { repository.getAllLabels() } returns listOf(label1, label2)
         every { labelsMapper.mapLabelToUi(label1, currentLabelsSelection, sheetType) } returns uiLabel1
         every { labelsMapper.mapLabelToUi(label2, currentLabelsSelection, sheetType) } returns uiLabel2

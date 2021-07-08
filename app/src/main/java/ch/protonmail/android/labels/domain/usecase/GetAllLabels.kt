@@ -65,7 +65,7 @@ class GetAllLabels @Inject constructor(
     private fun getListWithoutType(
         currentMessageFolder: Constants.MessageLocationType = Constants.MessageLocationType.INVALID
     ) = StandardFolderLocation.values()
-        .filter { it.id != currentMessageFolder.name }
+        .filter { it.id != currentMessageFolder.messageLocationTypeValue.toString() }
         .map { location ->
             LabelActonItemUiModel(
                 labelId = location.id,

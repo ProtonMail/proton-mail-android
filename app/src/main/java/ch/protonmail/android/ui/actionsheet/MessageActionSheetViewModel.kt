@@ -111,28 +111,28 @@ class MessageActionSheetViewModel @Inject constructor(
         messageIds: List<String>,
         currentFolder: Constants.MessageLocationType
     ) = moveMessagesToFolderAndDismiss(
-        messageIds, Constants.MessageLocationType.INBOX.toString(), currentFolder
+        messageIds, Constants.MessageLocationType.INBOX, currentFolder
     )
 
     fun moveToArchive(
         messageIds: List<String>,
         currentFolder: Constants.MessageLocationType
     ) = moveMessagesToFolderAndDismiss(
-        messageIds, Constants.MessageLocationType.ARCHIVE.toString(), currentFolder
+        messageIds, Constants.MessageLocationType.ARCHIVE, currentFolder
     )
 
     fun moveToSpam(
         messageIds: List<String>,
         currentFolder: Constants.MessageLocationType
     ) = moveMessagesToFolderAndDismiss(
-        messageIds, Constants.MessageLocationType.SPAM.toString(), currentFolder
+        messageIds, Constants.MessageLocationType.SPAM, currentFolder
     )
 
     fun moveToTrash(
         messageIds: List<String>,
         currentFolder: Constants.MessageLocationType
     ) = moveMessagesToFolderAndDismiss(
-        messageIds, Constants.MessageLocationType.TRASH.toString(), currentFolder
+        messageIds, Constants.MessageLocationType.TRASH, currentFolder
     )
 
     fun starMessage(
@@ -243,7 +243,7 @@ class MessageActionSheetViewModel @Inject constructor(
     }
 
     private fun moveMessagesToFolderAndDismiss(
-        ids: List<String>, newFolderLocationId: String,
+        ids: List<String>, newFolderLocationId: Constants.MessageLocationType,
         currentFolder: Constants.MessageLocationType
     ) {
         viewModelScope.launch {
@@ -253,7 +253,7 @@ class MessageActionSheetViewModel @Inject constructor(
                     moveConversationsToFolder(
                         ids,
                         primaryUserId,
-                        newFolderLocationId
+                        newFolderLocationId.messageLocationTypeValue.toString()
                     )
                 } else {
                     Timber.e("Primary user id is null. Cannot move message/conversation to folder")
@@ -261,7 +261,7 @@ class MessageActionSheetViewModel @Inject constructor(
             } else {
                 moveMessagesToFolder(
                     ids,
-                    newFolderLocationId,
+                    newFolderLocationId.messageLocationTypeValue.toString(),
                     currentFolder.messageLocationTypeValue.toString()
                 )
             }

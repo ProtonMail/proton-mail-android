@@ -154,10 +154,12 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
         // given
         val shallMoveToArchive = true
+        val inboxLocationId = "0"
+        val archiveLocationId = "6"
         coEvery { updateLabels.invoke(any(), any()) } just Runs
         coEvery {
             moveMessagesToFolder(
-                listOf(messageId1), Constants.MessageLocationType.ARCHIVE.toString(),
+                listOf(messageId1), Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString(),
                 Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
             )
         } just Runs
@@ -169,8 +171,9 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         coVerify { updateLabels.invoke(any(), any()) }
         coVerify {
             moveMessagesToFolder(
-                listOf(messageId1), Constants.MessageLocationType.ARCHIVE.toString(),
-                Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
+                listOf(messageId1),
+                archiveLocationId,
+                inboxLocationId
             )
         }
         assertEquals(ManageLabelActionResult.LabelsSuccessfullySaved, viewModel.actionsResult.value)
