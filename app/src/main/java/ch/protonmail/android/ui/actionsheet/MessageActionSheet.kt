@@ -154,7 +154,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         actionsTarget: ActionSheetTarget
     ) {
         with(binding) {
-            layoutDetailsActions.isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+            layoutDetailsActions.isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN ||
+                actionsTarget == ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
             textViewDetailsActionsReply.setOnClickListener {
                 (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.REPLY)
@@ -182,21 +183,21 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             val isStarred = arguments?.getBoolean(EXTRA_ARG_IS_STARED) ?: false
 
             textViewDetailsActionsUnstar.apply {
-                isVisible = actionsTarget != ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN || isStarred
+                isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN || isStarred
                 setOnClickListener {
                     viewModel.unStarMessage(messageIds, messageLocation)
                 }
             }
 
             textViewDetailsActionsStar.apply {
-                isVisible = actionsTarget != ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN || !isStarred
+                isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN || !isStarred
                 setOnClickListener {
                     viewModel.starMessage(messageIds, messageLocation)
                 }
             }
 
             textViewDetailsActionsMarkRead.apply {
-                isVisible = actionsTarget != ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+                isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
                 setOnClickListener {
                     viewModel.markRead(messageIds, messageLocation)
                 }
@@ -286,12 +287,14 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         messageIds: List<String>
     ) {
         with(binding) {
+            val showMoreMessageOptions = actionsTarget == ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN ||
+                actionsTarget == ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
-            viewActionSheetSeparator.isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
-            textViewActionSheetMoreTitle.isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+            viewActionSheetSeparator.isVisible = showMoreMessageOptions
+            textViewActionSheetMoreTitle.isVisible = showMoreMessageOptions
 
             textViewDetailsActionsPrint.apply {
-                isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+                isVisible = showMoreMessageOptions
                 setOnClickListener {
                     // we call it this way as it requires "special" context from the Activity
                     (activity as? MessageDetailsActivity)?.printMessage()
@@ -299,13 +302,13 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 }
             }
             textViewDetailsActionsViewHeaders.apply {
-                isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+                isVisible = showMoreMessageOptions
                 setOnClickListener {
                     viewModel.showMessageHeaders(messageIds.first())
                 }
             }
             textViewDetailsActionsReportPhishing.apply {
-                isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+                isVisible = showMoreMessageOptions
                 setOnClickListener {
                     (activity as? MessageDetailsActivity)?.showReportPhishingDialog()
                     dismiss()
