@@ -229,7 +229,12 @@ internal class MessageDetailsAdapter(
                 itemView.messageWebViewContainer.findViewById<WebView>(ITEM_MESSAGE_BODY_WEB_VIEW_ID) ?: return
             val messageBodyProgress =
                 itemView.messageWebViewContainer.findViewById<ProgressBar>(ITEM_MESSAGE_BODY_PROGRESS_VIEW_ID) ?: return
-            loadHtmlDataIntoWebView(webView, listItem.messageFormattedHtml)
+            val htmlContent = if (showingMoreThanOneMessage() || messageHasNoQuotedPart(listItem)) {
+                listItem.messageFormattedHtml
+            } else {
+                listItem.messageFormattedHtmlWithQuotedHistory
+            }
+            loadHtmlDataIntoWebView(webView, htmlContent)
 
             listItem.messageFormattedHtml?.let {
                 messageBodyProgress.visibility = View.GONE
@@ -241,6 +246,9 @@ internal class MessageDetailsAdapter(
             setupMessageActionsView(message, listItem.messageFormattedHtmlWithQuotedHistory, webView)
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
         }
+
+        private fun messageHasNoQuotedPart(listItem: MessageDetailsListItem) =
+            listItem.messageFormattedHtmlWithQuotedHistory == null
 
         private fun setupMessageActionsView(
             message: Message,
