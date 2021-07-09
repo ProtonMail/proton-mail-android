@@ -124,8 +124,8 @@ import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
-import ch.protonmail.android.ui.actionsheet.ActionSheetTarget
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
+import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils

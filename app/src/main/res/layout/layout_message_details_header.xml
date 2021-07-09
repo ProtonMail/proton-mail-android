@@ -120,7 +120,7 @@
         android:textSize="18sp"
         tools:text="@string/lock_default" />
 
-    <ch.protonmail.android.details.presentation.MessageDetailsHeaderIcons
+    <ch.protonmail.android.details.presentation.view.MessageDetailsHeaderIcons
         android:id="@+id/messageDetailsIcons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

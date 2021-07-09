@@ -38,6 +38,7 @@ import ch.protonmail.android.databinding.FragmentMessageActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -420,24 +421,4 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             }
         }
     }
-}
-
-enum class ActionSheetTarget {
-    /**
-     * ActionSheet is being summoned from the MailBox Screen (ie. MailboxActivity)
-     * to act on a number of Mailbox items which can be either messages or conversations
-     */
-    MAILBOX_ITEMS_IN_MAILBOX_SCREEN,
-
-    /**
-     * ActionSheet is being summoned from the Detail Screen (ie. MessageDetailsActivity)
-     * to act on the one "main" entity being displayed, which can be either a message or a conversation
-     */
-    MAILBOX_ITEM_IN_DETAIL_SCREEN,
-
-    /**
-     * ActionSheet is being summoned from the Detail Screen (ie. MessageDetailsActivity)
-     * to act on one specific message within a conversation (that has more than one message)
-     */
-    MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 }

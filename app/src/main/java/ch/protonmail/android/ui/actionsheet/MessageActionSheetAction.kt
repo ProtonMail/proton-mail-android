@@ -20,6 +20,7 @@
 package ch.protonmail.android.ui.actionsheet
 
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 
 /**
  * Contains types of actions executed from message action sheet.

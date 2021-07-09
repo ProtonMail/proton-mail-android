@@ -30,9 +30,9 @@ import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
-import ch.protonmail.android.ui.actionsheet.ActionSheetTarget
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetAction
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetViewModel
+import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import io.mockk.Called
 import io.mockk.MockKAnnotations

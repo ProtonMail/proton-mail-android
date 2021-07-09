@@ -36,7 +36,7 @@ import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionAdapter
 import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionSheetViewModel
-import ch.protonmail.android.ui.actionsheet.ActionSheetTarget
+import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn

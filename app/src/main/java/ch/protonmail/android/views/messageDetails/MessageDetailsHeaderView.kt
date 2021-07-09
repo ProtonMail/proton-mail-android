@@ -46,7 +46,7 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.databinding.LayoutMessageDetailsHeaderBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
-import ch.protonmail.android.details.presentation.MessageDetailsHeaderIcons
+import ch.protonmail.android.details.presentation.view.MessageDetailsHeaderIcons
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.ui.view.MultiLineLabelChipGroupView
 import ch.protonmail.android.ui.view.SingleLineLabelChipGroupView

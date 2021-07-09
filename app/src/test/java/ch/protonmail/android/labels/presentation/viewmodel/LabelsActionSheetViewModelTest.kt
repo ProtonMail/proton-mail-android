@@ -36,7 +36,7 @@ import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.UpdateConversationsLabels
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
-import ch.protonmail.android.ui.actionsheet.ActionSheetTarget
+import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
