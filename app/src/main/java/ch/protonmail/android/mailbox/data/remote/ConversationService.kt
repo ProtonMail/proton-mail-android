@@ -78,4 +78,11 @@ interface ConversationService {
         @Body conversationIds: ConversationIdsRequestBody,
         @Tag userIdTag: UserIdTag? = null
     ): ConversationsActionResponses
+
+    @PUT("mail/v4/conversations/delete")
+    @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
+    suspend fun deleteConversations(
+        @Body conversationIds: ConversationIdsRequestBody,
+        @Tag userIdTag: UserIdTag? = null
+    ): ConversationsActionResponses
 }

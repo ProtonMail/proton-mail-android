@@ -21,7 +21,6 @@ package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.event.data.remote.model.ConversationsEventResponse
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import kotlinx.coroutines.flow.Flow
@@ -93,4 +92,6 @@ interface ConversationsRepository {
     suspend fun unstar(conversationIds: List<String>, userId: UserId)
 
     suspend fun moveToFolder(conversationIds: List<String>, userId: UserId, folderId: String)
+
+    suspend fun delete(conversationIds: List<String>, userId: UserId, currentFolderId: String)
 }

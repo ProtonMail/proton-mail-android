@@ -40,4 +40,6 @@ sealed class MessageActionSheetAction {
     data class ChangeStarredStatus(val starredStatus: Boolean) : MessageActionSheetAction()
 
     data class MoveToFolder(val folderId: String) : MessageActionSheetAction()
+
+    object Delete : MessageActionSheetAction()
 }

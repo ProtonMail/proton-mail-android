@@ -1033,75 +1033,6 @@ class MailboxActivity :
     }
 
     override fun onActionItemClicked(mode: ActionMode, menuItem: MenuItem): Boolean {
-        // TODO: These actions need to be extracted to the view model and then removed from here
-        val messageIds = getSelectedMessageIds()
-        val menuItemId = menuItem.itemId
-        var job: Job? = null
-        when (menuItemId) {
-            R.id.move_to_trash -> {
-                job = PostTrashJobV2(messageIds, mailboxLabelId)
-                undoSnack = showUndoSnackbar(
-                    this@MailboxActivity,
-                    findViewById(R.id.drawer_layout),
-                    resources.getQuantityString(R.plurals.action_move_to_trash, messageIds.size),
-                    { },
-                    false
-                )
-                undoSnack!!.show()
-            }
-            R.id.delete_message ->
-                showDeleteConfirmationDialog(
-                    this,
-                    getString(R.string.delete_messages),
-                    getString(R.string.confirm_destructive_action)
-                ) {
-                    mailboxViewModel.deleteMessages(
-                        messageIds,
-                        currentMailboxLocation.messageLocationTypeValue.toString()
-                    )
-                    mode.finish()
-                }
-            R.id.mark_read -> {
-            }
-            R.id.mark_unread -> {
-            }
-            R.id.add_star -> job = PostStarJob(messageIds)
-            R.id.add_label -> {
-            }
-            R.id.add_folder -> {
-            }
-            R.id.remove_star -> job = PostUnstarJob(messageIds)
-            R.id.move_to_archive -> {
-                job = PostArchiveJob(messageIds)
-                undoSnack = showUndoSnackbar(
-                    this@MailboxActivity,
-                    findViewById(R.id.drawer_layout),
-                    resources.getQuantityString(R.plurals.action_move_to_archive, messageIds.size),
-                    { },
-                    false
-                )
-                undoSnack!!.show()
-            }
-            R.id.move_to_inbox -> job = PostInboxJob(messageIds, listOf(mailboxLabelId))
-            R.id.move_to_spam -> {
-                job = PostSpamJob(messageIds)
-                undoSnack = showUndoSnackbar(
-                    this@MailboxActivity, findViewById(R.id.drawer_layout),
-                    resources.getQuantityString(R.plurals.action_move_to_spam, messageIds.size),
-                    { },
-                    false
-                )
-                undoSnack!!.show()
-            }
-        }
-        if (job != null) {
-            mJobManager.addJobInBackground(job)
-        }
-
-        if (menuItemId !in listOf(R.id.add_label, R.id.add_folder, R.id.delete_message)) {
-            mode.finish()
-        }
-
         return true
     }
 
@@ -1125,9 +1056,10 @@ class MailboxActivity :
                     getString(R.string.delete_messages),
                     getString(R.string.confirm_destructive_action)
                 ) {
-                    mailboxViewModel.deleteMessages(
+                    mailboxViewModel.deleteAction(
                         messageIds,
-                        currentMailboxLocation.messageLocationTypeValue.toString()
+                        UserId(userManager.requireCurrentUserId().s),
+                        currentMailboxLocation
                     )
                 }
             } else {

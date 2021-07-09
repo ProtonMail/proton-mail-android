@@ -54,4 +54,9 @@ interface ConversationApiSpec {
         conversationIds: ConversationIdsRequestBody,
         userId: Id
     ): ConversationsActionResponses
+
+    suspend fun deleteConversations(
+        conversationIds: ConversationIdsRequestBody,
+        userId: Id
+    ): ConversationsActionResponses
 }

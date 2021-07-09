@@ -320,7 +320,7 @@ interface MessageDao {
     suspend fun saveMessageInfo(message: Message): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveMessagesInfo(messages: List<Message>)
+    suspend fun saveMessagesInfo(messages: List<Message>)
 
     @Query("DELETE FROM $TABLE_MESSAGES")
     fun clearMessagesCache()
