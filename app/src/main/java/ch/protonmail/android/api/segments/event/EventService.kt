@@ -19,7 +19,7 @@
 package ch.protonmail.android.api.segments.event
 
 import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.api.models.EventResponse
+import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.api.models.LatestEventResponse
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE

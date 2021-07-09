@@ -321,6 +321,7 @@ object Fields {
         const val MORE = "More"
         const val USED_SPACE = "UsedSpace"
         const val MESSAGES = "Messages"
+        const val CONVERSATIONS = "Conversations"
         const val CONTACTS = "Contacts"
         const val CONTACT_EMAILS = "ContactEmails"
         const val LABELS = "Labels"

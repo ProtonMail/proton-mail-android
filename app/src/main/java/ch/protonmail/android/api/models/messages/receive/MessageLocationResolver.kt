@@ -56,7 +56,7 @@ class MessageLocationResolver @Inject constructor(
         val longLabels = labelIds.filter { it.length > 2 }
 
         for (i in shortLabels.indices.reversed()) {
-            val item = labelIds[i]
+            val item = shortLabels[i]
             val locationInt = item.toInt()
             if (locationInt in validLocations) {
                 return Constants.MessageLocationType.fromInt(locationInt)

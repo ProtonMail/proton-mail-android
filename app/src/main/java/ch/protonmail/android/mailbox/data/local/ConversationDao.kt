@@ -52,12 +52,20 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
 
     @Query(
         """
+        SELECT * FROM $TABLE_CONVERSATIONS
+        WHERE $COLUMN_ID = :conversationId AND $COLUMN_USER_ID = :userId
+        """
+    )
+    abstract suspend fun findConversation(conversationId: String, userId: String): ConversationDatabaseModel?
+
+    @Query(
+        """
             DELETE FROM $TABLE_CONVERSATIONS
-            WHERE $COLUMN_ID = :conversationId 
+            WHERE $COLUMN_ID IN (:conversationIds)  
             AND $COLUMN_USER_ID = :userId
             """
     )
-    abstract fun deleteConversation(conversationId: String, userId: String)
+    abstract suspend fun deleteConversations(vararg conversationIds: String, userId: String)
 
     @Query("DELETE FROM $TABLE_CONVERSATIONS")
     abstract fun clear()

@@ -24,7 +24,7 @@ import android.os.Build
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.api.models.EventResponse
+import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences

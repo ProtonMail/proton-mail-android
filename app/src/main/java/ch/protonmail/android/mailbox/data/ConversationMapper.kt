@@ -47,6 +47,7 @@ internal fun ConversationApiModel.toLocal(userId: String) = ConversationDatabase
     labels = labels.toLabelContextDatabaseModel()
 )
 
+
 internal fun ConversationDatabaseModel.toDomainModel() = Conversation(
     id = id,
     subject = subject,
@@ -136,7 +137,7 @@ internal fun List<LabelContextApiModel>.toLabelContextDatabaseModel() =
 
 
 /**
- * Converts a response conversations list to a list of local conversation modal
+ * Converts a response conversations list to a list of local conversation model
  */
 internal fun List<ConversationApiModel>.toListLocal(userId: String) =
     map { conversation -> conversation.toLocal(userId) }

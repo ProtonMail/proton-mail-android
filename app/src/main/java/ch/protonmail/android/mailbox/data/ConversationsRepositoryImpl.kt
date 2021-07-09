@@ -25,6 +25,7 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.event.data.remote.model.ConversationsEventResponse
 import ch.protonmail.android.mailbox.data.local.ConversationDao
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
@@ -60,7 +61,7 @@ import javax.inject.Inject
 import kotlin.math.max
 import kotlin.time.toDuration
 
-const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
+const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723_478
 private const val MAX_LOCATION_ID_LENGTH = 2 // For non-custom locations such as: Inbox, Sent, Archive etc.
 
 class ConversationsRepositoryImpl @Inject constructor(
@@ -89,7 +90,12 @@ class ConversationsRepositoryImpl @Inject constructor(
                 messageDao.saveMessages(messages)
                 conversationDao.insertOrUpdate(conversation)
             },
-            delete = { key -> conversationDao.deleteConversation(key.conversationId, key.userId.s) }
+            delete = { key ->
+                conversationDao.deleteConversations(
+                    *listOf(key.conversationId).toTypedArray(),
+                    userId = key.userId.s
+                )
+            }
         )
     ).build()
 
@@ -103,8 +109,8 @@ class ConversationsRepositoryImpl @Inject constructor(
             }.fold(
                 onSuccess = {
                     val conversations = it.conversationResponse.toListLocal(parameters.userId.s)
-                    conversationDao.insertOrUpdate(*conversations.toTypedArray())
-                    if (conversations.isEmpty()) {
+                    saveConversations(conversations, parameters.userId)
+                    if (it.conversationResponse.isEmpty()) {
                         emit(Error.Remote("No conversations", null, NO_MORE_CONVERSATIONS_ERROR_CODE))
                     }
                 },
@@ -137,7 +143,19 @@ class ConversationsRepositoryImpl @Inject constructor(
         store.stream(StoreRequest.cached(ConversationStoreKey(conversationId, userId), true))
             .map { it.toDataResult() }
 
-    override fun clearConversations() = conversationDao.clear()
+
+    override suspend fun findConversation(conversationId: String, userId: Id): ConversationDatabaseModel? =
+        conversationDao.findConversation(conversationId, userId.s)
+
+
+    override suspend fun saveConversations(conversations: List<ConversationDatabaseModel>, userId: Id) =
+        conversationDao.insertOrUpdate(*conversations.toTypedArray())
+
+    override suspend fun deleteConversations(conversationIds: List<String>, userId: Id) {
+        conversationDao.deleteConversations(*conversationIds.toTypedArray(), userId = userId.s)
+    }
+
+    override suspend fun clearConversations() = conversationDao.clear()
 
     override suspend fun markRead(conversationIds: List<String>) {
         markConversationsReadWorker.enqueue(conversationIds)

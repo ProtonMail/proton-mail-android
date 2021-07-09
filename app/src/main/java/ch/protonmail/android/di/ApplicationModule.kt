@@ -68,6 +68,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import me.proton.core.accountmanager.domain.SessionManager
@@ -256,6 +257,12 @@ object ApplicationModule {
         userManager: UserManager,
         context: Context
     ): UserNotifier = AndroidUserNotifier(notificationServer, userManager, context, dispatcherProvider())
+
+    // Coroutine scope to use e.g. in EventHandler, something that has no access to viewModel, following ideas from:
+    // https://medium.com/androiddevelopers/coroutines-patterns-for-work-that-shouldnt-be-cancelled-e26c40f142ad
+    @Provides
+    @Singleton
+    fun applicationCoroutineScope() = CoroutineScope(Dispatchers.IO + SupervisorJob())
 }
 
 @Module
