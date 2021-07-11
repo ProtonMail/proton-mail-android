@@ -94,4 +94,8 @@ interface ConversationsRepository {
     suspend fun moveToFolder(conversationIds: List<String>, userId: UserId, folderId: String)
 
     suspend fun delete(conversationIds: List<String>, userId: UserId, currentFolderId: String)
+
+    suspend fun label(conversationIds: List<String>, userId: UserId, labelId: String)
+
+    suspend fun unlabel(conversationIds: List<String>, userId: UserId, labelId: String)
 }

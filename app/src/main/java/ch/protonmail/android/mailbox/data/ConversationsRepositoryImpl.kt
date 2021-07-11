@@ -275,6 +275,34 @@ class ConversationsRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun label(conversationIds: List<String>, userId: UserId, labelId: String) {
+        labelConversationsRemoteWorker.enqueue(conversationIds, labelId, userId)
+
+        conversationIds.forEach { conversationId ->
+            var lastMessageTime = 0L
+            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+                message.addLabels(listOf(labelId))
+                messageDao.saveMessage(message)
+                lastMessageTime = max(lastMessageTime, message.time)
+            }
+
+            addLabelsToConversation(conversationId, userId, listOf(labelId), lastMessageTime)
+        }
+    }
+
+    override suspend fun unlabel(conversationIds: List<String>, userId: UserId, labelId: String) {
+        unlabelConversationsRemoteWorker.enqueue(conversationIds, labelId, userId)
+
+        conversationIds.forEach { conversationId ->
+            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+                message.removeLabels(listOf(labelId))
+                messageDao.saveMessage(message)
+            }
+
+            removeLabelsFromConversation(conversationId, userId, listOf(labelId))
+        }
+    }
+
     /**
      * When we move a conversation to Inbox, the destination folder is not always the only destination
      * that needs to be added to the list of label ids. When the conversation contains messages that are

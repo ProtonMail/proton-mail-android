@@ -803,6 +803,96 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         }
     }
 
+    @Test
+    fun verifyMessagesAndConversationsAreLabeled() {
+        runBlockingTest {
+            // given
+            val conversationId1 = "conversationId1"
+            val conversationId2 = "conversationId2"
+            val conversationIds = listOf(conversationId1, conversationId2)
+            val userId = UserId("userId")
+            val labelId = "labelId"
+            val message = mockk<Message> {
+                every { time } returns 123
+                every { addLabels(any()) } just runs
+            }
+            val listOfMessages = listOf(message, message)
+            val conversationLabels = listOf(
+                LabelContextDatabaseModel("5", 0, 2, 123, 123, 1),
+                LabelContextDatabaseModel("0", 0, 2, 123, 123, 0)
+            )
+            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOfMessages)
+            coEvery { messageDao.saveMessage(message) } returns 123
+            coEvery { conversationDao.getConversation(any(), userId.id) } returns flowOf(
+                mockk {
+                    every { labels } returns conversationLabels
+                    every { numUnread } returns 0
+                    every { numMessages } returns 2
+                    every { size } returns 123
+                    every { numAttachments } returns 1
+                }
+            )
+            coEvery { conversationDao.updateLabels(any(), any()) } just runs
+
+            // when
+            conversationsRepository.label(conversationIds, userId, labelId)
+
+            // then
+            coVerify(exactly = 4) {
+                messageDao.saveMessage(message)
+            }
+            coVerify {
+                conversationDao.updateLabels(any(), conversationId1)
+            }
+            coVerify {
+                conversationDao.updateLabels(any(), conversationId2)
+            }
+        }
+    }
+
+    @Test
+    fun verifyMessagesAndConversationsAreUnlabeled() {
+        runBlockingTest {
+            // given
+            val conversationId1 = "conversationId1"
+            val conversationId2 = "conversationId2"
+            val conversationIds = listOf(conversationId1, conversationId2)
+            val userId = UserId("userId")
+            val labelId = "labelId"
+            val message = mockk<Message> {
+                every { removeLabels(any()) } just runs
+            }
+            val listOfMessages = listOf(message, message)
+            val conversationLabels = listOf(
+                LabelContextDatabaseModel("5", 0, 2, 123, 123, 1),
+                LabelContextDatabaseModel("0", 0, 2, 123, 123, 0),
+                LabelContextDatabaseModel("labelId", 0, 2, 123, 123, 0)
+            )
+            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOfMessages)
+            coEvery { messageDao.saveMessage(message) } returns 123
+            coEvery { conversationDao.getConversation(any(), userId.id) } returns flowOf(
+                mockk {
+                    every { labels } returns conversationLabels
+                }
+            )
+            coEvery { conversationDao.updateLabels(any(), any()) } just runs
+
+            // when
+            conversationsRepository.unlabel(conversationIds, userId, labelId)
+
+            // then
+            coVerify(exactly = 4) {
+                messageDao.saveMessage(message)
+            }
+            coVerify {
+                conversationDao.updateLabels(any(), conversationId1)
+            }
+            coVerify {
+                conversationDao.updateLabels(any(), conversationId2)
+            }
+        }
+    }
+
     private fun getConversation(
         id: String,
         subject: String,
