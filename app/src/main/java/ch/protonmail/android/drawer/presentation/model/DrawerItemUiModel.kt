@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uiModel
+package ch.protonmail.android.drawer.presentation.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import ch.protonmail.android.core.Constants.DrawerOptionType
 import ch.protonmail.android.core.Constants.MessageLocationType
+import ch.protonmail.android.uiModel.LabelUiModel
 
 /**
  * Ui Model for Items in Navigation Drawer

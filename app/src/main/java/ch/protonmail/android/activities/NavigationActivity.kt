@@ -47,6 +47,8 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.*
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary.Static.*
 import ch.protonmail.android.drawer.presentation.ui.view.ProtonSideDrawer
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.mapper.LabelUiModelMapper
@@ -54,8 +56,6 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.EXTRA_FRAGMENT_TITLE
 import ch.protonmail.android.settings.pin.ValidatePinActivity
-import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
-import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary.Static.Type
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil

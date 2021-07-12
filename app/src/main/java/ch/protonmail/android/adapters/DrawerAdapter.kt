@@ -25,11 +25,11 @@ import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Footer
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.SectionName
 import ch.protonmail.android.mapper.LabelUiModelMapper
-import ch.protonmail.android.uiModel.DrawerItemUiModel
-import ch.protonmail.android.uiModel.DrawerItemUiModel.Footer
-import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
-import ch.protonmail.android.uiModel.DrawerItemUiModel.SectionName
 import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
