@@ -675,7 +675,61 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         verify(exactly = 0) { messageRepository.markRead(any()) }
     }
 
-    private fun buildConversation(conversationId: String, isDownloaded: Boolean = false): Conversation {
+    @Test
+    fun verifyMarkUnReadOnInConversationMode() = runBlockingTest {
+        // given
+        val inputMessageLocation = INBOX
+        // messageId is defined as a field as it's needed at VM's instantiation time.
+        val inputConversationId = INPUT_ITEM_DETAIL_ID
+        every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
+        every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
+            inputMessageLocation.messageLocationTypeValue
+        val userId = Id("userId3")
+        every { userManager.requireCurrentUserId() } returns userId
+        coEvery { conversationModeEnabled(inputMessageLocation) } returns true
+
+        // when
+        viewModel.markUnread()
+
+        // then
+        coVerify(exactly = 1) {
+            changeConversationsReadStatus.invoke(
+                listOf(inputConversationId),
+                ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
+                UserId(userId.s),
+                inputMessageLocation
+            )
+        }
+        coVerify(exactly = 0) {
+            messageRepository.markUnRead(listOf(inputConversationId))
+        }
+    }
+
+
+    @Test
+    fun verifyMarkUnReadInMessageMode() = runBlockingTest {
+        // given
+        val inputMessageLocation = INBOX
+        // messageId is defined as a field as it's needed at VM's instantiation time.
+        val inputConversationId = INPUT_ITEM_DETAIL_ID
+        every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
+        every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
+            inputMessageLocation.messageLocationTypeValue
+        val userId = Id("userId3")
+        every { userManager.requireCurrentUserId() } returns userId
+        coEvery { conversationModeEnabled(inputMessageLocation) } returns false
+        coEvery { messageRepository.markUnRead(any()) } just Runs
+
+        // when
+        viewModel.markUnread()
+
+        // then
+        coVerify(exactly = 1) {
+            messageRepository.markUnRead(listOf(inputConversationId))
+        }
+    }
+
+    private fun buildConversation(conversationId: String): Conversation {
         val messageId = "messageId4"
         val secondMessageId = "messageId5"
         return Conversation(
