@@ -35,7 +35,7 @@
         tools:isDialogEnabled="true"
         tools:name="Super User" />
 
-    <ch.protonmail.android.ui.view.ProtonSideDrawer
+    <ch.protonmail.android.drawer.presentation.ui.view.ProtonSideDrawer
         android:id="@+id/sideDrawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
