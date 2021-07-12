@@ -130,7 +130,6 @@ import ch.protonmail.android.events.FetchDraftDetailEvent;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
 import ch.protonmail.android.events.MessageSavedEvent;
 import ch.protonmail.android.events.PostImportAttachmentEvent;
-import ch.protonmail.android.events.PostLoadContactsEvent;
 import ch.protonmail.android.events.ResignContactEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.contacts.SendPreferencesEvent;
@@ -1424,11 +1423,6 @@ public class ComposeMessageActivity
         setResult(RESULT_OK);
         saveLastInteraction();
         finish();
-    }
-
-    @Subscribe
-    public void onPostLoadContactsEvent(PostLoadContactsEvent event) {
-        recipientAdapter.setData(event.recipients);
     }
 
     @Subscribe

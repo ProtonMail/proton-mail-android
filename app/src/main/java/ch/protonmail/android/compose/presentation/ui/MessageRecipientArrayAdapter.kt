@@ -36,6 +36,10 @@ import ch.protonmail.android.domain.entity.Name
 import me.proton.core.util.kotlin.containsNoCase
 import kotlin.collections.filter as kFilter
 
+/**
+ * Array adapter for [MessageRecipient]
+ * This will filter our contacts with email address that doesn't match [EmailAddress.VALIDATION_REGEX]
+ */
 class MessageRecipientArrayAdapter(context: Context) :
     ArrayAdapter<MessageRecipient>(context, R.layout.layout_recipient_dropdown_item) {
 
@@ -72,14 +76,19 @@ class MessageRecipientArrayAdapter(context: Context) :
 
         override fun performFiltering(constraint: CharSequence?): FilterResults {
             return if (constraint.isNullOrBlank()) {
-                // No filter implemented we return all the list
-                data.toFilterResults()
+                // No filter implemented we return all the recipients with valid emails
+                data.filterValidEmails().toFilterResults()
             } else {
-                data.kFilter { messageRecipient ->
+                data.filterValidEmails().kFilter { messageRecipient ->
                     messageRecipient.name containsNoCase constraint ||
                         messageRecipient.emailAddress containsNoCase constraint
                 }.toFilterResults()
             }
+        }
+
+        private fun List<MessageRecipient>.filterValidEmails() = kFilter {
+            val isGroup = context.getString(R.string.members) in it.name
+            isGroup || EmailAddress.VALIDATION_REGEX.matches(it.emailAddress)
         }
 
         override fun publishResults(constraint: CharSequence?, results: FilterResults) {
@@ -113,6 +122,7 @@ class MessageRecipientArrayAdapter(context: Context) :
 
                 binding.contactNameTextView.text = recipient.name
                 if (isContact) {
+
                     val extractInitials = ExtractInitials()
                     val initials = extractInitials(Name(recipient.name), EmailAddress(recipient.emailAddress))
                     contactInitialsTextView.text = initials
