@@ -64,12 +64,7 @@ class AccountTypeViewModel @Inject constructor(
 
     fun onUpgradeClicked() {
         viewModelScope.launch {
-            accountManager.getPrimaryUserId().first()?.let {
-                val account = accountManager.getAccount(it).first()
-                if (account == null) {
-                    upgradeState.value = State.Error.PrimaryUser
-                    return@launch
-                }
+            accountManager.getPrimaryUserId().first()?.let { userId ->
                 with(plansOrchestrator) {
                     onUpgradeResult { upgradeResult ->
                         // do something with the upgrade result
@@ -78,7 +73,7 @@ class AccountTypeViewModel @Inject constructor(
                         }
                     }
 
-                    plansOrchestrator.startUpgradeWorkflow(account.userId)
+                    plansOrchestrator.startUpgradeWorkflow(userId)
                 }
             } ?: run {
                 upgradeState.value = State.Error.PrimaryUser
