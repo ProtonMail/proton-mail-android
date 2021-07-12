@@ -171,7 +171,9 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/timeDateTextView"
         android:src="@drawable/ic_chevron_down"
-        app:tint="@color/icon_weak" />
+        app:tint="@color/icon_weak"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/toCollapsedTextView"

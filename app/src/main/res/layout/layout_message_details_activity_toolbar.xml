@@ -42,7 +42,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/toolbarMessagesCountTextView"
+                android:id="@+id/collapsedToolbarMessagesCountTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
@@ -55,6 +55,21 @@
                 app:layout_constraintBottom_toTopOf="@+id/collapsedToolbarTitleTextView"
                 android:visibility="gone"
                 tools:visibility="visible"
+                tools:text="1 Message" />
+
+            <TextView
+                android:id="@+id/expandedToolbarMessagesCountTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:gravity="center_horizontal"
+                android:textAppearance="@style/Proton.Text.DefaultSmall.Medium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/starToggleButton"
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone"
+                tools:visibility="gone"
                 tools:text="1 Message" />
 
             <TextView

@@ -66,7 +66,6 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.ui.MODE_ACCORDION
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.messageDetails.BottomActionsView
 import com.google.android.material.appbar.AppBarLayout
@@ -96,44 +95,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
     private var messageRecipientUserId: Id? = null
     private var messageRecipientUsername: String? = null
-    private val attachmentToDownload = AtomicReference<Attachment?>(null)
+    private var onOffsetChangedListener: AppBarLayout.OnOffsetChangedListener? = null
     private var showPhishingReportButton = true
-    private var shouldTitleFadeOut = false
-    private var shouldTitleFadeIn = true
+
+    private val attachmentToDownload = AtomicReference<Attachment?>(null)
     private val viewModel: MessageDetailsViewModel by viewModels()
 
     /** Lazy instance of [ClipboardManager] that will be used for copy content into the Clipboard */
     private val clipboardManager by lazy { getSystemService<ClipboardManager>() }
-
-    private val onOffsetChangedListener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-        val scrolledPercentage = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange.toFloat()
-        // Animate collapsed title
-        if (scrolledPercentage >= TITLE_ANIMATION_THRESHOLD && shouldTitleFadeIn) {
-            startTitleAlphaAnimation(collapsedToolbarTitleTextView, View.VISIBLE)
-            collapsedToolbarTitleTextView.visibility = View.VISIBLE
-            shouldTitleFadeIn = false
-            shouldTitleFadeOut = true
-        } else if (scrolledPercentage < TITLE_ANIMATION_THRESHOLD && shouldTitleFadeOut) {
-            startTitleAlphaAnimation(collapsedToolbarTitleTextView, View.INVISIBLE)
-            collapsedToolbarTitleTextView.visibility = View.INVISIBLE
-            shouldTitleFadeIn = true
-            shouldTitleFadeOut = false
-        }
-        // Animate expanded title
-        if (scrolledPercentage < ONE_HUNDRED_PERCENT) {
-            expandedToolbarTitleTextView.visibility = View.VISIBLE
-            expandedToolbarTitleTextView.alpha = 1 - scrolledPercentage
-        } else {
-            expandedToolbarTitleTextView.visibility = View.INVISIBLE
-        }
-    }
-
-    private fun startTitleAlphaAnimation(view: View, visibility: Int) {
-        val alphaAnimation = if (visibility == View.VISIBLE) AlphaAnimation(0f, 1f) else AlphaAnimation(1f, 0f)
-        alphaAnimation.duration = TITLE_ANIMATION_DURATION
-        alphaAnimation.fillAfter = true
-        view.startAnimation(alphaAnimation)
-    }
 
     override fun getLayoutId(): Int = R.layout.activity_message_details
 
@@ -182,8 +151,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             } ?: false
         }
 
-        appBarLayout.addOnOffsetChangedListener(onOffsetChangedListener)
-
         starToggleButton.setOnCheckedChangeListener(OnStarToggleListener(mJobManager, messageOrConversationId))
     }
 
@@ -221,7 +188,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             onDisplayRemoteContentClicked(),
             mUserManager,
             onLoadMessageBody(),
-            onDownloadAttachment()
+            onDownloadAttachment(),
+            onEditDraftClicked()
         )
     }
 
@@ -479,6 +447,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         override fun onChanged(conversation: ConversationUiModel) {
             val lastMessage = conversation.messages.last()
 
+            setupToolbarOffsetListener(conversation.messages.count())
             displayToolbarData(conversation)
             setupLastMessageActionsListener(lastMessage)
 
@@ -496,7 +465,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 if (isAutoShowRemoteImages) {
                     viewModel.remoteContentDisplayed()
                 }
-                messageExpandableAdapter.mode = MODE_ACCORDION
                 messageDetailsRecyclerView.layoutManager = LinearLayoutManager(this@MessageDetailsActivity)
                 messageDetailsRecyclerView.adapter = messageExpandableAdapter
             }
@@ -506,6 +474,57 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             invalidateOptionsMenu()
             viewModel.renderingPassed = true
         }
+    }
+
+    private fun setupToolbarOffsetListener(messagesCount: Int) {
+        // Ensure we do only set onOffsetChangedListener once
+        if (onOffsetChangedListener != null) {
+            return
+        }
+
+        var areCollapsedViewsShown = false
+
+        onOffsetChangedListener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val scrolledPercentage = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange.toFloat()
+
+            val collapsedViewsAnimation = if (areCollapsedViewsShown) AlphaAnimation(1f, 0f) else AlphaAnimation(0f, 1f)
+            collapsedViewsAnimation.duration = TITLE_ANIMATION_DURATION
+            collapsedViewsAnimation.fillAfter = true
+
+            // Animate collapsed toolbar views
+            val shouldDisplayCollapsedViews = scrolledPercentage >= TITLE_ANIMATION_THRESHOLD && !areCollapsedViewsShown
+            val shouldHideCollapsedViews = scrolledPercentage < TITLE_ANIMATION_THRESHOLD && areCollapsedViewsShown
+
+            if (shouldDisplayCollapsedViews) {
+                collapsedToolbarTitleTextView.startAnimation(collapsedViewsAnimation)
+                collapsedToolbarMessagesCountTextView.startAnimation(collapsedViewsAnimation)
+
+                collapsedToolbarTitleTextView.visibility = View.VISIBLE
+                collapsedToolbarMessagesCountTextView.isVisible = messagesCount > 1
+                areCollapsedViewsShown = true
+            } else if (shouldHideCollapsedViews) {
+                collapsedToolbarTitleTextView.startAnimation(collapsedViewsAnimation)
+                collapsedToolbarMessagesCountTextView.startAnimation(collapsedViewsAnimation)
+
+                collapsedToolbarTitleTextView.visibility = View.INVISIBLE
+                collapsedToolbarMessagesCountTextView.isVisible = false
+                areCollapsedViewsShown = false
+            }
+
+            // Animate expanded toolbar views
+            if (scrolledPercentage < ONE_HUNDRED_PERCENT) {
+                expandedToolbarTitleTextView.visibility = View.VISIBLE
+                expandedToolbarMessagesCountTextView.isVisible = messagesCount > 1
+
+                expandedToolbarTitleTextView.alpha = 1 - scrolledPercentage
+                expandedToolbarMessagesCountTextView.alpha = 1 - scrolledPercentage
+            } else {
+                expandedToolbarTitleTextView.visibility = View.INVISIBLE
+                expandedToolbarMessagesCountTextView.isVisible = false
+            }
+        }
+
+        appBarLayout.addOnOffsetChangedListener(onOffsetChangedListener)
     }
 
     private fun setupLastMessageActionsListener(message: Message) {
@@ -550,12 +569,18 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         val isInvalidSubject = conversation.subject.isNullOrEmpty()
         val subject = if (isInvalidSubject) getString(R.string.empty_subject) else conversation.subject
         val messagesInConversation = conversation.messages.count()
-        toolbarMessagesCountTextView.text = resources.getQuantityString(
+        val numberOfMessagesFormatted = resources.getQuantityString(
             R.plurals.x_messages_count,
             messagesInConversation,
             messagesInConversation
         )
-        toolbarMessagesCountTextView.isVisible = messagesInConversation > 1
+        collapsedToolbarMessagesCountTextView.text = numberOfMessagesFormatted
+        // Initially, the expanded message count view is shown instead. Visibility changes are handled by `OnOffsetChangedListener`
+        collapsedToolbarMessagesCountTextView.isVisible = false
+
+        expandedToolbarMessagesCountTextView.text = numberOfMessagesFormatted
+        expandedToolbarMessagesCountTextView.isVisible = messagesInConversation > 1
+
         collapsedToolbarTitleTextView.text = subject
         collapsedToolbarTitleTextView.visibility = View.INVISIBLE
         expandedToolbarTitleTextView.text = subject
@@ -741,6 +766,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private fun onDisplayRemoteContentClicked() = { message: Message ->
         viewModel.displayRemoteContent(message)
         viewModel.checkStoragePermission.observe(this, { storagePermissionHelper.checkPermission() })
+    }
+
+    private fun onEditDraftClicked() = { message: Message ->
+        val intent = AppUtil.decorInAppIntent(Intent(this, ComposeMessageActivity::class.java))
+        intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, message.messageId)
+        intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, message.isInline)
+        intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID, message.addressID)
+        startActivity(intent)
     }
 
     private fun onDownloadAttachment() = { attachment: Attachment ->

@@ -51,9 +51,6 @@
     <declare-styleable name="PINValue">
         <attr name="keyValue" />
     </declare-styleable>
-    <declare-styleable name="LoadContentButton">
-        <attr name="text" format="string" />
-    </declare-styleable>
 
     <declare-styleable name="SquareFloatingButtonView">
         <attr name="fabType" format="enum">

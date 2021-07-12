@@ -64,7 +64,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/attachmentsView" />
 
-    <ch.protonmail.android.views.messageDetails.LoadContentButton
+    <Button
         android:id="@+id/displayRemoteContentButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -76,11 +76,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/expirationInfoView"
         android:visibility="gone"
-        app:text="@string/display_images"
+        android:text="@string/display_images"
+        app:icon="@drawable/mail_showimages"
+        app:iconGravity="textStart"
+        android:drawableTint="@color/white"
         tools:visibility="visible" />
 
-    <ch.protonmail.android.views.messageDetails.LoadContentButton
-        android:id="@+id/containerLoadEmbeddedImagesContainer"
+    <Button
+        android:id="@+id/loadEmbeddedImagesButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/message_spacing"
@@ -91,7 +94,29 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/displayRemoteContentButton"
         android:visibility="gone"
-        app:text="@string/load_embedded_images"
+        android:text="@string/load_embedded_images"
+        app:icon="@drawable/mail_showimages"
+        app:iconGravity="textStart"
+        android:drawableTint="@color/white"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/editDraftButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/message_spacing"
+        android:layout_marginTop="@dimen/message_spacing_small"
+        android:layout_marginRight="@dimen/message_spacing"
+        android:layout_marginBottom="@dimen/message_spacing_small"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/loadEmbeddedImagesButton"
+        android:visibility="gone"
+        android:text="@string/edit_draft"
+        android:gravity="center"
+        app:icon="@drawable/ic_pencil"
+        app:iconGravity="textStart"
+        android:drawableTint="@color/white"
         tools:visibility="visible" />
 
     <TextView
@@ -101,7 +126,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_margin="@dimen/fields_default_space_small"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/containerLoadEmbeddedImagesContainer"
+        app:layout_constraintTop_toBottomOf="@id/editDraftButton"
         android:background="@color/warning"
         android:padding="@dimen/fields_default_space"
         android:textColor="@color/white"

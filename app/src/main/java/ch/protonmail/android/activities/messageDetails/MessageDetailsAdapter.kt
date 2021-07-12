@@ -31,6 +31,7 @@ import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -47,20 +48,20 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
+import ch.protonmail.android.details.presentation.MessageDetailsListItem
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.utils.redirectToChrome
 import ch.protonmail.android.utils.ui.ExpandableRecyclerAdapter
+import ch.protonmail.android.utils.ui.TYPE_HEADER
+import ch.protonmail.android.utils.ui.TYPE_ITEM
 import ch.protonmail.android.views.PMWebViewClient
-import ch.protonmail.android.views.messageDetails.LoadContentButton
 import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
+import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
 import java.util.ArrayList
-
-private const val TYPE_ITEM = 1001
-private const val TYPE_HEADER = 1000
 
 internal class MessageDetailsAdapter(
     private val context: Context,
@@ -70,8 +71,9 @@ internal class MessageDetailsAdapter(
     private val onDisplayRemoteContentClicked: (Message) -> Unit,
     private val userManager: UserManager,
     private val onLoadMessageBody: (Message) -> Unit,
-    private val onAttachmentDownloadCallback: (Attachment) -> Unit
-) : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
+    private val onAttachmentDownloadCallback: (Attachment) -> Unit,
+    private val onEditDraftClicked: (Message) -> Unit
+) : ExpandableRecyclerAdapter<MessageDetailsListItem>(context) {
 
     private var allLabelsList: List<Label>? = emptyList()
     private var nonInclusiveLabelsList: List<LabelChipUiModel> = emptyList()
@@ -137,22 +139,6 @@ internal class MessageDetailsAdapter(
         return webView
     }
 
-    class MessageDetailsListItem : ListItem {
-
-        var message: Message
-        var messageFormattedHtml: String? = null
-        var showLoadEmbeddedImagesButton: Boolean = false
-
-        constructor(messageData: Message) : super(TYPE_HEADER) {
-            message = messageData
-        }
-
-        constructor(message: Message, content: String?) : super(TYPE_ITEM) {
-            this.message = message
-            this.messageFormattedHtml = content
-        }
-    }
-
     inner class HeaderViewHolder(
         view: View
     ) : ExpandableRecyclerAdapter<MessageDetailsListItem>.HeaderViewHolder(view) {
@@ -160,10 +146,35 @@ internal class MessageDetailsAdapter(
         fun bind(message: Message) {
             val messageDetailsHeaderView = itemView.headerView
             messageDetailsHeaderView.bind(message, allLabelsList ?: listOf(), nonInclusiveLabelsList)
+
+            messageDetailsHeaderView.setOnClickListener { view ->
+                val headerView = view as MessageDetailsHeaderView
+
+                if (isMessageBodyExpanded()) {
+                    // Message Body is expended - will collapse
+                    headerView.collapseHeader()
+                    headerView.forbidExpandingHeaderView()
+                } else {
+                    // Message Body is collapsed - will expand
+                    headerView.allowExpandingHeaderView()
+                }
+                toggleExpandedItems(layoutPosition, false)
+            }
+
+            if (isLastItemHeader()) {
+                messageDetailsHeaderView.allowExpandingHeaderView()
+            }
+        }
+
+        private fun isMessageBodyExpanded() = isExpanded(layoutPosition)
+
+        private fun isLastItemHeader(): Boolean {
+            val lastHeaderItem = visibleItems?.last { it.ItemType == TYPE_HEADER }
+            return layoutPosition == visibleItems?.indexOf(lastHeaderItem)
         }
     }
 
-    open inner class ItemViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.ViewHolder(view) {
+    inner class ItemViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.ViewHolder(view) {
 
         fun bind(position: Int, listItem: MessageDetailsListItem) {
             val message = listItem.message
@@ -173,8 +184,10 @@ internal class MessageDetailsAdapter(
 
             val expirationInfoView = itemView.expirationInfoView
             val displayRemoteContentButton = itemView.displayRemoteContentButton
-            val loadEmbeddedImagesContainer = itemView.containerLoadEmbeddedImagesContainer
+            val loadEmbeddedImagesButton = itemView.loadEmbeddedImagesButton
+            val editDraftButton = itemView.editDraftButton
 
+            editDraftButton.isVisible = message.isDraft()
             expirationInfoView.bind(message.expirationTime)
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
 
@@ -197,16 +210,17 @@ internal class MessageDetailsAdapter(
                 messageBodyProgress.visibility = View.INVISIBLE
             }
             displayAttachmentInfo(listItem.message.attachments, attachmentsView)
-            loadEmbeddedImagesContainer.isVisible = listItem.showLoadEmbeddedImagesButton
+            loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
             setUpViewDividers()
 
-            setupMessageContentActions(position, loadEmbeddedImagesContainer, displayRemoteContentButton)
+            setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
         }
 
         private fun setupMessageContentActions(
             position: Int,
-            loadEmbeddedImagesContainer: LoadContentButton,
-            displayRemoteContentButton: LoadContentButton
+            loadEmbeddedImagesContainer: Button,
+            displayRemoteContentButton: Button,
+            editDraftButton: Button
         ) {
             loadEmbeddedImagesContainer.setOnClickListener { view ->
                 view.visibility = View.GONE
@@ -233,6 +247,11 @@ internal class MessageDetailsAdapter(
                     webView.reload()
                     onDisplayRemoteContentClicked(item.message)
                 }
+            }
+
+            editDraftButton.setOnClickListener {
+                val item = visibleItems!![position]
+                onEditDraftClicked(item.message)
             }
         }
 
