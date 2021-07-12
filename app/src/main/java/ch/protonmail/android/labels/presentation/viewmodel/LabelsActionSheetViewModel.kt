@@ -30,7 +30,9 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
+import ch.protonmail.android.mailbox.domain.UpdateConversationsLabels
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,10 +49,12 @@ class LabelsActionSheetViewModel @Inject constructor(
     private val getAllLabels: GetAllLabels,
     private val userManager: UserManager,
     private val updateLabels: UpdateLabels,
+    private val updateConversationsLabels: UpdateConversationsLabels,
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val moveConversationsToFolder: MoveConversationsToFolder,
     private val conversationModeEnabled: ConversationModeEnabled,
-    private val messageRepository: MessageRepository
+    private val messageRepository: MessageRepository,
+    private val conversationsRepository: ConversationsRepository
 ) : ViewModel() {
 
     private val labelsSheetType = savedStateHandle.get<LabelsActionSheet.Type>(
@@ -77,7 +81,7 @@ class LabelsActionSheetViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             labelsMutableFlow.value = getAllLabels(
-                getCheckedLabelsForAllMessages(messageIds),
+                getCheckedLabelsForAllMailboxItems(messageIds),
                 labelsSheetType,
                 currentMessageFolder
             )
@@ -122,28 +126,48 @@ class LabelsActionSheetViewModel @Inject constructor(
         }
     }
 
-    private fun onLabelDoneClicked(messageIds: List<String>, shallMoveToArchive: Boolean) {
-        if (messageIds.isNotEmpty()) {
+    private fun onLabelDoneClicked(ids: List<String>, shallMoveToArchive: Boolean) {
+        if (ids.isNotEmpty()) {
             viewModelScope.launch {
                 val selectedLabels = labels.value
                     .filter { it.isChecked == true }
                     .map { it.labelId }
-                Timber.v("Selected labels: $selectedLabels messageId: $messageIds")
-                messageIds.forEach { messageId ->
-                    updateLabels(
-                        messageId,
-                        selectedLabels
+                val unselectedLabels = labels.value
+                    .filter { it.isChecked == false }
+                    .map { it.labelId }
+                Timber.v("Selected labels: $selectedLabels messageId: $ids")
+                if (conversationModeEnabled(currentMessageFolder)) {
+                    updateConversationsLabels(
+                        ids,
+                        UserId(userManager.requireCurrentUserId().s),
+                        selectedLabels,
+                        unselectedLabels
                     )
+                } else {
+                    ids.forEach { id ->
+                        updateLabels(
+                            id,
+                            selectedLabels
+                        )
+                    }
                 }
 
                 if (shallMoveToArchive) {
-                    moveMessagesToFolder(
-                        messageIds,
-                        Constants.MessageLocationType.ARCHIVE.toString(),
-                        currentMessageFolder.messageLocationTypeValue.toString()
-                    )
+                    if (conversationModeEnabled(currentMessageFolder)) {
+                        moveConversationsToFolder(
+                            ids,
+                            UserId(userManager.requireCurrentUserId().s),
+                            Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+                        )
+                    } else {
+                        moveMessagesToFolder(
+                            ids,
+                            Constants.MessageLocationType.ARCHIVE.toString(),
+                            currentMessageFolder.messageLocationTypeValue.toString()
+                        )
+                    }
                 }
-
+            }.invokeOnCompletion {
                 actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved
             }
         } else {
@@ -167,15 +191,22 @@ class LabelsActionSheetViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getCheckedLabelsForAllMessages(
-        messageIds: List<String>
+    private suspend fun getCheckedLabelsForAllMailboxItems(
+        ids: List<String>
     ): List<String> {
         val checkedLabels = mutableListOf<String>()
-        messageIds.forEach { messageId ->
-            val message = messageRepository.findMessageById(messageId)
-            Timber.v("Checking message labels: ${message?.labelIDsNotIncludingLocations}")
-            message?.labelIDsNotIncludingLocations?.let {
-                checkedLabels.addAll(it)
+        ids.forEach { id ->
+            if (conversationModeEnabled(currentMessageFolder)) {
+                conversationsRepository.findConversation(id, userManager.requireCurrentUserId())?.let {
+                    conversation ->
+                    checkedLabels.addAll(conversation.labels.map { label -> label.id })
+                }
+            } else {
+                val message = messageRepository.findMessageById(id)
+                Timber.v("Checking message labels: ${message?.labelIDsNotIncludingLocations}")
+                message?.labelIDsNotIncludingLocations?.let {
+                    checkedLabels.addAll(it)
+                }
             }
         }
         return checkedLabels
