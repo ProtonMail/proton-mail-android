@@ -181,7 +181,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         markConversationsUnreadWorker.enqueue(conversationIds)
 
         conversationIds.forEach forEachConversation@{ conversationId ->
-            val conversation = conversationDao.getConversation(conversationId, userId.id).first()
+            val conversation = requireNotNull(conversationDao.observeConversation(conversationId, userId.id).first())
             conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
             // Only the latest message from the current location is marked as unread
             messageDao.observeAllMessagesFromAConversation(conversationId).first().forEach { message ->
@@ -241,7 +241,7 @@ class ConversationsRepositoryImpl @Inject constructor(
                 lastMessageTime = max(lastMessageTime, message.time)
             }
 
-            val conversation = conversationDao.getConversation(conversationId, userId.id).first()
+            val conversation = requireNotNull(conversationDao.observeConversation(conversationId, userId.id).first())
             val labelsToRemoveFromConversation = getLabelIdsForRemovingWhenMovingToFolder(
                 conversation.labels.map { it.id }
             )
@@ -355,7 +355,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         labelIds: Collection<String>,
         lastMessageTime: Long
     ) {
-        val conversation = conversationDao.getConversation(conversationId, userId.id).first()
+        val conversation = requireNotNull(conversationDao.observeConversation(conversationId, userId.id).first())
         val newLabels = mutableListOf<LabelContextDatabaseModel>()
         labelIds.forEach { labelId ->
             val newLabel = LabelContextDatabaseModel(
@@ -379,14 +379,14 @@ class ConversationsRepositoryImpl @Inject constructor(
         userId: UserId,
         labelIds: Collection<String>
     ) {
-        val conversation = conversationDao.getConversation(conversationId, userId.id).first()
+        val conversation = requireNotNull(conversationDao.observeConversation(conversationId, userId.id).first())
         val labels = conversation.labels.toMutableList()
         labels.removeIf { it.id in labelIds }
         conversationDao.updateLabels(labels, conversationId)
     }
 
     private fun observeConversationsLocal(params: GetConversationsParameters): Flow<List<Conversation>> =
-        conversationDao.getConversations(params.userId.s).map { list ->
+        conversationDao.observeConversations(params.userId.s).map { list ->
             list.sortedWith(
                 compareByDescending<ConversationDatabaseModel> { conversation ->
                     conversation.labels.find { label -> label.id == params.locationId }?.contextTime
@@ -394,16 +394,20 @@ class ConversationsRepositoryImpl @Inject constructor(
             ).toDomainModelList()
         }
 
-    private fun observeConversationLocal(conversationId: String, userId: Id): Flow<Conversation> =
-        conversationDao.getConversation(conversationId, userId.s)
+    private fun observeConversationLocal(conversationId: String, userId: Id): Flow<Conversation?> =
+        conversationDao.observeConversation(conversationId, userId.s)
             .map { conversation ->
-                val messages = messageDao.getAllMessagesFromAConversation(conversation.id)
-                    .onEach { Timber.d("message id: ${it.messageId}, body: ${it.messageBody?.length}") }
-                    .toDomainModelList()
-                Timber.d(
-                    "Processed conversation id: ${conversation.id} messages size: ${messages.size}"
-                )
-                conversation.toDomainModel(messages)
+                if (conversation != null) {
+                    val messages = messageDao.getAllMessagesFromAConversation(conversation.id)
+                        .onEach { Timber.d("message id: ${it.messageId}, body: ${it.messageBody?.length}") }
+                        .toDomainModelList()
+                    Timber.d(
+                        "Processed conversation id: ${conversation.id} messages size: ${messages.size}"
+                    )
+                    conversation.toDomainModel(messages)
+                } else {
+                    null
+                }
             }
 
     private data class ConversationStoreKey(val conversationId: String, val userId: Id)

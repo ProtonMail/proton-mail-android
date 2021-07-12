@@ -40,7 +40,7 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
         WHERE $COLUMN_USER_ID = :userId
         """
     )
-    abstract fun getConversations(userId: String): Flow<List<ConversationDatabaseModel>>
+    abstract fun observeConversations(userId: String): Flow<List<ConversationDatabaseModel>>
 
     @Query(
         """
@@ -48,7 +48,7 @@ abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {
         WHERE $COLUMN_ID = :conversationId AND $COLUMN_USER_ID = :userId
         """
     )
-    abstract fun getConversation(conversationId: String, userId: String): Flow<ConversationDatabaseModel>
+    abstract fun observeConversation(conversationId: String, userId: String): Flow<ConversationDatabaseModel?>
 
     @Query(
         """
