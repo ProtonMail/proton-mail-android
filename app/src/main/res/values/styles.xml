@@ -32,6 +32,10 @@
         <item name="actionModeCloseDrawable">@drawable/ic_arrow_left</item>
         <item name="bottomSheetDialogTheme">@style/ProtonMail.BottomSheetDialogTheme</item>
         <item name="colorControlHighlight">@color/interaction_weak_pressed</item>
+
+        <item name="statusBarBackground">@color/status_bar</item>
+        <item name="android:navigationBarColor">@color/nav_bar</item>
+        <item name="android:statusBarColor">@color/transparent</item>
     </style>
 
     <style name="ProtonMailActionMode" parent="Widget.AppCompat.ActionMode">

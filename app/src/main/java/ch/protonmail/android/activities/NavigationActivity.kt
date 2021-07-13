@@ -59,8 +59,7 @@ import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
-import ch.protonmail.android.utils.extensions.setDarkStatusBar
-import ch.protonmail.android.utils.extensions.setLightStatusBar
+import ch.protonmail.android.utils.extensions.setDrawBehindSystemBars
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import ch.protonmail.android.utils.startSplashActivity
@@ -75,6 +74,8 @@ import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewM
 import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
+import me.proton.core.presentation.utils.setDarkStatusBar
+import me.proton.core.presentation.utils.setLightStatusBar
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -156,6 +157,11 @@ internal abstract class NavigationActivity : BaseActivity() {
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        @Suppress("DEPRECATION") // Is there a way to mime the behaviour with newer API?
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        setDrawBehindSystemBars()
+
         super.onCreate(savedInstanceState)
         authOrchestrator.register(this)
 
@@ -247,8 +253,8 @@ internal abstract class NavigationActivity : BaseActivity() {
     override fun onResume() {
         accountStateManager.setAuthOrchestrator(authOrchestrator)
         super.onResume()
-        checkUserId()
         setLightStatusBar()
+        checkUserId()
         app.startJobManager()
         mJobManager.addJobInBackground(FetchUpdatesJob())
         val alarmReceiver = AlarmReceiver()
@@ -313,20 +319,14 @@ internal abstract class NavigationActivity : BaseActivity() {
 
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
 
-            /**
-             * TODO [setDarkStatusBar]
-             *  disabled for now, as we're not drawing behind the status bar
-             */
             override fun onDrawerOpened(drawerView: View) {
                 super.onDrawerOpened(drawerView)
+                setDarkStatusBar()
             }
 
-            /**
-             * TODO [setLightStatusBar]
-             *  disabled for now, as we're not drawing behind the status bar
-             */
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
+                setLightStatusBar()
                 onDrawerClose()
                 onDrawerClose = {}
             }
