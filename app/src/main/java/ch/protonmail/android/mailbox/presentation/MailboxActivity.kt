@@ -123,6 +123,7 @@ import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
+import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.NetworkSnackBarUtil
 import ch.protonmail.android.utils.extensions.app
@@ -151,6 +152,7 @@ import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.EMPTY_STRING
+import me.proton.core.util.kotlin.exhaustive
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -219,6 +221,8 @@ internal class MailboxActivity :
     private val handler = Handler(Looper.getMainLooper())
 
     override val currentLabelId get() = mailboxLabelId
+
+    private val mailSettingsViewModel: MailSettingsViewModel by viewModels()
 
     override fun getLayoutId(): Int = R.layout.activity_mailbox
 
@@ -381,6 +385,23 @@ internal class MailboxActivity :
         ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
 
         setUpMailboxActionsView()
+
+        mailSettingsViewModel.getMailSettingsState().onEach {
+            when (it) {
+                is MailSettingsViewModel.MailSettingsState.Error.Message -> {
+                    showToast(it.message.toString(), Toast.LENGTH_LONG)
+                }
+                is MailSettingsViewModel.MailSettingsState.Error.NoPrimaryAccount -> {
+                    // TODO
+                }
+                is MailSettingsViewModel.MailSettingsState.Success -> {
+                    mailboxViewModel.refreshMessages()
+                }
+                is MailSettingsViewModel.MailSettingsState.Processing -> {
+                    // NOOP
+                }
+            }.exhaustive
+        }.launchIn(lifecycleScope)
     }
 
     override fun secureContent(): Boolean = true
@@ -767,6 +788,7 @@ internal class MailboxActivity :
         if (shouldShowSwipeGesturesChangedDialog()) {
             showSwipeGesturesChangedDialog()
         }
+
     }
 
     override fun onPause() {

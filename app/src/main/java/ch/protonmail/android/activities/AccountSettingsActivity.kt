@@ -26,13 +26,15 @@ import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.featureflags.FeatureFlagsManager
-import ch.protonmail.android.jobs.UpdateSettingsJob
+import ch.protonmail.android.mailbox.domain.HandleChangesToMailSettings
 import ch.protonmail.android.prefs.SecureSharedPreferences
+import ch.protonmail.android.usecase.delete.ClearUserMessagesData
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import me.proton.core.mailsettings.domain.entity.ViewMode
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.equalsNoCase
 import timber.log.Timber
@@ -43,6 +45,12 @@ class AccountSettingsActivity : BaseSettingsActivity() {
 
     @Inject
     lateinit var featureFlags: FeatureFlagsManager
+
+    @Inject
+    lateinit var clearUserMessagesData: ClearUserMessagesData
+
+    @Inject
+    lateinit var handleChangesToMailSettings: HandleChangesToMailSettings
 
     override fun getLayoutId(): Int = R.layout.activity_settings
 
@@ -123,17 +131,22 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         val mailSettings = mUserManager.getCurrentUserMailSettingsBlocking()
         Timber.d("MailSettings ViewMode = ${mailSettings?.viewMode}")
 
-        setEnabled(SettingsEnum.CONVERSATION_MODE, mailSettings?.viewMode == 0)
+        setEnabled(SettingsEnum.CONVERSATION_MODE, mailSettings?.viewMode == ViewMode.ConversationGrouping)
         setupViewModeChangedListener(mailSettings)
     }
 
     private fun setupViewModeChangedListener(mailSettings: MailSettings?) {
         setToggleListener(SettingsEnum.CONVERSATION_MODE) { _, isEnabled ->
-            mailSettings?.viewMode = if (isEnabled) 0 else 1
+            mailSettings?.viewMode = if (isEnabled) ViewMode.ConversationGrouping else ViewMode.NoConversationGrouping
             mailSettings?.saveBlocking(
                 SecureSharedPreferences.getPrefsForUser(this@AccountSettingsActivity, user.id)
             )
-            mJobManager.addJobInBackground(UpdateSettingsJob())
+            lifecycleScope.launch {
+                clearUserMessagesData.invoke(user.id)
+                handleChangesToMailSettings.invoke(
+                    user.id, mailSettings?.viewMode ?: ViewMode.ConversationGrouping
+                )
+            }
         }
     }
 }

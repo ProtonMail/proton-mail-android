@@ -23,6 +23,7 @@ import androidx.core.content.edit
 import ch.protonmail.android.api.models.enumerations.PackageType
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.runBlocking
+import me.proton.core.mailsettings.domain.entity.ViewMode
 import me.proton.core.util.kotlin.unsupported
 import java.io.Serializable
 
@@ -144,7 +145,7 @@ class MailSettings : Serializable {
     private val showMIMEType: String? = null
 
     @SerializedName(FIELD_VIEW_MODE)
-    var viewMode: Int = 1
+    var viewMode: ViewMode = ViewMode.ConversationGrouping
 
     @Transient
     @Deprecated("We should not rely on username. No replacement", level = DeprecationLevel.ERROR)
@@ -191,7 +192,7 @@ class MailSettings : Serializable {
             putInt(PREF_AUTO_SAVE_CONTACTS, autoSaveContacts)
             putInt(PREF_AUTO_WILDCARD_SEARCH, autoWildcardSearch)
             putInt(PREF_SHOW_IMAGES, showImagesFrom.flag)
-            putInt(PREF_VIEW_MODE, viewMode)
+            putInt(PREF_VIEW_MODE, viewMode.value)
             putInt(PREF_SHOW_MOVED, showMoved)
             putInt(PREF_SWIPE_RIGHT, swipeRight)
             putInt(PREF_SWIPE_LEFT, swipeLeft)
@@ -268,7 +269,9 @@ class MailSettings : Serializable {
                     setAttachPublicKey(getInt(PREF_ATTACH_PUBLIC_KEY, 0))
                     pgpScheme = getInt(PREF_PGP_SCHEME, 1)
                     sign = getInt(PREF_SIGN, 0)
-                    viewMode = getInt(PREF_VIEW_MODE, 1)
+                    viewMode =
+                        if (getInt(PREF_VIEW_MODE, ViewMode.ConversationGrouping.value) == 1)
+                            ViewMode.NoConversationGrouping else ViewMode.ConversationGrouping
                 }
             }
         }
