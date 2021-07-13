@@ -88,12 +88,4 @@
         app:layout_constraintEnd_toStartOf="@id/drawer_item_notifications_text_view"
         tools:text="@string/inbox" />
 
-    <include layout="@layout/drawer_list_item_divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        app:layout_constraintStart_toStartOf="@id/drawer_item_label_text_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="@dimen/padding_l"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
