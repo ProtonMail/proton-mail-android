@@ -453,8 +453,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
             Timber.v("New decrypted message ${lastMessage.messageId}")
             viewModel.renderedFromCache = AtomicBoolean(true)
-            val decryptedBody = getDecryptedBody(lastMessage.decryptedHTML)
-            if (decryptedBody.isEmpty() || lastMessage.messageBody.isNullOrEmpty()) {
+            if (lastMessage.messageBody.isNullOrEmpty()) {
                 UiUtil.showInfoSnack(mSnackLayout, this@MessageDetailsActivity, R.string.decryption_error_desc).show()
                 return
             }
