@@ -33,7 +33,6 @@ plugins {
     `kotlin-serialization`
     `sentry-android`
     `browserstack`
-    `jacoco`
 }
 
 kapt {
