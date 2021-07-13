@@ -321,7 +321,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         userId: Id
     ) {
         val messages = conversation.messages?.mapNotNull { message ->
-            messageRepository.getMessage(userId, message.id)?.let { localMessage ->
+            messageRepository.findMessage(userId, message.id)?.let { localMessage ->
                 val contactEmail = contactsRepository.findContactEmailByEmail(localMessage.senderEmail)
                 localMessage.senderDisplayName = contactEmail?.name.orEmpty()
                 localMessage

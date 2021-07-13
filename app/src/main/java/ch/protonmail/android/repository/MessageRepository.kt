@@ -77,7 +77,7 @@ class MessageRepository @Inject constructor(
         }
     }
 
-    suspend fun getMessage(userId: Id, messageId: String): Message? {
+    suspend fun findMessage(userId: Id, messageId: String): Message? {
         val messageDao = databaseProvider.provideMessageDao(userId)
         return messageDao.findMessageByIdOnce(messageId)?.apply {
             messageBody?.let {
@@ -88,11 +88,11 @@ class MessageRepository @Inject constructor(
         }
     }
 
-    @Deprecated("Use with user Id", ReplaceWith("findMessageOnce(userId, messageId)"))
+    @Deprecated("Use with user Id", ReplaceWith("findMessage(userId, messageId)"))
     suspend fun findMessageById(messageId: String): Message? {
         val currentUser = userManager.currentUserId
         return if (currentUser != null) {
-            getMessage(currentUser, messageId)
+            findMessage(currentUser, messageId)
         } else {
             Timber.w("Cannot find message for null user id")
             null
@@ -113,7 +113,7 @@ class MessageRepository @Inject constructor(
     suspend fun getMessage(
         userId: Id,
         messageId: String,
-        shouldFetchMessageDetails: Boolean = false
+        shouldFetchMessageDetails: Boolean
     ): Message? =
         withContext(dispatcherProvider.Io) {
             val user = userManager.getLegacyUser(userId)
@@ -126,7 +126,7 @@ class MessageRepository @Inject constructor(
 
     private suspend fun getMessageDetails(userId: Id, messageId: String): Message? =
         withContext(dispatcherProvider.Io) {
-            val message = getMessage(userId, messageId)
+            val message = findMessage(userId, messageId)
 
             if (message?.messageBody != null) {
                 return@withContext message
@@ -141,7 +141,7 @@ class MessageRepository @Inject constructor(
 
     private suspend fun getMessageMetadata(userId: Id, messageId: String): Message? =
         withContext(dispatcherProvider.Io) {
-            val message = getMessage(userId, messageId)
+            val message = findMessage(userId, messageId)
 
             if (message != null) {
                 return@withContext message

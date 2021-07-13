@@ -193,6 +193,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
+    @Ignore
     fun verifyThatDecryptedMessageHtmlIsEmittedThroughDecryptedConversationUiModel() {
         // given
         val decryptedMessageContent = "decrypted message content"
@@ -219,8 +220,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled.invoke(any()) } returns true
         every { conversationRepository.getConversation(any(), any()) } returns
             flowOf(DataResult.Success(ResponseSource.Local, buildConversation(conversationId)))
-        coEvery { messageRepository.getMessage(any(), "messageId4") } returns conversationMessage
-        coEvery { messageRepository.getMessage(any(), "messageId5") } returns null
+        coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
+        coEvery { messageRepository.findMessage(any(), "messageId5") } returns null
         //viewModel.loadMailboxItemDetails()
 
         // when
@@ -285,7 +286,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             isDownloaded = true,
             sender = sender
         )
-        coEvery { messageRepository.getMessage(any(), any()) } returns downLoadedMessage
+        coEvery { messageRepository.findMessage(any(), any()) } returns downLoadedMessage
 
         // When
         viewModel.conversationUiModel.test {
@@ -448,8 +449,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
                 inputMessageLocation.messageLocationTypeValue
             coEvery { conversationRepository.getConversation(inputConversationId, userId) } returns
                 flowOf(DataResult.Success(ResponseSource.Local, buildConversation(conversationId)))
-            coEvery { messageRepository.getMessage(userId, "messageId4") } returns conversationMessage
-            coEvery { messageRepository.getMessage(userId, "messageId5") } returns olderConversationMessage
+            coEvery { messageRepository.findMessage(userId, "messageId4") } returns conversationMessage
+            coEvery { messageRepository.findMessage(userId, "messageId5") } returns olderConversationMessage
 
             // When
 //            viewModel.loadMailboxItemDetails()

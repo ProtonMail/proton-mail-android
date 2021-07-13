@@ -396,7 +396,7 @@ class ProcessPushNotificationDataWorkerTest {
                 every { insertNewNotificationAndReturnAll(any()) } returns listOf(mockNotification)
             }
             val mockMessage = mockk<Message>()
-            coEvery { messageRepository.getMessage(testId, "messageId") } returns mockMessage
+            coEvery { messageRepository.findMessage(testId, "messageId") } returns mockMessage
             every {
                 notificationServer.notifySingleNewEmail(
                     any(),
@@ -460,7 +460,7 @@ class ProcessPushNotificationDataWorkerTest {
                 every { insertNewNotificationAndReturnAll(any()) } returns unreadNotifications
             }
             val mockMessage = mockk<Message>()
-            coEvery { messageRepository.getMessage(testId, "messageId") } returns mockMessage
+            coEvery { messageRepository.findMessage(testId, "messageId") } returns mockMessage
             every { notificationServer.notifyMultipleUnreadEmail(any(), any(), any(), any(), any()) } just runs
 
             // when
@@ -494,7 +494,7 @@ class ProcessPushNotificationDataWorkerTest {
                 every { insertNewNotificationAndReturnAll(any()) } returns listOf(mockNotification)
             }
             val mockMessage = mockk<Message>()
-            coEvery { messageRepository.getMessage(testId, "messageId") } returns mockMessage
+            coEvery { messageRepository.findMessage(testId, "messageId") } returns mockMessage
             every { notificationServer.notifySingleNewEmail(any(), any(), any(), any(), any(), any(), any()) } just runs
 
             val expectedResult = ListenableWorker.Result.success()
