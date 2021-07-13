@@ -79,7 +79,6 @@ import ch.protonmail.android.adapters.swipe.SpamSwipeHandler
 import ch.protonmail.android.adapters.swipe.StarSwipeHandler
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.adapters.swipe.TrashSwipeHandler
-import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.MessageCount
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.api.segments.event.AlarmReceiver
@@ -112,12 +111,6 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
-import ch.protonmail.android.jobs.PostArchiveJob
-import ch.protonmail.android.jobs.PostInboxJob
-import ch.protonmail.android.jobs.PostSpamJob
-import ch.protonmail.android.jobs.PostStarJob
-import ch.protonmail.android.jobs.PostTrashJobV2
-import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
@@ -138,7 +131,6 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnac
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.views.messageDetails.BottomActionsView
 import ch.protonmail.libs.core.utils.contains
-import com.birbit.android.jobqueue.Job
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
@@ -153,10 +145,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.proton.core.domain.entity.UserId
+import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.EMPTY_STRING
+import me.proton.core.util.kotlin.exhaustive
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -224,6 +218,8 @@ internal class MailboxActivity :
     private val handler = Handler(Looper.getMainLooper())
 
     override val currentLabelId get() = mailboxLabelId
+
+    private val mailSettingsViewModel: MailSettingsViewModel by viewModels()
 
     override fun getLayoutId(): Int = R.layout.activity_mailbox
 
@@ -382,9 +378,29 @@ internal class MailboxActivity :
             .onEach { mailboxAdapter.setNewLocation(it) }
             .launchIn(lifecycleScope)
 
-        ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
 
         setUpMailboxActionsView()
+
+        mailSettingsViewModel.getMailSettingsState().onEach {
+            when (it) {
+                is MailSettingsViewModel.MailSettingsState.Error.Message -> {
+                    showToast(it.message.toString(), Toast.LENGTH_LONG)
+                }
+                is MailSettingsViewModel.MailSettingsState.Error.NoPrimaryAccount -> {
+                    // TODO
+                }
+                is MailSettingsViewModel.MailSettingsState.Success -> {
+                    it.mailSettings?.let { mailSettings ->
+                        swipeController.setCurrentMailSetting(mailSettings)
+                        ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
+                    }
+                    mailboxViewModel.refreshMessages()
+                }
+                is MailSettingsViewModel.MailSettingsState.Processing -> {
+                    // NOOP
+                }
+            }.exhaustive
+        }.launchIn(lifecycleScope)
     }
 
     override fun secureContent(): Boolean = true
@@ -539,8 +555,6 @@ internal class MailboxActivity :
         counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()
         pendingActionDao = PendingActionDatabase.getInstance(this, currentUserId).getDao()
         messageDetailsRepository.reloadDependenciesForUser(currentUserId)
-
-        swipeController.loadCurrentMailSetting()
 
         startObservingPendingActions()
         AppUtil.clearNotifications(this, currentUserId)
@@ -762,7 +776,6 @@ internal class MailboxActivity :
         registerFcmReceiver()
         checkDelinquency()
         mailboxViewModel.checkConnectivity()
-        swipeController.loadCurrentMailSetting()
         val mailboxLocation = mailboxViewModel.mailboxLocation.value
         if (mailboxLocation == MessageLocationType.INBOX) {
             AppUtil.clearNotifications(this, userManager.requireCurrentUserId())
@@ -771,6 +784,7 @@ internal class MailboxActivity :
         if (shouldShowSwipeGesturesChangedDialog()) {
             showSwipeGesturesChangedDialog()
         }
+
     }
 
     override fun onPause() {
@@ -1441,15 +1455,9 @@ internal class MailboxActivity :
 
         private var mailSettings: MailSettings? = null
 
-        init {
-            loadCurrentMailSetting()
-        }
-
         @Deprecated("Subscribe for changes instead of reloading on current User/MailSettings changed.")
-        fun loadCurrentMailSetting() {
-            lifecycleScope.launchWhenResumed {
-                mailSettings = requireNotNull(userManager.getCurrentUserMailSettings())
-            }
+        fun setCurrentMailSetting(mailSettings: MailSettings) {
+            this.mailSettings = mailSettings
         }
 
         override fun getMovementFlags(
@@ -1500,8 +1508,8 @@ internal class MailboxActivity :
             val mailboxLocation = currentMailboxLocation
             val settings = mailSettings ?: return
             val swipeActionOrdinal: Int = when (direction) {
-                ItemTouchHelper.RIGHT -> settings.rightSwipeAction
-                ItemTouchHelper.LEFT -> settings.leftSwipeAction
+                ItemTouchHelper.RIGHT -> settings.swipeRight?.value ?: SwipeAction.TRASH.ordinal
+                ItemTouchHelper.LEFT -> settings.swipeLeft?.value ?: SwipeAction.ARCHIVE.ordinal
                 else -> throw IllegalArgumentException("Unrecognised direction: $direction")
             }
             val swipeAction = normalise(SwipeAction.values()[swipeActionOrdinal], currentMailboxLocation)
@@ -1549,13 +1557,13 @@ internal class MailboxActivity :
                         SwipeAction.TRASH.getActionBackgroundResource(deltaX < 0)
                     }
                     deltaX < 0 -> {
-                        mailSettings?.let {
-                            SwipeAction.values()[it.leftSwipeAction].getActionBackgroundResource(false)
+                        mailSettings?.swipeLeft?.let {
+                            SwipeAction.values()[it.value].getActionBackgroundResource(false)
                         } ?: Resources.ID_NULL
                     }
                     else -> {
-                        mailSettings?.let {
-                            SwipeAction.values()[it.rightSwipeAction].getActionBackgroundResource(true)
+                        mailSettings?.swipeRight?.let {
+                            SwipeAction.values()[it.value].getActionBackgroundResource(true)
                         } ?: Resources.ID_NULL
                     }
                 }

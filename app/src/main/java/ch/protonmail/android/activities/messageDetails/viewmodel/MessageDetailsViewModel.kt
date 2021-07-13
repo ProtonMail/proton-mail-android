@@ -58,7 +58,7 @@ import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.mailbox.domain.Conversation
+import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository

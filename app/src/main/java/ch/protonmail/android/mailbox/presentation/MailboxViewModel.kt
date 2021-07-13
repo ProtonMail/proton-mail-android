@@ -44,7 +44,7 @@ import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
-import ch.protonmail.android.mailbox.domain.Conversation
+import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetMessagesByLocation

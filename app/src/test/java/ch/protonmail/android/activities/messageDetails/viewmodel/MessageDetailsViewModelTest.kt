@@ -40,7 +40,7 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity.Compani
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
-import ch.protonmail.android.mailbox.domain.Conversation
+import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext

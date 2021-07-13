@@ -23,7 +23,6 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.feature.user.updateAddressBlocking
 import ch.protonmail.android.feature.user.updateOrderBlocking
-import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Params
 
@@ -31,11 +30,8 @@ class UpdateSettingsJob(
     private val newDisplayName: String? = null,
     private val newSignature: String? = null,
     private val addressIds: List<String>? = null,
-    private val actionLeftSwipeChanged: Boolean = false,
-    private val actionRightSwipeChanged: Boolean = false,
     private val backPressed: Boolean = false,
-    private val addressId: Id? = null,
-    private val featureFlags: FeatureFlagsManager = FeatureFlagsManager()
+    private val addressId: Id? = null
 ) : ProtonMailBaseJob(Params(Priority.LOW).requireNetwork()) {
 
     @Throws(Throwable::class)
@@ -51,12 +47,6 @@ class UpdateSettingsJob(
                 getUserManager().clearCache()
             }
             val mailSettings = getUserManager().getCurrentUserMailSettingsBlocking()!!
-            if (actionLeftSwipeChanged) {
-                getApi().updateLeftSwipe(mailSettings.leftSwipeAction)
-            }
-            if (actionRightSwipeChanged) {
-                getApi().updateRightSwipe(mailSettings.rightSwipeAction)
-            }
             if (mailSettings != null) {
                 updateMailSettings(mailSettings)
             }
@@ -68,9 +58,5 @@ class UpdateSettingsJob(
 
     private fun updateMailSettings(mailSettings: MailSettings) {
         getApi().updateAutoShowImages(mailSettings.showImages)
-
-        if (featureFlags.isChangeViewModeFeatureEnabled()) {
-            getApi().updateViewMode(mailSettings.viewMode)
-        }
     }
 }

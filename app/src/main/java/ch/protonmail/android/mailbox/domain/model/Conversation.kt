@@ -19,8 +19,19 @@
 
 package ch.protonmail.android.mailbox.domain.model
 
-sealed class GetConversationsResult {
-    data class Success(val conversations: List<Conversation>) : GetConversationsResult()
-    data class Error(val throwable: Throwable? = null) : GetConversationsResult()
-    object NoConversationsFound : GetConversationsResult()
-}
+import ch.protonmail.android.mailbox.domain.model.Correspondent
+import ch.protonmail.android.mailbox.domain.model.LabelContext
+import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
+
+data class Conversation(
+    val id: String,
+    val subject: String,
+    val senders: List<Correspondent>,
+    val receivers: List<Correspondent>,
+    val messagesCount: Int,
+    val unreadCount: Int,
+    val attachmentsCount: Int,
+    val expirationTime: Long,
+    val labels: List<LabelContext>,
+    val messages: List<MessageDomainModel>?
+)
