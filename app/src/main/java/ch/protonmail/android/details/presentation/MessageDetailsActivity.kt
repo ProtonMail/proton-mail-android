@@ -197,8 +197,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         if (message.messageId != null) {
             viewModel.loadMessageBody(message).mapLatest { loadedMessage ->
 
-                val parsedBody = viewModel.getParsedMessage(
-                    requireNotNull(loadedMessage.decryptedHTML),
+                val parsedBody = viewModel.formatMessageHtmlBody(
+                    loadedMessage,
                     UiUtil.getRenderWidth(this.windowManager),
                     AppUtil.readTxt(this, R.raw.editor),
                     this.getString(R.string.request_timeout)
@@ -363,7 +363,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
         val regex2 = "<body[^>]*>"
         // break the backgrounds and other urls
-        decryptedBody = decryptedBody!!.replace(regex2.toRegex(), "<body>")
+        decryptedBody = decryptedBody.replace(regex2.toRegex(), "<body>")
         return decryptedBody
     }
 
@@ -453,8 +453,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
             Timber.v("New decrypted message ${lastMessage.messageId}")
             viewModel.renderedFromCache = AtomicBoolean(true)
-            val decryptedBody = getDecryptedBody(lastMessage.decryptedHTML)
-            if (decryptedBody.isEmpty() || lastMessage.messageBody.isNullOrEmpty()) {
+            if (lastMessage.messageBody.isNullOrEmpty()) {
                 UiUtil.showInfoSnack(mSnackLayout, this@MessageDetailsActivity, R.string.decryption_error_desc).show()
                 return
             }

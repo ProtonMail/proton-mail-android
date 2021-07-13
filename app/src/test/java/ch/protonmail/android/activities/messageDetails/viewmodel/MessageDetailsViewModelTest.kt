@@ -150,18 +150,63 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     @Test
     fun verifyThatMessageIsParsedProperly() {
         // given
-        val decryptedMessage = "decrypted message content"
+        val decryptedMessageContent = "decrypted message content"
+        val decryptedMessage = Message(messageId = "messageId1").apply {
+            decryptedHTML = decryptedMessageContent
+        }
         val windowWidth = 500
         val defaultErrorMessage = "errorHappened"
         val cssContent = "css"
         val expected =
-            "<html>\n <head>\n  <style>$cssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessage  \n  </div>\n </body>\n</html>"
+            "<html>\n <head>\n  <style>$cssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessageContent  \n  </div>\n </body>\n</html>"
 
         // when
-        val parsedMessage = viewModel.getParsedMessage(decryptedMessage, windowWidth, cssContent, defaultErrorMessage)
+        val parsedMessage =
+            viewModel.formatMessageHtmlBody(decryptedMessage, windowWidth, cssContent, defaultErrorMessage)
 
         // then
         assertEquals(expected, parsedMessage)
+    }
+
+    @Test
+    fun verifyThatDecryptedMessageHtmlIsEmittedThroughDecryptedConversationUiModel() {
+        // given
+        val decryptedMessageContent = "decrypted message content"
+        // The ID of this message matches the ID of the "fake" message created by `buildMessageDomainModel` method
+        val decryptedMessage = Message(messageId = "messageId4").apply {
+            decryptedHTML = decryptedMessageContent
+        }
+        val decryptedConversationObserver = viewModel.decryptedConversationUiModel.testObserver()
+        val cssContent = "css"
+        val windowWidth = 500
+
+        val conversationId = UUID.randomUUID().toString()
+        val conversationMessage = mockk<Message>(relaxed = true)
+        every { conversationMessage.messageId } returns "messageId4"
+        every { conversationMessage.conversationId } returns conversationId
+        every { conversationMessage.subject } returns "subject4"
+        every { conversationMessage.sender } returns MessageSender("senderName", "sender@protonmail.ch")
+        every { conversationMessage.isDownloaded } returns true
+        every { conversationMessage.senderEmail } returns "sender@protonmail.com"
+        every { conversationMessage.numAttachments } returns 1
+        every { conversationMessage.time } returns 82374730L
+        every { conversationMessage.decrypt(any(), any(), any()) } just Runs
+
+        every { conversationModeEnabled.invoke(any()) } returns true
+        every { conversationRepository.getConversation(any(), any()) } returns
+            flowOf(DataResult.Success(ResponseSource.Local, buildConversation(conversationId)))
+        coEvery { messageRepository.findMessageOnce(any(), "messageId4") } returns conversationMessage
+        coEvery { messageRepository.findMessageOnce(any(), "messageId5") } returns null
+        viewModel.loadMailboxItemDetails()
+
+        // when
+        viewModel.formatMessageHtmlBody(decryptedMessage, windowWidth, cssContent, "errorHappened")
+
+        // then
+        val expectedMessageContent =
+            "<html>\n <head>\n  <style>$cssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessageContent  \n  </div>\n </body>\n</html>"
+        verify { conversationMessage setProperty "decryptedHTML" value expectedMessageContent }
+        assertEquals(conversationMessage, decryptedConversationObserver.observedValues.last()!!.messages[0])
     }
 
     @Test

@@ -231,10 +231,11 @@ internal class MessageDetailsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             for (renderedMessage in messageRenderer.renderedMessage) {
-                val currentUiModel = _decryptedConversationUiModel.value
-                val message = currentUiModel?.messages?.find { it.messageId == renderedMessage.messageId }
-                message?.decryptedHTML = renderedMessage.renderedHtmlBody
-                _messageRenderedWithImages.value = message
+                val updatedMessage = updateUiModelMessageWithFormattedHtml(
+                    renderedMessage.messageId,
+                    renderedMessage.renderedHtmlBody
+                )
+                _messageRenderedWithImages.value = updatedMessage
                 areImagesDisplayed = true
             }
         }
@@ -579,8 +580,8 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getParsedMessage(
-        decryptedMessageHtml: String,
+    fun formatMessageHtmlBody(
+        message: Message,
         windowWidth: Int,
         css: String,
         defaultErrorMessage: String
@@ -589,13 +590,23 @@ internal class MessageDetailsViewModel @Inject constructor(
             val contentTransformer = DefaultTransformer()
                 .pipe(ViewportTransformer(windowWidth, css))
 
-            contentTransformer.transform(Jsoup.parse(decryptedMessageHtml)).toString()
+            contentTransformer.transform(Jsoup.parse(message.decryptedHTML)).toString()
         } catch (ioException: IOException) {
             Timber.e(ioException, "Jsoup is unable to parse HTML message details")
             defaultErrorMessage
         }
 
+        updateUiModelMessageWithFormattedHtml(message.messageId, bodyString)
+
         return bodyString
+    }
+
+    private fun updateUiModelMessageWithFormattedHtml(messageId: String?, formattedHtml: String?): Message? {
+        val currentUiModel = _decryptedConversationUiModel.value
+        val message = currentUiModel?.messages?.find { it.messageId == messageId }
+        message?.decryptedHTML = formattedHtml
+        _decryptedConversationUiModel.postValue(currentUiModel)
+        return message
     }
 
     fun moveToTrash() {
