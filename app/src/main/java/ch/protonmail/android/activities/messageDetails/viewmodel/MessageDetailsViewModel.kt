@@ -29,8 +29,6 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessagePrinter
@@ -78,10 +76,11 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -118,7 +117,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val attachmentsHelper: AttachmentsHelper,
     private val downloadUtils: DownloadUtils,
     private val moveMessagesToFolder: MoveMessagesToFolder,
-    private val conversationModeEnabled: ConversationModeEnabled,
+    conversationModeEnabled: ConversationModeEnabled,
     private val conversationRepository: ConversationsRepository,
     savedStateHandle: SavedStateHandle,
     messageRendererFactory: MessageRenderer.Factory,
@@ -160,8 +159,8 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
     private val _conversationUiFLow = MutableSharedFlow<ConversationUiModel>(replay = 1)
 
-    val conversationUiModel: LiveData<ConversationUiModel> =
-        _conversationUiFLow.asLiveData()
+    val conversationUiModel: SharedFlow<ConversationUiModel>
+        get() = _conversationUiFLow
 
     private var bodyString: String? = null
         set(value) {
@@ -170,7 +169,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
 
     val labels: Flow<List<Label>> =
-        conversationUiModel.asFlow()
+        conversationUiModel
             .flatMapLatest { conversation ->
                 val userId = UserId(userManager.requireCurrentUserId().s)
                 val labelsIds = conversation.labelIds.map(::Id)
@@ -206,18 +205,21 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     init {
         // message render flow
-        if (conversationModeEnabled(location)) {
-            getConversationFlow().map { it.toConversationUiModel() }
-        } else {
-            getMessageFlow().map { it.toConversationUiModel() }
-        }
+        userManager.primaryUserId
+            .filterNotNull()
+            .flatMapLatest { userId ->
+                if (conversationModeEnabled(location)) {
+                    getConversationFlow(userId)
+                } else {
+                    getMessageFlow(userId)
+                }
+            }
             .distinctUntilChanged()
             .onEach {
                 Timber.i("Emit conversation Ui model subject ${it.subject}")
                 _conversationUiFLow.emit(it)
             }
             .launchIn(viewModelScope)
-
 
         viewModelScope.launch {
             for (renderedMessage in messageRenderer.renderedMessage) {
@@ -231,35 +233,29 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun getMessageFlow() = userManager.primaryUserId
-        .flatMapLatest { userId ->
-            if (userId != null) {
-                messageRepository.findMessage(userId, messageOrConversationId)
-            } else {
-                emptyFlow()
+    private fun getMessageFlow(userId: UserId): Flow<ConversationUiModel> =
+        messageRepository.observeMessage(userId, messageOrConversationId)
+            .filterNotNull()
+            .distinctUntilChanged()
+            .map {
+                loadMessageDetails(it)
             }
-        }
-        .filterNotNull()
-        .distinctUntilChanged()
-        .onEach {
-            loadMessageDetails()
-        }
-
-    private fun getConversationFlow() = userManager.primaryUserId
-        .flatMapLatest { userId ->
-            if (userId == null) {
-                return@flatMapLatest emptyFlow()
+            .filterNotNull()
+            .onEach {
+                emitConversationUiItem(it)
             }
 
-            conversationRepository.getConversation(messageOrConversationId, Id(userId.id))
-                .filter { it is DataResult.Success }
-                .onEach {
-                    loadConversationDetails(it, Id(userId.id))
-                }
-                .map {
-                    return@map (it as DataResult.Success).value
-                }
-        }
+    private fun getConversationFlow(userId: UserId): Flow<ConversationUiModel> =
+        conversationRepository.getConversation(messageOrConversationId, Id(userId.id))
+            .filter { it is DataResult.Success }
+            .distinctUntilChanged()
+            .onEach {
+                loadConversationDetails(it, Id(userId.id))
+            }
+            .map {
+                (it as DataResult.Success).value
+            }
+            .map { it.toConversationUiModel() }
 
     fun markUnread() {
         messageRepository.markUnRead(listOf(messageOrConversationId))
@@ -285,17 +281,24 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }.flowOn(dispatchers.Io)
 
-    private suspend fun loadMessageDetails() {
-        val userId = userManager.requireCurrentUserId()
-        val message = messageRepository.getMessage(userId, messageOrConversationId, true)
-        if (message != null) {
-            val contactEmail = contactsRepository.findContactEmailByEmail(message.senderEmail)
-            message.senderDisplayName = contactEmail?.name.orEmpty()
-            emitConversationUiItem(message.toConversationUiModel())
+    private suspend fun loadMessageDetails(message: Message): ConversationUiModel? {
+        val messageWithDetails = if (!message.isDownloaded) {
+            Timber.v("Message is not downloaded, trying to fetch it")
+            val userId = userManager.requireCurrentUserId()
+            messageRepository.getMessage(userId, messageOrConversationId, true)
         } else {
-            Timber.d("Failed fetching Message Details for message $messageOrConversationId")
-            _messageDetailsError.postValue(Event("Failed getting message details"))
+            message
         }
+
+        if (messageWithDetails == null || !messageWithDetails.isDownloaded) {
+            Timber.i("Failed fetching Message Details for message $messageOrConversationId")
+            _messageDetailsError.postValue(Event("Failed getting message details"))
+            return null
+        }
+
+        val contactEmail = contactsRepository.findContactEmailByEmail(messageWithDetails.senderEmail)
+        messageWithDetails.senderDisplayName = contactEmail?.name.orEmpty()
+        return messageWithDetails.toConversationUiModel()
     }
 
     private suspend fun loadConversationDetails(result: DataResult<Conversation>, userId: Id) {
@@ -318,7 +321,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         userId: Id
     ) {
         val messages = conversation.messages?.mapNotNull { message ->
-            messageRepository.findMessageOnce(userId, message.id)?.let { localMessage ->
+            messageRepository.getMessage(userId, message.id)?.let { localMessage ->
                 val contactEmail = contactsRepository.findContactEmailByEmail(localMessage.senderEmail)
                 localMessage.senderDisplayName = contactEmail?.name.orEmpty()
                 localMessage
@@ -457,7 +460,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun lastMessage() = conversationUiModel.value?.messages?.maxByOrNull { it.time }
+    private suspend fun lastMessage() = conversationUiModel.firstOrNull()?.messages?.maxByOrNull { it.time }
 
     /**
      * Explicitly make a copy of embedded attachment to downloads and display it (product requirement)
@@ -552,20 +555,19 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun triggerVerificationKeyLoading() {
         if (!fetchingPubKeys && publicKeys == null) {
-            val message = lastMessage()
-            message?.let {
-                fetchingPubKeys = true
-                viewModelScope.launch {
+            viewModelScope.launch {
+                val message = lastMessage()
+                message?.let {
+                    fetchingPubKeys = true
                     val result = fetchVerificationKeys(message.senderEmail)
-                    onFetchVerificationKeysEvent(result)
+                    onFetchVerificationKeysEvent(result, message)
                 }
             }
         }
     }
 
-    private fun onFetchVerificationKeysEvent(pubKeys: List<KeyInformation>) {
+    private fun onFetchVerificationKeysEvent(pubKeys: List<KeyInformation>, message: Message) {
         Timber.v("FetchVerificationKeys received $pubKeys")
-        val message = lastMessage()
 
         publicKeys = pubKeys
         refreshedKeys = false
@@ -573,20 +575,23 @@ internal class MessageDetailsViewModel @Inject constructor(
         fetchingPubKeys = false
         renderedFromCache = AtomicBoolean(false)
         // render with the new verification keys
-        if (renderingPassed && message != null) {
+        if (renderingPassed) {
             RegisterReloadTask(message).execute()
         }
     }
 
     fun printMessage(activityContext: Context) {
-        val message = lastMessage()
-        message?.let {
-            MessagePrinter(
-                activityContext,
-                activityContext.resources,
-                activityContext.getSystemService(Context.PRINT_SERVICE) as PrintManager,
-                remoteContentDisplayed
-            ).printMessage(it, this.bodyString ?: "")
+        viewModelScope.launch {
+            val message = lastMessage()
+            message?.let {
+                Timber.v("Print message id: ${it.messageId}")
+                MessagePrinter(
+                    activityContext,
+                    activityContext.resources,
+                    activityContext.getSystemService(Context.PRINT_SERVICE) as PrintManager,
+                    remoteContentDisplayed
+                ).printMessage(it, bodyString ?: "")
+            }
         }
     }
 
@@ -620,12 +625,15 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     fun moveToTrash() {
-        val message = lastMessage()
-        moveMessagesToFolder(
-            listOf(messageOrConversationId),
-            Constants.MessageLocationType.TRASH.toString(),
-            message?.folderLocation ?: EMPTY_STRING
-        )
+        viewModelScope.launch {
+            lastMessage()?.let { message ->
+                moveMessagesToFolder(
+                    listOf(messageOrConversationId),
+                    Constants.MessageLocationType.TRASH.toString(),
+                    message.folderLocation ?: EMPTY_STRING
+                )
+            }
+        }
     }
 
 }

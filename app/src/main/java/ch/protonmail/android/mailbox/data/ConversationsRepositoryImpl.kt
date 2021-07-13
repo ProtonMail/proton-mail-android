@@ -258,7 +258,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         deleteConversationsRemoteWorker.enqueue(conversationIds, currentFolderId, userId)
 
         conversationIds.forEach { conversationId ->
-            val messagesFromConversation = messageDao.findAllMessageFromAConversation(conversationId).first()
+            val messagesFromConversation = messageDao.getAllMessagesFromAConversation(conversationId)
             // The delete action deletes the messages that are in the current mailbox folder
             val messagesToDelete = messagesFromConversation.filter {
                 currentFolderId in it.allLabelIDs
@@ -271,9 +271,11 @@ class ConversationsRepositoryImpl @Inject constructor(
             if (messagesFromConversation.size == messagesToDelete.size) {
                 conversationDao.deleteConversation(conversationId, userId.id)
             } else {
-                val conversation = conversationDao.getConversation(conversationId, userId.id).first()
-                val newLabels = conversation.labels.filter { it.id != currentFolderId }
-                conversationDao.updateLabels(newLabels, conversationId)
+                val conversation = conversationDao.findConversation(conversationId, userId.id)
+                if (conversation != null) {
+                    val newLabels = conversation.labels.filter { it.id != currentFolderId }
+                    conversationDao.updateLabels(newLabels, conversationId)
+                }
             }
         }
     }

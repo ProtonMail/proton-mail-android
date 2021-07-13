@@ -20,6 +20,7 @@
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import app.cash.turbine.test
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
@@ -33,6 +34,7 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
+import ch.protonmail.android.details.data.toConversationUiModel
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_LOCATION_ID
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_OR_CONVERSATION_ID
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
@@ -56,37 +58,51 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Before
 import java.util.UUID
+import kotlin.test.BeforeTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 private const val INPUT_ITEM_DETAIL_ID = "inputMessageOrConversationId"
 
 class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
-    private val conversationRepository: ConversationsRepository = mockk(relaxed = true)
-
     private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true)
 
-    private val messageRepository: MessageRepository = mockk(relaxed = true)
+    private val observeConversationFlow = MutableSharedFlow<DataResult<Conversation>>(
+        replay = 1, onBufferOverflow = BufferOverflow.SUSPEND
+    )
+    private val conversationRepository: ConversationsRepository = mockk {
+        every { getConversation(any(), any()) } returns observeConversationFlow
+    }
+
+    private val observeMessageFlow = MutableSharedFlow<Message>(replay = 1, onBufferOverflow = BufferOverflow.SUSPEND)
+    private val messageRepository: MessageRepository = mockk {
+        every { observeMessage(any(), any()) } returns observeMessageFlow
+    }
 
     private val labelRepository: LabelRepository = mockk(relaxed = true)
 
+    private val testSenderContactEmail = ContactEmail(
+        "defaultMockContactEmailId", "defaultMockContactEmailAddress", "defaultMockContactName"
+    )
     private val contactsRepository: ContactsRepository = mockk(relaxed = true) {
-        coEvery { findContactEmailByEmail(any()) } returns ContactEmail(
-            "defaultMockContactEmailId", "defaultMockContactEmailAddress", "defaultMockContactName"
-        )
+        coEvery { findContactEmailByEmail(any()) } returns testSenderContactEmail
     }
 
     private val attachmentsHelper: AttachmentsHelper = mockk(relaxed = true)
@@ -112,8 +128,15 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns INBOX.messageLocationTypeValue
     }
 
+    private val testId1 = Id("userId1")
+    private val testId2 = Id("userId2")
+    private val testUserId1 = UserId(testId1.s)
+    private val testUserId2 = UserId(testId2.s)
+    private val userIdFlow = MutableStateFlow(testUserId1)
+
     private val userManager: UserManager = mockk(relaxed = true) {
-        every { requireCurrentUserId() } returns Id("userId1")
+        every { requireCurrentUserId() } returns testId1
+        coEvery { primaryUserId } returns userIdFlow
     }
 
     private var messageRendererFactory = mockk<MessageRenderer.Factory> {
@@ -124,7 +147,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private lateinit var viewModel: MessageDetailsViewModel
 
-    @Before
+    @BeforeTest
     fun setUp() {
         viewModel = MessageDetailsViewModel(
             messageDetailsRepository,
@@ -196,9 +219,9 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled.invoke(any()) } returns true
         every { conversationRepository.getConversation(any(), any()) } returns
             flowOf(DataResult.Success(ResponseSource.Local, buildConversation(conversationId)))
-        coEvery { messageRepository.findMessageOnce(any(), "messageId4") } returns conversationMessage
-        coEvery { messageRepository.findMessageOnce(any(), "messageId5") } returns null
-        viewModel.loadMailboxItemDetails()
+        coEvery { messageRepository.getMessage(any(), "messageId4") } returns conversationMessage
+        coEvery { messageRepository.getMessage(any(), "messageId5") } returns null
+        //viewModel.loadMailboxItemDetails()
 
         // when
         viewModel.formatMessageHtmlBody(decryptedMessage, windowWidth, cssContent, "errorHappened")
@@ -211,42 +234,70 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    @Ignore
     fun loadMailboxItemInvokesMessageRepositoryWithMessageIdAndUserId() = runBlockingTest {
         // Given
-        val userId = Id("userId2")
-        every { userManager.requireCurrentUserId() } returns userId
-        coEvery { messageRepository.getMessage(any(), any(), any()) } returns Message()
+        every { userManager.requireCurrentUserId() } returns testId1
+        val sender = MessageSender("senderName", "senderEmail")
+        val message = Message(
+            messageId = INPUT_ITEM_DETAIL_ID,
+            isDownloaded = false,
+            sender = sender
+        )
+        val downLoadedMessage = Message(
+            messageId = INPUT_ITEM_DETAIL_ID,
+            isDownloaded = true,
+            sender = sender
+        )
+
+        coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns downLoadedMessage
+        val expected = ConversationUiModel(
+            false,
+            null,
+            emptyList(),
+            listOf(downLoadedMessage),
+            null
+        )
 
         // When
-        //viewModel.loadMailboxItemDetails()
-
-        // Then
-        coVerify { messageRepository.getMessage(userId, INPUT_ITEM_DETAIL_ID, true) }
+        viewModel.conversationUiModel.test {
+            // Then
+            coVerify { messageRepository.observeMessage(testUserId1, INPUT_ITEM_DETAIL_ID) }
+            observeMessageFlow.emit(message)
+            coVerify { contactsRepository.findContactEmailByEmail(any()) }
+            val actualItem = expectItem()
+            assertEquals(expected, actualItem)
+            assertEquals(testSenderContactEmail.name, actualItem.messages[0].senderDisplayName)
+        }
     }
 
     @Test
-    @Ignore
-    fun loadMessageEmitsFoundMessageToLiveDataWithContactNameAsDisplayName() = runBlockingTest {
+    fun loadMailboxItemInvokesMessageRepositoryWithMessageIdAndUserIdForConversations() = runBlockingTest {
         // Given
-        val senderEmail = "senderEmail2"
-        val message = mockk<Message>(relaxed = true)
-        every { message.messageId } returns INPUT_ITEM_DETAIL_ID
-        every { message.isDownloaded } returns true
-        every { message.senderEmail } returns senderEmail
-        every { message.decrypt(any(), any(), any()) } just Runs
-        val senderContact = ContactEmail("ceId2", senderEmail, "senderContactName")
-        val messageObserver = viewModel.decryptedConversationUiModel.testObserver()
-        coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
-        coEvery { contactsRepository.findContactEmailByEmail(senderEmail) } returns senderContact
+        every { conversationModeEnabled.invoke(any()) } returns true
+        every { userManager.requireCurrentUserId() } returns testId2
+        val conversationId = UUID.randomUUID().toString()
+        val testConversation = buildConversation(conversationId)
+        val testConversationResult = DataResult.Success(ResponseSource.Local, testConversation)
+        every { userManager.requireCurrentUserId() } returns testId1
+        val sender = MessageSender("senderName", "senderEmail")
+        val downLoadedMessage = Message(
+            messageId = INPUT_ITEM_DETAIL_ID,
+            isDownloaded = true,
+            sender = sender
+        )
+        coEvery { messageRepository.getMessage(any(), any()) } returns downLoadedMessage
 
         // When
-//        viewModel.loadMailboxItemDetails()
-
-        // Then
-        verify { message setProperty "senderDisplayName" value "senderContactName" }
-        val emittedMessage = messageObserver.observedValues[0]?.messages?.last()
-        assertEquals(message, emittedMessage)
+        viewModel.conversationUiModel.test {
+            userIdFlow.emit(testUserId2)
+            // Then
+            coVerify { conversationRepository.getConversation(INPUT_ITEM_DETAIL_ID, testId2) }
+            observeConversationFlow.emit(testConversationResult)
+            coVerify { contactsRepository.findContactEmailByEmail(any()) }
+            val actualItem = expectItem()
+            assertNotNull(actualItem)
+            assertEquals(testConversation.toConversationUiModel(), actualItem)
+        }
     }
 
     @Test
@@ -260,6 +311,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { message.isRead } returns false
         every { message.decrypt(any(), any(), any()) } just Runs
         coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
+        coEvery { messageRepository.markRead(any()) } just Runs
 
         val userId = Id("userId4")
         every { userManager.requireCurrentUserId() } returns userId
@@ -292,13 +344,11 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    @Ignore
     fun loadMessageDoesNotMarkMessageAsReadWhenTheMessageIsAlreadyRead() = runBlockingTest {
         // This prevents the message detail to be refreshed in a loop, caused by the messageFlow to continuously emit
         // the message after it was marked as read (ignoring distinctUntilChanged clause). This is probably due to
         // some mutable property of `Message` class changing unexpectedly.
         // Given
-        val messageObserver = viewModel.decryptedConversationUiModel.testObserver()
         val message = mockk<Message>(relaxed = true)
         every { message.messageId } returns "messageId3"
         every { message.isDownloaded } returns true
@@ -308,45 +358,52 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
 
         // When
-//        viewModel.loadMailboxItemDetails()
+        viewModel.loadMessageBody(message).test {
 
-        // Then
-        verify(exactly = 0) { messageRepository.markRead(any()) }
-        val actual = messageObserver.observedValues.first()
-        assertEquals(message, actual?.messages?.first())
+            // Then
+            verify(exactly = 0) { messageRepository.markRead(any()) }
+            assertEquals(message, expectItem())
+            expectComplete()
+        }
     }
 
     @Test
-    @Ignore
-    fun loadMessageDoesNotEmitTheFoundMessageToLiveDataWhenTheMessageIsNotDownloaded() = runBlockingTest {
+    fun loadMessageIsMarkedAsReadWhenTheMessageIsUnRead() = runBlockingTest {
         // Given
-        val senderEmail = "senderEmail2"
+        val message = mockk<Message>(relaxed = true)
+        every { message.messageId } returns "messageId3"
+        every { message.isDownloaded } returns true
+        every { message.isRead } returns false
+        every { message.senderEmail } returns "senderEmail"
+        every { message.decrypt(any(), any(), any()) } just Runs
+        coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
+        coEvery { messageRepository.markRead(any()) } just Runs
+
+        // When
+        viewModel.loadMessageBody(message).test {
+
+            // Then
+            verify(exactly = 1) { messageRepository.markRead(any()) }
+            assertEquals(message, expectItem())
+            expectComplete()
+        }
+    }
+
+    @Test
+    fun loadMessageDoesNotEmitMessageToLiveDataWhenTheMessageWasNotFound() = runBlockingTest {
+        // Given
+        every { userManager.requireCurrentUserId() } returns testId1
+        val sender = MessageSender("senderName", "senderEmail")
         val message = Message(
             messageId = INPUT_ITEM_DETAIL_ID,
             isDownloaded = false,
-            sender = MessageSender("senderName", senderEmail)
+            sender = sender
         )
-        val messageObserver = viewModel.decryptedConversationUiModel.testObserver()
-        coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
-
-        // When
-//        viewModel.loadMailboxItemDetails()
-
-        // Then
-        assertEquals(emptyList(), messageObserver.observedValues)
-    }
-
-    @Test
-    @Ignore
-    fun loadMessageDoesNotEmitMessageToLiveDataWhenTheMessageWasNotFound() = runBlockingTest {
-        // Given
+        coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns null
         val messageErrorObserver = viewModel.messageDetailsError.testObserver()
-        coEvery { messageRepository.getMessage(any(), any(), any()) } returns null
 
         // When
-//        viewModel.loadMailboxItemDetails()
-
-        // Then
+        observeMessageFlow.emit(message)
         assertEquals("Failed getting message details", messageErrorObserver.observedValues[0]?.getContentIfNotHandled())
     }
 
@@ -391,8 +448,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
                 inputMessageLocation.messageLocationTypeValue
             coEvery { conversationRepository.getConversation(inputConversationId, userId) } returns
                 flowOf(DataResult.Success(ResponseSource.Local, buildConversation(conversationId)))
-            coEvery { messageRepository.findMessageOnce(userId, "messageId4") } returns conversationMessage
-            coEvery { messageRepository.findMessageOnce(userId, "messageId5") } returns olderConversationMessage
+            coEvery { messageRepository.getMessage(userId, "messageId4") } returns conversationMessage
+            coEvery { messageRepository.getMessage(userId, "messageId5") } returns olderConversationMessage
 
             // When
 //            viewModel.loadMailboxItemDetails()

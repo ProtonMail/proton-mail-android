@@ -789,12 +789,11 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             )
             every { message2 setProperty "deleted" value true } just runs
             coEvery { conversationDao.deleteConversation(any(), userId.id) } just runs
-            coEvery { conversationDao.getConversation(any(), any()) } returns flowOf(
+            coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
                 }
-            )
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOfMessages)
+            coEvery { messageDao.getAllMessagesFromAConversation(any()) } returns listOfMessages
             coEvery { messageDao.saveMessages(listOfMessages) } just runs
 
             // when
