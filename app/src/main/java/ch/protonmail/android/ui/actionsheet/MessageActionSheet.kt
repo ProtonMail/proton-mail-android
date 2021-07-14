@@ -298,7 +298,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 isVisible = showMoreMessageOptions
                 setOnClickListener {
                     // we call it this way as it requires "special" context from the Activity
-                    (activity as? MessageDetailsActivity)?.printMessage(messageIds[0])
+                    (activity as? MessageDetailsActivity)?.printMessage(messageIds.first())
                     dismiss()
                 }
             }
@@ -311,7 +311,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             textViewDetailsActionsReportPhishing.apply {
                 isVisible = showMoreMessageOptions
                 setOnClickListener {
-                    (activity as? MessageDetailsActivity)?.showReportPhishingDialog()
+                    (activity as? MessageDetailsActivity)?.showReportPhishingDialog(messageIds.first())
                     dismiss()
                 }
             }

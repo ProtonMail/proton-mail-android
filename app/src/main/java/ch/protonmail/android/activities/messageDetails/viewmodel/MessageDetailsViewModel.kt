@@ -594,19 +594,26 @@ internal class MessageDetailsViewModel @Inject constructor(
             defaultErrorMessage
         }
 
-        updateUiModelMessageWithFormattedHtml(message.messageId, formattedHtml)
+        updateUiModelMessageWithFormattedHtml(message.messageId, formattedHtml, message.decryptedBody)
         // Set the body of the message currently being displayed in messageRenderer to allow embedded images loading
         messageRenderer.messageBody = formattedHtml
         return formattedHtml
     }
 
-    private fun updateUiModelMessageWithFormattedHtml(messageId: String?, formattedHtml: String?): Message? {
+    private fun updateUiModelMessageWithFormattedHtml(
+        messageId: String?,
+        formattedHtml: String?,
+        decryptedBody: String? = null
+    ): Message? {
         // Needed to ensure the `decryptedHTML` is available on a message when an action is executed on it,
         // since most of the click listeners in `MessageDetailsActivity` that trigger actions (such as
         // reply or printMessage) hold a reference to the message in the `conversationUiModel object.
         // This is considered tech debt and detailed in MAILAND-2119
         val currentUiModel = _decryptedConversationUiModel.value
         val message = currentUiModel?.messages?.find { it.messageId == messageId }
+        decryptedBody?.let {
+            message?.decryptedBody = it
+        }
         message?.decryptedHTML = formattedHtml
         return message
     }

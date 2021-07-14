@@ -286,9 +286,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         return true
     }
 
-    fun showReportPhishingDialog(
-        message: Message? = viewModel.decryptedConversationUiModel.value?.messages?.last()
-    ) {
+    fun showReportPhishingDialog(messageId: String) {
+        val message = viewModel.decryptedConversationUiModel.value?.messages?.find { it.messageId == messageId }
         AlertDialog.Builder(this)
             .setTitle(R.string.phishing_dialog_title)
             .setMessage(R.string.phishing_dialog_message)
