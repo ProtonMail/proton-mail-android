@@ -186,7 +186,11 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         isExpanded = isExpanded.not()
     }
 
-    fun bind(message: Message, allLabels: List<Label>, nonInclusiveLabels: List<LabelChipUiModel>) {
+    fun bind(
+        message: Message,
+        exclusiveLabels: List<Label>,
+        nonExclusiveLabels: List<LabelChipUiModel>
+    ) {
         val senderText = getSenderText(message)
         val initials = if (senderText.isEmpty()) HYPHEN else senderText.substring(0, 1)
         senderInitialView.bind(initials)
@@ -199,9 +203,9 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         senderEmailTextView.text = context.getString(R.string.recipient_email_format, message.senderEmail)
         senderEmailTextView.setOnClickListener(getOnSenderClickListener(message.senderEmail))
 
-        if (nonInclusiveLabels.isEmpty().not()) {
-            labelsCollapsedGroupView.setLabels(nonInclusiveLabels)
-            labelsExpandedGroupView.setLabels(nonInclusiveLabels)
+        if (nonExclusiveLabels.isEmpty().not()) {
+            labelsCollapsedGroupView.setLabels(nonExclusiveLabels)
+            labelsExpandedGroupView.setLabels(nonExclusiveLabels)
             collapsedHeaderGroup.addView(labelsCollapsedGroupView)
             expandedHeaderGroup.addView(labelsExpandedGroupView)
             expandedHeaderGroup.addView(labelsImageView)
@@ -219,18 +223,23 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         encryptionInfoTextView.text = context.getText(senderLockIcon.tooltip)
         learnMoreTextView.movementMethod = LinkMovementMethod.getInstance()
 
-        getIconForMessageLocation(Constants.MessageLocationType.fromInt(message.location))?.let { icon ->
+        val messageLocation = message.location
+        getIconForMessageLocation(Constants.MessageLocationType.fromInt(messageLocation))?.let { icon ->
             locationImageView.setImageDrawable(ContextCompat.getDrawable(context, icon))
             locationExtendedImageView.setImageDrawable(ContextCompat.getDrawable(context, icon))
-            if (Constants.MessageLocationType.fromInt(message.location) == Constants.MessageLocationType.LABEL) {
-                getMessageFolder(allLabels)?.let { label ->
-                    val folderColor = Color.parseColor(UiUtil.normalizeColor(label.color))
-                    locationImageView.setColorFilter(folderColor)
-                    locationExtendedImageView.setColorFilter(folderColor)
-                }
+            // If the location is a custom folder, then make sure to color the icon in the correct folder color
+            if (Constants.MessageLocationType.fromInt(messageLocation) in arrayOf(
+                    Constants.MessageLocationType.LABEL_FOLDER,
+                    Constants.MessageLocationType.LABEL
+                ) && exclusiveLabels.isNotEmpty()
+            ) {
+                // There should be only one exclusive label for a message
+                val folderColor = Color.parseColor(UiUtil.normalizeColor(exclusiveLabels[0].color))
+                locationImageView.setColorFilter(folderColor)
+                locationExtendedImageView.setColorFilter(folderColor)
             }
         }
-        getTextForMessageLocation(Constants.MessageLocationType.fromInt(message.location), allLabels)?.let {
+        getTextForMessageLocation(Constants.MessageLocationType.fromInt(messageLocation), exclusiveLabels)?.let {
             locationTextView.text = it
         }
 
@@ -295,9 +304,6 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         return recipientContextMenuFactory.invoke(senderEmail)
     }
 
-    private fun getMessageFolder(labelsList: List<Label>): Label? = labelsList.find { it.exclusive }
-
-    // TODO: Showing the location is buggy, review together with MAILAND-1422
     private fun getIconForMessageLocation(messageLocation: Constants.MessageLocationType) = when (messageLocation) {
         Constants.MessageLocationType.INBOX -> R.drawable.ic_inbox
         Constants.MessageLocationType.SENT -> R.drawable.ic_paper_plane
@@ -307,6 +313,7 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         Constants.MessageLocationType.ARCHIVE -> R.drawable.ic_archive
         Constants.MessageLocationType.TRASH -> R.drawable.ic_trash
         Constants.MessageLocationType.SPAM -> R.drawable.ic_fire
+        Constants.MessageLocationType.LABEL_FOLDER -> R.drawable.ic_folder_filled
         Constants.MessageLocationType.LABEL -> R.drawable.ic_folder_filled
         else -> null
     }
@@ -323,7 +330,8 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         Constants.MessageLocationType.ARCHIVE -> context.getString(R.string.archive)
         Constants.MessageLocationType.TRASH -> context.getString(R.string.trash)
         Constants.MessageLocationType.SPAM -> context.getString(R.string.spam)
-        Constants.MessageLocationType.LABEL -> getMessageFolder(labelsList)?.name
+        Constants.MessageLocationType.LABEL_FOLDER -> { if (labelsList.isNotEmpty()) labelsList[0].name else null }
+        Constants.MessageLocationType.LABEL -> { if (labelsList.isNotEmpty()) labelsList[0].name else null }
         else -> null
     }
 

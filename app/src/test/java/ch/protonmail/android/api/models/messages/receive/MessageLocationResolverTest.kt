@@ -213,4 +213,31 @@ class MessageLocationResolverTest {
         assertEquals(expected, result)
     }
 
+    @Test
+    fun verifyThatLabelFolderLocationWithAllLocationAndLabelIsParsedProperly() {
+        // given
+        val exclusiveLabelId = "hk3g-efDXUe5pZKWzIkPPYKueFyAu9UCYRlD2ej-auBnu8gSC2g6hC0OVSkZm_3zdKkZdvLZBtRwydhjvUi-Wg=="
+        val nonExclusiveLabelId = "KixlLFyrSj5yTKHwMrhJjKEwSQ3MW7nxyIMplCGpaH8jL5mamO1oYM9Djo2S6pAm8EQmJ3CYMmo4Jpg_ax-LWw=="
+        val testLabelIds = listOf(
+            "5",
+            nonExclusiveLabelId,
+            exclusiveLabelId
+        )
+        val expected = Constants.MessageLocationType.LABEL_FOLDER
+        val exclusiveLabel = mockk<Label> {
+            every { exclusive } returns true
+        }
+        val nonExclusiveLabel = mockk<Label> {
+            every { exclusive } returns false
+        }
+        every { messageDao.findLabelByIdBlocking(exclusiveLabelId) } returns exclusiveLabel
+        every { messageDao.findLabelByIdBlocking(nonExclusiveLabelId) } returns nonExclusiveLabel
+
+        // when
+        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
+
+        // then
+        assertEquals(expected, result)
+    }
+
 }

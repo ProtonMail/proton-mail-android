@@ -64,7 +64,13 @@ class MessageLocationResolver @Inject constructor(
         }
 
         if (longLabels.isNotEmpty()) {
-            return resolveLabelType(longLabels[0])
+            longLabels.forEach {
+                val resolvedLocation = resolveLabelType(it)
+                if (resolvedLocation == Constants.MessageLocationType.LABEL_FOLDER) {
+                    return resolvedLocation
+                }
+            }
+            return Constants.MessageLocationType.LABEL
         }
 
         throw IllegalArgumentException("No valid location found in IDs: $labelIds ")
