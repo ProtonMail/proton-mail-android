@@ -61,7 +61,7 @@ object Constants {
     const val MAX_ATTACHMENTS = 100
     const val MAX_ATTACHMENT_FILE_SIZE_IN_BYTES = (25 * 1000 * 1000).toLong() // 25 MB
     const val MAX_ATTACHMENT_STORAGE_IN_MB = 1000
-    const val MIN_ATTACHMENT_STORAGE_IN_MB = 200
+    const val DEFAULT_ATTACHMENT_STORAGE_IN_MB = 600
     const val MAX_USERNAME_LENGTH = 40
     const val MAX_INCORRECT_PIN_ATTEMPTS = 10
     const val MAX_INTENT_STRING_SIZE = 200_000
