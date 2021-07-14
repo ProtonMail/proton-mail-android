@@ -601,13 +601,17 @@ internal class MessageDetailsViewModel @Inject constructor(
     }
 
     private fun updateUiModelMessageWithFormattedHtml(messageId: String?, formattedHtml: String?): Message? {
+        // Needed to ensure the `decryptedHTML` is available on a message when an action is executed on it,
+        // since most of the click listeners in `MessageDetailsActivity` that trigger actions (such as
+        // reply or printMessage) hold a reference to the message in the `conversationUiModel object.
+        // This is considered tech debt and detailed in MAILAND-2119
         val currentUiModel = _decryptedConversationUiModel.value
         val message = currentUiModel?.messages?.find { it.messageId == messageId }
         message?.decryptedHTML = formattedHtml
         return message
     }
 
-    fun moveToTrash() {
+    fun moveLastMessageToTrash() {
         viewModelScope.launch {
             lastMessage()?.let { message ->
                 moveMessagesToFolder(

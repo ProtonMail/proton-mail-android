@@ -548,7 +548,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         )
         messageDetailsActionsView.bind(actionsUiModel)
         messageDetailsActionsView.setOnThirdActionClickListener {
-            viewModel.moveToTrash()
+            viewModel.moveLastMessageToTrash()
             onBackPressed()
         }
         messageDetailsActionsView.setOnSecondActionClickListener {
