@@ -64,7 +64,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
@@ -73,7 +72,6 @@ import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import java.util.UUID
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -193,7 +191,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    @Ignore
     fun verifyThatDecryptedMessageHtmlIsEmittedThroughDecryptedConversationUiModel() {
         // given
         val decryptedMessageContent = "decrypted message content"
@@ -218,13 +215,14 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { conversationMessage.decrypt(any(), any(), any()) } just Runs
 
         every { conversationModeEnabled.invoke(any()) } returns true
-        every { conversationRepository.getConversation(any(), any()) } returns
-            flowOf(DataResult.Success(ResponseSource.Local, buildConversation(conversationId)))
+        every { userManager.requireCurrentUserId() } returns testId2
+        val conversationResult = DataResult.Success(ResponseSource.Local, buildConversation(conversationId))
         coEvery { messageRepository.findMessage(any(), "messageId4") } returns conversationMessage
         coEvery { messageRepository.findMessage(any(), "messageId5") } returns null
-        //viewModel.loadMailboxItemDetails()
 
         // when
+        userIdFlow.tryEmit(testUserId2)
+        observeConversationFlow.tryEmit(conversationResult)
         viewModel.formatMessageHtmlBody(decryptedMessage, windowWidth, cssContent, "errorHappened")
 
         // then
@@ -409,14 +407,9 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    @Ignore
     fun loadMailboxItemEmitsConversationUiItemWithOrderedConversationDataWhenRepositoryReturnsAConversationAndLastMessageDecryptionSucceeds() =
         runBlockingTest {
             // Given
-            val inputMessageLocation = INBOX
-            // messageId is defined as a field as it's needed at VM's instantiation time.
-            val inputConversationId = INPUT_ITEM_DETAIL_ID
-            val userId = Id("userId4")
             val conversationObserver = viewModel.decryptedConversationUiModel.testObserver()
             val conversationId = UUID.randomUUID().toString()
 
@@ -442,18 +435,15 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             every { olderConversationMessage.time } returns 82374724L
             every { olderConversationMessage.decrypt(any(), any(), any()) } just Runs
 
-            every { userManager.requireCurrentUserId() } returns userId
-            coEvery { conversationModeEnabled(inputMessageLocation) } returns true
-            every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
-            every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
-                inputMessageLocation.messageLocationTypeValue
-            coEvery { conversationRepository.getConversation(inputConversationId, userId) } returns
-                flowOf(DataResult.Success(ResponseSource.Local, buildConversation(conversationId)))
-            coEvery { messageRepository.findMessage(userId, "messageId4") } returns conversationMessage
-            coEvery { messageRepository.findMessage(userId, "messageId5") } returns olderConversationMessage
+            every { userManager.requireCurrentUserId() } returns testId2
+            coEvery { conversationModeEnabled(any()) } returns true
+            val conversationResult = DataResult.Success(ResponseSource.Local, buildConversation(conversationId))
+            coEvery { messageRepository.findMessage(testId2, "messageId4") } returns conversationMessage
+            coEvery { messageRepository.findMessage(testId2, "messageId5") } returns olderConversationMessage
 
             // When
-//            viewModel.loadMailboxItemDetails()
+            userIdFlow.tryEmit(testUserId2)
+            observeConversationFlow.tryEmit(conversationResult)
 
             // Then
             val conversationUiModel = ConversationUiModel(

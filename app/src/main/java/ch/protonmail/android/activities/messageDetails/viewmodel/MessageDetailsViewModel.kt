@@ -227,6 +227,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                     renderedMessage.messageId,
                     renderedMessage.renderedHtmlBody
                 )
+                Timber.v("Update rendered HTML message id: ${updatedMessage?.messageId}")
                 _messageRenderedWithImages.value = updatedMessage
                 areImagesDisplayed = true
             }
