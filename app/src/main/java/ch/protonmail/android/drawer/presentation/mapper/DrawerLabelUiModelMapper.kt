@@ -20,6 +20,7 @@ package ch.protonmail.android.drawer.presentation.mapper
 
 import android.content.Context
 import android.graphics.Color
+import androidx.annotation.VisibleForTesting
 import ch.protonmail.android.R
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
@@ -65,25 +66,32 @@ internal class DrawerLabelUiModelMapper @Inject constructor(
         }
 
         val colorInt =
-            if (useFolderColor) normalizeColor(color)
+            if (useFolderColor) toColorInt(color)
             else context.getColor(R.color.icon_inverted)
 
         return DrawerLabelUiModel.Icon(drawableRes, colorInt)
     }
 
-    private fun normalizeColor(color: String): Int {
-
-        val v4FixedColor = when (color) {
-            "#5ec7b7" -> "#79C4B7"
-            "#97c9c1" -> "#A1C8C1"
-            else -> color
+    private fun toColorInt(color: String): Int {
+        return when (color) {
+            AQUA_BASE_V3_COLOR -> context.getColor(R.color.aqua_base)
+            SAGE_BASE_V3_COLOR -> context.getColor(R.color.sage_base)
+            else -> parseColor(color)
         }
+    }
 
-        return try {
-            Color.parseColor(UiUtil.normalizeColor(v4FixedColor))
+    private fun parseColor(color: String): Int =
+        try {
+            Color.parseColor(UiUtil.normalizeColor(color))
         } catch (exception: Exception) {
-            Timber.w(exception, "Cannot parse color: $v4FixedColor")
-            Color.WHITE
+            Timber.w(exception, "Cannot parse color: $color")
+            context.getColor(R.color.icon_inverted)
         }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    companion object {
+
+        const val AQUA_BASE_V3_COLOR = "#5ec7b7"
+        const val SAGE_BASE_V3_COLOR = "#97c9c1"
     }
 }
