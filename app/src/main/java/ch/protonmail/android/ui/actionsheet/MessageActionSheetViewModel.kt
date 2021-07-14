@@ -207,7 +207,7 @@ class MessageActionSheetViewModel @Inject constructor(
             }
         }.invokeOnCompletion {
             val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-            actionsMutableFlow.value = MessageActionSheetAction.ShouldDismiss(dismissBackingActivity)
+            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
         }
     }
 
@@ -233,7 +233,7 @@ class MessageActionSheetViewModel @Inject constructor(
             }
         }.invokeOnCompletion {
             val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-            actionsMutableFlow.value = MessageActionSheetAction.ShouldDismiss(dismissBackingActivity)
+            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
         }
     }
 
@@ -269,7 +269,7 @@ class MessageActionSheetViewModel @Inject constructor(
             }
         }.invokeOnCompletion {
             val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-            actionsMutableFlow.value = MessageActionSheetAction.ShouldDismiss(dismissBackingActivity)
+            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
         }
     }
 

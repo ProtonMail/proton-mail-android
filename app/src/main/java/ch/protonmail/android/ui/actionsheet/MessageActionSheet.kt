@@ -340,7 +340,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             is MessageActionSheetAction.ShowMessageHeaders -> showMessageHeaders(sheetAction.messageHeaders)
             is MessageActionSheetAction.ChangeStarredStatus -> dismiss()
             is MessageActionSheetAction.Delete -> dismiss()
-            is MessageActionSheetAction.ShouldDismiss -> handleDismissBehavior(sheetAction.dismissBackingActivity)
+            is MessageActionSheetAction.DismissActionSheet ->
+                handleDismissBehavior(sheetAction.shallDismissBackingActivity)
             else -> Timber.v("unhandled action $sheetAction")
         }
     }

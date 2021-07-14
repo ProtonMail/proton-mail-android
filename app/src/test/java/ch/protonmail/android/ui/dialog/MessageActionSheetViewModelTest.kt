@@ -203,7 +203,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyMoveToInboxEmitsShouldDismissActionThatDoesNotDismissBackingActivityWhenBottomActionSheetTargetIsConversationDetails() {
         // given
         val messageId = "messageId1"
-        val expected = MessageActionSheetAction.ShouldDismiss(false)
+        val expected = MessageActionSheetAction.DismissActionSheet(false)
         every { conversationModeEnabled(any()) } returns true
         every { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
         every {
@@ -225,7 +225,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyMoveToInboxEmitsShouldDismissActionThatDismissesBackingActivityWhenBottomActionSheetTargetIsMessageDetails() {
         // given
         val messageId = "messageId2"
-        val expected = MessageActionSheetAction.ShouldDismiss(true)
+        val expected = MessageActionSheetAction.DismissActionSheet(true)
         every { conversationModeEnabled(any()) } returns false
         every { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
         every {
@@ -272,7 +272,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyMarkReadCallsChangeConversationReadStatusWhenConversationModeIsEnabledAndAConversationIsBeingMarkedAsRead() {
         // given
         val conversationId = "conversationId02"
-        val expected = MessageActionSheetAction.ShouldDismiss(true)
+        val expected = MessageActionSheetAction.DismissActionSheet(true)
         val userId = UserId("userId02")
         val markReadAction = ChangeConversationsReadStatus.Action.ACTION_MARK_READ
         val location = Constants.MessageLocationType.ALL_MAIL
@@ -321,7 +321,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyMarkUnreadCallsMessageRepositoryToMarkUnreadWhenConversationIsEnabledAndActionIsBeingAppliedToASpecificMessageInAConversation() {
         // given
         val messageId = "messageId4"
-        val expected = MessageActionSheetAction.ShouldDismiss(false)
+        val expected = MessageActionSheetAction.DismissActionSheet(false)
         every { conversationModeEnabled(any()) } returns true
         every { messageRepository.markUnRead(listOf(messageId)) } just Runs
         every {

@@ -255,8 +255,9 @@ internal class MessageDetailsAdapter(
             messageHtmlWithQuotedHistory: String?,
             webView: WebView
         ) {
-            val messageActionsView: MessageDetailsActionsView? =
-                itemView.messageWebViewContainer.findViewById(ITEM_MESSAGE_ACTIONS_LAYOUT_ID)
+            val messageActionsView: MessageDetailsActionsView =
+                itemView.messageWebViewContainer.findViewById(ITEM_MESSAGE_ACTIONS_LAYOUT_ID) ?: return
+
             val replyMode = if (message.toList.size + message.ccList.size > 1) {
                 MessageDetailsActionsView.ReplyMode.REPLY_ALL
             } else {
@@ -267,14 +268,14 @@ internal class MessageDetailsAdapter(
                 messageHtmlWithQuotedHistory.isNullOrEmpty(),
                 message.isDraft()
             )
-            messageActionsView?.bind(uiModel)
+            messageActionsView.bind(uiModel)
 
-            messageActionsView?.onShowHistoryClicked { showHistoryButton ->
+            messageActionsView.onShowHistoryClicked { showHistoryButton ->
                 loadHtmlDataIntoWebView(webView, messageHtmlWithQuotedHistory)
                 showHistoryButton.isVisible = false
             }
-            messageActionsView?.onReplyClicked { onReplyMessageClicked(message) }
-            messageActionsView?.onMoreActionsClicked { onMoreMessageActionsClicked(message) }
+            messageActionsView.onReplyClicked { onReplyMessageClicked(message) }
+            messageActionsView.onMoreActionsClicked { onMoreMessageActionsClicked(message) }
         }
 
         private fun loadHtmlDataIntoWebView(webView: WebView, htmlContent: String?) {

@@ -45,8 +45,7 @@ class MessageDetailsActionsView @JvmOverloads constructor(
     init {
         val binding = MessageDetailsActionsBinding.inflate(
             LayoutInflater.from(context),
-            this,
-            true
+            this
         )
         showHistoryButton = binding.detailsButtonShowHistory
         replyButton = binding.detailsButtonReply
@@ -71,7 +70,7 @@ class MessageDetailsActionsView @JvmOverloads constructor(
         moreActionsButton.setOnClickListener { callback(it) }
     }
 
-    class UiModel(
+    data class UiModel(
         val replyMode: ReplyMode,
         val hideShowHistory: Boolean,
         val hideAllActions: Boolean

@@ -17,8 +17,10 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/padding_m">
@@ -26,8 +28,10 @@
     <Button
         android:id="@+id/details_button_show_history"
         style="@style/ProtonButton.Borderless.Text"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/message_details_actions_button_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_m"
+        android:contentDescription="@string/details_show_history"
         android:text="@string/details_show_history"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,8 +42,10 @@
     <ImageButton
         android:id="@+id/details_button_reply"
         style="@style/ProtonImage.ImageButton"
-        android:layout_width="@dimen/message_details_actions_button_size"
-        android:layout_height="@dimen/message_details_actions_button_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_m"
+        android:contentDescription="@string/reply"
         android:background="?selectableItemBackgroundBorderless"
         android:src="@drawable/ic_reply"
         app:layout_constraintEnd_toStartOf="@id/details_button_more_actions"
@@ -50,8 +56,10 @@
     <ImageButton
         android:id="@+id/details_button_more_actions"
         style="@style/ProtonImage.ImageButton"
-        android:layout_width="@dimen/message_details_actions_button_size"
-        android:layout_height="@dimen/message_details_actions_button_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_m"
+        android:contentDescription="@string/more"
         android:background="?selectableItemBackgroundBorderless"
         android:src="@drawable/ic_three_dots_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -59,5 +67,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:tint="@color/cornflower_blue" />
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</merge>
