@@ -28,14 +28,15 @@ import me.proton.core.plan.domain.SupportedPaidPlanIds
 import me.proton.core.plan.domain.repository.PlansRepository
 import javax.inject.Singleton
 
+const val PLUS_PLAN_ID = "ziWi-ZOb28XR4sCGFCEpqQbd1FITVWYfTfKYUmV_wKKR3GsveN4HZCh9er5dhelYylEp-fhjBbUPDMHGU699fw=="
+
 @Module
 @InstallIn(SingletonComponent::class)
 object CorePlanModule {
 
     @Provides
     @SupportedPaidPlanIds
-    fun provideClientSupportedPaidPlanIds(): List<String> =
-        emptyList()
+    fun provideClientSupportedPaidPlanIds(): List<String> = listOf(PLUS_PLAN_ID)
 
     @Provides
     @Singleton

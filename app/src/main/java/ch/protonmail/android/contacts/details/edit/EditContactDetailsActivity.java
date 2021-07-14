@@ -854,15 +854,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         return view;
     }
 
-    private View.OnClickListener mUpgradeClickListener = v -> {
-        /*
-        Intent upgradeIntent = new Intent(EditContactDetailsActivity.this, UpsellingActivity.class);
-        upgradeIntent.putExtra(UpsellingActivity.EXTRA_OPEN_UPGRADE_CONTAINER, true);
-        startActivityForResult(AppUtil.decorInAppIntent(upgradeIntent), REQUEST_CODE_UPGRADE);
-        TODO("startUpgradePlanWorkflow")
-        */
-    };
-
     private void showUnsavedChangesDialog() {
         new UnsavedChangesDialog(this, () -> {
             saveAndFinish();

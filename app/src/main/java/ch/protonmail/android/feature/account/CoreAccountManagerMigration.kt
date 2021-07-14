@@ -175,7 +175,7 @@ private fun Keys.toCoreUserKey(userId: UserId, passphrase: EncryptedByteArray?) 
     version = 0,
     activation = activation,
     keyId = KeyId(id),
-    privateKey = PrivateKey(privateKey, isPrimary, passphrase = passphrase)
+    privateKey = PrivateKey(key = privateKey, isPrimary = isPrimary, passphrase = passphrase)
 )
 
 private fun Address.toCoreUserAddress(userId: UserId, passphrase: EncryptedByteArray?) = UserAddress(
@@ -202,5 +202,5 @@ private fun Keys.toCoreUserAddressKey(addressId: AddressId, passphrase: Encrypte
     activation = activation,
     active = active.toBooleanOrFalse(),
     keyId = KeyId(id),
-    privateKey = PrivateKey(privateKey, isPrimary, passphrase = passphrase)
+    privateKey = PrivateKey(key = privateKey, isPrimary = isPrimary, passphrase = passphrase)
 )
