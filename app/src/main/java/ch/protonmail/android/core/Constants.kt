@@ -117,6 +117,8 @@ object Constants {
     const val JOB_GROUP_SENDING = "sending"
     const val ERROR = "error"
 
+    const val BYTE_TO_MEGABYTE_RATIO = 1_000_000
+
     object Prefs {
         const val PREF_APP_VERSION = "appVersion"
         const val PREF_PREVIOUS_APP_VERSION = "previousAppVersion"

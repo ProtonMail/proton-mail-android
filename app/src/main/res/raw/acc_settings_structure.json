@@ -57,17 +57,6 @@
     "setting_type": "drill"
   },
   {
-    "setting_id": "snooze",
-    "is_section": true
-  },
-  {
-    "setting_id": "notification_snooze",
-    "is_section": false,
-    "setting_value": "",
-    "setting_hasValue": true,
-    "setting_type": "drill"
-  },
-  {
     "setting_id": "mailbox",
     "is_section": true
   },
@@ -87,6 +76,17 @@
   },
   {
     "setting_id": "local_storage_limit",
+    "is_section": false,
+    "setting_value": "",
+    "setting_hasValue": true,
+    "setting_type": "drill"
+  },
+  {
+    "setting_id": "snooze",
+    "is_section": true
+  },
+  {
+    "setting_id": "notification_snooze",
     "is_section": false,
     "setting_value": "",
     "setting_hasValue": true,
