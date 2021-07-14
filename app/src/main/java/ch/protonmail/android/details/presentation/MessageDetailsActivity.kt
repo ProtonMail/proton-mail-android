@@ -747,6 +747,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                     showToast(content)
                     progress.visibility = View.GONE
                 }
+                Timber.w("MessageDetailsError, $content")
             }
         }
     }

@@ -278,13 +278,37 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         val testConversation = buildConversation(conversationId)
         val testConversationResult = DataResult.Success(ResponseSource.Local, testConversation)
         every { userManager.requireCurrentUserId() } returns testId1
-        val sender = MessageSender("senderName", "senderEmail")
-        val downLoadedMessage = Message(
-            messageId = INPUT_ITEM_DETAIL_ID,
-            isDownloaded = true,
-            sender = sender
+        val sender = MessageSender("senderName", "sender@protonmail.ch")
+        val messageId = "messageId4"
+        val secondMessageId = "messageId5"
+        val downLoadedMessage1 = Message(
+            messageId = messageId,
+            isDownloaded = false, // this is false as with current converters (.toDbModel()) we loose this information
+            sender = sender,
+            time = 82_374_724L,
+            subject = "subject4",
+            conversationId = conversationId,
+            isReplied = false,
+            isRepliedAll = true,
+            isForwarded = false,
+            numAttachments = 1,
+            allLabelIDs = listOf("1", "2")
         )
-        coEvery { messageRepository.findMessage(any(), any()) } returns downLoadedMessage
+        val downLoadedMessage2 = Message(
+            messageId = secondMessageId,
+            isDownloaded = false, // this is false as with current converters (.toDbModel()) we loose this information
+            sender = sender,
+            time = 82_374_724L,
+            subject = "subject4",
+            conversationId = conversationId,
+            isReplied = false,
+            isRepliedAll = true,
+            isForwarded = false,
+            numAttachments = 1,
+            allLabelIDs = listOf("1", "2")
+        )
+        coEvery { messageRepository.findMessage(testId2, messageId) } returns downLoadedMessage1
+        coEvery { messageRepository.findMessage(testId2, secondMessageId) } returns downLoadedMessage2
 
         // When
         viewModel.conversationUiModel.test {
@@ -497,20 +521,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         verify(exactly = 0) { messageRepository.markRead(any()) }
     }
 
-    private fun buildEmptyConversation(conversationId: String) = Conversation(
-        conversationId,
-        "Conversation with no messages subject",
-        emptyList(),
-        emptyList(),
-        0,
-        0,
-        0,
-        0,
-        emptyList(),
-        emptyList()
-    )
-
-    private fun buildConversation(conversationId: String): Conversation {
+    private fun buildConversation(conversationId: String, isDownloaded: Boolean = false): Conversation {
         val messageId = "messageId4"
         val secondMessageId = "messageId5"
         return Conversation(
@@ -530,7 +541,10 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         )
     }
 
-    private fun buildMessageDomainModel(messageId: String, conversationId: String) = MessageDomainModel(
+    private fun buildMessageDomainModel(
+        messageId: String,
+        conversationId: String,
+    ) = MessageDomainModel(
         messageId,
         conversationId,
         "subject4",

@@ -213,10 +213,11 @@ internal class MessageDetailsViewModel @Inject constructor(
                     getMessageFlow(userId)
                 }
             }
+            .filterNotNull()
             .distinctUntilChanged()
             .onEach {
                 Timber.i("Emit conversation Ui model subject ${it.subject}")
-                _conversationUiFLow.emit(it)
+                emitConversationUiItem(it)
             }
             .launchIn(viewModelScope)
 
@@ -233,28 +234,20 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun getMessageFlow(userId: UserId): Flow<ConversationUiModel> =
+    private fun getMessageFlow(userId: UserId): Flow<ConversationUiModel?> =
         messageRepository.observeMessage(userId, messageOrConversationId)
             .filterNotNull()
             .distinctUntilChanged()
             .map {
                 loadMessageDetails(it)
             }
-            .filterNotNull()
-            .onEach {
-                emitConversationUiItem(it)
-            }
 
-    private fun getConversationFlow(userId: UserId): Flow<ConversationUiModel> =
+    private fun getConversationFlow(userId: UserId): Flow<ConversationUiModel?> =
         conversationRepository.getConversation(messageOrConversationId, Id(userId.id))
             .distinctUntilChanged()
-            .onEach {
+            .map {
                 loadConversationDetails(it, Id(userId.id))
             }
-            .map {
-                (it as DataResult.Success).value
-            }
-            .map { it.toConversationUiModel() }
 
     fun markUnread() {
         messageRepository.markUnRead(listOf(messageOrConversationId))
@@ -300,25 +293,34 @@ internal class MessageDetailsViewModel @Inject constructor(
         return messageWithDetails.toConversationUiModel()
     }
 
-    private suspend fun loadConversationDetails(result: DataResult<Conversation>, userId: Id) {
-        Timber.v("loadConversationDetails result: ${result.javaClass.canonicalName}")
-        if (result is DataResult.Success) {
-            val conversation = result.value
-            if (conversation.messages?.isEmpty() == true) {
-                return
+    private suspend fun loadConversationDetails(result: DataResult<Conversation>, userId: Id): ConversationUiModel? {
+        return when (result) {
+            is DataResult.Success -> {
+                Timber.v("loadConversationDetails Success")
+                val conversation = result.value
+                if (conversation.messages?.isEmpty() == true) {
+                    _messageDetailsError.postValue(Event("Failed getting conversation details, empty messages"))
+                    null
+                } else {
+                    onConversationLoaded(conversation, userId)
+                }
             }
-            onConversationLoaded(conversation, userId)
-
-        } else if (result is DataResult.Error) {
-            Timber.d("Error loading conversation $messageOrConversationId - cause: ${result.cause}")
-            _messageDetailsError.postValue(Event("Failed getting conversation details"))
+            is DataResult.Error -> {
+                Timber.d("loadConversationDetails $messageOrConversationId Error - cause: ${result.cause}")
+                _messageDetailsError.postValue(Event("Failed getting conversation details"))
+                null
+            }
+            else -> {
+                Timber.v("loadConversationDetails result ${result.javaClass.canonicalName}")
+                null
+            }
         }
     }
 
     private suspend fun onConversationLoaded(
         conversation: Conversation,
         userId: Id
-    ) {
+    ): ConversationUiModel? {
         val messages = conversation.messages?.mapNotNull { message ->
             messageRepository.findMessage(userId, message.id)?.let { localMessage ->
                 val contactEmail = contactsRepository.findContactEmailByEmail(localMessage.senderEmail)
@@ -326,29 +328,21 @@ internal class MessageDetailsViewModel @Inject constructor(
                 localMessage
             }
         }
-        Timber.v("Loaded conversation ${conversation.id} with ${messages?.size} messages")
         if (messages.isNullOrEmpty()) {
             Timber.d("Failed fetching Message Details for message $messageOrConversationId")
             _messageDetailsError.postValue(Event("Failed getting conversation's messages"))
-            return
+            return null
         }
 
-        val conversationUiItem = conversation.toConversationUiModel().copy(
+        return conversation.toConversationUiModel().copy(
             messages = messages.sortedBy { it.time }
         )
-        emitConversationUiItem(conversationUiItem)
     }
 
-    private fun emitConversationUiItem(conversationUiModel: ConversationUiModel) {
+    private suspend fun emitConversationUiItem(conversationUiModel: ConversationUiModel) {
         refreshedKeys = true
-        val lastMessage = conversationUiModel.messages.last()
-        if (!lastMessage.isDownloaded) {
-            Timber.d("Message detail tried loading a non-downloaded message! id: ${lastMessage.messageId}")
-            return
-        }
-
-        Timber.v("Emitting ConversationUiItem Detail = ${lastMessage.messageId} keys size: ${publicKeys?.size}")
         _decryptedConversationUiModel.postValue(conversationUiModel)
+        _conversationUiFLow.emit(conversationUiModel)
     }
 
     private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
