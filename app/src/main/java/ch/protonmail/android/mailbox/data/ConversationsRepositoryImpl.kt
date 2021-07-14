@@ -152,7 +152,10 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationDao.findConversation(conversationId, userId.s)
 
 
-    override suspend fun saveConversations(conversations: List<ConversationDatabaseModel>, userId: Id) =
+    override suspend fun saveConversations(
+        conversations: List<ConversationDatabaseModel>,
+        userId: Id
+    ) =
         conversationDao.insertOrUpdate(*conversations.toTypedArray())
 
     override suspend fun deleteConversations(conversationIds: List<String>, userId: Id) {

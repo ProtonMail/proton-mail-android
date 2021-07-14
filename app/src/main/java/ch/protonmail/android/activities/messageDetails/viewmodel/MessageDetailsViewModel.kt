@@ -78,7 +78,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -248,7 +247,6 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     private fun getConversationFlow(userId: UserId): Flow<ConversationUiModel> =
         conversationRepository.getConversation(messageOrConversationId, Id(userId.id))
-            .filter { it is DataResult.Success }
             .distinctUntilChanged()
             .onEach {
                 loadConversationDetails(it, Id(userId.id))
