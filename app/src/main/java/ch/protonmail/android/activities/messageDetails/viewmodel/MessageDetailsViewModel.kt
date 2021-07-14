@@ -621,7 +621,6 @@ internal class MessageDetailsViewModel @Inject constructor(
         val currentUiModel = _decryptedConversationUiModel.value
         val message = currentUiModel?.messages?.find { it.messageId == messageId }
         message?.decryptedHTML = formattedHtml
-        _decryptedConversationUiModel.postValue(currentUiModel)
         return message
     }
 
