@@ -167,7 +167,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationIds.forEach { conversationId ->
             conversationDao.updateNumUnreadMessages(0, conversationId)
             // All the messages from the conversation are marked as read
-            messageDao.observeAllMessagesFromAConversation(conversationId).first().forEach { message ->
+            messageDao.getAllMessagesFromAConversation(conversationId).forEach { message ->
                 messageDao.saveMessage(message.apply { setIsRead(true) })
             }
         }
@@ -184,7 +184,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             val conversation = requireNotNull(conversationDao.observeConversation(conversationId, userId.id).first())
             conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
             // Only the latest message from the current location is marked as unread
-            messageDao.observeAllMessagesFromAConversation(conversationId).first().forEach { message ->
+            messageDao.getAllMessagesFromAConversation(conversationId).forEach { message ->
                 if (Constants.MessageLocationType.fromInt(message.location) == location) {
                     messageDao.saveMessage(message.apply { setIsRead(false) })
                     return@forEachConversation
@@ -200,7 +200,7 @@ class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             var lastMessageTime = 0L
-            messageDao.observeAllMessagesFromAConversation(conversationId).first().forEach { message ->
+            messageDao.getAllMessagesFromAConversation(conversationId).forEach { message ->
                 messageDao.updateStarred(message.messageId!!, true)
                 lastMessageTime = max(lastMessageTime, message.time)
             }
@@ -217,7 +217,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationIds.forEach { conversationId ->
             removeLabelsFromConversation(conversationId, userId, listOf(starredLabelId))
 
-            messageDao.observeAllMessagesFromAConversation(conversationId).first().forEach { message ->
+            messageDao.getAllMessagesFromAConversation(conversationId).forEach { message ->
                 messageDao.updateStarred(message.messageId!!, false)
             }
         }
@@ -232,7 +232,7 @@ class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             var lastMessageTime = 0L
-            messageDao.observeAllMessagesFromAConversation(conversationId).first().forEach { message ->
+            messageDao.getAllMessagesFromAConversation(conversationId).forEach { message ->
                 val labelsToRemoveFromMessage = getLabelIdsForRemovingWhenMovingToFolder(message.allLabelIDs)
                 val labelsToAddToMessage = getLabelIdsForAddingWhenMovingToFolder(folderId, message.allLabelIDs)
                 message.removeLabels(labelsToRemoveFromMessage.toList())
@@ -241,7 +241,7 @@ class ConversationsRepositoryImpl @Inject constructor(
                 lastMessageTime = max(lastMessageTime, message.time)
             }
 
-            val conversation = requireNotNull(conversationDao.observeConversation(conversationId, userId.id).first())
+            val conversation = requireNotNull(conversationDao.findConversation(conversationId, userId.id))
             val labelsToRemoveFromConversation = getLabelIdsForRemovingWhenMovingToFolder(
                 conversation.labels.map { it.id }
             )
@@ -285,7 +285,7 @@ class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             var lastMessageTime = 0L
-            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+            messageDao.getAllMessageInfoFromAConversation(conversationId).forEach { message ->
                 message.addLabels(listOf(labelId))
                 messageDao.saveMessage(message)
                 lastMessageTime = max(lastMessageTime, message.time)
@@ -299,7 +299,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         unlabelConversationsRemoteWorker.enqueue(conversationIds, labelId, userId)
 
         conversationIds.forEach { conversationId ->
-            messageDao.findAllMessageFromAConversation(conversationId).first().forEach { message ->
+            messageDao.getAllMessageInfoFromAConversation(conversationId).forEach { message ->
                 message.removeLabels(listOf(labelId))
                 messageDao.saveMessage(message)
             }
@@ -357,7 +357,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         labelIds: Collection<String>,
         lastMessageTime: Long
     ) {
-        val conversation = requireNotNull(conversationDao.observeConversation(conversationId, userId.id).first())
+        val conversation = requireNotNull(conversationDao.findConversation(conversationId, userId.id))
         val newLabels = mutableListOf<LabelContextDatabaseModel>()
         labelIds.forEach { labelId ->
             val newLabel = LabelContextDatabaseModel(
@@ -381,7 +381,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         userId: UserId,
         labelIds: Collection<String>
     ) {
-        val conversation = requireNotNull(conversationDao.observeConversation(conversationId, userId.id).first())
+        val conversation = requireNotNull(conversationDao.findConversation(conversationId, userId.id))
         val labels = conversation.labels.toMutableList()
         labels.removeIf { it.id in labelIds }
         conversationDao.updateLabels(labels, conversationId)
