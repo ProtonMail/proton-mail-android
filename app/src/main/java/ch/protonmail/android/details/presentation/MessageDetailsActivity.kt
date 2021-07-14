@@ -803,8 +803,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         ).show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
     }
 
-    fun printMessage() {
-        viewModel.printMessage(primaryBaseActivity)
+    fun printMessage(messageId: String) {
+        viewModel.printMessage(messageId, primaryBaseActivity)
     }
 
     companion object {

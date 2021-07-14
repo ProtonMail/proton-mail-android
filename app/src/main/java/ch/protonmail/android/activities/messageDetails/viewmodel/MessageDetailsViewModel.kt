@@ -161,12 +161,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     val conversationUiModel: SharedFlow<ConversationUiModel>
         get() = _conversationUiFLow
 
-    private var bodyString: String? = null
-        set(value) {
-            field = value
-            messageRenderer.messageBody = value
-        }
-
     val labels: Flow<List<Label>> =
         conversationUiModel
             .flatMapLatest { conversation ->
@@ -573,18 +567,14 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    fun printMessage(activityContext: Context) {
-        viewModelScope.launch {
-            val message = lastMessage()
-            message?.let {
-                Timber.v("Print message id: ${it.messageId}")
-                MessagePrinter(
-                    activityContext,
-                    activityContext.resources,
-                    activityContext.getSystemService(Context.PRINT_SERVICE) as PrintManager,
-                    remoteContentDisplayed
-                ).printMessage(it, bodyString ?: "")
-            }
+    fun printMessage(messageId: String, activityContext: Context) {
+        _decryptedConversationUiModel.value?.messages?.find { it.messageId == messageId }?.let {
+            MessagePrinter(
+                activityContext,
+                activityContext.resources,
+                activityContext.getSystemService(Context.PRINT_SERVICE) as PrintManager,
+                remoteContentDisplayed
+            ).printMessage(it, it.decryptedHTML ?: "")
         }
     }
 
@@ -593,8 +583,8 @@ internal class MessageDetailsViewModel @Inject constructor(
         windowWidth: Int,
         css: String,
         defaultErrorMessage: String
-    ): String? {
-        bodyString = try {
+    ): String {
+        val formattedHtml = try {
             val contentTransformer = DefaultTransformer()
                 .pipe(ViewportTransformer(windowWidth, css))
 
@@ -604,9 +594,10 @@ internal class MessageDetailsViewModel @Inject constructor(
             defaultErrorMessage
         }
 
-        updateUiModelMessageWithFormattedHtml(message.messageId, bodyString)
-
-        return bodyString
+        updateUiModelMessageWithFormattedHtml(message.messageId, formattedHtml)
+        // Set the body of the message currently being displayed in messageRenderer to allow embedded images loading
+        messageRenderer.messageBody = formattedHtml
+        return formattedHtml
     }
 
     private fun updateUiModelMessageWithFormattedHtml(messageId: String?, formattedHtml: String?): Message? {

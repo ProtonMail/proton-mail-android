@@ -298,7 +298,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 isVisible = showMoreMessageOptions
                 setOnClickListener {
                     // we call it this way as it requires "special" context from the Activity
-                    (activity as? MessageDetailsActivity)?.printMessage()
+                    (activity as? MessageDetailsActivity)?.printMessage(messageIds[0])
                     dismiss()
                 }
             }
