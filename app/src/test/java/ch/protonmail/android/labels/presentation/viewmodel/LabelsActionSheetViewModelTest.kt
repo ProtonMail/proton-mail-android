@@ -30,7 +30,9 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.labels.domain.usecase.UpdateLabels
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
+import ch.protonmail.android.mailbox.domain.UpdateConversationsLabels
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import io.mockk.MockKAnnotations
@@ -73,6 +75,12 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
 
     @MockK
     private lateinit var conversationModeEnabled: ConversationModeEnabled
+
+    @MockK
+    private lateinit var conversationsRepository: ConversationsRepository
+
+    @MockK
+    private lateinit var updateConversationsLabels: UpdateConversationsLabels
 
     private lateinit var viewModel: LabelsActionSheetViewModel
 
@@ -125,15 +133,19 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         coEvery { getAllLabels.invoke(any(), any(), any()) } returns listOf(model1label, model2folder)
         coEvery { messageRepository.findMessageById(messageId1) } returns message1
 
+        coEvery { conversationModeEnabled(any()) } returns false
+
         viewModel = LabelsActionSheetViewModel(
             savedStateHandle,
             getAllLabels,
             userManager,
             updateLabels,
+            updateConversationsLabels,
             moveMessagesToFolder,
             moveConversationsToFolder,
             conversationModeEnabled,
-            messageRepository
+            messageRepository,
+            conversationsRepository
         )
     }
 
