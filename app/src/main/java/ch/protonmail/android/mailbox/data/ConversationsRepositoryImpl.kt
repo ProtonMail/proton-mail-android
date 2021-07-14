@@ -22,6 +22,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.details.data.toDomainModelList
 import ch.protonmail.android.domain.entity.Id
@@ -170,7 +171,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationIds.forEach { conversationId ->
             conversationDao.updateNumUnreadMessages(0, conversationId)
             // All the messages from the conversation are marked as read
-            messageDao.getAllMessagesFromAConversation(conversationId).forEach { message ->
+            getAllMessagesFromAConversation(conversationId).forEach { message ->
                 messageDao.saveMessage(message.apply { setIsRead(true) })
             }
         }
@@ -187,7 +188,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             val conversation = requireNotNull(conversationDao.observeConversation(conversationId, userId.id).first())
             conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
             // Only the latest message from the current location is marked as unread
-            messageDao.getAllMessagesFromAConversation(conversationId).forEach { message ->
+            getAllMessagesFromAConversation(conversationId).forEach { message ->
                 if (Constants.MessageLocationType.fromInt(message.location) == location) {
                     messageDao.saveMessage(message.apply { setIsRead(false) })
                     return@forEachConversation
@@ -203,7 +204,7 @@ class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             var lastMessageTime = 0L
-            messageDao.getAllMessagesFromAConversation(conversationId).forEach { message ->
+            getAllMessagesFromAConversation(conversationId).forEach { message ->
                 messageDao.updateStarred(message.messageId!!, true)
                 lastMessageTime = max(lastMessageTime, message.time)
             }
@@ -220,7 +221,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationIds.forEach { conversationId ->
             removeLabelsFromConversation(conversationId, userId, listOf(starredLabelId))
 
-            messageDao.getAllMessagesFromAConversation(conversationId).forEach { message ->
+            getAllMessagesFromAConversation(conversationId).forEach { message ->
                 messageDao.updateStarred(message.messageId!!, false)
             }
         }
@@ -235,7 +236,7 @@ class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             var lastMessageTime = 0L
-            messageDao.getAllMessagesFromAConversation(conversationId).forEach { message ->
+            getAllMessagesFromAConversation(conversationId).forEach { message ->
                 val labelsToRemoveFromMessage = getLabelIdsForRemovingWhenMovingToFolder(message.allLabelIDs)
                 val labelsToAddToMessage = getLabelIdsForAddingWhenMovingToFolder(folderId, message.allLabelIDs)
                 message.removeLabels(labelsToRemoveFromMessage.toList())
@@ -261,7 +262,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         deleteConversationsRemoteWorker.enqueue(conversationIds, currentFolderId, userId)
 
         conversationIds.forEach { conversationId ->
-            val messagesFromConversation = messageDao.getAllMessagesFromAConversation(conversationId)
+            val messagesFromConversation = getAllMessagesFromAConversation(conversationId)
             // The delete action deletes the messages that are in the current mailbox folder
             val messagesToDelete = messagesFromConversation.filter {
                 currentFolderId in it.allLabelIDs
@@ -288,7 +289,7 @@ class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             var lastMessageTime = 0L
-            messageDao.getAllMessageInfoFromAConversation(conversationId).forEach { message ->
+            messageDao.findAllMessagesInfoFromConversation(conversationId).forEach { message ->
                 message.addLabels(listOf(labelId))
                 messageDao.saveMessage(message)
                 lastMessageTime = max(lastMessageTime, message.time)
@@ -302,7 +303,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         unlabelConversationsRemoteWorker.enqueue(conversationIds, labelId, userId)
 
         conversationIds.forEach { conversationId ->
-            messageDao.getAllMessageInfoFromAConversation(conversationId).forEach { message ->
+            messageDao.findAllMessagesInfoFromConversation(conversationId).forEach { message ->
                 message.removeLabels(listOf(labelId))
                 messageDao.saveMessage(message)
             }
@@ -310,6 +311,11 @@ class ConversationsRepositoryImpl @Inject constructor(
             removeLabelsFromConversation(conversationId, userId, listOf(labelId))
         }
     }
+
+    private suspend fun getAllMessagesFromAConversation(conversationId: String): List<Message> =
+        messageDao.findAllMessagesInfoFromConversation(conversationId).onEach { message ->
+            message.attachments = message.attachments(messageDao)
+        }
 
     /**
      * When we move a conversation to Inbox, the destination folder is not always the only destination
@@ -403,7 +409,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationDao.observeConversation(conversationId, userId.s)
             .map { conversation ->
                 if (conversation != null) {
-                    val messages = messageDao.getAllMessagesFromAConversation(conversation.id)
+                    val messages = getAllMessagesFromAConversation(conversation.id)
                         .onEach { Timber.d("message id: ${it.messageId}, body: ${it.messageBody?.length}") }
                         .toDomainModelList()
                     Timber.d(

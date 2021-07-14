@@ -286,10 +286,6 @@ data class Message @JvmOverloads constructor(
         get() =
             MessageUtils.toContactString(bccList)
 
-    fun locationFromLabel(messageDao: MessageDao? = null): Constants.MessageLocationType  {
-        return MessageLocationResolver(messageDao).resolveLocationFromLabels(allLabelIDs)
-    }
-
     val isSent: Boolean
         get() {
             if (Type in listOf(MessageType.SENT, MessageType.INBOX_AND_SENT)) {
@@ -300,6 +296,9 @@ data class Message @JvmOverloads constructor(
             val user = userManager.currentLegacyUser
             return user!!.addresses!!.any { it.email.equals(senderEmail, ignoreCase = true) }
         }
+
+    fun locationFromLabel(messageDao: MessageDao? = null): Constants.MessageLocationType =
+        MessageLocationResolver(messageDao).resolveLocationFromLabels(allLabelIDs)
 
     fun writeTo(message: Message) {
         message.messageBody = messageBody
