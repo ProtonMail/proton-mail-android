@@ -32,6 +32,7 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.toConversationUiModel
@@ -39,6 +40,7 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity.Compani
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_OR_CONVERSATION_ID
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
@@ -48,6 +50,7 @@ import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
+import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.DownloadUtils
@@ -64,6 +67,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
@@ -230,6 +234,152 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             "<html>\n <head>\n  <style>$cssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessageContent  \n  </div>\n </body>\n</html>"
         verify { conversationMessage setProperty "decryptedHTML" value expectedMessageContent }
         assertEquals(conversationMessage, decryptedConversationObserver.observedValues.last()!!.messages[0])
+    }
+
+    @Test
+    fun verifyExclusiveLabelsAreFetchedWhenConversationFlowEmits() {
+        runBlockingTest {
+            // given
+            every { conversationModeEnabled.invoke(any()) } returns true
+            every { userManager.requireCurrentUserId() } returns testId2
+            val conversationId = UUID.randomUUID().toString()
+            val conversationResult = DataResult.Success(
+                ResponseSource.Local,
+                buildConversationWithExclusiveAndNonExclusiveLabels(conversationId)
+            )
+            val folderId1 = "folderId1"
+            val folder1 = Label(folderId1, "folder1", "color", 0, 0, true)
+            val folderId2 = "folderId2"
+            val folder2 = Label(folderId2, "folder2", "color", 0, 0, true)
+            val labelId1 = "labelId1"
+            val label1 = Label(labelId1, "label1", "-16776961", 0, 0, false)
+            val labelId2 = "labelId2"
+            val label2 = Label(labelId2, "label2", "-65281", 0, 0, false)
+            every {
+                labelRepository.findLabels(testUserId2, listOf(Id("folderId1"), Id("labelId1"), Id("labelId2")))
+            } returns flowOf(listOf(folder1, label1, label2))
+            every {
+                labelRepository.findLabels(testUserId2, listOf(Id("folderId2"), Id("labelId1")))
+            } returns flowOf(listOf(folder2, label1))
+            val messageId1 = "messageId1"
+            val messageId2 = "messageId2"
+            val sender = MessageSender("senderName", "sender@protonmail.ch")
+            val message1 = Message(
+                messageId = messageId1,
+                isDownloaded = false, // this is false as with current converters (.toDbModel()) we loose this information
+                sender = sender,
+                time = 82_374_724L,
+                subject = "subject4",
+                conversationId = conversationId,
+                isReplied = false,
+                isRepliedAll = true,
+                isForwarded = false,
+                numAttachments = 1,
+                allLabelIDs = listOf(folderId1, labelId1, labelId2)
+            )
+            val message2 = Message(
+                messageId = messageId2,
+                isDownloaded = false, // this is false as with current converters (.toDbModel()) we loose this information
+                sender = sender,
+                time = 82_374_724L,
+                subject = "subject4",
+                conversationId = conversationId,
+                isReplied = false,
+                isRepliedAll = true,
+                isForwarded = false,
+                numAttachments = 1,
+                allLabelIDs = listOf(folderId2, labelId1)
+            )
+            coEvery { messageRepository.findMessage(testId2, messageId1) } returns message1
+            coEvery { messageRepository.findMessage(testId2, messageId2) } returns message2
+
+            val expectedResult = hashMapOf(
+                messageId1 to listOf(folder1),
+                messageId2 to listOf(folder2)
+            )
+
+            // when
+            viewModel.exclusiveLabelsPerMessage.test {
+                userIdFlow.emit(testUserId2)
+                observeConversationFlow.emit(conversationResult)
+                // then
+                assertEquals(expectedResult, expectItem())
+            }
+        }
+    }
+
+    @Test
+    fun verifyNonExclusiveLabelsAreFetchedWhenConversationFlowEmits() {
+        runBlockingTest {
+            // given
+            every { conversationModeEnabled.invoke(any()) } returns true
+            every { userManager.requireCurrentUserId() } returns testId2
+            val conversationId = UUID.randomUUID().toString()
+            val conversationResult = DataResult.Success(
+                ResponseSource.Local,
+                buildConversationWithExclusiveAndNonExclusiveLabels(conversationId)
+            )
+            val folderId1 = "folderId1"
+            val folder1 = Label(folderId1, "folder1", "color", 0, 0, true)
+            val folderId2 = "folderId2"
+            val folder2 = Label(folderId2, "folder2", "color", 0, 0, true)
+            val labelId1 = "labelId1"
+            val label1 = Label(labelId1, "label1", "", 0, 0, false)
+            val labelChipUIModel1 = LabelChipUiModel(Id(labelId1), Name("label1"), null)
+            val labelId2 = "labelId2"
+            val label2 = Label(labelId2, "label2", "", 0, 0, false)
+            val labelChipUIModel2 = LabelChipUiModel(Id(labelId2), Name("label2"), null)
+            every {
+                labelRepository.findLabels(testUserId2, listOf(Id("folderId1"), Id("labelId1"), Id("labelId2")))
+            } returns flowOf(listOf(folder1, label1, label2))
+            every {
+                labelRepository.findLabels(testUserId2, listOf(Id("folderId2"), Id("labelId1")))
+            } returns flowOf(listOf(folder2, label1))
+            val messageId1 = "messageId1"
+            val messageId2 = "messageId2"
+            val sender = MessageSender("senderName", "sender@protonmail.ch")
+            val message1 = Message(
+                messageId = messageId1,
+                isDownloaded = false, // this is false as with current converters (.toDbModel()) we loose this information
+                sender = sender,
+                time = 82_374_724L,
+                subject = "subject4",
+                conversationId = conversationId,
+                isReplied = false,
+                isRepliedAll = true,
+                isForwarded = false,
+                numAttachments = 1,
+                allLabelIDs = listOf(folderId1, labelId1, labelId2)
+            )
+            val message2 = Message(
+                messageId = messageId2,
+                isDownloaded = false, // this is false as with current converters (.toDbModel()) we loose this information
+                sender = sender,
+                time = 82_374_724L,
+                subject = "subject4",
+                conversationId = conversationId,
+                isReplied = false,
+                isRepliedAll = true,
+                isForwarded = false,
+                numAttachments = 1,
+                allLabelIDs = listOf(folderId2, labelId1)
+            )
+            coEvery { messageRepository.findMessage(testId2, messageId1) } returns message1
+            coEvery { messageRepository.findMessage(testId2, messageId2) } returns message2
+
+            val expectedResult = hashMapOf(
+                messageId1 to listOf(labelChipUIModel1, labelChipUIModel2),
+                messageId2 to listOf(labelChipUIModel1)
+            )
+
+            // when
+            viewModel.nonExclusiveLabelsPerMessage.test {
+                userIdFlow.emit(testUserId2)
+                observeConversationFlow.emit(conversationResult)
+                // then
+                assertEquals(expectedResult, expectItem())
+            }
+        }
     }
 
     @Test
@@ -541,6 +691,41 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         )
     }
 
+    private fun buildConversationWithExclusiveAndNonExclusiveLabels(conversationId: String): Conversation {
+        val folderId1 = "folderId1"
+        val folderId2 = "folderId2"
+        val labelId1 = "labelId1"
+        val labelId2 = "labelId2"
+        return Conversation(
+            conversationId,
+            "Conversation subject",
+            listOf(),
+            listOf(),
+            5,
+            2,
+            1,
+            0,
+            listOf(
+                customFolderLabelContext(folderId1),
+                customFolderLabelContext(folderId2),
+                customLabelLabelContext(labelId1),
+                customLabelLabelContext(labelId2)
+            ),
+            listOf(
+                buildMessageDomainModelWithExclusiveAndNonExclusiveLabels(
+                    "messageId1",
+                    conversationId,
+                    listOf(folderId1, labelId1, labelId2)
+                ),
+                buildMessageDomainModelWithExclusiveAndNonExclusiveLabels(
+                    "messageId2",
+                    conversationId,
+                    listOf(folderId2, labelId1)
+                )
+            )
+        )
+    }
+
     private fun buildMessageDomainModel(
         messageId: String,
         conversationId: String,
@@ -562,6 +747,32 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         labelsIds = listOf("1", "2")
     )
 
+    private fun buildMessageDomainModelWithExclusiveAndNonExclusiveLabels(
+        messageId: String,
+        conversationId: String,
+        labelIds: List<String>
+    ) = MessageDomainModel(
+        messageId,
+        conversationId,
+        "subject4",
+        false,
+        Correspondent("senderName", "sender@protonmail.ch"),
+        listOf(),
+        82374724L,
+        1,
+        0L,
+        isReplied = false,
+        isRepliedAll = true,
+        isForwarded = false,
+        ccReceivers = emptyList(),
+        bccReceivers = emptyList(),
+        labelsIds = labelIds
+    )
+
     private fun inboxLabelContext() = LabelContext(INBOX.messageLocationTypeValue.toString(), 0, 0, 0L, 0, 0)
+
+    private fun customFolderLabelContext(folderId: String) = LabelContext(folderId, 1, 2, 3, 4, 5)
+
+    private fun customLabelLabelContext(labelId: String) = LabelContext(labelId, 1, 2, 3, 4, 5)
 
 }

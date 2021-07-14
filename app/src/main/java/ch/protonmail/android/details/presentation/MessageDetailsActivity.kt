@@ -171,11 +171,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             )
         }
 
-        viewModel.labels
-            .onEach(messageExpandableAdapter::setAllLabels)
+        viewModel.exclusiveLabelsPerMessage
+            .onEach(messageExpandableAdapter::setExclusiveLabelsPerMessage)
             .launchIn(lifecycleScope)
-        viewModel.nonExclusiveLabelsUiModels
-            .onEach(messageExpandableAdapter::setNonInclusiveLabels)
+        viewModel.nonExclusiveLabelsPerMessage
+            .onEach(messageExpandableAdapter::setNonExclusiveLabelsPerMessage)
             .launchIn(lifecycleScope)
 
         viewModel.messageDetailsError.observe(this, MessageDetailsErrorObserver())

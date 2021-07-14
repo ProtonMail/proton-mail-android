@@ -79,9 +79,11 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -161,23 +163,42 @@ internal class MessageDetailsViewModel @Inject constructor(
     val conversationUiModel: SharedFlow<ConversationUiModel>
         get() = _conversationUiFLow
 
-    val labels: Flow<List<Label>> =
+    val exclusiveLabelsPerMessage: Flow<HashMap<String, List<Label>>> =
         conversationUiModel
             .flatMapLatest { conversation ->
+                val labelsHashMap = hashMapOf<String, List<Label>>()
                 val userId = UserId(userManager.requireCurrentUserId().s)
-                val labelsIds = conversation.labelIds.map(::Id)
-                labelRepository.findLabels(userId, labelsIds)
+                conversation.messages.forEach { message ->
+                    val allLabelIds = message.allLabelIDs.map { labelId -> Id(labelId) }
+                    labelsHashMap[requireNotNull(message.messageId)] =
+                        labelRepository.findLabels(userId, allLabelIds).first()
+                            .filter { label ->
+                                label.exclusive
+                            }
+                }
+                return@flatMapLatest flowOf(labelsHashMap)
             }
 
-    val nonExclusiveLabelsUiModels: Flow<List<LabelChipUiModel>> =
-        labels.map { labelsList ->
-            labelsList.map { label ->
-                val labelColor = label.color.takeIfNotBlank()
-                    ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
-
-                LabelChipUiModel(Id(label.id), Name(label.name), labelColor)
+    val nonExclusiveLabelsPerMessage: Flow<HashMap<String, List<LabelChipUiModel>>> =
+        conversationUiModel
+            .flatMapLatest { conversation ->
+                val labelsHashMap = hashMapOf<String, List<LabelChipUiModel>>()
+                val userId = UserId(userManager.requireCurrentUserId().s)
+                conversation.messages.forEach { message ->
+                    val allLabelIds = message.allLabelIDs.map { labelId -> Id(labelId) }
+                    labelsHashMap[requireNotNull(message.messageId)] =
+                        labelRepository.findLabels(userId, allLabelIds).first()
+                            .filter { label ->
+                                !label.exclusive
+                            }
+                            .map { label ->
+                                val labelColor = label.color.takeIfNotBlank()
+                                    ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
+                                LabelChipUiModel(Id(label.id), Name(label.name), labelColor)
+                            }
+                }
+                return@flatMapLatest flowOf(labelsHashMap)
             }
-        }
 
     val checkStoragePermission: LiveData<Event<Boolean>>
         get() = _checkStoragePermission

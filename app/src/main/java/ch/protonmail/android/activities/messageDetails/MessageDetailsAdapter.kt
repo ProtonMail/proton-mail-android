@@ -80,8 +80,8 @@ internal class MessageDetailsAdapter(
     private val onMoreMessageActionsClicked: (Message) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsListItem>(context) {
 
-    private var allLabelsList: List<Label>? = emptyList()
-    private var nonInclusiveLabelsList: List<LabelChipUiModel> = emptyList()
+    private var exclusiveLabelsPerMessage: HashMap<String, List<Label>> = hashMapOf()
+    private var nonExclusiveLabelsPerMessage: HashMap<String, List<LabelChipUiModel>> = hashMapOf()
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (getItemViewType(position) == TYPE_HEADER) {
@@ -170,7 +170,11 @@ internal class MessageDetailsAdapter(
 
         fun bind(message: Message) {
             val messageDetailsHeaderView = itemView.headerView
-            messageDetailsHeaderView.bind(message, allLabelsList ?: listOf(), nonInclusiveLabelsList)
+            messageDetailsHeaderView.bind(
+                message,
+                exclusiveLabelsPerMessage[message.messageId] ?: listOf(),
+                nonExclusiveLabelsPerMessage[message.messageId] ?: listOf()
+            )
 
             messageDetailsHeaderView.setOnClickListener { view ->
                 val headerView = view as MessageDetailsHeaderView
@@ -372,12 +376,12 @@ internal class MessageDetailsAdapter(
         setItems(items)
     }
 
-    fun setAllLabels(labels: List<Label>) {
-        allLabelsList = labels
+    fun setExclusiveLabelsPerMessage(labels: HashMap<String, List<Label>>) {
+        exclusiveLabelsPerMessage = labels
     }
 
-    fun setNonInclusiveLabels(labels: List<LabelChipUiModel>) {
-        nonInclusiveLabelsList = labels
+    fun setNonExclusiveLabelsPerMessage(labels: HashMap<String, List<LabelChipUiModel>>) {
+        nonExclusiveLabelsPerMessage = labels
     }
 
     @SuppressLint("ClickableViewAccessibility")
