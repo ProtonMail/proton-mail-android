@@ -19,6 +19,7 @@
 package ch.protonmail.android.activities
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -84,6 +85,14 @@ const val EXTRA_FIRST_LOGIN = "extra.first.login"
 
 const val REQUEST_CODE_ACCOUNT_MANAGER = 997
 const val REQUEST_CODE_SNOOZED_NOTIFICATIONS = 555
+
+/**
+ * Set drawer behind system bars only on Android 11, as Drawer items don't fit correctly below API 30
+ *  ( fitsSystemWindow = true doesn't work as expected )
+ *
+ * Tracked on MAILAND-2123
+ */
+private val SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
 // endregion
 
 /**
@@ -158,9 +167,13 @@ internal abstract class NavigationActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        @Suppress("DEPRECATION") // Is there a way to mime the behaviour with newer API?
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        setDrawBehindSystemBars()
+        if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS) {
+            // This is needed for the status bar to change correctly, it doesn't without this. Is there a way to mime
+            //  the behaviour with newer API?
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            setDrawBehindSystemBars()
+        }
 
         super.onCreate(savedInstanceState)
         authOrchestrator.register(this)
@@ -253,7 +266,7 @@ internal abstract class NavigationActivity : BaseActivity() {
     override fun onResume() {
         accountStateManager.setAuthOrchestrator(authOrchestrator)
         super.onResume()
-        setLightStatusBar()
+        if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS) setLightStatusBar()
         checkUserId()
         app.startJobManager()
         mJobManager.addJobInBackground(FetchUpdatesJob())
@@ -321,12 +334,12 @@ internal abstract class NavigationActivity : BaseActivity() {
 
             override fun onDrawerOpened(drawerView: View) {
                 super.onDrawerOpened(drawerView)
-                setDarkStatusBar()
+                if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS) setDarkStatusBar()
             }
 
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
-                setLightStatusBar()
+                if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS) setLightStatusBar()
                 onDrawerClose()
                 onDrawerClose = {}
             }
