@@ -112,30 +112,30 @@ class MessageActionSheetViewModel @Inject constructor(
     fun moveToInbox(
         messageIds: List<String>,
         currentFolder: Constants.MessageLocationType
-    ) = moveMessagesToFolderAndDismiss(
-        messageIds, Constants.MessageLocationType.INBOX, currentFolder
-    )
+    ) {
+        moveMessagesToFolderAndDismiss(messageIds, Constants.MessageLocationType.INBOX, currentFolder)
+    }
 
     fun moveToArchive(
         messageIds: List<String>,
         currentFolder: Constants.MessageLocationType
-    ) = moveMessagesToFolderAndDismiss(
-        messageIds, Constants.MessageLocationType.ARCHIVE, currentFolder
-    )
+    ) {
+        moveMessagesToFolderAndDismiss(messageIds, Constants.MessageLocationType.ARCHIVE, currentFolder)
+    }
 
     fun moveToSpam(
         messageIds: List<String>,
         currentFolder: Constants.MessageLocationType
-    ) = moveMessagesToFolderAndDismiss(
-        messageIds, Constants.MessageLocationType.SPAM, currentFolder
-    )
+    ) {
+        moveMessagesToFolderAndDismiss(messageIds, Constants.MessageLocationType.SPAM, currentFolder)
+    }
 
     fun moveToTrash(
         messageIds: List<String>,
         currentFolder: Constants.MessageLocationType
-    ) = moveMessagesToFolderAndDismiss(
-        messageIds, Constants.MessageLocationType.TRASH, currentFolder
-    )
+    ) {
+        moveMessagesToFolderAndDismiss(messageIds, Constants.MessageLocationType.TRASH, currentFolder)
+    }
 
     fun starMessage(
         ids: List<String>,
@@ -245,7 +245,8 @@ class MessageActionSheetViewModel @Inject constructor(
     }
 
     private fun moveMessagesToFolderAndDismiss(
-        ids: List<String>, newFolderLocationId: Constants.MessageLocationType,
+        ids: List<String>,
+        newFolderLocationId: Constants.MessageLocationType,
         currentFolder: Constants.MessageLocationType
     ) {
         viewModelScope.launch {

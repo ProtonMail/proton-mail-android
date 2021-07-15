@@ -65,21 +65,17 @@ import org.apache.http.protocol.HTTP
 import timber.log.Timber
 import java.util.ArrayList
 
-private const val ITEM_MESSAGE_BODY_WEB_VIEW_ID = 0x0072347283
-private const val ITEM_MESSAGE_BODY_PROGRESS_VIEW_ID = 0x0072349834
-private const val ITEM_MESSAGE_ACTIONS_LAYOUT_ID = 0x0072342369
-
 internal class MessageDetailsAdapter(
     private val context: Context,
     private var messages: List<Message>,
     private val messageDetailsRecyclerView: RecyclerView,
+    private val messageBodyParser: MessageBodyParser,
+    private val userManager: UserManager,
     private val onLoadEmbeddedImagesClicked: (Message) -> Unit,
     private val onDisplayRemoteContentClicked: (Message) -> Unit,
-    private val userManager: UserManager,
     private val onLoadMessageBody: (Message) -> Unit,
     private val onAttachmentDownloadCallback: (Attachment) -> Unit,
     private val onEditDraftClicked: (Message) -> Unit,
-    private val messageBodyParser: MessageBodyParser,
     private val onReplyMessageClicked: (Message) -> Unit,
     private val onMoreMessageActionsClicked: (Message) -> Unit
 ) : ExpandableRecyclerAdapter<MessageDetailsListItem>(context) {
@@ -134,15 +130,15 @@ internal class MessageDetailsAdapter(
 
     private fun createMessageBodyProgressBar(): ProgressBar {
         val messageBodyProgress = ProgressBar(context)
-        messageBodyProgress.id = ITEM_MESSAGE_BODY_PROGRESS_VIEW_ID
+        messageBodyProgress.id = R.id.item_message_body_progress_view_id
         return messageBodyProgress
     }
 
     private fun showingMoreThanOneMessage() = messages.size > 1
 
-    private fun createInMessageActionsView(): View {
+    private fun createInMessageActionsView(): MessageDetailsActionsView {
         val detailsMessageActions = MessageDetailsActionsView(context)
-        detailsMessageActions.id = ITEM_MESSAGE_ACTIONS_LAYOUT_ID
+        detailsMessageActions.id = R.id.item_message_body_actions_layout_id
         return detailsMessageActions
     }
 
@@ -156,7 +152,7 @@ internal class MessageDetailsAdapter(
             (context as FragmentActivity).redirectToChrome()
             return null
         }
-        webView.id = ITEM_MESSAGE_BODY_WEB_VIEW_ID
+        webView.id = R.id.item_message_body_web_view_id
 
         val webViewClient = MessageDetailsPmWebViewClient(userManager, context, itemView)
         configureWebView(webView, webViewClient)
@@ -226,9 +222,10 @@ internal class MessageDetailsAdapter(
             }
 
             val webView =
-                itemView.messageWebViewContainer.findViewById<WebView>(ITEM_MESSAGE_BODY_WEB_VIEW_ID) ?: return
+                itemView.messageWebViewContainer.findViewById<WebView>(R.id.item_message_body_web_view_id) ?: return
             val messageBodyProgress =
-                itemView.messageWebViewContainer.findViewById<ProgressBar>(ITEM_MESSAGE_BODY_PROGRESS_VIEW_ID) ?: return
+                itemView.messageWebViewContainer.findViewById<ProgressBar>(R.id.item_message_body_progress_view_id)
+                    ?: return
             val htmlContent = if (showingMoreThanOneMessage() || messageHasNoQuotedPart(listItem)) {
                 listItem.messageFormattedHtml
             } else {
@@ -256,7 +253,7 @@ internal class MessageDetailsAdapter(
             webView: WebView
         ) {
             val messageActionsView: MessageDetailsActionsView =
-                itemView.messageWebViewContainer.findViewById(ITEM_MESSAGE_ACTIONS_LAYOUT_ID) ?: return
+                itemView.messageWebViewContainer.findViewById(R.id.item_message_body_actions_layout_id) ?: return
 
             val replyMode = if (message.toList.size + message.ccList.size > 1) {
                 MessageDetailsActionsView.ReplyMode.REPLY_ALL
@@ -347,13 +344,17 @@ internal class MessageDetailsAdapter(
         val item: MessageDetailsListItem? = visibleItems?.firstOrNull {
             it.ItemType == TYPE_ITEM && it.message.messageId == messageId
         }
+        if (item == null) {
+            Timber.d("Trying to show $messageId details but message is not in visibleItems list")
+            return
+        }
 
         val validParsedBody = parsedBody ?: return
         val messageBodyParts = messageBodyParser.splitBody(validParsedBody)
-        item?.messageFormattedHtml = messageBodyParts.messageBody
-        item?.messageFormattedHtmlWithQuotedHistory = messageBodyParts.messageBodyWithQuote
-        item?.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton
-        item?.message?.setAttachmentList(attachments)
+        item.messageFormattedHtml = messageBodyParts.messageBody
+        item.messageFormattedHtmlWithQuotedHistory = messageBodyParts.messageBodyWithQuote
+        item.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton
+        item.message.setAttachmentList(attachments)
 
         visibleItems?.indexOf(item)?.let { changedItemIndex ->
             notifyItemChanged(changedItemIndex, item)

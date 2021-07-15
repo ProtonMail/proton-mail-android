@@ -19,16 +19,20 @@
   -->
 <resources>
 
-    <item name="more_items_ll_more_text_view" type="id"/>
-    <item name="multi_line_label_recycler_view" type="id"/>
-    <item name="side_drawer_recycler_view" type="id"/>
-    <item name="single_line_label_more_text_view" type="id"/>
+    <item name="more_items_ll_more_text_view" type="id" />
+    <item name="multi_line_label_recycler_view" type="id" />
+    <item name="side_drawer_recycler_view" type="id" />
+    <item name="single_line_label_more_text_view" type="id" />
 
-    <item name="monday" type="id"/>
-    <item name="tuesday" type="id"/>
-    <item name="wednesday" type="id"/>
-    <item name="thursday" type="id"/>
-    <item name="friday" type="id"/>
-    <item name="saturday" type="id"/>
-    <item name="sunday" type="id"/>
+    <item name="item_message_body_web_view_id" type="id" />
+    <item name="item_message_body_progress_view_id" type="id" />
+    <item name="item_message_body_actions_layout_id" type="id" />
+
+    <item name="monday" type="id" />
+    <item name="tuesday" type="id" />
+    <item name="wednesday" type="id" />
+    <item name="thursday" type="id" />
+    <item name="friday" type="id" />
+    <item name="saturday" type="id" />
+    <item name="sunday" type="id" />
 </resources>

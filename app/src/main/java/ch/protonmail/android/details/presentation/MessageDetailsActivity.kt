@@ -188,13 +188,13 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             this,
             listOf(),
             messageDetailsRecyclerView,
+            messageBodyParser,
+            mUserManager,
             onLoadEmbeddedImagesClicked(),
             onDisplayRemoteContentClicked(),
-            mUserManager,
             onLoadMessageBody(),
             onDownloadAttachment(),
             onEditDraftClicked(),
-            messageBodyParser,
             onReplyMessageClicked(),
             onShowMessageActionSheet()
         )

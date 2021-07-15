@@ -209,15 +209,6 @@ object Constants {
         SEARCH(99),
         LABEL_FOLDER(999);
 
-        companion object {
-
-            fun fromInt(messageLocationTypeValue: Int): MessageLocationType {
-                return values().find {
-                    messageLocationTypeValue == it.messageLocationTypeValue
-                } ?: INVALID
-            }
-        }
-
         @Deprecated(
             message = "Passing `MessageLocationType` as a string is very error prone as clients might" +
                 " mistakenly use it as a location's ID (`messageLocationTypeValue`).",
@@ -227,8 +218,15 @@ object Constants {
             ),
             level = DeprecationLevel.ERROR
         )
-        override fun toString(): String {
-            return super.toString()
+        override fun toString() = super.toString()
+
+        companion object {
+
+            fun fromInt(messageLocationTypeValue: Int): MessageLocationType {
+                return values().find {
+                    messageLocationTypeValue == it.messageLocationTypeValue
+                } ?: INVALID
+            }
         }
     }
 
