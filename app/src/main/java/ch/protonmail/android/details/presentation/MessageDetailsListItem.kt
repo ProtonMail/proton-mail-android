@@ -27,6 +27,7 @@ import ch.protonmail.android.utils.ui.TYPE_ITEM
 class MessageDetailsListItem : ExpandableRecyclerAdapter.ListItem {
 
     var message: Message
+    var messageFormattedHtmlWithQuotedHistory: String? = null
     var messageFormattedHtml: String? = null
     var showLoadEmbeddedImagesButton: Boolean = false
 
@@ -34,8 +35,13 @@ class MessageDetailsListItem : ExpandableRecyclerAdapter.ListItem {
         this.message = message
     }
 
-    constructor(message: Message, content: String?) : super(TYPE_ITEM) {
+    /**
+     * @param messageContent the content of this message, in formatted HTML and without the "QUOTED" message
+     * @param originalMessageContent the original full content of this message (with QUOTE), formatted in HTML
+     */
+    constructor(message: Message, messageContent: String?, originalMessageContent: String?) : super(TYPE_ITEM) {
         this.message = message
-        this.messageFormattedHtml = content
+        this.messageFormattedHtml = messageContent
+        this.messageFormattedHtmlWithQuotedHistory = originalMessageContent
     }
 }

@@ -161,12 +161,6 @@ internal class MessageDetailsViewModel @Inject constructor(
     val conversationUiModel: SharedFlow<ConversationUiModel>
         get() = _conversationUiFLow
 
-    private var bodyString: String? = null
-        set(value) {
-            field = value
-            messageRenderer.messageBody = value
-        }
-
     val labels: Flow<List<Label>> =
         conversationUiModel
             .flatMapLatest { conversation ->
@@ -573,18 +567,14 @@ internal class MessageDetailsViewModel @Inject constructor(
         }
     }
 
-    fun printMessage(activityContext: Context) {
-        viewModelScope.launch {
-            val message = lastMessage()
-            message?.let {
-                Timber.v("Print message id: ${it.messageId}")
-                MessagePrinter(
-                    activityContext,
-                    activityContext.resources,
-                    activityContext.getSystemService(Context.PRINT_SERVICE) as PrintManager,
-                    remoteContentDisplayed
-                ).printMessage(it, bodyString ?: "")
-            }
+    fun printMessage(messageId: String, activityContext: Context) {
+        _decryptedConversationUiModel.value?.messages?.find { it.messageId == messageId }?.let {
+            MessagePrinter(
+                activityContext,
+                activityContext.resources,
+                activityContext.getSystemService(Context.PRINT_SERVICE) as PrintManager,
+                remoteContentDisplayed
+            ).printMessage(it, it.decryptedHTML ?: "")
         }
     }
 
@@ -593,8 +583,8 @@ internal class MessageDetailsViewModel @Inject constructor(
         windowWidth: Int,
         css: String,
         defaultErrorMessage: String
-    ): String? {
-        bodyString = try {
+    ): String {
+        val formattedHtml = try {
             val contentTransformer = DefaultTransformer()
                 .pipe(ViewportTransformer(windowWidth, css))
 
@@ -604,24 +594,36 @@ internal class MessageDetailsViewModel @Inject constructor(
             defaultErrorMessage
         }
 
-        updateUiModelMessageWithFormattedHtml(message.messageId, bodyString)
-
-        return bodyString
+        updateUiModelMessageWithFormattedHtml(message.messageId, formattedHtml, message.decryptedBody)
+        // Set the body of the message currently being displayed in messageRenderer to allow embedded images loading
+        messageRenderer.messageBody = formattedHtml
+        return formattedHtml
     }
 
-    private fun updateUiModelMessageWithFormattedHtml(messageId: String?, formattedHtml: String?): Message? {
+    private fun updateUiModelMessageWithFormattedHtml(
+        messageId: String?,
+        formattedHtml: String?,
+        decryptedBody: String? = null
+    ): Message? {
+        // Needed to ensure the `decryptedHTML` is available on a message when an action is executed on it,
+        // since most of the click listeners in `MessageDetailsActivity` that trigger actions (such as
+        // reply or printMessage) hold a reference to the message in the `conversationUiModel object.
+        // This is considered tech debt and detailed in MAILAND-2119
         val currentUiModel = _decryptedConversationUiModel.value
         val message = currentUiModel?.messages?.find { it.messageId == messageId }
+        decryptedBody?.let {
+            message?.decryptedBody = it
+        }
         message?.decryptedHTML = formattedHtml
         return message
     }
 
-    fun moveToTrash() {
+    fun moveLastMessageToTrash() {
         viewModelScope.launch {
             lastMessage()?.let { message ->
                 moveMessagesToFolder(
                     listOf(messageOrConversationId),
-                    Constants.MessageLocationType.TRASH.toString(),
+                    Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
                     message.folderLocation ?: EMPTY_STRING
                 )
             }

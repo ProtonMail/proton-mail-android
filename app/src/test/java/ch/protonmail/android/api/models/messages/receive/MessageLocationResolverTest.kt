@@ -152,7 +152,7 @@ class MessageLocationResolverTest {
     }
 
     @Test
-    fun verifyThaLabelFolderLocationWithAllLocationIsParsedProperly() {
+    fun verifyThatLabelFolderLocationWithAllLocationIsParsedProperly() {
 
         // given
         val testLabelIds = listOf(
@@ -173,7 +173,7 @@ class MessageLocationResolverTest {
     }
 
     @Test
-    fun verifyThaLabelFolderLocationWithAllLocationAndStarredIsParsedProperly() {
+    fun verifyThatLabelFolderLocationWithAllLocationAndStarredIsParsedProperly() {
 
         // given
         val testLabelIds = listOf(
@@ -194,4 +194,23 @@ class MessageLocationResolverTest {
         // then
         assertEquals(expected, result)
     }
+
+    @Test
+    fun verifyThatTheOrderingOfCustomFolderIdsAndStandardLocationsHasNoImpactOnTheLocationParsing() {
+
+        // given
+        val testLabelIds = listOf(
+            "a3z7Gw2gVTdgp00hH4NNoTouuQI2LH2kBzJd-SaGyF3UnlwKOgM-B32G9Fgj6aKq_ewuy3DAioOIXnQRGlrdJg==",
+            "5",
+            "6"
+        )
+        val expected = Constants.MessageLocationType.ARCHIVE
+
+        // when
+        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
+
+        // then
+        assertEquals(expected, result)
+    }
+
 }

@@ -20,6 +20,7 @@
 package ch.protonmail.android.ui.actionsheet
 
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 
 /**
  * Contains types of actions executed from message action sheet.
@@ -30,16 +31,15 @@ sealed class MessageActionSheetAction {
     data class ShowLabelsManager(
         val messageIds: List<String>,
         val currentFolderLocationId: Int,
-        val labelActionSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL
+        val labelActionSheetType: LabelsActionSheet.Type = LabelsActionSheet.Type.LABEL,
+        val actionSheetTarget: ActionSheetTarget
     ) : MessageActionSheetAction()
 
     data class ShowMessageHeaders(val messageHeaders: String) : MessageActionSheetAction()
 
-    data class ChangeReadStatus(val readStatus: Boolean) : MessageActionSheetAction()
-
     data class ChangeStarredStatus(val starredStatus: Boolean) : MessageActionSheetAction()
 
-    data class MoveToFolder(val folderId: String) : MessageActionSheetAction()
-
     object Delete : MessageActionSheetAction()
+
+    data class DismissActionSheet(val shallDismissBackingActivity: Boolean) : MessageActionSheetAction()
 }

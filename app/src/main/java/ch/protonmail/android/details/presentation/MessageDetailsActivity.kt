@@ -51,6 +51,7 @@ import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsV
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
@@ -60,6 +61,7 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
+import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
@@ -79,6 +81,7 @@ import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
+import javax.inject.Inject
 import kotlin.math.abs
 
 private const val TITLE_ANIMATION_THRESHOLD = 0.9
@@ -87,6 +90,9 @@ private const val ONE_HUNDRED_PERCENT = 1.0
 
 @AndroidEntryPoint
 internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
+
+    @Inject
+    lateinit var messageBodyParser: MessageBodyParser
 
     private lateinit var messageOrConversationId: String
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
@@ -182,16 +188,19 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             this,
             listOf(),
             messageDetailsRecyclerView,
-            onLoadEmbeddedImagesClicked(),
-            onDisplayRemoteContentClicked(),
+            messageBodyParser,
             mUserManager,
-            onLoadMessageBody(),
-            onDownloadAttachment(),
-            onEditDraftClicked()
+            ::onLoadEmbeddedImagesClicked,
+            ::onDisplayRemoteContentClicked,
+            ::onLoadMessageBody,
+            ::onDownloadAttachment,
+            ::onEditDraftClicked,
+            ::onReplyMessageClicked,
+            ::onShowMessageActionSheet
         )
     }
 
-    private fun onLoadMessageBody() = { message: Message ->
+    private fun onLoadMessageBody(message: Message) {
         if (message.messageId != null) {
             viewModel.loadMessageBody(message).mapLatest { loadedMessage ->
 
@@ -277,9 +286,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         return true
     }
 
-    fun showReportPhishingDialog(
-        message: Message? = viewModel.decryptedConversationUiModel.value?.messages?.last()
-    ) {
+    fun showReportPhishingDialog(messageId: String) {
+        val message = viewModel.decryptedConversationUiModel.value?.messages?.find { it.messageId == messageId }
         AlertDialog.Builder(this)
             .setTitle(R.string.phishing_dialog_title)
             .setMessage(R.string.phishing_dialog_message)
@@ -522,7 +530,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private fun setupLastMessageActionsListener(message: Message) {
         messageDetailsActionsView.setOnMoreActionClickListener {
             MessageActionSheet.newInstance(
-                MessageActionSheet.ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID,
+                ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN,
                 listOf(message.messageId ?: messageOrConversationId),
                 message.location,
                 getCurrentSubject(),
@@ -539,7 +547,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         )
         messageDetailsActionsView.bind(actionsUiModel)
         messageDetailsActionsView.setOnThirdActionClickListener {
-            viewModel.moveToTrash()
+            viewModel.moveLastMessageToTrash()
             onBackPressed()
         }
         messageDetailsActionsView.setOnSecondActionClickListener {
@@ -547,13 +555,17 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             viewModel.markUnread()
         }
         messageDetailsActionsView.setOnFirstActionClickListener {
-            val messageAction = if (message.toList.size + message.ccList.size > 1) {
-                Constants.MessageActionType.REPLY_ALL
-            } else {
-                Constants.MessageActionType.REPLY
-            }
-            executeMessageAction(messageAction, message)
+            onReplyMessage(message)
         }
+    }
+
+    private fun onReplyMessage(message: Message) {
+        val messageAction = if (message.toList.size + message.ccList.size > 1) {
+            Constants.MessageActionType.REPLY_ALL
+        } else {
+            Constants.MessageActionType.REPLY
+        }
+        executeMessageAction(messageAction, message)
     }
 
     private fun displayToolbarData(conversation: ConversationUiModel) {
@@ -749,7 +761,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private fun onLoadEmbeddedImagesClicked() = { message: Message ->
+    private fun onLoadEmbeddedImagesClicked(message: Message) {
         // this will ensure that the message has been loaded
         // and will protect from premature clicking on download attachments button
         if (viewModel.renderingPassed) {
@@ -757,12 +769,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private fun onDisplayRemoteContentClicked() = { message: Message ->
+    private fun onDisplayRemoteContentClicked(message: Message) {
         viewModel.displayRemoteContent(message)
         viewModel.checkStoragePermission.observe(this, { storagePermissionHelper.checkPermission() })
     }
 
-    private fun onEditDraftClicked() = { message: Message ->
+    private fun onEditDraftClicked(message: Message) {
         val intent = AppUtil.decorInAppIntent(Intent(this, ComposeMessageActivity::class.java))
         intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, message.messageId)
         intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, message.isInline)
@@ -770,13 +782,28 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         startActivity(intent)
     }
 
-    private fun onDownloadAttachment() = { attachment: Attachment ->
+    private fun onDownloadAttachment(attachment: Attachment) {
         attachmentToDownload.set(attachment)
         storagePermissionHelper.checkPermission()
     }
 
-    fun printMessage() {
-        viewModel.printMessage(primaryBaseActivity)
+    private fun onReplyMessageClicked(message: Message) {
+        onReplyMessage(message)
+    }
+
+    private fun onShowMessageActionSheet(message: Message) {
+        MessageActionSheet.newInstance(
+            ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN,
+            listOf(message.messageId ?: messageOrConversationId),
+            message.location,
+            getCurrentSubject(),
+            getMessagesFrom(message.sender?.name),
+            message.isStarred ?: false
+        ).show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
+    }
+
+    fun printMessage(messageId: String) {
+        viewModel.printMessage(messageId, primaryBaseActivity)
     }
 
     companion object {

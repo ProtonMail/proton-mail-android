@@ -209,7 +209,19 @@ object Constants {
         SEARCH(99),
         LABEL_FOLDER(999);
 
+        @Deprecated(
+            message = "Passing `MessageLocationType` as a string is very error prone as clients might" +
+                " mistakenly use it as a location's ID (`messageLocationTypeValue`).",
+            replaceWith = ReplaceWith(
+                "Pass the enum type and get it's value on the client instead " +
+                    "or pass the .toString() value of `messageLocationTypeValue"
+            ),
+            level = DeprecationLevel.ERROR
+        )
+        override fun toString() = super.toString()
+
         companion object {
+
             fun fromInt(messageLocationTypeValue: Int): MessageLocationType {
                 return values().find {
                     messageLocationTypeValue == it.messageLocationTypeValue

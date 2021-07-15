@@ -38,6 +38,7 @@ import ch.protonmail.android.databinding.FragmentMessageActionSheetBinding
 import ch.protonmail.android.databinding.LayoutMessageDetailsActionsSheetButtonsBinding
 import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.utils.AppUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -62,7 +63,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val originatorId = arguments?.getInt(EXTRA_ARG_ORIGINATOR_SCREEN_ID) ?: ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+        val actionsTarget = arguments?.getSerializable(EXTRA_ARG_ACTION_TARGET) as? ActionSheetTarget
+            ?: ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
         val messageIds: List<String> = arguments?.getStringArray(EXTRA_ARG_MESSAGE_IDS)?.toList()
             ?: throw IllegalStateException("messageIds in MessageActionSheet are Empty!")
         val messageLocation =
@@ -73,10 +75,10 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         val binding = FragmentMessageActionSheetBinding.inflate(inflater)
 
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
-        setupReplyActionsBindings(binding.includeLayoutActionSheetButtons, originatorId)
-        setupManageSectionBindings(binding, viewModel, originatorId, messageIds, messageLocation)
+        setupReplyActionsBindings(binding.includeLayoutActionSheetButtons, actionsTarget)
+        setupManageSectionBindings(binding, viewModel, actionsTarget, messageIds, messageLocation)
         setupMoveSectionBindings(binding, viewModel, messageIds, messageLocation)
-        setupMoreSectionBindings(binding, originatorId, messageIds)
+        setupMoreSectionBindings(binding, actionsTarget, messageIds)
         actionSheetHeader = binding.actionSheetHeaderDetailsActions
 
         viewModel.actionsFlow
@@ -150,10 +152,11 @@ class MessageActionSheet : BottomSheetDialogFragment() {
 
     private fun setupReplyActionsBindings(
         binding: LayoutMessageDetailsActionsSheetButtonsBinding,
-        originatorId: Int
+        actionsTarget: ActionSheetTarget
     ) {
         with(binding) {
-            layoutDetailsActions.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+            layoutDetailsActions.isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN ||
+                actionsTarget == ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
             textViewDetailsActionsReply.setOnClickListener {
                 (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.REPLY)
@@ -173,7 +176,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     private fun setupManageSectionBindings(
         binding: FragmentMessageActionSheetBinding,
         viewModel: MessageActionSheetViewModel,
-        originatorId: Int,
+        actionsTarget: ActionSheetTarget,
         messageIds: List<String>,
         messageLocation: Constants.MessageLocationType
     ) {
@@ -181,21 +184,21 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             val isStarred = arguments?.getBoolean(EXTRA_ARG_IS_STARED) ?: false
 
             textViewDetailsActionsUnstar.apply {
-                isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID || isStarred
+                isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN || isStarred
                 setOnClickListener {
                     viewModel.unStarMessage(messageIds, messageLocation)
                 }
             }
 
             textViewDetailsActionsStar.apply {
-                isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID || !isStarred
+                isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN || !isStarred
                 setOnClickListener {
                     viewModel.starMessage(messageIds, messageLocation)
                 }
             }
 
             textViewDetailsActionsMarkRead.apply {
-                isVisible = originatorId != ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+                isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
                 setOnClickListener {
                     viewModel.markRead(messageIds, messageLocation)
                 }
@@ -228,14 +231,14 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     setText(R.string.not_spam_move_to_inbox)
                 }
                 setOnClickListener {
-                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.INBOX)
+                    viewModel.moveToInbox(messageIds, messageLocation)
                 }
             }
             textViewDetailsActionsTrash.apply {
                 isVisible = messageLocation in Constants.MessageLocationType.values()
                     .filter { it != Constants.MessageLocationType.TRASH }
                 setOnClickListener {
-                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.TRASH)
+                    viewModel.moveToTrash(messageIds, messageLocation)
                 }
             }
             textViewDetailsActionsMoveToArchive.apply {
@@ -245,7 +248,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                             type != Constants.MessageLocationType.SPAM
                     }
                 setOnClickListener {
-                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.ARCHIVE)
+                    viewModel.moveToArchive(messageIds, messageLocation)
                 }
             }
             textViewDetailsActionsMoveToSpam.apply {
@@ -257,7 +260,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                             type != Constants.MessageLocationType.TRASH
                     }
                 setOnClickListener {
-                    viewModel.moveToFolder(messageIds, messageLocation, Constants.MessageLocationType.SPAM)
+                    viewModel.moveToSpam(messageIds, messageLocation)
                 }
             }
             textViewDetailsActionsDelete.apply {
@@ -281,32 +284,34 @@ class MessageActionSheet : BottomSheetDialogFragment() {
 
     private fun setupMoreSectionBindings(
         binding: FragmentMessageActionSheetBinding,
-        originatorId: Int,
+        actionsTarget: ActionSheetTarget,
         messageIds: List<String>
     ) {
         with(binding) {
+            val showMoreMessageOptions = actionsTarget == ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN ||
+                actionsTarget == ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
-            viewActionSheetSeparator.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
-            textViewActionSheetMoreTitle.isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+            viewActionSheetSeparator.isVisible = showMoreMessageOptions
+            textViewActionSheetMoreTitle.isVisible = showMoreMessageOptions
 
             textViewDetailsActionsPrint.apply {
-                isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+                isVisible = showMoreMessageOptions
                 setOnClickListener {
                     // we call it this way as it requires "special" context from the Activity
-                    (activity as? MessageDetailsActivity)?.printMessage()
+                    (activity as? MessageDetailsActivity)?.printMessage(messageIds.first())
                     dismiss()
                 }
             }
             textViewDetailsActionsViewHeaders.apply {
-                isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+                isVisible = showMoreMessageOptions
                 setOnClickListener {
                     viewModel.showMessageHeaders(messageIds.first())
                 }
             }
             textViewDetailsActionsReportPhishing.apply {
-                isVisible = originatorId == ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID
+                isVisible = showMoreMessageOptions
                 setOnClickListener {
-                    (activity as? MessageDetailsActivity)?.showReportPhishingDialog()
+                    (activity as? MessageDetailsActivity)?.showReportPhishingDialog(messageIds.first())
                     dismiss()
                 }
             }
@@ -329,26 +334,36 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             is MessageActionSheetAction.ShowLabelsManager -> showManageLabelsActionSheet(
                 sheetAction.messageIds,
                 sheetAction.labelActionSheetType,
-                sheetAction.currentFolderLocationId
+                sheetAction.currentFolderLocationId,
+                sheetAction.actionSheetTarget
             )
             is MessageActionSheetAction.ShowMessageHeaders -> showMessageHeaders(sheetAction.messageHeaders)
-            is MessageActionSheetAction.ChangeReadStatus -> dismissActionSheetAndGoToMailbox()
             is MessageActionSheetAction.ChangeStarredStatus -> dismiss()
-            is MessageActionSheetAction.MoveToFolder -> dismissActionSheetAndGoToMailbox()
             is MessageActionSheetAction.Delete -> dismiss()
+            is MessageActionSheetAction.DismissActionSheet ->
+                handleDismissBehavior(sheetAction.shallDismissBackingActivity)
             else -> Timber.v("unhandled action $sheetAction")
+        }
+    }
+
+    private fun handleDismissBehavior(dismissBackingActivity: Boolean) {
+        dismiss()
+        if (dismissBackingActivity) {
+            popBackDetailsActivity()
         }
     }
 
     private fun showManageLabelsActionSheet(
         messageIds: List<String>,
         labelActionSheetType: LabelsActionSheet.Type,
-        currentFolderLocationId: Int
+        currentFolderLocationId: Int,
+        actionSheetTarget: ActionSheetTarget
     ) {
         LabelsActionSheet.newInstance(
             messageIds,
             currentFolderLocationId,
-            labelActionSheetType
+            labelActionSheetType,
+            actionSheetTarget
         )
             .show(parentFragmentManager, LabelsActionSheet::class.qualifiedName)
         dismiss()
@@ -366,11 +381,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         dismiss()
     }
 
-    private fun dismissActionSheetAndGoToMailbox() {
-        dismiss()
-        popBackDetailsActivity()
-    }
-
     companion object {
 
         private const val EXTRA_ARG_MESSAGE_IDS = "arg_message_ids"
@@ -378,17 +388,13 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         private const val EXTRA_ARG_TITLE = "arg_message_details_actions_title"
         private const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
         private const val EXTRA_ARG_IS_STARED = "arg_extra_is_stared"
-        private const val EXTRA_ARG_ORIGINATOR_SCREEN_ID = "extra_arg_originator_screen_id"
         private const val HEADER_SLIDE_THRESHOLD = 0.8f
-        const val ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID = 0 // e.g. [MessageDetailsActivity]
-        const val ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID = 1 // e.g [MailboxActivity]
+        internal const val EXTRA_ARG_ACTION_TARGET = "extra_arg_action_sheet_actions_target"
 
         /**
          * Creates new action sheet instance.
          *
-         * @param originatorLocationId defines starting activity/location
-         *  0 = [ARG_ORIGINATOR_SCREEN_MESSAGE_DETAILS_ID]
-         *  1 = [ARG_ORIGINATOR_SCREEN_MESSAGES_LIST_ID]
+         * @param actionSheetTarget defines the entity this action sheet's actions will be applied to
          * @param messagesIds current message id/ or selected messages Ids
          * @param currentFolderLocationId defines current message folder location based on values from
          * [Constants.MessageLocationType] e.g. 3 = trash
@@ -397,7 +403,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
          * @param isStarred defines if message is currently marked as starred
          */
         fun newInstance(
-            originatorLocationId: Int,
+            actionSheetTarget: ActionSheetTarget,
             messagesIds: List<String>,
             currentFolderLocationId: Int,
             title: CharSequence,
@@ -411,7 +417,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     EXTRA_ARG_SUBTITLE to subTitle,
                     EXTRA_ARG_IS_STARED to isStarred,
                     EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID to currentFolderLocationId,
-                    EXTRA_ARG_ORIGINATOR_SCREEN_ID to originatorLocationId
+                    EXTRA_ARG_ACTION_TARGET to actionSheetTarget
                 )
             }
         }

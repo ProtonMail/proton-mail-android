@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.ui.actionsheet
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.core.Constants
@@ -30,6 +31,7 @@ import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
+import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +45,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MessageActionSheetViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val deleteMessage: DeleteMessage,
     private val deleteConversations: DeleteConversations,
     private val moveMessagesToFolder: MoveMessagesToFolder,
@@ -67,7 +70,8 @@ class MessageActionSheetViewModel @Inject constructor(
             val showLabelsManager = MessageActionSheetAction.ShowLabelsManager(
                 messageIds,
                 currentLocation.messageLocationTypeValue,
-                labelsSheetType
+                labelsSheetType,
+                getActionsTargetInputArg()
             )
             actionsMutableFlow.value = showLabelsManager
         }
@@ -105,35 +109,32 @@ class MessageActionSheetViewModel @Inject constructor(
         }
     }
 
-    fun moveToFolder(
-        ids: List<String>,
-        currentFolder: Constants.MessageLocationType,
-        destinationFolder: Constants.MessageLocationType
+    fun moveToInbox(
+        messageIds: List<String>,
+        currentFolder: Constants.MessageLocationType
     ) {
-        viewModelScope.launch {
-            if (conversationModeEnabled(currentFolder)) {
-                val primaryUserId = accountManager.getPrimaryUserId().first()
-                if (primaryUserId != null) {
-                    moveConversationsToFolder(
-                        ids,
-                        primaryUserId,
-                        destinationFolder.messageLocationTypeValue.toString()
-                    )
-                } else {
-                    Timber.e("Primary user id is null. Cannot move message/conversation to folder")
-                }
-            } else {
-                moveMessagesToFolder(
-                    ids,
-                    destinationFolder.toString(),
-                    currentFolder.messageLocationTypeValue.toString()
-                )
-            }
-        }.invokeOnCompletion {
-            actionsMutableFlow.value = MessageActionSheetAction.MoveToFolder(
-                destinationFolder.messageLocationTypeValue.toString()
-            )
-        }
+        moveMessagesToFolderAndDismiss(messageIds, Constants.MessageLocationType.INBOX, currentFolder)
+    }
+
+    fun moveToArchive(
+        messageIds: List<String>,
+        currentFolder: Constants.MessageLocationType
+    ) {
+        moveMessagesToFolderAndDismiss(messageIds, Constants.MessageLocationType.ARCHIVE, currentFolder)
+    }
+
+    fun moveToSpam(
+        messageIds: List<String>,
+        currentFolder: Constants.MessageLocationType
+    ) {
+        moveMessagesToFolderAndDismiss(messageIds, Constants.MessageLocationType.SPAM, currentFolder)
+    }
+
+    fun moveToTrash(
+        messageIds: List<String>,
+        currentFolder: Constants.MessageLocationType
+    ) {
+        moveMessagesToFolderAndDismiss(messageIds, Constants.MessageLocationType.TRASH, currentFolder)
     }
 
     fun starMessage(
@@ -141,7 +142,7 @@ class MessageActionSheetViewModel @Inject constructor(
         location: Constants.MessageLocationType
     ) {
         viewModelScope.launch {
-            if (conversationModeEnabled(location)) {
+            if (isActionAppliedToConversation(location)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     changeConversationsStarredStatus(
@@ -165,7 +166,7 @@ class MessageActionSheetViewModel @Inject constructor(
         location: Constants.MessageLocationType
     ) {
         viewModelScope.launch {
-            if (conversationModeEnabled(location)) {
+            if (isActionAppliedToConversation(location)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     changeConversationsStarredStatus(
@@ -189,7 +190,7 @@ class MessageActionSheetViewModel @Inject constructor(
         location: Constants.MessageLocationType
     ) {
         viewModelScope.launch {
-            if (conversationModeEnabled(location)) {
+            if (isActionAppliedToConversation(location)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     changeConversationsReadStatus(
@@ -205,7 +206,8 @@ class MessageActionSheetViewModel @Inject constructor(
                 messageRepository.markUnRead(ids)
             }
         }.invokeOnCompletion {
-            actionsMutableFlow.value = MessageActionSheetAction.ChangeReadStatus(false)
+            val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
         }
     }
 
@@ -214,7 +216,7 @@ class MessageActionSheetViewModel @Inject constructor(
         location: Constants.MessageLocationType
     ) {
         viewModelScope.launch {
-            if (conversationModeEnabled(location)) {
+            if (isActionAppliedToConversation(location)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     changeConversationsReadStatus(
@@ -230,7 +232,8 @@ class MessageActionSheetViewModel @Inject constructor(
                 messageRepository.markRead(ids)
             }
         }.invokeOnCompletion {
-            actionsMutableFlow.value = MessageActionSheetAction.ChangeReadStatus(true)
+            val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
         }
     }
 
@@ -240,4 +243,47 @@ class MessageActionSheetViewModel @Inject constructor(
             actionsMutableFlow.value = MessageActionSheetAction.ShowMessageHeaders(message?.header ?: EMPTY_STRING)
         }
     }
+
+    private fun moveMessagesToFolderAndDismiss(
+        ids: List<String>,
+        newFolderLocationId: Constants.MessageLocationType,
+        currentFolder: Constants.MessageLocationType
+    ) {
+        viewModelScope.launch {
+            if (isActionAppliedToConversation(currentFolder)) {
+                val primaryUserId = accountManager.getPrimaryUserId().first()
+                if (primaryUserId != null) {
+                    moveConversationsToFolder(
+                        ids,
+                        primaryUserId,
+                        newFolderLocationId.messageLocationTypeValue.toString()
+                    )
+                } else {
+                    Timber.e("Primary user id is null. Cannot move message/conversation to folder")
+                }
+            } else {
+                moveMessagesToFolder(
+                    ids,
+                    newFolderLocationId.messageLocationTypeValue.toString(),
+                    currentFolder.messageLocationTypeValue.toString()
+                )
+            }
+        }.invokeOnCompletion {
+            val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+        }
+    }
+
+    private fun isActionAppliedToConversation(location: Constants.MessageLocationType) =
+        conversationModeEnabled(location) && !isApplyingActionToMessageWithinAConversation()
+
+    private fun isApplyingActionToMessageWithinAConversation(): Boolean {
+        val actionsTarget = getActionsTargetInputArg()
+        return actionsTarget == ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+    }
+
+    private fun getActionsTargetInputArg() = savedStateHandle.get<ActionSheetTarget>(
+        MessageActionSheet.EXTRA_ARG_ACTION_TARGET
+    ) ?: ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+
 }
