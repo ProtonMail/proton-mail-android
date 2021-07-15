@@ -30,8 +30,6 @@ class UpdateSettingsJob(
     private val newDisplayName: String? = null,
     private val newSignature: String? = null,
     private val addressIds: List<String>? = null,
-    private val actionLeftSwipeChanged: Boolean = false,
-    private val actionRightSwipeChanged: Boolean = false,
     private val backPressed: Boolean = false,
     private val addressId: Id? = null
 ) : ProtonMailBaseJob(Params(Priority.LOW).requireNetwork()) {
@@ -49,12 +47,6 @@ class UpdateSettingsJob(
                 getUserManager().clearCache()
             }
             val mailSettings = getUserManager().getCurrentUserMailSettingsBlocking()!!
-            if (actionLeftSwipeChanged) {
-                getApi().updateLeftSwipe(mailSettings.leftSwipeAction)
-            }
-            if (actionRightSwipeChanged) {
-                getApi().updateRightSwipe(mailSettings.rightSwipeAction)
-            }
             if (mailSettings != null) {
                 updateMailSettings(mailSettings)
             }

@@ -21,20 +21,16 @@ package ch.protonmail.android.mailbox.presentation
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.flow.lastOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.domain.getPrimaryAccount
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,18 +45,18 @@ class MailSettingsViewModel @Inject constructor(
         .mapLatest { result ->
             when (result) {
                 is DataResult.Processing -> MailSettingsState.Processing
-                is DataResult.Success -> MailSettingsState.Success(result.value)
+                is DataResult.Success -> {
+                    MailSettingsState.Success(result.value)
+                }
                 is DataResult.Error -> MailSettingsState.Error.Message(result.message)
             }
         }
 
-    /*
-    fun getMailSettingsState() = accountManager.getPrimaryAccount()
+    fun getMailSettingsSuccessState() = accountManager.getPrimaryAccount()
         .filterNotNull()
         .flatMapLatest { account -> mailSettingsRepository.getMailSettingsFlow(account.userId) }
         .mapSuccessValueOrNull()
         .map { MailSettingsState.Success(it) }
-    */
 
     sealed class MailSettingsState {
         object Processing : MailSettingsState()
