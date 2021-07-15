@@ -43,15 +43,6 @@ class MailSettingsViewModel @Inject constructor(
     private val mailSettingsRepository: MailSettingsRepository
 ) : ViewModel() {
 
-    sealed class MailSettingsState {
-        object Processing : MailSettingsState()
-        data class Success(val mailSettings: MailSettings?) : MailSettingsState()
-        sealed class Error : MailSettingsState() {
-            data class Message(val message: String?) : Error()
-            object NoPrimaryAccount : Error()
-        }
-    }
-
     fun getMailSettingsState() = accountManager.getPrimaryAccount()
         .filterNotNull()
         .flatMapLatest { account -> mailSettingsRepository.getMailSettingsFlow(account.userId) }
@@ -70,4 +61,13 @@ class MailSettingsViewModel @Inject constructor(
         .mapSuccessValueOrNull()
         .map { MailSettingsState.Success(it) }
     */
+
+    sealed class MailSettingsState {
+        object Processing : MailSettingsState()
+        data class Success(val mailSettings: MailSettings?) : MailSettingsState()
+        sealed class Error : MailSettingsState() {
+            data class Message(val message: String?) : Error()
+            object NoPrimaryAccount : Error()
+        }
+    }
 }

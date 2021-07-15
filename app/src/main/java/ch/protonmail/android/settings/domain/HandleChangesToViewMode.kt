@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain
+package ch.protonmail.android.settings.domain
 
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.withContext
@@ -27,7 +27,7 @@ import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
-class HandleChangesToMailSettings @Inject constructor(
+class HandleChangesToViewMode @Inject constructor(
     private val mailSettingsRepository: MailSettingsRepository,
     private val dispatchers: DispatcherProvider
 ) {

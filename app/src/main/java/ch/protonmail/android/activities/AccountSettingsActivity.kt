@@ -26,8 +26,8 @@ import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.featureflags.FeatureFlagsManager
-import ch.protonmail.android.mailbox.domain.HandleChangesToMailSettings
 import ch.protonmail.android.prefs.SecureSharedPreferences
+import ch.protonmail.android.settings.domain.HandleChangesToViewMode
 import ch.protonmail.android.usecase.delete.ClearUserMessagesData
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
@@ -50,7 +50,7 @@ class AccountSettingsActivity : BaseSettingsActivity() {
     lateinit var clearUserMessagesData: ClearUserMessagesData
 
     @Inject
-    lateinit var handleChangesToMailSettings: HandleChangesToMailSettings
+    lateinit var handleChangesToViewMode: HandleChangesToViewMode
 
     override fun getLayoutId(): Int = R.layout.activity_settings
 
@@ -143,7 +143,7 @@ class AccountSettingsActivity : BaseSettingsActivity() {
             )
             lifecycleScope.launch {
                 clearUserMessagesData.invoke(user.id)
-                handleChangesToMailSettings.invoke(
+                handleChangesToViewMode.invoke(
                     user.id, mailSettings?.viewMode ?: ViewMode.ConversationGrouping
                 )
             }
