@@ -200,9 +200,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
             Timber.plant(new SentryTree());
         }
 
-        // Try to upgrade TLS Provider if needed
-        upgradeTlsProviderIfNeeded();
-
         // Initialize TrustKit for TLS Certificate Pinning
         TrustKit.initializeWithNetworkSecurityConfiguration(this);
 
@@ -213,6 +210,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
         setupNotificationChannels();
 
         super.onCreate();
+
+        // Try to upgrade TLS Provider if needed
+        upgradeTlsProviderIfNeeded();
 
         // Force Light mode (temporary workaround).
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
