@@ -138,7 +138,7 @@ class LabelsActionSheetViewModel @Inject constructor(
                     .filter { it.isChecked == false }
                     .map { it.labelId }
                 Timber.v("Selected labels: $selectedLabels messageId: $ids")
-                if (conversationModeEnabled(currentMessageFolder)) {
+                if (isActionAppliedToConversation(currentMessageFolder)) {
                     updateConversationsLabels(
                         ids,
                         UserId(userManager.requireCurrentUserId().s),
@@ -155,7 +155,7 @@ class LabelsActionSheetViewModel @Inject constructor(
                 }
 
                 if (shallMoveToArchive) {
-                    if (conversationModeEnabled(currentMessageFolder)) {
+                    if (isActionAppliedToConversation(currentMessageFolder)) {
                         moveConversationsToFolder(
                             ids,
                             UserId(userManager.requireCurrentUserId().s),
@@ -198,9 +198,8 @@ class LabelsActionSheetViewModel @Inject constructor(
     ): List<String> {
         val checkedLabels = mutableListOf<String>()
         ids.forEach { id ->
-            if (conversationModeEnabled(currentMessageFolder)) {
-                conversationsRepository.findConversation(id, userManager.requireCurrentUserId())?.let {
-                    conversation ->
+            if (isActionAppliedToConversation(currentMessageFolder)) {
+                conversationsRepository.findConversation(id, userManager.requireCurrentUserId())?.let { conversation ->
                     checkedLabels.addAll(conversation.labels.map { label -> label.id })
                 }
             } else {
