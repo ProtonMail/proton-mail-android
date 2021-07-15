@@ -190,17 +190,17 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             messageDetailsRecyclerView,
             messageBodyParser,
             mUserManager,
-            onLoadEmbeddedImagesClicked(),
-            onDisplayRemoteContentClicked(),
-            onLoadMessageBody(),
-            onDownloadAttachment(),
-            onEditDraftClicked(),
-            onReplyMessageClicked(),
-            onShowMessageActionSheet()
+            ::onLoadEmbeddedImagesClicked,
+            ::onDisplayRemoteContentClicked,
+            ::onLoadMessageBody,
+            ::onDownloadAttachment,
+            ::onEditDraftClicked,
+            ::onReplyMessageClicked,
+            ::onShowMessageActionSheet
         )
     }
 
-    private fun onLoadMessageBody() = { message: Message ->
+    private fun onLoadMessageBody(message: Message) {
         if (message.messageId != null) {
             viewModel.loadMessageBody(message).mapLatest { loadedMessage ->
 
@@ -761,7 +761,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private fun onLoadEmbeddedImagesClicked() = { message: Message ->
+    private fun onLoadEmbeddedImagesClicked(message: Message) {
         // this will ensure that the message has been loaded
         // and will protect from premature clicking on download attachments button
         if (viewModel.renderingPassed) {
@@ -769,12 +769,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         }
     }
 
-    private fun onDisplayRemoteContentClicked() = { message: Message ->
+    private fun onDisplayRemoteContentClicked(message: Message) {
         viewModel.displayRemoteContent(message)
         viewModel.checkStoragePermission.observe(this, { storagePermissionHelper.checkPermission() })
     }
 
-    private fun onEditDraftClicked() = { message: Message ->
+    private fun onEditDraftClicked(message: Message) {
         val intent = AppUtil.decorInAppIntent(Intent(this, ComposeMessageActivity::class.java))
         intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, message.messageId)
         intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, message.isInline)
@@ -782,16 +782,16 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         startActivity(intent)
     }
 
-    private fun onDownloadAttachment() = { attachment: Attachment ->
+    private fun onDownloadAttachment(attachment: Attachment) {
         attachmentToDownload.set(attachment)
         storagePermissionHelper.checkPermission()
     }
 
-    private fun onReplyMessageClicked() = { message: Message ->
+    private fun onReplyMessageClicked(message: Message) {
         onReplyMessage(message)
     }
 
-    private fun onShowMessageActionSheet() = { message: Message ->
+    private fun onShowMessageActionSheet(message: Message) {
         MessageActionSheet.newInstance(
             ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN,
             listOf(message.messageId ?: messageOrConversationId),
