@@ -31,7 +31,7 @@ stages:
   tags:
     - medium
   script:
-    - ./gradlew detekt
+    - ./gradlew detektBetaDebug
   artifacts:
     reports:
       codequality: config/detekt/reports/detekt.json
