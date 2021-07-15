@@ -166,15 +166,7 @@ interface MessageDao {
         }
 
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>> =
-        findAllMessageInfoByLastMessageAccessTime(laterThan)
-            .map { messages ->
-                messages.onEach { message ->
-                    message.attachments = message.attachments(this)
-                }
-            }
-
-    fun findAllMessageFromAConversation(conversationId: String): Flow<List<Message>> =
-        findAllMessageInfoFromAConversation(conversationId)
+        observeAllMessagesInfoByLastMessageAccessTime(laterThan)
             .map { messages ->
                 messages.onEach { message ->
                     message.attachments = message.attachments(this)
@@ -208,7 +200,7 @@ interface MessageDao {
         ORDER BY $COLUMN_MESSAGE_ACCESS_TIME
     """
     )
-    fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>>
+    fun observeAllMessagesInfoByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>>
 
     @Query(
         """
@@ -218,7 +210,17 @@ interface MessageDao {
         ORDER BY $COLUMN_MESSAGE_TIME DESC
     """
     )
-    fun findAllMessageInfoFromAConversation(conversationId: String): Flow<List<Message>>
+    fun observeAllMessagesInfoFromConversation(conversationId: String): Flow<List<Message>>
+
+    @Query(
+        """
+        SELECT *
+        FROM $TABLE_MESSAGES
+        WHERE $COLUMN_CONVERSATION_ID = :conversationId
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+    """
+    )
+    suspend fun findAllMessagesInfoFromConversation(conversationId: String): List<Message>
 
     suspend fun saveMessage(message: Message): Long {
         Timber.d("saveMessage ${message.messageId}, location: ${message.location}, labels: ${message.allLabelIDs}")

@@ -19,12 +19,14 @@
 
 package ch.protonmail.android.mailbox.data
 
+import app.cash.turbine.test
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.messages.receive.ServerMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
@@ -56,6 +58,8 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
@@ -208,7 +212,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 oldestConversationTimestamp = 1616496670,
                 pageSize = 2
             )
-            coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(listOf())
+            coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(listOf())
             coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
             // when
@@ -232,7 +236,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             )
 
             val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
-            coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(conversationsEntity)
+            coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(conversationsEntity)
             coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
             // when
@@ -253,7 +257,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 pageSize = 5
             )
 
-            coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(emptyList())
+            coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(emptyList())
             coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
             coEvery { api.fetchConversations(any()) } returns conversationsRemote
 
@@ -278,7 +282,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             oldestConversationTimestamp = 823848238
         )
 
-        coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(emptyList())
+        coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(emptyList())
         coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
         coEvery { api.fetchConversations(any()) } throws IOException("Test - Bad Request")
 
@@ -309,7 +313,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         val recipients = listOf(
             MessageRecipient("recipient", "recipient@pm.ch")
         )
-        coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(
+        coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(
             listOf(
                 ConversationDatabaseModel(
                     "conversationId234423",
@@ -366,7 +370,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
         )
         val conversationsEntity = conversationsRemote.conversationResponse.toListLocal(testUserId.s)
         val emptyConversationsResponse = ConversationsResponse(0, emptyList())
-        coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(conversationsEntity)
+        coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(conversationsEntity)
         coEvery { conversationDao.insertOrUpdate(*anyVararg()) } returns Unit
         coEvery { api.fetchConversations(any()) } returns emptyConversationsResponse
 
@@ -421,8 +425,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 isForwarded = false,
                 allLabelIDs = listOf("1", "2")
             )
-            coEvery { messageDao.findAllMessageFromAConversation(conversationId) } returns flowOf(listOf(message))
-            coEvery { conversationDao.getConversation(conversationId, userId) } returns flowOf(
+            coEvery { messageDao.findAllMessagesInfoFromConversation(conversationId) } returns listOf(message)
+            coEvery { messageDao.findAttachmentsByMessageId(any()) } returns flowOf(emptyList())
+            coEvery { conversationDao.observeConversation(conversationId, userId) } returns flowOf(
                 conversationDbModel
             )
 
@@ -499,15 +504,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 listOf(apiMessage)
             )
             val expectedMessage = Message(messageId = "messageId23842737", conversationId)
+            val dbFlow =
+                MutableSharedFlow<ConversationDatabaseModel?>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
             coEvery { api.fetchConversation(conversationId, Id(userId)) } returns conversationResponse
-            coEvery { messageDao.findAllMessageFromAConversation(conversationId) } returns flowOf(emptyList())
-            coEvery { conversationDao.getConversation(conversationId, userId) } throws Exception("no conversations")
+            coEvery { messageDao.findAllMessagesInfoFromConversation(conversationId) } returns emptyList()
+            coEvery { conversationDao.observeConversation(conversationId, userId) } returns dbFlow
             every { messageFactory.createMessage(apiMessage) } returns expectedMessage
-
-            // when
-            val result = conversationsRepository.getConversation(conversationId, Id(userId)).take(3).toList()
-
-            // then
             val expectedConversationDbModel = ConversationDatabaseModel(
                 conversationId,
                 0L,
@@ -526,13 +528,23 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 1,
                 emptyList()
             )
-            val errorMessage =
-                "Failed to read from Source of Truth. key: ConversationStoreKey(conversationId=conversationId2347393, userId=Id(s=userId82sd8238))"
-            val actualLocalError = result[0] as DataResult.Error.Local
-            assertEquals(errorMessage, actualLocalError.message)
-            assertEquals(DataResult.Processing(ResponseSource.Remote), result[1])
-            coVerify { messageDao.saveMessages(listOf(expectedMessage)) }
-            coVerify { conversationDao.insertOrUpdate(expectedConversationDbModel) }
+            coEvery { conversationDao.insertOrUpdate(expectedConversationDbModel) } answers {
+                dbFlow.tryEmit(
+                    expectedConversationDbModel
+                )
+            }
+
+            // when
+            conversationsRepository.getConversation(conversationId, Id(userId)).test {
+                dbFlow.emit(null)
+
+                // then
+                assertEquals(DataResult.Processing(ResponseSource.Remote), expectItem())
+                assertEquals(ResponseSource.Local, (expectItem() as DataResult.Success).source)
+                coVerify { messageDao.saveMessages(listOf(expectedMessage)) }
+                coVerify { conversationDao.insertOrUpdate(expectedConversationDbModel) }
+            }
+
         }
     }
 
@@ -545,12 +557,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 userId = testUserId,
                 oldestConversationTimestamp = null
             )
-            coEvery { conversationDao.getConversations(testUserId.s) } returns flowOf(emptyList())
+            coEvery { conversationDao.observeConversations(testUserId.s) } returns flowOf(emptyList())
             coEvery { api.fetchConversations(parameters) } throws CancellationException("Cancelled")
 
             // when
 
-           val result = conversationsRepository.getConversations(parameters).take(2).toList()
+            val result = conversationsRepository.getConversations(parameters).take(2).toList()
 
             val actualLocalItems0 = result[0] as DataResult.Success
             assertEquals(ResponseSource.Local, actualLocalItems0.source)
@@ -564,11 +576,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val conversation1 = "conversation1"
             val conversation2 = "conversation2"
             val conversationIds = listOf(conversation1, conversation2)
-            val message = mockk<Message> {
-                every { setIsRead(any()) } just runs
-            }
+            val message = Message()
             coEvery { conversationDao.updateNumUnreadMessages(0, any()) } just runs
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
             coEvery { messageDao.saveMessage(any()) } returns 123
 
             // when
@@ -593,18 +603,17 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val conversation2 = "conversation2"
             val conversationIds = listOf(conversation1, conversation2)
             val mailboxLocation = Constants.MessageLocationType.ARCHIVE
-            val message = mockk<Message> {
-                every { setIsRead(any()) } just runs
-                every { location } returns mailboxLocation.messageLocationTypeValue
-            }
+            val message = Message(
+                location = mailboxLocation.messageLocationTypeValue
+            )
             val unreadMessages = 0
-            every { conversationDao.getConversation(any(), any()) } returns flowOf(
+            every { conversationDao.observeConversation(any(), any()) } returns flowOf(
                 mockk {
                     every { numUnread } returns unreadMessages
                 }
             )
             coEvery { conversationDao.updateNumUnreadMessages(unreadMessages + 1, any()) } just runs
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
             coEvery { messageDao.saveMessage(any()) } returns 123
 
             // when
@@ -633,11 +642,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 LabelContextDatabaseModel("10", 2, 4, 123, 123, 1),
                 LabelContextDatabaseModel("2", 0, 3, 123, 123, 0)
             )
-            val message = mockk<Message> {
-                every { messageId } returns "messageId"
-                every { time } returns 123
-            }
-            every { conversationDao.getConversation(any(), any()) } returns flowOf(
+            val testMessageId = "messageId"
+            val message = Message(
+                messageId = testMessageId,
+                time = 123
+            )
+            coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
                     every { numUnread } returns 2
@@ -645,10 +655,10 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                     every { size } returns 123
                     every { numAttachments } returns 1
                 }
-            )
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
-            coEvery { messageDao.updateStarred("messageId", true) } just runs
+            coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
+            coEvery { messageDao.updateStarred(testMessageId, true) } just runs
 
             // when
             conversationsRepository.star(conversationIds, UserId(userId))
@@ -675,10 +685,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 LabelContextDatabaseModel("10", 2, 4, 123, 123, 1),
                 LabelContextDatabaseModel("2", 0, 3, 123, 123, 0)
             )
-            val message = mockk<Message> {
-                every { messageId } returns "messageId"
-            }
-            every { conversationDao.getConversation(any(), any()) } returns flowOf(
+            val testMessageId = "messageId"
+            val message = Message(messageId = testMessageId)
+            coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
                     every { numUnread } returns 2
@@ -686,10 +695,11 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                     every { size } returns 123
                     every { numAttachments } returns 1
                 }
-            )
+
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
-            coEvery { messageDao.updateStarred("messageId", false) } just runs
+            coEvery { messageDao.findAttachmentsByMessageId(testMessageId) } returns flowOf(emptyList())
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
+            coEvery { messageDao.updateStarred(testMessageId, false) } just runs
 
             // when
             conversationsRepository.unstar(conversationIds, UserId(userId))
@@ -699,7 +709,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 conversationDao.updateLabels(any(), any())
             }
             coVerify(exactly = 4) {
-                messageDao.updateStarred("messageId", false)
+                messageDao.updateStarred(testMessageId, false)
             }
         }
     }
@@ -716,20 +726,28 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val inboxId = "0"
             val starredId = "10"
             val allMailId = "5"
-            val message = mockk<Message> {
-                every { time } returns 123
-                every { allLabelIDs } returns listOf(inboxId, starredId)
-                every { labelIDsNotIncludingLocations } returns listOf("labelId")
-                every { removeLabels(listOf(inboxId)) } just runs
-                every { addLabels(listOf(folderId)) } just runs
-            }
+//            val message = mockk<Message> {
+//                every { time } returns 123
+//                every { allLabelIDs } returns listOf(inboxId, starredId)
+//                every { labelIDsNotIncludingLocations } returns listOf("labelId")
+//                every { removeLabels(listOf(inboxId)) } just runs
+//                every { addLabels(listOf(folderId)) } just runs
+//            }
+            val message = Message(
+                time = 123,
+                allLabelIDs = listOf(inboxId, allMailId),
+            )
             val conversationLabels = listOf(
                 LabelContextDatabaseModel(allMailId, 0, 2, 123, 123, 1),
                 LabelContextDatabaseModel(starredId, 0, 2, 123, 123, 1),
                 LabelContextDatabaseModel(inboxId, 0, 2, 123, 123, 0)
             )
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOf(message, message))
-            coEvery { conversationDao.getConversation(any(), any()) } returns flowOf(
+            val label: Label = mockk {
+                every { exclusive } returns false
+            }
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
+            coEvery { messageDao.findLabelById(any()) } returns label
+            coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
                     every { numUnread } returns 0
@@ -737,7 +755,6 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                     every { size } returns 123
                     every { numAttachments } returns 1
                 }
-            )
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
 
             // when
@@ -765,11 +782,11 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val conversationIds = listOf(conversationId1, conversationId2)
             val userId = UserId("userId")
             val currentFolderId = "folderId"
-            val message1 = mockk<Message> {
-                every { allLabelIDs } returns listOf("0", "5")
+            val message1 = Message().apply {
+                allLabelIDs = listOf("0", "5")
             }
-            val message2 = mockk<Message> {
-                every { allLabelIDs } returns listOf("3", "5")
+            val message2 = Message().apply {
+                allLabelIDs = listOf("3", "5")
             }
             val listOfMessages = listOf(message1, message2)
             val conversationLabels = listOf(
@@ -777,14 +794,12 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 LabelContextDatabaseModel("3", 0, 2, 123, 123, 1),
                 LabelContextDatabaseModel("5", 0, 2, 123, 123, 0)
             )
-            every { message2 setProperty "deleted" value true } just runs
             coEvery { conversationDao.deleteConversation(any(), userId.id) } just runs
-            coEvery { conversationDao.getConversation(any(), any()) } returns flowOf(
+            coEvery { conversationDao.findConversation(any(), any()) } returns
                 mockk {
                     every { labels } returns conversationLabels
                 }
-            )
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOfMessages)
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
             coEvery { messageDao.saveMessages(listOfMessages) } just runs
 
             // when
@@ -821,9 +836,9 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 LabelContextDatabaseModel("5", 0, 2, 123, 123, 1),
                 LabelContextDatabaseModel("0", 0, 2, 123, 123, 0)
             )
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOfMessages)
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
             coEvery { messageDao.saveMessage(message) } returns 123
-            coEvery { conversationDao.getConversation(any(), userId.id) } returns flowOf(
+            coEvery { conversationDao.findConversation(any(), userId.id) } returns
                 mockk {
                     every { labels } returns conversationLabels
                     every { numUnread } returns 0
@@ -831,7 +846,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                     every { size } returns 123
                     every { numAttachments } returns 1
                 }
-            )
+
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
 
             // when
@@ -868,13 +883,13 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 LabelContextDatabaseModel("0", 0, 2, 123, 123, 0),
                 LabelContextDatabaseModel("labelId", 0, 2, 123, 123, 0)
             )
-            coEvery { messageDao.findAllMessageFromAConversation(any()) } returns flowOf(listOfMessages)
+            coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOfMessages
             coEvery { messageDao.saveMessage(message) } returns 123
-            coEvery { conversationDao.getConversation(any(), userId.id) } returns flowOf(
+            coEvery { conversationDao.findConversation(any(), userId.id) } returns
                 mockk {
                     every { labels } returns conversationLabels
                 }
-            )
+
             coEvery { conversationDao.updateLabels(any(), any()) } just runs
 
             // when

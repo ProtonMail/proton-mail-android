@@ -65,9 +65,10 @@ class MessageRepository @Inject constructor(
     private val connectivityManager: NetworkConnectivityManager
 ) {
 
-    fun findMessage(userId: UserId, messageId: String): Flow<Message?> {
+    fun observeMessage(userId: UserId, messageId: String): Flow<Message?> {
         val messageDao = databaseProvider.provideMessageDao(Id(userId.id))
         return messageDao.findMessageById(messageId).onEach { message ->
+            Timber.d("findMessage id: ${message?.messageId}, ${message?.isRead}, ${message?.isDownloaded}")
             message?.messageBody?.let {
                 if (it.startsWith(FILE_PREFIX)) {
                     message.messageBody = messageBodyFileManager.readMessageBodyFromFile(message)
@@ -76,7 +77,7 @@ class MessageRepository @Inject constructor(
         }
     }
 
-    suspend fun findMessageOnce(userId: Id, messageId: String): Message? {
+    suspend fun findMessage(userId: Id, messageId: String): Message? {
         val messageDao = databaseProvider.provideMessageDao(userId)
         return messageDao.findMessageByIdOnce(messageId)?.apply {
             messageBody?.let {
@@ -87,64 +88,16 @@ class MessageRepository @Inject constructor(
         }
     }
 
-    @Deprecated("Use with user Id", ReplaceWith("findMessageOnce(userId, messageId)"))
+    @Deprecated("Use with user Id", ReplaceWith("findMessage(userId, messageId)"))
     suspend fun findMessageById(messageId: String): Message? {
         val currentUser = userManager.currentUserId
         return if (currentUser != null) {
-            findMessageOnce(currentUser, messageId)
+            findMessage(currentUser, messageId)
         } else {
             Timber.w("Cannot find message for null user id")
             null
         }
     }
-
-    private suspend fun saveMessage(userId: Id, message: Message): Message =
-        withContext(dispatcherProvider.Io) {
-            message.apply {
-                messageBody = messageBody?.let {
-                    return@let if (it.toByteArray().size > MAX_BODY_SIZE_IN_DB) {
-                        messageBodyFileManager.saveMessageBodyToFile(this)
-                    } else {
-                        it
-                    }
-                }
-            }
-            val messageDao = databaseProvider.provideMessageDao(userId)
-            messageDao.saveMessage(message)
-            return@withContext message
-        }
-
-    private suspend fun getMessageDetails(userId: Id, messageId: String): Message? =
-        withContext(dispatcherProvider.Io) {
-            val message = findMessageOnce(userId, messageId)
-
-            if (message?.messageBody != null) {
-                return@withContext message
-            }
-
-            return@withContext runCatching {
-                protonMailApiManager.fetchMessageDetails(messageId, UserIdTag(userId))
-            }.map { messageResponse ->
-                return@map saveMessage(userId, messageResponse.message)
-            }.getOrNull()
-        }
-
-    private suspend fun getMessageMetadata(userId: Id, messageId: String): Message? =
-        withContext(dispatcherProvider.Io) {
-            val message = findMessageOnce(userId, messageId)
-
-            if (message != null) {
-                return@withContext message
-            }
-
-            return@withContext runCatching {
-                protonMailApiManager.fetchMessageMetadata(messageId, UserIdTag(userId))
-            }.map { messageResponse ->
-                return@map messageResponse.messages.firstOrNull()?.let { message ->
-                    return@let saveMessage(userId, message)
-                }
-            }.getOrNull()
-        }
 
     /**
      * Returns an instance of Message with the given message id. Returns the message from the database
@@ -160,7 +113,7 @@ class MessageRepository @Inject constructor(
     suspend fun getMessage(
         userId: Id,
         messageId: String,
-        shouldFetchMessageDetails: Boolean = false
+        shouldFetchMessageDetails: Boolean
     ): Message? =
         withContext(dispatcherProvider.Io) {
             val user = userManager.getLegacyUser(userId)
@@ -169,6 +122,54 @@ class MessageRepository @Inject constructor(
             } else {
                 getMessageMetadata(userId, messageId)
             }
+        }
+
+    private suspend fun getMessageDetails(userId: Id, messageId: String): Message? =
+        withContext(dispatcherProvider.Io) {
+            val message = findMessage(userId, messageId)
+
+            if (message?.messageBody != null) {
+                return@withContext message
+            }
+
+            return@withContext runCatching {
+                protonMailApiManager.fetchMessageDetails(messageId, UserIdTag(userId))
+            }.map { messageResponse ->
+                return@map saveMessage(userId, messageResponse.message)
+            }.getOrNull()
+        }
+
+    private suspend fun getMessageMetadata(userId: Id, messageId: String): Message? =
+        withContext(dispatcherProvider.Io) {
+            val message = findMessage(userId, messageId)
+
+            if (message != null) {
+                return@withContext message
+            }
+
+            return@withContext runCatching {
+                protonMailApiManager.fetchMessageMetadata(messageId, UserIdTag(userId))
+            }.map { messageResponse ->
+                return@map messageResponse.messages.firstOrNull()?.let { message ->
+                    return@let saveMessage(userId, message)
+                }
+            }.getOrNull()
+        }
+
+    private suspend fun saveMessage(userId: Id, message: Message): Message =
+        withContext(dispatcherProvider.Io) {
+            message.apply {
+                messageBody = messageBody?.let {
+                    return@let if (it.toByteArray().size > MAX_BODY_SIZE_IN_DB) {
+                        messageBodyFileManager.saveMessageBodyToFile(this)
+                    } else {
+                        it
+                    }
+                }
+            }
+            val messageDao = databaseProvider.provideMessageDao(userId)
+            messageDao.saveMessage(message)
+            return@withContext message
         }
 
     fun moveToTrash(messageIds: List<String>, currentFolderLabelId: String) {

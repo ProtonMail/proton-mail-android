@@ -115,7 +115,7 @@ class MessageRepositoryTest {
             }
 
             // when
-            val result = messageRepository.getMessage(testUserId, messageId)
+            val result = messageRepository.getMessage(testUserId, messageId, false)
 
             // then
             assertEquals(messageInDb, result)
@@ -142,7 +142,7 @@ class MessageRepositoryTest {
             }
 
             // when
-            val result = messageRepository.getMessage(testUserId, messageId)
+            val result = messageRepository.getMessage(testUserId, messageId, false)
 
             // then
             assertEquals(messageFetched, result)
@@ -167,7 +167,7 @@ class MessageRepositoryTest {
             }
 
             // when
-            val result = messageRepository.getMessage(testUserId, messageId)
+            val result = messageRepository.getMessage(testUserId, messageId, false)
 
             // then
             assertEquals(message, result)
@@ -190,7 +190,7 @@ class MessageRepositoryTest {
             coEvery { messageDao.findMessageByIdOnce(messageId) } returns mockMessage
 
             // when
-            val result = messageRepository.getMessage(testUserId, messageId)
+            val result = messageRepository.findMessage(testUserId, messageId)
 
             // then
             assertEquals(mockMessage, result)
@@ -212,7 +212,7 @@ class MessageRepositoryTest {
             coEvery { messageDao.findMessageByIdOnce(messageId) } returns mockMessage
 
             // when
-            val result = messageRepository.getMessage(testUserId, messageId)
+            val result = messageRepository.findMessage(testUserId, messageId)
 
             // then
             assertEquals(mockMessage, result)
@@ -232,7 +232,7 @@ class MessageRepositoryTest {
             every { messageBodyFileManager.readMessageBodyFromFile(mockMessage) } returns "messageBody"
 
             // when
-            val result = messageRepository.getMessage(testUserId, messageId)
+            val result = messageRepository.findMessage(testUserId, messageId)
 
             // then
             assertEquals("messageBody", result?.messageBody)
@@ -256,7 +256,7 @@ class MessageRepositoryTest {
             coEvery { messageBodyFileManager.saveMessageBodyToFile(mockMessage) } returns "file://messageBody"
 
             // when
-            val result = messageRepository.getMessage(testUserId, messageId)
+            val result = messageRepository.getMessage(testUserId, messageId, false)
 
             // then
             val savedMessageCaptor = slot<Message>()
@@ -279,7 +279,7 @@ class MessageRepositoryTest {
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, UserIdTag(testUserId)) } throws Exception()
 
             // when
-            val result = messageRepository.getMessage(testUserId, messageId)
+            val result = messageRepository.findMessage(testUserId, messageId)
 
             // then
             assertNull(result)
@@ -298,7 +298,7 @@ class MessageRepositoryTest {
             coEvery { protonMailApiManager.fetchMessageMetadata(messageId, UserIdTag(testUserId)) } throws Exception()
 
             // when
-            val result = messageRepository.getMessage(testUserId, messageId)
+            val result = messageRepository.findMessage(testUserId, messageId)
 
             // then
             assertNull(result)

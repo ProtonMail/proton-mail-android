@@ -18,11 +18,6 @@
  */
 package ch.protonmail.android.activities;
 
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
-import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_NAME;
-import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
-
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -67,7 +62,6 @@ import ch.protonmail.android.core.NetworkResults;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
-import ch.protonmail.android.details.presentation.MessageDetailsActivity;
 import ch.protonmail.android.feature.account.AccountStateManager;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.settings.pin.ValidatePinActivity;
@@ -79,6 +73,11 @@ import ch.protonmail.android.worker.FetchUserWorker;
 import dagger.hilt.android.AndroidEntryPoint;
 import me.proton.core.humanverification.presentation.HumanVerificationOrchestrator;
 import timber.log.Timber;
+
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
+import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_NAME;
+import static ch.protonmail.android.worker.FetchUserWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
 
 @AndroidEntryPoint
 public abstract class BaseActivity extends AppCompatActivity implements INetworkConfiguratorCallback {

@@ -77,7 +77,7 @@ private const val PREF_ENGAGEMENT_SHOWN = "engagement_shown"
 @Deprecated("Now replaced by Core UserManager/AccountManager.")
 @Singleton
 class UserManager @Inject constructor(
-    private val context: Context,
+    context: Context,
     private val coreAccountManager: AccountManager,
     private val loadUser: LoadUser,
     private val loadLegacyUser: LoadLegacyUser,
