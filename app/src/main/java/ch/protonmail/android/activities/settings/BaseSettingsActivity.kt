@@ -37,7 +37,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.AccountSettingsActivity
+import ch.protonmail.android.settings.presentation.AccountSettingsActivity
 import ch.protonmail.android.activities.BaseConnectivityActivity
 import ch.protonmail.android.activities.DefaultAddressActivity
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE

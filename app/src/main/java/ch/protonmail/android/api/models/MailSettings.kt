@@ -24,7 +24,6 @@ import ch.protonmail.android.api.models.enumerations.PackageType
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.runBlocking
 import me.proton.core.mailsettings.domain.entity.ViewMode
-import me.proton.core.util.kotlin.unsupported
 import java.io.Serializable
 
 private const val FIELD_DISPLAY_NAME = "DisplayName"
@@ -32,7 +31,8 @@ private const val FIELD_SIGNATURE = "Signature"
 private const val FIELD_THEME = "Theme"
 private const val FIELD_AUTO_SAVE_CONTACTS = "AutoSaveContacts"
 private const val FIELD_AUTO_WILDCARD_SEARCH = "AutoWildcardSearch"
-private const val FIELD_SHOW_IMAGES = "ShowImages" // 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
+private const val FIELD_SHOW_IMAGES = "ShowImages" // 0 for none, 1 for remote,
+//                                                    2 for embedded, 3 for remote and embedded
 private const val FIELD_VIEW_MODE = "ViewMode" // 0 for conversation view, 1 for message view
 private const val FIELD_SHOW_MOVED = "ShowMoved"
 private const val FIELD_ALSO_ARCHIVE = "AlsoArchive"
@@ -53,7 +53,8 @@ private const val PREF_SIGNATURE = "mail_settings_Signature"
 private const val PREF_THEME = "mail_settings_Theme"
 private const val PREF_AUTO_SAVE_CONTACTS = "mail_settings_AutoSaveContacts"
 private const val PREF_AUTO_WILDCARD_SEARCH = "mail_settings_AutoWildcardSearch"
-private const val PREF_SHOW_IMAGES = "mail_settings_ShowImages" // 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
+private const val PREF_SHOW_IMAGES = "mail_settings_ShowImages" // 0 for none, 1 for remote,
+//                                                                 2 for embedded, 3 for remote and embedded
 private const val PREF_VIEW_MODE = "mail_settings_ViewMode" // 0 for conversation view, 1 for message view
 private const val PREF_SHOW_MOVED = "mail_settings_ShowMoved"
 private const val PREF_ALSO_ARCHIVE = "mail_settings_AlsoArchive"

@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities
+package ch.protonmail.android.settings.presentation
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
@@ -27,8 +28,6 @@ import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.prefs.SecureSharedPreferences
-import ch.protonmail.android.settings.domain.HandleChangesToViewMode
-import ch.protonmail.android.usecase.delete.ClearUserMessagesData
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,14 +42,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AccountSettingsActivity : BaseSettingsActivity() {
 
+    private val accountSettingsActivityViewModel: AccountSettingsActivityViewModel by viewModels()
+
     @Inject
     lateinit var featureFlags: FeatureFlagsManager
-
-    @Inject
-    lateinit var clearUserMessagesData: ClearUserMessagesData
-
-    @Inject
-    lateinit var handleChangesToViewMode: HandleChangesToViewMode
 
     override fun getLayoutId(): Int = R.layout.activity_settings
 
@@ -141,12 +136,7 @@ class AccountSettingsActivity : BaseSettingsActivity() {
             mailSettings?.saveBlocking(
                 SecureSharedPreferences.getPrefsForUser(this@AccountSettingsActivity, user.id)
             )
-            lifecycleScope.launch {
-                clearUserMessagesData.invoke(user.id)
-                handleChangesToViewMode.invoke(
-                    user.id, mailSettings?.viewMode ?: ViewMode.ConversationGrouping
-                )
-            }
+            accountSettingsActivityViewModel.changeViewMode(mailSettings?.viewMode ?: ViewMode.ConversationGrouping)
         }
     }
 }

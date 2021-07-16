@@ -240,7 +240,7 @@
             android:screenOrientation="portrait"
             android:label="@string/settings"/>
         <activity
-            android:name=".activities.AccountSettingsActivity"
+            android:name=".settings.presentation.AccountSettingsActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="@string/account_settings"/>

@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.settings.domain
 
-import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.ViewMode
@@ -37,9 +36,9 @@ class HandleChangesToViewMode @Inject constructor(
      * @param viewMode value that we want to change to
      */
     suspend operator fun invoke(
-        userId: Id,
+        userId: UserId,
         viewMode: ViewMode
     ) = withContext(dispatchers.Io) {
-        mailSettingsRepository.updateViewMode(UserId(userId.s), viewMode)
+        mailSettingsRepository.updateViewMode(userId, viewMode)
     }
 }
