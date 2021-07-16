@@ -293,7 +293,7 @@ Verlieren Sie dieses Passwort nicht, wir können es nicht wiederherstellen. Wenn
     <string name="draft_label_message_uploading">Nachricht wird gesendet …</string>
     <string name="attachment_failed">Hochladen des Anhangs der Nachricht fehlgeschlagen </string>
     <string name="attaching_photo_failed">Anhängen der Fotos fehlgeschlagen</string>
-    <string name="empty_message">Nachricht leeren</string>
+    <string name="empty_message">Nachricht ohne Inhalt</string>
     <string name="dismiss">Verwerfen</string>
     <string name="new_message_arrived">Neue Nachricht!</string>
     <string name="please_choose_color">Bitte eine Farbe wählen</string>
