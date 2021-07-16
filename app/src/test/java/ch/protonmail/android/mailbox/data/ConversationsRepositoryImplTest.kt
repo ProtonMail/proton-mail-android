@@ -753,8 +753,8 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             conversationsRepository.moveToFolder(conversationIds, userId, folderId)
 
             // then
-            coVerify(exactly = 4) {
-                messageDao.saveMessage(any())
+            coVerify(exactly = 2) {
+                messageDao.saveMessages(any())
             }
             coVerify(exactly = 2) {
                 conversationDao.updateLabels(any(), conversationId1)

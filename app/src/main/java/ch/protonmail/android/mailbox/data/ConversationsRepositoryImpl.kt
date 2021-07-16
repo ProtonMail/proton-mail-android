@@ -235,15 +235,18 @@ class ConversationsRepositoryImpl @Inject constructor(
         labelConversationsRemoteWorker.enqueue(conversationIds, folderId, userId)
 
         conversationIds.forEach { conversationId ->
+            Timber.v("Move conversation $conversationId to folder: $folderId")
             var lastMessageTime = 0L
-            getAllMessagesFromAConversation(conversationId).forEach { message ->
+            val messagesToUpdate = getAllMessagesFromAConversation(conversationId).map { message ->
                 val labelsToRemoveFromMessage = getLabelIdsForRemovingWhenMovingToFolder(message.allLabelIDs)
-                val labelsToAddToMessage = getLabelIdsForAddingWhenMovingToFolder(folderId, message.allLabelIDs)
                 message.removeLabels(labelsToRemoveFromMessage.toList())
+                val labelsToAddToMessage = getLabelIdsForAddingWhenMovingToFolder(folderId, message.allLabelIDs)
                 message.addLabels(labelsToAddToMessage.toList())
-                messageDao.saveMessage(message)
                 lastMessageTime = max(lastMessageTime, message.time)
+                message
             }
+            // save all updated messages from a conversation in one go
+            messageDao.saveMessages(messagesToUpdate)
 
             val conversation = requireNotNull(conversationDao.findConversation(conversationId, userId.id))
             val labelsToRemoveFromConversation = getLabelIdsForRemovingWhenMovingToFolder(
@@ -382,6 +385,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         val labels = conversation.labels.toMutableList()
         labels.removeIf { it.id in labelIds }
         labels.addAll(newLabels)
+        Timber.v("Update labels: $labels conversation: $conversationId")
         conversationDao.updateLabels(labels, conversationId)
     }
 
@@ -398,6 +402,7 @@ class ConversationsRepositoryImpl @Inject constructor(
 
     private fun observeConversationsLocal(params: GetConversationsParameters): Flow<List<Conversation>> =
         conversationDao.observeConversations(params.userId.s).map { list ->
+            Timber.d("Conversations update size: ${list.size}, params: $params")
             list.sortedWith(
                 compareByDescending<ConversationDatabaseModel> { conversation ->
                     conversation.labels.find { label -> label.id == params.locationId }?.contextTime

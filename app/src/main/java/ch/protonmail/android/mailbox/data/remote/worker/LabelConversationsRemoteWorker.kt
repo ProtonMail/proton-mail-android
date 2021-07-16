@@ -68,7 +68,7 @@ class LabelConversationsRemoteWorker @AssistedInject constructor(
 
         val requestBody = ConversationIdsRequestBody(labelId, conversationIds.asList())
 
-        Timber.v("LabelConversationsRemoteWorker labelId: $labelId convIds: $conversationIds")
+        Timber.v("LabelConversationsRemoteWorker labelId: $labelId convIds: ${conversationIds.asList()}")
 
         return runCatching {
             protonMailApiManager.labelConversations(requestBody, Id(userId))
