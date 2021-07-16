@@ -174,7 +174,7 @@ const val LOADER_ID_LABELS_OFFLINE = 32
 private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
 
 @AndroidEntryPoint
-class MailboxActivity :
+internal class MailboxActivity :
     NavigationActivity(),
     ActionMode.Callback,
     OnRefreshListener {

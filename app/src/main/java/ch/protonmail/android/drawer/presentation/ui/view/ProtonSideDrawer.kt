@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.ui.view
+package ch.protonmail.android.drawer.presentation.ui.view
 
 import android.content.Context
 import android.util.AttributeSet
@@ -27,8 +27,8 @@ import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ch.protonmail.android.adapters.DrawerAdapter
-import ch.protonmail.android.uiModel.DrawerItemUiModel
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel
+import ch.protonmail.android.drawer.presentation.ui.DrawerAdapter
 
 internal class ProtonSideDrawer @JvmOverloads constructor(
     context: Context,

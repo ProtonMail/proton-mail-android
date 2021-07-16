@@ -29,12 +29,9 @@ import timber.log.Timber
  * A Mapper of [LabelUiModel]
  * Inherit from [UiModelMapper]
  *
- * @param isLabelEditable whether the created Label is editable.
- * A different [LabelUiModel.image] will be used if [isLabelEditable]
- *
  * @author Davide Farella
  */
-internal class LabelUiModelMapper(private val isLabelEditable: Boolean) : UiModelMapper<Label, LabelUiModel> {
+internal class LabelUiModelMapper : UiModelMapper<Label, LabelUiModel> {
 
     /** @return [LabelUiModel] from receiver [Label] Entity */
     override fun Label.toUiModel(): LabelUiModel {
@@ -48,15 +45,11 @@ internal class LabelUiModelMapper(private val isLabelEditable: Boolean) : UiMode
             LabelUiModel.Type.FOLDERS -> R.drawable.ic_folder
         }
 
-        var newColor = color
-        if (color == "#5ec7b7") newColor = "#79C4B7"
-        if (color == "#97c9c1") newColor = "#A1C8C1"
-
         return LabelUiModel(
             labelId = id,
             name = name,
             image = image,
-            color = normalizeColor(newColor),
+            color = normalizeColor(color),
             isChecked = false,
             display = display,
             type = type
@@ -64,10 +57,17 @@ internal class LabelUiModelMapper(private val isLabelEditable: Boolean) : UiMode
     }
 
     private fun normalizeColor(color: String): Int {
+
+        val v4FixedColor = when (color) {
+            "#5ec7b7" -> "#79C4B7"
+            "#97c9c1" -> "#A1C8C1"
+            else -> color
+        }
+
         return try {
-            Color.parseColor(UiUtil.normalizeColor(color))
+            Color.parseColor(UiUtil.normalizeColor(v4FixedColor))
         } catch (exception: Exception) {
-            Timber.w(exception, "Cannot parse color: $color")
+            Timber.w(exception, "Cannot parse color: $v4FixedColor")
             Color.WHITE
         }
     }

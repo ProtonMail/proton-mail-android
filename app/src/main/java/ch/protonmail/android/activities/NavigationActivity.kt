@@ -36,7 +36,6 @@ import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
 import ch.protonmail.android.activities.navigation.NavigationViewModel
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
-import ch.protonmail.android.adapters.mapLabelsToDrawerLabels
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.local.SnoozeSettings
 import ch.protonmail.android.api.models.DatabaseProvider
@@ -47,16 +46,16 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.drawer.presentation.mapper.LabelWithUnreadCounterToDrawerLabelItemUiModelMapper
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary.Static.Type
+import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
+import ch.protonmail.android.drawer.presentation.ui.view.ProtonSideDrawer
 import ch.protonmail.android.feature.account.AccountStateManager
-import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.settings.pin.EXTRA_FRAGMENT_TITLE
 import ch.protonmail.android.settings.pin.ValidatePinActivity
-import ch.protonmail.android.ui.view.ProtonSideDrawer
-import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
-import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary.Static.Type
-import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
@@ -74,6 +73,7 @@ import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.presentation.view.AccountPrimaryView
 import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewModel
 import me.proton.core.auth.presentation.AuthOrchestrator
+import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
 import java.util.Calendar
 import javax.inject.Inject
@@ -90,7 +90,7 @@ const val REQUEST_CODE_SNOOZED_NOTIFICATIONS = 555
  * needs support for the navigation drawer.
  */
 @AndroidEntryPoint
-abstract class NavigationActivity : BaseActivity() {
+internal abstract class NavigationActivity : BaseActivity() {
 
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
@@ -117,6 +117,9 @@ abstract class NavigationActivity : BaseActivity() {
 
     @Inject
     lateinit var userManager: UserManager
+
+    @Inject
+    lateinit var drawerLabelMapper: LabelWithUnreadCounterToDrawerLabelItemUiModelMapper
 
     private val navigationViewModel by viewModels<NavigationViewModel>()
     private val accountSwitcherViewModel by viewModels<AccountSwitcherViewModel>()
@@ -436,8 +439,8 @@ abstract class NavigationActivity : BaseActivity() {
         }
     }
 
-    private fun onDrawerLabelSelected(label: LabelUiModel) {
-        val exclusive = label.type == LabelUiModel.Type.FOLDERS
+    private fun onDrawerLabelSelected(label: DrawerLabelUiModel) {
+        val exclusive = label.type == DrawerLabelUiModel.Type.FOLDERS
         onLabelMailBox(Constants.DrawerOptionType.LABEL, label.labelId, label.name, exclusive)
     }
 
@@ -447,12 +450,9 @@ abstract class NavigationActivity : BaseActivity() {
             if (labels == null)
                 return
 
-            // Get a mapper for create LabelUiModels. TODO this dependency could be handled better
-            val mapper = LabelUiModelMapper( /* isLabelEditable */false)
-
             // Prepare new Labels for the Adapter
-            val (labelsItems, foldersItems) = mapLabelsToDrawerLabels(mapper, labels)
-                .partition { it.uiModel.type == LabelUiModel.Type.LABELS }
+            val (labelsItems, foldersItems) = labels.map(drawerLabelMapper) { it.toUiModel() }
+                .partition { it.uiModel.type == DrawerLabelUiModel.Type.LABELS }
             sideDrawer.setFolderItems(R.string.folders, foldersItems)
             sideDrawer.setLabelItems(R.string.labels, labelsItems)
         }

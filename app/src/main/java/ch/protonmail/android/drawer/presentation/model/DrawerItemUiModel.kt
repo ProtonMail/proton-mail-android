@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uiModel
+package ch.protonmail.android.drawer.presentation.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -25,7 +25,7 @@ import ch.protonmail.android.core.Constants.MessageLocationType
 
 /**
  * Ui Model for Items in Navigation Drawer
- * @see ch.protonmail.android.adapters.DrawerAdapter
+ * @see ch.protonmail.android.drawer.presentation.ui.DrawerAdapter
  *
  * @author Davide Farella
  */
@@ -126,7 +126,7 @@ internal sealed class DrawerItemUiModel {
          * @param selected [Boolean] overridden in constructor for `copy` purpose
          */
         data class Label @JvmOverloads constructor(
-            val uiModel: LabelUiModel,
+            val uiModel: DrawerLabelUiModel,
             override val notificationCount: Int = 0,
             override val selected: Boolean = false
         ) : Primary() {
