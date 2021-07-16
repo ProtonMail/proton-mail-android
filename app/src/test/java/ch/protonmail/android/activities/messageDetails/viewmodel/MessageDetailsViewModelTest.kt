@@ -26,6 +26,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.attachments.AttachmentsHelper
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.INBOX
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
@@ -45,6 +46,7 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.LabelContext
 import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
@@ -75,6 +77,7 @@ import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.util.kotlin.EMPTY_STRING
 import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -115,6 +118,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     private val attachmentMetadataDao: AttachmentMetadataDao = mockk(relaxed = true)
 
     private val moveMessagesToFolder: MoveMessagesToFolder = mockk(relaxed = true)
+
+    private val moveConversationsToFolder: MoveConversationsToFolder = mockk(relaxed = true)
 
     private val fetchVerificationKeys: FetchVerificationKeys = mockk(relaxed = true)
 
@@ -167,6 +172,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             attachmentsHelper,
             DownloadUtils(),
             moveMessagesToFolder,
+            moveConversationsToFolder,
             conversationModeEnabled,
             conversationRepository,
             changeConversationsReadStatus,
@@ -705,7 +711,6 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         }
     }
 
-
     @Test
     fun verifyMarkUnReadInMessageMode() = runBlockingTest {
         // given
@@ -727,6 +732,81 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         coVerify(exactly = 1) {
             messageRepository.markUnRead(listOf(inputConversationId))
         }
+    }
+
+    @Test
+    fun verifyMoveToTrashInMessagesMode() {
+        // given
+        val inputMessageLocation = INBOX
+        // messageId is defined as a field as it's needed at VM's instantiation time.
+        val inputConversationId = INPUT_ITEM_DETAIL_ID
+        every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
+        every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
+            inputMessageLocation.messageLocationTypeValue
+        every { userManager.requireCurrentUserId() } returns testId1
+        coEvery { conversationModeEnabled(inputMessageLocation) } returns false
+        val message = Message(
+            messageId = INPUT_ITEM_DETAIL_ID,
+            folderLocation = inputMessageLocation.name
+        )
+        val downLoadedMessage = Message(
+            messageId = INPUT_ITEM_DETAIL_ID,
+            isDownloaded = true,
+            folderLocation = inputMessageLocation.name
+        )
+        coEvery { messageRepository.getMessage(testId1, INPUT_ITEM_DETAIL_ID, true) } returns downLoadedMessage
+
+        // when
+        observeMessageFlow.tryEmit(message)
+        viewModel.moveLastMessageToTrash()
+
+        // then
+        coVerify(exactly = 1) {
+            moveMessagesToFolder.invoke(
+                listOf(inputConversationId),
+                Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
+                message.folderLocation ?: EMPTY_STRING
+            )
+        }
+        coVerify(exactly = 0) {
+            moveConversationsToFolder(any(), any(), any())
+        }
+    }
+
+    @Test
+    fun verifyMoveToTrashInConversationMode() {
+        // given
+        val inputMessageLocation = INBOX
+        // messageId is defined as a field as it's needed at VM's instantiation time.
+        val inputConversationId = INPUT_ITEM_DETAIL_ID
+        every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
+        every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
+            inputMessageLocation.messageLocationTypeValue
+        val userString = "userId3"
+        val id = Id(userString)
+        val userId = UserId(userString)
+        every { userManager.requireCurrentUserId() } returns id
+        coEvery { conversationModeEnabled(inputMessageLocation) } returns true
+
+        // when
+        viewModel.moveLastMessageToTrash()
+
+        // then
+        coVerify(exactly = 1) {
+            moveConversationsToFolder(
+                listOf(inputConversationId),
+                userId,
+                Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
+            )
+        }
+        coVerify(exactly = 0) {
+            moveMessagesToFolder.invoke(
+                any(),
+                any(),
+                any()
+            )
+        }
+
     }
 
     private fun buildConversation(conversationId: String): Conversation {

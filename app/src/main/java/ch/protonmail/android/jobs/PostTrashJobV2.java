@@ -35,6 +35,7 @@ import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Label;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
+import timber.log.Timber;
 
 public class PostTrashJobV2 extends ProtonMailCounterJob {
 
@@ -58,6 +59,7 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
 
     @Override
     public void onAdded() {
+        Timber.v("Post to Trash ids: %s onAdded", mMessageIds);
         final CounterDao counterDao = CounterDatabase.Companion
                 .getInstance(getApplicationContext(), getUserId())
                 .getDao();
@@ -125,7 +127,7 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
     }
 
     @Override
-    public void onRun() throws Throwable {
+    public void onRun() {
         List<String> messageIds = new ArrayList<>(mMessageIds);
         getApi().labelMessages(new IDList(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue()), messageIds));
     }

@@ -22,6 +22,7 @@ package ch.protonmail.android.labels.domain.usecase
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.repository.MessageRepository
 import me.proton.core.util.kotlin.EMPTY_STRING
+import timber.log.Timber
 import javax.inject.Inject
 
 class MoveMessagesToFolder @Inject constructor(
@@ -33,6 +34,7 @@ class MoveMessagesToFolder @Inject constructor(
         newFolderLocationId: String,
         currentFolderLabelId: String = EMPTY_STRING,
     ) {
+        Timber.v("Move to folder: $newFolderLocationId")
         when (newFolderLocationId) {
             Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString() ->
                 messagesRepository.moveToTrash(messageIds, currentFolderLabelId)

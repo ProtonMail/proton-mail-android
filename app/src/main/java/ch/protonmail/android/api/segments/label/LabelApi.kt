@@ -53,9 +53,8 @@ class LabelApi(private val service: LabelService) : BaseApi(), LabelApiSpec {
             }
     }
 
-    override suspend fun fetchContactGroupsList(): List<ContactLabel> {
-        return service.fetchContactGroupsList().contactGroups
-    }
+    override suspend fun fetchContactGroupsList(): List<ContactLabel> =
+        service.fetchContactGroupsList().contactGroups
 
     @Throws(IOException::class)
     override fun createLabel(label: LabelBody): LabelResponse =

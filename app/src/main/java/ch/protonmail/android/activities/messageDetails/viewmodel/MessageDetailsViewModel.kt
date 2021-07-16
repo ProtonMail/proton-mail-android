@@ -61,6 +61,7 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.view.LabelChipUiModel
@@ -119,6 +120,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val attachmentsHelper: AttachmentsHelper,
     private val downloadUtils: DownloadUtils,
     private val moveMessagesToFolder: MoveMessagesToFolder,
+    private val moveConversationsToFolder: MoveConversationsToFolder,
     private val conversationModeEnabled: ConversationModeEnabled,
     private val conversationRepository: ConversationsRepository,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
@@ -654,13 +656,23 @@ internal class MessageDetailsViewModel @Inject constructor(
 
     fun moveLastMessageToTrash() {
         viewModelScope.launch {
-            lastMessage()?.let { message ->
-                moveMessagesToFolder(
+            if (isConversationEnabled()) {
+                val primaryUserId = UserId(userManager.requireCurrentUserId().s)
+                moveConversationsToFolder(
                     listOf(messageOrConversationId),
-                    Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
-                    message.folderLocation ?: EMPTY_STRING
+                    primaryUserId,
+                    Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
                 )
+            } else {
+                lastMessage()?.let { message ->
+                    moveMessagesToFolder(
+                        listOf(messageOrConversationId),
+                        Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString(),
+                        message.folderLocation ?: EMPTY_STRING
+                    )
+                }
             }
+
         }
     }
 
