@@ -162,7 +162,11 @@ class MessagesService : JobIntentService() {
         }
     }
 
-    private fun handleFetchMessages(location: Constants.MessageLocationType, time: Long, currentUserId: Id) {
+    private fun handleFetchMessages(
+        location: Constants.MessageLocationType,
+        time: Long,
+        currentUserId: Id
+    ) {
         try {
             val messages = mApi.fetchMessages(location.messageLocationTypeValue, time)
             Timber.v("handleFetchMessages location: $location, time: $time")
@@ -440,7 +444,11 @@ class MessagesService : JobIntentService() {
 
     class Scheduler @Inject constructor() {
 
-        fun fetchMessagesOlderThanTime(location: Constants.MessageLocationType, userId: Id, time: Long) {
+        fun fetchMessagesOlderThanTime(
+            location: Constants.MessageLocationType,
+            userId: Id,
+            time: Long
+        ) {
             Timber.v("fetchMessagesOlderThanTime location: $location, time: $time")
             val context = ProtonMailApplication.getApplication()
             val intent = Intent(context, MessagesService::class.java)

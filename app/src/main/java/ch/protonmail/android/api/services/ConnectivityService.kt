@@ -46,7 +46,7 @@ class ConnectivityService : JobService(), ConnectivityBroadcastReceiver.Connecti
     }
 
     override fun onStartJob(params: JobParameters?): Boolean {
-        registerReceiver(mConnectivityReceiver,  IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        registerReceiver(mConnectivityReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         return true
     }
 

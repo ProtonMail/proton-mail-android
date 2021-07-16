@@ -26,7 +26,10 @@ import ch.protonmail.android.domain.entity.Id
 
 class DeviceApi(private val service: DeviceService) : BaseApi(), DeviceApiSpec {
 
-    override suspend fun registerDevice(userId: Id, registerDeviceRequestBody: RegisterDeviceRequestBody) =
+    override suspend fun registerDevice(
+        userId: Id,
+        registerDeviceRequestBody: RegisterDeviceRequestBody
+    ) =
         service.registerDevice(UserIdTag(userId), registerDeviceRequestBody)
 
     override suspend fun unregisterDevice(unregisterDeviceRequestBody: UnregisterDeviceRequestBody) =

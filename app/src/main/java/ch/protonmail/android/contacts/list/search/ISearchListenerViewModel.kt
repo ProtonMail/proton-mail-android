@@ -18,8 +18,6 @@
  */
 package ch.protonmail.android.contacts.list.search
 
-/**
- * Created by kadrikj on 9/15/18. */
 interface ISearchListenerViewModel {
-    fun setSearchPhrase(searchPhrase:String?)
+    fun setSearchPhrase(searchPhrase: String?)
 }

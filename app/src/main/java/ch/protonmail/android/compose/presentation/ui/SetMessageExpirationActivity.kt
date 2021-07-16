@@ -48,6 +48,7 @@ import timber.log.Timber
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 const val ARG_SET_MESSAGE_EXPIRATION_DAYS = "arg.days"
+
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 const val ARG_SET_MESSAGE_EXPIRATION_HOURS = "arg.hours"
 

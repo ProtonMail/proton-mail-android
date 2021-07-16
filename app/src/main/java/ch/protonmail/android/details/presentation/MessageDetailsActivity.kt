@@ -186,7 +186,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private fun initAdapters() {
         messageExpandableAdapter = MessageDetailsAdapter(
             this,
-            listOf(),
+            emptyList(),
             messageDetailsRecyclerView,
             messageBodyParser,
             mUserManager,

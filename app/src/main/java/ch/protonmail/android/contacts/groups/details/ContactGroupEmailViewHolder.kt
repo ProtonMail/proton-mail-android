@@ -26,7 +26,7 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import kotlinx.android.synthetic.main.contact_groups_email_list_item_selectable.view.*
 import java.util.Locale
 
-class ContactGroupEmailViewHolder(view: View, private val mode: GroupsItemAdapterMode): RecyclerView.ViewHolder(view) {
+class ContactGroupEmailViewHolder(view: View, private val mode: GroupsItemAdapterMode) : RecyclerView.ViewHolder(view) {
 
     fun bind(contactEmail: ContactEmail) {
         var name = contactEmail.name

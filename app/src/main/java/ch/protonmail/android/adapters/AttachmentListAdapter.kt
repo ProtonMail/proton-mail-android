@@ -36,7 +36,6 @@ import java.io.File
 import java.util.ArrayList
 import java.util.Comparator
 
-
 class AttachmentListAdapter(
     context: Context,
     attachmentsList: List<LocalAttachment>?,
@@ -107,7 +106,8 @@ class AttachmentListAdapter(
         }
 
         attachmentName.text = attachment.displayName
-        attachmentSize.text = context.getString(R.string.attachment_size, Formatter.formatShortFileSize(context, attachment.size))
+        attachmentSize.text =
+            context.getString(R.string.attachment_size, Formatter.formatShortFileSize(context, attachment.size))
 
         removeButton.setOnClickListener {
             val isEmbedded = attachment.isEmbeddedImage
@@ -128,8 +128,11 @@ class AttachmentListAdapter(
 
         attachmentName.setOnClickListener {
             if ("file" == attachment.uri.scheme) {
-                val localFileUri = FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", File(attachment.uri.path))
-                val intent = Intent(Intent.ACTION_VIEW).setDataAndType(localFileUri, attachment.mimeType).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                val localFileUri = FileProvider.getUriForFile(
+                    context, context.applicationContext.packageName + ".provider", File(attachment.uri.path)
+                )
+                val intent = Intent(Intent.ACTION_VIEW).setDataAndType(localFileUri, attachment.mimeType)
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
                 if (intent.resolveActivity(context.packageManager) != null) {
                     context.startActivity(intent)
@@ -141,6 +144,7 @@ class AttachmentListAdapter(
     }
 
     interface IAttachmentListener {
+
         fun onAttachmentDeleted(remainingAttachments: Int, embeddedImagesCount: Int)
         fun askStoragePermission()
     }

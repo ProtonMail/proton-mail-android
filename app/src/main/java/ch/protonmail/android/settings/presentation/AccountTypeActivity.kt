@@ -51,7 +51,6 @@ import ch.protonmail.android.viewmodel.AccountTypeViewModel.State.Error.PrimaryU
 import com.squareup.otto.Subscribe
 import timber.log.Timber
 
-
 class AccountTypeActivity : BaseActivity() {
 
     private val upgrade by lazy { findViewById<Button>(R.id.upgrade) }

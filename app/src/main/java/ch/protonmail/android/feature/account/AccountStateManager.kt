@@ -72,7 +72,6 @@ import me.proton.core.humanverification.presentation.HumanVerificationManagerObs
 import me.proton.core.humanverification.presentation.HumanVerificationOrchestrator
 import me.proton.core.humanverification.presentation.observe
 import me.proton.core.humanverification.presentation.onHumanVerificationNeeded
-import me.proton.core.network.domain.humanverification.HumanVerificationAvailableMethods
 import me.proton.core.user.domain.UserManager
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject

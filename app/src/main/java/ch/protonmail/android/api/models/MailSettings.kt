@@ -272,14 +272,5 @@ class MailSettings : Serializable {
                 }
             }
         }
-
-        @Deprecated(
-            "Load using Preferences directly",
-            ReplaceWith("load(preferences)"),
-            DeprecationLevel.ERROR
-        )
-        fun load(username: String): MailSettings {
-            unsupported
-        }
     }
 }

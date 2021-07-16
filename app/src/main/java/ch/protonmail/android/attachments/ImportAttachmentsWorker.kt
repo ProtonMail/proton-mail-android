@@ -93,9 +93,11 @@ class ImportAttachmentsWorker(context: Context, params: WorkerParameters) : Work
                                     } catch (e: Exception) {
                                         Timber.i(e, "Import attachment exception")
                                         cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
-                                            .split("/")[cursor.getString(
-                                            cursor.getColumnIndex(MediaStore.Audio.Media.DATA)
-                                        ).split("/").size - 1]
+                                            .split("/")[
+                                            cursor.getString(
+                                                cursor.getColumnIndex(MediaStore.Audio.Media.DATA)
+                                            ).split("/").size - 1
+                                        ]
                                     }
                                     size = cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE))
                                     size = if (size > 0) size else importedFile.length()

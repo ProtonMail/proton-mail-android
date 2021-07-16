@@ -347,7 +347,7 @@ class SendMessageWorker @AssistedInject constructor(
                 .build()
 
             workManager.enqueueUniqueWork(
-                "${SEND_MESSAGE_WORK_NAME_PREFIX}-${requireNotNull(message.messageId)}",
+                "$SEND_MESSAGE_WORK_NAME_PREFIX-${requireNotNull(message.messageId)}",
                 ExistingWorkPolicy.REPLACE,
                 sendMessageRequest
             )

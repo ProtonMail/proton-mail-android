@@ -32,7 +32,7 @@ class NetworkApiSwitchWorker(context: Context, workerParams: WorkerParameters) :
     @SuppressLint("LogNotTimber")
     override fun doWork(): Result {
         Log.d(TAG, "doWork started")
-        if(isStopped) {
+        if (isStopped) {
             Log.d(TAG, "worker was stopped")
             return Result.failure()
         }

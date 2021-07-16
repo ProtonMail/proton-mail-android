@@ -44,6 +44,7 @@ public class PMFirebaseMessagingService : FirebaseMessagingService() {
 
     @Inject
     lateinit var registerDeviceWorkerEnqueuer: RegisterDeviceWorker.Enqueuer
+
     @Inject
     lateinit var processPushNotificationData: ProcessPushNotificationDataWorker.Enqueuer
 

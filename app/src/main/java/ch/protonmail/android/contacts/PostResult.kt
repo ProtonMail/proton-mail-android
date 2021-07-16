@@ -20,6 +20,4 @@ package ch.protonmail.android.contacts
 
 import ch.protonmail.android.events.Status
 
-/**
- * Created by kadrikj on 9/13/18. */
 class PostResult(val message: String? = null, val status: Status)

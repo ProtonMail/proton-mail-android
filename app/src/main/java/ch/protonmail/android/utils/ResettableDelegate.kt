@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.utils
 
-import java.util.*
+import java.util.LinkedList
 import kotlin.reflect.KProperty
 
 class ResettableLazyManager {

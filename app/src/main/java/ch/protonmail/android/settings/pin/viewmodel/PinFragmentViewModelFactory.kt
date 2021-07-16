@@ -22,7 +22,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import javax.inject.Inject
 
-class PinFragmentViewModelFactory @Inject constructor(private val pinFragmentViewModel: PinFragmentViewModel) :
+class PinFragmentViewModelFactory @Inject constructor(
+    private val pinFragmentViewModel: PinFragmentViewModel
+) :
     ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

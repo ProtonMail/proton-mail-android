@@ -43,7 +43,7 @@ class ContactGroupDetailsRepository @Inject constructor(
 ) {
 
     private val contactDao by lazy {
-        Timber.v("Instantiating contactDao in ContactGroupDetailsRepository");
+        Timber.v("Instantiating contactDao in ContactGroupDetailsRepository")
         databaseProvider.provideContactDao(userManager.requireCurrentUserId())
     }
 

@@ -20,4 +20,4 @@ package ch.protonmail.android.api.exceptions
 
 import ch.protonmail.android.api.models.ResponseBody
 
-class ApiException(val response: ResponseBody, message: String): Exception(message)
+class ApiException(val response: ResponseBody, message: String) : Exception(message)

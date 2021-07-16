@@ -29,7 +29,9 @@ import timber.log.Timber
 const val TYPE_HEADER = 1000
 const val TYPE_ITEM = 1001
 
-abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>(private var mContext: Context) :
+abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>(
+    private var mContext: Context
+) :
     RecyclerView.Adapter<ExpandableRecyclerAdapter<T>.ViewHolder>() {
 
     protected var allItems: MutableList<T> = ArrayList()
@@ -65,7 +67,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
     open inner class HeaderViewHolder(view: View) : ViewHolder(view) {
 
         init {
-            view.setOnClickListener{
+            view.setOnClickListener {
                 if (allItems.size > 2) {
                     handleClick()
                 }

@@ -36,56 +36,56 @@ import ch.protonmail.android.data.local.model.TABLE_PENDING_SEND
 import ch.protonmail.android.data.local.model.TABLE_PENDING_UPLOADS
 
 @Dao
-abstract class PendingActionDao {
+interface PendingActionDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertPendingForSend(pendingSend: PendingSend)
+    fun insertPendingForSend(pendingSend: PendingSend)
 
     @Query("SELECT * FROM $TABLE_PENDING_SEND")
-    abstract fun findAllPendingSendsAsync(): LiveData<List<PendingSend>>
+    fun findAllPendingSendsAsync(): LiveData<List<PendingSend>>
 
     @Query("SELECT * FROM $TABLE_PENDING_SEND WHERE $COLUMN_PENDING_SEND_MESSAGE_ID = :messageId")
-    abstract fun findPendingSendByMessageId(messageId: String): PendingSend?
+    fun findPendingSendByMessageId(messageId: String): PendingSend?
 
     @Query("DELETE FROM $TABLE_PENDING_SEND WHERE $COLUMN_PENDING_SEND_MESSAGE_ID = :messageId")
-    abstract fun deletePendingSendByMessageId(messageId: String)
+    fun deletePendingSendByMessageId(messageId: String)
 
     @Query("DELETE FROM $TABLE_PENDING_SEND WHERE $COLUMN_PENDING_SEND_LOCAL_DB_ID = :messageDbId")
-    abstract fun deletePendingSendByDbId(messageDbId: Long)
+    fun deletePendingSendByDbId(messageDbId: Long)
 
     @Query("SELECT * FROM $TABLE_PENDING_SEND WHERE $COLUMN_PENDING_SEND_OFFLINE_MESSAGE_ID = :offlineMessageId")
-    abstract fun findPendingSendByOfflineMessageId(offlineMessageId: String): PendingSend?
+    fun findPendingSendByOfflineMessageId(offlineMessageId: String): PendingSend?
 
     @Query("SELECT * FROM $TABLE_PENDING_SEND WHERE $COLUMN_PENDING_SEND_OFFLINE_MESSAGE_ID = :offlineMessageId")
-    abstract fun findPendingSendByOfflineMessageIdAsync(offlineMessageId: String): LiveData<PendingSend?>
+    fun findPendingSendByOfflineMessageIdAsync(offlineMessageId: String): LiveData<PendingSend?>
 
     @Query("SELECT * FROM $TABLE_PENDING_SEND WHERE $COLUMN_PENDING_SEND_LOCAL_DB_ID = :dbId")
-    abstract fun findPendingSendByDbId(dbId: Long): PendingSend?
+    fun findPendingSendByDbId(dbId: Long): PendingSend?
 
     @Query("DELETE FROM $TABLE_PENDING_SEND")
-    abstract fun clearPendingSendCache()
+    fun clearPendingSendCache()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertPendingForUpload(pendingUpload: PendingUpload)
+    fun insertPendingForUpload(pendingUpload: PendingUpload)
 
     @Query("SELECT * FROM $TABLE_PENDING_UPLOADS")
-    abstract fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>>
+    fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>>
 
     @Query("SELECT * FROM $TABLE_PENDING_UPLOADS WHERE $COLUMN_PENDING_UPLOAD_MESSAGE_ID = :messageId")
-    abstract fun findPendingUploadByMessageId(messageId: String): PendingUpload?
+    fun findPendingUploadByMessageId(messageId: String): PendingUpload?
 
     @Query("DELETE FROM $TABLE_PENDING_UPLOADS WHERE $COLUMN_PENDING_UPLOAD_MESSAGE_ID IN (:messageId)")
-    abstract fun deletePendingUploadByMessageId(vararg messageId: String)
+    fun deletePendingUploadByMessageId(vararg messageId: String)
 
     @Query("DELETE FROM $TABLE_PENDING_UPLOADS")
-    abstract fun clearPendingUploadCache()
+    fun clearPendingUploadCache()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertPendingDraft(pendingDraft: PendingDraft)
+    fun insertPendingDraft(pendingDraft: PendingDraft)
 
     @Query("DELETE FROM $TABLE_PENDING_DRAFT WHERE $COLUMN_PENDING_DRAFT_MESSAGE_ID = :messageDbId")
-    abstract fun deletePendingDraftById(messageDbId: Long)
+    fun deletePendingDraftById(messageDbId: Long)
 
     @Query("SELECT * FROM $TABLE_PENDING_DRAFT WHERE $COLUMN_PENDING_DRAFT_MESSAGE_ID = :messageDbId")
-    abstract fun findPendingDraftByDbId(messageDbId: Long): PendingDraft?
+    fun findPendingDraftByDbId(messageDbId: Long): PendingDraft?
 }

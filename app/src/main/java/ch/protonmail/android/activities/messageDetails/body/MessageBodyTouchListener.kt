@@ -45,7 +45,8 @@ internal class MessageBodyTouchListener(
                     val deltaY = motionEvent.rawY - mDownY
                     if (Math.abs(deltaX) > scaledTouchSlop && Math.abs(
                             deltaY
-                        ) < scaledTouchSlop || motionEvent.pointerCount > 1) {
+                        ) < scaledTouchSlop || motionEvent.pointerCount > 1
+                    ) {
                         wvScrollView.requestDisallowInterceptTouchEvent(true)
                     }
                 }

@@ -39,6 +39,7 @@ import javax.inject.Inject
 
 @VisibleForTesting(otherwise = PRIVATE)
 const val MESSAGE_PASSWORD_MIN_LENGTH = 4
+
 @VisibleForTesting(otherwise = PRIVATE)
 const val MESSAGE_PASSWORD_MAX_LENGTH = 21
 

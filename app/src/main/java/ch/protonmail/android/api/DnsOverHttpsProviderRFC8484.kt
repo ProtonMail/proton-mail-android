@@ -18,15 +18,13 @@
  */
 package ch.protonmail.android.api
 
+// import org.apache.commons.codec.binary.Base32
 import android.util.Base64
-import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.api.segments.DnsOverHttpsRetrofitApi
 import ch.protonmail.android.api.utils.Json
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-// import org.apache.commons.codec.binary.Base32
 import org.minidns.dnsmessage.DnsMessage
 import org.minidns.dnsmessage.Question
 import org.minidns.record.Record
@@ -88,13 +86,14 @@ class DnsOverHttpsProviderRFC8484(
             val answers = answerMessage.answerSection
             return answers
                 .mapNotNull { (it.payload as? TXT)?.text }
-                .map { "https://${it}/" }
+                .map { "https://$it/" }
                 .takeIf { it.isNotEmpty() }
         }
         return null
     }
 
     companion object {
+
         private const val TIMEOUT_S = 10L
     }
 }

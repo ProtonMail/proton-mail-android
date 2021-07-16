@@ -26,7 +26,7 @@ import ch.protonmail.android.utils.ui.RecipientDropDownClickListener
 
 internal class RecipientContextMenuFactory(
     private val context: MessageDetailsActivity
-    ) : Function1<String, View.OnClickListener> {
+) : Function1<String, View.OnClickListener> {
 
     override fun invoke(email: String): View.OnClickListener {
         val app = context.app

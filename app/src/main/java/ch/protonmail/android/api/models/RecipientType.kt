@@ -18,8 +18,6 @@
  */
 package ch.protonmail.android.api.models
 
-/**
- * Created by Kamil Rajtar on 14.08.18.  */
-enum class RecipientType{
-	TO,CC,BCC
+enum class RecipientType {
+    TO, CC, BCC
 }

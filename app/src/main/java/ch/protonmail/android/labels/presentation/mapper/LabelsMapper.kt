@@ -41,7 +41,7 @@ class LabelsMapper @Inject constructor() {
 
         // TODO if (labelsSheetType == LabelsActionSheet.Type.FOLDER && setting from the net MailSettings.EnableFolderColor != true)
         //  Color.BLACK else label.color
-        val colorInt =  label.color.toColorInt()
+        val colorInt = label.color.toColorInt()
 
         val isChecked = if (labelsSheetType == LabelsActionSheet.Type.LABEL) {
             currentLabelsSelection.contains(label.id)

@@ -55,5 +55,6 @@ fun <M : Mapper<In, Out>, In, Out> LiveData<In>.map(mapper: M, f: M.(In) -> Out)
  * @return [DataSource.Factory] of [Out]
  */
 fun <M : Mapper<In, Out>, In, Out> DataSource.Factory<Int, In>.map(
-    mapper: M, f: M.(In) -> Out
+    mapper: M,
+    f: M.(In) -> Out
 ): DataSource.Factory<Int, Out> = map { mapper.f(it) }

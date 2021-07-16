@@ -31,8 +31,6 @@ import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.SELECTED
 import ch.protonmail.android.contacts.details.data.ContactDetailsRepository
-import ch.protonmail.android.contacts.details.domain.FetchContactDetails
-import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsResult
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.domain.usecase.DownloadFile

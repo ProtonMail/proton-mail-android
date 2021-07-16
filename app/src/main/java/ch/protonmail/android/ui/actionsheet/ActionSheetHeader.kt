@@ -56,7 +56,7 @@ class ActionSheetHeader @JvmOverloads constructor(
     fun shiftTitleToRightBy(shiftValue: Float) {
         binding.textviewActionSheetTitle.translationX = shiftValue
 
-        with (binding.textviewActionSheetSubtitle) {
+        with(binding.textviewActionSheetSubtitle) {
             if (isVisible) {
                 translationX = shiftValue
             }

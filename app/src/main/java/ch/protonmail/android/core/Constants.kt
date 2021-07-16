@@ -64,7 +64,7 @@ object Constants {
     const val MIN_ATTACHMENT_STORAGE_IN_MB = 200
     const val MAX_USERNAME_LENGTH = 40
     const val MAX_INCORRECT_PIN_ATTEMPTS = 10
-    const val MAX_INTENT_STRING_SIZE = 200000
+    const val MAX_INTENT_STRING_SIZE = 200_000
     const val MIN_LOCAL_STORAGE_CLEARING_SIZE = 0.4
 
     // Indicates the first time when all clients should be signing all messages.

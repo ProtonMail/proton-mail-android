@@ -199,5 +199,5 @@ fun String.substring(
     endInclusive: Boolean = false,
     ignoreCase: Boolean = false
 ) = (this as CharSequence)
-        .subsequence(start, end, startIndex, endIndex, startInclusive, endInclusive, ignoreCase)
-        .toString()
+    .subsequence(start, end, startIndex, endIndex, startInclusive, endInclusive, ignoreCase)
+    .toString()

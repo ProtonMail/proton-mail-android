@@ -503,10 +503,14 @@ interface ContactDao {
     fun deleteJoinByGroupIdAndEmailId(contactEmailIds: List<String>, contactGroupId: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveContactEmailContactLabel(contactEmailContactLabelJoin: ContactEmailContactLabelJoin): Long
+    suspend fun saveContactEmailContactLabel(
+        contactEmailContactLabelJoin: ContactEmailContactLabelJoin
+    ): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactEmailContactLabelBlocking(contactEmailContactLabelJoin: ContactEmailContactLabelJoin): Long
+    fun saveContactEmailContactLabelBlocking(
+        contactEmailContactLabelJoin: ContactEmailContactLabelJoin
+    ): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveContactEmailContactLabel(

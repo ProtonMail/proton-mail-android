@@ -49,12 +49,11 @@ import kotlinx.android.synthetic.main.fragment_contacts_groups.*
 import timber.log.Timber
 import java.io.Serializable
 
-
 // region constants
 private const val TAG_CONTACT_GROUPS_FRAGMENT = "ProtonMail.ContactGroupsFragment"
 // endregion
 
-@AndroidEntryPoint  // TODO: Investigate if it could be merged together with [ContactsListFragment].
+@AndroidEntryPoint // TODO: Investigate if it could be merged together with [ContactsListFragment].
 class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
     private lateinit var contactGroupsAdapter: ContactsGroupsListAdapter

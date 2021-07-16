@@ -66,7 +66,6 @@ import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class ContactDetailsActivity : AppCompatActivity() {
 
