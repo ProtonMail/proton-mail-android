@@ -73,6 +73,7 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
@@ -162,6 +163,8 @@ class ComposeMessageViewModel @Inject constructor(
 
     private var sendingInProcess = false
     private var signatureContainsHtml = false
+
+    var compositeDisposable = CompositeDisposable()
 
     // endregion
     // region events observables
@@ -272,6 +275,11 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
+    override fun onCleared() {
+        compositeDisposable.clear()
+        super.onCleared()
+    }
+
     fun setupEditDraftMessage(draftId: String, composerGroupCountOf: String) {
         _draftId.set(draftId)
         _composerGroupCountOf = composerGroupCountOf
@@ -315,7 +323,7 @@ class ComposeMessageViewModel @Inject constructor(
             handleContactGroupsResult()
             return
         }
-        composeMessageRepository.getContactGroupsFromDB(userId, user.combinedContacts)
+        val disposable = composeMessageRepository.getContactGroupsFromDB(userId, user.combinedContacts)
             .flatMap {
                 for (group in it) {
                     val emails = composeMessageRepository.getContactGroupEmailsSync(group.ID)
@@ -355,6 +363,8 @@ class ComposeMessageViewModel @Inject constructor(
                     }
                 }
             )
+
+        compositeDisposable.add(disposable)
     }
 
     fun getContactGroupRecipients(group: ContactLabel): List<MessageRecipient> =
@@ -645,7 +655,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     fun findDraftMessageById() {
-        composeMessageRepository.findMessageByIdSingle(_draftId.get())
+        val disposable = composeMessageRepository.findMessageByIdSingle(_draftId.get())
             .subscribeOn(ThreadSchedulers.io())
             .observeOn(ThreadSchedulers.io())
             .flatMap {
@@ -676,6 +686,8 @@ class ComposeMessageViewModel @Inject constructor(
                     )
                 }
             )
+
+        compositeDisposable.add(disposable)
     }
 
     fun openAttachmentsScreen() {
@@ -943,7 +955,7 @@ class ComposeMessageViewModel @Inject constructor(
         _protonMailContactsLoaded = true
         for (userId in loggedInUserIds) {
             fetchContactGroups(userId!!)
-            composeMessageRepository.findAllMessageRecipients(userId)
+            val disposable = composeMessageRepository.findAllMessageRecipients(userId)
                 .subscribeOn(ThreadSchedulers.io())
                 .observeOn(ThreadSchedulers.main())
                 .subscribe {
@@ -958,6 +970,7 @@ class ComposeMessageViewModel @Inject constructor(
                         }
                     }
                 }
+            compositeDisposable.add(disposable)
         }
     }
 
@@ -1231,7 +1244,7 @@ class ComposeMessageViewModel @Inject constructor(
     @SuppressLint("CheckResult")
     fun watchForMessageSent() {
         if (_draftId.get().isNotEmpty()) {
-            composeMessageRepository.findMessageByIdObservable(_draftId.get()).toObservable()
+            val disposable = composeMessageRepository.findMessageByIdObservable(_draftId.get()).toObservable()
                 .subscribeOn(ThreadSchedulers.io())
                 .observeOn(ThreadSchedulers.main())
                 .subscribe(
@@ -1247,6 +1260,8 @@ class ComposeMessageViewModel @Inject constructor(
                     },
                     { }
                 )
+
+            compositeDisposable.add(disposable)
         }
     }
 
