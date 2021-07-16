@@ -25,6 +25,7 @@ import java.util.Properties
 plugins {
     `android-application`
     `google-services`
+    `detekt`
     `kotlin-android`
     `kotlin-android-extensions`
     `kotlin-kapt`
@@ -38,6 +39,27 @@ plugins {
 kapt {
     correctErrorTypes = true
 }
+
+detekt {
+    ignoreFailures = false
+    config = files("${rootProject.projectDir}/config/detekt/config.yml")
+
+    reports {
+        xml.enabled = false
+        html {
+            enabled = true
+            destination = file("${rootProject.projectDir}/config/detekt/reports/detekt.html")
+        }
+        txt {
+            enabled = true
+            destination = file("${rootProject.projectDir}/config/detekt/reports/detekt.txt")
+        }
+    }
+    dependencies {
+        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.15.0")
+    }
+}
+configurations { detekt }
 
 val privateProperties = Properties().apply {
     try {
@@ -221,6 +243,10 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
     val reportFiles: ConfigurableFileTree = fileTree(project.buildDir)
     reportFiles.include(reportFilesFilter)
     executionData.setFrom(reportFiles)
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt> {
+    this.jvmTarget = "1.8"
 }
 
 dependencies {

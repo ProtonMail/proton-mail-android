@@ -74,6 +74,7 @@ class VerifyConnection @Inject constructor(
             connectivityManagerFlow
         )
             .flattenMerge()
+            .filter { it != Constants.ConnectionState.PING_NEEDED }
             .onStart {
                 pingWorkerEnqueuer.enqueue()
                 emit(

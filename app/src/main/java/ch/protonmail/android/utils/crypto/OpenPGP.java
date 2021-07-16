@@ -38,13 +38,12 @@ import com.proton.gopenpgp.srp.Srp;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import at.favre.lib.crypto.bcrypt.Radix64Encoder;
-import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.crypto.Primes.PrimeGenerator;
 import timber.log.Timber;
 
@@ -167,11 +166,12 @@ public class OpenPGP {
     }
 
     public byte[] generateMailboxPassword(String encodedSalt, byte[] password) {
-
+        int passphraseHashSize = 31;
         byte[] decodedKeySalt = Base64.decode(encodedSalt, Base64.DEFAULT);
+
         try {
-            String generatedMailboxPassword = Srp.mailboxPassword(new String(password), decodedKeySalt);
-            return generatedMailboxPassword.replace("$2y$10$", "").replace(new String(new Radix64Encoder.Default().encode(decodedKeySalt)), "").getBytes();
+            byte[] srpPassword = Srp.mailboxPassword(password, decodedKeySalt);
+            return Arrays.copyOfRange(srpPassword, srpPassword.length - passphraseHashSize, srpPassword.length);
 
         } catch (Exception e) {
             Timber.e(e, "Generating mailbox password failed");

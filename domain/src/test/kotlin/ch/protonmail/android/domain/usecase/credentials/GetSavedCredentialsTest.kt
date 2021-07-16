@@ -34,9 +34,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import me.proton.core.test.kotlin.CoroutinesTest
+
 import kotlin.test.Test
+import kotlin.time.DurationUnit
 import kotlin.time.minutes
 import kotlin.time.seconds
+import kotlin.time.toDuration
 
 class GetSavedCredentialsTest : CoroutinesTest {
 
@@ -103,8 +106,8 @@ class GetSavedCredentialsTest : CoroutinesTest {
     fun `does publish updates correctly for all the credentials`() = coroutinesTest {
 
         val result = mutableListOf<Map<EmailAddress, Credential>>()
-        val interval = 30.seconds
-        val flow = getSavedCredentials(interval - 5.seconds)
+        val interval = 30.toDuration(DurationUnit.SECONDS)
+        val flow = getSavedCredentials(interval - 5.toDuration(DurationUnit.SECONDS))
         val job = launch {
             delay(10)
             flow.toList(result)
@@ -157,8 +160,8 @@ class GetSavedCredentialsTest : CoroutinesTest {
     fun `does publish updates correctly for a single credentials`() = coroutinesTest {
 
         val result = mutableListOf<Credential>()
-        val interval = 30.seconds
-        val flow = getSavedCredentials(SomeEmailAddress, interval - 5.seconds)
+        val interval = 30.toDuration(DurationUnit.SECONDS)
+        val flow = getSavedCredentials(SomeEmailAddress, interval - 5.toDuration(DurationUnit.SECONDS))
         val job = launch {
             delay(10)
             flow.toList(result)
@@ -201,9 +204,9 @@ class GetSavedCredentialsTest : CoroutinesTest {
     fun `does not publish multiple times the same value for all the credentials`() = coroutinesTest {
 
         val result = mutableListOf<Map<EmailAddress, Credential>>()
-        val flow = getSavedCredentials(30.seconds)
+        val flow = getSavedCredentials(30.toDuration(DurationUnit.SECONDS))
         val job = launch {
-            delay(10)
+            delay(10L)
             flow.toList(result)
         }
 
@@ -212,7 +215,7 @@ class GetSavedCredentialsTest : CoroutinesTest {
         repo[AnotherEmailAddress] = Credential.MailboxPasswordRequired
 
         // When
-        advanceTimeBy(2.minutes.toLongMilliseconds())
+        advanceTimeBy(2.toDuration(DurationUnit.MINUTES).toLongMilliseconds())
         job.cancel()
 
         // Then
@@ -228,9 +231,9 @@ class GetSavedCredentialsTest : CoroutinesTest {
     fun `does not publish multiple times the same value for a single credentials`() = coroutinesTest {
 
         val result = mutableListOf<Credential>()
-        val flow = getSavedCredentials(SomeEmailAddress, 30.seconds)
+        val flow = getSavedCredentials(SomeEmailAddress, 30.toDuration(DurationUnit.SECONDS))
         val job = launch {
-            delay(10)
+            delay(10L)
             flow.toList(result)
         }
 
@@ -238,7 +241,7 @@ class GetSavedCredentialsTest : CoroutinesTest {
         repo[SomeEmailAddress] = Credential.FullyLoggedIn
 
         // When
-        advanceTimeBy(2.minutes.toLongMilliseconds())
+        advanceTimeBy(2.toDuration(DurationUnit.MINUTES).toLongMilliseconds())
         job.cancel()
 
         // Then
