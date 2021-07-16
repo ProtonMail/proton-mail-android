@@ -155,8 +155,11 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         actionsTarget: ActionSheetTarget
     ) {
         with(binding) {
-            layoutDetailsActions.isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN ||
-                actionsTarget == ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+            layoutDetailsActions.isVisible = actionsTarget in listOf(
+                ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN,
+                ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN,
+                ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+            )
 
             textViewDetailsActionsReply.setOnClickListener {
                 (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.REPLY)

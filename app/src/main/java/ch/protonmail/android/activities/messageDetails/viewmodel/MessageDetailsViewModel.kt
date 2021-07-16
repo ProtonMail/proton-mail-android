@@ -222,7 +222,7 @@ internal class MessageDetailsViewModel @Inject constructor(
         userManager.primaryUserId
             .filterNotNull()
             .flatMapLatest { userId ->
-                if (conversationModeEnabled(location)) {
+                if (isConversationEnabled()) {
                     getConversationFlow(userId)
                 } else {
                     getMessageFlow(userId)
