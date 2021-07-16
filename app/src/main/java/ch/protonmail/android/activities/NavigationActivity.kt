@@ -19,6 +19,7 @@
 package ch.protonmail.android.activities
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -59,8 +60,7 @@ import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
-import ch.protonmail.android.utils.extensions.setDarkStatusBar
-import ch.protonmail.android.utils.extensions.setLightStatusBar
+import ch.protonmail.android.utils.extensions.setDrawBehindSystemBars
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import ch.protonmail.android.utils.startSplashActivity
@@ -75,6 +75,8 @@ import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewM
 import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
+import me.proton.core.presentation.utils.setDarkStatusBar
+import me.proton.core.presentation.utils.setLightStatusBar
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -83,6 +85,14 @@ const val EXTRA_FIRST_LOGIN = "extra.first.login"
 
 const val REQUEST_CODE_ACCOUNT_MANAGER = 997
 const val REQUEST_CODE_SNOOZED_NOTIFICATIONS = 555
+
+/**
+ * Set drawer behind system bars only on Android 11, as Drawer items don't fit correctly below API 30
+ *  ( fitsSystemWindow = true doesn't work as expected )
+ *
+ * Tracked on MAILAND-2123
+ */
+private val SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
 // endregion
 
 /**
@@ -156,6 +166,15 @@ internal abstract class NavigationActivity : BaseActivity() {
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS) {
+            // This is needed for the status bar to change correctly, it doesn't without this. Is there a way to mime
+            //  the behaviour with newer API?
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            setDrawBehindSystemBars()
+        }
+
         super.onCreate(savedInstanceState)
         authOrchestrator.register(this)
 
@@ -247,8 +266,8 @@ internal abstract class NavigationActivity : BaseActivity() {
     override fun onResume() {
         accountStateManager.setAuthOrchestrator(authOrchestrator)
         super.onResume()
+        if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS) setLightStatusBar()
         checkUserId()
-        setLightStatusBar()
         app.startJobManager()
         mJobManager.addJobInBackground(FetchUpdatesJob())
         val alarmReceiver = AlarmReceiver()
@@ -313,20 +332,14 @@ internal abstract class NavigationActivity : BaseActivity() {
 
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
 
-            /**
-             * TODO [setDarkStatusBar]
-             *  disabled for now, as we're not drawing behind the status bar
-             */
             override fun onDrawerOpened(drawerView: View) {
                 super.onDrawerOpened(drawerView)
+                if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS) setDarkStatusBar()
             }
 
-            /**
-             * TODO [setLightStatusBar]
-             *  disabled for now, as we're not drawing behind the status bar
-             */
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
+                if (SHOULD_DRAW_DRAWER_BEHIND_SYSTEM_BARS) setLightStatusBar()
                 onDrawerClose()
                 onDrawerClose = {}
             }

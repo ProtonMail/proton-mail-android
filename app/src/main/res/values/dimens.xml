@@ -196,7 +196,6 @@
     <!-- nav drawer -->
     <dimen name="labels_horizontal_padding">8dp</dimen>
     <dimen name="labels_separator_padding">16dp</dimen>
-    <dimen name="navdrawer_width">300dp</dimen>
 
     <!-- login -->
     <dimen name="spacing">40dp</dimen>

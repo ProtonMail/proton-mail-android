@@ -19,9 +19,10 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/navdrawer_width"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="start"
+    android:fitsSystemWindows="true"
     android:background="@color/nav_view_background"
     android:orientation="vertical">
 

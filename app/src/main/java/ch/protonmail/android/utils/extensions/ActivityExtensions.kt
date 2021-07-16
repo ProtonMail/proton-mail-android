@@ -19,13 +19,9 @@
 
 package ch.protonmail.android.utils.extensions
 
-import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 
-fun FragmentActivity.setDarkStatusBar() {
-    WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
-}
-
-fun FragmentActivity.setLightStatusBar() {
-    WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
+fun FragmentActivity.setDrawBehindSystemBars() {
+    WindowCompat.setDecorFitsSystemWindows(window, false)
 }
