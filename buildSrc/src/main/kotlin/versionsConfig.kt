@@ -73,7 +73,7 @@ const val `Proton-kotlin-test version` =        "0.2"           // Released: Oct
 // Feature
 const val `Proton-account version` =            "1.1.7"         // Released: Jun 17, 2021
 const val `Proton-account-manager version` =    "1.1.8"         // Released: Jun 17, 2021
-const val `Proton-auth version` =               "1.3"           // Released: Jul 13, 2021
+const val `Proton-auth version` =               "1.3.1"         // Released: Jul 16, 2021
 const val `Proton-country version` =            "0.1.5"         // Released: Jun 09, 2021
 const val `Proton-crypto version` =             "1.1.2"         // Released: Jun 21, 2021
 const val `Proton-data version` =               "1.0.3"         // Released: Mar 22, 2021
