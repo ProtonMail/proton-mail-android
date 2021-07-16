@@ -33,6 +33,7 @@ stages:
   script:
     - ./gradlew detektBetaDebug
   artifacts:
+    when: on_failure
     expire_in: 1 week
     paths:
       - config/detekt/reports/*
