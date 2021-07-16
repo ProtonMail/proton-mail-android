@@ -24,16 +24,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.RadioButton
 import android.widget.RadioGroup
-import androidx.lifecycle.lifecycleScope
+import androidx.activity.viewModels
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.settings.data.toLocal
-import ch.protonmail.android.settings.domain.HandleChangesToSwipeActions
+import ch.protonmail.android.settings.data.toLocalSwipeActionUiModel
 import ch.protonmail.android.utils.extensions.app
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import me.proton.core.mailsettings.domain.entity.SwipeAction
-import javax.inject.Inject
 import ch.protonmail.android.adapters.swipe.SwipeAction as SwipeActionLocal
 
 // region constants
@@ -49,11 +46,7 @@ enum class SwipeType {
 @AndroidEntryPoint
 class SwipeChooserActivity : BaseActivity() {
 
-    @Inject
-    lateinit var handleChangesToSwipeActions: HandleChangesToSwipeActions
-
-    private var currentAction: SwipeAction = SwipeAction.Trash
-    private var swipeId: SwipeType = SwipeType.RIGHT
+    private val swipeActionsViewModel: SwipeActionsViewModel by viewModels()
 
     private val swipeRadioGroup by lazy { findViewById<RadioGroup>(R.id.swipeRadioGroup) }
 
@@ -67,12 +60,9 @@ class SwipeChooserActivity : BaseActivity() {
         val elevation = resources.getDimension(R.dimen.action_bar_elevation)
         actionBar?.elevation = elevation
 
-        currentAction = intent.getSerializableExtra(EXTRA_CURRENT_ACTION) as SwipeAction
-        swipeId = intent.getSerializableExtra(EXTRA_SWIPE_ID) as SwipeType
-
-        if (swipeId == SwipeType.LEFT) {
+        if (swipeActionsViewModel.swipeId == SwipeType.LEFT) {
             actionBar?.title = getString(R.string.settings_swipe_right_to_left)
-        } else if (swipeId == SwipeType.RIGHT) {
+        } else if (swipeActionsViewModel.swipeId == SwipeType.RIGHT) {
             actionBar?.title = getString(R.string.settings_swipe_left_to_right)
         }
         createActions()
@@ -100,21 +90,7 @@ class SwipeChooserActivity : BaseActivity() {
                 true
             }
             R.id.save -> {
-                val userId = mUserManager.requireCurrentUserId()
-                lifecycleScope.launch {
-                    if (swipeId == SwipeType.LEFT) {
-
-                        handleChangesToSwipeActions.invoke(
-                            userId,
-                            swipeLeft = currentAction
-                        )
-                    } else {
-                        handleChangesToSwipeActions.invoke(
-                            userId,
-                            swipeRight = currentAction
-                        )
-                    }
-                }
+                swipeActionsViewModel.onSaveClicked()
                 saveAndFinish()
                 true
             }
@@ -136,12 +112,14 @@ class SwipeChooserActivity : BaseActivity() {
 
         for (index in availableActions.indices) {
             val swipeAction = availableActions[index]
-            if (getString(SwipeAction.values()[currentAction.value].toLocal().actionDescription) == swipeAction) {
+            if (getString(swipeActionsViewModel.currentAction.toLocalSwipeActionUiModel().actionDescription)
+                == swipeAction
+            ) {
                 (swipeRadioGroup.getChildAt(index) as RadioButton).isChecked = true
             }
         }
         swipeRadioGroup?.setOnCheckedChangeListener { _, _ ->
-            currentAction = when (swipeRadioGroup.checkedRadioButtonId) {
+            swipeActionsViewModel.currentAction = when (swipeRadioGroup.checkedRadioButtonId) {
                 R.id.read_unread -> SwipeAction.MarkRead
                 R.id.star_unstar -> SwipeAction.Star
                 R.id.trash -> SwipeAction.Trash

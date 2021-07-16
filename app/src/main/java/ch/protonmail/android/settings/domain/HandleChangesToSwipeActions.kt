@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.settings.domain
 
-import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.SwipeAction
@@ -37,15 +36,15 @@ class HandleChangesToSwipeActions @Inject constructor(
      * @param swipeRight and swipeLeft values that we want to change
      */
     suspend operator fun invoke(
-        userId: Id,
+        userId: UserId,
         swipeRight: SwipeAction? = null,
         swipeLeft: SwipeAction? = null
     ) = withContext(dispatchers.Io) {
         swipeRight?.let {
-            mailSettingsRepository.updateSwipeRight(UserId(userId.s), swipeRight)
+            mailSettingsRepository.updateSwipeRight(userId, swipeRight)
         }
         swipeLeft?.let {
-            mailSettingsRepository.updateSwipeLeft(UserId(userId.s), swipeLeft)
+            mailSettingsRepository.updateSwipeLeft(userId, swipeLeft)
         }
     }
 }

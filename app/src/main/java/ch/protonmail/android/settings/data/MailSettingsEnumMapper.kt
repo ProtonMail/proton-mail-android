@@ -20,14 +20,14 @@
 package ch.protonmail.android.settings.data
 
 import me.proton.core.mailsettings.domain.entity.SwipeAction
-import ch.protonmail.android.adapters.swipe.SwipeAction as SwipeActionLocal
+import ch.protonmail.android.adapters.swipe.SwipeAction as SwipeActionUiModel
 
-internal fun SwipeAction.toLocal(): SwipeActionLocal {
+internal fun SwipeAction.toLocalSwipeActionUiModel(): SwipeActionUiModel {
     return when (this) {
-        SwipeAction.Trash -> SwipeActionLocal.TRASH
-        SwipeAction.Spam -> SwipeActionLocal.SPAM
-        SwipeAction.Star -> SwipeActionLocal.STAR
-        SwipeAction.Archive -> SwipeActionLocal.ARCHIVE
-        SwipeAction.MarkRead -> SwipeActionLocal.MARK_READ
+        SwipeAction.Trash -> SwipeActionUiModel.TRASH
+        SwipeAction.Spam -> SwipeActionUiModel.SPAM
+        SwipeAction.Star -> SwipeActionUiModel.STAR
+        SwipeAction.Archive -> SwipeActionUiModel.ARCHIVE
+        SwipeAction.MarkRead -> SwipeActionUiModel.MARK_READ
     }
 }

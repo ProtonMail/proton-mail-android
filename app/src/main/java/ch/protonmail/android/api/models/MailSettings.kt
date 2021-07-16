@@ -148,19 +148,6 @@ class MailSettings : Serializable {
             showImages = value.flag
         }
 
-
-//    var leftSwipeAction: Int
-//        get() = if (swipeLeft in 0..4) swipeLeft else 0
-//        set(swipeAction) {
-//            swipeLeft = swipeAction
-//        }
-
-//    var rightSwipeAction: Int
-//        get() = if (swipeRight in 0..4) swipeRight else 0
-//        set(swipeAction) {
-//            swipeRight = swipeAction
-//        }
-
     val defaultSign: Boolean
         get() = sign != 0
 
