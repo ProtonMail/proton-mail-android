@@ -47,8 +47,8 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.drawer.presentation.mapper.LabelWithUnreadCounterToDrawerLabelItemUiModelMapper
-import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.*
-import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary.Static.*
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary
+import ch.protonmail.android.drawer.presentation.model.DrawerItemUiModel.Primary.Static.Type
 import ch.protonmail.android.drawer.presentation.model.DrawerLabelUiModel
 import ch.protonmail.android.drawer.presentation.ui.view.ProtonSideDrawer
 import ch.protonmail.android.feature.account.AccountStateManager
@@ -70,7 +70,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import me.proton.core.accountmanager.presentation.view.AccountPrimaryView
 import me.proton.core.accountmanager.presentation.viewmodel.AccountSwitcherViewModel
 import me.proton.core.auth.presentation.AuthOrchestrator
