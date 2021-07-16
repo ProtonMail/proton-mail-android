@@ -138,7 +138,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <LinearLayout
         android:id="@+id/messageWebViewContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:focusableInTouchMode="true"
         android:descendantFocusability="blocksDescendants"
         android:animateLayoutChanges="true"

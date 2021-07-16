@@ -190,6 +190,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             messageDetailsRecyclerView,
             messageBodyParser,
             mUserManager,
+            lifecycleScope,
             ::onLoadEmbeddedImagesClicked,
             ::onDisplayRemoteContentClicked,
             ::onLoadMessageBody,

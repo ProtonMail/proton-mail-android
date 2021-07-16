@@ -35,8 +35,10 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
@@ -61,9 +63,17 @@ import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
 import java.util.ArrayList
+
+/**
+ * Used to force the "message content" webview to have a fixed size while animating (expanding  / collapsing)
+ * a message in a conversation. This is needed to ensure a smooth animation
+ */
+private const val MESSAGE_CONTENT_ANIMATION_SIZE = 200
 
 internal class MessageDetailsAdapter(
     private val context: Context,
@@ -71,6 +81,7 @@ internal class MessageDetailsAdapter(
     private val messageDetailsRecyclerView: RecyclerView,
     private val messageBodyParser: MessageBodyParser,
     private val userManager: UserManager,
+    private val lifecycleScope: LifecycleCoroutineScope,
     private val onLoadEmbeddedImagesClicked: (Message) -> Unit,
     private val onDisplayRemoteContentClicked: (Message) -> Unit,
     private val onLoadMessageBody: (Message) -> Unit,
@@ -203,6 +214,12 @@ internal class MessageDetailsAdapter(
         }
     }
 
+    override fun onViewRecycled(holder: ViewHolder) {
+        super.onViewRecycled(holder)
+        constrainMessageContentHeight(holder)
+        resetWebViewContent(holder)
+    }
+
     inner class ItemViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.ViewHolder(view) {
 
         fun bind(position: Int, listItem: MessageDetailsListItem) {
@@ -246,6 +263,18 @@ internal class MessageDetailsAdapter(
 
             setupMessageActionsView(message, listItem.messageFormattedHtmlWithQuotedHistory, webView)
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
+
+
+            lifecycleScope.launch {
+                // Delay to allow expand animation to finish before changing the message content's size
+                delay(200)
+
+                val params = ConstraintLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                itemView.messageWebViewContainer.layoutParams = params
+            }
         }
 
         private fun messageHasNoQuotedPart(listItem: MessageDetailsListItem) =
@@ -461,6 +490,16 @@ internal class MessageDetailsAdapter(
                 false
             }
         }
+    }
+
+    private fun resetWebViewContent(holder: ViewHolder) {
+        val webView = holder.itemView.messageWebViewContainer?.findViewById<WebView>(R.id.item_message_body_web_view_id)
+        webView?.loadUrl("about:blank")
+    }
+
+    private fun constrainMessageContentHeight(holder: ViewHolder) {
+        val params = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, MESSAGE_CONTENT_ANIMATION_SIZE)
+        holder.itemView.messageWebViewContainer?.layoutParams = params
     }
 
     private fun setUpSpamScoreView(spamScore: Int, spamScoreView: TextView) {
