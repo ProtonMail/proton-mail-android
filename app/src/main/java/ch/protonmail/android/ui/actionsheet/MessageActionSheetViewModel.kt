@@ -254,7 +254,8 @@ class MessageActionSheetViewModel @Inject constructor(
         currentFolder: Constants.MessageLocationType
     ) {
         viewModelScope.launch {
-            if (isActionAppliedToConversation(currentFolder)) {
+            if (isActionAppliedToConversation(currentFolder, true)) {
+                Timber.v("Move conversation to folder: $newFolderLocationId")
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     moveConversationsToFolder(
@@ -266,6 +267,7 @@ class MessageActionSheetViewModel @Inject constructor(
                     Timber.e("Primary user id is null. Cannot move message/conversation to folder")
                 }
             } else {
+                Timber.v("Move message to folder: $newFolderLocationId")
                 moveMessagesToFolder(
                     ids,
                     newFolderLocationId.messageLocationTypeValue.toString(),
@@ -281,7 +283,7 @@ class MessageActionSheetViewModel @Inject constructor(
     private fun isActionAppliedToConversation(
         location: Constants.MessageLocationType?,
         shallIgnoreLocationInConversationResolution: Boolean = false
-    ) : Boolean {
+    ): Boolean {
         val locationForTypeDetermination = if (shallIgnoreLocationInConversationResolution) {
             null
         } else {
