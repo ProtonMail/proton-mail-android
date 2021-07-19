@@ -73,8 +73,10 @@ import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Before
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.toDuration
 
 private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
 
@@ -535,7 +537,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             }
 
             // when
-            conversationsRepository.getConversation(conversationId, Id(userId)).test {
+            conversationsRepository.getConversation(conversationId, Id(userId)).test(timeout = 3.toDuration(TimeUnit.SECONDS)) {
                 dbFlow.emit(null)
 
                 // then

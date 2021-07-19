@@ -259,6 +259,11 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt> {
     this.jvmTarget = "1.8"
 }
 
+tasks.withType<Test> {
+    // add more coroutines debug information
+    systemProperty("kotlinx.coroutines.debug", "on")
+}
+
 dependencies {
 
     // Hilt

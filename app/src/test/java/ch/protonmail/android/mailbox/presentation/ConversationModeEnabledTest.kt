@@ -118,6 +118,19 @@ class ConversationModeEnabledTest {
         assertEquals(true, actual)
     }
 
+    @Test
+    fun verifyThatConversationModeIsEnabledWhenLocationIsNull() {
+        // given
+        every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
+        every { userManager.getCurrentUserMailSettingsBlocking() } returns mailSettingsWithConversationViewMode()
+
+        // when
+        val actual = conversationModeEnabled(null)
+
+        // then
+        assertEquals(true, actual)
+    }
+
     private fun mailSettingsWithMessagesViewMode(): MailSettings {
         val mailSettings = MailSettings()
         mailSettings.viewMode = 1

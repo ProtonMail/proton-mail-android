@@ -304,6 +304,9 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
         } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+        val userId = UserId("userId")
+        every { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        coEvery { changeConversationsStarredStatus(any(), any(), any()) } just Runs
 
         // when
         viewModel.starMessage(

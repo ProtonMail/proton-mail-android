@@ -39,11 +39,16 @@ class ConversationModeEnabled @Inject constructor(
         MessageLocationType.SEARCH
     )
 
-    operator fun invoke(location: MessageLocationType): Boolean {
+    /**
+     * When location is null, the location is ignored.
+     */
+    operator fun invoke(location: MessageLocationType?): Boolean {
         val isConversationViewMode = userManager
             .getCurrentUserMailSettingsBlocking()?.viewMode == CONVERSATION_MODE_VIEW_MODE
         return featureFlagsManager.isChangeViewModeFeatureEnabled() &&
             isConversationViewMode &&
             !forceMessagesViewModeLocations.contains(location)
     }
+
+
 }

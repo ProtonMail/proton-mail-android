@@ -50,6 +50,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.yield
 import me.proton.core.data.arch.toDataResult
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.DataResult.Error
@@ -172,6 +173,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             conversationDao.updateNumUnreadMessages(0, conversationId)
             // All the messages from the conversation are marked as read
             getAllMessagesFromAConversation(conversationId).forEach { message ->
+                yield()
                 messageDao.saveMessage(message.apply { setIsRead(true) })
             }
         }
@@ -189,6 +191,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
             // Only the latest message from the current location is marked as unread
             getAllMessagesFromAConversation(conversationId).forEach { message ->
+                yield()
                 if (Constants.MessageLocationType.fromInt(message.location) == location) {
                     messageDao.saveMessage(message.apply { setIsRead(false) })
                     return@forEachConversation
@@ -203,9 +206,11 @@ class ConversationsRepositoryImpl @Inject constructor(
         labelConversationsRemoteWorker.enqueue(conversationIds, starredLabelId, userId)
 
         conversationIds.forEach { conversationId ->
+            Timber.v("Star conversation $conversationId")
             var lastMessageTime = 0L
             getAllMessagesFromAConversation(conversationId).forEach { message ->
-                messageDao.updateStarred(message.messageId!!, true)
+                yield()
+                messageDao.updateStarred(requireNotNull(message.messageId), true)
                 lastMessageTime = max(lastMessageTime, message.time)
             }
 
@@ -219,9 +224,11 @@ class ConversationsRepositoryImpl @Inject constructor(
         unlabelConversationsRemoteWorker.enqueue(conversationIds, starredLabelId, userId)
 
         conversationIds.forEach { conversationId ->
+            Timber.v("UnStar conversation $conversationId")
             removeLabelsFromConversation(conversationId, userId, listOf(starredLabelId))
 
             getAllMessagesFromAConversation(conversationId).forEach { message ->
+                yield()
                 messageDao.updateStarred(message.messageId!!, false)
             }
         }
@@ -238,6 +245,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             Timber.v("Move conversation $conversationId to folder: $folderId")
             var lastMessageTime = 0L
             val messagesToUpdate = getAllMessagesFromAConversation(conversationId).map { message ->
+                yield()
                 val labelsToRemoveFromMessage = getLabelIdsForRemovingWhenMovingToFolder(message.allLabelIDs)
                 message.removeLabels(labelsToRemoveFromMessage.toList())
                 val labelsToAddToMessage = getLabelIdsForAddingWhenMovingToFolder(folderId, message.allLabelIDs)
@@ -293,6 +301,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationIds.forEach { conversationId ->
             var lastMessageTime = 0L
             messageDao.findAllMessagesInfoFromConversation(conversationId).forEach { message ->
+                yield()
                 message.addLabels(listOf(labelId))
                 messageDao.saveMessage(message)
                 lastMessageTime = max(lastMessageTime, message.time)
@@ -307,6 +316,7 @@ class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach { conversationId ->
             messageDao.findAllMessagesInfoFromConversation(conversationId).forEach { message ->
+                yield()
                 message.removeLabels(listOf(labelId))
                 messageDao.saveMessage(message)
             }

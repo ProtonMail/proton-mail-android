@@ -139,10 +139,11 @@ class MessageActionSheetViewModel @Inject constructor(
 
     fun starMessage(
         ids: List<String>,
-        location: Constants.MessageLocationType
+        location: Constants.MessageLocationType,
+        shallIgnoreLocationInConversationResolution: Boolean = false
     ) {
         viewModelScope.launch {
-            if (isActionAppliedToConversation(location)) {
+            if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     changeConversationsStarredStatus(
@@ -163,10 +164,11 @@ class MessageActionSheetViewModel @Inject constructor(
 
     fun unStarMessage(
         ids: List<String>,
-        location: Constants.MessageLocationType
+        location: Constants.MessageLocationType,
+        shallIgnoreLocationInConversationResolution: Boolean = false
     ) {
         viewModelScope.launch {
-            if (isActionAppliedToConversation(location)) {
+            if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     changeConversationsStarredStatus(
@@ -187,10 +189,11 @@ class MessageActionSheetViewModel @Inject constructor(
 
     fun markUnread(
         ids: List<String>,
-        location: Constants.MessageLocationType
+        location: Constants.MessageLocationType,
+        shallIgnoreLocationInConversationResolution: Boolean = false
     ) {
         viewModelScope.launch {
-            if (isActionAppliedToConversation(location)) {
+            if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     changeConversationsReadStatus(
@@ -213,10 +216,11 @@ class MessageActionSheetViewModel @Inject constructor(
 
     fun markRead(
         ids: List<String>,
-        location: Constants.MessageLocationType
+        location: Constants.MessageLocationType,
+        shallIgnoreLocationInConversationResolution: Boolean = false
     ) {
         viewModelScope.launch {
-            if (isActionAppliedToConversation(location)) {
+            if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
                     changeConversationsReadStatus(
@@ -274,8 +278,17 @@ class MessageActionSheetViewModel @Inject constructor(
         }
     }
 
-    private fun isActionAppliedToConversation(location: Constants.MessageLocationType) =
-        conversationModeEnabled(location) && !isApplyingActionToMessageWithinAConversation()
+    private fun isActionAppliedToConversation(
+        location: Constants.MessageLocationType?,
+        shallIgnoreLocationInConversationResolution: Boolean = false
+    ) : Boolean {
+        val locationForTypeDetermination = if (shallIgnoreLocationInConversationResolution) {
+            null
+        } else {
+            location
+        }
+        return conversationModeEnabled(locationForTypeDetermination) && !isApplyingActionToMessageWithinAConversation()
+    }
 
     private fun isApplyingActionToMessageWithinAConversation(): Boolean {
         val actionsTarget = getActionsTargetInputArg()

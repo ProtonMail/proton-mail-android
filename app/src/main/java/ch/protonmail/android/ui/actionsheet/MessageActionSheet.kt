@@ -72,6 +72,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 arguments?.getInt(EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID) ?: 0
             )
 
+        Timber.v("MessageActionSheet for location: $messageLocation")
         val binding = FragmentMessageActionSheetBinding.inflate(inflater)
 
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
@@ -189,25 +190,41 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             textViewDetailsActionsUnstar.apply {
                 isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN || isStarred
                 setOnClickListener {
-                    viewModel.unStarMessage(messageIds, messageLocation)
+                    viewModel.unStarMessage(
+                        messageIds,
+                        messageLocation,
+                        actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                    )
                 }
             }
 
             textViewDetailsActionsStar.apply {
                 isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN || !isStarred
                 setOnClickListener {
-                    viewModel.starMessage(messageIds, messageLocation)
+                    viewModel.starMessage(
+                        messageIds,
+                        messageLocation,
+                        actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                    )
                 }
             }
 
             textViewDetailsActionsMarkRead.apply {
                 isVisible = actionsTarget == ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
                 setOnClickListener {
-                    viewModel.markRead(messageIds, messageLocation)
+                    viewModel.markRead(
+                        messageIds,
+                        messageLocation,
+                        actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                    )
                 }
             }
             textViewDetailsActionsMarkUnread.setOnClickListener {
-                viewModel.markUnread(messageIds, messageLocation)
+                viewModel.markUnread(
+                    messageIds,
+                    messageLocation,
+                    actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                )
             }
             textViewDetailsActionsLabelAs.setOnClickListener {
                 viewModel.showLabelsManager(messageIds, messageLocation)
