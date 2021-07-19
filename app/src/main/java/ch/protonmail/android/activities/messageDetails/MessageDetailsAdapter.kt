@@ -35,7 +35,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -216,8 +215,10 @@ internal class MessageDetailsAdapter(
 
     override fun onViewRecycled(holder: ViewHolder) {
         super.onViewRecycled(holder)
-        constrainMessageContentHeight(holder)
-        resetWebViewContent(holder)
+        holder.itemView.messageWebViewContainer?.let {
+            constrainMessageContentHeight(it)
+            resetWebViewContent(it)
+        }
     }
 
     inner class ItemViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.ViewHolder(view) {
@@ -269,10 +270,8 @@ internal class MessageDetailsAdapter(
                 // Delay to allow expand animation to finish before changing the message content's size
                 delay(200)
 
-                val params = ConstraintLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
+                val params = itemView.messageWebViewContainer.layoutParams
+                params.height = ViewGroup.LayoutParams.WRAP_CONTENT
                 itemView.messageWebViewContainer.layoutParams = params
             }
         }
@@ -456,9 +455,8 @@ internal class MessageDetailsAdapter(
         webView.isHorizontalScrollBarEnabled = false
         val webViewParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
+            ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        webViewParams.height = LinearLayout.LayoutParams.WRAP_CONTENT
         webViewParams.setMargins(0, 0, 0, 0)
         webView.layoutParams = webViewParams
         webView.webViewClient = pmWebViewClient
@@ -492,14 +490,15 @@ internal class MessageDetailsAdapter(
         }
     }
 
-    private fun resetWebViewContent(holder: ViewHolder) {
-        val webView = holder.itemView.messageWebViewContainer?.findViewById<WebView>(R.id.item_message_body_web_view_id)
+    private fun resetWebViewContent(messageWebViewContainer: LinearLayout) {
+        val webView = messageWebViewContainer.findViewById<WebView>(R.id.item_message_body_web_view_id)
         webView?.loadUrl("about:blank")
     }
 
-    private fun constrainMessageContentHeight(holder: ViewHolder) {
-        val params = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, MESSAGE_CONTENT_ANIMATION_SIZE)
-        holder.itemView.messageWebViewContainer?.layoutParams = params
+    private fun constrainMessageContentHeight(messageWebViewContainer: LinearLayout) {
+        val params = messageWebViewContainer.layoutParams
+        params.height = MESSAGE_CONTENT_ANIMATION_SIZE
+        messageWebViewContainer.layoutParams = params
     }
 
     private fun setUpSpamScoreView(spamScore: Int, spamScoreView: TextView) {
