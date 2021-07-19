@@ -37,7 +37,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.attachments.MessageDetailsAttachmentListAdapter
@@ -62,8 +61,6 @@ import ch.protonmail.android.views.messageDetails.MessageDetailsAttachmentsView
 import ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
 import kotlinx.android.synthetic.main.layout_message_details.view.*
 import kotlinx.android.synthetic.main.layout_message_details_web_view.view.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.apache.http.protocol.HTTP
 import timber.log.Timber
 import java.util.ArrayList
@@ -72,7 +69,8 @@ import java.util.ArrayList
  * Used to force the "message content" webview to have a fixed size while animating (expanding  / collapsing)
  * a message in a conversation. This is needed to ensure a smooth animation
  */
-private const val MESSAGE_CONTENT_ANIMATION_SIZE = 200
+private const val MESSAGE_CONTENT_FIXED_SIZE = 200
+private const val EXPAND_MESSAGE_ANIMATION_DELAY_MS = 200L
 
 internal class MessageDetailsAdapter(
     private val context: Context,
@@ -80,7 +78,6 @@ internal class MessageDetailsAdapter(
     private val messageDetailsRecyclerView: RecyclerView,
     private val messageBodyParser: MessageBodyParser,
     private val userManager: UserManager,
-    private val lifecycleScope: LifecycleCoroutineScope,
     private val onLoadEmbeddedImagesClicked: (Message) -> Unit,
     private val onDisplayRemoteContentClicked: (Message) -> Unit,
     private val onLoadMessageBody: (Message) -> Unit,
@@ -265,15 +262,15 @@ internal class MessageDetailsAdapter(
             setupMessageActionsView(message, listItem.messageFormattedHtmlWithQuotedHistory, webView)
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
 
+            itemView.messageWebViewContainer.postDelayed(
+                {
 
-            lifecycleScope.launch {
-                // Delay to allow expand animation to finish before changing the message content's size
-                delay(200)
-
-                val params = itemView.messageWebViewContainer.layoutParams
-                params.height = ViewGroup.LayoutParams.WRAP_CONTENT
-                itemView.messageWebViewContainer.layoutParams = params
-            }
+                    val params = itemView.messageWebViewContainer.layoutParams
+                    params.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                    itemView.messageWebViewContainer.layoutParams = params
+                },
+                EXPAND_MESSAGE_ANIMATION_DELAY_MS
+            )
         }
 
         private fun messageHasNoQuotedPart(listItem: MessageDetailsListItem) =
@@ -497,7 +494,7 @@ internal class MessageDetailsAdapter(
 
     private fun constrainMessageContentHeight(messageWebViewContainer: LinearLayout) {
         val params = messageWebViewContainer.layoutParams
-        params.height = MESSAGE_CONTENT_ANIMATION_SIZE
+        params.height = MESSAGE_CONTENT_FIXED_SIZE
         messageWebViewContainer.layoutParams = params
     }
 

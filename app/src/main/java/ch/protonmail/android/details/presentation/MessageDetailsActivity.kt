@@ -190,7 +190,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             messageDetailsRecyclerView,
             messageBodyParser,
             mUserManager,
-            lifecycleScope,
             ::onLoadEmbeddedImagesClicked,
             ::onDisplayRemoteContentClicked,
             ::onLoadMessageBody,
@@ -242,7 +241,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
         val webView = v as WebView
-        val result = webView.hitTestResult ?: return
+        val result = webView.hitTestResult
         val type = result.type
         if (listOf(HitTestResult.UNKNOWN_TYPE, HitTestResult.EDIT_TEXT_TYPE).contains(type)) {
             return
@@ -580,7 +579,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             messagesInConversation
         )
         collapsedToolbarMessagesCountTextView.text = numberOfMessagesFormatted
-        // Initially, the expanded message count view is shown instead. Visibility changes are handled by `OnOffsetChangedListener`
+        // Initially, the expanded message count view is shown instead.
+        // Visibility changes are handled by `OnOffsetChangedListener`
         collapsedToolbarMessagesCountTextView.isVisible = false
 
         expandedToolbarMessagesCountTextView.text = numberOfMessagesFormatted
