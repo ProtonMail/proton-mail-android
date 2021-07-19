@@ -46,7 +46,6 @@ import ch.protonmail.android.activities.BaseStoragePermissionActivity
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessageDetailsAdapter
-import ch.protonmail.android.activities.messageDetails.details.OnStarToggleListener
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.Attachment
@@ -156,7 +155,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             } ?: false
         }
 
-        starToggleButton.setOnCheckedChangeListener(OnStarToggleListener(mJobManager, messageOrConversationId))
+        starToggleButton.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (!buttonView.isPressed) {
+                return@setOnCheckedChangeListener
+            }
+            viewModel.handleStarUnStar(messageOrConversationId, isChecked)
+        }
     }
 
     private fun continueSetup() {

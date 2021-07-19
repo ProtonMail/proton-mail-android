@@ -59,6 +59,7 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
+import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
@@ -124,6 +125,7 @@ internal class MessageDetailsViewModel @Inject constructor(
     private val conversationModeEnabled: ConversationModeEnabled,
     private val conversationRepository: ConversationsRepository,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
+    private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     savedStateHandle: SavedStateHandle,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
@@ -673,6 +675,33 @@ internal class MessageDetailsViewModel @Inject constructor(
                 }
             }
 
+        }
+    }
+
+    fun handleStarUnStar(messageOrConversationId: String, isChecked: Boolean) {
+        val ids = listOf(messageOrConversationId)
+
+        if (isConversationEnabled()) {
+            viewModelScope.launch {
+                val starAction = if (isChecked) {
+                    ChangeConversationsStarredStatus.Action.ACTION_STAR
+                } else {
+                    ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
+                }
+                val primaryUserId = UserId(userManager.requireCurrentUserId().s)
+                changeConversationsStarredStatus(
+                    ids,
+                    primaryUserId,
+                    starAction
+                )
+            }
+        } else {
+            messageRepository
+            if (isChecked) {
+                messageRepository.starMessages(ids)
+            } else {
+                messageRepository.unStarMessages(ids)
+            }
         }
     }
 

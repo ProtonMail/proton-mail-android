@@ -44,6 +44,7 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
+import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
@@ -89,6 +90,8 @@ private const val INPUT_ITEM_DETAIL_ID = "inputMessageOrConversationId"
 class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     private val changeConversationsReadStatus: ChangeConversationsReadStatus = mockk(relaxed = true)
+
+    private val changeConversationsStarredStatus: ChangeConversationsStarredStatus = mockk(relaxed = true)
 
     private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true)
 
@@ -176,6 +179,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             conversationModeEnabled,
             conversationRepository,
             changeConversationsReadStatus,
+            changeConversationsStarredStatus,
             savedStateHandle,
             messageRendererFactory,
             verifyConnection,
@@ -807,6 +811,88 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             )
         }
 
+    }
+
+    @Test
+    fun verifyStarMessagesInConversationModeIsWorking() {
+        // given
+        val inputMessageLocation = INBOX
+        // messageId is defined as a field as it's needed at VM's instantiation time.
+        val inputConversationId = INPUT_ITEM_DETAIL_ID
+        every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
+        every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
+            inputMessageLocation.messageLocationTypeValue
+        val userString = "userId3"
+        val id = Id(userString)
+        val userId = UserId(userString)
+        every { userManager.requireCurrentUserId() } returns id
+        coEvery { conversationModeEnabled(inputMessageLocation) } returns true
+        val isChecked = true
+
+        // when
+        viewModel.handleStarUnStar(inputConversationId, isChecked)
+
+        // then
+        coVerify(exactly = 1) {
+            changeConversationsStarredStatus(
+                listOf(inputConversationId),
+                userId,
+                ChangeConversationsStarredStatus.Action.ACTION_STAR
+            )
+        }
+        coVerify(exactly = 0) {
+            messageRepository.starMessages(
+                any()
+            )
+        }
+        coVerify(exactly = 0) {
+            messageRepository.unStarMessages(
+                any()
+            )
+        }
+    }
+
+    @Test
+    fun verifyStarMessagesInMessageModeIsWorking() {
+        // given
+        val inputMessageLocation = INBOX
+        // messageId is defined as a field as it's needed at VM's instantiation time.
+        val inputConversationId = INPUT_ITEM_DETAIL_ID
+        every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
+        every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
+            inputMessageLocation.messageLocationTypeValue
+        val userString = "userId3"
+        val id = Id(userString)
+        every { userManager.requireCurrentUserId() } returns id
+        coEvery { conversationModeEnabled(inputMessageLocation) } returns false
+        val isChecked = true
+        every {
+            messageRepository.starMessages(
+                listOf(inputConversationId)
+            )
+        } just Runs
+
+        // when
+        viewModel.handleStarUnStar(inputConversationId, isChecked)
+
+        // then
+        coVerify(exactly = 0) {
+            changeConversationsStarredStatus(
+                any(),
+                any(),
+                any()
+            )
+        }
+        coVerify(exactly = 1) {
+            messageRepository.starMessages(
+                listOf(inputConversationId)
+            )
+        }
+        coVerify(exactly = 0) {
+            messageRepository.unStarMessages(
+                any()
+            )
+        }
     }
 
     private fun buildConversation(conversationId: String): Conversation {
