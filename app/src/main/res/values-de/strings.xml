@@ -52,7 +52,7 @@
     <string name="set_msg_password_repeat_password_title">Passwort erneut eingeben</string>
     <string name="set_msg_password_repeat_password_hint">Passwörter müssen übereinstimmen</string>
     <string name="set_msg_password_password_hint_title">Passwort-Hinweis</string>
-    <string name="set_msg_password_password_hint_hint">Hinweis angeben (optional)</string>
+    <string name="set_msg_password_password_hint_hint">Hinweis definieren (optional)</string>
     <string name="set_msg_password_apply_password">Passwort übernehmen</string>
     <string name="set_msg_password_remove_password">Passwort entfernen</string>
     <string name="set_msg_password_error_too_short">Passwort zu kurz</string>
@@ -65,14 +65,14 @@
     <string name="set_msg_expiration_3_days">3 Tage</string>
     <string name="set_msg_expiration_1_week">1 Woche</string>
     <string name="set_msg_expiration_custom">Benutzerdefiniert</string>
-    <string name="set_msg_expiration_check_description">Dieser Eintrag wurde geprüft</string>
+    <string name="set_msg_expiration_check_description">Dieser Eintrag wurde markiert</string>
     <!-- endregion -->
     <!-- region Settings -->
     <string name="settings_create_pin_code_title">PIN festlegen</string>
     <string name="settings_confirm_pin_code_title">PIN erneut eingeben</string>
     <string name="settings_pins_dont_match">PINs stimmen nicht überein!</string>
     <string name="settings_enter_pin_code_title">PIN eingeben</string>
-    <string name="settings_swipe_settings_info">Richten Sie Wischgesten für den Zugriff auf die am häufigsten verwendeten Aktionen ein.</string>
+    <string name="settings_swipe_settings_info">Richten Sie Wischgesten ein, um Zugriff auf die am häufigsten verwendeten Aktionen zu bekommen.</string>
     <string name="settings_swipe_left_to_right">Von links nach rechts</string>
     <string name="settings_swipe_right_to_left">Von rechts nach links</string>
     <!-- region Dialogs -->
@@ -98,12 +98,12 @@
     <string name="messages_load_failure">Fehler beim Abrufen der Nachrichten</string>
     <string name="message_details_load_failure">Fehler beim Abrufen der Nachrichtendetails</string>
     <string name="no_more_messages">Keine weiteren Nachrichten</string>
-    <string name="mailbox_login_failure">Anmelden am Postfach fehlgeschlagen</string>
+    <string name="mailbox_login_failure">Anmeldeversuch am Postfach fehlgeschlagen</string>
     <string name="login_failure">Anmelden fehlgeschlagen</string>
     <string name="incorrect_key_parameters">Unzulässige Schlüsselparameter</string>
     <string name="not_signed_up">Sie sind nicht für die Beta-Version von ProtonMail Android angemeldet</string>
     <string name="no_network">Keine Netzwerkverbindung</string>
-    <string name="no_network_queued">Keine Netzwerkverbindung, Nachricht in Warteschlange</string>
+    <string name="no_network_queued">Keine Netzwerkverbindung, Nachricht in der Warteschlange</string>
     <string name="update_app_title">Aktualisierung erforderlich</string>
     <string name="update_app">Die App ProtonMail kann erst genutzt werden, nachdem diese aktualisiert wurde</string>
     <string name="you_are_offline">Keine Verbindung zum Internet</string>
@@ -111,7 +111,7 @@
     <string name="api_offline">ProtonMail ist derzeit nicht erreichbar. Den aktuellen Status finden Sie unter https://protonstatus.com oder https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt gespeichert</string>
     <string name="contact_saved_offline">Kontakt gespeichert. Wird synchronisiert, sobald eine Verbindung verfügbar ist.</string>
-    <string name="contact_exist">E-Mai-Adresse des Kontaktes bereits vorhanden</string>
+    <string name="contact_exist">E-Mail-Adresse des Kontaktes bereits vorhanden</string>
     <string name="invalid_email">Ungültige E-Mail-Adresse</string>
     <string name="duplicate_email">Die E-Mail-Adresse ist ein Duplikat</string>
     <string name="invalid_code">Ungültiger Schlüssel</string>
@@ -189,7 +189,7 @@
     <string name="hours">Stunden</string>
     <string name="max_labels_exceeded">Die Nachricht %1$s darf höchstens %2$d Kategorien enthalten.</string>
     <string name="max_labels_selected">Maximal %d Kategorien erlaubt</string>
-    <string name="max_attachments_reached">Die maximale Anzahl von Anhängen je Nachricht wurde erreicht.</string>
+    <string name="max_attachments_reached">Die maximale Anzahl von Anhängen pro Nachricht ist erreicht.</string>
     <string name="max_attachments_size_reached">Die maximale Größe der Anhänge pro Nachricht wurde erreicht</string>
     <plurals name="hours_string">
         <item quantity="one">%d Stunde</item>
@@ -222,7 +222,7 @@
     <string name="select_file">Datei auswählen</string>
     <string name="attach_file">Datei anhängen</string>
     <string name="take_photo">Foto aufnehmen</string>
-    <string name="problem_taking_photo">Aufnehmen des Fotos fehlgeschlagen</string>
+    <string name="problem_taking_photo">Beim Aufnehmen des Fotos ist ein Fehler aufgetreten</string>
     <string name="problem_selecting_file">Hinzufügen der ausgewählten Datei fehlgeschlagen</string>
     <string name="add_contact">Kontakt hinzufügen</string>
     <string name="delete_contact">%s aus Kontakten entfernen?</string>
@@ -230,9 +230,9 @@
     <string name="confirm_destructive_action">Sind Sie sicher? Dies kann nicht widerrufen werden.</string>
     <string name="create">Erstellen</string>
     <string name="email">E-Mail-Adresse</string>
-    <string name="phone">Rufnummer</string>
+    <string name="phone">Telefonnummer</string>
     <string name="save">Speichern</string>
-    <string name="syncing_messages">Wird synchronisiert …</string>
+    <string name="syncing_messages">Synchronisiere...</string>
     <string name="sync">Kontakte synchronisieren</string>
     <string name="save_message_as_draft">Nachricht als Entwurf speichern?</string>
     <string name="no_subject">Nachricht ohne Betreff senden?</string>
@@ -624,11 +624,11 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="sender_lock_sent_autoresponder">Gesendet mit ProtonMail mit Null-Zugriff-Verschlüsselung</string>
     <string name="sender_lock_verification_failed">Überprüfung des Absenders fehlgeschlagen</string>
     <string name="sender_lock_pgp_encrypted">PGP-verschlüsselte Nachricht</string>
-    <string name="sender_lock_pgp_encrypted_verified">PGP-verschlüsselte Nachricht von bestätigter Adresse</string>
-    <string name="sender_lock_pgp_signed_verified_sender">PGP-signierte Nachricht von bestätigter Adresse</string>
+    <string name="sender_lock_pgp_encrypted_verified">PGP-verschlüsselte Nachricht von bestätigter E-Mail-Adresse</string>
+    <string name="sender_lock_pgp_signed_verified_sender">PGP-signierte Nachricht von bestätigter E-Mail-Adresse</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Ende-zu-Ende verschlüsselte Nachricht</string>
-    <string name="sender_lock_internal_verified">Ende-zu-Ende verschlüsselte Nachricht von bestätigter Adresse</string>
+    <string name="sender_lock_internal_verified">Ende-zu-Ende verschlüsselte Nachricht von bestätigter E-Mail-Adresse</string>
     <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Mwehr erfahren</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Ende-zu-Ende verschlüsselt</string>
@@ -959,4 +959,9 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="contacts_send_group_message">Gruppennachricht senden</string>
     <string name="inbox_this_folder_is_empty">Dieser Ordner ist leer</string>
     <string name="inbox_nothing_to_see_here">Hier gibt es nichts zu sehen</string>
+    <string name="inbox_could_not_retrieve_messages">Ihre Nachrichten konnten nicht abgerufen werden</string>
+    <string name="inbox_pull_down_to_retry">Bitte nach unten ziehen, um es erneut zu versuchen</string>
+    <string name="edit_draft">Entwurf bearbeiten</string>
+    <string name="primary_user_error">Ein Problem ist aufgetreten - Umstieg konnte nicht ausgeführt werden.</string>
+    <string name="details_show_history">Verlauf anzeigen</string>
 </resources>

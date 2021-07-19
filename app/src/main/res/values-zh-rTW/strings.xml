@@ -947,4 +947,9 @@
     <string name="contacts_send_group_message">發送群組訊息</string>
     <string name="inbox_this_folder_is_empty">此資料夾是空的</string>
     <string name="inbox_nothing_to_see_here">這裡空空如也</string>
+    <string name="inbox_could_not_retrieve_messages">無法擷取您的郵件</string>
+    <string name="inbox_pull_down_to_retry">請往下拉來重試</string>
+    <string name="edit_draft">編輯草稿</string>
+    <string name="primary_user_error">無法升級，出了點問題。</string>
+    <string name="details_show_history">顯示紀錄</string>
 </resources>

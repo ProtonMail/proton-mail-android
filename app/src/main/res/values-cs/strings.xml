@@ -52,7 +52,7 @@
     <string name="set_msg_password_repeat_password_title">Zopakovat heslo</string>
     <string name="set_msg_password_repeat_password_hint">Hesla se musí shodovat</string>
     <string name="set_msg_password_password_hint_title">Nápověda pro heslo</string>
-    <string name="set_msg_password_password_hint_hint">Nápověda k heslu (volitelné)</string>
+    <string name="set_msg_password_password_hint_hint">Definovat nápovědu (volitelné)</string>
     <string name="set_msg_password_apply_password">Použít heslo</string>
     <string name="set_msg_password_remove_password">Odstranit heslo</string>
     <string name="set_msg_password_error_too_short">Heslo je příliš krátké</string>
@@ -68,17 +68,17 @@
     <string name="set_msg_expiration_check_description">Tato položka je zaškrtnuta</string>
     <!-- endregion -->
     <!-- region Settings -->
-    <string name="settings_create_pin_code_title">Set PIN code</string>
-    <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
-    <string name="settings_pins_dont_match">The PIN codes must match!</string>
-    <string name="settings_enter_pin_code_title">Enter PIN code</string>
-    <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
-    <string name="settings_swipe_left_to_right">Left to right</string>
-    <string name="settings_swipe_right_to_left">Right to left</string>
+    <string name="settings_create_pin_code_title">Nastavit PIN kód</string>
+    <string name="settings_confirm_pin_code_title">Opakovat PIN kód</string>
+    <string name="settings_pins_dont_match">PIN kódy se musí shodovat!</string>
+    <string name="settings_enter_pin_code_title">Zadejte PIN kód</string>
+    <string name="settings_swipe_settings_info">Nastavte gesta pro přístup k nejpoužívanějším akcím.</string>
+    <string name="settings_swipe_left_to_right">Zleva doprava</string>
+    <string name="settings_swipe_right_to_left">Zprava doleva</string>
     <!-- region Dialogs -->
-    <string name="dialog_discard_changes_title">Discard changes?</string>
-    <string name="dialog_discard_changes_message">Any unsaved changes will be discarded.</string>
-    <string name="discard">Discard</string>
+    <string name="dialog_discard_changes_title">Zrušit změny?</string>
+    <string name="dialog_discard_changes_message">Všechny neuložené změny budou zahozeny.</string>
+    <string name="discard">Zahodit</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -262,7 +262,7 @@
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Původní zpráva --------</string>
     <string name="invalid_email_address">Adresa \'%s\' je neplatná</string>
-    <string name="invalid_email_address_removed">The address \'%s\' is invalid and was removed</string>
+    <string name="invalid_email_address_removed">Adresa \'%s\' je neplatná a byla odstraněna</string>
     <string name="no_recipients_specified">Zadejte alespoň jednoho příjemce</string>
     <string name="no_password_specified">Vypršení platnosti může být nastaveno pouze pro kompletně šifrované zprávy. Nastavte prosím heslo pro vaše příjemce, kteří nevyužívají služby ProtonMail.</string>
     <string name="attachment_limit">Přílohy jsou omezeny na %1$s. Celková velikost příloh bude: %2$s.</string>
@@ -271,7 +271,7 @@
     <string name="go_to_inbox">Přejít do složky Doručené</string>
     <string name="message_sent">Zpráva odeslána</string>
     <string name="message_failed">Odesílání zprávy selhalo</string>
-    <string name="message_sending_failures">%d message sending failures</string>
+    <string name="message_sending_failures">Odeslání %d zpráv(y) selhalo</string>
     <string name="storage_limit">Kapacita úložiště</string>
     <string name="edit_settings">Upravit nastavení</string>
     <string name="save_settings">Uložit nastavení</string>
@@ -313,7 +313,7 @@
     <string name="also_archive">Také archivovat</string>
     <string name="label_deleted">Štítek smazán</string>
     <string name="label_deleted_error">Chyba při mazání štítku</string>
-    <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
+    <string name="message_deleted_error">Chyba při odstraňování některých zpráv. Některé z vybraných zpráv jsou v procesu odesílání?!</string>
     <string name="respond_inline">Odpovědět v řádku</string>
     <string name="no_connectivity_detected">Bez připojení...</string>
     <string name="server_not_reachable_troubleshoot">Server není dosažitelný… (<u>Řešení problémů</u>)</string>
@@ -405,7 +405,7 @@
     </plurals>
     <string name="done">Hotovo</string>
     <string name="logout">Odhlásit se</string>
-    <string name="log_out">Log out %s?</string>
+    <string name="log_out">Odhlásit %s?</string>
     <string name="logout_question">Opravdu se chcete odhlásit?</string>
     <string name="logout_question_next_account">Opravdu se chcete odhlásit z aktuálního účtu a pokračovat s %s?</string>
     <string name="upgrade">Rozšířit</string>
@@ -500,7 +500,7 @@
     <string name="vcard_other_option_role">Role</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Převést Kontakt</string>
-    <string name="contacts_import_contact">Import Contact</string>
+    <string name="contacts_import_contact">Importovat kontakty</string>
     <string name="contacts_import">Import</string>
     <string name="upload_contacts">Nahrát kontakty</string>
     <string name="upgrade_encrypted_contact">Proveďte prosím navýšení svého účtu pro přístup k šifrováným detailům kontaktu.</string>
@@ -542,7 +542,7 @@
     <string name="error_message_card_name_invalid">Chyba: Neplatné jméno karty</string>
     <string name="error_message_select_country">Prosím vyberte zemi</string>
     <string name="error_message_exp_date_invalid">Chyba: Datum vypršení platnosti neplatné</string>
-    <string name="error_message_exp_date_past">Error: Expiration date is invalid</string>
+    <string name="error_message_exp_date_past">Chyba: Neplatný datum vypršení platnosti</string>
     <string name="error_message_card_number_invalid">Chyba: Neplatné číslo karty</string>
     <string name="print_error">Chyba tisku</string>
     <string name="download_complete">Stahování dokončeno</string>
@@ -550,7 +550,7 @@
     <string name="message_expires_in">Tato zpráva vyprší za %s</string>
     <string name="unsaved_changes_title">Neuložené změny</string>
     <string name="unsaved_changes_subtitle">Existují neuložené údaje ve formuláři. Opravdu chcete veškeré změny zahodit?</string>
-    <string name="request_timeout">Request timed out, please try again</string>
+    <string name="request_timeout">Požadavek vypršel, zkuste to prosím znovu</string>
     <string name="add_folder">Přidat složku</string>
     <string name="no_folders">Žádné složky</string>
     <string name="folders_title_move">Přesunout zprávy do</string>
@@ -635,11 +635,11 @@
     <string name="resign_contact_message">Ověření %s se nezdařilo: kontakt není správně podepsán. Chcete-li odeslat zprávu na tuto adresu nebo upravit kontakt, musíte kontakt znovu podepsat. K tomu může dojít i při obnovení hesla a resetování klíčů.</string>
     <!-- Sender locks -->
     <string name="sender_lock_unencrypted">Nezašifrovaná zpráva</string>
-    <string name="sender_lock_zero_access">Stored with zero access encryption</string>
+    <string name="sender_lock_zero_access">Uloženo bez přístupového šifrování</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Odesláno Vámi s end-to-end šifrováním</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Sent by ProtonMail with zero access encryption</string>
+    <string name="sender_lock_sent_autoresponder">Odesláno pomocí ProtonMailu bez přístupového šifrování</string>
     <string name="sender_lock_verification_failed">Ověření odesílatele se nezdařilo</string>
     <string name="sender_lock_pgp_encrypted">Zpráva šifrovaná pomocí PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Zpráva šifrovaná pomocí PGP z ověřené adresy</string>
@@ -653,8 +653,8 @@
     <string name="composer_lock_internal_pinned">Zašifrováno End-to-end k ověřenému příjemci</string>
     <string name="composer_lock_pgp_encrypted_pinned">Šifrované pomocí PGP</string>
     <string name="composer_lock_pgp_signed">Podepsané pomocí PGP</string>
-    <string name="recipient_not_found_and_removed">Recipient could not be found: %s and it has been removed</string>
-    <string name="recipient_error_and_removed">An error occurred while retrieving recipient information and the recipient has been removed: %s</string>
+    <string name="recipient_not_found_and_removed">Příjemce nebyl nalezen: %s byl odstraněn</string>
+    <string name="recipient_error_and_removed">Došlo k chybě při načítání informací o příjemci, příjemce byl odstraněn: %s</string>
     <string name="send_anyway">Přesto odeslat</string>
     <string name="expiration_error_title">Je zapnuto vypršení platnosti zprávy, ale ne všichni příjemci to podporují.</string>
     <string name="expiration_error_add_msg_password">Prosím, přidejte heslo zpávy pro následující příjemce:</string>
@@ -674,9 +674,9 @@
     <string name="report_phishing">Oznámit phishing</string>
     <string name="print">Vytisknout</string>
     <string name="phishing_dialog_title">Potvrdit oznámení phishingu</string>
-    <string name="phishing_dialog_message">Reporting a message as a phishing attempt will send the
-		message to us, so we can analyze it and improve our filters. This means that we will be able
-		to see the contents of the message in full.</string>
+    <string name="phishing_dialog_message">Nahlášená zpráva jako pokus o phishing bude odeslána
+		k nám, abychom ji mohli analyzovat a vylepšit naše filtry. To znamená, že budeme moci
+		zobrazit celý obsah zprávy.</string>
     <string name="phishing_report_send_message_moved_to_spam">Hlášení odesláno. Zpráva byla přesunuta do nevyžádané pošty.</string>
     <string name="cannot_send_report_send">Nelze odeslat oznámení</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
@@ -696,14 +696,14 @@
     <string name="title_activity_address_chooser">Spravovat členy</string>
     <string name="title_activity_account_manager">Správa účtů</string>
     <string name="account_manager_add_account">Přidat účet</string>
-    <string name="account_manager_remove_all_accounts">Removing all accounts</string>
+    <string name="account_manager_remove_all_accounts">Odstranit všechny účty</string>
     <string name="account_manager_note">You can be simultaneously logged into an unlimited number of paid ProtonMail accounts and one free account.</string>
     <string name="account_manager_remove_all">Remove all accounts</string>
     <string name="account_manager_logout">Odhlášení</string>
     <string name="account_manager_login">Přihlášení</string>
     <string name="manage_accounts_user_loggedout">%s (odhlášeno)</string>
     <string name="manage_accounts_user_primary">%s (výchozí)</string>
-    <string name="account_manager_remove">Remove</string>
+    <string name="account_manager_remove">Odstranit</string>
     <string name="default_error_message">Došlo k chybě</string>
     <string name="no_contact_groups">Žádné skupiny kontaktů</string>
     <string name="search_contacts_inside_group">Vyhledávat kontakty</string>
@@ -770,11 +770,11 @@
     <string name="use_pin_instead">Použít raději PIN</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">No biometric data enrolled</string>
-    <string name="log_in_using_biometric_credential">Unlock using your biometric credentials</string>
-    <string name="unlock_using_biometrics">Unlock using biometrics</string>
-    <string name="biometric_error_hw_not_available">Biometric hardware not available.</string>
+    <string name="log_in_using_biometric_credential">Odemknout pomocí Vašich biometrických údajů</string>
+    <string name="unlock_using_biometrics">Odemknout pomocí biometrie</string>
+    <string name="biometric_error_hw_not_available">Biometrický hardware není k dispozici.</string>
     <!-- end strings used for biometric enrollment -->
-    <string name="undisclosed_recipients">Undisclosed Recipients</string>
+    <string name="undisclosed_recipients">Nezveřejnění příjemci</string>
     <string name="manage_accounts">Spravovat účty</string>
     <!-- region Settings -->
     <string name="settings">Nastavení</string>
@@ -796,13 +796,13 @@
     <string name="display_name">Zobrazované jméno</string>
     <string name="edit_display_name">Upravit zobrazované jméno</string>
     <string name="signature">Podpis</string>
-    <string name="mobile_footer">Mobile footer</string>
-    <string name="edit_mobile_footer">Enable mobile footer</string>
-    <string name="default_mobile_footer">Sent from ProtonMail mobile</string>
-    <string name="mobile_footer_is_premium">Changing the Mobile Footer is allowed to Paid users only</string>
-    <string name="mobile_footer_info">This footer is added after your signature</string>
+    <string name="mobile_footer">Mobilní zápatí</string>
+    <string name="edit_mobile_footer">Povolit mobilní zápatí</string>
+    <string name="default_mobile_footer">Odesláno z aplikace ProtonMail</string>
+    <string name="mobile_footer_is_premium">Změna mobilní zápatí je umožněna pouze platícím uživatelům</string>
+    <string name="mobile_footer_info">Toto zápatí je přidáno za Váš podpis</string>
     <!-- region Snooze Settings -->
-    <string name="snooze_header">Snooze</string>
+    <string name="snooze_header">Odložit</string>
     <string name="notifications_snooze">Oznámení odložení</string>
     <string-array name="quick_snooze_values">
         <item>30 minut</item>
@@ -832,9 +832,9 @@
     <string name="set_custom_quick_snooze">Nastavit vlastní hodnotu rychlého odložení</string>
     <string name="turn_off">Vypnout</string>
     <string name="snooze_will_repeat">Odložení se bude opakovat</string>
-    <string name="work_days">Work days</string>
-    <string name="weekends">Weekend</string>
-    <string name="every_day">Every day</string>
+    <string name="work_days">Pracovní dny</string>
+    <string name="weekends">Víkend</string>
+    <string name="every_day">Každý den</string>
     <string-array name="snooze_repeat_values">
         <item>Po</item>
         <item>Út</item>
@@ -854,7 +854,7 @@
     <string name="mailbox">E-mailová schránka</string>
     <string name="privacy">Ochrana soukromí</string>
     <string name="auto_download_messages_title">Automaticky stahovat zprávy</string>
-    <string name="auto_download_messages_subtitle">When this option is enabled, messaged bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or log out, you will not be able to read message bodies while offline.)</string>
+    <string name="auto_download_messages_subtitle">Pokud je tato volba povolena, těla zpráv budou automaticky stažena pokaždé, když obdržíte nové e-mailové upozornění (toto bude spotřebovávat více dat). Pokud není tato volba povolena, těla zpráv budou stažena pouze při otevření e-mailu. (Poznámka: pokud smažete mezimapěť nebo se odhlásíte, nebude možné bez této volbou číst těla zpráv v režimu offline.)</string>
     <string name="settings_background_sync">Synchronizace na pozadí</string>
     <string name="settings_auto_show_images">Automaticky zobrazovat externí obrázky</string>
     <string name="settings_auto_show_embedded_images">Automaticky zobrazovat vnořené obrázky</string>
@@ -863,21 +863,21 @@
     <string name="labels_and_folders">Štítky &amp; složky </string>
     <string name="folders">Složky</string>
     <string name="labels">Štítky</string>
-    <string name="labels_manager">Labels manager</string>
+    <string name="labels_manager">Správce štítků</string>
     <string name="folders_manage">Správce složek</string>
-    <string name="swipe_actions">Swipe actions</string>
+    <string name="swipe_actions">Akce po přejetí prstem</string>
     <string name="swipe_action_right">Odsunutí doprava</string>
     <string name="swipe_action_left">Odsunutí doleva</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Zvolit akci posunutí</string>
     <string name="swipe_action_trash">Zpráva byla přesunuta do Koše</string>
-    <string name="swipe_action_trash_short">Move to Trash</string>
+    <string name="swipe_action_trash_short">Přesunout do koše</string>
     <string name="swipe_action_star">Zpráva byla označena</string>
     <string name="swipe_action_star_short">Aktualizovat hvězdičku</string>
     <string name="swipe_action_spam">Zpráva označena jako spam</string>
     <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Archivovat zprávu</string>
-    <string name="swipe_action_archive_short">Archive</string>
+    <string name="swipe_action_archive_short">Archiv</string>
     <string name="swipe_action_mark_read">Zpráva označena jako přečtená</string>
     <string name="swipe_action_mark_read_short">Přečteno</string>
     <plurals name="action_move_to_trash">
@@ -906,25 +906,25 @@
     <!-- region App Settings -->
     <string name="push_notifications">Oznámení</string>
     <string name="extended_notifications">Rozšířená oznámení</string>
-    <string name="extended_notifications_description">Turn this feature on to see the sender of the emails in the push notifications.</string>
+    <string name="extended_notifications_description">Zapněte tuto funkci, abyste viděli odesílatele e-mailů v push oznámení.</string>
     <string name="notification_settings">Nastavení notifikací</string>
-    <string name="auto_lock">Auto-lock</string>
-    <string name="auto_lock_app">Auto-lock app</string>
-    <string name="auto_lock_description">Turn this feature on to auto-lock your app and use a PIN code or fingerprint to unlock it.</string>
+    <string name="auto_lock">Automatické uzamčení</string>
+    <string name="auto_lock_app">Automaticky zamknout aplikaci</string>
+    <string name="auto_lock_description">Zapněte tuto funkci pro automatické zamknutí aplikace a použijte PIN kód nebo otisk prstu pro její odemčení.</string>
     <string name="change_pin_code">Změnit PIN kód</string>
-    <string name="auto_lock_timer">Auto-lock timer</string>
-    <string name="connections_via_third_parties">Alternative routing</string>
-    <string name="allow_secure_connections_via_third_parties">Allow alternative routing</string>
-    <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a></string>
+    <string name="auto_lock_timer">Čas automatického uzamčení</string>
+    <string name="connections_via_third_parties">Alternativní směrování</string>
+    <string name="allow_secure_connections_via_third_parties">Povolit alternativní směrování</string>
+    <string name="allow_secure_connections_via_third_parties_settings_description">V případě, že jsou stránky Proton blokovány, toto nastavení umožňuje aplikaci vyzkoušet alternativní síťové směrování na Proton, což může být užitečné pro obejití bran firewall nebo problémům se sítí. Pro větší spolehlivost doporučujeme ponechat toto nastavení zapnuté.</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">V případě, že jsou stránky Proton blokovány, toto nastavení umožňuje aplikaci vyzkoušet alternativní síťové směrování na Proton, což může být užitečné pro obejití bran firewall nebo problémům se sítí. Pro větší spolehlivost doporučujeme ponechat toto nastavení zapnuté. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Další informace</a></string>
     <string name="app_language">Jazyk aplikace</string>
     <string name="custom_language_dialog_title">Vybrat jazyk aplikace</string>
-    <string name="auto_detect">Auto-detect</string>
-    <string name="combined_contacts">Combined Contacts</string>
-    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
-    <string name="local_cache_management">Local Cache</string>
+    <string name="auto_detect">Automatická detekce</string>
+    <string name="combined_contacts">Sloučené kontakty</string>
+    <string name="turn_combined_contacts_on">Zapněte tuto funkci pro automatické vyplňování e-mailových adres pomocí kontaktů ze všech vašich přihlášených účtů.</string>
+    <string name="local_cache_management">Místní mezipaměť</string>
     <string name="cache_cleared">Mezipaměť byla obnovena</string>
-    <string name="empty_data">Empty Data</string>
+    <string name="empty_data">Smazat údaje</string>
     <!-- endregion -->
     <string name="enabled">Povoleno</string>
     <string name="disabled">Zakázáno</string>
@@ -933,19 +933,19 @@
     <!-- endregion -->
     <!-- region Multi Account -->
     <string name="remove_account_question">Odstranit %s?</string>
-    <string name="signed_in_with">Signed in with %s</string>
+    <string name="signed_in_with">Přihlášen jako %s</string>
     <string name="signed_in_with_logged_out_from">Byli jste odhlášeni z %1$s a přihlášeni k %2$s</string>
-    <string name="connect_account_limit_title">Limit reached</string>
+    <string name="connect_account_limit_title">Limit dosažen</string>
     <string name="connect_account_limit_subtitle">Nemůžete přidat další bezplatný účet ProtonMail. Lze přidat pouze jeden bezplatný účet ProtonMail. Odhlaste se prosím ze svého druhého bezplatného účtu nebo upgradujte jeden ze svých bezplatných účtů na účet placený.</string>
     <string name="switch_accounts_question">Přepnout účet?</string>
     <string name="switch_to_account">Přepnout na %s</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
-    <string name="shortcut_compose">Compose</string>
-    <string name="shortcut_compose_new_message">Compose a new message</string>
+    <string name="shortcut_compose">Nová zpráva</string>
+    <string name="shortcut_compose_new_message">Napsat novou zprávu</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
-    <string name="troubleshoot_dialog_title">Common connection problems and solutions</string>
+    <string name="troubleshoot_dialog_title">Běžné problémy s připojením a řešení</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
         &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
@@ -960,8 +960,8 @@
     <string name="error_image_bad_url">Poškozená URL adresa obrázku</string>
     <string name="error_saving_try_again">Při ukládání zprávy došlo k chybě. Zkuste to znovu.</string>
     <!-- endregion -->
-    <string name="allowed">Allowed</string>
-    <string name="denied">Denied</string>
+    <string name="allowed">Povoleno</string>
+    <string name="denied">Zakázáno</string>
     <string name="more">Více</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Akce pro přesunutí prstem byla změněna</string>
@@ -978,14 +978,14 @@
     <string name="error_loading_conversations">Chyba při načítání konverzací, zkuste to prosím znovu</string>
     <string name="star">Označit hvězdičkou</string>
     <string name="unstar">Odebrat hvězdičku</string>
-    <string name="star_unstar">Star/unstar</string>
+    <string name="star_unstar">Přidat/odebrat hvězdičku</string>
     <string name="send_to_archive">Odeslat do archivu?</string>
     <string name="new_label">Nový štítek</string>
     <string name="new_folder">Nová složka</string>
     <string name="label_as">Označit jako…</string>
     <string name="mark_as_unread">Označit jako nepřečtené</string>
     <string name="mark_as_read">Označit jako přečtené</string>
-    <string name="mark_as_read_unread">Mark as read/unread</string>
+    <string name="mark_as_read_unread">Označit jako přečtené/nepřečtené</string>
     <string name="move_message">Přesunout zprávu</string>
     <string name="manage">Spravovat</string>
     <string name="message_from">Zpráva od %s</string>
@@ -1004,6 +1004,11 @@
     </plurals>
     <string name="contacts_call">Zavolat</string>
     <string name="contacts_send_group_message">Odeslat skupinovou zprávu</string>
-    <string name="inbox_this_folder_is_empty">This folder is empty</string>
-    <string name="inbox_nothing_to_see_here">Nothing to see here</string>
+    <string name="inbox_this_folder_is_empty">Tato složka je prázdná</string>
+    <string name="inbox_nothing_to_see_here">Zde není nic k zobrazení</string>
+    <string name="inbox_could_not_retrieve_messages">Nepodařilo se načíst Vaše zprávy</string>
+    <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
+    <string name="edit_draft">Edit draft</string>
+    <string name="primary_user_error">Nelze upgradovat, něco se pokazilo.</string>
+    <string name="details_show_history">Zobrazit historii</string>
 </resources>

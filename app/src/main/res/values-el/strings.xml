@@ -20,13 +20,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- region All -->
     <string name="x_app_version_name_code">ProtonMail %s (%d)</string>
-    <string name="x_days">Days</string>
+    <string name="x_days">Ημέρες</string>
     <string name="x_folders">Φάκελοι</string>
-    <string name="x_hours">Hours</string>
+    <string name="x_hours">Ώρες</string>
     <string name="x_labels">Ετικέτες</string>
     <string name="x_more">Περισσότερα</string>
     <string name="x_search">Αναζήτηση</string>
-    <string name="x_set">Set</string>
+    <string name="x_set">Ορισμός</string>
     <string name="x_0">0</string>
     <!-- endregion -->
     <!-- region Drawer -->
@@ -44,41 +44,41 @@
     <string name="composer_from">Από:</string>
     <string name="composer_subject">Θέμα:</string>
     <string name="composer_to">Προς:</string>
-    <string name="set_msg_password_title">Set password</string>
-    <string name="set_msg_password_info">Set a password to encrypt this message for non-protonmail users. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Learn more</a></string>
-    <string name="set_msg_password_info_icon_description">Info</string>
-    <string name="set_msg_password_msg_password_title">Message password</string>
-    <string name="set_msg_password_msg_password_hint">4 to 21 characters long</string>
-    <string name="set_msg_password_repeat_password_title">Repeat password</string>
-    <string name="set_msg_password_repeat_password_hint">Passwords must match</string>
-    <string name="set_msg_password_password_hint_title">Password hint</string>
-    <string name="set_msg_password_password_hint_hint">Define hint (Optional)</string>
-    <string name="set_msg_password_apply_password">Apply password</string>
-    <string name="set_msg_password_remove_password">Remove password</string>
-    <string name="set_msg_password_error_too_short">Password too short</string>
-    <string name="set_msg_password_error_too_long">Password too long</string>
-    <string name="set_msg_password_error_mismatch">Password does not match</string>
-    <string name="set_msg_expiration_title">Message expiration</string>
-    <string name="set_msg_expiration_none">None</string>
-    <string name="set_msg_expiration_1_hour">1 hour</string>
-    <string name="set_msg_expiration_1_day">1 day</string>
-    <string name="set_msg_expiration_3_days">3 days</string>
-    <string name="set_msg_expiration_1_week">1 week</string>
-    <string name="set_msg_expiration_custom">Custom</string>
-    <string name="set_msg_expiration_check_description">This item is checked</string>
+    <string name="set_msg_password_title">Ορισμός κωδικού πρόσβασης</string>
+    <string name="set_msg_password_info">Ορίστε έναν κωδικό πρόσβασης για να κρυπτογραφήσετε αυτό το μήνυμα για χρήστες που δεν είναι χρήστες πρωτονίου. <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">Μάθετε περισσότερα</a></string>
+    <string name="set_msg_password_info_icon_description">Πληροφορίες</string>
+    <string name="set_msg_password_msg_password_title">Κωδικός πρόσβασης μηνύματος</string>
+    <string name="set_msg_password_msg_password_hint">μήκος 4 έως 21 χαρακτήρες</string>
+    <string name="set_msg_password_repeat_password_title">Επανάληψη κωδικού</string>
+    <string name="set_msg_password_repeat_password_hint">Οι κωδικοί πρέπει να είναι ίδιοι</string>
+    <string name="set_msg_password_password_hint_title">Υπόδειξη κωδικού πρόσβασης</string>
+    <string name="set_msg_password_password_hint_hint">Προσδιορίστε υπόδειξη (Προαιρετικό)</string>
+    <string name="set_msg_password_apply_password">Εφαρμογή κωδικού πρόσβασης</string>
+    <string name="set_msg_password_remove_password">Αφαίρεση κωδικού πρόσβασης</string>
+    <string name="set_msg_password_error_too_short">Ο κωδικός πρόσβασης είναι πολύ μικρός</string>
+    <string name="set_msg_password_error_too_long">Ο κωδικός πρόσβασης είναι πολύ μεγάλος</string>
+    <string name="set_msg_password_error_mismatch">Οι κωδικοί πρόσβασης δε ταιριάζουν</string>
+    <string name="set_msg_expiration_title">Λήξη μηνύματος</string>
+    <string name="set_msg_expiration_none">Κανένα</string>
+    <string name="set_msg_expiration_1_hour">1 ώρα</string>
+    <string name="set_msg_expiration_1_day">1 ημέρα</string>
+    <string name="set_msg_expiration_3_days">3 ημέρες</string>
+    <string name="set_msg_expiration_1_week">1 εβδομάδα</string>
+    <string name="set_msg_expiration_custom">Προσαρμοσμένο</string>
+    <string name="set_msg_expiration_check_description">Αυτό το στοιχείο είναι επιλεγμένο</string>
     <!-- endregion -->
     <!-- region Settings -->
-    <string name="settings_create_pin_code_title">Set PIN code</string>
-    <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
-    <string name="settings_pins_dont_match">The PIN codes must match!</string>
-    <string name="settings_enter_pin_code_title">Enter PIN code</string>
-    <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
-    <string name="settings_swipe_left_to_right">Left to right</string>
-    <string name="settings_swipe_right_to_left">Right to left</string>
+    <string name="settings_create_pin_code_title">Ορισμός κωδικού PIN</string>
+    <string name="settings_confirm_pin_code_title">Επανάληψη κωδικού PIN</string>
+    <string name="settings_pins_dont_match">Οι κωδικοί PIN πρέπει να ταιριάζουν!</string>
+    <string name="settings_enter_pin_code_title">Εισαγωγή κωδικού ΡΙΝ</string>
+    <string name="settings_swipe_settings_info">Ρύθμιση χειρονομιών συρσίματος για πρόσβαση στις πιο χρησιμοποιούμενες ενέργειες.</string>
+    <string name="settings_swipe_left_to_right">Αριστερά προς δεξιά</string>
+    <string name="settings_swipe_right_to_left">Δεξιά προς αριστερά</string>
     <!-- region Dialogs -->
-    <string name="dialog_discard_changes_title">Discard changes?</string>
-    <string name="dialog_discard_changes_message">Any unsaved changes will be discarded.</string>
-    <string name="discard">Discard</string>
+    <string name="dialog_discard_changes_title">Απόρριψη αλλαγών;</string>
+    <string name="dialog_discard_changes_message">Τυχόν αλλαγές που δεν έχουν αποθηκευτεί θα απορριφθούν.</string>
+    <string name="discard">Απόρριψη</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -482,8 +482,8 @@
     <string name="vcard_other_option_role">Ρόλος</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Μετατροπή επαφής</string>
-    <string name="contacts_import_contact">Import Contact</string>
-    <string name="contacts_import">Import</string>
+    <string name="contacts_import_contact">Εισαγωγή Επαφής</string>
+    <string name="contacts_import">Εισαγωγή</string>
     <string name="upload_contacts">Μεταφόρτωση Επαφών</string>
     <string name="upgrade_encrypted_contact">Παρακαλώ αναβαθμίστε για να χρησιμοποιήσετε κρυπτογραφημένα στοιχεία επαφής.</string>
     <string name="uploading_contacts">Μεταφόρτωση επαφών…</string>
@@ -629,7 +629,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">Μήνυμα κρυπτογραφημένο από άκρο σε άκρο</string>
     <string name="sender_lock_internal_verified">Από άκρη σε άκρη κρυπτογραφημένο μήνυμα, από επαληθευμένη διεύθυνση</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Learn more</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Μάθετε περισσότερα</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">Κρυπτογραφημένο από άκρο σε άκρο</string>
     <string name="composer_lock_internal_pinned">Κρυπτογραφημένο από άκρο σε άκρο σε επαληθευμένη διεύθυνση</string>
@@ -664,18 +664,18 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Προσθήκη Φωτογραφίας</string>
-    <string name="contact_display_name">Display Name</string>
-    <string name="add_new_email">Add Email Address</string>
+    <string name="contact_display_name">Εμφανιζόμενο Όνομα</string>
+    <string name="add_new_email">Προσθήκη Διεύθυνσης E-mail</string>
     <string name="no_groups">Καμία Ομάδα</string>
     <string name="contact_vcard_note">Σημείωση</string>
     <string name="edit_contact">Επεξεργασία επαφής</string>
     <string name="create_contact_group">Δημιουργία Ομάδας Επαφών</string>
     <string name="edit_contact_group">Επεξεργασία Ομάδας Επαφών</string>
-    <string name="contact_groups_manage_members">Manage Members</string>
-    <string name="contact_group_display_name">Display Name</string>
+    <string name="contact_groups_manage_members">Διαχείριση Μελών</string>
+    <string name="contact_group_display_name">Εμφανιζόμενο Όνομα</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Προσθήκη διεύθυνσης σε ομάδες</string>
-    <string name="title_activity_address_chooser">Manage Members</string>
+    <string name="title_activity_address_chooser">Διαχείριση Μελών</string>
     <string name="title_activity_account_manager">Διαχείριση λογαριασμών</string>
     <string name="account_manager_add_account">Προσθήκη λογαριασμού</string>
     <string name="account_manager_remove_all_accounts">Κατάργηση όλων των λογαριασμών</string>
@@ -688,7 +688,7 @@
     <string name="account_manager_remove">Αφαίρεση</string>
     <string name="default_error_message">Παρουσιάστηκε σφάλμα</string>
     <string name="no_contact_groups">Δεν υπάρχουν ομάδες επαφών</string>
-    <string name="search_contacts_inside_group">Search for contacts</string>
+    <string name="search_contacts_inside_group">Αναζήτηση για επαφές</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="one">%d Μέλος</item>
@@ -770,11 +770,11 @@
     <string name="display_name">Εμφανιζόμενο Όνομα</string>
     <string name="edit_display_name">Επεξεργασία εμφανιζόμενου ονόματος</string>
     <string name="signature">Υπογραφή</string>
-    <string name="mobile_footer">Mobile footer</string>
-    <string name="edit_mobile_footer">Enable mobile footer</string>
-    <string name="default_mobile_footer">Sent from ProtonMail mobile</string>
-    <string name="mobile_footer_is_premium">Changing the Mobile Footer is allowed to Paid users only</string>
-    <string name="mobile_footer_info">This footer is added after your signature</string>
+    <string name="mobile_footer">Υποσέλιδο κινητού</string>
+    <string name="edit_mobile_footer">Ενεργοποίηση υποσέλιδου κινητού</string>
+    <string name="default_mobile_footer">Στάλθηκε από ProtonMail mobile</string>
+    <string name="mobile_footer_is_premium">Η αλλαγή του Υποσέλιδου σε συσκευή κινητού επιτρέπεται μόνο σε χρήστες επί πληρωμής</string>
+    <string name="mobile_footer_info">Αυτό το υποσέλιδο προστέθηκε μετά την υπογραφή σας</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Αναβολή</string>
     <string name="notifications_snooze">Αναβολή Ειδοποίησης</string>
@@ -835,21 +835,21 @@
     <string name="labels_and_folders">Ετικέτες &amp; Φάκελοι </string>
     <string name="folders">Φάκελοι</string>
     <string name="labels">Ετικέτες</string>
-    <string name="labels_manager">Labels manager</string>
+    <string name="labels_manager">Διαχειριστής ετικετών</string>
     <string name="folders_manage">Διαχειριστής Φακέλων</string>
-    <string name="swipe_actions">Swipe actions</string>
+    <string name="swipe_actions">Ενέργειες ολίσθησης</string>
     <string name="swipe_action_right">Σύρσιμο δεξιά</string>
     <string name="swipe_action_left">Σύρετε αριστερά</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Επιλέξτε ενέργεια ολίσθησης</string>
     <string name="swipe_action_trash">Το μήνυμα μεταφέρθηκε στον κάδο απορριμμάτων</string>
-    <string name="swipe_action_trash_short">Move to Trash</string>
+    <string name="swipe_action_trash_short">Μετακίνηση στον κάδο απορριμμάτων</string>
     <string name="swipe_action_star">Το μήνυμα με Αστέρι ενημερώθηκε</string>
     <string name="swipe_action_star_short">Ενημέρωση αστεριού</string>
     <string name="swipe_action_spam">Το μήνυμα επισημάνθηκε ως ανεπιθύμητο</string>
-    <string name="swipe_action_spam_short">Spam</string>
+    <string name="swipe_action_spam_short">Ανεπιθύμητα</string>
     <string name="swipe_action_archive">Το μήνυμα αρχειοθετήθηκε</string>
-    <string name="swipe_action_archive_short">Archive</string>
+    <string name="swipe_action_archive_short">Αρχειοθέτηση</string>
     <string name="swipe_action_mark_read">Το μήνυμα επισημάνθηκε ως αναγνωσμένο</string>
     <string name="swipe_action_mark_read_short">Ανάγνωση</string>
     <plurals name="action_move_to_trash">
@@ -890,7 +890,7 @@
     <string name="turn_combined_contacts_on">Ενεργοποιήστε αυτή τη λειτουργία για να συμπληρώνετε αυτόματα τα E-mail χρησιμοποιώντας επαφές από όλους τους συνδεδεμένους λογαριασμούς σας.</string>
     <string name="local_cache_management">Διαχείριση τοπικής προσωρινής μνήμης</string>
     <string name="cache_cleared">Η τοπική μνήμη Cache έχει ανανεωθεί</string>
-    <string name="empty_data">Empty Data</string>
+    <string name="empty_data">Δεδομένα κενά</string>
     <!-- endregion -->
     <string name="enabled">Ενεργοποιημένο</string>
     <string name="disabled">Απενεργοποιημένο</string>
@@ -951,7 +951,7 @@
     <string name="label_as">Ετικέτα ως…</string>
     <string name="mark_as_unread">Επισήμανση ως μη αναγνωσμένο</string>
     <string name="mark_as_read">Επισήμανση ως αναγνωσμένο</string>
-    <string name="mark_as_read_unread">Mark as read/unread</string>
+    <string name="mark_as_read_unread">Σήμανση ως αναγνωσμένου/μη αναγνωσμένου</string>
     <string name="move_message">Μετακίνηση μηνύματος</string>
     <string name="manage">Διαχείριση</string>
     <string name="message_from">Μήνυμα από %s</string>
@@ -964,8 +964,13 @@
         <item quantity="one">%d συνομιλία</item>
         <item quantity="other">%d συνομιλίες</item>
     </plurals>
-    <string name="contacts_call">Call</string>
-    <string name="contacts_send_group_message">Send group message</string>
-    <string name="inbox_this_folder_is_empty">This folder is empty</string>
-    <string name="inbox_nothing_to_see_here">Nothing to see here</string>
+    <string name="contacts_call">Κλήση</string>
+    <string name="contacts_send_group_message">Στείλτε μήνυμα ομάδας</string>
+    <string name="inbox_this_folder_is_empty">Αυτός ο φάκελος είναι κενός</string>
+    <string name="inbox_nothing_to_see_here">Τίποτα ενδιαφέρον εδώ</string>
+    <string name="inbox_could_not_retrieve_messages">Αδυναμία ανάκτησης των μηνυμάτων σας</string>
+    <string name="inbox_pull_down_to_retry">Παρακαλώ τραβήξτε προς τα κάτω για να ξαναδοκιμάσετε</string>
+    <string name="edit_draft">Τροποποίηση πρόχειρου</string>
+    <string name="primary_user_error">Αδυναμία αναβάθμισης, κάτι πήγε στραβά.</string>
+    <string name="details_show_history">Show history</string>
 </resources>

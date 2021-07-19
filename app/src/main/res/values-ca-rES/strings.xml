@@ -967,4 +967,9 @@
     <string name="contacts_send_group_message">Enviar missatge de grup</string>
     <string name="inbox_this_folder_is_empty">Aquesta carpeta és buida</string>
     <string name="inbox_nothing_to_see_here">Aquí no hi ha res</string>
+    <string name="inbox_could_not_retrieve_messages">No s\'ha pogut accedir als vostres missatges</string>
+    <string name="inbox_pull_down_to_retry">Estireu cap avall per tornar-ho a provar</string>
+    <string name="edit_draft">Editar esborrany</string>
+    <string name="primary_user_error">No s\'ha pogut actualitzar, sembla que alguna cosa no ha funcionat.</string>
+    <string name="details_show_history">Mostrar historial</string>
 </resources>

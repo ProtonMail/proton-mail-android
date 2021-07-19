@@ -68,17 +68,17 @@
     <string name="set_msg_expiration_check_description">このアイテムはチェックされています</string>
     <!-- endregion -->
     <!-- region Settings -->
-    <string name="settings_create_pin_code_title">Set PIN code</string>
-    <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
-    <string name="settings_pins_dont_match">The PIN codes must match!</string>
-    <string name="settings_enter_pin_code_title">Enter PIN code</string>
+    <string name="settings_create_pin_code_title">PIN コードを設定</string>
+    <string name="settings_confirm_pin_code_title">PIN コードを確認</string>
+    <string name="settings_pins_dont_match">PIN コードが一致しません！</string>
+    <string name="settings_enter_pin_code_title">PIN コードを入力</string>
     <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
-    <string name="settings_swipe_left_to_right">Left to right</string>
-    <string name="settings_swipe_right_to_left">Right to left</string>
+    <string name="settings_swipe_left_to_right">左から右</string>
+    <string name="settings_swipe_right_to_left">右から左</string>
     <!-- region Dialogs -->
-    <string name="dialog_discard_changes_title">Discard changes?</string>
-    <string name="dialog_discard_changes_message">Any unsaved changes will be discarded.</string>
-    <string name="discard">Discard</string>
+    <string name="dialog_discard_changes_title">変更を破棄してよろしいですか？</string>
+    <string name="dialog_discard_changes_message">未保存の変更箇所は全て破棄されます。</string>
+    <string name="discard">破棄</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -473,8 +473,8 @@
     <string name="vcard_other_option_role">役職</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">連絡先を変換</string>
-    <string name="contacts_import_contact">Import Contact</string>
-    <string name="contacts_import">Import</string>
+    <string name="contacts_import_contact">連絡先をインポート</string>
+    <string name="contacts_import">インポート</string>
     <string name="upload_contacts">連絡先をアップロード</string>
     <string name="upgrade_encrypted_contact">暗号化された連絡先情報を使用するにはアップグレードしてください。</string>
     <string name="uploading_contacts">連絡先をアップロード中 …</string>
@@ -620,7 +620,7 @@
     <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">エンドツーエンド暗号化されたメッセージ</string>
     <string name="sender_lock_internal_verified">検証済みアドレスからの、エンドツーエンド暗号化されたメッセージ</string>
-    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">Learn more</a></string>
+    <string name="sender_lock_learn_more"><a href="https://protonmail.com/support/knowledge-base/what-is-encrypted/">詳細</a></string>
     <!-- Composer locks -->
     <string name="composer_lock_internal">エンドツーエンド暗号化</string>
     <string name="composer_lock_internal_pinned">検証済みアドレスへの、エンドツーエンド暗号化による送信</string>
@@ -652,18 +652,18 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">写真を追加</string>
-    <string name="contact_display_name">Display Name</string>
-    <string name="add_new_email">Add Email Address</string>
+    <string name="contact_display_name">表示名</string>
+    <string name="add_new_email">メールアドレスを追加</string>
     <string name="no_groups">グループはありません。</string>
     <string name="contact_vcard_note">メモ</string>
     <string name="edit_contact">連絡先の編集</string>
     <string name="create_contact_group">連絡先グループの作成</string>
     <string name="edit_contact_group">連絡先グループの編集</string>
-    <string name="contact_groups_manage_members">Manage Members</string>
-    <string name="contact_group_display_name">Display Name</string>
+    <string name="contact_groups_manage_members">メンバーを管理</string>
+    <string name="contact_group_display_name">表示名</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">アドレスをグループへ追加</string>
-    <string name="title_activity_address_chooser">Manage Members</string>
+    <string name="title_activity_address_chooser">メンバーを管理</string>
     <string name="title_activity_account_manager">アカウントの管理</string>
     <string name="account_manager_add_account">アカウントの追加</string>
     <string name="account_manager_remove_all_accounts">全てのアカウントを削除しています...</string>
@@ -676,7 +676,7 @@
     <string name="account_manager_remove">削除</string>
     <string name="default_error_message">エラーが発生しました</string>
     <string name="no_contact_groups">連絡先グループがありません</string>
-    <string name="search_contacts_inside_group">Search for contacts</string>
+    <string name="search_contacts_inside_group">連絡先を検索</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
         <item quantity="other">%d メンバー</item>
@@ -723,10 +723,10 @@
     <string name="app_locked">アプリはロックされています。</string>
     <string name="use_pin_instead">代わりにPINコードを使用する</string>
     <!-- strings used for biometric enrollment -->
-    <string name="no_biometric_data_enrolled">No biometric data enrolled</string>
+    <string name="no_biometric_data_enrolled">生体認証データが登録されていません</string>
     <string name="log_in_using_biometric_credential">生体認証によるロック解除</string>
     <string name="unlock_using_biometrics">生体認証によるロック解除</string>
-    <string name="biometric_error_hw_not_available">Biometric hardware not available.</string>
+    <string name="biometric_error_hw_not_available">生体認証ハードウェアは使用できません。</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">非公開の宛先</string>
     <string name="manage_accounts">アカウントの管理</string>
@@ -750,11 +750,11 @@
     <string name="display_name">表示名</string>
     <string name="edit_display_name">表示名の編集</string>
     <string name="signature">署名</string>
-    <string name="mobile_footer">Mobile footer</string>
-    <string name="edit_mobile_footer">Enable mobile footer</string>
-    <string name="default_mobile_footer">Sent from ProtonMail mobile</string>
-    <string name="mobile_footer_is_premium">Changing the Mobile Footer is allowed to Paid users only</string>
-    <string name="mobile_footer_info">This footer is added after your signature</string>
+    <string name="mobile_footer">モバイルフッター</string>
+    <string name="edit_mobile_footer">モバイルフッターを有効にする</string>
+    <string name="default_mobile_footer">ProtonMail モバイルから送信</string>
+    <string name="mobile_footer_is_premium">モバイルフッターの変更は有料ユーザーのみが可能です</string>
+    <string name="mobile_footer_info">このフッターは署名の後に追加されます</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">通知の停止</string>
     <string name="notifications_snooze">通知の停止計画</string>
@@ -814,7 +814,7 @@
     <string name="labels_and_folders">ラベルとフォルダー</string>
     <string name="folders">フォルダー</string>
     <string name="labels">ラベル</string>
-    <string name="labels_manager">Labels manager</string>
+    <string name="labels_manager">ラベルの管理</string>
     <string name="folders_manage">フォルダーの管理</string>
     <string name="swipe_actions">Swipe actions</string>
     <string name="swipe_action_right">右にスワイプ</string>
@@ -826,9 +826,9 @@
     <string name="swipe_action_star">メッセージへの星印の付け外し</string>
     <string name="swipe_action_star_short">スターを更新</string>
     <string name="swipe_action_spam">メッセージを迷惑メールとする</string>
-    <string name="swipe_action_spam_short">Spam</string>
+    <string name="swipe_action_spam_short">迷惑メール</string>
     <string name="swipe_action_archive">メッセージをアーカイブする</string>
-    <string name="swipe_action_archive_short">Archive</string>
+    <string name="swipe_action_archive_short">アーカイブ</string>
     <string name="swipe_action_mark_read">メッセージを既読にする</string>
     <string name="swipe_action_mark_read_short">既読</string>
     <plurals name="action_move_to_trash">
@@ -866,7 +866,7 @@
     <string name="turn_combined_contacts_on">この機能を有効化すると、ログイン済みのアカウントの連絡先を、メールアドレスの自動補完に利用可能になります。</string>
     <string name="local_cache_management">端末のキャッシュ管理</string>
     <string name="cache_cleared">端末のキャッシュが更新されました。</string>
-    <string name="empty_data">Empty Data</string>
+    <string name="empty_data">空データ</string>
     <!-- endregion -->
     <string name="enabled">有効</string>
     <string name="disabled">無効</string>
@@ -940,6 +940,11 @@
     </plurals>
     <string name="contacts_call">Call</string>
     <string name="contacts_send_group_message">Send group message</string>
-    <string name="inbox_this_folder_is_empty">This folder is empty</string>
+    <string name="inbox_this_folder_is_empty">このフォルダは空です</string>
     <string name="inbox_nothing_to_see_here">Nothing to see here</string>
+    <string name="inbox_could_not_retrieve_messages">Couldn\'t retrieve your messages</string>
+    <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
+    <string name="edit_draft">下書きを編集</string>
+    <string name="primary_user_error">Could not upgrade, something went wrong.</string>
+    <string name="details_show_history">履歴を表示</string>
 </resources>

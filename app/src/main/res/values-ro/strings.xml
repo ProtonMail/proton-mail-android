@@ -986,4 +986,9 @@
     <string name="contacts_send_group_message">Trimitere mesaj la grup</string>
     <string name="inbox_this_folder_is_empty">Acest folder este gol</string>
     <string name="inbox_nothing_to_see_here">Nimic de văzut aici</string>
+    <string name="inbox_could_not_retrieve_messages">Nu s-a putut prelua mesajul</string>
+    <string name="inbox_pull_down_to_retry">Trageți în jos pentru reîncercare</string>
+    <string name="edit_draft">Editare schiță</string>
+    <string name="primary_user_error">Nu s-a putut face upgrade, ceva nu a mers bine.</string>
+    <string name="details_show_history">Afișați istoricul</string>
 </resources>

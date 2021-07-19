@@ -968,4 +968,9 @@
     <string name="contacts_send_group_message">Envoyer un message de groupe</string>
     <string name="inbox_this_folder_is_empty">Ce dossier est vide</string>
     <string name="inbox_nothing_to_see_here">Il n\'y a rien à voir ici</string>
+    <string name="inbox_could_not_retrieve_messages">Impossible de récupérer vos messages</string>
+    <string name="inbox_pull_down_to_retry">Veuillez tirer vers le bas pour réessayer</string>
+    <string name="edit_draft">Modifier le brouillon</string>
+    <string name="primary_user_error">Impossible d’améliorer, une erreur s\'est produite.</string>
+    <string name="details_show_history">Afficher l\'historique</string>
 </resources>

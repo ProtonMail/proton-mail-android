@@ -1004,4 +1004,9 @@
     <string name="contacts_send_group_message">Wyślij wiadomość grupową</string>
     <string name="inbox_this_folder_is_empty">Folder jest pusty</string>
     <string name="inbox_nothing_to_see_here">Niczego tutaj nie ma</string>
+    <string name="inbox_could_not_retrieve_messages">Nie można pobrać wiadomości</string>
+    <string name="inbox_pull_down_to_retry">Przeciągnij w dół, aby ponowić próbę</string>
+    <string name="edit_draft">Edytuj szkic</string>
+    <string name="primary_user_error">Nie można ulepszyć. Coś poszło nie tak.</string>
+    <string name="details_show_history">Pokaż historię</string>
 </resources>

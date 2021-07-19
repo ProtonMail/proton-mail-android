@@ -969,4 +969,9 @@ compre más
     <string name="contacts_send_group_message">Enviar mensaje grupal</string>
     <string name="inbox_this_folder_is_empty">This folder is empty</string>
     <string name="inbox_nothing_to_see_here">Nothing to see here</string>
+    <string name="inbox_could_not_retrieve_messages">Couldn\'t retrieve your messages</string>
+    <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
+    <string name="edit_draft">Edit draft</string>
+    <string name="primary_user_error">Could not upgrade, something went wrong.</string>
+    <string name="details_show_history">Show history</string>
 </resources>

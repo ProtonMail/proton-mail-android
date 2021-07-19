@@ -952,4 +952,9 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="contacts_send_group_message">Kirim pesan grup</string>
     <string name="inbox_this_folder_is_empty">Folder ini kosong</string>
     <string name="inbox_nothing_to_see_here">Tidak ada yang bisa dilihat di sini</string>
+    <string name="inbox_could_not_retrieve_messages">Tidak dapat mengambil pesan Anda</string>
+    <string name="inbox_pull_down_to_retry">Silakan tarik ke bawah untuk coba ulang</string>
+    <string name="edit_draft">Edit draf</string>
+    <string name="primary_user_error">Tidak dapat meningkatkan, ada yang salah.</string>
+    <string name="details_show_history">Show history</string>
 </resources>

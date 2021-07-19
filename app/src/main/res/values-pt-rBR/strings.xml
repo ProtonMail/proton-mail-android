@@ -849,9 +849,9 @@
     <string name="swipe_action_spam">Mensagem marcada como spam</string>
     <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Mensagem arquivada</string>
-    <string name="swipe_action_archive_short">Archive</string>
+    <string name="swipe_action_archive_short">Arquivar</string>
     <string name="swipe_action_mark_read">Mensagem marcada como lida</string>
-    <string name="swipe_action_mark_read_short">Read</string>
+    <string name="swipe_action_mark_read_short">Lido</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Mensagem movida para a lixeira</item>
         <item quantity="other">Mensagens movidas para a lixeira</item>
@@ -890,7 +890,7 @@
     <string name="turn_combined_contacts_on">Ative este recurso para preencher automaticamente endereços de e-mail usando os contatos de todas as suas contas conectadas.</string>
     <string name="local_cache_management">Gerenciador de cache local</string>
     <string name="cache_cleared">Cache local atualizado</string>
-    <string name="empty_data">Empty Data</string>
+    <string name="empty_data">Limpar dados</string>
     <!-- endregion -->
     <string name="enabled">Ativado</string>
     <string name="disabled">Desabilitado</string>
@@ -944,14 +944,14 @@
     <string name="error_loading_conversations">Erro ao carregar conversas, por favor, tente novamente</string>
     <string name="star">Estrela</string>
     <string name="unstar">Remover estrela</string>
-    <string name="star_unstar">Star/unstar</string>
+    <string name="star_unstar">Atribuir/retirar estrela</string>
     <string name="send_to_archive">Enviar para o arquivo?</string>
     <string name="new_label">Novo marcador</string>
     <string name="new_folder">Nova pasta</string>
     <string name="label_as">Marcar como…</string>
     <string name="mark_as_unread">Marcar como não lida</string>
     <string name="mark_as_read">Marcar como lida</string>
-    <string name="mark_as_read_unread">Mark as read/unread</string>
+    <string name="mark_as_read_unread">Marcar como lida/não lida</string>
     <string name="move_message">Mover mensagem</string>
     <string name="manage">Gerenciar</string>
     <string name="message_from">Mensagem de %s</string>
@@ -968,4 +968,9 @@
     <string name="contacts_send_group_message">Enviar mensagem de grupo</string>
     <string name="inbox_this_folder_is_empty">Esta pasta está vazia</string>
     <string name="inbox_nothing_to_see_here">Nada pra ver aqui</string>
+    <string name="inbox_could_not_retrieve_messages">Não foi possível recuperar suas mensagens</string>
+    <string name="inbox_pull_down_to_retry">Por favor, puxe para baixo para tentar novamente</string>
+    <string name="edit_draft">Editar rascunho</string>
+    <string name="primary_user_error">Não foi possível atualizar, algo deu errado.</string>
+    <string name="details_show_history">Exibir histórico</string>
 </resources>
