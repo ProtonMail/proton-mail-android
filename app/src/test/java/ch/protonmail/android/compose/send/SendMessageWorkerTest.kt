@@ -52,6 +52,7 @@ import ch.protonmail.android.core.messageId
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
+import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -262,6 +263,32 @@ class SendMessageWorkerTest : CoroutinesTest {
         assertEquals(
             ListenableWorker.Result.failure(
                 workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "DraftCreationFailed")
+            ),
+            result
+        )
+    }
+
+    @Test
+    fun workerFailsWithoutNotifyingUserWhenSaveDraftFailsWithMessageAlreadySentError() = runBlockingTest {
+        val messageDbId = 2835L
+        val messageId = "823473"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = "Subject 004"
+        }
+        givenFullValidInput(messageDbId, messageId)
+        coEvery { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { saveDraft(any()) } returns SaveDraftResult.MessageAlreadySent
+        every { parameters.runAttemptCount } returns 0
+
+        val result = worker.doWork()
+
+        verify { pendingActionsDao.deletePendingSendByMessageId("823473") }
+        verify { userNotifier wasNot Called }
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "MessageAlreadySent")
             ),
             result
         )

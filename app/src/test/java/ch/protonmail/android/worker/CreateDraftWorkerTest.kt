@@ -39,6 +39,7 @@ import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
+import ch.protonmail.android.api.segments.RESPONSE_CODE_UNPROCESSABLE_ENTITY
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
@@ -76,7 +77,11 @@ import io.mockk.verify
 import io.mockk.verifyOrder
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import okhttp3.MediaType
+import okhttp3.ResponseBody
 import org.junit.Assert.assertEquals
+import retrofit2.HttpException
+import retrofit2.Response
 import java.io.IOException
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -1105,6 +1110,51 @@ class CreateDraftWorkerTest : CoroutinesTest {
             coVerify { messageDetailsRepository.saveMessageLocally(capture(actualMessage)) }
             assertEquals(expectedMessage, actualMessage.captured)
             assertEquals(expectedMessage.Attachments, actualMessage.captured.Attachments)
+        }
+    }
+
+    @Test
+    fun workerFailsReturningMessageAlreadySentErrorWhenApiResponseIs422WithMessageAlreadySentErrorCode() {
+        runBlockingTest {
+            // Given
+            val messageDbId = 346L
+            val message = Message().apply {
+                dbId = messageDbId
+                messageId = "remoteMessageIdA71237=="
+                addressID = "addressId836"
+                messageBody = "messageBody"
+                subject = "Subject002"
+            }
+            val unprocessableEntityException = HttpException(
+                Response.error<String>(
+                    RESPONSE_CODE_UNPROCESSABLE_ENTITY,
+                    ResponseBody.create(
+                        MediaType.parse("text/json"),
+                        """{ "Code": 15034, "Error": "Message has already been sent" }"""
+                    )
+                )
+            )
+            givenMessageIdInput(messageDbId)
+            givenActionTypeInput(NONE)
+            givenPreviousSenderAddress("")
+            every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
+            every { messageFactory.createDraftApiRequest(message) } returns mockk(relaxed = true) {
+                every { this@mockk.message.subject } returns "Subject002"
+            }
+            coEvery { apiManager.updateDraft("remoteMessageIdA71237==", any(), any()) } throws unprocessableEntityException
+            every { parameters.runAttemptCount } returns 0
+
+            // When
+            val result = worker.doWork()
+
+            // Then
+            val expectedFailure = ListenableWorker.Result.failure(
+                Data.Builder().putString(
+                    KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
+                    CreateDraftWorkerErrors.MessageAlreadySent.name
+                ).build()
+            )
+            assertEquals(expectedFailure, result)
         }
     }
 

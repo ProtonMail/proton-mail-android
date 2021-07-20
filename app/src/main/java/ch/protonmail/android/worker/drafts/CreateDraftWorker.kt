@@ -36,10 +36,12 @@ import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
+import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_ALREADY_SENT
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
@@ -56,7 +58,9 @@ import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.notifier.UserNotifier
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
+import retrofit2.HttpException
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -146,8 +150,17 @@ class CreateDraftWorker @WorkerInject constructor(
                     workDataOf(KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to response.messageId)
                 )
             },
-            onFailure = {
-                retryOrFail(it.messageId(messageId), createDraftRequest.message.subject)
+            onFailure = { throwable ->
+                if (throwable is HttpException) {
+                    val responseBody: ResponseBody? = Gson().fromJson(
+                        throwable.response()?.errorBody()?.string(), ResponseBody::class.java
+                    )
+                    if (responseBody?.code == RESPONSE_CODE_MESSAGE_ALREADY_SENT) {
+                        return failureWithError(CreateDraftWorkerErrors.MessageAlreadySent)
+                    }
+                }
+
+                return retryOrFail(throwable.messageId(messageId), createDraftRequest.message.subject)
             }
         )
     }

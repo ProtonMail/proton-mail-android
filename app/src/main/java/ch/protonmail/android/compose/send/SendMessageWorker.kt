@@ -52,6 +52,7 @@ import ch.protonmail.android.compose.send.SendMessageWorkerError.DraftCreationFa
 import ch.protonmail.android.compose.send.SendMessageWorkerError.ErrorPerformingApiRequest
 import ch.protonmail.android.compose.send.SendMessageWorkerError.FailureBuildingApiRequest
 import ch.protonmail.android.compose.send.SendMessageWorkerError.FetchSendPreferencesFailed
+import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageAlreadySent
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageNotFound
 import ch.protonmail.android.compose.send.SendMessageWorkerError.SavedDraftMessageNotFound
 import ch.protonmail.android.compose.send.SendMessageWorkerError.UserVerificationNeeded
@@ -122,45 +123,54 @@ class SendMessageWorker @WorkerInject constructor(
         val username = requireNotNull(getInputCurrentUsername())
 
         val result = saveDraft(message, previousSenderAddressId)
-        return if (result is SaveDraftResult.Success) {
-            val messageId = result.draftId
-            Timber.i("Send Message Worker saved draft successfully for messageId $messageId")
-            val savedDraftMessage = messageDetailsRepository.findMessageById(messageId) ?: return retryOrFail(
-                SavedDraftMessageNotFound,
-                message
-            )
+        return when (result) {
+            is SaveDraftResult.Success -> {
+                val messageId = result.draftId
+                Timber.i("Send Message Worker saved draft successfully for messageId $messageId")
+                val savedDraftMessage = messageDetailsRepository.findMessageById(messageId) ?: return retryOrFail(
+                    SavedDraftMessageNotFound,
+                    message
+                )
 
-            Timber.d("Send Message Worker fetching send preferences for messageId $messageId")
-            val sendPreferences = requestSendPreferences(savedDraftMessage, username) ?: return retryOrFail(
-                FetchSendPreferencesFailed,
-                savedDraftMessage
-            )
+                Timber.d("Send Message Worker fetching send preferences for messageId $messageId")
+                val sendPreferences = requestSendPreferences(savedDraftMessage, username) ?: return retryOrFail(
+                    FetchSendPreferencesFailed,
+                    savedDraftMessage
+                )
 
-            Timber.d("Send Message Worker building request for messageId $messageId")
-            savedDraftMessage.decrypt(userManager, username)
-            val requestBody = try {
-                buildSendMessageRequest(savedDraftMessage, sendPreferences, username)
-            } catch (t: Throwable) {
-                if (t is CancellationException) throw t
-                return retryOrFail(FailureBuildingApiRequest, savedDraftMessage, t)
+                Timber.d("Send Message Worker building request for messageId $messageId")
+                savedDraftMessage.decrypt(userManager, username)
+                val requestBody = try {
+                    buildSendMessageRequest(savedDraftMessage, sendPreferences, username)
+                } catch (t: Throwable) {
+                    if (t is CancellationException) throw t
+                    return retryOrFail(FailureBuildingApiRequest, savedDraftMessage, t)
+                }
+
+                return try {
+                    val response = apiManager.sendMessage(messageId, requestBody, RetrofitTag(username))
+                    handleSendMessageResponse(messageId, response, savedDraftMessage)
+                } catch (exception: IOException) {
+                    retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
+                } catch (exception: Exception) {
+                    pendingActionsDao.deletePendingSendByMessageId(messageId)
+                    showSendMessageError(message.subject)
+                    throw exception
+                }
             }
 
-            return try {
-                val response = apiManager.sendMessage(messageId, requestBody, RetrofitTag(username))
-                handleSendMessageResponse(messageId, response, savedDraftMessage)
-            } catch (exception: IOException) {
-                retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
-            } catch (exception: Exception) {
-                pendingActionsDao.deletePendingSendByMessageId(messageId)
+            is SaveDraftResult.MessageAlreadySent -> {
+                pendingActionsDao.deletePendingSendByMessageId(message.messageId ?: "")
+                saveMessageAsSent(message)
+                failureWithError(MessageAlreadySent)
+            }
+
+            else -> {
+                pendingActionsDao.deletePendingSendByMessageId(message.messageId ?: "")
                 showSendMessageError(message.subject)
-                throw exception
+                failureWithError(DraftCreationFailed)
             }
-        } else {
-            pendingActionsDao.deletePendingSendByMessageId(message.messageId ?: "")
-            showSendMessageError(message.subject)
-            failureWithError(DraftCreationFailed)
         }
-
     }
 
     private suspend fun handleSendMessageResponse(
@@ -196,17 +206,21 @@ class SendMessageWorker @WorkerInject constructor(
         savedDraftMessage: Message
     ): Result {
         responseMessage.writeTo(savedDraftMessage)
-        savedDraftMessage.location = SENT.messageLocationTypeValue
-        savedDraftMessage.setLabelIDs(
+        saveMessageAsSent(savedDraftMessage)
+        userNotifier.showMessageSent()
+        return Result.success()
+    }
+
+    private suspend fun saveMessageAsSent(message: Message) {
+        message.location = SENT.messageLocationTypeValue
+        message.setLabelIDs(
             listOf(
                 ALL_SENT.messageLocationTypeValue.toString(),
                 ALL_MAIL.messageLocationTypeValue.toString(),
                 SENT.messageLocationTypeValue.toString()
             )
         )
-        messageDetailsRepository.saveMessageLocally(savedDraftMessage)
-        userNotifier.showMessageSent()
-        return Result.success()
+        messageDetailsRepository.saveMessageLocally(message)
     }
 
     // TODO improve error handling for generic exception MAILAND-2003
