@@ -26,5 +26,6 @@ enum class CreateDraftWorkerErrors {
     MessageHasNullBody,
     MessageHasBlankBody,
     ServerError,
-    BadResponseCodeError
+    BadResponseCodeError,
+    MessageAlreadySent
 }

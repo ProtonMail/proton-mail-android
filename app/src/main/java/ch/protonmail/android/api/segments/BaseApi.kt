@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -27,11 +27,9 @@ import retrofit2.Response
 import java.util.Collections
 import java.util.concurrent.ArrayBlockingQueue
 
-// region constants
 const val ATTACH_PATH = "attach"
 
 const val ONE_MINUTE = 60L
-const val THREE_SECONDS = 3L
 const val TEN_SECONDS = 10L
 const val THIRTY_SECONDS = 30L
 
@@ -57,7 +55,6 @@ const val RESPONSE_CODE_NOT_ALLOWED = 2011
 const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_FAILED_GENERIC = 10_001
 const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DELETED = 10_002
 const val RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DISABLED = 10_003
-const val RESPONSE_CODE_ATTACHMENT_DELETE_ID_INVALID = 11_123
 const val RESPONSE_CODE_EMAIL_FAILED_VALIDATION = 12_006
 const val RESPONSE_CODE_NEW_PASSWORD_INCORRECT = 12_022
 const val RESPONSE_CODE_NEW_PASSWORD_MESSED_UP = 12_020
@@ -70,7 +67,7 @@ const val RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED = 13_014
 const val RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED = 13_061
 const val RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST = 15_052
 const val RESPONSE_CODE_RECIPIENT_NOT_FOUND = 33_102
-// endregion
+const val RESPONSE_CODE_MESSAGE_ALREADY_SENT = 15_034
 
 open class BaseApi {
     protected inline fun <reified T : ResponseBody> executeAll(list: List<Call<T>>): List<T?> {
