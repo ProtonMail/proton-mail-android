@@ -112,12 +112,6 @@ import ch.protonmail.android.fcm.RegisterDeviceWorker
 import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.feature.account.AccountStateManager
 import ch.protonmail.android.jobs.EmptyFolderJob
-import ch.protonmail.android.jobs.PostArchiveJob
-import ch.protonmail.android.jobs.PostInboxJob
-import ch.protonmail.android.jobs.PostSpamJob
-import ch.protonmail.android.jobs.PostStarJob
-import ch.protonmail.android.jobs.PostTrashJobV2
-import ch.protonmail.android.jobs.PostUnstarJob
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
@@ -138,7 +132,6 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnac
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.views.messageDetails.BottomActionsView
 import ch.protonmail.libs.core.utils.contains
-import com.birbit.android.jobqueue.Job
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
@@ -1072,11 +1065,11 @@ internal class MailboxActivity :
                     false
                 )
                 undoSnack!!.show()
-                mailboxViewModel.moveToTrash(
+                mailboxViewModel.moveToFolder(
                     messageIds,
                     UserId(userManager.requireCurrentUserId().s),
                     currentMailboxLocation,
-                    mailboxLabelId
+                    MessageLocationType.TRASH.messageLocationTypeValue.toString()
                 )
             }
             actionMode?.finish()
@@ -1505,7 +1498,15 @@ internal class MailboxActivity :
                 else -> throw IllegalArgumentException("Unrecognised direction: $direction")
             }
             val swipeAction = normalise(SwipeAction.values()[swipeActionOrdinal], currentMailboxLocation)
-            mSwipeProcessor.handleSwipe(swipeAction, messageSwiped, mJobManager, mailboxLabelId)
+            if (isConversationModeEnabled(mailboxLocation)) {
+                mailboxViewModel.handleConversationSwipe(
+                    swipeAction,
+                    mailboxItem.itemId,
+                    mailboxLocation
+                )
+            } else {
+                mSwipeProcessor.handleSwipe(swipeAction, messageSwiped, mJobManager, mailboxLabelId)
+            }
             if (undoSnack != null && undoSnack!!.isShownOrQueued) {
                 undoSnack!!.dismiss()
             }

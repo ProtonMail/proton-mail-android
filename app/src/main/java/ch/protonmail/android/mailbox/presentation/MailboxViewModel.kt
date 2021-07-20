@@ -23,6 +23,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.services.MessagesService
 import ch.protonmail.android.api.utils.ApplyRemoveLabels
@@ -41,9 +42,11 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchMessageCountsJob
-import ch.protonmail.android.jobs.PostTrashJobV2
+import ch.protonmail.android.jobs.PostStarJob
 import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
+import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.GetConversations
@@ -110,8 +113,10 @@ class MailboxViewModel @Inject constructor(
     private val conversationModeEnabled: ConversationModeEnabled,
     private val getConversations: GetConversations,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
+    private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     private val getMessagesByLocation: GetMessagesByLocation,
     private val moveConversationsToFolder: MoveConversationsToFolder,
+    private val moveMessagesToFolder: MoveMessagesToFolder,
     private val deleteConversations: DeleteConversations
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
@@ -629,22 +634,40 @@ class MailboxViewModel @Inject constructor(
         }
     }
 
-    fun moveToTrash(
-        ids: List<String>,
-        userId: UserId,
-        currentLocation: Constants.MessageLocationType,
-        mailboxLabelId: String?
-    ) {
-        if (conversationModeEnabled(currentLocation)) {
+    fun star(ids: List<String>, userId: UserId, location: Constants.MessageLocationType) {
+        if (conversationModeEnabled(location)) {
             viewModelScope.launch {
-                moveConversationsToFolder(
+                changeConversationsStarredStatus(
                     ids,
                     userId,
-                    Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
+                    ChangeConversationsStarredStatus.Action.ACTION_STAR
                 )
             }
         } else {
-            jobManager.addJobInBackground(PostTrashJobV2(ids, mailboxLabelId))
+            jobManager.addJobInBackground(PostStarJob(ids))
+        }
+    }
+
+    fun moveToFolder(
+        ids: List<String>,
+        userId: UserId,
+        currentLocation: Constants.MessageLocationType,
+        destinationFolderId: String
+    ) {
+        viewModelScope.launch {
+            if (conversationModeEnabled(currentLocation)) {
+                moveConversationsToFolder(
+                    ids,
+                    userId,
+                    destinationFolderId
+                )
+            } else {
+                moveMessagesToFolder(
+                    ids,
+                    destinationFolderId,
+                    currentLocation.messageLocationTypeValue.toString()
+                )
+            }
         }
     }
 
@@ -662,6 +685,48 @@ class MailboxViewModel @Inject constructor(
 
     fun refreshMessages() {
         mutableRefreshFlow.tryEmit(true)
+    }
+
+    fun handleConversationSwipe(
+        swipeAction: SwipeAction,
+        conversationId: String,
+        mailboxLocation: Constants.MessageLocationType
+    ) {
+        when (swipeAction) {
+            SwipeAction.TRASH ->
+                moveToFolder(
+                    listOf(conversationId),
+                    UserId(userManager.requireCurrentUserId().s),
+                    mailboxLocation,
+                    Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
+                )
+            SwipeAction.SPAM ->
+                moveToFolder(
+                    listOf(conversationId),
+                    UserId(userManager.requireCurrentUserId().s),
+                    mailboxLocation,
+                    Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString()
+                )
+            SwipeAction.STAR ->
+                star(
+                    listOf(conversationId),
+                    UserId(userManager.requireCurrentUserId().s),
+                    mailboxLocation
+                )
+            SwipeAction.ARCHIVE ->
+                moveToFolder(
+                    listOf(conversationId),
+                    UserId(userManager.requireCurrentUserId().s),
+                    mailboxLocation,
+                    Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
+                )
+            SwipeAction.MARK_READ ->
+                markRead(
+                    listOf(conversationId),
+                    UserId(userManager.requireCurrentUserId().s),
+                    mailboxLocation
+                )
+        }
     }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)

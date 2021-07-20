@@ -42,7 +42,9 @@ import ch.protonmail.android.di.JobEntryPoint
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.jobs.FetchMessageCountsJob
+import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
+import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.GetConversations
@@ -134,7 +136,13 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private lateinit var changeConversationsReadStatus: ChangeConversationsReadStatus
 
     @RelaxedMockK
+    private lateinit var changeConversationsStarredStatus: ChangeConversationsStarredStatus
+
+    @RelaxedMockK
     private lateinit var moveConversationsToFolder: MoveConversationsToFolder
+
+    @RelaxedMockK
+    private lateinit var moveMessagesToFolder: MoveMessagesToFolder
 
     @RelaxedMockK
     private lateinit var deleteConversations: DeleteConversations
@@ -173,8 +181,10 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             conversationModeEnabled,
             getConversations,
             changeConversationsReadStatus,
+            changeConversationsStarredStatus,
             getMessagesByLocation,
             moveConversationsToFolder,
+            moveMessagesToFolder,
             deleteConversations
         )
 
