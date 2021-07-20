@@ -29,7 +29,7 @@ stages:
 .detekt-analysis-common:
   stage: analyze
   tags:
-    - medium
+    - large
   script:
     - ./gradlew detektBetaDebug
   artifacts:
