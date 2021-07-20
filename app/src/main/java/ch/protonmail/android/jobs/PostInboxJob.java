@@ -35,6 +35,7 @@ import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Label;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
+import timber.log.Timber;
 
 public class PostInboxJob extends ProtonMailCounterJob {
 
@@ -63,6 +64,7 @@ public class PostInboxJob extends ProtonMailCounterJob {
         for (String id : mMessageIds) {
             final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
+                Timber.d("Post to INBOX message: %s", message.getMessageId());
                 if (!message.isRead()) {
                     UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
                     if (unreadLocationCounter != null) {
@@ -115,7 +117,7 @@ public class PostInboxJob extends ProtonMailCounterJob {
     }
 
     @Override
-    public void onRun() throws Throwable {
+    public void onRun() {
         getApi().labelMessages(new IDList(String.valueOf(Constants.MessageLocationType.INBOX.getMessageLocationTypeValue()), mMessageIds));
     }
 

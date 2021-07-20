@@ -31,6 +31,7 @@ import ch.protonmail.android.data.local.CounterDao;
 import ch.protonmail.android.data.local.CounterDatabase;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.UnreadLocationCounter;
+import timber.log.Timber;
 
 public class PostSpamJob extends ProtonMailCounterJob {
 
@@ -58,6 +59,7 @@ public class PostSpamJob extends ProtonMailCounterJob {
         for (String id : mMessageIds) {
             final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
+                Timber.d("Post to SPAM message: %s", message.getMessageId());
                 if (markMessageLocally(counterDao, message)) {
                     totalUnread++;
                 }

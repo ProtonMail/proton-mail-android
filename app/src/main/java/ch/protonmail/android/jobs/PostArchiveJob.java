@@ -60,6 +60,7 @@ public class PostArchiveJob extends ProtonMailCounterJob {
         for (String id : mMessageIds) {
             final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
+                Timber.d("Post to ARCHIVE message: %s", message.getMessageId());
                 if (updateMessageLocally(counterDao, message)) {
                     totalUnread++;
                 }

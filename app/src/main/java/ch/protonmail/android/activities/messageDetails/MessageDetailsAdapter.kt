@@ -254,7 +254,7 @@ internal class MessageDetailsAdapter(
             expirationInfoView.bind(message.expirationTime)
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
 
-            Timber.v("Load data for message: ${message.messageId} at position $position")
+            Timber.v("Load data for message: ${message.messageId} at position $position, loc: ${message.location}")
             if (listItem.messageFormattedHtml == null) {
                 onLoadMessageBody(message)
             }

@@ -25,6 +25,7 @@ import ch.protonmail.android.event.domain.model.ActionType
 import ch.protonmail.android.mailbox.data.toLocal
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import timber.log.Timber
 import javax.inject.Inject
 
 class HandleChangeToConversations @Inject constructor(
@@ -52,6 +53,7 @@ class HandleChangeToConversations @Inject constructor(
                 ActionType.DELETE -> {
                     conversationRepository.deleteConversations(listOf(response.id), userId)
                 }
+                else -> Timber.v("Unhandled ActionType ${response.action}")
             }
         }
     }
