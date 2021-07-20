@@ -49,12 +49,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.proton.core.accountmanager.data.db.AccountManagerDatabase
-import me.proton.core.mailsettings.data.repository.MailSettingsRepositoryImpl
-import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
-import me.proton.core.network.data.ApiProvider
 import me.proton.core.util.kotlin.DispatcherProvider
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -130,11 +125,4 @@ internal class ViewModelModule {
         moveConversationsToFolder,
         deleteConversations
     )
-
-    @Provides
-    @Singleton
-    fun provideMailSettingsRepositoryImpl(
-        db: AccountManagerDatabase,
-        provider: ApiProvider
-    ): MailSettingsRepository = MailSettingsRepositoryImpl(db, provider)
 }

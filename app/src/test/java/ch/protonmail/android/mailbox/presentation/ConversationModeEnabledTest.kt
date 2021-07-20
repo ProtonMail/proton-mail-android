@@ -26,7 +26,6 @@ import ch.protonmail.android.featureflags.FeatureFlagsManager
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
-import me.proton.core.mailsettings.domain.entity.ViewMode
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -121,13 +120,13 @@ class ConversationModeEnabledTest {
 
     private fun mailSettingsWithMessagesViewMode(): MailSettings {
         val mailSettings = MailSettings()
-        mailSettings.viewMode = ViewMode.NoConversationGrouping
+        mailSettings.viewMode = 1
         return mailSettings
     }
 
     private fun mailSettingsWithConversationViewMode(): MailSettings {
         val mailSettings = MailSettings()
-        mailSettings.viewMode = ViewMode.ConversationGrouping
+        mailSettings.viewMode = 0
         return mailSettings
     }
 

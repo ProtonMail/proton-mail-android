@@ -34,7 +34,7 @@ import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemote
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsUnreadRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.UnlabelConversationsRemoteWorker
-import ch.protonmail.android.mailbox.domain.model.Conversation
+import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import com.dropbox.android.external.store4.Fetcher

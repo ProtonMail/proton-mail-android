@@ -21,7 +21,7 @@ package ch.protonmail.android.details.data
 
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
-import ch.protonmail.android.mailbox.domain.model.Conversation
+import ch.protonmail.android.mailbox.domain.Conversation
 
 private const val STARRED_LABEL_ID = "10"
 

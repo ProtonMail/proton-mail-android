@@ -43,7 +43,7 @@ import ch.protonmail.android.mailbox.data.remote.worker.LabelConversationsRemote
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsReadRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsUnreadRemoteWorker
 import ch.protonmail.android.mailbox.data.remote.worker.UnlabelConversationsRemoteWorker
-import ch.protonmail.android.mailbox.domain.model.Conversation
+import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.LabelContext

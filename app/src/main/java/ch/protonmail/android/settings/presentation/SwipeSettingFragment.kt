@@ -30,14 +30,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
+import ch.protonmail.android.adapters.swipe.SwipeAction
+import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.databinding.SettingsSwipeFragmentBinding
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.libs.core.utils.onClick
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import me.proton.core.mailsettings.domain.entity.MailSettings
-import me.proton.core.mailsettings.domain.entity.SwipeAction
-import ch.protonmail.android.adapters.swipe.SwipeAction as SwipeActionLocal
+import me.proton.core.util.android.sharedpreferences.observe
 
 class SwipeSettingFragment : Fragment() {
 
@@ -64,52 +64,49 @@ class SwipeSettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as BaseSettingsActivity).mailSettingsViewModel.getMailSettingsSuccessState().onEach { state ->
-            state.mailSettings?.let {
-                mailSettings = it
-                renderLeftToRightPreview()
-                renderRightToLeftPreview()
-            }
-        }.launchIn(lifecycleScope)
+        (activity as BaseSettingsActivity).preferences?.observe()?.onEach {
+
+            mailSettings =
+                checkNotNull((activity as BaseSettingsActivity).userManager.getCurrentUserMailSettingsBlocking())
+            renderLeftToRightPreview()
+            renderRightToLeftPreview()
+        }?.launchIn(lifecycleScope)
     }
 
     fun renderLeftToRightPreview() {
-        val swipeRightAction: SwipeAction = mailSettings.swipeRight?.enum ?: SwipeAction.Trash
-
         binding.leftToRightSwipeActionTextView.text =
-            getString(SwipeActionLocal.values()[swipeRightAction.value].actionName)
+            getString(SwipeAction.values()[mailSettings.rightSwipeAction].actionName)
 
         binding.leftToRightSwipeActionTextView.onClick {
             val rightLeftChooserIntent = Intent(context, SwipeChooserActivity::class.java)
-            rightLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mailSettings.swipeRight?.enum)
+            rightLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mailSettings.rightSwipeAction)
             rightLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.RIGHT)
             startActivity(AppUtil.decorInAppIntent(rightLeftChooserIntent))
         }
 
         binding.leftToRightPlaceholderWrapper.removeAllViews()
         val leftToRightPlaceholder = createViewStub(
-            SwipeActionLocal.values()[swipeRightAction.value].getActionPreviewBackgroundResource(true)
+            SwipeAction.values()[mailSettings.rightSwipeAction].getActionPreviewBackgroundResource(true)
         )
         binding.leftToRightPlaceholderWrapper.addView(leftToRightPlaceholder)
         leftToRightPlaceholder.inflate()
     }
 
     fun renderRightToLeftPreview() {
-        val swipeLeftAction = mailSettings.swipeLeft?.enum ?: SwipeAction.Archive
 
         binding.rightToLeftSwipeActionTextView.text =
-            getString(SwipeActionLocal.values()[swipeLeftAction.value].actionName)
+            getString(SwipeAction.values()[mailSettings.leftSwipeAction].actionName)
 
         binding.rightToLeftSwipeActionTextView.onClick {
             val swipeLeftChooserIntent = Intent(context, SwipeChooserActivity::class.java)
-            swipeLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mailSettings.swipeLeft?.enum)
+            swipeLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mailSettings.leftSwipeAction)
             swipeLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.LEFT)
             startActivity(AppUtil.decorInAppIntent(swipeLeftChooserIntent))
         }
 
         binding.rightToLeftPlaceholderWrapper.removeAllViews()
         val rightToLeftPlaceholder = createViewStub(
-            SwipeActionLocal.values()[swipeLeftAction.value].getActionPreviewBackgroundResource(false)
+            SwipeAction.values()[mailSettings.leftSwipeAction].getActionPreviewBackgroundResource(false)
         )
         binding.rightToLeftPlaceholderWrapper.addView(rightToLeftPlaceholder)
         rightToLeftPlaceholder.inflate()
@@ -129,6 +126,10 @@ class SwipeSettingFragment : Fragment() {
 
     companion object {
 
-        fun newInstance() = SwipeSettingFragment()
+        fun newInstance(mailSettings: MailSettings): SwipeSettingFragment {
+            return SwipeSettingFragment().apply {
+                this.mailSettings = mailSettings
+            }
+        }
     }
 }

@@ -37,7 +37,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.settings.presentation.AccountSettingsActivity
+import ch.protonmail.android.activities.AccountSettingsActivity
 import ch.protonmail.android.activities.BaseConnectivityActivity
 import ch.protonmail.android.activities.DefaultAddressActivity
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
@@ -65,7 +65,6 @@ import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.mailbox.data.local.ConversationDao
-import ch.protonmail.android.mailbox.presentation.MailSettingsViewModel
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.settings.presentation.AccountTypeActivity
@@ -104,8 +103,6 @@ private const val EXTRA_CURRENT_ACTION = "extra.current.action"
 abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     val viewModel: ConnectivityBaseViewModel by viewModels()
-
-    val mailSettingsViewModel: MailSettingsViewModel by viewModels()
 
     @Inject
     lateinit var userManager: UserManager
@@ -362,7 +359,8 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 startActivity(foldersManagerIntent)
             }
             SWIPING_GESTURE -> {
-                val swipeFragment = SwipeSettingFragment.newInstance()
+                val mailSettings = checkNotNull(userManager.getCurrentUserMailSettingsBlocking())
+                val swipeFragment = SwipeSettingFragment.newInstance(mailSettings)
                 supportFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.zoom_in, 0, 0, R.anim.zoom_out)
                     .add(R.id.settings_fragment_container, swipeFragment)

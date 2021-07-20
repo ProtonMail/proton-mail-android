@@ -41,7 +41,7 @@ class ConversationModeEnabled @Inject constructor(
 
     operator fun invoke(location: MessageLocationType): Boolean {
         val isConversationViewMode = userManager
-            .getCurrentUserMailSettingsBlocking()?.viewMode?.value == CONVERSATION_MODE_VIEW_MODE
+            .getCurrentUserMailSettingsBlocking()?.viewMode == CONVERSATION_MODE_VIEW_MODE
         return featureFlagsManager.isChangeViewModeFeatureEnabled() &&
             isConversationViewMode &&
             !forceMessagesViewModeLocations.contains(location)
