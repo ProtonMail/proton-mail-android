@@ -75,14 +75,15 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
                 }
                 if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.SENT) {
                     message.setLocation(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue());
-                    message.removeLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.SENT.getMessageLocationTypeValue())));
                     message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.ALL_SENT.getMessageLocationTypeValue())));
+                    message.removeLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.SENT.getMessageLocationTypeValue())));
                 } else {
+                    message.setLocation(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue());
+                    message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue())));
                     if (!TextUtils.isEmpty(mLabelId)) {
                         message.removeLabels(Collections.singletonList(mLabelId));
                     }
                     removeOldFolderIds(message);
-                    message.setLocation(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue());
                 }
                 if (mFolderIds != null) {
                     for (String folderId : mFolderIds) {
@@ -105,10 +106,8 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
     }
 
     private void removeOldFolderIds(Message message) {
-        int oldLocation = message.getLocation();
         List<String> oldLabels = message.getAllLabelIDs();
         ArrayList<String> labelsToRemove = new ArrayList<>();
-        labelsToRemove.add(String.valueOf(oldLocation));
 
         MessageDao messageDao = MessageDatabase.Factory
                 .getInstance(getApplicationContext(), getUserId())
@@ -117,7 +116,7 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
         for (String labelId : oldLabels) {
             Label label = messageDao.findLabelByIdBlocking(labelId);
             // find folders
-            if (label != null && label.getExclusive()) {
+            if (label != null && label.getExclusive() && !label.getId().equals(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue()))) {
                 labelsToRemove.add(labelId);
             }
         }
