@@ -240,7 +240,12 @@ internal class MessageDetailsAdapter(
             val displayRemoteContentButton = itemView.displayRemoteContentButton
             val loadEmbeddedImagesButton = itemView.loadEmbeddedImagesButton
             val editDraftButton = itemView.editDraftButton
+            val webView = itemView.messageWebViewContainer
+                .findViewById<WebView>(R.id.item_message_body_web_view_id) ?: return
+            val messageBodyProgress = itemView.messageWebViewContainer
+                .findViewById<ProgressBar>(R.id.item_message_body_progress_view_id) ?: return
 
+            messageBodyProgress.isVisible = listItem.messageFormattedHtml.isNullOrEmpty()
             editDraftButton.isVisible = message.isDraft()
             expirationInfoView.bind(message.expirationTime)
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
@@ -250,11 +255,6 @@ internal class MessageDetailsAdapter(
                 onLoadMessageBody(message)
             }
 
-            val webView =
-                itemView.messageWebViewContainer.findViewById<WebView>(R.id.item_message_body_web_view_id) ?: return
-            val messageBodyProgress =
-                itemView.messageWebViewContainer.findViewById<ProgressBar>(R.id.item_message_body_progress_view_id)
-                    ?: return
             val htmlContent = if (showingMoreThanOneMessage() || messageHasNoQuotedPart(listItem)) {
                 listItem.messageFormattedHtml
             } else {
@@ -262,9 +262,6 @@ internal class MessageDetailsAdapter(
             }
             loadHtmlDataIntoWebView(webView, htmlContent)
 
-            listItem.messageFormattedHtml?.let {
-                messageBodyProgress.visibility = View.GONE
-            }
             displayAttachmentInfo(listItem.message.attachments, attachmentsView)
             loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
             setUpViewDividers()
