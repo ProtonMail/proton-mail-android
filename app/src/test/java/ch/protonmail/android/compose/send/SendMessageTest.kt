@@ -98,7 +98,7 @@ class SendMessageTest : CoroutinesTest {
     fun saveMessageAsNotDownloadedWithAllDraftsLocationAndCurrentTime() = runBlockingTest {
         // Given
         val message = Message(messageId = "9823472", addressID = "addressId")
-        val currentTimeMs = 23847233000L
+        val currentTimeMs = 23_847_233_000L
         val securityOptions = MessageSecurityOptions("", "", -1L)
         mockkStatic(ServerTime::class)
         every { ServerTime.currentTimeMillis() } returns currentTimeMs
@@ -108,7 +108,7 @@ class SendMessageTest : CoroutinesTest {
         sendMessage(parameters)
 
         // Then
-        val currentTimeSeconds = 23847233L
+        val currentTimeSeconds = 23_847_233L
         val expectedMessage = message.copy(
             location = MessageLocationType.ALL_DRAFT.messageLocationTypeValue,
             time = currentTimeSeconds,
@@ -122,7 +122,7 @@ class SendMessageTest : CoroutinesTest {
     fun insertMessageAsPendingForSending() = runBlockingTest {
         // Given
         val messageId = "82347"
-        val messageDbId = 82372L
+        val messageDbId = 82_372L
         val message = Message().apply {
             dbId = messageDbId
             this.messageId = messageId
@@ -144,12 +144,12 @@ class SendMessageTest : CoroutinesTest {
         // Given
         val decryptedMessageBody = "Message body in plain text"
         val message = Message().apply {
-            dbId = 992376L
+            dbId = 992_376L
             this.messageId = "823742"
             addressID = "addressId"
             decryptedBody = decryptedMessageBody
         }
-        val securityOptions = MessageSecurityOptions("secretPassword", "hint", 237237L)
+        val securityOptions = MessageSecurityOptions("secretPassword", "hint", 237_237L)
 
         // When
         val attachmentIds = listOf("23364382")

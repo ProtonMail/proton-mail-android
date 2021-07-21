@@ -36,6 +36,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.core.view.postDelayed
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
@@ -262,15 +263,9 @@ internal class MessageDetailsAdapter(
             setupMessageActionsView(message, listItem.messageFormattedHtmlWithQuotedHistory, webView)
             setupMessageContentActions(position, loadEmbeddedImagesButton, displayRemoteContentButton, editDraftButton)
 
-            itemView.messageWebViewContainer.postDelayed(
-                {
-
-                    val params = itemView.messageWebViewContainer.layoutParams
-                    params.height = ViewGroup.LayoutParams.WRAP_CONTENT
-                    itemView.messageWebViewContainer.layoutParams = params
-                },
-                EXPAND_MESSAGE_ANIMATION_DELAY_MS
-            )
+            itemView.messageWebViewContainer.postDelayed(EXPAND_MESSAGE_ANIMATION_DELAY_MS) {
+                expandMessageContentHeight(itemView.messageWebViewContainer)
+            }
         }
 
         private fun messageHasNoQuotedPart(listItem: MessageDetailsListItem) =
@@ -495,6 +490,12 @@ internal class MessageDetailsAdapter(
     private fun constrainMessageContentHeight(messageWebViewContainer: LinearLayout) {
         val params = messageWebViewContainer.layoutParams
         params.height = MESSAGE_CONTENT_FIXED_SIZE
+        messageWebViewContainer.layoutParams = params
+    }
+
+    private fun expandMessageContentHeight(messageWebViewContainer: LinearLayout) {
+        val params = messageWebViewContainer.layoutParams
+        params.height = ViewGroup.LayoutParams.WRAP_CONTENT
         messageWebViewContainer.layoutParams = params
     }
 
