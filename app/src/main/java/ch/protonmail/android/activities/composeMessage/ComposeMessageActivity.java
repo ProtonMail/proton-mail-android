@@ -571,7 +571,7 @@ public class ComposeMessageActivity
             composeMessageViewModel.setSender(extras.getString(EXTRA_SENDER_NAME, ""), extras.getString(EXTRA_SENDER_ADDRESS, ""));
             composeMessageViewModel.startFetchMessageDetailJob(extras.getString(EXTRA_MESSAGE_ID, ""));
             setMessageBody();
-        } else if (extras == null || !extras.containsKey(EXTRA_MESSAGE_ID)) {
+        } else if (extras == null || (!extras.containsKey(EXTRA_MESSAGE_ID) && !extras.containsKey(STATE_DRAFT_ID))) {
             // compose new message here
             composeMessageViewModel.setBeforeSaveDraft(false, messageBodyEditText.getText().toString());
             setMessageBody();
