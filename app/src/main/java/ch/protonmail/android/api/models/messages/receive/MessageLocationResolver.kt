@@ -73,6 +73,11 @@ class MessageLocationResolver @Inject constructor(
             return Constants.MessageLocationType.LABEL
         }
 
+        // special case handling of starred type if all the previous checks have failed
+        if (shortLabels.last().toInt() == Constants.MessageLocationType.STARRED.messageLocationTypeValue) {
+            return Constants.MessageLocationType.STARRED
+        }
+
         throw IllegalArgumentException("No valid location found in IDs: $labelIds ")
     }
 

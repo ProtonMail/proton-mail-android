@@ -240,4 +240,20 @@ class MessageLocationResolverTest {
         assertEquals(expected, result)
     }
 
+    @Test
+    fun verifyThatOnlyAllAndStaredIsResolvedToStarred() {
+
+        // given
+        val testLabelIds = listOf(
+            "5",
+            "10"
+        )
+        val expected = Constants.MessageLocationType.STARRED
+
+        // when
+        val result = messageFactory.resolveLocationFromLabels(testLabelIds)
+
+        // then
+        assertEquals(expected, result)
+    }
 }
