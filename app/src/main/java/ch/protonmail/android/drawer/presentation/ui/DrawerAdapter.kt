@@ -101,8 +101,14 @@ internal class DrawerAdapter : BaseAdapter<
             super.onBind(item)
             drawer_item_selection_view.isVisible = item.selected
             drawer_item_notifications_text_view.isVisible = item.hasNotifications()
-            drawer_item_notifications_text_view.text = item.notificationCount.toString()
+            drawer_item_notifications_text_view.text = item.notificationCount.formatToMax4chars()
             drawer_item_notifications_text_view.setNotificationIndicatorSize(item.notificationCount)
+        }
+
+        private fun Int.formatToMax4chars(): String {
+            val coerced = coerceAtMost(9999)
+            return if (coerced == this) "$coerced"
+            else "$coerced+"
         }
     }
 
