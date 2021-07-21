@@ -206,7 +206,7 @@ internal class MessageDetailsAdapter(
         private fun isMessageBodyExpanded() = isExpanded(layoutPosition)
 
         private fun isLastItemHeader(): Boolean {
-            val lastHeaderItem = visibleItems?.last { it.ItemType == TYPE_HEADER }
+            val lastHeaderItem = visibleItems?.last { it.itemType == TYPE_HEADER }
             return layoutPosition == visibleItems?.indexOf(lastHeaderItem)
         }
     }
@@ -366,7 +366,7 @@ internal class MessageDetailsAdapter(
         attachments: List<Attachment>
     ) {
         val item: MessageDetailsListItem? = visibleItems?.firstOrNull {
-            it.ItemType == TYPE_ITEM && it.message.messageId == messageId
+            it.itemType == TYPE_ITEM && it.message.messageId == messageId
         }
         if (item == null) {
             Timber.d("Trying to show $messageId details but message is not in visibleItems list")

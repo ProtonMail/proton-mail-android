@@ -39,15 +39,11 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
     private var indexList: MutableList<Int> = ArrayList()
     private var expandMap = SparseIntArray()
 
-    open class ListItem(var ItemType: Int)
+    open class ListItem(var itemType: Int)
 
-    override fun getItemId(i: Int): Long {
-        return i.toLong()
-    }
+    override fun getItemId(i: Int) = i.toLong()
 
-    override fun getItemCount(): Int {
-        return if (visibleItems == null) 0 else visibleItems!!.size
-    }
+    override fun getItemCount() = if (visibleItems == null) 0 else visibleItems!!.size
 
     fun getItem(i: Int): T? {
         return try {
@@ -58,9 +54,8 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
         }
     }
 
-    protected fun inflate(resourceID: Int, viewGroup: ViewGroup): View {
-        return LayoutInflater.from(mContext).inflate(resourceID, viewGroup, true)
-    }
+    protected fun inflate(resourceID: Int, viewGroup: ViewGroup): View =
+        LayoutInflater.from(mContext).inflate(resourceID, viewGroup, true)
 
     open inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
@@ -95,7 +90,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
         var insert = position
 
         var i = index + 1
-        while (i < allItems.size && allItems[i].ItemType != TYPE_HEADER) {
+        while (i < allItems.size && allItems[i].itemType != TYPE_HEADER) {
             insert++
             count++
             visibleItems!!.add(insert, allItems[i])
@@ -118,7 +113,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
         val index = indexList[position]
 
         var i = index + 1
-        while (i < allItems.size && allItems[i].ItemType != TYPE_HEADER) {
+        while (i < allItems.size && allItems[i].itemType != TYPE_HEADER) {
             count++
             visibleItems!!.removeAt(position + 1)
             indexList.removeAt(position + 1)
@@ -141,7 +136,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
     }
 
     override fun getItemViewType(position: Int): Int {
-        return visibleItems!![position].ItemType
+        return visibleItems!![position].itemType
     }
 
     fun setItems(items: MutableList<T>) {
@@ -151,7 +146,7 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
         indexList.clear()
 
         for (i in items.indices) {
-            if (items[i].ItemType == TYPE_HEADER) {
+            if (items[i].itemType == TYPE_HEADER) {
                 indexList.add(i)
                 visibleItems.add(items[i])
             }
