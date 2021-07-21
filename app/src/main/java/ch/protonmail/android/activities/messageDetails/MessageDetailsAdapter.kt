@@ -234,7 +234,7 @@ internal class MessageDetailsAdapter(
 
         fun bind(position: Int, listItem: MessageDetailsListItem) {
             val message = listItem.message
-            Timber.v("Bind item: ${message.messageId}")
+            Timber.v("Bind item: ${message.messageId}, isDownloaded: ${message.isDownloaded}")
             val attachmentsView = itemView.attachmentsView
             attachmentsView.visibility = View.GONE
 
@@ -254,8 +254,8 @@ internal class MessageDetailsAdapter(
             expirationInfoView.bind(message.expirationTime)
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
 
-            Timber.v("Load data for message: ${message.messageId} at position $position, loc: ${message.location}")
             if (listItem.messageFormattedHtml == null) {
+                Timber.v("Load body for message: ${message.messageId} at position $position, loc: ${message.location}")
                 onLoadMessageBody(message)
             }
 
@@ -384,8 +384,10 @@ internal class MessageDetailsAdapter(
             return
         }
 
+        Timber.d("Show message details: $messageId")
         val validParsedBody = parsedBody ?: return
         val messageBodyParts = messageBodyParser.splitBody(validParsedBody)
+
         item.messageFormattedHtml = messageBodyParts.messageBody
         item.messageFormattedHtmlWithQuotedHistory = messageBodyParts.messageBodyWithQuote
         item.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton

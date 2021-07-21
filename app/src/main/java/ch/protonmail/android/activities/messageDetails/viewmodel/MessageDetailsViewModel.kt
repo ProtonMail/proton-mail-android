@@ -331,7 +331,7 @@ internal class MessageDetailsViewModel @Inject constructor(
                 Timber.v("loadConversationDetails Success")
                 val conversation = result.value
                 if (conversation.messages?.isEmpty() == true) {
-                    _messageDetailsError.postValue(Event("Failed getting conversation details, empty messages"))
+                    Timber.i("Failed getting conversation details, empty messages")
                     null
                 } else {
                     onConversationLoaded(conversation, userId)
