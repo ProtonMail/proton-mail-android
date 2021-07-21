@@ -251,6 +251,7 @@ class ConversationsRepositoryImpl @Inject constructor(
                 message.removeLabels(labelsToRemoveFromMessage.toList())
                 val labelsToAddToMessage = getLabelIdsForAddingWhenMovingToFolder(folderId, message.allLabelIDs)
                 message.addLabels(labelsToAddToMessage.toList())
+                Timber.v("Remove labels $labelsToRemoveFromMessage, add labels: $labelsToAddToMessage")
                 lastMessageTime = max(lastMessageTime, message.time)
                 message
             }

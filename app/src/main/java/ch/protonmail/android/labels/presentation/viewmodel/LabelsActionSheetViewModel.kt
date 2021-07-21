@@ -93,7 +93,7 @@ class LabelsActionSheetViewModel @Inject constructor(
     fun onLabelClicked(model: LabelActonItemUiModel, currentFolderLocationId: Int) {
 
         if (model.labelType == LabelsActionSheet.Type.FOLDER.typeInt) {
-            onFolderClicked(model.labelId, currentFolderLocationId)
+            onFolderClicked(model.labelId)
         } else {
             // label type clicked
             val updatedLabels = labels.value
@@ -177,9 +177,10 @@ class LabelsActionSheetViewModel @Inject constructor(
         }
     }
 
-    private fun onFolderClicked(selectedFolderId: String, currentFolderLocationId: Int) {
+    private fun onFolderClicked(selectedFolderId: String) {
         viewModelScope.launch {
-            if (isActionAppliedToConversation(Constants.MessageLocationType.fromInt(currentFolderLocationId))) {
+            // ignore location here, otherwise custom folder case does not work
+            if (isActionAppliedToConversation(null)) {
                 userManager.currentUserId?.let {
                     moveConversationsToFolder(messageIds, UserId(it.s), selectedFolderId)
                 }
@@ -213,7 +214,7 @@ class LabelsActionSheetViewModel @Inject constructor(
         return checkedLabels
     }
 
-    private fun isActionAppliedToConversation(location: Constants.MessageLocationType) =
+    private fun isActionAppliedToConversation(location: Constants.MessageLocationType?) =
         conversationModeEnabled(location) && !isApplyingActionToMessageWithinAConversation()
 
     private fun isApplyingActionToMessageWithinAConversation(): Boolean {
