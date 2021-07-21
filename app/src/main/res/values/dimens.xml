@@ -245,6 +245,7 @@
     <dimen name="spacing_normal">16dp</dimen>
 
     <dimen name="custom_check_box_size">24dp</dimen>
+    <dimen name="constrained_message_content_view_size">200dp</dimen>
 
     <!-- endregion -->
 

@@ -24,6 +24,7 @@ import android.content.Context
 import android.os.Build
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -70,7 +71,7 @@ import java.util.ArrayList
  * Used to force the "message content" webview to have a fixed size while animating (expanding  / collapsing)
  * a message in a conversation. This is needed to ensure a smooth animation
  */
-private const val MESSAGE_CONTENT_FIXED_SIZE = 200
+private const val MESSAGE_CONTENT_FIXED_SIZE_DP = 200F
 private const val EXPAND_MESSAGE_ANIMATION_DELAY_MS = 200L
 
 internal class MessageDetailsAdapter(
@@ -90,6 +91,14 @@ internal class MessageDetailsAdapter(
 
     private var exclusiveLabelsPerMessage: HashMap<String, List<Label>> = hashMapOf()
     private var nonExclusiveLabelsPerMessage: HashMap<String, List<LabelChipUiModel>> = hashMapOf()
+
+    private val constrainedMessageHeightPx by lazy {
+        TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            MESSAGE_CONTENT_FIXED_SIZE_DP,
+            context.resources.displayMetrics
+        ).toInt()
+    }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (getItemViewType(position) == TYPE_HEADER) {
@@ -489,7 +498,7 @@ internal class MessageDetailsAdapter(
 
     private fun constrainMessageContentHeight(messageWebViewContainer: LinearLayout) {
         val params = messageWebViewContainer.layoutParams
-        params.height = MESSAGE_CONTENT_FIXED_SIZE
+        params.height = constrainedMessageHeightPx
         messageWebViewContainer.layoutParams = params
     }
 
