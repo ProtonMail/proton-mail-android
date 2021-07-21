@@ -1038,9 +1038,9 @@ internal class MailboxActivity :
 
     override fun onActionModeFinished(mode: ActionMode?) {
         super.onActionModeFinished(mode)
-        // The ActionModel will be visually closed with a small delay after this ( or any other callback, like
-        //  onDestroyActionMode ), for this reason we apply a small delay before making the stats bar transparent again,
-        //  in order to about to flash a black status bar
+        // The ActionMode will be visually closed with a small delay after this callback ( or any other, like
+        //  onDestroyActionMode ), for this reason we apply a small delay before making the status bar transparent
+        //  again, in order to avoid to flash a black status bar
         window.decorView.postDelayed(ACTION_MODE_STATUS_BAR_COLOR_DELAY) {
             window.statusBarColor = getColor(R.color.transparent)
         }
