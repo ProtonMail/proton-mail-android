@@ -171,7 +171,7 @@ internal class MessageDetailsAdapter(
         }
         webView.id = R.id.item_message_body_web_view_id
 
-        val webViewClient = MessageDetailsPmWebViewClient(userManager, context, itemView)
+        val webViewClient = MessageDetailsPmWebViewClient(userManager, context, itemView, shouldShowRemoteImages())
         configureWebView(webView, webViewClient)
         setUpScrollListener(webView, itemView.messageWebViewContainer)
 
@@ -248,6 +248,8 @@ internal class MessageDetailsAdapter(
                 .findViewById<ProgressBar>(R.id.item_message_body_progress_view_id) ?: return
 
             messageBodyProgress.isVisible = listItem.messageFormattedHtml.isNullOrEmpty()
+            displayRemoteContentButton.isVisible = false
+            loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
             editDraftButton.isVisible = message.isDraft()
             expirationInfoView.bind(message.expirationTime)
             setUpSpamScoreView(message.spamScore, itemView.spamScoreView)
@@ -262,10 +264,11 @@ internal class MessageDetailsAdapter(
             } else {
                 listItem.messageFormattedHtmlWithQuotedHistory
             }
-            loadHtmlDataIntoWebView(webView, htmlContent)
+            htmlContent?.let {
+                loadHtmlDataIntoWebView(webView, it)
+            }
 
             displayAttachmentInfo(listItem.message.attachments, attachmentsView)
-            loadEmbeddedImagesButton.isVisible = listItem.showLoadEmbeddedImagesButton
             setUpViewDividers()
 
             setupMessageActionsView(message, listItem.messageFormattedHtmlWithQuotedHistory, webView)
@@ -300,17 +303,17 @@ internal class MessageDetailsAdapter(
             messageActionsView.bind(uiModel)
 
             messageActionsView.onShowHistoryClicked { showHistoryButton ->
-                loadHtmlDataIntoWebView(webView, messageHtmlWithQuotedHistory)
+                loadHtmlDataIntoWebView(webView, messageHtmlWithQuotedHistory.orEmpty())
                 showHistoryButton.isVisible = false
             }
             messageActionsView.onReplyClicked { onReplyMessageClicked(message) }
             messageActionsView.onMoreActionsClicked { onMoreMessageActionsClicked(message) }
         }
 
-        private fun loadHtmlDataIntoWebView(webView: WebView, htmlContent: String?) {
+        private fun loadHtmlDataIntoWebView(webView: WebView, htmlContent: String) {
             webView.loadDataWithBaseURL(
                 Constants.DUMMY_URL_PREFIX,
-                htmlContent ?: "",
+                htmlContent,
                 "text/html",
                 HTTP.UTF_8,
                 ""
@@ -339,11 +342,10 @@ internal class MessageDetailsAdapter(
 
             displayRemoteContentButton.setOnClickListener {
                 val item = visibleItems!![position]
-                val webView = itemView.messageWebViewContainer.getChildAt(0) as? WebView
-                // isInit will prevent clicking the button before the WebView is ready.
-                // WebView init can take a bit longer.
+                val webView = itemView.messageWebViewContainer.findViewById<WebView>(R.id.item_message_body_web_view_id)
+
                 if (webView != null && webView.contentHeight > 0) {
-                    itemView.displayRemoteContentButton.visibility = View.GONE
+                    itemView.displayRemoteContentButton.isVisible = false
                     (webView.webViewClient as MessageDetailsPmWebViewClient).allowLoadingRemoteResources()
                     webView.reload()
                     onDisplayRemoteContentClicked(item.message)
@@ -531,31 +533,32 @@ internal class MessageDetailsAdapter(
     }
 
     private class MessageDetailsPmWebViewClient(
-        private val userManager: UserManager,
+        userManager: UserManager,
         activity: Activity,
-        private val itemView: View
-    ) : PMWebViewClient(userManager, activity, false) {
+        private val itemView: View,
+        private val isAutoShowRemoteImages: Boolean
+    ) : PMWebViewClient(userManager, activity, isAutoShowRemoteImages) {
 
         override fun onPageFinished(view: WebView, url: String) {
-            // Do not display the 'displayRemoteContent' button when API is lower than 26 as in that case remote
-            // images will be loaded automatically for the reason mentioned below
-            if (amountOfRemoteResourcesBlocked() > 0 && !isAndroidAPILevelLowerThan26()) {
+            if (amountOfRemoteResourcesBlocked() > 0) {
                 itemView.displayRemoteContentButton.isVisible = true
             }
 
-            // When android API < 26 we automatically show remote images because the `getWebViewClient` method
-            // that we use to access the webView and load them later on was only introduced with API 26
-            val showRemoteImages = isAutoShowRemoteImages() || isAndroidAPILevelLowerThan26()
-            this.blockRemoteResources(!showRemoteImages)
+            this.blockRemoteResources(!isAutoShowRemoteImages)
 
             super.onPageFinished(view, url)
         }
-
-        private fun isAutoShowRemoteImages(): Boolean {
-            val mailSettings = userManager.getCurrentUserMailSettingsBlocking()
-            return mailSettings?.showImagesFrom?.includesRemote() ?: false
-        }
-
-        private fun isAndroidAPILevelLowerThan26() = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
     }
+
+    private fun shouldShowRemoteImages(): Boolean {
+        val mailSettings = userManager.getCurrentUserMailSettingsBlocking()
+        val isAutoShowRemoteImages = mailSettings?.showImagesFrom?.includesRemote() ?: false
+
+        // When android API < 26 we automatically show remote images because the `getWebViewClient` method
+        // that we use to access the webView and load them later on was only introduced with API 26
+        return isAutoShowRemoteImages || isAndroidAPILevelLowerThan26()
+    }
+
+    private fun isAndroidAPILevelLowerThan26() = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+
 }
