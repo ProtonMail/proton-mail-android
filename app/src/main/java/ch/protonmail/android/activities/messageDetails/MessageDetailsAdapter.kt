@@ -348,6 +348,7 @@ internal class MessageDetailsAdapter(
                     itemView.displayRemoteContentButton.isVisible = false
                     (webView.webViewClient as MessageDetailsPmWebViewClient).allowLoadingRemoteResources()
                     webView.reload()
+                    webView.invalidate()
                     onDisplayRemoteContentClicked(item.message)
                 }
             }
