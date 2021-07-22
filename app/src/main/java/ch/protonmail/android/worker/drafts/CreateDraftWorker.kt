@@ -38,7 +38,6 @@ import arrow.core.right
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
@@ -68,6 +67,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import me.proton.core.util.kotlin.takeIfNotBlank
 import retrofit2.HttpException
 import timber.log.Timber
@@ -99,7 +99,6 @@ class CreateDraftWorker @AssistedInject constructor(
     private val addressCryptoFactory: AddressCrypto.Factory,
     private val base64: Base64Encoder,
     private val apiManager: ProtonMailApiManager,
-    private val databaseProvider: DatabaseProvider,
     private val userNotifier: UserNotifier
 ) : CoroutineWorker(context, params) {
 
@@ -115,7 +114,7 @@ class CreateDraftWorker @AssistedInject constructor(
         val messageId = message.messageId
             ?: return failureWithError(CreateDraftWorkerErrors.MessageHasNullId)
 
-        val draftBody = buildDraftBody(userId, senderAddress, Id(messageId), message, parentId)
+        val draftBody = buildDraftBody(senderAddress, Id(messageId), message, parentId)
             .mapLeft { return failureWithError(it) }
             .orThrow()
 
@@ -163,7 +162,6 @@ class CreateDraftWorker @AssistedInject constructor(
     }
 
     private suspend fun buildDraftBody(
-        userId: Id,
         senderAddress: Address,
         messageId: Id,
         message: Message,
@@ -172,9 +170,10 @@ class CreateDraftWorker @AssistedInject constructor(
         val initialDraftBody = messageFactory.createDraftApiRequest(message)
 
         val withParentDraftBody = if (parentId != null && isDraftBeingCreated(message)) {
-            val parentMessage = messageDetailsRepository.findMessageById(parentId).first()
-            val attachments = parentMessage?.attachments(databaseProvider.provideMessageDao(userId))
-            val parentAttachmentsKeyPackets = buildParentAttachmentsKeyPacketsMap(attachments, senderAddress)
+            val parentMessage = messageDetailsRepository.findMessageById(parentId).firstOrNull()
+                ?: fetchParentMessage(parentId)
+            val parentAttachmentsKeyPackets =
+                buildParentAttachmentsKeyPacketsMap(parentMessage.attachments, senderAddress)
 
             initialDraftBody.copy(
                 parentId = parentId,
@@ -206,6 +205,9 @@ class CreateDraftWorker @AssistedInject constructor(
             attachmentKeyPackets = messageAttachmentsKeyPackets + withParentDraftBody.attachmentKeyPackets
         ).right()
     }
+
+    private fun fetchParentMessage(parentId: String) =
+        apiManager.fetchMessageDetailsBlocking(messageId = parentId).message
 
     private fun buildMessageAttachmentsKeyPacketsMap(
         attachments: List<Attachment>,
