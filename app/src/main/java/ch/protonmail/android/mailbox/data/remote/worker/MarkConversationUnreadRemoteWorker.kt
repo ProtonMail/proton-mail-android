@@ -59,7 +59,7 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
                 workDataOf(KEY_MARK_UNREAD_WORKER_ERROR_DESCRIPTION to "Conversation ids list is null")
             )
 
-        Timber.v("MarkConversationsUnreadRemoteWorker conversationIds: $conversationIds")
+        Timber.v("MarkConversationsUnreadRemoteWorker conversationIds: ${conversationIds.asList()}")
         val requestBody = ConversationIdsRequestBody(ids = conversationIds.asList())
 
         return runCatching {

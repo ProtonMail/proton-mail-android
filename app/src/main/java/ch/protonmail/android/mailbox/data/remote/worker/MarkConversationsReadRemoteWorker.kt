@@ -33,6 +33,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -59,6 +60,8 @@ class MarkConversationsReadRemoteWorker @AssistedInject constructor(
             )
 
         val requestBody = ConversationIdsRequestBody(ids = conversationIds.asList())
+
+        Timber.v("MarkConversationsReadRemoteWorker conversationIds: ${conversationIds.asList()}")
 
         return runCatching {
             protonMailApiManager.markConversationsRead(requestBody)

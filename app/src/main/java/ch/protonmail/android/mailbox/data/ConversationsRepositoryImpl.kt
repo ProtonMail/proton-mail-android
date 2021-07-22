@@ -188,12 +188,16 @@ class ConversationsRepositoryImpl @Inject constructor(
 
         conversationIds.forEach forEachConversation@{ conversationId ->
             val conversation = requireNotNull(conversationDao.findConversation(conversationId, userId.id))
-            conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
-            // Only the latest message from the current location is marked as unread
+            // Only the latest unread message from the current location is marked as unread
             getAllMessagesFromAConversation(conversationId).forEach { message ->
                 yield()
-                if (Constants.MessageLocationType.fromInt(message.location) == location) {
+                if (
+                    Constants.MessageLocationType.fromInt(message.location) == location &&
+                    message.isRead
+                ) {
+                    Timber.v("Make message ${message.messageId} read")
                     messageDao.saveMessage(message.apply { setIsRead(false) })
+                    conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
                     return@forEachConversation
                 }
             }
