@@ -227,6 +227,15 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <include
+            android:id="@+id/includeOpenInProtonCalendar"
+            layout="@layout/button_open_in_proton_calendar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            />
+
         <ch.protonmail.android.views.messageDetails.AttachmentsView
             android:id="@+id/attachmentsContainer"
             android:layout_width="match_parent"
