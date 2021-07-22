@@ -58,17 +58,11 @@ internal class LabelUiModelMapper : UiModelMapper<Label, LabelUiModel> {
 
     private fun normalizeColor(color: String): Int {
 
-        val v4FixedColor = when (color) {
-            "#5ec7b7" -> "#79C4B7"
-            "#97c9c1" -> "#A1C8C1"
-            else -> color
-        }
-
         return try {
-            Color.parseColor(UiUtil.normalizeColor(v4FixedColor))
-        } catch (exception: Exception) {
-            Timber.w(exception, "Cannot parse color: $v4FixedColor")
-            Color.WHITE
+            Color.parseColor(UiUtil.normalizeColor(color))
+        } catch (exception: IllegalArgumentException) {
+            Timber.e(exception, "Cannot parse color: $color")
+            Color.GRAY
         }
     }
 }
