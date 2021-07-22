@@ -19,11 +19,13 @@
 
 package ch.protonmail.android.labels.presentation.mapper
 
+import android.graphics.Color
 import androidx.core.graphics.toColorInt
 import ch.protonmail.android.R
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
+import timber.log.Timber
 import javax.inject.Inject
 
 class LabelsMapper @Inject constructor() {
@@ -41,7 +43,12 @@ class LabelsMapper @Inject constructor() {
 
         // TODO if (labelsSheetType == LabelsActionSheet.Type.FOLDER && setting from the net MailSettings.EnableFolderColor != true)
         //  Color.BLACK else label.color
-        val colorInt = label.color.toColorInt()
+        val colorInt = try {
+            label.color.toColorInt()
+        } catch (exc: IllegalArgumentException) {
+            Timber.e(exc, "Unknown label color: ${label.color}")
+            Color.GRAY
+        }
 
         val isChecked = if (labelsSheetType == LabelsActionSheet.Type.LABEL) {
             currentLabelsSelection.contains(label.id)
