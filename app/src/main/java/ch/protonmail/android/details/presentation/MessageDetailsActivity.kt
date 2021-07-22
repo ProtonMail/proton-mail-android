@@ -462,10 +462,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
             Timber.v("New decrypted message ${lastMessage.messageId}")
             viewModel.renderedFromCache = AtomicBoolean(true)
-            if (lastMessage.messageBody.isNullOrEmpty()) {
-                UiUtil.showInfoSnack(mSnackLayout, this@MessageDetailsActivity, R.string.decryption_error_desc).show()
-                return
-            }
 
             Timber.v("setMessage conversations size: ${conversation.messages.size}")
             messageExpandableAdapter.setMessageData(conversation.messages)
