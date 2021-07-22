@@ -45,7 +45,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -423,11 +422,20 @@ class ConversationsRepositoryImpl @Inject constructor(
         }
 
     private fun observeConversationLocal(conversationId: String, userId: Id): Flow<Conversation?> =
-        conversationDao.observeConversation(conversationId, userId.s).combine(
-            messageDao.observeAllMessagesInfoFromConversation(conversationId)
-        ) { conversation, messages ->
-            conversation?.toDomainModel(messages.toDomainModelList())
-        }
+        conversationDao.observeConversation(conversationId, userId.s)
+            .map { conversation ->
+                if (conversation != null) {
+                    val messages = getAllMessagesFromAConversation(conversation.id)
+                        .onEach { Timber.d("message id: ${it.messageId}, body: ${it.messageBody?.length}") }
+                        .toDomainModelList()
+                    Timber.d(
+                        "Processed conversation id: ${conversation.id} messages size: ${messages.size}"
+                    )
+                    conversation.toDomainModel(messages)
+                } else {
+                    null
+                }
+            }
 
     private data class ConversationStoreKey(val conversationId: String, val userId: Id)
 }

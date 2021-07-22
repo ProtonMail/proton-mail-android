@@ -427,7 +427,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
                 isForwarded = false,
                 allLabelIDs = listOf("1", "2")
             )
-            coEvery { messageDao.observeAllMessagesInfoFromConversation(conversationId) } returns flowOf(listOf(message))
+            coEvery { messageDao.findAllMessagesInfoFromConversation(conversationId) } returns listOf(message)
             coEvery { messageDao.findAttachmentsByMessageId(any()) } returns flowOf(emptyList())
             coEvery { conversationDao.observeConversation(conversationId, userId) } returns flowOf(
                 conversationDbModel
@@ -509,7 +509,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val dbFlow =
                 MutableSharedFlow<ConversationDatabaseModel?>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
             coEvery { api.fetchConversation(conversationId, Id(userId)) } returns conversationResponse
-            coEvery { messageDao.observeAllMessagesInfoFromConversation(conversationId) } returns flowOf(emptyList())
+            coEvery { messageDao.findAllMessagesInfoFromConversation(conversationId) } returns emptyList()
             coEvery { conversationDao.observeConversation(conversationId, userId) } returns dbFlow
             every { messageFactory.createMessage(apiMessage) } returns expectedMessage
             val expectedConversationDbModel = ConversationDatabaseModel(
