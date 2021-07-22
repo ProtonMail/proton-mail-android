@@ -104,9 +104,9 @@ class CreateDraftWorker @WorkerInject constructor(
                 createDraftRequest.parentID = parentId
                 createDraftRequest.action = getInputActionType().messageActionTypeValue
                 val parentMessage = messageDetailsRepository.findMessageByIdBlocking(parentId)
-                val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
+                    ?: fetchParentMessage(parentId)
 
-                buildParentAttachmentsKeyPacketsMap(attachments, senderAddress).forEach {
+                buildParentAttachmentsKeyPacketsMap(parentMessage.Attachments, senderAddress).forEach {
                     createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
                 }
             }
@@ -164,6 +164,8 @@ class CreateDraftWorker @WorkerInject constructor(
             }
         )
     }
+
+    private fun fetchParentMessage(parentId: String) = apiManager.messageDetail(messageId = parentId).message
 
     private fun buildMessageAttachmentsKeyPacketsMap(
         attachments: List<Attachment>,
