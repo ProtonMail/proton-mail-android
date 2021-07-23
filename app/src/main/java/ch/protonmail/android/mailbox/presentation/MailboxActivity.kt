@@ -1579,6 +1579,12 @@ internal class MailboxActivity :
             }
             super.onChildDraw(canvas, recyclerView, viewHolder, deltaX, deltaY, actionState, isCurrentlyActive)
         }
+
+        override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+            super.onSelectedChanged(viewHolder, actionState)
+            val isSwiping = actionState == ItemTouchHelper.ACTION_STATE_SWIPE;
+            mailboxSwipeRefreshLayout.isEnabled = isSwiping.not();
+        }
     }
 
     private class OnMessageCountsListTask internal constructor(
