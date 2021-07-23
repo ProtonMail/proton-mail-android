@@ -29,7 +29,7 @@ import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel.
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel.Companion.TABLE_CONVERSATIONS
 import ch.protonmail.android.mailbox.data.local.model.LabelContextDatabaseModel
 import kotlinx.coroutines.flow.Flow
-import me.proton.core.data.db.BaseDao
+import me.proton.core.data.room.db.BaseDao
 
 @Dao
 abstract class ConversationDao : BaseDao<ConversationDatabaseModel>() {

@@ -374,7 +374,7 @@
         <activity
             android:name="me.proton.core.auth.presentation.ui.AddAccountActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/ProtonTheme.AddAccount"
+            android:theme="@style/ProtonTheme.Mail.AddAccount"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="me.proton.core.auth.presentation.ui.LoginActivity"
