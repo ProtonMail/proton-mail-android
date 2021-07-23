@@ -200,9 +200,11 @@ internal class MessageDetailsAdapter(
                     // Message Body is expended - will collapse
                     headerView.collapseHeader()
                     headerView.forbidExpandingHeaderView()
+                    itemView.lastConversationMessageCollapsedDivider.isVisible = isLastItemHeader()
                 } else {
                     // Message Body is collapsed - will expand
                     headerView.allowExpandingHeaderView()
+                    itemView.lastConversationMessageCollapsedDivider.isVisible = false
                 }
                 toggleExpandedItems(layoutPosition, false)
             }

@@ -20,6 +20,7 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -33,7 +34,6 @@
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="visible" />
 
-
     <ch.protonmail.android.views.messageDetails.MessageDetailsHeaderView
         android:id="@+id/headerView"
         android:layout_width="0dp"
@@ -41,5 +41,16 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/messagesDividerView" />
+
+    <View
+        android:id="@+id/lastConversationMessageCollapsedDivider"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:background="@drawable/list_divider"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerView"
+        tools:visibility="visible"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
