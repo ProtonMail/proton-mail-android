@@ -71,10 +71,21 @@ class AttachmentsViewModel @Inject constructor(
                         viewState.postValue(AttachmentsViewState.UpdateAttachments(updatedMessage.attachments))
                         this.cancel()
                     }
+                    if (draftWasAlreadyCreated(existingMessage, updatedMessage)) {
+                        // Opening the attachments screen after draft creation happened,
+                        // ensure the displayed attachments has a valid `attachmentId`
+                        viewState.postValue(AttachmentsViewState.UpdateAttachments(updatedMessage.attachments))
+                        this.cancel()
+                    }
                 }
             }
         }
     }
+
+    private fun draftWasAlreadyCreated(existingMessage: Message, updatedMessage: Message) =
+        isRemoteMessage(existingMessage)
+            && isRemoteMessage(updatedMessage)
+            && existingMessage.messageId == updatedMessage.messageId
 
     private fun draftCreationHappened(existingMessage: Message, updatedMessage: Message) =
         !isRemoteMessage(existingMessage) && isRemoteMessage(updatedMessage)
