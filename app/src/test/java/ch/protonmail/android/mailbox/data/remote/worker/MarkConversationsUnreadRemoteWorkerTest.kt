@@ -68,10 +68,11 @@ class MarkConversationsUnreadRemoteWorkerTest {
         // given
         val conversationIds = listOf("conversationId1", "conversationId2")
         val operationMock = mockk<Operation>()
+        val location = Constants.MessageLocationType.INBOX
         every { workManager.enqueue(any<WorkRequest>()) } returns operationMock
 
         // when
-        val operationResult = markConversationsUnreadRemoteWorkerEnqueuer.enqueue(conversationIds)
+        val operationResult = markConversationsUnreadRemoteWorkerEnqueuer.enqueue(conversationIds, location)
 
         // then
         assertEquals(operationMock, operationResult)
@@ -115,7 +116,7 @@ class MarkConversationsUnreadRemoteWorkerTest {
             every { workerParameters.inputData.getStringArray(KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS) } returns null
 
             val expectedResult = ListenableWorker.Result.failure(
-                workDataOf(KEY_MARK_READ_WORKER_ERROR_DESCRIPTION to "Conversation ids list is null")
+                workDataOf(KEY_MARK_READ_WORKER_ERROR_DESCRIPTION to "Conversation ids list or labelId is invalid")
             )
 
             // when

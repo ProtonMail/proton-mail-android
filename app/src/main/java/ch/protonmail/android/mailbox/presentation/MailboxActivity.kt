@@ -343,7 +343,8 @@ internal class MailboxActivity :
             OnMessageClickTask(
                 WeakReference(this@MailboxActivity),
                 messageDetailsRepository,
-                mailboxUiItem.itemId
+                mailboxUiItem.itemId,
+                currentMailboxLocation.messageLocationTypeValue
             ).execute()
         }
 
@@ -1292,7 +1293,8 @@ internal class MailboxActivity :
     private class OnMessageClickTask internal constructor(
         private val mailboxActivity: WeakReference<MailboxActivity>,
         private val messageDetailsRepository: MessageDetailsRepository,
-        private val messageId: String
+        private val messageId: String,
+        private val currentMailboxLocationType: Int
     ) : AsyncTask<Unit, Unit, Message>() {
 
         override fun doInBackground(vararg params: Unit): Message? =
@@ -1318,7 +1320,7 @@ internal class MailboxActivity :
                 intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_OR_CONVERSATION_ID, messageId)
                 intent.putExtra(
                     MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID,
-                    messageLocation?.messageLocationTypeValue
+                    currentMailboxLocationType
                 )
                 mailboxActivity?.startActivity(intent)
             }

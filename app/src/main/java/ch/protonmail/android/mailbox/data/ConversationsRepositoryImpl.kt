@@ -184,7 +184,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         userId: UserId,
         location: Constants.MessageLocationType
     ) {
-        markConversationsUnreadWorker.enqueue(conversationIds)
+        markConversationsUnreadWorker.enqueue(conversationIds, location)
 
         conversationIds.forEach forEachConversation@{ conversationId ->
             val conversation = requireNotNull(conversationDao.findConversation(conversationId, userId.id))
