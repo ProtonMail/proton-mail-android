@@ -100,6 +100,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private var messageRecipientUserId: Id? = null
     private var messageRecipientUsername: String? = null
     private var openedFolderLocationId: Int = Constants.MessageLocationType.INVALID.messageLocationTypeValue
+    private var openedFolderLabelId: String? = null
     private var onOffsetChangedListener: AppBarLayout.OnOffsetChangedListener? = null
     private var showPhishingReportButton = true
 
@@ -134,6 +135,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             EXTRA_MESSAGE_LOCATION_ID,
             Constants.MessageLocationType.INVALID.messageLocationTypeValue
         )
+        openedFolderLabelId = intent.getStringExtra(EXTRA_MAILBOX_LABEL_ID)
         val currentUser = mUserManager.requireCurrentUser()
         AppUtil.clearNotifications(this, currentUser.id)
         supportActionBar?.title = null
@@ -552,6 +554,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
                 actionSheetTarget,
                 listOf(id),
                 openedFolderLocationId,
+                openedFolderLabelId ?: openedFolderLocationId.toString(),
                 getCurrentSubject(),
                 getMessagesFrom(message.sender?.name),
                 message.isStarred ?: false
@@ -815,6 +818,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN,
             listOf(message.messageId ?: messageOrConversationId),
             message.location,
+            openedFolderLabelId ?: message.location.toString(),
             getCurrentSubject(),
             getMessagesFrom(message.sender?.name),
             message.isStarred ?: false
@@ -829,6 +833,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
 
         const val EXTRA_MESSAGE_OR_CONVERSATION_ID = "messageOrConversationId"
         const val EXTRA_MESSAGE_LOCATION_ID = "messageOrConversationLocation"
+        const val EXTRA_MAILBOX_LABEL_ID = "mailboxLabelId"
 
         const val EXTRA_MESSAGE_RECIPIENT_USER_ID = "message_recipient_user_id"
         const val EXTRA_MESSAGE_RECIPIENT_USERNAME = "message_recipient_username"

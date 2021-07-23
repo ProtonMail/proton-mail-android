@@ -84,7 +84,8 @@ interface ConversationsRepository {
     suspend fun markUnread(
         conversationIds: List<String>,
         userId: UserId,
-        location: Constants.MessageLocationType
+        location: Constants.MessageLocationType,
+        locationId: String
     )
 
     suspend fun star(conversationIds: List<String>, userId: UserId)

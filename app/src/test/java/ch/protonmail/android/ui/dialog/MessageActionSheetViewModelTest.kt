@@ -285,12 +285,13 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // when
         viewModel.markRead(
             listOf(conversationId),
-            location
+            location,
+            location.messageLocationTypeValue.toString()
         )
 
         // then
         assertEquals(expected, viewModel.actionsFlow.value)
-        coVerify { changeConversationsReadStatus.invoke(listOf(conversationId), markReadAction, userId, location) }
+        coVerify { changeConversationsReadStatus.invoke(listOf(conversationId), markReadAction, userId, location, location.messageLocationTypeValue.toString()) }
         verify { messageRepository wasNot Called }
     }
 
@@ -334,7 +335,8 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         // when
         viewModel.markUnread(
             listOf(messageId),
-            Constants.MessageLocationType.INBOX
+            Constants.MessageLocationType.INBOX,
+            Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
         )
 
         // then

@@ -604,14 +604,20 @@ class MailboxViewModel @Inject constructor(
             LabelChipUiModel(Id(label.id), Name(label.name), labelColor)
         }
 
-    fun markRead(ids: List<String>, userId: UserId, location: Constants.MessageLocationType) {
+    fun markRead(
+        ids: List<String>,
+        userId: UserId,
+        location: Constants.MessageLocationType,
+        locationId: String
+    ) {
         if (conversationModeEnabled(location)) {
             viewModelScope.launch {
                 changeConversationsReadStatus(
                     ids,
                     ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
                     userId,
-                    location
+                    location,
+                    locationId
                 )
             }
         } else {
@@ -619,14 +625,20 @@ class MailboxViewModel @Inject constructor(
         }
     }
 
-    fun markUnRead(ids: List<String>, userId: UserId, location: Constants.MessageLocationType) {
+    fun markUnRead(
+        ids: List<String>,
+        userId: UserId,
+        location: Constants.MessageLocationType,
+        locationId: String
+    ) {
         if (conversationModeEnabled(location)) {
             viewModelScope.launch {
                 changeConversationsReadStatus(
                     ids,
                     ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
                     userId,
-                    location
+                    location,
+                    locationId
                 )
             }
         } else {
@@ -690,7 +702,8 @@ class MailboxViewModel @Inject constructor(
     fun handleConversationSwipe(
         swipeAction: SwipeAction,
         conversationId: String,
-        mailboxLocation: Constants.MessageLocationType
+        mailboxLocation: Constants.MessageLocationType,
+        mailboxLocationId: String
     ) {
         when (swipeAction) {
             SwipeAction.TRASH ->
@@ -724,7 +737,8 @@ class MailboxViewModel @Inject constructor(
                 markRead(
                     listOf(conversationId),
                     UserId(userManager.requireCurrentUserId().s),
-                    mailboxLocation
+                    mailboxLocation,
+                    mailboxLocationId
                 )
         }
     }

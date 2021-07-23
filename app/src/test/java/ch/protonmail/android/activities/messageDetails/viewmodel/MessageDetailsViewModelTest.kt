@@ -37,6 +37,7 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.details.data.toConversationUiModel
+import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MAILBOX_LABEL_ID
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_LOCATION_ID
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_OR_CONVERSATION_ID
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
@@ -694,6 +695,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
+        every { savedStateHandle.get<String>(EXTRA_MAILBOX_LABEL_ID) } returns null
         val userId = Id("userId3")
         every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
@@ -707,7 +709,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
                 listOf(inputConversationId),
                 ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
                 UserId(userId.s),
-                inputMessageLocation
+                inputMessageLocation,
+                inputMessageLocation.messageLocationTypeValue.toString()
             )
         }
         coVerify(exactly = 0) {

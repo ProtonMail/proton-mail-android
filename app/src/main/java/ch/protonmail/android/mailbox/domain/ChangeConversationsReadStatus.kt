@@ -34,12 +34,13 @@ class ChangeConversationsReadStatus @Inject constructor(
         conversationIds: List<String>,
         action: Action,
         userId: UserId,
-        location: Constants.MessageLocationType
+        location: Constants.MessageLocationType,
+        locationId: String
     ) {
         if (action == Action.ACTION_MARK_READ) {
             conversationsRepository.markRead(conversationIds, userId)
         } else {
-            conversationsRepository.markUnread(conversationIds, userId, location)
+            conversationsRepository.markUnread(conversationIds, userId, location, locationId)
         }
     }
 

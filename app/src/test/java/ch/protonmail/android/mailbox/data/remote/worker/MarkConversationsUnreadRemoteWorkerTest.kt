@@ -71,7 +71,7 @@ class MarkConversationsUnreadRemoteWorkerTest {
         val conversationIds = listOf("conversationId1", "conversationId2")
         val userId = UserId("userId")
         val operationMock = mockk<Operation>()
-        val location = Constants.MessageLocationType.INBOX
+        val location = Constants.MessageLocationType.INBOX.messageLocationTypeValue.toString()
         every { workManager.enqueue(any<WorkRequest>()) } returns operationMock
 
         // when
@@ -90,6 +90,7 @@ class MarkConversationsUnreadRemoteWorkerTest {
             val tokenString = "token"
             val validUntilLong: Long = 123
             every { workerParameters.inputData.getStringArray(KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS) } returns conversationIdsArray
+            every { workerParameters.inputData.getString(KEY_MARK_UNREAD_WORKER_LABEL_ID) } returns "0"
             every { workerParameters.inputData.getString(KEY_MARK_UNREAD_WORKER_USER_ID) } returns userId
             coEvery { protonMailApiManager.markConversationsUnread(any(), Id(userId)) } returns mockk {
                 every { code } returns Constants.RESPONSE_CODE_MULTIPLE_OK
@@ -141,6 +142,7 @@ class MarkConversationsUnreadRemoteWorkerTest {
             every {
                 workerParameters.inputData.getStringArray(KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS)
             } returns conversationIdsArray
+            every { workerParameters.inputData.getString(KEY_MARK_UNREAD_WORKER_LABEL_ID) } returns "0"
             every { workerParameters.inputData.getString(KEY_MARK_UNREAD_WORKER_USER_ID) } returns userId
             coEvery { protonMailApiManager.markConversationsUnread(any(), Id(userId)) } throws IOException()
 
@@ -163,6 +165,7 @@ class MarkConversationsUnreadRemoteWorkerTest {
             every {
                 workerParameters.inputData.getStringArray(KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS)
             } returns conversationIdsArray
+            every { workerParameters.inputData.getString(KEY_MARK_UNREAD_WORKER_LABEL_ID) } returns "0"
             every { workerParameters.inputData.getString(KEY_MARK_UNREAD_WORKER_USER_ID) } returns userId
             every {
                 workerParameters.runAttemptCount

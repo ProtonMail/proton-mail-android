@@ -190,6 +190,7 @@ class MessageActionSheetViewModel @Inject constructor(
     fun markUnread(
         ids: List<String>,
         location: Constants.MessageLocationType,
+        locationId: String,
         shallIgnoreLocationInConversationResolution: Boolean = false
     ) {
         viewModelScope.launch {
@@ -200,7 +201,8 @@ class MessageActionSheetViewModel @Inject constructor(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
                         primaryUserId,
-                        location
+                        location,
+                        locationId
                     )
                 } else {
                     Timber.e("Primary user id is null. Cannot mark message/conversation unread")
@@ -217,6 +219,7 @@ class MessageActionSheetViewModel @Inject constructor(
     fun markRead(
         ids: List<String>,
         location: Constants.MessageLocationType,
+        locationId: String,
         shallIgnoreLocationInConversationResolution: Boolean = false
     ) {
         viewModelScope.launch {
@@ -227,7 +230,8 @@ class MessageActionSheetViewModel @Inject constructor(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
                         primaryUserId,
-                        location
+                        location,
+                        locationId
                     )
                 } else {
                     Timber.e("Primary user id is null. Cannot mark message/conversation read")

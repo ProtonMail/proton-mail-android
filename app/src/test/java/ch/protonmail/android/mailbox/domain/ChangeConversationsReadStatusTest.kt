@@ -61,7 +61,8 @@ class ChangeConversationsReadStatusTest {
                 conversationIds,
                 ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
                 userId,
-                Constants.MessageLocationType.ARCHIVE
+                Constants.MessageLocationType.ARCHIVE,
+                Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
             )
 
             // then
@@ -78,19 +79,20 @@ class ChangeConversationsReadStatusTest {
             val conversation1 = "conversation1"
             val conversation2 = "conversation2"
             val conversationIds = listOf(conversation1, conversation2)
-            coEvery { conversationsRepository.markUnread(conversationIds, any(), any()) } just runs
+            coEvery { conversationsRepository.markUnread(conversationIds, any(), any(), any()) } just runs
 
             // when
             changeConversationsReadStatus(
                 conversationIds,
                 ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
                 UserId("id"),
-                Constants.MessageLocationType.ARCHIVE
+                Constants.MessageLocationType.ARCHIVE,
+                Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
             )
 
             // then
             coVerify {
-                conversationsRepository.markUnread(conversationIds, any(), any())
+                conversationsRepository.markUnread(conversationIds, any(), any(), any())
             }
         }
     }

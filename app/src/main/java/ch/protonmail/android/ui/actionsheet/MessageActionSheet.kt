@@ -71,13 +71,15 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             Constants.MessageLocationType.fromInt(
                 arguments?.getInt(EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID) ?: 0
             )
+        val mailboxLabelId = arguments?.getString(EXTRA_ARG_MAILBOX_LABEL_ID)
+            ?: messageLocation.messageLocationTypeValue.toString()
 
         Timber.v("MessageActionSheet for location: $messageLocation")
         val binding = FragmentMessageActionSheetBinding.inflate(inflater)
 
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
         setupReplyActionsBindings(binding.includeLayoutActionSheetButtons, actionsTarget)
-        setupManageSectionBindings(binding, viewModel, actionsTarget, messageIds, messageLocation)
+        setupManageSectionBindings(binding, viewModel, actionsTarget, messageIds, messageLocation, mailboxLabelId)
         setupMoveSectionBindings(binding, viewModel, messageIds, messageLocation)
         setupMoreSectionBindings(binding, actionsTarget, messageIds)
         actionSheetHeader = binding.actionSheetHeaderDetailsActions
@@ -182,7 +184,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         viewModel: MessageActionSheetViewModel,
         actionsTarget: ActionSheetTarget,
         messageIds: List<String>,
-        messageLocation: Constants.MessageLocationType
+        messageLocation: Constants.MessageLocationType,
+        mailboxLabelId: String
     ) {
         with(binding) {
             val isStarred = arguments?.getBoolean(EXTRA_ARG_IS_STARED) ?: false
@@ -215,6 +218,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     viewModel.markRead(
                         messageIds,
                         messageLocation,
+                        mailboxLabelId,
                         actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
                     )
                 }
@@ -223,6 +227,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 viewModel.markUnread(
                     messageIds,
                     messageLocation,
+                    mailboxLabelId,
                     actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
                 )
             }
@@ -405,6 +410,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
 
         private const val EXTRA_ARG_MESSAGE_IDS = "arg_message_ids"
         private const val EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID = "extra_arg_current_folder_location_id"
+        private const val EXTRA_ARG_MAILBOX_LABEL_ID = "arg_mailbox_label_id"
         private const val EXTRA_ARG_TITLE = "arg_message_details_actions_title"
         private const val EXTRA_ARG_SUBTITLE = "arg_message_details_actions_sub_title"
         private const val EXTRA_ARG_IS_STARED = "arg_extra_is_stared"
@@ -426,6 +432,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             actionSheetTarget: ActionSheetTarget,
             messagesIds: List<String>,
             currentFolderLocationId: Int,
+            mailboxLabelId: String,
             title: CharSequence,
             subTitle: String? = null,
             isStarred: Boolean = false
@@ -437,6 +444,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     EXTRA_ARG_SUBTITLE to subTitle,
                     EXTRA_ARG_IS_STARED to isStarred,
                     EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID to currentFolderLocationId,
+                    EXTRA_ARG_MAILBOX_LABEL_ID to mailboxLabelId,
                     EXTRA_ARG_ACTION_TARGET to actionSheetTarget
                 )
             }

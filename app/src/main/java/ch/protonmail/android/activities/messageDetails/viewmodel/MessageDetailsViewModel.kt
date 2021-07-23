@@ -143,6 +143,10 @@ internal class MessageDetailsViewModel @Inject constructor(
         )
     }
 
+    private val mailboxLocationId: String? by lazy {
+        savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MAILBOX_LABEL_ID)
+    }
+
     private val messageRenderer
         by lazy { messageRendererFactory.create(viewModelScope) }
 
@@ -275,7 +279,8 @@ internal class MessageDetailsViewModel @Inject constructor(
                     listOf(messageOrConversationId),
                     ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
                     UserId(userManager.requireCurrentUserId().s),
-                    location
+                    location,
+                    mailboxLocationId ?: location.messageLocationTypeValue.toString()
                 )
             }
         } else {

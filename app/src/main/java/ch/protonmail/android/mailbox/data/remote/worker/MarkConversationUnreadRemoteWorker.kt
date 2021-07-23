@@ -30,7 +30,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import dagger.assisted.Assisted
@@ -60,12 +59,12 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
-        val labelId = inputData.getInt(KEY_UNLABEL_WORKER_LABEL_ID, -1)
+        val labelId = inputData.getString(KEY_UNLABEL_WORKER_LABEL_ID)
         val conversationIds = inputData.getStringArray(KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS)
         val userId = inputData.getString(KEY_MARK_UNREAD_WORKER_USER_ID)
 
         Timber.v("MarkConversationsUnreadRemoteWorker conversationIds: ${conversationIds?.asList()}, label:$labelId")
-        if (conversationIds.isNullOrEmpty() || labelId < 0 || userId.isNullOrEmpty()) {
+        if (conversationIds.isNullOrEmpty() || labelId.isNullOrEmpty() || userId.isNullOrEmpty()) {
             return Result.failure(
                 workDataOf(
                     KEY_MARK_UNREAD_WORKER_ERROR_DESCRIPTION to "Conversation ids list or labelId or userId is invalid"
@@ -73,7 +72,7 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
             )
         }
 
-        val requestBody = ConversationIdsRequestBody(labelId.toString(), conversationIds.asList())
+        val requestBody = ConversationIdsRequestBody(labelId, conversationIds.asList())
 
         return runCatching {
             protonMailApiManager.markConversationsUnread(requestBody, Id(userId))
@@ -105,7 +104,7 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
 
         fun enqueue(
             conversationIds: List<String>,
-            currentLocation: Constants.MessageLocationType,
+            currentLocation: String,
             userId: UserId
         ): Operation {
             val constraints = Constraints.Builder()
@@ -115,7 +114,7 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
             Timber.v("MarkConversationsUnreadRemoteWorker enqueue: $conversationIds, location:$currentLocation")
             val data = workDataOf(
                 KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS to conversationIds.toTypedArray(),
-                KEY_MARK_UNREAD_WORKER_LABEL_ID to currentLocation.messageLocationTypeValue,
+                KEY_MARK_UNREAD_WORKER_LABEL_ID to currentLocation,
                 KEY_MARK_UNREAD_WORKER_USER_ID to userId.id
             )
 

@@ -1081,13 +1081,15 @@ internal class MailboxActivity :
                 mailboxViewModel.markRead(
                     messageIds,
                     UserId(userManager.requireCurrentUserId().s),
-                    currentMailboxLocation
+                    currentMailboxLocation,
+                    mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString()
                 )
             } else {
                 mailboxViewModel.markUnRead(
                     messageIds,
                     UserId(userManager.requireCurrentUserId().s),
-                    currentMailboxLocation
+                    currentMailboxLocation,
+                    mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString()
                 )
             }
             actionMode?.finish()
@@ -1122,6 +1124,7 @@ internal class MailboxActivity :
             actionSheetTarget = ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN,
             messagesIds = messagesIds,
             currentFolderLocationId = currentMailboxLocation.messageLocationTypeValue,
+            mailboxLabelId = mailboxLabelId ?: currentMailboxLocation.messageLocationTypeValue.toString(),
             title = resources.getQuantityString(
                 messagesStringRes,
                 messagesIds.size,
@@ -1322,6 +1325,7 @@ internal class MailboxActivity :
                     MessageDetailsActivity.EXTRA_MESSAGE_LOCATION_ID,
                     currentMailboxLocationType
                 )
+                intent.putExtra(MessageDetailsActivity.EXTRA_MAILBOX_LABEL_ID, mailboxActivity?.mailboxLabelId)
                 mailboxActivity?.startActivity(intent)
             }
         }
@@ -1504,7 +1508,8 @@ internal class MailboxActivity :
                 mailboxViewModel.handleConversationSwipe(
                     swipeAction,
                     mailboxItem.itemId,
-                    mailboxLocation
+                    mailboxLocation,
+                    mailboxLabelId ?: mailboxLocation.messageLocationTypeValue.toString()
                 )
             } else {
                 mSwipeProcessor.handleSwipe(swipeAction, messageSwiped, mJobManager, mailboxLabelId)

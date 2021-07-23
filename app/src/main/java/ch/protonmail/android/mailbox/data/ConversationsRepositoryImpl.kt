@@ -185,19 +185,21 @@ class ConversationsRepositoryImpl @Inject constructor(
     override suspend fun markUnread(
         conversationIds: List<String>,
         userId: UserId,
-        location: Constants.MessageLocationType
+        location: Constants.MessageLocationType,
+        locationId: String
     ) {
-        markConversationsUnreadWorker.enqueue(conversationIds, location, userId)
+        markConversationsUnreadWorker.enqueue(conversationIds, locationId, userId)
 
         conversationIds.forEach forEachConversation@{ conversationId ->
             val conversation = requireNotNull(conversationDao.findConversation(conversationId, userId.id))
+            conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
+
             // Only the latest unread message from the current location is marked as unread
             getAllMessagesFromAConversation(conversationId).forEach { message ->
                 yield()
                 if (message.isRead) {
                     Timber.v("Make message ${message.messageId} read")
                     messageDao.saveMessage(message.apply { setIsRead(false) })
-                    conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
                     return@forEachConversation
                 }
             }

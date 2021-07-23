@@ -606,6 +606,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val conversation2 = "conversation2"
             val conversationIds = listOf(conversation1, conversation2)
             val mailboxLocation = Constants.MessageLocationType.ARCHIVE
+            val locationId = Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
             val message = Message(
                 location = mailboxLocation.messageLocationTypeValue
             )
@@ -622,7 +623,7 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             coEvery { messageDao.saveMessage(any()) } returns 123
 
             // when
-            conversationsRepository.markUnread(conversationIds, UserId("id"), mailboxLocation)
+            conversationsRepository.markUnread(conversationIds, UserId("id"), mailboxLocation, locationId)
 
             // then
             coVerify {
