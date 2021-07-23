@@ -35,6 +35,7 @@ import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBod
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -104,7 +105,7 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            Timber.v("MarkConversationsUnreadRemoteWorker enqueue: ${conversationIds}, currentLocation:$currentLocation")
+            Timber.v("MarkConversationsUnreadRemoteWorker enqueue: $conversationIds, location:$currentLocation")
             val data = workDataOf(
                 KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS to conversationIds.toTypedArray(),
                 KEY_MARK_UNREAD_WORKER_LABEL_ID to currentLocation.messageLocationTypeValue
@@ -112,6 +113,7 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
 
             val request = OneTimeWorkRequestBuilder<MarkConversationsUnreadRemoteWorker>()
                 .setConstraints(constraints)
+                .setInitialDelay(1, TimeUnit.SECONDS)
                 .setInputData(data)
                 .build()
 
