@@ -191,10 +191,7 @@ class ConversationsRepositoryImpl @Inject constructor(
             // Only the latest unread message from the current location is marked as unread
             getAllMessagesFromAConversation(conversationId).forEach { message ->
                 yield()
-                if (
-                    Constants.MessageLocationType.fromInt(message.location) == location &&
-                    message.isRead
-                ) {
+                if (message.isRead) {
                     Timber.v("Make message ${message.messageId} read")
                     messageDao.saveMessage(message.apply { setIsRead(false) })
                     conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
