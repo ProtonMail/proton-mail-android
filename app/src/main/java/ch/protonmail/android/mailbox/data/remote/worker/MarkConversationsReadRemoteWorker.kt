@@ -30,14 +30,17 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
 const val KEY_MARK_READ_WORKER_CONVERSATION_IDS = "ConversationIds"
+const val KEY_MARK_READ_WORKER_USER_ID = "UserId"
 const val KEY_MARK_READ_WORKER_UNDO_TOKEN = "UndoToken"
 const val KEY_MARK_READ_WORKER_VALID_UNTIL = "ValidUntil"
 const val KEY_MARK_READ_WORKER_ERROR_DESCRIPTION = "ErrorDescription"
@@ -58,13 +61,17 @@ class MarkConversationsReadRemoteWorker @AssistedInject constructor(
             ?: return Result.failure(
                 workDataOf(KEY_MARK_READ_WORKER_ERROR_DESCRIPTION to "Conversation ids list is null")
             )
+        val userId = inputData.getString(KEY_MARK_READ_WORKER_USER_ID)
+            ?: return Result.failure(
+                workDataOf(KEY_MARK_READ_WORKER_ERROR_DESCRIPTION to "User id is null")
+            )
 
         val requestBody = ConversationIdsRequestBody(ids = conversationIds.asList())
 
         Timber.v("MarkConversationsReadRemoteWorker conversationIds: ${conversationIds.asList()}")
 
         return runCatching {
-            protonMailApiManager.markConversationsRead(requestBody)
+            protonMailApiManager.markConversationsRead(requestBody, Id(userId))
         }.fold(
             onSuccess = { response ->
                 Result.success(
@@ -91,12 +98,15 @@ class MarkConversationsReadRemoteWorker @AssistedInject constructor(
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
-        fun enqueue(conversationIds: List<String>): Operation {
+        fun enqueue(conversationIds: List<String>, userId: UserId): Operation {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            val data = workDataOf(KEY_MARK_READ_WORKER_CONVERSATION_IDS to conversationIds.toTypedArray())
+            val data = workDataOf(
+                KEY_MARK_READ_WORKER_CONVERSATION_IDS to conversationIds.toTypedArray(),
+                KEY_MARK_READ_WORKER_USER_ID to userId.id
+            )
 
             val request = OneTimeWorkRequestBuilder<MarkConversationsReadRemoteWorker>()
                 .setConstraints(constraints)

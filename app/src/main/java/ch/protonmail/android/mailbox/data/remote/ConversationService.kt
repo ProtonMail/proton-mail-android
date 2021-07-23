@@ -56,13 +56,15 @@ interface ConversationService {
     @PUT("mail/v4/conversations/read")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
     suspend fun markConversationsRead(
-        @Body conversationIds: ConversationIdsRequestBody
+        @Body conversationIds: ConversationIdsRequestBody,
+        @Tag userIdTag: UserIdTag? = null
     ): ConversationsActionResponses
 
     @PUT("mail/v4/conversations/unread")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
     suspend fun markConversationsUnread(
-        @Body conversationIds: ConversationIdsRequestBody
+        @Body conversationIds: ConversationIdsRequestBody,
+        @Tag userIdTag: UserIdTag? = null
     ): ConversationsActionResponses
 
     @PUT("mail/v4/conversations/label")

@@ -38,11 +38,13 @@ interface ConversationApiSpec {
     ): ConversationResponse
 
     suspend fun markConversationsRead(
-        conversationIds: ConversationIdsRequestBody
+        conversationIds: ConversationIdsRequestBody,
+        userId: Id
     ): ConversationsActionResponses
 
     suspend fun markConversationsUnread(
-        conversationIds: ConversationIdsRequestBody
+        conversationIds: ConversationIdsRequestBody,
+        userId: Id
     ): ConversationsActionResponses
 
     suspend fun labelConversations(

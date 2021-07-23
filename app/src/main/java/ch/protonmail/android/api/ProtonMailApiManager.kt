@@ -372,12 +372,14 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     ): ConversationResponse = api.fetchConversation(conversationId, userId)
 
     override suspend fun markConversationsRead(
-        conversationIds: ConversationIdsRequestBody
-    ): ConversationsActionResponses = api.markConversationsRead(conversationIds)
+        conversationIds: ConversationIdsRequestBody,
+        userId: Id
+    ): ConversationsActionResponses = api.markConversationsRead(conversationIds, userId)
 
     override suspend fun markConversationsUnread(
-        conversationIds: ConversationIdsRequestBody
-    ): ConversationsActionResponses = api.markConversationsUnread(conversationIds)
+        conversationIds: ConversationIdsRequestBody,
+        userId: Id
+    ): ConversationsActionResponses = api.markConversationsUnread(conversationIds, userId)
 
     override suspend fun labelConversations(
         conversationIds: ConversationIdsRequestBody,

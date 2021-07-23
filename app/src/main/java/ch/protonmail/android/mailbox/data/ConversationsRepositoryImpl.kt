@@ -166,8 +166,11 @@ class ConversationsRepositoryImpl @Inject constructor(
 
     override suspend fun clearConversations() = conversationDao.clear()
 
-    override suspend fun markRead(conversationIds: List<String>) {
-        markConversationsReadWorker.enqueue(conversationIds)
+    override suspend fun markRead(
+        conversationIds: List<String>,
+        userId: UserId
+    ) {
+        markConversationsReadWorker.enqueue(conversationIds, userId)
 
         conversationIds.forEach { conversationId ->
             conversationDao.updateNumUnreadMessages(0, conversationId)
@@ -184,7 +187,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         userId: UserId,
         location: Constants.MessageLocationType
     ) {
-        markConversationsUnreadWorker.enqueue(conversationIds, location)
+        markConversationsUnreadWorker.enqueue(conversationIds, location, userId)
 
         conversationIds.forEach forEachConversation@{ conversationId ->
             val conversation = requireNotNull(conversationDao.findConversation(conversationId, userId.id))

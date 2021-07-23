@@ -28,10 +28,12 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.domain.entity.Id
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import java.io.IOException
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -67,11 +69,12 @@ class MarkConversationsReadRemoteWorkerTest {
     fun shouldEnqueueWorkerSuccessfullyWhenEnqueuerIsCalled() {
         // given
         val conversationIds = listOf("conversationId1", "conversationId2")
+        val userId = UserId("userId")
         val operationMock = mockk<Operation>()
         every { workManager.enqueue(any<WorkRequest>()) } returns operationMock
 
         // when
-        val operationResult = markConversationsReadRemoteWorkerEnqueuer.enqueue(conversationIds)
+        val operationResult = markConversationsReadRemoteWorkerEnqueuer.enqueue(conversationIds, userId)
 
         // then
         assertEquals(operationMock, operationResult)
@@ -82,10 +85,12 @@ class MarkConversationsReadRemoteWorkerTest {
         runBlockingTest {
             // given
             val conversationIdsArray = arrayOf("conversationId1", "conversationId2")
+            val userId = "userId"
             val tokenString = "token"
             val validUntilLong: Long = 123
             every { workerParameters.inputData.getStringArray(KEY_MARK_READ_WORKER_CONVERSATION_IDS) } returns conversationIdsArray
-            coEvery { protonMailApiManager.markConversationsRead(any()) } returns mockk {
+            every { workerParameters.inputData.getString(KEY_MARK_READ_WORKER_USER_ID) } returns userId
+            coEvery { protonMailApiManager.markConversationsRead(any(), Id(userId)) } returns mockk {
                 every { code } returns Constants.RESPONSE_CODE_MULTIPLE_OK
                 every { undoToken } returns mockk {
                     every { token } returns tokenString
@@ -131,10 +136,11 @@ class MarkConversationsReadRemoteWorkerTest {
         runBlockingTest {
             // given
             val conversationIdsArray = arrayOf("conversationId1", "conversationId2")
+            val userId = "userId"
             every {
                 workerParameters.inputData.getStringArray(KEY_MARK_READ_WORKER_CONVERSATION_IDS)
             } returns conversationIdsArray
-            coEvery { protonMailApiManager.markConversationsRead(any()) } throws IOException()
+            coEvery { protonMailApiManager.markConversationsRead(any(), Id(userId)) } throws IOException()
 
             val expectedResult = ListenableWorker.Result.retry()
 
@@ -151,13 +157,14 @@ class MarkConversationsReadRemoteWorkerTest {
         runBlockingTest {
             // given
             val conversationIdsArray = arrayOf("conversationId1", "conversationId2")
+            val userId = "userId"
             every {
                 workerParameters.inputData.getStringArray(KEY_MARK_READ_WORKER_CONVERSATION_IDS)
             } returns conversationIdsArray
             every {
                 workerParameters.runAttemptCount
             } returns 6
-            coEvery { protonMailApiManager.markConversationsRead(any()) } throws IOException()
+            coEvery { protonMailApiManager.markConversationsRead(any(), Id(userId)) } throws IOException()
 
             val expectedResult = ListenableWorker.Result.failure(
                 workDataOf(KEY_MARK_READ_WORKER_ERROR_DESCRIPTION to "Run attempts exceeded the limit")

@@ -31,9 +31,11 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -41,6 +43,7 @@ import kotlin.coroutines.cancellation.CancellationException
 
 const val KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS = "ConversationIds"
 const val KEY_MARK_UNREAD_WORKER_LABEL_ID = "LabelId"
+const val KEY_MARK_UNREAD_WORKER_USER_ID = "UserId"
 const val KEY_MARK_UNREAD_WORKER_UNDO_TOKEN = "UndoToken"
 const val KEY_MARK_UNREAD_WORKER_VALID_UNTIL = "ValidUntil"
 const val KEY_MARK_UNREAD_WORKER_ERROR_DESCRIPTION = "ErrorDescription"
@@ -59,18 +62,21 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val labelId = inputData.getInt(KEY_UNLABEL_WORKER_LABEL_ID, -1)
         val conversationIds = inputData.getStringArray(KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS)
+        val userId = inputData.getString(KEY_MARK_UNREAD_WORKER_USER_ID)
 
         Timber.v("MarkConversationsUnreadRemoteWorker conversationIds: ${conversationIds?.asList()}, label:$labelId")
-        if (conversationIds.isNullOrEmpty() || labelId < 0) {
+        if (conversationIds.isNullOrEmpty() || labelId < 0 || userId.isNullOrEmpty()) {
             return Result.failure(
-                workDataOf(KEY_MARK_UNREAD_WORKER_ERROR_DESCRIPTION to "Conversation ids list or labelId is invalid")
+                workDataOf(
+                    KEY_MARK_UNREAD_WORKER_ERROR_DESCRIPTION to "Conversation ids list or labelId or userId is invalid"
+                )
             )
         }
 
         val requestBody = ConversationIdsRequestBody(labelId.toString(), conversationIds.asList())
 
         return runCatching {
-            protonMailApiManager.markConversationsUnread(requestBody)
+            protonMailApiManager.markConversationsUnread(requestBody, Id(userId))
         }.fold(
             onSuccess = { response ->
                 Result.success(
@@ -99,7 +105,8 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
 
         fun enqueue(
             conversationIds: List<String>,
-            currentLocation: Constants.MessageLocationType
+            currentLocation: Constants.MessageLocationType,
+            userId: UserId
         ): Operation {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -108,7 +115,8 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
             Timber.v("MarkConversationsUnreadRemoteWorker enqueue: $conversationIds, location:$currentLocation")
             val data = workDataOf(
                 KEY_MARK_UNREAD_WORKER_CONVERSATION_IDS to conversationIds.toTypedArray(),
-                KEY_MARK_UNREAD_WORKER_LABEL_ID to currentLocation.messageLocationTypeValue
+                KEY_MARK_UNREAD_WORKER_LABEL_ID to currentLocation.messageLocationTypeValue,
+                KEY_MARK_UNREAD_WORKER_USER_ID to userId.id
             )
 
             val request = OneTimeWorkRequestBuilder<MarkConversationsUnreadRemoteWorker>()

@@ -40,12 +40,14 @@ class ConversationApi(private val service: ConversationService) : BaseApi(), Con
     ) = service.fetchConversation(conversationId, userIdTag = UserIdTag(userId))
 
     override suspend fun markConversationsRead(
-        conversationIds: ConversationIdsRequestBody
-    ) = service.markConversationsRead(conversationIds)
+        conversationIds: ConversationIdsRequestBody,
+        userId: Id
+    ) = service.markConversationsRead(conversationIds, userIdTag = UserIdTag(userId))
 
     override suspend fun markConversationsUnread(
-        conversationIds: ConversationIdsRequestBody
-    ) = service.markConversationsUnread(conversationIds)
+        conversationIds: ConversationIdsRequestBody,
+        userId: Id
+    ) = service.markConversationsUnread(conversationIds, userIdTag = UserIdTag(userId))
 
     override suspend fun labelConversations(
         conversationIds: ConversationIdsRequestBody,

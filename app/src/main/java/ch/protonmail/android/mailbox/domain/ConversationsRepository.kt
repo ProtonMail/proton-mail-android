@@ -79,7 +79,7 @@ interface ConversationsRepository {
 
     fun loadMore(params: GetConversationsParameters)
 
-    suspend fun markRead(conversationIds: List<String>)
+    suspend fun markRead(conversationIds: List<String>, userId: UserId)
 
     suspend fun markUnread(
         conversationIds: List<String>,

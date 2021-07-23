@@ -53,19 +53,20 @@ class ChangeConversationsReadStatusTest {
             val conversation1 = "conversation1"
             val conversation2 = "conversation2"
             val conversationIds = listOf(conversation1, conversation2)
-            coEvery { conversationsRepository.markRead(conversationIds) } just runs
+            val userId = UserId("id")
+            coEvery { conversationsRepository.markRead(conversationIds, userId) } just runs
 
             // when
             changeConversationsReadStatus(
                 conversationIds,
                 ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
-                UserId("id"),
+                userId,
                 Constants.MessageLocationType.ARCHIVE
             )
 
             // then
             coVerify {
-                conversationsRepository.markRead(conversationIds)
+                conversationsRepository.markRead(conversationIds, userId)
             }
         }
     }

@@ -578,13 +578,14 @@ class ConversationsRepositoryImplTest : CoroutinesTest, ArchTest {
             val conversation1 = "conversation1"
             val conversation2 = "conversation2"
             val conversationIds = listOf(conversation1, conversation2)
+            val userId = UserId("userId")
             val message = Message()
             coEvery { conversationDao.updateNumUnreadMessages(0, any()) } just runs
             coEvery { messageDao.findAllMessagesInfoFromConversation(any()) } returns listOf(message, message)
             coEvery { messageDao.saveMessage(any()) } returns 123
 
             // when
-            conversationsRepository.markRead(conversationIds)
+            conversationsRepository.markRead(conversationIds, userId)
 
             // then
             coVerify {
