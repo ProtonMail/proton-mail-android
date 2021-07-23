@@ -83,7 +83,7 @@ const val `Proton-key version` =                "1.1.4"         // Released: Jun
 const val `Proton-network version` =            "1.1.4"         // Released: Jun 21, 2021
 const val `Proton-payment version` =            "0.1.10"        // Released: Jul 13, 2021
 const val `Proton-plan version` =               "0.0.3"         // Released: Jul 13, 2021
-const val `Proton-presentation version` =       "0.9.1"         // Released: Jun 28, 2021
+const val `Proton-presentation version` =       "0.9.8"         // Released: Jul 23, 2021
 const val `Proton-user version` =               "1.1.4"         // Released: Jun 11, 2021
 
 @Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
