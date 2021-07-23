@@ -27,5 +27,6 @@ enum class SendMessageWorkerError {
     FailureBuildingApiRequest,
     ErrorPerformingApiRequest,
     UserVerificationNeeded,
-    ApiRequestReturnedBadBodyCode
+    ApiRequestReturnedBadBodyCode,
+    MessageAlreadySent
 }

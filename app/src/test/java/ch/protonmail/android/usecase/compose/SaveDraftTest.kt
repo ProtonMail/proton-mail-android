@@ -574,6 +574,51 @@ class SaveDraftTest : CoroutinesTest {
     }
 
     @Test
+    fun saveDraftsReturnsMessageAlreadySentFailureWhenWorkerFailsUpdatingADraftOnAPIWithMessageAlreadySentError() {
+        runBlockingTest {
+            // Given
+            val localDraftId = "8346"
+            val message = Message().apply {
+                dbId = 124L
+                this.messageId = "45624"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+                localId = localDraftId
+            }
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM to CreateDraftWorkerErrors.MessageAlreadySent.name
+            )
+            val workerStatusFlow = buildWorkerResponse(WorkInfo.State.FAILED, workOutputData)
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9834L
+            coEvery { messageDetailsRepository.findMessageById("45624") } returns message
+            every {
+                createDraftScheduler.enqueue(
+                    message,
+                    "parentId235",
+                    REPLY_ALL,
+                    "previousSenderId132424"
+                )
+            } answers { workerStatusFlow }
+
+
+            // When
+            val result = saveDraft.invoke(
+                SaveDraftParameters(
+                    message,
+                    emptyList(),
+                    "parentId235",
+                    REPLY_ALL,
+                    "previousSenderId132424",
+                    SaveDraft.SaveDraftTrigger.UserRequested
+                )
+            )
+
+            // Then
+            assertEquals(SaveDraftResult.MessageAlreadySent, result)
+        }
+    }
+
+    @Test
     fun saveDraftsShowPersistentErrorAndReturnsErrorWhenUploadingNewAttachmentsFails() {
         runBlockingTest {
             // Given
