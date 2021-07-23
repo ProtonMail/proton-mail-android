@@ -73,6 +73,7 @@ public class PostInboxJob extends ProtonMailCounterJob {
                     }
                     totalUnread++;
                 }
+                message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.INBOX.getMessageLocationTypeValue())));
                 if (mFolderIds != null) {
                     for (String folderId : mFolderIds) {
                         if (!TextUtils.isEmpty(folderId)) {
@@ -80,9 +81,7 @@ public class PostInboxJob extends ProtonMailCounterJob {
                         }
                     }
                 }
-                message.setLocation(Constants.MessageLocationType.INBOX.getMessageLocationTypeValue());
                 removeOldFolderIds(message);
-                message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.INBOX.getMessageLocationTypeValue())));
                 getMessageDetailsRepository().saveMessageBlocking(message);
             }
         }
@@ -96,10 +95,8 @@ public class PostInboxJob extends ProtonMailCounterJob {
     }
 
     private void removeOldFolderIds(Message message) {
-        int oldLocation = message.getLocation();
         List<String> oldLabels = message.getAllLabelIDs();
         ArrayList<String> labelsToRemove = new ArrayList<>();
-        labelsToRemove.add(String.valueOf(oldLocation));
 
         MessageDao messageDao = MessageDatabase.Factory
                 .getInstance(getApplicationContext(), getUserId())
@@ -108,7 +105,10 @@ public class PostInboxJob extends ProtonMailCounterJob {
         for (String labelId : oldLabels) {
             Label label = messageDao.findLabelByIdBlocking(labelId);
             // find folders
-            if (label != null && label.getExclusive()) {
+            if (label != null &&
+                    label.getExclusive() &&
+                    !label.getId().equals(String.valueOf(Constants.MessageLocationType.INBOX.getMessageLocationTypeValue()))
+            ) {
                 labelsToRemove.add(labelId);
             }
         }
