@@ -32,9 +32,9 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class LabelsMapperTest {
+class LabelActionItemUiModelMapperTest {
 
-    private val mapper = LabelsMapper()
+    private val mapper = LabelActionItemUiModelMapper()
 
     private val testColorInt = 123
 
