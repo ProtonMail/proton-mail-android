@@ -78,12 +78,15 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.test.kotlin.assertTrue
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class CreateDraftWorkerTest : CoroutinesTest {
 
@@ -1331,9 +1334,8 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val unprocessableEntityException = HttpException(
                 Response.error<String>(
                     RESPONSE_CODE_UNPROCESSABLE_ENTITY,
-                    ResponseBody.create(
-                        "text/json".toMediaTypeOrNull(),
-                        """{ "Code": 15034, "Error": "Message has already been sent" }"""
+                    """{ "Code": 15034, "Error": "Message has already been sent" }""".toResponseBody(
+                        "text/json".toMediaTypeOrNull()
                     )
                 )
             )

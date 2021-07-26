@@ -125,7 +125,7 @@ class CreateDraftWorker @AssistedInject constructor(
                 apiManager.updateDraft(
                     messageId,
                     draftBody,
-                    UserIdTag(userManager.requireCurrentUserId())
+                    UserIdTag(userId)
                 )
             }
         }.fold(

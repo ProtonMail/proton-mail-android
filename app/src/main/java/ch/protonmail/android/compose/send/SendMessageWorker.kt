@@ -180,19 +180,16 @@ class SendMessageWorker @AssistedInject constructor(
     ): Result {
         pendingActionDao.deletePendingSendByMessageId(messageId)
 
-        return when (response.code) {
-            RESPONSE_CODE_OK -> {
-                Timber.i("Send Message API call succeeded for messageId $messageId, Message Sent.")
-                handleMessageSentSuccess(response.sent, savedDraftMessage)
-            }
-            else -> {
-                Timber.e(
-                    DetailedException().apiError(response.code, response.error).messageId(messageId),
-                    "Send Message API call failed for messageId $messageId with error ${response.error}"
-                )
-                showSendMessageError(savedDraftMessage.subject)
-                failureWithError(ApiRequestReturnedBadBodyCode)
-            }
+        return if (response.code == RESPONSE_CODE_OK) {
+            Timber.i("Send Message API call succeeded for messageId $messageId, Message Sent.")
+            handleMessageSentSuccess(response.sent, savedDraftMessage)
+        } else {
+            Timber.e(
+                DetailedException().apiError(response.code, response.error).messageId(messageId),
+                "Send Message API call failed for messageId $messageId with error ${response.error}"
+            )
+            showSendMessageError(savedDraftMessage.subject)
+            failureWithError(ApiRequestReturnedBadBodyCode)
         }
     }
 
