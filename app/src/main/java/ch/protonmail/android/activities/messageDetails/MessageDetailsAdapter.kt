@@ -199,18 +199,17 @@ internal class MessageDetailsAdapter(
                 if (isMessageBodyExpanded()) {
                     // Message Body is expended - will collapse
                     headerView.collapseHeader()
-                    headerView.forbidExpandingHeaderView()
-                    itemView.lastConversationMessageCollapsedDivider.isVisible = isLastItemHeader()
-                } else {
-                    // Message Body is collapsed - will expand
-                    headerView.allowExpandingHeaderView()
-                    itemView.lastConversationMessageCollapsedDivider.isVisible = false
                 }
                 toggleExpandedItems(layoutPosition, false)
+                notifyItemChanged(layoutPosition)
+            }
+
+            if (isMessageBodyExpanded()) {
+                messageDetailsHeaderView.allowExpandingHeaderView()
             }
 
             if (isLastItemHeader()) {
-                messageDetailsHeaderView.allowExpandingHeaderView()
+                itemView.lastConversationMessageCollapsedDivider.isVisible = !isMessageBodyExpanded()
             }
         }
 
@@ -228,6 +227,9 @@ internal class MessageDetailsAdapter(
             constrainMessageContentHeight(it)
             resetWebViewContent(it)
         }
+
+        holder.itemView.lastConversationMessageCollapsedDivider?.let { it.isVisible = false }
+        holder.itemView.headerView?.forbidExpandingHeaderView()
     }
 
     inner class ItemViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.ViewHolder(view) {
