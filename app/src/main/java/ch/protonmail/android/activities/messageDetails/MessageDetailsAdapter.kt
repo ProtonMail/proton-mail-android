@@ -211,6 +211,12 @@ internal class MessageDetailsAdapter(
                 messageDetailsHeaderView.hideRecipientsCollapsedView()
             }
 
+            if (message.isRead) {
+                messageDetailsHeaderView.showMessageAsRead()
+            } else {
+                messageDetailsHeaderView.showMessageAsUnread()
+            }
+
             if (isLastItemHeader()) {
                 itemView.lastConversationMessageCollapsedDivider.isVisible = !isMessageBodyExpanded()
             }
@@ -402,9 +408,14 @@ internal class MessageDetailsAdapter(
         item.messageFormattedHtmlWithQuotedHistory = messageBodyParts.messageBodyWithQuote
         item.showLoadEmbeddedImagesButton = showLoadEmbeddedImagesButton
         item.message.setAttachmentList(attachments)
+        // Mark the message as read optimistically to reflect the change on the UI right away.
+        // Note that this message is being referenced to from both the header and the item.
+        item.message.Unread = false
 
         visibleItems?.indexOf(item)?.let { changedItemIndex ->
-            notifyItemChanged(changedItemIndex, item)
+            // Update both the message and its header to ensure the "read" status is shown
+            val messageHeaderIndex = changedItemIndex - 1
+            notifyItemRangeChanged(messageHeaderIndex, 2)
         }
     }
 
