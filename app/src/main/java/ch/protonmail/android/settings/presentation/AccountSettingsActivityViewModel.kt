@@ -21,7 +21,6 @@ package ch.protonmail.android.settings.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.settings.domain.HandleChangesToViewMode
@@ -49,10 +48,10 @@ class AccountSettingsActivityViewModel @Inject constructor(
     fun changeViewMode(viewMode: ViewMode) {
         viewModelScope.launch {
             accountManager.getPrimaryUserId().first()?.let { userId ->
-                    clearUserMessagesData.invoke(Id(userId.id))
-                    handleChangesToViewMode.invoke(
-                        userId, viewMode
-                    )
+                clearUserMessagesData.invoke(Id(userId.id))
+                handleChangesToViewMode.invoke(
+                    userId, viewMode
+                )
             }
         }
     }

@@ -44,7 +44,4 @@ interface MailSettingsApiSpec {
 
     @Throws(IOException::class)
     fun updateAutoShowImages(autoShowImages: Int): ResponseBody?
-
-    @Throws(IOException::class)
-    fun updateViewMode(viewMode: Int): ResponseBody?
 }

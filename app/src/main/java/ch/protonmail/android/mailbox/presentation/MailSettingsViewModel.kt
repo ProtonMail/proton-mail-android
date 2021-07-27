@@ -21,16 +21,19 @@ package ch.protonmail.android.mailbox.presentation
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.domain.getPrimaryAccount
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,6 +53,18 @@ class MailSettingsViewModel @Inject constructor(
                 }
                 is DataResult.Error -> MailSettingsState.Error.Message(result.message)
             }
+        }
+
+    fun getMailSettings() = accountManager.getPrimaryAccount()
+        .transformLatest { account ->
+            if (account == null) {
+                emit(MailSettingsState.Error.NoPrimaryAccount)
+                return@transformLatest
+            }
+            emit(MailSettingsState.Success(mailSettingsRepository.getMailSettings(account.userId)))
+        }.catch { error ->
+            Timber.e(error)
+            emit(MailSettingsState.Error.Message(error.message))
         }
 
     fun getMailSettingsSuccessState() = accountManager.getPrimaryAccount()

@@ -53,11 +53,13 @@ import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.mailbox.domain.HandleChangeToConversations
 import ch.protonmail.android.prefs.SecureSharedPreferences
+import ch.protonmail.android.usecase.fetch.FetchMailSettings
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.worker.FetchContactsDataWorker
 import ch.protonmail.android.worker.FetchContactsEmailsWorker
+import ch.protonmail.android.worker.FetchMailSettingsWorker
 import ch.protonmail.android.worker.FetchUserAddressesWorker
 import ch.protonmail.android.worker.FetchUserWorker
 import com.google.gson.JsonSyntaxException
@@ -78,11 +80,12 @@ class EventHandler @AssistedInject constructor(
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
     private val fetchUserWorkerEnqueuer: FetchUserWorker.Enqueuer,
     private val fetchUserAddressesWorkerEnqueuer: FetchUserAddressesWorker.Enqueuer,
+    private val fetchMailSettingsWorker: FetchMailSettingsWorker.Enqueuer,
     databaseProvider: DatabaseProvider,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val messageFactory: MessageFactory,
     @Assisted val userId: Id,
-    private val externalScope: CoroutineScope
+    private val externalScope: CoroutineScope,
 ) {
 
     private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)
@@ -247,6 +250,7 @@ class EventHandler @AssistedInject constructor(
         }
         if (mailSettings != null) {
             writeMailSettings(context, mailSettings)
+            fetchMailSettingsWorker.enqueue()
         }
         if (user != null) {
             // Core is the source of truth. Workaround: Force refresh Core.
@@ -275,6 +279,7 @@ class EventHandler @AssistedInject constructor(
 
         val prefs = SecureSharedPreferences.getPrefsForUser(context, userId)
         mailSettings.saveBlocking(prefs)
+
     }
 
     private fun writeMessagesUpdates(

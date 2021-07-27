@@ -499,9 +499,13 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
      * Turns the value of setting with [settingType] ON or OFF.
      */
     protected fun setEnabled(settingType: SettingsEnum, settingValueEnabled: Boolean) {
-        settingsAdapter.items
-            .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
-            ?.apply { enabled = settingValueEnabled }
+        val position = settingsAdapter.items
+            .indexOfFirst { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
+        if (position < 0 || position >= settingsAdapter.items.size) {
+            return
+        }
+        settingsAdapter.items[position].apply { enabled = settingValueEnabled }
+        settingsAdapter.notifyItemChanged(position)
     }
 
     /**

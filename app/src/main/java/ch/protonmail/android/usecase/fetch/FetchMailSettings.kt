@@ -20,20 +20,37 @@
 package ch.protonmail.android.usecase.fetch
 
 import android.content.Context
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.di.AppProcessLifecycleOwner
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
+import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
+import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 
 class FetchMailSettings @Inject constructor(
     private val context: Context,
-    private val protonMailApiManager: ProtonMailApiManager
+    private val protonMailApiManager: ProtonMailApiManager,
+    private val mailSettingsRepository: MailSettingsRepository,
+    private val dispatchers: DispatcherProvider,
+    @AppProcessLifecycleOwner
+    private val lifecycleOwner: LifecycleOwner
 ) {
 
-    suspend operator fun invoke(userId: Id) {
+    suspend operator fun invoke(
+        userId: UserId
+    ) = withContext(dispatchers.Io) {
+
         Timber.v("FetchMailSettings started")
-        val mailSettingsResponse = protonMailApiManager.fetchMailSettings(userId)
-        mailSettingsResponse.mailSettings.save(SecureSharedPreferences.getPrefsForUser(context, userId))
+        val mailSettingsResponse = protonMailApiManager.fetchMailSettings(Id(userId.id))
+        mailSettingsResponse.mailSettings.save(SecureSharedPreferences.getPrefsForUser(context, Id(userId.id)))
+
+        mailSettingsRepository.getMailSettingsFlow(userId, true).launchIn(lifecycleOwner.lifecycleScope)
     }
 }

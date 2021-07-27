@@ -19,6 +19,7 @@
 package ch.protonmail.android.uiModel
 
 import android.view.View
+import androidx.lifecycle.MutableLiveData
 import com.google.gson.annotations.SerializedName
 import me.proton.core.util.kotlin.EMPTY_STRING
 

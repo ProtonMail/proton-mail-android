@@ -20,15 +20,23 @@
 package ch.protonmail.android.mailbox.presentation
 
 import ch.protonmail.android.core.Constants.MessageLocationType
-import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.featureflags.FeatureFlagsManager
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.mailsettings.domain.entity.MailSettings
+import me.proton.core.mailsettings.domain.entity.ViewMode
+import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
+import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
-
-private const val CONVERSATION_MODE_VIEW_MODE = 0
 
 class ConversationModeEnabled @Inject constructor(
     private val featureFlagsManager: FeatureFlagsManager,
-    private val userManager: UserManager
+    private val accountManager: AccountManager,
+    private val mailSettingsRepository: MailSettingsRepository,
+    private val dispatchers: DispatcherProvider
 ) {
 
     private val forceMessagesViewModeLocations = listOf(
@@ -43,12 +51,19 @@ class ConversationModeEnabled @Inject constructor(
      * When location is null, the location is ignored.
      */
     operator fun invoke(location: MessageLocationType?): Boolean {
-        val isConversationViewMode = userManager
-            .getCurrentUserMailSettingsBlocking()?.viewMode?.value == CONVERSATION_MODE_VIEW_MODE
+        val isConversationViewMode: Boolean
+
+        runBlocking {
+            isConversationViewMode = getMailSettings().viewMode?.enum == ViewMode.ConversationGrouping
+        }
+
         return featureFlagsManager.isChangeViewModeFeatureEnabled() &&
             isConversationViewMode &&
             !forceMessagesViewModeLocations.contains(location)
     }
 
-
+    private suspend fun getMailSettings(): MailSettings = withContext(dispatchers.Io) {
+        val userId = accountManager.getPrimaryUserId().filterNotNull().first()
+        mailSettingsRepository.getMailSettings(userId)
+    }
 }
