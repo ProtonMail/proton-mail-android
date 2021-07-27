@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain
+package ch.protonmail.android.mailbox.domain.usecase
 
 import ch.protonmail.android.core.Constants
 import me.proton.core.domain.entity.UserId
@@ -29,7 +29,10 @@ import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import javax.inject.Inject
 
-class GetMessagesByLocation @Inject constructor(
+/**
+ * Use case for observe Messages by location
+ */
+class ObserveMessagesByLocation @Inject constructor(
     private val messageRepository: MessageRepository
 ) {
 

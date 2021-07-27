@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain
+package ch.protonmail.android.mailbox.domain.usecase
 
 import app.cash.turbine.test
 import ch.protonmail.android.core.Constants
@@ -36,11 +36,11 @@ import kotlinx.coroutines.test.runBlockingTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class GetMessagesByLocationTest {
+class ObserveMessagesByLocationTest {
 
     private val mailboxRepository: MessageRepository = mockk()
 
-    private val useCase = GetMessagesByLocation(mailboxRepository)
+    private val useCase = ObserveMessagesByLocation(mailboxRepository)
 
     private val userId = UserId("user")
 

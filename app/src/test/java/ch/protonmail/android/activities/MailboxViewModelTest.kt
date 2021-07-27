@@ -48,13 +48,13 @@ import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.GetConversations
-import ch.protonmail.android.mailbox.domain.GetMessagesByLocation
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.domain.model.LabelContext
+import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxState
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
@@ -135,7 +135,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private lateinit var getConversations: GetConversations
 
     @RelaxedMockK
-    private lateinit var getMessagesByLocation: GetMessagesByLocation
+    private lateinit var observeMessagesByLocation: ObserveMessagesByLocation
 
     @RelaxedMockK
     private lateinit var changeConversationsReadStatus: ChangeConversationsReadStatus
@@ -175,7 +175,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(ALL_MAIL) } returns true // ALL_MAIL type to use with conversations
         every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
         coEvery { getConversations(any(), any()) } returns conversationsResponseFlow.receiveAsFlow()
-        coEvery { getMessagesByLocation(any(), any(), any()) } returns messagesResponseChannel.receiveAsFlow()
+        coEvery { observeMessagesByLocation(any(), any(), any()) } returns messagesResponseChannel.receiveAsFlow()
         viewModel = MailboxViewModel(
             messageDetailsRepository,
             userManager,
@@ -191,7 +191,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             getConversations,
             changeConversationsReadStatus,
             changeConversationsStarredStatus,
-            getMessagesByLocation,
+            observeMessagesByLocation,
             moveConversationsToFolder,
             moveMessagesToFolder,
             deleteConversations,

@@ -37,8 +37,8 @@ import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.GetConversations
-import ch.protonmail.android.mailbox.domain.GetMessagesByLocation
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
+import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.settings.domain.GetMailSettings
@@ -102,7 +102,7 @@ internal class ViewModelModule {
         getConversations: GetConversations,
         changeConversationsReadStatus: ChangeConversationsReadStatus,
         changeConversationsStarredStatus: ChangeConversationsStarredStatus,
-        getMessagesByLocation: GetMessagesByLocation,
+        observeMessagesByLocation: ObserveMessagesByLocation,
         moveConversationsToFolder: MoveConversationsToFolder,
         moveMessagesToFolder: MoveMessagesToFolder,
         deleteConversations: DeleteConversations,
@@ -122,7 +122,7 @@ internal class ViewModelModule {
         getConversations,
         changeConversationsReadStatus,
         changeConversationsStarredStatus,
-        getMessagesByLocation,
+        observeMessagesByLocation,
         moveConversationsToFolder,
         moveMessagesToFolder,
         deleteConversations,

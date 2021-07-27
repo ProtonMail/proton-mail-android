@@ -49,12 +49,12 @@ import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.GetConversations
-import ch.protonmail.android.mailbox.domain.GetMessagesByLocation
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
+import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
 import ch.protonmail.android.settings.domain.GetMailSettings
@@ -88,8 +88,6 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
-import java.util.ArrayList
-import java.util.HashMap
 import javax.inject.Inject
 import kotlin.collections.set
 
@@ -115,7 +113,7 @@ class MailboxViewModel @Inject constructor(
     private val getConversations: GetConversations,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
-    private val getMessagesByLocation: GetMessagesByLocation,
+    private val observeMessagesByLocation: ObserveMessagesByLocation,
     private val moveConversationsToFolder: MoveConversationsToFolder,
     private val moveMessagesToFolder: MoveMessagesToFolder,
     private val deleteConversations: DeleteConversations,
@@ -181,7 +179,7 @@ class MailboxViewModel @Inject constructor(
                     conversationsAsMailboxItems(location, labelId, userId)
                 } else {
                     Timber.v("Getting messages for $location label: $labelId user: $userId")
-                    getMessagesByLocation(location, labelId, userId)
+                    observeMessagesByLocation(location, labelId, userId)
                         .map { result ->
                             when (result) {
                                 is GetMessagesResult.Success -> {
