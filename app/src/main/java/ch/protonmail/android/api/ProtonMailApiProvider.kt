@@ -18,15 +18,14 @@
  */
 package ch.protonmail.android.api
 
+import me.proton.core.network.data.ApiProvider
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Created by dinokadrikj on 3/3/20.
- */
 @Singleton
 class ProtonMailApiProvider @Inject constructor(
-    private val protonRetrofitBuilder: ProtonRetrofitBuilder
+    private val protonRetrofitBuilder: ProtonRetrofitBuilder,
+    private val apiProvider: ApiProvider
 ) {
     private val cache = HashMap<String, ProtonMailApi>()
 
@@ -37,7 +36,7 @@ class ProtonMailApiProvider @Inject constructor(
 
     fun provideApi(endpointUri: String): ProtonMailApi {
         if (!cache.containsKey(endpointUri)) {
-            cache[endpointUri] = ProtonMailApi(protonRetrofitBuilder)
+            cache[endpointUri] = ProtonMailApi(protonRetrofitBuilder, apiProvider)
         }
         return cache[endpointUri]!!
     }

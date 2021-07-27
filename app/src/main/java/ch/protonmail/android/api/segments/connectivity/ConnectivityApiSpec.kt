@@ -18,9 +18,9 @@
  */
 package ch.protonmail.android.api.segments.connectivity
 
-import ch.protonmail.android.api.models.ResponseBody
+import me.proton.core.network.domain.ApiResult
 
 interface ConnectivityApiSpec {
 
-    suspend fun pingAsync(): ResponseBody
+    suspend fun ping(): ApiResult<Unit>
 }

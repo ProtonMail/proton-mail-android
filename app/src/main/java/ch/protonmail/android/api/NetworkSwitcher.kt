@@ -19,19 +19,17 @@
 package ch.protonmail.android.api
 
 import ch.protonmail.android.api.models.doh.Proxies
-import ch.protonmail.android.api.segments.connectivity.ConnectivityApi
-import ch.protonmail.android.api.segments.connectivity.PingService
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.di.BaseUrl
 import ch.protonmail.android.utils.Logger
 import kotlinx.coroutines.runBlocking
-import retrofit2.Response
+import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface INetworkSwitcher {
     fun reconfigureProxy(proxies: Proxies?)
-    fun <T> tryRequest(callFun: suspend (PingService) -> Response<T>)
+    fun tryRequest(callFun: suspend (BaseRetrofitApi) -> Unit)
 }
 
 @Singleton
@@ -59,10 +57,10 @@ class NetworkSwitcher @Inject constructor(
         ProtonMailApplication.getApplication().eventManager.reconfigure(newApi.securedServices.event)
     }
 
-    override fun <T> tryRequest(callFun: suspend (PingService) -> Response<T>) {
+    override fun tryRequest(callFun: suspend (BaseRetrofitApi) -> Unit) {
         runBlocking {
             // this is a bit awkward, but it is fine for now
-            callFun.invoke((api.api.connectivityApi as ConnectivityApi).pingService)
+            callFun.invoke(api.api.connectivityApi as BaseRetrofitApi)
         }
     }
 }

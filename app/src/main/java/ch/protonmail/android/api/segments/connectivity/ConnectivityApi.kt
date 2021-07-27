@@ -18,10 +18,14 @@
  */
 package ch.protonmail.android.api.segments.connectivity
 
-import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.segments.BaseApi
+import me.proton.core.network.data.ApiProvider
+import me.proton.core.network.data.protonApi.BaseRetrofitApi
 
-class ConnectivityApi(val pingService: PingService) : BaseApi(), ConnectivityApiSpec {
+class ConnectivityApi(private val apiProvider: ApiProvider) : BaseApi(), ConnectivityApiSpec {
 
-    override suspend fun pingAsync(): ResponseBody = pingService.ping().body()!!
+    override suspend fun ping() =
+        apiProvider.get<BaseRetrofitApi>().invoke {
+            ping()
+        }
 }

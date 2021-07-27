@@ -80,6 +80,7 @@ import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import me.proton.core.network.domain.ApiResult
 import okhttp3.RequestBody
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -138,7 +139,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun getAttachmentUrl(attachmentId: String): String = api.getAttachmentUrl(attachmentId)
 
-    override suspend fun pingAsync(): ResponseBody = api.pingAsync()
+    override suspend fun ping(): ApiResult<Unit> = api.ping()
 
     override suspend fun fetchContacts(
         page: Int,
