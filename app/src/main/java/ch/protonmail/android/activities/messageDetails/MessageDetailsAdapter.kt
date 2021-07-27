@@ -206,6 +206,9 @@ internal class MessageDetailsAdapter(
 
             if (isMessageBodyExpanded()) {
                 messageDetailsHeaderView.allowExpandingHeaderView()
+                messageDetailsHeaderView.showRecipientsCollapsedView()
+            } else {
+                messageDetailsHeaderView.hideRecipientsCollapsedView()
             }
 
             if (isLastItemHeader()) {
@@ -234,6 +237,7 @@ internal class MessageDetailsAdapter(
 
         holder.itemView.lastConversationMessageCollapsedDivider?.let { it.isVisible = false }
         holder.itemView.headerView?.forbidExpandingHeaderView()
+        holder.itemView.headerView?.hideRecipientsCollapsedView()
     }
 
     inner class ItemViewHolder(view: View) : ExpandableRecyclerAdapter<MessageDetailsListItem>.ViewHolder(view) {
