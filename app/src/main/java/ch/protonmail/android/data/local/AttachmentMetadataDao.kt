@@ -52,6 +52,10 @@ interface AttachmentMetadataDao {
     @Query("SELECT SUM($COLUMN_ATTACHMENT_FILE_SIZE) size FROM $TABLE_ATTACHMENT_METADATA")
     fun getAllAttachmentsSizeUsedBlocking(): Long?
 
+    @Deprecated("Use Flow variant", ReplaceWith("getAllAttachmentsSizeUsed().first()"))
+    @Query("SELECT COALESCE(SUM($COLUMN_ATTACHMENT_FILE_SIZE), 0) size FROM $TABLE_ATTACHMENT_METADATA")
+    fun getAllAttachmentsSizeUsedNonNullBlocking(): Long
+
     @Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA WHERE $COLUMN_ATTACHMENT_FOLDER_LOCATION = :messageId")
     fun getAllAttachmentsForMessage(messageId: String): List<AttachmentMetadata>
 
