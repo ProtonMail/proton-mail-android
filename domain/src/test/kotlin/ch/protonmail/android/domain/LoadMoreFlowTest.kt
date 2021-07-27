@@ -20,6 +20,8 @@
 package ch.protonmail.android.domain
 
 import app.cash.turbine.test
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -30,9 +32,9 @@ import kotlin.test.assertEquals
 class LoadMoreFlowTest : CoroutinesTest {
 
     @Test
-    fun emitsFirstPage() = coroutinesTest {
+    fun emitsFirstPageFromOnlineOnly() = coroutinesTest {
         // given
-        val flow = FakePagedRepository.getAllItems()
+        val flow = FakeOnlineOnlyRepository.getAllItems()
 
         // when - then
         flow.test {
@@ -41,9 +43,65 @@ class LoadMoreFlowTest : CoroutinesTest {
     }
 
     @Test
-    fun emitsAllPages() = coroutinesTest {
+    fun emitsAllPagesFromOnlineOnly() = coroutinesTest {
         // given
-        val flow = FakePagedRepository.getAllItems()
+        val flow = FakeOnlineOnlyRepository.getAllItems()
+
+        // when - then
+        flow.test {
+            assertEquals(allItems.subList(0, 2), expectItem())
+            flow.loadMore()
+            assertEquals(allItems.subList(2, 4), expectItem())
+            flow.loadMore()
+            assertEquals(allItems.subList(4, 6), expectItem())
+            flow.loadMore()
+            assertEquals(allItems.subList(6, 7), expectItem())
+        }
+    }
+
+    @Test
+    fun emitsFirstPageFromOfflineEnabledIfNoCache() = coroutinesTest {
+        // given
+        val flow = FakeOfflineEnabledRepository.getAllItems()
+
+        // when - then
+        flow.test {
+            assertEquals(allItems.take(2), expectItem())
+        }
+    }
+
+    @Test
+    fun emitsAllPagesFromOfflineEnabledIfNoCache() = coroutinesTest {
+        // given
+        val flow = FakeOfflineEnabledRepository.getAllItems()
+
+        // when - then
+        flow.test {
+            assertEquals(allItems.subList(0, 2), expectItem())
+            flow.loadMore()
+            assertEquals(allItems.subList(2, 4), expectItem())
+            flow.loadMore()
+            assertEquals(allItems.subList(4, 6), expectItem())
+            flow.loadMore()
+            assertEquals(allItems.subList(6, 7), expectItem())
+        }
+    }
+
+    @Test
+    fun emitsFirstPageFromOfflineEnabledIfHasCache() = coroutinesTest {
+        // given
+        val flow = FakeOfflineEnabledRepository.getAllItems()
+
+        // when - then
+        flow.test {
+            assertEquals(allItems.take(2), expectItem())
+        }
+    }
+
+    @Test
+    fun emitsAllPagesFromOfflineEnabledIfHasCache() = coroutinesTest {
+        // given
+        val flow = FakeOfflineEnabledRepository.getAllItems()
 
         // when - then
         flow.test {
@@ -67,7 +125,22 @@ class LoadMoreFlowTest : CoroutinesTest {
                 .take(2)
                 .toList()
     }
-    private object FakePagedRepository {
+    private object FakeDatabase {
+        private val savedItems = MutableStateFlow(emptyList<Item>())
+        suspend fun save(items: List<Item>) {
+            savedItems.emit(savedItems.value + items)
+        }
+        suspend fun findAll(): Flow<List<Item>> = savedItems
+    }
+    private object FakeOnlineOnlyRepository {
+        fun getAllItems(): LoadMoreFlow<List<Item>> =
+            loadMoreFlow(
+                initialBookmark = 0,
+                createNextBookmark = { list -> list.maxOfOrNull { it.position } ?: Int.MAX_VALUE },
+                load = { FakePagedApi.getItems(it) }
+            )
+    }
+    private object FakeOfflineEnabledRepository {
         fun getAllItems(): LoadMoreFlow<List<Item>> =
             loadMoreFlow(
                 initialBookmark = 0,
