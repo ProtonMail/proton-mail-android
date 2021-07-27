@@ -31,10 +31,15 @@ import kotlin.test.assertEquals
  */
 class LoadMoreFlowTest : CoroutinesTest {
 
+    private val fakePagedApi = FakePagedApi()
+    private val fakeDatabase = FakeDatabase()
+    private val fakeOnlineOnlyRepository = FakeOnlineOnlyRepository(fakePagedApi)
+    private val fakeOfflineEnabledRepository = FakeOfflineEnabledRepository(fakePagedApi, fakeDatabase)
+
     @Test
     fun emitsFirstPageFromOnlineOnly() = coroutinesTest {
         // given
-        val flow = FakeOnlineOnlyRepository.getAllItems()
+        val flow = fakeOnlineOnlyRepository.getAllItems()
 
         // when - then
         flow.test {
@@ -45,7 +50,7 @@ class LoadMoreFlowTest : CoroutinesTest {
     @Test
     fun emitsAllPagesFromOnlineOnly() = coroutinesTest {
         // given
-        val flow = FakeOnlineOnlyRepository.getAllItems()
+        val flow = fakeOnlineOnlyRepository.getAllItems()
 
         // when - then
         flow.test {
@@ -62,7 +67,7 @@ class LoadMoreFlowTest : CoroutinesTest {
     @Test
     fun emitsFirstPageFromOfflineEnabledIfNoCache() = coroutinesTest {
         // given
-        val flow = FakeOfflineEnabledRepository.getAllItems()
+        val flow = fakeOfflineEnabledRepository.getAllItems()
 
         // when - then
         flow.test {
@@ -73,7 +78,7 @@ class LoadMoreFlowTest : CoroutinesTest {
     @Test
     fun emitsAllPagesFromOfflineEnabledIfNoCache() = coroutinesTest {
         // given
-        val flow = FakeOfflineEnabledRepository.getAllItems()
+        val flow = fakeOfflineEnabledRepository.getAllItems()
 
         // when - then
         flow.test {
@@ -90,7 +95,7 @@ class LoadMoreFlowTest : CoroutinesTest {
     @Test
     fun emitsFirstPageFromOfflineEnabledIfHasCache() = coroutinesTest {
         // given
-        val flow = FakeOfflineEnabledRepository.getAllItems()
+        val flow = fakeOfflineEnabledRepository.getAllItems()
 
         // when - then
         flow.test {
@@ -101,7 +106,7 @@ class LoadMoreFlowTest : CoroutinesTest {
     @Test
     fun emitsAllPagesFromOfflineEnabledIfHasCache() = coroutinesTest {
         // given
-        val flow = FakeOfflineEnabledRepository.getAllItems()
+        val flow = fakeOfflineEnabledRepository.getAllItems()
 
         // when - then
         flow.test {
@@ -117,7 +122,7 @@ class LoadMoreFlowTest : CoroutinesTest {
 
     private data class Item(val position: Int, val content: String)
 
-    private object FakePagedApi {
+    private class FakePagedApi {
         // return at most first 2 items after the given position
         fun getItems(position: Int): List<Item> =
             allItems.asSequence()
@@ -125,27 +130,32 @@ class LoadMoreFlowTest : CoroutinesTest {
                 .take(2)
                 .toList()
     }
-    private object FakeDatabase {
+    private class FakeDatabase {
         private val savedItems = MutableStateFlow(emptyList<Item>())
         suspend fun save(items: List<Item>) {
             savedItems.emit(savedItems.value + items)
         }
         suspend fun findAll(): Flow<List<Item>> = savedItems
     }
-    private object FakeOnlineOnlyRepository {
+    private class FakeOnlineOnlyRepository(
+        private val api: FakePagedApi
+    ) {
         fun getAllItems(): LoadMoreFlow<List<Item>> =
             loadMoreFlow(
                 initialBookmark = 0,
                 createNextBookmark = { list -> list.maxOfOrNull { it.position } ?: Int.MAX_VALUE },
-                load = { FakePagedApi.getItems(it) }
+                load = { api.getItems(it) }
             )
     }
-    private object FakeOfflineEnabledRepository {
+    private class FakeOfflineEnabledRepository(
+        private val api: FakePagedApi,
+        private val database: FakeDatabase
+    ) {
         fun getAllItems(): LoadMoreFlow<List<Item>> =
             loadMoreFlow(
                 initialBookmark = 0,
                 createNextBookmark = { list -> list.maxOfOrNull { it.position } ?: Int.MAX_VALUE },
-                load = { FakePagedApi.getItems(it) }
+                load = { api.getItems(it) }
             )
     }
 
