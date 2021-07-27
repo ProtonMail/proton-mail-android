@@ -22,6 +22,7 @@ package ch.protonmail.android.domain
 import app.cash.turbine.test
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -65,58 +66,133 @@ class LoadMoreFlowTest : CoroutinesTest {
     }
 
     @Test
-    fun emitsFirstPageFromOfflineEnabledIfNoCache() = coroutinesTest {
+    fun emitsFirstPageFromOfflineEnabledIfNoCacheAndHasNet() = coroutinesTest {
         // given
-        val flow = fakeOfflineEnabledRepository.getAllItems()
+        val flow = fakeOfflineEnabledRepository.withNet().getAllItems()
 
         // when - then
         flow.test {
+            assertEquals(emptyList(), expectItem())
             assertEquals(allItems.take(2), expectItem())
         }
     }
 
     @Test
-    fun emitsAllPagesFromOfflineEnabledIfNoCache() = coroutinesTest {
+    fun emitsAllPagesFromOfflineEnabledIfNoCacheAndHasNet() = coroutinesTest {
         // given
-        val flow = fakeOfflineEnabledRepository.getAllItems()
+        val flow = fakeOfflineEnabledRepository.withNet().getAllItems()
 
         // when - then
         flow.test {
-            assertEquals(allItems.subList(0, 2), expectItem())
-            flow.loadMore()
-            assertEquals(allItems.subList(2, 4), expectItem())
-            flow.loadMore()
-            assertEquals(allItems.subList(4, 6), expectItem())
-            flow.loadMore()
-            assertEquals(allItems.subList(6, 7), expectItem())
-        }
-    }
-
-    @Test
-    fun emitsFirstPageFromOfflineEnabledIfHasCache() = coroutinesTest {
-        // given
-        val flow = fakeOfflineEnabledRepository.getAllItems()
-
-        // when - then
-        flow.test {
+            assertEquals(emptyList(), expectItem())
             assertEquals(allItems.take(2), expectItem())
+            flow.loadMore()
+            assertEquals(allItems.take(4), expectItem())
+            flow.loadMore()
+            assertEquals(allItems.take(6), expectItem())
+            flow.loadMore()
+            assertEquals(allItems.take(7), expectItem())
         }
     }
 
     @Test
-    fun emitsAllPagesFromOfflineEnabledIfHasCache() = coroutinesTest {
+    fun emitsNothingOnFirstPageFromOfflineEnabledIfNoCacheAndHasNoNet() = coroutinesTest {
         // given
-        val flow = fakeOfflineEnabledRepository.getAllItems()
+        val flow = fakeOfflineEnabledRepository.withoutNet().getAllItems()
 
         // when - then
         flow.test {
-            assertEquals(allItems.subList(0, 2), expectItem())
+            assertEquals(emptyList(), expectItem())
+        }
+    }
+
+    @Test
+    fun emitsNothingOnAllPagesFromOfflineEnabledIfNoCacheAndHasNoNet() = coroutinesTest {
+        // given
+        val flow = fakeOfflineEnabledRepository.withoutNet().getAllItems()
+
+        // when - then
+        flow.test {
+            assertEquals(emptyList(), expectItem())
             flow.loadMore()
-            assertEquals(allItems.subList(2, 4), expectItem())
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun emitsFirstPageFromOfflineEnabledIfNoNetButHasCache() = coroutinesTest {
+        // given
+        fakeDatabase.save(item1, item2, item3)
+        val flow = fakeOfflineEnabledRepository.withoutNet().getAllItems()
+
+        // when - then
+        flow.test {
+            assertEquals(allItems.take(3), expectItem())
+        }
+    }
+
+    @Test
+    fun emitsAllPagesFromOfflineEnabledIfNoNetButHasCache() = coroutinesTest {
+        // given
+        fakeDatabase.save(item1, item2, item3)
+        val flow = fakeOfflineEnabledRepository.withoutNet().getAllItems()
+
+        // when - then
+        flow.test {
+            assertEquals(allItems.take(3), expectItem())
             flow.loadMore()
-            assertEquals(allItems.subList(4, 6), expectItem())
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun emitsFirstPageFromOfflineEnabledIfHasNetAndCache() = coroutinesTest {
+        // given
+        fakeDatabase.save(item1, item2, item3)
+        val flow = fakeOfflineEnabledRepository.withNet().getAllItems()
+
+        // when - then
+        flow.test {
+            assertEquals(allItems.take(3), expectItem())
+        }
+    }
+
+    @Test
+    fun emitsAllPagesFromOfflineEnabledIfHasNetAndCache() = coroutinesTest {
+        // given
+        fakeDatabase.save(item1, item2, item3)
+        val flow = fakeOfflineEnabledRepository.withNet().getAllItems()
+
+        // when - then
+        flow.test {
+            assertEquals(allItems.take(3), expectItem())
             flow.loadMore()
-            assertEquals(allItems.subList(6, 7), expectItem())
+            assertEquals(allItems.take(4), expectItem())
+        }
+    }
+
+    @Test
+    fun emitsAllPagesFromOfflineEnabledWhenNetIsRestoredAndHasCache() = coroutinesTest {
+        // given
+        fakeDatabase.save(item1, item2, item3)
+        val flow = fakeOfflineEnabledRepository.withoutNet().getAllItems()
+
+        // when - then
+        flow.test {
+            assertEquals(allItems.take(3), expectItem())
+            // Try to load few times before restoring connection
+            flow.loadMore()
+            expectNoEvents()
+            flow.loadMore()
+            expectNoEvents()
+            flow.loadMore()
+            expectNoEvents()
+            fakeOfflineEnabledRepository.withNet()
+            flow.loadMore()
+            flow.loadMore()
+            assertEquals(allItems.take(4), expectItem())
+            flow.loadMore()
+            assertEquals(allItems.take(6), expectItem())
         }
     }
 
@@ -131,11 +207,14 @@ class LoadMoreFlowTest : CoroutinesTest {
                 .toList()
     }
     private class FakeDatabase {
-        private val savedItems = MutableStateFlow(emptyList<Item>())
+        private val savedItems = MutableStateFlow(emptySet<Item>())
         suspend fun save(items: List<Item>) {
             savedItems.emit(savedItems.value + items)
         }
-        suspend fun findAll(): Flow<List<Item>> = savedItems
+        suspend fun save(vararg items: Item) {
+            savedItems.emit(savedItems.value + items)
+        }
+        fun findAll(): Flow<List<Item>> = savedItems.map { it.toList() }
     }
     private class FakeOnlineOnlyRepository(
         private val api: FakePagedApi
@@ -143,7 +222,7 @@ class LoadMoreFlowTest : CoroutinesTest {
         fun getAllItems(): LoadMoreFlow<List<Item>> =
             loadMoreFlow(
                 initialBookmark = 0,
-                createNextBookmark = { list -> list.maxOfOrNull { it.position } ?: Int.MAX_VALUE },
+                createNextBookmark = { list, previousBookmark -> list.maxOfOrNull { it.position } ?: previousBookmark },
                 load = { api.getItems(it) }
             )
     }
@@ -151,12 +230,23 @@ class LoadMoreFlowTest : CoroutinesTest {
         private val api: FakePagedApi,
         private val database: FakeDatabase
     ) {
+
+        private val hasNetworkFlow = MutableStateFlow(true)
+        private val fromApiFlow = loadMoreFlow(
+            initialBookmark = 0,
+            createNextBookmark = { list, previousBookmark -> list?.maxOfOrNull { it.position } ?: previousBookmark },
+            load = { if (hasNetworkFlow.value) api.getItems(it) else null }
+        )
+
+        private val fromDatabaseFlow = database.findAll()
+
+        suspend fun withNet() = apply { hasNetworkFlow.emit(true) }
+        suspend fun withoutNet() = apply { hasNetworkFlow.emit(false) }
+
         fun getAllItems(): LoadMoreFlow<List<Item>> =
-            loadMoreFlow(
-                initialBookmark = 0,
-                createNextBookmark = { list -> list.maxOfOrNull { it.position } ?: Int.MAX_VALUE },
-                load = { api.getItems(it) }
-            )
+            fromDatabaseFlow.withLoadMore(fromApiFlow) { fromApiListOrNull ->
+                fromApiListOrNull?.let { database.save(it) }
+            }
     }
 
     private companion object {

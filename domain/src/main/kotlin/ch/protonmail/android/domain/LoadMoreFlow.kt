@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.onStart
 
 class LoadMoreFlow<T> internal constructor(
     underlying: Flow<T>,
-    private val trigger: MutableSharedFlow<Unit>
+    internal val trigger: MutableSharedFlow<Unit>
 ) : Flow<T> by underlying {
 
     fun loadMore() {
@@ -46,7 +46,7 @@ class LoadMoreFlow<T> internal constructor(
  */
 fun <B, T> loadMoreFlow(
     initialBookmark: B,
-    createNextBookmark: (T) -> B,
+    createNextBookmark: (result: T, previousBookmark: B) -> B,
     load: suspend (bookmark: B) -> T
 ): LoadMoreFlow<T> {
     var bookmark = initialBookmark
@@ -57,7 +57,7 @@ fun <B, T> loadMoreFlow(
     }.map {
         // For each 'loadMore' invocation, load next page and prepare next bookmark
         val page = load(bookmark)
-        bookmark = createNextBookmark(page)
+        bookmark = createNextBookmark(page, bookmark)
         page
     }
 
