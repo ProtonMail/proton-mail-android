@@ -36,6 +36,7 @@ import ch.protonmail.android.mailbox.data.remote.worker.MarkConversationsUnreadR
 import ch.protonmail.android.mailbox.data.remote.worker.UnlabelConversationsRemoteWorker
 import ch.protonmail.android.mailbox.domain.Conversation
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
@@ -302,7 +303,11 @@ class ConversationsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun label(conversationIds: List<String>, userId: UserId, labelId: String) {
+    override suspend fun label(
+        conversationIds: List<String>,
+        userId: UserId,
+        labelId: String
+    ): ConversationsActionResult {
         labelConversationsRemoteWorker.enqueue(conversationIds, labelId, userId)
 
         conversationIds.forEach { conversationId ->
@@ -314,11 +319,20 @@ class ConversationsRepositoryImpl @Inject constructor(
                 lastMessageTime = max(lastMessageTime, message.time)
             }
 
-            addLabelsToConversation(conversationId, userId, listOf(labelId), lastMessageTime)
+            val result = addLabelsToConversation(conversationId, userId, listOf(labelId), lastMessageTime)
+            if (result is ConversationsActionResult.Error) {
+                return result
+            }
         }
+
+        return ConversationsActionResult.Success
     }
 
-    override suspend fun unlabel(conversationIds: List<String>, userId: UserId, labelId: String) {
+    override suspend fun unlabel(
+        conversationIds: List<String>,
+        userId: UserId,
+        labelId: String
+    ): ConversationsActionResult {
         unlabelConversationsRemoteWorker.enqueue(conversationIds, labelId, userId)
 
         conversationIds.forEach { conversationId ->
@@ -328,8 +342,13 @@ class ConversationsRepositoryImpl @Inject constructor(
                 messageDao.saveMessage(message)
             }
 
-            removeLabelsFromConversation(conversationId, userId, listOf(labelId))
+            val result = removeLabelsFromConversation(conversationId, userId, listOf(labelId))
+            if (result is ConversationsActionResult.Error) {
+                return result
+            }
         }
+
+        return ConversationsActionResult.Success
     }
 
     private suspend fun getAllMessagesFromAConversation(conversationId: String): List<Message> =
@@ -385,8 +404,12 @@ class ConversationsRepositoryImpl @Inject constructor(
         userId: UserId,
         labelIds: Collection<String>,
         lastMessageTime: Long
-    ) {
-        val conversation = requireNotNull(conversationDao.findConversation(conversationId, userId.id))
+    ): ConversationsActionResult {
+        val conversation = conversationDao.findConversation(conversationId, userId.id)
+        if (conversation == null) {
+            Timber.e("Conversation with id $conversationId could not be found in DB")
+            return ConversationsActionResult.Error
+        }
         val newLabels = mutableListOf<LabelContextDatabaseModel>()
         labelIds.forEach { labelId ->
             val newLabel = LabelContextDatabaseModel(
@@ -404,17 +427,23 @@ class ConversationsRepositoryImpl @Inject constructor(
         labels.addAll(newLabels)
         Timber.v("Update labels: $labels conversation: $conversationId")
         conversationDao.updateLabels(labels, conversationId)
+        return ConversationsActionResult.Success
     }
 
     private suspend fun removeLabelsFromConversation(
         conversationId: String,
         userId: UserId,
         labelIds: Collection<String>
-    ) {
-        val conversation = requireNotNull(conversationDao.findConversation(conversationId, userId.id))
+    ): ConversationsActionResult {
+        val conversation = conversationDao.findConversation(conversationId, userId.id)
+        if (conversation == null) {
+            Timber.e("Conversation with id $conversationId could not be found in DB")
+            return ConversationsActionResult.Error
+        }
         val labels = conversation.labels.toMutableList()
         labels.removeIf { it.id in labelIds }
         conversationDao.updateLabels(labels, conversationId)
+        return ConversationsActionResult.Success
     }
 
     private fun observeConversationsLocal(params: GetConversationsParameters): Flow<List<Conversation>> =

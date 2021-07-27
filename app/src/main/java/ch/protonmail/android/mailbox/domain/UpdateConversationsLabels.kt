@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.mailbox.domain
 
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
@@ -34,12 +35,21 @@ class UpdateConversationsLabels @Inject constructor(
         userId: UserId,
         selectedLabels: List<String>,
         unselectedLabels: List<String>
-    ) {
+    ): ConversationsActionResult {
+
         selectedLabels.forEach {
-            conversationsRepository.label(conversationIds, userId, it)
+            val result = conversationsRepository.label(conversationIds, userId, it)
+            if (result is ConversationsActionResult.Error) {
+                return result
+            }
         }
         unselectedLabels.forEach {
-            conversationsRepository.unlabel(conversationIds, userId, it)
+            val result = conversationsRepository.unlabel(conversationIds, userId, it)
+            if (result is ConversationsActionResult.Error) {
+                return result
+            }
         }
+
+        return ConversationsActionResult.Success
     }
 }

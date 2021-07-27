@@ -19,11 +19,10 @@
 
 package ch.protonmail.android.mailbox.domain
 
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import kotlin.test.Test
@@ -50,8 +49,8 @@ class UpdateConversationsLabelsTest {
             val label3 = "label3"
             val selectedLabels = listOf(label1, label2)
             val unselectedLabels = listOf(label3)
-            coEvery { conversationsRepository.label(conversationIds, userId, any()) } just runs
-            coEvery { conversationsRepository.unlabel(conversationIds, userId, any()) } just runs
+            coEvery { conversationsRepository.label(conversationIds, userId, any()) } returns ConversationsActionResult.Success
+            coEvery { conversationsRepository.unlabel(conversationIds, userId, any()) } returns ConversationsActionResult.Success
 
             // when
             updateConversationsLabels.invoke(conversationIds, userId, selectedLabels, unselectedLabels)

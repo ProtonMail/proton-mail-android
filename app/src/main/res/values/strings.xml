@@ -1074,4 +1074,6 @@
     <string name="primary_user_error">Could not upgrade, something went wrong.</string>
 
     <string name="details_show_history">Show history</string>
+
+    <string name="could_not_complete_action">Could not complete the action</string>
 </resources>
