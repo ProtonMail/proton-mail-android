@@ -62,7 +62,6 @@ import ch.protonmail.android.core.apiError
 import ch.protonmail.android.core.messageId
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
@@ -71,6 +70,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.serialize
@@ -220,7 +220,7 @@ class SendMessageWorker @AssistedInject constructor(
     private suspend fun buildSendMessageRequest(
         savedDraftMessage: Message,
         sendPreferences: List<SendPreference>,
-        userId: Id
+        userId: UserId
     ): MessageSendBody {
         val securityOptions = requireInputMessageSecurityOptions()
         val packages = packagesFactory.generatePackages(
@@ -233,7 +233,7 @@ class SendMessageWorker @AssistedInject constructor(
         return MessageSendBody(packages, securityOptions.expiresAfterInSeconds, autoSaveContacts)
     }
 
-    private fun requestSendPreferences(message: Message, userId: Id): List<SendPreference>? {
+    private fun requestSendPreferences(message: Message, userId: UserId): List<SendPreference>? {
         return runCatching {
             val emailSet = mutableSetOf<String>()
             message.toListString
@@ -296,10 +296,10 @@ class SendMessageWorker @AssistedInject constructor(
         return Result.failure(errorData)
     }
 
-    private fun getInputCurrentUserId(): Id? =
+    private fun getInputCurrentUserId(): UserId? =
         inputData
             .getString(KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID)
-            ?.let(::Id)
+            ?.let(::UserId)
 
     private fun requireInputMessageSecurityOptions(): MessageSecurityOptions =
         requireNotNull(
@@ -347,7 +347,7 @@ class SendMessageWorker @AssistedInject constructor(
                         KEY_INPUT_SEND_MESSAGE_MSG_DB_ID to message.dbId,
                         KEY_INPUT_SEND_MESSAGE_MESSAGE_ID to message.messageId,
                         KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS to attachmentIds.toTypedArray(),
-                        KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID to userManager.requireCurrentUserId().s,
+                        KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID to userManager.requireCurrentUserId().id,
                         KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID to parentId,
                         KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL to actionType.messageActionTypeValue,
                         KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID to previousSenderAddressId,

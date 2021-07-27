@@ -21,7 +21,7 @@ package ch.protonmail.android.domain.entity.user
 import assert4k.assert
 import assert4k.fails
 import assert4k.that
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.PgpField.PrivateKey
 import ch.protonmail.android.domain.entity.PgpField.PublicKey
@@ -77,7 +77,7 @@ internal class AddressKeyTest {
     }
 
     private val dummyKey = AddressKey(
-        Id("id"),
+        UserId("id"),
         4.toUInt(),
         canEncrypt = true,
         canVerifySignature = true,
@@ -89,5 +89,5 @@ internal class AddressKeyTest {
         active = true
     )
 
-    private val anotherDummyKey = dummyKey.copy(id = Id("another_id"))
+    private val anotherDummyKey = dummyKey.copy(id = UserId("another_id"))
 }

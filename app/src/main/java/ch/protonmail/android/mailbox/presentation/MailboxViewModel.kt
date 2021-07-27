@@ -37,7 +37,6 @@ import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchByLocationJob
@@ -395,7 +394,7 @@ class MailboxViewModel @Inject constructor(
     private fun conversationsAsMailboxItems(
         location: Constants.MessageLocationType,
         labelId: String?,
-        userId: Id
+        userId: UserId
     ): Flow<MailboxState> {
         val locationId = if (!labelId.isNullOrEmpty()) {
             labelId
@@ -432,7 +431,7 @@ class MailboxViewModel @Inject constructor(
         val userId = userManager.currentUserId ?: return emptyList()
 
         val contacts = contactsRepository.findAllContactEmails().first()
-        val labels = labelRepository.findAllLabels(UserId(userId.s)).first()
+        val labels = labelRepository.findAllLabels(UserId(userId.id)).first()
 
         return conversations.map { conversation ->
             val lastMessageTimeMs = conversation.labels.find {
@@ -490,8 +489,8 @@ class MailboxViewModel @Inject constructor(
         val contacts = emails
             .chunked(Constants.MAX_SQL_ARGUMENTS)
             .flatMap { emailChunk -> contactsRepository.findContactsByEmail(emailChunk).first()  }
-        val labelIds = messages.flatMap { message -> message.allLabelIDs }.distinct().map { Id(it) }
-        val userIdCore = UserId(userId.s)
+        val labelIds = messages.flatMap { message -> message.allLabelIDs }.distinct().map { UserId(it) }
+        val userIdCore = UserId(userId.id)
         val labels = labelIds
             .chunked(Constants.MAX_SQL_ARGUMENTS)
             .flatMap { labelChunk -> labelRepository.findLabels(userIdCore, labelChunk).first() }
@@ -509,7 +508,7 @@ class MailboxViewModel @Inject constructor(
             )
 
             val labelChipUiModels = labels
-                .filter { it.id.s in message.allLabelIDs }
+                .filter { it.id.id in message.allLabelIDs }
 
             val messageLocation = message.locationFromLabel()
             val isDraft = messageLocation == Constants.MessageLocationType.DRAFT
@@ -625,7 +624,7 @@ class MailboxViewModel @Inject constructor(
             val labelColor = label.color.takeIfNotBlank()
                 ?.let { Color.parseColor(UiUtil.normalizeColor(it)) }
 
-            LabelChipUiModel(Id(label.id), Name(label.name), labelColor)
+            LabelChipUiModel(UserId(label.id), Name(label.name), labelColor)
         }
 
     fun markRead(
@@ -715,7 +714,7 @@ class MailboxViewModel @Inject constructor(
         mutableMailboxLabelId.value = labelId
     }
 
-    fun setNewUserId(currentUserId: Id) {
+    fun setNewUserId(currentUserId: UserId) {
         mutableUserId.value = currentUserId
     }
 
@@ -733,34 +732,34 @@ class MailboxViewModel @Inject constructor(
             SwipeAction.TRASH ->
                 moveToFolder(
                     listOf(conversationId),
-                    UserId(userManager.requireCurrentUserId().s),
+                    UserId(userManager.requireCurrentUserId().id),
                     mailboxLocation,
                     Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString()
                 )
             SwipeAction.SPAM ->
                 moveToFolder(
                     listOf(conversationId),
-                    UserId(userManager.requireCurrentUserId().s),
+                    UserId(userManager.requireCurrentUserId().id),
                     mailboxLocation,
                     Constants.MessageLocationType.SPAM.messageLocationTypeValue.toString()
                 )
             SwipeAction.STAR ->
                 star(
                     listOf(conversationId),
-                    UserId(userManager.requireCurrentUserId().s),
+                    UserId(userManager.requireCurrentUserId().id),
                     mailboxLocation
                 )
             SwipeAction.ARCHIVE ->
                 moveToFolder(
                     listOf(conversationId),
-                    UserId(userManager.requireCurrentUserId().s),
+                    UserId(userManager.requireCurrentUserId().id),
                     mailboxLocation,
                     Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
                 )
             SwipeAction.MARK_READ ->
                 markRead(
                     listOf(conversationId),
-                    UserId(userManager.requireCurrentUserId().s),
+                    UserId(userManager.requireCurrentUserId().id),
                     mailboxLocation,
                     mailboxLocationId
                 )

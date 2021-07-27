@@ -21,7 +21,7 @@ package ch.protonmail.android.api
 import android.content.Context
 import android.content.SharedPreferences
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import me.proton.core.util.android.sharedpreferences.clearOnly
 import me.proton.core.util.android.sharedpreferences.get
@@ -55,7 +55,7 @@ class TokenManager private constructor(private val pref: SharedPreferences) {
     companion object {
 
         @Deprecated("Replaced by SessionProvider. Now fully handled by Core AccountManager.")
-        fun getInstance(context: Context, userId: Id): TokenManager =
+        fun getInstance(context: Context, userId: UserId): TokenManager =
             TokenManager(SecureSharedPreferences.getPrefsForUser(context, userId))
     }
 }

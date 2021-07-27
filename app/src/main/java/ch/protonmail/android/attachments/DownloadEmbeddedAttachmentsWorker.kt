@@ -33,7 +33,7 @@ import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.Crypto
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -85,7 +85,7 @@ class DownloadEmbeddedAttachmentsWorker @AssistedInject constructor(
             ?: return Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty user id")
             )
-        val userId = Id(userIdString)
+        val userId = UserId(userIdString)
 
         val singleAttachmentId = inputData.getString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING)
 
@@ -95,7 +95,7 @@ class DownloadEmbeddedAttachmentsWorker @AssistedInject constructor(
         requireNotNull(message)
         val addressId = requireNotNull(message.addressID)
 
-        val addressCrypto = Crypto.forAddress(userManager, userId, Id(addressId))
+        val addressCrypto = Crypto.forAddress(userManager, userId, UserId(addressId))
         // We need this outside of this because the embedded attachments are set once the message is actually decrypted
         try {
             message.decrypt(addressCrypto)
@@ -131,7 +131,7 @@ class DownloadEmbeddedAttachmentsWorker @AssistedInject constructor(
 
         fun enqueue(
             messageId: String,
-            userId: Id,
+            userId: UserId,
             attachmentId: String
         ): Operation {
 
@@ -141,7 +141,7 @@ class DownloadEmbeddedAttachmentsWorker @AssistedInject constructor(
 
             val data = Data.Builder()
                 .putString(KEY_INPUT_DATA_MESSAGE_ID_STRING, messageId)
-                .putString(KEY_INPUT_DATA_USER_ID_STRING, userId.s)
+                .putString(KEY_INPUT_DATA_USER_ID_STRING, userId.id)
                 .putString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING, attachmentId)
                 .build()
 

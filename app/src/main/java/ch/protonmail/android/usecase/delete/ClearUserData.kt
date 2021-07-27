@@ -22,7 +22,7 @@ package ch.protonmail.android.usecase.delete
 import android.content.Context
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.storage.AttachmentClearingService
 import ch.protonmail.android.storage.MessageBodyClearingService
 import ch.protonmail.android.utils.AppUtil
@@ -48,7 +48,7 @@ class ClearUserData @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) {
 
-    suspend operator fun invoke(userId: Id, alsoClearContacts: Boolean = true) {
+    suspend operator fun invoke(userId: UserId, alsoClearContacts: Boolean = true) {
 
         val attachmentMetadataDao = runCatching { databaseProvider.provideAttachmentMetadataDao(userId) }.getOrNull()
         val contactDao = runCatching { databaseProvider.provideContactDao(userId) }.getOrNull()
@@ -102,7 +102,7 @@ class ClearUserData @Inject constructor(
 //  1) extract in this use case
 //  2) extract in separate use case/s
 //  3) extract in worker/s
-    private fun startCleaningServices(userId: Id) {
+    private fun startCleaningServices(userId: UserId) {
         AttachmentClearingService.startClearUpImmediatelyService(context, userId)
         MessageBodyClearingService.startClearUpService()
     }

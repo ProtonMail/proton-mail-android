@@ -21,7 +21,6 @@ package ch.protonmail.android.feature.user
 
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.address.Address
-import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
@@ -40,24 +39,24 @@ import me.proton.core.util.kotlin.toInt
 
 @Deprecated("Replaced by Core UserManager", ReplaceWith("Core UserManager"))
 @Throws(ApiException::class)
-fun UserManager.getUserBlocking(userId: Id): User = runBlocking {
-    getUser(UserId(userId.s))
+fun UserManager.getUserBlocking(userId: UserId): User = runBlocking {
+    getUser(UserId(userId.id))
 }
 
 @Deprecated("Replaced by Core UserManager", ReplaceWith("Core UserManager"))
 @Throws(ApiException::class)
-fun UserManager.getAddressesBlocking(userId: Id): List<UserAddress> = runBlocking {
+fun UserManager.getAddressesBlocking(userId: UserId): List<UserAddress> = runBlocking {
     // Refresh only if we have no address.
-    getAddresses(UserId(userId.s), refresh = getAddresses(UserId(userId.s)).isEmpty())
+    getAddresses(UserId(userId.id), refresh = getAddresses(UserId(userId.id)).isEmpty())
 }
 
 @Deprecated("Replaced by Core UserManager", ReplaceWith("Core UserManager"))
 @Throws(ApiException::class)
-fun UserManager.getPrimaryAddressBlocking(userId: Id): UserAddress? = getAddressesBlocking(userId).primary()
+fun UserManager.getPrimaryAddressBlocking(userId: UserId): UserAddress? = getAddressesBlocking(userId).primary()
 
 @Deprecated("Replaced by Core UserManager", ReplaceWith("Core UserManager"))
 @Throws(ApiException::class)
-fun UserManager.getLegacyKeysBlocking(userId: Id): List<Keys> = getUserBlocking(userId).keys.map { key ->
+fun UserManager.getLegacyKeysBlocking(userId: UserId): List<Keys> = getUserBlocking(userId).keys.map { key ->
     Keys(
         key.keyId.id,
         key.privateKey.key,
@@ -72,33 +71,34 @@ fun UserManager.getLegacyKeysBlocking(userId: Id): List<Keys> = getUserBlocking(
 
 @Deprecated("Replaced by Core UserManager", ReplaceWith("Core UserManager"))
 @Throws(ApiException::class)
-fun UserManager.getLegacyAddressesBlocking(userId: Id): List<Address> = getAddressesBlocking(userId).map { address ->
-    Address(
-        address.addressId.id,
-        address.domainId,
-        address.email,
-        address.canSend.toInt(),
-        address.canReceive.toInt(),
-        address.enabled.toInt(),
-        requireNotNull(address.type?.value),
-        address.order,
-        address.displayName,
-        address.signature,
-        address.keys.isNotEmpty().toInt(),
-        address.keys.map { key ->
-            Keys(
-                key.keyId.id,
-                key.privateKey.key,
-                key.flags,
-                key.privateKey.isPrimary.toInt(),
-                key.token,
-                key.signature,
-                key.activation,
-                key.active.toInt()
-            )
-        }
-    )
-}
+fun UserManager.getLegacyAddressesBlocking(userId: UserId): List<Address> =
+    getAddressesBlocking(userId).map { address ->
+        Address(
+            address.addressId.id,
+            address.domainId,
+            address.email,
+            address.canSend.toInt(),
+            address.canReceive.toInt(),
+            address.enabled.toInt(),
+            requireNotNull(address.type?.value),
+            address.order,
+            address.displayName,
+            address.signature,
+            address.keys.isNotEmpty().toInt(),
+            address.keys.map { key ->
+                Keys(
+                    key.keyId.id,
+                    key.privateKey.key,
+                    key.flags,
+                    key.privateKey.isPrimary.toInt(),
+                    key.token,
+                    key.signature,
+                    key.activation,
+                    key.active.toInt()
+                )
+            }
+        )
+    }
 
 @Deprecated("Replaced by Core UserManager", ReplaceWith("Core User.useKeys"))
 @Throws(ApiException::class)

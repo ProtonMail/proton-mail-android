@@ -28,7 +28,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.utils.extensions.isInPreviewMode
 import com.google.android.flexbox.FlexDirection
@@ -85,13 +85,13 @@ class MultiLineLabelChipGroupView @JvmOverloads constructor(
          * @return List of Labels for build a Preview
          */
         fun buildPreviewItems(): List<LabelChipUiModel> = listOf(
-            LabelChipUiModel(Id("a"), Name("long name for first label"), Color.RED),
-            LabelChipUiModel(Id("b"), Name("second label"), Color.GREEN),
-            LabelChipUiModel(Id("c"), Name("third"), Color.BLUE),
-            LabelChipUiModel(Id("d"), Name("long name for forth label"), Color.CYAN),
-            LabelChipUiModel(Id("e"), Name("fifth label"), Color.MAGENTA),
-            LabelChipUiModel(Id("f"), Name("sixth"), Color.GRAY),
-            LabelChipUiModel(Id("g"), Name("long name for seventh label"), Color.BLACK),
+            LabelChipUiModel(UserId("a"), Name("long name for first label"), Color.RED),
+            LabelChipUiModel(UserId("b"), Name("second label"), Color.GREEN),
+            LabelChipUiModel(UserId("c"), Name("third"), Color.BLUE),
+            LabelChipUiModel(UserId("d"), Name("long name for forth label"), Color.CYAN),
+            LabelChipUiModel(UserId("e"), Name("fifth label"), Color.MAGENTA),
+            LabelChipUiModel(UserId("f"), Name("sixth"), Color.GRAY),
+            LabelChipUiModel(UserId("g"), Name("long name for seventh label"), Color.BLACK),
         )
     }
 }

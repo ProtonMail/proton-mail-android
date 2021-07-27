@@ -24,14 +24,14 @@ import android.os.Build
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.event.data.remote.model.EventResponse
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
@@ -54,8 +54,8 @@ class EventManager @Inject constructor(
 ) {
 
     private var service: EventService = protonMailApiManager.getSecuredServices().event
-    private val sharedPrefs = mutableMapOf<Id, SharedPreferences>()
-    private val eventHandlers = mutableMapOf<Id, EventHandler>()
+    private val sharedPrefs = mutableMapOf<UserId, SharedPreferences>()
+    private val eventHandlers = mutableMapOf<UserId, EventHandler>()
 
     fun reconfigure(service: EventService) {
         this.service = service
@@ -97,7 +97,7 @@ class EventManager @Inject constructor(
         }
     }
 
-    private suspend fun consumeEventsFor(loggedInUsers: Collection<Id>) = withContext(dispatchers.Io) {
+    private suspend fun consumeEventsFor(loggedInUsers: Collection<UserId>) = withContext(dispatchers.Io) {
         for (user in loggedInUsers) {
             eventHandlers.putIfAbsentApi23(user, eventHandlerFactory.create(user))
         }
@@ -123,7 +123,7 @@ class EventManager @Inject constructor(
         "Should not be used, necessary only for old and Java classes",
         ReplaceWith("consumeEventsFor(loggedInUsers)")
     )
-    fun consumeEventsForBlocking(loggedInUsers: Collection<Id>) =
+    fun consumeEventsForBlocking(loggedInUsers: Collection<UserId>) =
         runBlocking { consumeEventsFor(loggedInUsers) }
 
     /**
@@ -137,7 +137,7 @@ class EventManager @Inject constructor(
     /**
      * Clears the state of the EventManager for the given [userId]
      */
-    fun clearState(userId: Id) {
+    fun clearState(userId: UserId) {
         sharedPrefs -= userId
         eventHandlers -= userId
     }
@@ -160,7 +160,7 @@ class EventManager @Inject constructor(
     /**
      * @throws ApiException if service call fails
      */
-    private suspend fun generateNewEventId(userId: Id) {
+    private suspend fun generateNewEventId(userId: UserId) {
         val response = service.latestId(UserIdTag(userId))
         if (response.code == Constants.RESPONSE_CODE_OK) {
             backupNextEventId(userId, response.eventID)
@@ -186,11 +186,11 @@ class EventManager @Inject constructor(
         }
     }
 
-    private fun lockState(userId: Id) {
+    private fun lockState(userId: UserId) {
         backupNextEventId(userId, "")
     }
 
-    private fun recoverNextEventId(userId: Id): String? {
+    private fun recoverNextEventId(userId: UserId): String? {
         val prefs = sharedPrefs.getOrPut(
             userId,
             {
@@ -202,7 +202,7 @@ class EventManager @Inject constructor(
         return if (lastEventId.isNullOrEmpty()) null else lastEventId
     }
 
-    private fun backupNextEventId(userId: Id, eventId: String) {
+    private fun backupNextEventId(userId: UserId, eventId: String) {
         val prefs = sharedPrefs.getOrPut(
             userId,
             {

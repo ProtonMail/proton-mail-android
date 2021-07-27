@@ -71,7 +71,7 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import ch.protonmail.android.mailbox.data.remote.model.ConversationsActionResponses
@@ -187,7 +187,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         api.unlabelContactEmails(labelContactsBody)
 
     override suspend fun registerDevice(
-        userId: Id,
+        userId: UserId,
         registerDeviceRequestBody: RegisterDeviceRequestBody
     ) = api.registerDevice(userId, registerDeviceRequestBody)
 
@@ -347,9 +347,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         mimeType: String
     ): ResponseBody? = api.postPhishingReport(messageId, messageBody, mimeType)
 
-    override suspend fun fetchMailSettings(userId: Id): MailSettingsResponse = api.fetchMailSettings(userId)
+    override suspend fun fetchMailSettings(userId: UserId): MailSettingsResponse = api.fetchMailSettings(userId)
 
-    override fun fetchMailSettingsBlocking(userId: Id): MailSettingsResponse =
+    override fun fetchMailSettingsBlocking(userId: UserId): MailSettingsResponse =
         api.fetchMailSettingsBlocking(userId)
 
     override fun updateSignature(signature: String): ResponseBody? = api.updateSignature(signature)
@@ -363,31 +363,31 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun fetchConversation(
         conversationId: String,
-        userId: Id
+        userId: UserId
     ): ConversationResponse = api.fetchConversation(conversationId, userId)
 
     override suspend fun markConversationsRead(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ): ConversationsActionResponses = api.markConversationsRead(conversationIds, userId)
 
     override suspend fun markConversationsUnread(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ): ConversationsActionResponses = api.markConversationsUnread(conversationIds, userId)
 
     override suspend fun labelConversations(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ): ConversationsActionResponses = api.labelConversations(conversationIds, userId)
 
     override suspend fun unlabelConversations(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ): ConversationsActionResponses = api.unlabelConversations(conversationIds, userId)
 
     override suspend fun deleteConversations(
         conversationIds: ConversationIdsRequestBody,
-        userId: Id
+        userId: UserId
     ): ConversationsActionResponses = api.deleteConversations(conversationIds, userId)
 }

@@ -41,12 +41,12 @@ import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingUpload
 import ch.protonmail.android.di.CurrentUserId
 import ch.protonmail.android.di.CurrentUserMailSettings
-import ch.protonmail.android.domain.entity.Id
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -69,7 +69,7 @@ class UploadAttachments @AssistedInject constructor(
     private val pendingActionDao: PendingActionDao,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val addressCryptoFactory: AddressCrypto.Factory,
-    @CurrentUserId private val userId: Id,
+    @CurrentUserId private val userId: UserId,
     @CurrentUserMailSettings private val mailSettings: MailSettings
 ) : CoroutineWorker(context, params) {
 
@@ -81,7 +81,7 @@ class UploadAttachments @AssistedInject constructor(
 
         messageDetailsRepository.findMessageById(messageId).first()?.let { message ->
             val addressId = requireNotNull(message.addressID)
-            val addressCrypto = addressCryptoFactory.create(userId, Id(addressId))
+            val addressCrypto = addressCryptoFactory.create(userId, UserId(addressId))
 
             return@withContext when (val result = upload(newAttachments, message, addressCrypto, isMessageSending)) {
                 is Result.Success -> ListenableWorker.Result.success()

@@ -41,7 +41,7 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.domain.entity.Id;
+import me.proton.core.domain.entity.UserId;
 import ch.protonmail.android.feature.user.UserManagerKt;
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
@@ -142,7 +142,7 @@ public class User {
     @NonNull
     @Deprecated
     @kotlin.Deprecated(message = "Use usecase/LoadLegacyUser")
-    public static Either<LoadUser.Error, User> load(Id userId, Context context, UserManager userManager, KeyStoreCrypto keyStoreCrypto) {
+    public static Either<LoadUser.Error, User> load(UserId userId, Context context, UserManager userManager, KeyStoreCrypto keyStoreCrypto) {
         final SharedPreferences securePrefs = SecureSharedPreferences.Companion.getPrefsForUser(context, userId);
 
         User user;
@@ -157,7 +157,7 @@ public class User {
         return new Right(user);
     }
 
-    private static User loadFromCore(Id userId, SharedPreferences securePrefs, UserManager userManager, KeyStoreCrypto keyStoreCrypto) throws ApiException {
+    private static User loadFromCore(UserId userId, SharedPreferences securePrefs, UserManager userManager, KeyStoreCrypto keyStoreCrypto) throws ApiException {
         // Core UserManager (UserRepository & UserAddressRepository) have a memory cache.
         // Core UserManager will only do a network call if no data exist.
 
@@ -198,9 +198,9 @@ public class User {
         return user;
     }
 
-    private static User loadFromPrefs(Id userId, SharedPreferences securePrefs) {
+    private static User loadFromPrefs(UserId userId, SharedPreferences securePrefs) {
         final User user = new User();
-        user.id = userId.getS();
+        user.id = userId.getId();
         user.name = securePrefs.getString(PREF_USER_NAME, "");
         user.displayName = securePrefs.getString(PREF_DISPLAY_NAME, "");
         user.username = user.name;
@@ -262,7 +262,7 @@ public class User {
 
     private SharedPreferences getPreferences() {
         ProtonMailApplication application = ProtonMailApplication.getApplication();
-        return SecureSharedPreferences.Companion.getPrefsForUser(application, new Id(id));
+        return SecureSharedPreferences.Companion.getPrefsForUser(application, new UserId(id));
     }
 
     private void saveShowSignatureSetting() {

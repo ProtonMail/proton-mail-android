@@ -21,7 +21,7 @@
 package ch.protonmail.android.mapper.bridge
 
 import ch.protonmail.android.domain.entity.EmailAddress
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.user.Address
@@ -75,8 +75,8 @@ class AddressBridgeMapper @Inject constructor(
 
     override fun OldAddress.toNewModel(): Address {
         return Address(
-            id = Id(id),
-            domainId = domainId?.let(::Id),
+            id = UserId(id),
+            domainId = domainId?.let(::UserId),
             email = EmailAddress(email),
             displayName = displayName?.takeIfNotBlank()?.let(::Name),
             signature = signature?.takeIfNotBlank()?.let(::NotBlankString),

@@ -34,13 +34,13 @@ import androidx.fragment.app.Fragment
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.databinding.SettingsFragmentDisplayNameAndSignatureBinding
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.api.models.User as LegacyUser
 
 @AndroidEntryPoint
@@ -57,8 +57,14 @@ class DisplayNameAndSignatureFragment : Fragment() {
     private var hasChanges = false
     var newDisplayName = ""
     var newSignature: String? = null
-    var newAddressId: Id? = null
+    var newAddressId: UserId? = null
     var newMobileFooter: String? = null
+
+    var displayNameOrSignatureChanged = {
+        val displayName = user?.addresses?.primary?.displayName?.s ?: user?.addresses?.primary?.email?.s
+        val signature = user?.addresses?.primary?.signature?.s
+        newDisplayName != displayName || newSignature != signature
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -167,12 +173,6 @@ class DisplayNameAndSignatureFragment : Fragment() {
         binding.settingsToggleMobileFooter.setOnCheckedChangeListener { _, isChecked ->
             legacyUser.isShowMobileFooter = isChecked
         }
-    }
-
-    var displayNameOrSignatureChanged = {
-        val displayName = user?.addresses?.primary?.displayName?.s ?: user?.addresses?.primary?.email?.s
-        val signature = user?.addresses?.primary?.signature?.s
-        newDisplayName != displayName || newSignature != signature
     }
 
     companion object {

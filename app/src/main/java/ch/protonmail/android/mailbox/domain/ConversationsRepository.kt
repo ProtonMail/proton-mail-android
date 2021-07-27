@@ -20,7 +20,6 @@
 package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
 import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.Conversation
@@ -49,7 +48,7 @@ interface ConversationsRepository {
      * @return an empty optional when the repository encounters a handled failure getting the given conversation
      * @throws exception when the repository fails getting this conversation for any unhandled reasons
      */
-    fun getConversation(conversationId: String, userId: Id): Flow<DataResult<Conversation>>
+    fun getConversation(conversationId: String, userId: UserId): Flow<DataResult<Conversation>>
 
     /**
      * @param conversationId the encrypted id of the conversation to find
@@ -60,14 +59,14 @@ interface ConversationsRepository {
      * @return an empty optional when the repository encounters a handled failure getting the given conversation
      * @throws exception when the repository fails getting this conversation for any unhandled reasons
      */
-    suspend fun findConversation(conversationId: String, userId: Id): ConversationDatabaseModel?
+    suspend fun findConversation(conversationId: String, userId: UserId): ConversationDatabaseModel?
 
     /**
      * @param conversations a list representing the conversations we want to save to the local data source
      *
      * @throws exception when the repository fails to insert conversations for any unhandled reasons into local storage
      */
-    suspend fun saveConversations(conversations: List<ConversationDatabaseModel>, userId: Id)
+    suspend fun saveConversations(conversations: List<ConversationDatabaseModel>, userId: UserId)
 
     /**
      * Deletes all the conversations from the [TABLE_CONVERSATIONS] inside the local storage
@@ -77,7 +76,7 @@ interface ConversationsRepository {
     /**
      * Deletes a list of conversations from the [TABLE_CONVERSATIONS] inside the local storage
      */
-    suspend fun deleteConversations(conversationIds: List<String>, userId: Id)
+    suspend fun deleteConversations(conversationIds: List<String>, userId: UserId)
 
     fun loadMore(params: GetConversationsParameters)
 

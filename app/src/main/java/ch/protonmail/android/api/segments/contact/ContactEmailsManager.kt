@@ -25,7 +25,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.runBlocking
@@ -41,7 +41,7 @@ class ContactEmailsManager @Inject constructor(
     constructor(
         api: ProtonMailApiManager,
         databaseProvider: DatabaseProvider,
-        @Assisted userId: Id
+        @Assisted userId: UserId
     ) : this(api, databaseProvider.provideContactDao(userId))
 
     suspend fun refresh(pageSize: Int = Constants.CONTACTS_PAGE_SIZE) {
@@ -92,6 +92,6 @@ class ContactEmailsManager @Inject constructor(
 
     @AssistedInject.Factory
     interface AssistedFactory {
-        fun create(userId: Id): ContactEmailsManager
+        fun create(userId: UserId): ContactEmailsManager
     }
 }

@@ -23,7 +23,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
 import ch.protonmail.android.core.Constants.JOB_INTENT_SERVICE_ID_ATTACHMENT_CLEARING
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.servers.notification.EXTRA_USER_ID
 import ch.protonmail.android.storage.AttachmentClearingService.ACTION_CLEAR_CACHE_IMMEDIATELY
 import ch.protonmail.android.storage.AttachmentClearingService.ACTION_CLEAR_CACHE_IMMEDIATELY_DELETE_TABLES
@@ -56,10 +56,10 @@ class AttachmentClearingServiceHelper @Inject constructor(
         )
     }
 
-    fun startClearUpImmediatelyServiceAndDeleteTables(userId: Id) {
+    fun startClearUpImmediatelyServiceAndDeleteTables(userId: UserId) {
         val intent = Intent(context, AttachmentClearingService::class.java)
         intent.action = ACTION_CLEAR_CACHE_IMMEDIATELY_DELETE_TABLES
-        intent.putExtra(EXTRA_USER_ID, userId.s)
+        intent.putExtra(EXTRA_USER_ID, userId.id)
         JobIntentService.enqueueWork(
             context,
             AttachmentClearingService::class.java,

@@ -19,7 +19,7 @@
 package ch.protonmail.android.domain.entity.user
 
 import ch.protonmail.android.domain.entity.Bytes
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.Validable
@@ -42,7 +42,7 @@ import ch.protonmail.android.domain.entity.requireValid
  */
 @Validated
 data class User( // TODO: consider naming UserInfo or similar
-    val id: Id,
+    val id: UserId,
     val name: Name,
     val addresses: Addresses,
     val keys: UserKeys,
@@ -82,7 +82,7 @@ data class User( // TODO: consider naming UserInfo or similar
         requireValid()
     }
 
-    fun findAddressById(addressId: Id): Address? {
+    fun findAddressById(addressId: UserId): Address? {
         return addresses.addresses.values.find { it.id == addressId }
     }
 

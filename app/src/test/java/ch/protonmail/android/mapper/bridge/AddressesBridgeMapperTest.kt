@@ -60,8 +60,8 @@ internal class AddressesBridgeMapperTest {
         val newAddress = singleMapper { oldAddress.toNewModel() }
 
         assert that newAddress * {
-            +id.s equals "id"
-            +domainId?.s equals "domain_id"
+            +id.id equals "id"
+            +domainId?.id equals "domain_id"
             +email.s equals "davide@email.com"
             +displayName?.s equals "Davide"
             +signature?.s equals "signature"
@@ -91,8 +91,8 @@ internal class AddressesBridgeMapperTest {
 
         assert that newAddresses * {
             +addresses.size.fix() equals 10
-            +primary?.id?.s equals "11"
-            +sorted().map { it.id.s.toInt() } equals (11..20).toList()
+            +primary?.id?.id equals "11"
+            +sorted().map { it.id.id.toInt() } equals (11..20).toList()
         }
     }
 
@@ -104,7 +104,7 @@ internal class AddressesBridgeMapperTest {
 
         assert that newAddresses * {
             +addresses.size.fix() equals 10
-            +sorted().map { it.id.s.toInt() } equals (1..10).toList()
+            +sorted().map { it.id.id.toInt() } equals (1..10).toList()
         }
     }
 
@@ -118,7 +118,7 @@ internal class AddressesBridgeMapperTest {
         assert that order equals mapOf(10 to 20, 11 to 22, 12 to 10, 13 to 10, 14 to 28)
         assert that newAddresses * {
             +addresses.size.fix() equals 5
-            +sorted().map { it.id.s.toInt() } equals listOf(12, 13, 10, 11, 14)
+            +sorted().map { it.id.id.toInt() } equals listOf(12, 13, 10, 11, 14)
         }
     }
 

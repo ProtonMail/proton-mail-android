@@ -27,7 +27,6 @@ import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.MoveToFolderJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
@@ -66,7 +65,7 @@ class MessageRepository @Inject constructor(
 ) {
 
     fun observeMessage(userId: UserId, messageId: String): Flow<Message?> {
-        val messageDao = databaseProvider.provideMessageDao(Id(userId.id))
+        val messageDao = databaseProvider.provideMessageDao(UserId(userId.id))
         return messageDao.findMessageById(messageId).onEach { message ->
             Timber.d("findMessage id: ${message?.messageId}, ${message?.isRead}, ${message?.isDownloaded}")
             message?.messageBody?.let {
@@ -77,7 +76,7 @@ class MessageRepository @Inject constructor(
         }
     }
 
-    suspend fun findMessage(userId: Id, messageId: String): Message? {
+    suspend fun findMessage(userId: UserId, messageId: String): Message? {
         val messageDao = databaseProvider.provideMessageDao(userId)
         return messageDao.findMessageByIdOnce(messageId)?.apply {
             messageBody?.let {
@@ -111,7 +110,7 @@ class MessageRepository @Inject constructor(
      * @return An instance of Message
      */
     suspend fun getMessage(
-        userId: Id,
+        userId: UserId,
         messageId: String,
         shouldFetchMessageDetails: Boolean = false
     ): Message? =
@@ -124,7 +123,7 @@ class MessageRepository @Inject constructor(
             }
         }
 
-    private suspend fun getMessageDetails(userId: Id, messageId: String): Message? =
+    private suspend fun getMessageDetails(userId: UserId, messageId: String): Message? =
         withContext(dispatcherProvider.Io) {
             val message = findMessage(userId, messageId)
 
@@ -139,7 +138,7 @@ class MessageRepository @Inject constructor(
             }.getOrNull()
         }
 
-    private suspend fun getMessageMetadata(userId: Id, messageId: String): Message? =
+    private suspend fun getMessageMetadata(userId: UserId, messageId: String): Message? =
         withContext(dispatcherProvider.Io) {
             val message = findMessage(userId, messageId)
 
@@ -156,7 +155,7 @@ class MessageRepository @Inject constructor(
             }.getOrNull()
         }
 
-    private suspend fun saveMessage(userId: Id, message: Message): Message =
+    private suspend fun saveMessage(userId: UserId, message: Message): Message =
         withContext(dispatcherProvider.Io) {
             message.apply {
                 messageBody = messageBody?.let {
@@ -226,7 +225,7 @@ class MessageRepository @Inject constructor(
 
     fun observeMessagesByLocation(
         location: Constants.MessageLocationType,
-        userId: Id
+        userId: UserId
     ): Flow<List<Message>> {
         val messagesDao = databaseProvider.provideMessageDao(userId)
         return observeLocationDbDataFlow(location, messagesDao)
@@ -264,7 +263,7 @@ class MessageRepository @Inject constructor(
 
     fun observeMessagesByLabelId(
         labelId: String,
-        userId: Id
+        userId: UserId
     ): Flow<List<Message>> {
         val messagesDao = databaseProvider.provideMessageDao(userId)
         return messagesDao.observeMessagesByLabelId(labelId)
@@ -292,7 +291,7 @@ class MessageRepository @Inject constructor(
     }
 
     fun observeAllMessages(
-        userId: Id
+        userId: UserId
     ): Flow<List<Message>> {
         val messagesDao = databaseProvider.provideMessageDao(userId)
         return messagesDao.observeAllMessages()
@@ -327,7 +326,7 @@ class MessageRepository @Inject constructor(
 
     private suspend fun persistMessages(
         messages: List<Message>,
-        userId: Id,
+        userId: UserId,
         messageLocationTypeValue: Int? = null
     ) = withContext(dispatcherProvider.Io) {
         val messagesDao = databaseProvider.provideMessageDao(userId)

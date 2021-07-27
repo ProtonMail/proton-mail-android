@@ -19,7 +19,7 @@
 
 package ch.protonmail.android.mailbox.domain
 
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.NO_MORE_CONVERSATIONS_ERROR_CODE
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
@@ -40,7 +40,7 @@ class GetConversations @Inject constructor(
      * or custom label / folder to get the conversations for.
      */
     operator fun invoke(
-        userId: Id,
+        userId: UserId,
         locationId: String
     ): Flow<GetConversationsResult> {
         val params = GetConversationsParameters(
@@ -80,7 +80,7 @@ class GetConversations @Inject constructor(
     }
 
     fun loadMore(
-        userId: Id,
+        userId: UserId,
         locationId: String,
         lastConversationTime: Long
     ) {

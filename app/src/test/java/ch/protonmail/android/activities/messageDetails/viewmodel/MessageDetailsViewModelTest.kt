@@ -41,7 +41,6 @@ import ch.protonmail.android.details.presentation.MessageDetailsActivity.Compani
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_LOCATION_ID
 import ch.protonmail.android.details.presentation.MessageDetailsActivity.Companion.EXTRA_MESSAGE_OR_CONVERSATION_ID
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
@@ -145,10 +144,10 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns INBOX.messageLocationTypeValue
     }
 
-    private val testId1 = Id("userId1")
-    private val testId2 = Id("userId2")
-    private val testUserId1 = UserId(testId1.s)
-    private val testUserId2 = UserId(testId2.s)
+    private val testId1 = UserId("userId1")
+    private val testId2 = UserId("userId2")
+    private val testUserId1 = UserId(testId1.id)
+    private val testUserId2 = UserId(testId2.id)
     private val userIdFlow = MutableStateFlow(testUserId1)
 
     private val userManager: UserManager = mockk(relaxed = true) {
@@ -303,10 +302,10 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             val labelId2 = "labelId2"
             val label2 = Label(labelId2, "label2", "-65281", 0, 0, false)
             every {
-                labelRepository.findLabels(testUserId2, listOf(Id("folderId1"), Id("labelId1"), Id("labelId2")))
+                labelRepository.findLabels(testUserId2, listOf(UserId("folderId1"), UserId("labelId1"), UserId("labelId2")))
             } returns flowOf(listOf(folder1, label1, label2))
             every {
-                labelRepository.findLabels(testUserId2, listOf(Id("folderId2"), Id("labelId1")))
+                labelRepository.findLabels(testUserId2, listOf(UserId("folderId2"), UserId("labelId1")))
             } returns flowOf(listOf(folder2, label1))
             val messageId1 = "messageId1"
             val messageId2 = "messageId2"
@@ -372,15 +371,15 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             val folder2 = Label(folderId2, "folder2", "color", 0, 0, true)
             val labelId1 = "labelId1"
             val label1 = Label(labelId1, "label1", "", 0, 0, false)
-            val labelChipUIModel1 = LabelChipUiModel(Id(labelId1), Name("label1"), null)
+            val labelChipUIModel1 = LabelChipUiModel(UserId(labelId1), Name("label1"), null)
             val labelId2 = "labelId2"
             val label2 = Label(labelId2, "label2", "", 0, 0, false)
-            val labelChipUIModel2 = LabelChipUiModel(Id(labelId2), Name("label2"), null)
+            val labelChipUIModel2 = LabelChipUiModel(UserId(labelId2), Name("label2"), null)
             every {
-                labelRepository.findLabels(testUserId2, listOf(Id("folderId1"), Id("labelId1"), Id("labelId2")))
+                labelRepository.findLabels(testUserId2, listOf(UserId("folderId1"), UserId("labelId1"), UserId("labelId2")))
             } returns flowOf(listOf(folder1, label1, label2))
             every {
-                labelRepository.findLabels(testUserId2, listOf(Id("folderId2"), Id("labelId1")))
+                labelRepository.findLabels(testUserId2, listOf(UserId("folderId2"), UserId("labelId1")))
             } returns flowOf(listOf(folder2, label1))
             val messageId1 = "messageId1"
             val messageId2 = "messageId2"
@@ -533,7 +532,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         coEvery { messageRepository.getMessage(any(), any(), any()) } returns message
         coEvery { messageRepository.markRead(any()) } just Runs
 
-        val userId = Id("userId4")
+        val userId = UserId("userId4")
         every { userManager.requireCurrentUserId() } returns userId
 
         // When
@@ -695,7 +694,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         // Given
         val messageId = "messageId"
 
-        val userId = Id("userId3")
+        val userId = UserId("userId3")
         every { userManager.requireCurrentUserId() } returns userId
 
         val message = mockk<Message>()
@@ -728,7 +727,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
         every { savedStateHandle.get<String>(EXTRA_MAILBOX_LABEL_ID) } returns null
-        val userId = Id("userId3")
+        val userId = UserId("userId3")
         every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
         val conversationResult = DataResult.Success(ResponseSource.Local, buildConversation("conversationId"))
@@ -757,7 +756,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
             changeConversationsReadStatus.invoke(
                 listOf(inputConversationId),
                 ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
-                UserId(userId.s),
+                UserId(userId.id),
                 inputMessageLocation,
                 inputMessageLocation.messageLocationTypeValue.toString()
             )
@@ -825,7 +824,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<String>(EXTRA_MESSAGE_OR_CONVERSATION_ID) } returns inputConversationId
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
-        val userId = Id("userId3")
+        val userId = UserId("userId3")
         every { userManager.requireCurrentUserId() } returns userId
         coEvery { conversationModeEnabled(inputMessageLocation) } returns false
         coEvery { messageRepository.markUnRead(any()) } just Runs
@@ -896,7 +895,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
         val userString = "userId3"
-        val id = Id(userString)
+        val id = UserId(userString)
         val userId = UserId(userString)
         every { userManager.requireCurrentUserId() } returns id
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
@@ -1001,7 +1000,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
         val userString = "userId3"
-        val id = Id(userString)
+        val id = UserId(userString)
         val userId = UserId(userString)
         every { userManager.requireCurrentUserId() } returns id
         coEvery { conversationModeEnabled(inputMessageLocation) } returns true
@@ -1040,7 +1039,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { savedStateHandle.get<Int>(EXTRA_MESSAGE_LOCATION_ID) } returns
             inputMessageLocation.messageLocationTypeValue
         val userString = "userId3"
-        val id = Id(userString)
+        val id = UserId(userString)
         every { userManager.requireCurrentUserId() } returns id
         coEvery { conversationModeEnabled(inputMessageLocation) } returns false
         val isChecked = true

@@ -20,7 +20,7 @@
 
 package ch.protonmail.android.mapper.bridge
 
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.ValidationException
@@ -49,7 +49,7 @@ class UserBridgeMapper @Inject constructor(
 
         return try {
             User(
-                id = Id(id),
+                id = UserId(id),
                 name = Name(name.takeIfNotBlank() ?: username),
                 addresses = addressMapper { addresses.toNewModel() },
                 keys = keysMapper { keys.toNewModel() },

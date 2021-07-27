@@ -23,7 +23,6 @@ import android.content.Context
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.model.Label
-import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
@@ -34,8 +33,8 @@ class RoomLabelRepository @Inject constructor(
     private val messageDao: MessageDao
 ) : LabelRepository {
 
-    override fun findLabels(userId: UserId, labelsIds: List<Id>): Flow<List<Label>> =
-        getDao(userId).findLabelsById(labelsIds.map { it.s })
+    override fun findLabels(userId: UserId, labelsIds: List<UserId>): Flow<List<Label>> =
+        getDao(userId).findLabelsById(labelsIds.map { it.id })
 
     override fun findAllLabels(userId: UserId): Flow<List<Label>> =
         getDao(userId).getAllLabels()
@@ -49,5 +48,5 @@ class RoomLabelRepository @Inject constructor(
     }
 
     private fun getDao(userId: UserId): MessageDao =
-        messageDatabaseFactory.getInstance(context, Id(userId.id)).getDao()
+        messageDatabaseFactory.getInstance(context, UserId(userId.id)).getDao()
 }

@@ -52,7 +52,7 @@ import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.details.domain.MessageBodyParser
 import ch.protonmail.android.details.presentation.model.ConversationUiModel
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
@@ -98,7 +98,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
     private lateinit var primaryBaseActivity: Context
 
-    private var messageRecipientUserId: Id? = null
+    private var messageRecipientUserId: UserId? = null
     private var messageRecipientUsername: String? = null
     private var openedFolderLocationId: Int = Constants.MessageLocationType.INVALID.messageLocationTypeValue
     private var openedFolderLabelId: String? = null
@@ -130,7 +130,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         messageOrConversationId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_OR_CONVERSATION_ID))
-        messageRecipientUserId = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USER_ID)?.let(::Id)
+        messageRecipientUserId = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USER_ID)?.let(::UserId)
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
         openedFolderLocationId = intent.getIntExtra(
             EXTRA_MESSAGE_LOCATION_ID,

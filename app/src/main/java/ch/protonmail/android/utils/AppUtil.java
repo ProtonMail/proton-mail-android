@@ -61,7 +61,7 @@ import ch.protonmail.android.data.local.NotificationDao;
 import ch.protonmail.android.data.local.NotificationDatabase;
 import ch.protonmail.android.data.local.PendingActionDao;
 import ch.protonmail.android.data.local.PendingActionDatabase;
-import ch.protonmail.android.domain.entity.Id;
+import me.proton.core.domain.entity.UserId;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.mailbox.data.local.ConversationDao;
@@ -153,22 +153,22 @@ public class AppUtil {
     }
 
     @Deprecated // Use ClearUserData use case
-    public static void deleteDatabases(Context context, Id userId) {
+    public static void deleteDatabases(Context context, UserId userId) {
         deleteDatabases(context, userId, null, true);
     }
 
     @Deprecated // Use ClearUserData use case
-    public static void deleteDatabases(Context context, Id userId, boolean clearContacts) {
+    public static void deleteDatabases(Context context, UserId userId, boolean clearContacts) {
         deleteDatabases(context, userId, null, clearContacts);
     }
 
     @Deprecated // Use ClearUserData use case
-    public static void deleteDatabases(Context context, Id userId, IDBClearDone clearDoneListener) {
+    public static void deleteDatabases(Context context, UserId userId, IDBClearDone clearDoneListener) {
         deleteDatabases(context, userId, clearDoneListener, true);
     }
 
     @Deprecated // Use ClearUserData use case
-    private static void deleteDatabases(Context context, Id userId, IDBClearDone clearDoneListener, boolean clearContacts) {
+    private static void deleteDatabases(Context context, UserId userId, IDBClearDone clearDoneListener, boolean clearContacts) {
         try {
             clearStorage(
                     context,
@@ -227,14 +227,14 @@ public class AppUtil {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
         final UserManager userManager = ((ProtonMailApplication) context.getApplicationContext()).getUserManager();
-        final Id userId = userManager.requireCurrentUserId();
+        final UserId userId = userManager.requireCurrentUserId();
         final NotificationDao notificationDao = NotificationDatabase.Companion
                 .getInstance(context, userId)
                 .getDao();
         new ClearNotificationsFromDatabaseTask(notificationDao).execute();
     }
 
-    public static void clearNotifications(Context context, Id userId) {
+    public static void clearNotifications(Context context, UserId userId) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(userId.hashCode());
         final NotificationDao notificationDao = NotificationDatabase.Companion
@@ -300,7 +300,7 @@ public class AppUtil {
     @Deprecated // Use ClearUserData use case
     public static void clearStorage(
             final Context context,
-            final Id userId,
+            final UserId userId,
             final ContactDao contactDao,
             final MessageDao messageDao,
             final MessageDao searchDatabase,
@@ -329,7 +329,7 @@ public class AppUtil {
     @Deprecated // Use ClearUserData use case
     private static void clearStorage(
             final Context context,
-            final Id userId,
+            final UserId userId,
             final ContactDao contactDao,
             final MessageDao messageDao,
             final ConversationDao conversationDao,

@@ -19,10 +19,10 @@
 package ch.protonmail.android.domain.entity.user
 
 import ch.protonmail.android.domain.entity.EmailAddress
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.Validated
+import me.proton.core.domain.entity.UserId
 
 /**
  * Representation of an user's address
@@ -30,8 +30,8 @@ import ch.protonmail.android.domain.entity.Validated
  */
 @Validated
 data class Address(
-    val id: Id,
-    val domainId: Id?,
+    val id: UserId,
+    val domainId: UserId?,
     val email: EmailAddress,
     val displayName: Name?,
     val signature: NotBlankString?,
@@ -88,7 +88,7 @@ data class Addresses(
     /**
      * @return [Address] matching the given [addressId]
      */
-    fun findBy(addressId: Id): Address? =
+    fun findBy(addressId: UserId): Address? =
         addresses.values.find { it.id == addressId }
 
     /**

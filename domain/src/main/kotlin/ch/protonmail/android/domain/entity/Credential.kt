@@ -63,7 +63,7 @@ sealed class Credential {
      * At this point, if Mailbox psw is null the caller should verify that it's still not required, because Settings
      * may have change meanwhile
      *
-     * should be holding User Id, locked keys and Mailbox psw ( or null )
+     * should be holding User UserId, locked keys and Mailbox psw ( or null )
      * Note: keys are currently tied to the User
      * @see ch.protonmail.android.domain.entity.user.User.keys
      * @see ch.protonmail.android.domain.entity.user.Address.keys

@@ -24,7 +24,7 @@ import ch.protonmail.android.contacts.details.domain.model.FetchContactDetailsRe
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.utils.crypto.TextDecryptionResult
 import ezvcard.parameter.VCardParameters
 import ezvcard.property.Address
@@ -43,7 +43,7 @@ import kotlin.test.assertEquals
 
 class FetchContactsMapperTest {
 
-    private val testUserId = Id("id")
+    private val testUserId = UserId("id")
     private val userManager: UserManager = mockk {
         every { currentUserId } returns testUserId
         every { requireCurrentUserId() } returns testUserId

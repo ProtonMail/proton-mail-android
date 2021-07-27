@@ -30,7 +30,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -75,7 +74,7 @@ class MarkConversationsUnreadRemoteWorker @AssistedInject constructor(
         val requestBody = ConversationIdsRequestBody(labelId, conversationIds.asList())
 
         return runCatching {
-            protonMailApiManager.markConversationsUnread(requestBody, Id(userId))
+            protonMailApiManager.markConversationsUnread(requestBody, UserId(userId))
         }.fold(
             onSuccess = { response ->
                 Result.success(

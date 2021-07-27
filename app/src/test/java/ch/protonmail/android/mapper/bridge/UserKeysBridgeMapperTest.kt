@@ -47,7 +47,7 @@ internal class UserKeysBridgeMapperTest {
         val newKey = singleMapper { oldKey.toNewModel() }
 
         assert that newKey * {
-            +id.s equals "id"
+            +id.id equals "id"
             +privateKey.content.s equals "private_key"
             +token?.content?.s equals "token"
         }
@@ -60,7 +60,7 @@ internal class UserKeysBridgeMapperTest {
         val newKeys = multiMapper { oldKeys.toNewModel() }
 
         assert that newKeys * {
-            +primaryKey?.id?.s equals "4"
+            +primaryKey?.id?.id equals "4"
             +keys.size.fix() equals 10
         }
     }
@@ -72,7 +72,7 @@ internal class UserKeysBridgeMapperTest {
         val newKeys = multiMapper { oldKeys.toNewModel() }
 
         assert that newKeys * {
-            +primaryKey?.id?.s equals "1"
+            +primaryKey?.id?.id equals "1"
             +keys.size.fix() equals 10
         }
     }

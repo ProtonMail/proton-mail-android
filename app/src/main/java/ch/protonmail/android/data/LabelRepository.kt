@@ -20,13 +20,12 @@
 package ch.protonmail.android.data
 
 import ch.protonmail.android.data.local.model.Label
-import ch.protonmail.android.domain.entity.Id
-import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
+import kotlinx.coroutines.flow.Flow
 
 interface LabelRepository {
 
-    fun findLabels(userId: UserId, labelsIds: List<Id>): Flow<List<Label>>
+    fun findLabels(userId: UserId, labelsIds: List<UserId>): Flow<List<Label>>
 
     fun findAllLabels(userId: UserId): Flow<List<Label>>
 

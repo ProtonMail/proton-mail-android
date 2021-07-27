@@ -29,7 +29,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.withStyledAttributes
 import androidx.recyclerview.widget.DiffUtil
 import ch.protonmail.android.R
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.utils.extensions.fromAttributesOrPreviewOrNull
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -47,7 +47,7 @@ class LabelChipView @JvmOverloads constructor(
     defStyleAttr: Int = android.R.attr.textViewStyle
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
 
-    var labelId: Id? = null
+    var labelId: UserId? = null
 
     @get:ColorInt
     private val defaultBackgroundTint: Int get() =
@@ -113,7 +113,7 @@ class LabelChipView @JvmOverloads constructor(
  *  if `null` a default background will be used, for ensure readability of the text
  */
 data class LabelChipUiModel(
-    val id: Id,
+    val id: UserId,
     val name: Name,
     @ColorInt
     val color: Int?

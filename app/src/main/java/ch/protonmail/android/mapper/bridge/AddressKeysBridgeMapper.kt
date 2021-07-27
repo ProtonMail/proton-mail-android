@@ -20,7 +20,7 @@
 
 package ch.protonmail.android.mapper.bridge
 
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.AddressKey
@@ -58,7 +58,7 @@ class AddressKeysBridgeMapper @Inject constructor(
 class AddressKeyBridgeMapper @Inject constructor() : BridgeMapper<OldKey, AddressKey> {
 
     override fun OldKey.toNewModel() = AddressKey(
-        id = Id(id),
+        id = UserId(id),
         version = 4.toUInt(), // TODO not implemented on old Keys
         canEncrypt = canEncrypt(flags),
         canVerifySignature = canVerifySignature(flags),

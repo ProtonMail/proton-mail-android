@@ -130,7 +130,6 @@ import ch.protonmail.android.data.local.model.LocalAttachment;
 import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.data.local.model.MessageSender;
 import ch.protonmail.android.di.DefaultSharedPreferences;
-import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
@@ -173,6 +172,7 @@ import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import me.proton.core.accountmanager.domain.AccountManager;
+import me.proton.core.domain.entity.UserId;
 import timber.log.Timber;
 
 @AndroidEntryPoint
@@ -1460,7 +1460,7 @@ public class ComposeMessageActivity
         } else {
             binding.composerProgressLayout.setVisibility(View.GONE);
         }
-        AddressCrypto crypto = Crypto.forAddress(mUserManager, mUserManager.requireCurrentUserId(), new Id(loadedMessage.getAddressID()));
+        AddressCrypto crypto = Crypto.forAddress(mUserManager, mUserManager.requireCurrentUserId(), new UserId(loadedMessage.getAddressID()));
         if (updateAttachments) {
             composeMessageViewModel.createLocalAttachments(loadedMessage);
         }
@@ -1698,8 +1698,8 @@ public class ComposeMessageActivity
             composeMessageViewModel.getMergedContactsLiveData().observe(this, messageRecipients -> {
                 recipientAdapter.setData(messageRecipients);
             });
-            Set<Id> userIds = AccountManagerKt.allLoggedInBlocking(accountManager);
-            for(Id userId : userIds) {
+            Set<UserId> userIds = AccountManagerKt.allLoggedInBlocking(accountManager);
+            for(UserId userId : userIds) {
                 composeMessageViewModel.fetchContactGroups(userId);
             }
             composeMessageViewModel.loadPMContacts();

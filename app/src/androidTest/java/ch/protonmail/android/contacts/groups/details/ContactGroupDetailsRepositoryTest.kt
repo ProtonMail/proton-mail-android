@@ -30,7 +30,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabel
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.every
@@ -73,7 +73,7 @@ class ContactGroupDetailsRepositoryTest {
         contactGroupDetailsRepository =
             ContactGroupDetailsRepository(protonMailApi, databaseProvider, workManager, userManager)
 
-        every { userManager.requireCurrentUserId() } returns Id("id")
+        every { userManager.requireCurrentUserId() } returns UserId("id")
     }
 
     //region tests

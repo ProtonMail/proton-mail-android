@@ -19,7 +19,7 @@
 package ch.protonmail.android.crypto
 
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.UserKey
@@ -33,7 +33,7 @@ import java.util.Arrays
 class UserCrypto(
     userManager: UserManager,
     openPgp: OpenPGP,
-    userId: Id
+    userId: UserId
 ) : Crypto<UserKey>(userManager, openPgp, userId) {
 
     override val currentKeys: Collection<UserKey>

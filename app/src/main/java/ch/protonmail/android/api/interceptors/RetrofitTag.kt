@@ -18,11 +18,11 @@
  */
 package ch.protonmail.android.api.interceptors
 
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 
 /**
  * Objects of this class can be attached to OkHttp's requests and be read by Interceptors.
  */
 data class UserIdTag(
-    val id: Id
+    val id: UserId
 )

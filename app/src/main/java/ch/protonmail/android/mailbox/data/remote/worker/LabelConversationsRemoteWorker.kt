@@ -30,7 +30,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.remote.model.ConversationIdsRequestBody
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -71,7 +70,7 @@ class LabelConversationsRemoteWorker @AssistedInject constructor(
         Timber.v("LabelConversationsRemoteWorker labelId: $labelId convIds: ${conversationIds.asList()}")
 
         return runCatching {
-            protonMailApiManager.labelConversations(requestBody, Id(userId))
+            protonMailApiManager.labelConversations(requestBody, UserId(userId))
         }.fold(
             onSuccess = {
                 Result.success()

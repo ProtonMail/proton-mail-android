@@ -49,7 +49,6 @@ import ch.protonmail.android.core.apiError
 import ch.protonmail.android.core.messageId
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.notifier.UserNotifier
@@ -65,6 +64,7 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.serialize
@@ -137,7 +137,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             }
             val previousSenderAddressId = "previousSenderId82348"
             val securityOptions = MessageSecurityOptions("password", "hint", 3_273_727L)
-            val testUserId = Id("8234")
+            val testUserId = UserId("8234")
             every { userManager.currentUserId } returns testUserId
             every { userManager.requireCurrentUserId() } returns testUserId
 
@@ -166,7 +166,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             val actualMessageDbId = inputData.getLong(KEY_INPUT_SEND_MESSAGE_MSG_DB_ID, -1)
             val actualAttachmentIds = inputData.getStringArray(KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS)
             val actualMessageLocalId = inputData.getString(KEY_INPUT_SEND_MESSAGE_MESSAGE_ID)
-            val actualUserId = Id(requireNotNull(inputData.getString(KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID)))
+            val actualUserId = UserId(requireNotNull(inputData.getString(KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID)))
             val actualMessageParentId = inputData.getString(KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID)
             val actualMessageActionType = inputData.getInt(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL, -1)
             val actualPreviousSenderAddress = inputData.getString(KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID)
@@ -308,7 +308,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             every { this@mockk.messageId } returns savedDraftId
             every { this@mockk.toListString } returns "recipientOnSavedDraft@pm.me"
         }
-        val userId = Id("randomUser1234823")
+        val userId = UserId("randomUser1234823")
         givenFullValidInput(messageDbId, messageId, userId = userId)
         coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
         coEvery { messageDetailsRepository.findMessageById(savedDraftId) } returns flowOf(savedDraftMessage)
@@ -497,7 +497,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             every { this@mockk.ccListString } returns ""
             every { this@mockk.bccListString } returns ""
         }
-        val userId = Id("randomUser9234823")
+        val userId = UserId("randomUser9234823")
         givenFullValidInput(messageDbId, messageId, userId = userId)
         every { sendPreferencesFactoryAssistedFactory.create(userId) } returns sendPreferencesFactory
         coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
@@ -521,7 +521,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         val savedDraftMessageId = "23742"
         val savedDraftMessage = mockk<Message>(relaxed = true)
         val securityOptions = MessageSecurityOptions("password", "hint", 172800L)
-        val currentUserId = Id("user")
+        val currentUserId = UserId("user")
         givenFullValidInput(messageDbId, messageId, securityOptions = securityOptions, userId = currentUserId)
         coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
         coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns flowOf(savedDraftMessage)
@@ -571,7 +571,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             "key" to sendPreference
         )
         val securityOptions = MessageSecurityOptions("password", "hint", 172_800L)
-        val currentUserId = Id("user")
+        val currentUserId = UserId("user")
         givenFullValidInput(messageDbId, messageId, securityOptions = securityOptions, userId = currentUserId)
         coEvery { messageDetailsRepository.findMessageByDatabaseId(messageDbId) } returns flowOf(message)
         coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns flowOf(savedDraftMessage)
@@ -971,13 +971,13 @@ class SendMessageWorkerTest : CoroutinesTest {
         messageActionType: Constants.MessageActionType = Constants.MessageActionType.REPLY,
         previousSenderAddress: String = "prevSenderAddress923",
         securityOptions: MessageSecurityOptions? = MessageSecurityOptions(null, null, -1),
-        userId: Id = Id("randomUser132948231")
+        userId: UserId = UserId("randomUser132948231")
     ) {
         every { parameters.inputData.getLong(KEY_INPUT_SEND_MESSAGE_MSG_DB_ID, -1) } answers { messageDbId }
         every { parameters.inputData.getStringArray(KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS) } answers { attachments }
         every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_MESSAGE_ID) } answers { messageId }
         every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID) } answers { parentId }
-        every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID) } answers { userId.s }
+        every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_CURRENT_USER_ID) } answers { userId.id }
         every { parameters.inputData.getInt(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL, -1) } answers {
             messageActionType.messageActionTypeValue
         }

@@ -28,7 +28,7 @@ import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.utils.crypto.KeyInformation
 import io.mockk.coEvery
@@ -42,7 +42,7 @@ import kotlin.test.assertNotNull
 
 class FetchVerificationKeysTest : CoroutinesTest {
 
-    private val testUserId = Id("id")
+    private val testUserId = UserId("id")
     private val testUser = mockk<User> {
         every { id } returns testUserId
         every { addresses } returns mockk(relaxed = true)

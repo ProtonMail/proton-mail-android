@@ -27,7 +27,7 @@ import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.di.CurrentUserId
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.utils.ServerTime
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -42,7 +42,7 @@ class SendMessage @Inject constructor(
     private val pendingActionDao: PendingActionDao,
     private val sendMessageScheduler: SendMessageWorker.Enqueuer,
     private val addressCryptoFactory: AddressCrypto.Factory,
-    @CurrentUserId private val currentUserId: Id
+    @CurrentUserId private val currentUserId: UserId
 ) {
 
     suspend operator fun invoke(parameters: SendMessageParameters) = withContext(dispatchers.Io) {
@@ -50,7 +50,7 @@ class SendMessage @Inject constructor(
         Timber.d("Send Message use case called with messageId ${message.messageId}")
         val addressId = requireNotNull(message.addressID)
 
-        val addressCrypto = addressCryptoFactory.create(currentUserId, Id(addressId))
+        val addressCrypto = addressCryptoFactory.create(currentUserId, UserId(addressId))
         val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
         message.messageBody = encryptedBody
 

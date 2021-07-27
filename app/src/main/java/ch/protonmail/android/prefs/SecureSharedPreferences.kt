@@ -32,11 +32,11 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
 import ch.protonmail.android.core.PREF_USERNAME
 import ch.protonmail.android.di.DefaultSharedPreferences
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.obfuscate
 import ch.protonmail.android.utils.extensions.obfuscateUsername
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.android.sharedpreferences.clearAll
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.set
@@ -454,16 +454,16 @@ class SecureSharedPreferences(
         private val dispatchers: DispatcherProvider
     ) {
 
-        suspend operator fun invoke(usernames: Collection<String>): Map<String, Id> =
+        suspend operator fun invoke(usernames: Collection<String>): Map<String, UserId> =
             withContext(dispatchers.Io) {
                 usernames.mapNotNull(::migrateForUser).toMap()
             }
 
-        private fun migrateForUser(username: String): Pair<String, Id>? {
+        private fun migrateForUser(username: String): Pair<String, UserId>? {
             Timber.v("Migrating SecureSharedPreferences for ${username.obfuscateUsername()}")
 
             @Suppress("DEPRECATION") val oldPrefs = preferencesFactory._usernamePreferences(username)
-            val userId = oldPrefs.get<String>(PREF_USER_ID)?.let(::Id)
+            val userId = oldPrefs.get<String>(PREF_USER_ID)?.let(::UserId)
 
             return if (userId != null) {
                 val newPrefs = preferencesFactory.userPreferences(userId)
@@ -507,10 +507,10 @@ class SecureSharedPreferences(
             )
         }
 
-        fun userPreferences(userId: Id): SharedPreferences =
+        fun userPreferences(userId: UserId): SharedPreferences =
             SecureSharedPreferences(
                 context,
-                context.getSharedPreferences(userId.s, Context.MODE_PRIVATE),
+                context.getSharedPreferences(userId.id, Context.MODE_PRIVATE),
                 defaultSharedPreferences
             )
 
@@ -528,7 +528,7 @@ class SecureSharedPreferences(
             ReplaceWith("secureSharedPreferencesFactory.userPreferences(userId)")
         )
         @Synchronized
-        fun getPrefsForUser(context: Context, userId: Id): SharedPreferences =
+        fun getPrefsForUser(context: Context, userId: UserId): SharedPreferences =
             Factory(
                 context.applicationContext,
                 PreferenceManager.getDefaultSharedPreferences(context)

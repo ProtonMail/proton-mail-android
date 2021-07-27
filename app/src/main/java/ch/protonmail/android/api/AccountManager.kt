@@ -25,13 +25,13 @@ import androidx.core.content.edit
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.di.ApplicationModule
 import ch.protonmail.android.di.DefaultSharedPreferences
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.extensions.obfuscateUsername
 import ch.protonmail.android.utils.getStringList
 import ch.protonmail.libs.core.preferences.clearOnly
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -63,30 +63,30 @@ class AccountManager(
     }
 
     @Deprecated("For Test only.")
-    suspend fun allLoggedInForTest(): Set<Id> = withContext(dispatchers.Io) {
-        sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()).map(::Id).toSet()
+    suspend fun allLoggedInForTest(): Set<UserId> = withContext(dispatchers.Io) {
+        sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()).map(::UserId).toSet()
     }
 
     @Deprecated("For Test only.")
-    suspend fun allSavedForTest(): Set<Id> = withContext(dispatchers.Io) {
-        sharedPreferences.get(PREF_ALL_SAVED, emptySet<String>()).map(::Id).toSet()
+    suspend fun allSavedForTest(): Set<UserId> = withContext(dispatchers.Io) {
+        sharedPreferences.get(PREF_ALL_SAVED, emptySet<String>()).map(::UserId).toSet()
     }
 
     @Deprecated("For Test only.")
-    suspend fun allLoggedOutForTest(): Set<Id> = withContext(dispatchers.Io) {
+    suspend fun allLoggedOutForTest(): Set<UserId> = withContext(dispatchers.Io) {
         allSavedForTest() - allLoggedInForTest()
     }
 
-    private suspend fun setLoggedIn(userIds: Collection<Id>) = withContext(dispatchers.Io) {
+    private suspend fun setLoggedIn(userIds: Collection<UserId>) = withContext(dispatchers.Io) {
         sharedPreferences[PREF_ALL_LOGGED_IN] =
-            sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) + userIds.map { it.s }
+            sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) + userIds.map { it.id }
 
         setSaved(userIds)
     }
 
-    private suspend fun setSaved(userIds: Collection<Id>) = withContext(dispatchers.Io) {
+    private suspend fun setSaved(userIds: Collection<UserId>) = withContext(dispatchers.Io) {
         sharedPreferences[PREF_ALL_SAVED] =
-            sharedPreferences.get(PREF_ALL_SAVED, emptySet<String>()) + userIds.map { it.s }
+            sharedPreferences.get(PREF_ALL_SAVED, emptySet<String>()) + userIds.map { it.id }
     }
 
     /**

@@ -27,7 +27,7 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.utils.ServerTime
 import io.mockk.MockKAnnotations
 import io.mockk.coVerify
@@ -47,7 +47,7 @@ import kotlin.test.assertEquals
 
 class SendMessageTest : CoroutinesTest {
 
-    private val testUserId = Id("id")
+    private val testUserId = UserId("id")
 
     @RelaxedMockK
     private lateinit var addressCryptoFactory: AddressCrypto.Factory
@@ -80,7 +80,7 @@ class SendMessageTest : CoroutinesTest {
         val addressCrypto = mockk<AddressCrypto> {
             every { encrypt(decryptedBody, true).armored } returns "encrypted armored content"
         }
-        every { addressCryptoFactory.create(testUserId, Id(senderAddressId)) } returns addressCrypto
+        every { addressCryptoFactory.create(testUserId, UserId(senderAddressId)) } returns addressCrypto
 
         // When
         val parameters = SendMessage.SendMessageParameters(message, listOf(), "", NONE, "", securityOptions)

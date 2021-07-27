@@ -20,7 +20,7 @@
 package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.repository.MessageRepository
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +36,7 @@ class GetMessagesByLocation @Inject constructor(
     operator fun invoke(
         mailboxLocation: Constants.MessageLocationType,
         labelId: String?,
-        userId: Id
+        userId: UserId
     ): Flow<GetMessagesResult> =
         when (mailboxLocation) {
             Constants.MessageLocationType.LABEL,

@@ -21,29 +21,29 @@ package ch.protonmail.android.jobs
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.di.JobEntryPoint
-import ch.protonmail.android.domain.entity.Id
 import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.Params
 import com.birbit.android.jobqueue.RetryConstraint
 import dagger.hilt.EntryPoints
+import me.proton.core.domain.entity.UserId
 import timber.log.Timber
 
 abstract class ProtonMailBaseJob @JvmOverloads protected constructor(
     params: Params?,
-    userId: Id? = null
+    userId: UserId? = null
 ) : Job(params) {
 
     protected val entryPoint
         get() = EntryPoints.get(ProtonMailApplication.getApplication(), JobEntryPoint::class.java)
 
     // This property is serialized by JobQueue library.
-    private var userIdString: String? = userId?.s ?: getUserManager().currentUserId?.s
+    private var userIdString: String? = userId?.id ?: getUserManager().currentUserId?.id
 
-    protected val userId: Id?
-        get() = userIdString?.let(::Id)
+    protected val userId: UserId?
+        get() = userIdString?.let(::UserId)
             ?: getUserManager().currentUserId
 
-    protected fun requireUserId(): Id =
+    protected fun requireUserId(): UserId =
         requireNotNull(userId)
 
     protected fun getAccountManager() = entryPoint.accountManager()

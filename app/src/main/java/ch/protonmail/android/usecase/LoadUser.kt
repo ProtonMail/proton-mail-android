@@ -20,7 +20,7 @@
 package ch.protonmail.android.usecase
 
 import arrow.core.Either
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper
 import kotlinx.coroutines.runBlocking
@@ -36,7 +36,7 @@ class LoadUser @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) {
 
-    suspend operator fun invoke(userId: Id): Either<Error, User> =
+    suspend operator fun invoke(userId: UserId): Either<Error, User> =
         withContext(dispatchers.Io) {
             loadLegacyUser(userId)
                 .map { mapper { it.toNewUser() } }
@@ -47,7 +47,7 @@ class LoadUser @Inject constructor(
         "Should not be used, necessary only for old and Java classes",
         ReplaceWith("invoke(userId)")
     )
-    fun blocking(userId: Id) = runBlocking {
+    fun blocking(userId: UserId) = runBlocking {
         invoke(userId)
     }
 

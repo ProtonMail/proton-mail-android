@@ -43,7 +43,7 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.data.local.MessageDao
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.util.checkNotBlank
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
@@ -406,8 +406,8 @@ data class Message @JvmOverloads constructor(
      */
     @JvmOverloads
     @Deprecated("This logic should be extracted to a testable component for any new usages. Tracked in MAILAND-1566")
-    fun decrypt(userManager: UserManager, userId: Id, verKeys: List<KeyInformation>? = null) {
-        val addressId = Id(checkNotNull(addressID))
+    fun decrypt(userManager: UserManager, userId: UserId, verKeys: List<KeyInformation>? = null) {
+        val addressId = UserId(checkNotNull(addressID))
         val addressCrypto = Crypto.forAddress(userManager, userId, addressId)
         decrypt(addressCrypto, verKeys)
     }

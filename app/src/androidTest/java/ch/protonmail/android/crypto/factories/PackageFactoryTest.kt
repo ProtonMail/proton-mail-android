@@ -29,7 +29,7 @@ import ch.protonmail.android.api.models.factories.PackageFactory
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.utils.HTMLToMDConverter
 import ch.protonmail.android.utils.base64.Base64Encoder
 import com.proton.gopenpgp.crypto.SessionKey
@@ -95,9 +95,9 @@ class PackageFactoryTest {
             every { dataPacket } returns "dataPacket".toByteArray()
         }
         val currentUsername = "Marino"
-        val currentUserId = Id("marino")
+        val currentUserId = UserId("marino")
         every { base64Encoder.encode(any()) } returns "encodedBase64"
-        every { addressCryptoFactory.create(currentUserId, Id(addressId)) } returns crypto
+        every { addressCryptoFactory.create(currentUserId, UserId(addressId)) } returns crypto
         every { htmlToMDConverter.convert(any()) } returns bodyPlainText
         every { crypto.encrypt(bodyPlainText, true) } returns cipherText
         every { crypto.decryptKeyPacket(keyPackage) } returns "decryptedKeyPackets".toByteArray()

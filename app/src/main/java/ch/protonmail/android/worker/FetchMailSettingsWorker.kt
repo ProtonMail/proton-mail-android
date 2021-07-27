@@ -27,7 +27,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.usecase.fetch.FetchMailSettings
 import kotlinx.coroutines.flow.first
 import dagger.assisted.Assisted

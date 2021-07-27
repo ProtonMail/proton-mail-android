@@ -50,7 +50,7 @@ import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse;
-import ch.protonmail.android.domain.entity.Id;
+import me.proton.core.domain.entity.UserId;
 import ch.protonmail.android.domain.entity.user.Address;
 import ch.protonmail.android.domain.entity.user.AddressKey;
 import ch.protonmail.android.domain.entity.user.Addresses;
@@ -70,14 +70,14 @@ public class SendPreferencesFactory {
     private final MailSettings mailSettings;
     private final UserCrypto crypto;
     private final ContactDao contactDao;
-    private final Id userId;
+    private final UserId userId;
 
     @AssistedInject
     public SendPreferencesFactory(
             Context context,
             ProtonMailApiManager api,
             UserManager userManager,
-            @Assisted Id userId
+            @Assisted UserId userId
     ) {
         this.mApi = api;
         this.mUserManager = userManager;
@@ -89,7 +89,7 @@ public class SendPreferencesFactory {
 
     @AssistedInject.Factory
     public interface Factory {
-        SendPreferencesFactory create(Id userId);
+        SendPreferencesFactory create(UserId userId);
     }
 
     @WorkerThread

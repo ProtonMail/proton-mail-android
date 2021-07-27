@@ -29,7 +29,7 @@ import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.model.Message
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.utils.MessageBodyFileManager
 import com.birbit.android.jobqueue.JobManager
@@ -82,7 +82,7 @@ class MessageRepositoryTest {
     }
 
     private val testUserName = "userName1"
-    private val testUserId = Id(testUserName)
+    private val testUserId = UserId(testUserName)
     private val message1 = mockk<Message>(relaxed = true)
     private val message2 = mockk<Message>(relaxed = true)
     private val message3 = mockk<Message>(relaxed = true)
@@ -556,7 +556,7 @@ class MessageRepositoryTest {
 
         // when
         val resultsList =
-            messageRepository.observeMessagesByLocation(mailboxLocation, Id(testUserName)).take(2).toList()
+            messageRepository.observeMessagesByLocation(mailboxLocation, UserId(testUserName)).take(2).toList()
 
         // then
         coVerify {

@@ -19,7 +19,7 @@
 package ch.protonmail.android.jobs
 
 import ch.protonmail.android.api.models.MailSettings
-import ch.protonmail.android.domain.entity.Id
+import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.feature.user.updateAddressBlocking
 import ch.protonmail.android.feature.user.updateOrderBlocking
@@ -31,7 +31,7 @@ class UpdateSettingsJob(
     private val newSignature: String? = null,
     private val addressIds: List<String>? = null,
     private val backPressed: Boolean = false,
-    private val addressId: Id? = null
+    private val addressId: UserId? = null
 ) : ProtonMailBaseJob(Params(Priority.LOW).requireNetwork()) {
 
     @Throws(Throwable::class)
@@ -39,7 +39,7 @@ class UpdateSettingsJob(
         try {
             val userId = getUserManager().requireCurrentUserId()
             if (addressIds != null) {
-                getUserAddressManager().updateOrderBlocking(userId, addressIds.map { Id(it) })
+                getUserAddressManager().updateOrderBlocking(userId, addressIds.map { UserId(it) })
                 getUserManager().clearCache()
             }
             if ((newDisplayName != null || newSignature != null) && addressId != null) {
