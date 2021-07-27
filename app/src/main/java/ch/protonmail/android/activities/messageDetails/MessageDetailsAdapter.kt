@@ -190,7 +190,8 @@ internal class MessageDetailsAdapter(
             messageDetailsHeaderView.bind(
                 message,
                 exclusiveLabelsPerMessage[message.messageId] ?: listOf(),
-                nonExclusiveLabelsPerMessage[message.messageId] ?: listOf()
+                nonExclusiveLabelsPerMessage[message.messageId] ?: listOf(),
+                ::onHeaderCollapsed
             )
 
             messageDetailsHeaderView.setOnClickListener { view ->
@@ -211,6 +212,10 @@ internal class MessageDetailsAdapter(
             if (isLastItemHeader()) {
                 itemView.lastConversationMessageCollapsedDivider.isVisible = !isMessageBodyExpanded()
             }
+        }
+
+        private fun onHeaderCollapsed() {
+            notifyItemChanged(layoutPosition)
         }
 
         private fun isMessageBodyExpanded() = isExpanded(layoutPosition)

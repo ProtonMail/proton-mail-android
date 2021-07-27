@@ -29,7 +29,6 @@ import android.text.method.LinkMovementMethod
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -177,19 +176,11 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
 
     private var isExpanded = false
 
-    private val onChevronClickListener = OnClickListener {
-        if (isExpanded) {
-            collapseHeader()
-        } else {
-            expandHeader()
-        }
-        isExpanded = isExpanded.not()
-    }
-
     fun bind(
         message: Message,
         exclusiveLabels: List<Label>,
-        nonExclusiveLabels: List<LabelChipUiModel>
+        nonExclusiveLabels: List<LabelChipUiModel>,
+        onHeaderCollapsed: () -> Unit
     ) {
         val senderText = getSenderText(message)
         val initials = if (senderText.isEmpty()) HYPHEN else senderText.substring(0, 1)
@@ -250,7 +241,15 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
 
         storageTextView.text = Formatter.formatShortFileSize(context, message.totalSize)
 
-        expandCollapseChevronImageView.setOnClickListener(onChevronClickListener)
+        expandCollapseChevronImageView.setOnClickListener {
+            if (isExpanded) {
+                collapseHeader()
+                onHeaderCollapsed()
+            } else {
+                expandHeader()
+            }
+            isExpanded = isExpanded.not()
+        }
         expandedHeaderGroup.visibility = View.GONE
         collapsedHeaderGroup.visibility = View.VISIBLE
 
