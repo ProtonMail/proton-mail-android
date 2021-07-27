@@ -24,8 +24,6 @@ import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.requests.DisplayName
 import ch.protonmail.android.api.models.requests.ShowImages
 import ch.protonmail.android.api.models.requests.Signature
-import ch.protonmail.android.api.models.requests.SwipeLeft
-import ch.protonmail.android.api.models.requests.SwipeRight
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.domain.entity.Id
@@ -47,14 +45,6 @@ class MailSettingsApi(private val service: MailSettingsService) : BaseApi(), Mai
     @Throws(IOException::class)
     override fun updateDisplayName(displayName: String): ResponseBody? =
         ParseUtils.parse(service.updateDisplay(DisplayName(displayName)).execute())
-
-    @Throws(IOException::class)
-    override fun updateLeftSwipe(swipeSelection: Int): ResponseBody? =
-        ParseUtils.parse(service.updateLeftSwipe(SwipeLeft(swipeSelection)).execute())
-
-    @Throws(IOException::class)
-    override fun updateRightSwipe(swipeSelection: Int): ResponseBody? =
-        ParseUtils.parse(service.updateRightSwipe(SwipeRight(swipeSelection)).execute())
 
     @Throws(IOException::class)
     override fun updateAutoShowImages(autoShowImages: Int): ResponseBody? =

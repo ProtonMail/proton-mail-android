@@ -355,10 +355,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun updateDisplayName(displayName: String): ResponseBody? = api.updateDisplayName(displayName)
 
-    override fun updateLeftSwipe(swipeSelection: Int): ResponseBody? = api.updateLeftSwipe(swipeSelection)
-
-    override fun updateRightSwipe(swipeSelection: Int): ResponseBody? = api.updateRightSwipe(swipeSelection)
-
     override fun updateAutoShowImages(autoShowImages: Int): ResponseBody? = api.updateAutoShowImages(autoShowImages)
 
     override suspend fun fetchConversations(params: GetConversationsParameters): ConversationsResponse =

@@ -37,11 +37,5 @@ interface MailSettingsApiSpec {
     fun updateDisplayName(displayName: String): ResponseBody?
 
     @Throws(IOException::class)
-    fun updateLeftSwipe(swipeSelection: Int): ResponseBody?
-
-    @Throws(IOException::class)
-    fun updateRightSwipe(swipeSelection: Int): ResponseBody?
-
-    @Throws(IOException::class)
     fun updateAutoShowImages(autoShowImages: Int): ResponseBody?
 }

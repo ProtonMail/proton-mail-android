@@ -24,8 +24,6 @@ import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.requests.DisplayName
 import ch.protonmail.android.api.models.requests.ShowImages
 import ch.protonmail.android.api.models.requests.Signature
-import ch.protonmail.android.api.models.requests.SwipeLeft
-import ch.protonmail.android.api.models.requests.SwipeRight
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
 import retrofit2.Call
@@ -57,14 +55,6 @@ interface MailSettingsService {
     @PUT("mail/v4/settings/signature")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun updateSignature(@Body signature: Signature): Call<ResponseBody>
-
-    @PUT("mail/v4/settings/swipeleft")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun updateLeftSwipe(@Body swipeLeft: SwipeLeft): Call<ResponseBody>
-
-    @PUT("mail/v4/settings/swiperight")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun updateRightSwipe(@Body swipeRight: SwipeRight): Call<ResponseBody>
 
     @PUT("mail/v4/settings/images")
     fun updateAutoShowImages(@Body showImages: ShowImages): Call<ResponseBody>
