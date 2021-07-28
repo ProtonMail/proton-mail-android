@@ -28,6 +28,7 @@ import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.MessageActionSheetAction
@@ -247,7 +248,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyUnStarMessageCallsChangeConversationStarredStatusWhenConversationModeIsEnabledAndAConversationIsBeingUnStarred() {
         // given
         val conversationId = "conversationId01"
-        val expected = MessageActionSheetAction.ChangeStarredStatus(false)
+        val expected = MessageActionSheetAction.ChangeStarredStatus(starredStatus = false, isSuccessful = true)
         val userId = UserId("userId")
         val unstarAction = ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
         every { conversationModeEnabled(any()) } returns true
@@ -255,6 +256,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
         } returns ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+        coEvery { changeConversationsStarredStatus.invoke(listOf(conversationId), userId, unstarAction) } returns ConversationsActionResult.Success
 
         // when
         viewModel.unStarMessage(
@@ -299,7 +301,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
     fun verifyStarMessageCallsMessageRepositoryToStarMessageWhenConversationIsEnabledAndActionIsBeingAppliedToASpecificMessageInAConversation() {
         // given
         val messageId = "messageId3"
-        val expected = MessageActionSheetAction.ChangeStarredStatus(true)
+        val expected = MessageActionSheetAction.ChangeStarredStatus(true, isSuccessful = true)
         every { conversationModeEnabled(any()) } returns true
         every { messageRepository.starMessages(listOf(messageId)) } just Runs
         every {
@@ -307,7 +309,7 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
         val userId = UserId("userId")
         every { accountManager.getPrimaryUserId() } returns flowOf(userId)
-        coEvery { changeConversationsStarredStatus(any(), any(), any()) } just Runs
+        coEvery { changeConversationsStarredStatus(any(), any(), any()) } returns ConversationsActionResult.Success
 
         // when
         viewModel.starMessage(

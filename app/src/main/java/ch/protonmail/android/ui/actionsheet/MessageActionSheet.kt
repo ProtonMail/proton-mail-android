@@ -26,6 +26,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -375,7 +376,13 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                 sheetAction.actionSheetTarget
             )
             is MessageActionSheetAction.ShowMessageHeaders -> showMessageHeaders(sheetAction.messageHeaders)
-            is MessageActionSheetAction.ChangeStarredStatus -> dismiss()
+            is MessageActionSheetAction.ChangeStarredStatus -> {
+                if (sheetAction.isSuccessful) {
+                    dismiss()
+                } else {
+                    showCouldNotCompleteActionError()
+                }
+            }
             is MessageActionSheetAction.Delete -> dismiss()
             is MessageActionSheetAction.DismissActionSheet ->
                 handleDismissBehavior(sheetAction.shallDismissBackingActivity)
@@ -416,6 +423,14 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             )
         )
         dismiss()
+    }
+
+    private fun showCouldNotCompleteActionError() {
+        Toast.makeText(
+            context,
+            context?.getString(R.string.could_not_complete_action),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     companion object {

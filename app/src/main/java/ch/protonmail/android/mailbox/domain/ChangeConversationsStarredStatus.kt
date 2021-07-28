@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.mailbox.domain
 
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
@@ -33,8 +34,8 @@ class ChangeConversationsStarredStatus @Inject constructor(
         conversationIds: List<String>,
         userId: UserId,
         action: Action
-    ) {
-        if (action == Action.ACTION_STAR) {
+    ): ConversationsActionResult {
+        return if (action == Action.ACTION_STAR) {
             conversationsRepository.star(conversationIds, userId)
         } else {
             conversationsRepository.unstar(conversationIds, userId)

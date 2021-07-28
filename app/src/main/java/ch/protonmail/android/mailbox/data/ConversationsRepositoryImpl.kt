@@ -207,7 +207,10 @@ class ConversationsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun star(conversationIds: List<String>, userId: UserId) {
+    override suspend fun star(
+        conversationIds: List<String>,
+        userId: UserId
+    ): ConversationsActionResult {
         val starredLabelId = Constants.MessageLocationType.STARRED.messageLocationTypeValue.toString()
 
         labelConversationsRemoteWorker.enqueue(conversationIds, starredLabelId, userId)
@@ -221,24 +224,37 @@ class ConversationsRepositoryImpl @Inject constructor(
                 lastMessageTime = max(lastMessageTime, message.time)
             }
 
-            addLabelsToConversation(conversationId, userId, listOf(starredLabelId), lastMessageTime)
+            val result = addLabelsToConversation(conversationId, userId, listOf(starredLabelId), lastMessageTime)
+            if (result is ConversationsActionResult.Error) {
+                return result
+            }
         }
+
+        return ConversationsActionResult.Success
     }
 
-    override suspend fun unstar(conversationIds: List<String>, userId: UserId) {
+    override suspend fun unstar(
+        conversationIds: List<String>,
+        userId: UserId
+    ): ConversationsActionResult {
         val starredLabelId = Constants.MessageLocationType.STARRED.messageLocationTypeValue.toString()
 
         unlabelConversationsRemoteWorker.enqueue(conversationIds, starredLabelId, userId)
 
         conversationIds.forEach { conversationId ->
             Timber.v("UnStar conversation $conversationId")
-            removeLabelsFromConversation(conversationId, userId, listOf(starredLabelId))
+            val result = removeLabelsFromConversation(conversationId, userId, listOf(starredLabelId))
+            if (result is ConversationsActionResult.Error) {
+                return result
+            }
 
             getAllMessagesFromAConversation(conversationId).forEach { message ->
                 yield()
                 messageDao.updateStarred(message.messageId!!, false)
             }
         }
+
+        return ConversationsActionResult.Success
     }
 
     override suspend fun moveToFolder(
