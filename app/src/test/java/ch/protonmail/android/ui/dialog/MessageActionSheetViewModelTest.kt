@@ -283,6 +283,15 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         every {
             savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
         } returns ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+        coEvery {
+            changeConversationsReadStatus.invoke(
+                listOf(conversationId),
+                markReadAction,
+                userId,
+                location,
+                location.messageLocationTypeValue.toString()
+            )
+        } returns ConversationsActionResult.Success
 
         // when
         viewModel.markRead(

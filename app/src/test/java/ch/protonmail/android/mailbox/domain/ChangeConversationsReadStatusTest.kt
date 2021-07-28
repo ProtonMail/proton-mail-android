@@ -20,11 +20,10 @@
 package ch.protonmail.android.mailbox.domain
 
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import kotlin.test.BeforeTest
@@ -54,7 +53,7 @@ class ChangeConversationsReadStatusTest {
             val conversation2 = "conversation2"
             val conversationIds = listOf(conversation1, conversation2)
             val userId = UserId("id")
-            coEvery { conversationsRepository.markRead(conversationIds, userId) } just runs
+            coEvery { conversationsRepository.markRead(conversationIds, userId) } returns ConversationsActionResult.Success
 
             // when
             changeConversationsReadStatus(
@@ -79,7 +78,7 @@ class ChangeConversationsReadStatusTest {
             val conversation1 = "conversation1"
             val conversation2 = "conversation2"
             val conversationIds = listOf(conversation1, conversation2)
-            coEvery { conversationsRepository.markUnread(conversationIds, any(), any(), any()) } just runs
+            coEvery { conversationsRepository.markUnread(conversationIds, any(), any(), any()) } returns ConversationsActionResult.Success
 
             // when
             changeConversationsReadStatus(

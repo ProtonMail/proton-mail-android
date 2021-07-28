@@ -223,22 +223,29 @@ class MessageActionSheetViewModel @Inject constructor(
             if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
-                    changeConversationsReadStatus(
+                    val result = changeConversationsReadStatus(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
                         primaryUserId,
                         location,
                         locationId
                     )
+                    if (result is ConversationsActionResult.Error) {
+                        cancel("Could not complete the action")
+                    }
                 } else {
                     Timber.e("Primary user id is null. Cannot mark message/conversation unread")
                 }
             } else {
                 messageRepository.markUnRead(ids)
             }
-        }.invokeOnCompletion {
-            val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+        }.invokeOnCompletion { cancellationException ->
+            if (cancellationException != null) {
+                actionsMutableFlow.value = MessageActionSheetAction.CouldNotCompleteActionError
+            } else {
+                val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+            }
         }
     }
 
@@ -252,22 +259,29 @@ class MessageActionSheetViewModel @Inject constructor(
             if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
-                    changeConversationsReadStatus(
+                    val result = changeConversationsReadStatus(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
                         primaryUserId,
                         location,
                         locationId
                     )
+                    if (result is ConversationsActionResult.Error) {
+                        cancel("Could not complete the action")
+                    }
                 } else {
                     Timber.e("Primary user id is null. Cannot mark message/conversation read")
                 }
             } else {
                 messageRepository.markRead(ids)
             }
-        }.invokeOnCompletion {
-            val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+        }.invokeOnCompletion { cancellationException ->
+            if (cancellationException != null) {
+                actionsMutableFlow.value = MessageActionSheetAction.CouldNotCompleteActionError
+            } else {
+                val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+            }
         }
     }
 

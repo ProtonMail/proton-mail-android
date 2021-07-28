@@ -80,14 +80,14 @@ interface ConversationsRepository {
 
     fun loadMore(params: GetConversationsParameters)
 
-    suspend fun markRead(conversationIds: List<String>, userId: UserId)
+    suspend fun markRead(conversationIds: List<String>, userId: UserId): ConversationsActionResult
 
     suspend fun markUnread(
         conversationIds: List<String>,
         userId: UserId,
         location: Constants.MessageLocationType,
         locationId: String
-    )
+    ): ConversationsActionResult
 
     suspend fun star(conversationIds: List<String>, userId: UserId): ConversationsActionResult
 

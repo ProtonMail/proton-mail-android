@@ -170,7 +170,7 @@ class ConversationsRepositoryImpl @Inject constructor(
     override suspend fun markRead(
         conversationIds: List<String>,
         userId: UserId
-    ) {
+    ): ConversationsActionResult {
         markConversationsReadWorker.enqueue(conversationIds, userId)
 
         conversationIds.forEach { conversationId ->
@@ -181,6 +181,8 @@ class ConversationsRepositoryImpl @Inject constructor(
                 messageDao.saveMessage(message.apply { setIsRead(true) })
             }
         }
+
+        return ConversationsActionResult.Success
     }
 
     override suspend fun markUnread(
@@ -188,11 +190,15 @@ class ConversationsRepositoryImpl @Inject constructor(
         userId: UserId,
         location: Constants.MessageLocationType,
         locationId: String
-    ) {
+    ): ConversationsActionResult {
         markConversationsUnreadWorker.enqueue(conversationIds, locationId, userId)
 
         conversationIds.forEach forEachConversation@{ conversationId ->
-            val conversation = requireNotNull(conversationDao.findConversation(conversationId, userId.id))
+            val conversation = conversationDao.findConversation(conversationId, userId.id)
+            if (conversation == null) {
+                Timber.e("Conversation with id $conversationId could not be found in DB")
+                return ConversationsActionResult.Error
+            }
             conversationDao.updateNumUnreadMessages(conversation.numUnread + 1, conversationId)
 
             // Only the latest unread message from the current location is marked as unread
@@ -205,6 +211,8 @@ class ConversationsRepositoryImpl @Inject constructor(
                 }
             }
         }
+
+        return ConversationsActionResult.Success
     }
 
     override suspend fun star(
