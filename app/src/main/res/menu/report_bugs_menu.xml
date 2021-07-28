@@ -22,7 +22,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <item
         android:id="@+id/send_report"
-        android:icon="@drawable/ic_menu_send"
+        android:icon="@drawable/ic_paper_plane"
         android:title="@string/send_report"
         app:showAsAction="ifRoom" />
 
