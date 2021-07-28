@@ -98,7 +98,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/forwardedImageView"
         app:layout_constraintEnd_toStartOf="@id/lockIconTextView"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/senderInitialView"
+        app:layout_constraintBottom_toBottomOf="@id/senderInitialView"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constrainedWidth="true"
@@ -393,8 +394,9 @@
         android:id="@+id/collapsedHeaderGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="lockIconTextView, locationImageView,
+        app:constraint_referenced_ids="lockIconTextView,
         toCollapsedTextView, recipientsCollapsedTextView"
+        android:visibility="gone"
         tools:visibility="gone"/>
 
     <androidx.constraintlayout.widget.Group

@@ -268,17 +268,39 @@ class MessageDetailsHeaderView @JvmOverloads constructor(
         expandCollapseChevronImageView.isVisible = false
     }
 
+    fun hideRecipientsCollapsedView() {
+        collapsedHeaderGroup.isVisible = false
+    }
+
+    fun showRecipientsCollapsedView() {
+        collapsedHeaderGroup.isVisible = true
+    }
+
     fun collapseHeader() {
         expandedHeaderGroup.visibility = GONE
         collapsedHeaderGroup.visibility = VISIBLE
+        locationImageView.visibility = VISIBLE
         expandCollapseChevronImageView.setImageDrawable(
             ContextCompat.getDrawable(context, R.drawable.ic_chevron_down)
         )
     }
 
+    fun showMessageAsUnread() {
+        senderNameTextView.setTypeface(null, Typeface.BOLD)
+        timeDateTextView.setTypeface(null, Typeface.BOLD)
+        timeDateTextView.setTextColor(context.getColor(R.color.text_norm))
+    }
+
+    fun showMessageAsRead() {
+        senderNameTextView.setTypeface(null, Typeface.NORMAL)
+        timeDateTextView.setTypeface(null, Typeface.NORMAL)
+        timeDateTextView.setTextColor(context.getColor(R.color.text_weak))
+    }
+
     private fun expandHeader() {
         collapsedHeaderGroup.visibility = GONE
         expandedHeaderGroup.visibility = VISIBLE
+        locationImageView.visibility = GONE
         expandCollapseChevronImageView.setImageDrawable(
             ContextCompat.getDrawable(context, R.drawable.ic_chevron_up)
         )
