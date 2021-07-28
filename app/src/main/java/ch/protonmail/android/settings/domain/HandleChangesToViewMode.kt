@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.settings.domain
 
+import ch.protonmail.android.featureflags.FeatureFlagsManager
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.mailsettings.domain.entity.ViewMode
@@ -27,6 +28,7 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 class HandleChangesToViewMode @Inject constructor(
+    private val featureFlags: FeatureFlagsManager = FeatureFlagsManager(),
     private val mailSettingsRepository: MailSettingsRepository,
     private val dispatchers: DispatcherProvider
 ) {
@@ -39,6 +41,8 @@ class HandleChangesToViewMode @Inject constructor(
         userId: UserId,
         viewMode: ViewMode
     ) = withContext(dispatchers.Io) {
-        mailSettingsRepository.updateViewMode(userId, viewMode)
+        if (featureFlags.isChangeViewModeFeatureEnabled()) {
+            mailSettingsRepository.updateViewMode(userId, viewMode)
+        }
     }
 }
