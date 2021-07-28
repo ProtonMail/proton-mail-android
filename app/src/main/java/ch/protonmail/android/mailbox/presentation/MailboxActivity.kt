@@ -45,6 +45,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.os.postDelayed
 import androidx.core.view.isVisible
+import androidx.core.view.postDelayed
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.loader.app.LoaderManager
@@ -165,6 +166,7 @@ private const val STATE_MAILBOX_LABEL_LOCATION = "mailbox_label_location"
 private const val STATE_MAILBOX_LABEL_LOCATION_NAME = "mailbox_label_location_name"
 const val LOADER_ID_LABELS_OFFLINE = 32
 private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
+private const val ACTION_MODE_STATUS_BAR_COLOR_DELAY = 500L
 
 @AndroidEntryPoint
 internal class MailboxActivity :
@@ -1017,19 +1019,40 @@ internal class MailboxActivity :
         //endregion
     }
 
+    // region Action mode
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         actionMode = mode
         mailboxSwipeRefreshLayout.isEnabled = false
         return true
     }
 
-    override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
-        return true
+    override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = true
+
+    override fun onActionModeStarted(mode: ActionMode?) {
+        super.onActionModeStarted(mode)
+        // We need to set a solid color for status bar during Action mode, or it will be black
+        window.statusBarColor = getColor(R.color.status_bar)
     }
 
-    override fun onActionItemClicked(mode: ActionMode, menuItem: MenuItem): Boolean {
-        return true
+    override fun onActionItemClicked(mode: ActionMode, menuItem: MenuItem) = true
+
+    override fun onActionModeFinished(mode: ActionMode?) {
+        super.onActionModeFinished(mode)
+        // The ActionMode will be visually closed with a small delay after this callback ( or any other, like
+        //  onDestroyActionMode ), for this reason we apply a small delay before making the status bar transparent
+        //  again, in order to avoid to flash a black status bar
+        window.decorView.postDelayed(ACTION_MODE_STATUS_BAR_COLOR_DELAY) {
+            window.statusBarColor = getColor(R.color.transparent)
+        }
     }
+
+    override fun onDestroyActionMode(mode: ActionMode) {
+        actionMode = null
+        mailboxActionsView.visibility = View.GONE
+        mailboxSwipeRefreshLayout.isEnabled = true
+        mailboxAdapter.endSelectionMode()
+    }
+    // endregion
 
     private fun setUpMailboxActionsView() {
         val actionsUiModel = BottomActionsView.UiModel(
@@ -1132,13 +1155,6 @@ internal class MailboxActivity :
             )
         )
             .show(supportFragmentManager, MessageActionSheet::class.qualifiedName)
-    }
-
-    override fun onDestroyActionMode(mode: ActionMode) {
-        actionMode = null
-        mailboxActionsView.visibility = View.GONE
-        mailboxSwipeRefreshLayout.isEnabled = true
-        mailboxAdapter.endSelectionMode()
     }
 
     private fun showFoldersManager(messageIds: List<String>) {
