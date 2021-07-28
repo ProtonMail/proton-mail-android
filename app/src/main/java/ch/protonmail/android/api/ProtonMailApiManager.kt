@@ -28,7 +28,6 @@ import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.ContactsDataResponse
 import ch.protonmail.android.api.models.CreateContact
 import ch.protonmail.android.api.models.CreateContactV2BodyItem
-import ch.protonmail.android.api.models.CreateOrganizationRequest
 import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.GetSubscriptionResponse
@@ -313,9 +312,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override suspend fun fetchOrganization(): ApiResult<OrganizationResponse> = api.fetchOrganization()
 
     override suspend fun fetchOrganizationKeys(): ApiResult<Keys> = api.fetchOrganizationKeys()
-
-    override suspend fun createOrganization(body: CreateOrganizationRequest): ApiResult<OrganizationResponse> =
-        api.createOrganization(body)
 
     override suspend fun fetchSubscription(): GetSubscriptionResponse = api.fetchSubscription()
 

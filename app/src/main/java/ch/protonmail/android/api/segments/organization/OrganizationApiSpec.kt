@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.api.segments.organization
 
-import ch.protonmail.android.api.models.CreateOrganizationRequest
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.OrganizationResponse
 import me.proton.core.network.domain.ApiResult
@@ -29,5 +28,4 @@ interface OrganizationApiSpec {
 
     suspend fun fetchOrganizationKeys(): ApiResult<Keys>
 
-    suspend fun createOrganization(body: CreateOrganizationRequest): ApiResult<OrganizationResponse>
 }

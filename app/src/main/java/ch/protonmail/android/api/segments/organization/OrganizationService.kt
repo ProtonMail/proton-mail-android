@@ -18,16 +18,13 @@
  */
 package ch.protonmail.android.api.segments.organization
 
-import ch.protonmail.android.api.models.CreateOrganizationRequest
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.OrganizationResponse
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
-import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
-import retrofit2.http.POST
 
 interface OrganizationService : BaseRetrofitApi {
 
@@ -38,9 +35,5 @@ interface OrganizationService : BaseRetrofitApi {
     @GET("organizations/keys")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun fetchOrganizationsKeys(): Keys
-
-    @POST("organizations")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun createOrganization(@Body body: CreateOrganizationRequest): OrganizationResponse
 
 }
