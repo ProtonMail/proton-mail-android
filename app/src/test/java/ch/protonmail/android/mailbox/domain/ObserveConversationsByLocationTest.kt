@@ -25,6 +25,7 @@ import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.LabelContext
+import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -42,19 +43,19 @@ import kotlin.test.assertEquals
 
 private const val NO_MORE_CONVERSATIONS_ERROR_CODE = 723478
 
-class GetConversationsTest : CoroutinesTest {
+class ObserveConversationsByLocationTest : CoroutinesTest {
 
     private var userId = UserId("id")
 
     @RelaxedMockK
     private lateinit var conversationRepository: ConversationsRepository
 
-    private lateinit var getConversations: GetConversations
+    private lateinit var observeConversationsByLocation: ObserveConversationsByLocation
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        getConversations = GetConversations(
+        observeConversationsByLocation = ObserveConversationsByLocation(
             conversationRepository
         )
     }
@@ -64,7 +65,7 @@ class GetConversationsTest : CoroutinesTest {
         val location = MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
         coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf()
 
-        getConversations.invoke(userId, location)
+        observeConversationsByLocation.invoke(userId, location)
 
         val params = GetConversationsParameters(
             locationId = location,
@@ -80,7 +81,7 @@ class GetConversationsTest : CoroutinesTest {
         val dataResult = DataResult.Success(ResponseSource.Remote, conversations)
         coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(dataResult)
 
-        val actual = getConversations.invoke(userId, MessageLocationType.INBOX.messageLocationTypeValue.toString())
+        val actual = observeConversationsByLocation.invoke(userId, MessageLocationType.INBOX.messageLocationTypeValue.toString())
 
         val expected = GetConversationsResult.Success(conversations)
         assertEquals(expected, actual.first())
@@ -90,7 +91,7 @@ class GetConversationsTest : CoroutinesTest {
     fun getConversationsReturnsErrorWhenRepositoryFailsGettingConversations() = runBlockingTest {
         coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(DataResult.Error.Local(null, null))
 
-        val actual = getConversations.invoke(userId, MessageLocationType.INBOX.messageLocationTypeValue.toString())
+        val actual = observeConversationsByLocation.invoke(userId, MessageLocationType.INBOX.messageLocationTypeValue.toString())
 
         val error = GetConversationsResult.Error()
         assertEquals(error, actual.first())
@@ -101,7 +102,7 @@ class GetConversationsTest : CoroutinesTest {
         val location = MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
         coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf()
 
-        getConversations.invoke(userId, location)
+        observeConversationsByLocation.invoke(userId, location)
 
         val params = GetConversationsParameters(
             locationId = location,
@@ -124,7 +125,7 @@ class GetConversationsTest : CoroutinesTest {
         val dataResult = DataResult.Success(ResponseSource.Local, conversations)
         coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(dataResult)
 
-        val result: GetConversationsResult = getConversations.invoke(
+        val result: GetConversationsResult = observeConversationsByLocation.invoke(
             userId, MessageLocationType.ARCHIVE.messageLocationTypeValue.toString()
         ).first()
 
@@ -146,7 +147,7 @@ class GetConversationsTest : CoroutinesTest {
         val dataResult = DataResult.Success(ResponseSource.Local, conversations)
         coEvery { conversationRepository.getConversations(any()) } returns loadMoreFlowOf(dataResult)
 
-        val result: GetConversationsResult = getConversations.invoke(
+        val result: GetConversationsResult = observeConversationsByLocation.invoke(
             userId,
             customLabelId
         ).first()
@@ -161,7 +162,7 @@ class GetConversationsTest : CoroutinesTest {
             DataResult.Error.Remote("any", null, NO_MORE_CONVERSATIONS_ERROR_CODE)
         )
 
-        val actual = getConversations.invoke(userId, MessageLocationType.INBOX.messageLocationTypeValue.toString())
+        val actual = observeConversationsByLocation.invoke(userId, MessageLocationType.INBOX.messageLocationTypeValue.toString())
 
         val error = GetConversationsResult.NoConversationsFound
         assertEquals(error, actual.first())

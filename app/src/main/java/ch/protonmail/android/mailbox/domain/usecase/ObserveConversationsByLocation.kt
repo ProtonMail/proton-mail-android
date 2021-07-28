@@ -17,20 +17,21 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain
+package ch.protonmail.android.mailbox.domain.usecase
 
 import ch.protonmail.android.domain.LoadMoreFlow
 import ch.protonmail.android.domain.loadMoreCatch
 import ch.protonmail.android.domain.loadMoreMap
 import me.proton.core.domain.entity.UserId
 import ch.protonmail.android.mailbox.data.NO_MORE_CONVERSATIONS_ERROR_CODE
+import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import me.proton.core.domain.arch.DataResult
 import timber.log.Timber
 import javax.inject.Inject
 
-class GetConversations @Inject constructor(
+class ObserveConversationsByLocation @Inject constructor(
     private val conversationRepository: ConversationsRepository
 ) {
 

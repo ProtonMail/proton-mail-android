@@ -50,12 +50,12 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
-import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
+import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
@@ -112,7 +112,7 @@ class MailboxViewModel @Inject constructor(
     networkConfigurator: NetworkConfigurator,
     private val messageServiceScheduler: MessagesService.Scheduler,
     private val conversationModeEnabled: ConversationModeEnabled,
-    private val getConversations: GetConversations,
+    private val observeConversationsByLocation: ObserveConversationsByLocation,
     private val changeConversationsReadStatus: ChangeConversationsReadStatus,
     private val changeConversationsStarredStatus: ChangeConversationsStarredStatus,
     private val observeMessagesByLocation: ObserveMessagesByLocation,
@@ -415,7 +415,7 @@ class MailboxViewModel @Inject constructor(
             location.messageLocationTypeValue.toString()
         }
         Timber.v("conversationsAsMailboxItems locationId: $locationId")
-        return getConversations(
+        return observeConversationsByLocation(
             userId,
             locationId
         ).loadMoreMap { result ->

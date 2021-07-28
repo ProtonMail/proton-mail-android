@@ -50,13 +50,13 @@ import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
-import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.model.Correspondent
 import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.domain.model.LabelContext
+import ch.protonmail.android.mailbox.domain.usecase.ObserveConversationsByLocation
 import ch.protonmail.android.mailbox.domain.usecase.ObserveMessagesByLocation
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.mailbox.presentation.MailboxState
@@ -135,7 +135,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     private lateinit var conversationModeEnabled: ConversationModeEnabled
 
     @RelaxedMockK
-    private lateinit var getConversations: GetConversations
+    private lateinit var observeConversationsByLocation: ObserveConversationsByLocation
 
     @RelaxedMockK
     private lateinit var observeMessagesByLocation: ObserveMessagesByLocation
@@ -177,7 +177,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(LABEL_FOLDER) } returns true // LABEL_FOLDER type to use with conversations
         every { conversationModeEnabled(ALL_MAIL) } returns true // ALL_MAIL type to use with conversations
         every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
-        every { getConversations(any(), any()) } returns conversationsResponseFlow.receiveAsFlow()
+        every { observeConversationsByLocation(any(), any()) } returns conversationsResponseFlow.receiveAsFlow()
             .withLoadMore(loadMoreFlowOf<GetConversationsResult>()) {}
         coEvery { observeMessagesByLocation(any(), any(), any()) } returns messagesResponseChannel.receiveAsFlow()
         viewModel = MailboxViewModel(
@@ -192,7 +192,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             networkConfigurator,
             messageServiceScheduler,
             conversationModeEnabled,
-            getConversations,
+            observeConversationsByLocation,
             changeConversationsReadStatus,
             changeConversationsStarredStatus,
             observeMessagesByLocation,
@@ -644,7 +644,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
         every { conversationModeEnabled(location) } returns true
 
         val conversationsFlow = mockk<LoadMoreFlow<GetConversationsResult>>()
-        every { getConversations(any(), any()) } returns conversationsFlow
+        every { observeConversationsByLocation(any(), any()) } returns conversationsFlow
 
         // when
         viewModel.setNewMailboxLocation(location)
