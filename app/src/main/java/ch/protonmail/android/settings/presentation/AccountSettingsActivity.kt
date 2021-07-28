@@ -26,9 +26,11 @@ import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.featureflags.FeatureFlagsManager
+import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -123,16 +125,24 @@ class AccountSettingsActivity : BaseSettingsActivity() {
      * When feature flag is false, no item will be shown in settings and this will have no effect.
      */
     private fun setupViewMode() {
-        mailSettingsViewModel.getMailSettingsSuccessState().onEach { state ->
-            state.mailSettings?.let { mailSettings ->
-                Timber.d("MailSettings ViewMode = ${mailSettings.viewMode}")
+        lifecycleScope.launch {
+            accountSettingsActivityViewModel.getMailSettings()
+                .dropWhile { it !is GetMailSettings.MailSettingsState.Success }
+                .onEach { result ->
+                    when (result) {
+                        is GetMailSettings.MailSettingsState.Success -> {
+                            result.mailSettings?.let { mailSettings ->
+                                Timber.d("MailSettings ViewMode = ${mailSettings.viewMode}")
 
-                setEnabled(
-                    SettingsEnum.CONVERSATION_MODE,
-                    mailSettings.viewMode?.enum == ViewMode.ConversationGrouping
-                )
-            }
-        }.launchIn(lifecycleScope)
+                                setEnabled(
+                                    SettingsEnum.CONVERSATION_MODE,
+                                    mailSettings.viewMode?.enum == ViewMode.ConversationGrouping
+                                )
+                            }
+                        }
+                    }
+                }.launchIn(lifecycleScope)
+        }
         setupViewModeChangedListener()
     }
 

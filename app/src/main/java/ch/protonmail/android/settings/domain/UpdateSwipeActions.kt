@@ -26,7 +26,7 @@ import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
-class HandleChangesToSwipeActions @Inject constructor(
+class UpdateSwipeActions @Inject constructor(
     private val mailSettingsRepository: MailSettingsRepository,
     private val dispatchers: DispatcherProvider
 ) {

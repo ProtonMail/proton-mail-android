@@ -19,37 +19,34 @@
 
 package ch.protonmail.android.settings.presentation
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.settings.domain.HandleChangesToViewMode
+import ch.protonmail.android.settings.domain.GetMailSettings
+import ch.protonmail.android.settings.domain.UpdateViewMode
 import ch.protonmail.android.usecase.delete.ClearUserMessagesData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
-import me.proton.core.mailsettings.domain.entity.SwipeAction
 import me.proton.core.mailsettings.domain.entity.ViewMode
 import javax.inject.Inject
 
 @HiltViewModel
 class AccountSettingsActivityViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     private val accountManager: AccountManager,
     private var clearUserMessagesData: ClearUserMessagesData,
-    private var handleChangesToViewMode: HandleChangesToViewMode
+    private var updateViewMode: UpdateViewMode,
+    private val getMailSettings: GetMailSettings
 ) : ViewModel() {
 
-    var currentAction: SwipeAction =
-        savedStateHandle.get<SwipeAction>(EXTRA_CURRENT_ACTION) ?: SwipeAction.Trash
-    val swipeId: SwipeType = savedStateHandle.get<SwipeType>(EXTRA_SWIPE_ID) ?: SwipeType.RIGHT
+    suspend fun getMailSettings() = getMailSettings.invoke()
 
     fun changeViewMode(viewMode: ViewMode) {
         viewModelScope.launch {
             accountManager.getPrimaryUserId().first()?.let { userId ->
                 clearUserMessagesData.invoke(Id(userId.id))
-                handleChangesToViewMode.invoke(
+                updateViewMode.invoke(
                     userId, viewMode
                 )
             }

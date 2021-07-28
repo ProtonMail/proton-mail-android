@@ -27,7 +27,7 @@ import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
-class HandleChangesToViewMode @Inject constructor(
+class UpdateViewMode @Inject constructor(
     private val featureFlags: FeatureFlagsManager = FeatureFlagsManager(),
     private val mailSettingsRepository: MailSettingsRepository,
     private val dispatchers: DispatcherProvider

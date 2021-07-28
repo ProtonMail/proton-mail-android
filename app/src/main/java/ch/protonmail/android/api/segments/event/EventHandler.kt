@@ -85,7 +85,7 @@ class EventHandler @AssistedInject constructor(
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val messageFactory: MessageFactory,
     @Assisted val userId: Id,
-    private val externalScope: CoroutineScope,
+    private val externalScope: CoroutineScope
 ) {
 
     private val messageDetailsRepository = messageDetailsRepositoryFactory.create(userId)

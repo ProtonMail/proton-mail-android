@@ -117,6 +117,7 @@ import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReac
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
+import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
@@ -221,7 +222,6 @@ internal class MailboxActivity :
 
     override val currentLabelId get() = mailboxLabelId
 
-    private val mailSettingsViewModel: MailSettingsViewModel by viewModels()
 
     override fun getLayoutId(): Int = R.layout.activity_mailbox
 
@@ -384,26 +384,26 @@ internal class MailboxActivity :
 
         setUpMailboxActionsView()
 
-        mailSettingsViewModel.getMailSettingsState().onEach {
-            when (it) {
-                is MailSettingsViewModel.MailSettingsState.Error.Message -> {
-                    showToast(it.message.toString(), Toast.LENGTH_LONG)
-                }
-                is MailSettingsViewModel.MailSettingsState.Error.NoPrimaryAccount -> {
-                    // TODO
-                }
-                is MailSettingsViewModel.MailSettingsState.Success -> {
-                    it.mailSettings?.let { mailSettings ->
-                        swipeController.setCurrentMailSetting(mailSettings)
-                        ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
+        lifecycleScope.launch {
+            mailboxViewModel.getMailSettingsState().onEach {
+                when (it) {
+                    is GetMailSettings.MailSettingsState.Error.Message -> {
+                        showToast(it.message.toString(), Toast.LENGTH_LONG)
                     }
-                    mailboxViewModel.refreshMessages()
-                }
-                is MailSettingsViewModel.MailSettingsState.Processing -> {
-                    // NOOP
-                }
-            }.exhaustive
-        }.launchIn(lifecycleScope)
+                    is GetMailSettings.MailSettingsState.Error.NoPrimaryAccount -> {
+                        Timber.w("No Primary Account")
+                    }
+                    is GetMailSettings.MailSettingsState.Success -> {
+                        it.mailSettings?.let { mailSettings ->
+                            swipeController.setCurrentMailSetting(mailSettings)
+                            ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
+                        }
+                        mailboxViewModel.refreshMessages()
+                    }
+                    else -> Unit
+                }.exhaustive
+            }.launchIn(lifecycleScope)
+        }
     }
 
     override fun secureContent(): Boolean = true

@@ -27,22 +27,29 @@ import android.view.ViewGroup
 import android.view.ViewStub
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.databinding.SettingsSwipeFragmentBinding
+import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.libs.core.utils.onClick
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.mailsettings.domain.entity.SwipeAction
 import ch.protonmail.android.adapters.swipe.SwipeAction as SwipeActionLocal
 
+@AndroidEntryPoint
 class SwipeSettingFragment : Fragment() {
 
     lateinit var mailSettings: MailSettings
     private var _binding: SettingsSwipeFragmentBinding? = null
+
+    private val swipeActionsViewModel: SwipeActionsViewModel by viewModels()
 
     private val binding get() = requireNotNull(_binding)
 
@@ -64,16 +71,24 @@ class SwipeSettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as BaseSettingsActivity).mailSettingsViewModel.getMailSettingsSuccessState().onEach { state ->
-            state.mailSettings?.let {
-                mailSettings = it
-                renderLeftToRightPreview()
-                renderRightToLeftPreview()
-            }
-        }.launchIn(lifecycleScope)
+        lifecycleScope.launch {
+            swipeActionsViewModel.getMailSettings()
+                .dropWhile { it !is GetMailSettings.MailSettingsState.Success }
+                .onEach { result ->
+                    when (result) {
+                        is GetMailSettings.MailSettingsState.Success -> {
+                            result.mailSettings?.let {
+                                mailSettings = it
+                                renderLeftToRightPreview()
+                                renderRightToLeftPreview()
+                            }
+                        }
+                    }
+                }.launchIn(lifecycleScope)
+        }
     }
 
-    fun renderLeftToRightPreview() {
+    private fun renderLeftToRightPreview() {
         val swipeRightAction: SwipeAction = mailSettings.swipeRight?.enum ?: SwipeAction.Trash
 
         binding.leftToRightSwipeActionTextView.text =
@@ -94,7 +109,7 @@ class SwipeSettingFragment : Fragment() {
         leftToRightPlaceholder.inflate()
     }
 
-    fun renderRightToLeftPreview() {
+    private fun renderRightToLeftPreview() {
         val swipeLeftAction = mailSettings.swipeLeft?.enum ?: SwipeAction.Archive
 
         binding.rightToLeftSwipeActionTextView.text =

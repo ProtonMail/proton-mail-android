@@ -57,6 +57,7 @@ import ch.protonmail.android.mailbox.domain.model.GetConversationsResult
 import ch.protonmail.android.mailbox.domain.model.GetMessagesResult
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
+import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -117,7 +118,8 @@ class MailboxViewModel @Inject constructor(
     private val getMessagesByLocation: GetMessagesByLocation,
     private val moveConversationsToFolder: MoveConversationsToFolder,
     private val moveMessagesToFolder: MoveMessagesToFolder,
-    private val deleteConversations: DeleteConversations
+    private val deleteConversations: DeleteConversations,
+    private val getMailSettings: GetMailSettings
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -742,6 +744,8 @@ class MailboxViewModel @Inject constructor(
                 )
         }
     }
+
+    suspend fun getMailSettingsState() = getMailSettings()
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)
 }
