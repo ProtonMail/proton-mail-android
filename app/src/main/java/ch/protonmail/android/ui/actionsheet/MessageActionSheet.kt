@@ -78,7 +78,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         val binding = FragmentMessageActionSheetBinding.inflate(inflater)
 
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
-        setupReplyActionsBindings(binding.includeLayoutActionSheetButtons, actionsTarget)
+        setupReplyActionsBindings(binding.includeLayoutActionSheetButtons, actionsTarget, messageIds.first())
         setupManageSectionBindings(binding, viewModel, actionsTarget, messageIds, messageLocation, mailboxLabelId)
         setupMoveSectionBindings(binding, viewModel, messageIds, messageLocation)
         setupMoreSectionBindings(binding, actionsTarget, messageIds)
@@ -155,7 +155,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
 
     private fun setupReplyActionsBindings(
         binding: LayoutMessageDetailsActionsSheetButtonsBinding,
-        actionsTarget: ActionSheetTarget
+        actionsTarget: ActionSheetTarget,
+        messageId: String
     ) {
         with(binding) {
             layoutDetailsActions.isVisible = actionsTarget in listOf(
@@ -165,15 +166,21 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             )
 
             textViewDetailsActionsReply.setOnClickListener {
-                (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.REPLY)
+                (activity as? MessageDetailsActivity)?.executeMessageAction(
+                    Constants.MessageActionType.REPLY, messageId
+                )
                 dismiss()
             }
             textViewDetailsActionsReplyAll.setOnClickListener {
-                (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.REPLY_ALL)
+                (activity as? MessageDetailsActivity)?.executeMessageAction(
+                    Constants.MessageActionType.REPLY_ALL, messageId
+                )
                 dismiss()
             }
             textViewDetailsActionsForward.setOnClickListener {
-                (activity as? MessageDetailsActivity)?.executeMessageAction(Constants.MessageActionType.FORWARD)
+                (activity as? MessageDetailsActivity)?.executeMessageAction(
+                    Constants.MessageActionType.FORWARD, messageId
+                )
                 dismiss()
             }
         }
