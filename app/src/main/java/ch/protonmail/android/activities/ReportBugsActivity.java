@@ -29,17 +29,15 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 
-import com.squareup.otto.Subscribe;
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import ch.protonmail.android.R;
-import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.domain.entity.user.User;
-import ch.protonmail.android.events.BugReportEvent;
-import ch.protonmail.android.events.Status;
 import ch.protonmail.android.jobs.ReportBugsJob;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
+import ch.protonmail.android.utils.notifier.UserNotifier;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 
 public class ReportBugsActivity extends BaseActivity {
@@ -48,6 +46,9 @@ public class ReportBugsActivity extends BaseActivity {
 
     @BindView(R.id.bug_description)
     EditText mBugDescription;
+
+    @Inject
+    protected UserNotifier userNotifier;
 
     @Override
     protected int getLayoutId() {
@@ -79,18 +80,6 @@ public class ReportBugsActivity extends BaseActivity {
                 invalidateOptionsMenu();
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        ProtonMailApplication.getApplication().getBus().register(this);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        ProtonMailApplication.getApplication().getBus().unregister(this);
     }
 
     @Override
@@ -136,23 +125,12 @@ public class ReportBugsActivity extends BaseActivity {
                 User user = mUserManager.requireCurrentUser();
                 String username = user.getName().getS();
                 String email = user.getAddresses().getPrimary().getEmail().getS();
-                mJobManager.addJobInBackground(new ReportBugsJob(OSName, OSVersion, client, appVersionName, title, description, username, email));
+                mJobManager.addJobInBackground(new ReportBugsJob(OSName, OSVersion, client, appVersionName, title, description, username, email, userNotifier));
                 TextExtensions.showToast(this, R.string.sending_report, Toast.LENGTH_SHORT);
                 saveLastInteraction();
                 finish();
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Subscribe
-    public void onBugReportEvent(BugReportEvent event){
-        if (event.getStatus() == Status.SUCCESS){
-            TextExtensions.showToast(this, R.string.received_report, Toast.LENGTH_SHORT);
-        } else if (event.getStatus() == Status.NO_NETWORK) {
-            TextExtensions.showToast(this, R.string.not_received_report_offline);
-        } else {
-            TextExtensions.showToast(this, R.string.not_received_report, Toast.LENGTH_SHORT);
         }
     }
 }

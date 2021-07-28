@@ -18,10 +18,9 @@
  */
 package ch.protonmail.android.jobs
 
+import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.events.BugReportEvent
-import ch.protonmail.android.events.Status
-import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.notifier.UserNotifier
 import com.birbit.android.jobqueue.Params
 import kotlinx.coroutines.runBlocking
 import me.proton.core.network.domain.ApiResult
@@ -34,15 +33,9 @@ class ReportBugsJob(
     private val title: String,
     private val description: String,
     private val userName: String,
-    private val email: String
+    private val email: String,
+    private val userNotifier: UserNotifier
 ) : ProtonMailEndlessJob(Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_BUGS)) {
-
-    override fun onAdded() {
-        super.onAdded()
-        if (!getQueueNetworkUtil().isConnected()) {
-            AppUtil.postEventOnUi(BugReportEvent(Status.NO_NETWORK))
-        }
-    }
 
     @Throws(Throwable::class)
     override fun onRun() {
@@ -58,9 +51,9 @@ class ReportBugsJob(
                 email
             )
             if (response is ApiResult.Success) {
-                AppUtil.postEventOnUi(BugReportEvent(Status.SUCCESS))
+                userNotifier.showError(R.string.received_report)
             } else {
-                AppUtil.postEventOnUi(BugReportEvent(Status.FAILED))
+                userNotifier.showError(R.string.not_received_report)
             }
         }
     }
