@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.databinding.FragmentLabelsActionSheetBinding
+import ch.protonmail.android.details.presentation.MessageDetailsActivity
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.presentation.model.LabelActonItemUiModel
 import ch.protonmail.android.labels.presentation.viewmodel.LabelsActionAdapter
@@ -130,7 +131,10 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
         Timber.v("Result received $result")
         when (result) {
             is ManageLabelActionResult.LabelsSuccessfullySaved,
-            is ManageLabelActionResult.MessageSuccessfullyMoved -> dismiss()
+            is ManageLabelActionResult.MessageSuccessfullyMoved ->
+                handleDismissBehavior(
+                    (result as ManageLabelActionResult.MessageSuccessfullyMoved).shouldDismissBackingActivity
+                )
             is ManageLabelActionResult.ErrorLabelsThresholdReached ->
                 showApplicableLabelsThresholdError(result.maxAllowedCount)
             is ManageLabelActionResult.ErrorUpdatingLabels ->
@@ -163,6 +167,15 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
             Toast.LENGTH_SHORT
         ).show()
     }
+
+    private fun handleDismissBehavior(dismissBackingActivity: Boolean) {
+        dismiss()
+        if (dismissBackingActivity) {
+            popBackDetailsActivity()
+        }
+    }
+
+    private fun popBackDetailsActivity() = (activity as? MessageDetailsActivity)?.onBackPressed()
 
     companion object {
 

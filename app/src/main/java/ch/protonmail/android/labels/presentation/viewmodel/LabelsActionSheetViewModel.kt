@@ -208,7 +208,10 @@ class LabelsActionSheetViewModel @Inject constructor(
             if (cancellationException != null) {
                 actionsResultMutableFlow.value = ManageLabelActionResult.ErrorMovingToFolder
             } else {
-                actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved
+                val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+                actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved(
+                    dismissBackingActivity
+                )
             }
         }
     }
