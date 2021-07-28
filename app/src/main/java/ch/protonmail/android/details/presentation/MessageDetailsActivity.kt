@@ -587,7 +587,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         } else {
             Constants.MessageActionType.REPLY
         }
-        executeMessageAction(messageAction, message)
+        executeMessageAction(messageAction, message.messageId)
     }
 
     private fun displayToolbarData(conversation: ConversationUiModel) {
@@ -613,11 +613,21 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         expandedToolbarTitleTextView.text = subject
     }
 
+    /**
+     * Legacy method to executes reply, reply_all and forward op
+     * @param messageOrConversationId the message or conversation ID on which to perform the action on.
+     * Passing a conversation ID will cause the action to be applied to the last message.
+     */
     fun executeMessageAction(
         messageAction: Constants.MessageActionType,
-        message: Message = requireNotNull(viewModel.decryptedConversationUiModel.value?.messages?.last())
+        messageOrConversationId: String?
     ) {
         try {
+            val message = requireNotNull(
+                viewModel.decryptedConversationUiModel.value?.messages?.find {
+                    it.messageId == messageOrConversationId
+                } ?: viewModel.decryptedConversationUiModel.value?.messages?.last()
+            )
             val user = mUserManager.requireCurrentLegacyUser()
             val userUsedSpace = user.usedSpace
             val userMaxSpace = if (user.maxSpace == 0L) {
