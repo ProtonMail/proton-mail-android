@@ -93,7 +93,11 @@ interface ConversationsRepository {
 
     suspend fun unstar(conversationIds: List<String>, userId: UserId): ConversationsActionResult
 
-    suspend fun moveToFolder(conversationIds: List<String>, userId: UserId, folderId: String)
+    suspend fun moveToFolder(
+        conversationIds: List<String>,
+        userId: UserId,
+        folderId: String
+    ): ConversationsActionResult
 
     suspend fun delete(conversationIds: List<String>, userId: UserId, currentFolderId: String)
 

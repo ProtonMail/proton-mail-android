@@ -34,6 +34,7 @@ import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.UpdateConversationsLabels
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
@@ -223,6 +224,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             every {
                 savedStateHandle.get<ActionSheetTarget>("extra_arg_labels_action_sheet_actions_target")
             } returns ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+            coEvery { moveConversationsToFolder.invoke(any(), any(), any()) } returns ConversationsActionResult.Success
 
             // when
             viewModel.onLabelClicked(model2folder, 0)

@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.mailbox.domain
 
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import me.proton.core.domain.entity.UserId
 import javax.inject.Inject
 
@@ -33,8 +34,8 @@ class MoveConversationsToFolder @Inject constructor(
         conversationIds: List<String>,
         userId: UserId,
         folderId: String
-    ) {
-        conversationsRepository.moveToFolder(
+    ): ConversationsActionResult {
+        return conversationsRepository.moveToFolder(
             conversationIds,
             userId,
             folderId

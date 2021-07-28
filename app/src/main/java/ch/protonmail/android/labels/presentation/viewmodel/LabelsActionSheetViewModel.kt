@@ -161,11 +161,14 @@ class LabelsActionSheetViewModel @Inject constructor(
 
                 if (shallMoveToArchive) {
                     if (isActionAppliedToConversation(currentMessageFolder)) {
-                        moveConversationsToFolder(
+                        val result = moveConversationsToFolder(
                             ids,
                             UserId(userManager.requireCurrentUserId().s),
                             ARCHIVE.messageLocationTypeValue.toString(),
                         )
+                        if (result is ConversationsActionResult.Error) {
+                            cancel("Could not complete the action")
+                        }
                     } else {
                         moveMessagesToFolder(
                             ids,
@@ -191,15 +194,22 @@ class LabelsActionSheetViewModel @Inject constructor(
             // ignore location here, otherwise custom folder case does not work
             if (isActionAppliedToConversation(null)) {
                 userManager.currentUserId?.let {
-                    moveConversationsToFolder(messageIds, UserId(it.s), selectedFolderId)
+                    val result = moveConversationsToFolder(messageIds, UserId(it.s), selectedFolderId)
+                    if (result is ConversationsActionResult.Error) {
+                        cancel("Could not complete the action")
+                    }
                 }
             } else {
                 moveMessagesToFolder(
                     messageIds, selectedFolderId, currentMessageFolder.messageLocationTypeValue.toString()
                 )
             }
-        }.invokeOnCompletion {
-            actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved
+        }.invokeOnCompletion { cancellationException ->
+            if (cancellationException != null) {
+                actionsResultMutableFlow.value = ManageLabelActionResult.ErrorMovingToFolder
+            } else {
+                actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved
+            }
         }
     }
 

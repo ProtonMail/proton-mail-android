@@ -24,5 +24,6 @@ sealed class ManageLabelActionResult {
     object LabelsSuccessfullySaved : ManageLabelActionResult()
     object MessageSuccessfullyMoved : ManageLabelActionResult()
     object ErrorUpdatingLabels : ManageLabelActionResult()
+    object ErrorMovingToFolder : ManageLabelActionResult()
     data class ErrorLabelsThresholdReached(val maxAllowedCount: Int) : ManageLabelActionResult()
 }

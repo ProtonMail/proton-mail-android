@@ -45,4 +45,6 @@ sealed class MessageActionSheetAction {
     object Delete : MessageActionSheetAction()
 
     data class DismissActionSheet(val shallDismissBackingActivity: Boolean) : MessageActionSheetAction()
+
+    object CouldNotCompleteActionError : MessageActionSheetAction()
 }

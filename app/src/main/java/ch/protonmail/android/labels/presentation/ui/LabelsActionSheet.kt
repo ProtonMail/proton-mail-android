@@ -135,6 +135,8 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
                 showApplicableLabelsThresholdError(result.maxAllowedCount)
             is ManageLabelActionResult.ErrorUpdatingLabels ->
                 showCouldNotCompleteActionError()
+            is ManageLabelActionResult.ErrorMovingToFolder ->
+                showCouldNotCompleteActionError()
             else -> {
                 Timber.v("Result $result")
             }

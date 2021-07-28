@@ -261,7 +261,7 @@ class ConversationsRepositoryImpl @Inject constructor(
         conversationIds: List<String>,
         userId: UserId,
         folderId: String
-    ) {
+    ): ConversationsActionResult {
         labelConversationsRemoteWorker.enqueue(conversationIds, folderId, userId)
 
         conversationIds.forEach { conversationId ->
@@ -280,13 +280,34 @@ class ConversationsRepositoryImpl @Inject constructor(
             // save all updated messages from a conversation in one go
             messageDao.saveMessages(messagesToUpdate)
 
-            val conversation = requireNotNull(conversationDao.findConversation(conversationId, userId.id))
+            val conversation = conversationDao.findConversation(conversationId, userId.id)
+            if (conversation == null) {
+                Timber.e("Conversation with id $conversationId could not be found in DB")
+                return ConversationsActionResult.Error
+            }
             val labelsToRemoveFromConversation = getLabelIdsForRemovingWhenMovingToFolder(
                 conversation.labels.map { it.id }
             )
-            removeLabelsFromConversation(conversationId, userId, labelsToRemoveFromConversation)
-            addLabelsToConversation(conversationId, userId, listOf(folderId), lastMessageTime)
+            val removeLabelsResult = removeLabelsFromConversation(
+                conversationId,
+                userId,
+                labelsToRemoveFromConversation
+            )
+            val addLabelsResult = addLabelsToConversation(
+                conversationId,
+                userId,
+                listOf(folderId),
+                lastMessageTime
+            )
+            if (
+                removeLabelsResult is ConversationsActionResult.Error ||
+                addLabelsResult is ConversationsActionResult.Error
+            ) {
+                return ConversationsActionResult.Error
+            }
         }
+
+        return ConversationsActionResult.Success
     }
 
     override suspend fun delete(

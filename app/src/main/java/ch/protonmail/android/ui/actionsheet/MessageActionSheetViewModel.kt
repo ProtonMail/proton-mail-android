@@ -288,11 +288,14 @@ class MessageActionSheetViewModel @Inject constructor(
                 Timber.v("Move conversation to folder: $newFolderLocationId")
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
-                    moveConversationsToFolder(
+                    val result = moveConversationsToFolder(
                         ids,
                         primaryUserId,
                         newFolderLocationId.messageLocationTypeValue.toString()
                     )
+                    if (result is ConversationsActionResult.Error) {
+                        cancel("Could not complete the action")
+                    }
                 } else {
                     Timber.e("Primary user id is null. Cannot move message/conversation to folder")
                 }
@@ -304,9 +307,13 @@ class MessageActionSheetViewModel @Inject constructor(
                     currentFolder.messageLocationTypeValue.toString()
                 )
             }
-        }.invokeOnCompletion {
-            val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+        }.invokeOnCompletion { cancellationException ->
+            if (cancellationException != null) {
+                actionsMutableFlow.value = MessageActionSheetAction.CouldNotCompleteActionError
+            } else {
+                val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+            }
         }
     }
 

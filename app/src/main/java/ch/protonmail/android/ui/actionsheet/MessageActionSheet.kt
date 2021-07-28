@@ -386,6 +386,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             is MessageActionSheetAction.Delete -> dismiss()
             is MessageActionSheetAction.DismissActionSheet ->
                 handleDismissBehavior(sheetAction.shallDismissBackingActivity)
+            is MessageActionSheetAction.CouldNotCompleteActionError ->
+                showCouldNotCompleteActionError()
             else -> Timber.v("unhandled action $sheetAction")
         }
     }
