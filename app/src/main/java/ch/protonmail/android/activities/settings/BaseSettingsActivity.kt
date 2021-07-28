@@ -478,9 +478,13 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     }
 
     protected fun setValue(settingType: SettingsEnum, settingValueNew: String) {
-        settingsAdapter.items
-            .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
-            ?.apply { settingValue = settingValueNew }
+        val position = settingsAdapter.items
+            .indexOfFirst { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
+        if (position < 0 || position >= settingsAdapter.items.size) {
+            return
+        }
+        settingsAdapter.items[position].apply { settingValue = settingValueNew }
+        settingsAdapter.notifyItemChanged(position)
     }
 
     protected fun setIconVisibility(settingType: SettingsEnum, visibility: Int) {

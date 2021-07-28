@@ -104,7 +104,7 @@ class AccountSettingsActivity : BaseSettingsActivity() {
 
         lifecycleScope.launch {
             val attachmentSizeUsedBytes = attachmentMetadataDao.getAllAttachmentsSizeUsed().first() ?: 0
-            val attachmentSizeUsed = attachmentSizeUsedBytes / (1000.0 * 1000.0)
+            val attachmentSizeUsed = attachmentSizeUsedBytes.toFloat() / Constants.BYTE_TO_MEGABYTE_RATIO
             setValue(
                 SettingsEnum.LOCAL_STORAGE_LIMIT,
                 String.format(getString(R.string.storage_value), mAttachmentStorageValue, attachmentSizeUsed)
