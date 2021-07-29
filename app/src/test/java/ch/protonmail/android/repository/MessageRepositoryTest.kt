@@ -49,6 +49,8 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Test
 import java.io.IOException
@@ -369,9 +371,7 @@ class MessageRepositoryTest {
         coEvery {
             protonMailApiManager.getMessages(
                 UserIdTag(testUserId),
-                mailboxLocation.messageLocationTypeValue,
-                null,
-                null
+                mailboxLocation.messageLocationTypeValue.toString()
             )
         } returns apiResponse
         // endregion
@@ -395,18 +395,19 @@ class MessageRepositoryTest {
 
             // then
             // verify messages from database
-            assertEquals(initialDatabaseMessages, expectItem())
+            assertEquals(DataResult.Success(ResponseSource.Local, initialDatabaseMessages), expectItem())
 
             // verify api fetch
             coVerify {
                 protonMailApiManager.getMessages(
-                    UserIdTag(testUserId), mailboxLocation.messageLocationTypeValue, null, null
+                    UserIdTag(testUserId),
+                    mailboxLocation.messageLocationTypeValue.toString()
                 )
             }
             coVerify { messageDao.saveMessages(apiMessages) }
 
             // verify message from api
-            assertEquals(apiMessages, expectItem())
+            assertEquals(DataResult.Success(ResponseSource.Local, apiMessages), expectItem())
         }
     }
 
@@ -422,13 +423,12 @@ class MessageRepositoryTest {
                 mailboxLocation.messageLocationTypeValue
             )
         } returns dbFlow
-        val testException = IOException("NetworkError!")
+        val exceptionMessage = "NetworkError!"
+        val testException = IOException(exceptionMessage)
         coEvery {
             protonMailApiManager.getMessages(
                 UserIdTag(testUserId),
-                mailboxLocation.messageLocationTypeValue,
-                null,
-                null
+                mailboxLocation.messageLocationTypeValue.toString()
             )
         } throws testException
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
@@ -438,7 +438,8 @@ class MessageRepositoryTest {
             dbFlow.emit(dbMessages)
 
             // then
-            assertEquals(dbMessages, expectItem())
+            assertEquals(DataResult.Error.Remote(exceptionMessage, testException), expectItem())
+            assertEquals(DataResult.Success(ResponseSource.Local, dbMessages), expectItem())
             expectNoEvents()
         }
     }
@@ -456,10 +457,7 @@ class MessageRepositoryTest {
         val dbFlow = MutableSharedFlow<List<Message>>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
         coEvery { messageDao.observeMessagesByLabelId(label1) } returns dbFlow
         coEvery {
-            protonMailApiManager.searchByLabelAndPage(
-                label1,
-                0
-            )
+            protonMailApiManager.getMessages(UserIdTag(testUserId), label1)
         } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
 
@@ -468,9 +466,9 @@ class MessageRepositoryTest {
             dbFlow.emit(dbMessages)
 
             // then
+            assertEquals(DataResult.Success(ResponseSource.Local, dbMessages), expectItem())
             coVerify { messageDao.saveMessages(netMessages) }
-            assertEquals(netMessages, expectItem())
-            assertEquals(dbMessages, expectItem())
+            assertEquals(DataResult.Success(ResponseSource.Local, netMessages), expectItem())
         }
     }
 
@@ -482,12 +480,10 @@ class MessageRepositoryTest {
         val netMessages = listOf(message1, message2, message3, message4)
         val dbFlow = MutableSharedFlow<List<Message>>(replay = 2, onBufferOverflow = BufferOverflow.SUSPEND)
         coEvery { messageDao.observeMessagesByLabelId(label1) } returns dbFlow
-        val testException = IOException("NetworkError!")
+        val testExceptionMessage = "NetworkError!"
+        val testException = IOException(testExceptionMessage)
         coEvery {
-            protonMailApiManager.searchByLabelAndPage(
-                label1,
-                0
-            )
+            protonMailApiManager.getMessages(UserIdTag(testUserId), label1)
         } throws testException
         coEvery { messageDao.saveMessages(netMessages) } answers { dbFlow.tryEmit(netMessages) }
 
@@ -496,8 +492,8 @@ class MessageRepositoryTest {
             dbFlow.emit(dbMessages)
 
             // then
-            assertEquals(dbMessages, expectItem())
-            expectError()
+            assertEquals(DataResult.Error.Remote(testExceptionMessage, testException), expectItem())
+            assertEquals(DataResult.Success(ResponseSource.Local, dbMessages), expectItem())
         }
     }
 
@@ -515,19 +511,20 @@ class MessageRepositoryTest {
         coEvery {
             protonMailApiManager.getMessages(
                 UserIdTag(testUserId),
-                mailboxLocation.messageLocationTypeValue,
-                null,
-                null
+                mailboxLocation.messageLocationTypeValue.toString()
             )
         } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } just Runs
 
         // when
-        val resultsList = messageRepository.observeMessagesByLocation(testUserId, mailboxLocation).take(2).toList()
+        messageRepository.observeMessagesByLocation(testUserId, mailboxLocation).test {
 
-        // then
-        coVerify(exactly = 1) { messageDao.saveMessages(netMessages) }
-        assertEquals(dbMessages, resultsList[0])
+            // then
+            assertEquals(DataResult.Success(ResponseSource.Local, dbMessages), expectItem())
+            assertEquals(DataResult.Success(ResponseSource.Local, netMessages), expectItem())
+
+            coVerify(exactly = 1) { messageDao.saveMessages(netMessages) }
+        }
     }
 
     @Test
@@ -544,9 +541,7 @@ class MessageRepositoryTest {
         coEvery {
             protonMailApiManager.getMessages(
                 UserIdTag(testUserId),
-                mailboxLocation.messageLocationTypeValue,
-                null,
-                null
+                mailboxLocation.messageLocationTypeValue.toString()
             )
         } returns netResponse
         coEvery { messageDao.saveMessages(netMessages) } just Runs
@@ -557,7 +552,7 @@ class MessageRepositoryTest {
 
         // then
         coVerify(exactly = 0) { messageDao.saveMessages(netMessages) }
-        assertEquals(dbMessages, resultsList[0])
+        assertEquals(DataResult.Success(ResponseSource.Local, dbMessages), resultsList[0])
     }
 
     @Test
@@ -575,9 +570,7 @@ class MessageRepositoryTest {
         coEvery {
             protonMailApiManager.getMessages(
                 UserIdTag(testUserId),
-                mailboxLocation.messageLocationTypeValue,
-                null,
-                null
+                mailboxLocation.messageLocationTypeValue.toString()
             )
         } returns apiResponse
         // endregion
@@ -600,18 +593,19 @@ class MessageRepositoryTest {
 
             // then
             // verify messages from database
-            assertEquals(initialDatabaseMessages, expectItem())
+            assertEquals(DataResult.Success(ResponseSource.Local, initialDatabaseMessages), expectItem())
 
             // verify api fetch
             coVerify {
                 protonMailApiManager.getMessages(
-                    UserIdTag(testUserId), mailboxLocation.messageLocationTypeValue, null, null
+                    UserIdTag(testUserId),
+                    mailboxLocation.messageLocationTypeValue.toString()
                 )
             }
             coVerify { messageDao.saveMessages(apiMessages) }
 
             // verify message from api
-            assertEquals(apiMessages, expectItem())
+            assertEquals(DataResult.Success(ResponseSource.Local, apiMessages), expectItem())
         }
     }
 }
