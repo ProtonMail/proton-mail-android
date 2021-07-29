@@ -87,10 +87,10 @@ public class PostArchiveJob extends ProtonMailCounterJob {
             unreadIncrease = true;
         }
         if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.SENT) {
-            message.removeLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.SENT.getMessageLocationTypeValue())));
             message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.ALL_SENT.getMessageLocationTypeValue())));
-
+            message.removeLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.SENT.getMessageLocationTypeValue())));
         }
+        message.setLabelIDs(Arrays.asList(String.valueOf(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue())));
         if (mFolderIds != null) {
             for (String folderId : mFolderIds) {
                 if (!TextUtils.isEmpty(folderId)) {
@@ -98,8 +98,6 @@ public class PostArchiveJob extends ProtonMailCounterJob {
                 }
             }
         }
-        message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
-        message.setLabelIDs(Arrays.asList(String.valueOf(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue())));
         Timber.d("Archive message id: %s, location: %s, labels: %s", message.getMessageId(), message.getLocation(), message.getAllLabelIDs());
         getMessageDetailsRepository().saveMessageBlocking(message);
         return unreadIncrease;
