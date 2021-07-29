@@ -461,13 +461,13 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     private inner class ConversationUiModelObserver : Observer<ConversationUiModel> {
 
         override fun onChanged(conversation: ConversationUiModel) {
-            val lastMessage = conversation.messages.last()
+            val lastNonDraftMessage = conversation.messages.last { it.isDraft().not() }
 
             setupToolbarOffsetListener(conversation.messages.count())
             displayToolbarData(conversation)
-            setupLastMessageActionsListener(lastMessage)
+            setupLastMessageActionsListener(lastNonDraftMessage)
 
-            Timber.v("New decrypted message ${lastMessage.messageId}")
+            Timber.v("New decrypted message ${lastNonDraftMessage.messageId}")
             viewModel.renderedFromCache = AtomicBoolean(true)
 
             Timber.v("setMessage conversations size: ${conversation.messages.size}")
@@ -616,7 +616,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
     /**
      * Legacy method to executes reply, reply_all and forward op
      * @param messageOrConversationId the message or conversation ID on which to perform the action on.
-     * Passing a conversation ID will cause the action to be applied to the last message.
+     * Passing a conversation ID will cause the action to be applied to the last message that is not a draft.
      */
     fun executeMessageAction(
         messageAction: Constants.MessageActionType,
@@ -626,7 +626,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
             val message = requireNotNull(
                 viewModel.decryptedConversationUiModel.value?.messages?.find {
                     it.messageId == messageOrConversationId
-                } ?: viewModel.decryptedConversationUiModel.value?.messages?.last()
+                } ?: viewModel.decryptedConversationUiModel.value?.messages?.last { it.isDraft().not() }
             )
             val user = mUserManager.requireCurrentLegacyUser()
             val userUsedSpace = user.usedSpace

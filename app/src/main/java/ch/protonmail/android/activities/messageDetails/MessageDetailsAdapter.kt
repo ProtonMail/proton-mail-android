@@ -427,7 +427,19 @@ internal class MessageDetailsAdapter(
             items.add(MessageDetailsListItem(message))
             items.add(MessageDetailsListItem(message, message.decryptedHTML, message.decryptedHTML))
         }
+
         setItems(items)
+        expandLastNonDraftItem()
+    }
+
+    private fun expandLastNonDraftItem() {
+        val lastNonDraftHeaderIndex = visibleItems?.indexOfLast {
+            !it.message.isDraft() && it.itemType == TYPE_HEADER
+        } ?: return
+
+        if (!isExpanded(lastNonDraftHeaderIndex)) {
+            toggleExpandedItems(lastNonDraftHeaderIndex, true)
+        }
     }
 
     fun setExclusiveLabelsPerMessage(labels: HashMap<String, List<Label>>) {
