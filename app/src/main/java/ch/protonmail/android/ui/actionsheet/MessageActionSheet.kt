@@ -391,7 +391,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                     showCouldNotCompleteActionError()
                 }
             }
-            is MessageActionSheetAction.Delete -> dismiss()
             is MessageActionSheetAction.DismissActionSheet ->
                 handleDismissBehavior(sheetAction.shallDismissBackingActivity)
             is MessageActionSheetAction.CouldNotCompleteActionError ->

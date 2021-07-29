@@ -42,8 +42,6 @@ sealed class MessageActionSheetAction {
         val isSuccessful: Boolean
     ) : MessageActionSheetAction()
 
-    object Delete : MessageActionSheetAction()
-
     data class DismissActionSheet(val shallDismissBackingActivity: Boolean) : MessageActionSheetAction()
 
     object CouldNotCompleteActionError : MessageActionSheetAction()
