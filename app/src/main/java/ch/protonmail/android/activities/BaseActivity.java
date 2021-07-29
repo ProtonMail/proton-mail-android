@@ -512,6 +512,11 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     @Override
+    public void showDohFailed() {
+        Timber.d("BaseActivity: Doh All alternative proxies failed");
+    }
+
+    @Override
     public void startAutoRetry() {
         autoRetry = true;
     }

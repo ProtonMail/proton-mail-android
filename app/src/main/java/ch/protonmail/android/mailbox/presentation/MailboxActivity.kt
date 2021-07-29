@@ -693,6 +693,10 @@ internal class MailboxActivity :
         mailboxViewModel.checkConnectivityDelayed()
     }
 
+    override fun showDohFailed() {
+        showNoConnSnackAndScheduleRetry(Constants.ConnectionState.CANT_REACH_SERVER)
+    }
+
     private fun checkRegistration() {
         // Check device for Play Services APK.
         lifecycleScope.launchWhenCreated {
@@ -1199,6 +1203,7 @@ internal class MailboxActivity :
 
     /* SwipeRefreshLayout.OnRefreshListener */
     override fun onRefresh() {
+        mailboxViewModel.checkConnectivity()
         syncUUID = UUID.randomUUID().toString()
         mailboxViewModel.refreshMailboxCount(currentMailboxLocation)
         mailboxViewModel.refreshMessages()
