@@ -80,7 +80,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         setupHeaderBindings(binding.actionSheetHeaderDetailsActions, arguments)
         setupReplyActionsBindings(binding.includeLayoutActionSheetButtons, actionsTarget, messageIds.first())
         setupManageSectionBindings(binding, viewModel, actionsTarget, messageIds, messageLocation, mailboxLabelId)
-        setupMoveSectionBindings(binding, viewModel, messageIds, messageLocation)
+        setupMoveSectionBindings(binding, viewModel, messageIds, messageLocation, actionsTarget)
         setupMoreSectionBindings(binding, actionsTarget, messageIds)
         actionSheetHeader = binding.actionSheetHeaderDetailsActions
 
@@ -249,7 +249,8 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         binding: FragmentMessageActionSheetBinding,
         viewModel: MessageActionSheetViewModel,
         messageIds: List<String>,
-        messageLocation: Constants.MessageLocationType
+        messageLocation: Constants.MessageLocationType,
+        actionsTarget: ActionSheetTarget
     ) {
         with(binding) {
 
@@ -304,7 +305,11 @@ class MessageActionSheet : BottomSheetDialogFragment() {
                             type == Constants.MessageLocationType.SPAM
                     }
                 setOnClickListener {
-                    viewModel.delete(messageIds, messageLocation)
+                    viewModel.delete(
+                        messageIds,
+                        messageLocation,
+                        actionsTarget == ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+                    )
                 }
             }
             textViewDetailsActionsMoveTo.setOnClickListener {

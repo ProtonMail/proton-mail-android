@@ -87,10 +87,11 @@ class MessageActionSheetViewModel @Inject constructor(
      */
     fun delete(
         ids: List<String>,
-        currentFolder: Constants.MessageLocationType
+        currentFolder: Constants.MessageLocationType,
+        shallIgnoreLocationInConversationResolution: Boolean
     ) {
         viewModelScope.launch {
-            if (conversationModeEnabled(currentFolder)) {
+            if (isActionAppliedToConversation(currentFolder, shallIgnoreLocationInConversationResolution)) {
                 accountManager.getPrimaryUserId().first()?.let {
                     deleteConversations(
                         ids,
