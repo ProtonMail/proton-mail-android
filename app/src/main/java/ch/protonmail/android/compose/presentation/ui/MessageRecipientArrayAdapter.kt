@@ -33,7 +33,9 @@ import ch.protonmail.android.contacts.domain.usecase.ExtractInitials
 import ch.protonmail.android.databinding.LayoutRecipientDropdownItemBinding
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.Name
+import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.containsNoCase
+import timber.log.Timber
 import kotlin.collections.filter as kFilter
 
 /**
@@ -123,9 +125,7 @@ class MessageRecipientArrayAdapter(context: Context) :
                 binding.contactNameTextView.text = recipient.name
                 if (isContact) {
 
-                    val extractInitials = ExtractInitials()
-                    val initials = extractInitials(Name(recipient.name), EmailAddress(recipient.emailAddress))
-                    contactInitialsTextView.text = initials
+                    contactInitialsTextView.text = recipient.initials
                     contactEmailTextView.text = recipient.emailAddress
                 } else if (isGroup) {
                     contactGroupIconImageView.backgroundTintList =
@@ -134,6 +134,14 @@ class MessageRecipientArrayAdapter(context: Context) :
                         ColorStateList.valueOf(root.context.getColor(R.color.icon_inverted))
                 }
             }
+        }
+
+        private val MessageRecipient.initials: String get() = try {
+            val extractInitials = ExtractInitials()
+            extractInitials(Name(name), EmailAddress(emailAddress))
+        } catch (e: IllegalArgumentException) {
+            Timber.w(e, "Can't extract recipient initials. Name: $name - Email: $emailAddress")
+            EMPTY_STRING
         }
     }
 }
