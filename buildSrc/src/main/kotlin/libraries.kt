@@ -32,13 +32,16 @@ val DependencyHandler.`Proton-kotlin-test` get() =                  protonTest("
 
 val DependencyHandler.`Proton-account` get() =                      proton("account") version `Proton-account version`
 val DependencyHandler.`Proton-account-manager` get() =              proton("account-manager") version `Proton-account-manager version`
+val DependencyHandler.`Proton-account-manager-data-db` get()   =    proton("account-manager-data-db") version `Proton-account-manager version`
 val DependencyHandler.`Proton-auth` get() =                         proton("auth") version `Proton-auth version`
 val DependencyHandler.`Proton-country` get() =                      proton("country") version `Proton-country version`
 val DependencyHandler.`Proton-crypto` get() =                       proton("crypto") version `Proton-crypto version`
 val DependencyHandler.`Proton-data` get() =                         proton("data") version `Proton-data version`
+val DependencyHandler.`Proton-data-room` get() =                    proton("data-room") version `Proton-data-room version`
 val DependencyHandler.`Proton-domain` get() =                       proton("domain") version `Proton-domain version`
 val DependencyHandler.`Proton-human-verification` get() =           proton("human-verification") version `Proton-human-verification version`
 val DependencyHandler.`Proton-key` get() =                          proton("key") version `Proton-key version`
+val DependencyHandler.`Proton-mail-settings` get() =                proton("mail-settings") version `Proton-mail-settings version`
 val DependencyHandler.`Proton-network` get() =                      proton("network") version `Proton-network version`
 val DependencyHandler.`Proton-payment` get() =                      proton("payment") version `Proton-payment version`
 val DependencyHandler.`Proton-plan` get() =                         proton("plan") version `Proton-plan version`
