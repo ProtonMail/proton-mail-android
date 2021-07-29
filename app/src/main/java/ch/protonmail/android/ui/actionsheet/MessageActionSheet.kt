@@ -256,11 +256,13 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         with(binding) {
 
             textViewDetailsActionsMoveToInbox.apply {
-                isVisible = messageLocation in Constants.MessageLocationType.values()
-                    .filter { type ->
-                        type == Constants.MessageLocationType.ARCHIVE ||
-                            type == Constants.MessageLocationType.SPAM
-                    }
+                isVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
+                    messageLocation in Constants.MessageLocationType.values()
+                        .filter { type ->
+                            type == Constants.MessageLocationType.ARCHIVE ||
+                                type == Constants.MessageLocationType.SPAM
+                        }
+                } else true
                 if (messageLocation == Constants.MessageLocationType.SPAM) {
                     setText(R.string.not_spam_move_to_inbox)
                 }
@@ -270,29 +272,35 @@ class MessageActionSheet : BottomSheetDialogFragment() {
             }
             textViewDetailsActionsTrash.apply {
                 isVisible = messageLocation in Constants.MessageLocationType.values()
-                    .filter { it != Constants.MessageLocationType.TRASH }
+                    .filter { type ->
+                        type != Constants.MessageLocationType.TRASH
+                    }
                 setOnClickListener {
                     viewModel.moveToTrash(messageIds, messageLocation)
                 }
             }
             textViewDetailsActionsMoveToArchive.apply {
-                isVisible = messageLocation in Constants.MessageLocationType.values()
-                    .filter { type ->
-                        type != Constants.MessageLocationType.ARCHIVE &&
-                            type != Constants.MessageLocationType.SPAM
-                    }
+                isVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
+                    messageLocation in Constants.MessageLocationType.values()
+                        .filter { type ->
+                            type != Constants.MessageLocationType.ARCHIVE &&
+                                type != Constants.MessageLocationType.SPAM
+                        }
+                } else true
                 setOnClickListener {
                     viewModel.moveToArchive(messageIds, messageLocation)
                 }
             }
             textViewDetailsActionsMoveToSpam.apply {
-                isVisible = messageLocation in Constants.MessageLocationType.values()
-                    .filter { type ->
-                        type != Constants.MessageLocationType.SPAM &&
-                            type != Constants.MessageLocationType.DRAFT &&
-                            type != Constants.MessageLocationType.SENT &&
-                            type != Constants.MessageLocationType.TRASH
-                    }
+                isVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
+                    messageLocation in Constants.MessageLocationType.values()
+                        .filter { type ->
+                            type != Constants.MessageLocationType.SPAM &&
+                                type != Constants.MessageLocationType.DRAFT &&
+                                type != Constants.MessageLocationType.SENT &&
+                                type != Constants.MessageLocationType.TRASH
+                        }
+                } else true
                 setOnClickListener {
                     viewModel.moveToSpam(messageIds, messageLocation)
                 }

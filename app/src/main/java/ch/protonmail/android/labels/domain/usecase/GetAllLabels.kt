@@ -52,7 +52,9 @@ class GetAllLabels @Inject constructor(
             uiLabelsFromDb
     }
 
-    private fun getStandardFolders(currentMessageFolder: Constants.MessageLocationType): List<LabelActonItemUiModel> {
+    private fun getStandardFolders(
+        currentMessageFolder: Constants.MessageLocationType
+    ): List<LabelActonItemUiModel> {
         return when (currentMessageFolder) {
             Constants.MessageLocationType.INBOX,
             Constants.MessageLocationType.ARCHIVE,
@@ -65,7 +67,9 @@ class GetAllLabels @Inject constructor(
     private fun getListWithoutType(
         currentMessageFolder: Constants.MessageLocationType = Constants.MessageLocationType.INVALID
     ) = StandardFolderLocation.values()
-        .filter { it.id != currentMessageFolder.messageLocationTypeValue.toString() }
+        .filter {
+            it.id != currentMessageFolder.messageLocationTypeValue.toString()
+        }
         .map { location ->
             LabelActonItemUiModel(
                 labelId = location.id,

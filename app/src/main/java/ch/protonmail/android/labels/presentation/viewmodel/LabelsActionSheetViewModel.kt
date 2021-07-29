@@ -24,6 +24,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ARCHIVE
+import ch.protonmail.android.core.Constants.MessageLocationType.INVALID
+import ch.protonmail.android.core.Constants.MessageLocationType.TRASH
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.labels.domain.model.ManageLabelActionResult
 import ch.protonmail.android.labels.domain.usecase.GetAllLabels
@@ -73,6 +75,9 @@ class LabelsActionSheetViewModel @Inject constructor(
     private val messageIds = savedStateHandle.get<List<String>>(LabelsActionSheet.EXTRA_ARG_MESSAGES_IDS)
         ?: emptyList()
 
+    private val actionSheetTarget = savedStateHandle.get<ActionSheetTarget>(LabelsActionSheet.EXTRA_ARG_ACTION_TARGET)
+        ?: ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+
     private val labelsMutableFlow = MutableStateFlow(emptyList<LabelActonItemUiModel>())
     private val actionsResultMutableFlow = MutableStateFlow<ManageLabelActionResult>(ManageLabelActionResult.Default)
 
@@ -87,7 +92,10 @@ class LabelsActionSheetViewModel @Inject constructor(
             labelsMutableFlow.value = getAllLabels(
                 getCheckedLabelsForAllMailboxItems(messageIds),
                 labelsSheetType,
-                currentMessageFolder
+                if (actionSheetTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN ||
+                    currentMessageFolder == TRASH
+                ) currentMessageFolder
+                else INVALID
             )
         }
     }

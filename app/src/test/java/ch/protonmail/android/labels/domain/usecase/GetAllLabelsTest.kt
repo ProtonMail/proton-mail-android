@@ -94,7 +94,9 @@ class GetAllLabelsTest {
 
 
         // when
-        val result = useCase.invoke(currentLabelsSelection)
+        val result = useCase.invoke(
+            currentLabelsSelection
+        )
 
         // then
         assertEquals(expected, result)

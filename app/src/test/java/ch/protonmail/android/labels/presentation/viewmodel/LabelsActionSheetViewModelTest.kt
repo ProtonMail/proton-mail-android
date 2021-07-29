@@ -134,6 +134,10 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             savedStateHandle.get<Int>(LabelsActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID)
         } returns 0
 
+        every {
+            savedStateHandle.get<ActionSheetTarget>(LabelsActionSheet.EXTRA_ARG_ACTION_TARGET)
+        } returns ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
+
         coEvery { getAllLabels.invoke(any(), any(), any()) } returns listOf(model1label, model2folder)
         coEvery { messageRepository.findMessageById(messageId1) } returns message1
 
