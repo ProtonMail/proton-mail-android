@@ -257,7 +257,7 @@ class MessageRepository @Inject constructor(
         return loadMoreCombineTransform(fromDatabaseFlow, fromApiFlow) { fromDatabase, fromApi ->
             when (fromApi) {
                 is Success -> saveMessages(fromApi)
-                is Error -> emit(fromApi)
+                is Error -> if (connectivityManager.isInternetConnectionPossible()) emit(fromApi)
                 null, is Processing -> {
                     // noop
                 }
@@ -290,7 +290,7 @@ class MessageRepository @Inject constructor(
         return loadMoreCombineTransform(fromDatabaseFlow, fromApiFlow) { fromDatabase, fromApi ->
             when (fromApi) {
                 is Success -> saveMessages(fromApi)
-                is Error -> emit(fromApi)
+                is Error -> if (connectivityManager.isInternetConnectionPossible()) emit(fromApi)
                 null, is Processing -> {
                     // noop
                 }
