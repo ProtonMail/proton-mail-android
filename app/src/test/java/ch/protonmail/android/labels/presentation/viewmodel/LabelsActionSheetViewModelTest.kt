@@ -134,6 +134,10 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             savedStateHandle.get<Int>(LabelsActionSheet.EXTRA_ARG_CURRENT_FOLDER_LOCATION_ID)
         } returns 0
 
+        every {
+            savedStateHandle.get<ActionSheetTarget>(LabelsActionSheet.EXTRA_ARG_ACTION_TARGET)
+        } returns ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
+
         coEvery { getAllLabels.invoke(any(), any(), any()) } returns listOf(model1label, model2folder)
         coEvery { messageRepository.findMessageById(messageId1) } returns message1
 
@@ -204,13 +208,16 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
         coEvery { userManager.didReachLabelsThreshold(any()) } returns false
         coEvery { moveMessagesToFolder.invoke(any(), any(), any()) } just Runs
         coEvery { conversationModeEnabled(any()) } returns false
+        every {
+            savedStateHandle.get<ActionSheetTarget>(LabelsActionSheet.EXTRA_ARG_ACTION_TARGET)
+        } returns ActionSheetTarget.MAILBOX_ITEMS_IN_MAILBOX_SCREEN
 
         // when
         viewModel.onLabelClicked(model2folder, 0)
 
         // then
         coVerify { moveMessagesToFolder.invoke(any(), any(), any()) }
-        assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved, viewModel.actionsResult.value)
+        assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved(true), viewModel.actionsResult.value)
     }
 
     @Test
@@ -232,7 +239,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             // then
             coVerify { moveConversationsToFolder(any(), any(), any()) }
             coVerify { moveMessagesToFolder wasNot Called }
-            assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved, viewModel.actionsResult.value)
+            assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved(true), viewModel.actionsResult.value)
         }
 
     @Test
@@ -253,6 +260,6 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             // then
             coVerify { moveMessagesToFolder.invoke(any(), any(), any()) }
             coVerify { moveConversationsToFolder wasNot Called }
-            assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved, viewModel.actionsResult.value)
+            assertEquals(ManageLabelActionResult.MessageSuccessfullyMoved(false), viewModel.actionsResult.value)
         }
 }

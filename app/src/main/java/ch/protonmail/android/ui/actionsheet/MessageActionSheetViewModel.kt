@@ -108,7 +108,8 @@ class MessageActionSheetViewModel @Inject constructor(
                 )
             }
         }.invokeOnCompletion {
-            actionsMutableFlow.value = MessageActionSheetAction.Delete
+            val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
         }
     }
 
