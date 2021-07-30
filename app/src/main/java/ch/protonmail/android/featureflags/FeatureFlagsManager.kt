@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.featureflags
 
-import ch.protonmail.android.utils.AppUtil
 import javax.inject.Inject
 
 class FeatureFlagsManager @Inject constructor() {
@@ -28,5 +27,5 @@ class FeatureFlagsManager @Inject constructor() {
      * Defines whether the user has the possibility to toggle view mode
      * between conversation view and single message view
      */
-    fun isChangeViewModeFeatureEnabled() = AppUtil.isDebug()
+    fun isChangeViewModeFeatureEnabled() = true
 }
