@@ -556,7 +556,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             val expected = listOf(
                 fakeMailboxUiData("messageId9238482", "senderName", "subject1283")
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected)
 
             // When
             viewModel.mailboxState.test {
@@ -635,7 +635,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expectedItems, false)
+            val expectedState = MailboxState.Data(expectedItems)
 
             // When
             viewModel.mailboxState.test {
@@ -695,7 +695,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected)
 
             // When
             viewModel.mailboxState.test {
@@ -750,7 +750,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected)
 
             // When
             viewModel.mailboxState.test {
@@ -801,7 +801,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected)
 
             // When
             viewModel.mailboxState.test {
@@ -860,7 +860,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected)
 
             // When
             viewModel.mailboxState.test {
@@ -917,7 +917,7 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
                     isDraft = false
                 )
             )
-            val expectedState = MailboxState.Data(expected, false)
+            val expectedState = MailboxState.Data(expected)
 
             // When
             viewModel.mailboxState.test {

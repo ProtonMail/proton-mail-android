@@ -567,6 +567,9 @@ internal class MailboxActivity :
 
         when (state) {
             is MailboxState.Loading -> setRefreshing(true)
+            is MailboxState.NoMoreItems -> {
+                if (isLoadingMore.get()) setLoadingMore(false)
+            }
             is MailboxState.Data -> {
                 Timber.v("Data state items count: ${state.items.size}")
                 setRefreshing(false)
@@ -871,7 +874,9 @@ internal class MailboxActivity :
 
     private fun setLoadingMore(loadingMore: Boolean): Boolean {
         val previousValue = isLoadingMore.getAndSet(loadingMore)
-        mailboxRecyclerView.post { mailboxAdapter.includeFooter = isLoadingMore.get() }
+        if (previousValue != loadingMore) {
+            mailboxRecyclerView.post { mailboxAdapter.includeFooter = isLoadingMore.get() }
+        }
         return previousValue
     }
 
@@ -1513,7 +1518,7 @@ internal class MailboxActivity :
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position = viewHolder.adapterPosition
-            val mailboxItem = mailboxAdapter.getItem(position)
+            val mailboxItem = mailboxAdapter.getMailboxItem(position)
             val messageSwiped = SimpleMessage(mailboxItem)
             val mailboxLocation = currentMailboxLocation
             val settings = mailSettings ?: return
