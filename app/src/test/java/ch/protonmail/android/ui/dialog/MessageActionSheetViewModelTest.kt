@@ -344,4 +344,48 @@ class MessageActionSheetViewModelTest : ArchTest, CoroutinesTest {
         verify { messageRepository.markUnRead(listOf(messageId)) }
         verify { accountManager wasNot Called }
     }
+
+    @Test
+    fun verifyDeleteCallsDeleteMessageWhenCalledForAMessageInsideAConversation() {
+        val messageIds = listOf("messageId5")
+        val currentFolder = Constants.MessageLocationType.TRASH
+        every { conversationModeEnabled(any()) } returns true
+        every {
+            savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
+        } returns ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
+
+        viewModel.delete(
+            messageIds,
+            currentFolder,
+            true
+        )
+
+        coVerify { deleteMessage(messageIds, currentFolder.messageLocationTypeValue.toString()) }
+    }
+
+    @Test
+    fun verifyDeleteCallsDeleteConversationWhenCalledForAConversation() {
+        val messageIds = listOf("messageId6")
+        val currentFolder = Constants.MessageLocationType.SPAM
+        val userId = UserId("userId6")
+        every { accountManager.getPrimaryUserId() } returns flowOf(userId)
+        every { conversationModeEnabled(any()) } returns true
+        every {
+            savedStateHandle.get<ActionSheetTarget>("extra_arg_action_sheet_actions_target")
+        } returns ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
+
+        viewModel.delete(
+            messageIds,
+            currentFolder,
+            true
+        )
+
+        coVerify {
+            deleteConversations(
+                messageIds,
+                userId,
+                currentFolder.messageLocationTypeValue.toString()
+            )
+        }
+    }
 }
