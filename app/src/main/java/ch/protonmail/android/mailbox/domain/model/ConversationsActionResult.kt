@@ -17,13 +17,14 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.labels.domain.model
+package ch.protonmail.android.mailbox.domain.model
 
-sealed class ManageLabelActionResult {
-    object Default : ManageLabelActionResult()
-    object LabelsSuccessfullySaved : ManageLabelActionResult()
-    object MessageSuccessfullyMoved : ManageLabelActionResult()
-    object ErrorUpdatingLabels : ManageLabelActionResult()
-    object ErrorMovingToFolder : ManageLabelActionResult()
-    data class ErrorLabelsThresholdReached(val maxAllowedCount: Int) : ManageLabelActionResult()
+/**
+ * A sealed class which indicates the status of the conversation action that needs to be performed
+ */
+sealed class ConversationsActionResult {
+
+    object Success : ConversationsActionResult()
+
+    object Error : ConversationsActionResult()
 }

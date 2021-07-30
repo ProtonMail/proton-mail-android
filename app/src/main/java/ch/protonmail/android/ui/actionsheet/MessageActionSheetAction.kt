@@ -37,9 +37,14 @@ sealed class MessageActionSheetAction {
 
     data class ShowMessageHeaders(val messageHeaders: String) : MessageActionSheetAction()
 
-    data class ChangeStarredStatus(val starredStatus: Boolean) : MessageActionSheetAction()
+    data class ChangeStarredStatus(
+        val starredStatus: Boolean,
+        val isSuccessful: Boolean
+    ) : MessageActionSheetAction()
 
     object Delete : MessageActionSheetAction()
 
     data class DismissActionSheet(val shallDismissBackingActivity: Boolean) : MessageActionSheetAction()
+
+    object CouldNotCompleteActionError : MessageActionSheetAction()
 }

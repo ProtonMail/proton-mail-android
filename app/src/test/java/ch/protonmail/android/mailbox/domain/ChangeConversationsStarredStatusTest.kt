@@ -19,11 +19,10 @@
 
 package ch.protonmail.android.mailbox.domain
 
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.domain.entity.UserId
 import kotlin.test.BeforeTest
@@ -51,7 +50,7 @@ class ChangeConversationsStarredStatusTest {
             // given
             val conversationIds = listOf("conversation1", "conversation2")
             val userId = UserId("id")
-            coEvery { conversationsRepository.star(any(), any()) } just runs
+            coEvery { conversationsRepository.star(any(), any()) } returns ConversationsActionResult.Success
 
             // when
             changeConversationsStarredStatus(
@@ -73,7 +72,7 @@ class ChangeConversationsStarredStatusTest {
             // given
             val conversationIds = listOf("conversation1", "conversation2")
             val userId = UserId("id")
-            coEvery { conversationsRepository.unstar(any(), any()) } just runs
+            coEvery { conversationsRepository.unstar(any(), any()) } returns ConversationsActionResult.Success
 
             // when
             changeConversationsStarredStatus(

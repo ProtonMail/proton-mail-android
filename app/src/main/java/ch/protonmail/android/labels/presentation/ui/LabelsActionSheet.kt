@@ -133,6 +133,10 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
             is ManageLabelActionResult.MessageSuccessfullyMoved -> dismiss()
             is ManageLabelActionResult.ErrorLabelsThresholdReached ->
                 showApplicableLabelsThresholdError(result.maxAllowedCount)
+            is ManageLabelActionResult.ErrorUpdatingLabels ->
+                showCouldNotCompleteActionError()
+            is ManageLabelActionResult.ErrorMovingToFolder ->
+                showCouldNotCompleteActionError()
             else -> {
                 Timber.v("Result $result")
             }
@@ -148,6 +152,14 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
     private fun showApplicableLabelsThresholdError(maxLabelsAllowed: Int) {
         Toast.makeText(
             context, getString(R.string.max_labels_selected, maxLabelsAllowed),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun showCouldNotCompleteActionError() {
+        Toast.makeText(
+            context,
+            context?.getString(R.string.could_not_complete_action),
             Toast.LENGTH_SHORT
         ).show()
     }

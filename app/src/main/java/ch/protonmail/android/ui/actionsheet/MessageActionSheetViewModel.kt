@@ -29,11 +29,13 @@ import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -147,19 +149,30 @@ class MessageActionSheetViewModel @Inject constructor(
             if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
-                    changeConversationsStarredStatus(
+                    val result = changeConversationsStarredStatus(
                         ids,
                         primaryUserId,
                         ChangeConversationsStarredStatus.Action.ACTION_STAR
                     )
+                    if (result is ConversationsActionResult.Error) {
+                        cancel("Could not complete the action")
+                    }
                 } else {
                     Timber.e("Primary user id is null. Cannot star message/conversation")
                 }
             } else {
                 messageRepository.starMessages(ids)
             }
-        }.invokeOnCompletion {
-            actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(true)
+        }.invokeOnCompletion { cancellationException ->
+            if (cancellationException != null) {
+                actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(
+                    starredStatus = true, isSuccessful = false
+                )
+            } else {
+                actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(
+                    starredStatus = true, isSuccessful = true
+                )
+            }
         }
     }
 
@@ -172,19 +185,31 @@ class MessageActionSheetViewModel @Inject constructor(
             if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
-                    changeConversationsStarredStatus(
+                    val result = changeConversationsStarredStatus(
                         ids,
                         primaryUserId,
                         ChangeConversationsStarredStatus.Action.ACTION_UNSTAR
                     )
+                    if (result is ConversationsActionResult.Error) {
+                        cancel("Could not complete the action")
+                    }
                 } else {
                     Timber.e("Primary user id is null. Cannot unstar message/conversation")
                 }
             } else {
                 messageRepository.unStarMessages(ids)
             }
-        }.invokeOnCompletion {
-            actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(false)
+        }.invokeOnCompletion { cancellationException ->
+            if (cancellationException != null) {
+                actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(
+                    starredStatus = false, isSuccessful = false
+                )
+            } else {
+                actionsMutableFlow.value = MessageActionSheetAction.ChangeStarredStatus(
+                    starredStatus = false, isSuccessful = true
+                )
+
+            }
         }
     }
 
@@ -198,22 +223,29 @@ class MessageActionSheetViewModel @Inject constructor(
             if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
-                    changeConversationsReadStatus(
+                    val result = changeConversationsReadStatus(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_UNREAD,
                         primaryUserId,
                         location,
                         locationId
                     )
+                    if (result is ConversationsActionResult.Error) {
+                        cancel("Could not complete the action")
+                    }
                 } else {
                     Timber.e("Primary user id is null. Cannot mark message/conversation unread")
                 }
             } else {
                 messageRepository.markUnRead(ids)
             }
-        }.invokeOnCompletion {
-            val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+        }.invokeOnCompletion { cancellationException ->
+            if (cancellationException != null) {
+                actionsMutableFlow.value = MessageActionSheetAction.CouldNotCompleteActionError
+            } else {
+                val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+            }
         }
     }
 
@@ -227,22 +259,29 @@ class MessageActionSheetViewModel @Inject constructor(
             if (isActionAppliedToConversation(location, shallIgnoreLocationInConversationResolution)) {
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
-                    changeConversationsReadStatus(
+                    val result = changeConversationsReadStatus(
                         ids,
                         ChangeConversationsReadStatus.Action.ACTION_MARK_READ,
                         primaryUserId,
                         location,
                         locationId
                     )
+                    if (result is ConversationsActionResult.Error) {
+                        cancel("Could not complete the action")
+                    }
                 } else {
                     Timber.e("Primary user id is null. Cannot mark message/conversation read")
                 }
             } else {
                 messageRepository.markRead(ids)
             }
-        }.invokeOnCompletion {
-            val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+        }.invokeOnCompletion { cancellationException ->
+            if (cancellationException != null) {
+                actionsMutableFlow.value = MessageActionSheetAction.CouldNotCompleteActionError
+            } else {
+                val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+            }
         }
     }
 
@@ -263,11 +302,14 @@ class MessageActionSheetViewModel @Inject constructor(
                 Timber.v("Move conversation to folder: $newFolderLocationId")
                 val primaryUserId = accountManager.getPrimaryUserId().first()
                 if (primaryUserId != null) {
-                    moveConversationsToFolder(
+                    val result = moveConversationsToFolder(
                         ids,
                         primaryUserId,
                         newFolderLocationId.messageLocationTypeValue.toString()
                     )
+                    if (result is ConversationsActionResult.Error) {
+                        cancel("Could not complete the action")
+                    }
                 } else {
                     Timber.e("Primary user id is null. Cannot move message/conversation to folder")
                 }
@@ -279,9 +321,13 @@ class MessageActionSheetViewModel @Inject constructor(
                     currentFolder.messageLocationTypeValue.toString()
                 )
             }
-        }.invokeOnCompletion {
-            val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-            actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+        }.invokeOnCompletion { cancellationException ->
+            if (cancellationException != null) {
+                actionsMutableFlow.value = MessageActionSheetAction.CouldNotCompleteActionError
+            } else {
+                val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
+                actionsMutableFlow.value = MessageActionSheetAction.DismissActionSheet(dismissBackingActivity)
+            }
         }
     }
 

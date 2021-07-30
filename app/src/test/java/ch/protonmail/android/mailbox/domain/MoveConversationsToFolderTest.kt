@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.mailbox.domain
 
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
@@ -46,7 +47,7 @@ class MoveConversationsToFolderTest {
             val conversationIds = listOf("conversationId1", "conversationId2")
             val userId = UserId("userId")
             val folderId = "folderId"
-            coEvery { conversationsRepository.moveToFolder(conversationIds, userId, folderId) } just runs
+            coEvery { conversationsRepository.moveToFolder(conversationIds, userId, folderId) } returns ConversationsActionResult.Success
 
             // when
             moveConversationsToFolder(conversationIds, userId, folderId)

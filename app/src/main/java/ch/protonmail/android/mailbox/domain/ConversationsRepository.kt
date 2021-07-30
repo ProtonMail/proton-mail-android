@@ -22,6 +22,7 @@ package ch.protonmail.android.mailbox.domain
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mailbox.data.local.model.ConversationDatabaseModel
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
@@ -79,24 +80,36 @@ interface ConversationsRepository {
 
     fun loadMore(params: GetConversationsParameters)
 
-    suspend fun markRead(conversationIds: List<String>, userId: UserId)
+    suspend fun markRead(conversationIds: List<String>, userId: UserId): ConversationsActionResult
 
     suspend fun markUnread(
         conversationIds: List<String>,
         userId: UserId,
         location: Constants.MessageLocationType,
         locationId: String
-    )
+    ): ConversationsActionResult
 
-    suspend fun star(conversationIds: List<String>, userId: UserId)
+    suspend fun star(conversationIds: List<String>, userId: UserId): ConversationsActionResult
 
-    suspend fun unstar(conversationIds: List<String>, userId: UserId)
+    suspend fun unstar(conversationIds: List<String>, userId: UserId): ConversationsActionResult
 
-    suspend fun moveToFolder(conversationIds: List<String>, userId: UserId, folderId: String)
+    suspend fun moveToFolder(
+        conversationIds: List<String>,
+        userId: UserId,
+        folderId: String
+    ): ConversationsActionResult
 
     suspend fun delete(conversationIds: List<String>, userId: UserId, currentFolderId: String)
 
-    suspend fun label(conversationIds: List<String>, userId: UserId, labelId: String)
+    suspend fun label(
+        conversationIds: List<String>,
+        userId: UserId,
+        labelId: String
+    ): ConversationsActionResult
 
-    suspend fun unlabel(conversationIds: List<String>, userId: UserId, labelId: String)
+    suspend fun unlabel(
+        conversationIds: List<String>,
+        userId: UserId,
+        labelId: String
+    ): ConversationsActionResult
 }

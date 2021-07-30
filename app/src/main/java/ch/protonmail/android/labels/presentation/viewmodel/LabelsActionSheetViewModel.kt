@@ -34,10 +34,12 @@ import ch.protonmail.android.labels.presentation.ui.LabelsActionSheet
 import ch.protonmail.android.mailbox.domain.ConversationsRepository
 import ch.protonmail.android.mailbox.domain.MoveConversationsToFolder
 import ch.protonmail.android.mailbox.domain.UpdateConversationsLabels
+import ch.protonmail.android.mailbox.domain.model.ConversationsActionResult
 import ch.protonmail.android.mailbox.presentation.ConversationModeEnabled
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -139,12 +141,15 @@ class LabelsActionSheetViewModel @Inject constructor(
                     .map { it.labelId }
                 Timber.v("Selected labels: $selectedLabels messageId: $ids")
                 if (isActionAppliedToConversation(currentMessageFolder)) {
-                    updateConversationsLabels(
+                    val result = updateConversationsLabels(
                         ids,
                         UserId(userManager.requireCurrentUserId().s),
                         selectedLabels,
                         unselectedLabels
                     )
+                    if (result is ConversationsActionResult.Error) {
+                        cancel("Could not complete the action")
+                    }
                 } else {
                     ids.forEach { id ->
                         updateLabels(
@@ -156,11 +161,14 @@ class LabelsActionSheetViewModel @Inject constructor(
 
                 if (shallMoveToArchive) {
                     if (isActionAppliedToConversation(currentMessageFolder)) {
-                        moveConversationsToFolder(
+                        val result = moveConversationsToFolder(
                             ids,
                             UserId(userManager.requireCurrentUserId().s),
                             ARCHIVE.messageLocationTypeValue.toString(),
                         )
+                        if (result is ConversationsActionResult.Error) {
+                            cancel("Could not complete the action")
+                        }
                     } else {
                         moveMessagesToFolder(
                             ids,
@@ -169,8 +177,12 @@ class LabelsActionSheetViewModel @Inject constructor(
                         )
                     }
                 }
-            }.invokeOnCompletion {
-                actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved
+            }.invokeOnCompletion { cancellationException ->
+                if (cancellationException != null) {
+                    actionsResultMutableFlow.value = ManageLabelActionResult.ErrorUpdatingLabels
+                } else {
+                    actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved
+                }
             }
         } else {
             Timber.i("Cannot continue messages list is null or empty!")
@@ -182,15 +194,22 @@ class LabelsActionSheetViewModel @Inject constructor(
             // ignore location here, otherwise custom folder case does not work
             if (isActionAppliedToConversation(null)) {
                 userManager.currentUserId?.let {
-                    moveConversationsToFolder(messageIds, UserId(it.s), selectedFolderId)
+                    val result = moveConversationsToFolder(messageIds, UserId(it.s), selectedFolderId)
+                    if (result is ConversationsActionResult.Error) {
+                        cancel("Could not complete the action")
+                    }
                 }
             } else {
                 moveMessagesToFolder(
                     messageIds, selectedFolderId, currentMessageFolder.messageLocationTypeValue.toString()
                 )
             }
-        }.invokeOnCompletion {
-            actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved
+        }.invokeOnCompletion { cancellationException ->
+            if (cancellationException != null) {
+                actionsResultMutableFlow.value = ManageLabelActionResult.ErrorMovingToFolder
+            } else {
+                actionsResultMutableFlow.value = ManageLabelActionResult.MessageSuccessfullyMoved
+            }
         }
     }
 
