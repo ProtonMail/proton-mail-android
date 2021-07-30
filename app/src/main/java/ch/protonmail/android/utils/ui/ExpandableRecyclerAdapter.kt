@@ -154,17 +154,6 @@ abstract class ExpandableRecyclerAdapter<T : ExpandableRecyclerAdapter.ListItem>
 
         this.visibleItems = visibleItems
 
-        for (i in visibleItems.indices) {
-            if (getItemViewType(i) == TYPE_HEADER) {
-                if (isExpanded(i)) {
-                    break
-                } else {
-                    if (i == visibleItems.size - 1) {
-                        expandItems(i, true)
-                    }
-                }
-            }
-        }
         notifyDataSetChanged()
     }
 
