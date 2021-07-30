@@ -37,7 +37,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.AccountSettingsActivity
+import ch.protonmail.android.settings.presentation.AccountSettingsActivity
 import ch.protonmail.android.activities.BaseConnectivityActivity
 import ch.protonmail.android.activities.DefaultAddressActivity
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
@@ -359,8 +359,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 startActivity(foldersManagerIntent)
             }
             SWIPING_GESTURE -> {
-                val mailSettings = checkNotNull(userManager.getCurrentUserMailSettingsBlocking())
-                val swipeFragment = SwipeSettingFragment.newInstance(mailSettings)
+                val swipeFragment = SwipeSettingFragment.newInstance()
                 supportFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.zoom_in, 0, 0, R.anim.zoom_out)
                     .add(R.id.settings_fragment_container, swipeFragment)
@@ -497,9 +496,13 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
      * Turns the value of setting with [settingType] ON or OFF.
      */
     protected fun setEnabled(settingType: SettingsEnum, settingValueEnabled: Boolean) {
-        settingsAdapter.items
-            .find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
-            ?.apply { enabled = settingValueEnabled }
+        val position = settingsAdapter.items
+            .indexOfFirst { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
+        if (position < 0 || position >= settingsAdapter.items.size) {
+            return
+        }
+        settingsAdapter.items[position].apply { enabled = settingValueEnabled }
+        settingsAdapter.notifyItemChanged(position)
     }
 
     /**

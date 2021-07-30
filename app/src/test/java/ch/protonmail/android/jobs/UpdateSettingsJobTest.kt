@@ -25,7 +25,6 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.di.JobEntryPoint
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.utils.AppUtil
 import dagger.hilt.EntryPoints
 import io.mockk.MockKAnnotations
@@ -38,12 +37,7 @@ import io.mockk.verify
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-private const val VIEW_MODE_CONVERSATION = 0
-
 class UpdateSettingsJobTest {
-
-    @RelaxedMockK
-    private lateinit var featureFlagsManager: FeatureFlagsManager
 
     @RelaxedMockK
     private lateinit var mockUserManager: UserManager
@@ -85,30 +79,5 @@ class UpdateSettingsJobTest {
         updateSettings.onRun()
 
         verify { mockApiManager.updateAutoShowImages(0) }
-    }
-
-    @Test
-    fun jobCallsApiToUpdateViewModeToggleWhenMailSettingsAreValidAndNotificationEmailDidNotChange() {
-        mailSettings.viewMode = VIEW_MODE_CONVERSATION
-        updateSettings = UpdateSettingsJob(
-            featureFlags = featureFlagsManager
-        )
-        every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns true
-
-        updateSettings.onRun()
-
-        verify { mockApiManager.updateViewMode(0) }
-    }
-
-    @Test
-    fun jobDoesNotCallApiToUpdateViewModeToggleWhenViewModeFeatureFlagIsFalse() {
-        updateSettings = UpdateSettingsJob(
-            featureFlags = featureFlagsManager
-        )
-        every { featureFlagsManager.isChangeViewModeFeatureEnabled() } returns false
-
-        updateSettings.onRun()
-
-        verify(exactly = 0) { mockApiManager.updateViewMode(any()) }
     }
 }

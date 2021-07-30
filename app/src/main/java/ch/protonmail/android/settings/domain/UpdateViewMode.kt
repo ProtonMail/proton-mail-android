@@ -17,40 +17,32 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.usecase.fetch
+package ch.protonmail.android.settings.domain
 
-import android.content.Context
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
-import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.di.AppProcessLifecycleOwner
-import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.prefs.SecureSharedPreferences
-import kotlinx.coroutines.flow.launchIn
+import ch.protonmail.android.featureflags.FeatureFlagsManager
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
+import me.proton.core.mailsettings.domain.entity.ViewMode
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
 import me.proton.core.util.kotlin.DispatcherProvider
-import timber.log.Timber
 import javax.inject.Inject
 
-class FetchMailSettings @Inject constructor(
-    private val context: Context,
-    private val protonMailApiManager: ProtonMailApiManager,
+class UpdateViewMode @Inject constructor(
+    private val featureFlags: FeatureFlagsManager = FeatureFlagsManager(),
     private val mailSettingsRepository: MailSettingsRepository,
-    private val dispatchers: DispatcherProvider,
-    @AppProcessLifecycleOwner
-    private val lifecycleOwner: LifecycleOwner
+    private val dispatchers: DispatcherProvider
 ) {
 
+    /**
+     * @param userId Id of the user who is currently logged in
+     * @param viewMode value that we want to change to
+     */
     suspend operator fun invoke(
-        userId: UserId
+        userId: UserId,
+        viewMode: ViewMode
     ) = withContext(dispatchers.Io) {
-
-        Timber.v("FetchMailSettings started")
-        val mailSettingsResponse = protonMailApiManager.fetchMailSettings(Id(userId.id))
-        mailSettingsResponse.mailSettings.save(SecureSharedPreferences.getPrefsForUser(context, Id(userId.id)))
-
-        mailSettingsRepository.getMailSettingsFlow(userId, true).launchIn(lifecycleOwner.lifecycleScope)
+        if (featureFlags.isChangeViewModeFeatureEnabled()) {
+            mailSettingsRepository.updateViewMode(userId, viewMode)
+        }
     }
 }

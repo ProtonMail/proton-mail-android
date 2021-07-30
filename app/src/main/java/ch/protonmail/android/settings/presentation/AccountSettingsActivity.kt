@@ -16,23 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.activities
+package ch.protonmail.android.settings.presentation
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
-import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.featureflags.FeatureFlagsManager
-import ch.protonmail.android.jobs.UpdateSettingsJob
-import ch.protonmail.android.prefs.SecureSharedPreferences
+import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import me.proton.core.mailsettings.domain.entity.ViewMode
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.equalsNoCase
 import timber.log.Timber
@@ -40,6 +43,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class AccountSettingsActivity : BaseSettingsActivity() {
+
+    private val accountSettingsActivityViewModel: AccountSettingsActivityViewModel by viewModels()
 
     @Inject
     lateinit var featureFlags: FeatureFlagsManager
@@ -120,20 +125,31 @@ class AccountSettingsActivity : BaseSettingsActivity() {
      * When feature flag is false, no item will be shown in settings and this will have no effect.
      */
     private fun setupViewMode() {
-        val mailSettings = mUserManager.getCurrentUserMailSettingsBlocking()
-        Timber.d("MailSettings ViewMode = ${mailSettings?.viewMode}")
+        lifecycleScope.launch {
+            accountSettingsActivityViewModel.getMailSettings()
+                .dropWhile { it !is GetMailSettings.MailSettingsState.Success }
+                .onEach { result ->
+                    when (result) {
+                        is GetMailSettings.MailSettingsState.Success -> {
+                            result.mailSettings?.let { mailSettings ->
+                                Timber.d("MailSettings ViewMode = ${mailSettings.viewMode}")
 
-        setEnabled(SettingsEnum.CONVERSATION_MODE, mailSettings?.viewMode == 0)
-        setupViewModeChangedListener(mailSettings)
+                                setEnabled(
+                                    SettingsEnum.CONVERSATION_MODE,
+                                    mailSettings.viewMode?.enum == ViewMode.ConversationGrouping
+                                )
+                            }
+                        }
+                    }
+                }.launchIn(lifecycleScope)
+        }
+        setupViewModeChangedListener()
     }
 
-    private fun setupViewModeChangedListener(mailSettings: MailSettings?) {
+    private fun setupViewModeChangedListener() {
         setToggleListener(SettingsEnum.CONVERSATION_MODE) { _, isEnabled ->
-            mailSettings?.viewMode = if (isEnabled) 0 else 1
-            mailSettings?.saveBlocking(
-                SecureSharedPreferences.getPrefsForUser(this@AccountSettingsActivity, user.id)
-            )
-            mJobManager.addJobInBackground(UpdateSettingsJob())
+            val viewMode = if (isEnabled) ViewMode.ConversationGrouping else ViewMode.NoConversationGrouping
+            accountSettingsActivityViewModel.changeViewMode(viewMode)
         }
     }
 }

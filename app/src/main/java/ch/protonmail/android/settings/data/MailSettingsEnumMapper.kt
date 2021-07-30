@@ -17,21 +17,17 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain
+package ch.protonmail.android.settings.data
 
-import ch.protonmail.android.mailbox.domain.model.Correspondent
-import ch.protonmail.android.mailbox.domain.model.LabelContext
-import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
+import me.proton.core.mailsettings.domain.entity.SwipeAction
+import ch.protonmail.android.adapters.swipe.SwipeAction as SwipeActionUiModel
 
-data class Conversation(
-    val id: String,
-    val subject: String,
-    val senders: List<Correspondent>,
-    val receivers: List<Correspondent>,
-    val messagesCount: Int,
-    val unreadCount: Int,
-    val attachmentsCount: Int,
-    val expirationTime: Long,
-    val labels: List<LabelContext>,
-    val messages: List<MessageDomainModel>?
-)
+internal fun SwipeAction.toLocalSwipeActionUiModel(): SwipeActionUiModel {
+    return when (this) {
+        SwipeAction.Trash -> SwipeActionUiModel.TRASH
+        SwipeAction.Spam -> SwipeActionUiModel.SPAM
+        SwipeAction.Star -> SwipeActionUiModel.STAR
+        SwipeAction.Archive -> SwipeActionUiModel.ARCHIVE
+        SwipeAction.MarkRead -> SwipeActionUiModel.MARK_READ
+    }
+}

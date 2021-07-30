@@ -306,12 +306,12 @@ dependencies {
         `Proton-account-manager`,
         `Proton-account-manager-data-db`,
         `Proton-user`,
+        `Proton-mail-settings`,
         `Proton-key`,
         `Proton-human-verification`,
         `Proton-payment`,
         `Proton-plan`,
         `Proton-country`,
-        `Proton-mail-settings`,
         `Proton-payment`,
         `Proton-plan`,
 

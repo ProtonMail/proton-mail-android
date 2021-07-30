@@ -17,17 +17,21 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.api.models.requests;
+package ch.protonmail.android.mailbox.domain.model
 
-import com.google.gson.annotations.SerializedName;
+import ch.protonmail.android.mailbox.domain.model.Correspondent
+import ch.protonmail.android.mailbox.domain.model.LabelContext
+import ch.protonmail.android.mailbox.domain.model.MessageDomainModel
 
-import ch.protonmail.android.api.utils.Fields;
-
-public class ViewMode {
-    @SerializedName(Fields.Settings.VIEW_MODE)
-    private int viewMode;
-
-    public ViewMode(int viewMode) {
-        this.viewMode = viewMode;
-    }
-}
+data class Conversation(
+    val id: String,
+    val subject: String,
+    val senders: List<Correspondent>,
+    val receivers: List<Correspondent>,
+    val messagesCount: Int,
+    val unreadCount: Int,
+    val attachmentsCount: Int,
+    val expirationTime: Long,
+    val labels: List<LabelContext>,
+    val messages: List<MessageDomainModel>?
+)

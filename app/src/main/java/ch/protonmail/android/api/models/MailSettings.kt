@@ -23,7 +23,6 @@ import androidx.core.content.edit
 import ch.protonmail.android.api.models.enumerations.PackageType
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.runBlocking
-import me.proton.core.util.kotlin.unsupported
 import java.io.Serializable
 
 private const val FIELD_DISPLAY_NAME = "DisplayName"
@@ -31,11 +30,9 @@ private const val FIELD_SIGNATURE = "Signature"
 private const val FIELD_THEME = "Theme"
 private const val FIELD_AUTO_SAVE_CONTACTS = "AutoSaveContacts"
 private const val FIELD_AUTO_WILDCARD_SEARCH = "AutoWildcardSearch"
-private const val FIELD_SHOW_IMAGES = "ShowImages" // 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
-private const val FIELD_VIEW_MODE = "ViewMode" // 0 for conversation view, 1 for message view
+private const val FIELD_SHOW_IMAGES = "ShowImages" // 0 for none, 1 for remote,
+//                                                    2 for embedded, 3 for remote and embedded
 private const val FIELD_SHOW_MOVED = "ShowMoved"
-private const val FIELD_SWIPE_LEFT = "SwipeLeft"
-private const val FIELD_SWIPE_RIGHT = "SwipeRight"
 private const val FIELD_ALSO_ARCHIVE = "AlsoArchive"
 private const val FIELD_PM_SIGNATURE = "PMSignature"
 private const val FIELD_RIGHT_TO_LEFT = "RightToLeft"
@@ -54,11 +51,9 @@ private const val PREF_SIGNATURE = "mail_settings_Signature"
 private const val PREF_THEME = "mail_settings_Theme"
 private const val PREF_AUTO_SAVE_CONTACTS = "mail_settings_AutoSaveContacts"
 private const val PREF_AUTO_WILDCARD_SEARCH = "mail_settings_AutoWildcardSearch"
-private const val PREF_SHOW_IMAGES = "mail_settings_ShowImages" // 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
-private const val PREF_VIEW_MODE = "mail_settings_ViewMode" // 0 for conversation view, 1 for message view
+private const val PREF_SHOW_IMAGES = "mail_settings_ShowImages" // 0 for none, 1 for remote,
+//                                                                 2 for embedded, 3 for remote and embedded
 private const val PREF_SHOW_MOVED = "mail_settings_ShowMoved"
-private const val PREF_SWIPE_LEFT = "mail_settings_SwipeLeft"
-private const val PREF_SWIPE_RIGHT = "mail_settings_SwipeRight"
 private const val PREF_ALSO_ARCHIVE = "mail_settings_AlsoArchive"
 private const val PREF_PM_SIGNATURE = "mail_settings_PMSignature"
 private const val PREF_RIGHT_TO_LEFT = "mail_settings_RightToLeft"
@@ -101,12 +96,6 @@ class MailSettings : Serializable {
     @SerializedName(FIELD_SHOW_MOVED)
     private val showMoved: Int = 0
 
-    @SerializedName(FIELD_SWIPE_RIGHT)
-    private var swipeRight: Int = 0
-
-    @SerializedName(FIELD_SWIPE_LEFT)
-    private var swipeLeft: Int = 0
-
     @SerializedName(FIELD_ALSO_ARCHIVE)
     private val alsoArchive: Int = 0
 
@@ -143,9 +132,6 @@ class MailSettings : Serializable {
     @SerializedName(FIELD_SHOW_MIME_TYPE)
     private val showMIMEType: String? = null
 
-    @SerializedName(FIELD_VIEW_MODE)
-    var viewMode: Int = 1
-
     @Transient
     @Deprecated("We should not rely on username. No replacement", level = DeprecationLevel.ERROR)
     var username: String? = null
@@ -155,19 +141,6 @@ class MailSettings : Serializable {
         get() = ShowImageFrom.fromFlag(showImages)
         set(value) {
             showImages = value.flag
-        }
-
-
-    var leftSwipeAction: Int
-        get() = if (swipeLeft in 0..4) swipeLeft else 0
-        set(swipeAction) {
-            swipeLeft = swipeAction
-        }
-
-    var rightSwipeAction: Int
-        get() = if (swipeRight in 0..4) swipeRight else 0
-        set(swipeAction) {
-            swipeRight = swipeAction
         }
 
     val defaultSign: Boolean
@@ -191,10 +164,7 @@ class MailSettings : Serializable {
             putInt(PREF_AUTO_SAVE_CONTACTS, autoSaveContacts)
             putInt(PREF_AUTO_WILDCARD_SEARCH, autoWildcardSearch)
             putInt(PREF_SHOW_IMAGES, showImagesFrom.flag)
-            putInt(PREF_VIEW_MODE, viewMode)
             putInt(PREF_SHOW_MOVED, showMoved)
-            putInt(PREF_SWIPE_RIGHT, swipeRight)
-            putInt(PREF_SWIPE_LEFT, swipeLeft)
             putInt(PREF_ALSO_ARCHIVE, alsoArchive)
             putInt(PREF_PM_SIGNATURE, pmSignature)
             putInt(PREF_RIGHT_TO_LEFT, rightToLeft)
@@ -261,14 +231,9 @@ class MailSettings : Serializable {
                 with(userPreferences) {
                     showImagesFrom = ShowImageFrom.fromFlag(getInt(PREF_SHOW_IMAGES, 0))
                     autoSaveContacts = getInt(PREF_AUTO_SAVE_CONTACTS, 0)
-                    leftSwipeAction = getInt(PREF_SWIPE_LEFT, 0)
-                    swipeLeft = leftSwipeAction
-                    rightSwipeAction = getInt(PREF_SWIPE_RIGHT, 0)
-                    swipeRight = rightSwipeAction
                     setAttachPublicKey(getInt(PREF_ATTACH_PUBLIC_KEY, 0))
                     pgpScheme = getInt(PREF_PGP_SCHEME, 1)
                     sign = getInt(PREF_SIGN, 0)
-                    viewMode = getInt(PREF_VIEW_MODE, 1)
                 }
             }
         }

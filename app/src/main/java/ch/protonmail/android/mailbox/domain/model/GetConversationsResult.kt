@@ -19,8 +19,6 @@
 
 package ch.protonmail.android.mailbox.domain.model
 
-import ch.protonmail.android.mailbox.domain.Conversation
-
 sealed class GetConversationsResult {
     data class Success(val conversations: List<Conversation>) : GetConversationsResult()
     data class Error(val throwable: Throwable? = null) : GetConversationsResult()

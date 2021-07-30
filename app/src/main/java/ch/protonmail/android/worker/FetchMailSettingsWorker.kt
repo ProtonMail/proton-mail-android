@@ -55,7 +55,7 @@ class FetchMailSettingsWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         return runCatching {
             accountManager.getAccounts(AccountState.Ready).first().forEach {
-                withContext(dispatchers.Io) { fetchMailSettings.invoke(Id(it.userId.id)) }
+                withContext(dispatchers.Io) { fetchMailSettings.invoke(it.userId) }
             }
         }.fold(
             onSuccess = { Result.success() },

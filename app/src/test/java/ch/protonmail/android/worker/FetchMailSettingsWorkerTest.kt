@@ -31,6 +31,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.AccountState
 import me.proton.core.accountmanager.domain.AccountManager
@@ -87,20 +88,18 @@ class FetchMailSettingsWorkerTest {
     }
 
     @Test
-    fun `should return success when API call is successful`() {
-        runBlocking {
-            // given
-            coEvery { accountManager.getAccounts(AccountState.Ready) } returns flowOf(accounts)
-            coEvery { fetchMailSettings.invoke(any()) } returns Unit
+    fun `should return success when API call is successful`() = runBlockingTest {
+        // given
+        coEvery { accountManager.getAccounts(AccountState.Ready) } returns flowOf(accounts)
+        coEvery { fetchMailSettings.invoke(any()) } returns mockk(relaxed = true)
 
-            val expectedResult = ListenableWorker.Result.success()
+        val expectedResult = ListenableWorker.Result.success()
 
-            // when
-            val workerResult = fetchMailSettingsWorker.doWork()
+        // when
+        val workerResult = fetchMailSettingsWorker.doWork()
 
-            // then
-            assertEquals(expectedResult, workerResult)
-        }
+        // then
+        assertEquals(expectedResult, workerResult)
     }
 
     @Test

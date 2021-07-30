@@ -45,7 +45,7 @@ import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
 import ch.protonmail.android.mailbox.domain.ChangeConversationsStarredStatus
-import ch.protonmail.android.mailbox.domain.Conversation
+import ch.protonmail.android.mailbox.domain.model.Conversation
 import ch.protonmail.android.mailbox.domain.DeleteConversations
 import ch.protonmail.android.mailbox.domain.GetConversations
 import ch.protonmail.android.mailbox.domain.GetMessagesByLocation
@@ -59,6 +59,7 @@ import ch.protonmail.android.mailbox.presentation.MailboxState
 import ch.protonmail.android.mailbox.presentation.MailboxViewModel
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.mailbox.presentation.model.MessageData
+import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.ui.view.LabelChipUiModel
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -147,6 +148,9 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
     @RelaxedMockK
     private lateinit var deleteConversations: DeleteConversations
 
+    @RelaxedMockK
+    private lateinit var getMailSettings: GetMailSettings
+
     private lateinit var viewModel: MailboxViewModel
 
     private val loadingState = MailboxState.Loading
@@ -185,7 +189,8 @@ class MailboxViewModelTest : ArchTest, CoroutinesTest {
             getMessagesByLocation,
             moveConversationsToFolder,
             moveMessagesToFolder,
-            deleteConversations
+            deleteConversations,
+            getMailSettings
         )
 
         val jobEntryPoint = mockk<JobEntryPoint>()

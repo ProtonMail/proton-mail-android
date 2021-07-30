@@ -80,7 +80,6 @@ import ch.protonmail.android.adapters.swipe.SpamSwipeHandler
 import ch.protonmail.android.adapters.swipe.StarSwipeHandler
 import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.adapters.swipe.TrashSwipeHandler
-import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.MessageCount
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.api.segments.event.AlarmReceiver
@@ -118,6 +117,7 @@ import ch.protonmail.android.mailbox.presentation.MailboxViewModel.MaxLabelsReac
 import ch.protonmail.android.mailbox.presentation.model.MailboxUiItem
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
+import ch.protonmail.android.settings.domain.GetMailSettings
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
 import ch.protonmail.android.ui.actionsheet.MessageActionSheet
 import ch.protonmail.android.ui.actionsheet.model.ActionSheetTarget
@@ -147,10 +147,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.proton.core.domain.entity.UserId
+import me.proton.core.mailsettings.domain.entity.MailSettings
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.EMPTY_STRING
+import me.proton.core.util.kotlin.exhaustive
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -219,6 +221,7 @@ internal class MailboxActivity :
     private val handler = Handler(Looper.getMainLooper())
 
     override val currentLabelId get() = mailboxLabelId
+
 
     override fun getLayoutId(): Int = R.layout.activity_mailbox
 
@@ -378,9 +381,29 @@ internal class MailboxActivity :
             .onEach { mailboxAdapter.setNewLocation(it) }
             .launchIn(lifecycleScope)
 
-        ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
 
         setUpMailboxActionsView()
+
+        lifecycleScope.launch {
+            mailboxViewModel.getMailSettingsState().onEach {
+                when (it) {
+                    is GetMailSettings.MailSettingsState.Error.Message -> {
+                        showToast(it.message.toString(), Toast.LENGTH_LONG)
+                    }
+                    is GetMailSettings.MailSettingsState.Error.NoPrimaryAccount -> {
+                        Timber.w("No Primary Account")
+                    }
+                    is GetMailSettings.MailSettingsState.Success -> {
+                        it.mailSettings?.let { mailSettings ->
+                            swipeController.setCurrentMailSetting(mailSettings)
+                            ItemTouchHelper(swipeController).attachToRecyclerView(mailboxRecyclerView)
+                        }
+                        mailboxViewModel.refreshMessages()
+                    }
+                    else -> Unit
+                }.exhaustive
+            }.launchIn(lifecycleScope)
+        }
     }
 
     override fun secureContent(): Boolean = true
@@ -535,8 +558,6 @@ internal class MailboxActivity :
         counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()
         pendingActionDao = PendingActionDatabase.getInstance(this, currentUserId).getDao()
         messageDetailsRepository.reloadDependenciesForUser(currentUserId)
-
-        swipeController.loadCurrentMailSetting()
 
         startObservingPendingActions()
         AppUtil.clearNotifications(this, currentUserId)
@@ -758,7 +779,6 @@ internal class MailboxActivity :
         registerFcmReceiver()
         checkDelinquency()
         mailboxViewModel.checkConnectivity()
-        swipeController.loadCurrentMailSetting()
         val mailboxLocation = mailboxViewModel.mailboxLocation.value
         if (mailboxLocation == MessageLocationType.INBOX) {
             AppUtil.clearNotifications(this, userManager.requireCurrentUserId())
@@ -767,6 +787,7 @@ internal class MailboxActivity :
         if (shouldShowSwipeGesturesChangedDialog()) {
             showSwipeGesturesChangedDialog()
         }
+
     }
 
     override fun onPause() {
@@ -1456,15 +1477,9 @@ internal class MailboxActivity :
 
         private var mailSettings: MailSettings? = null
 
-        init {
-            loadCurrentMailSetting()
-        }
-
         @Deprecated("Subscribe for changes instead of reloading on current User/MailSettings changed.")
-        fun loadCurrentMailSetting() {
-            lifecycleScope.launchWhenResumed {
-                mailSettings = requireNotNull(userManager.getCurrentUserMailSettings())
-            }
+        fun setCurrentMailSetting(mailSettings: MailSettings) {
+            this.mailSettings = mailSettings
         }
 
         override fun getMovementFlags(
@@ -1515,8 +1530,8 @@ internal class MailboxActivity :
             val mailboxLocation = currentMailboxLocation
             val settings = mailSettings ?: return
             val swipeActionOrdinal: Int = when (direction) {
-                ItemTouchHelper.RIGHT -> settings.rightSwipeAction
-                ItemTouchHelper.LEFT -> settings.leftSwipeAction
+                ItemTouchHelper.RIGHT -> settings.swipeRight?.value ?: SwipeAction.TRASH.ordinal
+                ItemTouchHelper.LEFT -> settings.swipeLeft?.value ?: SwipeAction.ARCHIVE.ordinal
                 else -> throw IllegalArgumentException("Unrecognised direction: $direction")
             }
             val swipeAction = normalise(SwipeAction.values()[swipeActionOrdinal], currentMailboxLocation)
@@ -1573,13 +1588,13 @@ internal class MailboxActivity :
                         SwipeAction.TRASH.getActionBackgroundResource(deltaX < 0)
                     }
                     deltaX < 0 -> {
-                        mailSettings?.let {
-                            SwipeAction.values()[it.leftSwipeAction].getActionBackgroundResource(false)
+                        mailSettings?.swipeLeft?.let {
+                            SwipeAction.values()[it.value].getActionBackgroundResource(false)
                         } ?: Resources.ID_NULL
                     }
                     else -> {
-                        mailSettings?.let {
-                            SwipeAction.values()[it.rightSwipeAction].getActionBackgroundResource(true)
+                        mailSettings?.swipeRight?.let {
+                            SwipeAction.values()[it.value].getActionBackgroundResource(true)
                         } ?: Resources.ID_NULL
                     }
                 }

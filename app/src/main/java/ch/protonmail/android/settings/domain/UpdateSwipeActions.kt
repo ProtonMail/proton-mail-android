@@ -17,40 +17,34 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.usecase.fetch
+package ch.protonmail.android.settings.domain
 
-import android.content.Context
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
-import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.di.AppProcessLifecycleOwner
-import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.prefs.SecureSharedPreferences
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
+import me.proton.core.mailsettings.domain.entity.SwipeAction
 import me.proton.core.mailsettings.domain.repository.MailSettingsRepository
 import me.proton.core.util.kotlin.DispatcherProvider
-import timber.log.Timber
 import javax.inject.Inject
 
-class FetchMailSettings @Inject constructor(
-    private val context: Context,
-    private val protonMailApiManager: ProtonMailApiManager,
+class UpdateSwipeActions @Inject constructor(
     private val mailSettingsRepository: MailSettingsRepository,
-    private val dispatchers: DispatcherProvider,
-    @AppProcessLifecycleOwner
-    private val lifecycleOwner: LifecycleOwner
+    private val dispatchers: DispatcherProvider
 ) {
 
+    /**
+     * @param userId Id of the user who is currently logged in
+     * @param swipeRight and swipeLeft values that we want to change
+     */
     suspend operator fun invoke(
-        userId: UserId
+        userId: UserId,
+        swipeRight: SwipeAction? = null,
+        swipeLeft: SwipeAction? = null
     ) = withContext(dispatchers.Io) {
-
-        Timber.v("FetchMailSettings started")
-        val mailSettingsResponse = protonMailApiManager.fetchMailSettings(Id(userId.id))
-        mailSettingsResponse.mailSettings.save(SecureSharedPreferences.getPrefsForUser(context, Id(userId.id)))
-
-        mailSettingsRepository.getMailSettingsFlow(userId, true).launchIn(lifecycleOwner.lifecycleScope)
+        swipeRight?.let {
+            mailSettingsRepository.updateSwipeRight(userId, swipeRight)
+        }
+        swipeLeft?.let {
+            mailSettingsRepository.updateSwipeLeft(userId, swipeLeft)
+        }
     }
 }
