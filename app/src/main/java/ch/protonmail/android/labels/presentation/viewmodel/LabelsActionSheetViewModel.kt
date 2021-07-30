@@ -189,11 +189,7 @@ class LabelsActionSheetViewModel @Inject constructor(
                 if (cancellationException != null) {
                     actionsResultMutableFlow.value = ManageLabelActionResult.ErrorUpdatingLabels
                 } else {
-//                    actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved()
-                    val dismissBackingActivity = !isApplyingActionToMessageWithinAConversation()
-                    actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved(
-                        dismissBackingActivity
-                    )
+                    actionsResultMutableFlow.value = ManageLabelActionResult.LabelsSuccessfullySaved
                 }
             }
         } else {

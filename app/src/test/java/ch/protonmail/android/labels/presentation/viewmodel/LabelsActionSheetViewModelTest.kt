@@ -184,7 +184,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
                 inboxLocationId
             )
         }
-        assertEquals(ManageLabelActionResult.LabelsSuccessfullySaved(true), viewModel.actionsResult.value)
+        assertEquals(ManageLabelActionResult.LabelsSuccessfullySaved, viewModel.actionsResult.value)
     }
 
     @Test
