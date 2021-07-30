@@ -130,10 +130,13 @@ class LabelsActionSheet : BottomSheetDialogFragment() {
     private fun processActionResult(result: ManageLabelActionResult) {
         Timber.v("Result received $result")
         when (result) {
-            is ManageLabelActionResult.LabelsSuccessfullySaved,
+            is ManageLabelActionResult.LabelsSuccessfullySaved ->
+                handleDismissBehavior(
+                    result.shouldDismissBackingActivity
+                )
             is ManageLabelActionResult.MessageSuccessfullyMoved ->
                 handleDismissBehavior(
-                    (result as ManageLabelActionResult.MessageSuccessfullyMoved).shouldDismissBackingActivity
+                    result.shouldDismissBackingActivity
                 )
             is ManageLabelActionResult.ErrorLabelsThresholdReached ->
                 showApplicableLabelsThresholdError(result.maxAllowedCount)
