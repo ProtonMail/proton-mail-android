@@ -65,7 +65,7 @@ class MailboxRecyclerViewAdapter(
     val checkedMailboxItems get() =
         selectedMailboxItemsIds.mapNotNull { mailboxItems.find { message -> message.itemId == it } }
 
-    public override fun getItem(position: Int) = mailboxItems[position]
+    public fun getMailboxItem(position: Int) = mailboxItems[position]
 
     override fun submitList(list: List<MailboxUiItem>?) {
         mailboxItems = list ?: emptyList()
@@ -100,8 +100,6 @@ class MailboxRecyclerViewAdapter(
             ElementType.FOOTER -> MailboxItemViewHolder.FooterViewHolder(MailboxItemFooterView(context))
         }
     }
-
-    override fun getItemCount(): Int = mailboxItems.size + if (includeFooter) 1 else 0
 
     override fun onBindViewHolder(holder: MailboxItemViewHolder, position: Int) {
         when (ElementType.values()[getItemViewType(position)]) {
