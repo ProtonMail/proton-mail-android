@@ -711,7 +711,8 @@ class MailboxActivity :
         mailboxViewModel.checkConnectivityDelayed()
     }
 
-    override fun showDohFailed() {
+    override fun onDohFailed() {
+        super.onDohFailed()
         showNoConnSnackAndScheduleRetry(Constants.ConnectionState.CANT_REACH_SERVER)
     }
 
