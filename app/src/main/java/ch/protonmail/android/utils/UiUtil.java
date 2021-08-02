@@ -30,12 +30,9 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.SpannedString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
@@ -192,22 +189,6 @@ public class UiUtil {
         int id = View.generateViewId();
         view.setId(id);
         return id;
-    }
-
-    @SuppressWarnings("deprecation")
-    public static Spanned fromHtml(String text) {
-        String textResult = text;
-        if (TextUtils.isEmpty(text) && !"".equals(text)) {
-            textResult = "";
-        }
-        if (TextUtils.isEmpty(textResult)) {
-            return SpannedString.valueOf(textResult);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return Html.fromHtml(textResult, Html.FROM_HTML_MODE_COMPACT);
-        } else {
-            return Html.fromHtml(textResult);
-        }
     }
 
     public static String toHtml(String text) {

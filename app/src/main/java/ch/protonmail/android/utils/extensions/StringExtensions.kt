@@ -80,7 +80,7 @@ fun CharSequence.subsequence(
     endIndex: Int = length,
     startInclusive: Boolean = false,
     endInclusive: Boolean = false,
-    ignoreCase: Boolean = false
+    ignoreCase: Boolean = false,
 ): CharSequence {
     // Calculate the index where to start substring-ing
     val from = if (start != null) {

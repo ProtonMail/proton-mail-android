@@ -109,7 +109,6 @@ class ComposeMessageViewModelTest : ArchTest, CoroutinesTest {
     @BeforeTest
     fun setUp() {
         mockkStatic(UiUtil::class)
-        every { UiUtil.fromHtml(any()) } returns mockk(relaxed = true)
         every { verifyConnection.invoke() } returns flowOf(Constants.ConnectionState.CONNECTED)
     }
 

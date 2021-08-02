@@ -117,6 +117,7 @@ import ch.protonmail.android.attachments.ImportAttachmentsWorker;
 import ch.protonmail.android.compose.ComposeMessageViewModel;
 import ch.protonmail.android.compose.presentation.ui.ComposeMessageKotlinActivity;
 import ch.protonmail.android.compose.presentation.ui.MessageRecipientArrayAdapter;
+import ch.protonmail.android.compose.presentation.util.HtmlToSpanned;
 import ch.protonmail.android.compose.recipients.GroupRecipientsDialogFragment;
 import ch.protonmail.android.contacts.PostResult;
 import ch.protonmail.android.core.Constants;
@@ -254,6 +255,9 @@ public class ComposeMessageActivity
     @Inject
     @DefaultSharedPreferences
     SharedPreferences defaultSharedPreferences;
+    
+    @Inject
+    HtmlToSpanned htmlToSpanned;
 
     String composerInstanceId;
 
@@ -1528,7 +1532,7 @@ public class ComposeMessageActivity
 
         final String originalMessageDividerString = getString(R.string.original_message_divider);
         if (clean && messageBody.contains(originalMessageDividerString)) {
-            Spanned secondPart = UiUtil.fromHtml(messageBody.substring(messageBody.indexOf(originalMessageDividerString)));
+            Spanned secondPart = htmlToSpanned.invoke(messageBody.substring(messageBody.indexOf(originalMessageDividerString)));
             binding.composerQuoteHeaderTextView.setText(secondPart);
             composeMessageViewModel.setQuotedHeader(secondPart);
             messageBody = messageBody.substring(0, messageBody.indexOf(originalMessageDividerString));
@@ -1656,7 +1660,7 @@ public class ComposeMessageActivity
             if (isPlainText) {
                 bodyText = content;
             } else {
-                bodyText = UiUtil.fromHtml(content);
+                bodyText = htmlToSpanned.invoke(content);
             }
             messageBodyEditText.setText(bodyText);
         }
@@ -1813,8 +1817,10 @@ public class ComposeMessageActivity
             mMessageBody.setVisibility(View.GONE);
             composeMessageViewModel.setIsMessageBodyVisible(false);
             mMessageBody.loadData("", "text/html; charset=utf-8", HTTP.UTF_8);
-            String composeContentBuilder = messageBodyEditText.getText().toString() + System.getProperty("line.separator") + binding.composerQuoteHeaderTextView.getText().toString() +
-                    UiUtil.fromHtml((composeMessageViewModel.getMessageDataResult().getInitialMessageContent()));
+            String composeContentBuilder = messageBodyEditText.getText().toString() +
+                    System.getProperty("line.separator") +
+                    binding.composerQuoteHeaderTextView.getText().toString() +
+                    htmlToSpanned.invoke(composeMessageViewModel.getMessageDataResult().getInitialMessageContent());
             messageBodyEditText.setText(composeContentBuilder);
         }
     }
@@ -1886,26 +1892,30 @@ public class ComposeMessageActivity
                             showCanNotSendDialog(address.getEmail());
                             return;
                         }
+
                         String currentMail = messageBodyEditText.getText().toString();
                         String newSignature = composeMessageViewModel.getNewSignature();
-                        boolean newSignatureEmpty = TextUtils.isEmpty(newSignature) || TextUtils.isEmpty(UiUtil.fromHtml(newSignature).toString().trim());
-                        boolean signatureEmpty = TextUtils.isEmpty(composeMessageViewModel.getMessageDataResult().getSignature()) || TextUtils.isEmpty(UiUtil.fromHtml(composeMessageViewModel.getMessageDataResult().getSignature()).toString().trim());
-                        if (!newSignatureEmpty && !signatureEmpty) {
+                        boolean isNewSignatureEmpty = TextUtils.isEmpty(newSignature) || TextUtils.isEmpty(htmlToSpanned.invoke(newSignature).toString().trim());
+                        String signature = composeMessageViewModel.getMessageDataResult().getSignature();
+                        Spanned signatureSpanned = htmlToSpanned.invoke(signature);
+
+                        boolean isSignatureEmpty = TextUtils.isEmpty(signature) || TextUtils.isEmpty(signatureSpanned.toString().trim());
+                        if (!isNewSignatureEmpty && !isSignatureEmpty) {
                             newSignature = composeMessageViewModel.calculateSignature(newSignature);
-                            messageBodyEditText.setText(currentMail.replace(UiUtil.fromHtml(composeMessageViewModel.getMessageDataResult().getSignature()), UiUtil.fromHtml(newSignature)));
+                            messageBodyEditText.setText(currentMail.replace(signatureSpanned, htmlToSpanned.invoke(newSignature)));
                             composeMessageViewModel.processSignature(newSignature);
-                        } else if (newSignatureEmpty && !signatureEmpty) {
-                            if (currentMail.contains(composeMessageViewModel.getMessageDataResult().getSignature())) {
-                                messageBodyEditText.setText(currentMail.replace("\n\n\n" + composeMessageViewModel.getMessageDataResult().getSignature(), ""));
+                        } else if (isNewSignatureEmpty && !isSignatureEmpty) {
+                            if (currentMail.contains(signature)) {
+                                messageBodyEditText.setText(currentMail.replace("\n\n\n" + signature, ""));
                             } else {
-                                if (currentMail.contains(UiUtil.fromHtml(composeMessageViewModel.getMessageDataResult().getSignature().trim()))) {
-                                    messageBodyEditText.setText(currentMail.replace("\n\n\n" + UiUtil.fromHtml(composeMessageViewModel.getMessageDataResult().getSignature().trim()), ""));
+                                if (currentMail.contains(htmlToSpanned.invoke(signature.trim()))) {
+                                    messageBodyEditText.setText(currentMail.replace("\n\n\n" + htmlToSpanned.invoke(signature.trim()), ""));
                                 } else {
-                                    messageBodyEditText.setText(currentMail.replace(UiUtil.fromHtml(composeMessageViewModel.getMessageDataResult().getSignature()), ""));
+                                    messageBodyEditText.setText(currentMail.replace(signatureSpanned, ""));
                                 }
                             }
                             composeMessageViewModel.setSignature("");
-                        } else if (!newSignatureEmpty && signatureEmpty) {
+                        } else if (!isNewSignatureEmpty && isSignatureEmpty) {
                             newSignature = composeMessageViewModel.calculateSignature(newSignature).trim();
                             StringBuilder sb = new StringBuilder(currentMail);
                             int lastIndexSpace = currentMail.indexOf("\n\n\n");
@@ -1914,7 +1924,7 @@ public class ComposeMessageActivity
                             } else {
                                 sb.append("\n\n\n" + newSignature);
                             }
-                            messageBodyEditText.setText(UiUtil.fromHtml(sb.toString().replace("\n", newline)));
+                            messageBodyEditText.setText(htmlToSpanned.invoke(sb.toString().replace("\n", newline)));
                             composeMessageViewModel.processSignature(newSignature);
                         }
                         // Trigger Save Draft after changing sender to ensure attachments are encrypted with the right key
