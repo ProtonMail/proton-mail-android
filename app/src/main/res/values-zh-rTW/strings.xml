@@ -952,4 +952,5 @@
     <string name="edit_draft">編輯草稿</string>
     <string name="primary_user_error">無法升級，出了點問題。</string>
     <string name="details_show_history">顯示紀錄</string>
+    <string name="could_not_complete_action">無法完成此動作</string>
 </resources>

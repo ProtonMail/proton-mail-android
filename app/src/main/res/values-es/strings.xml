@@ -68,17 +68,17 @@
     <string name="set_msg_expiration_check_description">Este elemento está marcado</string>
     <!-- endregion -->
     <!-- region Settings -->
-    <string name="settings_create_pin_code_title">Set PIN code</string>
-    <string name="settings_confirm_pin_code_title">Repeat PIN code</string>
-    <string name="settings_pins_dont_match">The PIN codes must match!</string>
-    <string name="settings_enter_pin_code_title">Enter PIN code</string>
+    <string name="settings_create_pin_code_title">Establecer código PIN</string>
+    <string name="settings_confirm_pin_code_title">Repetir código PIN</string>
+    <string name="settings_pins_dont_match">¡Los códigos PIN deben coincidir!</string>
+    <string name="settings_enter_pin_code_title">Introducir código PIN</string>
     <string name="settings_swipe_settings_info">Set up swipe gestures to access most used actions.</string>
-    <string name="settings_swipe_left_to_right">Left to right</string>
-    <string name="settings_swipe_right_to_left">Right to left</string>
+    <string name="settings_swipe_left_to_right">Izquierda a derecha</string>
+    <string name="settings_swipe_right_to_left">Derecha a izquierda</string>
     <!-- region Dialogs -->
-    <string name="dialog_discard_changes_title">Discard changes?</string>
+    <string name="dialog_discard_changes_title">¿Descartar los cambios?</string>
     <string name="dialog_discard_changes_message">Any unsaved changes will be discarded.</string>
-    <string name="discard">Discard</string>
+    <string name="discard">Descartar</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -483,7 +483,7 @@
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Convertir contacto</string>
     <string name="contacts_import_contact">Import Contact</string>
-    <string name="contacts_import">Import</string>
+    <string name="contacts_import">Importar</string>
     <string name="upload_contacts">Cargar contactos</string>
     <string name="upgrade_encrypted_contact">Actualice su plan para utilizar la información cifrada de contacto.</string>
     <string name="uploading_contacts">Cargando contactos…</string>
@@ -844,13 +844,13 @@ compre más
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Elija la acción de deslizar</string>
     <string name="swipe_action_trash">Mensaje movido a la papelera</string>
-    <string name="swipe_action_trash_short">Move to Trash</string>
+    <string name="swipe_action_trash_short">Mover a la Papelera</string>
     <string name="swipe_action_star">Mensaje marcado como destacado</string>
     <string name="swipe_action_star_short">Actualizar destacado</string>
     <string name="swipe_action_spam">Mensaje marcado como spam</string>
     <string name="swipe_action_spam_short">Spam</string>
     <string name="swipe_action_archive">Mensaje archivado</string>
-    <string name="swipe_action_archive_short">Archive</string>
+    <string name="swipe_action_archive_short">Archivar</string>
     <string name="swipe_action_mark_read">Mensaje marcado como leído</string>
     <string name="swipe_action_mark_read_short">Leído</string>
     <plurals name="action_move_to_trash">
@@ -891,7 +891,7 @@ compre más
     <string name="turn_combined_contacts_on">Active esta función para completar automáticamente las direcciones usando los contactos de todas sus cuentas conectadas.</string>
     <string name="local_cache_management">Gestionar caché local</string>
     <string name="cache_cleared">La caché local está actualizada</string>
-    <string name="empty_data">Empty Data</string>
+    <string name="empty_data">Vaciar datos</string>
     <!-- endregion -->
     <string name="enabled">Habilitado</string>
     <string name="disabled">Deshabilitado</string>
@@ -945,14 +945,14 @@ compre más
     <string name="error_loading_conversations">Error al cargar conversaciones, inténtalo de nuevo</string>
     <string name="star">Destacar</string>
     <string name="unstar">No destacar</string>
-    <string name="star_unstar">Star/unstar</string>
+    <string name="star_unstar">Destacar/no destacar</string>
     <string name="send_to_archive">¿Enviar al archivo?</string>
     <string name="new_label">Nueva etiqueta</string>
     <string name="new_folder">Nueva carpeta</string>
     <string name="label_as">Etiquetar como…</string>
     <string name="mark_as_unread">Marcar como no leído</string>
     <string name="mark_as_read">Marcar como leído</string>
-    <string name="mark_as_read_unread">Mark as read/unread</string>
+    <string name="mark_as_read_unread">Marcar como leído/no leído</string>
     <string name="move_message">Mover mensaje</string>
     <string name="manage">Administrar</string>
     <string name="message_from">Mensaje de %s</string>
@@ -967,11 +967,12 @@ compre más
     </plurals>
     <string name="contacts_call">Llamar</string>
     <string name="contacts_send_group_message">Enviar mensaje grupal</string>
-    <string name="inbox_this_folder_is_empty">This folder is empty</string>
+    <string name="inbox_this_folder_is_empty">Esta carpeta está vacía</string>
     <string name="inbox_nothing_to_see_here">Nothing to see here</string>
     <string name="inbox_could_not_retrieve_messages">Couldn\'t retrieve your messages</string>
     <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
-    <string name="edit_draft">Edit draft</string>
+    <string name="edit_draft">Editar borrador</string>
     <string name="primary_user_error">Could not upgrade, something went wrong.</string>
-    <string name="details_show_history">Show history</string>
+    <string name="details_show_history">Mostrar historial</string>
+    <string name="could_not_complete_action">Could not complete the action</string>
 </resources>

@@ -684,7 +684,7 @@
     <string name="account_manager_logout">Ffeɣ</string>
     <string name="account_manager_login">Qqen</string>
     <string name="manage_accounts_user_loggedout">%s (Teffɣeḍ)</string>
-    <string name="manage_accounts_user_primary">%s (primary)</string>
+    <string name="manage_accounts_user_primary">%s (agejdan)</string>
     <string name="account_manager_remove">Kkes</string>
     <string name="default_error_message">Tella-d tuccḍa</string>
     <string name="no_contact_groups">Ulac igrawen n unermes</string>
@@ -872,7 +872,7 @@
     <!-- region App Settings -->
     <string name="push_notifications">Tilɣa yettudemmren</string>
     <string name="extended_notifications">Ilɣa n usiɣzef</string>
-    <string name="extended_notifications_description">Turn this feature on to see the sender of the emails in the push notifications.</string>
+    <string name="extended_notifications_description">Turn this feature on to see the senderof the emails in the push notifications.</string>
     <string name="notification_settings">Iɣewwaren n ilɣa</string>
     <string name="auto_lock">Asekkeṛ awurman</string>
     <string name="auto_lock_app">Asekkeṛ awurman n usnas</string>
@@ -970,7 +970,8 @@
     <string name="inbox_nothing_to_see_here">Ulac acu ara twaliḍ dagi</string>
     <string name="inbox_could_not_retrieve_messages">Ur izmir ara ad d-yawi iznan-ik</string>
     <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
-    <string name="edit_draft">Edit draft</string>
-    <string name="primary_user_error">Could not upgrade, something went wrong.</string>
-    <string name="details_show_history">Show history</string>
+    <string name="edit_draft">Ẓreg arewway</string>
+    <string name="primary_user_error">Ulamek aleqqem n uswir, tella-d tuccḍa.</string>
+    <string name="details_show_history">Sken amazray</string>
+    <string name="could_not_complete_action">Could not complete the action</string>
 </resources>

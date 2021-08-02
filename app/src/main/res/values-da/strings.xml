@@ -973,4 +973,5 @@
     <string name="edit_draft">Redigér kladde</string>
     <string name="primary_user_error">Kunne ikke opgradere, noget gik galt.</string>
     <string name="details_show_history">Vis historik</string>
+    <string name="could_not_complete_action">Could not complete the action</string>
 </resources>

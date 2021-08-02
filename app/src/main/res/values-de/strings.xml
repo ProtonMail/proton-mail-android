@@ -964,4 +964,5 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="edit_draft">Entwurf bearbeiten</string>
     <string name="primary_user_error">Ein Problem ist aufgetreten - Umstieg konnte nicht ausgeführt werden.</string>
     <string name="details_show_history">Verlauf anzeigen</string>
+    <string name="could_not_complete_action">Die Aktion konnte nicht abgeschlossen werden</string>
 </resources>

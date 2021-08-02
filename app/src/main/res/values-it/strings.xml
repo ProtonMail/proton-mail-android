@@ -973,4 +973,5 @@
     <string name="edit_draft">Modifica la bozza</string>
     <string name="primary_user_error">Impossibile aggiornare, qualcosa è andato storto.</string>
     <string name="details_show_history">Mostra cronologia</string>
+    <string name="could_not_complete_action">Impossibile completare l\'azione</string>
 </resources>

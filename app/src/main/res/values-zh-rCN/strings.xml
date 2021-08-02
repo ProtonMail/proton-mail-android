@@ -45,15 +45,15 @@
     <string name="composer_subject">主题：</string>
     <string name="composer_to">收件人：</string>
     <string name="set_msg_password_title">设置密码</string>
-    <string name="set_msg_password_info">请设置密码以为非 ProtonMail 用户加密此邮件。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">了解更多</a></string>
+    <string name="set_msg_password_info">请为非 ProtonMail 用户设置密码将邮件加密。<a href="https://protonmail.com/support/knowledge-base/encrypt-for-outise-users/">了解详情</a></string>
     <string name="set_msg_password_info_icon_description">信息</string>
     <string name="set_msg_password_msg_password_title">邮件密码</string>
     <string name="set_msg_password_msg_password_hint">4 - 21 个字符</string>
     <string name="set_msg_password_repeat_password_title">重复密码</string>
     <string name="set_msg_password_repeat_password_hint">密码必须一致</string>
     <string name="set_msg_password_password_hint_title">密码提示</string>
-    <string name="set_msg_password_password_hint_hint">密码提示 (可选)</string>
-    <string name="set_msg_password_apply_password">应用密码</string>
+    <string name="set_msg_password_password_hint_hint">密码提示（非必填）</string>
+    <string name="set_msg_password_apply_password">确认密码</string>
     <string name="set_msg_password_remove_password">移除密码</string>
     <string name="set_msg_password_error_too_short">密码过短</string>
     <string name="set_msg_password_error_too_long">密码过长</string>
@@ -64,7 +64,7 @@
     <string name="set_msg_expiration_1_day">1 天</string>
     <string name="set_msg_expiration_3_days">3 天</string>
     <string name="set_msg_expiration_1_week">1 周</string>
-    <string name="set_msg_expiration_custom">自定义</string>
+    <string name="set_msg_expiration_custom">其他时长</string>
     <string name="set_msg_expiration_check_description">已勾选该项</string>
     <!-- endregion -->
     <!-- region Settings -->
@@ -72,13 +72,13 @@
     <string name="settings_confirm_pin_code_title">重复 PIN 码</string>
     <string name="settings_pins_dont_match">两次 PIN 码必须匹配！</string>
     <string name="settings_enter_pin_code_title">请输入 PIN 码</string>
-    <string name="settings_swipe_settings_info">设置访问常用操作的快捷手势</string>
+    <string name="settings_swipe_settings_info">设置滑动手势来执行常用操作。</string>
     <string name="settings_swipe_left_to_right">从左到右</string>
     <string name="settings_swipe_right_to_left">从右到左</string>
     <!-- region Dialogs -->
-    <string name="dialog_discard_changes_title">舍弃更改？</string>
-    <string name="dialog_discard_changes_message">所有未保存的更改都将舍弃</string>
-    <string name="discard">舍弃</string>
+    <string name="dialog_discard_changes_title">确定要放弃更改吗？</string>
+    <string name="dialog_discard_changes_message">所有未保存的更改都将丢失。</string>
+    <string name="discard">放弃更改</string>
     <!-- end region -->
     <!-- region Old / V3 / pre-conventions -->
     <string name="protonmail">ProtonMail</string>
@@ -651,7 +651,7 @@
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">添加照片</string>
-    <string name="contact_display_name">昵称</string>
+    <string name="contact_display_name">名称</string>
     <string name="add_new_email">添加邮箱地址</string>
     <string name="no_groups">无群组</string>
     <string name="contact_vcard_note">备注</string>
@@ -659,7 +659,7 @@
     <string name="create_contact_group">创建联系人群组</string>
     <string name="edit_contact_group">更改联系人群组</string>
     <string name="contact_groups_manage_members">管理成员</string>
-    <string name="contact_group_display_name">昵称</string>
+    <string name="contact_group_display_name">名称</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">加入群组</string>
     <string name="title_activity_address_chooser">管理成员</string>
@@ -749,11 +749,11 @@
     <string name="display_name">对外名称</string>
     <string name="edit_display_name">更改对外名称</string>
     <string name="signature">落款</string>
-    <string name="mobile_footer">文末落款</string>
-    <string name="edit_mobile_footer">启用文末落款</string>
+    <string name="mobile_footer">移动端标识</string>
+    <string name="edit_mobile_footer">开启移动端标识</string>
     <string name="default_mobile_footer">发送自 ProtonMail 移动端</string>
-    <string name="mobile_footer_is_premium">开通付费账户方可更改移动端文末落款</string>
-    <string name="mobile_footer_info">此落款添加在您的签名之后</string>
+    <string name="mobile_footer_is_premium">开通付费账户方可更改移动端标识</string>
+    <string name="mobile_footer_info">这段标识文本将加在您的落款之后</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">免打扰</string>
     <string name="notifications_snooze">免打扰</string>
@@ -821,7 +821,7 @@
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">选择滑动操作</string>
     <string name="swipe_action_trash">邮件已移至废件箱</string>
-    <string name="swipe_action_trash_short">移至回收站</string>
+    <string name="swipe_action_trash_short">移至废件箱</string>
     <string name="swipe_action_star">星标已更改</string>
     <string name="swipe_action_star_short">切换星标</string>
     <string name="swipe_action_spam">标记为垃圾邮件</string>
@@ -900,8 +900,8 @@
     <string name="error_image_bad_url">图片网址不正确</string>
     <string name="error_saving_try_again">保存邮件失败，请重试。</string>
     <!-- endregion -->
-    <string name="allowed">已允许</string>
-    <string name="denied">已拒绝</string>
+    <string name="allowed">允许</string>
+    <string name="denied">不允许</string>
     <string name="more">更多</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">滑动手势已更改</string>
@@ -937,12 +937,13 @@
         <item quantity="other">%d 条会话</item>
     </plurals>
     <string name="contacts_call">呼叫</string>
-    <string name="contacts_send_group_message">发送群组消息</string>
-    <string name="inbox_this_folder_is_empty">此文件夹是空</string>
+    <string name="contacts_send_group_message">群发邮件</string>
+    <string name="inbox_this_folder_is_empty">此文件夹为空</string>
     <string name="inbox_nothing_to_see_here">暂无内容</string>
-    <string name="inbox_could_not_retrieve_messages">Couldn\'t retrieve your messages</string>
-    <string name="inbox_pull_down_to_retry">Please pull down to retry</string>
-    <string name="edit_draft">Edit draft</string>
-    <string name="primary_user_error">Could not upgrade, something went wrong.</string>
-    <string name="details_show_history">Show history</string>
+    <string name="inbox_could_not_retrieve_messages">获取邮件失败</string>
+    <string name="inbox_pull_down_to_retry">请下拉重试</string>
+    <string name="edit_draft">编辑草稿</string>
+    <string name="primary_user_error">发生错误，升级失败。</string>
+    <string name="details_show_history">显示历史记录</string>
+    <string name="could_not_complete_action">操作无法完成</string>
 </resources>
