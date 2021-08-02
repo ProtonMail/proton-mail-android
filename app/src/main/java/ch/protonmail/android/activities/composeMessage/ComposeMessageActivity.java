@@ -1817,6 +1817,7 @@ public class ComposeMessageActivity
             mMessageBody.setVisibility(View.GONE);
             composeMessageViewModel.setIsMessageBodyVisible(false);
             mMessageBody.loadData("", "text/html; charset=utf-8", HTTP.UTF_8);
+            binding.composerQuoteHeaderTextView.setVisibility(View.GONE);
             String composeContentBuilder = messageBodyEditText.getText().toString() +
                     System.getProperty("line.separator") +
                     binding.composerQuoteHeaderTextView.getText().toString() +
