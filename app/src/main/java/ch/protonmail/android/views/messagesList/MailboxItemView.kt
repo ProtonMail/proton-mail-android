@@ -79,7 +79,7 @@ class MailboxItemView @JvmOverloads constructor(
 
     private fun setTextViewStyles(isRead: Boolean) {
         if (isRead) {
-            sender_text_view.setTextAppearance(R.style.Proton_Text_Default)
+            sender_text_view.setTextAppearance(R.style.Proton_Text_Default_Weak)
             subject_text_view.setTextAppearance(R.style.Proton_Text_DefaultSmall_Weak)
             time_date_text_view.setTextAppearance(R.style.Proton_Text_Caption_Weak)
         } else {
