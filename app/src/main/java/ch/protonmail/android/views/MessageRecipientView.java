@@ -375,7 +375,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
 
         @Override
         public void onClick() {
-            //You should have access to the activity here
+            // You should have access to the activity here
             MessageRecipient token = getToken();
             List<MessageRecipient> groupRecipients = token.getGroupRecipients();
             boolean isGroup = groupRecipients != null && groupRecipients.size() > 0;

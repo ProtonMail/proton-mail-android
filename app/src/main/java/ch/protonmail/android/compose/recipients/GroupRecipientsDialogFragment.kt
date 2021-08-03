@@ -24,19 +24,26 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.dialogs.AbstractDialogFragment
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.databinding.DialogFragmentGroupRecipientsBinding
 import ch.protonmail.android.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.dialog_fragment_group_recipients.*
+import me.proton.core.presentation.ui.view.ProtonButton
+import me.proton.core.presentation.ui.view.ProtonCheckbox
 import javax.inject.Inject
 
 // region constants
@@ -53,6 +60,13 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
     private lateinit var groupRecipientsViewModel: GroupRecipientsViewModel
     private lateinit var groupRecipientsAdapter: GroupRecipientsAdapter
     private lateinit var groupRecipientsListener: IGroupRecipientsListener
+
+    private lateinit var groupIconImageView: ImageView
+    private lateinit var groupNameTextView: TextView
+    private lateinit var selectAllCheckbox: ProtonCheckbox
+    private lateinit var recipientsRecyclerView: RecyclerView
+    private lateinit var applyButton: ProtonButton
+    private lateinit var cancelButton: ProtonButton
 
     override fun onBackPressed() {
         CANCELED = true
@@ -99,6 +113,25 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
         }
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val binding = DialogFragmentGroupRecipientsBinding.inflate(inflater)
+
+        with(binding) {
+            groupIconImageView = dialogGroupRecipientsGroupIconImageView
+            groupNameTextView = dialogGroupRecipientsGroupNameTextView
+            selectAllCheckbox = dialogGroupRecipientsSelectAllCheckbox
+            recipientsRecyclerView = dialogGroupRecipientsRecyclerView
+            applyButton = dialogGroupRecipientsApplyButton
+            cancelButton = dialogGroupRecipientsCancelButton
+        }
+
+        return binding.root
+    }
+
     override fun onResume() {
         super.onResume()
 
@@ -112,7 +145,7 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
 
     override fun initUi(rootView: View?) {
         groupRecipientsAdapter =
-            GroupRecipientsAdapter(context!!, groupRecipientsViewModel.getData(), this::onMembersSelectChanged)
+            GroupRecipientsAdapter(groupRecipientsViewModel.getData(), this::onMembersSelectChanged)
         groupRecipientsViewModel.contactGroupResult.observe(
             this,
             Observer {
@@ -152,19 +185,20 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initUi(view)
         with(recipientsRecyclerView) {
             layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
             adapter = groupRecipientsAdapter
         }
-        title.text = groupRecipientsViewModel.getTitle()
-        groupIcon.colorFilter = PorterDuffColorFilter(
+        groupNameTextView.text = groupRecipientsViewModel.getTitle()
+        groupIconImageView.colorFilter = PorterDuffColorFilter(
             groupRecipientsViewModel.getGroupColor(),
             PorterDuff.Mode.SRC_IN
         )
 
-        check.setOnClickListener {
+        selectAllCheckbox.setOnClickListener {
             val allMessageRecipients = ArrayList<MessageRecipient>()
-            if (check.isChecked) {
+            if (selectAllCheckbox.isChecked) {
                 for (email in groupRecipientsAdapter.getData()) {
                     email.isSelected = true
                     allMessageRecipients.add(email)
@@ -178,11 +212,11 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
             groupRecipientsAdapter.setData(allMessageRecipients)
         }
 
-        done.setOnClickListener {
+        applyButton.setOnClickListener {
             CANCELED = false
             dismiss()
         }
-        cancel.setOnClickListener {
+        cancelButton.setOnClickListener {
             CANCELED = true
             dismiss()
         }
@@ -215,7 +249,7 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
     }
 
     private fun onMembersSelectChanged() {
-        check.isChecked = groupRecipientsAdapter.itemCount == groupRecipientsAdapter.getSelected().size
+        selectAllCheckbox.isChecked = groupRecipientsAdapter.itemCount == groupRecipientsAdapter.getSelected().size
     }
 
     companion object {
