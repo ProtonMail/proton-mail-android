@@ -73,55 +73,8 @@ class MessageActionSheetViewModel @Inject constructor(
         messageLocation: Constants.MessageLocationType,
         actionsTarget: ActionSheetTarget
     ) {
-        val isMoveToInboxVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
-            messageLocation in Constants.MessageLocationType.values()
-                .filter { type ->
-                    type == Constants.MessageLocationType.ARCHIVE ||
-                        type == Constants.MessageLocationType.SPAM ||
-                        type == Constants.MessageLocationType.TRASH
-
-                }
-        } else true
-
-        val isMoveToTrashVisible = messageLocation in Constants.MessageLocationType.values()
-            .filter { type -> type != Constants.MessageLocationType.TRASH }
-
-        val isMoveToArchiveVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
-            messageLocation in Constants.MessageLocationType.values()
-                .filter { type ->
-                    type != Constants.MessageLocationType.ARCHIVE &&
-                        type != Constants.MessageLocationType.SPAM
-                }
-        } else true
-
-        val isMoveToSpamVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
-            messageLocation in Constants.MessageLocationType.values()
-                .filter { type ->
-                    type != Constants.MessageLocationType.SPAM &&
-                        type != Constants.MessageLocationType.DRAFT &&
-                        type != Constants.MessageLocationType.SENT &&
-                        type != Constants.MessageLocationType.TRASH
-                }
-        } else true
-
-        val isDeleteVisible = messageLocation in Constants.MessageLocationType.values()
-            .filter { type ->
-                type == Constants.MessageLocationType.DRAFT ||
-                    type == Constants.MessageLocationType.SENT ||
-                    type == Constants.MessageLocationType.TRASH ||
-                    type == Constants.MessageLocationType.SPAM
-            }
-
-        stateMutableFlow.value = MessageActionSheetState.MoveSectionState(
-            messageIds,
-            messageLocation,
-            actionsTarget,
-            isMoveToInboxVisible,
-            isMoveToTrashVisible,
-            isMoveToArchiveVisible,
-            isMoveToSpamVisible,
-            isDeleteVisible
-        )
+        val moveSectionState = computeMoveSectionState(actionsTarget, messageLocation, messageIds)
+        stateMutableFlow.value = moveSectionState
     }
 
     fun showLabelsManager(
@@ -413,5 +366,62 @@ class MessageActionSheetViewModel @Inject constructor(
     private fun getActionsTargetInputArg() = savedStateHandle.get<ActionSheetTarget>(
         MessageActionSheet.EXTRA_ARG_ACTION_TARGET
     ) ?: ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+
+    private fun computeMoveSectionState(
+        actionsTarget: ActionSheetTarget,
+        messageLocation: Constants.MessageLocationType,
+        messageIds: List<String>
+    ): MessageActionSheetState.MoveSectionState {
+        val isMoveToInboxVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
+            messageLocation in Constants.MessageLocationType.values()
+                .filter { type ->
+                    type == Constants.MessageLocationType.ARCHIVE ||
+                        type == Constants.MessageLocationType.SPAM ||
+                        type == Constants.MessageLocationType.TRASH
+
+                }
+        } else true
+
+        val isMoveToTrashVisible = messageLocation in Constants.MessageLocationType.values()
+            .filter { type -> type != Constants.MessageLocationType.TRASH }
+
+        val isMoveToArchiveVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
+            messageLocation in Constants.MessageLocationType.values()
+                .filter { type ->
+                    type != Constants.MessageLocationType.ARCHIVE &&
+                        type != Constants.MessageLocationType.SPAM
+                }
+        } else true
+
+        val isMoveToSpamVisible = if (actionsTarget != ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN) {
+            messageLocation in Constants.MessageLocationType.values()
+                .filter { type ->
+                    type != Constants.MessageLocationType.SPAM &&
+                        type != Constants.MessageLocationType.DRAFT &&
+                        type != Constants.MessageLocationType.SENT &&
+                        type != Constants.MessageLocationType.TRASH
+                }
+        } else true
+
+        val isDeleteVisible = messageLocation in Constants.MessageLocationType.values()
+            .filter { type ->
+                type == Constants.MessageLocationType.DRAFT ||
+                    type == Constants.MessageLocationType.SENT ||
+                    type == Constants.MessageLocationType.TRASH ||
+                    type == Constants.MessageLocationType.SPAM
+            }
+
+        val moveSectionState = MessageActionSheetState.MoveSectionState(
+            messageIds,
+            messageLocation,
+            actionsTarget,
+            isMoveToInboxVisible,
+            isMoveToTrashVisible,
+            isMoveToArchiveVisible,
+            isMoveToSpamVisible,
+            isDeleteVisible
+        )
+        return moveSectionState
+    }
 
 }

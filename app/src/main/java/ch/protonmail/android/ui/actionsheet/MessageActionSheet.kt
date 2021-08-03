@@ -97,16 +97,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    private fun updateViewState(state: MessageActionSheetState, binding: FragmentMessageActionSheetBinding) {
-        when (state) {
-            is MessageActionSheetState.MoveSectionState -> {
-                setupMoveSectionState(binding, viewModel, state)
-            }
-            MessageActionSheetState.Initial -> {
-            }
-        }
-    }
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val bottomSheetDialog = super.onCreateDialog(savedInstanceState)
         bottomSheetDialog.setOnShowListener { dialogInterface ->
@@ -148,6 +138,16 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         actionSheetHeader = null
         super.onDestroyView()
+    }
+
+    private fun updateViewState(state: MessageActionSheetState, binding: FragmentMessageActionSheetBinding) {
+        when (state) {
+            is MessageActionSheetState.MoveSectionState -> {
+                setupMoveSectionState(binding, state)
+            }
+            MessageActionSheetState.Initial -> {
+            }
+        }
     }
 
     private fun setupHeaderBindings(
@@ -263,7 +263,6 @@ class MessageActionSheet : BottomSheetDialogFragment() {
 
     private fun setupMoveSectionState(
         binding: FragmentMessageActionSheetBinding,
-        viewModel: MessageActionSheetViewModel,
         state: MessageActionSheetState.MoveSectionState
     ) {
         val messageIds = state.mailboxItemIds
