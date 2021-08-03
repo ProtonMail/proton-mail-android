@@ -65,7 +65,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         val actionsTarget = arguments?.getSerializable(EXTRA_ARG_ACTION_TARGET) as? ActionSheetTarget
-            ?: ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+            ?: ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
         val messageIds: List<String> = arguments?.getStringArray(EXTRA_ARG_MESSAGE_IDS)?.toList()
             ?: throw IllegalStateException("messageIds in MessageActionSheet are Empty!")
         val messageLocation =
@@ -176,7 +176,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
     ) {
         with(binding) {
             layoutDetailsActions.isVisible = actionsTarget in listOf(
-                ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN,
+                ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN,
                 ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN,
                 ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
             )
@@ -322,7 +322,7 @@ class MessageActionSheet : BottomSheetDialogFragment() {
         messageIds: List<String>
     ) {
         with(binding) {
-            val showMoreMessageOptions = actionsTarget == ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN ||
+            val showMoreMessageOptions = actionsTarget == ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN ||
                 actionsTarget == ActionSheetTarget.MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN
 
             viewActionSheetSeparator.isVisible = showMoreMessageOptions

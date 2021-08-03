@@ -230,7 +230,7 @@ class LabelsActionSheetViewModelTest : ArchTest, CoroutinesTest {
             coEvery { conversationModeEnabled(any()) } returns true
             every {
                 savedStateHandle.get<ActionSheetTarget>("extra_arg_labels_action_sheet_actions_target")
-            } returns ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+            } returns ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
             coEvery { moveConversationsToFolder.invoke(any(), any(), any()) } returns ConversationsActionResult.Success
 
             // when

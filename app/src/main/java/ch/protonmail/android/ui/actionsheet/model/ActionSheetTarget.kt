@@ -28,15 +28,15 @@ enum class ActionSheetTarget {
 
     /**
      * ActionSheet called from the Detail Screen (ie. MessageDetailsActivity)
-     * to act on the one "main" message entity being displayed
-     */
-    MAILBOX_ITEM_IN_DETAIL_SCREEN,
-
-    /**
-     * ActionSheet called from the Detail Screen (ie. MessageDetailsActivity)
      * to act on one specific message within a conversation (that has more than one message)
      */
     MESSAGE_ITEM_WITHIN_CONVERSATION_DETAIL_SCREEN,
+
+    /**
+     * ActionSheet called from the Detail Screen (ie. MessageDetailsActivity)
+     * to act on the one single message entity being displayed
+     */
+    MESSAGE_ITEM_IN_DETAIL_SCREEN,
 
     /**
      * ActionSheet called from the Detail Screen (ie. MessageDetailsActivity)

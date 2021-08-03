@@ -542,7 +542,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity() {
         val actionSheetTarget = if (viewModel.isConversationEnabled()) {
             ActionSheetTarget.CONVERSATION_ITEM_IN_DETAIL_SCREEN
         } else {
-            ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+            ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
         }
         val id = if (viewModel.isConversationEnabled()) {
             messageOrConversationId

@@ -60,9 +60,9 @@ class MessageActionSheetViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val stateMutableFlow = MutableStateFlow<MessageActionSheetState>(MessageActionSheetState.Initial)
+    private val mutableStateFlow = MutableStateFlow<MessageActionSheetState>(MessageActionSheetState.Initial)
     val stateFlow: StateFlow<MessageActionSheetState>
-        get() = stateMutableFlow
+        get() = mutableStateFlow
 
     private val actionsMutableFlow = MutableStateFlow<MessageActionSheetAction>(MessageActionSheetAction.Default)
     val actionsFlow: StateFlow<MessageActionSheetAction>
@@ -74,7 +74,7 @@ class MessageActionSheetViewModel @Inject constructor(
         actionsTarget: ActionSheetTarget
     ) {
         val moveSectionState = computeMoveSectionState(actionsTarget, messageLocation, messageIds)
-        stateMutableFlow.value = moveSectionState
+        mutableStateFlow.value = moveSectionState
     }
 
     fun showLabelsManager(
@@ -365,7 +365,7 @@ class MessageActionSheetViewModel @Inject constructor(
 
     private fun getActionsTargetInputArg() = savedStateHandle.get<ActionSheetTarget>(
         MessageActionSheet.EXTRA_ARG_ACTION_TARGET
-    ) ?: ActionSheetTarget.MAILBOX_ITEM_IN_DETAIL_SCREEN
+    ) ?: ActionSheetTarget.MESSAGE_ITEM_IN_DETAIL_SCREEN
 
     private fun computeMoveSectionState(
         actionsTarget: ActionSheetTarget,
