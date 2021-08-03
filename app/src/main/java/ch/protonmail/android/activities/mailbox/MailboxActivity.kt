@@ -711,6 +711,11 @@ class MailboxActivity :
         mailboxViewModel.checkConnectivityDelayed()
     }
 
+    override fun onDohFailed() {
+        super.onDohFailed()
+        showNoConnSnackAndScheduleRetry(Constants.ConnectionState.CANT_REACH_SERVER)
+    }
+
     private fun checkRegistration() {
         // Check device for Play Services APK.
         if (checkPlayServices()) {
@@ -1508,6 +1513,7 @@ class MailboxActivity :
 
     /* SwipeRefreshLayout.OnRefreshListener */
     override fun onRefresh() {
+        mailboxViewModel.checkConnectivity()
         if (!spinner_layout.isRefreshing) {
             fetchUpdates(true)
         }
