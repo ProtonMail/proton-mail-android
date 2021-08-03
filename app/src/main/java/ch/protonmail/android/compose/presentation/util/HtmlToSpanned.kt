@@ -46,8 +46,7 @@ class HtmlToSpanned @Inject constructor() {
 
     private companion object {
 
-        const val HEAD_TAG_NAME = "head"
-        const val HEAD_START_TAG = "<$HEAD_TAG_NAME>"
-        const val HEAD_END_TAG = "</$HEAD_TAG_NAME>"
+        const val HEAD_START_TAG = "<head>"
+        const val HEAD_END_TAG = "</head>"
     }
 }

@@ -19,59 +19,56 @@
 
 package ch.protonmail.android.compose.presentation.util
 
-import android.text.SpannableString
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
+import androidx.core.text.HtmlCompat
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@Config(sdk = [24, 28])
-@RunWith(RobolectricTestRunner::class)
+/**
+ * Test suite for [HtmlToSpanned]
+ */
 class HtmlToSpannedTest {
 
-    private val htmlToSpannable = HtmlToSpanned()
+    private lateinit var htmlToSpannable: HtmlToSpanned
 
-    @Test
-    fun convertHtmlWithCssInHead() {
-        // given
-        val input = HTML_WITH_CSS_IN_HEAD
-        val expected = SpannableString("Sent to myself")
+    @BeforeTest
+    fun setup() {
+        mockkStatic(HtmlCompat::class)
+        every { HtmlCompat.fromHtml(any(), any()) } answers {
+            mockk {
+                every { this@mockk.toString() } returns firstArg()
+            }
+        }
+        htmlToSpannable = HtmlToSpanned()
+    }
 
-        // when
-        val result = htmlToSpannable(input).trim()
-
-        // then
-        assertEquals(expected, result)
+    @AfterTest
+    fun tearDown() {
+        unmockkStatic(HtmlCompat::class)
     }
 
     @Test
-    fun convertHtmlWithoutHead() {
+    fun removesHeadFromHtml() {
         // given
-        val input = HTML_WITHOUT_HEAD
-        val expected = SpannableString("Sent to myself")
+        val input = HTML_WITH_CSS_IN_HEAD
+        val expected = "Sent to myself"
 
         // when
-        val result = htmlToSpannable(input).trim()
+        val result = htmlToSpannable(input).toString()
 
         // then
         assertEquals(expected, result)
     }
 }
 
-// region Test Html's
-private val HTML_WITHOUT_HEAD = """
-    |<blockquote class="protonmail_quote"><br><html>
-    | <body>
-    |  <div id="pm-body" class="inbox-body">   Sent to myself  
-    |  </div>
-    | </body>
-    |</html></div>
-""".trimMargin("|")
 private val HTML_WITH_CSS_IN_HEAD = """
-    |<blockquote class="protonmail_quote"><br><html>
-    | <head>
-    |  <style>/* for HTML 5 */
+    |<head>
+    | <style>/* for HTML 5 */
     |article,
     |aside,
     |datalist,
@@ -339,11 +336,6 @@ private val HTML_WITH_CSS_IN_HEAD = """
     |}
     |</style>
     |  <meta name="viewport" content="width=462, maximum-scale=2"> 
-    | </head>
-    | <body>
-    |  <div id="pm-body" class="inbox-body">   Sent to myself  
-    |  </div>
-    | </body>
-    |</html></div>
+    |</head>Sent to myself
 """.trimMargin("|")
 // endregion

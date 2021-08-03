@@ -28,7 +28,6 @@ import okhttp3.Interceptor
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import timber.log.Timber
 import java.net.CookieManager
 import java.net.CookiePolicy
 import java.net.URL
@@ -117,15 +116,10 @@ class DefaultOkHttpClient(
 ) {
 
     init {
-        try {
-            okClientBuilder.sslSocketFactory(
-                trustKit.getSSLSocketFactory(serverHostname),
-                trustKit.getTrustManager(serverHostname)
-            )
-        } catch (e: IllegalArgumentException) {
-            // This can happen while testing with Robolectric
-            Timber.e(e)
-        }
+        okClientBuilder.sslSocketFactory(
+            trustKit.getSSLSocketFactory(serverHostname),
+            trustKit.getTrustManager(serverHostname)
+        )
     }
 }
 
