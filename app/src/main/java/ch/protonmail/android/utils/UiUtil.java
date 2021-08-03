@@ -264,14 +264,17 @@ public class UiUtil {
         LayoutInflater inflater = activity.getLayoutInflater();
         final AlertDialog dialog;
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        View dialogView = inflater.inflate(R.layout.layout_dialog_expiration_error_warning, null);
+        View dialogView = inflater.inflate(R.layout.dialog_recipient_expiration_unsupported, null);
+
         final LinearLayout recipientsMissingPasswordLayout = dialogView.findViewById(R.id.recipients_missing_password);
         final LinearLayout recipientsDisablePgpLayout = dialogView.findViewById(R.id.recipients_disable_pgp);
-        Button btnCancel = dialogView.findViewById(R.id.cancel);
-        Button btnOk = dialogView.findViewById(R.id.ok);
         TextView learnMore = dialogView.findViewById(R.id.learn_more_button);
+        Button cancelButton = dialogView.findViewById(R.id.dialog_expiration_unsupported_cancel_button);
+        Button sendAnywayButton = dialogView.findViewById(R.id.dialog_expiration_unsupported_send_anyway_button);
+
         ImageButton recipientsMissingPasswordSwitch = dialogView.findViewById(R.id.recipients_missing_password_switch);
         ImageButton recipientsDisablePgpSwitch = dialogView.findViewById(R.id.recipients_disable_pgp_switch);
+
         View recipientsMissingPasswordHeader = dialogView.findViewById(R.id.recipients_missing_password_header);
         View recipientsDisablePgpHeader = dialogView.findViewById(R.id.recipients_disable_pgp_header);
 
@@ -315,9 +318,9 @@ public class UiUtil {
         dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
 
-        btnCancel.setOnClickListener(v -> dialog.cancel());
+        cancelButton.setOnClickListener(v -> dialog.cancel());
 
-        btnOk.setOnClickListener(view -> {
+        sendAnywayButton.setOnClickListener(view -> {
             okClickListener.onClick(view);
             dialog.cancel();
         });
